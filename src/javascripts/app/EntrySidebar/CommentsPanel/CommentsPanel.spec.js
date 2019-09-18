@@ -53,7 +53,7 @@ const setEmpty = () => {
   useCommentsFetcher.mockReturnValue({ isLoading: false, error: null, data: [] });
 };
 const defaultProps = {
-  spaceId: 'a',
+  endpoint: () => {},
   entryId: 'b',
   environmentId: 'c',
   isVisible: true,
@@ -93,10 +93,10 @@ describe('CommentsPanel', () => {
       expect(getByTestId('comments')).toHaveStyle('transform: translateX(-1px)');
     });
 
-    it('fetches all comments of entry `props.entryId` in space `props.spaceId`', () => {
+    it('fetches all comments of entry `props.entryId` via `props.endpoint`', () => {
       build();
-      const { spaceId, entryId } = defaultProps;
-      expect(useCommentsFetcher).toHaveBeenCalledWith(spaceId, entryId);
+      const { endpoint, entryId } = defaultProps;
+      expect(useCommentsFetcher).toHaveBeenCalledWith(endpoint, entryId);
     });
   });
 

@@ -156,8 +156,7 @@ export default ({ $scope, emitter }) => {
       // the comments tab is opened for the first time
       emitter.emit(SidebarEventTypes.INIT_COMMENTS_PANEL, {
         entryId: $scope.entityInfo.id,
-        spaceId: spaceContext.getId(),
-        environmentId: spaceContext.getEnvironmentId()
+        endpoint: spaceContext.endpoint
       });
     });
 

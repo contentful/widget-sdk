@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { map, uniq } from 'lodash';
 import resolveLinks from 'data/LinkResolver.es6';
 import { getSpace, getUserSync } from 'services/TokenStore.es6';
-import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/EndpointFactory.es6';
+import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { getUsers } from 'access_control/OrganizationMembershipRepository.es6';
 import { getAllForEntry, create } from 'data/CMA/CommentsRepo.es6';
 import useAsync, { useAsyncFn } from 'app/common/hooks/useAsync.es6';
@@ -11,14 +11,14 @@ import { trackCommentCreated } from './analytics.es6';
 /**
  * Fetches all comments for the given entry.
  * Returns a state object
- * @param {string} spaceId
+ * @param {SpaceEndpoint} endpoint
  * @param {string} entryId
  */
-export const useCommentsFetcher = (spaceId, entryId) => {
+export const useCommentsFetcher = (endpoint, entryId) => {
   // avoiding infinite loop.
   const fetch = useCallback(async () => {
-    return withMinDelay(fetchCommentsAndUsers(spaceId, entryId));
-  }, [spaceId, entryId]);
+    return withMinDelay(fetchCommentsAndUsers(endpoint, entryId));
+  }, [endpoint, entryId]);
 
   return useAsync(fetch);
 };
@@ -26,12 +26,11 @@ export const useCommentsFetcher = (spaceId, entryId) => {
 /**
  * Creates a comment in the given entry.
  * Returns a state object and a requester function
- * @param {string} spaceId
+ * @param {SpaceEndpoint} endpoint
  * @param {string} entryId
  */
-export const useCommentCreator = (spaceId, entryId, parentCommentId) => {
+export const useCommentCreator = (endpoint, entryId, parentCommentId) => {
   const user = getUserSync();
-  const endpoint = createSpaceEndpoint(spaceId);
 
   return useAsyncFn(async body => {
     const comment = await create(endpoint, entryId, { body, parentCommentId });
@@ -60,8 +59,8 @@ async function fetchUsers(spaceId, userIds) {
  * Get all comments as well as all the users associated with the comments
  * and return the resolved items
  */
-export async function fetchCommentsAndUsers(spaceId, entryId) {
-  const endpoint = createSpaceEndpoint(spaceId);
+export async function fetchCommentsAndUsers(endpoint, entryId) {
+  const { spaceId } = endpoint;
   const { items: comments } = await getAllForEntry(endpoint, entryId);
   const commentCreatorIds = uniq(map(comments, 'sys.createdBy.sys.id'));
   const users = commentCreatorIds.length ? await fetchUsers(spaceId, commentCreatorIds) : [];

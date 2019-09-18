@@ -2,29 +2,26 @@
 
 exports[`CommentsPanelContainer initializes the sidebar 1`] = `
 <CommentsPanel
+  endpoint={[Function]}
   entryId="my-entry"
-  environmentId="my-env"
   onCommentsCountUpdate={[Function]}
-  spaceId="my-space"
 />
 `;
 
 exports[`CommentsPanelContainer makes panel hidden 1`] = `
 <CommentsPanel
+  endpoint={[Function]}
   entryId="my-entry"
-  environmentId="my-env"
   isVisible={false}
   onCommentsCountUpdate={[Function]}
-  spaceId="my-space"
 />
 `;
 
 exports[`CommentsPanelContainer makes panel visible 1`] = `
 <CommentsPanel
+  endpoint={[Function]}
   entryId="my-entry"
-  environmentId="my-env"
   isVisible={true}
   onCommentsCountUpdate={[Function]}
-  spaceId="my-space"
 />
 `;

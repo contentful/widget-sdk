@@ -57,8 +57,8 @@ export const styles = {
   })
 };
 
-function CommentsPanelContent({ spaceId, entryId, onCommentsCountUpdate }) {
-  const { isLoading, data, error } = useCommentsFetcher(spaceId, entryId);
+function CommentsPanelContent({ endpoint, entryId, onCommentsCountUpdate }) {
+  const { isLoading, data, error } = useCommentsFetcher(endpoint, entryId);
   const [comments, setComments] = useState();
   const [shouldScroll, setShouldScroll] = useState(false);
   const listRef = useRef(null);
@@ -119,6 +119,7 @@ function CommentsPanelContent({ spaceId, entryId, onCommentsCountUpdate }) {
         {threads.length > 0 &&
           threads.map(thread => (
             <CommentThread
+              endpoint={endpoint}
               key={thread[0].sys.id}
               thread={thread}
               onNewReply={handleNewComment}
@@ -135,14 +136,14 @@ function CommentsPanelContent({ spaceId, entryId, onCommentsCountUpdate }) {
         )}
       </div>
       <div className={styles.commentForm} data-test-id="comments.form">
-        <CreateComment spaceId={spaceId} entryId={entryId} onNewComment={handleNewComment} />
+        <CreateComment endpoint={endpoint} entryId={entryId} onNewComment={handleNewComment} />
       </div>
     </React.Fragment>
   );
 }
 
 CommentsPanelContent.propTypes = {
-  spaceId: PropTypes.string.isRequired,
+  endpoint: PropTypes.func.isRequired,
   entryId: PropTypes.string.isRequired,
   onCommentsCountUpdate: PropTypes.func.isRequired
 };

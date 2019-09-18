@@ -37,10 +37,10 @@ const styles = {
   })
 };
 
-export default function CommentThread({ thread, onRemoved, onNewReply }) {
+export default function CommentThread({ endpoint, thread, onRemoved, onNewReply }) {
   const [comment, ...replies] = thread;
   const {
-    sys: { reference: entry, space }
+    sys: { reference: entry }
   } = comment;
   const ref = useRef();
   const [replyingMode, setReplyingMode] = useState(false);
@@ -77,7 +77,7 @@ export default function CommentThread({ thread, onRemoved, onNewReply }) {
         {replyingMode && (
           <footer className={styles.replyActions}>
             <CreateEntryComment
-              spaceId={space.sys.id}
+              endpoint={endpoint}
               entryId={entry.sys.id}
               parentCommentId={comment.sys.id}
               onNewComment={onNewReply}
@@ -92,6 +92,7 @@ export default function CommentThread({ thread, onRemoved, onNewReply }) {
 }
 
 CommentThread.propTypes = {
+  endpoint: PropTypes.func.isRequired,
   thread: types.CommentThread.isRequired,
   onRemoved: PropTypes.func.isRequired,
   onNewReply: PropTypes.func.isRequired
