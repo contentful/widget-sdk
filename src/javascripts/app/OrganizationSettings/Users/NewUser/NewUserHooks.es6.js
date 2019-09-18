@@ -53,7 +53,7 @@ export function useAddToOrg(orgId, hasSsoEnabled, onProgress = () => {}) {
  * Create org memberships with emails addresses provided.
  * Used only when the org has SSO enabled
  * @param {Object} endpoint Org endpoint
- * @param {String[]} emails Email addresses to be added
+ * @param {String[]} email Email address to be added
  * @param {String} role An org role. One of 'owner', 'admin' or 'member'
  * @param {Boolean} suppressInvitation If the email notification should be suppressed
  */
@@ -64,8 +64,9 @@ async function addToOrg(endpoint, email, role, suppressInvitation, spaceMembersh
 
 /**
  * Add org members to spaces.
- * Used only when the org has SSO enabled.
- * @param {String[]} emails
+ * Used when the org has SSO enabled
+ * or in the new invitation flow behind a FF
+ * @param {String[]} email
  * @param {Array} spaceMemberships An array with objects containing the space and the role ids. { space: {}, roles: []}
  */
 async function addToSpaces(email, spaceMemberships) {
@@ -78,7 +79,7 @@ async function addToSpaces(email, spaceMemberships) {
       // ignore
     }
   });
-  // will never return a rejection as we are catching any errors above
+  // will never reject as we are catching any errors above
   return Promise.all(requests);
 }
 
@@ -87,7 +88,7 @@ async function addToSpaces(email, spaceMemberships) {
  * with the respective space memberships.
  * This is only used if the org does not use SSO
  * @param {Object} endpoint Org endpoint
- * @param {String[]} emails
+ * @param {String[]} email
  * @param {String} role An org role. One of 'owner', 'admin' or 'member'
  * @param {*} spaceMemberships An array with objects containing the space and the role ids. { space: {}, roles: []}
  */
@@ -128,12 +129,12 @@ async function createInvitationWithPendingMembership(endpoint, email, role) {
 // This will keep a record of successfull and unsuccessful requests and call
 // a progress callback function after every call.
 // Returns an object containing successes and failures
-async function sendInvitations(fn, onProgress, endpoint, emails, ...rest) {
+async function sendInvitations(fn, onProgress, endpoint, emails, ...fnArgs) {
   const successes = [];
   const failures = [];
   const requests = emails.map(async email => {
     try {
-      await fn(endpoint, email, ...rest);
+      await fn(endpoint, email, ...fnArgs);
       successes.push(email);
     } catch (e) {
       failures.push({ email, error: e });

@@ -92,6 +92,7 @@ describe('NewUser', () => {
     createSpaceEndpoint.mockReset();
     createSpaceMembershipRepo.mockReset();
     invite.mockReset();
+    getVariation.mockReset();
     cleanup();
   });
 
