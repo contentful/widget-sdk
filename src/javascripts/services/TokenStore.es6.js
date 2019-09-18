@@ -19,7 +19,7 @@ import window from 'utils/ngCompat/window.es6';
 // Refresh token info every 5 minutes
 const TOKEN_INFO_REFRESH_INTERVAL = 5 * 60 * 1000;
 
-const fetchInfo = makeFetchWithAuth(auth);
+const getFetchInfo = () => makeFetchWithAuth(auth);
 
 const userBus = K.createPropertyBus(null);
 const spacesBus = K.createPropertyBus(null);
@@ -92,7 +92,7 @@ export function init() {
 export function refresh() {
   if (!tokenInfoMVar.isEmpty()) {
     tokenInfoMVar.empty();
-    fetchInfo().then(
+    getFetchInfo()().then(
       newTokenInfo => {
         tokenInfo = newTokenInfo;
         tokenInfoMVar.put(newTokenInfo);

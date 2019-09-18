@@ -1,33 +1,39 @@
-import { setCheckbox } from 'test/helpers/DOM';
-import * as sinon from 'test/helpers/sinon';
+import { setCheckbox } from 'test/utils/dom';
+import sinon from 'sinon';
+import { $compile, $initialize, $apply, $q } from 'test/utils/ng';
 
 // TODO Rewrite this with the new actor based test DSL.
 describe('AddFieldDialogController', () => {
-  beforeEach(module('contentful/test'));
-
-  beforeEach(function() {
-    this.dialog = {
-      promise: this.when()
-    };
-    this.dialog.confirm = sinon.stub().returns(this.dialog);
-
+  beforeEach(async function() {
     const contentType = { data: {} };
 
-    this.el = this.$compile(JST.add_field_dialog(), {
+    await $initialize(this.system);
+
+    this.dialog = {
+      promise: $q.resolve()
+    };
+
+    this.dialog.confirm = sinon.stub().returns(this.dialog);
+
+    this.el = $compile(JST.add_field_dialog(), {
       dialog: this.dialog,
       contentType: contentType
     });
   });
 
+  afterEach(function() {
+    this.el.remove();
+  });
+
   describe('text field group', () => {
     beforeEach(function() {
       this.el.find('button[aria-label="Text"]').click();
-      this.$apply();
+      $apply();
       this.el
         .find('[name=fieldName]')
         .val('my field')
         .trigger('change');
-      this.$apply();
+      $apply();
     });
 
     it('creates a symbol field', function() {
@@ -35,7 +41,7 @@ describe('AddFieldDialogController', () => {
         .find('button:contains(Create)')
         .first()
         .click();
-      this.$apply();
+      $apply();
 
       sinon.assert.calledWith(
         this.dialog.confirm,
@@ -49,12 +55,12 @@ describe('AddFieldDialogController', () => {
 
     it('creates a symbol list field', function() {
       setCheckbox(this.el.find('#add-field-form__field-is-list').get(0), true);
-      this.$apply();
+      $apply();
       this.el
         .find('button:contains(Create)')
         .first()
         .click();
-      this.$apply();
+      $apply();
 
       sinon.assert.calledWith(
         this.dialog.confirm,
@@ -70,12 +76,12 @@ describe('AddFieldDialogController', () => {
         .find('#field-type-long')
         .prop('checked', true)
         .click();
-      this.$apply();
+      $apply();
       this.el
         .find('button:contains(Create)')
         .first()
         .click();
-      this.$apply();
+      $apply();
 
       sinon.assert.calledWith(
         this.dialog.confirm,
@@ -90,7 +96,7 @@ describe('AddFieldDialogController', () => {
         .find('#field-type-long')
         .prop('checked', true)
         .click();
-      this.$apply();
+      $apply();
 
       const listOption = this.el.find('#add-field-form__field-is-list');
       const hiddenParents = listOption.parents('.ng-hide');
@@ -101,12 +107,12 @@ describe('AddFieldDialogController', () => {
   describe('number field group', () => {
     beforeEach(function() {
       this.el.find('button[aria-label="Number"]').click();
-      this.$apply();
+      $apply();
       this.el
         .find('[name=fieldName]')
         .val('my field')
         .trigger('change');
-      this.$apply();
+      $apply();
     });
 
     it('creates an integer field', function() {
@@ -114,17 +120,17 @@ describe('AddFieldDialogController', () => {
         .find('#field-type-decimal')
         .prop('checked', true)
         .click();
-      this.$apply();
+      $apply();
       this.el
         .find('#field-type-integer')
         .prop('checked', true)
         .click();
-      this.$apply();
+      $apply();
       this.el
         .find('button:contains(Create)')
         .first()
         .click();
-      this.$apply();
+      $apply();
 
       sinon.assert.calledWith(
         this.dialog.confirm,
@@ -141,12 +147,12 @@ describe('AddFieldDialogController', () => {
         .find('#field-type-decimal')
         .prop('checked', true)
         .click();
-      this.$apply();
+      $apply();
       this.el
         .find('button:contains(Create)')
         .first()
         .click();
-      this.$apply();
+      $apply();
 
       sinon.assert.calledWith(
         this.dialog.confirm,
@@ -162,12 +168,12 @@ describe('AddFieldDialogController', () => {
   describe('media field group', () => {
     beforeEach(function() {
       this.el.find('button[aria-label="Media"]').click();
-      this.$apply();
+      $apply();
       this.el
         .find('[name=fieldName]')
         .val('my field')
         .trigger('change');
-      this.$apply();
+      $apply();
     });
 
     it('creates an integer field', function() {
@@ -175,17 +181,17 @@ describe('AddFieldDialogController', () => {
         .find('#add-field-form__field-is-list')
         .prop('checked', true)
         .click();
-      this.$apply();
+      $apply();
       this.el
         .find('#add-field-form__field-is-single')
         .prop('checked', true)
         .click();
-      this.$apply();
+      $apply();
       this.el
         .find('button:contains(Create)')
         .first()
         .click();
-      this.$apply();
+      $apply();
 
       sinon.assert.calledWith(
         this.dialog.confirm,
@@ -201,12 +207,12 @@ describe('AddFieldDialogController', () => {
         .find('#add-field-form__field-is-list')
         .prop('checked', true)
         .click();
-      this.$apply();
+      $apply();
       this.el
         .find('button:contains(Create)')
         .first()
         .click();
-      this.$apply();
+      $apply();
 
       sinon.assert.calledWith(
         this.dialog.confirm,
@@ -224,7 +230,7 @@ describe('AddFieldDialogController', () => {
   describe('field id input', () => {
     beforeEach(function() {
       this.el.find('button[aria-label="Text"]').click();
-      this.$apply();
+      $apply();
     });
 
     it('is automatically updated from field name', function() {
@@ -232,7 +238,7 @@ describe('AddFieldDialogController', () => {
         .find('[name=fieldName]')
         .val('my field')
         .trigger('change');
-      this.$apply();
+      $apply();
 
       const apiName = this.el.find('[name=apiName]');
       expect(apiName.val()).toEqual('myField');
@@ -243,17 +249,17 @@ describe('AddFieldDialogController', () => {
         .find('[name=fieldName]')
         .val('my field')
         .trigger('change');
-      this.$apply();
+      $apply();
       this.el
         .find('[name=apiName]')
         .val('myApiName')
         .trigger('change');
-      this.$apply();
+      $apply();
       this.el
         .find('button:contains(Create)')
         .first()
         .click();
-      this.$apply();
+      $apply();
 
       sinon.assert.calledWith(
         this.dialog.confirm,
@@ -269,7 +275,7 @@ describe('AddFieldDialogController', () => {
         .find('[name=fieldName]')
         .val('my field')
         .trigger('change');
-      this.$apply();
+      $apply();
       const apiName = this.el.find('[name=apiName]');
 
       expect(apiName.attr('aria-invalid')).not.toEqual('true');
@@ -279,7 +285,7 @@ describe('AddFieldDialogController', () => {
         .find('button:contains(Create)')
         .first()
         .click();
-      this.$apply();
+      $apply();
       // TODO we should actually be able to make this expectation after
       // the change to the apiName value. Unfortunately this does not
       // work because validation through the cfValidateModel directive
@@ -292,7 +298,7 @@ describe('AddFieldDialogController', () => {
   describe('field name input', () => {
     it('shows an error if empty', function() {
       this.el.find('button[aria-label="Text"]').click();
-      this.$apply();
+      $apply();
       const fieldName = this.el.find('[name=fieldName]');
 
       expect(fieldName.attr('aria-invalid')).not.toEqual('true');
@@ -300,7 +306,7 @@ describe('AddFieldDialogController', () => {
         .find('button:contains(Create)')
         .first()
         .click();
-      this.$apply();
+      $apply();
       expect(fieldName.attr('aria-invalid')).toEqual('true');
 
       sinon.assert.notCalled(this.dialog.confirm);
@@ -315,18 +321,18 @@ describe('AddFieldDialogController', () => {
     };
 
     this.el.find('button[aria-label="Text"]').click();
-    this.$apply();
+    $apply();
     this.el
       .find('[name=fieldName]')
       .val('my field')
       .trigger('change');
-    this.$apply();
+    $apply();
 
     this.el
       .find('button:contains(Create and configure)')
       .first()
       .click();
-    this.$apply();
+    $apply();
 
     sinon.assert.calledOnce(this.dialog.confirm);
     sinon.assert.calledWith(

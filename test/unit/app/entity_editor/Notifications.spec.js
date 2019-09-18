@@ -1,10 +1,15 @@
+import { $initialize } from 'test/utils/ng';
+import sinon from 'sinon';
+
 describe('app/entityEditor/Notifications', () => {
-  beforeEach(function() {
-    module('contentful/test');
-    this.ComponentLibrary = this.$inject('@contentful/forma-36-react-components');
+  beforeEach(async function() {
+    this.ComponentLibrary = await this.system.import('@contentful/forma-36-react-components');
     this.ComponentLibrary.Notification.success = sinon.stub();
     this.ComponentLibrary.Notification.error = sinon.stub();
-    const N = this.$inject('app/entity_editor/Notifications.es6');
+    const N = await this.system.import('app/entity_editor/Notifications.es6');
+
+    await $initialize(this.system);
+
     this.Notification = N.Notification;
     this.notify = N.makeNotify('Entry', () => 'TITLE');
   });

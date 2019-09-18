@@ -13,6 +13,7 @@
  */
 
 import { cloneDeep } from 'lodash';
+import sinon from 'sinon';
 
 const serverData = Object.freeze({
   name: 'my resource',
@@ -32,9 +33,9 @@ const serverList = Object.freeze({
  */
 export const describeGetResource = entityDescription('resource factory', names => {
   describe('.getOne(id)', function() {
-    it('obtains resource from server', function*() {
+    it('obtains resource from server', async function() {
       this.request.respond(serverData);
-      const resource = yield this.space[names.getOne]('43');
+      const resource = await this.space[names.getOne]('43');
       expect(resource.data).toEqual(serverData);
       sinon.assert.calledWith(this.request, {
         method: 'GET',
@@ -42,12 +43,12 @@ export const describeGetResource = entityDescription('resource factory', names =
       });
     });
 
-    it('returns identical object', function*() {
+    it('returns identical object', async function() {
       this.request.respond(serverData);
       this.request.respond(serverData);
 
-      const resource1 = yield this.space[names.getOne]('43');
-      const resource2 = yield this.space[names.getOne]('43');
+      const resource1 = await this.space[names.getOne]('43');
+      const resource2 = await this.space[names.getOne]('43');
       expect(resource1).toEqual(resource2);
     });
 
@@ -55,11 +56,11 @@ export const describeGetResource = entityDescription('resource factory', names =
       expect(() => this.space[names.getOne]()).toThrow(new Error('No id provided'));
     });
 
-    it('rejects server error', function*() {
+    it('rejects server error', async function() {
       this.request.throw('server error');
 
       try {
-        yield this.space[names.getOne]('43');
+        await this.space[names.getOne]('43');
       } catch (err) {
         expect(err).toBe('server error');
         return;
@@ -69,9 +70,9 @@ export const describeGetResource = entityDescription('resource factory', names =
   });
 
   describe('.getAll(query)', function() {
-    it('obtains resource list from server', function*() {
+    it('obtains resource list from server', async function() {
       this.request.respond(serverList);
-      const [resource] = yield this.space[names.getAll]('myquery');
+      const [resource] = await this.space[names.getAll]('myquery');
       expect(resource.data).toEqual(serverData);
       sinon.assert.calledWith(this.request, {
         method: 'GET',
@@ -80,17 +81,17 @@ export const describeGetResource = entityDescription('resource factory', names =
       });
     });
 
-    it('sets total on returned list', function*() {
+    it('sets total on returned list', async function() {
       this.request.respond(serverList);
-      const entries = yield this.space[names.getAll]('myquery');
+      const entries = await this.space[names.getAll]('myquery');
       expect(entries.total).toEqual(123);
     });
 
-    it('returns list with identitcal objects', function*() {
+    it('returns list with identitcal objects', async function() {
       this.request.respond(serverList);
       this.request.respond(serverList);
-      const entries1 = yield this.space[names.getAll]('myquery');
-      const entries2 = yield this.space[names.getAll]('myquery');
+      const entries1 = await this.space[names.getAll]('myquery');
+      const entries2 = await this.space[names.getAll]('myquery');
       const identical = entries1.every((_, i) => entries1[i] === entries2[i]);
       expect(identical).toBe(true);
     });
@@ -102,13 +103,13 @@ export const describeGetResource = entityDescription('resource factory', names =
  */
 export const describeCreateResource = entityDescription('resource factory', names => {
   describe('.createOne(data)', function() {
-    it('sends POST request without id', function*() {
+    it('sends POST request without id', async function() {
       const newData = {
         name: 'my resource',
         fields: null
       };
       this.request.respond(serverData);
-      const resource = yield this.space[names.createOne](newData);
+      const resource = await this.space[names.createOne](newData);
       sinon.assert.calledWith(this.request, {
         method: 'POST',
         url: `/spaces/42/${names.slug}`,
@@ -117,14 +118,14 @@ export const describeCreateResource = entityDescription('resource factory', name
       expect(resource.getId()).toEqual('43');
     });
 
-    it('sends PUT request with id', function*() {
+    it('sends PUT request with id', async function() {
       const newData = {
         sys: { id: '55' },
         name: 'my resource',
         fields: null
       };
       this.request.respond(serverData);
-      yield this.space[names.createOne](newData);
+      await this.space[names.createOne](newData);
       sinon.assert.calledWith(this.request, {
         method: 'PUT',
         url: `/spaces/42/${names.slug}/55`,
@@ -132,13 +133,13 @@ export const describeCreateResource = entityDescription('resource factory', name
       });
     });
 
-    it('identical object is retrieved by .getId()', function*() {
+    it('identical object is retrieved by .getId()', async function() {
       this.request.respond(serverData);
-      const resource1 = yield this.space[names.createOne]({ name: 'my resource' });
+      const resource1 = await this.space[names.createOne]({ name: 'my resource' });
       expect(resource1.getId()).toEqual('43');
 
       this.request.respond(serverData);
-      const resource2 = yield this.space[names.getOne]('43');
+      const resource2 = await this.space[names.getOne]('43');
       expect(resource1).toEqual(resource2);
     });
   });
@@ -148,7 +149,7 @@ export const describeCreateResource = entityDescription('resource factory', name
  * Describe `newResource(data)` factory method.
  */
 export const describeNewResource = entityDescription('resource factory', names => {
-  it('.new(data)', function*() {
+  it('.new(data)', async function() {
     // TODO this should be a promise for consistency
     const resource = this.space[names.new]();
     expect(resource.getId()).toBeUndefined();
@@ -156,7 +157,7 @@ export const describeNewResource = entityDescription('resource factory', names =
     resource.data.name = 'new name';
     const saveData = cloneDeep(resource.data);
     this.request.respond(serverData);
-    yield resource.save();
+    await resource.save();
     sinon.assert.calledWith(this.request, {
       method: 'POST',
       url: `/spaces/42/${names.slug}`,
@@ -224,10 +225,10 @@ export const describeContentEntity = entityDescription(
     });
 
     describe('#unpublish', function() {
-      it('sends DELETE request', function*() {
+      it('sends DELETE request', async function() {
         this.entity.data.sys.id = 'eid';
         this.request.respond(this.entity.data);
-        yield this.entity.unpublish();
+        await this.entity.unpublish();
         sinon.assert.calledWith(this.request, {
           method: 'DELETE',
           url: `/spaces/42/${names.plural}/eid/published`
@@ -253,9 +254,9 @@ export const describeResource = entityDescription('resource', (names, descriptio
     })
   });
 
-  beforeEach(function*() {
+  beforeEach(async function() {
     this.request.respond(serverData);
-    this.resource = yield this.space[names.getOne](contentTypeId);
+    this.resource = await this.space[names.getOne](contentTypeId);
     this[names.singular] = this.resource;
     this.request.reset();
   });
@@ -264,9 +265,9 @@ export const describeResource = entityDescription('resource', (names, descriptio
     description(serverData);
   }
 
-  it('#delete()', function*() {
+  it('#delete()', async function() {
     this.request.respond(null);
-    yield this.resource.delete();
+    await this.resource.delete();
     sinon.assert.calledWith(this.request, {
       method: 'DELETE',
       url: `/spaces/42/${names.plural}/43`
@@ -278,10 +279,10 @@ export const describeResource = entityDescription('resource', (names, descriptio
       delete this.resource.data.sys.id;
     });
 
-    it('sends POST request', function*() {
+    it('sends POST request', async function() {
       const resourceData = cloneDeep(this.resource.data);
       this.request.respond(resourceData);
-      yield this.resource.save();
+      await this.resource.save();
       sinon.assert.calledWith(this.request, {
         method: 'POST',
         url: `/spaces/42/${names.plural}`,
@@ -289,29 +290,29 @@ export const describeResource = entityDescription('resource', (names, descriptio
       });
     });
 
-    it('updates from server response', function*() {
+    it('updates from server response', async function() {
       const serverData = { name: 'server name' };
       this.request.respond(serverData);
-      yield this.resource.save();
+      await this.resource.save();
       expect(this.resource.data).toEqual(serverData);
     });
 
-    it('updates identity map', function*() {
+    it('updates identity map', async function() {
       this.request.respond(serverData);
-      yield this.resource.save();
+      await this.resource.save();
 
       this.request.respond(serverData);
-      const resource = yield this.space[names.getOne]('43');
+      const resource = await this.space[names.getOne]('43');
       expect(resource).toEqual(this.resource);
     });
   });
 
   describe('#save() with id', function() {
-    it('sends PUT request', function*() {
+    it('sends PUT request', async function() {
       this.resource.data.name = 'my new resource';
       const resourceData = cloneDeep(this.resource.data);
       this.request.respond(resourceData);
-      yield this.resource.save();
+      await this.resource.save();
       sinon.assert.calledWith(this.request, {
         method: 'PUT',
         url: `/spaces/42/${names.plural}/43`,
@@ -320,19 +321,19 @@ export const describeResource = entityDescription('resource', (names, descriptio
       });
     });
 
-    it('updates from server response', function*() {
+    it('updates from server response', async function() {
       const serverData = { name: 'server name' };
       this.request.respond(serverData);
-      yield this.resource.save();
+      await this.resource.save();
       expect(this.resource.data).toEqual(serverData);
     });
 
-    it('updates identity map', function*() {
+    it('updates identity map', async function() {
       this.request.respond(serverData);
-      yield this.resource.save();
+      await this.resource.save();
 
       this.request.respond(serverData);
-      const resource = yield this.space[names.getOne]('43');
+      const resource = await this.space[names.getOne]('43');
       expect(resource).toEqual(this.resource);
     });
   });
@@ -354,9 +355,9 @@ export const describeVersionedResource = entityDescription('resource', (names, d
     }
   });
 
-  beforeEach(function*() {
+  beforeEach(async function() {
     this.request.respond(serverData);
-    this.resource = yield this.space[names.getOne](serverData);
+    this.resource = await this.space[names.getOne](serverData);
     this[names.singular] = this.resource;
     this.request.reset();
   });
@@ -365,9 +366,9 @@ export const describeVersionedResource = entityDescription('resource', (names, d
     description(serverData);
   }
 
-  it('#delete()', function*() {
+  it('#delete()', async function() {
     this.request.respond(null);
-    yield this.resource.delete();
+    await this.resource.delete();
     sinon.assert.calledWith(this.request, {
       method: 'DELETE',
       url: `/spaces/42/${names.plural}/43`
@@ -375,11 +376,11 @@ export const describeVersionedResource = entityDescription('resource', (names, d
   });
 
   describe('#save()', function() {
-    it('sends put request with id', function*() {
+    it('sends put request with id', async function() {
       this.resource.data.name = 'my new resource';
       const resourceData = cloneDeep(this.resource.data);
       this.request.respond(resourceData);
-      yield this.resource.save();
+      await this.resource.save();
       sinon.assert.calledWith(this.request, {
         method: 'PUT',
         url: `/spaces/42/${names.plural}/43`,

@@ -1,3 +1,4 @@
+import sinon from 'sinon';
 import Client from 'legacy-client';
 import describeSpaceInstance from 'test/helpers/libs/legacy_client/space_instance';
 import _ from 'lodash';

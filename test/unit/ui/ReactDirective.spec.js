@@ -1,21 +1,24 @@
 // we don't want to use prop types in this tiny module
 /* eslint-disable react/prop-types */
 
+import React from 'react';
+import { $initialize, $inject, $compile, $apply } from 'test/utils/ng';
+
 describe('ReactDirective', () => {
-  let React;
-  beforeEach(function() {
-    let provide;
-    module('contentful/test', $provide => {
-      provide = $provide;
-    });
+  beforeEach(async function() {
+    this.component = {
+      default: null
+    };
 
-    React = this.$inject('react');
+    this.system.set('ui/Components/Icon.es6', this.component);
 
-    this.$rootScope = this.$inject('$rootScope');
+    await $initialize(this.system);
 
-    this.compile = function({ template, scopeProperties, component }) {
-      provide.value('react/hello', component);
-      const $el = this.$compile(template, scopeProperties);
+    this.$rootScope = $inject('$rootScope');
+
+    this.compile = ({ template, scopeProperties, component }) => {
+      this.component.default = component;
+      const $el = $compile(template, scopeProperties);
 
       return {
         $el,
@@ -24,14 +27,10 @@ describe('ReactDirective', () => {
     };
   });
 
-  afterEach(() => {
-    React = null;
-  });
-
   it('renders react component inside angular template', function() {
     const template = `
       <div>
-        <react-component name="react/hello"></react-component>
+        <react-component name="ui/Components/Icon.es6"></react-component>
       </div>
     `;
     const component = class X extends React.Component {
@@ -40,22 +39,6 @@ describe('ReactDirective', () => {
       }
     };
     const { $el } = this.compile({ template, component });
-
-    expect($el.find('.test-class').text()).toBe('hello!');
-  });
-
-  it('renders react component if its exposes by default key', function() {
-    const template = `
-      <div>
-        <react-component name="react/hello"></react-component>
-      </div>
-    `;
-    const component = class X extends React.Component {
-      render() {
-        return React.createElement('div', { className: 'test-class' }, 'hello!');
-      }
-    };
-    const { $el } = this.compile({ template, component: { default: component } });
 
     expect($el.find('.test-class').text()).toBe('hello!');
   });
@@ -75,7 +58,7 @@ describe('ReactDirective', () => {
   it('should pass props to react component', function() {
     const template = `
       <div>
-        <react-component name="react/hello" props="props"></react-component>
+        <react-component name="ui/Components/Icon.es6" props="props"></react-component>
       </div>
     `;
     const component = class X extends React.Component {
@@ -99,7 +82,7 @@ describe('ReactDirective', () => {
   it('should update react component if props changed', function() {
     const template = `
       <div>
-        <react-component name="react/hello" props="props"></react-component>
+        <react-component name="ui/Components/Icon.es6" props="props"></react-component>
       </div>
     `;
     const component = class X extends React.Component {
@@ -118,7 +101,7 @@ describe('ReactDirective', () => {
     });
 
     scope.props.value = 'updated value from scope';
-    this.$apply();
+    $apply();
 
     expect($el.find('.test-class').text()).toBe('updated value from scope');
   });
@@ -126,7 +109,7 @@ describe('ReactDirective', () => {
   it('should be able to pass functions as props to react component', function() {
     const template = `
       <div>
-        <react-component name="react/hello" props="props"></react-component>
+        <react-component name="ui/Components/Icon.es6" props="props"></react-component>
       </div>
     `;
     const component = class X extends React.Component {
@@ -150,7 +133,7 @@ describe('ReactDirective', () => {
   it('should update react component if props property replaced using reference watch', function() {
     const template = `
     <div>
-      <react-component name="react/hello" props="props" watch-depth="reference"></react-component>
+      <react-component name="ui/Components/Icon.es6" props="props" watch-depth="reference"></react-component>
     </div>
     `;
     const component = class X extends React.Component {
@@ -169,7 +152,7 @@ describe('ReactDirective', () => {
     });
 
     scope.props = { value: 'updated value from scope' };
-    this.$apply();
+    $apply();
 
     expect($el.find('.test-class').text()).toBe('updated value from scope');
   });
@@ -177,7 +160,7 @@ describe('ReactDirective', () => {
   it('should NOT update react component if props property updated using reference watch', function() {
     const template = `
     <div>
-      <react-component name="react/hello" props="props" watch-depth="reference"></react-component>
+      <react-component name="ui/Components/Icon.es6" props="props" watch-depth="reference"></react-component>
     </div>
     `;
     const component = class X extends React.Component {
@@ -196,7 +179,7 @@ describe('ReactDirective', () => {
     });
 
     scope.props.value = 'updated value from scope';
-    this.$apply();
+    $apply();
 
     expect($el.find('.test-class').text()).toBe('initial value');
   });

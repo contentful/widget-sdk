@@ -1,7 +1,9 @@
-import * as sinon from 'test/helpers/sinon';
+import sinon from 'sinon';
+import { $initialize, $inject } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('CreateSampleSpace service', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     this.templates = [
       {
         fields: { name: 'product catalogue' }
@@ -53,26 +55,28 @@ describe('CreateSampleSpace service', () => {
       refresh: sinon.stub().resolves()
     };
 
-    module('contentful/test', $provide => {
+    this.system.set('services/TokenStore.es6', this.tokenStore);
+    this.system.set('services/SpaceTemplateCreator/index.es6', {
+      getCreator: this.getCreator
+    });
+    this.system.set('states/Navigator.es6', {
+      go: this.go
+    });
+    this.system.set('services/SpaceTemplateLoader.es6', this.spaceTemplateLoader);
+
+    this.createSampleSpace = (await this.system.import(
+      'components/shared/auto_create_new_space/CreateSampleSpace.es6'
+    )).default;
+
+    await $initialize(this.system, $provide => {
       $provide.constant('client', this.client);
       $provide.constant('modalDialog', this.modalDialog);
-      $provide.value('services/TokenStore.es6', this.tokenStore);
-      $provide.value('services/SpaceTemplateCreator/index.es6', {
-        getCreator: this.getCreator
-      });
-      $provide.value('states/Navigator.es6', {
-        go: this.go
-      });
-      $provide.value('services/SpaceTemplateLoader.es6', this.spaceTemplateLoader);
       $provide.constant('spaceContext', this.spaceContext);
     });
 
-    this.$rootScope = this.$inject('$rootScope');
+    this.$rootScope = $inject('$rootScope');
     sinon.spy(this.$rootScope, '$broadcast');
 
-    this.createSampleSpace = this.$inject(
-      'components/shared/auto_create_new_space/CreateSampleSpace.es6'
-    ).default;
     this.getOrg = (orgId = 'owned-org') => {
       return {
         sys: {

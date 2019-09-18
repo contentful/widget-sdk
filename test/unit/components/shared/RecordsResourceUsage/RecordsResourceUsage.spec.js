@@ -1,4 +1,5 @@
 import React from 'react';
+import sinon from 'sinon';
 import { shallow } from 'enzyme';
 
 describe('RecordsResourceUsage', function() {
@@ -30,14 +31,11 @@ describe('RecordsResourceUsage', function() {
       }
     };
 
-    module('contentful/test', $provide => {
-      $provide.value('services/ChangeSpaceService.es6', {
-        showDialog: this.stubs.showDialog
-      });
+    this.system.set('services/ChangeSpaceService.es6', {
+      showDialog: this.stubs.showDialog
     });
 
-    const RecordsResourceUsage = this.$inject('components/RecordsResourceUsage')
-      .RecordsResourceUsage;
+    const { RecordsResourceUsage } = await this.system.import('components/RecordsResourceUsage');
 
     this.render = function() {
       return shallow(

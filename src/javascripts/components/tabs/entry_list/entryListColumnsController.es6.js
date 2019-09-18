@@ -29,6 +29,7 @@ export default function register() {
         displayedFieldIds => {
           if (
             displayedFieldIds &&
+            displayedFieldIds.length &&
             !_.includes(displayedFieldIds, $scope.context.view.order.fieldId)
           ) {
             setOrderField(SystemFields.getFallbackOrderField(displayedFieldIds));

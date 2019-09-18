@@ -2,8 +2,6 @@ import { once } from 'lodash';
 import * as Config from 'Config.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const { newClient: createCfClient } = getModule('contentfulClient');
-
 /**
  * @ngdoc service
  * @name app/api/KeyEditor/BoilerplateCode
@@ -21,11 +19,15 @@ const boilerplateSpaceId = '2m3cigbhrkff';
 const previewToken = 'f16c6afc8c29c70747010419ac7c67aca8554353b781127964a4da0d3d561bac';
 const deliveryToken = '0823649eecd58e485f33874956959610ae30e53f1d8c9567e225a4a094644f4b';
 
-const boilerplateSpace = createCfClient({
-  space: boilerplateSpaceId,
-  accessToken: usePreview ? previewToken : deliveryToken,
-  host: `${usePreview ? 'preview' : 'cdn'}.contentful.com`
-});
+const getBoilerplateSpace = () => {
+  const { newClient: createCfClient } = getModule('contentfulClient');
+
+  return createCfClient({
+    space: boilerplateSpaceId,
+    accessToken: usePreview ? previewToken : deliveryToken,
+    host: `${usePreview ? 'preview' : 'cdn'}.contentful.com`
+  });
+};
 
 /**
  * @ngdoc service
@@ -49,7 +51,7 @@ const boilerplateSpace = createCfClient({
 export const get = once(fetch);
 
 function fetch() {
-  return boilerplateSpace
+  return getBoilerplateSpace()
     .entries({
       content_type: 'boilerplate',
       order: 'fields.order'

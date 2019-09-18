@@ -87,6 +87,7 @@ const reduce = makeReducer({
  */
 export function openDeleteDialog(runDelete, environment) {
   const ModalDialog = getModule('modalDialog');
+
   return ModalDialog.open({
     template: `
       <div class="modal-background">

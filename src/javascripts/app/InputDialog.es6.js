@@ -1,7 +1,5 @@
 import { getModule } from 'NgRegistry.es6';
 
-const modalDialog = getModule('modalDialog');
-
 /**
  * @ngdoc service
  * @name app/InputDialog
@@ -27,6 +25,8 @@ const modalDialog = getModule('modalDialog');
  */
 
 export default function open(params = {}) {
+  const modalDialog = getModule('modalDialog');
+
   const { input = {} } = params;
   input.value = input.value || '';
   input.min = input.min || 0;

@@ -1,12 +1,10 @@
 import _ from 'lodash';
 import sinon from 'sinon';
-import { createIsolatedSystem } from 'test/helpers/system-js';
 import { EntityType } from 'app/entity_editor/Components/constants.es6';
+import { beforeEach, it } from 'test/utils/dsl';
 
 describe('fetchLinks', () => {
-  beforeEach(function*() {
-    const system = createIsolatedSystem();
-
+  beforeEach(async function() {
     this.spaceContext = {
       cma: {
         getEntries: sinon.stub()
@@ -38,17 +36,17 @@ describe('fetchLinks', () => {
       .withArgs('EntityHelpers')
       .returns(EntityHelpers);
 
-    system.set('NgRegistry.es6', {
+    this.system.set('NgRegistry.es6', {
       getModule: getModuleStub
     });
 
-    system.set('services/localeStore.es6', {
+    this.system.set('services/localeStore.es6', {
       default: TheLocaleStore
     });
 
-    system.set('states/Navigator.es6', this.navigator);
+    this.system.set('states/Navigator.es6', this.navigator);
 
-    const { default: fetchLinks } = yield system.import(
+    const { default: fetchLinks } = await this.system.import(
       'app/entity_editor/Components/FetchLinksToEntity/fetchLinks.es6'
     );
 
@@ -56,7 +54,7 @@ describe('fetchLinks', () => {
   });
 
   function itCallsApiAndProcessEntity(type) {
-    return function*() {
+    return async function() {
       const id = 'entity-id';
       const items = [
         { sys: { id: 'entity-id-0' } },
@@ -88,7 +86,7 @@ describe('fetchLinks', () => {
         this.navigator.href.withArgs(ref).returns(`href-${idx}`);
       });
 
-      const result = yield this.fetchLinks(id, type);
+      const result = await this.fetchLinks(id, type);
 
       expect(result).toEqual([
         {
@@ -118,16 +116,17 @@ describe('fetchLinks', () => {
   it('calls api with given id for asset', itCallsApiAndProcessEntity(EntityType.ASSET));
   it('calls api with given id for entry', itCallsApiAndProcessEntity(EntityType.ENTRY));
 
-  it('throws if entity type neither Entry nor Asset', function*() {
+  it('throws if entity type neither Entry nor Asset', async function() {
     const id = 'entity-id';
     const type = 'ENTITY';
 
     try {
-      yield this.fetchLinks(id, type);
+      await this.fetchLinks(id, type);
     } catch (e) {
       expect(e.message).toEqual('Unsupported entityType ENTITY');
       return;
     }
+
     throw new Error('fetchLinks is expected to throw');
   });
 });

@@ -1,6 +1,4 @@
 import { registerDirective } from 'NgRegistry.es6';
-import $ from 'jquery';
-import window from 'utils/ngCompat/window.es6';
 
 import createController from 'navigation/Sidepanel/DirectiveController.es6';
 
@@ -23,7 +21,7 @@ export default function register() {
       controller: [
         '$scope',
         $scope => {
-          createController($scope, $(window));
+          createController($scope);
         }
       ]
     })

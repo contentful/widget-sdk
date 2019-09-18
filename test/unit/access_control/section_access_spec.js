@@ -1,12 +1,12 @@
-'use strict';
-
 import _ from 'lodash';
+import sinon from 'sinon';
+import { $initialize, $inject } from 'test/utils/ng';
 
 describe('Section Access', () => {
-  let sectionAccess, accessChecker, spaceContext, visibilityStub;
+  let sectionAccess, spaceContext, visibilityStub;
 
   afterEach(() => {
-    sectionAccess = accessChecker = spaceContext = visibilityStub = null;
+    sectionAccess = spaceContext = visibilityStub = null;
   });
 
   const allTrue = {
@@ -17,14 +17,18 @@ describe('Section Access', () => {
     settings: true
   };
 
-  beforeEach(function() {
-    module('contentful/test');
+  beforeEach(async function() {
+    visibilityStub = sinon.stub().returns(allTrue);
 
-    sectionAccess = this.$inject('access_control/SectionAccess.es6');
-    accessChecker = this.$inject('access_control/AccessChecker/index.es6');
-    spaceContext = this.$inject('spaceContext');
+    await this.system.override('access_control/AccessChecker/index.es6', {
+      getSectionVisibility: visibilityStub
+    });
 
-    accessChecker.getSectionVisibility = visibilityStub = sinon.stub().returns(allTrue);
+    sectionAccess = await this.system.import('access_control/SectionAccess.es6');
+
+    await $initialize(this.system);
+
+    spaceContext = $inject('spaceContext');
   });
 
   describe('#getFirstAccessibleSref', () => {

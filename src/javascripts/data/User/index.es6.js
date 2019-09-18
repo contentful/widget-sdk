@@ -5,21 +5,18 @@ import { organizations$, user$, spacesByOrganization$ } from 'services/TokenStor
 import { combine, onValue, getValue, createPropertyBus } from 'utils/kefir.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const $rootScope = getModule('$rootScope');
-const $stateParams = getModule('$stateParams');
-const spaceContext = getModule('spaceContext');
-
 /**
  * @description
  * A stream combining user, current org, current space and spaces grouped by org id
  */
-export const getUserDataBus = () => combine(
-  [user$, getCurrentOrgSpaceBus(), spacesByOrganization$],
-  (user, [org, space], spacesByOrg) => [user, org, spacesByOrg, space]
-)
-  .filter(([user, org, spacesByOrg]) => user && user.email && org && spacesByOrg) // space is a maybe
-  .skipDuplicates(isEqual)
-  .toProperty();
+export const getUserDataBus = () =>
+  combine(
+    [user$, getCurrentOrgSpaceBus(), spacesByOrganization$],
+    (user, [org, space], spacesByOrg) => [user, org, spacesByOrg, space]
+  )
+    .filter(([user, org, spacesByOrg]) => user && user.email && org && spacesByOrg) // space is a maybe
+    .skipDuplicates(isEqual)
+    .toProperty();
 
 /**
  * @description
@@ -179,6 +176,8 @@ export function getUserSpaceRoles(space) {
  * the curr org.
  */
 function getCurrentOrgSpaceBus() {
+  const $rootScope = getModule('$rootScope');
+
   const currOrgSpaceBus = createPropertyBus([]);
   const currOrgSpaceUpdater = updateCurrOrgSpace(currOrgSpaceBus);
 
@@ -191,6 +190,8 @@ function getCurrentOrgSpaceBus() {
 }
 
 function updateCurrOrgSpace(bus) {
+  const $stateParams = getModule('$stateParams');
+
   return _ => {
     const orgId = $stateParams.orgId;
     const orgs = getValue(organizations$);
@@ -211,10 +212,14 @@ function updateCurrOrgSpace(bus) {
  * @return {Object|null} org
  */
 export function getCurrOrg(orgs, orgId) {
+  const spaceContext = getModule('spaceContext');
+
   return getOrgById(orgs, orgId) || get(spaceContext, ['organization'], null) || orgs[0] || null;
 }
 
 function getCurrSpace() {
+  const spaceContext = getModule('spaceContext');
+
   return get(spaceContext, 'space.data', null);
 }
 

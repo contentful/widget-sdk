@@ -7,8 +7,6 @@ import { MOCK_APIS } from 'Config.es6';
 import { getModule } from 'NgRegistry.es6';
 import window from 'utils/ngCompat/window.es6';
 
-const $location = getModule('$location');
-
 const store = getStore().forKey('use_mock_api');
 
 /**
@@ -18,6 +16,8 @@ const store = getStore().forKey('use_mock_api');
  * This is currently supported only on `preview` and `dev-on-preview` envs.
  */
 export function init() {
+  const $location = getModule('$location');
+
   const urlParams = $location.search();
   const mockApiIdFromUrl = urlParams['use_mock_api'];
   const mockApiId = mockApiIdFromUrl || store.get();

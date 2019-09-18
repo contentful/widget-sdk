@@ -1,8 +1,9 @@
 import _ from 'lodash';
+import { $initialize, $compile } from 'test/utils/ng';
 
 describe('cfSnapshotPresenter', () => {
-  beforeEach(function() {
-    module('contentful/test', $provide => {
+  beforeEach(async function() {
+    await $initialize(this.system, $provide => {
       $provide.constant('cfIframeWidgetDirective', () => {});
       $provide.constant('cfWidgetRendererDirective', () => {});
       $provide.constant('cfWidgetApiDirective', () => {});
@@ -17,10 +18,14 @@ describe('cfSnapshotPresenter', () => {
         version
       };
 
-      const el = this.$compile('<cf-snapshot-presenter />', data);
+      this.el = $compile('<cf-snapshot-presenter />', data);
 
-      return el.scope();
+      return this.el.scope();
     };
+  });
+
+  afterEach(function() {
+    this.el && this.el.remove();
   });
 
   describe('$scope.value', () => {

@@ -1,5 +1,5 @@
 import { onStoreFetchingStatusChange } from './util.es6';
-import * as K from '../../../../../test/helpers/mocks/kefir';
+import * as K from '../../../../../test/utils/kefir';
 
 const initialStatus = {
   isLoading: true,

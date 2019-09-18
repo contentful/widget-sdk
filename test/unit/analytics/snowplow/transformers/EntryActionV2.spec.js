@@ -1,19 +1,21 @@
-const PATH = 'analytics/snowplow/transformers/EntryActionV2.es6';
+import sinon from 'sinon';
 
-describe(PATH, () => {
+describe('analytics/snowplow/transformers/EntryActionV2.es6', () => {
   const BASE_EVENT = {
     data: {},
     contexts: [{ data: 1 }, { bar: 2 }]
   };
 
-  beforeEach(function() {
+  beforeEach(async function() {
     this.EntityActionStub = sinon.stub();
 
-    module('contentful/test', $provide => {
-      $provide.value('analytics/snowplow/transformers/EntityAction.es6', this.EntityActionStub);
+    this.system.set('analytics/snowplow/transformers/EntityAction.es6', {
+      default: this.EntityActionStub
     });
 
-    const transformer = this.$inject(PATH).default;
+    const transformer = (await this.system.import(
+      'analytics/snowplow/transformers/EntryActionV2.es6'
+    )).default;
 
     this.transform = eventData => {
       this.EntityActionStub.withArgs('entry:create', {

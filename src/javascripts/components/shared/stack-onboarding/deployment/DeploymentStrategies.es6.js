@@ -10,8 +10,6 @@ import {
 } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const spaceContext = getModule('spaceContext');
-
 class DeploymentStrategies extends React.Component {
   constructor(props) {
     super(props);
@@ -25,6 +23,8 @@ class DeploymentStrategies extends React.Component {
   }
 
   async componentDidMount() {
+    const spaceContext = getModule('spaceContext');
+
     const spaceId = spaceContext.space && spaceContext.space.getSys().id;
     const { deliveryToken } = await getCredentials();
 

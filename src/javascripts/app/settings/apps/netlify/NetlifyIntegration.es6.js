@@ -3,12 +3,12 @@ import { getPostPublishUrl } from './BuildButton/PubNubClient.es6';
 import * as NetlifyClient from './NetlifyClient.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const spaceContext = getModule('spaceContext');
-
 const ARTIFACT_KEYS = ['buildHookUrl', 'buildHookId', 'contentPreviewId'];
 const NETLIFY_HOOK_EVENTS = ['deploy_building', 'deploy_created', 'deploy_failed'];
 
 export async function install({ config, contentTypeIds, appsClient, accessToken }) {
+  const spaceContext = getModule('spaceContext');
+
   config = prepareConfig(config);
 
   // Create build hooks for all sites.
@@ -99,6 +99,8 @@ export async function update(context) {
 }
 
 export async function uninstall({ appsClient, accessToken }) {
+  const spaceContext = getModule('spaceContext');
+
   await removeExistingArtifacts(appsClient, accessToken);
 
   await appsClient.remove('netlify');
@@ -147,6 +149,8 @@ function makeError(message) {
 }
 
 async function removeExistingArtifacts(appsClient, accessToken) {
+  const spaceContext = getModule('spaceContext');
+
   // Fetch the current remote version of configuration and...
   const remote = await appsClient.get('netlify');
   const siteConfigs = get(remote, ['config', 'sites'], []);

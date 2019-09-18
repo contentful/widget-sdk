@@ -1,21 +1,25 @@
 import _ from 'lodash';
+import sinon from 'sinon';
+import { $initialize, $inject } from 'test/utils/ng';
+import { beforeEach, it } from 'test/utils/dsl';
 
 describe('UserSpaceInvitationController', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     this.stubs = {
       track: sinon.stub()
     };
 
-    module('contentful/test', $provide => {
-      $provide.constant('analytics/Analytics.es6', {
-        track: this.stubs.track
-      });
+    await this.system.set('analytics/Analytics.es6', {
+      track: this.stubs.track
     });
-    const $rootScope = this.$inject('$rootScope');
-    const $controller = this.$inject('$controller');
 
-    const $timeout = this.$inject('$timeout');
-    this.spaceContext = this.$inject('mocks/spaceContext').init();
+    await $initialize(this.system);
+
+    const $rootScope = $inject('$rootScope');
+    const $controller = $inject('$controller');
+
+    const $timeout = $inject('$timeout');
+    this.spaceContext = $inject('mocks/spaceContext').init();
     this.spaceContext.memberships.invite = sinon.stub().resolves();
 
     const scope = (this.scope = _.extend($rootScope.$new(), {

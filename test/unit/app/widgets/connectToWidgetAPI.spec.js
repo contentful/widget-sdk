@@ -1,13 +1,12 @@
+import sinon from 'sinon';
+
 import React from 'react';
 import { mount } from 'enzyme';
 
-import * as sinon from 'test/helpers/sinon';
-import { createIsolatedSystem } from 'test/helpers/system-js';
+import { $initialize, $inject } from 'test/utils/ng';
 
 describe('connectToWidgetAPI', () => {
   beforeEach(async function() {
-    module('contentful/test');
-    this.system = createIsolatedSystem();
     this.system.set('search/EntitySelector/Config.es6', {});
     this.system.set('navigation/SlideInNavigator/index.es6', {
       goToSlideInEntity: () => {}
@@ -20,41 +19,18 @@ describe('connectToWidgetAPI', () => {
     });
     this.system.set('directives/thumbnailHelpers.es6', {});
 
-    const getModuleStub = sinon.stub();
-    getModuleStub
-      .withArgs('spaceContext')
-      .returns({
-        cma: {}
-      })
-      .withArgs('$rootScope')
-      .returns({
-        $on: sinon.stub()
-      })
-      .withArgs('$location')
-      .returns({
-        absUrl: () => 'abs-url'
-      })
-      .withArgs('access_control/AccessChecker')
-      .returns({
-        getSectionVisibility: () => ({
-          entry: true,
-          asset: true
-        })
-      });
+    const { default: connectToWidgetAPI } = await this.system.import(
+      'app/widgets/WidgetApi/connectToWidgetApi.es6'
+    );
 
-    this.system.set('NgRegistry.es6', {
-      getModule: getModuleStub
-    });
+    await $initialize(this.system);
 
-    this.widgetApi = this.$inject('mocks/widgetApi').create();
+    this.widgetApi = $inject('mocks/widgetApi').create();
+    this.widgetApi.fieldProperties.isDisabled$.set(true);
 
     this.props = {
       widgetApi: this.widgetApi
     };
-    this.widgetApi.fieldProperties.isDisabled$.set(true);
-    const { default: connectToWidgetAPI } = await this.system.import(
-      'app/widgets/WidgetApi/connectToWidgetApi.es6'
-    );
 
     this.Component = sinon.spy(() => null);
 

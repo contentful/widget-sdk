@@ -37,9 +37,8 @@ export default function register() {
 
         controller: [
           '$scope',
-          'utils/LaunchDarkly/index.es6',
           '$stateParams',
-          function($scope, LD, $stateParams) {
+          function($scope, $stateParams) {
             const controller = this;
             const {
               organization,

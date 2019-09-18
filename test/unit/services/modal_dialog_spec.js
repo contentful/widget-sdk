@@ -1,21 +1,28 @@
-import * as sinon from 'test/helpers/sinon';
+import sinon from 'sinon';
 import _ from 'lodash';
 import $ from 'jquery';
+import { $initialize, $inject, $wait } from 'test/utils/ng';
+import { beforeEach, it } from 'test/utils/dsl';
 
 describe('Modal dialog service', () => {
   let modalDialog, scope;
   let successStub, errorStub;
-  beforeEach(function() {
-    module('contentful/test');
-    scope = this.$inject('$rootScope').$new();
-    modalDialog = this.$inject('modalDialog');
+  beforeEach(async function() {
+    await $initialize(this.system);
+
+    scope = $inject('$rootScope').$new();
+    modalDialog = $inject('modalDialog');
     successStub = sinon.stub();
     errorStub = sinon.stub();
   });
 
+  afterEach(() => {
+    modalDialog = scope = successStub = errorStub = null;
+  });
+
   describe('create a dialog', () => {
     let dialog;
-    beforeEach(() => {
+    beforeEach(async () => {
       $('<div class="client"></div>').appendTo('body');
       dialog = modalDialog.open({
         scope: scope,
@@ -23,6 +30,8 @@ describe('Modal dialog service', () => {
         title: 'TITLE'
       });
       dialog.promise.then(successStub).catch(errorStub);
+
+      await $wait();
     });
 
     afterEach(() => {
@@ -42,7 +51,7 @@ describe('Modal dialog service', () => {
       expect(dialog.domElement.get(0)).toBeDefined();
     });
 
-    it('sets title', () => {
+    it('sets title', async () => {
       expect(dialog.domElement.find('header h1').html()).toMatch('TITLE');
     });
 
@@ -149,7 +158,7 @@ describe('Modal dialog service', () => {
         expect($('.modal-background').length).toBe(1);
       });
 
-      it('calls the success stub', function*() {
+      it('calls the success stub', function() {
         dialog.cancel().promise.finally(() => {
           sinon.assert.called(errorStub);
         });

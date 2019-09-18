@@ -1,8 +1,24 @@
 /* global require module */
 
 const P = require('path');
-const root = P.resolve() + '/';
 const express = require('express');
+
+// Test file patterns common to the karma config and the development config
+
+const filesNeededToRunTests = [
+  'node_modules/systemjs/dist/system.src.js',
+  'test/system-config.js',
+  'test/prelude.js',
+  'src/javascripts/**/*.js',
+  {
+    pattern: 'src/javascripts/libs/locales_list.json',
+    watched: false,
+    served: true,
+    included: false
+  },
+  'test/utils/**/*.js',
+  'test/helpers/**/*.js'
+];
 
 module.exports = function(config) {
   config.plugins.push(
@@ -36,15 +52,9 @@ module.exports = function(config) {
       'public/app/vendor.css',
       'public/app/main.css',
 
-      'public/app/vendor.js',
       'public/app/templates.js',
-      'public/app/libs-test.js',
-      // we load bundled file, it is processed by webpack and contains all
-      // modules. it allows us to use any custom loaders
-      // it also means that this file should already exist, so you can either
-      // build it in advance, or run with webpack in parallel
-      'public/app/components.js'
-    ].concat(filesNeededToRunTests, ['test/unit/**/*.js', 'test/integration/**/*.js']), // eslint-disable-line
+      'public/app/dependencies.js'
+    ].concat(filesNeededToRunTests, ['test/unit/**/*.js', 'test/integration/**/*.js']),
 
     middleware: ['static'],
 
@@ -52,9 +62,12 @@ module.exports = function(config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       'test/helpers/**/*.js': ['babelTest', 'sourcemap'],
+      'test/utils/**/*.js': ['babelTest', 'sourcemap'],
       'test/integration/**/*.js': ['babelTest', 'sourcemap'],
       'test/unit/**/*.js': ['babelTest', 'sourcemap'],
-      'public/app/*.js': ['sourcemap']
+      'src/javascripts/**/*.js': ['babelTest', 'sourcemap'],
+      'public/app/dependencies.js': ['sourcemap'],
+      'vendor/jquery-shim.js': ['babelTest', 'sourcemap']
     },
 
     customPreprocessors: {
@@ -64,17 +77,24 @@ module.exports = function(config) {
           moduleIds: true,
           getModuleId: stripRoot,
           babelrc: false,
+          ignore: ['test/prelude.js'],
           sourceMap: 'inline',
-          presets: ['@babel/env', '@babel/react'],
-          plugins: [
+          presets: [
             [
-              '@babel/transform-modules-systemjs',
+              '@babel/preset-env',
               {
-                systemGlobal: 'SystemTest'
+                loose: true,
+                modules: false,
+                useBuiltIns: false
               }
             ],
+            '@babel/react'
+          ],
+          plugins: [
+            '@babel/transform-modules-systemjs',
             '@babel/proposal-object-rest-spread',
-            '@babel/proposal-class-properties'
+            '@babel/proposal-class-properties',
+            '@babel/syntax-dynamic-import'
           ]
         },
         sourceFileName: makeSourceFileName
@@ -119,17 +139,16 @@ module.exports = function(config) {
   });
 };
 
-// Test file patterns common to the karma config and the development config
-const filesNeededToRunTests = (module.exports.filesNeededToRunTests = [
-  'node_modules/systemjs/dist/system.src.js',
-  'test/prelude.js',
-
-  'test/helpers/**/*.js'
-]);
+module.exports.filesNeededToRunTests = filesNeededToRunTests;
 
 function stripRoot(path) {
-  if (path.startsWith(root)) {
-    return path.replace(root, '');
+  const rootDir = `${__dirname}/`;
+  const srcDir = `${P.resolve(__dirname, 'src', 'javascripts')}/`;
+
+  if (path.startsWith(srcDir)) {
+    return path.replace(srcDir, '');
+  } else if (path.startsWith(rootDir)) {
+    return path.replace(rootDir, '');
   } else {
     return path;
   }

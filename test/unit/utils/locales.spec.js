@@ -1,18 +1,14 @@
-import { createIsolatedSystem } from 'test/helpers/system-js';
-
 describe('utils/locales.es6', () => {
-  beforeEach(function*() {
-    const system = createIsolatedSystem();
-
-    system.set('localesList', {
+  beforeEach(async function() {
+    this.system.set('libs/locales_list.json', {
       default: [{ code: 'ar-AE' }, { code: 'hr-BA' }]
     });
 
-    system.set('rtl-detect', {
+    this.system.set('rtl-detect', {
       isRtlLang: code => ['hr-BA', 'he-IL'].includes(code)
     });
 
-    this.localeUtils = yield system.import('utils/locales.es6');
+    this.localeUtils = await this.system.import('utils/locales.es6');
   });
 
   describe('#isRtlLocale()', () => {

@@ -1,17 +1,27 @@
-'use strict';
+import sinon from 'sinon';
+import { $initialize, $inject, $compile, $wait } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('cfPersistentNotification Directive', () => {
   let element, scope;
   let $rootScope, $timeout;
 
-  beforeEach(function() {
-    module('contentful/test');
+  beforeEach(async function() {
+    this.stubs = {
+      logWarn: sinon.stub()
+    };
 
-    $rootScope = this.$inject('$rootScope');
-    $timeout = this.$inject('$timeout');
+    this.system.set('services/logger.es6', {
+      logWarn: this.stubs.logWarn
+    });
+
+    await $initialize(this.system);
+
+    $rootScope = $inject('$rootScope');
+    $timeout = $inject('$timeout');
 
     const data = { field: {} };
-    element = this.$compile('<cf-persistent-notification />', data);
+    element = $compile('<cf-persistent-notification />', data);
     scope = element.scope();
   });
 
@@ -83,8 +93,6 @@ describe('cfPersistentNotification Directive', () => {
     const PARAMS_2 = { message: 'some message 2' };
 
     beforeEach(function() {
-      this.logWarnStub = sinon.stub();
-      this.$inject('services/logger.es6').logWarn = this.logWarnStub;
       $rootScope.$broadcast('persistentNotification', null);
       $rootScope.$broadcast('persistentNotification', PARAMS_1);
       $rootScope.$broadcast('persistentNotification', PARAMS_2);
@@ -104,10 +112,12 @@ describe('cfPersistentNotification Directive', () => {
       expect($body().length).toBe(0);
     });
 
-    it('logs concurrent broadcasted notification params', function() {
+    it('logs concurrent broadcasted notification params', async function() {
       const RESET_NOTE = '*RESET NOTIFICATION*';
-      sinon.assert.calledOnce(this.logWarnStub);
-      sinon.assert.calledWithExactly(this.logWarnStub, sinon.match.string, {
+
+      await $wait();
+      sinon.assert.calledOnce(this.stubs.logWarn);
+      sinon.assert.calledWithExactly(this.stubs.logWarn, sinon.match.string, {
         notifications: [RESET_NOTE, PARAMS_1, PARAMS_2, RESET_NOTE]
       });
     });

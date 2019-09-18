@@ -1,3 +1,4 @@
+import sinon from 'sinon';
 import describeEntity from './entity';
 import describeArchivable from './archivable';
 import {
@@ -16,16 +17,16 @@ export default function describeAsset() {
   describeArchivable(asset, setupEntity);
 
   function setupEntity() {
-    beforeEach(function*() {
+    beforeEach(async function() {
       this.request.respond({ sys: { type: 'Asset' } });
-      this.entity = yield this.space.createAsset();
+      this.entity = await this.space.createAsset();
     });
   }
 
   describeResource(asset, function() {
-    it('#process()', function*() {
+    it('#process()', async function() {
       this.request.respond(null);
-      yield this.asset.process('myversion', 'mylocale');
+      await this.asset.process('myversion', 'mylocale');
       sinon.assert.calledWith(this.request, {
         method: 'PUT',
         url: '/spaces/42/assets/43/files/mylocale/process',

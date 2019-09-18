@@ -1,25 +1,27 @@
+import sinon from 'sinon';
+import { $inject, $compile, $apply, $initialize } from 'test/utils/ng';
+
 describe('Role List Directive', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     this.getCurrentVariation = sinon.stub().resolves(false);
     this.stubs = {
       isOwnerOrAdmin: sinon.stub().returns(false)
     };
 
-    module('contentful/test', $provide => {
-      $provide.value('utils/LaunchDarkly', {
-        getCurrentVariation: this.getCurrentVariation
-      });
-      $provide.value('$state', { href: sinon.stub(), current: {} });
-
-      $provide.value('services/OrganizationRoles.es6', {
-        isOwnerOrAdmin: this.stubs.isOwnerOrAdmin
-      });
+    this.system.set('utils/LaunchDarkly/index.es6', {
+      getCurrentVariation: this.getCurrentVariation,
+      onFeatureFlag: sinon.stub()
     });
-    this.basicErrorHandler = this.$inject('app/common/ReloadNotification.es6').basicErrorHandler;
+
+    this.system.set('services/OrganizationRoles.es6', {
+      isOwnerOrAdmin: this.stubs.isOwnerOrAdmin
+    });
 
     this.canModifyRoles = sinon.stub().resolves(true);
-    this.$inject('access_control/AccessChecker').canModifyRoles = this.canModifyRoles;
-    this.$inject('utils/LaunchDarkly').onFeatureFlag = sinon.stub();
+
+    await this.system.override('access_control/AccessChecker/index.es6', {
+      canModifyRoles: this.canModifyRoles
+    });
 
     this.roles = [
       {
@@ -49,18 +51,6 @@ describe('Role List Directive', () => {
       },
       usage: 2
     };
-
-    this.reset = sinon.stub().resolves({
-      roles: this.roles,
-      rolesResource: this.rolesResource
-    });
-
-    const UserListHandler = this.$inject('UserListHandler');
-
-    UserListHandler.create = sinon.stub().returns({
-      reset: this.reset,
-      getMembershipCounts: sinon.stub().returns({})
-    });
 
     this.organization = {
       usage: {
@@ -93,12 +83,27 @@ describe('Role List Directive', () => {
       organization: this.organization
     };
 
-    this.mockService('services/TokenStore.es6', {
+    await this.system.override('services/TokenStore.es6', {
       getSpace: sinon.stub().resolves(this.space),
       getOrganization: sinon.stub().resolves(this.organization)
     });
 
-    const spaceContext = this.$inject('spaceContext');
+    this.reset = sinon.stub().resolves({
+      roles: this.roles,
+      rolesResource: this.rolesResource
+    });
+
+    await $initialize(this.system, $provide => {
+      $provide.constant('$state', { href: sinon.stub(), current: {} });
+      $provide.constant('UserListHandler', {
+        create: sinon.stub().returns({
+          reset: this.reset,
+          getMembershipCounts: sinon.stub().returns({})
+        })
+      });
+    });
+
+    const spaceContext = $inject('spaceContext');
 
     spaceContext.organization = this.organization;
 
@@ -108,9 +113,11 @@ describe('Role List Directive', () => {
       getOrganizationId: sinon.stub().returns(this.organization.sys.id)
     };
 
+    // window.jQuery = window.$ = $;
+
     this.compileElement = function() {
-      this.container = this.$compile('<cf-role-list />', { context: {} });
-      this.$apply();
+      this.container = $compile('<cf-role-list />', { context: {} });
+      $apply();
     };
 
     this.getButton = () => this.container.find('button:contains("Create new role")');
@@ -146,6 +153,9 @@ describe('Role List Directive', () => {
         expect(this.getButton().length).toBe(0);
 
         this.toggleLegacy(false);
+
+        this.container.remove();
+
         this.compileElement();
 
         expect(this.getButton().length).toBe(0);
@@ -154,15 +164,22 @@ describe('Role List Directive', () => {
 
     describe('for a user that can modify roles', () => {
       it('should show the Add Role button', function() {
+        // let container;
+
         this.canModifyRoles.resolves(true);
 
         this.toggleLegacy(true);
         this.compileElement();
 
+        // debugger;
+
         expect(this.getButton().length).toBe(1);
 
         this.toggleLegacy(false);
+        this.container.remove();
         this.compileElement();
+
+        // debugger;
 
         expect(this.getButton().length).toBe(1);
       });
@@ -183,6 +200,7 @@ describe('Role List Directive', () => {
         expect(text).toBe('Your organization is using 1 out of 3 available roles.');
 
         this.toggleLegacy(false);
+        this.container.remove();
         this.compileElement();
 
         text = this.container
@@ -214,6 +232,7 @@ describe('Role List Directive', () => {
           expect(text).toBe('Upgrade to add more roles, or delete an existing role.');
 
           this.toggleLegacy(false);
+          this.container.remove();
           this.compileElement();
 
           text = this.container
@@ -242,6 +261,7 @@ describe('Role List Directive', () => {
           );
 
           this.toggleLegacy(false);
+          this.container.remove();
           this.compileElement();
 
           text = this.container
@@ -270,6 +290,7 @@ describe('Role List Directive', () => {
           expect(text).toBe('Contact the admin of this organization to upgrade the organization.');
 
           this.toggleLegacy(false);
+          this.container.remove();
           this.compileElement();
 
           text = this.container

@@ -10,8 +10,6 @@ import {
 } from './ContentTypeConfig.es6';
 import { EXTENSIONS } from './Constants.es6';
 
-const spaceContext = getModule('spaceContext');
-
 class InstallationError extends Error {
   constructor(message) {
     super(message);
@@ -24,6 +22,8 @@ const raiseInstallationError = message => {
 };
 
 const installExtension = async ({ url, name }) => {
+  const spaceContext = getModule('spaceContext');
+
   const extensionData = await Fetcher.fetchExtension(url).catch(
     raiseInstallationError(`Failed to load extension ${name} from ${url}`)
   );
@@ -38,6 +38,8 @@ const installExtension = async ({ url, name }) => {
 };
 
 const createContentType = async name => {
+  const spaceContext = getModule('spaceContext');
+
   const existingContentTypes = await spaceContext.publishedCTs.getAllBare();
   let contentTypeId = stringUtils.toIdentifier(name);
 
@@ -61,6 +63,8 @@ const addExtensionsToEditorInterface = async (
   imageUploaderExtensionId,
   imageTaggingExtensionId
 ) => {
+  const spaceContext = getModule('spaceContext');
+
   const editorInterface = await spaceContext.cma
     .getEditorInterface(contentType.sys.id)
     .catch(raiseInstallationError(`Failed to load editor interface for ${contentType.name}`));
@@ -78,6 +82,8 @@ const addExtensionsToEditorInterface = async (
 };
 
 export const installApp = async wrapperName => {
+  const spaceContext = getModule('spaceContext');
+
   const [imageTaggingExtension, imageUploaderExtension, contentType] = await Promise.all([
     installExtension(EXTENSIONS.imageTagging),
     installExtension(EXTENSIONS.imageUploader),
@@ -104,6 +110,8 @@ export const installApp = async wrapperName => {
 };
 
 const deleteExtension = id => {
+  const spaceContext = getModule('spaceContext');
+
   if (id) {
     return spaceContext.cma.deleteExtension(id);
   }
@@ -112,6 +120,8 @@ const deleteExtension = id => {
 };
 
 const removeExtensionsFromEditorInterface = async config => {
+  const spaceContext = getModule('spaceContext');
+
   const editorInterface = await spaceContext.cma.getEditorInterface(config.contentTypeId);
 
   editorInterface.sidebar = editorInterface.sidebar.filter(
@@ -131,6 +141,8 @@ const removeExtensionsFromEditorInterface = async config => {
 };
 
 export const uninstallApp = async appConfig => {
+  const spaceContext = getModule('spaceContext');
+
   const config = appConfig.config || {};
 
   await Promise.all([

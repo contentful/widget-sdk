@@ -25,6 +25,7 @@ export default class AngularComponent extends React.Component {
   componentDidMount() {
     const $rootScope = getModule('$rootScope');
     const $compile = getModule('$compile');
+
     // we create isolated scope
     this.scope = $rootScope.$new(true);
     this.enrichScope(this.props.scope);

@@ -1,68 +1,107 @@
-'use strict';
+import { $initialize } from 'test/utils/ng';
+import sinon from 'sinon';
 
 describe('Gatekeeper Message Handler', () => {
-  beforeEach(function() {
-    this.window = { location: '' };
-    module('contentful/test', $provide => {
-      $provide.value('utils/ngCompat/window.es6', {
-        default: this.window
+  beforeEach(async function() {
+    this.stubs = {
+      window: {
+        location: ''
+      },
+      showDialog: sinon.stub(),
+      refresh: sinon.spy(),
+      track: sinon.stub(),
+      $state: {},
+      updateWebappUrl: sinon.stub(),
+      $location_url: sinon.spy(),
+      modalDialog_open: sinon.stub().returns({ promise: Promise.resolve() }),
+      redirectToLogin: sinon.spy(),
+      cancelUser: sinon.spy()
+    };
+
+    this.Notification = (await this.system.import(
+      '@contentful/forma-36-react-components'
+    )).Notification;
+    this.Notification.success = sinon.stub();
+    this.Notification.error = sinon.stub();
+
+    await this.system.set('utils/ngCompat/window.es6', {
+      default: this.stubs.window
+    });
+
+    await this.system.set('services/CreateSpace.es6', {
+      showDialog: this.stubs.showDialog
+    });
+
+    await this.system.set('services/TokenStore.es6', {
+      refresh: this.stubs.refresh
+    });
+
+    await this.system.set('analytics/Analytics.es6', {
+      track: this.stubs.track
+    });
+
+    await this.system.set('account/UrlSyncHelper.es6', {
+      updateWebappUrl: this.stubs.updateWebappUrl
+    });
+
+    await this.system.set('Authentication.es6', {
+      redirectToLogin: this.stubs.redirectToLogin,
+      cancelUser: this.stubs.cancelUser
+    });
+
+    this.handle = (await this.system.import('account/handleGatekeeperMessage.es6')).default;
+
+    await $initialize(this.system, $provide => {
+      $provide.constant('$state', this.stubs.$state);
+      $provide.constant('$location', {
+        url: this.stubs.$location_url
+      });
+      $provide.constant('modalDialog', {
+        open: this.stubs.modalDialog_open
       });
     });
-    this.handle = this.$inject('account/handleGatekeeperMessage.es6').default;
   });
 
   describe('actions on message', () => {
     it('logs out cancelled user and redirects them', function() {
       this.handle({ action: 'create', type: 'UserCancellation' });
-      expect(this.window.location).toBe('//www.test.com/goodbye');
+      sinon.assert.calledOnce(this.stubs.cancelUser);
     });
 
     it('opens the space creation dialog', function() {
-      const CreateSpace = this.$inject('services/CreateSpace.es6');
-      CreateSpace.showDialog = sinon.stub();
       this.handle({ action: 'new', type: 'space', organizationId: 'orgId' });
-      sinon.assert.calledOnce(CreateSpace.showDialog.withArgs('orgId'));
+      sinon.assert.calledOnce(this.stubs.showDialog.withArgs('orgId'));
     });
 
     it('refreshes token when space is deleted', function() {
-      const refresh = (this.$inject('services/TokenStore.es6').refresh = sinon.spy());
-
       this.handle({ action: 'delete', type: 'space' });
-      sinon.assert.calledOnce(refresh);
+      sinon.assert.calledOnce(this.stubs.refresh);
     });
 
     it('shows notification', function() {
-      const { Notification } = this.$inject('@contentful/forma-36-react-components');
-      Notification.success = sinon.stub();
-      Notification.error = sinon.stub();
       this.handle({ type: 'flash', resource: { message: 'OK', type: 'info' } });
       this.handle({ type: 'flash', resource: { message: 'FAIL', type: 'error' } });
-      sinon.assert.calledOnce(Notification.success.withArgs('OK'));
-      sinon.assert.calledOnce(Notification.error.withArgs('FAIL'));
+      sinon.assert.calledOnce(this.Notification.success.withArgs('OK'));
+      sinon.assert.calledOnce(this.Notification.error.withArgs('FAIL'));
     });
 
     it('sends an analytics event', function() {
-      const analytics = this.mockService('analytics/Analytics.es6');
-
       const data = {
         elementId: 'someId',
         groupId: 'someGroupId'
       };
       this.handle({ type: 'analytics', event: 'element:click', data });
-      expect(analytics.track.calledOnce).toBe(true);
-      const [event, eventData] = analytics.track.getCall(0).args;
+      expect(this.stubs.track.calledOnce).toBe(true);
+      const [event, eventData] = this.stubs.track.getCall(0).args;
       expect(event).toBe('element:click');
       expect(eventData).toEqual(data);
     });
 
     it('sends an analytics event with resolved fromState', function() {
       const currentStateName = 'some.current.name';
-      const analytics = this.mockService('analytics/Analytics.es6');
-      this.mockService('$state', {
-        current: {
-          name: currentStateName
-        }
-      });
+      this.stubs.$state.current = {
+        name: currentStateName
+      };
 
       const data = {
         elementId: 'someId',
@@ -70,7 +109,7 @@ describe('Gatekeeper Message Handler', () => {
         fromState: '$state.current.name'
       };
       this.handle({ type: 'analytics', event: 'element:click', data });
-      const [_, eventData] = analytics.track.getCall(0).args;
+      const [_, eventData] = this.stubs.track.getCall(0).args;
       expect(eventData).toEqual({
         ...data,
         fromState: currentStateName
@@ -78,33 +117,27 @@ describe('Gatekeeper Message Handler', () => {
     });
 
     it('changes URL when triggered', function() {
-      const url = (this.$inject('$location').url = sinon.spy());
       this.handle({ action: 'navigate', type: 'location', path: 'blah/blah' });
-      sinon.assert.calledOnce(url.withArgs('blah/blah'));
+      sinon.assert.calledOnce(this.stubs.$location_url.withArgs('blah/blah'));
     });
 
     it('updates location', function() {
-      const urlSyncHelper = this.mockService('account/UrlSyncHelper.es6');
       this.handle({ action: 'update', type: 'location', path: 'blah/blah' });
-      sinon.assert.calledOnce(urlSyncHelper.updateWebappUrl.withArgs('blah/blah'));
+      sinon.assert.calledOnce(this.stubs.updateWebappUrl.withArgs('blah/blah'));
     });
 
     it('refreshes token for any other message', function() {
-      const refresh = (this.$inject('services/TokenStore.es6').refresh = sinon.spy());
       this.handle({ blah: 'blah' });
-      sinon.assert.calledOnce(refresh);
+      sinon.assert.calledOnce(this.stubs.refresh);
     });
 
     describe('handles gk errors', () => {
       beforeEach(function() {
-        this.modalDialog = this.$inject('modalDialog');
-        this.modalDialog.open = sinon.stub().returns({ promise: Promise.resolve() });
-        this.$state = this.$inject('$state');
-        this.$state.go = sinon.stub();
+        this.stubs.$state.go = sinon.stub();
 
         this.expectModal = function(title, message) {
           sinon.assert.calledOnce(
-            this.modalDialog.open.withArgs({
+            this.stubs.modalDialog_open.withArgs({
               title: title,
               message: message,
               ignoreEsc: true,
@@ -130,9 +163,8 @@ describe('Gatekeeper Message Handler', () => {
       });
 
       it('redirects to login', function() {
-        const redirectToLogin = (this.$inject('Authentication.es6').redirectToLogin = sinon.spy());
         this.handle({ type: 'error', status: 401 });
-        sinon.assert.calledOnce(redirectToLogin);
+        sinon.assert.calledOnce(this.stubs.redirectToLogin);
       });
     });
   });

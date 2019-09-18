@@ -1,9 +1,8 @@
-'use strict';
-
+import sinon from 'sinon';
 import { times, merge, cloneDeep } from 'lodash';
-
 import createContentPreview from 'services/contentPreview.es6';
 import { getStore } from 'TheStore/index.es6';
+import { beforeEach, it } from 'test/utils/dsl';
 
 describe('contentPreview', () => {
   beforeEach(function() {

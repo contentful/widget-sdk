@@ -1,8 +1,6 @@
 import { cloneDeep, get } from 'lodash';
 import { getModule } from 'NgRegistry.es6';
 
-const $q = getModule('$q');
-
 /**
  * @ngdoc method
  * @name snapshotDecorator#withCurrent
@@ -37,6 +35,8 @@ export function withCurrent(entrySys, snapshots) {
  * Decorates snapshots setting snapshot.sys.createdBy.authorName value
  */
 export function withAuthorName(spaceContext, snapshots) {
+  const $q = getModule('$q');
+
   const promises = snapshots.map(snapshot => {
     const userId = get(snapshot, 'sys.createdBy.sys.id');
 

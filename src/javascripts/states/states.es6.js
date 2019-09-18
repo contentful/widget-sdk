@@ -4,6 +4,7 @@ import spacesState from 'states/Spaces.es6';
 import homeState from 'states/Home.es6';
 import DeeplinkPage from 'states/deeplink/DeeplinkPage.es6';
 import userInvitationState from 'states/UserInvitationState.es6';
+import { getQueryString } from 'utils/location';
 
 import { getModule } from 'NgRegistry.es6';
 
@@ -27,9 +28,9 @@ const deeplinkState = {
   url: '/deeplink',
   component: DeeplinkPage,
   mapInjectedToProps: [
-    '$location',
-    $location => ({
-      searchParams: $location.search()
+    // in states/config, mapInjectedToProps is expected to be an array
+    () => ({
+      searchParams: getQueryString()
     })
   ]
 };

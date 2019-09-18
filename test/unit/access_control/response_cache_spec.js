@@ -1,6 +1,5 @@
-'use strict';
-
 import _ from 'lodash';
+import sinon from 'sinon';
 
 describe('Response Cache', () => {
   let cache, canStub;
@@ -13,9 +12,8 @@ describe('Response Cache', () => {
 
   const noNewEnforcements = {};
 
-  beforeEach(function() {
-    module('contentful/test');
-    cache = this.$inject('access_control/AccessChecker/ResponseCache.es6');
+  beforeEach(async function() {
+    cache = await this.system.import('access_control/AccessChecker/ResponseCache.es6');
     canStub = sinon.stub().returns(true);
     cache.reset({ can: canStub });
   });

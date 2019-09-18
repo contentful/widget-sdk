@@ -1,16 +1,18 @@
-'use strict';
-import * as sinon from 'test/helpers/sinon';
+import sinon from 'sinon';
 import _ from 'lodash';
+import { $initialize, $inject } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('data/Request/Retry.es6', () => {
-  beforeEach(function() {
-    module('contentful/test');
-
+  beforeEach(async function() {
     this.sandbox = sinon.sandbox.create();
 
-    const wrap = this.$inject('data/Request/Retry.es6').default;
-    this.$timeout = this.$inject('$timeout');
-    this.$q = this.$inject('$q');
+    const { default: wrap } = await this.system.import('data/Request/Retry.es6');
+
+    await $initialize(this.system);
+
+    this.$timeout = $inject('$timeout');
+    this.$q = $inject('$q');
 
     this.requestStub = sinon.stub();
     const wrapped = wrap(this.requestStub);
@@ -74,7 +76,7 @@ describe('data/Request/Retry.es6', () => {
     this.expectCallCount(15);
   });
 
-  it('retries with an exponential backoff for 429', function*() {
+  it('retries with an exponential backoff for 429', async function() {
     // We wait maximum number of times
     this.sandbox.stub(Math, 'random').returns(1);
 
@@ -102,11 +104,11 @@ describe('data/Request/Retry.es6', () => {
     this.flush(110);
     this.expectCallCount(3);
 
-    const requestRes = yield requestPromise;
+    const requestRes = await requestPromise;
     expect(requestRes).toBe(res);
   });
 
-  it('fails after 6 tries for 429', function*() {
+  it('fails after 6 tries for 429', async function() {
     this.requestStub.rejects({ status: 429 });
     const responsePromise = this.push();
 
@@ -114,7 +116,7 @@ describe('data/Request/Retry.es6', () => {
     // waiting periods.
     this.flush((Math.pow(2, 7) + 1) * 1000);
     this.expectCallCount(6);
-    const response = yield responsePromise.catch(_.identity);
+    const response = await responsePromise.catch(_.identity);
     expect(response.status).toBe(429);
   });
 

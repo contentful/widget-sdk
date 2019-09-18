@@ -11,10 +11,6 @@ import * as logger from 'services/logger.es6';
 import * as Intercom from 'services/intercom.es6';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog.es6';
 
-const $state = getModule('$state');
-const Command = getModule('command');
-const spaceContext = getModule('spaceContext');
-
 import initKeyEditor from './KeyEditor.es6';
 import { get as getBoilerplates } from './BoilerplateCode.es6';
 
@@ -28,6 +24,8 @@ export default function attach($scope, apiKey, spaceEnvironments, spaceAliases) 
 }
 
 function mountBoilerplates($scope, apiKey) {
+  const spaceContext = getModule('spaceContext');
+
   getBoilerplates().then(boilerplates => {
     $scope.boilerplateProps = {
       boilerplates,
@@ -42,6 +40,8 @@ function mountBoilerplates($scope, apiKey) {
 }
 
 function mountContactUs($scope) {
+  const $state = getModule('$state');
+
   LD.onFeatureFlag($scope, CONTACT_US_BOILERPLATE_FLAG, flag => {
     if (flag && Intercom.isEnabled()) {
       $scope.contactUsProps = {
@@ -119,6 +119,8 @@ const notify = {
 };
 
 function mountKeyEditor($scope, apiKey, spaceEnvironments, spaceAliases) {
+  const Command = getModule('command');
+
   // `environments` key is present only if there are environments other than master enabled
   if (!Array.isArray(apiKey.environments) || apiKey.environments.length === 0) {
     apiKey.environments = [{ sys: { id: 'master', type: 'Link', linkType: 'Environment' } }];
@@ -132,8 +134,10 @@ function mountKeyEditor($scope, apiKey, spaceEnvironments, spaceAliases) {
     model.aliasesExist = true;
   }
 
-  const reinitKeyEditor = (environmentsEnabled = false) =>
-    initKeyEditor({
+  const reinitKeyEditor = (environmentsEnabled = false) => {
+    const spaceContext = getModule('spaceContext');
+
+    return initKeyEditor({
       data: deepFreeze({
         spaceId: spaceContext.getId(),
         isAdmin: !!spaceContext.getData(['spaceMember', 'admin']),
@@ -154,6 +158,7 @@ function mountKeyEditor($scope, apiKey, spaceEnvironments, spaceAliases) {
       },
       trackCopy: source => track('api_key:clipboard_copy', { source })
     });
+  };
 
   reinitKeyEditor();
   LD.onFeatureFlag($scope, ENVIRONMENTS_FLAG, reinitKeyEditor);
@@ -169,6 +174,9 @@ function mountKeyEditor($scope, apiKey, spaceEnvironments, spaceAliases) {
   };
 
   function remove() {
+    const $state = getModule('$state');
+    const spaceContext = getModule('spaceContext');
+
     return spaceContext.apiKeyRepo
       .remove(apiKey.sys.id)
       .then(
@@ -191,6 +199,8 @@ function mountKeyEditor($scope, apiKey, spaceEnvironments, spaceAliases) {
   }
 
   function save() {
+    const spaceContext = getModule('spaceContext');
+
     if (model.environments.length < 1) {
       notify.saveNoEnvironments(model.aliasesExist);
       return;

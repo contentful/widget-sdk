@@ -1,8 +1,6 @@
 import { cloneDeep } from 'lodash';
 import { getModule } from 'NgRegistry.es6';
 
-const spaceContext = getModule('spaceContext');
-
 export const UNINDEXABLE_FIELD_TYPES = ['Object', 'Array', 'Link', 'Location'];
 export const META_FIELDS = [
   { id: '_entryId_', title: '{Entry Id}', transformPath: '/payload/sys/id' },
@@ -185,6 +183,8 @@ async function saveRecord(record, context) {
 }
 
 function saveWebhook(draftWebhook, context, existingWebhookId) {
+  const spaceContext = getModule('spaceContext');
+
   if (existingWebhookId) {
     const existing = findWebhookById(existingWebhookId, context);
     if (!existing) {
@@ -199,6 +199,8 @@ function saveWebhook(draftWebhook, context, existingWebhookId) {
 }
 
 export async function remove(context) {
+  const spaceContext = getModule('spaceContext');
+
   const algoliaWebhookIds = [];
   context.config.records
     .filter(r => r)
@@ -219,6 +221,8 @@ export async function remove(context) {
 }
 
 export async function removeRecord(record, context) {
+  const spaceContext = getModule('spaceContext');
+
   const algoliaWebhooks = [record.publishWebhookId, record.unpublishWebhookId]
     .map(id => findWebhookById(id, context))
     .filter(webhook => !!webhook);

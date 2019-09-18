@@ -1,23 +1,24 @@
 import React from 'react';
 import _ from 'lodash';
 import sinon from 'sinon';
+import * as K from 'test/utils/kefir';
+import { $initialize } from 'test/utils/ng';
 
 import { mount } from 'enzyme';
-import * as K from 'test/helpers/mocks/kefir';
 
 describe('in DeploymentForm', () => {
   let DeploymentForm;
 
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.value('services/TokenStore.es6', {
-        user$: K.createMockProperty({ sys: { id: 1 } })
-      });
+  beforeEach(async function() {
+    this.system.set('services/TokenStore.es6', {
+      user$: K.createMockProperty({ sys: { id: 1 } })
     });
 
-    DeploymentForm = this.$inject(
+    DeploymentForm = (await this.system.import(
       'components/shared/stack-onboarding/deployment/DeploymentForm.es6'
-    ).default;
+    )).default;
+
+    await $initialize(this.system);
   });
 
   afterEach(function() {

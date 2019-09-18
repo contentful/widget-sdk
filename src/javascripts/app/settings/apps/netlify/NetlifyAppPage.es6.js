@@ -28,8 +28,6 @@ import AppUninstallDialog from '../dialogs/AppUninstallDialog.es6';
 import NoConnectionUninstallDialog from './NoConnectionUninstallDialog.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const $state = getModule('$state');
-
 const notifyError = (err, fallbackMessage) => {
   Notification.error(err.useMessage ? err.message || fallbackMessage : fallbackMessage);
 };
@@ -158,6 +156,8 @@ export default class NetlifyAppPage extends Component {
   };
 
   uninstall = async () => {
+    const $state = getModule('$state');
+
     try {
       this.setState({ busyWith: 'uninstall' });
       await NetlifyIntegration.uninstall(this.getIntegrationContext());

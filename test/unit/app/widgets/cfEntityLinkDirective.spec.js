@@ -1,10 +1,12 @@
 import _ from 'lodash';
+import sinon from 'sinon';
+import { $initialize, $apply, $inject, $compile } from 'test/utils/ng';
 
 describe('cfEntityLink directive', () => {
-  beforeEach(function() {
-    module('contentful/test');
+  beforeEach(async function() {
+    await $initialize(this.system);
 
-    const $q = this.$inject('$q');
+    const $q = $inject('$q');
     this.compile = function(entity, actions, config) {
       const entityHelpers = {
         entityTitle(entity, locale) {
@@ -27,7 +29,7 @@ describe('cfEntityLink directive', () => {
         );
       }
 
-      const element = this.$compile(
+      const element = $compile(
         `<cf-entity-link entity="entity" entity-helpers="entityHelpers" actions="actions" config="config"></cf-entity-link>`,
         {
           entity: entity,
@@ -37,7 +39,7 @@ describe('cfEntityLink directive', () => {
         }
       );
 
-      this.$apply();
+      $apply();
       return element.get(0);
     };
   });

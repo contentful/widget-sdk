@@ -1,7 +1,12 @@
+import sinon from 'sinon';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
+
 describe('data/Request/Auth.es6', () => {
-  beforeEach(function() {
-    module('contentful/test');
-    const wrapWithAuth = this.$inject('data/Request/Auth.es6').default;
+  beforeEach(async function() {
+    const { default: wrapWithAuth } = await this.system.import('data/Request/Auth.es6');
+
+    await $initialize(this.system);
 
     this.getToken = sinon.stub().resolves('TOKEN');
     this.refreshToken = sinon.stub().resolves('REFRESHED TOKEN');
@@ -15,8 +20,8 @@ describe('data/Request/Auth.es6', () => {
     this.request = wrapWithAuth(auth, this.baseRequest);
   });
 
-  it('makes request with authorization header', function*() {
-    yield this.request({});
+  it('makes request with authorization header', async function() {
+    await this.request({});
     sinon.assert.calledWith(
       this.baseRequest,
       sinon.match({
@@ -26,7 +31,7 @@ describe('data/Request/Auth.es6', () => {
 
     this.getToken.resolves('TOKEN 2');
 
-    yield this.request({});
+    await this.request({});
     sinon.assert.calledWith(
       this.baseRequest,
       sinon.match({
@@ -35,7 +40,7 @@ describe('data/Request/Auth.es6', () => {
     );
   });
 
-  it('keeps request params and returns base response', function*() {
+  it('keeps request params and returns base response', async function() {
     const baseResponse = {};
     this.baseRequest.resolves(baseResponse);
 
@@ -44,44 +49,44 @@ describe('data/Request/Auth.es6', () => {
       url: 'URL',
       headers: { H1: true }
     };
-    const response = yield this.request(params);
+    const response = await this.request(params);
 
     expect(response).toBe(baseResponse);
     sinon.assert.calledWith(this.baseRequest, sinon.match(params));
   });
 
-  it('rejects with base error', function*() {
+  it('rejects with base error', async function() {
     const baseError = {};
     this.baseRequest.rejects(baseError);
 
-    const error = yield this.request({}).catch(e => e);
+    const error = await this.request({}).catch(e => e);
     expect(error).toBe(baseError);
   });
 
-  it('retries with new token when base request responds with 401', function*() {
-    const $q = this.$inject('$q');
+  it('retries with new token when base request responds with 401', async function() {
+    const $q = $inject('$q');
     const firstResponse = $q.defer();
     this.baseRequest.onCall(0).returns(firstResponse.promise);
     this.baseRequest.onCall(1).returns($q.resolve());
 
     // Init request and update the current token
     const resultPromise = this.request({});
-    this.$apply();
+    $apply();
     this.getToken.resolves('NEW TOKEN');
 
     // Reject first request as unauthorized
     firstResponse.reject({ status: 401 });
-    yield resultPromise;
+    await resultPromise;
 
     expect(this.baseRequest.args[0][0].headers.Authorization).toBe('Bearer TOKEN');
     expect(this.baseRequest.args[1][0].headers.Authorization).toBe('Bearer NEW TOKEN');
   });
 
-  it('refreshes token when base request responds with 401', function*() {
-    const $q = this.$inject('$q');
+  it('refreshes token when base request responds with 401', async function() {
+    const $q = $inject('$q');
     this.baseRequest.onCall(0).returns($q.reject({ status: 401 }));
     this.baseRequest.onCall(1).returns($q.resolve());
-    yield this.request({});
+    await this.request({});
 
     sinon.assert.calledOnce(this.refreshToken);
     expect(this.baseRequest.args[0][0].headers.Authorization).toBe('Bearer TOKEN');

@@ -4,8 +4,6 @@ import { getEndpoint } from 'data/Request/Utils.es6';
 import * as Telemetry from 'i13n/Telemetry.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const $http = getModule('$http');
-
 /**
  * @description
  * Create a HTTP request function that handles authentication and
@@ -16,6 +14,8 @@ const $http = getModule('$http');
  * See the wrapper documentation for details.
  */
 export default function makeRequest(auth) {
+  const $http = getModule('$http');
+
   return wrapWithCounter(wrapWithAuth(auth, wrapWithRetry($http)));
 }
 

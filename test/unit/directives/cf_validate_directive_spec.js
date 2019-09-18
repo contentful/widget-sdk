@@ -1,15 +1,17 @@
-'use strict';
-
 import _ from 'lodash';
+import sinon from 'sinon';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
 
 describe('cfValidate', () => {
-  beforeEach(module('contentful/test'));
+  beforeEach(async function() {
+    await $initialize(this.system);
+  });
 
   describe('validator', () => {
     beforeEach(function() {
-      this.scope = this.$inject('$rootScope').$new();
+      this.scope = $inject('$rootScope').$new();
 
-      const $controller = this.$inject('$controller');
+      const $controller = $inject('$controller');
       this.validator = $controller('ValidationController', {
         $scope: this.scope,
         $attrs: { cfValidate: 'data' }
@@ -144,7 +146,7 @@ describe('cfValidate', () => {
     it('runs validation on "validate" event', function() {
       sinon.spy(this.validator, 'run');
       this.scope.$broadcast('validate');
-      this.$apply();
+      $apply();
       sinon.assert.calledOnce(this.validator.run);
     });
     describe('#hasError()', () => {
@@ -184,13 +186,13 @@ describe('cfValidate', () => {
     };
 
     beforeEach(function() {
-      const $compile = this.$inject('$compile');
-      const $rootScope = this.$inject('$rootScope');
+      const $compile = $inject('$compile');
+      const $rootScope = $inject('$rootScope');
 
       const template = '<div cf-validate="contentType" cf-content-type-schema></div>';
       const element = $compile(template)($rootScope);
       this.scope = element.scope();
-      this.$apply();
+      $apply();
     });
 
     it('validates', function() {

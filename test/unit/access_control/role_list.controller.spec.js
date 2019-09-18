@@ -1,24 +1,8 @@
+import sinon from 'sinon';
+import { $inject, $apply, $initialize } from 'test/utils/ng';
+
 describe('Role List Controller', () => {
-  beforeEach(function() {
-    this.stubs = {
-      isOwnerOrAdmin: sinon.stub().returns(false),
-      basicErrorHandler: sinon.stub()
-    };
-
-    module('contentful/test', $provide => {
-      $provide.value('services/OrganizationRoles.es6', {
-        isOwnerOrAdmin: this.stubs.isOwnerOrAdmin
-      });
-      $provide.value('app/common/ReloadNotification.es6', {
-        basicErrorHandler: this.stubs.basicErrorHandler
-      });
-    });
-    this.scope = this.$inject('$rootScope').$new();
-
-    this.canModifyRoles = sinon.stub().resolves(true);
-    this.$inject('access_control/AccessChecker').canModifyRoles = this.canModifyRoles;
-
-    this.scope.context = {};
+  beforeEach(async function() {
     this.roles = [
       {
         name: 'Editor',
@@ -48,14 +32,29 @@ describe('Role List Controller', () => {
       usage: 2
     };
 
-    const UserListHandler = this.$inject('UserListHandler');
+    this.stubs = {
+      isOwnerOrAdmin: sinon.stub().returns(false),
+      basicErrorHandler: sinon.stub()
+    };
+
     this.reset = sinon.stub().resolves({
       roles: this.roles,
       rolesResource: this.rolesResource
     });
-    UserListHandler.create = sinon.stub().returns({
-      reset: this.reset,
-      getMembershipCounts: sinon.stub().returns({})
+
+    this.system.set('services/OrganizationRoles.es6', {
+      isOwnerOrAdmin: this.stubs.isOwnerOrAdmin
+    });
+    this.system.set('app/common/ReloadNotification.es6', {
+      default: {
+        basicErrorHandler: this.stubs.basicErrorHandler
+      }
+    });
+
+    this.canModifyRoles = sinon.stub().resolves(true);
+
+    await this.system.override('access_control/AccessChecker/index.es6', {
+      canModifyRoles: this.canModifyRoles
     });
 
     this.organization = {
@@ -89,12 +88,18 @@ describe('Role List Controller', () => {
       organization: this.organization
     };
 
-    this.mockService('services/TokenStore.es6', {
+    await this.system.set('services/TokenStore.es6', {
       getSpace: sinon.stub().resolves(this.space),
       getOrganization: sinon.stub().resolves(this.organization)
     });
 
-    const spaceContext = this.$inject('spaceContext');
+    await $initialize(this.system);
+
+    this.scope = {
+      context: {}
+    };
+
+    const spaceContext = $inject('spaceContext');
 
     spaceContext.organization = this.organization;
 
@@ -104,9 +109,24 @@ describe('Role List Controller', () => {
       getOrganizationId: sinon.stub().returns(this.organization.sys.id)
     };
 
+    const UserListHandler = {
+      create: sinon.stub().returns({
+        reset: this.reset,
+        getMembershipCounts: sinon.stub().returns({})
+      })
+    };
+
+    this.$state = {};
+
     this.createController = () => {
-      this.$inject('$controller')('RoleListController', { $scope: this.scope });
-      this.$apply();
+      $inject('$controller')('RoleListController', {
+        $scope: this.scope,
+        $state: this.$state,
+        UserListHandler,
+        spaceContext
+      });
+
+      $apply();
     };
 
     this.setLimit = (usage, limit) => {
@@ -145,6 +165,7 @@ describe('Role List Controller', () => {
     it('flags as false if limit has not been reached', function() {
       this.setLimit(1, 5);
       this.createController();
+
       expect(this.scope.reachedLimit).toBe(false);
     });
 
@@ -163,11 +184,10 @@ describe('Role List Controller', () => {
   describe('duplicating role', () => {
     it('should be able to successfully duplicate a role', function() {
       this.createController();
-      const $state = this.$inject('$state');
-      $state.go = sinon.spy();
+      this.$state.go = sinon.spy();
       const role = { sys: { id: 'foobar' } };
       this.scope.duplicateRole(role);
-      sinon.assert.calledWith($state.go, '^.new', { baseRoleId: 'foobar' });
+      sinon.assert.calledWith(this.$state.go, '^.new', { baseRoleId: 'foobar' });
     });
   });
 

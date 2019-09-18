@@ -1,16 +1,22 @@
-'use strict';
-
 import _ from 'lodash';
+import sinon from 'sinon';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('Batch performer service', () => {
   const ENTITY_API = ['publish', 'unpublish', 'archive', 'unarchive', 'delete'];
   const API = ENTITY_API.concat(['duplicate']);
 
-  beforeEach(function() {
-    module('contentful/test');
-    this.create = this.$inject('batchPerformer').create;
-    this.analytics = this.$inject('analytics/Analytics.es6');
-    this.analytics.track = sinon.spy();
+  beforeEach(async function() {
+    this.analytics = {
+      track: sinon.stub()
+    };
+
+    this.system.set('analytics/Analytics.es6', this.analytics);
+
+    await $initialize(this.system);
+
+    this.create = $inject('batchPerformer').create;
   });
 
   describe('performing batch entry operations', () => {
@@ -30,7 +36,7 @@ describe('Batch performer service', () => {
         const retried = cc();
         const calls = [cc(), retried, cc(), retried];
         this.actionStubs = calls;
-        this.$inject('spaceContext').space = { createEntry: ce };
+        $inject('spaceContext').space = { createEntry: ce };
 
         function cc() {
           return sinon.stub().resolves({});
@@ -158,7 +164,7 @@ describe('Batch performer service', () => {
       const entity = this.entities[1];
       actionStub.rejects({ statusCode: 404 });
       this.performer[action]();
-      this.$apply();
+      $apply();
       sinon.assert.calledOnce(entity.setDeleted);
       sinon.assert.calledOnce(this.onDelete.withArgs(entity));
     });

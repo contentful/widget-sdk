@@ -5,7 +5,6 @@ import * as K from 'utils/kefir.es6';
 import { getModule } from 'NgRegistry.es6';
 import * as logger from 'services/logger.es6';
 import * as Store from 'data/streamHashSet.es6';
-const $q = getModule('$q');
 
 /**
  * @ngdoc type
@@ -23,6 +22,8 @@ const $q = getModule('$q');
  * @param {Client.Space} space  Space instance from the client.
  */
 export function create(space) {
+  const $q = getModule('$q');
+
   const store = Store.create();
 
   /**
@@ -182,6 +183,8 @@ function removeDeleted(contentTypes) {
 }
 
 function handleReloadError(err) {
+  const $q = getModule('$q');
+
   const message = get(err, 'body.message');
   if (message) {
     Notification.error(message);

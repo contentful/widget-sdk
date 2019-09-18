@@ -1,5 +1,6 @@
-import * as sinon from 'test/helpers/sinon';
+import sinon from 'sinon';
 import _ from 'lodash';
+import { $initialize, $compile } from 'test/utils/ng';
 
 describe('cfZenmode', () => {
   let editor;
@@ -20,18 +21,18 @@ describe('cfZenmode', () => {
     setHistory: sinon.spy()
   };
 
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.constant('services/localeStore.es6', {
-        default: {
-          getLocales: () => [{ code: 'en', name: 'English' }, { code: 'de', name: 'German' }],
-          getDefaultLocale: () => 'en'
-        }
-      });
+  beforeEach(async function() {
+    this.system.set('services/localeStore.es6', {
+      default: {
+        getLocales: () => [{ code: 'en', name: 'English' }, { code: 'de', name: 'German' }],
+        getDefaultLocale: () => 'en'
+      }
     });
 
+    await $initialize(this.system);
+
     const scopeProps = { zenApi: apiMock, preview: {} };
-    const elem = this.$compile('<cf-zenmode zen-api="zenApi" />', scopeProps);
+    const elem = $compile('<cf-zenmode zen-api="zenApi" />', scopeProps);
     this.scope = elem.isolateScope();
 
     // can get CodeMirror instance from DOM node now:
@@ -60,7 +61,7 @@ describe('cfZenmode', () => {
     this.scope.showPreview(false);
     expect(this.scope.isPreviewActive).toEqual(false);
 
-    const otherZenMode = this.$compile('<cf-zenmode zen-api="zenApi">', { zenApi: apiMock });
+    const otherZenMode = $compile('<cf-zenmode zen-api="zenApi">', { zenApi: apiMock });
     const otherScope = otherZenMode.isolateScope();
     expect(otherScope.isPreviewActive).toEqual(false);
   });

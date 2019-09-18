@@ -1,7 +1,7 @@
-import { createIsolatedSystem } from 'test/helpers/system-js';
+import sinon from 'sinon';
 
 describe('data/EndpointFactory.es6', () => {
-  beforeEach(function*() {
+  beforeEach(async function() {
     this.Authentication = {};
     this.Config = { apiUrl: sinon.stub().returns('API_URL') };
     this.orgEndpoint = () => {};
@@ -11,12 +11,10 @@ describe('data/EndpointFactory.es6', () => {
       createSpaceEndpoint: sinon.stub().returns(this.spaceEndpoint)
     };
 
-    this.system = createIsolatedSystem();
-
     this.system.set('Authentication.es6', this.Authentication);
     this.system.set('Config.es6', this.Config);
     this.system.set('data/Endpoint.es6', this.Endpoint);
-    this.factory = yield this.system.import('data/EndpointFactory.es6');
+    this.factory = await this.system.import('data/EndpointFactory.es6');
   });
 
   describe('#createOrganizationEndpoint', () => {

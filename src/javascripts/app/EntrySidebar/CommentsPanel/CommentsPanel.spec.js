@@ -5,7 +5,7 @@ import { render, within, fireEvent, cleanup } from '@testing-library/react';
 import CommentsPanel from './CommentsPanel.es6';
 import { useCommentsFetcher, useCommentCreator } from './hooks.es6';
 import { remove as removeComment } from 'data/CMA/CommentsRepo.es6';
-import flushPromises from '../../../../../test/helpers/flushPromises';
+import flushPromises from 'testHelpers/flushPromises';
 
 const mockAuthor = { firstName: 'John', lastName: 'Doe', avatarUrl: '0.jpeg', sys: { id: 'abc' } };
 

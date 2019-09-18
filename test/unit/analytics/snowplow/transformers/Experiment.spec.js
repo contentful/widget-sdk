@@ -1,9 +1,8 @@
 describe('Experiment transformer', () => {
-  beforeEach(function() {
-    module('contentful/test');
-
-    const experimentTransformer = this.$inject('analytics/snowplow/transformers/Experiment.es6')
-      .default;
+  beforeEach(async function() {
+    const experimentTransformer = (await this.system.import(
+      'analytics/snowplow/transformers/Experiment.es6'
+    )).default;
 
     this.data = {
       experiment: {

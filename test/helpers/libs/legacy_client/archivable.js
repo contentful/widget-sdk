@@ -1,12 +1,14 @@
+import sinon from 'sinon';
+
 export default function describeArchivable(names, description) {
   describe(`archivable ${names.singular}`, function() {
     if (description) description();
 
     describe('#archive', function() {
-      it('sends PUT request', function*() {
+      it('sends PUT request', async function() {
         this.entity.data.sys.id = 'eid';
         this.request.respond(this.entity.data);
-        yield this.entity.archive();
+        await this.entity.archive();
         sinon.assert.calledWith(this.request, {
           method: 'PUT',
           url: `/spaces/42/${names.plural}/eid/archived`
@@ -15,10 +17,10 @@ export default function describeArchivable(names, description) {
     });
 
     describe('#unarchive', function() {
-      it('sends DELETE request', function*() {
+      it('sends DELETE request', async function() {
         this.entity.data.sys.id = 'eid';
         this.request.respond(this.entity.data);
-        yield this.entity.unarchive();
+        await this.entity.unarchive();
         sinon.assert.calledWith(this.request, {
           method: 'DELETE',
           url: `/spaces/42/${names.plural}/eid/archived`

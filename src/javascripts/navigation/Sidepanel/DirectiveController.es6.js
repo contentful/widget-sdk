@@ -1,25 +1,15 @@
+import $ from 'jquery';
 import { assign, get } from 'utils/Collections.es6';
 import * as K from 'utils/kefir.es6';
 import keycodes from 'utils/keycodes.es6';
 
-import * as Navigator from 'states/Navigator.es6';
-
-import { navState$, NavStates } from 'navigation/NavState.es6';
-import * as TokenStore from 'services/TokenStore.es6';
-import * as OrgRoles from 'services/OrganizationRoles.es6';
-import * as CreateSpace from 'services/CreateSpace.es6';
-import * as AccessChecker from 'access_control/AccessChecker/index.es6';
-import * as LD from 'utils/LaunchDarkly/index.es6';
-import * as logger from 'services/logger.es6';
 import { ENVIRONMENTS_FLAG } from 'featureFlags.es6';
 
-import renderSidepanel from './SidepanelView.es6';
-
-export default function createController($scope, winJqueryObject) {
-  winJqueryObject.on('keyup', handleEsc);
+export default function createController($scope) {
+  $(window).on('keyup', handleEsc);
 
   $scope.$on('$destroy', () => {
-    winJqueryObject.off('keyup', handleEsc);
+    $(window).off('keyup', handleEsc);
   });
 
   let navState;
@@ -48,44 +38,89 @@ export default function createController($scope, winJqueryObject) {
     environmentsEnabled: false
   };
 
+  $scope.loaded = false;
+
+  let Navigator;
+  let navState$;
+  let NavStates;
+  let TokenStore;
+  let OrgRoles;
+  let CreateSpace;
+  let AccessChecker;
+  let LD;
+  let logger;
+  let renderSidepanel;
+
+  async function initialize() {
+    [
+      Navigator,
+      { navState$, NavStates },
+      TokenStore,
+      OrgRoles,
+      CreateSpace,
+      AccessChecker,
+      LD,
+      logger,
+      { default: renderSidepanel }
+    ] = await Promise.all([
+      import('states/Navigator.es6'),
+      import('navigation/NavState.es6'),
+      import('services/TokenStore.es6'),
+      import('services/OrganizationRoles.es6'),
+      import('services/CreateSpace.es6'),
+      import('access_control/AccessChecker/index.es6'),
+      import('utils/LaunchDarkly/index.es6'),
+      import('services/logger.es6'),
+      import('./SidepanelView.es6')
+    ]);
+
+    K.onValueScope($scope, TokenStore.organizations$, orgs => {
+      state = assign(state, { orgs: orgs || [] });
+      render();
+    });
+
+    K.onValueScope($scope, TokenStore.spacesByOrganization$, spacesByOrg => {
+      state = assign(state, { spacesByOrg: spacesByOrg || {} });
+      render();
+    });
+
+    K.onValueScope($scope, navState$.combine(AccessChecker.isInitialized$), values => {
+      if (values[1]) {
+        navState = values[0];
+        state = assign(state, {
+          currentSpaceId: get(navState, ['space', 'sys', 'id']),
+          currentEnvId: get(navState, ['env', 'sys', 'id'], 'master')
+        });
+        setCurrOrg(navState.org || get(state, ['orgs', 0]));
+        render();
+      }
+    });
+
+    LD.onFeatureFlag($scope, ENVIRONMENTS_FLAG, isEnabled => {
+      state = assign(state, { environmentsEnabled: isEnabled });
+      render();
+    });
+
+    $scope.$watch('sidePanelIsShown', sidePanelIsShown => {
+      state = assign(state, { sidePanelIsShown });
+      render();
+    });
+
+    $scope.loaded = true;
+
+    render();
+  }
+
   function render() {
+    if (!$scope.loaded) {
+      return;
+    }
+
     $scope.component = renderSidepanel(state);
     $scope.$applyAsync();
   }
 
-  render();
-
-  $scope.$watch('sidePanelIsShown', sidePanelIsShown => {
-    state = assign(state, { sidePanelIsShown });
-    render();
-  });
-
-  K.onValueScope($scope, TokenStore.organizations$, orgs => {
-    state = assign(state, { orgs: orgs || [] });
-    render();
-  });
-
-  K.onValueScope($scope, TokenStore.spacesByOrganization$, spacesByOrg => {
-    state = assign(state, { spacesByOrg: spacesByOrg || {} });
-    render();
-  });
-
-  K.onValueScope($scope, navState$.combine(AccessChecker.isInitialized$), values => {
-    if (values[1]) {
-      navState = values[0];
-      state = assign(state, {
-        currentSpaceId: get(navState, ['space', 'sys', 'id']),
-        currentEnvId: get(navState, ['env', 'sys', 'id'], 'master')
-      });
-      setCurrOrg(navState.org || get(state, ['orgs', 0]));
-      render();
-    }
-  });
-
-  LD.onFeatureFlag($scope, ENVIRONMENTS_FLAG, isEnabled => {
-    state = assign(state, { environmentsEnabled: isEnabled });
-    render();
-  });
+  initialize();
 
   function gotoOrgSettings() {
     closeSidePanel();

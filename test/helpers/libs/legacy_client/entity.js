@@ -1,3 +1,5 @@
+import sinon from 'sinon';
+
 export default function describeEntity(names, description) {
   describe(`entity ${names.singular}`, function() {
     if (description) description();
@@ -201,10 +203,10 @@ export default function describeEntity(names, description) {
     });
 
     describe('#getPublishedState', function() {
-      it('sends GET request', function*() {
+      it('sends GET request', async function() {
         this.entity.data.sys.id = 'eid';
         this.request.respond(this.entity.data);
-        yield this.entity.getPublishedState();
+        await this.entity.getPublishedState();
         sinon.assert.calledWith(this.request, {
           method: 'GET',
           url: `/spaces/42/${names.plural}/eid/published`
@@ -213,9 +215,9 @@ export default function describeEntity(names, description) {
     });
 
     describe('#save', function() {
-      it('sends POST request', function*() {
+      it('sends POST request', async function() {
         this.request.respond(this.entity.data);
-        yield this.entity.save();
+        await this.entity.save();
         sinon.assert.calledWith(this.request, {
           method: 'POST',
           url: `/spaces/42/${names.plural}`,
@@ -223,14 +225,14 @@ export default function describeEntity(names, description) {
         });
       });
 
-      it('sends PUT request', function*() {
+      it('sends PUT request', async function() {
         const headers = {};
         headers['X-Contentful-Version'] = 1;
         headers.test = 'test';
         this.entity.data.sys.version = 1;
         this.entity.data.sys.id = 'eid';
         this.request.respond(this.entity.data);
-        yield this.entity.save({ test: 'test' });
+        await this.entity.save({ test: 'test' });
         sinon.assert.calledWith(this.request, {
           method: 'PUT',
           headers: headers,
@@ -241,11 +243,11 @@ export default function describeEntity(names, description) {
     });
 
     describe('#delete', function() {
-      it('sends DELETE request', function*() {
+      it('sends DELETE request', async function() {
         this.entity.data.sys.version = 1;
         this.entity.data.sys.id = 'eid';
         this.request.respond(this.entity.data);
-        yield this.entity.delete();
+        await this.entity.delete();
         sinon.assert.calledWith(this.request, {
           method: 'DELETE',
           url: `/spaces/42/${names.plural}/eid`
@@ -267,11 +269,11 @@ export default function describeEntity(names, description) {
     });
 
     describe('#publish', function() {
-      it('sends PUT request with current version header', function*() {
+      it('sends PUT request with current version header', async function() {
         this.entity.data.sys.id = 'eid';
         this.entity.data.sys.version = 'VERSION';
         this.request.respond(this.entity.data);
-        yield this.entity.publish();
+        await this.entity.publish();
         sinon.assert.calledWith(this.request, {
           method: 'PUT',
           headers: {
@@ -281,10 +283,10 @@ export default function describeEntity(names, description) {
         });
       });
 
-      it('lets you set the version in the PUT request', function*() {
+      it('lets you set the version in the PUT request', async function() {
         this.entity.data.sys.id = 'eid';
         this.request.respond(this.entity.data);
-        yield this.entity.publish(1);
+        await this.entity.publish(1);
         sinon.assert.calledWith(this.request, {
           method: 'PUT',
           headers: {

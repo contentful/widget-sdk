@@ -1,4 +1,7 @@
 import _ from 'lodash';
+import sinon from 'sinon';
+import { $initialize, $inject } from 'test/utils/ng';
+import { beforeEach, it } from 'test/utils/dsl';
 
 describe('EntityHelpers', () => {
   const REWRITTEN_URL = 'http://rewritten.url/file.txt';
@@ -10,30 +13,31 @@ describe('EntityHelpers', () => {
     throw new Error('Should not end up here!');
   };
 
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.constant('services/AssetUrlService.es6', {
-        transformHostname: _.constant(REWRITTEN_URL)
-      });
-      $provide.constant('services/localeStore.es6', {
-        default: {
-          toInternalCode: code => INTERNAL_LOCALE_BY_LOCALE[code]
-        }
-      });
+  beforeEach(async function() {
+    this.system.set('services/AssetUrlService.es6', {
+      transformHostname: _.constant(REWRITTEN_URL)
+    });
+    this.system.set('services/localeStore.es6', {
+      default: {
+        toInternalCode: code => INTERNAL_LOCALE_BY_LOCALE[code]
+      }
     });
 
-    this.spaceContext = this.$inject('mocks/spaceContext').init();
-    this.EntityHelpers = this.$inject('EntityHelpers');
+    await $initialize(this.system);
+
+    this.spaceContext = $inject('mocks/spaceContext').init();
+    this.EntityHelpers = $inject('EntityHelpers');
+
     this.helpers = this.EntityHelpers.newForLocale('en-US');
   });
 
   describe('#assetFileUrl', () => {
-    it('rejects if invalid file is provided', function*() {
-      yield this.helpers.assetFileUrl({}).then(throwingFn, _.noop);
+    it('rejects if invalid file is provided', async function() {
+      await this.helpers.assetFileUrl({}).then(throwingFn, _.noop);
     });
 
-    it('resolves with URL', function*() {
-      const url = yield this.helpers.assetFileUrl({ url: 'http://some.url/file.txt' });
+    it('resolves with URL', async function() {
+      const url = await this.helpers.assetFileUrl({ url: 'http://some.url/file.txt' });
       expect(url).toBe(REWRITTEN_URL);
     });
   });

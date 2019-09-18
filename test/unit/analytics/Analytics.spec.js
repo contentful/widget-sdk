@@ -1,22 +1,24 @@
-'use strict';
+import sinon from 'sinon';
+import { $initialize } from 'test/utils/ng';
 
 describe('Analytics', () => {
   const makeMock = keys => keys.reduce((acc, key) => ({ ...acc, [key]: sinon.stub() }), {});
 
-  beforeEach(function() {
+  beforeEach(async function() {
     this.segment = makeMock(['enable', 'disable', 'identify', 'track', 'page']);
     this.Snowplow = makeMock(['enable', 'disable', 'identify', 'track', 'buildUnstructEventData']);
     const analyticsConsole = makeMock(['setSessionData', 'add']);
 
-    module('contentful/test', $provide => {
-      $provide.constant('analytics/segment.es6', {
-        default: this.segment
-      });
-      $provide.constant('analytics/snowplow/Snowplow.es6', this.Snowplow);
+    this.system.set('analytics/segment.es6', {
+      default: this.segment
+    });
+    this.system.set('analytics/snowplow/Snowplow.es6', this.Snowplow);
+
+    this.analytics = await this.system.import('analytics/Analytics.es6');
+
+    await $initialize(this.system, $provide => {
       $provide.constant('analytics/console', analyticsConsole);
     });
-
-    this.analytics = this.$inject('analytics/Analytics.es6');
 
     // we want to simulate production environment
     // this way data hits the Segment and Snowplow services

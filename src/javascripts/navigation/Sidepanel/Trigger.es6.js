@@ -1,5 +1,4 @@
 /* eslint-disable camelcase */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { caseof } from 'sum-types';
@@ -8,10 +7,8 @@ import tokens from '@contentful/forma-36-tokens';
 import Logo from 'svg/logo-label.es6';
 import Hamburger from 'svg/hamburger.es6';
 
-import { navState$, NavStates } from 'navigation/NavState.es6';
-import * as TokenStore from 'services/TokenStore.es6';
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
 import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel.es6';
+
 import { css } from 'emotion';
 
 const oneLineTruncate = {
@@ -22,24 +19,49 @@ const oneLineTruncate = {
 
 export default class Trigger extends React.Component {
   static propTypes = {
-    onClick: PropTypes.func.isRequired
+    onClick: PropTypes.func.isRequired,
+    spaceContext: PropTypes.object.isRequired
   };
 
-  UNSAFE_componentWillMount() {
+  state = {
+    loading: true
+  };
+
+  async UNSAFE_componentWillMount() {
+    const [{ navState$, NavStates }, accessChecker, TokenStore] = await Promise.all([
+      import('navigation/NavState.es6'),
+      import('access_control/AccessChecker/index.es6'),
+      import('services/TokenStore.es6')
+    ]);
+
     this.offNavState = navState$.onValue(navState => {
       this.setState({ navState });
     });
+
     this.offOrganizations = TokenStore.organizations$.onValue(organizations => {
       this.setState({ showOrganization: organizations.length > 1 });
+    });
+
+    this.setState({
+      navState$,
+      NavStates,
+      accessChecker,
+      loading: false
     });
   }
 
   componentWillUnmount() {
     this.offNavState();
+    this.offOrganizations();
   }
 
   render() {
     const { onClick } = this.props;
+
+    if (this.state.loading) {
+      return <></>;
+    }
+
     return (
       <div
         className="app-top-bar__sidepanel-trigger"
@@ -75,7 +97,7 @@ export default class Trigger extends React.Component {
   }
 }
 
-function renderContent({ navState, showOrganization }) {
+function renderContent({ NavStates, accessChecker, navState, showOrganization }) {
   return caseof(navState, [
     [
       NavStates.Space,

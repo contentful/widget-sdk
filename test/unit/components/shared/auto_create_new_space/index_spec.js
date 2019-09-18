@@ -1,8 +1,10 @@
-import * as sinon from 'test/helpers/sinon';
-import * as K from 'test/helpers/mocks/kefir';
+import sinon from 'sinon';
+import * as K from 'test/utils/kefir';
+import { $initialize, $apply, $wait } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('AutoCreateNewSpace/index', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     this.tokenStore = {
       user$: K.createMockProperty(null),
       spacesByOrganization$: K.createMockProperty(null),
@@ -15,21 +17,21 @@ describe('AutoCreateNewSpace/index', () => {
       forKey: sinon.stub()
     };
 
-    module('contentful/test', $provide => {
-      $provide.value('services/TokenStore.es6', this.tokenStore);
-      $provide.value(
-        'components/shared/auto_create_new_space/CreateSampleSpace.es6',
-        this.createSampleSpace
-      );
-      $provide.value('TheStore/index.es6', {
-        getStore: sinon.stub().returns(this.store)
-      });
-      $provide.value('utils/LaunchDarkly/index.es6', {
-        getCurrentVariation: sinon.stub().returns(false)
-      });
+    this.system.set('services/TokenStore.es6', this.tokenStore);
+    this.system.set('components/shared/auto_create_new_space/CreateSampleSpace.es6', {
+      default: this.createSampleSpace
+    });
+    this.system.set('TheStore/index.es6', {
+      getStore: sinon.stub().returns(this.store)
+    });
+    this.system.set('utils/LaunchDarkly/index.es6', {
+      getCurrentVariation: sinon.stub().returns(false)
     });
 
-    const init = this.$inject('components/shared/auto_create_new_space').init;
+    const init = (await this.system.import('components/shared/auto_create_new_space/index.es6'))
+      .init;
+
+    await $initialize(this.system);
 
     const user = {
       sys: { id: 'user', createdAt: new Date().toISOString() },
@@ -56,9 +58,9 @@ describe('AutoCreateNewSpace/index', () => {
       }
     };
 
-    this.init = _ => {
+    this.init = () => {
       init();
-      this.$apply();
+      $apply();
     };
 
     // set data to qualify user
@@ -101,10 +103,6 @@ describe('AutoCreateNewSpace/index', () => {
       [
         [ctx => ctx.store.get.returns(true), 'space was already auto created for the user'],
         [
-          ctx => (ctx.user.sys.createdAt = new Date(2017, 7, 12).toISOString()),
-          'user is not recent'
-        ],
-        [
           ctx => ctx.tokenStore.spacesByOrganization$.set({ orgId: ['spaceId'] }),
           'the user has an org with spaces'
         ],
@@ -118,9 +116,10 @@ describe('AutoCreateNewSpace/index', () => {
       ].forEach(testQualification);
 
       function testQualification([fn, msg]) {
-        it(`should be a noop if ${msg}`, function() {
+        it(`should be a noop if ${msg}`, async function() {
           fn(this);
           this.init();
+          await $wait();
           sinon.assert.notCalled(this.createSampleSpace);
         });
       }
@@ -131,7 +130,7 @@ describe('AutoCreateNewSpace/index', () => {
       this.tokenStore.user$.set(this.user);
       this.store.get.returns(false);
       this.init();
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await $wait();
       sinon.assert.calledOnce(this.createSampleSpace);
       sinon.assert.calledWithExactly(
         this.createSampleSpace,
@@ -148,10 +147,10 @@ describe('AutoCreateNewSpace/index', () => {
 
       this.createSampleSpace.resolves(delayedPromise);
       this.init();
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await $wait();
       this.user.sys = { id: '123', createdAt: new Date(2017, 8, 24).toISOString() };
       this.tokenStore.user$.set(this.user);
-      this.$apply();
+      $apply();
       sinon.assert.calledOnce(this.createSampleSpace);
     });
   });

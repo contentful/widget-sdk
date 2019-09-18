@@ -1,10 +1,16 @@
-import * as K from 'test/helpers/mocks/kefir';
+import * as K from 'test/utils/kefir';
 import _ from 'lodash';
-import createLocaleStoreMock from 'test/helpers/mocks/createLocaleStoreMock';
+import sinon from 'sinon';
+import createLocaleStoreMock from 'test/utils/createLocaleStoreMock';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
 
 describe('cfWidgetApi directive', () => {
-  beforeEach(function() {
-    module('contentful/test', $provide => {
+  beforeEach(async function() {
+    this.system.set('services/localeStore.es6', {
+      default: createLocaleStoreMock()
+    });
+
+    await $initialize(this.system, $provide => {
       $provide.constant('spaceContext', {
         cma: {
           getEntry: _.noop,
@@ -12,14 +18,11 @@ describe('cfWidgetApi directive', () => {
           getAsset: _.noop
         }
       });
-      $provide.constant('services/localeStore.es6', {
-        default: createLocaleStoreMock()
-      });
     });
 
-    const $controller = this.$inject('$controller');
+    const $controller = $inject('$controller');
 
-    this.scope = this.$inject('$rootScope').$new();
+    this.scope = $inject('$rootScope').$new();
     this.widget = {
       field: {},
       settings: {
@@ -98,7 +101,7 @@ describe('cfWidgetApi directive', () => {
 
   describe('#space', () => {
     it('exposes same methods as spaceContext.cma', function() {
-      const spaceContext = this.$inject('spaceContext');
+      const spaceContext = $inject('spaceContext');
       const getAllKeys = obj => Object.keys(_.toPlainObject(obj));
       expect(getAllKeys(this.widgetApi.space)).toEqual(getAllKeys(spaceContext.cma));
     });
@@ -129,11 +132,11 @@ describe('cfWidgetApi directive', () => {
     it('emits errors when "fieldLocale.errors" changes', function() {
       const cb = sinon.spy();
       this.widgetApi.field.onSchemaErrorsChanged(cb);
-      this.$apply();
+      $apply();
       cb.reset();
 
       this.scope.fieldLocale.errors$.set(['ERRORS']);
-      this.$apply();
+      $apply();
       sinon.assert.calledOnce(cb);
       sinon.assert.calledWithExactly(cb, ['ERRORS']);
     });

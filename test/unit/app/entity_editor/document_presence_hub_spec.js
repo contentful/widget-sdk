@@ -1,4 +1,6 @@
-import * as K from 'test/helpers/mocks/kefir';
+import * as K from 'test/utils/kefir';
+import sinon from 'sinon';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
 
 describe('entityEditor/Document/PresenceHub', () => {
   function extractUserIds(userStream) {
@@ -9,8 +11,8 @@ describe('entityEditor/Document/PresenceHub', () => {
     );
   }
 
-  beforeEach(function() {
-    module('contentful/test');
+  beforeEach(async function() {
+    await $initialize(this.system);
 
     this.shout = sinon.stub();
 
@@ -18,10 +20,10 @@ describe('entityEditor/Document/PresenceHub', () => {
 
     this.receiveShout = function(data) {
       docEvents.emit({ name: 'shout', data });
-      this.$apply();
+      $apply();
     };
 
-    const PresenceHub = this.$inject('entityEditor/Document/PresenceHub');
+    const PresenceHub = $inject('entityEditor/Document/PresenceHub');
     this.presence = PresenceHub.create('ownUser', docEvents, this.shout);
   });
 
@@ -42,7 +44,7 @@ describe('entityEditor/Document/PresenceHub', () => {
     });
 
     it('removes users after time out', function() {
-      const $interval = this.$inject('$interval');
+      const $interval = $inject('$interval');
       const clock = sinon.useFakeTimers();
       const idsStream = extractUserIds(this.presence.collaborators);
 
@@ -85,7 +87,7 @@ describe('entityEditor/Document/PresenceHub', () => {
     it('shouts back "ping" when no field has been focused', function() {
       this.shout.reset();
       this.receiveShout(['open', 'sourceUser']);
-      this.$apply();
+      $apply();
       sinon.assert.calledWith(this.shout, ['ping', 'ownUser']);
     });
   });

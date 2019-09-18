@@ -1,15 +1,17 @@
-'use strict';
 import _ from 'lodash';
+import sinon from 'sinon';
+import { $initialize, $inject } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('entityEditor/Document/StringField', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     this.ShareJS = {};
 
-    module('contentful/test', $provide => {
+    await $initialize(this.system, $provide => {
       $provide.constant('data/ShareJS/Utils', this.ShareJS);
     });
 
-    this.StringField = this.$inject('entityEditor/Document/StringField');
+    this.StringField = $inject('entityEditor/Document/StringField');
   });
 
   describe('#is', () => {

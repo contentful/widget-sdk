@@ -2,9 +2,6 @@ import { accountUrl } from 'Config.es6';
 import { extend, startsWith, endsWith } from 'lodash';
 import { getModule } from 'NgRegistry.es6';
 
-const $state = getModule('$state');
-const $location = getModule('$location');
-
 /**
  * @module account/UrlSyncHelper
  * @description
@@ -16,6 +13,9 @@ const $location = getModule('$location');
  */
 
 export function getGatekeeperUrl() {
+  const $state = getModule('$state');
+  const $location = getModule('$location');
+
   const webappUrl = $location.url();
   const baseUrl = $state.href('account');
 
@@ -42,6 +42,9 @@ export function getGatekeeperUrl() {
  * @param {string} gkUrl
  */
 export function updateWebappUrl(gkUrl = '') {
+  const $state = getModule('$state');
+  const $location = getModule('$location');
+
   gkUrl = endsWith(gkUrl, '/') ? gkUrl.substr(0, gkUrl.length - 1) : gkUrl;
 
   const baseUrl = $state.href($state.current.name, { pathSuffix: '' });

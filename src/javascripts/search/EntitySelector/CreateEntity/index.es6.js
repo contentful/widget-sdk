@@ -9,8 +9,6 @@ import * as logger from 'services/logger.es6';
 
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
 
-const entityCreator = getModule('entityCreator');
-
 export const entityTypes = {
   Entry: 'Entry',
   Asset: 'Asset'
@@ -87,6 +85,8 @@ CreateAsset.propTypes = {
 };
 
 async function onSelectHandler(contentTypeId, cb) {
+  const entityCreator = getModule('entityCreator');
+
   const createEntity = () =>
     contentTypeId !== null ? entityCreator.newEntry(contentTypeId) : entityCreator.newAsset();
   try {

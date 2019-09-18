@@ -1,4 +1,4 @@
-import * as sinon from 'test/helpers/sinon';
+import sinon from 'sinon';
 import _ from 'lodash';
 
 /**

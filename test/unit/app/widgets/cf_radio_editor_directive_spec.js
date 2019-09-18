@@ -1,18 +1,18 @@
-'use strict';
-
 import $ from 'jquery';
+import sinon from 'sinon';
+import { $initialize, $compile, $apply, $inject } from 'test/utils/ng';
 
 describe('cfRadioEditor Directive', () => {
   let fieldApi;
 
-  beforeEach(function() {
-    module('contentful/test');
+  beforeEach(async function() {
+    await $initialize(this.system);
 
-    this.widgetApi = this.$inject('mocks/widgetApi').create();
+    this.widgetApi = $inject('mocks/widgetApi').create();
     fieldApi = this.widgetApi.field;
 
     this.compile = function() {
-      return this.$compile(
+      return $compile(
         '<cf-radio-editor />',
         {},
         {
@@ -66,7 +66,7 @@ describe('cfRadioEditor Directive', () => {
     expect(element.find('input:checked').length).toBe(0);
 
     this.widgetApi.fieldProperties.value$.set('value');
-    this.$apply();
+    $apply();
     expect(element.find('input:checked').next()[0].firstChild.nodeValue).toEqual('value');
   });
 
@@ -75,7 +75,7 @@ describe('cfRadioEditor Directive', () => {
     const input = this.compile().find('input');
     expect(input.prop('disabled')).toBe(false);
     this.widgetApi.fieldProperties.isDisabled$.set(true);
-    this.$apply();
+    $apply();
     expect(input.prop('disabled')).toBe(true);
   });
 

@@ -1,4 +1,5 @@
-'use strict';
+import sinon from 'sinon';
+import { $initialize, $inject } from 'test/utils/ng';
 
 describe('ListViewsController', () => {
   let $scope, resetList;
@@ -6,20 +7,20 @@ describe('ListViewsController', () => {
     $scope = resetList = null;
   });
 
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.constant('data/ListViewPersistor.es6', {
-        default: () => ({
-          read: () => ({ from_qs: 'test' }),
-          save: () => {}
-        })
-      });
+  beforeEach(async function() {
+    this.system.set('data/ListViewPersistor.es6', {
+      default: () => ({
+        read: () => ({ from_qs: 'test' }),
+        save: () => {}
+      })
     });
 
-    $scope = Object.assign(this.$inject('$rootScope').$new(), { context: {} });
+    await $initialize(this.system);
+
+    $scope = Object.assign($inject('$rootScope').$new(), { context: {} });
     resetList = sinon.stub();
 
-    this.$inject('$controller')('ListViewsController', {
+    $inject('$controller')('ListViewsController', {
       $scope,
       entityType: 'Entry',
       getBlankView: () => ({ id: 'blankView' }),

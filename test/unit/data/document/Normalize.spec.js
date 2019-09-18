@@ -3,7 +3,6 @@ import { get, set } from 'lodash';
 
 describe('data/document/Normalize#normalize', () => {
   beforeEach(function() {
-    module('contentful/test');
     this.otDoc = {
       setValueAt: (path, value) => {
         set(this.snapshot, path, value);

@@ -1,3 +1,7 @@
+import sinon from 'sinon';
+import { $initialize } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
+
 describe('Space Wizard action creators', function() {
   beforeEach(async function() {
     this.organization = {
@@ -68,50 +72,50 @@ describe('Space Wizard action creators', function() {
       return action(...args)(this.stubs.dispatch);
     };
 
-    module('contentful/test', $provide => {
-      $provide.value('services/ResourceService.es6', {
-        default: () => {
-          return {
-            get: this.stubs.ResourceService_get
-          };
-        }
-      });
-
-      $provide.value('data/EndpointFactory.es6', {
-        createOrganizationEndpoint: this.stubs.createOrganizationEndpoint,
-        createSpaceEndpoint: this.stubs.createSpaceEndpoint
-      });
-
-      $provide.value('account/pricing/PricingDataProvider.es6', {
-        getSpaceRatePlans: this.stubs.getSpaceRatePlans,
-        changeSpace: this.stubs.changeSpace,
-        getSubscriptionPlans: this.stubs.getSubscriptionPlans,
-        calculateTotalPrice: this.stubs.calculateTotalPrice
-      });
-
-      $provide.constant('client', {
-        createSpace: this.stubs.createSpace
-      });
-
-      $provide.value('data/CMA/ApiKeyRepo.es6', {
-        default: () => {
-          return {
-            create: this.stubs.ApiKeyRepo_create
-          };
-        }
-      });
-
-      $provide.value('services/SpaceTemplateLoader.es6', {
-        getTemplatesList: this.stubs.getTemplatesList
-      });
+    this.system.set('services/ResourceService.es6', {
+      default: () => {
+        return {
+          get: this.stubs.ResourceService_get
+        };
+      }
     });
 
-    this.mockService('services/TokenStore.es6', {
+    this.system.set('data/EndpointFactory.es6', {
+      createOrganizationEndpoint: this.stubs.createOrganizationEndpoint,
+      createSpaceEndpoint: this.stubs.createSpaceEndpoint
+    });
+
+    this.system.set('account/pricing/PricingDataProvider.es6', {
+      getSpaceRatePlans: this.stubs.getSpaceRatePlans,
+      changeSpace: this.stubs.changeSpace,
+      getSubscriptionPlans: this.stubs.getSubscriptionPlans,
+      calculateTotalPrice: this.stubs.calculateTotalPrice
+    });
+
+    this.system.set('data/CMA/ApiKeyRepo.es6', {
+      default: () => {
+        return {
+          create: this.stubs.ApiKeyRepo_create
+        };
+      }
+    });
+
+    this.system.set('services/SpaceTemplateLoader.es6', {
+      getTemplatesList: this.stubs.getTemplatesList
+    });
+
+    this.system.set('services/TokenStore.es6', {
       refresh: this.stubs.TokenStore_refresh
     });
 
-    this.actionCreators = this.$inject('redux/actions/spaceWizard/actionCreators.es6');
-    this.actions = this.$inject('redux/actions/spaceWizard/actions.es6');
+    this.actionCreators = await this.system.import('redux/actions/spaceWizard/actionCreators.es6');
+    this.actions = await this.system.import('redux/actions/spaceWizard/actions.es6');
+
+    await $initialize(this.system, $provide => {
+      $provide.constant('client', {
+        createSpace: this.stubs.createSpace
+      });
+    });
   });
 
   describe('fetchSpacePlans', function() {

@@ -1,9 +1,10 @@
 import _ from 'lodash';
 
 describe('Generic transformer', () => {
-  beforeEach(function() {
-    module('contentful/test');
-    this.transformer = this.$inject('analytics/snowplow/transformers/Generic.es6').default;
+  beforeEach(async function() {
+    this.transformer = (await this.system.import(
+      'analytics/snowplow/transformers/Generic.es6'
+    )).default;
     this.baseObj = {
       userId: 'user-1',
       organizationId: 'org',

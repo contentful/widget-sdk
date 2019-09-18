@@ -1,3 +1,4 @@
+import sinon from 'sinon';
 import describeEntity from './entity';
 import describeArchivable from './archivable';
 import { describeResource, describeGetResource, describeContentEntity } from './space_resource';
@@ -34,9 +35,9 @@ export default function describeEntry() {
       fields: 'hey ho'
     });
 
-    it('posts to server', function*() {
+    it('posts to server', async function() {
       this.request.respond(serverData);
-      const resource = yield this.space.createEntry('123', { name: 'my resource' });
+      const resource = await this.space.createEntry('123', { name: 'my resource' });
       sinon.assert.calledWith(this.request, {
         method: 'POST',
         url: '/spaces/42/entries',
@@ -46,19 +47,19 @@ export default function describeEntry() {
       expect(resource.getId()).toEqual('43');
     });
 
-    it('identical object is retrieved by .getId()', function*() {
+    it('identical object is retrieved by .getId()', async function() {
       this.request.respond(serverData);
-      const resource = yield this.space.createEntry('123', { name: 'my resource' });
+      const resource = await this.space.createEntry('123', { name: 'my resource' });
       expect(resource.getId()).toEqual('43');
     });
 
-    it('updates with id given', function*() {
+    it('updates with id given', async function() {
       const newData = {
         name: 'my resource',
         sys: { id: '55' }
       };
       this.request.respond(serverData);
-      yield this.space.createEntry('123', newData);
+      await this.space.createEntry('123', newData);
       sinon.assert.calledWith(this.request, {
         method: 'PUT',
         url: '/spaces/42/entries/55',

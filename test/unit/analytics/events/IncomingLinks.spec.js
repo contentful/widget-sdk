@@ -1,18 +1,15 @@
 import _ from 'lodash';
 import sinon from 'sinon';
-import { createIsolatedSystem } from 'test/helpers/system-js';
 
 describe('IncomingLinks', () => {
-  beforeEach(function*() {
-    const system = createIsolatedSystem();
-
+  beforeEach(async function() {
     this.analytics = {
       track: sinon.stub()
     };
 
-    system.set('analytics/Analytics.es6', this.analytics);
+    this.system.set('analytics/Analytics.es6', this.analytics);
 
-    this.incomingLinksEvents = yield system.import('analytics/events/IncomingLinks.es6');
+    this.incomingLinksEvents = await this.system.import('analytics/events/IncomingLinks.es6');
   });
 
   describe('onIncomingLinkClick', () => {

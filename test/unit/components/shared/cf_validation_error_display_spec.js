@@ -1,4 +1,5 @@
-'use strict';
+import sinon from 'sinon';
+import { $initialize, $inject } from 'test/utils/ng';
 
 describe('ErrorPathController', () => {
   let controller, scope, attrs;
@@ -7,13 +8,14 @@ describe('ErrorPathController', () => {
     controller = scope = attrs = null;
   });
 
-  beforeEach(module('contentful/test'));
+  beforeEach(async function() {
+    const { default: errorMessageBuilder } = await this.system.import(
+      'services/errorMessageBuilder/errorMessageBuilder.es6'
+    );
+    await $initialize(this.system);
 
-  beforeEach(function() {
-    const $rootScope = this.$inject('$rootScope');
-    const $controller = this.$inject('$controller');
-    const errorMessageBuilder = this.$inject('services/errorMessageBuilder/errorMessageBuilder.es6')
-      .default;
+    const $rootScope = $inject('$rootScope');
+    const $controller = $inject('$controller');
 
     scope = $rootScope.$new();
 

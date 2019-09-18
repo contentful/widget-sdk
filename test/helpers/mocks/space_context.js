@@ -1,6 +1,9 @@
-import * as sinon from 'test/helpers/sinon';
-import createMockEndpoint from 'test/helpers/mocks/SpaceEndpoint';
+import sinon from 'sinon';
+import { stubAll } from 'test/utils/sinon';
+import createMockEndpoint from 'test/utils/createSpaceEndpointMock';
 import APIClient from 'data/APIClient.es6';
+import * as CTRepo from 'data/ContentTypeRepo/Published.es6';
+import createApiKeyRepo from 'data/CMA/ApiKeyRepo.es6';
 
 /**
  * @ngdoc service
@@ -26,22 +29,20 @@ import APIClient from 'data/APIClient.es6';
 angular.module('contentful/mocks').factory('mocks/spaceContext', [
   'spaceContext',
   'cfStub',
-  'data/ContentTypeRepo/Published.es6',
   'mocks/entityEditor/Document',
-  'data/CMA/ApiKeyRepo.es6',
-  (spaceContext, cfStub, CTRepo, { create: createDocument }, { default: createApiKeyRepo }) => {
+  (spaceContext, cfStub, { create: createDocument }) => {
     return {
       init: init
     };
 
     function init() {
-      const spaceContextMock = sinon.stubAll(spaceContext);
+      const spaceContextMock = stubAll(spaceContext);
 
-      spaceContextMock.publishedCTs = sinon.stubAll(CTRepo.create());
+      spaceContextMock.publishedCTs = stubAll(CTRepo.create());
 
       const space = cfStub.space('test');
       space.environmentMeta = {};
-      spaceContextMock.space = sinon.stubAll(space);
+      spaceContextMock.space = stubAll(space);
 
       spaceContextMock.docPool = {
         get: function(entity, _contentType) {

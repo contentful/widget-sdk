@@ -10,9 +10,9 @@ import ContentPreviewListPage, {
 } from '../ContentPreviewListPage.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
-const spaceContext = getModule('spaceContext');
-
 const ContentPreviewsFetcher = createFetcherComponent(() => {
+  const spaceContext = getModule('spaceContext');
+
   return spaceContext.contentPreview.getAll().then(previews => values(previews));
 });
 

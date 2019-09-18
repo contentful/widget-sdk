@@ -1,7 +1,6 @@
 describe('Snowplow schemas service', () => {
-  beforeEach(function() {
-    module('contentful/test');
-    this.getSchema = this.$inject('analytics/snowplow/Schemas.es6').getSchema;
+  beforeEach(async function() {
+    this.getSchema = (await this.system.import('analytics/snowplow/Schemas.es6')).getSchema;
   });
 
   describe('#getSchema()', () => {

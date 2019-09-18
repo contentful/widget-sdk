@@ -1,19 +1,20 @@
-import * as sinon from 'test/helpers/sinon';
+import sinon from 'sinon';
 import _ from 'lodash';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
 
 describe('EntitySelectorController', () => {
-  beforeEach(function() {
-    module('contentful/test');
+  beforeEach(async function() {
+    await $initialize(this.system);
 
-    const $rootScope = this.$inject('$rootScope');
-    const $controller = this.$inject('$controller');
-    const $timeout = this.$inject('$timeout');
+    const $rootScope = $inject('$rootScope');
+    const $controller = $inject('$controller');
+    const $timeout = $inject('$timeout');
 
-    this.spaceContext = this.$inject('mocks/spaceContext').init();
+    this.spaceContext = $inject('mocks/spaceContext').init();
     this.spaceContext.publishedCTs.getAllBare.returns([]);
     this.spaceContext.space.getEntries.defers();
 
-    this.entitySelector = this.$inject('entitySelector');
+    this.entitySelector = $inject('entitySelector');
 
     this.fetch = sinon.stub().resolves({ items: [] });
 
@@ -27,14 +28,14 @@ describe('EntitySelectorController', () => {
         labels
       });
       this.ctrl = $controller('EntitySelectorController', { $scope: this.scope });
-      this.$apply();
+      $apply();
     };
 
     this.loadMore = function() {
       $timeout.flush();
       this.scope.paginator.isAtLast = _.constant(false);
       this.scope.loadMore();
-      this.$apply();
+      $apply();
     };
   });
 
@@ -59,7 +60,7 @@ describe('EntitySelectorController', () => {
     it('responds to "forceSearch" event', function() {
       this.createController();
       this.scope.$broadcast('forceSearch');
-      this.$apply();
+      $apply();
       // (1) init (2) forced
       sinon.assert.calledTwice(this.fetch);
     });
@@ -67,27 +68,27 @@ describe('EntitySelectorController', () => {
     it('triggers when term >= 1', function() {
       this.createController();
       this.scope.view.searchText = '';
-      this.$apply();
+      $apply();
       this.scope.view.searchText = '1';
-      this.$apply();
+      $apply();
       sinon.assert.calledTwice(this.fetch);
     });
 
     it('triggers when clearing', function() {
       this.createController();
       this.scope.view.searchText = '4444';
-      this.$apply();
+      $apply();
       this.scope.view.searchText = '333';
-      this.$apply();
+      $apply();
       sinon.assert.calledThrice(this.fetch);
     });
 
     it('triggers when deleting the value', function() {
       this.createController();
       this.scope.view.searchText = '4444';
-      this.$apply();
+      $apply();
       delete this.scope.view.searchText;
-      this.$apply();
+      $apply();
       sinon.assert.calledThrice(this.fetch);
     });
   });

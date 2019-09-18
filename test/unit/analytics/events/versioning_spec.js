@@ -1,6 +1,6 @@
-'use strict';
-
 import { cloneDeep } from 'lodash';
+import sinon from 'sinon';
+import { it } from 'test/utils/dsl';
 
 describe('Tracking versioning', () => {
   const data = {
@@ -14,7 +14,7 @@ describe('Tracking versioning', () => {
     }
   };
 
-  beforeEach(function() {
+  beforeEach(async function() {
     this.analytics = {
       track: sinon.stub(),
       getSessionData: sinon
@@ -25,12 +25,12 @@ describe('Tracking versioning', () => {
 
     this.openConfirmator = sinon.stub().resolves(true);
 
-    module('contentful/test', $provide => {
-      $provide.value('analytics/Analytics.es6', this.analytics);
-      $provide.value('app/common/UnsavedChangesDialog.es6', () => this.openConfirmator);
+    this.system.set('analytics/Analytics.es6', this.analytics);
+    this.system.set('app/common/UnsavedChangesDialog.es6', {
+      default: () => this.openConfirmator
     });
 
-    this.track = this.$inject('analytics/events/versioning.es6');
+    this.track = await this.system.import('analytics/events/versioning.es6');
     this.track.setData(data.entry, data.snapshot);
 
     this.getTrackingData = () => {

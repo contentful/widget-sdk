@@ -1,16 +1,22 @@
-'use strict';
+import sinon from 'sinon';
 import _ from 'lodash';
 import $ from 'jquery';
+import { $initialize, $compile, $apply } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('LocationEditor integration', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     this.googleMaps = createGoogleMapsStub();
-    module('contentful/test', $provide => {
-      $provide.constant('utils/LazyLoader.es6', {
-        get: sinon.stub().resolves(this.googleMaps)
-      });
-      $provide.constant('lodash/throttle', _.identity);
+    this.LazyLoader = {
+      get: sinon.stub().resolves(this.googleMaps)
+    };
+
+    this.system.set('utils/LazyLoader.es6', this.LazyLoader);
+    this.system.set('lodash/throttle', {
+      default: _.identity
     });
+
+    await $initialize(this.system);
 
     this.fieldApi = {
       onValueChanged: sinon.stub().yields(),
@@ -20,7 +26,7 @@ describe('LocationEditor integration', () => {
     };
 
     this.compile = function() {
-      const el = this.$compile(
+      const el = $compile(
         '<cf-location-editor>',
         {},
         {
@@ -30,7 +36,7 @@ describe('LocationEditor integration', () => {
       // Enable visibility checks. If not attached to body all elemnts
       // are always hidden.
       el.appendTo('body');
-      this.$apply();
+      $apply();
       return extendWithUiMethods(el, this);
     };
   });
@@ -51,7 +57,7 @@ describe('LocationEditor integration', () => {
         .find('input[name="inputMethod"][ng-value=COORDINATES]')
         .prop('checked', true)
         .click();
-      this.$apply();
+      $apply();
 
       expect(this.el.find('input[name=lat]').is(':visible')).toEqual(true);
       expect(this.el.find('input[name=lon]').is(':visible')).toEqual(true);
@@ -62,14 +68,14 @@ describe('LocationEditor integration', () => {
         .find('input[name="inputMethod"][ng-value=COORDINATES]')
         .prop('checked', true)
         .click();
-      this.$apply();
+      $apply();
       expect(this.el.find('input[name=address]').is(':visible')).toEqual(false);
 
       this.el
         .find('input[name="inputMethod"][ng-value=ADDRESS]')
         .prop('checked', true)
         .click();
-      this.$apply();
+      $apply();
       expect(this.el.find('input[name=address]').is(':visible')).toEqual(true);
     });
   });
@@ -84,7 +90,7 @@ describe('LocationEditor integration', () => {
     it('populates address search from initial location', function() {
       sinon.assert.calledWith(this.geocode, { location: { lat: 1, lng: 2 } });
       this.geocode.callArgWith(1, [makeSearchResult('ADDRESS')]);
-      this.$apply();
+      $apply();
       expect(this.el.getInputValue('address')).toEqual('ADDRESS');
     });
 
@@ -99,7 +105,7 @@ describe('LocationEditor integration', () => {
       const results = ['A 1', 'A 2', 'A 3'];
       this.geocode.callArgWith(1, results.map(makeSearchResult));
 
-      this.$apply();
+      $apply();
       const resultItems = this.el
         .find('[data-test-id=search-results] li')
         .map(function() {
@@ -113,12 +119,12 @@ describe('LocationEditor integration', () => {
       this.el.setInputValue('address', 'something');
 
       this.geocode.callArgWith(1, [makeSearchResult('ADDRESS')]);
-      this.$apply();
+      $apply();
       const resultElement = this.el.find('[data-test-id=search-results]');
       expect(resultElement.is(':visible')).toBe(true);
 
       this.el.setInputValue('address', '');
-      this.$apply();
+      $apply();
       expect(resultElement.is(':visible')).toBe(false);
     });
 
@@ -129,10 +135,10 @@ describe('LocationEditor integration', () => {
           makeSearchResult('A 1', 0, 0),
           makeSearchResult('A 2', -1, -2)
         ]);
-        this.$apply();
+        $apply();
 
         this.el.find('[data-test-id=search-results] li:contains(A 2)').click();
-        this.$apply();
+        $apply();
       });
 
       it('updates location input', function() {
@@ -152,14 +158,14 @@ describe('LocationEditor integration', () => {
     it('shows error message when there are no results', function() {
       this.el.setInputValue('address', 'something');
       this.geocode.callArgWith(1, []);
-      this.$apply();
+      $apply();
       expect(this.el.findStatus('address-not-found').length).toBe(1);
     });
 
     it('shows error message when map APIs errors', function() {
       this.el.setInputValue('address', 'something');
       this.geocode.callArgWith(2, new Error('ERROR'));
-      this.$apply();
+      $apply();
       expect(this.el.findStatus('address-search-failed').length).toBe(1);
     });
   });
@@ -172,7 +178,7 @@ describe('LocationEditor integration', () => {
 
     it('updated when value changes', function() {
       this.fieldApi.onValueChanged.yield({ lat: -1, lon: -2 });
-      this.$apply();
+      $apply();
       expect(this.el.getInputValue('lat')).toEqual('-1');
       expect(this.el.getInputValue('lon')).toEqual('-2');
     });
@@ -213,7 +219,7 @@ describe('LocationEditor integration', () => {
       sinon.assert.calledWith(geocode, { location: { lat: -1, lng: 2 } });
 
       geocode.callArgWith(1, [{ formatted_address: 'ADDRESS' }]);
-      this.$apply();
+      $apply();
       expect(this.el.getInputValue('address')).toEqual('ADDRESS');
     });
   });
@@ -236,41 +242,39 @@ describe('LocationEditor integration', () => {
     });
 
     it('shows loading box while loading', function() {
-      const LazyLoader = this.$inject('utils/LazyLoader.es6');
-      LazyLoader.get.defers();
+      this.LazyLoader.get.defers();
       const el = this.compile();
 
       expect(el.findStatus('loading').length).toEqual(1);
 
-      LazyLoader.get.resolve(createGoogleMapsStub());
-      this.$apply();
+      this.LazyLoader.get.resolve(createGoogleMapsStub());
+      $apply();
       expect(el.findStatus('loading').length).toEqual(0);
     });
 
     it('shows initialization error when loading fails', function() {
-      const LazyLoader = this.$inject('utils/LazyLoader.es6');
-      LazyLoader.get.defers();
+      this.LazyLoader.get.defers();
       const el = this.compile();
       const alertSelector = '[data-test-id="field-editor-initialization"]';
 
       expect(el.find(alertSelector).length).toEqual(0);
 
-      LazyLoader.get.reject(new Error());
-      this.$apply();
+      this.LazyLoader.get.reject(new Error());
+      $apply();
       expect(el.find(alertSelector).length).toEqual(1);
     });
   });
 
-  function extendWithUiMethods(el, context) {
+  function extendWithUiMethods(el) {
     el.setInputValue = (name, value) => {
       el.find('[name=' + name + ']')
         .val(value)
         .trigger('change');
-      context.$apply();
+      $apply();
     };
 
     el.getInputValue = name => {
-      context.$apply();
+      $apply();
       return el.find('[name=' + name + ']').val();
     };
 

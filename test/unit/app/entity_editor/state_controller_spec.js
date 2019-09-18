@@ -1,56 +1,72 @@
-import flushPromises from '../../../helpers/flushPromises';
+import flushPromises from 'test/utils/flushPromises';
+
+import createLocaleStoreMock from 'test/utils/createLocaleStoreMock';
+import sinon from 'sinon';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
+import { beforeEach, it } from 'test/utils/dsl';
 
 describe('entityEditor/StateController', () => {
-  beforeEach(function() {
-    this.wait = async () => {
-      // TODO: Move more dependencies to use `Promise` so that we can get rid of
-      //  this monstrosity. Or let's just move tests to Jest.
-      this.$apply();
-      await flushPromises();
-      this.$apply();
-      await flushPromises();
-      this.$apply();
-    };
+  beforeEach(async function() {
     this.stubs = {
       goToPreviousSlideOrExit: sinon.stub(),
       showUnpublishedReferencesWarning: sinon.stub().returns(Promise.resolve(true))
     };
 
-    module('contentful/test', $provide => {
-      $provide.constant('navigation/SlideInNavigator/index.es6', {
-        goToPreviousSlideOrExit: this.stubs.goToPreviousSlideOrExit
-      });
+    this.registerWarningSpy = sinon.stub();
+    this.showWarningsStub = sinon.stub().resolves();
 
-      $provide.constant('app/common/ModalLauncher.es6', {
-        default: {
-          open: sinon.stub().resolves(true)
-        }
-      });
-
-      $provide.constant('app/entity_editor/UnpublishedReferencesWarning/index.es6', {
-        showUnpublishedReferencesWarning: this.stubs.showUnpublishedReferencesWarning
-      });
-
-      $provide.value('analytics/Analytics.es6', {
-        track: sinon.stub()
-      });
+    this.system.set('navigation/SlideInNavigator/index.es6', {
+      goToPreviousSlideOrExit: this.stubs.goToPreviousSlideOrExit
     });
 
-    const createDocument = this.$inject('mocks/entityEditor/Document').create;
+    this.system.set('app/common/ModalLauncher.es6', {
+      default: {
+        open: sinon.stub().resolves(true)
+      }
+    });
 
-    this.rootScope = this.$inject('$rootScope');
+    this.system.set('app/entity_editor/UnpublishedReferencesWarning/index.es6', {
+      showUnpublishedReferencesWarning: this.stubs.showUnpublishedReferencesWarning
+    });
+
+    this.system.set('services/localeStore.es6', {
+      default: createLocaleStoreMock()
+    });
+
+    this.system.set('analytics/Analytics.es6', {
+      track: sinon.stub()
+    });
+
+    this.system.set('access_control/AccessChecker/index.es6', {
+      canPerformActionOnEntity: sinon.stub.returns(true)
+    });
+
+    this.system.set('app/entity_editor/PublicationWarnings/index.es6', {
+      create: () => ({
+        register: this.registerWarningSpy,
+        show: this.showWarningsStub
+      })
+    });
+
+    this.analytics = await this.system.import('analytics/Analytics.es6');
+    this.Notification = (await this.system.import(
+      'app/entity_editor/Notifications.es6'
+    )).Notification;
+
+    await $initialize(this.system);
+
+    const createDocument = $inject('mocks/entityEditor/Document').create;
+
+    this.rootScope = $inject('$rootScope');
     this.scope = this.rootScope.$new();
-    this.scope.editorContext = this.$inject('mocks/entityEditor/Context').create();
+    this.scope.editorContext = $inject('mocks/entityEditor/Context').create();
     this.scope.entityInfo = {};
     this.scope.editorData = { widgetTrackingContexts: [] };
 
-    this.spaceContext = this.$inject('spaceContext');
+    this.spaceContext = $inject('spaceContext');
     this.spaceContext.getId = () => 'spaceid';
     this.spaceContext.getEnvironmentId = () => 'envid';
 
-    this.analytics = this.$inject('analytics/Analytics.es6');
-
-    this.Notification = this.$inject('app/entity_editor/Notifications.es6').Notification;
     this.notify = sinon.stub();
 
     this.assertErrorNotification = function(action, error) {
@@ -81,7 +97,7 @@ describe('entityEditor/StateController', () => {
 
     this.validator = this.scope.editorContext.validator;
 
-    const $controller = this.$inject('$controller');
+    const $controller = $inject('$controller');
     this.controller = $controller('entityEditor/StateController', {
       $scope: this.scope,
       notify: this.notify,
@@ -103,9 +119,8 @@ describe('entityEditor/StateController', () => {
     });
 
     it('makes delete request', async function() {
-      this.controller.delete.execute();
-
-      await this.wait();
+      await this.controller.delete.execute();
+      $apply();
 
       sinon.assert.calledWith(
         this.spaceEndpoint,
@@ -118,27 +133,23 @@ describe('entityEditor/StateController', () => {
     });
 
     it('sends success notification', async function() {
-      this.controller.delete.execute();
+      await this.controller.delete.execute();
 
-      await this.wait();
+      $apply();
 
       this.assertSuccessNotification('delete');
     });
 
     it('sends failure notification with API error', async function() {
       this.spaceEndpoint.rejects('ERROR');
-      this.controller.delete.execute();
-
-      await this.wait();
-
+      await this.controller.delete.execute();
+      $apply();
       this.assertErrorNotification('delete', 'ERROR');
     });
 
     it('navigates to the previous slide-in entity or closes the current state as a fallback', async function() {
-      this.controller.delete.execute();
-
-      await this.wait();
-
+      await this.controller.delete.execute();
+      $apply();
       sinon.assert.calledOnceWith(this.stubs.goToPreviousSlideOrExit, 'delete');
     });
   });
@@ -151,6 +162,7 @@ describe('entityEditor/StateController', () => {
         version: 42,
         publishedVersion: 43
       });
+      $apply();
     });
 
     it('sets current state to "published"', function() {
@@ -170,9 +182,9 @@ describe('entityEditor/StateController', () => {
         this.action = this.controller.secondary[0];
       });
 
-      it('unpublishes and archives the entity', function() {
-        this.action.execute();
-        this.$apply();
+      it('unpublishes and archives the entity', async function() {
+        await this.action.execute();
+        $apply();
 
         sinon.assert.calledWith(
           this.spaceEndpoint,
@@ -198,9 +210,9 @@ describe('entityEditor/StateController', () => {
         this.action = this.controller.secondary[1];
       });
 
-      it('unpublishes the entity', function() {
-        this.action.execute();
-        this.$apply();
+      it('unpublishes the entity', async function() {
+        await this.action.execute();
+        $apply();
 
         sinon.assert.calledWith(
           this.spaceEndpoint,
@@ -221,9 +233,10 @@ describe('entityEditor/StateController', () => {
 
     describe('primary action publish', () => {
       it('publishes entity', async function() {
-        this.controller.primary.execute();
+        await this.controller.primary.execute();
 
-        await this.wait();
+        await flushPromises();
+        $apply();
 
         sinon.assert.calledOnce(this.spaceEndpoint);
         sinon.assert.calledWith(
@@ -238,17 +251,18 @@ describe('entityEditor/StateController', () => {
       });
 
       it('notifies on success', async function() {
-        this.controller.primary.execute();
-
-        await this.wait();
+        await this.controller.primary.execute();
+        await flushPromises();
+        $apply();
 
         this.assertSuccessNotification('publish');
       });
 
       it('runs the validator', async function() {
-        this.controller.primary.execute();
+        await this.controller.primary.execute();
 
-        await this.wait();
+        await flushPromises();
+        $apply();
 
         sinon.assert.calledOnce(this.validator.run);
       });
@@ -288,9 +302,9 @@ describe('entityEditor/StateController', () => {
 
         function itTracksThePublishEventWithOrigin(eventOrigin) {
           it('tracks the publish event', async function() {
-            this.controller.primary.execute();
-
-            await this.wait();
+            await this.controller.primary.execute();
+            await flushPromises();
+            $apply();
 
             sinon.assert.calledWithExactly(this.analytics.track, 'entry:publish', {
               eventOrigin: eventOrigin,
@@ -315,9 +329,10 @@ describe('entityEditor/StateController', () => {
         });
 
         it('does not track the publish event', async function() {
-          this.controller.primary.execute();
+          await this.controller.primary.execute();
 
-          await this.wait();
+          await flushPromises();
+          $apply();
 
           sinon.assert.notCalled(this.spaceContext.publishedCTs.get);
           sinon.assert.notCalled(this.analytics.track);
@@ -326,9 +341,9 @@ describe('entityEditor/StateController', () => {
 
       it('sends notification if validation failed', async function() {
         this.validator.run.returns(false);
-        this.controller.primary.execute();
-
-        await this.wait();
+        await this.controller.primary.execute();
+        await flushPromises();
+        $apply();
 
         sinon.assert.calledWith(
           this.notify,
@@ -338,18 +353,20 @@ describe('entityEditor/StateController', () => {
 
       it('does not publish if validation failed', async function() {
         this.validator.run.returns(false);
-        this.controller.primary.execute();
 
-        await this.wait();
+        await this.controller.primary.execute();
+        await flushPromises();
+        $apply();
 
         sinon.assert.notCalled(this.spaceEndpoint);
       });
 
       it('sends notification on server error', async function() {
         this.spaceEndpoint.rejects('ERROR');
-        this.controller.primary.execute();
+        await this.controller.primary.execute();
 
-        await this.wait();
+        await flushPromises();
+        $apply();
 
         this.assertErrorNotification('publish', 'ERROR');
       });
@@ -365,9 +382,8 @@ describe('entityEditor/StateController', () => {
       });
 
       it('archives entity', async function() {
-        this.action.execute();
-
-        await this.wait();
+        await this.action.execute();
+        $apply();
 
         sinon.assert.calledWith(
           this.spaceEndpoint,
@@ -380,18 +396,16 @@ describe('entityEditor/StateController', () => {
       });
 
       it('notifies on success', async function() {
-        this.action.execute();
-
-        await this.wait();
+        await this.action.execute();
+        $apply();
 
         this.assertSuccessNotification('archive');
       });
 
       it('notifies on failure', async function() {
         this.spaceEndpoint.rejects('ERROR');
-        this.action.execute();
-
-        await this.wait();
+        await this.action.execute();
+        $apply();
 
         this.assertErrorNotification('archive', 'ERROR');
       });
@@ -418,7 +432,7 @@ describe('entityEditor/StateController', () => {
 
       sinon.assert.notCalled(this.doc.reverter.revert);
       this.controller.revertToPrevious.execute();
-      this.$apply();
+      $apply();
 
       sinon.assert.calledOnce(this.doc.reverter.revert);
       this.assertSuccessNotification('revert');
@@ -429,7 +443,7 @@ describe('entityEditor/StateController', () => {
 
       sinon.assert.notCalled(this.doc.reverter.revert);
       this.controller.revertToPrevious.execute();
-      this.$apply();
+      $apply();
 
       sinon.assert.calledOnce(this.doc.reverter.revert);
       this.assertErrorNotification('revert', 'ERROR');
@@ -437,9 +451,9 @@ describe('entityEditor/StateController', () => {
   });
 
   describe('publication warnings', () => {
-    it('shows publication warnings before actual action', function() {
-      this.$apply();
-      this.controller.primary.execute();
+    it('shows publication warnings before actual action', async function() {
+      $apply();
+      await this.controller.primary.execute();
 
       sinon.assert.calledOnce(this.stubs.showUnpublishedReferencesWarning);
     });

@@ -1,8 +1,9 @@
-import flushPromises from 'test/helpers/flushPromises';
+import sinon from 'sinon';
+import flushPromises from 'test/utils/flushPromises';
 import React from 'react';
 import { mount } from 'enzyme';
-
-import sinon from 'sinon';
+import { $initialize } from 'test/utils/ng';
+import { beforeEach, it } from 'test/utils/dsl';
 
 const sandbox = sinon.sandbox.create();
 
@@ -29,7 +30,16 @@ describe('FetchEntity', () => {
   let RequestStatus;
 
   beforeEach(async function() {
-    module('contentful/test', $provide => {
+    this.system.set('data/CMA/EntityState.es6', {
+      stateName: sinon.stub().returns('draft'),
+      getState: sinon.stub()
+    });
+
+    const FetchEntityModule = await this.system.import('app/widgets/shared/FetchEntity/index.es6');
+    FetchEntity = FetchEntityModule.default;
+    RequestStatus = FetchEntityModule.RequestStatus;
+
+    await $initialize(this.system, $provide => {
       $provide.constant('EntityHelpers', {
         newForLocale: sinon
           .stub()
@@ -49,16 +59,7 @@ describe('FetchEntity', () => {
               .returns(Promise.resolve('DESCRIPTION'))
           })
       });
-
-      $provide.constant('data/CMA/EntityState.es6', {
-        stateName: sinon.stub().returns('draft'),
-        getState: sinon.stub()
-      });
     });
-
-    const FetchEntityModule = this.$inject('app/widgets/shared/FetchEntity/index.es6');
-    FetchEntity = FetchEntityModule.default;
-    RequestStatus = FetchEntityModule.RequestStatus;
 
     this.entity = {
       sys: {

@@ -12,8 +12,6 @@ import {
 
 import { getModule } from 'NgRegistry.es6';
 
-const $rootScope = getModule('$rootScope');
-
 const DEPLOYMENT_PROVIDERS = {
   NETLIFY: 'netlify',
   HEROKU: 'heroku'
@@ -61,6 +59,8 @@ export default class DeploymentForm extends React.Component {
   };
 
   onComplete = event => {
+    const $rootScope = getModule('$rootScope');
+
     const { url } = this.state;
     const prefix = getStoragePrefix();
 

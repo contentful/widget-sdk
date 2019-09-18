@@ -1,6 +1,7 @@
 import { registerDirective } from 'NgRegistry.es6';
+import React from 'react';
 
-import sidepanelTrigger from 'navigation/Sidepanel/Trigger.es6';
+import SidepanelTrigger from 'navigation/Sidepanel/Trigger.es6';
 
 export default function register() {
   /**
@@ -13,12 +14,18 @@ export default function register() {
     () => ({
       restrict: 'E',
       template: '<cf-component-bridge component=sidepanelComponent>',
-      scope: {},
+      scope: {
+        onClick: '=toggleSidePanel'
+      },
 
       controller: [
         '$scope',
-        $scope => {
-          $scope.sidepanelComponent = sidepanelTrigger();
+        'spaceContext',
+        ($scope, spaceContext) => {
+          $scope.sidepanelComponent = React.createElement(SidepanelTrigger, {
+            onClick: $scope.onClick,
+            spaceContext
+          });
         }
       ]
     })

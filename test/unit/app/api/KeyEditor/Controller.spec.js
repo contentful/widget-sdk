@@ -1,33 +1,40 @@
 import ReactTestUtils from 'react-dom/test-utils';
 import _ from 'lodash';
+import sinon from 'sinon';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
 
 describe('app/api/KeyEditor/Controller.es6', () => {
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.value('navigation/closeState', sinon.spy());
-      $provide.value('app/api/KeyEditor/BoilerplateCode.es6', {
-        get: sinon.stub().resolves([
-          {
-            id: 'BP_ID',
-            instructions: '',
-            sourceUrl: sinon.stub().returns('https://downloadlink')
-          }
-        ])
-      });
+  beforeEach(async function() {
+    this.system.set('app/api/KeyEditor/BoilerplateCode.es6', {
+      get: sinon.stub().resolves([
+        {
+          id: 'BP_ID',
+          instructions: '',
+          sourceUrl: sinon.stub().returns('https://downloadlink')
+        }
+      ])
     });
 
-    const attachController = this.$inject('app/api/KeyEditor/Controller.es6').default;
-    const template = this.$inject('app/api/KeyEditor/Template.es6').default();
-    const $compile = this.$inject('$compile');
-    const $rootScope = this.$inject('$rootScope');
-    const $state = this.$inject('$state');
+    this.system.set('access_control/AccessChecker/index.es6', {
+      canModifyApiKeys: sinon.stub().returns(true),
+      shouldDisable: sinon.stub(),
+      getResponseByActionAndEntity: sinon.stub()
+    });
+
+    const attachController = (await this.system.import('app/api/KeyEditor/Controller.es6')).default;
+    const template = (await this.system.import('app/api/KeyEditor/Template.es6')).default();
+
+    await $initialize(this.system, $provide => {
+      $provide.value('navigation/closeState', sinon.spy());
+    });
+
+    const $compile = $inject('$compile');
+    const $rootScope = $inject('$rootScope');
+    const $state = $inject('$state');
 
     sinon.stub($state, 'go').resolves();
 
-    this.accessChecker = this.$inject('access_control/AccessChecker');
-    this.accessChecker.canModifyApiKeys = sinon.stub().returns(true);
-
-    this.spaceContext = this.$inject('mocks/spaceContext').init();
+    this.spaceContext = $inject('mocks/spaceContext').init();
     this.apiKeyRepo = this.spaceContext.apiKeyRepo;
 
     this.compile = apiKey => {
@@ -50,6 +57,7 @@ describe('app/api/KeyEditor/Controller.es6', () => {
       attachController(scope, apiKey);
       const el = $compile(template)(scope).get(0);
       scope.$apply();
+
       return {
         input: {
           name: findInput(el, 'name'),
@@ -77,7 +85,7 @@ describe('app/api/KeyEditor/Controller.es6', () => {
 
   describe('delete action', () => {
     it('removes api key from repo', function() {
-      const $state = this.$inject('$state');
+      const $state = $inject('$state');
       this.apiKeyRepo.remove = sinon.stub().resolves();
 
       const editor = this.compile();
@@ -91,14 +99,14 @@ describe('app/api/KeyEditor/Controller.es6', () => {
   describe('save action', () => {
     it('saves key to repo', function() {
       this.apiKeyRepo.save = sinon.spy(data => {
-        return this.$inject('$q').resolve(data);
+        return $inject('$q').resolve(data);
       });
 
       const editor = this.compile();
 
       editor.input.name.value = 'NEW NAME';
       ReactTestUtils.Simulate.change(editor.input.name);
-      this.$apply();
+      $apply();
 
       editor.actions.save().click();
       sinon.assert.calledWith(

@@ -5,19 +5,20 @@ import { getModule } from 'NgRegistry.es6';
 import { track } from 'analytics/Analytics.es6';
 import * as logger from 'services/logger.es6';
 
-const $state = getModule('$state');
-
 export default class ConceptVideoWidget extends React.Component {
   state = {
     playVideo: () => {}
   };
 
-  onStart = () =>
+  onStart = () => {
+    const $state = getModule('$state');
+
     track('element:click', {
       elementId: 'concept_video_play',
       groupId: 'author_editor_continuous_onboarding',
       fromState: $state.current.name
     });
+  };
 
   onError = error =>
     logger.logError('Wistia video player', {

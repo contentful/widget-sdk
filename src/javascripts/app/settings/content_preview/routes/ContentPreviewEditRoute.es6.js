@@ -9,9 +9,9 @@ import ContentPreviewFormPage, {
 } from '../ContentPreviewFormPage.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
-const spaceContext = getModule('spaceContext');
-
 const ContentTypesFetcher = createFetcherComponent(({ contentPreviewId }) => {
+  const spaceContext = getModule('spaceContext');
+
   return Promise.all([
     spaceContext.publishedCTs.refreshBare(),
     spaceContext.contentPreview.get(contentPreviewId)
@@ -26,6 +26,8 @@ export default class ContentPreviewEditRoute extends Component {
   };
 
   render() {
+    const spaceContext = getModule('spaceContext');
+
     return (
       <AdminOnly>
         <ContentTypesFetcher contentPreviewId={this.props.contentPreviewId}>

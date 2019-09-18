@@ -1,22 +1,29 @@
-import * as sinon from 'test/helpers/sinon';
+import sinon from 'sinon';
 import _ from 'lodash';
+import { $initialize, $inject } from 'test/utils/ng';
 
 describe('Promised loader service', () => {
   let loader, stubs, $rootScope, $q;
 
-  beforeEach(() => {
-    module('contentful/test', $provide => {
+  beforeEach(async function() {
+    stubs = {
+      method: sinon.stub(),
+      success: sinon.stub(),
+      error: sinon.stub(),
+      success2: sinon.stub(),
+      error2: sinon.stub()
+    };
+
+    await $initialize(this.system, $provide => {
       $provide.constant('lodash/debounce', _.debounce);
-      stubs = $provide.makeStubs(['method', 'success', 'error', 'success2', 'error2']);
     });
-    inject($injector => {
-      const PromisedLoader = $injector.get('PromisedLoader');
-      const delayedInvocationStub = $injector.get('delayedInvocationStub');
-      $rootScope = $injector.get('$rootScope');
-      $q = $injector.get('$q');
-      loader = new PromisedLoader();
-      loader._loadPromise = delayedInvocationStub(loader._loadPromise);
-    });
+
+    const PromisedLoader = $inject('PromisedLoader');
+    const delayedInvocationStub = $inject('delayedInvocationStub');
+    $rootScope = $inject('$rootScope');
+    $q = $inject('$q');
+    loader = new PromisedLoader();
+    loader._loadPromise = delayedInvocationStub(loader._loadPromise);
   });
 
   describe('load entities successfully', () => {
@@ -117,14 +124,14 @@ describe('Promised loader service', () => {
 
 describe('PromisedLoader service', () => {
   let a, b;
-  beforeEach(() => {
-    module('contentful/test', $provide => {
+  beforeEach(async function() {
+    await $initialize(this.system, $provide => {
       $provide.constant('lodash/debounce', _.debounce);
     });
-    inject(PromisedLoader => {
-      a = new PromisedLoader();
-      b = new PromisedLoader();
-    });
+
+    const PromisedLoader = $inject('PromisedLoader');
+    a = new PromisedLoader();
+    b = new PromisedLoader();
   });
 
   it('The debounced function in two Promised Loaders should be distinct', () => {

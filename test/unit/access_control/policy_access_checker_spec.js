@@ -5,9 +5,8 @@ import _ from 'lodash';
 describe('Policy Access Checker', () => {
   let pac;
 
-  beforeEach(function() {
-    module('contentful/test');
-    pac = this.$inject('access_control/AccessChecker/PolicyChecker.es6');
+  beforeEach(async function() {
+    pac = await this.system.import('access_control/AccessChecker/PolicyChecker.es6');
   });
 
   const roles = {

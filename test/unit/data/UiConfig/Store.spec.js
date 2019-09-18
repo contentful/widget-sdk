@@ -1,18 +1,22 @@
 import { cloneDeep } from 'lodash';
 
-import * as sinon from 'test/helpers/sinon';
-import createMockSpaceEndpoint from 'test/helpers/mocks/SpaceEndpoint';
+import sinon from 'sinon';
+import createMockSpaceEndpoint from 'test/utils/createSpaceEndpointMock';
+import { $initialize } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('data/UiConfig/Store.es6', () => {
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      this.trackMigrationSpy = sinon.spy();
-      $provide.value('analytics/events/SearchAndViews.es6', {
-        searchTermsMigrated: this.trackMigrationSpy
-      });
+  beforeEach(async function() {
+    this.trackMigrationSpy = sinon.spy();
+
+    this.system.set('analytics/events/SearchAndViews.es6', {
+      searchTermsMigrated: this.trackMigrationSpy
     });
 
-    const createUiConfigStore = this.$inject('data/UiConfig/Store.es6').default;
+    const { default: createUiConfigStore } = await this.system.import('data/UiConfig/Store.es6');
+
+    await $initialize(this.system);
+
     const endpoint = createMockSpaceEndpoint();
 
     this.store = endpoint.stores.ui_config;
@@ -190,9 +194,9 @@ describe('data/UiConfig/Store.es6', () => {
     });
 
     describe('migration', function() {
-      it('results in `_migrated` property in payload', function*() {
-        const api = yield this.create();
-        yield api.entries.shared.set('UPDATED ENTRY LIST VIEWS');
+      it('results in `_migrated` property in payload', async function() {
+        const api = await this.create();
+        await api.entries.shared.set('UPDATED ENTRY LIST VIEWS');
         expect(this.store.default).toEqual({
           sys: { version: 2 },
           _migrated: {

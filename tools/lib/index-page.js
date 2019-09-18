@@ -1,7 +1,7 @@
 const { h, doctype } = require('./hyperscript');
 const { create: createResolver } = require('./manifest-resolver');
 
-const DEV_ENTRY_SCRIPTS = ['vendor.js', 'templates.js', 'libs.js', 'components.js'];
+const DEV_ENTRY_SCRIPTS = ['templates.js', 'app.js'];
 
 const DEFAULT_ENTRY_SCRIPTS = ['application.min.js'];
 
@@ -88,8 +88,11 @@ function indexPage(uiVersion, config, resolve, entryScripts) {
       },
       [
         h('.client', [
-          h('cf-app-container.app-container.ng-hide', { ngShow: 'user', cfRolesForWalkMe: '' }),
-          h('div', { ngIf: '!user' }, [appLoader()])
+          h('cf-app-container.app-container.ng-hide', {
+            ngShow: 'user && appReady',
+            cfRolesForWalkMe: ''
+          }),
+          h('div', { ngIf: '!user || !appReady' }, [appLoader()])
         ])
       ].concat(entryScripts.map(src => scriptTag(resolve(src))))
     )

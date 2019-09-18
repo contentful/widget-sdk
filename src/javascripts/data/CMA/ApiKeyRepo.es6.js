@@ -1,8 +1,6 @@
 import { pick } from 'lodash';
 import { getModule } from 'NgRegistry.es6';
 
-const $q = getModule('$q');
-
 /**
  * @ngdoc service
  * @name data/CMA/ApiKeyRepo
@@ -31,6 +29,8 @@ const $q = getModule('$q');
  * @returns {ApiKeyRepo}
  */
 export default function create(spaceEndpoint) {
+  const $q = getModule('$q');
+
   // Promise to cached list of deliver keys
   let deliveryKeys = null;
 

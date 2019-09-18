@@ -1,8 +1,6 @@
 import { assign, clone } from 'lodash';
 import { getModule } from 'NgRegistry.es6';
 
-const $q = getModule('$q');
-
 const UNAUTHORIZED = 401;
 
 /**
@@ -22,6 +20,8 @@ const UNAUTHORIZED = 401;
  * @param {function(object): Promise} request
  */
 export default function wrapWithAuth(auth, request) {
+  const $q = getModule('$q');
+
   return params =>
     auth.getToken().then(token => {
       return requestWithToken(params, token, 1);

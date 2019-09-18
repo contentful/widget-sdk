@@ -9,11 +9,11 @@ import * as AssetUrlService from 'services/AssetUrlService.es6';
 import LinkOrganizer from './linkOrganizer.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const modalDialog = getModule('modalDialog');
-const entitySelector = getModule('entitySelector');
-const $state = getModule('$state');
-
 export function create(editor, locale, defaultLocaleCode, { zen }) {
+  const modalDialog = getModule('modalDialog');
+  const entitySelector = getModule('entitySelector');
+  const $state = getModule('$state');
+
   const {
     fallbackCode,
     internal_code: localeCode,

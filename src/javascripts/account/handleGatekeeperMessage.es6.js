@@ -7,12 +7,10 @@ import * as Analytics from 'analytics/Analytics.es6';
 import * as UrlSyncHelper from 'account/UrlSyncHelper.es6';
 import * as createSpace from 'services/CreateSpace.es6';
 
-const $state = getModule('$state');
-const $rootScope = getModule('$rootScope');
-const $location = getModule('$location');
-const modalDialog = getModule('modalDialog');
-
 export default function handleGatekeeperMessage(data) {
+  const $rootScope = getModule('$rootScope');
+  const $location = getModule('$location');
+
   const match = makeMessageMatcher(data);
 
   if (match('create', 'UserCancellation')) {
@@ -60,6 +58,9 @@ function makeMessageMatcher(data) {
 }
 
 function showErrorModal(data) {
+  const $state = getModule('$state');
+  const modalDialog = getModule('modalDialog');
+
   const defaultTitle = 'Something went wrong';
   const defaultMessage =
     'An error has occurred. We have been automatically notified and will investigate. If it re-occurs, please contact support.';
@@ -96,6 +97,8 @@ function showNotification(data) {
 }
 
 function trackGKEvent({ event, data: eventData }) {
+  const $state = getModule('$state');
+
   if (event && eventData) {
     const newData = Object.assign({}, eventData);
 

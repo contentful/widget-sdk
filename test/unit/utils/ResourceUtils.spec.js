@@ -1,5 +1,5 @@
 describe('ResourceUtils', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     function createResource(type, limits, usage) {
       const { maximum, included } = limits;
 
@@ -75,9 +75,7 @@ describe('ResourceUtils', () => {
       pricingVersion: this.pricingVersions.pricingVersion2
     };
 
-    module('contentful/test');
-
-    this.ResourceUtils = this.$inject('utils/ResourceUtils.es6');
+    this.ResourceUtils = await this.system.import('utils/ResourceUtils.es6');
   });
 
   describe('#canCreate', () => {

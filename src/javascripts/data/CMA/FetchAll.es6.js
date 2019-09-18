@@ -1,8 +1,6 @@
 import _ from 'lodash';
 import { getModule } from 'NgRegistry.es6';
 
-const $q = getModule('$q');
-
 /**
  * @ngdoc service
  * @name data/CMA/FetchAll
@@ -67,6 +65,8 @@ export function fetchAllWithIncludes(endpoint, path, batchLimit, params, headers
 }
 
 function makeRequests(endpoint, path, batchLimit, params, headers) {
+  const $q = getModule('$q');
+
   const requestPromises = [];
   let query = _.extend({}, params, { skip: 0, limit: batchLimit });
 

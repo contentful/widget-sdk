@@ -1,19 +1,16 @@
-import { createIsolatedSystem } from 'test/helpers/system-js';
-
 describe('data/ContentTypeRepo/accessibleCTs.es6', () => {
   let accessibleCTs;
   const accessibleCTsIds = [1, 2, 3];
 
-  beforeEach(function*() {
-    this.system = createIsolatedSystem();
+  beforeEach(async function() {
     this.system.set('access_control/AccessChecker/index.es6', {
       canPerformActionOnEntryOfType: (_, id) => accessibleCTsIds.indexOf(id) > -1,
       Action: {
         READ: 'read'
       }
     });
-    accessibleCTs = yield this.system.import('data/ContentTypeRepo/accessibleCTs.es6');
 
+    accessibleCTs = await this.system.import('data/ContentTypeRepo/accessibleCTs.es6');
     accessibleCTs = accessibleCTs.default;
   });
 

@@ -34,11 +34,6 @@ import TheLocaleStore from 'services/localeStore.es6';
 import * as createResourceService from 'services/ResourceService.es6';
 import * as RoleRepository from 'access_control/RoleRepository.es6';
 
-const $state = getModule('$state');
-const spaceContext = getModule('spaceContext');
-const createRoleRemover = getModule('createRoleRemover');
-const UserListHandler = getModule('UserListHandler');
-
 const PermissionPropType = PropTypes.shape({
   manage: PropTypes.bool,
   read: PropTypes.bool
@@ -97,6 +92,10 @@ class RoleEditor extends React.Component {
   };
 
   delete = () => {
+    const $state = getModule('$state');
+    const createRoleRemover = getModule('createRoleRemover');
+    const UserListHandler = getModule('UserListHandler');
+
     const { role } = this.props;
 
     const listHandler = UserListHandler.create();
@@ -109,6 +108,8 @@ class RoleEditor extends React.Component {
   };
 
   duplicate = () => {
+    const $state = getModule('$state');
+
     const { role } = this.props;
 
     if (get(role, 'sys.id')) {
@@ -117,6 +118,8 @@ class RoleEditor extends React.Component {
   };
 
   save = (autofix = false) => {
+    const spaceContext = getModule('spaceContext');
+
     this.setState({ saving: true });
     const { isNew, baseRole } = this.props;
     const { internal } = this.state;
@@ -135,6 +138,8 @@ class RoleEditor extends React.Component {
   };
 
   handleSaveSuccess = autofix => role => {
+    const $state = getModule('$state');
+
     const { isNew } = this.props;
     if (autofix) {
       Notification.success('One or more rules referencing deleted data where removed');
@@ -204,6 +209,8 @@ class RoleEditor extends React.Component {
     );
 
   autofixPolicies = () => {
+    const spaceContext = getModule('spaceContext');
+
     const cts = spaceContext.publishedCTs.getAllBare();
     const locales = getLocales(TheLocaleStore.getPrivateLocales());
     const internalCopy = cloneDeep(this.state.internal);
@@ -283,6 +290,8 @@ class RoleEditor extends React.Component {
   };
 
   async componentDidMount() {
+    const spaceContext = getModule('spaceContext');
+
     const { isNew } = this.props;
     const organization = spaceContext.organization;
     const FeatureService = createLegacyFeatureService(spaceContext.getId());
@@ -316,10 +325,14 @@ class RoleEditor extends React.Component {
   }
 
   navigateToList() {
+    const $state = getModule('$state');
+
     return $state.go('^.list');
   }
 
   render() {
+    const spaceContext = getModule('spaceContext');
+
     const { role, autofixed } = this.props;
 
     const {

@@ -3,6 +3,8 @@ import { get, find } from 'lodash';
 import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
 import { getStore } from 'TheStore/index.es6';
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as TokenStore from 'services/TokenStore.es6';
 
 import Base from './Base.es6';
 import { go } from './Navigator.es6';
@@ -119,9 +121,7 @@ export function organizationBase(definition) {
     onEnter: [
       '$state',
       '$stateParams',
-      'access_control/AccessChecker/index.es6',
-      'services/TokenStore.es6',
-      async ($state, $stateParams, accessChecker, TokenStore) => {
+      async ($state, $stateParams) => {
         let orgId;
         let org;
         let space;

@@ -1,16 +1,17 @@
-'use strict';
+import sinon from 'sinon';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
 
 describe('cfValidateModel directive', () => {
-  beforeEach(function() {
-    module('contentful/test', $provide => {
+  beforeEach(async function() {
+    await $initialize(this.system, $provide => {
       $provide.constant('$timeout', fn => {
         fn();
       });
     });
 
-    const $compile = this.$inject('$compile');
+    const $compile = $inject('$compile');
 
-    const $rootScope = this.$inject('$rootScope');
+    const $rootScope = $inject('$rootScope');
 
     const template =
       '<div cf-validate="data">' + '<input ng-model="data.x" cf-validate-model="x">' + '</div>';
@@ -27,13 +28,13 @@ describe('cfValidateModel directive', () => {
 
     this.commitValue = function() {
       this.scope.$emit('ngModel:update');
-      this.$apply();
+      $apply();
     };
   });
 
   it('validates on input ngModel:update', function() {
     this.scope.$emit('ngModel:update');
-    this.$apply();
+    $apply();
     sinon.assert.calledOnce(this.validator.run);
     sinon.assert.calledWith(this.validator.run, 'x', true);
   });

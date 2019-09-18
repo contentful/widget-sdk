@@ -6,12 +6,57 @@
  * configuration.
  */
 
-// This enforces strict mode for _all_ files in the application code
-// since we just concatenate them.
 'use strict';
+
+/*
+  This defines the types that are required for sharejs/client
+
+  This used to be built by the gulp task, which processed a superset
+  of these files through Babel and concatenated them. This accomplishes
+  the same thing, but using webpack directly.
+ */
+import text from '@contentful/sharejs/lib/types/text';
+import '@contentful/sharejs/lib/types/text-api';
+import json from '@contentful/sharejs/lib/types/json';
+import '@contentful/sharejs/lib/types/json-api';
+
+window.sharejs = {
+  types: {
+    text,
+    json
+  }
+};
+
+import '@babel/polyfill';
+
+import angular from 'angular';
+import AngularInit from 'AngularInit';
+
+// Angular deps
+import 'angular-animate';
+import 'angular-sanitize';
+import 'angular-ui-router';
+
+// Polyfill for Element.closest used to support Slatejs in IE.
+import 'element-closest';
+
+// CodeMirror: JSON field editor component
+import 'codemirror/addon/edit/closebrackets';
+import 'codemirror/mode/javascript/javascript';
+// CodeMirror: Markdown field editor component
+import 'codemirror/mode/markdown/markdown';
+// CodeMirror: HTML highlighting inside Markdown
+import 'codemirror/mode/xml/xml';
+import 'codemirror/addon/edit/continuelist';
+import 'codemirror/addon/mode/overlay';
+// CodeMirror: mixed HTML mode for UI Extension editor
+import 'codemirror/mode/htmlmixed/htmlmixed';
 
 import moment from 'moment';
 import _ from 'lodash';
+import qs from 'qs';
+
+import { awaitInitReady } from 'NgRegistry.es6';
 
 const injectedConfig = readInjectedConfig();
 const env = injectedConfig.config.environment;
@@ -32,88 +77,8 @@ function readInjectedConfig() {
   }
 }
 
-angular.module('contentful/init', []);
-
-/**
- * @ngdoc module
- * @name contentful
- */
-angular.module('contentful', ['contentful/init', 'ngAnimate', 'ngSanitize', 'ui.router']);
-
-/**
- * @ngdoc module
- * @name contentful/app
- */
 angular
-  .module('contentful/app', ['contentful'])
-  .config([
-    '$compileProvider',
-    $compileProvider => {
-      if (env !== 'development') {
-        $compileProvider.debugInfoEnabled(false);
-      }
-    }
-  ])
-  .run([
-    '$injector',
-    $injector => {
-      const Config = $injector.get('Config.es6');
-      if (Config.env === 'development') {
-        Error.stackTraceLimit = 100;
-      } else {
-        Error.stackTraceLimit = 25;
-      }
-      $injector.get('Debug.es6').init(window);
-      $injector.get('Authentication.es6').init();
-
-      // Start telemetry and expose it as a global.
-      // It can be used by E2E or Puppeteer scripts.
-      const Telemetry = $injector.get('i13n/Telemetry.es6');
-      window.cfTelemetry = Telemetry;
-      Telemetry.init();
-
-      $injector.get('services/TokenStore.es6').init();
-      $injector.get('utils/LaunchDarkly').init();
-      $injector.get('navigation/stateChangeHandlers').setup();
-      $injector.get('ui/ContextMenuHandler.es6').default();
-      $injector.get('states/states.es6').loadAll();
-      $injector.get('dialogsInitController').init();
-      $injector.get('components/shared/auto_create_new_space').init();
-      $injector.get('widgets/ExtensionActivationTracking.es6').init();
-
-      moment.locale('en', {
-        calendar: {
-          lastDay: '[Yesterday], LT',
-          sameDay: '[Today], LT',
-          nextDay: '[Tomorrow], LT',
-          lastWeek: 'ddd, LT',
-          nextWeek: '[Next] ddd, LT',
-          sameElse: 'll'
-        }
-      });
-    }
-  ])
-  // Listen to postMessage events and check if they are coming from
-  // GK iframes. If so, handle messages accordingly
-  .run([
-    '$injector',
-    $injector => {
-      const handleGKMessage = $injector.get('account/handleGatekeeperMessage.es6').default;
-      const Config = $injector.get('Config.es6');
-      const {
-        config: { authUrl }
-      } = Config.readInjectedConfig();
-      const cb = evt => {
-        if (evt.origin.includes(authUrl)) {
-          handleGKMessage(evt.data);
-        }
-      };
-      window.addEventListener('message', cb);
-    }
-  ]);
-
-angular
-  .module('contentful')
+  .module(`contentful/app-config`, [AngularInit, 'ngAnimate', 'ngSanitize', 'ui.router'])
   .config([
     '$locationProvider',
     $locationProvider => {
@@ -127,21 +92,18 @@ angular
       $locationProvider.hashPrefix('!!!');
     }
   ])
-
   .config([
     '$compileProvider',
     $compileProvider => {
       $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|contentful):/);
     }
   ])
-
   .config([
     '$animateProvider',
     $animateProvider => {
       $animateProvider.classNameFilter(/animate/);
     }
   ])
-
   .config([
     '$urlMatcherFactoryProvider',
     $urlMatcherFactoryProvider => {
@@ -246,7 +208,6 @@ angular
       ]);
     }
   ])
-
   .config([
     '$httpProvider',
     $httpProvider => {
@@ -275,174 +236,136 @@ angular
 
       $httpProvider.defaults.headers.common['X-Contentful-User-Agent'] = headerParts.join('; ');
     }
+  ])
+  .config([
+    '$stateProvider',
+    $stateProvider => {
+      $stateProvider.decorator('parent', function(internalStateObj, parentFn) {
+        // This fn is called by StateBuilder each time a state is registered
+        // The first arg is the internal state. Capture it and add an accessor to public state object.
+        internalStateObj.self.$$state = function() {
+          return internalStateObj;
+        };
+
+        // pass through to default .parent() function
+        return parentFn(internalStateObj);
+      });
+    }
   ]);
 
-(() => {
-  const registry = [];
-  window.AngularSystem = {
-    register: register,
-    registry: registry,
-    set: set
-  };
-
-  // Load the modules defined in `libs/`
-  window.libs.forEach(lib => {
-    set(lib[0], lib[1]);
-  });
-
-  /**
-   * Analagous to angular.module().constant.
-   * Registers the given `moduleObj` as a module
-   * named `id` in SystemJS using a custom `run`
-   * function.
-   *
-   * Sets the module on the `contentful/init` Angular module.
-   * @param {String} id        Name of module
-   * @param {Object} moduleObj Module object
-   */
-  function set(id, moduleObj) {
-    registry.push([
-      id,
-      [],
-      export_ => {
-        const exports = moduleObj;
-        export_(Object.assign({ default: exports }, exports));
-        return {
-          setters: [],
-          execute: function() {}
-        };
+angular
+  .module(`contentful/app`, [`contentful/app-config`])
+  .config([
+    '$compileProvider',
+    $compileProvider => {
+      if (env !== 'development') {
+        $compileProvider.debugInfoEnabled(false);
       }
-    ]);
-
-    angular.module('contentful/init').constant(id, moduleObj);
-  }
-
-  /**
-   * Registers a module dynamically. Analagous
-   * to angular.module().factory.
-   *
-   * @param  {String} id Module name
-   * @param  {Array} deps Dependencies
-   * @param  {Function} run  Function that is run to export the module
-   */
-  function register(id, deps, run) {
-    registry.push([id, deps, run]);
-    registerDirectoryAlias(id);
-
-    angular.module('contentful/init').factory(id, [
-      '$injector',
-      $injector => {
-        const mod = makeModule();
-
-        const ctx = run(mod.export);
-
-        deps.forEach((name, i) => {
-          const absName = resolve(name, id);
-          const depExports = coerceExports($injector.get(absName));
-          ctx.setters[i](depExports);
-        });
-        ctx.execute();
-
-        // do not freeze exports while running unit
-        // test so methods can be freely stubbed
-        if (isUnitTest()) {
-          return mod.exports;
-        } else {
-          return Object.freeze(mod.exports);
-        }
-
-        function isUnitTest() {
-          try {
-            // TODO: check actual process env
-            return $injector.get('Config.es6').env === 'unittest';
-          } catch (err) {
-            return false;
-          }
-        }
-      }
-    ]);
-  }
-
-  /**
-   * If 'exports' is an ES6 module return it, otherwise coerce it from
-   * CommonJS exports to an ES6 module
-   */
-  function coerceExports(exports) {
-    if (exports.__esModule) {
-      return exports;
     }
+  ])
 
-    // We don't use `React.PropTypes` since it's deprecated and warns
-    // when accessing. Unfortunatelly the `assign` below will also
-    // cause the warning. Here we detect if we're dealing with React
-    // exports and if so we remove `PropTypes`.
-    if (exports.Component && 'PropTypes' in exports) {
-      delete exports.PropTypes;
-    }
+  .run([
+    '$injector',
+    '$state',
+    async ($injector, $state) => {
+      await awaitInitReady();
 
-    return Object.assign({ default: exports }, exports);
-  }
+      // Import and initialize core services
+      const { init: initSpaceContext } = $injector.get('spaceContext');
+      const { init: initAuthorization } = $injector.get('authorization');
 
-  function makeModule() {
-    const exports = {};
+      await Promise.all([initAuthorization(), initSpaceContext()]);
 
-    Object.defineProperty(exports, '__esModule', {
-      value: true
-    });
+      const Config = await import('Config.es6');
+      const { default: handleGKMessage } = await import('account/handleGatekeeperMessage.es6');
+      const { init: initDebug } = await import('Debug.es6');
+      const { init: initAuthentication } = await import('Authentication.es6');
+      const { init: initTokenStore } = await import('services/TokenStore.es6');
+      const { init: initLD } = await import('utils/LaunchDarkly/index.es6');
+      const { init: initAutoCreateNewSpace } = await import(
+        'components/shared/auto_create_new_space/index.es6'
+      );
+      const { default: initContextMenuHandler } = await import('ui/ContextMenuHandler.es6');
+      const Telemetry = await import('i13n/Telemetry.es6');
+      const { loadAll: loadAllStates } = await import('states/states.es6');
+      const { go } = await import('states/Navigator.es6');
+      const { init: initExtentionActivationTracking } = await import(
+        'widgets/ExtensionActivationTracking.es6'
+      );
 
-    return {
-      export: export_,
-      exports: exports
-    };
+      const { init: initDialogs } = $injector.get('dialogsInitController');
+      const { setup: setupStateChangeHandlers } = $injector.get('navigation/stateChangeHandlers');
 
-    function export_(name, value) {
-      if (typeof name === 'string') {
-        exports[name] = value;
+      if (Config.env === 'development') {
+        Error.stackTraceLimit = 100;
       } else {
-        for (const key in name) {
-          exports[key] = name[key];
-        }
+        Error.stackTraceLimit = 25;
       }
+
+      loadAllStates();
+      initDebug(window);
+      initAuthentication();
+      initTokenStore();
+      initLD();
+      initAutoCreateNewSpace();
+      initContextMenuHandler();
+      initExtentionActivationTracking();
+
+      initDialogs();
+      setupStateChangeHandlers();
+
+      // Start telemetry and expose it as a global.
+      // It can be used by E2E or Puppeteer scripts.
+      window.cfTelemetry = Telemetry;
+      Telemetry.init();
+
+      moment.updateLocale('en', {
+        calendar: {
+          lastDay: '[Yesterday], LT',
+          sameDay: '[Today], LT',
+          nextDay: '[Tomorrow], LT',
+          lastWeek: 'ddd, LT',
+          nextWeek: '[Next] ddd, LT',
+          sameElse: 'll'
+        }
+      });
+
+      // Listen to postMessage events and check if they are coming from
+      // GK iframes. If so, handle messages accordingly
+      const {
+        config: { authUrl }
+      } = Config.readInjectedConfig();
+      const cb = evt => {
+        if (evt.origin.includes(authUrl)) {
+          handleGKMessage(evt.data);
+        }
+      };
+      window.addEventListener('message', cb);
+
+      // Due to the async loading, we need to take the route above and attempt
+      // to route to it
+      let matchFound = false;
+
+      $state.get().forEach(state => {
+        if (!state.$$state || state.abstract) {
+          return;
+        }
+
+        const { url } = state.$$state();
+        const params = qs.parse(window.location.search.substr(1));
+        const match = url.exec(window.location.pathname, params);
+
+        if (match && !matchFound) {
+          matchFound = true;
+
+          go({
+            path: state.name.split('.'),
+            params: match
+          });
+        }
+      });
+
+      // Finally, mark the app as loaded
+      angular.module('contentful/app').loaded = true;
     }
-  }
-
-  /**
-   * If module ID matches 'a/b/index.es6' then register a module 'a/b'
-   * that is an alias for the index module.
-   */
-  function registerDirectoryAlias(moduleId) {
-    const path = moduleId.split('/');
-    const last = path.pop();
-    if (last === 'index.es6') {
-      angular.module('contentful/init').factory(path.join('/'), [moduleId, id]);
-    }
-  }
-
-  function id(x) {
-    return x;
-  }
-
-  function resolve(to, from) {
-    // IE does not support string.startsWith()
-    if (to.substr(0, 2) === './' || to.substr(0, 3) === '../') {
-      const froms = from.split('/');
-      // Last 'from' is the filename but we resolve relative to the
-      // directory.
-      froms.pop();
-      const tos = to.split('/');
-      return tos
-        .reduce((resolved, seg) => {
-          if (seg === '..') {
-            resolved.pop();
-          } else if (seg !== '.') {
-            resolved.push(seg);
-          }
-
-          return resolved;
-        }, froms)
-        .join('/');
-    } else {
-      return to;
-    }
-  }
-})();
+  ]);

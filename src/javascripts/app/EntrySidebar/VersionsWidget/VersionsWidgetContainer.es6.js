@@ -6,7 +6,6 @@ import SidebarWidgetTypes from '../SidebarWidgetTypes.es6';
 import VersionsWidget from './VersionsWidget.es6';
 import * as SnapshotDecorator from 'app/snapshots/helpers/SnapshotDecorator.es6';
 
-const spaceContext = getModule('spaceContext');
 export const PREVIEW_COUNT = 7;
 
 export default class VersionsWidgetContainer extends Component {
@@ -35,6 +34,8 @@ export default class VersionsWidgetContainer extends Component {
   }
 
   onUpdateVersionsWidget = ({ entrySys, publishedVersion }) => {
+    const spaceContext = getModule('spaceContext');
+
     if (this.state.publishedVersion !== publishedVersion) {
       this.setState({ publishedVersion });
       spaceContext.cma

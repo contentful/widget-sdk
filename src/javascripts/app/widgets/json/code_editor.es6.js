@@ -2,9 +2,6 @@ import * as Adapter from './code_mirror_adapter.es6';
 import { forEach, pick } from 'lodash';
 import { getModule } from 'NgRegistry.es6';
 
-const $rootScope = getModule('$rootScope');
-const Command = getModule('command');
-
 /**
  * @ngdoc service
  * @module cf.app
@@ -33,6 +30,9 @@ const Command = getModule('command');
  * editor.destroy()
  */
 export function create(widgetApi) {
+  const $rootScope = getModule('$rootScope');
+  const Command = getModule('command');
+
   const field = widgetApi.field;
   const editor = Adapter.create({ onStateChange: updateState });
 

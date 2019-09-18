@@ -1,16 +1,19 @@
-'use strict';
+import sinon from 'sinon';
+import { $initialize, $apply } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('data/userCache.es6', () => {
   let userCache, fetchAll;
 
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.value('data/CMA/FetchAll.es6', {
-        fetchAll: (fetchAll = sinon.stub().resolves())
-      });
+  beforeEach(async function() {
+    this.system.set('data/CMA/FetchAll.es6', {
+      fetchAll: (fetchAll = sinon.stub().resolves())
     });
 
-    const createCache = this.$inject('data/userCache.es6').default;
+    const { default: createCache } = await this.system.import('data/userCache.es6');
+
+    await $initialize(this.system);
+
     const endpoint = {};
     userCache = createCache(endpoint);
   });
@@ -28,12 +31,11 @@ describe('data/userCache.es6', () => {
       sinon.assert.calledOnce(fetchAll);
     });
 
-    it('it maps users by id', () => {
+    it('it maps users by id', async () => {
       const userResponse = [makeUser('0'), makeUser('1')];
       fetchAll.resolves(userResponse);
-      return userCache.getAll().then(users => {
-        expect(users).toEqual(userResponse);
-      });
+      const users = await userCache.getAll();
+      expect(users).toEqual(userResponse);
     });
 
     it('it caches resulst', function() {
@@ -42,7 +44,7 @@ describe('data/userCache.es6', () => {
       const handleUsers = sinon.stub();
       userCache.getAll().then(handleUsers);
       userCache.getAll().then(handleUsers);
-      this.$apply();
+      $apply();
       expect(handleUsers.args[0][0]).toBe(handleUsers.args[1][0]);
     });
   });
@@ -56,23 +58,21 @@ describe('data/userCache.es6', () => {
       sinon.assert.calledOnce(fetchAll);
     });
 
-    it('it gets users by id', () => {
+    it('it gets users by id', async () => {
       const userResponse = [makeUser('0'), makeUser('1')];
       fetchAll.resolves(userResponse);
-      return userCache.get('1').then(user => {
-        expect(user).toEqual(userResponse[1]);
-      });
+      const user = await userCache.get('1');
+      expect(user).toEqual(userResponse[1]);
     });
 
-    it('resuses response from call to "#getAll()"', () => {
+    it('resuses response from call to "#getAll()"', async () => {
       const userResponse = [makeUser('0'), makeUser('1')];
       fetchAll.resolves(userResponse);
-      return userCache.getAll().then(users =>
-        userCache.get('0').then(user => {
-          expect(user).toBe(users[0]);
-          sinon.assert.calledOnce(fetchAll);
-        })
-      );
+      const users = await userCache.getAll();
+      userCache.get('0').then(user => {
+        expect(user).toBe(users[0]);
+        sinon.assert.calledOnce(fetchAll);
+      });
     });
   });
 });

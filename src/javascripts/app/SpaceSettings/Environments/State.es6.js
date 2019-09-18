@@ -13,11 +13,10 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import { getModule } from 'NgRegistry.es6';
 
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo.es6';
-import { openCreateDialog, openEditDialog } from './EditDialog.es6';
+import { openCreateDialog } from './EditDialog.es6';
 import { openDeleteDialog } from './DeleteDialog.es6';
 import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService.es6';
 import View from './View.es6';
-const spaceContext = getModule('spaceContext');
 const environmentsFlagName = 'feature-dv-11-2017-environments';
 
 export default {
@@ -91,15 +90,6 @@ const reduce = makeReducer({
     });
     return state;
   },
-  [OpenEditDialog]: (state, environment, { resourceEndpoint, dispatch }) => {
-    C.runTask(function*() {
-      const updated = yield openEditDialog(resourceEndpoint.update, environment.payload);
-      if (updated) {
-        dispatch(Reload);
-      }
-    });
-    return state;
-  },
   [OpenDeleteDialog]: (state, environment, { resourceEndpoint, dispatch }) => {
     C.runTask(function*() {
       const updated = yield openDeleteDialog(resourceEndpoint.remove, environment);
@@ -126,6 +116,8 @@ const reduce = makeReducer({
   [ReceiveResponse]: (state, result) => {
     return match(result, {
       [C.Success]: ([items, resource]) => {
+        const spaceContext = getModule('spaceContext');
+
         // Resource service gets usage on organization level for v1 orgs - see
         // https://contentful.atlassian.net/browse/MOI-144
         // This should be fixed when `feature-bv-2018-01-features-api` is turned on.
@@ -192,6 +184,8 @@ export function createComponent(spaceContext, canSelectSource, aliasesEnabled) {
 }
 
 function makeEnvironmentModel(environment) {
+  const spaceContext = getModule('spaceContext');
+
   const status = caseofEq(environment.sys.status.sys.id, [
     ['ready', () => 'ready'],
     ['failed', () => 'failed'],

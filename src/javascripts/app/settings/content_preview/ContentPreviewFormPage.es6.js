@@ -28,54 +28,56 @@ import {
 import * as Analytics from 'analytics/Analytics.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const $state = getModule('$state');
-const spaceContext = getModule('spaceContext');
+export const ContentPreviewFormPageSkeleton = props => {
+  const $state = getModule('$state');
 
-export const ContentPreviewFormPageSkeleton = props => (
-  <Workbench>
-    <Workbench.Header
-      onBack={() => {
-        $state.go('^.list');
-      }}
-      icon={<Icon name="page-settings" scale="0.8" />}
-      title={
-        <>
-          {props.title && <Heading>{props.title}</Heading>}
-          {!props.title && (
-            <SkeletonContainer svgHeight={21} clipId="title">
+  return (
+    <Workbench>
+      <Workbench.Header
+        onBack={() => {
+          $state.go('^.list');
+        }}
+        icon={<Icon name="page-settings" scale="0.8" />}
+        title={
+          <>
+            {props.title && <Heading>{props.title}</Heading>}
+            {!props.title && (
+              <SkeletonContainer svgHeight={21} clipId="title">
+                <SkeletonDisplayText lineHeight={21} />
+              </SkeletonContainer>
+            )}
+          </>
+        }
+        actions={
+          props.actions || (
+            <SkeletonContainer svgHeight={21} svgWidth={100} clipId="actions">
               <SkeletonDisplayText lineHeight={21} />
             </SkeletonContainer>
-          )}
-        </>
-      }
-      actions={
-        props.actions || (
-          <SkeletonContainer svgHeight={21} svgWidth={100} clipId="actions">
-            <SkeletonDisplayText lineHeight={21} />
-          </SkeletonContainer>
-        )
-      }
-    />
-    <Workbench.Content>
-      {props.children || (
-        <Form className="content-preview-editor">
-          <Heading className="section-title" element="h3">
-            General information
-          </Heading>
-          <SkeletonContainer svgWidth={600} ariaLabel="Loading content type..." clipId="content">
-            <SkeletonBodyText numberOfLines={5} marginBottom={15} />
-          </SkeletonContainer>
-        </Form>
-      )}
-    </Workbench.Content>
-    <Workbench.Sidebar position="right">
-      <WhatIsContentPreview />
-      <TokensForContentPreview />
-      <LinkedEntries />
-      <LegacyTokens />
-    </Workbench.Sidebar>
-  </Workbench>
-);
+          )
+        }
+      />
+      <Workbench.Content>
+        {props.children || (
+          <Form className="content-preview-editor">
+            <Heading className="section-title" element="h3">
+              General information
+            </Heading>
+            <SkeletonContainer svgWidth={600} ariaLabel="Loading content type..." clipId="content">
+              <SkeletonBodyText numberOfLines={5} marginBottom={15} />
+            </SkeletonContainer>
+          </Form>
+        )}
+      </Workbench.Content>
+      <Workbench.Sidebar position="right">
+        <WhatIsContentPreview />
+        <TokensForContentPreview />
+        <LinkedEntries />
+        <LegacyTokens />
+      </Workbench.Sidebar>
+    </Workbench>
+  );
+};
+
 ContentPreviewFormPageSkeleton.propTypes = {
   title: PropTypes.node,
   actions: PropTypes.node,
@@ -158,6 +160,9 @@ export default class ContentPreviewFormPage extends Component {
   }
 
   remove = async () => {
+    const $state = getModule('$state');
+    const spaceContext = getModule('spaceContext');
+
     const confirmed = await ModalLauncher.open(({ isShown, onClose }) => (
       <ModalConfirm
         isShown={isShown}
@@ -197,6 +202,9 @@ export default class ContentPreviewFormPage extends Component {
   };
 
   save = () => {
+    const $state = getModule('$state');
+    const spaceContext = getModule('spaceContext');
+
     const isValid = this.validate();
     if (!isValid) {
       return;

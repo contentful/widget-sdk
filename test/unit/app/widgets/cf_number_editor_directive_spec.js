@@ -1,16 +1,17 @@
-'use strict';
 import _ from 'lodash';
+import sinon from 'sinon';
+import { $initialize, $inject, $compile, $apply } from 'test/utils/ng';
 
 describe('Number widgets', () => {
-  beforeEach(function() {
-    module('contentful/test');
+  beforeEach(async function() {
+    await $initialize(this.system);
 
-    this.widgetApi = this.$inject('mocks/widgetApi').create();
+    this.widgetApi = $inject('mocks/widgetApi').create();
 
     this.fieldApi = this.widgetApi.field;
 
     this.compileElement = function() {
-      const el = this.$compile(
+      const el = $compile(
         '<cf-number-editor />',
         {},
         {
@@ -25,7 +26,7 @@ describe('Number widgets', () => {
         inputEl: inputEl,
         setInput: val => {
           inputEl.val(val).trigger('input');
-          this.$apply();
+          $apply();
         },
         isStatusVisible: function() {
           return statusEl.css('display') !== 'none';
@@ -76,9 +77,10 @@ describe('Number widgets', () => {
 describe('cfNumberEditor/parseNumber', () => {
   let parseNumber;
 
-  beforeEach(function() {
-    module('contentful/test');
-    parseNumber = this.$inject('cfNumberEditor/parseNumber');
+  beforeEach(async function() {
+    await $initialize(this.system);
+
+    parseNumber = $inject('cfNumberEditor/parseNumber');
   });
 
   describe('parse numbers', () => {

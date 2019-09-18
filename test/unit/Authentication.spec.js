@@ -1,24 +1,33 @@
-import * as K from 'test/helpers/mocks/kefir';
+import * as K from 'test/utils/kefir';
+import sinon from 'sinon';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('Authentication.es6', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     this.$http = sinon.stub();
     this.window = {
       location: '',
       addEventListener: sinon.stub(),
       removeEventListener: sinon.stub()
     };
+    this.$location = {
+      url: sinon.stub()
+    };
 
-    module('contentful/test', $provide => {
+    this.system.set('utils/ngCompat/window.es6', { default: this.window });
+    const { getStore } = await this.system.import('TheStore/index.es6');
+    this.Auth = await this.system.import('Authentication.es6');
+
+    await $initialize(this.system, $provide => {
       $provide.value('$http', this.$http);
-      $provide.constant('utils/ngCompat/window.es6', { default: this.window });
+      $provide.value('$location', this.$location);
     });
 
     this.$http.resolves({ data: { access_token: 'NEW TOKEN' } });
-    this.Auth = this.$inject('Authentication.es6');
-    this.$q = this.$inject('$q');
 
-    const getStore = this.$inject('TheStore').getStore;
+    this.$q = $inject('$q');
+
     this.store = getStore('session').forKey('token');
     this.localStore = getStore('local');
   });
@@ -80,7 +89,7 @@ describe('Authentication.es6', () => {
     it('redirects to login when token fetch fails', function() {
       this.$http.rejects();
       this.Auth.refreshToken();
-      this.$apply();
+      $apply();
       expect(this.window.location).toBe('//be.test.com/login');
     });
   });
@@ -113,8 +122,7 @@ describe('Authentication.es6', () => {
 
     describe('on login from gatekeeper', () => {
       beforeEach(function() {
-        const $location = this.mockService('$location');
-        $location.url.returns('/?login=1');
+        this.$location.url.returns('/?login=1');
       });
 
       it('revokes and deletes existing token', function*() {
@@ -172,7 +180,7 @@ describe('Authentication.es6', () => {
 
     it('revokes the token', function*() {
       yield this.Auth.logout();
-      this.$apply();
+      $apply();
       sinon.assert.calledWith(
         this.$http,
         sinon.match({

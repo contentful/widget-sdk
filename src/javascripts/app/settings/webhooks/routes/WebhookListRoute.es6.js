@@ -13,9 +13,9 @@ import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import TheLocaleStore from 'services/localeStore.es6';
 
-const spaceContext = getModule('spaceContext');
-
 const WebhooksFetcher = createFetcherComponent(() => {
+  const spaceContext = getModule('spaceContext');
+
   return Promise.all([
     spaceContext.webhookRepo.getAll(),
     getOrgFeature(spaceContext.organization.sys.id, 'webhook_aws_proxy')
@@ -33,6 +33,8 @@ export class WebhookListRoute extends React.Component {
   };
 
   setupTemplateOpener(hasAwsProxy = false) {
+    const spaceContext = getModule('spaceContext');
+
     return createWebhookTemplateDialogOpener({
       webhookRepo: spaceContext.webhookRepo,
       contentTypes: spaceContext.publishedCTs.getAllBare(),

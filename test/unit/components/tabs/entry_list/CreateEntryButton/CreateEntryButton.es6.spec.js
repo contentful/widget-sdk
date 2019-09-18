@@ -1,9 +1,10 @@
 import React from 'react';
 import { noop } from 'lodash';
 import sinon from 'sinon';
-import { default as CreateEntryButton, Style } from 'components/CreateEntryButton';
+import { default as CreateEntryButton, Style } from 'components/CreateEntryButton/index.es6';
 
 import { mount } from 'enzyme';
+import { beforeEach, it } from 'test/utils/dsl';
 
 const CONTENT_TYPE_1 = { name: 'name-1', sys: { id: 'ID_1' } };
 const CONTENT_TYPE_2 = { name: 'name-2', sys: { id: 'ID_2' } };

@@ -1,8 +1,8 @@
 import { getModule } from 'NgRegistry.es6';
 
-const spaceContext = getModule('spaceContext');
-
 export async function fetchContentTypes() {
+  const spaceContext = getModule('spaceContext');
+
   const { items } = await spaceContext.endpoint({
     method: 'GET',
     path: ['content_types'],

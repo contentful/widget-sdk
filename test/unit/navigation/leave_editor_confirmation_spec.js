@@ -1,9 +1,10 @@
-'use strict';
+import sinon from 'sinon';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
 
 describe('navigator', () => {
   describe('leave editor confirmation', () => {
-    beforeEach(
-      module('contentful/test', $stateProvider => {
+    beforeEach(async function() {
+      await $initialize(this.system, ($stateProvider, $urlRouterProvider) => {
         $stateProvider.state('dirty', {
           data: {
             dirty: true
@@ -11,26 +12,20 @@ describe('navigator', () => {
         });
 
         $stateProvider.state('leave', {});
-      })
-    );
 
-    beforeEach(
-      module($urlRouterProvider => {
         // We do not want to sync the $location to the $urlRouter
         $urlRouterProvider.deferIntercept(true);
-      })
-    );
+      });
 
-    beforeEach(function() {
-      const stateChangeHandlers = this.$inject('navigation/stateChangeHandlers');
+      const stateChangeHandlers = $inject('navigation/stateChangeHandlers');
       stateChangeHandlers.setup();
 
-      const $state = this.$inject('$state');
+      const $state = $inject('$state');
       this.$state = $state;
       this.dirtyState = $state.get('dirty');
 
       $state.go('dirty');
-      this.$apply();
+      $apply();
       expect($state.current.name).toEqual('dirty');
     });
 
@@ -49,7 +44,7 @@ describe('navigator', () => {
       this.dirtyState.onExit = exit;
 
       this.$state.go('leave');
-      this.$apply();
+      $apply();
       sinon.assert.calledOnce(exit);
     });
 
@@ -61,7 +56,7 @@ describe('navigator', () => {
       this.dirtyState.onExit = exit;
 
       this.$state.go('leave');
-      this.$apply();
+      $apply();
       sinon.assert.notCalled(exit);
     });
   });

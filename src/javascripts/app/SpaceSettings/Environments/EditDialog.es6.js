@@ -11,8 +11,6 @@ import { getModule } from 'NgRegistry.es6';
 import { isValidResourceId } from 'data/utils.es6';
 import * as logger from 'services/logger.es6';
 
-const { open: openDialog } = getModule('modalDialog');
-
 // Actions
 const SetFieldValue = makeCtor('SetFieldValue');
 const Submit = makeCtor('Submit');
@@ -40,6 +38,8 @@ export function openCreateDialog(
   currentEnvironment,
   canSelectSource
 ) {
+  const { open: openDialog } = getModule('modalDialog');
+
   const initialState = {
     fields: {
       id: {

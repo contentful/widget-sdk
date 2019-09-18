@@ -2,6 +2,7 @@ import qs from 'qs';
 import { getStore } from 'TheStore/index.es6';
 import { omit, isEmpty } from 'lodash';
 import { serialize, unserialize } from 'data/ViewSerializer.es6';
+import { getQueryString } from 'utils/location';
 
 const STORE_PREFIX = 'lastFilterQueryString';
 
@@ -35,7 +36,7 @@ export default function create({ entityType, spaceId, $location }) {
   }
 
   function read() {
-    const currentQS = $location.search();
+    const currentQS = getQueryString();
     const previousQS = store.get() || {};
     const viewData = isEmpty(currentQS) ? previousQS : currentQS;
     const view = omitUIConfigOnlyViewProperties(unserialize(viewData)) || {};

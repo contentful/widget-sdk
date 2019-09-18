@@ -2,10 +2,9 @@ import _ from 'lodash';
 import React from 'react';
 import { mount } from 'enzyme';
 import sinon from 'sinon';
-import { createIsolatedSystem } from 'test/helpers/system-js';
 import { EntityType } from 'app/entity_editor/Components/constants.es6';
 
-import flushPromises from 'test/helpers/flushPromises';
+import flushPromises from 'test/utils/flushPromises';
 
 describe('FetchLinksToEntity', () => {
   const defaultProps = {
@@ -16,21 +15,22 @@ describe('FetchLinksToEntity', () => {
 
   beforeEach(function() {
     this.onFetchLinks = sinon.stub();
-    const system = createIsolatedSystem();
-    system.set('analytics/events/IncomingLinks.es6', {
+    this.system.set('analytics/events/IncomingLinks.es6', {
       onFetchLinks: this.onFetchLinks,
       Origin: {
         DIALOG: 'dialog',
         SIDEBAR: 'sidebar'
       }
     });
-    this.system = system;
-    this.importModule = function*({ fetchLinksStub }) {
+
+    const system = this.system;
+
+    this.importModule = async function({ fetchLinksStub }) {
       system.set('app/entity_editor/Components/FetchLinksToEntity/fetchLinks.es6', {
         default: fetchLinksStub
       });
 
-      const { default: FetchLinksToEntity } = yield system.import(
+      const { default: FetchLinksToEntity } = await system.import(
         'app/entity_editor/Components/FetchLinksToEntity'
       );
 
@@ -38,17 +38,13 @@ describe('FetchLinksToEntity', () => {
     };
   });
 
-  afterEach(function() {
-    delete this.system;
-  });
-
   function render(Component, props) {
     return mount(<Component {...defaultProps} {...props} />);
   }
 
-  it('passes pending state on initial render', function*() {
+  it('passes pending state on initial render', async function() {
     const fetchLinksStub = sinon.stub().returns(Promise.resolve([]));
-    const Component = yield* this.importModule({ fetchLinksStub });
+    const Component = await this.importModule({ fetchLinksStub });
 
     const renderFunc = sinon.stub().returns(null);
     render(Component, { render: renderFunc });
@@ -56,18 +52,18 @@ describe('FetchLinksToEntity', () => {
     sinon.assert.calledWith(renderFunc, { links: [], requestState: 'pending' });
   });
 
-  it('passes success state and links if api called returns data', function*() {
+  it('passes success state and links if api called returns data', async function() {
     const links = [{ a: 1 }, { b: 2 }];
     const fetchLinksStub = sinon
       .stub()
       .withArgs(defaultProps.id, defaultProps.type)
       .returns(Promise.resolve(links));
 
-    const Component = yield* this.importModule({ fetchLinksStub });
+    const Component = await this.importModule({ fetchLinksStub });
 
     const renderFunc = sinon.stub().returns(null);
     render(Component, { render: renderFunc });
-    yield flushPromises();
+    await flushPromises();
 
     sinon.assert.calledWith(renderFunc.getCall(1), {
       links,
@@ -80,17 +76,17 @@ describe('FetchLinksToEntity', () => {
     });
   });
 
-  it('passes error state and empty links if api fails to return data', function*() {
+  it('passes error state and empty links if api fails to return data', async function() {
     const fetchLinksStub = sinon
       .stub()
       .withArgs(defaultProps.id, defaultProps.type)
       .returns(Promise.reject(new Error()));
 
-    const Component = yield* this.importModule({ fetchLinksStub });
+    const Component = await this.importModule({ fetchLinksStub });
 
     const renderFunc = sinon.stub().returns(null);
     render(Component, { render: renderFunc });
-    yield flushPromises();
+    await flushPromises();
 
     sinon.assert.calledWith(renderFunc.getCall(1), {
       links: [],

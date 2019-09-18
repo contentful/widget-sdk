@@ -2,8 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { getModule } from 'NgRegistry.es6';
 
-const $state = getModule('$state');
-
 class StateRedirect extends React.Component {
   static propTypes = {
     to: PropTypes.string.isRequired,
@@ -12,6 +10,8 @@ class StateRedirect extends React.Component {
   };
 
   componentDidMount() {
+    const $state = getModule('$state');
+
     $state.go(this.props.to, this.props.params, this.props.options);
   }
 

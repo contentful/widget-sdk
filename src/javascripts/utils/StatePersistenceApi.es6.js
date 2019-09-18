@@ -4,9 +4,8 @@ const alphaHeaders = {
   'x-contentful-enable-alpha-feature': 'state-persistence'
 };
 
-const usersEndpoint = createUsersEndpoint();
-
 export async function fetchUserState(key) {
+  const usersEndpoint = createUsersEndpoint();
   return usersEndpoint(
     {
       method: 'GET',
@@ -17,6 +16,7 @@ export async function fetchUserState(key) {
 }
 
 export async function updateUserState(key, { version, ...data }) {
+  const usersEndpoint = createUsersEndpoint();
   return usersEndpoint(
     {
       method: 'PUT',

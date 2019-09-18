@@ -16,9 +16,7 @@ globals:
   JST: false
 
   jasmine: false
-  sinon: false
   inject: false
-  module: false
 
   describe: false
   xdescribe: false

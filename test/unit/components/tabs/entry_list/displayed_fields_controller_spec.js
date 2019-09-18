@@ -1,23 +1,24 @@
-'use strict';
+import sinon from 'sinon';
+import { $initialize, $inject } from 'test/utils/ng';
 
 describe('Displayed Fields Controller', () => {
-  beforeEach(function() {
-    module('contentful/test');
-
-    this.mockService('data/SystemFields.es6', {
+  beforeEach(async function() {
+    this.system.set('data/SystemFields.es6', {
       getList: sinon.stub().returns([]),
       getDefaultFieldIds: () => [1, 2, 3]
     });
 
-    this.spaceContext = this.$inject('mocks/spaceContext').init();
+    await $initialize(this.system);
 
-    this.scope = this.$inject('$rootScope').$new();
+    this.spaceContext = $inject('mocks/spaceContext').init();
+
+    this.scope = $inject('$rootScope').$new();
 
     Object.assign(this.scope, {
       context: { view: {} }
     });
 
-    const $controller = this.$inject('$controller');
+    const $controller = $inject('$controller');
     $controller('DisplayedFieldsController', { $scope: this.scope });
     sinon.spy(this.scope, 'refreshDisplayFields');
   });

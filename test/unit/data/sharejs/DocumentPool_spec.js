@@ -1,18 +1,17 @@
-import * as K from 'test/helpers/mocks/kefir';
+import sinon from 'sinon';
+import * as K from 'test/utils/kefir';
 import _ from 'lodash';
 
 describe('DocumentPool', () => {
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.constant('app/entity_editor/Document.es6', {
-        create: sinon.spy((_conn, entity) => {
-          const s = entity.data.sys;
-          return s.id === 'id' && s.type === 'Entry' ? this.doc : this.doc2;
-        })
-      });
+  beforeEach(async function() {
+    this.system.set('app/entity_editor/Document.es6', {
+      create: sinon.spy((_conn, entity) => {
+        const s = entity.data.sys;
+        return s.id === 'id' && s.type === 'Entry' ? this.doc : this.doc2;
+      })
     });
 
-    this.createDoc = this.$inject('app/entity_editor/Document.es6').create;
+    this.createDoc = (await this.system.import('app/entity_editor/Document.es6')).create;
     this.doc = {
       destroy: sinon.stub(),
       state: {
@@ -21,7 +20,8 @@ describe('DocumentPool', () => {
     };
     this.doc2 = { destroy: sinon.stub() };
 
-    const createPool = this.$inject('data/sharejs/DocumentPool.es6').create;
+    const createPool = (await this.system.import('data/sharejs/DocumentPool.es6')).create;
+
     this.conn = {};
     this.pool = createPool(this.conn);
   });

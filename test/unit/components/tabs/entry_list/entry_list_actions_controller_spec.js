@@ -1,15 +1,18 @@
-'use strict';
+import sinon from 'sinon';
+
+import { $initialize, $inject } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('Entry List Actions Controller', () => {
-  let scope, stubs, accessChecker, ComponentLibrary;
+  let scope, stubs, ComponentLibrary;
   let action1, action2, action3, action4;
 
   afterEach(() => {
-    scope = stubs = accessChecker = ComponentLibrary = null;
+    scope = stubs = ComponentLibrary = null;
     action1 = action2 = action3 = action4 = null;
   });
 
-  beforeEach(function() {
+  beforeEach(async function() {
     const duplicateOrPublishResults = {
       succeeded: ['foo', 'bar'].map(prefix => ({
         data: {
@@ -25,30 +28,45 @@ describe('Entry List Actions Controller', () => {
       }))
     };
 
-    module('contentful/test', $provide => {
-      stubs = $provide.makeStubs([
-        'track',
-        'success',
-        'error',
-        'size',
-        'createEntry',
-        'getSelected',
-        'clear',
-        'action1',
-        'action2',
-        'action3',
-        'action4',
-        'timeout'
-      ]);
+    stubs = {
+      track: sinon.stub(),
+      success: sinon.stub(),
+      error: sinon.stub(),
+      size: sinon.stub(),
+      createEntry: sinon.stub(),
+      getSelected: sinon.stub(),
+      clear: sinon.stub(),
+      action1: sinon.stub(),
+      action2: sinon.stub(),
+      action3: sinon.stub(),
+      action4: sinon.stub(),
+      timeout: sinon.stub(),
+      shouldHide: sinon.stub(),
+      shouldDisable: sinon.stub(),
+      canPerformActionOnEntity: sinon.stub()
+    };
 
-      $provide.value('analytics/Analytics.es6', {
-        track: stubs.track
-      });
+    this.system.set('analytics/Analytics.es6', {
+      track: stubs.track
+    });
 
+    this.system.set('access_control/AccessChecker/index.es6', {
+      shouldHide: stubs.shouldHide,
+      shouldDisable: stubs.shouldDisable,
+      canPerformActionOnEntity: stubs.canPerformActionOnEntity
+    });
+
+    const paginatorClass = (await this.system.import('classes/Paginator.es6')).default;
+
+    ComponentLibrary = await this.system.import('@contentful/forma-36-react-components');
+    ComponentLibrary.Notification.error = stubs.error;
+    ComponentLibrary.Notification.success = stubs.success;
+
+    await $initialize(this.system, $provide => {
       $provide.value('$timeout', stubs.timeout);
     });
 
-    const $q = this.$inject('$q');
+    const $q = $inject('$q');
     action1 = $q.defer();
     action2 = $q.defer();
     action3 = $q.defer();
@@ -58,26 +76,17 @@ describe('Entry List Actions Controller', () => {
     stubs.action3.returns(action3.promise);
     stubs.action4.returns(action4.promise);
 
-    ComponentLibrary = this.$inject('@contentful/forma-36-react-components');
-    ComponentLibrary.Notification.error = stubs.error;
-    ComponentLibrary.Notification.success = stubs.success;
+    scope = $inject('$rootScope').$new();
 
-    scope = this.$inject('$rootScope').$new();
-
-    scope.paginator = this.$inject('classes/Paginator.es6').default.create();
+    scope.paginator = paginatorClass.create();
     scope.selection = {
       size: stubs.size,
       getSelected: stubs.getSelected.returns([]),
       clear: stubs.clear
     };
 
-    const spaceContext = this.$inject('mocks/spaceContext').init();
+    const spaceContext = $inject('mocks/spaceContext').init();
     spaceContext.space = { createEntry: stubs.createEntry };
-
-    accessChecker = this.$inject('access_control/AccessChecker');
-    accessChecker.shouldHide = sinon.stub().returns(false);
-    accessChecker.shouldDisable = sinon.stub().returns(false);
-    accessChecker.canPerformActionOnEntity = sinon.stub();
 
     scope.publishSelected = sinon.stub().returns($q.resolve(duplicateOrPublishResults));
 
@@ -85,7 +94,7 @@ describe('Entry List Actions Controller', () => {
     // rely upon its implementation (via batchPerformer instance methods)
     // internally. The stub below allows us to do so while mocking the return
     // value of `batchPerformer.create(config).duplicate`.
-    const batchPerformer = this.$inject('batchPerformer');
+    const batchPerformer = $inject('batchPerformer');
     const { create } = batchPerformer;
     sinon.stub(batchPerformer, 'create').callsFake((...args) => {
       const { duplicate, ...performer } = create(...args);
@@ -98,7 +107,7 @@ describe('Entry List Actions Controller', () => {
       };
     });
 
-    const $controller = this.$inject('$controller');
+    const $controller = $inject('$controller');
     $controller('EntryListActionsController', { $scope: scope });
   });
 
@@ -291,7 +300,7 @@ describe('Entry List Actions Controller', () => {
   });
 
   it('cannot show duplicate action', () => {
-    accessChecker.shouldHide.withArgs('create', 'entry').returns(true);
+    stubs.shouldHide.withArgs('create', 'entry').returns(true);
     expect(scope.showDuplicate()).toBeFalsy();
   });
 
@@ -302,7 +311,7 @@ describe('Entry List Actions Controller', () => {
     it('can show ' + action + ' action', () => {
       stubs.action1.returns(true);
       stubs.action2.returns(true);
-      accessChecker.canPerformActionOnEntity.returns(true);
+      stubs.canPerformActionOnEntity.returns(true);
       stubs.getSelected.returns([
         makeEntity(canMethodName, stubs.action1),
         makeEntity(canMethodName, stubs.action2)
@@ -312,10 +321,10 @@ describe('Entry List Actions Controller', () => {
     });
 
     it('cannot show delete ' + action + ' because no general permission', () => {
-      accessChecker.shouldHide.withArgs(action, 'entry').returns(true);
+      stubs.shouldHide.withArgs(action, 'entry').returns(true);
       stubs.action1.returns(true);
       stubs.action2.returns(true);
-      accessChecker.canPerformActionOnEntity.returns(false);
+      stubs.canPerformActionOnEntity.returns(false);
       stubs.getSelected.returns([
         makeEntity(canMethodName, stubs.action1),
         makeEntity(canMethodName, stubs.action2)
@@ -327,7 +336,7 @@ describe('Entry List Actions Controller', () => {
     it('cannot show ' + action + ' action because no permission on item', () => {
       stubs.action1.returns(true);
       stubs.action2.returns(false);
-      accessChecker.canPerformActionOnEntity.returns(true);
+      stubs.canPerformActionOnEntity.returns(true);
       stubs.getSelected.returns([
         makeEntity(canMethodName, stubs.action1),
         makeEntity(canMethodName, stubs.action2)

@@ -12,9 +12,9 @@ import EmptyStateContainer, {
 } from 'components/EmptyStateContainer/EmptyStateContainer.es6';
 import NoContentTypeAdvice from 'components/tabs/NoContentTypeAdvice/index.es6';
 
-const spaceContext = getModule('spaceContext');
-
 export default ({ hasContentType, contentTypes, onCreate, suggestedContentTypeId }) => {
+  const spaceContext = getModule('spaceContext');
+
   const canCreateCT = can(Action.CREATE, 'ContentType');
   const userIsAdmin = spaceContext.getData('spaceMembership.admin', false);
 

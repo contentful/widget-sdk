@@ -1,5 +1,5 @@
-'use strict';
 import _ from 'lodash';
+import { $initialize, $inject, $apply, $compile, $q } from 'test/utils/ng';
 
 describe('cfEmbedlyPreview Directive', () => {
   let deferredEmbedlyResponse;
@@ -8,25 +8,27 @@ describe('cfEmbedlyPreview Directive', () => {
     deferredEmbedlyResponse = null;
   });
 
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.constant('lodash/debounce', _.identity);
+  beforeEach(async function() {
+    this.system.set('lodash/debounce', {
+      default: _.identity
+    });
+    this.system.set('utils/LazyLoader.es6', {
+      get: () => {
+        const stubbedEmbedly = (type, element, callback) => {
+          if (type === 'card' && element.localName === 'a' && element.hasAttribute('href')) {
+            element.innerHTML = 'I am a card from ' + element.getAttribute('href');
+          } else if (type === 'on') {
+            deferredEmbedlyResponse.resolve = callback;
+          }
+        };
+
+        return $q.resolve(stubbedEmbedly);
+      }
     });
 
-    const $q = this.$inject('$q');
+    await $initialize(this.system);
+
     deferredEmbedlyResponse = $q.defer();
-
-    this.$inject('utils/LazyLoader.es6').get = () => {
-      const stubbedEmbedly = (type, element, callback) => {
-        if (type === 'card' && element.localName === 'a' && element.hasAttribute('href')) {
-          element.innerHTML = 'I am a card from ' + element.getAttribute('href');
-        } else if (type === 'on') {
-          deferredEmbedlyResponse.resolve = callback;
-        }
-      };
-
-      return $q.resolve(stubbedEmbedly);
-    };
 
     this.compileElement = defaultValue => {
       defaultValue = defaultValue || null;
@@ -34,12 +36,12 @@ describe('cfEmbedlyPreview Directive', () => {
         previewUrl: _.get(this, 'scope.previewUrl') || defaultValue,
         urlStatus: 'loading'
       };
-      this.element = this.$compile(
+      this.element = $compile(
         '<cf-embedly-preview preview-url="previewUrl" url-status="urlStatus" />',
         scopeProps
       );
       this.scope = this.element.isolateScope();
-      this.$apply();
+      $apply();
     };
   });
 
@@ -105,7 +107,7 @@ describe('cfEmbedlyPreview Directive', () => {
       this.compileElement('http://404site.com');
       expect(this.scope.urlStatus).toBe('loading');
       // Simulate a 404 by flushing timers without resolving
-      this.$inject('$timeout').flush();
+      $inject('$timeout').flush();
       expect(this.scope.urlStatus).toBe('broken');
     });
 
@@ -113,7 +115,7 @@ describe('cfEmbedlyPreview Directive', () => {
       this.compileElement('http://404site.com');
       expect(this.scope.urlStatus).toBe('loading');
       this.scope.previewUrl = '';
-      this.$inject('$timeout').flush();
+      $inject('$timeout').flush();
       expect(this.scope.urlStatus).toBe('ok');
     });
   });

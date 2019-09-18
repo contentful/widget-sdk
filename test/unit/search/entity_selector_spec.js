@@ -1,18 +1,32 @@
+import sinon from 'sinon';
 import _ from 'lodash';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('entitySelector', () => {
-  beforeEach(function() {
-    module('contentful/test');
+  beforeEach(async function() {
+    this.system.set('services/localeStore.es6', {
+      default: {
+        getDefaultLocale: () => ({ code: 'de-DE' })
+      }
+    });
 
-    this.$q = this.$inject('$q');
-    this.entitySelector = this.$inject('entitySelector');
-    this.openDialogStub = sinon.stub().returns({ promise: this.$q.resolve() });
-    this.$inject('modalDialog').open = this.openDialogStub;
-    this.$inject('services/localeStore.es6').default.getDefaultLocale = () => ({ code: 'de-DE' });
+    this.openDialogStub = sinon.stub();
+
+    await $initialize(this.system, $provide => {
+      $provide.constant('modalDialog', {
+        open: this.openDialogStub
+      });
+    });
+
+    this.$q = $inject('$q');
+    this.openDialogStub.returns({ promise: this.$q.resolve() });
+
+    this.entitySelector = $inject('entitySelector');
 
     this.open = (field, links) => {
       const promise = this.entitySelector.openFromField(field, links);
-      this.$apply();
+      $apply();
       return promise;
     };
     this.getScope = () => this.openDialogStub.lastCall.args[0].scopeData;
@@ -129,7 +143,7 @@ describe('entitySelector', () => {
     beforeEach(function() {
       this.openFromExt = opts => {
         const promise = this.entitySelector.openFromExtension(opts);
-        this.$apply();
+        $apply();
         return promise;
       };
 
@@ -172,7 +186,7 @@ describe('entitySelector', () => {
 
     describe('converting options to validations', () => {
       it('"contentTypes" option converted to validation', async function() {
-        const spaceContext = this.$inject('mocks/spaceContext').init();
+        const spaceContext = $inject('mocks/spaceContext').init();
         spaceContext.publishedCTs.fetch.resolves({});
 
         const ids = ['blogpost', 'cat'];

@@ -6,11 +6,11 @@ import { get } from 'lodash';
 import BuildButton from './BuildButton.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const spaceContext = getModule('spaceContext');
-
 const validId = id => typeof id === 'string' && id.length > 0;
 
 const getContentPreviewIdsFor = async contentType => {
+  const spaceContext = getModule('spaceContext');
+
   const ctId = get(contentType, ['sys', 'id']);
   const contentPreviews = await spaceContext.contentPreview.getForContentType(ctId);
 
@@ -29,6 +29,8 @@ export default class NetlifyBuildButton extends Component {
   state = {};
 
   async componentDidMount() {
+    const spaceContext = getModule('spaceContext');
+
     const contentPreviewIds = await getContentPreviewIdsFor(this.props.contentType);
 
     // At least one content preview is required for Netlify app to operate.

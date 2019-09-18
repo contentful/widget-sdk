@@ -2,8 +2,10 @@ import { get } from 'lodash';
 import * as OrganizationRoles from 'services/OrganizationRoles.es6';
 import { getValue } from 'utils/kefir.es6';
 import { user$ } from 'services/TokenStore.es6';
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as Config from 'Config.es6';
 
-export const spaceHomeController = ($scope, space, accessChecker, Config) => {
+export const spaceHomeController = ($scope, space) => {
   $scope.context.ready = true;
   $scope.context.forbidden = !accessChecker.getSectionVisibility().spaceHome;
   $scope.readOnlySpace = Boolean(space.readOnlyAt);

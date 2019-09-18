@@ -1,11 +1,11 @@
 import { getModule } from 'NgRegistry.es6';
 
-const modalDialog = getModule('modalDialog');
-
 export default function SaveViewDialog({
   allowViewTypeSelection = false,
   allowRoleAssignment = false
 }) {
+  const modalDialog = getModule('modalDialog');
+
   return modalDialog.open({
     template:
       '<react-component class="modal-background" name="app/ContentList/SaveViewDialogComponent.es6" props="props"/>',

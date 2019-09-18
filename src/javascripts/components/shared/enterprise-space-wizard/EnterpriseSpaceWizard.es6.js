@@ -20,8 +20,6 @@ import EnterpriseSpaceWizardInfo from './EnterpriseSpaceWizardInfo.es6';
 import { TextField } from '@contentful/forma-36-react-components';
 import { getModule } from 'NgRegistry.es6';
 
-const $rootScope = getModule('$rootScope');
-
 class EnterpriseSpaceWizard extends React.Component {
   static propTypes = {
     freeSpaceRatePlan: PropTypes.object.isRequired,
@@ -107,6 +105,8 @@ class EnterpriseSpaceWizard extends React.Component {
   }
 
   static handleTemplateCreated() {
+    const $rootScope = getModule('$rootScope');
+
     $rootScope.$broadcast('spaceTemplateCreated');
   }
 

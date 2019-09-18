@@ -1,17 +1,19 @@
 import { range } from 'lodash';
-import * as sinon from 'test/helpers/sinon';
+import sinon from 'sinon';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('utils/Concurrent.es6', () => {
   let C;
   let C$q;
 
-  beforeEach(function() {
-    module('contentful/test');
+  beforeEach(async function() {
+    C = await this.system.import('utils/Concurrent.es6');
+    C$q = await this.system.import('utils/ConcurrentQ.es6');
 
-    C = this.$inject('utils/Concurrent.es6');
-    C$q = this.$inject('utils/ConcurrentQ.es6');
+    await $initialize(this.system);
 
-    this.$q = this.$inject('$q');
+    this.$q = $inject('$q');
   });
 
   afterEach(() => {
@@ -30,7 +32,7 @@ describe('utils/Concurrent.es6', () => {
       put(b.promise);
       a.resolve('VAL A');
       b.resolve('VAL B');
-      this.$apply();
+      $apply();
 
       sinon.assert.calledOnceWith(onResult, C.Success('VAL B'));
     });
@@ -45,7 +47,7 @@ describe('utils/Concurrent.es6', () => {
       put(b.promise);
       a.reject('ERR A');
       b.reject('ERR B');
-      this.$apply();
+      $apply();
 
       sinon.assert.calledOnce(onResult);
       sinon.assert.calledOnceWith(onResult, C.Failure('ERR B'));

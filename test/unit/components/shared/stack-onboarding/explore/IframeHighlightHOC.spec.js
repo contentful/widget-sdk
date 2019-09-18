@@ -1,23 +1,25 @@
 import React from 'react';
 import _ from 'lodash';
 import sinon from 'sinon';
+import { $initialize } from 'test/utils/ng';
 
 import { shallow } from 'enzyme';
 
 describe('IframeHighlightHOC', () => {
   let IframeHighlightHOC, goStub;
 
-  beforeEach(function() {
+  beforeEach(async function() {
     goStub = sinon.spy();
-    module('contentful/test', $provide => {
+
+    IframeHighlightHOC = (await this.system.import(
+      'components/shared/stack-onboarding/explore/IframeHighlightHOC.es6'
+    )).default;
+
+    await $initialize(this.system, $provide => {
       $provide.value('$state', {
         go: goStub
       });
     });
-
-    IframeHighlightHOC = this.$inject(
-      'components/shared/stack-onboarding/explore/IframeHighlightHOC.es6'
-    ).default;
   });
 
   afterEach(function() {

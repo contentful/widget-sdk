@@ -4,12 +4,6 @@ import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
 import { includes, get, orderBy, compact } from 'lodash';
 import TheLocaleStore from 'services/localeStore.es6';
 
-const spaceContext = getModule('spaceContext');
-const EntityHelpers = getModule('EntityHelpers');
-
-const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
-const entityHelpers = EntityHelpers.newForLocale(defaultLocaleCode);
-
 const RESULTS_LIMIT = 20;
 export const MIN_QUERY_LENGTH = 2;
 
@@ -33,6 +27,12 @@ const buildPathParams = (id, type) => {
 };
 
 const queryEntries = async query => {
+  const spaceContext = getModule('spaceContext');
+  const EntityHelpers = getModule('EntityHelpers');
+
+  const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
+  const entityHelpers = EntityHelpers.newForLocale(defaultLocaleCode);
+
   if (!getSectionVisibility().entry) {
     return [];
   }
@@ -60,6 +60,12 @@ const queryEntries = async query => {
 };
 
 const queryAssets = async query => {
+  const spaceContext = getModule('spaceContext');
+  const EntityHelpers = getModule('EntityHelpers');
+
+  const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
+  const entityHelpers = EntityHelpers.newForLocale(defaultLocaleCode);
+
   if (!getSectionVisibility().asset) {
     return [];
   }
@@ -86,6 +92,8 @@ const queryAssets = async query => {
 };
 
 const queryContentTypes = query => {
+  const spaceContext = getModule('spaceContext');
+
   if (!getSectionVisibility().contentType) {
     return [];
   }

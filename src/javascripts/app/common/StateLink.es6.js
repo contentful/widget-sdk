@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { getModule } from 'NgRegistry.es6';
 
-const $state = getModule('$state');
-
 const StateLink = ({ to, params, options, children, ...rest }) => {
+  const $state = getModule('$state');
+
   if (typeof children === 'function') {
     return children({
       getHref: () => $state.href(to, params, options),

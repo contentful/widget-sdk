@@ -5,16 +5,17 @@
  *
  * It also patches the Karma.start() function to load all test modules.
  */
+
 (() => {
   // Will hold a list of all module IDs that define test cases
   const testModules = [];
 
-  // All modules under `test/` will register here.
-  window.SystemTest = { register };
+  const registerInSystemJS = window.SystemJS.register.bind(window.SystemJS);
 
-  // Load ES6 modules defined in src/javascripts. They are registered in
-  // `src/javascripts/prelude.js`.
-  window.AngularSystem.registry.forEach(args => register(...args));
+  window.SystemJS.register = register;
+  window.testRegistry = [];
+
+  window.libs.forEach(([name, dep]) => registerLibrary(name, dep));
 
   /**
    * We hook into karma start to make sure that we load all test modules before
@@ -22,24 +23,124 @@
    */
   const Karma = window.__karma__;
   const start = Karma.start.bind(Karma);
-  Karma.start = (...args) => {
-    SystemJS.import('test/helpers/boot')
-      .then(() => {
-        return Promise.all(testModules.map(name => SystemJS.import(name)));
-      })
-      .then(
-        () => {
-          start(...args);
-        },
-        err => {
-          // We need to call this in a new context so that Karma’s window.onerror
-          // handler picks it up. If we throw it in a Promise the browser will raise
-          // an `uncaughtRejection` event.
-          window.setTimeout(() => {
-            throw err;
-          });
-        }
-      );
+
+  Error.stackTraceLimit = 1000;
+
+  /**
+   * Subscribe to promise rejection and expose error details to karma runner.
+   * Note that it will fail with generic error rather than a failed test case
+   * due to asynchronous event handling.
+   */
+  window.addEventListener('unhandledrejection', ev => {
+    // Without this check there will be an error in async tests using `Promise.reject()`
+    if (ev.reason) {
+      window.__karma__.error(`Unhandled rejection: ${ev.reason.stack}`);
+    }
+  });
+
+  Karma.start = async (...args) => {
+    // Check to see that every file in __karma__ is in System
+    const fetchPromises = [];
+
+    for (const filename of Object.keys(Karma.files)) {
+      const prefixes = ['/base/src', '/base/test'];
+
+      if (!prefixes.find(prefix => filename.startsWith(prefix))) {
+        continue;
+      }
+
+      // Remove base and .js from the filename, and see if it's in the records
+      let recordName;
+      if (filename.startsWith('/base/src')) {
+        recordName = filename.split('/base/src/javascripts/')[1];
+      } else {
+        recordName = filename.split('/base/')[1];
+      }
+
+      const ignoredFiles = ['test/system-config', 'test/prelude', 'libs/locales_list'];
+      recordName = recordName.split('.js')[0];
+
+      if (ignoredFiles.find(name => recordName === name)) {
+        continue;
+      }
+
+      const normalizedRecordName = SystemJS.normalizeSync(recordName);
+
+      if (!SystemJS[Object.getOwnPropertySymbols(SystemJS)[0]].records[normalizedRecordName]) {
+        fetchPromises.push(
+          window
+            .fetch(filename)
+            .then(resp => resp.text())
+            .then(eval)
+        );
+      }
+    }
+
+    await Promise.all(fetchPromises);
+
+    try {
+      // This needs to be registered early because prelude depends on it (and it not being in `this.system`);
+      SystemJS.register('Config.es6', [], _export => {
+        _export({
+          authUrl: x => `//be.test.com${ensureLeadingSlash(x)}`,
+          apiUrl: x => `//api.test.com${ensureLeadingSlash(x)}`,
+          websiteUrl: x => `//www.test.com${ensureLeadingSlash(x)}`,
+          accountUrl: x => `//be.test.com/account${ensureLeadingSlash(x)}`,
+          domain: 'test.com',
+          env: 'unittest',
+          launchDarkly: { envId: 'launch-darkly-test-id' },
+          snowplow: {},
+          services: {
+            filestack: {},
+            google: {},
+            contentful: {},
+            embedly: {},
+            getstream_io: {}
+          },
+          readInjectedConfig: () => ({ config: {} })
+        });
+
+        return {
+          setters: [],
+          execute: function() {}
+        };
+      });
+
+      await SystemJS.import('angular-mocks');
+      const { configure } = await SystemJS.import('enzyme');
+      const { default: Adapter } = await SystemJS.import('enzyme-adapter-react-16');
+
+      configure({ adapter: new Adapter() });
+
+      await SystemJS.import('test/helpers/setup-isolated-system');
+      await SystemJS.import('test/utils/dsl');
+
+      await SystemJS.import('test/helpers/leaked-dom-elements');
+      await SystemJS.import('test/helpers/sinon');
+      await SystemJS.import('test/helpers/jasmine-matchers');
+
+      await SystemJS.import('test/helpers/systemjs-mocks');
+
+      await SystemJS.import('test/helpers/mocks/index');
+      await SystemJS.import('test/helpers/mocks/entity_editor_document');
+      await SystemJS.import('test/helpers/mocks/editor_context');
+      await SystemJS.import('test/helpers/mocks/cf_stub');
+      await SystemJS.import('test/helpers/mocks/space_context');
+      await SystemJS.import('test/helpers/mocks/ot_doc');
+      await SystemJS.import('test/helpers/mocks/widget_api');
+
+      await SystemJS.import('prelude');
+      await Promise.all(testModules.map(name => SystemJS.import(name)));
+
+      start(...args);
+    } catch (e) {
+      // We need to call this in a new context so that Karma’s window.onerror
+      // handler picks it up. If we throw it in a Promise the browser will raise
+      // an `uncaughtRejection` event.
+      window.setTimeout(() => {
+        throw e;
+      });
+    }
   };
 
   /**
@@ -49,13 +150,25 @@
    * we will load eagerly later.
    */
   function register(id, deps, run) {
-    SystemJS.register(id, deps, run);
+    window.testRegistry.push([id, deps, run]);
+    registerInSystemJS(id, deps, run);
 
     registerDirectoryAlias(id);
 
     if (id.startsWith('test/unit') || id.startsWith('test/integration')) {
       testModules.push(id);
     }
+  }
+
+  function registerLibrary(name, dep) {
+    window.SystemJS.register(name, [], export_ => {
+      const exports = dep;
+      export_(Object.assign({ default: exports }, exports));
+      return {
+        setters: [],
+        execute: function() {}
+      };
+    });
   }
 
   /**
@@ -71,3 +184,11 @@
     }
   }
 })();
+
+function ensureLeadingSlash(x = '') {
+  if (x.charAt(0) === '/') {
+    return x;
+  } else {
+    return '/' + x;
+  }
+}

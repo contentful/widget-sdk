@@ -1,18 +1,31 @@
-import * as K from 'test/helpers/mocks/kefir';
+import * as K from 'test/utils/kefir';
 import _ from 'lodash';
+import sinon from 'sinon';
 import { deepFreeze } from 'utils/Freeze.es6';
-import createLocaleStoreMock from 'test/helpers/mocks/createLocaleStoreMock';
+import createLocaleStoreMock from 'test/utils/createLocaleStoreMock';
+import { $inject, $initialize, $apply } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('entityEditor/Document', () => {
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.constant('services/localeStore.es6', {
-        default: createLocaleStoreMock()
-      });
+  beforeEach(async function() {
+    this.stubs = {
+      canPerformActionOnEntity: sinon.stub(),
+      canUpdateEntry: sinon.stub(),
+      canUpdateAsset: sinon.stub(),
+      canEditFieldLocale: sinon.stub()
+    };
+    this.system.set('services/localeStore.es6', {
+      default: createLocaleStoreMock()
+    });
+    this.system.set('access_control/AccessChecker/index.es6', {
+      canUpdateEntity: sinon.stub().returns(true),
+      canPerformActionOnEntity: this.stubs.canPerformActionOnEntity,
+      canUpdateEntry: this.stubs.canUpdateEntry,
+      canUpdateAsset: this.stubs.canUpdateAsset,
+      canEditFieldLocale: this.stubs.canEditFieldLocale
     });
 
-    this.DocLoad = this.$inject('data/sharejs/Connection.es6').DocLoad;
-    this.OtDoc = this.$inject('mocks/OtDoc');
+    this.DocLoad = (await this.system.import('data/sharejs/Connection.es6')).DocLoad;
 
     this.docLoader = {
       doc: K.createMockProperty(this.DocLoad.None()),
@@ -25,8 +38,7 @@ describe('entityEditor/Document', () => {
       refreshAuth: sinon.stub().resolves()
     };
 
-    this.accessChecker = this.mockService('access_control/AccessChecker');
-    this.accessChecker.canUpdateEntity.returns(true);
+    const Doc = await this.system.import('app/entity_editor/Document.es6');
 
     this.connectAndOpen = function(data) {
       data = _.cloneDeep(data || this.entity.data);
@@ -35,13 +47,16 @@ describe('entityEditor/Document', () => {
       }
       const doc = new this.OtDoc(data);
       this.docLoader.doc.set(this.DocLoad.Doc(doc));
-      this.$apply();
+      $apply();
       return doc;
     };
 
-    this.localeStore = this.$inject('services/localeStore.es6').default;
-
+    this.localeStore = (await this.system.import('services/localeStore.es6')).default;
     this.localeStore.setLocales([{ internal_code: 'en' }]);
+
+    await $initialize(this.system);
+
+    this.OtDoc = $inject('mocks/OtDoc');
 
     this.contentType = {
       data: {
@@ -78,8 +93,6 @@ describe('entityEditor/Document', () => {
     };
 
     this.createDoc = (type = 'Entry') => {
-      const Doc = this.$inject('app/entity_editor/Document.es6');
-
       this.entity.data.sys.type = type;
       this.initialEntity = deepFreeze(_.cloneDeep(this.entity));
 
@@ -124,7 +137,7 @@ describe('entityEditor/Document', () => {
         }
       });
 
-      this.$apply();
+      $apply();
 
       const normalizedFieldValues = this.doc.getValueAt(['fields']);
       expect(normalizedFieldValues).toEqual({
@@ -163,13 +176,13 @@ describe('entityEditor/Document', () => {
 
     it('is "ok" when the document connects', function() {
       this.connectAndOpen();
-      this.$apply();
+      $apply();
       K.assertCurrentValue(this.doc.status$, 'ok');
     });
 
     it('is "ot-connection-error" when there is a disconnected error', function() {
       this.connectAndOpen();
-      this.$apply();
+      $apply();
       K.assertCurrentValue(this.doc.status$, 'ok');
       this.docLoader.doc.set(this.DocLoad.Error('disconnected'));
       K.assertCurrentValue(this.doc.status$, 'ot-connection-error');
@@ -177,7 +190,7 @@ describe('entityEditor/Document', () => {
 
     it('is "editing-not-allowed" when doc opening is forbidden', function() {
       this.connectAndOpen();
-      this.$apply();
+      $apply();
       K.assertCurrentValue(this.doc.status$, 'ok');
       this.docLoader.doc.set(this.DocLoad.Error('forbidden'));
       K.assertCurrentValue(this.doc.status$, 'editing-not-allowed');
@@ -185,7 +198,7 @@ describe('entityEditor/Document', () => {
 
     it('is "archived" when the entity is archived', function() {
       const doc = this.connectAndOpen();
-      this.$apply();
+      $apply();
       K.assertCurrentValue(this.doc.status$, 'ok');
       doc.setAt(['sys', 'archivedVersion'], 1);
       K.assertCurrentValue(this.doc.status$, 'archived');
@@ -296,7 +309,7 @@ describe('entityEditor/Document', () => {
       doc.removeAt = sinon.stub().yields();
       const resolved = sinon.stub();
       this.doc.removeValueAt('PATH').then(resolved);
-      this.$apply();
+      $apply();
       sinon.assert.called(resolved);
     });
 
@@ -305,7 +318,7 @@ describe('entityEditor/Document', () => {
       doc.removeAt = sinon.stub().throws('ERROR');
       const resolved = sinon.stub();
       this.doc.removeValueAt('PATH').then(resolved);
-      this.$apply();
+      $apply();
       sinon.assert.called(resolved);
     });
 
@@ -333,14 +346,14 @@ describe('entityEditor/Document', () => {
 
     it('inserts value into ShareJS document', function() {
       this.doc.insertValueAt(['a'], 1, 'X');
-      this.$apply();
+      $apply();
       expect(this.otDoc.snapshot.a).toEqual([0, 'X', 1, 2]);
     });
 
     it('sets value to singleton array', function() {
       delete this.otDoc.snapshot.a;
       this.doc.insertValueAt(['a'], 0, 'X');
-      this.$apply();
+      $apply();
       expect(this.otDoc.snapshot.a).toEqual(['X']);
     });
   });
@@ -358,14 +371,14 @@ describe('entityEditor/Document', () => {
 
     it('pushes value into ShareJS document', function() {
       this.doc.pushValueAt(['a'], 'X');
-      this.$apply();
+      $apply();
       expect(this.otDoc.snapshot.a).toEqual([0, 1, 2, 'X']);
     });
 
     it('sets value to singleton array', function() {
       delete this.otDoc.snapshot.a;
       this.doc.pushValueAt(['a'], 'X');
-      this.$apply();
+      $apply();
       expect(this.otDoc.snapshot.a).toEqual(['X']);
     });
 
@@ -522,7 +535,7 @@ describe('entityEditor/Document', () => {
       doc.version = 20;
       doc.snapshot.sys.updatedBy = 'me';
       doc.emit('some event');
-      this.$apply();
+      $apply();
 
       K.assertMatchCurrentValue(
         this.doc.sysProperty,
@@ -539,7 +552,7 @@ describe('entityEditor/Document', () => {
       doc.version = 20;
       doc.compressed = 10;
       doc.emit('some event');
-      this.$apply();
+      $apply();
 
       const version = K.getValue(this.doc.sysProperty).version;
       expect(version).toBe(30);
@@ -579,12 +592,12 @@ describe('entityEditor/Document', () => {
 
       this.otDoc.inflightOp = true;
       this.otDoc.emit('change', []);
-      this.$apply();
+      $apply();
       K.assertCurrentValue(this.doc.state.isSaving$, true);
 
       this.otDoc.inflightOp = false;
       this.otDoc.emit('acknowledge');
-      this.$apply();
+      $apply();
       K.assertCurrentValue(this.doc.state.isSaving$, false);
     });
   });
@@ -594,7 +607,7 @@ describe('entityEditor/Document', () => {
       this.otDoc = this.connectAndOpen();
       this.docUpdate = function(path, value) {
         this.otDoc.setAt(path, value);
-        this.$apply();
+        $apply();
       };
     });
 
@@ -606,13 +619,12 @@ describe('entityEditor/Document', () => {
       K.assertCurrentValue(this.doc.state.isDirty$, false);
     });
 
-    xit('changes to true if a published document is changed', function() {
+    it('changes to true if a published document is changed', function() {
       this.otDoc.version = 12;
       this.docUpdate(['sys', 'publishedVersion'], 12);
       K.assertCurrentValue(this.doc.state.isDirty$, false);
 
       this.docUpdate(['fields'], {});
-      expect(this.isDirtyValues[0]).toBe(true);
       K.assertCurrentValue(this.doc.state.isDirty$, true);
     });
 
@@ -645,7 +657,7 @@ describe('entityEditor/Document', () => {
     it('emits "OpenForbidden" error when opening fails', function() {
       const errors = K.extractValues(this.doc.state.error$);
       this.docLoader.doc.set(this.DocLoad.Error('forbidden'));
-      this.$apply();
+      $apply();
       expect(errors[0].constructor.name).toBe('OpenForbidden');
     });
   });
@@ -653,37 +665,37 @@ describe('entityEditor/Document', () => {
   describe('#permissions', () => {
     describe('#can()', () => {
       it('delegates to "accessChecker.canPerformActionOnEntity()"', function() {
-        this.accessChecker.canPerformActionOnEntity.returns(true);
+        this.stubs.canPerformActionOnEntity.returns(true);
         expect(this.doc.permissions.can('publish')).toBe(true);
 
-        this.accessChecker.canPerformActionOnEntity.returns(false);
+        this.stubs.canPerformActionOnEntity.returns(false);
         expect(this.doc.permissions.can('publish')).toBe(false);
 
-        const entity = this.accessChecker.canPerformActionOnEntity.args[0][1];
+        const entity = this.stubs.canPerformActionOnEntity.args[0][1];
         expect(entity.data.sys.id).toEqual('ENTITY_ID');
       });
 
       it('delegates "update" calls to "accessChecker.canUpdateEntry()"', function() {
-        this.accessChecker.canUpdateEntry.returns(true);
+        this.stubs.canUpdateEntry.returns(true);
         expect(this.doc.permissions.can('update')).toBe(true);
 
-        this.accessChecker.canUpdateEntry.returns(false);
+        this.stubs.canUpdateEntry.returns(false);
         expect(this.doc.permissions.can('update')).toBe(false);
 
-        const entity = this.accessChecker.canUpdateEntry.args[0][0];
+        const entity = this.stubs.canUpdateEntry.args[0][0];
         expect(entity.data.sys.id).toEqual('ENTITY_ID');
       });
 
       it('delegates "update" calls to "accessChecker.canUpdateAsset()"', function() {
         const doc = this.createDoc('Asset');
 
-        this.accessChecker.canUpdateAsset.returns(true);
+        this.stubs.canUpdateAsset.returns(true);
         expect(doc.permissions.can('update')).toBe(true);
 
-        this.accessChecker.canUpdateAsset.returns(false);
+        this.stubs.canUpdateAsset.returns(false);
         expect(doc.permissions.can('update')).toBe(false);
 
-        const entity = this.accessChecker.canUpdateAsset.args[0][0];
+        const entity = this.stubs.canUpdateAsset.args[0][0];
         expect(entity.data.sys.id).toEqual('ENTITY_ID');
       });
 
@@ -695,20 +707,20 @@ describe('entityEditor/Document', () => {
 
     describe('#canEditFieldLocale()', () => {
       it('returns false if `update` permission is denied', function() {
-        this.accessChecker.canUpdateEntry.returns(false);
+        this.stubs.canUpdateEntry.returns(false);
         expect(this.doc.permissions.canEditFieldLocale('FIELD', 'LOCALE')).toBe(false);
       });
 
       it('delegates to "policyAccessChecker"', function() {
-        this.accessChecker.canUpdateEntry.returns(true);
-        this.accessChecker.canEditFieldLocale.returns(true);
+        this.stubs.canUpdateEntry.returns(true);
+        this.stubs.canEditFieldLocale.returns(true);
 
         expect(this.doc.permissions.canEditFieldLocale('FIELD', 'LOCALE')).toBe(true);
 
-        this.accessChecker.canEditFieldLocale.returns(false);
+        this.stubs.canEditFieldLocale.returns(false);
         expect(this.doc.permissions.canEditFieldLocale('FIELD', 'LOCALE')).toBe(false);
 
-        const args = this.accessChecker.canEditFieldLocale.args[0];
+        const args = this.stubs.canEditFieldLocale.args[0];
         const [ctId, { apiName }, { code }] = args;
         expect(ctId).toBe('CT_ID');
         expect(apiName).toBe('FIELD');
@@ -735,7 +747,7 @@ describe('entityEditor/Document', () => {
   describe('client entity instance', () => {
     it('updates data when OtDoc emits changes', function() {
       const otDoc = this.connectAndOpen();
-      this.$apply();
+      $apply();
       otDoc.setAt(['fields', 'a', 'en'], 'VALUE');
       expect(this.entity.data.fields.a.en).toBe('VALUE');
     });
@@ -743,7 +755,7 @@ describe('entityEditor/Document', () => {
     it('marks entity as deleted when sys has deletedVersion', function() {
       const otDoc = this.connectAndOpen();
       this.entity.setDeleted = sinon.spy();
-      this.$apply();
+      $apply();
       otDoc.setAt(['sys', 'deletedVersion'], 1);
       expect(this.entity.data).toBe(undefined);
       sinon.assert.called(this.entity.setDeleted);
@@ -753,10 +765,10 @@ describe('entityEditor/Document', () => {
   function itRejectsWithoutDocument(method) {
     it('rejects when document is not opened', function() {
       this.docLoader.doc.set(this.DocLoad.None());
-      this.$apply();
+      $apply();
       const errored = sinon.stub();
       this.doc[method]().catch(errored);
-      this.$apply();
+      $apply();
       sinon.assert.called(errored);
     });
   }
@@ -770,14 +782,14 @@ describe('entityEditor/Document', () => {
 
       it('calls auth refresh on `forbidden` error', function() {
         action.call(this);
-        this.$apply();
+        $apply();
         sinon.assert.calledOnce(this.docConnection.refreshAuth);
       });
 
       it('emits error on state.error$ if auth refresh fails', function() {
         const errors = K.extractValues(this.doc.state.error$);
         action.call(this);
-        this.$apply();
+        $apply();
         expect(errors[0].constructor.name).toBe('SetValueForbidden');
       });
     });

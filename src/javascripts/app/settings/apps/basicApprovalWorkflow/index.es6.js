@@ -6,10 +6,9 @@ import createFetcherComponent from 'app/common/createFetcherComponent.es6';
 import AppPageShell from '../_common/AppPageShell.es6';
 import ApprovalWorkflowAppPage from './ApprovalWorkflowAppPage.es6';
 
-const spaceContext = getModule('spaceContext');
-const $state = getModule('$state');
-
 const ApprovalWorkflowFetcher = createFetcherComponent(({ client }) => {
+  const spaceContext = getModule('spaceContext');
+
   return Promise.all([client.get('basicApprovalWorkflow'), spaceContext.publishedCTs.getAllBare()]);
 });
 
@@ -21,6 +20,9 @@ export default class ApprovalWorkflowApp extends Component {
   };
 
   render() {
+    const spaceContext = getModule('spaceContext');
+    const $state = getModule('$state');
+
     return (
       <ApprovalWorkflowFetcher client={this.props.client}>
         {({ isLoading, isError, data }) => {

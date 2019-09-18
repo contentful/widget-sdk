@@ -10,9 +10,9 @@ import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import TheLocaleStore from 'services/localeStore.es6';
 
-const spaceContext = getModule('spaceContext');
-
 const LocalesFetcher = createFetcherComponent(() => {
+  const spaceContext = getModule('spaceContext');
+
   return spaceContext.localeRepo.getAll();
 });
 
@@ -88,6 +88,8 @@ class NewLocaleForm extends Component {
 
 export default class LocalesNewRoute extends React.Component {
   save = async function(locale) {
+    const spaceContext = getModule('spaceContext');
+
     const savedLocale = await spaceContext.localeRepo.save(locale);
     await TheLocaleStore.refresh();
     return savedLocale;

@@ -1,5 +1,3 @@
-'use strict';
-
 import _ from 'lodash';
 
 describe('markdown_editor/PreviewRender.es6', () => {
@@ -21,9 +19,8 @@ describe('markdown_editor/PreviewRender.es6', () => {
     return treeBuilder.getHashCode(str);
   }
 
-  beforeEach(function() {
-    module('contentful/test');
-    treeBuilder = this.$inject('markdown_editor/PreviewRender.es6');
+  beforeEach(async function() {
+    treeBuilder = await this.system.import('markdown_editor/PreviewRender.es6');
     buildTree = treeBuilder.default();
   });
 

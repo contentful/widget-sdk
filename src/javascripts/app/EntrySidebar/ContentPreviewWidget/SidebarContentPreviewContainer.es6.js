@@ -7,8 +7,6 @@ import { getModule } from 'NgRegistry.es6';
 import TheLocaleStore from 'services/localeStore.es6';
 import * as Entries from 'data/entries.es6';
 
-const spaceContext = getModule('spaceContext');
-
 const getEmptyContentPreview = () => ({
   compiledUrl: '',
   name: ''
@@ -33,6 +31,8 @@ export class SidebarContentPreviewContainer extends Component {
   };
 
   componentDidMount = async () => {
+    const spaceContext = getModule('spaceContext');
+
     // getForContentType does not return API objects, but some non-standard
     // internal representation with `envId` property
     // TODO: refactor to use just API objects
@@ -50,6 +50,8 @@ export class SidebarContentPreviewContainer extends Component {
   };
 
   getSelectedContentPreview = contentPreviews => {
+    const spaceContext = getModule('spaceContext');
+
     const selectedContentPreviewId = spaceContext.contentPreview.getSelected();
     return (
       contentPreviews.find(preview => preview.envId === selectedContentPreviewId) ||
@@ -59,6 +61,8 @@ export class SidebarContentPreviewContainer extends Component {
   };
 
   getCompiledUrls = async (contentPreviews, entry, contentType) => {
+    const spaceContext = getModule('spaceContext');
+
     const selectedContentPreview = this.getSelectedContentPreview(contentPreviews);
     const compiledUrl = await spaceContext.contentPreview.replaceVariablesInUrl(
       selectedContentPreview.url,
@@ -73,6 +77,8 @@ export class SidebarContentPreviewContainer extends Component {
   };
 
   onTrackPreviewOpened = async () => {
+    const spaceContext = getModule('spaceContext');
+
     if (!this.state.isPreviewSetup) {
       return;
     }
@@ -123,11 +129,15 @@ export class SidebarContentPreviewContainer extends Component {
   };
 
   onChangeContentPreview = preview => {
+    const spaceContext = getModule('spaceContext');
+
     spaceContext.contentPreview.setSelected(preview);
     this.setState({ selectedContentPreview: preview });
   };
 
   render() {
+    const spaceContext = getModule('spaceContext');
+
     const isAdmin = spaceContext.getData('spaceMember.admin', false);
 
     return (

@@ -1,10 +1,8 @@
-'use strict';
 import _ from 'lodash';
 import validationViews from 'services/validationViews.es6';
 
 describe('predefined validation regexps', () => {
   beforeEach(function() {
-    module('contentful/test');
     this.views = validationViews.get('regexp');
   });
 

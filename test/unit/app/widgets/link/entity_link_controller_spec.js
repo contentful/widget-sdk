@@ -1,10 +1,13 @@
 import _ from 'lodash';
+import sinon from 'sinon';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
 
 describe('EntityLinkController', () => {
-  beforeEach(function() {
-    module('contentful/test');
-    const $rootScope = this.$inject('$rootScope');
-    const $controller = this.$inject('$controller');
+  beforeEach(async function() {
+    await $initialize(this.system);
+
+    const $rootScope = $inject('$rootScope');
+    const $controller = $inject('$controller');
 
     this.helpers = _.transform(
       [
@@ -25,7 +28,7 @@ describe('EntityLinkController', () => {
       const defaultScope = _.extend($rootScope.$new(), { entityHelpers: this.helpers });
       this.scope = _.extend(defaultScope, scopeProps || {});
       this.controller = $controller('EntityLinkController', { $scope: this.scope });
-      this.$apply();
+      $apply();
     };
   });
 
@@ -96,11 +99,11 @@ describe('EntityLinkController', () => {
   });
 
   it('exposes content type when it is loaded', function() {
-    const $q = this.$inject('$q');
+    const $q = $inject('$q');
 
     const contentType = $q.resolve({ data: { name: 'CTNAME' } });
     this.init({ contentType });
-    this.$apply();
+    $apply();
     expect(this.scope.contentTypeName).toBe('CTNAME');
   });
 });

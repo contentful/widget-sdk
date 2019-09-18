@@ -1,16 +1,17 @@
-'use strict';
-
 import _ from 'lodash';
 import $ from 'jquery';
+import { $initialize, $inject } from 'test/utils/ng';
 
 describe('DateTime Editor', () => {
   let moment;
   let element, scope;
 
-  beforeEach(module('contentful/test'));
+  beforeEach(async function() {
+    moment = (await this.system.import('moment')).default;
+    await $initialize(this.system);
+    const $rootScope = $inject('$rootScope');
+    const $compile = $inject('$compile');
 
-  beforeEach(inject(($compile, $rootScope, _moment_) => {
-    moment = _moment_;
     scope = $rootScope;
     scope.widget = {
       settings: {
@@ -21,7 +22,7 @@ describe('DateTime Editor', () => {
     scope.fieldData = { value: null };
     element = $compile('<div cf-datetime-editor ng-model="fieldData.value"></div>')(scope);
     scope.$apply();
-  }));
+  });
 
   afterEach(() => {
     scope.$destroy();

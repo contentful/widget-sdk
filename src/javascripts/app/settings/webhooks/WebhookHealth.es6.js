@@ -2,8 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { getModule } from 'NgRegistry.es6';
 
-const spaceContext = getModule('spaceContext');
-
 const THRESHOLD = { WARNING: 70, SUCCESS: 90 };
 
 const STATUSES = ['LOADING', 'NODATA', 'FAILURE', 'WARNING', 'SUCCESS'];
@@ -32,6 +30,8 @@ export class WebhookHealth extends React.Component {
   };
 
   componentDidMount() {
+    const spaceContext = getModule('spaceContext');
+
     const { webhookId } = this.props;
 
     spaceContext.webhookRepo.logs

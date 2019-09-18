@@ -1,7 +1,9 @@
+import sinon from 'sinon';
 import $ from 'jquery';
-import * as DOM from 'test/helpers/DOM';
+import * as DOM from 'test/utils/dom';
 import { forEach, clone } from 'lodash';
-import createLocaleStoreMock from 'test/helpers/mocks/createLocaleStoreMock';
+import createLocaleStoreMock from 'test/utils/createLocaleStoreMock';
+import { $initialize, $inject, $compile, $apply, $removeDirectives } from 'test/utils/ng';
 
 /**
  * Tests the integration of the 'cfEntityField' directive with
@@ -16,16 +18,19 @@ import createLocaleStoreMock from 'test/helpers/mocks/createLocaleStoreMock';
  * TODO Use DOM helpers
  */
 describe('entity editor field integration', () => {
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.constant('cfWidgetApiDirective', () => {});
-      $provide.constant('cfWidgetRendererDirective', () => {});
-      $provide.constant('services/localeStore.es6', {
-        default: createLocaleStoreMock()
-      });
+  beforeEach(async function() {
+    // module('contentful/test', $provide => {
+    //   $provide.constant('cfWidgetApiDirective', () => {});
+    //   $provide.constant('cfWidgetRendererDirective', () => {});
+    // });
+    this.system.set('services/localeStore.es6', {
+      default: createLocaleStoreMock()
     });
 
-    this.createDocument = this.$inject('mocks/entityEditor/Document').create;
+    await $initialize(this.system);
+    await $removeDirectives(this.system, ['cfWidgetApi', 'cfWidgetRenderer', 'tooltip']);
+
+    this.createDocument = $inject('mocks/entityEditor/Document').create;
 
     this.widget = {
       isVisible: true,
@@ -37,12 +42,11 @@ describe('entity editor field integration', () => {
       settings: {}
     };
 
-    const $q = this.$inject('$q');
-    const spaceContext = this.mockService('spaceContext', {
-      entryTitle(entry) {
-        return `TITLE ${entry.data.sys.id}`;
-      }
-    });
+    const $q = $inject('$q');
+    const spaceContext = $inject('spaceContext');
+    spaceContext.entryTitle = entry => {
+      return `TITLE ${entry.data.sys.id}`;
+    };
 
     spaceContext.space = {
       getEntries(query) {
@@ -57,7 +61,7 @@ describe('entity editor field integration', () => {
 
     spaceContext.user = { sys: { id: 'user-id-from-space-context' } };
 
-    const editorContext = this.$inject('mocks/entityEditor/Context').create();
+    const editorContext = $inject('mocks/entityEditor/Context').create();
     this.focus = editorContext.focus;
     this.validator = editorContext.validator;
 
@@ -80,7 +84,7 @@ describe('entity editor field integration', () => {
 
     this.compile = function() {
       this.otDoc = this.otDoc || this.createDocument();
-      const el = this.$compile('<cf-entity-field>', {
+      const el = $compile('<cf-entity-field>', {
         widget: this.widget,
         editorContext,
         otDoc: this.otDoc,
@@ -201,7 +205,7 @@ describe('entity editor field integration', () => {
           { code: 'en', internal_code: 'en-internal' },
           { code: 'de', internal_code: 'de-internal' }
         ];
-        this.$apply();
+        $apply();
         expectShownLocales(el, ['en', 'de']);
       });
 
@@ -227,7 +231,7 @@ describe('entity editor field integration', () => {
         this.validator.hasFieldLocaleError.withArgs('FID', 'de-internal').returns(true);
         // we need to force an update unfortunately
         this.validator.errors$.set([]);
-        this.$apply();
+        $apply();
 
         expectShownLocales(el, ['en', 'de']);
       }
@@ -306,7 +310,7 @@ describe('entity editor field integration', () => {
           { path: ['fields', 'FID', 'en-internal'], name: 'en-error-1' },
           { path: ['fields', 'FID', 'en-internal'], name: 'en-error-2' }
         ]);
-        this.$apply();
+        $apply();
 
         const defLocale = el.find('[data-locale=def]');
         expect(hasErrorStatus(defLocale, 'entry.schema.def-error')).toBe(true);
@@ -323,12 +327,12 @@ describe('entity editor field integration', () => {
         this.validator.hasFieldError.withArgs('FID').returns(true);
         // we need to force an update unfortunately
         this.validator.errors$.set([]);
-        this.$apply();
+        $apply();
         assertInvalidState(el.field, true);
 
         this.validator.hasFieldError = sinon.stub().returns(false);
         this.validator.errors$.set([]);
-        this.$apply();
+        $apply();
         assertInvalidState(el.field, false);
       });
 
@@ -338,15 +342,15 @@ describe('entity editor field integration', () => {
 
         el.fieldController.setInvalid('def', true);
         el.fieldController.setInvalid('en', true);
-        this.$apply();
+        $apply();
         assertInvalidState(el.field, true);
 
         el.fieldController.setInvalid('en', false);
-        this.$apply();
+        $apply();
         assertInvalidState(el.field, true);
 
         el.fieldController.setInvalid('def', false);
-        this.$apply();
+        $apply();
         assertInvalidState(el.field, false);
       });
 
@@ -361,7 +365,7 @@ describe('entity editor field integration', () => {
             message: ''
           }
         ]);
-        this.$apply();
+        $apply();
         view.find('uniqueness-conflicts-list').assertHasText('TITLE DUPLICATE');
       });
     });
@@ -402,7 +406,7 @@ describe('entity editor field integration', () => {
       const el = this.compile();
 
       this.focus.set('FID');
-      this.$apply();
+      $apply();
       assertAriaFlag(el.field, 'current', true);
     });
 
@@ -410,11 +414,11 @@ describe('entity editor field integration', () => {
       const el = this.compile();
 
       this.focus.set('FID');
-      this.$apply();
+      $apply();
       assertAriaFlag(el.field, 'current', true);
 
       this.focus.set('other');
-      this.$apply();
+      $apply();
       assertAriaFlag(el.field, 'current', false);
     });
 
@@ -422,11 +426,11 @@ describe('entity editor field integration', () => {
       const el = this.compile();
 
       this.focus.set('FID');
-      this.$apply();
+      $apply();
       assertAriaFlag(el.field, 'current', true);
 
       this.focus.unset('FID');
-      this.$apply();
+      $apply();
       assertAriaFlag(el.field, 'current', false);
     });
   });

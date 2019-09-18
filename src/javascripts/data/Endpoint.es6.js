@@ -3,8 +3,6 @@ import { extend, filter, get } from 'lodash';
 import shouldUseEnvEndpoint from './shouldUseEnvEndpoint.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const $q = getModule('$q');
-
 /**
  * @module
  * @description
@@ -168,6 +166,8 @@ export function createExtensionDefinitionsEndpoint(baseUrl, auth) {
  * @returns {function(): Promise<Object>}
  */
 export function create(baseUrl, auth) {
+  const $q = getModule('$q');
+
   const baseRequest = makeRequest(auth);
   let withBaseUrl = baseUrl;
 

@@ -1,14 +1,20 @@
-import createMockSpaceEndpoint from 'test/helpers/mocks/SpaceEndpoint';
+import createMockSpaceEndpoint from 'test/utils/createSpaceEndpointMock';
 import _ from 'lodash';
+import sinon from 'sinon';
+import { $initialize } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('data/CMA/ApiKeyRepo.es6', () => {
-  beforeEach(function() {
-    module('contentful/test');
+  beforeEach(async function() {
+    const { default: apiKeyRepo } = await this.system.import('data/CMA/ApiKeyRepo.es6');
+
+    await $initialize(this.system);
+
     const endpoint = createMockSpaceEndpoint();
     this.deliveryStore = endpoint.stores.api_keys;
     this.previewStore = endpoint.stores.preview_api_keys;
     this.endpoint = sinon.spy(endpoint.request);
-    this.repo = this.$inject('data/CMA/ApiKeyRepo.es6').default(this.endpoint);
+    this.repo = apiKeyRepo(this.endpoint);
 
     this.deliveryStore.ID = {
       sys: { id: 'ID' },

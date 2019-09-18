@@ -6,8 +6,6 @@ import buildWidgetApi from 'app/widgets/WidgetApi/buildWidgetApi.es6';
 import WidgetAPIContext from './WidgetApiContext.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const $rootScope = getModule('$rootScope');
-
 /**
  * Takes a component with a `value`, `isDisabled` and `onChange` props
  * and connects them to a `widgetApi` passed to the returned HOC.
@@ -43,6 +41,8 @@ export default function connectToWidgetApi(
     };
 
     UNSAFE_componentWillMount() {
+      const $rootScope = getModule('$rootScope');
+
       const field = this.props.widgetApi.field;
       this.offDisabledState = field.onIsDisabledChanged(this.handleDisabledChanges);
       this.offValueChanged = field.onValueChanged(this.handleIncomingChanges);

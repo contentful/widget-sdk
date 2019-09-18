@@ -1,7 +1,8 @@
-'use strict';
-
 import _ from 'lodash';
-import createLocaleStoreMock from 'test/helpers/mocks/createLocaleStoreMock';
+import sinon from 'sinon';
+import createLocaleStoreMock from 'test/utils/createLocaleStoreMock';
+
+import { $initialize, $inject, $apply } from 'test/utils/ng';
 
 describe('Asset List Controller', () => {
   let scope, spaceContext, stubs, $q, getAssets, ComponentLibrary;
@@ -19,67 +20,67 @@ describe('Asset List Controller', () => {
     return assets;
   }
 
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      stubs = $provide.makeStubs([
-        'archived',
-        'track',
-        'getAssets',
-        'then',
-        'logError',
-        'pickMultiple',
-        'error',
-        'success',
-        'process',
-        'getVersion',
-        'publish',
-        'apiErrorHandler'
-      ]);
+  beforeEach(async function() {
+    stubs = {
+      archived: sinon.stub(),
+      track: sinon.stub(),
+      getAssets: sinon.stub(),
+      then: sinon.stub(),
+      logError: sinon.stub(),
+      pickMultiple: sinon.stub(),
+      error: sinon.stub(),
+      success: sinon.stub(),
+      process: sinon.stub(),
+      getVersion: sinon.stub(),
+      publish: sinon.stub(),
+      apiErrorHandler: sinon.stub()
+    };
 
-      $provide.constant('services/logger.es6', {
-        logError: stubs.logError
-      });
-
-      $provide.value('app/common/ReloadNotification.es6', {
-        default: {
-          apiErrorHandler: stubs.apiErrorHandler
-        }
-      });
-
-      $provide.value('services/Filestack.es6', {
-        pickMultiple: stubs.pickMultiple
-      });
-
-      $provide.value('utils/ResourceUtils.es6', {
-        isLegacyOrganization: () => false
-      });
-
-      $provide.constant('services/localeStore.es6', {
-        default: createLocaleStoreMock()
-      });
+    this.system.set('services/logger.es6', {
+      logError: stubs.logError
     });
 
-    ComponentLibrary = this.$inject('@contentful/forma-36-react-components');
+    this.system.set('app/common/ReloadNotification.es6', {
+      default: {
+        apiErrorHandler: stubs.apiErrorHandler
+      }
+    });
+
+    this.system.set('services/Filestack.es6', {
+      pickMultiple: stubs.pickMultiple
+    });
+
+    this.system.set('utils/ResourceUtils.es6', {
+      isLegacyOrganization: () => false
+    });
+
+    this.system.set('services/localeStore.es6', {
+      default: createLocaleStoreMock()
+    });
+
+    ComponentLibrary = await this.system.import('@contentful/forma-36-react-components');
     ComponentLibrary.Notification.error = stubs.error;
     ComponentLibrary.Notification.success = stubs.success;
 
-    $q = this.$inject('$q');
+    await $initialize(this.system);
 
-    scope = this.$inject('$rootScope').$new();
+    $q = $inject('$q');
+
+    scope = $inject('$rootScope').$new();
     scope.context = {};
 
-    const cfStub = this.$inject('cfStub');
+    const cfStub = $inject('cfStub');
     const space = cfStub.space('test');
 
     getAssets = $q.defer();
     stubs.getAssets.returns(getAssets.promise);
     space.getAssets = stubs.getAssets;
 
-    spaceContext = this.$inject('mocks/spaceContext').init();
+    spaceContext = $inject('mocks/spaceContext').init();
     spaceContext.space = space;
     spaceContext.publishedCTs = { getAllBare: () => [] };
 
-    const $controller = this.$inject('$controller');
+    const $controller = $inject('$controller');
     $controller('AssetListController', { $scope: scope });
     scope.selection.updateList = sinon.stub();
   });
@@ -382,7 +383,7 @@ describe('Asset List Controller', () => {
         .returns($q.resolve());
 
       scope.createMultipleAssets();
-      this.$apply();
+      $apply();
     });
 
     it('Filestack.pickMultiple is called', () => {

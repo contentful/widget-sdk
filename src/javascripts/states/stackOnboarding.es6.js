@@ -1,3 +1,5 @@
+import { checkSpace } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
+
 const getStarted = {
   name: 'getStarted',
   url: '/get-started',
@@ -29,8 +31,7 @@ export default {
   onEnter: [
     '$state',
     'spaceContext',
-    'components/shared/auto_create_new_space/CreateModernOnboarding.es6',
-    function($state, spaceContext, { checkSpace }) {
+    function($state, spaceContext) {
       const spaceId = spaceContext.space && spaceContext.space.getId();
 
       // The onboarding steps are accessible only when

@@ -1,21 +1,22 @@
-'use strict';
+import sinon from 'sinon';
 import _ from 'lodash';
 
 describe('markdown_editor/commands.es6', () => {
   let textarea, editor, commands, cm;
 
-  beforeEach(function() {
-    module('contentful/test');
-    const Commands = this.$inject('markdown_editor/commands.es6');
-    const Wrapper = this.$inject('markdown_editor/codemirror_wrapper.es6');
-    const CodeMirror = this.$inject('codemirror');
+  beforeEach(async function() {
+    const Commands = await this.system.import('markdown_editor/commands.es6');
+    const Wrapper = await this.system.import('markdown_editor/codemirror_wrapper.es6');
+    const CodeMirror = await this.system.import('codemirror');
+
     textarea = document.createElement('textarea');
     document.body.appendChild(textarea);
 
-    const cmFactory = sinon.spy(CodeMirror, 'fromTextArea');
-    editor = Wrapper.create(textarea, {}, CodeMirror);
-    cm = cmFactory.returnValues[0];
-    cmFactory.restore();
+    const { fromTextArea } = CodeMirror;
+    const spy = sinon.spy(fromTextArea);
+
+    editor = Wrapper.create(textarea, {}, Object.assign({}, CodeMirror, { fromTextArea: spy }));
+    cm = spy.returnValues[0];
 
     commands = Commands.create(editor);
   });

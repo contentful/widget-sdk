@@ -1,39 +1,49 @@
-'use strict';
+import sinon from 'sinon';
+import { $initialize, $inject } from 'test/utils/ng';
 
 describe('Asset List Actions Controller', () => {
-  let scope, stubs, accessChecker, ComponentLibrary;
+  let scope, stubs, ComponentLibrary;
   let action1, action2, action3, action4;
 
   afterEach(() => {
-    scope = stubs = accessChecker = ComponentLibrary = null;
+    scope = stubs = ComponentLibrary = null;
     action1 = action2 = action3 = action4 = null;
   });
 
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      stubs = $provide.makeStubs([
-        'track',
-        'success',
-        'error',
-        'size',
-        'createAsset',
-        'getSelected',
-        'clear',
-        'action1',
-        'action2',
-        'action3',
-        'action4',
-        'timeout'
-      ]);
+  beforeEach(async function() {
+    stubs = {
+      track: sinon.stub(),
+      success: sinon.stub(),
+      error: sinon.stub(),
+      size: sinon.stub(),
+      createAsset: sinon.stub(),
+      getSelected: sinon.stub(),
+      clear: sinon.stub(),
+      action1: sinon.stub(),
+      action2: sinon.stub(),
+      action3: sinon.stub(),
+      action4: sinon.stub(),
+      timeout: sinon.stub(),
+      canPerformActionOnEntity: sinon.stub()
+    };
 
-      $provide.value('analytics/Analytics.es6', {
-        track: stubs.track
-      });
+    this.system.set('analytics/Analytics.es6', {
+      track: stubs.track
+    });
 
+    this.system.set('access_control/AccessChecker/index.es6', {
+      canPerformActionOnEntity: stubs.canPerformActionOnEntity
+    });
+
+    ComponentLibrary = await this.system.import('@contentful/forma-36-react-components');
+    ComponentLibrary.Notification.error = stubs.error;
+    ComponentLibrary.Notification.success = stubs.success;
+
+    await $initialize(this.system, $provide => {
       $provide.value('$timeout', stubs.timeout);
     });
 
-    const $q = this.$inject('$q');
+    const $q = $inject('$q');
     action1 = $q.defer();
     action2 = $q.defer();
     action3 = $q.defer();
@@ -43,24 +53,17 @@ describe('Asset List Actions Controller', () => {
     stubs.action3.returns(action3.promise);
     stubs.action4.returns(action4.promise);
 
-    ComponentLibrary = this.$inject('@contentful/forma-36-react-components');
-    ComponentLibrary.Notification.error = stubs.error;
-    ComponentLibrary.Notification.success = stubs.success;
-
-    scope = this.$inject('$rootScope').$new();
+    scope = $inject('$rootScope').$new();
     scope.selection = {
       size: stubs.size,
       getSelected: stubs.getSelected.returns([]),
       clear: stubs.clear
     };
 
-    const spaceContext = this.$inject('mocks/spaceContext').init();
+    const spaceContext = $inject('mocks/spaceContext').init();
     spaceContext.space = { createAsset: stubs.createAsset };
 
-    accessChecker = this.$inject('access_control/AccessChecker');
-    accessChecker.canPerformActionOnEntity = sinon.stub();
-
-    const $controller = this.$inject('$controller');
+    const $controller = $inject('$controller');
     $controller('AssetListActionsController', { $scope: scope });
   });
 
@@ -150,7 +153,7 @@ describe('Asset List Actions Controller', () => {
     it('can show ' + action + ' action', () => {
       stubs.action1.returns(true);
       stubs.action2.returns(true);
-      accessChecker.canPerformActionOnEntity.returns(true);
+      stubs.canPerformActionOnEntity.returns(true);
       stubs.getSelected.returns([
         makeEntity(canMethodName, stubs.action1),
         makeEntity(canMethodName, stubs.action2)
@@ -162,7 +165,7 @@ describe('Asset List Actions Controller', () => {
     it('cannot show delete ' + action + ' because no general permission', () => {
       stubs.action1.returns(true);
       stubs.action2.returns(true);
-      accessChecker.canPerformActionOnEntity.returns(false);
+      stubs.canPerformActionOnEntity.returns(false);
       stubs.getSelected.returns([
         makeEntity(canMethodName, stubs.action1),
         makeEntity(canMethodName, stubs.action2)
@@ -174,7 +177,7 @@ describe('Asset List Actions Controller', () => {
     it('cannot show ' + action + ' action because no permission on item', () => {
       stubs.action1.returns(true);
       stubs.action2.returns(false);
-      accessChecker.canPerformActionOnEntity.returns(true);
+      stubs.canPerformActionOnEntity.returns(true);
       stubs.getSelected.returns([
         makeEntity(canMethodName, stubs.action1),
         makeEntity(canMethodName, stubs.action2)

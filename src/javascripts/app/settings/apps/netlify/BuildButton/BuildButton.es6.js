@@ -17,8 +17,6 @@ import {
 import { getModule } from 'NgRegistry.es6';
 import styles from './styles.es6';
 
-const spaceContext = getModule('spaceContext');
-
 export default class BuildButton extends Component {
   static propTypes = {
     netlifySite: PropTypes.shape({
@@ -31,6 +29,8 @@ export default class BuildButton extends Component {
   state = { history: [] };
 
   async componentDidMount() {
+    const spaceContext = getModule('spaceContext');
+
     const site = this.props.netlifySite;
     if (!site.channel || !site.netlifySiteId || !site.buildHookUrl) {
       this.setState({ misconfigured: true });
@@ -82,6 +82,8 @@ export default class BuildButton extends Component {
   }
 
   build = async () => {
+    const spaceContext = getModule('spaceContext');
+
     this.pubsub.publish({
       contentful: true,
       event: EVENT_TRIGGERED,

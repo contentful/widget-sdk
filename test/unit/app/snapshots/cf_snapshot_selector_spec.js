@@ -1,11 +1,15 @@
-import * as K from 'test/helpers/mocks/kefir';
+import * as K from 'test/utils/kefir';
 import _ from 'lodash';
+import sinon from 'sinon';
+import { $initialize, $compile as $compileHelper, $inject, $apply } from 'test/utils/ng';
 
 describe('cfSnapshotSelector', () => {
   const PER_PAGE = 20; // page size
 
-  beforeEach(function() {
-    module('contentful/test');
+  beforeEach(async function() {
+    const moment = (await this.system.import('moment')).default;
+
+    await $initialize(this.system);
 
     const mockEntry = {
       sys: {
@@ -15,13 +19,12 @@ describe('cfSnapshotSelector', () => {
       }
     };
 
-    const moment = this.$inject('moment');
-    const spaceContext = this.$inject('mocks/spaceContext').init();
+    const spaceContext = $inject('mocks/spaceContext').init();
 
-    const createDocument = this.$inject('mocks/entityEditor/Document').create;
+    const createDocument = $inject('mocks/entityEditor/Document').create;
     const doc = createDocument(mockEntry);
 
-    const $compile = this.$compile.bind(this);
+    const $compile = $compileHelper.bind(this);
 
     spaceContext.cma = {
       getEntrySnapshots: sinon.stub().resolves({
@@ -35,14 +38,15 @@ describe('cfSnapshotSelector', () => {
       })
     };
 
-    this.scope = compile().scope();
+    this.el = compile();
+    this.scope = this.el.scope();
     this.spaceContext = spaceContext;
     this.makeFakeSnapshot = makeFakeSnapshot;
     this.makeFakeSnapshots = makeFakeSnapshots;
 
     this.toggleList = function(flag) {
       this.scope.showSnapshotSelector$.set(flag);
-      this.$apply();
+      $apply();
     };
 
     this.assertLoadCalledAndReset = () => {
@@ -109,6 +113,10 @@ describe('cfSnapshotSelector', () => {
         }
       };
     }
+  });
+
+  afterEach(function() {
+    this.el.remove();
   });
 
   describe('lazy init', () => {

@@ -97,6 +97,7 @@ function createServer(configName, getBuild) {
 
     const app = express();
     const config = createWebpackConfig();
+
     const compiler = webpack(config);
     const webpackDevMiddleware = middleware(compiler, {
       publicPath: '/app/',

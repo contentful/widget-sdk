@@ -21,8 +21,6 @@ import * as Analytics from 'analytics/Analytics.es6';
 const apiUsagePropType = arrayPropType(organizationResourceUsagePropType);
 const apiSeriesColors = ['#3072BE', '#14D997', '#CD3F39'];
 
-const $state = getModule('$state');
-
 export default class OrganizationUsagePage extends React.Component {
   static propTypes = {
     spaceNames: PropTypes.objectOf(PropTypes.string).isRequired,
@@ -48,6 +46,8 @@ export default class OrganizationUsagePage extends React.Component {
   };
 
   onClickSupport = () => {
+    const $state = getModule('$state');
+
     Analytics.track('element:click', {
       elementId: 'contact_sales_usage',
       groupId: 'contact_sales',

@@ -1,5 +1,7 @@
-import * as sinon from 'test/helpers/sinon';
+import sinon from 'sinon';
 import { sortBy, map, max } from 'lodash';
+import { $initialize, $inject } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 const VERSION_MISMATCH_ERROR = { status: 409 };
 const UNPROCESSABLE_ERROR = { status: 500 };
@@ -11,10 +13,12 @@ let $timeout;
 let lastId;
 
 describe('BulkAssetsCreator.tryToPublishProcessingAssets()', () => {
-  beforeEach(function() {
-    module('contentful/test');
-    this.BulkAssetsCreator = this.$inject('services/BulkAssetsCreator.es6');
-    $timeout = this.$inject('$timeout');
+  beforeEach(async function() {
+    this.BulkAssetsCreator = await this.system.import('services/BulkAssetsCreator.es6');
+
+    await $initialize(this.system);
+
+    $timeout = $inject('$timeout');
     lastId = 0;
   });
 
@@ -121,7 +125,7 @@ describe('BulkAssetsCreator.tryToPublishProcessingAssets()', () => {
 });
 
 function test(msg, buildAssetsAndExpectations) {
-  it(msg, function*() {
+  it(msg, async function() {
     const assets = [];
     const expectedPublishedAssets = [];
     const expectedUnpublishableAssets = [];
@@ -136,7 +140,7 @@ function test(msg, buildAssetsAndExpectations) {
 
     const p = this.BulkAssetsCreator.tryToPublishProcessingAssets(assets);
     $timeout.flush(getTestTime(assets));
-    const { publishedAssets, unpublishableAssets } = yield p;
+    const { publishedAssets, unpublishableAssets } = await p;
 
     expect(sort(publishedAssets)).toEqual(sort(expectedPublishedAssets));
     expect(sort(unpublishableAssets)).toEqual(sort(expectedUnpublishableAssets));

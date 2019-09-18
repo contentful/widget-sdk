@@ -1,5 +1,8 @@
+import sinon from 'sinon';
+import { $initialize, $inject, $apply, $compile } from 'test/utils/ng';
+
 describe('The ApiKey list directive', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     const resource = {
       usage: 0,
       limits: {
@@ -12,19 +15,20 @@ describe('The ApiKey list directive', () => {
       shouldDisable: sinon.stub().returns(false)
     };
 
-    module('contentful/test', $provide => {
+    this.system.set('access_control/AccessChecker/index.es6', {
+      shouldDisable: this.stubs.shouldDisable,
+      shouldHide: sinon.stub().returns(false)
+    });
+    this.system.set('services/ResourceService.es6', {
+      default: () => ({
+        get: sinon.stub().resolves(resource)
+      })
+    });
+
+    await $initialize(this.system, $provide => {
       $provide.value('$state', {
         href: sinon.stub(),
         current: { name: 'test.api.foo' }
-      });
-      $provide.constant('access_control/AccessChecker/index.es6', {
-        shouldDisable: this.stubs.shouldDisable,
-        shouldHide: sinon.stub().returns(false)
-      });
-      $provide.constant('services/ResourceService.es6', {
-        default: () => ({
-          get: sinon.stub().resolves(resource)
-        })
       });
     });
 
@@ -38,18 +42,19 @@ describe('The ApiKey list directive', () => {
       pricingVersion: 'pricing_version_1'
     };
 
-    const spaceContext = this.$inject('mocks/spaceContext').init();
+    const spaceContext = $inject('mocks/spaceContext').init();
     spaceContext.apiKeyRepo.getAll = sinon
       .stub()
       .resolves([{ sys: { id: 1 }, name: 'key1' }, { sys: { id: 2 }, name: 'key2' }]);
     spaceContext.organization = this.organization;
 
     this.setup = function() {
-      this.container = this.$compile('<cf-api-key-list />', {
+      this.container = $compile('<cf-api-key-list />', {
         context: {}
       });
       this.sidebar = this.container.find('.entity-sidebar');
-      this.$inject('$rootScope').$apply();
+
+      $apply();
     };
   });
 

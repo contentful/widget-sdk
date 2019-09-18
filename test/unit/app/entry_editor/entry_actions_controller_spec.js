@@ -1,21 +1,28 @@
-import * as K from 'test/helpers/mocks/kefir';
+import * as K from 'test/utils/kefir';
 import _ from 'lodash';
+import sinon from 'sinon';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
 
 describe('Entry Actions Controller', () => {
-  beforeEach(function() {
-    module('contentful/test');
+  beforeEach(async function() {
+    this.stubs = {
+      track: sinon.stub()
+    };
 
-    const $rootScope = this.$inject('$rootScope');
+    this.system.set('analytics/Analytics.es6', {
+      track: this.stubs.track
+    });
+
+    await $initialize(this.system);
+
+    const $rootScope = $inject('$rootScope');
     this.scope = $rootScope.$new();
-    this.$state = this.$inject('$state');
+    this.$state = $inject('$state');
     this.notify = sinon.stub();
     this.fields$ = K.createMockProperty({});
 
-    this.analytics = this.$inject('analytics/Analytics.es6');
-    this.analytics.track = sinon.stub();
-
-    const $controller = this.$inject('$controller');
-    const spaceContext = this.$inject('mocks/spaceContext').init();
+    const $controller = $inject('$controller');
+    const spaceContext = $inject('mocks/spaceContext').init();
     this.createEntry = sinon.stub();
     spaceContext.space.createEntry = this.createEntry;
 
@@ -56,7 +63,7 @@ describe('Entry Actions Controller', () => {
       beforeEach(function() {
         executeActionAndApplyScope = () => {
           this.controller[action].execute();
-          this.$apply();
+          $apply();
         };
       });
 
@@ -66,11 +73,10 @@ describe('Entry Actions Controller', () => {
             this.createEntry.resolves(response);
             executeActionAndApplyScope();
             const { contentTypeId, id: entryId } = this.entityInfo;
-            sinon.assert.calledWithExactly(
-              this.analytics.track,
-              'entry_editor:created_with_same_ct',
-              { contentTypeId, entryId }
-            );
+            sinon.assert.calledWithExactly(this.stubs.track, 'entry_editor:created_with_same_ct', {
+              contentTypeId,
+              entryId
+            });
           });
         }
 
@@ -83,7 +89,7 @@ describe('Entry Actions Controller', () => {
           itCallsTheAction();
 
           it('tracks the event', function() {
-            sinon.assert.calledWithExactly(this.analytics.track, 'entry:create', {
+            sinon.assert.calledWithExactly(this.stubs.track, 'entry:create', {
               eventOrigin: action === 'add' ? 'entry-editor' : 'entry-editor__duplicate',
               contentType: { name: 'foo' },
               response: response.data

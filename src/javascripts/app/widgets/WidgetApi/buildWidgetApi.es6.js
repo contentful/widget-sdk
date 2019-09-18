@@ -21,10 +21,10 @@ import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
  * @returns {Object}
  */
 export default function buildWidgetApi({ field, entry, currentUrl, settings }) {
-  const { entry: canAccessEntries, asset: canAccessAssets } = getSectionVisibility();
-
   const spaceContext = getModule('spaceContext');
   const entitySelector = getModule('entitySelector');
+
+  const { entry: canAccessEntries, asset: canAccessAssets } = getSectionVisibility();
 
   const widgetAPI = {
     field,

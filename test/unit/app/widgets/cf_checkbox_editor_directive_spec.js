@@ -1,11 +1,13 @@
-import { setCheckbox } from 'test/helpers/DOM';
-import * as sinon from 'test/helpers/sinon';
+import { setCheckbox } from 'test/utils/dom';
+import sinon from 'sinon';
 import $ from 'jquery';
+import { $initialize, $inject, $compile, $apply } from 'test/utils/ng';
 
 describe('cfCheckboxEditor directive', () => {
-  beforeEach(function() {
-    module('contentful/test');
-    const widgetApi = this.$inject('mocks/widgetApi').create({
+  beforeEach(async function() {
+    await $initialize(this.system);
+
+    const widgetApi = $inject('mocks/widgetApi').create({
       field: {
         itemValidations: [{ in: ['A', 'B', 'C'] }]
       }
@@ -13,7 +15,7 @@ describe('cfCheckboxEditor directive', () => {
 
     this.fieldApi = widgetApi.field;
 
-    this.el = this.$compile(
+    this.el = $compile(
       '<cf-checkbox-editor />',
       {},
       {
@@ -22,9 +24,13 @@ describe('cfCheckboxEditor directive', () => {
     );
   });
 
+  afterEach(function() {
+    this.el.remove();
+  });
+
   it('shows warning when there are no item validations', function() {
     this.fieldApi.itemValidations = undefined;
-    const el = this.$compile(
+    const el = $compile(
       '<cf-checkbox-editor />',
       {},
       {
@@ -47,7 +53,7 @@ describe('cfCheckboxEditor directive', () => {
 
   it('checks checkboxes if values are changed remotely', function() {
     this.fieldApi.onValueChanged.yield(['C', 'A']);
-    this.$apply();
+    $apply();
 
     let checked = this.el
       .find('input[type=checkbox]')
@@ -58,7 +64,7 @@ describe('cfCheckboxEditor directive', () => {
     expect(checked).toEqual([true, false, true]);
 
     this.fieldApi.onValueChanged.yield(['B', 'A']);
-    this.$apply();
+    $apply();
     checked = this.el
       .find('input[type=checkbox]')
       .map(function() {
@@ -70,7 +76,7 @@ describe('cfCheckboxEditor directive', () => {
 
   it('adds value to list if checked', function() {
     this.fieldApi.onValueChanged.yield(['A']);
-    this.$apply();
+    $apply();
 
     this.fieldApi.setValue.reset();
 
@@ -83,12 +89,12 @@ describe('cfCheckboxEditor directive', () => {
 
   it('removes value form list if unchecked', function() {
     this.fieldApi.onValueChanged.yield(['A', 'C']);
-    this.$apply();
+    $apply();
     this.fieldApi.setValue.reset();
 
     const checkbox = this.el.find('label:contains(C)').find('input[type=checkbox]');
     setCheckbox(checkbox, false);
-    this.$apply();
+    $apply();
 
     sinon.assert.calledOnce(this.fieldApi.setValue);
     sinon.assert.calledWithExactly(this.fieldApi.setValue, ['A']);
@@ -96,12 +102,12 @@ describe('cfCheckboxEditor directive', () => {
 
   it('completely removes value when all boxes are unchecked', function() {
     this.fieldApi.onValueChanged.yield(['A']);
-    this.$apply();
+    $apply();
 
     this.fieldApi.removeValue.reset();
     const checkbox = this.el.find('label:contains(A)').find('input[type=checkbox]');
     setCheckbox(checkbox, false);
-    this.$apply();
+    $apply();
 
     sinon.assert.calledOnce(this.fieldApi.removeValue);
   });

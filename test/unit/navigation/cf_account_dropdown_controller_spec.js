@@ -1,16 +1,9 @@
-'use strict';
+import sinon from 'sinon';
+import { $initialize, $inject } from 'test/utils/ng';
 
 describe('Account Dropdown Controller', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     const stubs = (this.stubs = {});
-
-    module('contentful/test', $provide => {
-      $provide.value('analytics/Analytics.es6', stubs.analytics);
-      $provide.value('Authentication.es6', stubs.authentication);
-      $provide.value('utils/ngCompat/window.es6', {
-        default: stubs.window
-      });
-    });
 
     this.stubs.analytics = { track: sinon.stub(), disable: sinon.stub() };
     this.stubs.authentication = { logout: sinon.stub() };
@@ -20,10 +13,30 @@ describe('Account Dropdown Controller', () => {
       document: window.document
     };
 
-    const $rootScope = this.$inject('$rootScope');
-    const $controller = this.$inject('$controller');
+    this.system.set('analytics/Analytics.es6', stubs.analytics);
+    this.system.set('Authentication.es6', stubs.authentication);
+    this.system.set('utils/ngCompat/window.es6', {
+      default: stubs.window
+    });
+
+    await $initialize(this.system);
+
+    const $rootScope = $inject('$rootScope');
+    const $controller = $inject('$controller');
     this.scope = $rootScope.$new();
     $controller('cfAccountDropdownController', { $scope: this.scope });
+
+    const waitForLoaded = async () => {
+      if (this.scope.loaded) {
+        return true;
+      }
+
+      await new Promise(resolve => setTimeout(resolve));
+
+      return waitForLoaded();
+    };
+
+    await waitForLoaded();
   });
 
   describe('calls logout', () => {

@@ -1,10 +1,10 @@
-'use strict';
+import { $initialize, $inject, $compile, $apply } from 'test/utils/ng';
 
 describe('cfLoaders', () => {
-  beforeEach(function() {
-    module('contentful/test');
+  beforeEach(async function() {
+    await $initialize(this.system);
 
-    this.$rootScope = this.$inject('$rootScope');
+    this.$rootScope = $inject('$rootScope');
 
     this.compile = directive => {
       return function(isShownProp, isShown, loaderMsg, watchStateChange = true) {
@@ -14,7 +14,7 @@ describe('cfLoaders', () => {
         template += loaderMsg ? `loader-msg="${loaderMsg}" ` : '';
         template += `watch-state-change="${watchStateChange}" />`;
 
-        const $el = this.$compile(template);
+        const $el = $compile(template);
         const scope = $el.find(':first-child').scope();
 
         scope.$parent[isShownProp] = isShown;
@@ -27,7 +27,7 @@ describe('cfLoaders', () => {
     this.assertStateChangeVal = function(event, isShown, watchStateChange) {
       const { scope } = this.compileLoader(undefined, isShown, '', watchStateChange);
       this.emitStateEvent(event);
-      this.$apply();
+      $apply();
       expect(scope.isShown).toBe(isShown);
     };
 
@@ -39,7 +39,7 @@ describe('cfLoaders', () => {
 
       tests.forEach(t => {
         scope.$parent[isShownProp] = t;
-        this.$apply();
+        $apply();
         expect(scope.isShown).toBe(scope.$parent[isShownProp]);
       });
     };
@@ -78,7 +78,7 @@ describe('cfLoaders', () => {
 
       expect(scope.isShown).toBe('TEST');
       scope.$parent.isSearching = true;
-      this.$apply();
+      $apply();
       expect(scope.isShown).toBe(true);
     });
 
@@ -110,7 +110,7 @@ describe('cfLoaders', () => {
         }
       );
       this.emitStateEvent('$stateChangeStart');
-      this.$apply();
+      $apply();
       expect(scope.isShown).toBe(false);
     });
   });

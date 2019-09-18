@@ -1,21 +1,20 @@
-'use strict';
-
 import $ from 'jquery';
+import { $initialize, $inject, $apply } from 'test/utils/ng';
 
 describe('cfFieldErrorsFor', () => {
-  beforeEach(module('contentful/test'));
+  beforeEach(async function() {
+    await $initialize(this.system);
 
-  beforeEach(function() {
-    const $compile = this.$inject('$compile');
+    const $compile = $inject('$compile');
     const template =
       '<form>' +
       '<input name="myfield" ng-model="myfield">' +
       '<ul cf-field-errors-for="myfield"></ul>' +
       '</form>';
-    const element = $compile(template)(this.$inject('$rootScope'));
+    const element = $compile(template)($inject('$rootScope'));
     this.errorList = element.find('ul');
     this.modelController = element.find('input').controller('ngModel');
-    this.$apply();
+    $apply();
   });
 
   it('hides the element when there are no errors', function() {
@@ -23,29 +22,29 @@ describe('cfFieldErrorsFor', () => {
 
     this.modelController.$setValidity('a', false);
     this.modelController.hideErrors = false;
-    this.$apply();
+    $apply();
     expect(this.errorList.hasClass('ng-hide')).toBe(false);
 
     this.modelController.$setValidity('a', true);
-    this.$apply();
+    $apply();
     expect(this.errorList.hasClass('ng-hide')).toBe(true);
   });
 
   it('hides the element when input has not been touched', function() {
     this.modelController.$setValidity('a', false);
 
-    this.$apply();
+    $apply();
     expect(this.errorList.hasClass('ng-hide')).toBe(true);
 
     this.modelController.$dirty = true;
-    this.$apply();
+    $apply();
     expect(this.errorList.hasClass('ng-hide')).toBe(false);
   });
 
   it('renders error messages', function() {
     this.modelController.$setValidity('a', false);
     this.modelController.$setValidity('b', false);
-    this.$apply();
+    $apply();
     const errorMessages = this.errorList
       .find('li')
       .map((_, e) => $(e).text())
@@ -58,7 +57,7 @@ describe('cfFieldErrorsFor', () => {
     this.modelController.errorDetails = {
       a: { message: 'my custom message' }
     };
-    this.$apply();
+    $apply();
     expect(this.errorList.text()).toEqual('my custom message');
   });
 });

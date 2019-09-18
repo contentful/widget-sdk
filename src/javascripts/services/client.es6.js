@@ -2,16 +2,10 @@ import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 import Client from 'legacy-client';
 
-import makeRequest from 'data/Request.es6';
-import * as auth from 'Authentication.es6';
-import * as Config from 'Config.es6';
-
 export default function register() {
   registerFactory('client', [
     '$q',
     $q => {
-      const baseRequest = makeRequest(auth);
-      const baseUrl = Config.apiUrl().slice(0, -1); // Remove trailing slash
       const defaultHeaders = {
         'X-Contentful-Skip-Transformation': true,
         'Content-Type': 'application/vnd.contentful.management.v1+json'
@@ -22,8 +16,15 @@ export default function register() {
         createSpace: createSpace
       });
 
-      function request(req) {
-        req = buildRequest(req);
+      async function request(req) {
+        req = await buildRequest(req);
+
+        const [auth, { default: makeRequest }] = await Promise.all([
+          import('Authentication.es6'),
+          import('data/Request.es6')
+        ]);
+        const baseRequest = makeRequest(auth);
+
         return baseRequest(req).then(
           res => res.data,
           (
@@ -39,7 +40,10 @@ export default function register() {
         );
       }
 
-      function buildRequest(data) {
+      async function buildRequest(data) {
+        const Config = await import('Config.es6');
+        const baseUrl = Config.apiUrl().slice(0, -1); // Remove trailing slash
+
         const req = {
           method: data.method,
           url: [baseUrl, data.path.replace(/^\/+/, '')].join('/'),

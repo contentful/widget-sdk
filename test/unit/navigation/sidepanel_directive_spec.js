@@ -1,7 +1,8 @@
-import * as sinon from 'test/helpers/sinon';
-import * as K from 'test/helpers/mocks/kefir';
-import * as DOM from 'test/helpers/DOM';
+import sinon from 'sinon';
+import * as K from 'test/utils/kefir';
+import * as DOM from 'test/utils/dom';
 import $ from 'jquery';
+import { $initialize, $apply, $flush, $compileWith, $waitForControllerLoaded } from 'test/utils/ng';
 
 describe('cfNavSidepanel directive', () => {
   let NavStates;
@@ -30,24 +31,40 @@ describe('cfNavSidepanel directive', () => {
     getAll: sinon.stub().resolves([])
   };
 
-  beforeEach(function() {
-    module('contentful/test', $provide => {
-      $provide.value('services/CreateSpace.es6', CreateSpace);
-      $provide.value('states/Navigator.es6', Navigator);
-      $provide.value('access_control/AccessChecker/index.es6', accessChecker);
-      $provide.value('services/OrganizationRoles.es6', OrganizationRoles);
-      $provide.value('utils/LaunchDarkly/index.es6', { onFeatureFlag: sinon.stub() });
-      $provide.value('data/EndpointFactory.es6', {
-        createSpaceEndpoint: sinon.stub(),
-        createOrganizationEndpoint: sinon.stub().returns(() => Promise.resolve({ sys: {} }))
-      });
-      $provide.value('data/CMA/SpaceEnvironmentsRepo.es6', { create: () => environmentsRepo });
+  const TokenStore = {
+    organizations$: K.createMockProperty(null),
+    spacesByOrganization$: K.createMockProperty(null)
+  };
+
+  const LD = {
+    onFeatureFlag: sinon.stub()
+  };
+
+  const EndpointFactory = {
+    createSpaceEndpoint: sinon.stub(),
+    createOrganizationEndpoint: sinon.stub().returns(() => Promise.resolve({ sys: {} }))
+  };
+
+  beforeEach(async function() {
+    this.system.set('services/CreateSpace.es6', CreateSpace);
+    this.system.set('states/Navigator.es6', Navigator);
+    this.system.set('access_control/AccessChecker/index.es6', accessChecker);
+    this.system.set('services/OrganizationRoles.es6', OrganizationRoles);
+    this.system.set('utils/LaunchDarkly/index.es6', { onFeatureFlag: sinon.stub() });
+    this.system.set('data/EndpointFactory.es6', EndpointFactory);
+    this.system.set('data/CMA/SpaceEnvironmentsRepo.es6', { create: () => environmentsRepo });
+
+    this.system.set('services/TokenStore.es6', TokenStore);
+
+    this.system.set('utils/LaunchDarkly/index.es6', LD);
+    this.system.override('navigation/NavState.es6', {
+      navState$
     });
 
-    const NavState = this.$inject('navigation/NavState.es6');
-    NavState.navState$ = navState$;
-    NavStates = NavState.NavStates;
+    NavStates = (await this.system.import('navigation/NavState.es6')).NavStates;
     navState$.set(NavStates.Default());
+
+    await $initialize(this.system);
 
     const orgs = [
       {
@@ -84,7 +101,7 @@ describe('cfNavSidepanel directive', () => {
       ]
     };
 
-    this.init = (testEnvironments = false) => {
+    this.init = async (testEnvironments = false) => {
       const rewrittenSpaces = Object.keys(spacesByOrg).reduce((acc, orgId) => {
         return Object.assign(acc, {
           [orgId]: spacesByOrg[orgId].map(space => {
@@ -93,29 +110,28 @@ describe('cfNavSidepanel directive', () => {
         });
       }, {});
 
-      const tokenStore = this.$inject('services/TokenStore.es6');
-      tokenStore.organizations$ = K.createMockProperty(orgs);
-      tokenStore.spacesByOrganization$ = K.createMockProperty(rewrittenSpaces);
+      TokenStore.organizations$.set(orgs);
+      TokenStore.spacesByOrganization$.set(rewrittenSpaces);
 
-      this.$inject('utils/LaunchDarkly/index.es6').onFeatureFlag.callsFake((_1, _2, cb) =>
-        cb(testEnvironments)
-      );
+      LD.onFeatureFlag.callsFake((_1, _2, cb) => cb(testEnvironments));
 
       // TODO abstract this into DOM helper
       const container = DOM.createUI($('<div class=client>').get(0));
       $(container.element).appendTo('body');
 
       let $scope;
-      const element = this.$compileWith('<cf-nav-sidepanel is-shown="isShown" />', _$scope => {
+      const element = $compileWith('<cf-nav-sidepanel is-shown="isShown" />', _$scope => {
         $scope = _$scope;
       });
 
+      await $waitForControllerLoaded(element.isolateScope());
+
       element.appendTo(container.element);
 
-      this.$flush();
+      $flush();
 
       $scope.isShown = true;
-      this.$apply();
+      $apply();
 
       return [container, $scope];
     };
@@ -131,35 +147,35 @@ describe('cfNavSidepanel directive', () => {
     navState$.set(new NavStates.Default());
   });
 
-  it('opens/closes sidepanel', function() {
-    const [container, $scope] = this.init();
+  it('opens/closes sidepanel', async function() {
+    const [container, $scope] = await this.init();
     const sidepanel = container.find('sidepanel');
 
     $scope.isShown = false;
-    this.$apply();
+    $apply();
     sidepanel.assertNotVisible();
     $scope.isShown = true;
-    this.$apply();
+    $apply();
     sidepanel.assertIsVisible();
 
     container.destroy();
   });
 
-  it('closes sidepanel via click', function() {
-    const [container] = this.init();
+  it('closes sidepanel via click', async function() {
+    const [container] = await this.init();
     const sidepanel = container.find('sidepanel');
     const sidepanelCloseButton = container.find('sidepanel-close-btn');
 
     // Close sidepanel via click
     sidepanelCloseButton.click();
-    this.$apply();
+    $apply();
     sidepanel.assertNotVisible();
 
     container.destroy();
   });
 
-  it('toggles org dropdown', function() {
-    const [container] = this.init();
+  it('toggles org dropdown', async function() {
+    const [container] = await this.init();
     const sidepanelHeader = container.find('sidepanel-header');
     const orgsDropdown = container.find('sidepanel-org-list');
     const orgsDropdownActiveClass = 'nav-sidepanel__org-list-container--is-visible';
@@ -168,28 +184,28 @@ describe('cfNavSidepanel directive', () => {
     expect(orgsDropdown.element.classList.contains(orgsDropdownActiveClass)).toEqual(false);
     // Open orgs dropdown
     sidepanelHeader.click();
-    this.$apply();
+    $apply();
     expect(orgsDropdown.element.classList.contains(orgsDropdownActiveClass)).toEqual(true);
     // Close orgs dropdown
     sidepanelHeader.click();
-    this.$apply();
+    $apply();
     expect(orgsDropdown.element.classList.contains(orgsDropdownActiveClass)).toEqual(false);
 
     container.destroy();
   });
 
-  it('allows user to switch orgs', function() {
-    const [container] = this.init(true);
+  it('allows user to switch orgs', async function() {
+    const [container] = await this.init(true);
     const sidepanelHeader = container.find('sidepanel-header');
     const orgLink = container.find('sidepanel-org-link-2');
     const currentOrg = container.find('sidepanel-header-curr-org');
 
     // Open orgs dropdown
     sidepanelHeader.click();
-    this.$apply();
+    $apply();
     // Switch org
     orgLink.click();
-    this.$apply();
+    $apply();
     currentOrg.assertHasText('test-org-3');
     // Check org contains expected spaces
     container.find('sidepanel-space-link-0').assertHasText('test-space-3-1');
@@ -198,13 +214,13 @@ describe('cfNavSidepanel directive', () => {
     container.destroy();
   });
 
-  it('calls navigator when switching spaces', function() {
-    const [container] = this.init();
+  it('calls navigator when switching spaces', async function() {
+    const [container] = await this.init();
     const spaceLink = container.find('sidepanel-space-link-0');
 
     // Switch space
     spaceLink.click();
-    this.$apply();
+    $apply();
 
     sinon.assert.calledWith(Navigator.go, {
       path: ['spaces', 'detail'],
@@ -215,8 +231,8 @@ describe('cfNavSidepanel directive', () => {
     container.destroy();
   });
 
-  it('renders org icon with correct initials', function() {
-    const [container] = this.init();
+  it('renders org icon with correct initials', async function() {
+    const [container] = await this.init();
     const orgIcon = container.find('sidepanel-header-org-icon');
 
     orgIcon.assertHasText('TE');
@@ -224,18 +240,16 @@ describe('cfNavSidepanel directive', () => {
     container.destroy();
   });
 
-  it('fetches environments for admins', function() {
-    const [container] = this.init(true);
+  it('fetches environments for admins', async function() {
+    const [container] = await this.init(true);
     const spaceLink = container.find('sidepanel-space-link-0');
-    const createSpaceEndpoint = this.$inject('data/EndpointFactory.es6').createSpaceEndpoint;
-    const repo = this.$inject('data/CMA/SpaceEnvironmentsRepo.es6').create();
 
     spaceLink.click();
-    this.$apply();
+    $apply();
 
     // path: '/spaces/test-space-id-1-1/environments',
-    sinon.assert.calledWith(createSpaceEndpoint, 'test-space-id-1-1');
-    sinon.assert.calledOnce(repo.getAll);
+    sinon.assert.calledWith(EndpointFactory.createSpaceEndpoint, 'test-space-id-1-1');
+    sinon.assert.calledOnce(environmentsRepo.getAll);
 
     container.destroy();
   });

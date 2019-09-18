@@ -1,4 +1,5 @@
 import { toArray } from 'lodash';
+import { $inject } from 'test/utils/ng';
 
 beforeEach(function() {
   this._angularElements = [];
@@ -12,11 +13,11 @@ afterEach(function() {
   delete this._angularElements;
 
   // Destroy root element
-  const $rootElement = this.$inject('$rootElement');
+  const $rootElement = $inject('$rootElement');
   $rootElement.remove();
 
   // Destroy all scopes
-  const $rootScope = this.$inject('$rootScope');
+  const $rootScope = $inject('$rootScope');
   $rootScope.$destroy();
 
   // Warn if there is still an element
@@ -24,6 +25,7 @@ afterEach(function() {
   const leakedElements = bodyChildren.filter(
     el => el.tagName !== 'SCRIPT' && el.tagName !== 'LINK'
   );
+
   if (leakedElements.length > 0) {
     /* eslint no-console: off */
     console.warn(

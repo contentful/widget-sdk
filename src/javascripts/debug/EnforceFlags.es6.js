@@ -7,8 +7,6 @@ import Cookies from 'js-cookie';
 import window from 'utils/ngCompat/window.es6';
 import { getModule } from 'NgRegistry.es6';
 
-const location = getModule('$location');
-
 const ENABLE_FLAGS_KEY = 'ui_enable_flags';
 const DISABLE_FLAGS_KEY = 'ui_disable_flags';
 
@@ -20,6 +18,8 @@ const storeForDisable = getStore().forKey(DISABLE_FLAGS_KEY);
  * a notification.
  */
 export function init() {
+  const location = getModule('$location');
+
   const urlParams = location.search();
   const enabledFlags = urlParams[ENABLE_FLAGS_KEY];
   const disabledFlags = urlParams[DISABLE_FLAGS_KEY];

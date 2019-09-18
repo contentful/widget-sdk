@@ -1,4 +1,7 @@
+import sinon from 'sinon';
 import { assign } from 'utils/Collections.es6';
+import { $initialize, $inject } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 describe('data/Endpoint.es6', () => {
   const baseUrl = '//test.io';
@@ -11,7 +14,7 @@ describe('data/Endpoint.es6', () => {
     'X-Contentful-User-Agent': 'app contentful.web-app; platform browser; env development'
   };
 
-  beforeEach(function() {
+  beforeEach(async function() {
     /*
       Because the default headers are set in prelude.js,
       it's not possible to mock them using a normal approach.
@@ -19,20 +22,22 @@ describe('data/Endpoint.es6', () => {
       This means that the environment in the default headers say `env development`
       even though it should be `env unittest`.
      */
-    module('contentful/test');
+
+    this.Endpoint = await this.system.import('data/Endpoint.es6');
+
+    await $initialize(this.system);
 
     const auth = {
       getToken: sinon.stub().resolves('TOKEN')
     };
 
-    this.Endpoint = this.$inject('data/Endpoint.es6');
-    this.$http = this.$inject('$httpBackend');
-    this.$timeout = this.$inject('$timeout');
+    this.$http = $inject('$httpBackend');
+    this.$timeout = $inject('$timeout');
 
     this.makeRequest = function(...args) {
       const request = this.Endpoint.create(baseUrl, auth);
       const response = request(...args);
-      this.$inject('$timeout').flush();
+      $inject('$timeout').flush();
       return response;
     };
   });
@@ -103,38 +108,60 @@ describe('data/Endpoint.es6', () => {
   });
 
   describe('error response', () => {
-    it('is an error object', function*() {
+    it('is an error object', async function() {
       this.$http.whenGET(/./).respond(500);
       const req = this.makeRequest({
         method: 'GET',
         path: ['foo']
       });
       this.$http.flush();
-      const error = yield this.catchPromise(req);
+      let error;
+
+      try {
+        await req;
+      } catch (e) {
+        error = e;
+      }
+
       expect(error instanceof Error).toBe(true);
       expect(error.message).toEqual('API request failed');
     });
 
-    it('has "request" object', function*() {
+    it('has "request" object', async function() {
       this.$http.whenGET(/./).respond(500);
       const req = this.makeRequest({
         method: 'GET',
         path: ['foo']
       });
       this.$http.flush();
-      const error = yield this.catchPromise(req);
+
+      let error;
+
+      try {
+        await req;
+      } catch (e) {
+        error = e;
+      }
+
       expect(error.request.method).toBe('GET');
       expect(error.request.url).toBe(`${baseUrl}/foo`);
     });
 
-    it('has "response" properties', function*() {
+    it('has "response" properties', async function() {
       this.$http.whenGET(/./).respond(455, 'ERRORS');
       const req = this.makeRequest({
         method: 'GET',
         path: ['foo']
       });
       this.$http.flush();
-      const error = yield this.catchPromise(req);
+      let error;
+
+      try {
+        await req;
+      } catch (e) {
+        error = e;
+      }
+
       expect(error.status).toBe(455);
       expect(error.data).toEqual('ERRORS');
     });

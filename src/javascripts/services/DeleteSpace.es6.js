@@ -10,13 +10,13 @@ import APIClient from 'data/APIClient.es6';
 import { isEnterprisePlan, isFreeSpacePlan } from 'account/pricing/PricingDataProvider.es6';
 
 export function openDeleteSpaceDialog({ space, plan, onSuccess }) {
-  if (plan && isEnterprisePlan(plan) && !isFreeSpacePlan(plan)) {
-    return openCommittedSpaceWarningDialog();
-  }
-
   const $rootScope = getModule('$rootScope');
   const modalDialog = getModule('modalDialog');
   const Command = getModule('command');
+
+  if (plan && isEnterprisePlan(plan) && !isFreeSpacePlan(plan)) {
+    return openCommittedSpaceWarningDialog();
+  }
 
   const spaceName = space.name;
   const scope = extend($rootScope.$new(), {
@@ -54,6 +54,8 @@ function remove(space) {
 }
 
 function removalConfirmation() {
+  const modalDialog = getModule('modalDialog');
+
   const content = [
     h('p', [
       'You are about to remove space ',
@@ -74,8 +76,6 @@ function removalConfirmation() {
     h('button.btn-caution', { uiCommand: 'remove' }, ['Remove']),
     h('button.btn-secondary-action', { ngClick: 'dialog.cancel()' }, ['Don’t remove'])
   ];
-
-  const modalDialog = getModule('modalDialog');
 
   return modalDialog.richtextLayout('Remove space', content, controls);
 }

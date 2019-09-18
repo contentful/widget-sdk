@@ -15,9 +15,9 @@ import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import TheLocaleStore from 'services/localeStore.es6';
 
-const spaceContext = getModule('spaceContext');
-
 const LocalesFetcher = createFetcherComponent(() => {
+  const spaceContext = getModule('spaceContext');
+
   return spaceContext.localeRepo.getAll();
 });
 
@@ -183,12 +183,16 @@ class EditLocaleForm extends Component {
 
 export default class LocalesEditRoute extends React.Component {
   save = async function(locale) {
+    const spaceContext = getModule('spaceContext');
+
     const savedLocale = await spaceContext.localeRepo.save(locale);
     await TheLocaleStore.refresh();
     return savedLocale;
   };
 
   remove = async function(locale) {
+    const spaceContext = getModule('spaceContext');
+
     await spaceContext.localeRepo.remove(locale);
     await TheLocaleStore.refresh();
   };

@@ -1,7 +1,8 @@
 describe('App open transformer', () => {
-  beforeEach(function() {
-    module('contentful/test');
-    this.transformer = this.$inject('analytics/snowplow/transformers/AppOpen.es6').default;
+  beforeEach(async function() {
+    this.transformer = (await this.system.import(
+      'analytics/snowplow/transformers/AppOpen.es6'
+    )).default;
   });
 
   it('transforms data', function() {

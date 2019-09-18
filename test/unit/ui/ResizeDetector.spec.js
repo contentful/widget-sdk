@@ -2,11 +2,14 @@ import React from 'react';
 import { observeResize } from 'ui/ResizeDetector.es6';
 import _ from 'lodash';
 import $ from 'jquery';
+import { createUI } from 'test/utils/dom';
+import { $wait } from 'test/utils/ng';
 
 describe('ui/ResizeDetector.es6', () => {
   beforeEach(function() {
-    const view = this.createUI();
-    view.render(
+    this.view = createUI();
+
+    this.view.render(
       <div
         id="container"
         style={{
@@ -23,10 +26,14 @@ describe('ui/ResizeDetector.es6', () => {
       </div>
     );
 
-    this.container = $(view.element).find('#container');
+    this.container = $(this.view.element).find('#container');
   });
 
-  it('emits when container is resized', function*() {
+  afterEach(function() {
+    this.view.destroy();
+  });
+
+  it('emits when container is resized', async function() {
     const inner = this.container.find('#inner');
     const innerWidth$ = observeResize(inner.get(0)).map(() => inner.width());
     // This promise resolves when the width of the inner container
@@ -37,8 +44,11 @@ describe('ui/ResizeDetector.es6', () => {
       .toPromise();
 
     this.container.width(1000);
+
+    await $wait();
+
     // We don’t need an assertion. We just make sure that this promise
     // resolves without timing out.
-    yield resizeDetected;
+    await resizeDetected;
   });
 });

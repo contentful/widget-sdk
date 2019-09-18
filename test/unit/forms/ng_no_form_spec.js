@@ -1,12 +1,13 @@
-'use strict';
+import sinon from 'sinon';
+import { $initialize, $inject } from 'test/utils/ng';
 
 describe('cfNoForm directive', () => {
-  beforeEach(module('contentful/test'));
+  beforeEach(async function() {
+    await $initialize(this.system);
 
-  beforeEach(function() {
-    const $compile = this.$inject('$compile');
+    const $compile = $inject('$compile');
 
-    this.$rootScope = this.$inject('$rootScope');
+    this.$rootScope = $inject('$rootScope');
     this.scope = this.$rootScope.$new();
 
     const template =

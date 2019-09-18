@@ -1,7 +1,8 @@
 describe('Space create transformer', () => {
-  beforeEach(function() {
-    module('contentful/test');
-    this.transformer = this.$inject('analytics/snowplow/transformers/SpaceCreate.es6').default;
+  beforeEach(async function() {
+    this.transformer = (await this.system.import(
+      'analytics/snowplow/transformers/SpaceCreate.es6'
+    )).default;
   });
 
   describe('space created from template', () => {

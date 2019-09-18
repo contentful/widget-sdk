@@ -7,9 +7,9 @@ import AppPageShell from '../_common/AppPageShell.es6';
 
 import AlgoliaAppPage from './Container.es6';
 
-const spaceContext = getModule('spaceContext');
-
 const AlgoliaFetcher = createFetcherComponent(({ client }) => {
+  const spaceContext = getModule('spaceContext');
+
   return Promise.all([
     client.get('algolia'),
     spaceContext.publishedCTs.getAllBare(),
