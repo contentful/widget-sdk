@@ -6,6 +6,7 @@ import { SectionHeading, Tag } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 
+import JobsEmptyStateMessage from './JobsEmptyStateMessage.es6';
 import WrappedEntityList from 'app/common/WrappedEntityList/index.es6';
 
 const styles = {
@@ -86,10 +87,10 @@ const DateGroup = ({ jobs, entriesData, contentTypesData }) => {
       <SectionHeading className={styles.dateGroupHeader}>
         {formatDate(jobs[0].scheduledAt)}
       </SectionHeading>
-      {timeGroups.map(jobs => (
+      {timeGroups.map((jobs, index) => (
         <TimeGroup
           jobs={jobs}
-          key={jobs[0].scheduledAt}
+          key={`${jobs[0].scheduledAt}-${index}`}
           entriesData={entriesData}
           contentTypesData={contentTypesData}
         />
@@ -108,11 +109,12 @@ export default class JobsSchedule extends React.Component {
   static propTypes = {
     jobs: PropTypes.arrayOf(jobPropType),
     entriesData: PropTypes.object,
-    contentTypesData: PropTypes.object
+    contentTypesData: PropTypes.object,
+    emptyStateMessage: PropTypes.object
   };
 
   render() {
-    const { jobs, entriesData, contentTypesData } = this.props;
+    const { jobs, entriesData, contentTypesData, emptyStateMessage } = this.props;
     if (!this.props.jobs.length) {
       return null;
     }
@@ -124,15 +126,18 @@ export default class JobsSchedule extends React.Component {
       .value();
     return (
       <div>
-        {groupedJobs.length &&
-          groupedJobs.map(jobsGroup => (
+        {groupedJobs && groupedJobs.length > 0 ? (
+          groupedJobs.map((jobsGroup, index) => (
             <DateGroup
               jobs={jobsGroup}
-              key={jobsGroup[0].scheduledAt}
+              key={`${jobsGroup[0].scheduledAt}-${index}`}
               entriesData={entriesData}
               contentTypesData={contentTypesData}
             />
-          ))}
+          ))
+        ) : (
+          <JobsEmptyStateMessage title={emptyStateMessage.title} text={emptyStateMessage.text} />
+        )}
       </div>
     );
   }

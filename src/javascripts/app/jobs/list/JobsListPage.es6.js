@@ -205,6 +205,7 @@ export default class JobsListPage extends Component {
                   jobs={jobs}
                   entriesData={entries}
                   usersData={users}
+                  emptyStateMessage={this.tabs[activeTab].emptyStateMessage}
                   contentTypesData={contentTypes}
                 />
               ) : (
