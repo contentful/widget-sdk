@@ -38,7 +38,8 @@ const initialState = {
   emailList: [],
   invalidAddresses: [],
   spaceMemberships: [],
-  suppressInvitation: true
+  suppressInvitation: true,
+  progress: { successes: [], failures: [] }
 };
 
 const reducer = (state, action) => {
@@ -62,13 +63,14 @@ const reducer = (state, action) => {
       return { ...state, orgRole: action.payload, submitted: false };
     case 'NOTIFICATIONS_PREFERENCE_CHANGED':
       return { ...state, suppressInvitation: !action.payload };
+    case 'PROGRESS_CHANGED':
+      return { ...state, progress: action.payload };
     case 'RESET':
       return { ...initialState };
   }
 };
 
 export default function NewUser({ orgId, onReady, hasSsoEnabled, isOwner }) {
-  const [{ isLoading, error, data }, addToOrg, resetAsyncFn] = useAddToOrg(orgId, hasSsoEnabled);
   const [
     {
       submitted,
@@ -77,10 +79,17 @@ export default function NewUser({ orgId, onReady, hasSsoEnabled, isOwner }) {
       invalidAddresses,
       orgRole,
       spaceMemberships,
-      suppressInvitation
+      suppressInvitation,
+      progress
     },
     dispatch
   ] = useReducer(reducer, initialState);
+  const handleProgressChange = payload => dispatch({ type: 'PROGRESS_CHANGED', payload });
+  const [{ isLoading, error, data }, addToOrg, resetAsyncFn] = useAddToOrg(
+    orgId,
+    hasSsoEnabled,
+    handleProgressChange
+  );
 
   const handleEmailsChange = evt => {
     const {
@@ -173,7 +182,7 @@ export default function NewUser({ orgId, onReady, hasSsoEnabled, isOwner }) {
     <Workbench title="Invite users">
       <Workbench.Content centered>
         {error && <Paragraph>Something went wrong</Paragraph>}
-        {isLoading && <NewUserProgress emailList={emailList} />}
+        {isLoading && <NewUserProgress progress={progress} emailList={emailList} />}
         {data && (
           <NewUserSuccess
             failures={data.failures}

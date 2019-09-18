@@ -9,7 +9,7 @@ import { getVariation } from 'LaunchDarkly.es6';
 // If the org has Single Sign On enabled, we create the org memberships directly
 // If not, we send invitations to the emails addresses
 // returns an object { failures, successes }
-export function useAddToOrg(orgId, hasSsoEnabled) {
+export function useAddToOrg(orgId, hasSsoEnabled, onProgress = () => {}) {
   const fn = async (emails, role, spaceMemberships, suppressInvitation) => {
     const orgEndpoint = createOrganizationEndpoint(orgId);
     const shouldUseNewInvitation = await getVariation(
@@ -17,20 +17,33 @@ export function useAddToOrg(orgId, hasSsoEnabled) {
     );
 
     // use the new invitation flow using pending org memberships
+    // this new process will also cover SSO
     if (shouldUseNewInvitation) {
-      return createInvitationWithPendingMembership(orgEndpoint, emails, role, spaceMemberships);
+      return sendInvitations(
+        createInvitationWithPendingMembership,
+        onProgress,
+        orgEndpoint,
+        emails,
+        role,
+        spaceMemberships
+      );
     }
 
-    // old flow. sso + non-sso
+    // old flow. SSO + non-SSO
     if (hasSsoEnabled) {
       // if the org is SSO enabled, create org memberships directly
-      const { failures, successes } = await addToOrg(orgEndpoint, emails, role, suppressInvitation);
-      // invite all successfuly added org members to the spaces
-      await addToSpaces(successes, spaceMemberships);
-      return { failures, successes };
+      return sendInvitations(
+        addToOrg,
+        onProgress,
+        orgEndpoint,
+        emails,
+        role,
+        suppressInvitation,
+        spaceMemberships
+      );
     } else {
       // if the org does not use SSO, create invitations
-      return inviteToOrg(orgEndpoint, emails, role, spaceMemberships);
+      return sendInvitations(inviteToOrg, onProgress, orgEndpoint, emails, role, spaceMemberships);
     }
   };
 
@@ -45,21 +58,9 @@ export function useAddToOrg(orgId, hasSsoEnabled) {
  * @param {String} role An org role. One of 'owner', 'admin' or 'member'
  * @param {Boolean} suppressInvitation If the email notification should be suppressed
  */
-async function addToOrg(endpoint, emails, role, suppressInvitation) {
-  const failures = [];
-  const successes = [];
-
-  const requests = emails.map(async email => {
-    try {
-      await createOrgMembership(endpoint, { role, email, suppressInvitation });
-      successes.push(email);
-    } catch (e) {
-      failures.push({ email, error: e });
-    }
-  });
-
-  await Promise.all(requests);
-  return { failures, successes };
+async function addToOrg(endpoint, email, role, suppressInvitation, spaceMemberships) {
+  await createOrgMembership(endpoint, { role, email, suppressInvitation });
+  await addToSpaces(email, spaceMemberships);
 }
 
 /**
@@ -68,19 +69,17 @@ async function addToOrg(endpoint, emails, role, suppressInvitation) {
  * @param {String[]} emails
  * @param {Array} spaceMemberships An array with objects containing the space and the role ids. { space: {}, roles: []}
  */
-async function addToSpaces(emails, spaceMemberships) {
-  const requests = spaceMemberships.flatMap(({ space, roles }) => {
+async function addToSpaces(email, spaceMemberships) {
+  const requests = spaceMemberships.map(async ({ space, roles }) => {
     const spaceEndpoint = createSpaceEndpoint(space.sys.id);
-    return emails.map(async email => {
-      const invite = createSpaceMembershipRepo(spaceEndpoint).invite;
-      try {
-        await invite(email, roles);
-      } catch {
-        // ignore
-      }
-    });
+    const invite = createSpaceMembershipRepo(spaceEndpoint).invite;
+    try {
+      await invite(email, roles);
+    } catch {
+      // ignore
+    }
   });
-
+  // will never return a rejection as we are catching any errors above
   return Promise.all(requests);
 }
 
@@ -93,26 +92,12 @@ async function addToSpaces(emails, spaceMemberships) {
  * @param {String} role An org role. One of 'owner', 'admin' or 'member'
  * @param {*} spaceMemberships An array with objects containing the space and the role ids. { space: {}, roles: []}
  */
-async function inviteToOrg(endpoint, emails, role, spaceMemberships) {
-  const failures = [];
-  const successes = [];
-
-  const requests = emails.map(async email => {
-    try {
-      await invite(endpoint, {
-        role,
-        email,
-        spaceInvitations: convertSpaceMemberships(spaceMemberships)
-      });
-      successes.push(email);
-    } catch (e) {
-      failures.push({ email, error: e });
-    }
+async function inviteToOrg(endpoint, email, role, spaceMemberships) {
+  return invite(endpoint, {
+    role,
+    email,
+    spaceInvitations: convertSpaceMemberships(spaceMemberships)
   });
-
-  await Promise.all(requests);
-
-  return { failures, successes };
 }
 
 function convertSpaceMemberships(spaceMemberships) {
@@ -129,29 +114,36 @@ function convertSpaceMemberships(spaceMemberships) {
 
 // Alpha invitation flow. Under a feature flag ('feature-bv-09-2019-new-invitation-flow-new-entity')
 // Requires alpha header (x-contentful-enable-alpha-feature: pending-org-membership)
-async function createInvitationWithPendingMembership(endpoint, emails, role, spaceMemberships) {
-  const failures = [],
-    successes = [];
+async function createInvitationWithPendingMembership(endpoint, email, role) {
+  return invite(
+    endpoint,
+    {
+      role,
+      email
+    },
+    true
+  );
+}
+
+// Send out invitation requests.
+// This will keep a record of successfull and unsuccessful requests and call
+// a progress callback function after every call.
+// Returns an object containing successes and failures
+async function sendInvitations(fn, onProgress, endpoint, emails, ...rest) {
+  const successes = [];
+  const failures = [];
   const requests = emails.map(async email => {
     try {
-      await invite(
-        endpoint,
-        {
-          role,
-          email
-        },
-        true
-      );
+      await fn(endpoint, email, ...rest);
       successes.push(email);
     } catch (e) {
       failures.push({ email, error: e });
+    } finally {
+      onProgress({ successes, failures });
     }
   });
-  // send out all org invitations
+
   await Promise.all(requests);
 
-  // add all successfuly invited members to the spaces
-  await addToSpaces(successes, spaceMemberships);
-
-  return { failures, successes };
+  return { successes, failures };
 }
