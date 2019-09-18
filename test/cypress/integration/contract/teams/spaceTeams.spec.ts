@@ -305,6 +305,18 @@ describe('Teams in space page', () => {
               ...teamHeaders,
               'CONTENT-TYPE': 'application/vnd.contentful.management.v1+json',
               'x-contentful-team': 'team1'
+            },
+            body: {
+              admin: false,
+              roles: [
+                {
+                  sys: {
+                    id: 'role1',
+                    type: 'Link',
+                    linkType: 'Role'
+                  }
+                }
+              ]
             }
           },
           willRespondWith: {
