@@ -175,7 +175,7 @@ describe('Teams in space page', () => {
             Team: [
               {
                 name: 'Team 1',
-                memberCount: 500,
+                memberCount: 2,
                 sys: { id: 'team1' }
               },
               {
@@ -273,7 +273,7 @@ describe('Teams in space page', () => {
       cy.getAllByTestId('membership-row').then(
         (rows) => {
           cy.wrap(rows[0]).should('be.visible');
-          cy.wrap(rows[0]).contains('td', '500 members').should('be.visible');
+          cy.wrap(rows[0]).contains('td', '2 members').should('be.visible');
           cy.wrap(rows[0]).contains('td', 'Team 1').should('be.visible');
           cy.wrap(rows[0]).contains('td', 'Admin').should('be.visible');
 
@@ -301,7 +301,11 @@ describe('Teams in space page', () => {
           withRequest: {
             method: 'PUT',
             path: `/spaces/${defaultSpaceId}/team_space_memberships/TSM1`,
-            headers: teamHeaders
+            headers: {
+              ...teamHeaders,
+              'CONTENT-TYPE': 'application/vnd.contentful.management.v1+json',
+              'x-contentful-team': 'team1'
+            }
           },
           willRespondWith: {
             status: 200,
