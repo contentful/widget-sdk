@@ -8,6 +8,7 @@ import {
   CheckboxField,
   Subheading
 } from '@contentful/forma-36-react-components';
+import { isEmpty } from 'lodash';
 import tokens from '@contentful/forma-36-tokens';
 import { updateUserData, userAccountDataShape } from './AccountService.es6';
 import { css } from 'emotion';
@@ -39,8 +40,40 @@ function AccountEditorModal({
   const [currentPasswordIsRequired, setCurrentPasswordIsRequired] = useState(false);
   const [editorUserState, setEditorUserState] = useState(userState);
 
+  const updateValidationMessages = (errors, validationState) => {
+    let newValidationState = validationState;
+    errors.forEach(error => {
+      switch (error.path) {
+        case 'password':
+          if (error.name === 'insecure') {
+            newValidationState = {
+              ...newValidationState,
+              newPassword: 'The password you entered is not secure.'
+            };
+          }
+          break;
+        case 'current_password':
+          if (error.name === 'invalid') {
+            newValidationState = {
+              ...newValidationState,
+              currentPassword: 'The password you entered is not valid.'
+            };
+          }
+          break;
+        case 'email':
+          if (error.name === 'invalid') {
+            newValidationState = {
+              ...newValidationState,
+              currentPassword: 'The email you entered is not valid.'
+            };
+          }
+          break;
+      }
+    });
+    setValidationState(newValidationState);
+  };
   const submitForm = async ({ passwordState, editorUserState }) => {
-    updateUserData({
+    const updatedUserData = await updateUserData({
       version: editorUserState.sys.version,
       data: {
         firstName: editorUserState.firstName,
@@ -50,19 +83,32 @@ function AccountEditorModal({
         currentPassword: passwordState.currentPassword
       }
     });
-    setParentUserState(editorUserState);
-    setShowModal(false);
+    if (updatedUserData.sys.type === 'User') {
+      setParentUserState(editorUserState);
+      setShowModal(false);
+    } else if (updatedUserData.sys.type === 'Error') {
+      updateValidationMessages(updatedUserData.details.errors, validationState);
+    }
   };
-  const validateName = value => value.length === 0 && 'Can not be empty';
 
-  const validateEmail = value => value.length === 0 && 'Can not be empty';
+  const validateName = value => (value.length === 0 ? 'Can not be empty' : '');
+
+  const validateEmail = value => (value.length === 0 ? 'Can not be empty' : '');
   const validateNewPassword = value =>
-    value.length < 8 && 'Password should have at least 8 characters';
+    value.length < 8 ? 'Password should have at least 8 characters' : '';
   const validateConfirmPassword = value =>
     (value.length === 0 && 'Can not be empty') ||
     (value.length < 8 && 'Password should have at least 8 characters') ||
-    (value !== passwordState.newPassword && 'Passwords do not match');
-  const validateCurrentPassword = value => value.length === 0 && 'Can not be empty';
+    (value !== passwordState.newPassword && 'Passwords do not match') ||
+    '';
+  const validateCurrentPassword = value => (value.length === 0 ? 'Can not be empty' : '');
+
+  const validateForm = validationState => {
+    const formIsInvalid = Boolean(
+      Object.keys(validationState).find(key => !isEmpty(validationState[key]))
+    );
+    return formIsInvalid && currentPasswordIsRequired && Boolean(validationState.currentPassword);
+  };
 
   const onChangeFirstName = ({ target: { value } }) => {
     setValidationState({ ...validationState, firstName: validateName(value) });
@@ -182,7 +228,8 @@ function AccountEditorModal({
           <Button
             onClick={() => submitForm({ passwordState, editorUserState })}
             type="submit"
-            buttonType="positive">
+            buttonType="positive"
+            disabled={validateForm(validationState)}>
             Save changes
           </Button>
           <Button
