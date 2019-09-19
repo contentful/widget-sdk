@@ -81,7 +81,6 @@ export const angularInitRun = [
       import('app/widgets/cfBooleanEditorDirective.es6'),
       import('app/widgets/cfCheckboxEditorDirective.es6'),
       import('app/widgets/cfFileEditorDirective.es6'),
-      import('app/widgets/cfListInputEditorDirective.es6'),
       import('app/widgets/cfRatingEditorDirective.es6'),
       import('app/widgets/datetime/cfEntryDatetimeEditorDirective.es6'),
       import('app/widgets/json/cfJsonEditorCodeEditorDirective.es6'),

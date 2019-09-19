@@ -34,6 +34,7 @@ window.libs = [
   ['@contentful/field-editor-multiple-line', require('@contentful/field-editor-multiple-line')],
   ['@contentful/field-editor-dropdown', require('@contentful/field-editor-dropdown')],
   ['@contentful/field-editor-tags', require('@contentful/field-editor-tags')],
+  ['@contentful/field-editor-list', require('@contentful/field-editor-list')],
 
   ['@contentful/asn1js', require('@contentful/asn1js')],
   ['@contentful/forma-36-react-components', require('@contentful/forma-36-react-components')],
