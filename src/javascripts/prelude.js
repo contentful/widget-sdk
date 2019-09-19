@@ -360,7 +360,8 @@ angular
 
           go({
             path: state.name.split('.'),
-            params: match
+            params: match,
+            options: { location: false }
           });
         }
       });
