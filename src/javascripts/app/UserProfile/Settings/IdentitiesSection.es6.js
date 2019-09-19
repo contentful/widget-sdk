@@ -183,6 +183,7 @@ function RemoveIdentityProvider({ onRemove, identityId, name }) {
           label={`Remove "${name}" open identity`}
           buttonType="secondary"
           onClick={() => setShown(true)}
+          testId={`remove-${name}-button`}
         />
       </Tooltip>
       <ModalConfirm
@@ -192,11 +193,9 @@ function RemoveIdentityProvider({ onRemove, identityId, name }) {
         size="small"
         shouldCloseOnEscapePress
         shouldCloseOnOverlayClick
-        // confirmLabel={text('confirmLabel', ModalConfirm.defaultProps.confirmLabel)}
-        // cancelLabel={text('cancelLabel', ModalConfirm.defaultProps.cancelLabel)}
-        testId="dialog-remove-name-identity"
-        confirmTestId="confirm-remove-name-identity"
-        cancelTestId="cancel-remove-name-identity"
+        testId={`dialog-remove-${name}-identity`}
+        confirmTestId={`confirm-remove-${name}-identity`}
+        cancelTestId={`cancel-remove-${name}-identity`}
         onCancel={() => {
           setShown(false);
         }}

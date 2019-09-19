@@ -8,7 +8,6 @@ describe('User profile page', () => {
             provider: 'user_profile',
             cors: true,
             pactfileWriteMode: 'merge',
-            dir: Cypress.env('pactDir'),
             spec: 2
         })
     );
@@ -24,8 +23,14 @@ describe('User profile page', () => {
             cy.visit('/account/profile/user');
             cy.wait(interactions);
         });
-        it('find id', () => {
+        it('see user account data', () => {
             cy.getByTestId('user-account-data').should('be.visible');
+        });
+        it('remove twitter identity', () => {
+            cy.getByTestId('remove-twitter-button').should('be.visible').click();
+            cy.getByTestId('dialog-remove-twitter-identity').should('be.visible');
+            cy.getByTestId('confirm-remove-twitter-identity').should('be.visible').click();
+            // check for successful interaction "/users/me/identities/3035"
         })
     });
 });
