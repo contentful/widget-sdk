@@ -162,8 +162,12 @@ RelativeDateFieldValue.propTypes = {
 };
 
 function AbsoluteDateFieldValue({ value }) {
+  const label = moment.parseZone(value).format('MM/DD/YYYY h:mm A Z');
+
   return (
-    <span className={styles.noWrap}>{moment.parseZone(value).format('MM/DD/YYYY h:mm A Z')}</span>
+    <span className={styles.textOverflow} title={label}>
+      {label}
+    </span>
   );
 }
 
