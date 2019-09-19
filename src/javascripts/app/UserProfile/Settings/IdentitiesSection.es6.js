@@ -2,7 +2,13 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { Heading, IconButton } from '@contentful/forma-36-react-components';
+import {
+  Heading,
+  IconButton,
+  Tooltip,
+  ModalConfirm,
+  Paragraph
+} from '@contentful/forma-36-react-components';
 import { domain } from 'Config.es6';
 import { difference, isArray, upperFirst, isEmpty, xor, find } from 'lodash';
 import GithubIcon from 'svg/github-icon.es6';
@@ -69,7 +75,8 @@ const styles = {
     'input[type="submit"]': {
       color: tokens.colorBlueDark
     }
-  })
+  }),
+  tooltipTargetWrapper: css({ display: 'flex' })
 };
 
 const identitiesProviders = ['google', 'github', 'twitter'];
@@ -153,6 +160,7 @@ IdentitiesSection.propTypes = {
 export default IdentitiesSection;
 
 function RemoveIdentityProvider({ onRemove, identityId, name }) {
+  const [isShown, setShown] = useState(false);
   const onDelete = (id, name) => {
     deleteUserIdentityData(id);
     onRemove(name);
@@ -163,14 +171,41 @@ function RemoveIdentityProvider({ onRemove, identityId, name }) {
         <IdentityIcon providerName={name} />
         <div className={styles.providerName}>{upperFirst(name)}</div>
       </div>
-      <IconButton
-        iconProps={{
-          icon: 'Close'
+      <Tooltip
+        place="right"
+        id={`remove-${name}-${identityId}`}
+        content="Remove identity"
+        targetWrapperClassName={styles.tooltipTargetWrapper}>
+        <IconButton
+          iconProps={{
+            icon: 'Close'
+          }}
+          label={`Remove "${name}" open identity`}
+          buttonType="secondary"
+          onClick={() => setShown(true)}
+        />
+      </Tooltip>
+      <ModalConfirm
+        isShown={isShown}
+        title="Remove identity"
+        intent="negative"
+        size="small"
+        shouldCloseOnEscapePress
+        shouldCloseOnOverlayClick
+        // confirmLabel={text('confirmLabel', ModalConfirm.defaultProps.confirmLabel)}
+        // cancelLabel={text('cancelLabel', ModalConfirm.defaultProps.cancelLabel)}
+        testId="dialog-remove-name-identity"
+        confirmTestId="confirm-remove-name-identity"
+        cancelTestId="cancel-remove-name-identity"
+        onCancel={() => {
+          setShown(false);
         }}
-        label={`Remove "${name}" open identity`}
-        buttonType="secondary"
-        onClick={() => onDelete(identityId.toString(), name)}
-      />
+        onConfirm={() => {
+          setShown(false);
+          onDelete(identityId.toString(), name);
+        }}>
+        <Paragraph>Are you sure you want to remove this authentication option?</Paragraph>
+      </ModalConfirm>
     </div>
   );
 }
