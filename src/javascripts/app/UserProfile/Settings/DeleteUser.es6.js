@@ -25,7 +25,8 @@ const styles = {
     fontWeight: tokens.fontWeightDemiBold,
     fontSize: tokens.fontSizeM,
     color: tokens.colorTextDark
-  })
+  }),
+  paddingS: css({ padding: tokens.spacingS })
 };
 
 const DeleteUser = ({ userCancellationWarning }) => {
@@ -46,10 +47,12 @@ const DeleteUser = ({ userCancellationWarning }) => {
 
   return (
     <>
-      <Heading>Danger Zone</Heading>
-      <Button buttonType="negative" onClick={() => setShowModal(true)}>
-        Delete User
-      </Button>
+      <Typography className={styles.paddingS}>
+        <Heading>Danger Zone</Heading>
+        <Button buttonType="negative" onClick={() => setShowModal(true)}>
+          Delete User
+        </Button>
+      </Typography>
 
       <ModalConfirm
         title="Danger Zone"
