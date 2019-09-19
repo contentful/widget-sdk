@@ -35,7 +35,7 @@ export default function Settings({ title, onReady }) {
             <AccountDetails data={userAccountData} />
           </Card>
           <Card className={styles.userSettingsSection}>
-            <DeleteUser />
+            <DeleteUser userCancellationWarning={userAccountData.userCancellationWarning} />
           </Card>
         </Workbench.Content>
       </Workbench>
