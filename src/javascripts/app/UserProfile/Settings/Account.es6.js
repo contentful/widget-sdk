@@ -86,7 +86,6 @@ export default function AccountDetails({ data }) {
             />
           </Tooltip>
           <AccountEditorModal
-            initialUserData={data}
             userState={userState}
             setUserState={setUserState}
             showModal={showModal}
