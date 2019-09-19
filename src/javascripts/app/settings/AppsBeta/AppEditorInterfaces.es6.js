@@ -95,7 +95,7 @@ function transformSingleEditorInterfaceToTargetState(ei, defaultSidebar, targetS
     const targetSidebar = isObject(targetState.sidebar) ? targetState.sidebar : {};
 
     // If there is no sidebar stored use the default one.
-    result.sidebar = Array.isArray(result.sidebar) ? result.sidebar : defaultSidebar;
+    result.sidebar = Array.isArray(result.sidebar) ? result.sidebar : cloneDeep(defaultSidebar);
 
     const widget = {
       widgetNamespace: NAMESPACE_EXTENSION,
