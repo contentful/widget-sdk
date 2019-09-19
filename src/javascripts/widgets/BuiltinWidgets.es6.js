@@ -7,7 +7,7 @@ import LinkEditor, {
   SingleLinkEditor,
   withCfWebApp as linkEditorWithCfWebApp
 } from 'app/widgets/LinkEditor/index.es6';
-import TagEditorField from 'app/widgets/TagEditor/TagEditorField.es6';
+import { TagsEditor } from '@contentful/field-editor-tags';
 import { SingleLineEditor } from '@contentful/field-editor-single-line';
 import { MultipleLineEditor } from '@contentful/field-editor-multiple-line';
 import { DropdownEditor } from '@contentful/field-editor-dropdown';
@@ -206,7 +206,7 @@ export function create() {
     fieldTypes: ['Symbols'],
     name: 'Tag',
     icon: 'tags',
-    buildTemplate: ({ widgetApi }) => <TagEditorField widgetApi={widgetApi} />
+    renderFieldEditor: ({ widgetApi }) => <TagsEditor field={widgetApi.field} />
   });
 
   registerWidget('fileEditor', {
