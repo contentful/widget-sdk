@@ -29,6 +29,14 @@ export async function deleteUserIdentityData(id) {
   });
 }
 
+export async function deleteUserAccount(data) {
+  return await usersEndpoint({
+    method: 'POST',
+    path: ['user_cancellations'],
+    data
+  });
+}
+
 export const userAccountDataShape = PropTypes.shape({
   firstName: PropTypes.string,
   lastName: PropTypes.string,
