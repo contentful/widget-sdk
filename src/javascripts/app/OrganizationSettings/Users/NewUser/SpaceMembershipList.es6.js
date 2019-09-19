@@ -5,10 +5,11 @@ import tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { getAllRoles } from 'access_control/OrganizationMembershipRepository.es6';
-import { SectionHeading, IconButton, Icon } from '@contentful/forma-36-react-components';
+import { SectionHeading, Icon } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
 import SpacesAutoComplete from 'app/common/SpacesAutocomplete.es6';
 import SpaceRoleEditor from 'app/OrganizationSettings/SpaceRoleEditor.es6';
+import AutocompleteSelection from 'app/common/AutocompleteSelection.es6';
 import useAsync from 'app/common/hooks/useAsync.es6';
 import { createImmerReducer } from 'redux/utils/createImmerReducer.es6';
 
@@ -18,16 +19,6 @@ const styles = {
   }),
   list: css({
     marginTop: tokens.spacingM
-  }),
-  listItem: css({
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: '5px 10px',
-    margin: 0,
-    alignItems: 'center',
-    ':hover': {
-      backgroundColor: tokens.colorElementLightest
-    }
   }),
   leftColumn: css({
     display: 'flex',
@@ -114,12 +105,12 @@ export default function SpaceMembershipList({ orgId, submitted = false, onChange
           true
         )} selected`}</SectionHeading>
       )}
-      <ul className={styles.list}>
+      <div className={styles.list}>
         {spaceMemberships.map(({ space, roles }) => (
-          <li
+          <AutocompleteSelection
+            onRemove={() => handleSpaceRemoved(space.sys.id)}
             key={space.sys.id}
-            className={styles.listItem}
-            data-test-id="space-membership-list.item">
+            testId="space-membership-list.item">
             <div className={styles.leftColumn}>
               <strong className={styles.spaceName}>{space.name}</strong>
               <SpaceRoleEditor
@@ -132,16 +123,9 @@ export default function SpaceMembershipList({ orgId, submitted = false, onChange
                 <Icon icon="ErrorCircle" color="negative" className={styles.errorIcon} />
               )}
             </div>
-            <IconButton
-              buttonType="secondary"
-              iconProps={{ icon: 'Close' }}
-              onClick={() => handleSpaceRemoved(space.sys.id)}
-              label="Remove space"
-              testId="space-membership-list.remove-button"
-            />
-          </li>
+          </AutocompleteSelection>
         ))}
-      </ul>
+      </div>
     </>
   );
 }
