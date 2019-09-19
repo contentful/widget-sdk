@@ -206,18 +206,34 @@ describe('AppEditorInterfaces', () => {
       cma.getEditorInterface.mockImplementationOnce(() => {
         return Promise.resolve({ sys: { contentType: { sys: { id: 'CT1' } } } });
       });
+      cma.getEditorInterface.mockImplementationOnce(() => {
+        return Promise.resolve({ sys: { contentType: { sys: { id: 'CT2' } } } });
+      });
 
-      await transform({ CT1: { sidebar: { position: 3 } } });
+      await transform({
+        CT1: { sidebar: { position: 3 } },
+        CT2: { sidebar: { position: 2 } }
+      });
 
-      expect(cma.updateEditorInterface).toBeCalledTimes(1);
+      expect(cma.updateEditorInterface).toBeCalledTimes(2);
 
       const defaultSidebar = await getDefaultSidebar();
+
       expect(cma.updateEditorInterface).toBeCalledWith({
         sys: { contentType: { sys: { id: 'CT1' } } },
         sidebar: [
           ...defaultSidebar.slice(0, 3),
           { widgetNamespace: NAMESPACE_EXTENSION, widgetId: EXTENSION_ID },
           ...defaultSidebar.slice(3)
+        ]
+      });
+
+      expect(cma.updateEditorInterface).toBeCalledWith({
+        sys: { contentType: { sys: { id: 'CT2' } } },
+        sidebar: [
+          ...defaultSidebar.slice(0, 2),
+          { widgetNamespace: NAMESPACE_EXTENSION, widgetId: EXTENSION_ID },
+          ...defaultSidebar.slice(2)
         ]
       });
     });
