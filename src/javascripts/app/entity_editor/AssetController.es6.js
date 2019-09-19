@@ -25,7 +25,7 @@ export default async function create($scope, editorData, preferences) {
   const spaceContext = getModule('spaceContext');
   const $rootScope = getModule('$rootScope');
 
-  $scope.sidebarToggleProps = initSidebarTogglesProps($rootScope);
+  $scope.sidebarToggleProps = initSidebarTogglesProps($rootScope, $scope);
 
   $scope.context = {};
   $scope.editorData = editorData;
