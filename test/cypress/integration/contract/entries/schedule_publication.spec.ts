@@ -19,7 +19,7 @@ import {
 import { FeatureFlag } from '../../../util/featureFlag';
 
 describe('Schedule Publication', () => {
-  let interactions: string[]
+  let interactions: string[];
   beforeEach(() => {
     cy.enableFeatureFlags([FeatureFlag.SCHEDULED_PUBLICATION]);
     interactions = basicServerSetUp();
@@ -29,17 +29,14 @@ describe('Schedule Publication', () => {
     beforeEach(() => {
       interactions.push(queryAllScheduledJobsForDefaultEntry.willFindNone());
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
-      cy.wait(
-        interactions,
-        { timeout: 10000 }
-      );
+      cy.wait(interactions, { timeout: 10000 });
     });
 
     it('submits the new scheduled publication and then re-fetch the list of scheduled publications', () => {
       cy.resetAllFakeServers();
 
-      const validateAnEntryInteraction = validateAnEntryValidResponse.willSucceed()
-      const scheduledPubinteraction = createScheduledPublicationForDefaultSpace.willSucceed()
+      const validateAnEntryInteraction = validateAnEntryValidResponse.willSucceed();
+      const scheduledPubinteraction = createScheduledPublicationForDefaultSpace.willSucceed();
 
       cy.getByTestId('change-state-menu-trigger').click();
       cy.getByTestId('schedule-publication').click();
@@ -55,19 +52,34 @@ describe('Schedule Publication', () => {
       cy.getByTestId('scheduled-item').should('have.length', 1);
       cy.getByTestId('change-state-published').should('be.disabled');
     });
+    it('cannot create more jobs than the set limit', () => {
+      const validateAnEntryInteraction = validateAnEntryValidResponse.willSucceed();
+      const scheduledPubinteraction = createScheduledPublicationForDefaultSpace.willFailWithMaxPendingJobsError();
+
+      cy.getByTestId('change-state-menu-trigger').click();
+      cy.getByTestId('schedule-publication').click();
+
+      cy.getByTestId('schedule-publication-modal')
+        .should('be.visible')
+        .find('[data-test-id="schedule-publication"]')
+        .first()
+        .click();
+
+      cy.wait(validateAnEntryInteraction);
+      cy.wait(scheduledPubinteraction)
+      cy.wait(200)  // extra wait for notification animation 200ms
+      cy.getAllByTestId('cf-ui-notification')
+        .should('be.visible')
+        .should('contain', 'There is a limit of 10 scheduled entries')
+    });
   });
 
   describe('cancelling a publication', () => {
     beforeEach(() => {
-      interactions.push(
-        queryAllScheduledJobsForDefaultEntry.willFindOnePendingJob()
-      );
+      interactions.push(queryAllScheduledJobsForDefaultEntry.willFindOnePendingJob());
 
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
-      cy.wait(
-        interactions,
-        { timeout: 10000 }
-      );
+      cy.wait(interactions, { timeout: 10000 });
     });
 
     it('cancels publication after clicking on the grey button', () => {
@@ -94,10 +106,7 @@ describe('Schedule Publication', () => {
       interactions.push(queryAllScheduledJobsForDefaultEntry.willFindOneFailedJob());
 
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
-      cy.wait(
-        interactions,
-        { timeout: 10000 }
-      );
+      cy.wait(interactions, { timeout: 10000 });
 
       cy.getByTestId('failed-job-note')
         .should('be.visible')
@@ -109,10 +118,7 @@ describe('Schedule Publication', () => {
       interactions.push(queryAllScheduledJobsForDefaultEntry.willFailWithAnInternalServerError());
 
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
-      cy.wait(
-        interactions,
-        { timeout: 10000 }
-      );
+      cy.wait(interactions, { timeout: 10000 });
 
       cy.getByTestId('cf-ui-note')
         .should('be.visible')

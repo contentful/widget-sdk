@@ -1,8 +1,16 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import { defaultSpaceId } from '../../../util/requests';
 import { getAllPublicContentTypesInDefaultSpace } from '../../../interactions/content_types';
-import { queryAllJobsForDefaultSpace } from '../../../interactions/jobs';
-import { severalJobsResponse } from '../../../fixtures/responses/jobs-several';
+import {
+  queryPendingJobsForDefaultSpace,
+  queryCompletedJobsForDefaultSpace,
+  queryFailedJobsForDefaultSpace
+} from '../../../interactions/jobs';
+import {
+  severalPendingJobsResponse,
+  severalCompletedJobsResponse,
+  severalFailedJobsResponse
+} from '../../../fixtures/responses/jobs-several';
 import { queryForDefaultEntryWithoutEnvironment } from '../../../interactions/entries';
 import { queryForDefaultUserDetails } from '../../../interactions/users';
 import { FeatureFlag } from '../../../util/featureFlag';
@@ -27,20 +35,42 @@ describe('Jobs page', () => {
   context('no jobs in the space', () => {
     beforeEach(() => {
       const interactions = defaultRequestsMock();
-      const slowInteraction = queryAllJobsForDefaultSpace.willFindNone();
+      const slowInteraction = queryPendingJobsForDefaultSpace.willFindNone();
 
       cy.visit(`/spaces/${defaultSpaceId}/jobs`);
 
       cy.wait(interactions);
       cy.wait(slowInteraction, { timeout: 10000 });
     });
-    it('renders illustration and heading for empty state', () => {
+    it('renders illustration and heading for Scheduled tab empty state', () => {
       cy.getByTestId('cf-ui-tab-panel')
         .should('be.visible')
         .find('svg')
         .should('be.visible')
         .getByTestId('jobs-state-message-heading')
         .should('contain', 'Nothing is scheduled');
+    });
+    it('renders illustration and heading for Completed tab empty state', () => {
+      const completedJobsInteraction = queryCompletedJobsForDefaultSpace.willFindNone();
+      selectCompletedTab();
+      cy.wait(completedJobsInteraction);
+      cy.getByTestId('cf-ui-tab-panel')
+        .should('be.visible')
+        .find('svg')
+        .should('be.visible')
+        .getByTestId('jobs-state-message-heading')
+        .should('contain', 'No entries have been successfully published yet');
+    });
+    it('renders illustration and heading for Failed tab empty state', () => {
+      const failedJobsInteraction = queryFailedJobsForDefaultSpace.willFindNone();
+      selectFailedTab();
+      cy.wait(failedJobsInteraction);
+      cy.getByTestId('cf-ui-tab-panel')
+        .should('be.visible')
+        .find('svg')
+        .should('be.visible')
+        .getByTestId('jobs-state-message-heading')
+        .should('contain', 'Nothing here');
     });
   });
 
@@ -60,7 +90,7 @@ describe('Jobs page', () => {
         publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
       });
       const slowInteractions = [
-        queryAllJobsForDefaultSpace.willFindSeveral(),
+        queryPendingJobsForDefaultSpace.willFindSeveral(),
         queryForDefaultEntryWithoutEnvironment.willFindIt(),
         queryForDefaultUserDetails.willFindTheUserDetails()
       ];
@@ -71,18 +101,37 @@ describe('Jobs page', () => {
         timeout: 10000
       });
     });
-    it('renders list of jobs', () => {
+    it('renders list of scheduled jobs', () => {
       cy.getByTestId('scheduled-jobs-date-group')
         .should('be.visible')
         .getAllByTestId('cf-ui-entity-list-item')
-        .should('have.length', severalJobsResponse.items.length);
+        .should('have.length', severalPendingJobsResponse.items.length);
+    });
+    it('renders list of completed jobs', () => {
+      const completedJobsInteraction = queryCompletedJobsForDefaultSpace.willFindSeveral();
+      selectCompletedTab();
+      cy.wait(completedJobsInteraction);
+      cy.getByTestId('scheduled-jobs-date-group')
+        .should('be.visible')
+        .getAllByTestId('cf-ui-entity-list-item')
+        .should('have.length', severalCompletedJobsResponse.items.length);
+    });
+    it('renders list of failed jobs', () => {
+      const failedJobsInteraction = queryFailedJobsForDefaultSpace.willFindSeveral();
+      selectFailedTab();
+      cy.wait(failedJobsInteraction);
+      cy.getAllByTestId('scheduled-job').should(
+        'have.length',
+        severalFailedJobsResponse.items.length
+      );
+      cy.getByTestId('cf-ui-tag').should('contain', 'publish failed');
     });
   });
 
   context('error state', () => {
     beforeEach(() => {
       const interactions = defaultRequestsMock();
-      const slowInteraction = queryAllJobsForDefaultSpace.willFailWithAnInternalServerError();
+      const slowInteraction = queryPendingJobsForDefaultSpace.willFailWithAnInternalServerError();
 
       cy.visit(`/spaces/${defaultSpaceId}/jobs`);
       cy.wait(interactions);
@@ -98,3 +147,14 @@ describe('Jobs page', () => {
     });
   });
 });
+function selectCompletedTab() {
+  cy.getAllByTestId('cf-ui-tab')
+    .eq(1)
+    .click();
+}
+
+function selectFailedTab() {
+  cy.getAllByTestId('cf-ui-tab')
+    .eq(2)
+    .click();
+}

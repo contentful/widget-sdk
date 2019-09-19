@@ -1,16 +1,39 @@
 import { Matchers } from '@pact-foundation/pact-web';
-import { defaultSpaceId, defaultUserId } from '../../util/requests';
+import { defaultSpaceId, defaultUserId, defaultJobId } from '../../util/requests';
 
-export const severalJobsResponse = {
+export const severalPendingJobsResponse = {
   sys: {
     type: 'Array'
   },
   skip: 0,
   limit: 100,
   items: [
-    job({ sys: { id: 'jobID' } }),
-    job({ sys: { id: 'jobID2' } }),
-    job({ sys: { id: 'jobID3' } })
+    job({ sys: { id: Matchers.somethingLike(defaultJobId) } }),
+    job({ sys: { id: Matchers.somethingLike('jobID2') } }),
+    job({ sys: { id: Matchers.somethingLike('jobID3') } })
+  ]
+};
+
+export const severalCompletedJobsResponse = {
+  sys: {
+    type: 'Array'
+  },
+  skip: 0,
+  limit: 100,
+  items: [
+    job({ sys: { id: Matchers.somethingLike('jobID3'), status: 'done' } }),
+    job({ sys: { id: Matchers.somethingLike('jobID4'), status: 'done' } })
+  ]
+};
+export const severalFailedJobsResponse = {
+  sys: {
+    type: 'Array'
+  },
+  skip: 0,
+  limit: 100,
+  items: [
+    job({ sys: { id: Matchers.somethingLike('jobID5'), status: 'failed' } }),
+    job({ sys: { id: Matchers.somethingLike('jobID6'), status: 'failed' } })
   ]
 };
 
@@ -20,7 +43,7 @@ export const onePendingJobResponse = {
   },
   skip: 0,
   limit: 100,
-  items: [job({ sys: { id: 'jobID' } })]
+  items: [job({ sys: { id: Matchers.somethingLike(defaultJobId) } })]
 };
 
 export const oneFailedJobResponse = {
@@ -29,7 +52,7 @@ export const oneFailedJobResponse = {
   },
   skip: 0,
   limit: 100,
-  items: [job({ sys: { id: 'jobID', status: 'failed' } })]
+  items: [job({ sys: { id: Matchers.somethingLike(defaultJobId), status: 'failed' } })]
 };
 
 export const createJobResponse = job({
