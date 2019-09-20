@@ -11,6 +11,7 @@ import { TagsEditor } from '@contentful/field-editor-tags';
 import { SingleLineEditor } from '@contentful/field-editor-single-line';
 import { MultipleLineEditor } from '@contentful/field-editor-multiple-line';
 import { DropdownEditor } from '@contentful/field-editor-dropdown';
+import { ListEditor } from '@contentful/field-editor-list';
 
 const CfLinkEditor = linkEditorWithCfWebApp(LinkEditor);
 const CfSingleLinkEditor = linkEditorWithCfWebApp(SingleLinkEditor);
@@ -186,7 +187,7 @@ export function create() {
     fieldTypes: ['Symbols'],
     name: 'List',
     icon: 'singleline',
-    template: '<cf-list-input-editor>',
+    renderFieldEditor: ({ widgetApi }) => <ListEditor field={widgetApi.field} />,
     parameters: [
       {
         ...HELP_TEXT_PARAMETER,
