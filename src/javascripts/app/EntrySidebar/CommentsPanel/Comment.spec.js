@@ -40,8 +40,15 @@ const setAsCommentAuthor = isAuthor => {
 };
 
 describe('Comment', () => {
-  const mount = (comment, hasReplies) =>
-    render(<Comment comment={comment} onRemoved={jest.fn()} hasReplies={hasReplies} />);
+  const mount = (comment, hasReplies) => {
+    const props = {
+      comment,
+      hasReplies,
+      endpoint: jest.fn(),
+      onRemoved: jest.fn()
+    };
+    return render(<Comment {...props} />);
+  };
   const now = new Date(date).valueOf();
 
   beforeEach(() => {
