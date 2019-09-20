@@ -80,10 +80,7 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
       status: 200,
       body: {
         items: [
-          {
-            name: 'Role 1',
-            sys: { id: 'role1' }
-          },
+          role1,
           {
             name: 'Role 2',
             sys: { id: 'role2' }
@@ -138,6 +135,9 @@ const membership1 = {
 const role1 = {
   name: 'Role 1',
   sys: { id: 'role1' }
+};
+const linkRole1 = {
+  sys: { type: 'Link', linkType: 'Role', id: 'role1' }
 };
 
 describe('Teams in space page', () => {
@@ -205,16 +205,7 @@ describe('Teams in space page', () => {
             membership1,
             {
               admin: false,
-              roles: [
-                {
-                  sys:
-                    {
-                      type: 'Link',
-                      linkType: 'Role',
-                      id: 'role1'
-                    }
-                }
-              ],
+              roles: [ linkRole1 ],
               sys: {
                 type: 'TeamSpaceMembership',
                 id: 'TSM2',
@@ -308,20 +299,12 @@ describe('Teams in space page', () => {
             },
             body: {
               admin: false,
-              roles: [
-                {
-                  sys: {
-                    id: 'role1',
-                    type: 'Link',
-                    linkType: 'Role'
-                  }
-                }
-              ]
+              roles: [ linkRole1 ]
             }
           },
           willRespondWith: {
             status: 200,
-            body: { ...membership1, sys: { version: 1, ...membership1.sys }, admin: false, roles: [role1] }
+            body: { ...membership1, sys: { version: 1, ...membership1.sys }, admin: false, roles: [linkRole1] }
           }
         }).as(editmembershipInteraction);
 
