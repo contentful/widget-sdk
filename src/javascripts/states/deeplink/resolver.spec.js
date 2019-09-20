@@ -269,11 +269,16 @@ describe('states/deeplink/resolver.es6', () => {
       });
 
       expect(result).toEqual({
-        path: ['spaces', 'detail', 'apps', 'list'],
+        path: ['spaces', 'detail', 'environment', 'apps', 'list'],
         params: {
           spaceId: 'test-space-id',
+          environmentId: 'master',
           appId: 'netlify',
           referrer: 'deeplink'
+        },
+        deeplinkOptions: {
+          selectSpace: true,
+          selectEnvironment: true
         }
       });
     });
@@ -295,11 +300,16 @@ describe('states/deeplink/resolver.es6', () => {
       });
 
       expect(result).toEqual({
-        path: ['spaces', 'detail', 'settings', 'extensions', 'list'],
+        path: ['spaces', 'detail', 'environment', 'settings', 'extensions', 'list'],
         params: {
           spaceId: 'test-space-id',
+          environmentId: 'master',
           extensionUrl: 'https://example.org',
           referrer: 'deeplink'
+        },
+        deeplinkOptions: {
+          selectSpace: true,
+          selectEnvironment: true
         }
       });
     });

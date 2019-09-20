@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
 import StateLink from 'app/common/StateLink.es6';
 
 import StateRedirect from 'app/common/StateRedirect.es6';
-import DeeplinkSelectSpaceEnv from './DeeplinkSelectSpaceEnv.es6';
-import { Heading, Paragraph, Typography } from '@contentful/forma-36-react-components';
+import DeeplinkSelectSpaceEnv from './DeeplinkSelectSpaceEnv/DeeplinkSelectSpaceEnv';
+import { Heading, Paragraph, Typography, Spinner } from '@contentful/forma-36-react-components';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import { resolveLink } from './resolver.es6';
 
@@ -13,8 +14,20 @@ const styles = {
   messageContainer: css({
     marginTop: '40%',
     textAlign: 'center'
+  }),
+  spinner: css({
+    marginBottom: tokens.spacingS
   })
 };
+
+function DeeplinkRedirectingMessage() {
+  return (
+    <div className={styles.messageContainer}>
+      <Spinner className={styles.spinner} />
+      <Heading as="h3">Redirecting…</Heading>
+    </div>
+  );
+}
 
 function DeeplinkPageMessage(props) {
   return (
@@ -63,6 +76,10 @@ export function useDeeplinkPage({ searchParams }) {
     }
   }, [searchParams]);
 
+  const abort = () => {
+    window.location.href = window.location.origin;
+  };
+
   const updateRedirectLink = useCallback(
     ({ spaceId, environmentId }) => {
       setRedirect({
@@ -85,20 +102,22 @@ export function useDeeplinkPage({ searchParams }) {
   return {
     status,
     redirect,
+    abort,
     updateRedirectLink,
     deeplinkOptions
   };
 }
 
 export default function DeeplinkPage(props) {
-  const { status, redirect, deeplinkOptions, updateRedirectLink } = useDeeplinkPage({
+  const { status, redirect, deeplinkOptions, updateRedirectLink, abort } = useDeeplinkPage({
     searchParams: props.searchParams
   });
 
   return (
     <Workbench>
       <Workbench.Content type="text">
-        {status === PageStatuses.redirecting && <DeeplinkPageMessage title="Redirecting…" />}
+        {status === PageStatuses.redirecting && <DeeplinkRedirectingMessage />}
+        {status === PageStatuses.redirecting && redirect ? <StateRedirect {...redirect} /> : null}
         {status === PageStatuses.notExistError && (
           <DeeplinkPageMessage
             title="The link you provided is broken or does not exist"
@@ -121,17 +140,22 @@ export default function DeeplinkPage(props) {
         {status === PageStatuses.selectSpaceEnv && (
           <DeeplinkSelectSpaceEnv
             {...deeplinkOptions}
-            onComplete={({ spaceId, environmentId }) => {
+            href={props.href}
+            searchParams={props.searchParams}
+            onContinue={({ spaceId, environmentId }) => {
               updateRedirectLink({ spaceId, environmentId });
+            }}
+            onCancel={() => {
+              abort();
             }}
           />
         )}
-        {redirect && status === PageStatuses.redirecting ? <StateRedirect {...redirect} /> : null}
       </Workbench.Content>
     </Workbench>
   );
 }
 
 DeeplinkPage.propTypes = {
+  href: PropTypes.string.isRequired,
   searchParams: PropTypes.object.isRequired
 };

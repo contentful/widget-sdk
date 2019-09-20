@@ -56,8 +56,6 @@ function resolveParams(link, params) {
       'install-extension': resolveInstallExtension,
       'webhook-template': resolveWebhookTemplate,
       apps: resolveApps,
-      // todo: remove experimental app deeplinks
-      'apps-experimental': resolveAppsExperimental,
       home: makeSpaceScopedPathResolver({ spaceScopedPath: ['spaces', 'detail', 'home'] }),
       'general-settings': makeSpaceScopedPathResolver({
         spaceScopedPath: ['spaces', 'detail', 'settings', 'space']
@@ -200,11 +198,16 @@ async function resolveInstallExtension({ url, referrer }) {
   const spaceContext = getModule('spaceContext');
   await spaceContext.resetWithSpace(space);
   return {
-    path: ['spaces', 'detail', 'settings', 'extensions', 'list'],
+    path: ['spaces', 'detail', 'environment', 'settings', 'extensions', 'list'],
     params: {
       spaceId,
+      environmentId: 'master',
       extensionUrl: url,
       referrer: referrer ? `deeplink-${referrer}` : 'deeplink'
+    },
+    deeplinkOptions: {
+      selectSpace: true,
+      selectEnvironment: true
     }
   };
 }
@@ -238,11 +241,14 @@ async function resolveWebhookTemplate({ id, referrer }) {
   const { spaceId } = await getSpaceInfo();
   return {
     path: ['spaces', 'detail', 'settings', 'webhooks', 'list'],
-    params: { spaceId, templateId: id, referrer: referrer ? `deeplink-${referrer}` : 'deeplink' }
+    params: { spaceId, templateId: id, referrer: referrer ? `deeplink-${referrer}` : 'deeplink' },
+    deeplinkOptions: {
+      selectSpace: true
+    }
   };
 }
 
-async function resolveAppsExperimental({ id, referrer }) {
+async function resolveApps({ id, referrer }) {
   const { spaceId } = await getSpaceInfo();
 
   return {
@@ -256,19 +262,6 @@ async function resolveAppsExperimental({ id, referrer }) {
     deeplinkOptions: {
       selectSpace: true,
       selectEnvironment: true
-    }
-  };
-}
-
-async function resolveApps({ id, referrer }) {
-  const { spaceId } = await getSpaceInfo();
-
-  return {
-    path: ['spaces', 'detail', 'apps', 'list'],
-    params: {
-      spaceId,
-      appId: id,
-      referrer: referrer ? `deeplink-${referrer}` : 'deeplink'
     }
   };
 }

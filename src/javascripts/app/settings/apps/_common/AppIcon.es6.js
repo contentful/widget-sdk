@@ -7,15 +7,18 @@ import ContentfulLogoLight from 'svg/ContentfulLogoLight.es6';
 import GatsbyIcon from 'svg/GatsbyIcon.es6';
 import BynderIcon from 'svg/BynderIcon.es6';
 import CloudinaryIcon from 'svg/CloudinaryIcon.es6';
+import GenericAppIcon from 'svg/page-apps.es6';
 import DefaultIcon from 'ui/Components/Icon.es6';
 
 const Sizes = {
+  xsmall: 20,
   small: 35,
   default: 40,
   large: 60
 };
 
 const Icons = {
+  generic: GenericAppIcon,
   contentful: ContentfulLogoLight,
   netlify: NetlifyIcon,
   algolia: AlgoliaIcon,
@@ -28,7 +31,7 @@ const Icons = {
 export default class AppIcon extends Component {
   static propTypes = {
     appId: PropTypes.string,
-    size: PropTypes.oneOf(['default', 'large', 'small']),
+    size: PropTypes.oneOf(['default', 'large', 'small', 'xsmall']),
     className: PropTypes.string
   };
 

@@ -49,9 +49,6 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
             viewBox="0 0 34 34"
             width="34"
           >
-            <title>
-              E2494E4E-7883-4280-90B9-D9D401C412D2
-            </title>
             <g
               fill="none"
               fill-rule="evenodd"
@@ -445,9 +442,6 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
             viewBox="0 0 34 34"
             width="34"
           >
-            <title>
-              E2494E4E-7883-4280-90B9-D9D401C412D2
-            </title>
             <g
               fill="none"
               fill-rule="evenodd"
@@ -817,9 +811,6 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
                             viewBox="0 0 34 34"
                             width="34"
                           >
-                            <title>
-                              E2494E4E-7883-4280-90B9-D9D401C412D2
-                            </title>
                             <g
                               fill="none"
                               fill-rule="evenodd"

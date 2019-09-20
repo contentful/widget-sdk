@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, cleanup, waitForElement, fireEvent } from '@testing-library/react';
 import 'jest-dom/extend-expect';
-import DeeplinkPage from './DeeplinkPage.es6';
+import DeeplinkPage from './DeeplinkPage';
 import { resolveLink } from './resolver.es6';
 import { getSpaceInfo, getAllEnviroments } from './utils.es6';
 import $state from 'ng/$state';
@@ -19,7 +19,7 @@ jest.mock(
   { virtual: true }
 );
 
-describe('deeplink/DeeplinkPage.es6', () => {
+describe('deeplink/DeeplinkPage', () => {
   beforeEach(() => {
     $state.go.mockClear();
   });
@@ -36,6 +36,7 @@ describe('deeplink/DeeplinkPage.es6', () => {
 
     const { getByText } = render(
       <DeeplinkPage
+        href="https://app.contentful.com"
         searchParams={{
           link: 'some-link',
           param1: '1',
@@ -95,6 +96,7 @@ describe('deeplink/DeeplinkPage.es6', () => {
 
     const { getByText, getByTestId } = render(
       <DeeplinkPage
+        href="https://app.contentful.com"
         searchParams={{
           link: 'some-link',
           spaceId: 'deeplink-space-id'

@@ -2,9 +2,9 @@ import { Notification } from '@contentful/forma-36-react-components';
 import accountState from './account.es6';
 import spacesState from 'states/Spaces.es6';
 import homeState from 'states/Home.es6';
-import DeeplinkPage from 'states/deeplink/DeeplinkPage.es6';
+import DeeplinkPage from 'states/deeplink/DeeplinkPage';
 import userInvitationState from 'states/UserInvitationState.es6';
-import { getQueryString } from 'utils/location';
+import { getQueryString, getLocationHref } from 'utils/location';
 
 import { getModule } from 'NgRegistry.es6';
 
@@ -30,6 +30,7 @@ const deeplinkState = {
   mapInjectedToProps: [
     // in states/config, mapInjectedToProps is expected to be an array
     () => ({
+      href: getLocationHref(),
       searchParams: getQueryString()
     })
   ]

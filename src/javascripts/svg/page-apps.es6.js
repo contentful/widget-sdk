@@ -1,8 +1,7 @@
 import React from 'react';
 
-const PageApps = () => (
-  <svg width={34} height={34} viewBox="0 0 34 34">
-    <title>{'E2494E4E-7883-4280-90B9-D9D401C412D2'}</title>
+const PageApps = props => (
+  <svg width={34} height={34} viewBox="0 0 34 34" {...props}>
     <g fill="none" fillRule="evenodd">
       <path d="M-2 0h36v36H-2z" />
       <path
