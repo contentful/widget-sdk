@@ -120,8 +120,7 @@ export default ({ $scope, emitter }) => {
       emitter.emit(SidebarEventTypes.UPDATED_TASKS_WIDGET, {
         ...update,
         entityInfo: $scope.entityInfo,
-        spaceId: spaceContext.space.getId(),
-        envId: spaceContext.getEnvironmentId(),
+        endpoint: spaceContext.endpoint,
         users: spaceContext.users,
         currentUser: spaceContext.user,
         isSpaceAdmin: user => spaceContext.space.isAdmin(user)
@@ -157,8 +156,7 @@ export default ({ $scope, emitter }) => {
       // the comments tab is opened for the first time
       emitter.emit(SidebarEventTypes.INIT_COMMENTS_PANEL, {
         entryId: $scope.entityInfo.id,
-        spaceId: spaceContext.getId(),
-        environmentId: spaceContext.getEnvironmentId()
+        endpoint: spaceContext.endpoint
       });
     });
 

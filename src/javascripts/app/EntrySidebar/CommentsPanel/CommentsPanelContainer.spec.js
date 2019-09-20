@@ -14,8 +14,8 @@ describe('CommentsPanelContainer', () => {
   let off;
   let component;
   const params = {
+    endpoint: () => {},
     entryId: 'my-entry',
-    spaceId: 'my-space',
     environmentId: 'my-env'
   };
   const render = () => {

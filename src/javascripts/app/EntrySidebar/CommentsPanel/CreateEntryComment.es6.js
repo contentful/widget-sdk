@@ -22,7 +22,7 @@ const styles = {
 };
 
 export default function CreateEntryComment({
-  spaceId,
+  endpoint,
   entryId,
   parentCommentId,
   onNewComment,
@@ -33,7 +33,7 @@ export default function CreateEntryComment({
   const [isSubmitted, setIsSubmited] = useState(false);
   const [body, setBody] = useState('');
   const [{ data, isLoading, error }, createComment, resetCreatorState] = useCommentCreator(
-    spaceId,
+    endpoint,
     entryId,
     parentCommentId
   );
@@ -121,7 +121,7 @@ export default function CreateEntryComment({
 }
 
 CreateEntryComment.propTypes = {
-  spaceId: PropTypes.string.isRequired,
+  endpoint: PropTypes.func.isRequired,
   entryId: PropTypes.string.isRequired,
   onNewComment: PropTypes.func.isRequired,
   onActive: PropTypes.func,

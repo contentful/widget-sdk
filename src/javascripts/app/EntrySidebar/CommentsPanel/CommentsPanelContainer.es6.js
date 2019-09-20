@@ -6,7 +6,7 @@ import CommentsPanel from './CommentsPanel.es6';
 
 /**
  * This component is the bridge between the EntitySidebar and the CommentPanel components.
- * It receives spaceId, entityId and environmentId via an event.
+ * It receives an endpoint and entityId via an event.
  * The CommentPanel component is only rendered after this data is available
  * This component also takes care of listening to an event to decide when
  * to show or hide the comments panel.
@@ -23,8 +23,8 @@ export default class CommentsPanelContainer extends React.Component {
   componentDidMount() {
     const { emitter } = this.props;
     emitter.emit(SidebarEventTypes.WIDGET_REGISTERED, SidebarWidgetTypes.COMMENTS_PANEL);
-    emitter.on(SidebarEventTypes.INIT_COMMENTS_PANEL, ({ entryId, environmentId, spaceId }) => {
-      this.setState({ initialized: true, entryId, environmentId, spaceId });
+    emitter.on(SidebarEventTypes.INIT_COMMENTS_PANEL, ({ endpoint, entryId }) => {
+      this.setState({ initialized: true, endpoint, entryId });
     });
     emitter.on(SidebarEventTypes.UPDATED_COMMENTS_PANEL, ({ isVisible }) => {
       this.setState({ isVisible });

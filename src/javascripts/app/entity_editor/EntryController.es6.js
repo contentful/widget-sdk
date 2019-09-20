@@ -27,7 +27,6 @@ import setupNoShareJsCmaFakeRequestsExperiment from './NoShareJsCmaFakeRequestsE
 import * as Navigator from 'states/Navigator.es6';
 import { trackIsCommentsAlphaEligible } from '../EntrySidebar/CommentsPanel/analytics.es6';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
-import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import { getAllForEntry } from 'data/CMA/CommentsRepo.es6';
 import initSidebarTogglesProps from 'app/entity_editor/entityEditorSidebarToggles.es6';
 
@@ -186,10 +185,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
   }).then(isEnabled => {
     if (isEnabled) {
       trackIsCommentsAlphaEligible();
-      if (spaceContext.isMasterEnvironment()) {
-        // Comments are currently only working in the master environment.
-        initComments($scope, spaceId, entityInfo.id);
-      }
+      initComments($scope, spaceContext.endpoint, entityInfo.id);
     }
   });
 
@@ -214,7 +210,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
   };
 }
 
-function initComments($scope, spaceId, entityId) {
+function initComments($scope, endpoint, entityId) {
   // Showing the count is low-priority so we can defer fetching it
   if (window.requestIdleCallback !== undefined) {
     window.requestIdleCallback(maybeFetchCommentsCount);
@@ -228,7 +224,6 @@ function initComments($scope, spaceId, entityId) {
 
   async function maybeFetchCommentsCount() {
     if ($scope.sidebarToggleProps.commentsToggle.commentsCount === undefined) {
-      const endpoint = createSpaceEndpoint(spaceId);
       const { items: comments } = await getAllForEntry(endpoint, entityId);
       setCommentsCount(comments.length);
     }
