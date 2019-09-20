@@ -9,9 +9,9 @@ import {
   Heading,
   Tooltip,
   Notification,
-  ModalConfirm
+  ModalConfirm,
+  Paragraph
 } from '@contentful/forma-36-react-components';
-import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import tokens from '@contentful/forma-36-tokens';
 import { remove as removeComment } from 'data/CMA/CommentsRepo.es6';
 import { canRemoveComment } from './utils.es6';
@@ -57,16 +57,18 @@ export const styles = {
   })
 };
 
-export default function Comment({ comment, onRemoved, className, hasReplies }) {
+// TODO: Make this a dumb component like <Task /> neither triggering any CMA requests
+//  directly, nor receiving an entire CMA `Comment` object.
+
+export default function Comment({ endpoint, comment, onRemoved, className, hasReplies }) {
   const {
     sys: { createdBy, createdAt }
   } = comment;
   const creationDate = moment(createdAt, moment.ISO_8601);
   const handleRemove = async () => {
     const {
-      sys: { space, reference: entry, id: commentId }
+      sys: { reference: entry, id: commentId }
     } = comment;
-    const endpoint = createSpaceEndpoint(space.sys.id);
     try {
       await removeComment(endpoint, entry.sys.id, commentId);
       onRemoved(comment);
@@ -101,6 +103,7 @@ export default function Comment({ comment, onRemoved, className, hasReplies }) {
 }
 
 Comment.propTypes = {
+  endpoint: PropTypes.func.isRequired,
   comment: types.Comment.isRequired,
   onRemoved: PropTypes.func.isRequired,
   className: PropTypes.string,
@@ -161,7 +164,7 @@ function RemovalConfirmationDialog({ isShown, onConfirm, onCancel }) {
       intent="negative"
       onCancel={onCancel}
       onConfirm={onConfirm}>
-      <p>Are you sure you want to remove this comment?</p>
+      <Paragraph>Are you sure you want to remove this comment?</Paragraph>
     </ModalConfirm>
   );
 }

@@ -59,7 +59,12 @@ export default function CommentThread({ endpoint, thread, onRemoved, onNewReply 
         className={styles.root}
         onClick={() => setReplyingMode(true)}
         data-test-id="comments.thread">
-        <Comment comment={comment} onRemoved={onRemoved} hasReplies={!!replies.length} />
+        <Comment
+          endpoint={endpoint}
+          comment={comment}
+          onRemoved={onRemoved}
+          hasReplies={!!replies.length}
+        />
 
         {replies.length ? (
           <div className={styles.thread}>
@@ -67,6 +72,7 @@ export default function CommentThread({ endpoint, thread, onRemoved, onNewReply 
               <Comment
                 className={styles.reply}
                 key={reply.sys.id}
+                endpoint={endpoint}
                 comment={reply}
                 onRemoved={onRemoved}
               />
