@@ -142,7 +142,6 @@ const needsRefactoring = node => {
     'jquery',
     'ui/Framework/CfComponentBridgeDirective',
     'ui/Framework/Store',
-    'states/Navigator',
     'utils/ngCompat/window'
   ];
   let intersection = _.intersectionWith(modules, attributes, _.isEqual);

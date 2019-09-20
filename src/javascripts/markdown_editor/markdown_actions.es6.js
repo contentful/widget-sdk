@@ -1,4 +1,5 @@
 import { Notification } from '@contentful/forma-36-react-components';
+import { getCurrentStateName } from 'states/Navigator.es6';
 import specialCharacters from './markdown_special_characters.es6';
 import { defaults, isObject, get, mapValues } from 'lodash';
 import { fileNameToTitle, truncate } from 'utils/StringUtils.es6';
@@ -12,7 +13,6 @@ import { getModule } from 'NgRegistry.es6';
 export function create(editor, locale, defaultLocaleCode, { zen }) {
   const modalDialog = getModule('modalDialog');
   const entitySelector = getModule('entitySelector');
-  const $state = getModule('$state');
 
   const {
     fallbackCode,
@@ -253,7 +253,7 @@ export function create(editor, locale, defaultLocaleCode, { zen }) {
     track('element:click', {
       elementId: 'markdown_help_dialog',
       groupId: 'editors_authors_help',
-      fromState: $state.current.name
+      fromState: getCurrentStateName()
     });
     modalDialog.open({
       template: 'markdown_help_dialog'

@@ -1,4 +1,5 @@
 import { registerDirective, registerController } from 'NgRegistry.es6';
+import { getCurrentStateName } from 'states/Navigator.es6';
 import accountDropdownTemplateDef from 'navigation/templates/AccountDropdown.template.es6';
 
 export default function register() {
@@ -11,8 +12,7 @@ export default function register() {
 
   registerController('cfAccountDropdownController', [
     '$scope',
-    '$state',
-    ($scope, $state) => {
+    $scope => {
       let Intercom;
       let Analytics;
       let Config;
@@ -37,7 +37,7 @@ export default function register() {
         Analytics.track('element:click', {
           elementId: 'contact_sales_dropdown',
           groupId: 'contact_sales',
-          fromState: $state.current.name
+          fromState: getCurrentStateName()
         });
         Intercom.open();
       };

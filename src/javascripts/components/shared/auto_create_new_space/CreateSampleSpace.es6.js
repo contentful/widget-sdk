@@ -1,5 +1,5 @@
 import { runTask } from 'utils/Concurrent.es6';
-
+import { getCurrentStateName } from 'states/Navigator.es6';
 import { getCreator } from 'services/SpaceTemplateCreator/index.es6';
 import { track, updateUserInSegment } from 'analytics/Analytics.es6';
 import { go as gotoState } from 'states/Navigator.es6';
@@ -27,7 +27,6 @@ const DEFAULT_LOCALE = 'en-US';
 export default function(org, templateName, modalTemplate = autoCreateSpaceTemplate) {
   const $rootScope = getModule('$rootScope');
   const spaceContext = getModule('spaceContext');
-  const $state = getModule('$state');
 
   /*
    * throws an error synchronously to differentiate it from
@@ -59,7 +58,7 @@ export default function(org, templateName, modalTemplate = autoCreateSpaceTempla
         track('element:click', {
           elementId,
           groupId: 'project_status',
-          fromState: $state.current.name
+          fromState: getCurrentStateName()
         });
         updateUserInSegment({
           projectStatus: elementId

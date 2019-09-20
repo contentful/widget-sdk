@@ -1,6 +1,6 @@
 import { getStore } from 'TheStore/index.es6';
 import * as Analytics from 'analytics/Analytics.es6';
-
+import { getCurrentStateName } from 'states/Navigator.es6';
 import { refresh, user$ } from 'services/TokenStore.es6';
 
 import { create as createToken } from 'app/api/CMATokens/Resource.es6';
@@ -96,11 +96,10 @@ export const getManagementToken = () => {
   return createManagementToken();
 };
 export const track = (elementId, toState) => {
-  const $state = getModule('$state');
   const payload = {
     elementId,
     groupId: getGroupId(),
-    fromState: $state.current.name
+    fromState: getCurrentStateName()
   };
 
   if (toState) {

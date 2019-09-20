@@ -1,6 +1,7 @@
 import { once } from 'lodash';
 import * as K from 'utils/kefir.es6';
 import { getModule } from 'NgRegistry.es6';
+import { getCurrentStateName } from 'states/Navigator.es6';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes.es6';
 import createExtensionBridge from 'widgets/bridges/createExtensionBridge.es6';
@@ -13,7 +14,6 @@ export default ({ $scope, emitter }) => {
   const $controller = getModule('$controller');
   const $rootScope = getModule('$rootScope');
   const spaceContext = getModule('spaceContext');
-  const $state = getModule('$state');
   const entitySelector = getModule('entitySelector');
   const entityCreator = getModule('entityCreator');
 
@@ -33,7 +33,7 @@ export default ({ $scope, emitter }) => {
         contentType: $scope.entityInfo.contentType,
         dataForTracking: {
           locales: $scope.localeData.activeLocales,
-          fromState: $state.current.name,
+          fromState: getCurrentStateName(),
           entryId: $scope.entityInfo.id
         }
       });

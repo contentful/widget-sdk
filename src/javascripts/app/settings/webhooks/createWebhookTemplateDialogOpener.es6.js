@@ -1,10 +1,10 @@
 import Templates from './templates/index.es6';
 import React from 'react';
 import { get } from 'lodash';
+import * as Navigator from 'states/Navigator.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import * as WebhookEditorActions from './WebhookEditorActions.es6';
 import WebhookTemplateDialog from './WebhookTemplateDialog.es6';
-import { getModule } from 'NgRegistry.es6';
 
 const isNonEmptyString = s => typeof s === 'string' && s.length > 0;
 
@@ -19,8 +19,6 @@ export default function createWebhookTemplateDialogOpener(config) {
   );
 
   return function openTemplateDialog(templateId, templateIdReferrer) {
-    const $state = getModule('$state');
-
     templateId = validTemplateIds.includes(templateId) ? templateId : Templates[0].id;
 
     ModalLauncher.open(({ onClose, isShown }) => (
@@ -42,7 +40,12 @@ export default function createWebhookTemplateDialogOpener(config) {
             })
           ).then(webhooks => {
             onClose();
-            $state.go('^.detail', { webhookId: get(webhooks, '[0].sys.id') });
+            Navigator.go({
+              path: ['^.detail'],
+              params: {
+                webhookId: get(webhooks, '[0].sys.id')
+              }
+            });
             return webhooks;
           })
         }

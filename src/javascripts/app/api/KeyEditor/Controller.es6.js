@@ -1,6 +1,7 @@
 import { assign, get, inRange, isEqual, assignWith } from 'lodash';
 import { deepFreeze } from 'utils/Freeze.es6';
 import { concat } from 'utils/Collections.es6';
+import { getCurrentStateName } from 'states/Navigator.es6';
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
 import * as LD from 'utils/LaunchDarkly/index.es6';
 import { Notification } from '@contentful/forma-36-react-components';
@@ -40,8 +41,6 @@ function mountBoilerplates($scope, apiKey) {
 }
 
 function mountContactUs($scope) {
-  const $state = getModule('$state');
-
   LD.onFeatureFlag($scope, CONTACT_US_BOILERPLATE_FLAG, flag => {
     if (flag && Intercom.isEnabled()) {
       $scope.contactUsProps = {
@@ -49,7 +48,7 @@ function mountContactUs($scope) {
           track('element:click', {
             elementId: 'contact_sales_boilerplate',
             groupId: 'contact_sales',
-            fromState: $state.current.name
+            fromState: getCurrentStateName()
           }),
         openIntercom: () => Intercom.open()
       };

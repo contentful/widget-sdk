@@ -4,6 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { assign } from 'utils/Collections.es6';
 import { getOrganization } from 'services/TokenStore.es6';
+import { getCurrentStateName } from 'states/Navigator.es6';
 import { runTask } from 'utils/Concurrent.es6';
 import { ADMIN_ROLE_ID } from 'access_control/constants.es6';
 import { createOrganizationEndpoint as createEndpoint } from 'data/EndpointFactory.es6';
@@ -36,7 +37,6 @@ import { getStore } from 'TheStore/index.es6';
 
 // Start: For Next Steps for a TEA space (a space created using the example space template)
 import { track, updateUserInSegment } from 'analytics/Analytics.es6';
-import { getModule } from 'NgRegistry.es6';
 
 const GROUP_ID = 'tea_onboarding_steps';
 const store = getStore('local');
@@ -57,8 +57,6 @@ const Success = makeCtor('success');
 const Failure = makeCtor('failure');
 
 export default function($scope) {
-  const $state = getModule('$state');
-
   let state = {
     spaces: [],
     emails: [],
@@ -255,7 +253,7 @@ export default function($scope) {
           track('element:click', {
             elementId: 'invite_users',
             groupId: GROUP_ID,
-            fromState: $state.current.name,
+            fromState: getCurrentStateName(),
             spaceId: pendingInvitesForTEA.spaceId,
             organizationId: orgId
           });
