@@ -20,6 +20,7 @@ import { orgRoles } from 'utils/MembershipUtils.es6';
 import { useAddToOrg } from './NewUserHooks.es6';
 import { isValidEmail, parseList } from 'utils/StringUtils.es6';
 import SpaceMembershipList from './SpaceMembershipList.es6';
+import TeamList from './TeamList.es6';
 import NewUserSuccess from './NewUserSuccess.es6';
 import NewUserProgress from './NewUserProgress.es6';
 import { css } from 'emotion';
@@ -59,6 +60,8 @@ const reducer = (state, action) => {
     }
     case 'SPACE_MEMBERSHIPS_CHANGED':
       return { ...state, spaceMemberships: action.payload, submitted: false };
+    case 'TEAMS_CHANGED':
+      return { ...state, teams: action.payload, submitted: false };
     case 'ROLE_CHANGED':
       return { ...state, orgRole: action.payload, submitted: false };
     case 'NOTIFICATIONS_PREFERENCE_CHANGED':
@@ -70,7 +73,7 @@ const reducer = (state, action) => {
   }
 };
 
-export default function NewUser({ orgId, onReady, hasSsoEnabled, isOwner }) {
+export default function NewUser({ orgId, onReady, hasSsoEnabled, hasTeamsFeature, isOwner }) {
   const [
     {
       submitted,
@@ -178,6 +181,10 @@ export default function NewUser({ orgId, onReady, hasSsoEnabled, isOwner }) {
     dispatch({ type: 'SPACE_MEMBERSHIPS_CHANGED', payload: spaceMemberships });
   }, []);
 
+  const handleTeamSelected = useCallback(teams => {
+    dispatch({ type: 'TEAMS_CHANGED', payload: teams });
+  }, []);
+
   return (
     <Workbench title="Invite users">
       <Workbench.Content centered>
@@ -251,7 +258,14 @@ export default function NewUser({ orgId, onReady, hasSsoEnabled, isOwner }) {
                 </ValidationMessage>
               )}
             </fieldset>
-
+            {hasTeamsFeature && (
+              <fieldset>
+                <Subheading element="h3" className={styles.subheading}>
+                  Add to teams
+                </Subheading>
+                <TeamList orgId={orgId} onChange={handleTeamSelected} />
+              </fieldset>
+            )}
             {hasSsoEnabled && (
               <CheckboxField
                 id="sendNotifications"
@@ -280,8 +294,9 @@ export default function NewUser({ orgId, onReady, hasSsoEnabled, isOwner }) {
 NewUser.propTypes = {
   orgId: PropTypes.string.isRequired,
   onReady: PropTypes.func.isRequired,
-  hasSsoEnabled: PropTypes.bool.isRequired,
-  isOwner: PropTypes.bool.isRequired
+  hasSsoEnabled: PropTypes.bool,
+  hasTeamsFeature: PropTypes.bool,
+  isOwner: PropTypes.bool
 };
 
 async function confirmNoSpaces(count) {

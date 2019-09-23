@@ -5,16 +5,24 @@ import NewUser from './NewUser.es6';
 import AngularComponent from 'ui/Framework/AngularComponent.es6';
 import { getOrganization } from 'services/TokenStore.es6';
 import { isOwner } from 'services/OrganizationRoles.es6';
+import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
+import { NEW_INVITATION_FORM } from 'featureFlags.es6';
 
 export default function NewUserBridge({ onReady, context, orgId }) {
   const [variation, setVariation] = useState(null);
+  const [hasTeamsFeature, setHasTeamsFeature] = useState(false);
   const [org, setOrg] = useState(null);
 
   useEffect(() => {
-    Promise.all([getVariation('feature-bv-05-2019-new-invitation-flow'), getOrganization(orgId)])
-      .then(([variation, organization]) => {
+    Promise.all([
+      getVariation(NEW_INVITATION_FORM),
+      getOrganization(orgId),
+      getOrgFeature(orgId, 'teams')
+    ])
+      .then(([variation, organization, hasTeamsFeature]) => {
         setOrg(organization);
         setVariation(variation);
+        setHasTeamsFeature(hasTeamsFeature);
       })
       .catch(() => setVariation(false));
   }, [orgId]);
@@ -25,6 +33,7 @@ export default function NewUserBridge({ onReady, context, orgId }) {
         onReady={onReady}
         orgId={orgId}
         hasSsoEnabled={org.hasSsoEnabled}
+        hasTeamsFeature={hasTeamsFeature}
         isOwner={isOwner(org)}
       />
     );

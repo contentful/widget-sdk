@@ -29,7 +29,14 @@ const styles = {
     fontWeight: tokens.fontWeightMedium,
     width: 200
   }),
-  roleEditor: css({}),
+  roleEditor: css({
+    button: {
+      height: 30,
+      span: {
+        padding: '0 .25rem'
+      }
+    }
+  }),
   errorIcon: css({
     marginLeft: tokens.spacingS
   })
@@ -118,6 +125,7 @@ export default function SpaceMembershipList({ orgId, submitted = false, onChange
                 isDisabled={isLoading}
                 options={allRoles[space.sys.id]}
                 onChange={handleRoleChanged(space.sys.id)}
+                className={styles.roleEditor}
               />
               {submitted && !roles.length && (
                 <Icon icon="ErrorCircle" color="negative" className={styles.errorIcon} />
