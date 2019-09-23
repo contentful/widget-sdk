@@ -14,7 +14,7 @@ export const ENTITY_EDITOR_CMA_EXPERIMENT =
   'feature-pen-07-2019-fake-cma-calls-experiment-to-replace-sharejs';
 export const PENDING_ORG_MEMBERSHIPS = 'feature-bv-09-2019-new-invitation-flow-new-entity';
 export const NEW_INVITATION_FORM = 'feature-bv-05-2019-new-invitation-flow';
-
+export const TEAMS_IN_INVITATION = 'new-invitation-flow-teams';
 // Gatekeeper Product Catalog Flags
 export const ENVIRONMENT_USAGE_ENFORCEMENT = 'environment_usage_enforcements';
 export const ENVIRONMENT_ALIASING = 'environment_aliasing';

@@ -93,3 +93,14 @@ export async function createTeamSpaceMembership(spaceEndpoint, teamId, { admin, 
     }
   );
 }
+
+export function createTeamMembership(endpoint, orgMembershipId, teamId) {
+  return endpoint(
+    {
+      method: 'POST',
+      path: ['teams', teamId, 'team_memberships'],
+      data: { orgMembershipId }
+    },
+    ALPHA_HEADER
+  );
+}
