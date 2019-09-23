@@ -9,7 +9,7 @@ import {
   ModalConfirm,
   Paragraph
 } from '@contentful/forma-36-react-components';
-import { domain } from 'Config.es6';
+import { oauthUrl } from 'Config.es6';
 import { difference, isArray, upperFirst, isEmpty, xor, find } from 'lodash';
 import GithubIcon from 'svg/github-icon.es6';
 import GoogleIcon from 'svg/google-icon.es6';
@@ -81,27 +81,9 @@ const styles = {
 
 const identitiesProviders = ['google', 'github', 'twitter'];
 const addProviderControls = {
-  google: (
-    <AddIdentityProvider
-      key="google"
-      name="google"
-      link={`https://be.${domain}/account/profile/auth/google_oauth2?origin=https%3A%2F%2Fapp.${domain}%2Faccount%2Fprofile%2Fuser`}
-    />
-  ),
-  github: (
-    <AddIdentityProvider
-      key="github"
-      name="github"
-      link={`https://be.${domain}/account/profile/auth/github?origin=https%3A%2F%2Fapp.${domain}%2Faccount%2Fprofile%2Fuser`}
-    />
-  ),
-  twitter: (
-    <AddIdentityProvider
-      key="twitter"
-      name="twitter"
-      link={`https://be.${domain}/account/profile/auth/twitter?origin=https%3A%2F%2Fapp.${domain}%2Faccount%2Fprofile%2Fuser`}
-    />
-  )
+  google: <AddIdentityProvider key="google_oauth2" id="google_oauth2" name="google" />,
+  github: <AddIdentityProvider key="github" id="github" name="github" />,
+  twitter: <AddIdentityProvider key="twitter" id="github" name="twitter" />
 };
 
 const IdentitiesSection = ({ userIdentities }) => {
@@ -125,7 +107,7 @@ const IdentitiesSection = ({ userIdentities }) => {
 
   return isEmpty(connectedIdentities) ? (
     <>
-      <Heading className={styles.heading}>Connect open Identities:</Heading>
+      <Heading className={styles.heading}>Available open identities:</Heading>
       <div className={styles.identitiesRow}>
         {identitiesProviders.map(provider => addProviderControls[provider])}
       </div>
@@ -203,7 +185,7 @@ function RemoveIdentityProvider({ onRemove, identityId, name }) {
           setShown(false);
           onDelete(identityId.toString(), name);
         }}>
-        <Paragraph>Are you sure you want to remove this authentication option?</Paragraph>
+        <Paragraph>Are you sure you want to remove this open identity from your account?</Paragraph>
       </ModalConfirm>
     </div>
   );
@@ -215,9 +197,9 @@ RemoveIdentityProvider.propTypes = {
   onRemove: PropTypes.func.isRequired
 };
 
-function AddIdentityProvider({ link, name }) {
+function AddIdentityProvider({ id, name }) {
   return (
-    <form action={link} method="post">
+    <form action={oauthUrl(id, '/account/user/profile')} method="post">
       <div className={cx(styles[name], styles.identityItem)}>
         <IdentityIcon providerName={name} />
         <input
@@ -232,7 +214,7 @@ function AddIdentityProvider({ link, name }) {
 }
 
 AddIdentityProvider.propTypes = {
-  link: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired
 };
 

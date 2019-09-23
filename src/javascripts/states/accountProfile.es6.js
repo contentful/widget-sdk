@@ -2,7 +2,9 @@ import base from 'states/Base.es6';
 import { iframeStateWrapper, reactStateWrapper } from './utils.es6';
 import { noop } from 'lodash';
 
-const user = reactUserBase({
+const user = reactStateWrapper({
+  loadingText: 'Loading your account…',
+  onEnter: [noop],
   name: 'user',
   title: 'User settings',
   url: '/user',
@@ -40,14 +42,6 @@ const userCancellation = userBase({
   title: 'User cancellation',
   url: '/user_cancellation{pathSuffix:PathSuffix}'
 });
-
-function reactUserBase(definition) {
-  return reactStateWrapper({
-    loadingText: 'Loading your account…',
-    onEnter: [noop],
-    ...definition
-  });
-}
 
 function userBase(definition) {
   return iframeStateWrapper({

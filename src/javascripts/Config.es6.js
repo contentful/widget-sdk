@@ -150,6 +150,16 @@ export function microBackendsUrl(path) {
   return settings.microBackendsUrl + ensureLeadingSlash(path);
 }
 
+export function oauthUrl(identityKey, originSuffix) {
+  let base = `https://be.${domain}/account/profile/auth/${identityKey}`;
+
+  if (originSuffix) {
+    base += '?' + qs.stringify({ origin: `https://app.${domain}${originSuffix}` });
+  }
+
+  return base;
+}
+
 /**
  * Configuration for 3rd party services.
  * TODO: move Snowplow and LD here.

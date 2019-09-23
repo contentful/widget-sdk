@@ -72,6 +72,7 @@ import * as searchEntitySelectorCreateEntityIndexEs6 from 'search/EntitySelector
 import * as componentsSharedEnterpriseSpaceWizardEnterpriseSpaceWizardEs6 from 'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard.es6';
 import * as navigationModernStackOnboardingRelaunchEs6 from 'navigation/modernStackOnboardingRelaunch.es6';
 import * as componentsSharedUserInvitationEs6 from 'components/shared/UserInvitation.es6';
+import * as appUserProfileSettingsIndexEs6 from 'app/UserProfile/Settings/index.es6';
 import * as appUserSettingsSpaceMembershipsEs6 from 'app/UserSettings/SpaceMemberships.es6';
 import * as componentsTabsContentTypeListContentTypeListPageEs6 from 'components/tabs/content_type_list/ContentTypeListPage.es6';
 import * as appSettingsSpaceSpaceSettingsRouteEs6 from 'app/settings/space/SpaceSettingsRoute.es6';
@@ -343,6 +344,7 @@ function getModule(name) {
     'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard.es6': componentsSharedEnterpriseSpaceWizardEnterpriseSpaceWizardEs6,
     'navigation/modernStackOnboardingRelaunch.es6': navigationModernStackOnboardingRelaunchEs6,
     'components/shared/UserInvitation.es6': componentsSharedUserInvitationEs6,
+    'app/UserProfile/Settings/index.es6': appUserProfileSettingsIndexEs6,
     'app/UserSettings/SpaceMemberships.es6': appUserSettingsSpaceMembershipsEs6,
     'components/tabs/content_type_list/ContentTypeListPage.es6': componentsTabsContentTypeListContentTypeListPageEs6,
     'app/settings/space/SpaceSettingsRoute.es6': appSettingsSpaceSpaceSettingsRouteEs6,
