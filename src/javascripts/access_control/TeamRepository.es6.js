@@ -15,7 +15,7 @@ export async function getAllTeams(endpoint) {
 }
 
 export async function getAllTeamsSpaceMemberships(orgEndpoint) {
-  const includePaths = ['roles', 'sys.team'];
+  const includePaths = ['roles', 'sys.team', 'sys.space'];
   const { items, includes } = await fetchAllWithIncludes(
     orgEndpoint,
     ['team_space_memberships'],
