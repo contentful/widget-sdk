@@ -16,6 +16,7 @@
     "@contentful/field-editor-single-line": "0.1.0",
     "@contentful/field-editor-dropdown": "0.1.0",
     "@contentful/field-editor-tags": "0.1.0",
+    "@contentful/field-editor-checkbox": "0.1.1",
     "@contentful/field-editor-list": "0.3.0",
     "@contentful/forma-36-fcss": "^0.0.31",
     "@contentful/forma-36-react-components": "^3.18.4",

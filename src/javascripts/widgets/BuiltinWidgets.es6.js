@@ -12,6 +12,7 @@ import { SingleLineEditor } from '@contentful/field-editor-single-line';
 import { MultipleLineEditor } from '@contentful/field-editor-multiple-line';
 import { DropdownEditor } from '@contentful/field-editor-dropdown';
 import { ListEditor } from '@contentful/field-editor-list';
+import { CheckboxEditor } from '@contentful/field-editor-checkbox';
 
 const CfLinkEditor = linkEditorWithCfWebApp(LinkEditor);
 const CfSingleLinkEditor = linkEditorWithCfWebApp(SingleLinkEditor);
@@ -200,7 +201,7 @@ export function create() {
     fieldTypes: ['Symbols'],
     name: 'Checkbox',
     icon: 'checkbox',
-    template: '<cf-checkbox-editor />'
+    renderFieldEditor: ({ widgetApi }) => <CheckboxEditor field={widgetApi.field} />
   });
 
   registerWidget('tagEditor', {
