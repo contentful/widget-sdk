@@ -8,6 +8,7 @@ const _ = require('lodash');
 
 const rootPath = path.resolve(__dirname, '..', '..', '..');
 const srcPath = path.resolve(rootPath, 'src', 'javascripts');
+const depsFilePath = path.resolve(rootPath, 'build', 'dependencies-pre.js');
 
 async function generate() {
   const testDepNames = [
@@ -43,7 +44,7 @@ async function generate() {
 
     worker.on('message', data => {
       // Write a progress indicator period/dot
-      process.stdout.write('.');
+      print('.');
 
       depNames.push(data);
 
@@ -53,6 +54,8 @@ async function generate() {
 
     return worker;
   });
+
+  print(`Generating ${depsFilePath} `);
 
   // Send the initial file load
   workers.forEach(worker => {
@@ -85,9 +88,9 @@ ${uniqDeps
 
   ensureBuildDirExists();
 
-  const depsFilePath = path.resolve(rootPath, 'build', 'dependencies-pre.js');
-
   fs.writeFileSync(depsFilePath, stringifiedDeps);
+
+  print(' Done.', true);
 }
 
 function waitForAllWorkers(workers) {
@@ -139,6 +142,14 @@ function gatherFiles(p) {
 
 function ensureBuildDirExists() {
   fs.mkdirSync(path.resolve(rootPath, 'build'), { recursive: true });
+}
+
+function print(message, newline = false) {
+  process.stdout.write(message);
+
+  if (newline) {
+    process.stdout.write('\n');
+  }
 }
 
 module.exports = generate;
