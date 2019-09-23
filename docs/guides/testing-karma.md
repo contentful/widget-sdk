@@ -60,10 +60,6 @@ import * as KM from 'test/helpers/mocks/kefir';
 import * as K from 'utils/kefir';
 ~~~
 
-The ES6 module `utils/kefir` imports the `kefir` module, which is registered
-in `libs/env-prod.js`. Any NPM module that needs to be available within the testing
-context only will need to be added to `libs/env-test.js`.
-
 If you don't use an Angular context in your tests, it's not possible to import
 Angular services that are not ES6 modules into your test. To use Angular services
 that are not defined as ES6 modules see [“Using Angular”](#using-angular) below.
