@@ -5,7 +5,7 @@ import { uniq, without, omit } from 'lodash';
 import { addNotification } from 'debug/DevNotifications.es6';
 import Cookies from 'js-cookie';
 import window from 'utils/ngCompat/window.es6';
-import { getModule } from 'NgRegistry.es6';
+import * as locationUtils from 'utils/location';
 
 const ENABLE_FLAGS_KEY = 'ui_enable_flags';
 const DISABLE_FLAGS_KEY = 'ui_disable_flags';
@@ -18,9 +18,7 @@ const storeForDisable = getStore().forKey(DISABLE_FLAGS_KEY);
  * a notification.
  */
 export function init() {
-  const location = getModule('$location');
-
-  const urlParams = location.search();
+  const urlParams = locationUtils.getQueryString();
   const enabledFlags = urlParams[ENABLE_FLAGS_KEY];
   const disabledFlags = urlParams[DISABLE_FLAGS_KEY];
 
@@ -28,7 +26,7 @@ export function init() {
   setFromQuery(disabledFlags, storeForDisable);
   if (enabledFlags || disabledFlags) {
     // Updates url without reloading
-    location.search(omit(urlParams, ENABLE_FLAGS_KEY, DISABLE_FLAGS_KEY));
+    locationUtils.setQueryString(omit(urlParams, ENABLE_FLAGS_KEY, DISABLE_FLAGS_KEY));
   }
   displayNotification();
 }

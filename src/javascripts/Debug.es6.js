@@ -1,7 +1,6 @@
 import * as Config from 'Config.es6';
 import { includes, mapValues } from 'lodash';
 import * as UIVersionSwitcher from 'debug/UIVersionSwitcher.es6';
-import * as MockApiToggle from 'debug/MockApiToggle.es6';
 import * as EnforceFlags from 'debug/EnforceFlags.es6';
 import { getModule } from 'NgRegistry.es6';
 
@@ -27,7 +26,6 @@ export function init(global) {
 // `global.cfDebug`.
 function initDevNotifications() {
   UIVersionSwitcher.init();
-  MockApiToggle.init();
   EnforceFlags.init();
 }
 
@@ -40,11 +38,10 @@ function initDevNotifications() {
  * ~~~~
  */
 function create() {
-  const $injector = getModule('$injector');
+  const analytics = getModule('analytics/console');
 
   const modules = {
-    analytics: $injector.get('analytics/console'),
-    http: require('debug/XHR.es6')
+    analytics
   };
 
   const initializers = mapValues(modules, module => {

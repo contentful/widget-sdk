@@ -8,8 +8,7 @@ import moment from 'moment';
 import React from 'react';
 import { TextLink, Button } from '@contentful/forma-36-react-components';
 import { addNotification } from 'debug/DevNotifications.es6';
-import qs from 'qs';
-import { getModule } from 'NgRegistry.es6';
+import * as locationUtils from 'utils/location';
 import window from 'utils/ngCompat/window.es6';
 import { css } from 'emotion';
 
@@ -19,14 +18,13 @@ import { css } from 'emotion';
  * with cookie.
  */
 export function init() {
-  const location = getModule('$location');
-  const urlParams = location.search();
+  const urlParams = locationUtils.getQueryString();
   const uiVersion = urlParams['ui_version'];
 
   if (uiVersion) {
     setVersionCookie(uiVersion);
     // This will reload the app with new ui version
-    window.location.search = '?' + qs.stringify(omit(urlParams, 'ui_version'));
+    locationUtils.setQueryString(omit(urlParams, 'ui_version'));
   }
   addVersionNotification();
 }

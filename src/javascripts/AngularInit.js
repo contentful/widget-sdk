@@ -134,7 +134,6 @@ export const angularInitRun = [
       import('components/tabs/entry_list/entryListSearchController.es6'),
       import('services/batchPerformer.es6'),
       import('components/tabs/listActionsController.es6'),
-      import('debug/XHR/cfMockXhrConsoleDirective.es6'),
       import('directives/bindHtmlCompileDirective.es6'),
       import('directives/cfFocusOnRenderDirective.es6'),
       import('directives/cfFocusOtInputDirective.es6'),
