@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {
   Heading,
   Button,
-  ModalConfirm,
+  Modal,
   Typography,
   Subheading,
   Paragraph,
@@ -26,7 +26,12 @@ const styles = {
     fontSize: tokens.fontSizeM,
     color: tokens.colorTextDark
   }),
-  paddingS: css({ padding: tokens.spacingS })
+  paddingS: css({ padding: tokens.spacingS }),
+  buttons: css({
+    '> &:first-child': {
+      marginRight: tokens.spacingM
+    }
+  })
 };
 
 const DeleteUser = ({ userCancellationWarning }) => {
@@ -54,7 +59,7 @@ const DeleteUser = ({ userCancellationWarning }) => {
         </Button>
       </Typography>
 
-      <ModalConfirm
+      <Modal
         title="Danger Zone"
         intent="negative"
         shouldCloseOnEscapePress={true}
@@ -63,14 +68,7 @@ const DeleteUser = ({ userCancellationWarning }) => {
         size="large"
         testId="dialog-user-cancellation"
         confirmTestId="confirm-user-cancellation"
-        cancelTestId="cancel-user-cancellation"
-        onCancel={() => {
-          setShowModal(false);
-        }}
-        onConfirm={() => {
-          setShowModal(false);
-          onCancelUser({ activeOption, details });
-        }}>
+        cancelTestId="cancel-user-cancellation">
         <Typography>
           <Subheading>{"We're sorry to see you go."}</Subheading>
           <Paragraph>If there is anything we can help you with, please contact us.</Paragraph>
@@ -116,7 +114,24 @@ const DeleteUser = ({ userCancellationWarning }) => {
             ))}
           </Note>
         )}
-      </ModalConfirm>
+        <div className={styles.buttons}>
+          <Button
+            buttonType="negative"
+            onClick={() => {
+              setShowModal(false);
+              onCancelUser({ activeOption, details });
+            }}>
+            Delete my account
+          </Button>
+          <Button
+            buttonType="muted"
+            onClick={() => {
+              setShowModal(false);
+            }}>
+            Cancel
+          </Button>
+        </div>
+      </Modal>
     </>
   );
 };

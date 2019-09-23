@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Heading, IconButton, Typography, Tooltip } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css, cx } from 'emotion';
-import { userAccountDataShape } from './AccountService.es6';
+import { User as UserPropType } from './propTypes';
 import IdentitiesSection from './IdentitiesSection.es6';
 import AccountEditorModal from './AccountEditorModal.es6';
 
@@ -52,8 +52,8 @@ const styles = {
 };
 
 export default function AccountDetails({ data }) {
-  const [showModal, setShowModal] = React.useState(false);
-  const [userState, setUserState] = React.useState(data);
+  const [showModal, setShowModal] = useState(false);
+  const [user, setUser] = useState(data);
 
   return (
     <div data-test-id="user-account-data" className={styles.paddingS}>
@@ -63,13 +63,13 @@ export default function AccountDetails({ data }) {
           <div className={cx(styles.flexContainer, styles.paddingTopS)}>
             <img
               className={styles.accountImage}
-              alt={`${userState.firstName}'s profile image`}
-              src={userState.avatarUrl}
+              alt={`Profile image for ${user.firstName} ${user.lastName}`}
+              src={user.avatarUrl}
             />
             <Typography className={cx(styles.column, styles.paddingLeftL)}>
-              <span className={styles.name}>{userState.firstName}</span>
-              <span className={styles.name}>{userState.lastName}</span>
-              <span className={styles.email}>{userState.email}</span>
+              <span className={styles.name}>{user.firstName}</span>
+              <span className={styles.name}>{user.lastName}</span>
+              <span className={styles.email}>{user.email}</span>
               <span className={styles.password}>********</span>
             </Typography>
           </div>
@@ -86,18 +86,21 @@ export default function AccountDetails({ data }) {
             />
           </Tooltip>
           <AccountEditorModal
-            userState={userState}
-            setUserState={setUserState}
+            user={user}
+            onConfirm={updatedUser => {
+              setUser(updatedUser);
+              setShowModal(false);
+            }}
+            onCancel={() => setShowModal(false)}
             showModal={showModal}
-            setShowModal={setShowModal}
           />
         </div>
       </section>
-      <IdentitiesSection userIdentities={userState.identities} />
+      <IdentitiesSection identities={user.identities} />
     </div>
   );
 }
 
 AccountDetails.propTypes = {
-  data: userAccountDataShape.isRequired
+  data: UserPropType.isRequired
 };
