@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Card } from '@contentful/forma-36-react-components';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
@@ -18,12 +18,9 @@ const styles = {
 };
 
 export default function Settings({ title, onReady }) {
-  const getUserData = useCallback(async () => {
-    return await fetchUserData();
-  }, []);
-  React.useEffect(onReady, []);
+  useEffect(onReady, []);
 
-  const { isLoading, data: userAccountData } = useAsync(getUserData);
+  const { isLoading, data: userAccountData } = useAsync(useCallback(fetchUserData));
 
   return isLoading ? null : (
     <>

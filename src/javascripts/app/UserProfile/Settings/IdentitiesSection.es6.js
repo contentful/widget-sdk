@@ -10,11 +10,9 @@ import {
   Paragraph
 } from '@contentful/forma-36-react-components';
 import { oauthUrl } from 'Config.es6';
-import { difference, isArray, upperFirst, isEmpty, xor, find } from 'lodash';
 import GithubIcon from 'svg/github-icon.es6';
 import GoogleIcon from 'svg/google-icon.es6';
 import TwitterIcon from 'svg/twitter-icon.es6';
-import { deleteUserIdentityData } from './AccountService.es6';
 
 const styles = {
   heading: css({
@@ -62,7 +60,7 @@ const styles = {
       color: tokens.colorTextDark
     }
   }),
-  google: css({
+  google_oauth2: css({
     border: `1px solid ${tokens.colorRedLight}`,
     color: tokens.colorRedDark,
     'input[type="submit"]': {
@@ -79,93 +77,78 @@ const styles = {
   tooltipTargetWrapper: css({ display: 'flex' })
 };
 
-const identitiesProviders = ['google', 'github', 'twitter'];
-const addProviderControls = {
-  google: <AddIdentityProvider key="google_oauth2" id="google_oauth2" name="google" />,
-  github: <AddIdentityProvider key="github" id="github" name="github" />,
-  twitter: <AddIdentityProvider key="twitter" id="github" name="twitter" />
+const idpMap = {
+  google_oauth2: 'Google',
+  github: 'Github',
+  twitter: 'Twitter'
 };
 
-const IdentitiesSection = ({ userIdentities }) => {
-  const getIdentitiesState = userIdentities => {
-    const connectedIdentities =
-      isArray(userIdentities) && userIdentities.map(identity => identity.provider);
-    const unconnectedIdentities = difference(identitiesProviders, connectedIdentities);
-    return { connectedIdentities, unconnectedIdentities };
-  };
-  const getUpdatedState = (providerName, connectedIdentities, unconnectedIdentities) => {
-    const newConnectedIdentities = xor(connectedIdentities, [providerName]);
-    const newUnconnectedIdentities = [...unconnectedIdentities, providerName];
-    return {
-      connectedIdentities: newConnectedIdentities,
-      unconnectedIdentities: newUnconnectedIdentities
-    };
-  };
-  const [{ connectedIdentities, unconnectedIdentities }, setState] = useState(
-    getIdentitiesState(userIdentities)
+const IdentitiesSection = ({ identities, onRemoveIdentity }) => {
+  const availableProviders = Object.keys(idpMap).filter(
+    providerName => !identities.find(({ provider: usedProvider }) => providerName === usedProvider)
   );
 
-  return isEmpty(connectedIdentities) ? (
+  return (
     <>
-      <Heading className={styles.heading}>Available open identities:</Heading>
-      <div className={styles.identitiesRow}>
-        {identitiesProviders.map(provider => addProviderControls[provider])}
-      </div>
-    </>
-  ) : (
-    <>
-      <Heading className={styles.heading}>Connected open Identities:</Heading>
-      {connectedIdentities.map((providerName, index) => {
-        const identityData = find(userIdentities, i => i.provider === providerName);
-        return (
-          <RemoveIdentityProvider
-            onRemove={providerName =>
-              setState(getUpdatedState(providerName, connectedIdentities, unconnectedIdentities))
-            }
-            key={index}
-            identityId={identityData.sys.id}
-            name={identityData.provider}
-          />
-        );
-      })}
-      <Heading className={styles.heading}>Open Identities:</Heading>
-      <div className={styles.identitiesRow}>
-        {unconnectedIdentities.map(provider => addProviderControls[provider])}
-      </div>
+      {identities.length ? (
+        <>
+          <Heading className={styles.heading}>Connected open identities:</Heading>
+          {identities.map(({ provider, sys: { id: identityId } }) => {
+            return (
+              <RemoveIdentityProvider
+                onRemove={onRemoveIdentity}
+                key={provider}
+                identityId={identityId}
+                provider={provider}
+              />
+            );
+          })}
+        </>
+      ) : null}
+      {availableProviders.length ? (
+        <>
+          <Heading className={styles.heading}>Available open identities:</Heading>
+          <div className={styles.identitiesRow}>
+            {availableProviders.map(provider => {
+              return <AddIdentityProvider key={provider} provider={provider} />;
+            })}
+          </div>
+        </>
+      ) : null}
     </>
   );
 };
 IdentitiesSection.propTypes = {
-  userIdentities: PropTypes.any
+  identities: PropTypes.array,
+  onRemoveIdentity: PropTypes.func.isRequired
 };
 
 export default IdentitiesSection;
 
-function RemoveIdentityProvider({ onRemove, identityId, name }) {
+function RemoveIdentityProvider({ onRemove, identityId, provider }) {
+  const humanName = idpMap[provider];
+
   const [isShown, setShown] = useState(false);
-  const onDelete = (id, name) => {
-    deleteUserIdentityData(id);
-    onRemove(name);
-  };
+
   return (
     <div className={styles.identitiesRow}>
-      <div className={cx(styles[name], styles.identityItem)}>
-        <IdentityIcon providerName={name} />
-        <div className={styles.providerName}>{upperFirst(name)}</div>
+      <div className={cx(styles[provider], styles.identityItem)}>
+        <IdentityIcon provider={provider} />
+        <div className={styles.providerName}>{humanName}</div>
       </div>
       <Tooltip
         place="right"
-        id={`remove-${name}-${identityId}`}
+        id={`remove-${provider}-${identityId}`}
         content="Remove identity"
         targetWrapperClassName={styles.tooltipTargetWrapper}>
         <IconButton
           iconProps={{
             icon: 'Close'
           }}
-          label={`Remove "${name}" open identity`}
+          label={`Remove "${humanName}"`}
           buttonType="secondary"
           onClick={() => setShown(true)}
-          testId={`remove-${name}-button`}
+          testId={`remove-${provider}-button`}
         />
       </Tooltip>
       <ModalConfirm
@@ -175,15 +158,15 @@ function RemoveIdentityProvider({ onRemove, identityId, name }) {
         size="small"
         shouldCloseOnEscapePress
         shouldCloseOnOverlayClick
-        testId={`dialog-remove-${name}-identity`}
-        confirmTestId={`confirm-remove-${name}-identity`}
-        cancelTestId={`cancel-remove-${name}-identity`}
+        testId={`dialog-remove-${provider}-identity`}
+        confirmTestId={`confirm-remove-${provider}-identity`}
+        cancelTestId={`cancel-remove-${provider}-identity`}
         onCancel={() => {
           setShown(false);
         }}
         onConfirm={() => {
           setShown(false);
-          onDelete(identityId.toString(), name);
+          onRemove(provider);
         }}>
         <Paragraph>Are you sure you want to remove this open identity from your account?</Paragraph>
       </ModalConfirm>
@@ -193,19 +176,21 @@ function RemoveIdentityProvider({ onRemove, identityId, name }) {
 
 RemoveIdentityProvider.propTypes = {
   identityId: PropTypes.number.isRequired,
-  name: PropTypes.string.isRequired,
+  provider: PropTypes.string.isRequired,
   onRemove: PropTypes.func.isRequired
 };
 
-function AddIdentityProvider({ id, name }) {
+function AddIdentityProvider({ provider }) {
+  const humanName = idpMap[provider];
+
   return (
-    <form action={oauthUrl(id, '/account/user/profile')} method="post">
-      <div className={cx(styles[name], styles.identityItem)}>
-        <IdentityIcon providerName={name} />
+    <form action={oauthUrl(provider, '/account/user/profile')} method="post">
+      <div className={cx(styles[provider], styles.identityItem)}>
+        <IdentityIcon provider={provider} />
         <input
           className={cx(styles.identityInput, styles.cursorPointer)}
           type="submit"
-          value={upperFirst(name)}
+          value={humanName}
           name="Add Identity Provider"
         />
       </div>
@@ -214,15 +199,15 @@ function AddIdentityProvider({ id, name }) {
 }
 
 AddIdentityProvider.propTypes = {
-  id: PropTypes.string.isRequired,
+  provider: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired
 };
 
-function IdentityIcon({ providerName }) {
-  switch (providerName) {
+function IdentityIcon({ provider }) {
+  switch (provider) {
     case 'github':
       return <GithubIcon />;
-    case 'google':
+    case 'google_oauth2':
       return <GoogleIcon />;
     case 'twitter':
       return <TwitterIcon />;
@@ -232,5 +217,5 @@ function IdentityIcon({ providerName }) {
 }
 
 IdentityIcon.propTypes = {
-  providerName: PropTypes.oneOf(['github', 'google', 'twitter']).isRequired
+  provider: PropTypes.oneOf(['github', 'google_oauth2', 'twitter']).isRequired
 };
