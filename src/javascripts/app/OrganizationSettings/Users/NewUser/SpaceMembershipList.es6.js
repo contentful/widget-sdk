@@ -103,7 +103,7 @@ export default function SpaceMembershipList({ orgId, submitted = false, onChange
   }, [onChange, spaceMemberships]);
 
   return (
-    <>
+    <div data-test-id="new-user.spaces">
       <SpacesAutoComplete orgId={orgId} onChange={handleSpaceSelected} value={selectedSpaces} />
       {selectedSpaces.length > 0 && (
         <SectionHeading className={styles.count}>{`${pluralize(
@@ -134,7 +134,7 @@ export default function SpaceMembershipList({ orgId, submitted = false, onChange
           </AutocompleteSelection>
         ))}
       </div>
-    </>
+    </div>
   );
 }
 

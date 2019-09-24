@@ -109,11 +109,11 @@ TeamSpaceMembershipList.propTypes = {
 
 // Get a text listing the roles up to a limit
 // i.e:
-// roles: ['Editor', 'Author', 'Translator'], limitToShow: 1
-// => Editor and 2 other space roles
-function getRolesText(membership, limitToShow = 2) {
+// roles: ['Editor', 'Author', 'Translator', 'Translator 2']
+// => Editor, Author and 2 other space roles
+function getRolesText(membership) {
   if (membership.admin) return 'Admin';
-  if (membership.roles.length > limitToShow) {
+  if (membership.roles.length > 2) {
     const [first, second, ...rest] = membership.roles;
     return (
       <Tooltip

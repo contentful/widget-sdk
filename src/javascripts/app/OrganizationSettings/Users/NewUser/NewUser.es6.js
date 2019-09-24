@@ -39,6 +39,7 @@ const initialState = {
   emailList: [],
   invalidAddresses: [],
   spaceMemberships: [],
+  teams: [],
   suppressInvitation: true,
   progress: { successes: [], failures: [] }
 };
@@ -83,6 +84,7 @@ export default function NewUser({ orgId, onReady, hasSsoEnabled, hasTeamsFeature
       orgRole,
       spaceMemberships,
       suppressInvitation,
+      teams,
       progress
     },
     dispatch
@@ -120,7 +122,8 @@ export default function NewUser({ orgId, onReady, hasSsoEnabled, hasTeamsFeature
       const confirmed = await confirmNoSpaces(emailList.length);
       if (!confirmed) return;
     }
-    addToOrg(emailList, orgRole, spaceMemberships, suppressInvitation);
+
+    addToOrg(emailList, orgRole, spaceMemberships, teams, suppressInvitation);
   };
 
   const handleNotificationsPreferenceChange = evt => {
@@ -314,10 +317,10 @@ async function confirmNoSpaces(count) {
       testId="new-user.no-spaces-confirmation">
       <Typography>
         <Paragraph>
-          Are you sure you want to invite {count > 1 ? `${count} users` : 'this user'} without
-          access to a space?
+          Are you sure you want to invite {count > 1 ? `${count} users` : 'a user'} without access
+          to a space?
         </Paragraph>
-        <Paragraph>{`Users without access to a space can't create or edit content, but you can always add them to spaces later.`}</Paragraph>
+        <Paragraph>{`They won't be able to create or edit content. You can change that by adding them to spaces later.`}</Paragraph>
       </Typography>
     </ModalConfirm>
   ));

@@ -68,7 +68,7 @@ export default function SpaceMembershipList({ orgId, onChange }) {
   }, [onChange, teams]);
 
   return (
-    <>
+    <div data-test-id="new-user.teams">
       <TeamsAutocomplete orgId={orgId} onChange={handleTeamSelected} value={teams} />
       {teams.length > 0 && (
         <SectionHeading className={styles.count}>{`${pluralize(
@@ -86,7 +86,7 @@ export default function SpaceMembershipList({ orgId, onChange }) {
             teamSpaceMemberships={teamSpaceMemberships[team.sys.id]}></TeamSelection>
         ))}
       </div>
-    </>
+    </div>
   );
 }
 

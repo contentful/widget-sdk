@@ -99,7 +99,7 @@ export function createTeamMembership(endpoint, orgMembershipId, teamId) {
     {
       method: 'POST',
       path: ['teams', teamId, 'team_memberships'],
-      data: { orgMembershipId }
+      data: { orgMembershipId, admin: false }
     },
     ALPHA_HEADER
   );
