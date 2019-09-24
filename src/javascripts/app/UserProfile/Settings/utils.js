@@ -4,36 +4,57 @@ const validations = {
 };
 
 const validators = {
-  firstName: value => {
+  firstName: field => {
+    const { value } = field;
+
     if (!validations.presence(value)) {
-      return 'First name cannot be empty';
+      return 'First name is required';
     }
   },
-  lastName: value => {
+  lastName: field => {
+    const { value } = field;
     if (!validations.presence(value)) {
-      return 'Last name cannot be empty';
+      return 'Last name is required';
     }
   },
-  email: value => {
+  email: field => {
+    const { value } = field;
     if (!validations.presence(value)) {
-      return 'Email cannot be empty';
+      return 'Email is required';
     }
   },
-  currentPassword: (value, fields) => {
+  currentPassword: (field, fields) => {
+    const { value, dirty } = field;
+    if (!dirty) {
+      return null;
+    }
+
     if (!fields.email.value) {
       return null;
     }
 
     if (!validations.presence(value)) {
-      return 'Current password cannot be empty';
+      return 'Current password is required';
     }
   },
-  newPassword: value => {
+  newPassword: field => {
+    const { value, dirty } = field;
+
+    if (!dirty) {
+      return null;
+    }
+
     if (!validations.minLength(8, value)) {
       return 'New password must be at least 8 characters';
     }
   },
-  newPasswordConfirm: (value, fields) => {
+  newPasswordConfirm: (field, fields) => {
+    const { value, dirty } = field;
+
+    if (!dirty) {
+      return null;
+    }
+
     if (!validations.minLength(8, value)) {
       return 'New password confirmation must be at least 8 characters';
     }
@@ -51,13 +72,16 @@ export function getValidationMessageFor(fields, fieldName) {
     return 'Warning: field name is not valid';
   }
 
-  if (!fieldData.dirty) {
-    return null;
-  }
-
+  // The server validation message always take precedence over others
   if (fieldData.serverValidationMessage) {
     return fieldData.serverValidationMessage;
   }
 
-  return validators[fieldName](fieldData.value, fields);
+  const validator = validators[fieldName];
+
+  if (!validator) {
+    return null;
+  }
+
+  return validator(fieldData, fields);
 }

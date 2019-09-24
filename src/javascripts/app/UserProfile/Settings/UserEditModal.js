@@ -22,6 +22,7 @@ const styles = {
 };
 
 const createFieldData = (initialValue = null) => ({
+  touched: false,
   dirty: false,
   value: initialValue,
   serverValidationMessage: null
@@ -45,9 +46,12 @@ const initializeReducer = user => {
 const reducer = createImmerReducer({
   UPDATE_FIELD_VALUE: (state, { payload }) => {
     state.fields[payload.field].value = payload.value;
-    state.fields[payload.field].dirty = true;
+    state.fields[payload.field].touched = true;
     state.formInvalid = false;
     state.fields[payload.field].serverValidationMessage = null;
+  },
+  SET_FIELD_DIRTY: (state, { payload }) => {
+    state.fields[payload.field].dirty = true;
   },
   SET_ALL_FIELDS_DIRTY: state => {
     Object.values(state.fields).forEach(fieldData => {
@@ -138,7 +142,10 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
   };
 
   const fields = formData.fields;
-  const currentPasswordIsRequired = fields.email.value && fields.email.dirty;
+  const currentPasswordIsRequired =
+    fields.email.touched || fields.newPassword.touched || fields.newPasswordConfirm.touched;
+  const submitButtonDisabled =
+    !Object.values(formData.fields).find(field => field.dirty) || formData.formInvalid;
 
   return (
     <Modal
@@ -164,6 +171,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
               payload: { field: 'firstName', value: e.target.value }
             })
           }
+          onBlur={() => dispatch({ type: 'SET_FIELD_DIRTY', payload: { field: 'firstName' } })}
           labelText="First Name"
           textInputProps={{ type: 'text', autoComplete: 'off' }}
         />
@@ -179,6 +187,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
               payload: { field: 'lastName', value: e.target.value }
             })
           }
+          onBlur={() => dispatch({ type: 'SET_FIELD_DIRTY', payload: { field: 'lastName' } })}
           labelText="Last Name"
           textInputProps={{ type: 'text', autoComplete: 'off' }}
         />
@@ -193,9 +202,12 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
               payload: { field: 'email', value: e.target.value }
             })
           }
+          onBlur={() => dispatch({ type: 'SET_FIELD_DIRTY', payload: { field: 'email' } })}
           labelText="Email"
           textInputProps={{ type: 'email', autoComplete: 'off' }}
-          helpText="To confirm email changes enter your current newPassword and don’t forget to confirm the new email, you will find a confirmation link in your inbox soon."
+          helpText={
+            fields.email.touched ? 'Enter your password to confirm your updated email.' : ''
+          }
         />
         <Subheading>Change Password</Subheading>
         <TextField
@@ -209,6 +221,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
               payload: { field: 'newPassword', value: e.target.value }
             })
           }
+          onBlur={() => dispatch({ type: 'SET_FIELD_DIRTY', payload: { field: 'newPassword' } })}
           labelText="New Password"
           textInputProps={{ type: 'password', autoComplete: 'off' }}
           helpText="Create a unique password at least 8 characters long"
@@ -223,6 +236,9 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
               type: 'UPDATE_FIELD_VALUE',
               payload: { field: 'newPasswordConfirm', value: e.target.value }
             })
+          }
+          onBlur={() =>
+            dispatch({ type: 'SET_FIELD_DIRTY', payload: { field: 'newPasswordConfirm' } })
           }
           labelText="Confirm new password"
           textInputProps={{ type: 'password', autoComplete: 'off' }}
@@ -241,6 +257,9 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
                   type: 'UPDATE_FIELD_VALUE',
                   payload: { field: 'currentPassword', value: e.target.value }
                 })
+              }
+              onBlur={() =>
+                dispatch({ type: 'SET_FIELD_DIRTY', payload: { field: 'currentPassword' } })
               }
               labelText="Current Password"
               textInputProps={{ type: 'password', autoComplete: 'off' }}
@@ -266,6 +285,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
               formIsValid && submitForm(formData, user, dispatch, onConfirm);
             }}
             type="submit"
+            disabled={submitButtonDisabled}
             buttonType="positive">
             Save changes
           </Button>

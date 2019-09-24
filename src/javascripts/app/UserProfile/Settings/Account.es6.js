@@ -72,11 +72,7 @@ const openEditModal = async (user, setUser) => {
 
   // Update the user
   // Set the updated email as the unconfirmed email
-  const updatedUser = Object.assign({}, user, {
-    ...result,
-    email: user.email,
-    unconfirmedEmail: result.email
-  });
+  const updatedUser = Object.assign({}, user, result);
 
   setUser(updatedUser);
 };
@@ -120,7 +116,7 @@ export default function AccountDetails({ data }) {
               <span className={styles.email}>
                 {user.email} {user.unconfirmedEmail ? `(${user.unconfirmedEmail})` : null}
               </span>
-              <span className={styles.password}>********</span>
+              {user.passwordSet && <span className={styles.password}>********</span>}
             </Typography>
           </div>
         </div>
