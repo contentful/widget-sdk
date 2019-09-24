@@ -20,20 +20,26 @@ const styles = {
 export default function Settings({ title, onReady }) {
   useEffect(onReady, []);
 
-  const { isLoading, data: userAccountData } = useAsync(useCallback(fetchUserData));
+  const { isLoading, data: user } = useAsync(useCallback(fetchUserData));
 
-  return isLoading ? null : (
+  if (isLoading) {
+    return null;
+  }
+
+  const { userCancellationWarning: warning } = user;
+
+  return (
     <>
       <DocumentTitle title={title} />
       <Workbench>
         <Workbench.Header title={title} />
         <Workbench.Content type="default">
           <Card className={styles.userSettingsSection}>
-            <AccountDetails data={userAccountData} />
+            <AccountDetails data={user} />
           </Card>
-          {!userAccountData.ssoLoginOnly && (
+          {!user.ssoLoginOnly && (
             <Card className={styles.userSettingsSection}>
-              <DeleteUser userCancellationWarning={userAccountData.userCancellationWarning} />
+              <DeleteUser singleOwnerOrganizations={warning.singleOwnerOrganizations} />
             </Card>
           )}
         </Workbench.Content>
