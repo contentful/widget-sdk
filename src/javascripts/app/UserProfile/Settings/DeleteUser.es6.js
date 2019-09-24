@@ -43,7 +43,7 @@ const DeleteUser = ({ userCancellationWarning }) => {
     other: { name: 'Other', key: 'other' }
   };
   const [showModal, setShowModal] = useState(false);
-  const [activeOption, setActiveOption] = useState(null);
+  const [activeOption, setActiveOption] = useState(reasons.other.key);
   const [details, setDetails] = useState('');
 
   const onCancelUser = ({ activeOption, details }) => {
@@ -96,7 +96,7 @@ const DeleteUser = ({ userCancellationWarning }) => {
         </Typography>
         {!isEmpty(userCancellationWarning.singleOwnerOrganizations) && (
           <Note className={styles.dangerZoneNote} noteType="negative">
-            <Subheading>{"You're entering the danger zone!"}</Subheading>
+            <Subheading>You’re entering the danger zone!</Subheading>
             <Paragraph>
               The following organizations, including their spaces and all their content will be
               deleted permanently:

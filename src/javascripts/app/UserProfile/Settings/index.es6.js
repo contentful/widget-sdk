@@ -31,9 +31,11 @@ export default function Settings({ title, onReady }) {
           <Card className={styles.userSettingsSection}>
             <AccountDetails data={userAccountData} />
           </Card>
-          <Card className={styles.userSettingsSection}>
-            <DeleteUser userCancellationWarning={userAccountData.userCancellationWarning} />
-          </Card>
+          {!userAccountData.ssoLoginOnly && (
+            <Card className={styles.userSettingsSection}>
+              <DeleteUser userCancellationWarning={userAccountData.userCancellationWarning} />
+            </Card>
+          )}
         </Workbench.Content>
       </Workbench>
     </>

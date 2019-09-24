@@ -1,7 +1,14 @@
 import React, { useState, useCallback } from 'react';
-import { Heading, IconButton, Typography, Tooltip } from '@contentful/forma-36-react-components';
+import {
+  Heading,
+  IconButton,
+  Typography,
+  Tooltip,
+  TextLink
+} from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css, cx } from 'emotion';
+import { websiteUrl } from 'Config.es6';
 import { User as UserPropType } from './propTypes';
 import IdentitiesSection from './IdentitiesSection.es6';
 import UserEditModal from './UserEditModal';
@@ -44,6 +51,7 @@ const styles = {
   }),
   email: css({
     marginTop: tokens.spacingXs,
+    marginBottom: tokens.spacingM,
     color: tokens.colorTextMid
   }),
   password: css({
@@ -66,7 +74,7 @@ const openEditModal = async (user, setUser) => {
   });
 
   if (result === false) {
-    // The modal was closed, do nothing
+    // The modal was closed manually, do nothing
     return;
   }
 
@@ -111,29 +119,40 @@ export default function AccountDetails({ data }) {
               src={user.avatarUrl}
             />
             <Typography className={cx(styles.column, styles.paddingLeftL)}>
-              <span className={styles.name}>{user.firstName}</span>
-              <span className={styles.name}>{user.lastName}</span>
+              <span className={styles.name}>
+                {user.firstName} {user.lastName}
+              </span>
               <span className={styles.email}>
                 {user.email} {user.unconfirmedEmail ? `(${user.unconfirmedEmail})` : null}
               </span>
-              {user.passwordSet && <span className={styles.password}>********</span>}
+              {!user.ssoLoginOnly && user.passwordSet && (
+                <span className={styles.password}>********</span>
+              )}
+              {user.ssoLoginOnly && (
+                <TextLink href={`${websiteUrl()}/faq/sso`}>
+                  Single sign-on is active for your account.
+                </TextLink>
+              )}
             </Typography>
           </div>
         </div>
-
-        <div className={styles.column}>
-          <Tooltip place="bottom" id="edit-user-account" content="Edit account">
-            <IconButton
-              label="Edit user account details"
-              iconProps={{ icon: 'Edit' }}
-              buttonType="muted"
-              onClick={() => openEditModal(user, setUser)}
-              testId="edit-user-account-details"
-            />
-          </Tooltip>
-        </div>
+        {!user.ssoLoginOnly && (
+          <div className={styles.column}>
+            <Tooltip place="bottom" id="edit-user-account" content="Edit account">
+              <IconButton
+                label="Edit user account details"
+                iconProps={{ icon: 'Edit' }}
+                buttonType="muted"
+                onClick={() => openEditModal(user, setUser)}
+                testId="edit-user-account-details"
+              />
+            </Tooltip>
+          </div>
+        )}
       </section>
-      <IdentitiesSection onRemoveIdentity={removeIdentity} identities={identities} />
+      {!user.ssoLoginOnly && (
+        <IdentitiesSection onRemoveIdentity={removeIdentity} identities={identities} />
+      )}
     </div>
   );
 }
