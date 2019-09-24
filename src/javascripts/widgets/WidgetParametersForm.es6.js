@@ -34,7 +34,7 @@ const BooleanOption = ({ name, value, option, onChange, label, style }) => {
       <label>
         <input
           name={name || ''}
-          type="checkbox"
+          type="radio"
           checked={value === option}
           onChange={() => onChange(value === option ? undefined : option)}
         />{' '}
