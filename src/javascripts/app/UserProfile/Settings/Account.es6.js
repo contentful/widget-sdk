@@ -4,7 +4,8 @@ import tokens from '@contentful/forma-36-tokens';
 import { css, cx } from 'emotion';
 import { User as UserPropType } from './propTypes';
 import IdentitiesSection from './IdentitiesSection.es6';
-import AccountEditorModal from './AccountEditorModal.es6';
+import UserEditModal from './UserEditModal';
+import * as ModalLauncher from 'app/common/ModalLauncher.es6';
 
 const styles = {
   spaceLeft: css({
@@ -51,8 +52,35 @@ const styles = {
   })
 };
 
+const openEditModal = async (user, setUser) => {
+  const result = await ModalLauncher.open(({ isShown, onClose }) => {
+    return (
+      <UserEditModal
+        user={user}
+        onConfirm={onClose}
+        onCancel={() => onClose(false)}
+        isShown={isShown}
+      />
+    );
+  });
+
+  if (result === false) {
+    // The modal was closed, do nothing
+    return;
+  }
+
+  // Update the user
+  // Set the updated email as the unconfirmed email
+  const updatedUser = Object.assign({}, user, {
+    ...result,
+    email: user.email,
+    unconfirmedEmail: result.email
+  });
+
+  setUser(updatedUser);
+};
+
 export default function AccountDetails({ data }) {
-  const [showModal, setShowModal] = useState(false);
   const [user, setUser] = useState(data);
 
   return (
@@ -69,31 +97,24 @@ export default function AccountDetails({ data }) {
             <Typography className={cx(styles.column, styles.paddingLeftL)}>
               <span className={styles.name}>{user.firstName}</span>
               <span className={styles.name}>{user.lastName}</span>
-              <span className={styles.email}>{user.email}</span>
+              <span className={styles.email}>
+                {user.email} {user.unconfirmedEmail ? `(${user.unconfirmedEmail})` : null}
+              </span>
               <span className={styles.password}>********</span>
             </Typography>
           </div>
         </div>
 
         <div className={styles.column}>
-          <Tooltip place="bottom" id={`edit-user-account`} content="Edit account">
+          <Tooltip place="bottom" id="edit-user-account" content="Edit account">
             <IconButton
               label="Edit user account details"
               iconProps={{ icon: 'Edit' }}
               buttonType="muted"
-              onClick={() => setShowModal(true)}
+              onClick={() => openEditModal(user, setUser)}
               testId="edit-user-account-details"
             />
           </Tooltip>
-          <AccountEditorModal
-            user={user}
-            onConfirm={updatedUser => {
-              setUser(updatedUser);
-              setShowModal(false);
-            }}
-            onCancel={() => setShowModal(false)}
-            showModal={showModal}
-          />
         </div>
       </section>
       <IdentitiesSection identities={user.identities} />

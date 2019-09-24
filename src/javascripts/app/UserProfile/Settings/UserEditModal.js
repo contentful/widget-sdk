@@ -13,11 +13,33 @@ import tokens from '@contentful/forma-36-tokens';
 import { createImmerReducer } from 'redux/utils/createImmerReducer.es6';
 import { updateUserData } from './AccountService.es6';
 import { User as UserPropType } from './propTypes';
+import { getValidationMessageFor } from './utils';
 import { css } from 'emotion';
 
 const styles = {
   controlsPanel: css({ display: 'flex' }),
   marginLeftM: css({ marginLeft: tokens.spacingM })
+};
+
+const createFieldData = (initialValue = null) => ({
+  dirty: false,
+  value: initialValue,
+  serverValidationMessage: null
+});
+
+const initializeReducer = user => {
+  return {
+    fields: {
+      firstName: createFieldData(user.firstName),
+      lastName: createFieldData(user.lastName),
+      email: createFieldData(user.email),
+      currentPassword: createFieldData(),
+      newPassword: createFieldData(),
+      newPasswordConfirm: createFieldData(),
+      logAnalyticsFeature: createFieldData(user.logAnalyticsFeature)
+    },
+    formInvalid: false
+  };
 };
 
 const reducer = createImmerReducer({
@@ -41,33 +63,17 @@ const reducer = createImmerReducer({
   },
   SERVER_VALIDATION_FAILURE: (state, { payload }) => {
     state.fields[payload.field].serverValidationMessage = payload.value;
+  },
+  RESET: (_, { payload }) => {
+    return initializeReducer(payload.user);
   }
 });
 
-const createFieldData = () => ({
-  dirty: false,
-  value: null,
-  serverValidationMessage: null
-});
-
-const initialFormData = {
-  fields: {
-    firstName: createFieldData(),
-    lastName: createFieldData(),
-    email: createFieldData(),
-    currentPassword: createFieldData(),
-    newPassword: createFieldData(),
-    newPasswordConfirm: createFieldData(),
-    logAnalyticsFeature: createFieldData()
-  },
-  formInvalid: false
-};
-
-const submitForm = async (formData, currentVersion, dispatch, onConfirm) => {
+const submitForm = async (formData, user, dispatch, onConfirm) => {
   const fieldData = formData.fields;
 
   const updatedUserData = await updateUserData({
-    version: currentVersion,
+    version: user.sys.version,
     data: {
       firstName: fieldData.firstName.value,
       lastName: fieldData.lastName.value,
@@ -79,7 +85,8 @@ const submitForm = async (formData, currentVersion, dispatch, onConfirm) => {
   });
 
   if (updatedUserData.sys.type === 'User') {
-    onConfirm(_.mapValues(fieldData, 'value'));
+    dispatch({ type: 'RESET', payload: { user: updatedUserData } });
+    onConfirm(updatedUserData);
   } else if (updatedUserData.sys.type === 'Error') {
     const errorDetails = updatedUserData.details.errors;
 
@@ -115,82 +122,14 @@ const submitForm = async (formData, currentVersion, dispatch, onConfirm) => {
   }
 };
 
-function getValidationMessageFor(formData, field) {
-  const validations = {
-    presence: data => (data.value ? true : false),
-    minLength: (length, data) => (data.value && data.value.length >= length ? true : false)
-  };
-
-  const fields = formData.fields;
-  const fieldData = fields[field];
-
-  if (!fieldData) {
-    return 'Warning: field name is not valid';
-  }
-
-  if (!fieldData.dirty) {
-    return null;
-  }
-
-  if (fieldData.serverValidationMessage) {
-    return fieldData.serverValidationMessage;
-  }
-
-  switch (field) {
-    case 'firstName': {
-      if (!validations.presence(fieldData)) {
-        return 'First name cannot be empty';
-      }
-      break;
-    }
-    case 'lastName': {
-      if (!validations.presence(fieldData)) {
-        return 'Last name cannot be empty';
-      }
-      break;
-    }
-    case 'email': {
-      if (!validations.presence(fieldData)) {
-        return 'Email cannot be empty';
-      }
-      break;
-    }
-    case 'currentPassword': {
-      if (!fields.email.value) {
-        return null;
-      }
-
-      if (!validations.presence(fieldData)) {
-        return 'Current password cannot be empty';
-      }
-      break;
-    }
-    case 'newPassword': {
-      if (!validations.minLength(8, fieldData)) {
-        return 'New password must be at least 8 characters';
-      }
-
-      break;
-    }
-    case 'newPasswordConfirm': {
-      if (!validations.minLength(8, fieldData)) {
-        return 'New password confirmation must be at least 8 characters';
-      }
-
-      if (fieldData.value !== fields.newPassword.value) {
-        return 'New password and its confirmation do not match';
-      }
-      break;
-    }
-  }
-}
-
-function AccountEditorModal({ user, onConfirm, onCancel, showModal }) {
-  const [formData, dispatch] = useReducer(reducer, initialFormData);
+export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
+  const [formData, dispatch] = useReducer(reducer, user, initializeReducer);
 
   const validateForm = () => {
     const formIsInvalid = Boolean(
-      Object.keys(formData.fields).find(fieldName => getValidationMessageFor(formData, fieldName))
+      Object.keys(formData.fields).find(fieldName =>
+        getValidationMessageFor(formData.fields, fieldName)
+      )
     );
 
     if (formIsInvalid) {
@@ -210,13 +149,16 @@ function AccountEditorModal({ user, onConfirm, onCancel, showModal }) {
       title="Edit account"
       shouldCloseOnEscapePress={true}
       shouldCloseOnOverlayClick={true}
-      isShown={showModal}
-      onClose={() => onCancel()}
+      isShown={isShown}
+      onClose={() => {
+        dispatch({ type: 'RESET', payload: { user } });
+        onCancel();
+      }}
       size="large">
       <Form>
         <TextField
           required
-          validationMessage={getValidationMessageFor(formData, 'firstName')}
+          validationMessage={getValidationMessageFor(formData.fields, 'firstName')}
           id="first-name-field"
           name="first-name"
           value={fields.firstName.value}
@@ -232,7 +174,7 @@ function AccountEditorModal({ user, onConfirm, onCancel, showModal }) {
         />
         <TextField
           required
-          validationMessage={getValidationMessageFor(formData, 'lastName')}
+          validationMessage={getValidationMessageFor(formData.fields, 'lastName')}
           id="last-name-field"
           name="last-name"
           value={fields.lastName.value}
@@ -264,7 +206,7 @@ function AccountEditorModal({ user, onConfirm, onCancel, showModal }) {
         />
         <Subheading>Change Password</Subheading>
         <TextField
-          validationMessage={getValidationMessageFor(formData, 'newPassword')}
+          validationMessage={getValidationMessageFor(formData.fields, 'newPassword')}
           id="new-password-field"
           name="new-password"
           value={fields.newPassword.value}
@@ -280,7 +222,7 @@ function AccountEditorModal({ user, onConfirm, onCancel, showModal }) {
           helpText="Create a unique password at least 8 characters long"
         />
         <TextField
-          validationMessage={getValidationMessageFor(formData, 'newPasswordConfirm')}
+          validationMessage={getValidationMessageFor(formData.fields, 'newPasswordConfirm')}
           id="confirm-new-password-field"
           name="confirm-new-password"
           value={fields.newPasswordConfirm.value}
@@ -301,7 +243,7 @@ function AccountEditorModal({ user, onConfirm, onCancel, showModal }) {
             <Subheading>Confirm changes</Subheading>
             <TextField
               required
-              validationMessage={getValidationMessageFor(formData, 'currentPassword')}
+              validationMessage={getValidationMessageFor(formData.fields, 'currentPassword')}
               id="current-password-field"
               name="current-password"
               value={fields.currentPassword.value}
@@ -335,13 +277,19 @@ function AccountEditorModal({ user, onConfirm, onCancel, showModal }) {
           <Button
             onClick={() => {
               const formIsValid = validateForm(formData);
-              formIsValid && submitForm(formData, user.sys.version, dispatch, onConfirm);
+              formIsValid && submitForm(formData, user, dispatch, onConfirm);
             }}
             type="submit"
             buttonType="positive">
             Save changes
           </Button>
-          <Button className={styles.marginLeftM} onClick={() => onCancel()} buttonType="muted">
+          <Button
+            className={styles.marginLeftM}
+            onClick={() => {
+              dispatch({ type: 'RESET', payload: { user } });
+              onCancel();
+            }}
+            buttonType="muted">
             Cancel
           </Button>
         </div>
@@ -350,11 +298,9 @@ function AccountEditorModal({ user, onConfirm, onCancel, showModal }) {
   );
 }
 
-AccountEditorModal.propTypes = {
-  showModal: PropTypes.bool.isRequired,
+UserEditModal.propTypes = {
+  isShown: PropTypes.bool.isRequired,
   onConfirm: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
   user: UserPropType.isRequired
 };
-
-export default AccountEditorModal;
