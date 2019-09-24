@@ -1,3 +1,4 @@
+/* eslint-disable rulesdir/restrict-non-f36-components */
 import React from 'react';
 import { findIndex, set, update, remove, map } from 'lodash/fp';
 import {
@@ -44,6 +45,8 @@ import { ENVIRONMENT_ALIASING } from '../featureFlags.es6';
 
 import * as createResourceService from 'services/ResourceService.es6';
 import * as RoleRepository from 'access_control/RoleRepository.es6';
+
+import * as RoleListHandler from './RoleListHandler.es6';
 
 const PermissionPropType = PropTypes.shape({
   manage: PropTypes.bool,
@@ -106,11 +109,10 @@ class RoleEditor extends React.Component {
   delete = () => {
     const $state = getModule('$state');
     const createRoleRemover = getModule('createRoleRemover');
-    const UserListHandler = getModule('UserListHandler');
 
     const { role } = this.props;
 
-    const listHandler = UserListHandler.create();
+    const listHandler = RoleListHandler.create();
     listHandler.reset().then(() => {
       createRoleRemover(listHandler, () => {
         this.setDirty(false);

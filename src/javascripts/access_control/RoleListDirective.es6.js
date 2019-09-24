@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _, { sortBy } from 'lodash';
 
 import { registerDirective, registerController } from 'NgRegistry.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
@@ -8,7 +8,7 @@ import * as accessChecker from 'access_control/AccessChecker/index.es6';
 import createResourceService from 'services/ResourceService.es6';
 import { getSubscriptionState } from 'account/AccountUtils.es6';
 
-import * as UserListHandler from './UserListHandler.es6';
+import * as RoleListHandler from './RoleListHandler.es6';
 
 export default function register() {
   registerDirective('cfRoleList', () => ({
@@ -24,7 +24,7 @@ export default function register() {
     'UserListController/jumpToRole',
     'spaceContext',
     ($scope, $state, createRoleRemover, jumpToRoleMembers, spaceContext) => {
-      const listHandler = UserListHandler.create();
+      const listHandler = RoleListHandler.create();
       const organization = spaceContext.organization;
 
       $scope.legacy = ResourceUtils.isLegacyOrganization(organization);
@@ -55,7 +55,7 @@ export default function register() {
       }
 
       function jumpToAdminRoleMembers() {
-        jumpToRoleMembers('Administrator');
+        jumpToRoleMembers(RoleListHandler.ADMIN_ROLE_NAME);
       }
 
       function duplicateRole(role) {
@@ -68,14 +68,15 @@ export default function register() {
           .then(onResetResponse, accessChecker.wasForbidden($scope.context));
       }
 
-      function onResetResponse(data) {
-        const rolesResource = createResourceService(spaceContext.getId()).get('role');
+      async function onResetResponse(data) {
+        const rolesResource = await createResourceService(spaceContext.getId()).get('role');
 
-        $scope.memberships = listHandler.getMembershipCounts();
-        $scope.countAdmin = $scope.memberships.admin || 0;
+        const roleCounts = listHandler.getRoleCounts();
+        $scope.countAdmin = roleCounts.admin;
+        $scope.memberships = roleCounts;
 
-        $scope.roles = _.sortBy(data.roles, 'name').map(role => {
-          role.count = $scope.memberships[role.sys.id] || 0;
+        $scope.roles = sortBy(data.roles, 'name').map(role => {
+          role.count = roleCounts[role.sys.id] || 0;
 
           return role;
         });

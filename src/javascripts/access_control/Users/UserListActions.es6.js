@@ -29,6 +29,8 @@ const MODAL_OPTS_BASE = {
 const getDisplayName = ({ firstName, lastName, email }) =>
   firstName || lastName ? `${firstName} ${lastName}` : email;
 
+const isLastAdmin = (member, adminCount) => !!member.admin && adminCount === 1;
+
 /**
  * Creates a instance of actions used in space users list view to open the following dialogs:
  *
@@ -56,9 +58,9 @@ export function create(availableRoles, spaceUsers) {
    */
   function openRemovalConfirmationDialog(fetch) {
     return async (member, adminCount) => {
-      const isLastAdmin = member.admin && adminCount === 1;
-
-      const ConfirmDialog = isLastAdmin ? LastAdminRemovalConfirmDialog : UserRemovalConfirmDialog;
+      const ConfirmDialog = isLastAdmin(member, adminCount)
+        ? LastAdminRemovalConfirmDialog
+        : UserRemovalConfirmDialog;
       const confirmed = await ModalLauncher.open(({ isShown, onClose }) => (
         <ConfirmDialog
           displayName={getDisplayName(member.sys.user)}
@@ -96,7 +98,6 @@ export function create(availableRoles, spaceUsers) {
   async function openRoleChangeDialog(member, adminCount) {
     const {
       sys: { id: memberId, user },
-      admin,
       roles,
       relatedMemberships
     } = member;
@@ -109,7 +110,7 @@ export function create(availableRoles, spaceUsers) {
         initiallySelectedRoleIds={map(roles, 'sys.id')}
         onClose={onClose}
         memberId={memberId}
-        isLastAdmin={!!admin && adminCount === 1}
+        isLastAdmin={isLastAdmin(member, adminCount)}
       />
     ));
 

@@ -1,5 +1,5 @@
 import { registerFactory } from 'NgRegistry.es6';
-import _ from 'lodash';
+import { extend, map } from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 import { getInstance } from 'access_control/RoleRepository.es6';
@@ -37,13 +37,14 @@ export default function register() {
 
         function prepareRemovalDialogScope(role, remove) {
           const scope = $rootScope.$new();
+          const roleCount = listHandler.getRoleCounts()[role.sys.id];
 
-          return _.extend(scope, {
+          return extend(scope, {
             role,
             input: {},
-            count: getCountFor(role),
-            isUsed: getCountFor(role) > 0,
-            roleOptions: listHandler.getRoleOptionsBut(role.sys.id),
+            count: roleCount,
+            isUsed: roleCount > 0,
+            roleOptions: listHandler.getRoleOptions().filter(({ id }) => id !== role.sys.id),
             moveUsersAndRemoveRole: Command.create(moveUsersAndRemoveRole, {
               disabled: function() {
                 return !scope.input.id;
@@ -53,11 +54,10 @@ export default function register() {
           });
 
           function moveUsersAndRemoveRole() {
-            const users = listHandler.getUsersByRole(role.sys.id);
-            const memberships = _.map(users, 'membership');
+            const memberships = listHandler.getMemberships();
             const moveToRoleId = scope.input.id;
 
-            const promises = _.map(memberships, membership =>
+            const promises = map(memberships, membership =>
               spaceContext.memberships.changeRoleTo(membership, [moveToRoleId])
             );
 
@@ -69,11 +69,6 @@ export default function register() {
               ReloadNotification.basicErrorHandler
             );
           }
-        }
-
-        function getCountFor(role) {
-          const counts = listHandler.getMembershipCounts();
-          return counts[role.sys.id];
         }
       };
     }
