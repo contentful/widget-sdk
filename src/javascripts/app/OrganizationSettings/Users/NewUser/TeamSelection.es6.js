@@ -68,8 +68,8 @@ function Toggle({ isOpen, onClick, count }) {
     display: 'flex'
   });
   const hasMemberships = count > 0;
-  const label = pluralize('space', count, true);
-  const iconName = isOpen ? 'ChevronUp' : 'ChevronDown';
+  const label = `in ${pluralize('space', count, true)}`;
+  const iconName = isOpen ? 'ChevronUp' : 'ChevronRight';
 
   if (!hasMemberships) return 'No spaces';
 
@@ -96,7 +96,7 @@ function TeamSpaceMembershipList({ teamSpaceMemberships = [] }) {
       {teamSpaceMemberships &&
         teamSpaceMemberships.map(membership => (
           <Paragraph key={membership.sys.id}>
-            {membership.sys.space.name} as {getRolesText(membership)}
+            <strong>{membership.sys.space.name}</strong> as {getRolesText(membership)}
           </Paragraph>
         ))}
     </Typography>
