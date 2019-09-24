@@ -96,7 +96,8 @@ const UserListPresentation = ({
   openRemovalConfirmationDialog,
   onChangeSelectedView,
   jumpToRole,
-  numberOfTeamMemberships
+  numberOfTeamMemberships,
+  adminCount
 }) => {
   const roleAnchorEl = useRef(null);
   useEffect(() => {
@@ -139,78 +140,73 @@ const UserListPresentation = ({
             <div key={label} className={styles.userListGroup}>
               <span id="scroll-to-anchor" ref={label === jumpToRole ? roleAnchorEl : null} />
               <SectionHeading element="h3">{label}</SectionHeading>
-              {members.map(
-                ({
+              {members.map(member => {
+                const {
                   sys: {
                     id,
                     user: { avatarUrl, firstName, lastName, email, confirmed }
                   },
                   roles
-                }) => {
-                  const displayName = firstName || lastName ? `${firstName} ${lastName}` : email;
-                  const displayRoles = isEmpty(roles)
-                    ? 'Administrator'
-                    : joinAnd(map(roles, 'name'));
+                } = member;
+                const displayName = firstName || lastName ? `${firstName} ${lastName}` : email;
+                const displayRoles = isEmpty(roles) ? 'Administrator' : joinAnd(map(roles, 'name'));
 
-                  return (
-                    <div key={id} data-test-id="user-list.item" className={styles.user}>
-                      <img
-                        className={styles.userAvatar}
-                        src={avatarUrl}
-                        width="50"
-                        height="50"
-                        alt="user avatar"
-                      />
-                      <div>
-                        <strong data-test-id="user-list.name" className={styles.userName}>
-                          {displayName}
-                        </strong>
-                        {!confirmed && (
-                          <small className={styles.notConfirmed}>
-                            This account is not confirmed
-                          </small>
-                        )}
-                        <div data-test-id="user-list.roles">{displayRoles}</div>
-                      </div>
-                      <Tooltip
-                        targetWrapperClassName={styles.userMenu}
-                        place="left"
-                        content={
-                          numberOfTeamMemberships[id] > 0
-                            ? `This user has space access through ${pluralize(
-                                'team',
-                                numberOfTeamMemberships[id],
-                                true
-                              )}`
-                            : ''
-                        }>
-                        <ContextMenu
-                          buttonProps={{
-                            'data-test-id': 'user-list.actions'
-                          }}
-                          isDisabled={!canModifyUsers || numberOfTeamMemberships[id] > 0}
-                          items={[
-                            {
-                              label: 'Change role',
-                              action: () => openRoleChangeDialog(id),
-                              otherProps: {
-                                'data-ui-trigger': 'user-change-role'
-                              }
-                            },
-                            {
-                              label: 'Remove from this space',
-                              action: () => openRemovalConfirmationDialog(id),
-                              otherProps: {
-                                'data-ui-trigger': 'user-remove-from-space'
-                              }
-                            }
-                          ]}
-                        />
-                      </Tooltip>
+                return (
+                  <div key={id} data-test-id="user-list.item" className={styles.user}>
+                    <img
+                      className={styles.userAvatar}
+                      src={avatarUrl}
+                      width="50"
+                      height="50"
+                      alt="user avatar"
+                    />
+                    <div>
+                      <strong data-test-id="user-list.name" className={styles.userName}>
+                        {displayName}
+                      </strong>
+                      {!confirmed && (
+                        <small className={styles.notConfirmed}>This account is not confirmed</small>
+                      )}
+                      <div data-test-id="user-list.roles">{displayRoles}</div>
                     </div>
-                  );
-                }
-              )}
+                    <Tooltip
+                      targetWrapperClassName={styles.userMenu}
+                      place="left"
+                      content={
+                        numberOfTeamMemberships[id] > 0
+                          ? `This user has space access through ${pluralize(
+                              'team',
+                              numberOfTeamMemberships[id],
+                              true
+                            )}`
+                          : ''
+                      }>
+                      <ContextMenu
+                        buttonProps={{
+                          'data-test-id': 'user-list.actions'
+                        }}
+                        isDisabled={!canModifyUsers || numberOfTeamMemberships[id] > 0}
+                        items={[
+                          {
+                            label: 'Change role',
+                            action: () => openRoleChangeDialog(member, adminCount),
+                            otherProps: {
+                              'data-ui-trigger': 'user-change-role'
+                            }
+                          },
+                          {
+                            label: 'Remove from this space',
+                            action: () => openRemovalConfirmationDialog(member, adminCount),
+                            otherProps: {
+                              'data-ui-trigger': 'user-remove-from-space'
+                            }
+                          }
+                        ]}
+                      />
+                    </Tooltip>
+                  </div>
+                );
+              })}
             </div>
           ))}
         </Workbench.Content>
@@ -243,9 +239,10 @@ UserListPresentation.propTypes = {
   isOwnerOrAdmin: PropTypes.bool.isRequired,
   isInvitingUsersToSpace: PropTypes.bool,
   hasTeamsFeature: PropTypes.bool,
-  spaceUsersCount: PropTypes.number,
+  spaceUsersCount: PropTypes.number.isRequired,
   openSpaceInvitationDialog: PropTypes.func.isRequired,
   openRoleChangeDialog: PropTypes.func.isRequired,
   openRemovalConfirmationDialog: PropTypes.func.isRequired,
-  onChangeSelectedView: PropTypes.func.isRequired
+  onChangeSelectedView: PropTypes.func.isRequired,
+  adminCount: PropTypes.number.isRequired
 };

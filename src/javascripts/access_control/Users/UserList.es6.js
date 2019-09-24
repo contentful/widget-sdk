@@ -1,49 +1,62 @@
 import React, { useCallback, useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import _, { noop, groupBy, first, map, orderBy, filter, get } from 'lodash';
+import _, { groupBy, first, map, orderBy, filter, get } from 'lodash';
 
 import { create as createMembershipRepo } from 'access_control/SpaceMembershipRepository.es6';
+import { canModifyUsers } from 'access_control/AccessChecker/index.es6';
 import createSpaceMembersRepo from 'data/CMA/SpaceMembersRepo.es6';
 import RoleRepository from 'access_control/RoleRepository.es6';
 import { getAllUsers } from 'access_control/OrganizationMembershipRepository.es6';
 import resolveLinks from 'data/LinkResolver.es6';
 import useAsync from 'app/common/hooks/useAsync.es6';
-import { getModule } from 'NgRegistry.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
+import { getModule } from 'NgRegistry.es6';
+import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 
-import UserListPresentation from './UserListPresentation.es6';
+import * as UserListActions from './UserListActions.es6';
+import UserListPresentation from './UserListPresentation';
 import { VIEW_BY_NAME, VIEW_BY_ROLE } from './constants.es6';
 
-const fetch = (endpoint, space, onReady) => async () => {
-  const [members, spaceMemberships, roles, users] = await Promise.all([
+const fetch = (orgId, endpoint, space, onReady, setData) => async () => {
+  const [members, spaceMemberships, roles, spaceUsers, hasTeamsFeature] = await Promise.all([
     createSpaceMembersRepo(endpoint).getAll(),
     createMembershipRepo(endpoint).getAll(),
     RoleRepository.getInstance(space).getAll(),
-    getAllUsers(endpoint)
+    getAllUsers(endpoint),
+    getOrgFeature(orgId, 'teams', false)
   ]);
 
   const resolvedMembers = resolveLinks({
     paths: ['roles', 'relatedMemberships', 'sys.user'],
-    includes: { Role: roles, SpaceMembership: spaceMemberships, User: users },
+    includes: { Role: roles, SpaceMembership: spaceMemberships, User: spaceUsers },
     items: members
   });
 
-  onReady();
+  setData({ resolvedMembers, roles, spaceUsers, hasTeamsFeature });
 
-  return { resolvedMembers };
+  onReady();
 };
 
 const UserList = ({ onReady, jumpToRole }) => {
-  const [selectedView, setSelectedView] = useState(jumpToRole ? VIEW_BY_ROLE : VIEW_BY_NAME);
   const { endpoint, space, organization } = getModule('spaceContext');
-  const accessChecker = getModule('access_control/AccessChecker');
-  const { isLoading, error, data } = useAsync(useCallback(fetch(endpoint, space, onReady), []));
+
+  const [selectedView, setSelectedView] = useState(jumpToRole ? VIEW_BY_ROLE : VIEW_BY_NAME);
+  const [isInvitingUsersToSpace, setIsInvitingUsersToSpace] = useState(false);
+  const [data, setData] = useState(null);
+  const boundFetch = fetch(organization.sys.id, endpoint, space, onReady, setData);
+  const { isLoading, error } = useAsync(useCallback(boundFetch, []));
 
   const resolvedMembers = get(data, 'resolvedMembers', []);
+  const roles = get(data, 'roles', []);
+  const spaceUsers = get(data, 'spaceUsers', []);
+  const hasTeamsFeature = get(data, 'hasTeamsFeature', false);
+
   const sortedMembers = useMemo(
     () => orderBy(resolvedMembers, ['sys.user.firstName', 'sys.user.lastName'], ['asc', 'asc']),
     [resolvedMembers]
   );
+
+  const adminCount = filter(sortedMembers, 'admin').length;
 
   const usersByName = useMemo(
     () =>
@@ -85,22 +98,41 @@ const UserList = ({ onReady, jumpToRole }) => {
 
   const spaceUsersCount = sortedMembers.length;
 
+  const actions = UserListActions.create(roles, spaceUsers);
+
   return (
     <UserListPresentation
-      orgId={organization.sys.id}
-      isOwnerOrAdmin={isOwnerOrAdmin(organization)}
-      canModifyUsers={accessChecker.canModifyUsers()}
-      selectedView={selectedView}
-      openRemovalConfirmationDialog={noop}
-      openRoleChangeDialog={noop}
-      openSpaceInvitationDialog={noop}
-      onChangeSelectedView={setSelectedView}
       userGroups={userGroups}
-      spaceUsersCount={spaceUsersCount}
       numberOfTeamMemberships={numberOfTeamMemberships}
+      selectedView={selectedView}
+      orgId={organization.sys.id}
       jumpToRole={jumpToRole}
+      canModifyUsers={canModifyUsers()}
+      isOwnerOrAdmin={isOwnerOrAdmin(organization)}
+      isInvitingUsersToSpace={isInvitingUsersToSpace}
+      hasTeamsFeature={hasTeamsFeature}
+      spaceUsersCount={spaceUsersCount}
+      openSpaceInvitationDialog={openSpaceInvitationDialog}
+      openRoleChangeDialog={decorateWithRefetch(actions.openRoleChangeDialog)}
+      openRemovalConfirmationDialog={actions.openRemovalConfirmationDialog(boundFetch)}
+      onChangeSelectedView={setSelectedView}
+      adminCount={adminCount}
     />
   );
+
+  function decorateWithRefetch(command) {
+    return function(...args) {
+      return command(...args).then(boundFetch);
+    };
+  }
+
+  function openSpaceInvitationDialog() {
+    setIsInvitingUsersToSpace(true);
+
+    decorateWithRefetch(actions.openSpaceInvitationDialog(boundFetch))().finally(() => {
+      setIsInvitingUsersToSpace(false);
+    });
+  }
 };
 UserList.propTypes = {
   onReady: PropTypes.func.isRequired,
