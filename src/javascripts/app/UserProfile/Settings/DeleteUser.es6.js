@@ -43,7 +43,7 @@ const DeleteUser = ({ userCancellationWarning }) => {
     other: { name: 'Other', key: 'other' }
   };
   const [showModal, setShowModal] = useState(false);
-  const [activeOption, setActiveOption] = useState(reasons.other.key);
+  const [activeOption, setActiveOption] = useState(null);
   const [details, setDetails] = useState('');
 
   const onCancelUser = ({ activeOption, details }) => {

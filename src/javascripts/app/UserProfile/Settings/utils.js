@@ -10,24 +10,31 @@ const validators = {
 
     if (!validations.presence(value)) {
       return 'First name is required';
+<<<<<<< HEAD
     }
 
     if (!validations.maxLength(100, value)) {
       return 'First name must be less than 100 characters';
+=======
+>>>>>>> Add touched and dirty as separate statuses on the field data
     }
   },
   lastName: field => {
     const { value } = field;
     if (!validations.presence(value)) {
       return 'Last name is required';
+<<<<<<< HEAD
     }
 
     if (!validations.maxLength(100, value)) {
       return 'Last name must be less than 100 characters';
+=======
+>>>>>>> Add touched and dirty as separate statuses on the field data
     }
   },
   email: field => {
     const { value } = field;
+<<<<<<< HEAD
 
     if (!validations.presence(value)) {
       return 'Email is required';
@@ -41,6 +48,19 @@ const validators = {
     const { value, touched, dirty } = field;
 
     if (!(touched && dirty)) {
+=======
+    if (!validations.presence(value)) {
+      return 'Email is required';
+    }
+  },
+  currentPassword: (field, fields) => {
+    const { value, dirty } = field;
+    if (!dirty) {
+      return null;
+    }
+
+    if (!fields.email.value) {
+>>>>>>> Add touched and dirty as separate statuses on the field data
       return null;
     }
 
@@ -49,6 +69,7 @@ const validators = {
     }
   },
   newPassword: field => {
+<<<<<<< HEAD
     const { value, touched, dirty } = field;
 
     if (!(touched && dirty)) {
@@ -59,14 +80,28 @@ const validators = {
       return;
     }
 
+=======
+    const { value, dirty } = field;
+
+    if (!dirty) {
+      return null;
+    }
+
+>>>>>>> Add touched and dirty as separate statuses on the field data
     if (!validations.minLength(8, value)) {
       return 'New password must be at least 8 characters';
     }
   },
   newPasswordConfirm: (field, fields) => {
+<<<<<<< HEAD
     const { value, touched, dirty } = field;
 
     if (!(touched && dirty)) {
+=======
+    const { value, dirty } = field;
+
+    if (!dirty) {
+>>>>>>> Add touched and dirty as separate statuses on the field data
       return null;
     }
 
