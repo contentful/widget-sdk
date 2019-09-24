@@ -68,8 +68,6 @@ export const angularInitRun = [
       import('app/entity_editor/fieldLocaleController.es6'),
       import('app/entity_editor/presenceHub.es6'),
       import('app/entity_editor/stateController.es6'),
-      import('data/sharejs/utils.es6'),
-      import('app/entity_editor/stringField.es6'),
       import('app/entry_editor/cfEntryEditorDirective.es6'),
       import('app/entry_editor/cfWidgetApiDirective.es6'),
       import('app/entry_editor/entryActionsController.es6'),

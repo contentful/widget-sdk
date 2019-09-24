@@ -126,7 +126,6 @@
       await SystemJS.import('test/helpers/mocks/editor_context');
       await SystemJS.import('test/helpers/mocks/cf_stub');
       await SystemJS.import('test/helpers/mocks/space_context');
-      await SystemJS.import('test/helpers/mocks/ot_doc');
       await SystemJS.import('test/helpers/mocks/widget_api');
 
       await SystemJS.import('prelude');

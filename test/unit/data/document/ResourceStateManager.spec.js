@@ -1,8 +1,11 @@
 import sinon from 'sinon';
 import * as K from 'test/utils/kefir';
 import createMockSpaceEndpoint from 'test/utils/createSpaceEndpointMock';
-import { $initialize, $inject } from 'test/utils/ng';
+import { $initialize } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
+import createOtDocMock from 'test/helpers/mocks/ot_doc';
+
+const OtDocMock = createOtDocMock();
 
 describe('data/document/ResourceStateManager.es6', () => {
   beforeEach(async function() {
@@ -44,8 +47,7 @@ describe('data/document/ResourceStateManager.es6', () => {
       setDeleted: sinon.stub()
     };
 
-    const OtDoc = $inject('mocks/OtDoc');
-    this.sjsDoc = new OtDoc(entityData);
+    this.sjsDoc = new OtDocMock(entityData);
 
     const docLoader = {
       doc: K.createMockProperty(DocLoad.None()),

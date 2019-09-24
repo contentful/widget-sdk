@@ -11,7 +11,7 @@ const mocks = {
 };
 
 jest.mock(
-  'ng/data/ShareJS/Utils',
+  'data/sharejs/utils.es6',
   () => ({
     setDeep: (...args) => mocks.ShareJS.setDeep(...args),
     peek: (...args) => mocks.ShareJS.peek(...args)

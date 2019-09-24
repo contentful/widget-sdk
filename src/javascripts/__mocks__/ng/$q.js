@@ -1,5 +1,11 @@
+export const resolve = jest.fn().mockImplementation(...args => Promise.resolve(...args));
+export const reject = jest.fn().mockImplementation(error => Promise.reject(error));
+export const all = jest.fn().mockImplementation(queries => Promise.all(queries));
+export const denodeify = jest.fn().mockImplementation(fn => fn(function callback() {}));
+
 export default {
-  resolve: jest.fn().mockImplementation(...args => Promise.resolve(...args)),
-  reject: jest.fn().mockImplementation(error => Promise.reject(error)),
-  all: jest.fn().mockImplementation(queries => Promise.all(queries))
+  resolve,
+  reject,
+  all,
+  denodeify
 };

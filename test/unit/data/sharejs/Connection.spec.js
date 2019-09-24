@@ -1,8 +1,11 @@
 import sinon from 'sinon';
 import * as K from 'test/utils/kefir';
 import _ from 'lodash';
-import { $initialize, $apply, $inject } from 'test/utils/ng';
+import { $initialize, $apply } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
+import createOtDocMock from 'test/helpers/mocks/ot_doc';
+
+const OtDocMock = createOtDocMock();
 
 describe('data/sharejs/Connection.es6', () => {
   beforeEach(async function() {
@@ -41,9 +44,8 @@ describe('data/sharejs/Connection.es6', () => {
 
     await $initialize(this.system);
 
-    const OtDoc = $inject('mocks/OtDoc');
     this.resolveOpen = function() {
-      const doc = new OtDoc();
+      const doc = new OtDocMock();
       doc.close.yields();
       this.baseConnection.open.yield(null, doc);
       this.baseConnection.open.reset();

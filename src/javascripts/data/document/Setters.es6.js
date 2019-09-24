@@ -1,6 +1,7 @@
 import * as K from 'utils/kefir.es6';
 import * as RichTextFieldSetter from 'app/widgets/rich_text/RichTextFieldSetter.es6';
-
+import * as ShareJS from 'data/sharejs/utils.es6';
+import * as StringField from 'app/entity_editor/document/stringField.es6';
 import { getModule } from 'NgRegistry.es6';
 
 /**
@@ -22,8 +23,6 @@ export function create({
   contentType
 }) {
   const $q = getModule('$q');
-  const StringField = getModule('entityEditor/Document/StringField');
-  const ShareJS = getModule('data/ShareJS/Utils');
 
   const localFieldChangesBus = K.createBus();
   const errorBus = K.createBus();
@@ -65,7 +64,7 @@ export function create({
   }
 
   function setValueAtRaw(doc, path, value) {
-    if (path.length === 3 && StringField.is(path[1], contentType)) {
+    if (path.length === 3 && StringField.isStringField(path[1], contentType)) {
       return StringField.setAt(doc, path, value);
     } else if (RichTextFieldSetter.is(path[1], contentType)) {
       return RichTextFieldSetter.setAt(doc, path, value);

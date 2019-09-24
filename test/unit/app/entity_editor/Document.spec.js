@@ -3,8 +3,11 @@ import _ from 'lodash';
 import sinon from 'sinon';
 import { deepFreeze } from 'utils/Freeze.es6';
 import createLocaleStoreMock from 'test/utils/createLocaleStoreMock';
-import { $inject, $initialize, $apply } from 'test/utils/ng';
+import { $initialize, $apply } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
+import createOtDocMock from 'test/helpers/mocks/ot_doc';
+
+const OtDocMock = createOtDocMock();
 
 describe('entityEditor/Document', () => {
   beforeEach(async function() {
@@ -45,7 +48,7 @@ describe('entityEditor/Document', () => {
       if (!_.get(data, ['sys', 'type'])) {
         _.set(data, ['sys', 'type'], 'Entry');
       }
-      const doc = new this.OtDoc(data);
+      const doc = new OtDocMock(data);
       this.docLoader.doc.set(this.DocLoad.Doc(doc));
       $apply();
       return doc;
@@ -55,8 +58,6 @@ describe('entityEditor/Document', () => {
     this.localeStore.setLocales([{ internal_code: 'en' }]);
 
     await $initialize(this.system);
-
-    this.OtDoc = $inject('mocks/OtDoc');
 
     this.contentType = {
       data: {
@@ -158,7 +159,7 @@ describe('entityEditor/Document', () => {
   describe('on document change', () => {
     it('closes current doc', function() {
       this.otDoc = this.connectAndOpen();
-      this.docLoader.doc.set(this.DocLoad.Doc(new this.OtDoc({ sys: { type: 'Entry' } })));
+      this.docLoader.doc.set(this.DocLoad.Doc(new OtDocMock({ sys: { type: 'Entry' } })));
       sinon.assert.calledOnce(this.docLoader.close);
     });
 

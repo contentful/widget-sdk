@@ -24,11 +24,11 @@ import { getModule } from 'NgRegistry.es6';
 import * as logger from 'services/logger.es6';
 import * as Status from 'data/document/status.es6';
 import TheLocaleStore from 'services/localeStore.es6';
+import * as ShareJS from 'data/sharejs/utils.es6';
 
 // TODO Instead of passing an entity instance provided by the client
 // library we should only pass the entity data.
 export function create(docConnection, entity, contentType, user, spaceEndpoint) {
-  const ShareJS = getModule('data/ShareJS/Utils');
   const PresenceHub = getModule('entityEditor/Document/PresenceHub');
 
   let currentDoc;

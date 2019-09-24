@@ -1,8 +1,8 @@
 import jsondiff from 'json0-ot-diff';
 import emptyDoc from './constants/EmptyDoc.es6';
 import deepEqual from 'fast-deep-equal';
+import * as ShareJS from 'data/sharejs/utils.es6';
 
-import { getModule } from 'NgRegistry.es6';
 import * as logger from 'services/logger.es6';
 
 /**
@@ -37,8 +37,6 @@ export const is = (fieldId, contentType) => {
  * @param {object} nextFieldValue
  */
 export const setAt = (doc, fieldPath, nextFieldValue) => {
-  const ShareJS = getModule('data/ShareJS/Utils');
-
   const fieldValue = ShareJS.peek(doc, fieldPath);
   if (deepEqual(nextFieldValue, emptyDoc)) {
     /**
@@ -56,7 +54,7 @@ export const setAt = (doc, fieldPath, nextFieldValue) => {
      * We pass both the `fieldValue` and `nextFieldValue` as undefined to keep
      * ShareJS from raising a type error. This litters the console output.
      *
-     * [1] https://github.com/contentful/user_interface/blob/master/src/javascripts/app/entity_editor/stringField.es6.js#L28-L33
+     * [1] https://github.com/contentful/user_interface/blob/master/src/javascripts/app/entity_editor/document/stringField.es6.js#L28-L33
      */
     return ShareJS.setDeep(doc, fieldPath, undefined).then(() =>
       setValue(doc, fieldPath, undefined, undefined)
@@ -78,8 +76,6 @@ export const setAt = (doc, fieldPath, nextFieldValue) => {
 };
 
 function setValue(doc, fieldPath, fieldValue, nextFieldValue) {
-  const ShareJS = getModule('data/ShareJS/Utils');
-
   const ops = jsondiff(fieldValue, nextFieldValue).map(op => ({
     ...op,
     p: [...fieldPath, ...op.p]
