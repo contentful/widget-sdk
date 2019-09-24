@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Heading, IconButton, Typography, Tooltip } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css, cx } from 'emotion';
@@ -6,6 +6,7 @@ import { User as UserPropType } from './propTypes';
 import IdentitiesSection from './IdentitiesSection.es6';
 import UserEditModal from './UserEditModal';
 import * as ModalLauncher from 'app/common/ModalLauncher.es6';
+import { deleteUserIdentityData } from './AccountService.es6';
 
 const styles = {
   spaceLeft: css({
@@ -82,6 +83,25 @@ const openEditModal = async (user, setUser) => {
 
 export default function AccountDetails({ data }) {
   const [user, setUser] = useState(data);
+  const [identities, setIdentities] = useState(user.identities);
+  const removeIdentity = useCallback(
+    async provider => {
+      const {
+        sys: { id: identityId }
+      } = identities.find(i => i.provider === provider);
+
+      // identityIds are, weirdly, numbers, so they must be cast to string before making
+      // the API call
+      await deleteUserIdentityData(identityId.toString());
+
+      const updatedIdentities = identities.filter(identity => {
+        return identity.provider !== provider;
+      });
+
+      setIdentities(updatedIdentities);
+    },
+    [identities]
+  );
 
   return (
     <div data-test-id="user-account-data" className={styles.paddingS}>
@@ -117,7 +137,7 @@ export default function AccountDetails({ data }) {
           </Tooltip>
         </div>
       </section>
-      <IdentitiesSection identities={user.identities} />
+      <IdentitiesSection onRemoveIdentity={removeIdentity} identities={identities} />
     </div>
   );
 }
