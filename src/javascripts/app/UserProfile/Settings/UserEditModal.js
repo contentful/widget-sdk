@@ -145,7 +145,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
   const currentPasswordIsRequired =
     fields.email.touched || fields.newPassword.touched || fields.newPasswordConfirm.touched;
   const submitButtonDisabled =
-    !Object.values(formData.fields).find(field => field.dirty) || formData.formInvalid;
+    !Object.values(formData.fields).find(field => field.touched) || formData.formInvalid;
 
   return (
     <Modal

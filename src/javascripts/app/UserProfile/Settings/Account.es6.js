@@ -56,8 +56,7 @@ const styles = {
   }),
   password: css({
     fontWeight: tokens.fontWeightMedium,
-    fontSize: tokens.fontSizeL,
-    marginTop: tokens.spacingM
+    fontSize: tokens.fontSizeL
   })
 };
 
@@ -123,13 +122,16 @@ export default function AccountDetails({ data }) {
                 {user.firstName} {user.lastName}
               </span>
               <span className={styles.email}>
-                {user.email} {user.unconfirmedEmail ? `(${user.unconfirmedEmail})` : null}
+                {user.email}{' '}
+                {user.unconfirmedEmail ? (
+                  <Tooltip content="This email is unconfirmed">({user.unconfirmedEmail})</Tooltip>
+                ) : null}
               </span>
               {!user.ssoLoginOnly && user.passwordSet && (
                 <span className={styles.password}>********</span>
               )}
               {user.ssoLoginOnly && (
-                <TextLink href={`${websiteUrl()}/faq/sso`}>
+                <TextLink href={websiteUrl('faq/sso')}>
                   Single sign-on is active for your account.
                 </TextLink>
               )}

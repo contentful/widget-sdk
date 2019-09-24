@@ -5,22 +5,20 @@ import {
   Button,
   Modal,
   Typography,
-  Subheading,
   Paragraph,
   FieldGroup,
   RadioButtonField,
   Textarea,
   Note,
-  List,
-  ListItem
+  FormLabel
 } from '@contentful/forma-36-react-components';
-import { isEmpty, kebabCase } from 'lodash';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { deleteUserAccount } from './AccountService.es6';
+import ContactUsButton from 'ui/Components/ContactUsButton.es6';
 
 const styles = {
-  dangerZoneNote: css({ marginTop: tokens.spacingXl }),
+  warningNote: css({ marginBottom: tokens.spacingL }),
   orgName: css({
     fontWeight: tokens.fontWeightDemiBold,
     fontSize: tokens.fontSizeM,
@@ -28,13 +26,14 @@ const styles = {
   }),
   paddingS: css({ padding: tokens.spacingS }),
   buttons: css({
-    '> &:first-child': {
+    marginTop: tokens.spacingM,
+    '> button': {
       marginRight: tokens.spacingM
     }
   })
 };
 
-const DeleteUser = ({ userCancellationWarning }) => {
+const DeleteUser = ({ singleOwnerOrganizations }) => {
   const reasons = {
     otherSolution: { name: "I've found another solution", key: 'other_solution' },
     notUseful: { name: "I don't find it useful", key: 'not_useful' },
@@ -50,17 +49,22 @@ const DeleteUser = ({ userCancellationWarning }) => {
     deleteUserAccount({ reason: activeOption, description: details });
   };
 
+  const warningNoteCountCopy =
+    singleOwnerOrganizations.length === 1
+      ? `your organization ${singleOwnerOrganizations[0].name}`
+      : `all ${singleOwnerOrganizations.length} of your organizations`;
+
   return (
     <>
       <Typography className={styles.paddingS}>
         <Heading>Danger Zone</Heading>
         <Button buttonType="negative" onClick={() => setShowModal(true)}>
-          Delete User
+          Delete my account
         </Button>
       </Typography>
 
       <Modal
-        title="Danger Zone"
+        title="Delete my account"
         intent="negative"
         shouldCloseOnEscapePress={true}
         shouldCloseOnOverlayClick={true}
@@ -70,9 +74,19 @@ const DeleteUser = ({ userCancellationWarning }) => {
         confirmTestId="confirm-user-cancellation"
         cancelTestId="cancel-user-cancellation">
         <Typography>
-          <Subheading>{"We're sorry to see you go."}</Subheading>
-          <Paragraph>If there is anything we can help you with, please contact us.</Paragraph>
-          <Subheading>{"What's your reason for cancelling?"}</Subheading>
+          {singleOwnerOrganizations.length && (
+            <Note className={styles.warningNote} noteType="negative">
+              <strong>
+                We will delete {warningNoteCountCopy}, including all spaces and all content, as soon
+                as you delete your account.
+              </strong>
+            </Note>
+          )}
+          <Paragraph>
+            If there is anything we can help you with, please{' '}
+            <ContactUsButton noIcon>get in touch with us</ContactUsButton>.
+          </Paragraph>
+          <FormLabel>Why are you deleting your account?</FormLabel>
           <FieldGroup>
             {Object.keys(reasons).map((reason, index) => (
               <RadioButtonField
@@ -88,32 +102,12 @@ const DeleteUser = ({ userCancellationWarning }) => {
               />
             ))}
           </FieldGroup>
-          <Subheading>{'Do you mind giving us more details?'}</Subheading>
+          <FormLabel>Additional details</FormLabel>
           <Textarea
             name="cancellationDetails"
             value={details}
             onChange={e => setDetails(e.target.value)}></Textarea>
         </Typography>
-        {!isEmpty(userCancellationWarning.singleOwnerOrganizations) && (
-          <Note className={styles.dangerZoneNote} noteType="negative">
-            <Subheading>You’re entering the danger zone!</Subheading>
-            <Paragraph>
-              The following organizations, including their spaces and all their content will be
-              deleted permanently:
-            </Paragraph>
-            {userCancellationWarning.singleOwnerOrganizations.map(org => (
-              <List key={`${kebabCase(org.name)}-list`}>
-                <span key={kebabCase(org.name)} className={styles.orgName}>
-                  {org.name}
-                </span>{' '}
-                (Organization)
-                {org.spaceNames.map(name => (
-                  <ListItem key={kebabCase(name)}>{name}</ListItem>
-                ))}
-              </List>
-            ))}
-          </Note>
-        )}
         <div className={styles.buttons}>
           <Button
             buttonType="negative"
@@ -137,7 +131,7 @@ const DeleteUser = ({ userCancellationWarning }) => {
 };
 
 DeleteUser.propTypes = {
-  userCancellationWarning: PropTypes.any
+  singleOwnerOrganizations: PropTypes.array.isRequired
 };
 
 export default DeleteUser;
