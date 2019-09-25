@@ -7,14 +7,12 @@ import {
   IconButton,
   Tooltip,
   ModalConfirm,
-  Paragraph,
-  Notification
+  Paragraph
 } from '@contentful/forma-36-react-components';
 import { oauthUrl } from 'Config.es6';
 import GithubIcon from 'svg/github-icon.es6';
 import GoogleIcon from 'svg/google-icon.es6';
 import TwitterIcon from 'svg/twitter-icon.es6';
-import { deleteUserIdentityData } from './AccountRepository';
 
 const styles = {
   heading: css({
@@ -50,7 +48,7 @@ const styles = {
     backgroundColor: 'rgb(255, 255, 255, 0)',
     height: '100%',
     width: '100%',
-    paddingLeft: '42px'
+    left: '13px'
   }),
   cursorPointer: css({
     cursor: 'pointer'
@@ -132,23 +130,7 @@ export default IdentitiesSection;
 function RemoveIdentityProvider({ onRemove, identityId, provider, disallowRemoval }) {
   const humanName = idpMap[provider];
 
-  const [isModalShown, setModalShown] = useState(false);
-
-  const removeIdentity = async identityId => {
-    // identityIds are, weirdly, numbers, so they must be cast to string before making
-    // the API call
-    try {
-      await deleteUserIdentityData(identityId.toString());
-    } catch (_) {
-      Notification.error(`An error occurred while removing ${humanName} from your profile.`);
-
-      return;
-    }
-
-    onRemove(identityId);
-
-    Notification.success(`${humanName} successfully removed from your profile.`);
-  };
+  const [isShown, setShown] = useState(false);
 
   return (
     <div className={styles.identitiesRow}>
@@ -169,12 +151,12 @@ function RemoveIdentityProvider({ onRemove, identityId, provider, disallowRemova
               }}
               label={`Remove "${humanName}"`}
               buttonType="secondary"
-              onClick={() => setModalShown(true)}
+              onClick={() => setShown(true)}
               testId={`remove-${provider}-button`}
             />
           </Tooltip>
           <ModalConfirm
-            isShown={isModalShown}
+            isShown={isShown}
             title="Remove identity"
             intent="negative"
             size="small"
@@ -184,11 +166,11 @@ function RemoveIdentityProvider({ onRemove, identityId, provider, disallowRemova
             confirmTestId={`confirm-remove-${provider}-identity`}
             cancelTestId={`cancel-remove-${provider}-identity`}
             onCancel={() => {
-              setModalShown(false);
+              setShown(false);
             }}
             onConfirm={() => {
-              setModalShown(false);
-              removeIdentity(identityId);
+              setShown(false);
+              onRemove(provider);
             }}>
             <Paragraph>
               Are you sure you want to remove this open identity from your account?
@@ -226,7 +208,8 @@ function AddIdentityProvider({ provider }) {
 }
 
 AddIdentityProvider.propTypes = {
-  provider: PropTypes.string.isRequired
+  provider: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired
 };
 
 function IdentityIcon({ provider }) {

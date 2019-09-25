@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Heading,
   IconButton,
@@ -12,8 +12,9 @@ import { websiteUrl } from 'Config.es6';
 import { User as UserPropType } from './propTypes';
 import IdentitiesSection from './IdentitiesSection';
 import UserEditModal from './UserEditModal';
-import ChangePasswordModal from './ChangePasswordModal';
+import AddPasswordModal from './AddPasswordModal';
 import * as ModalLauncher from 'app/common/ModalLauncher.es6';
+import { deleteUserIdentityData } from './AccountService';
 
 const styles = {
   spaceLeft: css({
@@ -81,11 +82,11 @@ const openEditModal = async (user, setUser) => {
   setUser(updatedUser);
 };
 
-const openChangePasswordModal = async (user, setUser) => {
+const openAddPasswordModal = async (user, setUser) => {
   const result = await ModalLauncher.open(({ isShown, onClose }) => {
     return (
-      <ChangePasswordModal
-        user={user}
+      <AddPasswordModal
+        currentVersion={user.sys.version}
         onConfirm={onClose}
         onCancel={() => onClose(false)}
         isShown={isShown}
@@ -102,14 +103,27 @@ const openChangePasswordModal = async (user, setUser) => {
   setUser(updatedUser);
 };
 
-export default function AccountDetails({ userData }) {
-  const [user, setUser] = useState(userData);
+export default function AccountDetails({ data }) {
+  const [user, setUser] = useState(data);
   const [identities, setIdentities] = useState(user.identities);
-  const removeIdentity = identityId => {
-    const updatedIdentities = identities.filter(identity => identity.sys.id !== identityId);
+  const removeIdentity = useCallback(
+    async provider => {
+      const {
+        sys: { id: identityId }
+      } = identities.find(i => i.provider === provider);
 
-    setIdentities(updatedIdentities);
-  };
+      // identityIds are, weirdly, numbers, so they must be cast to string before making
+      // the API call
+      await deleteUserIdentityData(identityId.toString());
+
+      const updatedIdentities = identities.filter(identity => {
+        return identity.provider !== provider;
+      });
+
+      setIdentities(updatedIdentities);
+    },
+    [identities]
+  );
 
   return (
     <div data-test-id="user-account-data" className={styles.paddingS}>
@@ -123,23 +137,21 @@ export default function AccountDetails({ userData }) {
               src={user.avatarUrl}
             />
             <Typography className={cx(styles.column, styles.paddingLeftL)}>
-              <span data-test-id="user-full-name" className={styles.name}>
+              <span className={styles.name}>
                 {user.firstName} {user.lastName}
               </span>
-              <span data-test-id="user-email" className={styles.email}>
-                {user.email}
-                {user.unconfirmedEmail && (
-                  <>
-                    <br />
-                    Unconfirmed email: {user.unconfirmedEmail}
-                  </>
-                )}
+              <span className={styles.email}>
+                {user.email}{' '}
+                {user.unconfirmedEmail ? (
+                  <Tooltip content="This email is unconfirmed">({user.unconfirmedEmail})</Tooltip>
+                ) : null}
               </span>
-              {!user.ssoLoginOnly && (
-                <TextLink
-                  testId="link-change-password"
-                  onClick={() => openChangePasswordModal(user, setUser)}>
-                  {user.passwordSet ? 'Change' : 'Add'} password
+              {!user.ssoLoginOnly && user.passwordSet && (
+                <span className={styles.password}>********</span>
+              )}
+              {!user.ssoLoginOnly && !user.passwordSet && (
+                <TextLink onClick={() => openAddPasswordModal(user, setUser)}>
+                  Add a password
                 </TextLink>
               )}
               {user.ssoLoginOnly && (
@@ -174,5 +186,5 @@ export default function AccountDetails({ userData }) {
 }
 
 AccountDetails.propTypes = {
-  userData: UserPropType.isRequired
+  data: UserPropType.isRequired
 };
