@@ -50,7 +50,6 @@ describe('Schedule Publication', () => {
       cy.wait(validateAnEntryInteraction);
       cy.wait(scheduledPubinteraction);
       cy.getByTestId('scheduled-item').should('have.length', 1);
-      cy.getByTestId('change-state-published').should('be.disabled');
     });
     it('cannot create more jobs than the set limit', () => {
       const validateAnEntryInteraction = validateAnEntryValidResponse.willSucceed();
@@ -66,11 +65,11 @@ describe('Schedule Publication', () => {
         .click();
 
       cy.wait(validateAnEntryInteraction);
-      cy.wait(scheduledPubinteraction)
-      cy.wait(200)  // extra wait for notification animation 200ms
+      cy.wait(scheduledPubinteraction);
+      cy.wait(200); // extra wait for notification animation 200ms
       cy.getAllByTestId('cf-ui-notification')
         .should('be.visible')
-        .should('contain', 'There is a limit of 10 scheduled entries')
+        .should('contain', 'There is a limit of 10 scheduled entries');
     });
   });
 

@@ -135,7 +135,7 @@ export default function JobsWidget({
     fetchJobs();
   }, [fetchJobs, publishedAt]);
 
-  const createJob = async scheduledAt => {
+  const createJob = async ({ scheduledAt, action }) => {
     try {
       const job = await JobsService.createJob(
         EndpointFactory.createSpaceEndpoint(spaceId, environmentId),
@@ -144,7 +144,7 @@ export default function JobsWidget({
           environmentId,
           userId,
           entityId: entity.sys.id,
-          action: 'publish',
+          action: action,
           scheduledAt
         })
       );
@@ -165,17 +165,14 @@ export default function JobsWidget({
     }
   };
 
-  const handleCreate = async ({ scheduledAt }) => {
+  const handleCreate = async ({ scheduledAt, action }) => {
     setIsCreatingJob(true);
-    const job = await createJob(scheduledAt);
+    const job = await createJob({ scheduledAt, action });
     if (job && job.sys) {
       Notification.success(`${entryTitle} was scheduled successfully`);
       setIsCreatingJob(false);
       setIsDialogShown(false);
-      trackCreatedJob({
-        jobId: job.sys.id,
-        scheduledAt: job.scheduledAt
-      });
+      trackCreatedJob(job);
       setJobs([job, ...jobs]);
     }
   };
@@ -183,8 +180,9 @@ export default function JobsWidget({
   const handleCancel = jobId => {
     JobsService.cancelJob(EndpointFactory.createSpaceEndpoint(spaceId, environmentId), jobId).then(
       () => {
-        trackCancelledJob({ jobId });
-        setJobs(jobs.slice(1));
+        const job = jobs.find(j => j.sys.id === jobId);
+        trackCancelledJob(job);
+        setJobs(jobs.filter(j => j !== job));
         Notification.success('Schedule cancelled');
       }
     );
@@ -196,10 +194,6 @@ export default function JobsWidget({
   const lastJob = jobs[0];
   const prevLastJob = usePrevious(lastJob);
   const showToast = shouldShowSuccessToast(prevLastJob, lastJob, entity);
-
-  const finalPublicationBlockedReason = hasScheduledActions
-    ? PUBLICATION_BLOCKED_BY_JOBS_WARNING
-    : publicationBlockedReason;
 
   useEffect(() => {
     if (showToast) {
@@ -220,13 +214,6 @@ export default function JobsWidget({
         isSaving={isSaving}
         updatedAt={updatedAt}
         onScheduledPublishClick={async () => {
-          if (!validator.run()) {
-            Notification.error(
-              `Error scheduling ${entryTitle}: Validation failed. Please check the individual fields for errors.`
-            );
-            return;
-          }
-
           const isConfirmed = await showUnpublishedReferencesWarning({
             entity,
             spaceId,
@@ -240,8 +227,8 @@ export default function JobsWidget({
           }
         }}
         isScheduledPublishDisabled={Boolean(error)}
-        isDisabled={hasScheduledActions || isLoading}
-        publicationBlockedReason={finalPublicationBlockedReason}
+        isDisabled={isLoading}
+        publicationBlockedReason={publicationBlockedReason}
       />
       {isLoading && (
         <SkeletonContainer data-test-id="jobs-skeleton" className={styles.jobsSkeleton}>
@@ -263,15 +250,18 @@ export default function JobsWidget({
               jobs={pendingJobs}
               onCancel={handleCancel}
               isReadOnly={primary.isDisabled()}
+              hasAlphaTag
             />
           )}
           {isDialogShown && (
             <JobDialog
+              isMasterEnvironment={isMasterEnvironment}
               spaceId={spaceId}
               environmentId={environmentId}
               entity={entity}
               validator={validator}
               entryTitle={entryTitle}
+              pendingJobs={pendingJobs}
               onCreate={newJob => {
                 handleCreate(newJob);
               }}

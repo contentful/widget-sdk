@@ -8,6 +8,7 @@ import { css } from 'emotion';
 
 import JobsEmptyStateMessage from './JobsEmptyStateMessage.es6';
 import WrappedEntityList from 'app/common/WrappedEntityList/index.es6';
+import JobAction from '../JobAction.es6';
 
 const styles = {
   jobsSchedule: css({}),
@@ -19,8 +20,13 @@ const styles = {
     paddingBottom: tokens.spacingXs,
     marginBottom: tokens.spacingL
   }),
-  timeGroup: css({ display: 'flex', alignItems: 'center', marginBottom: tokens.spacingL }),
-  timeGroupHeader: css({ marginRight: tokens.spacingM, textAlign: 'right', minWidth: '80px' }),
+  timeGroup: css({ display: 'flex', marginBottom: tokens.spacingL }),
+  timeGroupHeader: css({
+    marginRight: tokens.spacingM,
+    marginTop: tokens.spacingS,
+    textAlign: 'right',
+    minWidth: '80px'
+  }),
   timeGroupListWrapper: css({
     maxWidth: 'calc(100% - 95px)',
     flexGrow: 1,
@@ -42,7 +48,9 @@ const TimeGroup = ({ jobs, entriesData, contentTypesData }) => {
     <div className={styles.timeGroup}>
       <div className={styles.timeGroupHeader}>
         <SectionHeading>{moment(jobs[0].scheduledAt).format('hh:mm A')}</SectionHeading>
-        <Tag tagType="positive">{jobs[0].action}</Tag>
+        <Tag tagType={jobs[0].action === JobAction.Publish ? 'positive' : 'secondary'}>
+          {jobs[0].action}
+        </Tag>
       </div>
       <div className={styles.timeGroupListWrapper}>
         <WrappedEntityList
@@ -79,7 +87,7 @@ function formatDate(date) {
 
 const DateGroup = ({ jobs, entriesData, contentTypesData }) => {
   const timeGroups = _.chain(jobs)
-    .groupBy(job => moment(job.scheduledAt).format('HH:mm'))
+    .groupBy(job => `${moment(job.scheduledAt).format('HH:mm')}-${job.action}`)
     .map(job => job)
     .value();
   return (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment-timezone';
 import { css } from 'emotion';
@@ -19,12 +19,17 @@ import APIClient from 'data/APIClient.es6';
 import { getTimezoneOptions } from './Timezones.es6';
 import { createDialogClose, createDialogOpen } from 'app/jobs/Analytics/JobsAnalytics.es6';
 
+import JobsTimeline from '../JobsTimeline/index.es6';
 import DatePicker from './DatePicker/index.es6';
 import TimePicker from './TimePicker/index.es6';
+import JobAction, { actionToLabelText } from 'app/jobs/JobAction.es6';
 
 const styles = {
   timezoneNote: css({
     marginTop: tokens.spacingS
+  }),
+  form: css({
+    marginBottom: `-${tokens.spacingM}`
   })
 };
 
@@ -63,14 +68,6 @@ function formatScheduledAtDate({ date, time, utcOffset }) {
   return res;
 }
 
-function usePreviousDate(dateTimeOffset) {
-  const ref = useRef();
-  useEffect(() => {
-    ref.current = dateTimeOffset;
-  });
-  return ref.current;
-}
-
 function JobDialog({
   onCreate,
   onCancel,
@@ -79,16 +76,18 @@ function JobDialog({
   validator,
   entryTitle,
   spaceId,
-  environmentId
+  environmentId,
+  pendingJobs,
+  isMasterEnvironment
 }) {
   const now = moment(Date.now());
-  const suggestedDate = now.add(1, 'hours').startOf('hour');
-
+  const suggestedDate = getSuggestedDate(pendingJobs, now);
   const [date, setDate] = useState(suggestedDate.format('YYYY-MM-DD'));
   const [time, setTime] = useState(suggestedDate.format('HH:mm'));
+  const [action, setAction] = useState(JobAction.Publish);
+  const [isSubmitDisabled, setSubmitDisabled] = useState(isSubmitting);
   const [formError, setFormError] = useState('');
   const [utcOffset, setUtcOffset] = useState(suggestedDate.utcOffset());
-  const prevTimeAndDate = usePreviousDate({ time, date, utcOffset });
 
   useEffect(() => {
     createDialogOpen();
@@ -97,6 +96,24 @@ function JobDialog({
 
   const validateForm = useCallback(
     onFormValid => {
+      if (
+        pendingJobs &&
+        pendingJobs.length > 0 &&
+        pendingJobs.find(
+          job =>
+            job.scheduledAt ===
+            moment(formatScheduledAtDate({ date, time, utcOffset })).toISOString()
+        )
+      ) {
+        setFormError(
+          'There is already an action scheduled for the selected time, please review the current schedule.'
+        );
+        setSubmitDisabled(false);
+        return;
+      } else {
+        setFormError(null);
+      }
+
       if (moment(formatScheduledAtDate({ date, time, utcOffset })).isAfter(moment.now())) {
         setFormError(null);
         if (onFormValid) {
@@ -105,30 +122,47 @@ function JobDialog({
       } else {
         setFormError("The selected time can't be in the past");
       }
+
+      setSubmitDisabled(false);
     },
-    [time, utcOffset, date]
+    [time, utcOffset, date, pendingJobs]
   );
-
-  useEffect(() => {
-    if (!prevTimeAndDate) {
-      return;
-    }
-
-    if (
-      prevTimeAndDate.time !== time ||
-      prevTimeAndDate.date !== date ||
-      prevTimeAndDate.utcOffset !== utcOffset
-    ) {
-      validateForm();
-    }
-  }, [time, date, utcOffset, prevTimeAndDate, validateForm]);
 
   const endpoint = EndpointFactory.createSpaceEndpoint(spaceId, environmentId);
   const client = new APIClient(endpoint);
 
+  function getSuggestedDate() {
+    return pendingJobs && pendingJobs.length !== 0
+      ? moment(pendingJobs[0].scheduledAt)
+          .add(1, 'hours')
+          .startOf('hour')
+      : now.add(1, 'hours').startOf('hour');
+  }
+
+  function handleSubmit() {
+    setSubmitDisabled(true);
+    validateForm(async () => {
+      if (action === JobAction.Publish) {
+        try {
+          await client.validateEntry(entity);
+        } catch (e) {
+          validator.setApiResponseErrors(e);
+          Notification.error(
+            `Error scheduling ${entryTitle}: Validation failed. Please check the individual fields for errors.`
+          );
+          return;
+        }
+      }
+      onCreate({
+        scheduledAt: formatScheduledAtDate({ date, time, utcOffset }),
+        action
+      });
+    });
+  }
+
   return (
     <Modal
-      title="Schedule to publish"
+      title="Set Schedule"
       size="small"
       shouldCloseOnEscapePress
       shouldCloseOnOverlayClick
@@ -139,13 +173,32 @@ function JobDialog({
         <>
           <Modal.Header title={title} onClose={onClose} />
           <Modal.Content>
-            <Form spacing="condensed">
+            {pendingJobs && pendingJobs.length > 0 && (
+              <JobsTimeline
+                size="small"
+                jobs={pendingJobs}
+                isMasterEnvironment={isMasterEnvironment}
+                showAllScheduleLink={false}
+                isReadOnly
+              />
+            )}
+            <Form spacing="condensed" className={styles.form}>
+              <FieldGroup row>
+                <SelectField
+                  labelText="Action"
+                  onChange={e => setAction(e.target.value)}
+                  name="action"
+                  id="action">
+                  <Option value={JobAction.Publish}>Publish</Option>
+                  <Option value={JobAction.Unpublish}>Unpublish</Option>
+                </SelectField>
+              </FieldGroup>
               <FieldGroup row>
                 <DatePicker
                   onChange={date => {
                     setDate(moment(date).format('YYYY-MM-DD'));
                   }}
-                  labelText="Publish on"
+                  labelText={actionToLabelText(action)}
                   required
                   value={moment(date).toDate()}
                   minDate={now.toDate()}
@@ -181,11 +234,11 @@ function JobDialog({
                   ))}
                 </SelectField>
               </FieldGroup>
-              <FieldGroup>
-                {utcOffset !== now.utcOffset() && (
+              {utcOffset !== now.utcOffset() && (
+                <FieldGroup>
                   <TimezoneNote date={date} time={time} utcOffset={utcOffset} />
-                )}
-              </FieldGroup>
+                </FieldGroup>
+              )}
               {formError && (
                 <FieldGroup>
                   <Note noteType="negative" testId="job-dialog-validation-message">
@@ -200,24 +253,8 @@ function JobDialog({
               data-test-id="schedule-publication"
               type="submit"
               loading={isSubmitting}
-              disabled={isSubmitting}
-              onClick={() => {
-                validateForm(async () => {
-                  try {
-                    await client.validateEntry(entity);
-                  } catch (e) {
-                    validator.setApiResponseErrors(e);
-                    Notification.error(
-                      `Error scheduling ${entryTitle}: Validation failed. Please check the individual fields for errors.`
-                    );
-                    return;
-                  }
-
-                  onCreate({
-                    scheduledAt: formatScheduledAtDate({ date, time, utcOffset })
-                  });
-                });
-              }}>
+              disabled={isSubmitDisabled}
+              onClick={handleSubmit}>
               Schedule
             </Button>
             <Button buttonType="muted" data-test-id="cancel" onClick={() => onCancel()}>
@@ -241,7 +278,9 @@ JobDialog.propTypes = {
   entryTitle: PropTypes.string.isRequired,
   onCreate: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
-  isSubmitting: PropTypes.bool.isRequired
+  isSubmitting: PropTypes.bool.isRequired,
+  pendingJobs: PropTypes.array,
+  isMasterEnvironment: PropTypes.bool
 };
 
 export default JobDialog;

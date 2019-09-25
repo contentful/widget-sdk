@@ -1,6 +1,7 @@
 import * as Analytics from 'analytics/Analytics.es6';
 import * as Intercom from 'services/intercom.es6';
 import * as JobsAnalytics from './JobsAnalytics.es6';
+import JobAction from '../JobAction.es6';
 
 jest.mock('analytics/Analytics.es6');
 describe('JobsAnalytics', () => {
@@ -19,9 +20,9 @@ describe('JobsAnalytics', () => {
   it('Dialog open', () => {
     JobsAnalytics.createDialogOpen();
 
-    expectTrackCalledOnceWith(JobsAnalytics.EventName.Dialog, {
-      purpose: JobsAnalytics.JobAction.EntryPublish,
-      name: JobsAnalytics.EventName.CreateJob,
+    expectTrackCalledOnceWith('global:dialog', {
+      name: 'jobs:create',
+      purpose: 'job.create',
       action: 'open'
     });
   });
@@ -29,39 +30,66 @@ describe('JobsAnalytics', () => {
   it('Dialog close', () => {
     JobsAnalytics.createDialogClose();
 
-    expectTrackCalledOnceWith(JobsAnalytics.EventName.Dialog, {
-      purpose: JobsAnalytics.JobAction.EntryPublish,
-      name: JobsAnalytics.EventName.CreateJob,
+    expectTrackCalledOnceWith('global:dialog', {
+      name: 'jobs:create',
       action: 'close'
     });
   });
 
-  it('CreateJob', () => {
-    const jobId = 'job-id';
-    const scheduledAt = '2019-07-12T23:37:00.000+05:30';
+  it.each([[JobAction.Publish, 'Entry.publish'], [JobAction.Unpublish, 'Entry.unpublish']])(
+    'CreateJob with action %i',
+    (jobAction, eventAction) => {
+      const jobId = 'job-id';
+      const entityId = 'entity-id';
+      const scheduledAt = '2019-07-12T23:37:00.000+05:30';
 
-    JobsAnalytics.createJob({ jobId, scheduledAt });
+      const job = {
+        sys: {
+          id: jobId,
+          entity: {
+            sys: {
+              id: entityId
+            }
+          }
+        },
+        action: jobAction,
+        scheduledAt
+      };
 
-    expectTrackCalledOnceWith(JobsAnalytics.EventName.CreateJob, {
-      action: JobsAnalytics.JobAction.EntryPublish,
-      job_id: jobId,
-      scheduled_for: scheduledAt,
-      timezone_offset: -120
-    });
+      JobsAnalytics.createJob(job);
 
-    expectTrackToIntercomCalledOnceWith('scheduled-publishing-create-job');
-  });
+      expectTrackCalledOnceWith('jobs:create', {
+        action: eventAction,
+        job_id: jobId,
+        entity_id: entityId,
+        scheduled_for: scheduledAt,
+        timezone_offset: -120
+      });
 
-  it('cancelJob', () => {
-    const jobId = 'job-id';
+      expectTrackToIntercomCalledOnceWith('scheduled-publishing-create-job');
+    }
+  );
 
-    JobsAnalytics.cancelJob({ jobId });
+  it.each([[JobAction.Publish, 'Entry.publish'], [JobAction.Unpublish, 'Entry.unpublish']])(
+    'cancelJob with action %i',
+    (jobAction, eventAction) => {
+      const jobId = 'job-id';
 
-    expectTrackCalledOnceWith(JobsAnalytics.EventName.CancelJob, {
-      action: JobsAnalytics.JobAction.EntryPublish,
-      job_id: jobId
-    });
-  });
+      const job = {
+        sys: {
+          id: jobId
+        },
+        action: jobAction
+      };
+
+      JobsAnalytics.cancelJob(job);
+
+      expectTrackCalledOnceWith('jobs:cancel', {
+        action: eventAction,
+        job_id: jobId
+      });
+    }
+  );
 
   it('trackAlphaEligibilityToIntercom calls Intercom once', () => {
     JobsAnalytics.trackAlphaEligibilityToIntercom();

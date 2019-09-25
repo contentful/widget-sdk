@@ -39,7 +39,7 @@ const styles = {
     fontSize: '18px',
     '&:after': {
       marginLeft: '10px',
-      content: '',
+      content: '""',
       height: '1px',
       marginTop: '10px',
       backgroundColor: '#e5ebed',

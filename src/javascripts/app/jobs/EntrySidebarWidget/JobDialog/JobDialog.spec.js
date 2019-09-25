@@ -78,7 +78,8 @@ describe('JobDialog', () => {
     await schedulePublication(renderResult);
 
     expect(props.onCreate).toHaveBeenCalledWith({
-      scheduledAt: expected
+      scheduledAt: expected,
+      action: 'publish'
     });
   });
 
@@ -108,7 +109,8 @@ describe('JobDialog', () => {
     ).toBeInTheDocument();
     await schedulePublication(renderResult);
     expect(props.onCreate).toHaveBeenCalledWith({
-      scheduledAt: expected
+      scheduledAt: expected,
+      action: 'publish'
     });
   });
 

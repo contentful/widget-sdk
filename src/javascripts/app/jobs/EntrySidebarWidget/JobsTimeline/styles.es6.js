@@ -6,11 +6,21 @@ export const scheduleStyles = {
     whiteSpace: 'nowrap',
     width: '50%'
   }),
-  schedule: css({}),
+  schedule: css({
+    marginBottom: tokens.spacingS
+  }),
+  scheduleSmall: css({
+    display: 'flex',
+    alignItems: 'center'
+  }),
   scheduleHeader: css({
     display: 'flex',
     alignContent: 'center',
     marginBottom: tokens.spacingS
+  }),
+  scheduleHeaderSmall: css({
+    marginBottom: '0px',
+    marginTop: '2px'
   }),
   scheduleIcon: css({
     marginRight: tokens.spacingXs
@@ -27,5 +37,8 @@ export const scheduleStyles = {
   }),
   date: css({
     color: tokens.colorTextLight
+  }),
+  dateSmall: css({
+    marginLeft: 'auto'
   })
 };

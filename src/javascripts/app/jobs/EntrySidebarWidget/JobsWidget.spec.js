@@ -3,7 +3,7 @@ import { render, cleanup, wait, fireEvent } from '@testing-library/react';
 import 'jest-dom/extend-expect';
 
 import { Notification } from '@contentful/forma-36-react-components';
-import { default as JobsWidget, PUBLICATION_BLOCKED_BY_JOBS_WARNING } from './JobsWidget.es6';
+import { default as JobsWidget } from './JobsWidget.es6';
 import {
   getNotCanceledJobsForEntity,
   createJob as createJobService,
@@ -80,6 +80,7 @@ describe('<JobsWidget />', () => {
 
     expect(getNotCanceledJobsForEntity).toHaveBeenCalledWith(
       expect.any(Function),
+
       defaultEntryId()
     );
 
@@ -110,28 +111,15 @@ describe('<JobsWidget />', () => {
     expect(renderResult.queryByTestId('schedule-publication')).toBeNull();
   });
 
-  it('disables the status button when there is an active job', async () => {
-    getNotCanceledJobsForEntity.mockResolvedValueOnce([createPendingJob()]);
-    const publishedEntry = createEntry({ sys: { publishedAt: '2019-06-21T05:00:00.000Z' } });
-    const [renderResult] = build({ entity: publishedEntry });
-    await wait();
-    expect(renderResult.getByTestId('change-state-menu-trigger')).toBeDisabled();
-    expect(renderResult.getByTestId('change-state-published')).toBeDisabled();
-    expect(renderResult.getByTestId('action-restriction-note').textContent).toBe(
-      PUBLICATION_BLOCKED_BY_JOBS_WARNING
-    );
-  });
-
-  it('does not render scheduled publication cta if primary action is not allowed', async () => {
+  it('does not render scheduled publication cta if publication is blocked', async () => {
     getNotCanceledJobsForEntity.mockResolvedValueOnce([]);
     const [renderResult] = build({
       entity: createEntry(),
       primary: {
         ...commandTemplate,
-        label: 'Publish',
-        targetStateId: 'published',
-        isDisabled: () => true
-      }
+        label: 'Publish'
+      },
+      publicationBlockedReason: 'some reason'
     });
 
     expect(getNotCanceledJobsForEntity).toHaveBeenCalledWith(
@@ -141,7 +129,9 @@ describe('<JobsWidget />', () => {
 
     await wait();
     fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
-    expect(renderResult.queryByTestId('schedule-publication')).toBeNull();
+    expect(
+      renderResult.queryByTestId('schedule-publication').querySelector('button')
+    ).toBeDisabled();
     expect(renderResult.queryByTestId('failed-job-note')).toBeNull();
   });
 
@@ -231,16 +221,13 @@ describe('<JobsWidget />', () => {
     const [renderResult] = build({ entity: notPublishedEntry });
     await wait();
     fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
-    fireEvent.click(renderResult.getByText('Schedule publication'));
+    fireEvent.click(renderResult.getByText('Set Schedule'));
     await wait();
     fireEvent.click(renderResult.getByTestId('schedule-publication'));
     await wait();
 
     expect(createJobSpy).toHaveBeenCalledTimes(1);
-    expect(createJobSpy).toHaveBeenCalledWith({
-      jobId: job.sys.id,
-      scheduledAt: job.scheduledAt
-    });
+    expect(createJobSpy).toHaveBeenCalledWith(job);
     expect(Notification.success).toHaveBeenCalledWith('Test was scheduled successfully');
   });
 
@@ -253,35 +240,12 @@ describe('<JobsWidget />', () => {
     await wait();
 
     fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
-    fireEvent.click(renderResult.getByText('Schedule publication'));
+    fireEvent.click(renderResult.getByText('Set Schedule'));
     await wait();
     fireEvent.click(renderResult.getByTestId('schedule-publication'));
     await wait();
 
     expect(Notification.error).toHaveBeenCalledWith('Test failed to schedule');
-  });
-
-  it('validates entry before scheduling', async () => {
-    const job = createPendingJob();
-    const createJobSpy = jest.spyOn(JobsAnalytics, 'createJob');
-    const runValidatorMock = jest.fn().mockReturnValueOnce(false);
-
-    createJobService.mockResolvedValueOnce(job);
-    getNotCanceledJobsForEntity.mockResolvedValueOnce([]);
-
-    const notPublishedEntry = createEntry();
-    const [renderResult] = build({
-      entity: notPublishedEntry,
-      validator: { run: runValidatorMock }
-    });
-
-    await wait();
-    fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
-    fireEvent.click(renderResult.getByText('Schedule publication'));
-    await wait();
-
-    expect(createJobSpy).not.toHaveBeenCalled();
-    expect(Notification.error).toHaveBeenCalled();
   });
 
   it('cancels the job', async () => {
@@ -300,9 +264,7 @@ describe('<JobsWidget />', () => {
     await wait();
 
     expect(cancelJobSpy).toHaveBeenCalledTimes(1);
-    expect(cancelJobSpy).toHaveBeenCalledWith({
-      jobId: job.sys.id
-    });
+    expect(cancelJobSpy).toHaveBeenCalledWith(job);
   });
 });
 
@@ -323,7 +285,10 @@ function createJob(job = {}) {
 }
 
 function createPendingJob(job = {}) {
-  return createJob({ ...job, sys: { ...job.sys, status: 'pending' } });
+  return createJob({
+    ...job,
+    sys: { ...job.sys, entity: { sys: { id: 'id' } }, status: 'pending' }
+  });
 }
 
 function createFailedJob(job = {}) {

@@ -28,6 +28,16 @@ const styles = {
   scheduleListItem: css({
     lineHeight: '1rem',
     display: 'flex',
+    alignItems: 'center',
+    borderTop: `1px solid ${tokens.colorElementMid}`,
+    marginBottom: `-${tokens.spacingS}`,
+    '> button': {
+      height: '2.5rem'
+    }
+  }),
+  scheduleListItemInnerWrapper: css({
+    lineHeight: '1rem',
+    display: 'flex',
     alignItems: 'center'
   }),
   scheduledIcon: css({
@@ -58,7 +68,7 @@ export default class StatusWidget extends React.PureComponent {
 
   renderScheduledPublicationCta = () => {
     // disabled by the parent component (e.g. error during jobs fetching)
-    if (this.props.isScheduledPublishDisabled || this.props.primary.isDisabled()) {
+    if (this.props.isScheduledPublishDisabled || this.props.primary.isRestricted()) {
       return null;
     }
 
@@ -66,16 +76,14 @@ export default class StatusWidget extends React.PureComponent {
       <DropdownListItem
         className={styles.scheduleListItem}
         testId="schedule-publication"
-        isDisabled={
-          this.props.primary.targetStateId !== 'published' || !!this.props.publicationBlockedReason
-        }
+        isDisabled={!!this.props.publicationBlockedReason}
         onClick={() => {
           this.props.onScheduledPublishClick();
           this.setState({ isOpenDropdown: false });
         }}>
-        <div className={styles.scheduleListItem}>
+        <div className={styles.scheduleListItemInnerWrapper}>
           <Icon icon="Clock" color="muted" className={styles.scheduledIcon} />
-          Schedule publication <Tag className={styles.alphaTag}>Alpha</Tag>
+          Set Schedule <Tag className={styles.alphaTag}>Alpha</Tag>
         </div>
       </DropdownListItem>
     );

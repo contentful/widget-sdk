@@ -14,15 +14,26 @@ import {
 } from '@contentful/forma-36-react-components';
 import { scheduleStyles as styles } from './styles.es6';
 import CancellationModal from './CancellationModal.es6';
+import JobAction from 'app/jobs/JobAction.es6';
 
-const FormattedTime = time =>
+const FormattedTime = ({ time, size }) =>
   moment
     .utc(time)
     .local()
-    .format('ddd, MMM Do, YYYY - h:mm A');
+    .format(size === 'default' ? 'ddd, MMM Do, YYYY - h:mm A' : 'MMM Do, YYYY - h:mm A');
+
+FormattedTime.propTypes = {
+  time: PropTypes.string.isRequired,
+  size: PropTypes.oneOf(['default', 'size'])
+};
+
+FormattedTime.defaultProps = {
+  size: 'default'
+};
 
 const tagTypeForAction = {
-  publish: 'positive'
+  [JobAction.Publish]: 'positive',
+  [JobAction.Unpublish]: 'secondary'
 };
 
 class Job extends Component {
@@ -39,10 +50,11 @@ class Job extends Component {
   };
 
   render() {
-    const { scheduledAt, action, id, onCancel, isReadOnly } = this.props;
+    const { scheduledAt, action, id, onCancel, isReadOnly, size } = this.props;
     return (
-      <Card className={styles.schedule}>
-        <div className={styles.scheduleHeader}>
+      <Card className={cn(styles.schedule, size === 'small' ? styles.scheduleSmall : '')}>
+        <div
+          className={cn(styles.scheduleHeader, size === 'small' ? styles.scheduleHeaderSmall : '')}>
           <Icon icon="Clock" color="secondary" className={styles.scheduleIcon} />
           <Tag
             className={cn(styles.actionType)}
@@ -78,13 +90,15 @@ class Job extends Component {
                   this.toggleCancelDialog();
                   onCancel(id);
                 }}>
-                This entry is scheduled to {action} on {FormattedTime(scheduledAt)}. <br />
+                This entry is scheduled to {action} on <FormattedTime time={scheduledAt} />. <br />
                 Are you sure you want to cancel?
               </CancellationModal>
             </>
           )}
         </div>
-        <span className={styles.date}>{FormattedTime(scheduledAt)}</span>
+        <span className={cn(styles.date, size === 'small' ? styles.dateSmall : '')}>
+          <FormattedTime time={scheduledAt} size={size} />
+        </span>
       </Card>
     );
   }
@@ -96,7 +110,8 @@ export const propTypes = {
   status: PropTypes.oneOf(['pending', 'cancelled', 'success', 'error']),
   id: PropTypes.string.isRequired,
   onCancel: PropTypes.func.isRequired,
-  isReadOnly: PropTypes.bool.isRequired
+  isReadOnly: PropTypes.bool.isRequired,
+  size: PropTypes.oneOf(['default', 'small']).isRequired
 };
 Job.propTypes = propTypes;
 
