@@ -162,19 +162,17 @@ export default function AccountDetails({ data }) {
             </Typography>
           </div>
         </div>
-        {!user.ssoLoginOnly && (
-          <div className={styles.column}>
-            <Tooltip place="bottom" id="edit-user-account" content="Edit account">
-              <IconButton
-                label="Edit user account details"
-                iconProps={{ icon: 'Edit' }}
-                buttonType="muted"
-                onClick={() => openEditModal(user, setUser)}
-                testId="edit-user-account-details"
-              />
-            </Tooltip>
-          </div>
-        )}
+        <div className={styles.column}>
+          <Tooltip place="bottom" id="edit-user-account" content="Edit account">
+            <IconButton
+              label="Edit user account details"
+              iconProps={{ icon: 'Edit' }}
+              buttonType="muted"
+              onClick={() => openEditModal(user, setUser)}
+              testId="edit-user-account-details"
+            />
+          </Tooltip>
+        </div>
       </section>
       {!user.ssoLoginOnly && (
         <IdentitiesSection

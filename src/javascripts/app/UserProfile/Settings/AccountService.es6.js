@@ -10,15 +10,11 @@ export async function fetchUserData() {
 }
 
 export async function updateUserData({ version, data }) {
-  try {
-    return await usersEndpoint({
-      method: 'PUT',
-      data,
-      version
-    });
-  } catch (e) {
-    return e.data;
-  }
+  return await usersEndpoint({
+    method: 'PUT',
+    data,
+    version
+  });
 }
 
 export async function deleteUserIdentityData(id) {

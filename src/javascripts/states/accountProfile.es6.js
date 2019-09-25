@@ -6,7 +6,7 @@ const user = reactStateWrapper({
   loadingText: 'Loading your account…',
   onEnter: [noop],
   name: 'user',
-  title: 'User settings',
+  title: 'User profile',
   url: '/user',
   componentPath: 'app/UserProfile/Settings/index.es6'
 });

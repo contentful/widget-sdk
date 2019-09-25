@@ -1,6 +1,12 @@
 import React, { useReducer } from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Form, TextField, Button } from '@contentful/forma-36-react-components';
+import {
+  Modal,
+  Form,
+  TextField,
+  Button,
+  Notification
+} from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { createImmerReducer } from 'redux/utils/createImmerReducer.es6';
@@ -67,11 +73,19 @@ export default function AddPasswordModal({ currentVersion, onConfirm, onCancel, 
     dispatch({ type: 'SET_SUBMITTING', payload: true });
 
     const newPassword = formData.fields.newPassword.value;
+    let response;
 
-    const response = await updateUserData({
-      version: currentVersion,
-      data: { password: newPassword }
-    });
+    try {
+      response = await updateUserData({
+        version: currentVersion,
+        data: { password: newPassword }
+      });
+    } catch (_) {
+      Notification.error('Something went wrong. Try again.');
+      dispatch({ type: 'SET_SUBMITTING', payload: false });
+
+      return;
+    }
 
     if (response.sys.type === 'Error') {
       const error = response.details.errors[0];
