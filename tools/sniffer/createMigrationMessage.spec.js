@@ -51,14 +51,6 @@ describe('sniffer/createMigrationMessage', () => {
     ).toMatchInlineSnapshot(`
       "<details><summary>More details</summary>
 
-      ### Well done
-
-      \`src/path/to-updated-file.js\`
-
-      🎖 for removing some 🤕 dependencies:
-      * \`spaceContext\`
-      * \`ui/Framework\`
-
       ### Could be better
 
       \`src/path/to-file.js\`
@@ -74,6 +66,7 @@ describe('sniffer/createMigrationMessage', () => {
       \`src/path/to-updated-file.js\`
 
       Avoid using the following dependencies:
+      * \`$state\`
       * \`$timeout\`
       * \`hyperscript\`
 

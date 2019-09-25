@@ -37,12 +37,14 @@ module.exports = diff => {
   if (updated.length > 0) {
     updated.forEach(item => {
       const rightDeps = _.uniq([
-        ...(item.right.angular || []),
-        ...(item.right.needsRefactoring || [])
+        ...(_.isArray(_.get(item, 'right.angular')) ? _.get(item, 'right.angular') : []),
+        ...(_.isArray(_.get(item, 'right.needsRefactoring'))
+          ? _.get(item, 'right.needsRefactoring')
+          : [])
       ]).sort();
       const leftDeps = _.uniq([
-        ...(item.left.angular || []),
-        ...(item.left.needsRefactoring || [])
+        ...(_.isArray(item, 'left.angular') ? _.get(item, 'left.angular') : []),
+        ...(_.isArray(item, 'left.needsRefactoring') ? _.get(item, 'left.needsRefactoring') : [])
       ]).sort();
 
       const diffResult = diffArrays(leftDeps, rightDeps);

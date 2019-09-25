@@ -6,8 +6,6 @@ const js = node => node.extension === '.js';
 
 const jade = node => node.extension === '.jade';
 
-const stylus = node => node.extension === '.styl';
-
 const test = node => js(node) && node.path.indexOf('spec.js') !== -1;
 
 const jest = node => test(node) && node.path.indexOf('src/javascripts') !== -1;
@@ -45,23 +43,16 @@ const angular = node => {
     '$injector',
     '$timeout',
     '$q',
+    '$exceptionHandler',
     'NgRegistry',
     '$interval',
-    'ReloadNotification',
     'modalDialog',
     'logger',
-    'notification',
     'command',
     'spaceContext',
-    'PolicyBuilder',
-    'PolicyBuilder/CONFIG',
     'cf-context-menu-trigger',
     'cf-context-menu',
-    'cf-ui-sticky-container',
-    'navigation/confirmLeaveEditor',
-    'analytics/Analytics.es6',
-    'TheLocaleStore',
-    'TheLocaleStore/implementation'
+    'cf-ui-sticky-container'
   ];
   const intersection = _.intersectionWith(modules, attributes, _.isEqual);
   return intersection.length > 0 ? intersection : false;
@@ -77,10 +68,6 @@ const hyperscript = node => {
   }
   const attributes = [
     'utils/hyperscript',
-    'ui/Framework/index',
-    'ui/Framework',
-    // Scheduled for removal, see: #3983
-    'ui/Framework/Hooks/index',
     'utils/legacy-html-hyperscript',
     'utils/legacy-html-hyperscript/index'
   ];
@@ -101,17 +88,12 @@ const react = node => {
     'prop-types',
     'redux',
     'redux-thunk',
-    'create-react-class',
-    'create-react-context',
     'react-dom',
     'react-redux',
     'react-router-dom',
-    'app/WorkbenchReact',
     'react-codemirror',
     'react-animate-height',
-    'react-tippy',
     'redux/store',
-    'downshift',
     'slate-react',
     '<react-component>'
   ];
@@ -138,11 +120,13 @@ const needsRefactoring = node => {
   const isHyperscript = hyperscript(node);
 
   const attributes = [
-    'create-react-class',
     'jquery',
     'ui/Framework/CfComponentBridgeDirective',
     'ui/Framework/Store',
-    'utils/ngCompat/window'
+    'utils/ngCompat/window',
+    'cf-component-bridge',
+    'enzyme',
+    'sinon'
   ];
   let intersection = _.intersectionWith(modules, attributes, _.isEqual);
 
@@ -167,7 +151,6 @@ module.exports = {
   js: js,
   jade: jade,
   test: test,
-  stylus: stylus,
   jest: jest,
   karma: karma,
   angular: angular,
