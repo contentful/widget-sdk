@@ -151,7 +151,7 @@ export default function AccountDetails({ data }) {
               )}
               {!user.ssoLoginOnly && !user.passwordSet && (
                 <TextLink onClick={() => openAddPasswordModal(user, setUser)}>
-                  Add a password
+                  Add password
                 </TextLink>
               )}
               {user.ssoLoginOnly && (

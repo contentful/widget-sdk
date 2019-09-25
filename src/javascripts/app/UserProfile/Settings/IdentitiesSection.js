@@ -208,8 +208,7 @@ function AddIdentityProvider({ provider }) {
 }
 
 AddIdentityProvider.propTypes = {
-  provider: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired
+  provider: PropTypes.string.isRequired
 };
 
 function IdentityIcon({ provider }) {

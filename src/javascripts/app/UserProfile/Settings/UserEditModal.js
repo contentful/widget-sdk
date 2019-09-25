@@ -22,7 +22,7 @@ const styles = {
   marginLeftM: css({ marginLeft: tokens.spacingM })
 };
 
-const createFieldData = (initialValue = null) => ({
+const createFieldData = (initialValue = '') => ({
   touched: false,
   dirty: false,
   value: initialValue,
@@ -55,9 +55,9 @@ const reducer = createImmerReducer({
   SET_FIELD_TOUCHED: (state, { payload }) => {
     state.fields[payload.field].touched = true;
   },
-  SET_ALL_FIELDS_DIRTY: state => {
+  SET_ALL_FIELDS_TOUCHED: state => {
     Object.values(state.fields).forEach(fieldData => {
-      fieldData.dirty = true;
+      fieldData.touched = true;
     });
   },
   SET_SUBMITTING: (state, { payload }) => {
@@ -92,51 +92,52 @@ const submitForm = async (formData, user, dispatch, onConfirm) => {
         logAnalyticsFeature: fieldData.logAnalyticsFeature.value
       }
     });
-  } catch (_) {
-    Notification.error('Something went wrong. Try again.');
+  } catch (err) {
+    const { data } = err;
+
+    if (data.sys && data.sys.type === 'Error') {
+      const errorDetails = data.details.errors;
+
+      errorDetails.forEach(({ path, name }) => {
+        const pathFieldMapping = {
+          password: 'newPassword',
+          current_password: 'currentPassword',
+          email: 'email'
+        };
+        let message;
+
+        if (path === 'password') {
+          if (name === 'insecure') {
+            message = 'The password you entered is not secure';
+          }
+        } else if (path === 'current_password') {
+          if (name === 'invalid') {
+            message = 'The password you entered is not valid';
+          }
+        } else if (path === 'email') {
+          if (name === 'invalid') {
+            message = 'The email you entered is not valid';
+          }
+        }
+
+        if (message) {
+          dispatch({
+            type: 'SERVER_VALIDATION_FAILURE',
+            payload: { field: pathFieldMapping[path], value: message }
+          });
+        }
+      });
+    } else {
+      Notification.error('Something went wrong. Try again.');
+    }
+
     dispatch({ type: 'SET_SUBMITTING', payload: false });
 
     return;
   }
 
-  if (response.sys.type === 'User') {
-    dispatch({ type: 'RESET', payload: { user: response } });
-    onConfirm(response);
-  } else if (response.sys.type === 'Error') {
-    dispatch({ type: 'SET_SUBMITTING', payload: false });
-
-    const errorDetails = response.details.errors;
-
-    errorDetails.forEach(({ path, name }) => {
-      const pathFieldMapping = {
-        password: 'newPassword',
-        current_password: 'currentPassword',
-        email: 'email'
-      };
-      let message;
-
-      if (path === 'password') {
-        if (name === 'insecure') {
-          message = 'The password you entered is not secure';
-        }
-      } else if (path === 'current_password') {
-        if (name === 'invalid') {
-          message = 'The password you entered is not valid';
-        }
-      } else if (path === 'email') {
-        if (name === 'invalid') {
-          message = 'The email you entered is not valid';
-        }
-      }
-
-      if (message) {
-        dispatch({
-          type: 'SERVER_VALIDATION_FAILURE',
-          payload: { field: pathFieldMapping[path], value: message }
-        });
-      }
-    });
-  }
+  dispatch({ type: 'RESET', payload: { user: response } });
+  onConfirm(response);
 };
 
 export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
