@@ -8,7 +8,7 @@ const user = reactStateWrapper({
   name: 'user',
   title: 'User profile',
   url: '/user',
-  componentPath: 'app/UserProfile/Settings/index.es6'
+  componentPath: 'app/UserProfile/Settings'
 });
 
 const spaceMemberships = reactStateWrapper({

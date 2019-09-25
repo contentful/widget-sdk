@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import { Card } from '@contentful/forma-36-react-components';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
-import AccountDetails from './Account.es6';
-import DeleteUser from './DeleteUser.es6';
+import AccountDetails from './AccountDetails';
+import DeleteUser from './DeleteUser';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
-import { fetchUserData } from './AccountService.es6';
+import { fetchUserData } from './AccountService';
 import useAsync from 'app/common/hooks/useAsync.es6';
 
 const styles = {

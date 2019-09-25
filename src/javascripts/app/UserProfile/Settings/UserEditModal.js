@@ -12,7 +12,7 @@ import {
 import _ from 'lodash';
 import tokens from '@contentful/forma-36-tokens';
 import { createImmerReducer } from 'redux/utils/createImmerReducer.es6';
-import { updateUserData } from './AccountService.es6';
+import { updateUserData } from './AccountService';
 import { User as UserPropType } from './propTypes';
 import { getValidationMessageFor } from './utils';
 import { css } from 'emotion';
@@ -195,7 +195,11 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
           }
           onBlur={() => dispatch({ type: 'SET_FIELD_TOUCHED', payload: { field: 'firstName' } })}
           labelText="First Name"
-          textInputProps={{ type: 'text', autoComplete: 'off' }}
+          textInputProps={{
+            type: 'text',
+            autoComplete: 'off',
+            placeholder: 'Felix'
+          }}
         />
         <TextField
           required
@@ -211,7 +215,11 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
           }
           onBlur={() => dispatch({ type: 'SET_FIELD_TOUCHED', payload: { field: 'lastName' } })}
           labelText="Last Name"
-          textInputProps={{ type: 'text', autoComplete: 'off' }}
+          textInputProps={{
+            type: 'text',
+            autoComplete: 'off',
+            placeholder: 'Müller'
+          }}
         />
         <TextField
           required
@@ -227,7 +235,11 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
           }
           onBlur={() => dispatch({ type: 'SET_FIELD_TOUCHED', payload: { field: 'email' } })}
           labelText="Email"
-          textInputProps={{ type: 'email', autoComplete: 'off' }}
+          textInputProps={{
+            type: 'email',
+            autoComplete: 'off',
+            placeholder: 'felix.mueller@example.com'
+          }}
           helpText={
             userHasPassword && fields.email.dirty
               ? 'Enter your password to confirm your updated email.'

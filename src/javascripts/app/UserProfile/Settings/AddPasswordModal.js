@@ -10,7 +10,7 @@ import {
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { createImmerReducer } from 'redux/utils/createImmerReducer.es6';
-import { updateUserData } from './AccountService.es6';
+import { updateUserData } from './AccountService';
 import { getValidationMessageFor } from './utils';
 
 const styles = {

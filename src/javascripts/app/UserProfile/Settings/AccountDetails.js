@@ -10,11 +10,11 @@ import tokens from '@contentful/forma-36-tokens';
 import { css, cx } from 'emotion';
 import { websiteUrl } from 'Config.es6';
 import { User as UserPropType } from './propTypes';
-import IdentitiesSection from './IdentitiesSection.es6';
+import IdentitiesSection from './IdentitiesSection';
 import UserEditModal from './UserEditModal';
 import AddPasswordModal from './AddPasswordModal';
 import * as ModalLauncher from 'app/common/ModalLauncher.es6';
-import { deleteUserIdentityData } from './AccountService.es6';
+import { deleteUserIdentityData } from './AccountService';
 
 const styles = {
   spaceLeft: css({

@@ -51,6 +51,7 @@ import * as appWidgetsRichTextReadOnlyRichTextEditorEs6 from 'app/widgets/rich_t
 import * as componentsSharedRelativeDateTimeIndexEs6 from 'components/shared/RelativeDateTime/index.es6';
 import * as appWidgetsJsonJsonEditorWarningEs6 from 'app/widgets/json/JsonEditorWarning.es6';
 import * as appWidgetsLocationLocationEditorWarningEs6 from 'app/widgets/location/LocationEditorWarning.es6';
+import * as appWidgetsEditorWarningPredefinedValuesEs6 from 'app/widgets/EditorWarningPredefinedValues.es6';
 import * as componentsFieldDialogValidationValuesEs6 from 'components/field_dialog/ValidationValues.es6';
 import * as componentsFieldDialogAppearanceFieldDialogAppearanceTabEs6 from 'components/field_dialog/appearance/FieldDialogAppearanceTab.es6';
 import * as componentsFieldDialogRichTextOptionsEs6 from 'components/field_dialog/RichTextOptions.es6';
@@ -72,7 +73,7 @@ import * as searchEntitySelectorCreateEntityIndexEs6 from 'search/EntitySelector
 import * as componentsSharedEnterpriseSpaceWizardEnterpriseSpaceWizardEs6 from 'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard.es6';
 import * as navigationModernStackOnboardingRelaunchEs6 from 'navigation/modernStackOnboardingRelaunch.es6';
 import * as componentsSharedUserInvitationEs6 from 'components/shared/UserInvitation.es6';
-import * as appUserProfileSettingsIndexEs6 from 'app/UserProfile/Settings/index.es6';
+import * as appUserProfileSettings from 'app/UserProfile/Settings';
 import * as appUserSettingsSpaceMembershipsEs6 from 'app/UserSettings/SpaceMemberships.es6';
 import * as componentsTabsContentTypeListContentTypeListPageEs6 from 'components/tabs/content_type_list/ContentTypeListPage.es6';
 import * as appSettingsSpaceSpaceSettingsRouteEs6 from 'app/settings/space/SpaceSettingsRoute.es6';
@@ -323,6 +324,7 @@ function getModule(name) {
     'components/shared/RelativeDateTime/index.es6': componentsSharedRelativeDateTimeIndexEs6,
     'app/widgets/json/JsonEditorWarning.es6': appWidgetsJsonJsonEditorWarningEs6,
     'app/widgets/location/LocationEditorWarning.es6': appWidgetsLocationLocationEditorWarningEs6,
+    'app/widgets/EditorWarningPredefinedValues.es6': appWidgetsEditorWarningPredefinedValuesEs6,
     'components/field_dialog/ValidationValues.es6': componentsFieldDialogValidationValuesEs6,
     'components/field_dialog/appearance/FieldDialogAppearanceTab.es6': componentsFieldDialogAppearanceFieldDialogAppearanceTabEs6,
     'components/field_dialog/RichTextOptions.es6': componentsFieldDialogRichTextOptionsEs6,
@@ -344,7 +346,7 @@ function getModule(name) {
     'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard.es6': componentsSharedEnterpriseSpaceWizardEnterpriseSpaceWizardEs6,
     'navigation/modernStackOnboardingRelaunch.es6': navigationModernStackOnboardingRelaunchEs6,
     'components/shared/UserInvitation.es6': componentsSharedUserInvitationEs6,
-    'app/UserProfile/Settings/index.es6': appUserProfileSettingsIndexEs6,
+    'app/UserProfile/Settings': appUserProfileSettings,
     'app/UserSettings/SpaceMemberships.es6': appUserSettingsSpaceMembershipsEs6,
     'components/tabs/content_type_list/ContentTypeListPage.es6': componentsTabsContentTypeListContentTypeListPageEs6,
     'app/settings/space/SpaceSettingsRoute.es6': appSettingsSpaceSpaceSettingsRouteEs6,
