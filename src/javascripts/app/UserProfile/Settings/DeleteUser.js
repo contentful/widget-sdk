@@ -82,6 +82,7 @@ const DeleteUser = ({ singleOwnerOrganizations }) => {
         shouldCloseOnEscapePress={true}
         shouldCloseOnOverlayClick={true}
         isShown={showModal}
+        onClose={() => setShowModal(false)}
         size="large"
         testId="dialog-user-cancellation"
         confirmTestId="confirm-user-cancellation"
@@ -99,8 +100,8 @@ const DeleteUser = ({ singleOwnerOrganizations }) => {
             If there is anything we can help you with, please{' '}
             <ContactUsButton noIcon>get in touch with us</ContactUsButton>.
           </Paragraph>
-          <FormLabel>Why are you deleting your account?</FormLabel>
-          <FieldGroup>
+          <FormLabel htmlFor="reasons">Why are you deleting your account?</FormLabel>
+          <FieldGroup id="reasons">
             {Object.keys(reasons).map((reason, index) => (
               <RadioButtonField
                 key={index}
@@ -115,9 +116,10 @@ const DeleteUser = ({ singleOwnerOrganizations }) => {
               />
             ))}
           </FieldGroup>
-          <FormLabel>Additional details</FormLabel>
+          <FormLabel htmlFor="cancellationDetails">Additional details</FormLabel>
           <Textarea
             name="cancellationDetails"
+            id="cancellationDetails"
             value={details}
             onChange={e => setDetails(e.target.value)}></Textarea>
         </Typography>

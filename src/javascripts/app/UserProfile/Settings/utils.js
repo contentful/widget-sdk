@@ -24,8 +24,9 @@ const validators = {
     }
   },
   currentPassword: (field, fields) => {
-    const { value, dirty } = field;
-    if (!dirty) {
+    const { value, touched, dirty } = field;
+
+    if (!(touched && dirty)) {
       return null;
     }
 
@@ -38,9 +39,9 @@ const validators = {
     }
   },
   newPassword: field => {
-    const { value, dirty } = field;
+    const { value, touched, dirty } = field;
 
-    if (!dirty) {
+    if (!(touched && dirty)) {
       return null;
     }
 
@@ -49,9 +50,9 @@ const validators = {
     }
   },
   newPasswordConfirm: (field, fields) => {
-    const { value, dirty } = field;
+    const { value, touched, dirty } = field;
 
-    if (!dirty) {
+    if (!(touched && dirty)) {
       return null;
     }
 

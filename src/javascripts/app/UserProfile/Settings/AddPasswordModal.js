@@ -18,7 +18,7 @@ const styles = {
   marginLeftM: css({ marginLeft: tokens.spacingM })
 };
 
-const createFieldData = (initialValue = null) => ({
+const createFieldData = (initialValue = '') => ({
   touched: false,
   dirty: false,
   value: initialValue,
@@ -47,9 +47,9 @@ const reducer = createImmerReducer({
   SET_FIELD_TOUCHED: (state, { payload }) => {
     state.fields[payload.field].touched = true;
   },
-  SET_ALL_FIELDS_DIRTY: state => {
+  SET_ALL_FIELDS_TOUCHED: state => {
     Object.values(state.fields).forEach(fieldData => {
-      fieldData.dirty = true;
+      fieldData.touched = true;
     });
   },
   SET_SUBMITTING: (state, { payload }) => {
@@ -80,30 +80,30 @@ export default function AddPasswordModal({ currentVersion, onConfirm, onCancel, 
         version: currentVersion,
         data: { password: newPassword }
       });
-    } catch (_) {
-      Notification.error('Something went wrong. Try again.');
-      dispatch({ type: 'SET_SUBMITTING', payload: false });
+    } catch (err) {
+      const { data } = err;
 
-      return;
-    }
+      if (data.sys && data.sys.type === 'Error') {
+        const error = data.details.errors[0];
 
-    if (response.sys.type === 'Error') {
-      const error = response.details.errors[0];
-
-      if (error.name === 'insecure') {
-        dispatch({
-          type: 'SERVER_VALIDATION_FAILURE',
-          payload: {
-            field: 'newPassword',
-            value: 'The password you entered is not secure'
-          }
-        });
+        if (error.name === 'insecure') {
+          dispatch({
+            type: 'SERVER_VALIDATION_FAILURE',
+            payload: {
+              field: 'newPassword',
+              value: 'The password you entered is not secure'
+            }
+          });
+        }
+      } else {
+        Notification.error('Something went wrong. Try again.');
       }
 
       dispatch({ type: 'SET_SUBMITTING', payload: false });
-    } else {
-      onConfirm(response);
+      return;
     }
+
+    onConfirm(response);
   };
 
   const validateForm = () => {
@@ -123,15 +123,16 @@ export default function AddPasswordModal({ currentVersion, onConfirm, onCancel, 
   };
 
   const fields = formData.fields;
-  const submitButtonDisabled =
+  const submitButtonDisabled = Boolean(
     formData.submitting ||
-    fields.newPassword.value === '' ||
-    fields.newPassword.value !== fields.newPasswordConfirm.value ||
-    fields.newPassword.serverValidationMessage;
+      fields.newPassword.value === '' ||
+      fields.newPassword.value !== fields.newPasswordConfirm.value ||
+      fields.newPassword.serverValidationMessage
+  );
 
   return (
     <Modal
-      title="Add a password"
+      title="Add password"
       shouldCloseOnEscapePress={true}
       shouldCloseOnOverlayClick={true}
       isShown={isShown}
@@ -153,6 +154,7 @@ export default function AddPasswordModal({ currentVersion, onConfirm, onCancel, 
               payload: { field: 'newPassword', value: e.target.value }
             })
           }
+          onBlur={() => dispatch({ type: 'SET_FIELD_TOUCHED', payload: { field: 'newPassword' } })}
           labelText="New password"
           textInputProps={{ type: 'password', autoComplete: 'off' }}
         />
@@ -166,6 +168,9 @@ export default function AddPasswordModal({ currentVersion, onConfirm, onCancel, 
               type: 'UPDATE_FIELD_VALUE',
               payload: { field: 'newPasswordConfirm', value: e.target.value }
             })
+          }
+          onBlur={() =>
+            dispatch({ type: 'SET_FIELD_TOUCHED', payload: { field: 'newPasswordConfirm' } })
           }
           labelText="Confirm new password"
           textInputProps={{ type: 'password', autoComplete: 'off' }}
