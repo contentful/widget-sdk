@@ -6,7 +6,8 @@ import {
   TextField,
   Form,
   CheckboxField,
-  Subheading
+  Subheading,
+  Notification
 } from '@contentful/forma-36-react-components';
 import _ from 'lodash';
 import tokens from '@contentful/forma-36-tokens';
@@ -39,7 +40,8 @@ const initializeReducer = user => {
       newPasswordConfirm: createFieldData(),
       logAnalyticsFeature: createFieldData(user.logAnalyticsFeature)
     },
-    formInvalid: false
+    formInvalid: false,
+    submitting: false
   };
 };
 
@@ -58,6 +60,9 @@ const reducer = createImmerReducer({
       fieldData.dirty = true;
     });
   },
+  SET_SUBMITTING: (state, { payload }) => {
+    state.submitting = payload;
+  },
   SET_FORM_INVALID: state => {
     state.formInvalid = true;
   },
@@ -70,25 +75,37 @@ const reducer = createImmerReducer({
 });
 
 const submitForm = async (formData, user, dispatch, onConfirm) => {
+  dispatch({ type: 'SET_SUBMITTING', payload: true });
+
   const fieldData = formData.fields;
+  let response;
 
-  const updatedUserData = await updateUserData({
-    version: user.sys.version,
-    data: {
-      firstName: fieldData.firstName.value,
-      lastName: fieldData.lastName.value,
-      email: fieldData.email.value,
-      password: fieldData.newPassword.value,
-      currentPassword: fieldData.currentPassword.value,
-      logAnalyticsFeature: fieldData.logAnalyticsFeature.value
-    }
-  });
+  try {
+    response = await updateUserData({
+      version: user.sys.version,
+      data: {
+        firstName: fieldData.firstName.value,
+        lastName: fieldData.lastName.value,
+        email: fieldData.email.value,
+        password: fieldData.newPassword.value,
+        currentPassword: fieldData.currentPassword.value,
+        logAnalyticsFeature: fieldData.logAnalyticsFeature.value
+      }
+    });
+  } catch (_) {
+    Notification.error('Something went wrong. Try again.');
+    dispatch({ type: 'SET_SUBMITTING', payload: false });
 
-  if (updatedUserData.sys.type === 'User') {
-    dispatch({ type: 'RESET', payload: { user: updatedUserData } });
-    onConfirm(updatedUserData);
-  } else if (updatedUserData.sys.type === 'Error') {
-    const errorDetails = updatedUserData.details.errors;
+    return;
+  }
+
+  if (response.sys.type === 'User') {
+    dispatch({ type: 'RESET', payload: { user: response } });
+    onConfirm(response);
+  } else if (response.sys.type === 'Error') {
+    dispatch({ type: 'SET_SUBMITTING', payload: false });
+
+    const errorDetails = response.details.errors;
 
     errorDetails.forEach(({ path, name }) => {
       const pathFieldMapping = {
@@ -148,7 +165,9 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
     fields.newPasswordConfirm.dirty;
   const userHasPassword = user.passwordSet;
   const submitButtonDisabled =
-    !Object.values(formData.fields).find(field => field.dirty) || formData.formInvalid;
+    !Object.values(formData.fields).find(field => field.dirty) ||
+    formData.formInvalid ||
+    formData.submitting;
 
   return (
     <Modal
