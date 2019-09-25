@@ -25,7 +25,7 @@ const styles = {
     marginRight: tokens.spacingM,
     marginTop: tokens.spacingS,
     textAlign: 'right',
-    minWidth: '80px'
+    minWidth: '90px'
   }),
   timeGroupListWrapper: css({
     maxWidth: 'calc(100% - 95px)',
