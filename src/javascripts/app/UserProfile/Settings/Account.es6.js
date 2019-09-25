@@ -12,6 +12,7 @@ import { websiteUrl } from 'Config.es6';
 import { User as UserPropType } from './propTypes';
 import IdentitiesSection from './IdentitiesSection.es6';
 import UserEditModal from './UserEditModal';
+import AddPasswordModal from './AddPasswordModal';
 import * as ModalLauncher from 'app/common/ModalLauncher.es6';
 import { deleteUserIdentityData } from './AccountService.es6';
 
@@ -73,12 +74,30 @@ const openEditModal = async (user, setUser) => {
   });
 
   if (result === false) {
-    // The modal was closed manually, do nothing
     return;
   }
 
-  // Update the user
-  // Set the updated email as the unconfirmed email
+  const updatedUser = Object.assign({}, user, result);
+
+  setUser(updatedUser);
+};
+
+const openAddPasswordModal = async (user, setUser) => {
+  const result = await ModalLauncher.open(({ isShown, onClose }) => {
+    return (
+      <AddPasswordModal
+        currentVersion={user.sys.version}
+        onConfirm={onClose}
+        onCancel={() => onClose(false)}
+        isShown={isShown}
+      />
+    );
+  });
+
+  if (result === false) {
+    return;
+  }
+
   const updatedUser = Object.assign({}, user, result);
 
   setUser(updatedUser);
@@ -130,6 +149,11 @@ export default function AccountDetails({ data }) {
               {!user.ssoLoginOnly && user.passwordSet && (
                 <span className={styles.password}>********</span>
               )}
+              {!user.ssoLoginOnly && !user.passwordSet && (
+                <TextLink onClick={() => openAddPasswordModal(user, setUser)}>
+                  Add a password
+                </TextLink>
+              )}
               {user.ssoLoginOnly && (
                 <TextLink href={websiteUrl('faq/sso')}>
                   Single sign-on is active for your account.
@@ -153,7 +177,11 @@ export default function AccountDetails({ data }) {
         )}
       </section>
       {!user.ssoLoginOnly && (
-        <IdentitiesSection onRemoveIdentity={removeIdentity} identities={identities} />
+        <IdentitiesSection
+          userHasPassword={user.passwordSet}
+          onRemoveIdentity={removeIdentity}
+          identities={identities}
+        />
       )}
     </div>
   );

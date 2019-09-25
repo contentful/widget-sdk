@@ -46,12 +46,12 @@ const initializeReducer = user => {
 const reducer = createImmerReducer({
   UPDATE_FIELD_VALUE: (state, { payload }) => {
     state.fields[payload.field].value = payload.value;
-    state.fields[payload.field].touched = true;
+    state.fields[payload.field].dirty = true;
     state.formInvalid = false;
     state.fields[payload.field].serverValidationMessage = null;
   },
-  SET_FIELD_DIRTY: (state, { payload }) => {
-    state.fields[payload.field].dirty = true;
+  SET_FIELD_TOUCHED: (state, { payload }) => {
+    state.fields[payload.field].touched = true;
   },
   SET_ALL_FIELDS_DIRTY: state => {
     Object.values(state.fields).forEach(fieldData => {
@@ -143,9 +143,12 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
 
   const fields = formData.fields;
   const currentPasswordIsRequired =
-    fields.email.touched || fields.newPassword.touched || fields.newPasswordConfirm.touched;
+    (user.passwordSet && fields.email.dirty) ||
+    fields.newPassword.dirty ||
+    fields.newPasswordConfirm.dirty;
+  const userHasPassword = user.passwordSet;
   const submitButtonDisabled =
-    !Object.values(formData.fields).find(field => field.touched) || formData.formInvalid;
+    !Object.values(formData.fields).find(field => field.dirty) || formData.formInvalid;
 
   return (
     <Modal
@@ -171,7 +174,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
               payload: { field: 'firstName', value: e.target.value }
             })
           }
-          onBlur={() => dispatch({ type: 'SET_FIELD_DIRTY', payload: { field: 'firstName' } })}
+          onBlur={() => dispatch({ type: 'SET_FIELD_TOUCHED', payload: { field: 'firstName' } })}
           labelText="First Name"
           textInputProps={{ type: 'text', autoComplete: 'off' }}
         />
@@ -187,12 +190,13 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
               payload: { field: 'lastName', value: e.target.value }
             })
           }
-          onBlur={() => dispatch({ type: 'SET_FIELD_DIRTY', payload: { field: 'lastName' } })}
+          onBlur={() => dispatch({ type: 'SET_FIELD_TOUCHED', payload: { field: 'lastName' } })}
           labelText="Last Name"
           textInputProps={{ type: 'text', autoComplete: 'off' }}
         />
         <TextField
           required
+          validationMessage={getValidationMessageFor(formData.fields, 'email')}
           id="email-field"
           name="email"
           value={fields.email.value}
@@ -202,47 +206,55 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
               payload: { field: 'email', value: e.target.value }
             })
           }
-          onBlur={() => dispatch({ type: 'SET_FIELD_DIRTY', payload: { field: 'email' } })}
+          onBlur={() => dispatch({ type: 'SET_FIELD_TOUCHED', payload: { field: 'email' } })}
           labelText="Email"
           textInputProps={{ type: 'email', autoComplete: 'off' }}
           helpText={
-            fields.email.touched ? 'Enter your password to confirm your updated email.' : ''
+            userHasPassword && fields.email.dirty
+              ? 'Enter your password to confirm your updated email.'
+              : ''
           }
         />
-        <Subheading>Change Password</Subheading>
-        <TextField
-          validationMessage={getValidationMessageFor(formData.fields, 'newPassword')}
-          id="new-password-field"
-          name="new-password"
-          value={fields.newPassword.value}
-          onChange={e =>
-            dispatch({
-              type: 'UPDATE_FIELD_VALUE',
-              payload: { field: 'newPassword', value: e.target.value }
-            })
-          }
-          onBlur={() => dispatch({ type: 'SET_FIELD_DIRTY', payload: { field: 'newPassword' } })}
-          labelText="New Password"
-          textInputProps={{ type: 'password', autoComplete: 'off' }}
-          helpText="Create a unique password at least 8 characters long"
-        />
-        <TextField
-          validationMessage={getValidationMessageFor(formData.fields, 'newPasswordConfirm')}
-          id="confirm-new-password-field"
-          name="confirm-new-password"
-          value={fields.newPasswordConfirm.value}
-          onChange={e =>
-            dispatch({
-              type: 'UPDATE_FIELD_VALUE',
-              payload: { field: 'newPasswordConfirm', value: e.target.value }
-            })
-          }
-          onBlur={() =>
-            dispatch({ type: 'SET_FIELD_DIRTY', payload: { field: 'newPasswordConfirm' } })
-          }
-          labelText="Confirm new password"
-          textInputProps={{ type: 'password', autoComplete: 'off' }}
-        />
+        {userHasPassword && (
+          <>
+            <Subheading>Change Password</Subheading>
+            <TextField
+              validationMessage={getValidationMessageFor(formData.fields, 'newPassword')}
+              id="new-password-field"
+              name="new-password"
+              value={fields.newPassword.value}
+              onChange={e =>
+                dispatch({
+                  type: 'UPDATE_FIELD_VALUE',
+                  payload: { field: 'newPassword', value: e.target.value }
+                })
+              }
+              onBlur={() =>
+                dispatch({ type: 'SET_FIELD_TOUCHED', payload: { field: 'newPassword' } })
+              }
+              labelText="New Password"
+              textInputProps={{ type: 'password', autoComplete: 'off' }}
+              helpText="Create a unique password at least 8 characters long"
+            />
+            <TextField
+              validationMessage={getValidationMessageFor(formData.fields, 'newPasswordConfirm')}
+              id="confirm-new-password-field"
+              name="confirm-new-password"
+              value={fields.newPasswordConfirm.value}
+              onChange={e =>
+                dispatch({
+                  type: 'UPDATE_FIELD_VALUE',
+                  payload: { field: 'newPasswordConfirm', value: e.target.value }
+                })
+              }
+              onBlur={() =>
+                dispatch({ type: 'SET_FIELD_TOUCHED', payload: { field: 'newPasswordConfirm' } })
+              }
+              labelText="Confirm new password"
+              textInputProps={{ type: 'password', autoComplete: 'off' }}
+            />
+          </>
+        )}
         {currentPasswordIsRequired && (
           <>
             <Subheading>Confirm changes</Subheading>
@@ -259,7 +271,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
                 })
               }
               onBlur={() =>
-                dispatch({ type: 'SET_FIELD_DIRTY', payload: { field: 'currentPassword' } })
+                dispatch({ type: 'SET_FIELD_TOUCHED', payload: { field: 'currentPassword' } })
               }
               labelText="Current Password"
               textInputProps={{ type: 'password', autoComplete: 'off' }}
@@ -268,6 +280,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
         )}
         <CheckboxField
           labelText="Allow Contentful to send information to external providers to help us improve the service"
+          labelIsLight
           value={fields.logAnalyticsFeature.value ? 'yes' : 'no'}
           onChange={() =>
             dispatch({
