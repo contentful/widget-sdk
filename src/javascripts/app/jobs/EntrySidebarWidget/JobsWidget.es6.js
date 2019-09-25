@@ -152,7 +152,7 @@ export default function JobsWidget({
     } catch (error) {
       if (400 === error.status) {
         Notification.error(
-          `Unable to schedule ${entryTitle}. There is a limit of 10 scheduled entries pending at any one time.`
+          `Unable to schedule ${entryTitle}. There is a limit of 20 scheduled entries pending at any one time.`
         );
       } else {
         Notification.error(`${entryTitle} failed to schedule`);
