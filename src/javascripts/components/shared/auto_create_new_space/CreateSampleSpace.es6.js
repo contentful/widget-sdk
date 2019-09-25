@@ -9,6 +9,7 @@ import { getTemplate, getTemplatesList } from 'services/SpaceTemplateLoader.es6'
 import autoCreateSpaceTemplate from './Template.es6';
 import * as TokenStore from 'services/TokenStore.es6';
 import { getModule } from 'NgRegistry.es6';
+import client from 'services/client.es6';
 import * as logger from 'services/logger.es6';
 
 const DEFAULT_LOCALE = 'en-US';
@@ -110,8 +111,6 @@ export default function(org, templateName, modalTemplate = autoCreateSpaceTempla
  * space home.
  */
 function* createSpace(org, templateName) {
-  const client = getModule('client');
-
   const newSpace = yield client.createSpace(
     {
       name: 'The example project',

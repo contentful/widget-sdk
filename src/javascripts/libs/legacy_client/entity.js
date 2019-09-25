@@ -1,9 +1,7 @@
-'use strict';
-
-const _ = require('lodash');
-const Request = require('./request');
-const mixinChildResourceMethods = require('./child_resources');
-const dateStringToIso = require('./utils').dateStringToIso;
+import _ from 'lodash';
+import Request from './request';
+import mixinChildResourceMethods from './child_resources';
+import { dateStringToIso } from './utils';
 
 /**
  * Base class for all entities exposed by the REST API
@@ -162,4 +160,4 @@ Entity.prototype = {
 
 mixinChildResourceMethods(Entity.prototype);
 
-module.exports = Entity;
+export default Entity;

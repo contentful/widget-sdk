@@ -1,9 +1,7 @@
-'use strict';
-
-const Entity = require('./entity');
-const mixinPublishable = require('./publishable');
-const mixinArchivable = require('./archivable');
-const createResourceFactoryMethods = require('./resource_factory');
+import Entity from './entity';
+import mixinPublishable from './publishable';
+import mixinArchivable from './archivable';
+import createResourceFactoryMethods from './resource_factory';
 
 const Entry = function Entry(data, persistenceContext) {
   Entity.call(this, data, persistenceContext);
@@ -29,4 +27,4 @@ Entry.factoryMethods = {
   }
 };
 
-module.exports = Entry;
+export default Entry;

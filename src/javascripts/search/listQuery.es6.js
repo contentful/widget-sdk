@@ -1,6 +1,6 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
-import { assetContentType } from 'legacy-client';
+import { assetContentType } from 'libs/legacy_client/client';
 import * as SystemFields from 'data/SystemFields.es6';
 
 import { buildQuery as buildQueryFromUISearch } from 'app/ContentList/Search/QueryBuilder.es6';

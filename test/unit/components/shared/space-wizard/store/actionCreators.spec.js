@@ -108,14 +108,16 @@ describe('Space Wizard action creators', function() {
       refresh: this.stubs.TokenStore_refresh
     });
 
+    this.system.set('services/client.es6', {
+      default: {
+        createSpace: this.stubs.createSpace
+      }
+    });
+
     this.actionCreators = await this.system.import('redux/actions/spaceWizard/actionCreators.es6');
     this.actions = await this.system.import('redux/actions/spaceWizard/actions.es6');
 
-    await $initialize(this.system, $provide => {
-      $provide.constant('client', {
-        createSpace: this.stubs.createSpace
-      });
-    });
+    await $initialize(this.system);
   });
 
   describe('fetchSpacePlans', function() {

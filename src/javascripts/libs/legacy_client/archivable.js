@@ -1,9 +1,7 @@
-'use strict';
+import { extend } from 'lodash';
 
-const _ = require('lodash');
-
-module.exports = function mixinPublishable(base) {
-  return _.extend(base, {
+export default function mixinPublishable(base) {
+  return extend(base, {
     archive: function() {
       return this.endpoint('archived')
         .put()
@@ -36,4 +34,4 @@ module.exports = function mixinPublishable(base) {
       );
     }
   });
-};
+}

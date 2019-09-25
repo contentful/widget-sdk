@@ -1,11 +1,9 @@
-'use strict';
-
-const _ = require('lodash');
+import _ from 'lodash';
 
 // Dummy content type that is used to generate the Asset form
 // in the same manner the Entry form is generated.
 // Mimics instance of the `ContentType` class in this package.
-module.exports = {
+export default {
   getId: _.constant(undefined),
   data: {
     sys: {

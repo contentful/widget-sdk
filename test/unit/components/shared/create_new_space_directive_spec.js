@@ -63,9 +63,11 @@ describe('cfCreateNewSpace directive', () => {
     this.system.set('services/logger.es6', stubs.logger);
     this.system.set('services/TokenStore.es6', stubs.tokenStore);
     this.system.set('services/ResourceService.es6', stubs.resourceService);
+    this.system.set('services/client.es6', {
+      default: stubs.client
+    });
 
     await $initialize(this.system, $provide => {
-      $provide.constant('client', stubs.client);
       $provide.value('$state', stubs.state);
     });
 

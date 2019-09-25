@@ -64,12 +64,15 @@ describe('CreateSampleSpace service', () => {
     });
     this.system.set('services/SpaceTemplateLoader.es6', this.spaceTemplateLoader);
 
+    this.system.set('services/client.es6', {
+      default: this.client
+    });
+
     this.createSampleSpace = (await this.system.import(
       'components/shared/auto_create_new_space/CreateSampleSpace.es6'
     )).default;
 
     await $initialize(this.system, $provide => {
-      $provide.constant('client', this.client);
       $provide.constant('modalDialog', this.modalDialog);
       $provide.constant('spaceContext', this.spaceContext);
     });

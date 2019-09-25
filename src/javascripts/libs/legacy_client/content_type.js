@@ -1,9 +1,7 @@
-'use strict';
-
-const Entity = require('./entity');
-const mixinPublishable = require('./publishable');
-const _ = require('lodash');
-const createResourceFactoryMethods = require('./resource_factory');
+import Entity from './entity';
+import mixinPublishable from './publishable';
+import _ from 'lodash';
+import createResourceFactoryMethods from './resource_factory';
 
 const ContentType = function ContentType(data, persistenceContext) {
   data = _.merge(
@@ -127,4 +125,4 @@ ContentType.factoryMethods = {
   }
 };
 
-module.exports = ContentType;
+export default ContentType;

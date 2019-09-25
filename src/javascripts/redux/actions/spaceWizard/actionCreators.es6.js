@@ -1,5 +1,5 @@
 import { get, noop } from 'lodash';
-
+import client from 'services/client.es6';
 import createResourceService from 'services/ResourceService.es6';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import {
@@ -134,7 +134,6 @@ export function createSpace({
   onTemplateCreated,
   onConfirm
 }) {
-  const client = getModule('client');
   const spaceContext = getModule('spaceContext');
 
   return async dispatch => {

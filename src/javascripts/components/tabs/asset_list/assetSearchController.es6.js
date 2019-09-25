@@ -6,7 +6,7 @@ import React from 'react';
 import Paginator from 'classes/Paginator.es6';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 import { Notification } from '@contentful/forma-36-react-components';
-import { assetContentType } from 'legacy-client';
+import { assetContentType } from 'libs/legacy_client/client';
 import * as SystemFields from 'data/SystemFields.es6';
 import * as logger from 'services/logger.es6';
 

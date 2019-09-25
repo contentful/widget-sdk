@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import Client from 'legacy-client';
+import Client from 'libs/legacy_client/client';
 import sinon from 'sinon';
 
 angular

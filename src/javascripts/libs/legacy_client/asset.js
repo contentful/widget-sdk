@@ -1,9 +1,7 @@
-'use strict';
-
-const Entity = require('./entity');
-const mixinPublishable = require('./publishable');
-const mixinArchivable = require('./archivable');
-const createResourceFactoryMethods = require('./resource_factory');
+import Entity from './entity';
+import mixinPublishable from './publishable';
+import mixinArchivable from './archivable';
+import createResourceFactoryMethods from './resource_factory';
 
 const Asset = function Asset(data, persistenceContext) {
   Entity.call(this, data, persistenceContext);
@@ -26,4 +24,4 @@ Asset.factoryMethods = {
   createAsset: factoryMethods.create
 };
 
-module.exports = Asset;
+export default Asset;

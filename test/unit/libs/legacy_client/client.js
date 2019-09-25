@@ -1,9 +1,9 @@
 import sinon from 'sinon';
-import Client from 'legacy-client';
+import Client from 'libs/legacy_client/client';
 import describeSpaceInstance from 'test/helpers/libs/legacy_client/space_instance';
 import _ from 'lodash';
 
-describe('client', function() {
+describe('legacyClient', function() {
   beforeEach(function() {
     this.request = createRequestStub();
     this.client = new Client({

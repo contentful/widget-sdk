@@ -1,8 +1,4 @@
-'use strict';
-
-const _ = require('lodash');
-
-module.exports = Request;
+import _ from 'lodash';
 
 /**
  * Immutable representation of the path, method, payload, and headers
@@ -110,3 +106,5 @@ function rejectEmpty(response) {
 function identity(response) {
   return response;
 }
+
+export default Request;

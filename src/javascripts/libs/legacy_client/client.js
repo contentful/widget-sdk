@@ -1,17 +1,13 @@
-'use strict';
-
-const PersistenceContext = require('./persistence_context');
-const Space = require('./space');
-const Request = require('./request');
-const mixinChildResourceMethods = require('./child_resources');
-const assetContentType = require('./asset_content_type');
+import PersistenceContext from './persistence_context';
+import Space from './space';
+import Request from './request';
+import mixinChildResourceMethods from './child_resources';
+import assetContentType from './asset_content_type';
 
 const Client = function Client(adapter) {
   const baseRequest = new Request(adapter);
   this.persistenceContext = new PersistenceContext(baseRequest);
 };
-
-Client.assetContentType = assetContentType;
 
 Client.prototype = {
   endpoint: function(...args) {
@@ -22,4 +18,6 @@ Client.prototype = {
 mixinChildResourceMethods(Client.prototype);
 Space.mixinFactoryMethods(Client.prototype, 'spaces');
 
-module.exports = Client;
+export { assetContentType };
+
+export default Client;

@@ -63,15 +63,6 @@ module.exports = () => {
     resolve: {
       modules: ['node_modules', 'src/javascripts'],
       alias: {
-        'legacy-client': P.resolve(
-          __dirname,
-          '..',
-          'src',
-          'javascripts',
-          'libs',
-          'legacy_client',
-          'client.js'
-        ),
         'saved-views-migrator': P.resolve(
           __dirname,
           '..',

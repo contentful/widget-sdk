@@ -1,10 +1,6 @@
-'use strict';
-
 function IdentityMap() {
   this._entities = {};
 }
-
-module.exports = IdentityMap;
 
 /**
  * Add or update 'entity' and return unique reference to the shared
@@ -37,3 +33,5 @@ IdentityMap.prototype._get = function(identity) {
 IdentityMap.prototype._set = function(identity, entity) {
   this._entities[identity] = entity;
 };
+
+export default IdentityMap;

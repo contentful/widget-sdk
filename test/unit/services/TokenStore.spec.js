@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import * as K from 'test/utils/kefir';
 import _ from 'lodash';
-import { $initialize, $inject, $apply } from 'test/utils/ng';
+import { $initialize, $apply } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
 
 describe('Token store service', () => {
@@ -30,13 +30,16 @@ describe('Token store service', () => {
       organization: { sys: { id: 'testorg' } }
     }));
 
+    this.system.set('services/client.es6', {
+      default: {
+        newSpace: sinon.stub()
+      }
+    });
+
     this.tokenStore = await this.system.import('services/TokenStore.es6');
     this.OrganizationRoles = await this.system.import('services/OrganizationRoles.es6');
 
     await $initialize(this.system);
-
-    this.client = $inject('client');
-    this.client.newSpace = sinon.stub();
 
     this.organizations = [
       { sys: { id: 'org1' } },

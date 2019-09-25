@@ -32,7 +32,6 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
       'json0-ot-diff',
       'kefir',
       'ldclient-js',
-      'legacy-client',
       'localesList',
       'lodash',
       'lodash/fp',

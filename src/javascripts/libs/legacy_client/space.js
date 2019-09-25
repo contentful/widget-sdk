@@ -1,12 +1,10 @@
-'use strict';
-
-const Entity = require('./entity');
-const ContentType = require('./content_type');
-const Entry = require('./entry');
-const Asset = require('./asset');
-const _ = require('lodash');
-const createResourceFactoryMethods = require('./resource_factory');
-const PersistenceContext = require('./persistence_context');
+import _ from 'lodash';
+import Entity from './entity';
+import ContentType from './content_type';
+import Entry from './entry';
+import Asset from './asset';
+import createResourceFactoryMethods from './resource_factory';
+import PersistenceContext from './persistence_context';
 
 const Space = function Space(data, persistenceContext) {
   persistenceContext.setupIdentityMap();
@@ -71,4 +69,4 @@ Space.mixinFactoryMethods = function(target, path) {
 
 _.extend(Space.prototype, ContentType.factoryMethods, Entry.factoryMethods, Asset.factoryMethods);
 
-module.exports = Space;
+export default Space;

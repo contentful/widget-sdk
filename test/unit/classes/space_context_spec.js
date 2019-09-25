@@ -66,12 +66,16 @@ describe('spaceContext', () => {
 
     this.system.set('data/CMA/ProductCatalog.es6', this.ProductCatalog);
 
+    this.system.set('services/client.es6', {
+      default: {
+        newSpace: makeClientSpaceMock
+      }
+    });
+
     this.LD = await this.system.import('utils/LaunchDarkly/index.es6');
     this.LD._setFlag('feature-dv-11-2017-environments', true);
 
-    await $initialize(this.system, $provide => {
-      $provide.constant('client', { newSpace: makeClientSpaceMock });
-    });
+    await $initialize(this.system);
 
     this.spaceContext = $inject('spaceContext');
     await this.spaceContext.init();

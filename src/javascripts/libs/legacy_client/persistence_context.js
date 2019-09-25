@@ -1,12 +1,8 @@
-'use strict';
-
-const IdentityMap = require('./identity_map');
+import IdentityMap from './identity_map';
 
 function PersistenceContext(baseRequest) {
   this._baseRequest = baseRequest;
 }
-
-module.exports = PersistenceContext;
 
 PersistenceContext.prototype.changePath = function(...args) {
   return this.withEndpoint(this.endpoint().paths(args));
@@ -35,3 +31,5 @@ PersistenceContext.prototype.setupIdentityMap = function() {
     this.identityMap = new IdentityMap();
   }
 };
+
+export default PersistenceContext;

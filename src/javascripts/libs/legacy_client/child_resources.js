@@ -1,13 +1,11 @@
-'use strict';
-
-const _ = require('lodash');
+import { extend, map } from 'lodash';
 
 /**
  * Allows resources to create child resources that inherit the
  * parent's persistence context.
  */
-module.exports = function mixinChildResourceFactory(target) {
-  _.extend(target, {
+export default function mixinChildResourceFactory(target) {
+  extend(target, {
     /**
      * Return a function that creates an instance or a list of
      * instances of 'Constructor' from a server response.
@@ -28,7 +26,7 @@ module.exports = function mixinChildResourceFactory(target) {
         }
 
         if ('sys' in response && response.sys.type === 'Array') {
-          const entities = _.map(response.items, construct);
+          const entities = map(response.items, construct);
           Object.defineProperty(entities, 'total', { value: response.total });
           return entities;
         } else {
@@ -42,4 +40,4 @@ module.exports = function mixinChildResourceFactory(target) {
       return this.persistenceContext.withEndpoint(endpoint);
     }
   });
-};
+}

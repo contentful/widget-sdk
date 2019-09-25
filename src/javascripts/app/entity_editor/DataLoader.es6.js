@@ -7,7 +7,7 @@ import {
   buildSidebarRenderables,
   buildEditorRenderable
 } from 'widgets/WidgetRenderable.es6';
-import { assetContentType } from 'legacy-client';
+import { assetContentType } from 'libs/legacy_client/client';
 import * as WidgetStore from 'widgets/WidgetStore.es6';
 import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer.es6';
 import * as AdvancedExtensibilityFeature from 'app/settings/extensions/services/AdvancedExtensibilityFeature.es6';

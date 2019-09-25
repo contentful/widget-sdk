@@ -4,7 +4,7 @@ import React from 'react';
 import createNewSpaceTemplateDef from 'components/shared/create_new_space/Template.es6';
 import * as logger from 'services/logger.es6';
 import localesList from 'libs/locales_list.json';
-
+import client from 'services/client.es6';
 import createResourceService from 'services/ResourceService.es6';
 import { getTemplatesList, getTemplate } from 'services/SpaceTemplateLoader.es6';
 import * as spaceTemplateEvents from 'analytics/events/SpaceCreation.es6';
@@ -27,8 +27,7 @@ export default function register() {
     '$state',
     '$element',
     'spaceContext',
-    'client',
-    function($scope, $rootScope, $state, $element, spaceContext, client) {
+    function($scope, $rootScope, $state, $element, spaceContext) {
       const controller = this;
       const DEFAULT_LOCALE = 'en-US';
       const DEFAULT_ERROR_MESSAGE =

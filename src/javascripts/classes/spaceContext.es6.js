@@ -4,6 +4,7 @@ import { create as createViewMigrator } from 'saved-views-migrator';
 import * as K from 'utils/kefir.es6';
 import { deepFreeze, deepFreezeClone } from 'utils/Freeze.es6';
 import { ENVIRONMENT_ALIASING } from '../featureFlags.es6';
+import client from 'services/client.es6';
 const MASTER_ENVIRONMENT_ID = 'master';
 
 export default function register() {
@@ -17,8 +18,7 @@ export default function register() {
    */
   registerFactory('spaceContext', [
     '$rootScope',
-    'client',
-    ($rootScope, client) => {
+    $rootScope => {
       const publishedCTsBus$ = K.createPropertyBus([]);
 
       // Enforcements deinitialization function, when changing space

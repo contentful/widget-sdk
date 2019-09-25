@@ -1,10 +1,8 @@
-'use strict';
+import { extend } from 'lodash';
+import { dateStringToIso } from './utils';
 
-const _ = require('lodash');
-const dateStringToIso = require('./utils').dateStringToIso;
-
-module.exports = function mixinPublishable(base) {
-  return _.extend(base, {
+export default function mixinPublishable(base) {
+  return extend(base, {
     publish: function(version) {
       if (typeof version === 'undefined') {
         version = this.getVersion();
@@ -62,4 +60,4 @@ module.exports = function mixinPublishable(base) {
       return !this.isDeleted() && !this.isPublished();
     }
   });
-};
+}

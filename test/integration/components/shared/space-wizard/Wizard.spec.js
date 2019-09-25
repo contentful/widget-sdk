@@ -217,16 +217,18 @@ describe('Space Wizard', function() {
       refresh: this.stubs.TokenStore_refresh
     });
 
+    this.system.set('services/client.es6', {
+      default: {
+        createSpace: this.stubs.createSpace
+      }
+    });
+
     const { default: Wizard } = await this.system.import(
       'components/shared/space-wizard/Wizard.es6'
     );
     this.store = (await this.system.import('redux/store.es6')).default;
 
-    await $initialize(this.system, $provide => {
-      $provide.constant('client', {
-        createSpace: this.stubs.createSpace
-      });
-    });
+    await $initialize(this.system);
 
     this.mountWithAction = function(action) {
       return mount(

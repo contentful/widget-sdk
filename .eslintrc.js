@@ -12,8 +12,7 @@ module.exports = {
       webpack: {
         config: 'tools/webpack.config.js'
       }
-    },
-    'import/core-modules': ['legacy-client', 'localesList', 'marked', 'searchParser']
+    }
   },
   plugins: ['react-hooks'],
   env: {
