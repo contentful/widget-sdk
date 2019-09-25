@@ -74,9 +74,11 @@ describe('Client Controller', () => {
       makeStateRefresher: () => this.refreshNavState
     });
 
-    await $initialize(this.system, $provide => {
-      $provide.constant('authorization', this.authorizationStubs);
+    this.system.set('services/authorization.es6', {
+      default: this.authorizationStubs
     });
+
+    await $initialize(this.system);
 
     const $rootScope = $inject('$rootScope');
     scope = $rootScope.$new();

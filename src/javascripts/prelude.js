@@ -272,9 +272,8 @@ angular
 
       // Import and initialize core services
       const { init: initSpaceContext } = $injector.get('spaceContext');
-      const { init: initAuthorization } = $injector.get('authorization');
 
-      await Promise.all([initAuthorization(), initSpaceContext()]);
+      await initSpaceContext();
 
       const Config = await import('Config.es6');
       const { default: handleGKMessage } = await import('account/handleGatekeeperMessage.es6');

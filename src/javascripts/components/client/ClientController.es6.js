@@ -1,6 +1,7 @@
 import { registerController, appReady } from 'NgRegistry.es6';
 import { onValueScope } from 'utils/kefir.es6';
 import { pick, isObject } from 'lodash';
+import authorization from 'services/authorization.es6';
 
 import { ENVIRONMENT_USAGE_ENFORCEMENT } from 'featureFlags.es6';
 
@@ -9,9 +10,8 @@ export default function register() {
     '$scope',
     '$state',
     'spaceContext',
-    'authorization',
     '$rootScope',
-    function ClientController($scope, $state, spaceContext, authorization, $rootScope) {
+    function ClientController($scope, $state, spaceContext, $rootScope) {
       let isAnalyticsAllowed;
       let logger;
       let Intercom;

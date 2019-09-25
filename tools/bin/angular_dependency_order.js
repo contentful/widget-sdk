@@ -19,7 +19,6 @@ const _ = require('lodash');
 
 // These files are not imported asynchronously, and are handled differently
 const exceptions = [
-  'services/authorization.es6.js',
   'services/client.es6.js',
   'classes/spaceContext.es6.js',
   'components/client/ClientController.es6.js',
