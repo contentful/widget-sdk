@@ -10,11 +10,13 @@ import {
   RadioButtonField,
   Textarea,
   Note,
-  FormLabel
+  FormLabel,
+  Notification
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { deleteUserAccount } from './AccountService.es6';
+import { cancelUser } from 'Authentication.es6';
 import ContactUsButton from 'ui/Components/ContactUsButton.es6';
 
 const styles = {
@@ -44,9 +46,20 @@ const DeleteUser = ({ singleOwnerOrganizations }) => {
   const [showModal, setShowModal] = useState(false);
   const [activeOption, setActiveOption] = useState(reasons.other.key);
   const [details, setDetails] = useState('');
+  const [deleting, setDeleting] = useState(false);
 
-  const onCancelUser = ({ activeOption, details }) => {
-    deleteUserAccount({ reason: activeOption, description: details });
+  const onCancelUser = async ({ activeOption, details }) => {
+    try {
+      await deleteUserAccount({ reason: activeOption, description: details });
+    } catch (_) {
+      setDeleting(false);
+
+      Notification.error('Something went wrong while deleting your account. Try again.');
+
+      return;
+    }
+
+    cancelUser();
   };
 
   const warningNoteCountCopy =
@@ -111,8 +124,10 @@ const DeleteUser = ({ singleOwnerOrganizations }) => {
         <div className={styles.buttons}>
           <Button
             buttonType="negative"
+            disabled={deleting}
+            loading={deleting}
             onClick={() => {
-              setShowModal(false);
+              setDeleting(true);
               onCancelUser({ activeOption, details });
             }}>
             Delete my account

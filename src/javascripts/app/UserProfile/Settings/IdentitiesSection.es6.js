@@ -25,21 +25,21 @@ const styles = {
     marginTop: tokens.spacingS
   }),
   identityItem: css({
-    width: '130px',
+    width: '135px',
     height: '42px',
     position: 'relative',
     marginRight: tokens.spacingS,
     svg: {
       position: 'absolute',
-      top: '7px',
-      left: '20px'
+      top: '8px',
+      left: '27px'
     }
   }),
   providerName: css({
     fontSize: tokens.fontSizeM,
     position: 'absolute',
     top: '11px',
-    right: '30px'
+    left: '60px'
   }),
   identityInput: css({
     border: 'none',
@@ -48,27 +48,27 @@ const styles = {
     backgroundColor: 'rgb(255, 255, 255, 0)',
     height: '100%',
     width: '100%',
-    paddingLeft: '25px'
+    left: '13px'
   }),
   cursorPointer: css({
     cursor: 'pointer'
   }),
   github: css({
-    border: `1px solid ${tokens.colorElementDarkest}`,
+    border: `1px solid #ADADAD`,
     color: tokens.colorTextDark,
     'input[type="submit"]': {
       color: tokens.colorTextDark
     }
   }),
   google_oauth2: css({
-    border: `1px solid ${tokens.colorRedLight}`,
+    border: `1px solid #E5ADA3`,
     color: tokens.colorRedDark,
     'input[type="submit"]': {
       color: tokens.colorRedDark
     }
   }),
   twitter: css({
-    border: `1px solid ${tokens.colorBlueLight}`,
+    border: `1px solid #A8CFF1`,
     color: tokens.colorBlueDark,
     'input[type="submit"]': {
       color: tokens.colorBlueDark
@@ -83,7 +83,7 @@ const idpMap = {
   twitter: 'Twitter'
 };
 
-const IdentitiesSection = ({ identities, onRemoveIdentity }) => {
+const IdentitiesSection = ({ userHasPassword, identities, onRemoveIdentity }) => {
   const availableProviders = Object.keys(idpMap).filter(
     providerName => !identities.find(({ provider: usedProvider }) => providerName === usedProvider)
   );
@@ -100,6 +100,7 @@ const IdentitiesSection = ({ identities, onRemoveIdentity }) => {
                 key={provider}
                 identityId={identityId}
                 provider={provider}
+                disallowRemoval={!userHasPassword && identities.length === 1}
               />
             );
           })}
@@ -120,12 +121,13 @@ const IdentitiesSection = ({ identities, onRemoveIdentity }) => {
 };
 IdentitiesSection.propTypes = {
   identities: PropTypes.array,
-  onRemoveIdentity: PropTypes.func.isRequired
+  onRemoveIdentity: PropTypes.func.isRequired,
+  userHasPassword: PropTypes.bool.isRequired
 };
 
 export default IdentitiesSection;
 
-function RemoveIdentityProvider({ onRemove, identityId, provider }) {
+function RemoveIdentityProvider({ onRemove, identityId, provider, disallowRemoval }) {
   const humanName = idpMap[provider];
 
   const [isShown, setShown] = useState(false);
@@ -136,40 +138,46 @@ function RemoveIdentityProvider({ onRemove, identityId, provider }) {
         <IdentityIcon provider={provider} />
         <div className={styles.providerName}>{humanName}</div>
       </div>
-      <Tooltip
-        place="right"
-        id={`remove-${provider}-${identityId}`}
-        content="Remove identity"
-        targetWrapperClassName={styles.tooltipTargetWrapper}>
-        <IconButton
-          iconProps={{
-            icon: 'Close'
-          }}
-          label={`Remove "${humanName}"`}
-          buttonType="secondary"
-          onClick={() => setShown(true)}
-          testId={`remove-${provider}-button`}
-        />
-      </Tooltip>
-      <ModalConfirm
-        isShown={isShown}
-        title="Remove identity"
-        intent="negative"
-        size="small"
-        shouldCloseOnEscapePress
-        shouldCloseOnOverlayClick
-        testId={`dialog-remove-${provider}-identity`}
-        confirmTestId={`confirm-remove-${provider}-identity`}
-        cancelTestId={`cancel-remove-${provider}-identity`}
-        onCancel={() => {
-          setShown(false);
-        }}
-        onConfirm={() => {
-          setShown(false);
-          onRemove(provider);
-        }}>
-        <Paragraph>Are you sure you want to remove this open identity from your account?</Paragraph>
-      </ModalConfirm>
+      {!disallowRemoval && (
+        <>
+          <Tooltip
+            place="right"
+            id={`remove-${provider}-${identityId}`}
+            content="Remove identity"
+            targetWrapperClassName={styles.tooltipTargetWrapper}>
+            <IconButton
+              iconProps={{
+                icon: 'Close'
+              }}
+              label={`Remove "${humanName}"`}
+              buttonType="secondary"
+              onClick={() => setShown(true)}
+              testId={`remove-${provider}-button`}
+            />
+          </Tooltip>
+          <ModalConfirm
+            isShown={isShown}
+            title="Remove identity"
+            intent="negative"
+            size="small"
+            shouldCloseOnEscapePress
+            shouldCloseOnOverlayClick
+            testId={`dialog-remove-${provider}-identity`}
+            confirmTestId={`confirm-remove-${provider}-identity`}
+            cancelTestId={`cancel-remove-${provider}-identity`}
+            onCancel={() => {
+              setShown(false);
+            }}
+            onConfirm={() => {
+              setShown(false);
+              onRemove(provider);
+            }}>
+            <Paragraph>
+              Are you sure you want to remove this open identity from your account?
+            </Paragraph>
+          </ModalConfirm>
+        </>
+      )}
     </div>
   );
 }
@@ -177,7 +185,8 @@ function RemoveIdentityProvider({ onRemove, identityId, provider }) {
 RemoveIdentityProvider.propTypes = {
   identityId: PropTypes.number.isRequired,
   provider: PropTypes.string.isRequired,
-  onRemove: PropTypes.func.isRequired
+  onRemove: PropTypes.func.isRequired,
+  disallowRemoval: PropTypes.bool.isRequired
 };
 
 function AddIdentityProvider({ provider }) {
