@@ -69,7 +69,7 @@ describe('Schedule Publication', () => {
       cy.wait(200); // extra wait for notification animation 200ms
       cy.getAllByTestId('cf-ui-notification')
         .should('be.visible')
-        .should('contain', 'There is a limit of 10 scheduled entries');
+        .should('contain', 'There is a limit of 20 scheduled entries');
     });
   });
 
