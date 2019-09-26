@@ -17,6 +17,7 @@ import {
   createOrgMembership
 } from 'access_control/OrganizationMembershipRepository.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
+import { getVariation } from 'LaunchDarkly.es6';
 import { create as createSpaceMembershipRepo } from 'access_control/SpaceMembershipRepository.es6';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory.es6';
 
@@ -82,6 +83,7 @@ describe('NewUser', () => {
     createSpaceMembershipRepo.mockReturnValue({
       invite: mockInviteToSpaceFn
     });
+    getVariation.mockResolvedValue(false);
   });
   afterEach(() => {
     mockOnReady.mockReset();
@@ -90,6 +92,7 @@ describe('NewUser', () => {
     createSpaceEndpoint.mockReset();
     createSpaceMembershipRepo.mockReset();
     invite.mockReset();
+    getVariation.mockReset();
     cleanup();
   });
 
@@ -138,27 +141,6 @@ describe('NewUser', () => {
       expect(invite).not.toHaveBeenCalled();
     });
 
-    it('add to spaces', async () => {
-      const wrapper = build();
-      await submitForm(wrapper, 'expect@topass.com', 'Member', [
-        { spaceName: 'Foo', roleNames: ['Editor'] }
-      ]);
-      expect(createOrganizationEndpoint).toHaveBeenCalledWith('myorg');
-      expect(invite).toHaveBeenCalledWith(mockOrgEndpoint, {
-        role: 'member',
-        email: 'expect@topass.com',
-        spaceInvitations: [
-          {
-            admin: false,
-            roleIds: ['editorid'],
-            spaceId: '123'
-          }
-        ]
-      });
-      expect(createSpaceMembershipRepo).not.toHaveBeenCalled();
-      expect(mockInviteToSpaceFn).not.toHaveBeenCalled();
-    });
-
     it('it fails to send if a space role is not selected', async () => {
       const wrapper = build();
       const { spaceMembershipsValidationMessage } = await submitForm(
@@ -179,6 +161,7 @@ describe('NewUser', () => {
       await submitForm(wrapper, ['john.doe@enterprise.com'], 'Owner', [
         { spaceName: 'Foo', roleNames: ['Editor'] }
       ]);
+      await wait(() => wrapper.getByTestId('new-user.done'));
       expect(invite).toHaveBeenCalledWith(mockOrgEndpoint, {
         role: 'owner',
         email: 'john.doe@enterprise.com',
@@ -196,6 +179,7 @@ describe('NewUser', () => {
       } = await submitForm(wrapper, emails, 'Member', [
         { spaceName: 'Foo', roleNames: ['Editor'] }
       ]);
+      await wait(() => wrapper.getByTestId('new-user.done'));
       expect([
         emailsValidationMessage,
         orgRoleValidationMessage,
@@ -209,6 +193,46 @@ describe('NewUser', () => {
       ModalLauncher.open.mockResolvedValueOnce(false);
       await submitForm(wrapper, ['john.doe@enterprise.com'], 'Owner');
       expect(invite).not.toHaveBeenCalled();
+    });
+
+    describe('adding to spaces', () => {
+      it('creates invitations with space memberships', async () => {
+        const wrapper = build();
+        await submitForm(wrapper, 'expect@topass.com', 'Member', [
+          { spaceName: 'Foo', roleNames: ['Editor'] }
+        ]);
+        await wait(() => wrapper.getByTestId('new-user.done'));
+        expect(createOrganizationEndpoint).toHaveBeenCalledWith('myorg');
+        expect(invite).toHaveBeenCalledWith(mockOrgEndpoint, {
+          role: 'member',
+          email: 'expect@topass.com',
+          spaceInvitations: [
+            {
+              admin: false,
+              roleIds: ['editorid'],
+              spaceId: '123'
+            }
+          ]
+        });
+        expect(createSpaceMembershipRepo).not.toHaveBeenCalled();
+        expect(mockInviteToSpaceFn).not.toHaveBeenCalled();
+      });
+
+      it('creates space memberships', async () => {
+        const wrapper = build(true);
+        const spaceMemberships = [
+          { spaceName: mockSpaces[0].name, roleNames: [mockRoles[0].name] },
+          { spaceName: mockSpaces[1].name, roleNames: [mockRoles[1].name] }
+        ];
+        await submitForm(wrapper, 'expect@topass.com', 'Member', spaceMemberships);
+        await wait(() => wrapper.getByTestId('new-user.done'));
+        expect(invite).not.toHaveBeenCalled();
+        expect(createSpaceMembershipRepo).toHaveBeenCalledWith(mockSpaceEndpoint);
+        expect(createSpaceEndpoint).toHaveBeenNthCalledWith(1, mockSpaces[0].sys.id);
+        expect(createSpaceEndpoint).toHaveBeenNthCalledWith(2, mockSpaces[1].sys.id);
+        expect(mockInviteToSpaceFn).toHaveBeenNthCalledWith(1, 'expect@topass.com', ['editorid']);
+        expect(mockInviteToSpaceFn).toHaveBeenNthCalledWith(2, 'expect@topass.com', ['authorid']);
+      });
     });
 
     it('shows a success message', async () => {
@@ -279,10 +303,15 @@ async function addSpaceMemberships(wrapper, spaceMemberships) {
   // wait for the spaces to be lodaded
   await waitForElement(() => getAllByTestId('autocomplete.dropdown-list-item'));
 
-  spaceMemberships.forEach(({ spaceName, roleNames }, index) => {
+  spaceMemberships.forEach(({ spaceName }) => {
     const space = getByText(spaceName);
     // select the space by name
     fireEvent.click(space);
+    // focus again to select the next space
+    fireEvent.focus(spacesAutocomplete);
+  });
+
+  spaceMemberships.forEach(({ roleNames }, index) => {
     // get the space membership form by index
     const spaceMembershipForm = getAllByTestId('space-membership-list.item')[index];
     // for each role, click on the checkbox referenced by a label with the correct role name
