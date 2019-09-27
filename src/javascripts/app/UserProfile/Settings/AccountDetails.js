@@ -12,9 +12,9 @@ import { websiteUrl } from 'Config.es6';
 import { User as UserPropType } from './propTypes';
 import IdentitiesSection from './IdentitiesSection';
 import UserEditModal from './UserEditModal';
-import AddPasswordModal from './AddPasswordModal';
+import ChangePasswordModal from './ChangePasswordModal';
 import * as ModalLauncher from 'app/common/ModalLauncher.es6';
-import { deleteUserIdentityData } from './AccountService';
+import { deleteUserIdentityData } from './AccountRepository';
 
 const styles = {
   spaceLeft: css({
@@ -82,11 +82,11 @@ const openEditModal = async (user, setUser) => {
   setUser(updatedUser);
 };
 
-const openAddPasswordModal = async (user, setUser) => {
+const openChangePasswordModal = async (user, setUser) => {
   const result = await ModalLauncher.open(({ isShown, onClose }) => {
     return (
-      <AddPasswordModal
-        currentVersion={user.sys.version}
+      <ChangePasswordModal
+        user={user}
         onConfirm={onClose}
         onCancel={() => onClose(false)}
         isShown={isShown}
@@ -103,8 +103,8 @@ const openAddPasswordModal = async (user, setUser) => {
   setUser(updatedUser);
 };
 
-export default function AccountDetails({ data }) {
-  const [user, setUser] = useState(data);
+export default function AccountDetails({ userData }) {
+  const [user, setUser] = useState(userData);
   const [identities, setIdentities] = useState(user.identities);
   const removeIdentity = useCallback(
     async provider => {
@@ -141,17 +141,17 @@ export default function AccountDetails({ data }) {
                 {user.firstName} {user.lastName}
               </span>
               <span className={styles.email}>
-                {user.email}{' '}
-                {user.unconfirmedEmail ? (
-                  <Tooltip content="This email is unconfirmed">({user.unconfirmedEmail})</Tooltip>
-                ) : null}
+                {user.email}
+                {user.unconfirmedEmail && (
+                  <>
+                    <br />
+                    Unconfirmed email: {user.unconfirmedEmail}
+                  </>
+                )}
               </span>
-              {!user.ssoLoginOnly && user.passwordSet && (
-                <span className={styles.password}>********</span>
-              )}
-              {!user.ssoLoginOnly && !user.passwordSet && (
-                <TextLink onClick={() => openAddPasswordModal(user, setUser)}>
-                  Add password
+              {!user.ssoLoginOnly && (
+                <TextLink onClick={() => openChangePasswordModal(user, setUser)}>
+                  {user.passwordSet ? 'Change' : 'Add'} password
                 </TextLink>
               )}
               {user.ssoLoginOnly && (
@@ -186,5 +186,5 @@ export default function AccountDetails({ data }) {
 }
 
 AccountDetails.propTypes = {
-  data: UserPropType.isRequired
+  userData: UserPropType.isRequired
 };
