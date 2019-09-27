@@ -17,6 +17,7 @@ exports[`PeriodSelector should render 1`] = `
     required={false}
     testId="cf-ui-select"
     width="auto"
+    willBlurOnEsc={true}
   >
     <Option
       key="0"

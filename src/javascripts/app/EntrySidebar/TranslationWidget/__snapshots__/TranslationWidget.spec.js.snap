@@ -12,6 +12,7 @@ exports[`EntrySidebar/TranslationWidget when single locale mode is off should ma
       testId="cf-ui-select"
       value="multiple"
       width="auto"
+      willBlurOnEsc={true}
     >
       <Option
         testId="cf-ui-select-option"
@@ -138,6 +139,7 @@ exports[`EntrySidebar/TranslationWidget when single locale mode is on should mat
       testId="cf-ui-select"
       value="single"
       width="auto"
+      willBlurOnEsc={true}
     >
       <Option
         testId="cf-ui-select-option"

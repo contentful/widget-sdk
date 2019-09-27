@@ -35,7 +35,12 @@ export default class QuickNavSearch extends React.Component {
   inputRef = React.createRef();
 
   componentDidMount() {
+    this.mounted = true;
     this.inputRef.current.focus();
+  }
+
+  componentWillUnmount() {
+    this.mounted = false;
   }
 
   hotKeyHandler = (event, highlightedItem) => {
@@ -53,7 +58,7 @@ export default class QuickNavSearch extends React.Component {
   onQueryUpdate = async query => {
     this.setState({ isLoading: true, query });
     const items = await getSearchResults(query);
-    this.setState({ items, isLoading: false });
+    this.mounted && this.setState({ items, isLoading: false });
   };
 
   onQueryUpdateThrottled = throttle(this.onQueryUpdate, 1000, { trailing: true });
@@ -78,7 +83,7 @@ export default class QuickNavSearch extends React.Component {
                   }
                 })}
                 testId="quick-nav-search-input"
-                placeholder="Jump to..."
+                placeholder="Quick search - search for entries, assets and content types"
                 inputRef={this.inputRef}
               />
               {isLoading && <Spinner className={styles.spinnerLoading} />}

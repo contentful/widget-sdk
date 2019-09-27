@@ -646,6 +646,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                                     required={false}
                                     testId="ctf-ui-checkbox"
                                     type="checkbox"
+                                    willBlurOnEsc={true}
                                   >
                                     <ControlledInput
                                       checked={false}
@@ -655,6 +656,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                                       required={false}
                                       testId="ctf-ui-checkbox"
                                       type="checkbox"
+                                      willBlurOnEsc={true}
                                     >
                                       <input
                                         aria-label="Admin"
@@ -666,6 +668,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                                         onBlur={[Function]}
                                         onChange={[Function]}
                                         onFocus={[Function]}
+                                        onKeyDown={[Function]}
                                         required={false}
                                         type="checkbox"
                                       />
@@ -755,6 +758,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                                     required={false}
                                     testId="ctf-ui-checkbox"
                                     type="checkbox"
+                                    willBlurOnEsc={true}
                                   >
                                     <ControlledInput
                                       checked={false}
@@ -764,6 +768,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                                       required={false}
                                       testId="ctf-ui-checkbox"
                                       type="checkbox"
+                                      willBlurOnEsc={true}
                                     >
                                       <input
                                         aria-label="Police officer"
@@ -775,6 +780,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                                         onBlur={[Function]}
                                         onChange={[Function]}
                                         onFocus={[Function]}
+                                        onKeyDown={[Function]}
                                         required={false}
                                         type="checkbox"
                                       />
@@ -828,6 +834,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                                     required={false}
                                     testId="ctf-ui-checkbox"
                                     type="checkbox"
+                                    willBlurOnEsc={true}
                                   >
                                     <ControlledInput
                                       checked={false}
@@ -837,6 +844,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                                       required={false}
                                       testId="ctf-ui-checkbox"
                                       type="checkbox"
+                                      willBlurOnEsc={true}
                                     >
                                       <input
                                         aria-label="Thief"
@@ -848,6 +856,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                                         onBlur={[Function]}
                                         onChange={[Function]}
                                         onFocus={[Function]}
+                                        onKeyDown={[Function]}
                                         required={false}
                                         type="checkbox"
                                       />

@@ -2,7 +2,8 @@ div.entry-editor__input-group
   input(
     type="text"
     aria-invalid="{{hasErrors || state === 'duplicate'}}"
-    ng-disabled="isDisabled")
+    ng-disabled="isDisabled"
+    ng-keydown="handleKeyDown($event)")
   div.entry-editor__input-spinner(ng-show="state === 'checking' && !hasUniqueValidationError")
 .cfnext-form__field-error(
   role="status"

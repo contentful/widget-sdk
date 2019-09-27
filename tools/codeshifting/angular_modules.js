@@ -49,6 +49,7 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
       'react-dom',
       'react-dom/server',
       'react-highlight-words',
+      'react-hotkeys',
       'react-redux',
       'react-tippy',
       'redux',

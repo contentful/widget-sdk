@@ -11,6 +11,7 @@ exports[`EntrySidebar/TranslationWidgetDropdown when a locale has 1 error should
     testId="cf-ui-select"
     value="en-HK"
     width="full"
+    willBlurOnEsc={true}
   >
     <Option
       key="en-HK"
@@ -48,6 +49,7 @@ exports[`EntrySidebar/TranslationWidgetDropdown when a locale has more than one 
     testId="cf-ui-select"
     value="en-HK"
     width="full"
+    willBlurOnEsc={true}
   >
     <Option
       key="en-HK"
@@ -85,6 +87,7 @@ exports[`EntrySidebar/TranslationWidgetDropdown when both locales have errors sh
     testId="cf-ui-select"
     value="en-HK"
     width="full"
+    willBlurOnEsc={true}
   >
     <Option
       key="en-HK"
@@ -122,6 +125,7 @@ exports[`EntrySidebar/TranslationWidgetDropdown when there are no locale errors 
     testId="cf-ui-select"
     value="en-HK"
     width="full"
+    willBlurOnEsc={true}
   >
     <Option
       key="en-HK"

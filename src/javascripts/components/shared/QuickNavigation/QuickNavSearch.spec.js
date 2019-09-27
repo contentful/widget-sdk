@@ -1,15 +1,8 @@
 import React from 'react';
-import Enzyme from 'enzyme';
-import QuickNav from './QuickNav.es6';
+import { render, cleanup, fireEvent } from '@testing-library/react';
+import 'jest-dom/extend-expect';
+import QuickNavSearch from './QuickNavSearch.es6';
 import { getModule } from 'NgRegistry.es6';
-
-jest.mock('react-modal', () => {
-  function ReactModalMock({ children }) {
-    return <div className="react-modal">{children}</div>;
-  }
-  ReactModalMock.setAppElement = jest.fn();
-  return ReactModalMock;
-});
 
 jest.mock('services/localeStore', () => ({
   getDefaultLocale: () => ({
@@ -52,38 +45,38 @@ jest.mock('access_control/AccessChecker/index.es6', () => ({
   getSectionVisibility: jest.fn().mockReturnValue({ entry: true, asset: true, contentType: true })
 }));
 
-describe('shared/QuickNavComponent.es6', () => {
-  const spaceContext = getModule('spaceContext');
-  let wrapper;
-  beforeEach(() => {
-    jest.useFakeTimers();
-    spaceContext.cma.getEntries.mockClear();
-    spaceContext.cma.getAssets.mockClear();
-    spaceContext.publishedCTs.getAllBare.mockClear();
-    wrapper = Enzyme.mount(<QuickNav />);
-  });
-  it('should render search button', () => {
-    expect(wrapper.find('[data-test-id="quick-nav-search-button"]')).toExist();
-  });
-  it('should open search onClick', () => {
-    wrapper.find('[data-test-id="quick-nav-search-button"]').simulate('click');
-    expect(wrapper.find('[testId="quick-nav-search-input"]')).toExist();
-  });
+let wrapper;
+const spaceContext = getModule('spaceContext');
+
+beforeEach(() => {
+  jest.useFakeTimers();
+  spaceContext.cma.getEntries.mockClear();
+  spaceContext.cma.getAssets.mockClear();
+  spaceContext.publishedCTs.getAllBare.mockClear();
+  wrapper = render(<QuickNavSearch />);
+});
+
+afterEach(() => {
+  cleanup();
+});
+
+describe('shared/QuickNavSearch.es6', () => {
   it('should send request if query length is more than one character', () => {
-    wrapper.find('[data-test-id="quick-nav-search-button"]').simulate('click');
-    wrapper
-      .find('[data-test-id="quick-nav-search-input"]')
-      .simulate('change', { target: { value: 'foo' } });
+    fireEvent.change(wrapper.getByTestId('quick-nav-search-input'), {
+      target: { value: 'abc' }
+    });
+
     jest.runOnlyPendingTimers();
     expect(spaceContext.cma.getEntries).toHaveBeenCalledTimes(1);
     expect(spaceContext.cma.getAssets).toHaveBeenCalledTimes(1);
     expect(spaceContext.publishedCTs.getAllBare).toHaveBeenCalledTimes(1);
   });
+
   it('should not send request if query length is less than one character', () => {
-    wrapper.find('[data-test-id="quick-nav-search-button"]').simulate('click');
-    wrapper
-      .find('[data-test-id="quick-nav-search-input"]')
-      .simulate('change', { target: { value: 'a' } });
+    fireEvent.change(wrapper.getByTestId('quick-nav-search-input'), {
+      target: { value: 'a' }
+    });
+
     jest.runOnlyPendingTimers();
     expect(spaceContext.cma.getEntries).toHaveBeenCalledTimes(0);
     expect(spaceContext.cma.getAssets).toHaveBeenCalledTimes(0);

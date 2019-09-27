@@ -48,7 +48,10 @@ export function create(textarea, options, CodeMirror) {
     Tab: function() {
       replaceSelectedText(getIndentation());
     },
-    Enter: 'newlineAndIndentContinueMarkdownList'
+    Enter: 'newlineAndIndentContinueMarkdownList',
+    Esc: () => {
+      cm.getInputField().blur();
+    }
   });
 
   // Whenever the markdown editor container is resized we must refresh

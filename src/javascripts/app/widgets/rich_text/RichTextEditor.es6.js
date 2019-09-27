@@ -125,6 +125,17 @@ export default class RichTextEditor extends React.Component {
     }
   }
 
+  // eslint-disable-next-line no-unused-vars
+  handleKeyDown = (event, editor, next) => {
+    const ESC = 27;
+
+    if (event.keyCode === ESC) {
+      event.currentTarget.blur();
+    }
+
+    return next();
+  };
+
   render() {
     const classNames = cn('rich-text', {
       'rich-text--enabled': !this.props.isDisabled,
@@ -153,6 +164,7 @@ export default class RichTextEditor extends React.Component {
           value={this.state.value}
           ref={this.editor}
           onChange={this.onChange}
+          onKeyDown={this.handleKeyDown}
           plugins={this.slatePlugins}
           readOnly={this.props.isDisabled}
           className="rich-text__editor"

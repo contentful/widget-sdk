@@ -201,6 +201,14 @@ export default function register() {
           }
         );
 
+        scope.handleKeyDown = event => {
+          const ESC = 27;
+
+          if (event.keyCode === ESC) {
+            event.target.blur();
+          }
+        };
+
         $inputEl.on(
           'input change',
           debounce(() => {
