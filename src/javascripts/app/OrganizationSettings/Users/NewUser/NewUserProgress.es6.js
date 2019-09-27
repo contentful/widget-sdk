@@ -22,6 +22,11 @@ NewUserProgress.propTypes = {
   emailList: PropTypes.arrayOf(PropTypes.string).isRequired,
   progress: PropTypes.shape({
     successes: PropTypes.arrayOf(PropTypes.string).isRequired,
-    failures: PropTypes.arrayOf(PropTypes.string).isRequired
+    failures: PropTypes.arrayOf(
+      PropTypes.shape({
+        email: PropTypes.string.isRequired,
+        error: PropTypes.object.isRequired
+      })
+    ).isRequired
   }).isRequired
 };

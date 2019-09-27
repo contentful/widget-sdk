@@ -15,7 +15,7 @@ export async function getAllTeams(endpoint) {
 }
 
 export async function getAllTeamsSpaceMemberships(orgEndpoint) {
-  const includePaths = ['roles', 'sys.team'];
+  const includePaths = ['roles', 'sys.team', 'sys.space'];
   const { items, includes } = await fetchAllWithIncludes(
     orgEndpoint,
     ['team_space_memberships'],
@@ -91,5 +91,16 @@ export async function createTeamSpaceMembership(spaceEndpoint, teamId, { admin, 
       'x-contentful-team': teamId,
       ...ALPHA_HEADER
     }
+  );
+}
+
+export function createTeamMembership(endpoint, orgMembershipId, teamId) {
+  return endpoint(
+    {
+      method: 'POST',
+      path: ['teams', teamId, 'team_memberships'],
+      data: { orgMembershipId, admin: false }
+    },
+    ALPHA_HEADER
   );
 }
