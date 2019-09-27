@@ -12,7 +12,7 @@ import {
 import _ from 'lodash';
 import tokens from '@contentful/forma-36-tokens';
 import { createImmerReducer } from 'redux/utils/createImmerReducer.es6';
-import { updateUserData } from './AccountService';
+import { updateUserData } from './AccountRepository';
 import { User as UserPropType } from './propTypes';
 import { getValidationMessageFor } from './utils';
 import { css } from 'emotion';
@@ -36,8 +36,6 @@ const initializeReducer = user => {
       lastName: createFieldData(user.lastName),
       email: createFieldData(user.email),
       currentPassword: createFieldData(),
-      newPassword: createFieldData(),
-      newPasswordConfirm: createFieldData(),
       logAnalyticsFeature: createFieldData(user.logAnalyticsFeature)
     },
     formInvalid: false,
@@ -87,7 +85,6 @@ const submitForm = async (formData, user, dispatch, onConfirm) => {
         firstName: fieldData.firstName.value,
         lastName: fieldData.lastName.value,
         email: fieldData.email.value,
-        password: fieldData.newPassword.value,
         currentPassword: fieldData.currentPassword.value,
         logAnalyticsFeature: fieldData.logAnalyticsFeature.value
       }
@@ -100,23 +97,44 @@ const submitForm = async (formData, user, dispatch, onConfirm) => {
 
       errorDetails.forEach(({ path, name }) => {
         const pathFieldMapping = {
+          first_name: 'firstName',
+          last_name: 'lastName',
           password: 'newPassword',
           current_password: 'currentPassword',
           email: 'email'
         };
         let message;
 
-        if (path === 'password') {
-          if (name === 'insecure') {
-            message = 'The password you entered is not secure';
+        switch (path) {
+          case 'first_name': {
+            if (name === 'length') {
+              message = 'The first name you entered is too long';
+            }
+            break;
           }
-        } else if (path === 'current_password') {
-          if (name === 'invalid') {
-            message = 'The password you entered is not valid';
+          case 'last_name': {
+            if (name === 'length') {
+              message = 'The last name you entered is too long';
+            }
+            break;
           }
-        } else if (path === 'email') {
-          if (name === 'invalid') {
-            message = 'The email you entered is not valid';
+          case 'email': {
+            if (name === 'invalid') {
+              message = 'The email you entered is not valid';
+            }
+            break;
+          }
+          case 'password': {
+            if (name === 'insecure') {
+              message = 'The password you entered is not secure';
+            }
+            break;
+          }
+          case 'current_password': {
+            if (name === 'invalid') {
+              message = 'The password you entered is not valid';
+            }
+            break;
           }
         }
 
@@ -134,6 +152,12 @@ const submitForm = async (formData, user, dispatch, onConfirm) => {
     dispatch({ type: 'SET_SUBMITTING', payload: false });
 
     return;
+  }
+
+  // Show a notification telling the user to check their inbox only if the unconfirmed email in the response is the same
+  // as the email in the formData
+  if (response.unconfirmedEmail === formData.fields.email.value) {
+    Notification.success('Check your inbox to confirm your new email.');
   }
 
   dispatch({ type: 'RESET', payload: { user: response } });
@@ -160,10 +184,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
   };
 
   const fields = formData.fields;
-  const currentPasswordIsRequired =
-    (user.passwordSet && fields.email.dirty) ||
-    fields.newPassword.dirty ||
-    fields.newPasswordConfirm.dirty;
+  const currentPasswordIsRequired = user.passwordSet && fields.email.dirty;
   const userHasPassword = user.passwordSet;
   const submitButtonDisabled =
     !Object.values(formData.fields).find(field => field.dirty) ||
@@ -247,46 +268,6 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
               : ''
           }
         />
-        {userHasPassword && (
-          <>
-            <Subheading>Change Password</Subheading>
-            <TextField
-              validationMessage={getValidationMessageFor(formData.fields, 'newPassword')}
-              id="new-password-field"
-              name="new-password"
-              value={fields.newPassword.value}
-              onChange={e =>
-                dispatch({
-                  type: 'UPDATE_FIELD_VALUE',
-                  payload: { field: 'newPassword', value: e.target.value }
-                })
-              }
-              onBlur={() =>
-                dispatch({ type: 'SET_FIELD_TOUCHED', payload: { field: 'newPassword' } })
-              }
-              labelText="New Password"
-              textInputProps={{ type: 'password', autoComplete: 'off' }}
-              helpText="Create a unique password at least 8 characters long"
-            />
-            <TextField
-              validationMessage={getValidationMessageFor(formData.fields, 'newPasswordConfirm')}
-              id="confirm-new-password-field"
-              name="confirm-new-password"
-              value={fields.newPasswordConfirm.value}
-              onChange={e =>
-                dispatch({
-                  type: 'UPDATE_FIELD_VALUE',
-                  payload: { field: 'newPasswordConfirm', value: e.target.value }
-                })
-              }
-              onBlur={() =>
-                dispatch({ type: 'SET_FIELD_TOUCHED', payload: { field: 'newPasswordConfirm' } })
-              }
-              labelText="Confirm new password"
-              textInputProps={{ type: 'password', autoComplete: 'off' }}
-            />
-          </>
-        )}
         {currentPasswordIsRequired && (
           <>
             <Subheading>Confirm changes</Subheading>

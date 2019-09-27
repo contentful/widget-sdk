@@ -10,7 +10,7 @@ import {
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { createImmerReducer } from 'redux/utils/createImmerReducer.es6';
-import { updateUserData } from './AccountService';
+import { updateUserData } from './AccountRepository';
 import { getValidationMessageFor } from './utils';
 
 const styles = {
@@ -28,6 +28,7 @@ const createFieldData = (initialValue = '') => ({
 const initializeReducer = currentVersion => {
   return {
     fields: {
+      currentPassword: createFieldData(),
       newPassword: createFieldData(),
       newPasswordConfirm: createFieldData()
     },
@@ -66,19 +67,23 @@ const reducer = createImmerReducer({
   }
 });
 
-export default function AddPasswordModal({ currentVersion, onConfirm, onCancel, isShown }) {
-  const [formData, dispatch] = useReducer(reducer, currentVersion, initializeReducer);
+export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown }) {
+  const [formData, dispatch] = useReducer(reducer, user.sys.version, initializeReducer);
 
   const submit = async () => {
     dispatch({ type: 'SET_SUBMITTING', payload: true });
 
     const newPassword = formData.fields.newPassword.value;
+    const currentPassword = formData.fields.currentPassword.value;
     let response;
 
     try {
       response = await updateUserData({
-        version: currentVersion,
-        data: { password: newPassword }
+        version: user.sys.version,
+        data: {
+          password: newPassword,
+          currentPassword
+        }
       });
     } catch (err) {
       const { data } = err;
@@ -129,19 +134,40 @@ export default function AddPasswordModal({ currentVersion, onConfirm, onCancel, 
       fields.newPassword.value !== fields.newPasswordConfirm.value ||
       fields.newPassword.serverValidationMessage
   );
+  const userHasPassword = user.passwordSet;
 
   return (
     <Modal
-      title="Add password"
+      title={`${userHasPassword ? 'Update' : 'Add'} password`}
       shouldCloseOnEscapePress={true}
       shouldCloseOnOverlayClick={true}
       isShown={isShown}
       onClose={() => {
-        dispatch({ type: 'RESET', payload: { currentVersion } });
+        dispatch({ type: 'RESET', payload: { currentVersion: user.sys.version } });
         onCancel();
       }}
       size="large">
       <Form>
+        {userHasPassword && (
+          <TextField
+            required
+            validationMessage={getValidationMessageFor(formData.fields, 'currentPassword')}
+            id="current-password"
+            name="current-password"
+            value={fields.currentPassword.value}
+            onChange={e =>
+              dispatch({
+                type: 'UPDATE_FIELD_VALUE',
+                payload: { field: 'currentPassword', value: e.target.value }
+              })
+            }
+            onBlur={() =>
+              dispatch({ type: 'SET_FIELD_TOUCHED', payload: { field: 'currentPassword' } })
+            }
+            labelText="Current password"
+            textInputProps={{ type: 'password', autoComplete: 'off' }}
+          />
+        )}
         <TextField
           required
           validationMessage={getValidationMessageFor(formData.fields, 'newPassword')}
@@ -191,7 +217,7 @@ export default function AddPasswordModal({ currentVersion, onConfirm, onCancel, 
           <Button
             className={styles.marginLeftM}
             onClick={() => {
-              dispatch({ type: 'RESET', payload: { currentVersion } });
+              dispatch({ type: 'RESET', payload: { currentVersion: user.sys.version } });
               onCancel();
             }}
             buttonType="muted">
@@ -203,9 +229,9 @@ export default function AddPasswordModal({ currentVersion, onConfirm, onCancel, 
   );
 }
 
-AddPasswordModal.propTypes = {
+ChangePasswordModal.propTypes = {
   onConfirm: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
   isShown: PropTypes.bool.isRequired,
-  currentVersion: PropTypes.number.isRequired
+  user: PropTypes.object.isRequired
 };

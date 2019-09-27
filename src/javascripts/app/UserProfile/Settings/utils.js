@@ -1,6 +1,6 @@
 const validations = {
-  presence: value => (value ? true : false),
-  minLength: (length, value) => (value && value.length >= length ? true : false)
+  presence: value => (value.trim() ? true : false),
+  minLength: (length, value) => (value && value.trim().length >= length ? true : false)
 };
 
 const validators = {
@@ -23,14 +23,10 @@ const validators = {
       return 'Email is required';
     }
   },
-  currentPassword: (field, fields) => {
+  currentPassword: field => {
     const { value, touched, dirty } = field;
 
     if (!(touched && dirty)) {
-      return null;
-    }
-
-    if (!fields.email.value) {
       return null;
     }
 
@@ -43,6 +39,10 @@ const validators = {
 
     if (!(touched && dirty)) {
       return null;
+    }
+
+    if (!value) {
+      return;
     }
 
     if (!validations.minLength(8, value)) {

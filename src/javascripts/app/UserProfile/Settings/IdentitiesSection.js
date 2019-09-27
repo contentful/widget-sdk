@@ -48,7 +48,7 @@ const styles = {
     backgroundColor: 'rgb(255, 255, 255, 0)',
     height: '100%',
     width: '100%',
-    left: '13px'
+    paddingLeft: '42px'
   }),
   cursorPointer: css({
     cursor: 'pointer'
