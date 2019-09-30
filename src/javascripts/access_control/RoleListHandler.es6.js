@@ -1,9 +1,9 @@
 import _, { filter } from 'lodash';
 
 import createSpaceMembersRepo from 'data/CMA/SpaceMembersRepo.es6';
+import { getInstance as getRoleRepoInstance } from 'access_control/RoleRepository.es6';
+import { getModule } from 'NgRegistry.es6';
 
-import { getModule } from '../NgRegistry.es6';
-import RoleRepository from './RoleRepository.es6';
 import { ADMIN_ROLE_ID } from './constants.es6';
 
 export const ADMIN_ROLE_NAME = 'Administrator';
@@ -25,22 +25,22 @@ export function create() {
 
   async function reset() {
     const { endpoint, space } = spaceContext;
-    const result = Promise.all([
+    const [_memberships, roles] = await Promise.all([
       createSpaceMembersRepo(endpoint).getAll(),
-      RoleRepository.getInstance(space).getAll()
+      getRoleRepoInstance(space).getAll()
     ]);
 
-    memberships = result.memberships;
+    memberships = _memberships;
     roleCounts = {
-      admin: filter(result.memberships, 'admin').length,
-      ..._(result.memberships)
+      admin: filter(memberships, 'admin').length,
+      ..._(memberships)
         .flatMap('roles')
         .countBy('sys.id')
         .value()
     };
 
-    roleOptions = [ADMIN_OPT].concat(result.roles.map(({ name, sys: { id } }) => ({ id, name })));
+    roleOptions = [ADMIN_OPT].concat(roles.map(({ name, sys: { id } }) => ({ id, name })));
 
-    return { memberships: result.memberships, roles: result.roles };
+    return { memberships, roles };
   }
 }
