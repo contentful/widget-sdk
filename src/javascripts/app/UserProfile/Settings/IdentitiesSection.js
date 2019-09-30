@@ -7,12 +7,14 @@ import {
   IconButton,
   Tooltip,
   ModalConfirm,
-  Paragraph
+  Paragraph,
+  Notification
 } from '@contentful/forma-36-react-components';
 import { oauthUrl } from 'Config.es6';
 import GithubIcon from 'svg/github-icon.es6';
 import GoogleIcon from 'svg/google-icon.es6';
 import TwitterIcon from 'svg/twitter-icon.es6';
+import { deleteUserIdentityData } from './AccountRepository';
 
 const styles = {
   heading: css({
@@ -130,7 +132,23 @@ export default IdentitiesSection;
 function RemoveIdentityProvider({ onRemove, identityId, provider, disallowRemoval }) {
   const humanName = idpMap[provider];
 
-  const [isShown, setShown] = useState(false);
+  const [isModalShown, setModalShown] = useState(false);
+
+  const removeIdentity = async identityId => {
+    // identityIds are, weirdly, numbers, so they must be cast to string before making
+    // the API call
+    try {
+      await deleteUserIdentityData(identityId.toString());
+    } catch (_) {
+      Notification.error(`An error occurred while removing ${humanName} from your profile.`);
+
+      return;
+    }
+
+    onRemove(identityId);
+
+    Notification.success(`${humanName} successfully removed from your profile.`);
+  };
 
   return (
     <div className={styles.identitiesRow}>
@@ -151,12 +169,12 @@ function RemoveIdentityProvider({ onRemove, identityId, provider, disallowRemova
               }}
               label={`Remove "${humanName}"`}
               buttonType="secondary"
-              onClick={() => setShown(true)}
+              onClick={() => setModalShown(true)}
               testId={`remove-${provider}-button`}
             />
           </Tooltip>
           <ModalConfirm
-            isShown={isShown}
+            isShown={isModalShown}
             title="Remove identity"
             intent="negative"
             size="small"
@@ -166,11 +184,11 @@ function RemoveIdentityProvider({ onRemove, identityId, provider, disallowRemova
             confirmTestId={`confirm-remove-${provider}-identity`}
             cancelTestId={`cancel-remove-${provider}-identity`}
             onCancel={() => {
-              setShown(false);
+              setModalShown(false);
             }}
             onConfirm={() => {
-              setShown(false);
-              onRemove(provider);
+              setModalShown(false);
+              removeIdentity(identityId);
             }}>
             <Paragraph>
               Are you sure you want to remove this open identity from your account?

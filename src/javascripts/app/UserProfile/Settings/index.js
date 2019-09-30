@@ -8,7 +8,7 @@ import { css } from 'emotion';
 import useAsync from 'app/common/hooks/useAsync.es6';
 import { fetchUserData } from './AccountRepository';
 import AccountDetails from './AccountDetails';
-import DeleteUser from './DeleteUser';
+import DangerZoneSection from './DangerZoneSection';
 
 const styles = {
   section: css({
@@ -46,7 +46,7 @@ export default function Settings({ title, onReady }) {
           </Card>
           {!userData.ssoLoginOnly && (
             <Card className={styles.section}>
-              <DeleteUser singleOwnerOrganizations={warning.singleOwnerOrganizations} />
+              <DangerZoneSection singleOwnerOrganizations={warning.singleOwnerOrganizations} />
             </Card>
           )}
         </Workbench.Content>

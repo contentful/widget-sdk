@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import {
   Heading,
   IconButton,
@@ -14,7 +14,6 @@ import IdentitiesSection from './IdentitiesSection';
 import UserEditModal from './UserEditModal';
 import ChangePasswordModal from './ChangePasswordModal';
 import * as ModalLauncher from 'app/common/ModalLauncher.es6';
-import { deleteUserIdentityData } from './AccountRepository';
 
 const styles = {
   spaceLeft: css({
@@ -106,24 +105,11 @@ const openChangePasswordModal = async (user, setUser) => {
 export default function AccountDetails({ userData }) {
   const [user, setUser] = useState(userData);
   const [identities, setIdentities] = useState(user.identities);
-  const removeIdentity = useCallback(
-    async provider => {
-      const {
-        sys: { id: identityId }
-      } = identities.find(i => i.provider === provider);
+  const removeIdentity = identityId => {
+    const updatedIdentities = identities.filter(identity => identity.sys.id !== identityId);
 
-      // identityIds are, weirdly, numbers, so they must be cast to string before making
-      // the API call
-      await deleteUserIdentityData(identityId.toString());
-
-      const updatedIdentities = identities.filter(identity => {
-        return identity.provider !== provider;
-      });
-
-      setIdentities(updatedIdentities);
-    },
-    [identities]
-  );
+    setIdentities(updatedIdentities);
+  };
 
   return (
     <div data-test-id="user-account-data" className={styles.paddingS}>
