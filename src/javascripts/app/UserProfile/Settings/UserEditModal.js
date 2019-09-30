@@ -23,21 +23,25 @@ const styles = {
 };
 
 const createFieldData = (initialValue = '') => ({
-  touched: false,
-  dirty: false,
+  blurred: false,
   value: initialValue,
   serverValidationMessage: null
 });
 
 const initializeReducer = user => {
+  const fields = {
+    firstName: createFieldData(user.firstName),
+    lastName: createFieldData(user.lastName),
+    email: createFieldData(user.email),
+    logAnalyticsFeature: createFieldData(user.logAnalyticsFeature)
+  };
+
+  if (user.passwordSet) {
+    fields.currentPassword = createFieldData();
+  }
+
   return {
-    fields: {
-      firstName: createFieldData(user.firstName),
-      lastName: createFieldData(user.lastName),
-      email: createFieldData(user.email),
-      currentPassword: createFieldData(),
-      logAnalyticsFeature: createFieldData(user.logAnalyticsFeature)
-    },
+    fields,
     formInvalid: false,
     submitting: false
   };
@@ -46,16 +50,15 @@ const initializeReducer = user => {
 const reducer = createImmerReducer({
   UPDATE_FIELD_VALUE: (state, { payload }) => {
     state.fields[payload.field].value = payload.value;
-    state.fields[payload.field].dirty = true;
     state.formInvalid = false;
     state.fields[payload.field].serverValidationMessage = null;
   },
-  SET_FIELD_TOUCHED: (state, { payload }) => {
-    state.fields[payload.field].touched = true;
+  SET_FIELD_BLURRED: (state, { payload }) => {
+    state.fields[payload.field].blurred = true;
   },
-  SET_ALL_FIELDS_TOUCHED: state => {
+  SET_ALL_FIELDS_BLURRED: state => {
     Object.values(state.fields).forEach(fieldData => {
-      fieldData.touched = true;
+      fieldData.blurred = true;
     });
   },
   SET_SUBMITTING: (state, { payload }) => {
@@ -76,18 +79,23 @@ const submitForm = async (formData, user, dispatch, onConfirm) => {
   dispatch({ type: 'SET_SUBMITTING', payload: true });
 
   const fieldData = formData.fields;
+  const data = {
+    firstName: fieldData.firstName.value,
+    lastName: fieldData.lastName.value,
+    email: fieldData.email.value,
+    logAnalyticsFeature: fieldData.logAnalyticsFeature.value
+  };
+
+  if (user.passwordSet) {
+    data.currentPassword = fieldData.currentPassword.value;
+  }
+
   let response;
 
   try {
     response = await updateUserData({
       version: user.sys.version,
-      data: {
-        firstName: fieldData.firstName.value,
-        lastName: fieldData.lastName.value,
-        email: fieldData.email.value,
-        currentPassword: fieldData.currentPassword.value,
-        logAnalyticsFeature: fieldData.logAnalyticsFeature.value
-      }
+      data
     });
   } catch (err) {
     const { data } = err;

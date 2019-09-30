@@ -38,9 +38,9 @@ const validators = {
     }
   },
   currentPassword: field => {
-    const { value, touched, dirty } = field;
+    const { value, blurred } = field;
 
-    if (!(touched && dirty)) {
+    if (!blurred) {
       return null;
     }
 
@@ -49,9 +49,9 @@ const validators = {
     }
   },
   newPassword: field => {
-    const { value, touched, dirty } = field;
+    const { value, blurred } = field;
 
-    if (!(touched && dirty)) {
+    if (!blurred) {
       return null;
     }
 
@@ -64,9 +64,9 @@ const validators = {
     }
   },
   newPasswordConfirm: (field, fields) => {
-    const { value, touched, dirty } = field;
+    const { value, blurred } = field;
 
-    if (!(touched && dirty)) {
+    if (!blurred) {
       return null;
     }
 

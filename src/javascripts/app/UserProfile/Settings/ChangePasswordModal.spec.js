@@ -1,19 +1,257 @@
+import React from 'react';
+import { render, cleanup, fireEvent, within, wait } from '@testing-library/react';
+import ChangePasswordModal from './ChangePasswordModal';
+import { updateUserData } from './AccountRepository';
+import { Notification } from '@contentful/forma-36-react-components';
+
+import 'jest-dom/extend-expect';
+
+jest.mock('./AccountRepository', () => ({
+  updateUserData: jest.fn()
+}));
+
 describe('ChangePasswordModal', () => {
-  it('should close if the user presses the cancel button', () => {});
+  const build = custom => {
+    const opts = Object.assign(
+      {},
+      {
+        hasPassword: true,
+        onConfirm: () => {},
+        onCancel: () => {}
+      },
+      custom
+    );
 
-  it('should disable the submit button when the modal first loads', () => {});
+    const user = {
+      passwordSet: opts.hasPassword,
+      sys: {
+        version: 3
+      }
+    };
 
-  it('should warn on blur when typing in a trimmed password less than 8 characters', () => {});
+    return render(
+      <ChangePasswordModal
+        user={user}
+        onConfirm={opts.onConfirm}
+        onCancel={opts.onCancel}
+        isShown
+      />
+    );
+  };
 
-  it('should warn on blur when typing in a trimmed password confirmation less than 8 characters', () => {});
+  afterEach(cleanup);
 
-  it('should warn on blur if the password confirmation does not match the password', () => {});
+  it('should call onCancel if the user presses the cancel button', () => {
+    const onCancel = jest.fn();
 
-  it('should submit if there are no errors on the form when submitting', () => {});
+    const { queryByTestId } = build({ onCancel });
 
-  it('should warn if the server returns an error with insecure name for the password path', () => {});
+    fireEvent.click(queryByTestId('cancel'));
 
-  it('should show a notification if an unknown error occurs', () => {});
+    expect(onCancel).toHaveBeenCalled();
+  });
 
-  it('should fire the onConfirm with the response data if successful', () => {});
+  it('should disable the submit button when the modal first loads', () => {
+    const { queryByTestId } = build();
+
+    expect(queryByTestId('confirm-change-password')).toHaveAttribute('disabled');
+  });
+
+  it('should warn on blur when typing in a trimmed new password less than 8 characters', async () => {
+    const { queryByTestId } = build();
+    const newPasswordField = queryByTestId('new-password');
+    const input = newPasswordField.querySelector('input');
+
+    fireEvent.change(input, { target: { value: '      mypass' } });
+    fireEvent.blur(input);
+
+    expect(within(newPasswordField).queryByTestId('cf-ui-validation-message').textContent).toEqual(
+      expect.any(String)
+    );
+  });
+
+  it('should warn on blur when the current password field is empty', () => {
+    const { queryByTestId } = build();
+    const currentPasswordField = queryByTestId('current-password');
+    const input = currentPasswordField.querySelector('input');
+
+    fireEvent.blur(input);
+
+    const validationMessage = within(currentPasswordField).queryByTestId('cf-ui-validation-message')
+      .textContent;
+
+    expect(validationMessage).toEqual(expect.any(String));
+  });
+
+  it('should warn on blur when typing in a trimmed new password confirmation less than 8 characters', () => {
+    const { queryByTestId } = build();
+    const newPasswordConfirmField = queryByTestId('new-password-confirm');
+    const input = newPasswordConfirmField.querySelector('input');
+
+    fireEvent.change(input, { target: { value: '      myconf' } });
+    fireEvent.blur(input);
+
+    const validationMessage = within(newPasswordConfirmField).queryByTestId(
+      'cf-ui-validation-message'
+    ).textContent;
+
+    expect(validationMessage).toEqual(expect.any(String));
+  });
+
+  it('should warn on blur if the password confirmation does not match the password', () => {
+    const { queryByTestId } = build();
+    const newPasswordField = queryByTestId('new-password');
+    const newPasswordConfirmField = queryByTestId('new-password-confirm');
+
+    const passwordInput = newPasswordField.querySelector('input');
+    const confirmInput = newPasswordConfirmField.querySelector('input');
+
+    fireEvent.change(passwordInput, { target: { value: 'my-awesome-password' } });
+    fireEvent.blur(passwordInput);
+
+    const passwordValidationMessage = within(newPasswordField).queryByTestId(
+      'cf-ui-validation-message'
+    );
+    expect(passwordValidationMessage).toBeNull();
+
+    fireEvent.change(confirmInput, { target: { value: 'my-confirmation-that-does-not-match' } });
+    fireEvent.blur(confirmInput);
+
+    const confirmValidationMessage = within(newPasswordConfirmField).queryByTestId(
+      'cf-ui-validation-message'
+    ).textContent;
+
+    expect(confirmValidationMessage).toEqual(expect.any(String));
+  });
+
+  it('should not submit if there are errors on the form when submitting', async () => {
+    const { queryByTestId } = build();
+    const newPasswordField = queryByTestId('new-password');
+    const newPasswordConfirmField = queryByTestId('new-password-confirm');
+    const submitButton = queryByTestId('confirm-change-password');
+
+    const passwordInput = newPasswordField.querySelector('input');
+    const confirmInput = newPasswordConfirmField.querySelector('input');
+
+    fireEvent.change(passwordInput, { target: { value: 'my-awesome-password' } });
+    fireEvent.blur(passwordInput);
+
+    fireEvent.change(confirmInput, { target: { value: 'my-wrong-confirmation' } });
+    fireEvent.blur(confirmInput);
+
+    fireEvent.click(submitButton);
+
+    await wait();
+
+    expect(updateUserData).not.toBeCalled();
+  });
+
+  it('should submit if there are no errors on the form when submitting', async () => {
+    const { queryByTestId } = build();
+
+    const currentPasswordField = queryByTestId('current-password');
+    const newPasswordField = queryByTestId('new-password');
+    const newPasswordConfirmField = queryByTestId('new-password-confirm');
+    const submitButton = queryByTestId('confirm-change-password');
+
+    const currentInput = currentPasswordField.querySelector('input');
+    const passwordInput = newPasswordField.querySelector('input');
+    const confirmInput = newPasswordConfirmField.querySelector('input');
+
+    fireEvent.change(currentInput, { target: { value: 'my-current-password' } });
+    fireEvent.change(passwordInput, { target: { value: 'my-awesome-password' } });
+    fireEvent.change(confirmInput, { target: { value: 'my-awesome-password' } });
+
+    fireEvent.click(submitButton);
+
+    await wait();
+
+    expect(updateUserData).toBeCalled();
+  });
+
+  it('should warn if the server returns an error with insecure name for the password path', async () => {
+    const err = new Error();
+    err.data = {
+      details: {
+        errors: [
+          {
+            name: 'insecure',
+            path: 'password'
+          }
+        ]
+      },
+      sys: {
+        type: 'Error'
+      }
+    };
+
+    updateUserData.mockRejectedValueOnce(err);
+
+    const { queryByTestId } = build({ hasPassword: false });
+
+    const newPasswordField = queryByTestId('new-password');
+    const newPasswordConfirmField = queryByTestId('new-password-confirm');
+    const submitButton = queryByTestId('confirm-change-password');
+
+    const passwordInput = newPasswordField.querySelector('input');
+    const confirmInput = newPasswordConfirmField.querySelector('input');
+
+    fireEvent.change(passwordInput, { target: { value: 'my-awesome-password' } });
+    fireEvent.change(confirmInput, { target: { value: 'my-awesome-password' } });
+
+    fireEvent.click(submitButton);
+
+    await wait();
+
+    const newPasswordValidationMessage = within(newPasswordField).queryByTestId(
+      'cf-ui-validation-message'
+    ).textContent;
+
+    expect(newPasswordValidationMessage).toEqual(expect.any(String));
+  });
+
+  it('should show a notification if an unknown error occurs', async () => {
+    jest.spyOn(Notification, 'error').mockImplementation(() => {});
+    const err = new Error();
+    updateUserData.mockRejectedValueOnce(err);
+
+    const { queryByTestId } = build({ hasPassword: false });
+
+    const newPasswordField = queryByTestId('new-password');
+    const newPasswordConfirmField = queryByTestId('new-password-confirm');
+    const submitButton = queryByTestId('confirm-change-password');
+
+    const passwordInput = newPasswordField.querySelector('input');
+    const confirmInput = newPasswordConfirmField.querySelector('input');
+
+    fireEvent.change(passwordInput, { target: { value: 'my-awesome-password' } });
+    fireEvent.change(confirmInput, { target: { value: 'my-awesome-password' } });
+
+    fireEvent.click(submitButton);
+
+    await wait();
+
+    expect(Notification.error).toBeCalled();
+  });
+
+  it('should fire the onConfirm with the response data if successful', async () => {
+    const onConfirm = jest.fn();
+    const { queryByTestId } = build({ hasPassword: false, onConfirm });
+
+    const newPasswordField = queryByTestId('new-password');
+    const newPasswordConfirmField = queryByTestId('new-password-confirm');
+    const submitButton = queryByTestId('confirm-change-password');
+
+    const passwordInput = newPasswordField.querySelector('input');
+    const confirmInput = newPasswordConfirmField.querySelector('input');
+
+    fireEvent.change(passwordInput, { target: { value: 'my-awesome-password' } });
+    fireEvent.change(confirmInput, { target: { value: 'my-awesome-password' } });
+
+    fireEvent.click(submitButton);
+
+    await wait();
+
+    expect(onConfirm).toBeCalled();
+  });
 });

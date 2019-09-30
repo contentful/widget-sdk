@@ -12,6 +12,7 @@ import { css } from 'emotion';
 import { createImmerReducer } from 'redux/utils/createImmerReducer.es6';
 import { updateUserData } from './AccountRepository';
 import { getValidationMessageFor } from './utils';
+import { fromPairs, get } from 'lodash';
 
 const styles = {
   controlsPanel: css({ display: 'flex' }),
@@ -19,19 +20,26 @@ const styles = {
 };
 
 const createFieldData = (initialValue = '') => ({
-  touched: false,
-  dirty: false,
+  blurred: false,
   value: initialValue,
   serverValidationMessage: null
 });
 
-const initializeReducer = currentVersion => {
+const initializeReducer = user => {
+  const {
+    sys: { version: currentVersion }
+  } = user;
+  const fields = {
+    newPassword: createFieldData(),
+    newPasswordConfirm: createFieldData()
+  };
+
+  if (user.passwordSet) {
+    fields.currentPassword = createFieldData();
+  }
+
   return {
-    fields: {
-      currentPassword: createFieldData(),
-      newPassword: createFieldData(),
-      newPasswordConfirm: createFieldData()
-    },
+    fields,
     formInvalid: false,
     submitting: false,
     currentVersion
@@ -41,16 +49,15 @@ const initializeReducer = currentVersion => {
 const reducer = createImmerReducer({
   UPDATE_FIELD_VALUE: (state, { payload }) => {
     state.fields[payload.field].value = payload.value;
-    state.fields[payload.field].dirty = true;
     state.formInvalid = false;
     state.fields[payload.field].serverValidationMessage = null;
   },
-  SET_FIELD_TOUCHED: (state, { payload }) => {
-    state.fields[payload.field].touched = true;
+  SET_FIELD_BLURRED: (state, { payload }) => {
+    state.fields[payload.field].blurred = true;
   },
-  SET_ALL_FIELDS_TOUCHED: state => {
+  SET_ALL_FIELDS_BLURRED: state => {
     Object.values(state.fields).forEach(fieldData => {
-      fieldData.touched = true;
+      fieldData.blurred = true;
     });
   },
   SET_SUBMITTING: (state, { payload }) => {
@@ -62,33 +69,36 @@ const reducer = createImmerReducer({
   SERVER_VALIDATION_FAILURE: (state, { payload }) => {
     state.fields[payload.field].serverValidationMessage = payload.value;
   },
-  RESET: () => {
-    return initializeReducer();
+  RESET: (_, { payload }) => {
+    return initializeReducer(payload);
   }
 });
 
 export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown }) {
-  const [formData, dispatch] = useReducer(reducer, user.sys.version, initializeReducer);
+  const [formData, dispatch] = useReducer(reducer, user, initializeReducer);
 
   const submit = async () => {
     dispatch({ type: 'SET_SUBMITTING', payload: true });
 
-    const newPassword = formData.fields.newPassword.value;
-    const currentPassword = formData.fields.currentPassword.value;
+    const data = {
+      password: formData.fields.newPassword.value
+    };
+
+    if (formData.fields.currentPassword) {
+      data.currentPassword = formData.fields.currentPassword.value;
+    }
+
     let response;
 
     try {
       response = await updateUserData({
         version: user.sys.version,
-        data: {
-          password: newPassword,
-          currentPassword
-        }
+        data
       });
     } catch (err) {
       const { data } = err;
 
-      if (data.sys && data.sys.type === 'Error') {
+      if (get(data, ['sys', 'type']) === 'Error') {
         const error = data.details.errors[0];
 
         if (error.name === 'insecure') {
@@ -112,10 +122,24 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
   };
 
   const validateForm = () => {
+    dispatch({ type: 'SET_ALL_FIELDS_BLURRED' });
+
+    // We need to manually set each field as touched as well, since
+    // the update will happen after this function call
+    const fields = fromPairs(
+      Object.entries(formData.fields).map(([name, data]) => {
+        return [
+          name,
+          {
+            ...data,
+            blurred: true
+          }
+        ];
+      })
+    );
+
     const formIsInvalid = Boolean(
-      Object.keys(formData.fields).find(fieldName =>
-        getValidationMessageFor(formData.fields, fieldName)
-      )
+      Object.keys(formData.fields).find(fieldName => getValidationMessageFor(fields, fieldName))
     );
 
     if (formIsInvalid) {
@@ -134,6 +158,7 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
       fields.newPassword.value !== fields.newPasswordConfirm.value ||
       fields.newPassword.serverValidationMessage
   );
+
   const userHasPassword = user.passwordSet;
 
   return (
@@ -144,7 +169,7 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
       shouldCloseOnOverlayClick={true}
       isShown={isShown}
       onClose={() => {
-        dispatch({ type: 'RESET', payload: { currentVersion: user.sys.version } });
+        dispatch({ type: 'RESET', payload: user });
         onCancel();
       }}
       size="large">
@@ -164,7 +189,7 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
               })
             }
             onBlur={() =>
-              dispatch({ type: 'SET_FIELD_TOUCHED', payload: { field: 'currentPassword' } })
+              dispatch({ type: 'SET_FIELD_BLURRED', payload: { field: 'currentPassword' } })
             }
             labelText="Current password"
             textInputProps={{ type: 'password', autoComplete: 'off' }}
@@ -183,12 +208,13 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
               payload: { field: 'newPassword', value: e.target.value }
             })
           }
-          onBlur={() => dispatch({ type: 'SET_FIELD_TOUCHED', payload: { field: 'newPassword' } })}
+          onBlur={() => dispatch({ type: 'SET_FIELD_BLURRED', payload: { field: 'newPassword' } })}
           labelText="New password"
           textInputProps={{ type: 'password', autoComplete: 'off' }}
         />
         <TextField
           required
+          validationMessage={getValidationMessageFor(formData.fields, 'newPasswordConfirm')}
           testId="new-password-confirm"
           id="new-password-confirm"
           name="new-password-confirm"
@@ -200,7 +226,7 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
             })
           }
           onBlur={() =>
-            dispatch({ type: 'SET_FIELD_TOUCHED', payload: { field: 'newPasswordConfirm' } })
+            dispatch({ type: 'SET_FIELD_BLURRED', payload: { field: 'newPasswordConfirm' } })
           }
           labelText="Confirm new password"
           textInputProps={{ type: 'password', autoComplete: 'off' }}
@@ -208,7 +234,7 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
         <div className={styles.controlsPanel}>
           <Button
             testId="confirm-change-password"
-            onClick={async () => {
+            onClick={() => {
               const formIsValid = validateForm();
 
               formIsValid && submit();
@@ -221,8 +247,9 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
           </Button>
           <Button
             className={styles.marginLeftM}
+            testId="cancel"
             onClick={() => {
-              dispatch({ type: 'RESET', payload: { currentVersion: user.sys.version } });
+              dispatch({ type: 'RESET', payload: user });
               onCancel();
             }}
             buttonType="muted">

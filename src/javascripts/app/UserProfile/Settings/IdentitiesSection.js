@@ -91,7 +91,7 @@ const IdentitiesSection = ({ userHasPassword, identities, onRemoveIdentity }) =>
   );
 
   return (
-    <>
+    <div data-test-id='identities-section'>
       {identities.length ? (
         <>
           <Heading className={styles.heading}>Connected open identities:</Heading>
@@ -118,7 +118,7 @@ const IdentitiesSection = ({ userHasPassword, identities, onRemoveIdentity }) =>
           </div>
         </>
       ) : null}
-    </>
+    </div>
   );
 };
 IdentitiesSection.propTypes = {
