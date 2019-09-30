@@ -7,7 +7,7 @@ import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { ModalConfirm } from '@contentful/forma-36-react-components';
 import { assign, filter } from 'utils/Collections.es6';
 import openRoleSelector from './RoleSelector.es6';
-import openInputDialog from 'app/InputDialog.es6';
+import { openInputDialog } from 'app/InputDialogComponent.es6';
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
 import { htmlEncode } from 'utils/encoder.es6';
 
@@ -102,13 +102,24 @@ ViewFolder.propTypes = {
   actions: PropTypes.object.isRequired
 };
 
-function renameFolder(folder, UpdateFolder) {
-  openInputDialog({
-    title: 'Rename folder',
-    confirmLabel: 'Rename folder',
-    message: 'New name for the folder',
-    input: { value: folder.title, min: 1, max: 32 }
-  }).promise.then(title => UpdateFolder(assign(folder, { title })));
+async function renameFolder(folder, UpdateFolder) {
+  const title = await openInputDialog(
+    {
+      title: 'Rename folder',
+      confirmLabel: 'Rename folder',
+      message: 'New name for the folder',
+      intent: 'positive',
+      maxLenght: 32,
+      isValid: value => {
+        const trimmed = (value || '').trim();
+        return trimmed.length > 0 && trimmed.length <= 32;
+      }
+    },
+    folder.title
+  );
+  if (title) {
+    UpdateFolder(assign(folder, { title }));
+  }
 }
 
 function deleteFolder(folder, DeleteFolder) {

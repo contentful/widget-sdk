@@ -62,7 +62,18 @@ export default function register() {
           };
 
           scope.resize = function resize(mode) {
-            ImageOperations.resize(mode, scope.file).then(setUpload, notifyEditError);
+            ImageOperations.resize(mode, scope.file).then(
+              value => {
+                if (value) {
+                  setUpload(value);
+                }
+              },
+              err => {
+                if (err) {
+                  notifyEditError(err);
+                }
+              }
+            );
           };
 
           scope.crop = async function crop(mode) {
@@ -72,7 +83,7 @@ export default function register() {
             scope.imageIsLoading = true;
             try {
               const file = await ImageOperations.crop(mode, scope.file);
-              if (file !== null) {
+              if (file) {
                 setFile(file);
               }
             } catch (ex) {

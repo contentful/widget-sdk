@@ -6,7 +6,7 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 
 import ViewFolder from './ViewFolder.es6';
-import openInputDialog from 'app/InputDialog.es6';
+import { openInputDialog } from 'app/InputDialogComponent.es6';
 import AddFolderIcon from 'svg/add-folder.es6';
 
 const styles = {
@@ -127,6 +127,23 @@ Empty.propTypes = {
 export default function ViewMenu({ state, actions }) {
   const { folders, canEdit } = state;
 
+  const onAddFolderClick = async () => {
+    const title = await openInputDialog({
+      title: 'Add folder',
+      confirmLabel: 'Add folder',
+      message: 'Please provide a name for your new folder:',
+      maxLength: 32,
+      intent: 'positive',
+      isValid: value => {
+        const trimmed = (value || '').trim();
+        return trimmed.length > 0 && trimmed.length <= 32;
+      }
+    });
+    if (title) {
+      actions.CreateFolder(title);
+    }
+  };
+
   // The default folder is ensured (minimal length is 1):
   const isEmpty =
     getAtPath(folders, ['length']) === 1 && getAtPath(folders, [0, 'views', 'length']) === 0;
@@ -144,16 +161,7 @@ export default function ViewMenu({ state, actions }) {
         {canEdit && (
           <div className={styles['view-menu__actions']}>
             <div className={styles['view-folder__separator']} />
-            <button
-              className="text-link"
-              onClick={() => {
-                openInputDialog({
-                  title: 'Add folder',
-                  confirmLabel: 'Add folder',
-                  message: 'Please provide a name for your new folder:',
-                  input: { min: 1, max: 32 }
-                }).promise.then(actions.CreateFolder);
-              }}>
+            <button className="text-link" onClick={onAddFolderClick}>
               <i style={{ marginRight: '5px' }}>
                 <AddFolderIcon />
               </i>{' '}

@@ -1,6 +1,7 @@
 import { get } from 'lodash';
+import React from 'react';
 import * as Filestack from 'services/Filestack.es6';
-import openInputDialog from 'app/InputDialog.es6';
+import { openInputDialog } from 'app/InputDialogComponent.es6';
 import * as TokenStore from 'services/TokenStore.es6';
 import * as HostnameTransformer from '@contentful/hostname-transformer';
 
@@ -34,12 +35,14 @@ const RESIZE_MODES = {
     initialValue: ratio(file),
     regex: RATIO_REGEX,
     title: 'Please provide desired dimensions',
-    message: `
-      Expected format is <code>{width}:{height}</code>.
-      Both <code>{width}</code> and <code>{height}</code> should be numbers between 1 and 9999.
-      Your image will be scaled without maintaining the original aspect ratio.
-      The form is prepopulated with current dimensions of your image.
-    `,
+    message: (
+      <>
+        Expected format is <code>width:height</code>. Both <code>width</code> and{' '}
+        <code>height</code> should be numbers between 1 and 9999. Your image will be scaled without
+        maintaining the original aspect ratio. The form is prepopulated with current dimensions of
+        your image.
+      </>
+    ),
     valueToUrl: value => {
       const [w, h] = value.split(':');
       return url(file, `w=${w}&h=${h}&fit=scale`);
@@ -67,12 +70,22 @@ export function resize(mode, file) {
 
   const { initialValue, regex, title, message, valueToUrl } = mode(file);
 
-  return openInputDialog({
-    input: { value: initialValue, regex },
-    title,
-    message,
-    confirmLabel: 'Resize image'
-  }).promise.then(valueToUrl);
+  return openInputDialog(
+    {
+      title,
+      message,
+      confirmLabel: 'Resize image',
+      intent: 'positive',
+      isValid: value => {
+        return regex.test(value);
+      }
+    },
+    initialValue
+  ).then(value => {
+    if (value) {
+      return valueToUrl(value);
+    }
+  });
 }
 
 export function crop(mode, file) {
@@ -88,22 +101,29 @@ export function crop(mode, file) {
 }
 
 function cropWithCustomAspectRatio(file) {
-  return openInputDialog({
-    input: {
-      value: ratio(file),
-      regex: RATIO_REGEX
+  return openInputDialog(
+    {
+      confirmLabel: 'Please provide desired aspect ratio',
+      intent: 'positive',
+      isValid: value => {
+        return RATIO_REGEX.test(value);
+      },
+      title: 'Please provide desired aspect ratio',
+      message: (
+        <>
+          Expected format is <code>width:height</code>. Both <code>width</code> and{' '}
+          <code>height</code> should be numbers between 1 and 9999. The form is prepopulated with
+          the aspect ratio of your image.
+        </>
+      )
     },
-    title: 'Please provide desired aspect ratio',
-    message: `
-      Expected format is <code>{width}:{height}</code>.
-      Both <code>{width}</code> and <code>{height}</code> should be numbers between 1 and 9999.
-      The form is prepopulated with the aspect ratio of your image.
-    `,
-    confirmLabel: 'Crop with provided aspect ratio'
-  }).promise.then(ratio => {
-    const [w, h] = ratio.split(':');
-    const parsedRatio = parseInt(w, 10) / parseInt(h, 10);
-    return Filestack.cropImage(parsedRatio, url(file));
+    ratio(file)
+  ).then(ratio => {
+    if (ratio) {
+      const [w, h] = ratio.split(':');
+      const parsedRatio = parseInt(w, 10) / parseInt(h, 10);
+      return Filestack.cropImage(parsedRatio, url(file));
+    }
   });
 }
 

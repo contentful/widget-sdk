@@ -1,69 +1,73 @@
-import React from 'react';
+import React, { useState } from 'react';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
+import {
+  ModalConfirm,
+  TextInput,
+  Paragraph,
+  Typography
+} from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
-import keycodes from 'utils/keycodes.es6';
 
-export default class InputDialog extends React.Component {
-  static propTypes = {
-    params: PropTypes.shape({
-      message: PropTypes.string,
-      title: PropTypes.string,
-      confirmLabel: PropTypes.string,
-      cancelLabel: PropTypes.string
-    }).isRequired,
-    onCancel: PropTypes.func.isRequired,
-    initialValue: PropTypes.string.isRequired,
-    onConfirm: PropTypes.func.isRequired,
-    maxLength: PropTypes.number,
-    isValid: PropTypes.bool.isRequired
-  };
-
-  static defaultProps = {
-    maxLength: undefined
-  };
-
-  constructor(props) {
-    super(props);
-
-    this.state = { value: props.initialValue };
-  }
-
-  onKeyDown = e => e.keyCode === keycodes.ENTER && this.props.onConfirm(this.state.value);
-
-  render() {
-    const { params, onConfirm, onCancel, maxLength, isValid } = this.props;
-    const { value } = this.state;
-    return (
-      <div className="modal-dialog">
-        <header className="modal-dialog__header">
-          <h1>{params.title}</h1>
-          <button className="modal-dialog__close" onClick={onCancel} />
-        </header>
-        <div className="modal-dialog__content">
-          <p
-            className="modal-dialog__richtext"
-            dangerouslySetInnerHTML={{ __html: params.message }}
-          />
-          <input
-            className="cfnext-form__input--full-size"
-            type="text"
-            value={value}
-            onChange={({ target: { value } }) => this.setState({ value })}
-            onKeyDown={this.onKeyDown}
-            maxLength={maxLength ? `${maxLength}` : ''}
-          />
-        </div>
-        <div className="modal-dialog__controls">
-          <button
-            className="btn-primary-action"
-            onClick={() => onConfirm(this.state.value)}
-            disabled={!isValid}>
-            {params.confirmLabel || 'OK'}
-          </button>
-          <button className="btn-secondary-action" onClick={onCancel}>
-            {params.cancelLabel || 'Cancel'}
-          </button>
-        </div>
-      </div>
-    );
-  }
+export function openInputDialog(params, initialValue = '') {
+  return ModalLauncher.open(({ isShown, onClose }) => (
+    <InputDialog
+      isShown={isShown}
+      params={params}
+      initialValue={initialValue}
+      onConfirm={value => {
+        const trimmedValue = String(value).trim();
+        if (trimmedValue) {
+          onClose(trimmedValue);
+        }
+      }}
+      onCancel={() => {
+        onClose(false);
+      }}
+    />
+  ));
 }
+
+export default function InputDialog(props) {
+  const [value, setValue] = useState(props.initialValue);
+
+  return (
+    <ModalConfirm
+      title={props.params.title}
+      confirmLabel={props.params.confirmLabel}
+      cancelLabel={props.params.cancelLabel}
+      isShown={props.isShown}
+      intent={props.params.intent}
+      isConfirmDisabled={!props.params.isValid(value)}
+      onCancel={() => {
+        props.onCancel();
+      }}
+      onConfirm={() => {
+        props.onConfirm(value);
+      }}>
+      <Typography>
+        <Paragraph>{props.params.message}</Paragraph>
+      </Typography>
+      <TextInput
+        maxLength={props.params.maxLength ? props.params.maxLength : 255}
+        value={value}
+        onChange={e => setValue(e.target.value)}
+      />
+    </ModalConfirm>
+  );
+}
+
+InputDialog.propTypes = {
+  params: PropTypes.shape({
+    message: PropTypes.string,
+    title: PropTypes.string,
+    confirmLabel: PropTypes.string,
+    cancelLabel: PropTypes.string,
+    intent: PropTypes.string,
+    maxLength: PropTypes.number,
+    isValid: PropTypes.func.isRequired
+  }).isRequired,
+  isShown: PropTypes.bool.isRequired,
+  onCancel: PropTypes.func.isRequired,
+  initialValue: PropTypes.string.isRequired,
+  onConfirm: PropTypes.func.isRequired
+};

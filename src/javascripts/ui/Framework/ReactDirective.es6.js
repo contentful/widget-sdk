@@ -19,7 +19,6 @@ import * as appContentListSaveViewDialogComponentEs6 from 'app/ContentList/SaveV
 import * as uiComponentsIconEs6 from 'ui/Components/Icon.es6';
 import * as componentsSharedIe11DeprecationBannerEs6 from 'components/shared/IE11DeprecationBanner.es6';
 import * as appContentModelEditorContentTypesPageEs6 from 'app/ContentModel/Editor/ContentTypesPage.es6';
-import * as appInputDialogComponentEs6 from 'app/InputDialogComponent.es6';
 import * as appOrganizationSettingsSsoSsoSetupEs6 from 'app/OrganizationSettings/SSO/SSOSetup.es6';
 import * as uiPagesSubscriptionOverviewIndexEs6 from 'ui/Pages/SubscriptionOverview/index.es6';
 import * as appOrganizationSettingsTeamsTeamPageEs6 from 'app/OrganizationSettings/Teams/TeamPage.es6';
@@ -293,7 +292,6 @@ function getModule(name) {
     'ui/Components/Icon.es6': uiComponentsIconEs6,
     'components/shared/IE11DeprecationBanner.es6': componentsSharedIe11DeprecationBannerEs6,
     'app/ContentModel/Editor/ContentTypesPage.es6': appContentModelEditorContentTypesPageEs6,
-    'app/InputDialogComponent.es6': appInputDialogComponentEs6,
     'app/OrganizationSettings/SSO/SSOSetup.es6': appOrganizationSettingsSsoSsoSetupEs6,
     'ui/Pages/SubscriptionOverview/index.es6': uiPagesSubscriptionOverviewIndexEs6,
     'app/OrganizationSettings/Teams/TeamPage.es6': appOrganizationSettingsTeamsTeamPageEs6,
