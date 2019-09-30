@@ -1,4 +1,3 @@
-/* eslint-disable rulesdir/restrict-non-f36-components */
 import React from 'react';
 import { findIndex, set, update, remove, map } from 'lodash/fp';
 import {
