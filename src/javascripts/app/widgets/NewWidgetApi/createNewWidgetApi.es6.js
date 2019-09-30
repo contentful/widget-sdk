@@ -22,8 +22,13 @@ export default function createNewWidgetApi(dependencies) {
   const { $scope } = dependencies;
 
   const field = createFieldApi({ $scope });
+  const parameters = {
+    installation: {},
+    instance: $scope.widget.settings || {}
+  };
 
   return {
-    field
+    field,
+    parameters
   };
 }

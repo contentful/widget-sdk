@@ -9502,38 +9502,6 @@ pre,
   .sticky-parent {
     padding-top: 0;
   }
-  .checkbox-editor__options {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-direction: column;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-            flex-direction: column;
-    -ms-flex-align: start;
-    -webkit-box-align: start;
-            align-items: start;
-  }
-  .checkbox-editor__options.x--disabled {
-    padding: 0 0.5em;
-    color: #8091a5;
-    background: #f7f9fa;
-    overflow: hidden;
-  }
-  .x--dir-rtl .checkbox-editor__options.x--directed .checkbox-editor__label {
-    margin-right: 0.4em;
-  }
-  .checkbox-editor__option {
-    display: block;
-    cursor: pointer;
-    line-height: 1.5em;
-    margin: 0.375em 0;
-    padding: 0 !important;
-  }
-  .checkbox-editor__option > input[type="checkbox"] {
-    vertical-align: middle;
-    margin: -3px 0.6em 0 0;
-  }
   .rating-editor {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -9555,57 +9523,6 @@ pre,
   }
   .rating-editor__clear {
     margin-left: 0.5em;
-  }
-  cf-radio-editor {
-    display: block;
-  }
-  .radio-editor__options {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-direction: row;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-            flex-direction: row;
-    -ms-flex-wrap: wrap;
-    flex-wrap: wrap;
-  }
-  .radio-editor__options.x--vertical {
-    -ms-flex-direction: column;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-            flex-direction: column;
-    -ms-flex-align: start;
-    -webkit-box-align: start;
-            align-items: start;
-  }
-  .radio-editor__options.x--disabled {
-    padding: 0 0.5em;
-    color: #8091a5;
-    background: #f7f9fa;
-  }
-  .x--dir-rtl .radio-editor__options.x--directed .radio-editor__label {
-    margin-right: 0.4em;
-  }
-  .radio-editor__option {
-    cursor: pointer;
-    display: block;
-    line-height: 1.5em;
-    margin: 0.375em 1em 0.375em 0;
-    width: auto !important;
-    padding: 0 !important;
-  }
-  .radio-editor__input {
-    vertical-align: middle;
-    margin: 0 0.6em 0 0;
-  }
-  .radio-editor__clear {
-    display: block;
-    margin: 0.6em 1.5em 0 0;
-  }
-  .x--vertical .radio-editor__clear {
-    display: inline-block;
-    margin: 0 1.5em;
   }
   .json-editor__disabled-content {
     font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;

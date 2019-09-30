@@ -13,6 +13,8 @@ import { MultipleLineEditor } from '@contentful/field-editor-multiple-line';
 import { DropdownEditor } from '@contentful/field-editor-dropdown';
 import { ListEditor } from '@contentful/field-editor-list';
 import { CheckboxEditor } from '@contentful/field-editor-checkbox';
+import { RadioEditor } from '@contentful/field-editor-radio';
+import { BooleanEditor } from '@contentful/field-editor-boolean';
 
 const CfLinkEditor = linkEditorWithCfWebApp(LinkEditor);
 const CfSingleLinkEditor = linkEditorWithCfWebApp(SingleLinkEditor);
@@ -85,7 +87,7 @@ export function create() {
     name: 'Radio',
     icon: 'radio',
     notFocusable: true,
-    template: '<cf-radio-editor />'
+    renderFieldEditor: ({ widgetApi }) => <RadioEditor field={widgetApi.field} />
   });
 
   registerWidget('boolean', {
@@ -93,7 +95,9 @@ export function create() {
     name: 'Radio',
     icon: 'radio',
     notFocusable: true,
-    template: '<cf-boolean-editor />',
+    renderFieldEditor: ({ widgetApi }) => (
+      <BooleanEditor field={widgetApi.field} parameters={widgetApi.parameters} />
+    ),
     parameters: [
       {
         id: 'trueLabel',
