@@ -4,11 +4,11 @@ import {
   getClientParams,
   _resetGlobals
 } from './SpaceTemplateLoader.es6';
-import { getModule } from 'NgRegistry.es6';
+import * as contentfulClient from 'services/contentfulClient.es6';
 import { contentTypesCDA, assetsCDA, entriesCDA, spaceCDA } from 'fixtures/SpaceTemplateLoader.es6';
 
 jest.mock(
-  'ng/contentfulClient',
+  'services/contentfulClient.es6',
   _ => ({
     newClient: jest.fn()
   }),
@@ -16,7 +16,6 @@ jest.mock(
 );
 
 describe('SpaceTemplateLoader', () => {
-  const contentfulClient = getModule('contentfulClient');
   const clientGetEntriesMock = jest.fn();
   const clientGetAssetsMock = jest.fn();
   const clientGetCTsMock = jest.fn();

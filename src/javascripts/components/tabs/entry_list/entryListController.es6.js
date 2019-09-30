@@ -7,7 +7,7 @@ import { createSelection } from 'classes/Selection.es6';
 import * as entityStatus from 'app/entity_editor/EntityStatus.es6';
 import { getBlankEntryView as getBlankView } from 'data/UiConfig/Blanks.es6';
 import * as ResourceUtils from 'utils/ResourceUtils.es6';
-
+import EntityListCache from 'classes/entityListCache.es6';
 import createSavedViewsSidebar from 'app/ContentList/SavedViewsSidebar.es6';
 import * as Analytics from 'analytics/Analytics.es6';
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
@@ -22,16 +22,8 @@ export default function register() {
     '$state',
     '$controller',
     'spaceContext',
-    'EntityListCache',
     'entityCreator',
-    function EntryListController(
-      $scope,
-      $state,
-      $controller,
-      spaceContext,
-      EntityListCache,
-      entityCreator
-    ) {
+    function EntryListController($scope, $state, $controller, spaceContext, entityCreator) {
       const searchController = $controller('EntryListSearchController', { $scope: $scope });
       $controller('DisplayedFieldsController', { $scope: $scope });
       $controller('EntryListColumnsController', { $scope: $scope });

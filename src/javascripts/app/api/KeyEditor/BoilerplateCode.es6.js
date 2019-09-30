@@ -1,6 +1,6 @@
 import { once } from 'lodash';
 import * as Config from 'Config.es6';
-import { getModule } from 'NgRegistry.es6';
+import { newClient as createCfClient } from 'services/contentfulClient.es6';
 
 /**
  * @ngdoc service
@@ -20,8 +20,6 @@ const previewToken = 'f16c6afc8c29c70747010419ac7c67aca8554353b781127964a4da0d3d
 const deliveryToken = '0823649eecd58e485f33874956959610ae30e53f1d8c9567e225a4a094644f4b';
 
 const getBoilerplateSpace = () => {
-  const { newClient: createCfClient } = getModule('contentfulClient');
-
   return createCfClient({
     space: boilerplateSpaceId,
     accessToken: usePreview ? previewToken : deliveryToken,

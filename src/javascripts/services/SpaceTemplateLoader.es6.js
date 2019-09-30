@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import { getModule } from 'NgRegistry.es6';
 import * as Config from 'Config.es6';
 import * as logger from 'services/logger.es6';
+import { newClient as newContentfulClient } from 'services/contentfulClient.es6';
 
 const contentfulConfig = Config.services.contentful;
 
@@ -17,10 +17,8 @@ export function _resetGlobals() {
 }
 
 export async function getTemplatesList() {
-  const contentfulClient = getModule('contentfulClient');
-
   if (!client) {
-    client = contentfulClient.newClient(getClientParams({ env: Config.env, ...contentfulConfig }));
+    client = newContentfulClient(getClientParams({ env: Config.env, ...contentfulConfig }));
   }
 
   const templates = await client.entries({
@@ -45,14 +43,12 @@ export function getTemplate(templateInfo) {
 }
 
 function getSpaceClient(templateInfo) {
-  const contentfulClient = getModule('contentfulClient');
-
   const spaceId = templateInfo.spaceId;
   if (spaceId in spaceClients) {
     return spaceClients[spaceId];
   }
 
-  spaceClients[spaceId] = contentfulClient.newClient({
+  spaceClients[spaceId] = newContentfulClient({
     host: contentfulConfig.cdaApiUrl,
     space: spaceId,
     accessToken: templateInfo.spaceApiKey
