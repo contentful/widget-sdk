@@ -195,6 +195,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
 
   return (
     <Modal
+      testId="edit-account-data-modal"
       title="Edit account"
       shouldCloseOnEscapePress={true}
       shouldCloseOnOverlayClick={true}
@@ -209,6 +210,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
           required
           validationMessage={getValidationMessageFor(formData.fields, 'firstName')}
           id="first-name-field"
+          testId="first-name-field"
           name="first-name"
           value={fields.firstName.value}
           onChange={e =>
@@ -229,6 +231,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
           required
           validationMessage={getValidationMessageFor(formData.fields, 'lastName')}
           id="last-name-field"
+          testId="last-name-field"
           name="last-name"
           value={fields.lastName.value}
           onChange={e =>
@@ -249,6 +252,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
           required
           validationMessage={getValidationMessageFor(formData.fields, 'email')}
           id="email-field"
+          testId="email-field"
           name="email"
           value={fields.email.value}
           onChange={e =>
@@ -277,6 +281,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
               required
               validationMessage={getValidationMessageFor(formData.fields, 'currentPassword')}
               id="current-password-field"
+              testId="current-password-field"
               name="current-password"
               value={fields.currentPassword.value}
               onChange={e =>
@@ -308,6 +313,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
         />
         <div className={styles.controlsPanel}>
           <Button
+            testId="confirm-account-data-changes"
             onClick={() => {
               const formIsValid = validateForm(formData);
               formIsValid && submitForm(formData, user, dispatch, onConfirm);

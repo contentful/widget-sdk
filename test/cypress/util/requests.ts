@@ -3,7 +3,6 @@ import { RequestOptions, Query } from '@pact-foundation/pact-web';
 const severalEntriesBody = require('../fixtures/responses/entries-several.json');
 const severalAssetsBody = require('../fixtures/responses/assets-several.json');
 const severalContentTypesBody = require('../fixtures/responses/content-types-several.json');
-const userProfileData = require('../fixtures/responses/user-profile-data.json');
 
 export const defaultSpaceId = Cypress.env('spaceId');
 export const defaultOrgId = Cypress.env('orgId');
@@ -25,8 +24,6 @@ export const defaultTaskId = 'taskId1';
 export const defaultUserId = 'userID';
 export const defaultJobId = 'jobID';
 export const defaultWebhookId = 'webhookId';
-
-export const defaultUserProfileData = userProfileData;
 
 export function getEntries(spaceId: string = defaultSpaceId, query?: Query): RequestOptions {
   return {
