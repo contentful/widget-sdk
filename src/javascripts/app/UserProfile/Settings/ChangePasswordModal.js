@@ -138,6 +138,7 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
 
   return (
     <Modal
+      testId="change-password-modal"
       title={`${userHasPassword ? 'Update' : 'Add'} password`}
       shouldCloseOnEscapePress={true}
       shouldCloseOnOverlayClick={true}
@@ -152,6 +153,7 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
           <TextField
             required
             validationMessage={getValidationMessageFor(formData.fields, 'currentPassword')}
+            testId="current-password"
             id="current-password"
             name="current-password"
             value={fields.currentPassword.value}
@@ -171,6 +173,7 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
         <TextField
           required
           validationMessage={getValidationMessageFor(formData.fields, 'newPassword')}
+          testId="new-password"
           id="new-password"
           name="new-password"
           value={fields.newPassword.value}
@@ -186,6 +189,7 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
         />
         <TextField
           required
+          testId="new-password-confirm"
           id="new-password-confirm"
           name="new-password-confirm"
           value={fields.newPasswordConfirm.value}
@@ -203,6 +207,7 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
         />
         <div className={styles.controlsPanel}>
           <Button
+            testId="confirm-change-password"
             onClick={async () => {
               const formIsValid = validateForm();
 

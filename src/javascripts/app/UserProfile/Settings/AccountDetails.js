@@ -123,10 +123,10 @@ export default function AccountDetails({ userData }) {
               src={user.avatarUrl}
             />
             <Typography className={cx(styles.column, styles.paddingLeftL)}>
-              <span className={styles.name}>
+              <span data-test-id="user-full-name" className={styles.name}>
                 {user.firstName} {user.lastName}
               </span>
-              <span className={styles.email}>
+              <span data-test-id="user-email" className={styles.email}>
                 {user.email}
                 {user.unconfirmedEmail && (
                   <>
@@ -136,7 +136,9 @@ export default function AccountDetails({ userData }) {
                 )}
               </span>
               {!user.ssoLoginOnly && (
-                <TextLink onClick={() => openChangePasswordModal(user, setUser)}>
+                <TextLink
+                  testId="link-change-password"
+                  onClick={() => openChangePasswordModal(user, setUser)}>
                   {user.passwordSet ? 'Change' : 'Add'} password
                 </TextLink>
               )}
