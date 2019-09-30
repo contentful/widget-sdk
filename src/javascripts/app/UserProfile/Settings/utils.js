@@ -1,6 +1,7 @@
 const validations = {
   presence: value => (value.trim() ? true : false),
-  minLength: (length, value) => (value && value.trim().length >= length ? true : false)
+  minLength: (length, value) => (value && value.trim().length >= length ? true : false),
+  maxLength: (length, value) => (value && value.trim().length < length ? true : false)
 };
 
 const validators = {
@@ -10,17 +11,30 @@ const validators = {
     if (!validations.presence(value)) {
       return 'First name is required';
     }
+
+    if (!validations.maxLength(100, value)) {
+      return 'First name must be less than 100 characters';
+    }
   },
   lastName: field => {
     const { value } = field;
     if (!validations.presence(value)) {
       return 'Last name is required';
     }
+
+    if (!validations.maxLength(100, value)) {
+      return 'Last name must be less than 100 characters';
+    }
   },
   email: field => {
     const { value } = field;
+
     if (!validations.presence(value)) {
       return 'Email is required';
+    }
+
+    if (!validations.maxLength(254, value)) {
+      return 'Email must be less than 254 characters';
     }
   },
   currentPassword: field => {

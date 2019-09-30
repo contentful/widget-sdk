@@ -2,14 +2,17 @@ describe('UserProfile Settings utils', () => {
   describe('getValidationMessageFor', () => {
     describe('firstName', () => {
       it('should return a message if no value is given', () => {});
+      it('should return a message if value is longer than 100 characters', () => {});
     });
 
     describe('lastName', () => {
       it('should return a message if no value is given', () => {});
+      it('should return a message if value is longer than 100 characters', () => {});
     });
 
     describe('email', () => {
       it('should return a message if no value is given', () => {});
+      it('should return a message if value is longer than 254 characters', () => {});
     });
 
     describe('currentPassword', () => {

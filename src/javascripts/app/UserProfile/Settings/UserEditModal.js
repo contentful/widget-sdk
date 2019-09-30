@@ -154,11 +154,13 @@ const submitForm = async (formData, user, dispatch, onConfirm) => {
     return;
   }
 
-  // Show a notification telling the user to check their inbox only if the unconfirmed email in the response is the same
+  // Show a notification telling the user to check their inbox if the unconfirmed email in the response is the same
   // as the email in the formData
   if (response.unconfirmedEmail === formData.fields.email.value) {
-    Notification.success('Check your inbox to confirm your new email.');
+    Notification.warning('Check your inbox to confirm your new email.');
   }
+
+  Notification.success('Your profile has been successfully updated.');
 
   dispatch({ type: 'RESET', payload: { user: response } });
   onConfirm(response);
