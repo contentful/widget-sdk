@@ -2,7 +2,7 @@ import React from 'react';
 import { render, cleanup, fireEvent } from '@testing-library/react';
 import 'jest-dom/extend-expect';
 import QuickNavSearch from './QuickNavSearch.es6';
-import { getModule } from 'NgRegistry.es6';
+import spaceContext from 'ng/spaceContext';
 
 jest.mock('services/localeStore', () => ({
   getDefaultLocale: () => ({
@@ -46,7 +46,6 @@ jest.mock('access_control/AccessChecker/index.es6', () => ({
 }));
 
 let wrapper;
-const spaceContext = getModule('spaceContext');
 
 beforeEach(() => {
   jest.useFakeTimers();

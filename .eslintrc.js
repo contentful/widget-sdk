@@ -14,7 +14,11 @@ module.exports = {
       }
     }
   },
-  plugins: ['react-hooks'],
+  parserOptions: {
+    ecmaVersion: 2017,
+    sourceType: 'module'
+  },
+  plugins: ['react-hooks', 'rulesdir', 'import'],
   env: {
     /*
       We are setting `browser: false` and manually allowing which globals we want.
@@ -29,10 +33,18 @@ module.exports = {
     ArrayBuffer: false,
     Uint8Array: false,
     window: true,
-    document: true
+    document: true,
+    JST: false
   },
   parser: 'babel-eslint',
   rules: {
+    'import/no-unresolved': 'error',
+    'rulesdir/relative-imports': 'error',
+    'rulesdir/restrict-angular-require': 'error',
+    'rulesdir/restrict-forma-css-in-react-components': 'warn',
+    'rulesdir/restrict-non-f36-components': 'warn',
+    'rulesdir/enforce-getModule-call-inside-fn': 'error',
+    'rulesdir/restrict-inline-styles': 'error',
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'error',
     'react/display-name': 'off',
@@ -78,15 +90,12 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['src/javascripts/**/*.js'],
-      excludedFiles: ['*.es6.js', '*.spec.js'],
-      env: {
-        browser: true,
-        node: false
-      },
-      globals: {
-        angular: false,
-        JST: false
+      files: ['test/**'],
+      rules: {
+        'import/no-unresolved': 'off',
+        'rulesdir/restrict-inline-styles': 'off',
+        'rulesdir/relative-imports': 'off',
+        'rulesdir/enforce-getModule-call-inside-fn': 'off'
       }
     },
     {
@@ -97,6 +106,8 @@ module.exports = {
       ],
       plugins: ['jest', 'rulesdir'],
       rules: {
+        'rulesdir/relative-imports': 'off',
+        'import/no-unresolved': 'off',
         'jest/no-disabled-tests': 'warn',
         'jest/no-focused-tests': 'error',
         'jest/no-identical-title': 'error',
@@ -129,27 +140,7 @@ module.exports = {
       }
     },
     {
-      files: ['src/javascripts/**/*.es6.js'],
-      parserOptions: {
-        ecmaVersion: 2017,
-        sourceType: 'module'
-      },
-      plugins: ['rulesdir', 'import'],
-      rules: {
-        'import/no-unresolved': 'error',
-        'rulesdir/relative-imports': 'error',
-        'rulesdir/restrict-angular-require': 'error',
-        'rulesdir/restrict-forma-css-in-react-components': 'warn',
-        'rulesdir/restrict-non-f36-components': 'warn',
-        'rulesdir/enforce-getModule-call-inside-fn': 'error',
-        'rulesdir/restrict-inline-styles': 'error'
-      },
-      globals: {
-        JST: false
-      }
-    },
-    {
-      files: ['src/javascripts/svg/**/*.es6.js'],
+      files: ['src/javascripts/svg/**/*.js'],
       plugins: ['rulesdir'],
       rules: {
         'rulesdir/restrict-inline-styles': 'off'
