@@ -191,7 +191,7 @@ export default class Task extends React.Component {
       return (
         <Tooltip
           data-test-id="disabled-task-tooltip"
-          content="You are not permitted to update this task">
+          content="This task is assigned to another user">
           {checkbox}
         </Tooltip>
       );
