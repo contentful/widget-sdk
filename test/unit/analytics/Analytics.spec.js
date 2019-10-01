@@ -7,18 +7,16 @@ describe('Analytics', () => {
   beforeEach(async function() {
     this.segment = makeMock(['enable', 'disable', 'identify', 'track', 'page']);
     this.Snowplow = makeMock(['enable', 'disable', 'identify', 'track', 'buildUnstructEventData']);
-    const analyticsConsole = makeMock(['setSessionData', 'add']);
 
     this.system.set('analytics/segment.es6', {
       default: this.segment
     });
     this.system.set('analytics/snowplow/Snowplow.es6', this.Snowplow);
+    this.system.set('analytics/analyticsConsole.es6', makeMock(['setSessionData', 'add']));
 
     this.analytics = await this.system.import('analytics/Analytics.es6');
 
-    await $initialize(this.system, $provide => {
-      $provide.constant('analytics/console', analyticsConsole);
-    });
+    await $initialize(this.system);
 
     // we want to simulate production environment
     // this way data hits the Segment and Snowplow services

@@ -34,7 +34,7 @@ export const angularInitRun = [
     componentsSharedPersistentNotificationCfPersistentNotificationDirectiveEs6();
 
     const modules = await Promise.all([
-      import('analytics/analyticsConsole.es6'),
+      import('analytics/analyticsConsoleDirective'),
       import('access_control/UserListHandler.es6'),
       import('services/modalDialogService.es6'),
       import('ui/command.es6'),

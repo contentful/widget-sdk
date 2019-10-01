@@ -2,7 +2,7 @@ import * as Config from 'Config.es6';
 import { includes, mapValues } from 'lodash';
 import * as UIVersionSwitcher from 'debug/UIVersionSwitcher.es6';
 import * as EnforceFlags from 'debug/EnforceFlags.es6';
-import { getModule } from 'NgRegistry.es6';
+import * as analyticsConsole from 'analytics/analyticsConsole.es6';
 
 const DEBUG_ENVS = ['development', 'preview', 'staging'];
 
@@ -38,16 +38,11 @@ function initDevNotifications() {
  * ~~~~
  */
 function create() {
-  const analytics = getModule('analytics/console');
-
   const modules = {
-    analytics
+    analytics: analyticsConsole.init
   };
 
-  const initializers = mapValues(modules, module => {
-    return module.default;
-  });
-  return makeLazyObj(initializers);
+  return makeLazyObj(modules);
 }
 
 /**

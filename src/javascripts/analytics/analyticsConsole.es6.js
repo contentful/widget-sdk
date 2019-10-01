@@ -1,4 +1,4 @@
-import { registerFactory, registerDirective } from 'NgRegistry.es6';
+import { getModule } from 'NgRegistry.es6';
 import _ from 'lodash';
 import * as K from 'utils/kefir.es6';
 import moment from 'moment';
@@ -8,223 +8,117 @@ import * as logger from 'services/logger.es6';
 import * as SnowplowEvents from 'analytics/snowplow/Events.es6';
 import * as Snowplow from 'analytics/snowplow/Snowplow.es6';
 
-export default function register() {
-  /**
-   * @ngdoc service
-   * @name analytics/console
-   * @description
-   * A small UI component presenting all events being tracked. Can be
-   * turned on (not in production) by calling `cfDebug.analytics()` from
-   * the console
-   *
-   * TODO We should invert the dependencies. Currently the 'Analytics'
-   * module requires this module and uses 'add()' and 'setSessionData()'
-   * to interact with the console. Instead this module should require
-   * 'Analytics' and use an event stream provided by the 'Analytics'
-   * module.
-   */
-  registerFactory('analytics/console', [
-    '$rootScope',
-    '$compile',
-    ($rootScope, $compile) => {
-      const { buildUnstructEventData: buildSnowplowEvent } = Snowplow;
-      const { getSchema: getSnowplowSchema } = SnowplowEvents;
+/**
+ * @description
+ * A small UI component presenting all events being tracked. Can be
+ * turned on (not in production) by calling `cfDebug.analytics()` from
+ * the console
+ *
+ * TODO We should invert the dependencies. Currently the 'Analytics'
+ * module requires this module and uses 'add()' and 'setSessionData()'
+ * to interact with the console. Instead this module should require
+ * 'Analytics' and use an event stream provided by the 'Analytics'
+ * module.
+ */
 
-      let isEnabled = false;
-      let el = null;
+const { buildUnstructEventData: buildSnowplowEvent } = Snowplow;
+const { getSchema: getSnowplowSchema } = SnowplowEvents;
 
-      const eventsBus = K.createBus();
-      const sessionDataBus = K.createPropertyBus();
+let isEnabled = false;
+let el = null;
+let scope = null;
 
-      const events$ = eventsBus.stream.scan((events, newEvent) => events.concat([newEvent]), []);
-      events$.onValue(_.noop);
+const eventsBus = K.createBus();
+const sessionDataBus = K.createPropertyBus();
 
-      const scope = _.extend($rootScope.$new(true), {
-        events$: events$,
-        sessionData$: sessionDataBus.property
-      });
+function getScope() {
+  if (scope) {
+    return scope;
+  }
+  const $rootScope = getModule('$rootScope');
 
-      return {
-        /**
-         * @ngdoc method
-         * @name analytics/console#default
-         * @description
-         * Enables and opens the console.
-         *
-         * After this we record events send from the analytics service.
-         *
-         * Mocks ES6 default export. Used by 'Debug' module to initialize
-         * service.
-         */
-        default: overrideScopeOptions => {
-          isEnabled = true;
-          show(overrideScopeOptions);
-        },
+  const events$ = eventsBus.stream.scan((events, newEvent) => events.concat([newEvent]), []);
+  events$.onValue(_.noop);
 
-        add: add,
-        /**
-         * @ngdoc method
-         * @name analytics/console#setUserData
-         * @param {object} data
-         * @description
-         * Replaces current session data.
-         */
-        setSessionData: sessionDataBus.set
-      };
+  scope = _.extend($rootScope.$new(true), {
+    events$: events$,
+    sessionData$: sessionDataBus.property
+  });
 
-      /**
-       * @ngdoc method
-       * @name analytics/console#show
-       * @param {Object?} overrideScopeOptions
-       * @returns {string|undefined}
-       * @description
-       * Activates the console.
-       */
-      function show(overrideScopeOptions) {
-        el = el || $compile('<cf-analytics-console />')(scope);
-        const first = el[0];
-        if (!first.parentElement) {
-          document.body.appendChild(first);
-        }
-
-        scope.$applyAsync(() => {
-          scope.isVisible = true;
-          Object.assign(scope, overrideScopeOptions);
-        });
-
-        return 'enjoy tracking! :wave:';
-      }
-
-      /**
-       * @ngdoc method
-       * @name analytics/console#add
-       * @param {string} name
-       * @param {object?} data
-       * @description
-       * Adds an event to the console.
-       */
-      function add(name, data) {
-        const snowplowEvent = buildSnowplowEvent(name, data);
-
-        const event = {
-          time: moment().format('HH:mm:ss'),
-          name: name,
-          data: data,
-          isValid: validateEvent(name)
-        };
-
-        if (snowplowEvent) {
-          const snowplowSchema = getSnowplowSchema(name);
-
-          event.snowplow = {
-            name: snowplowSchema.name,
-            version: snowplowSchema.version,
-            data: snowplowEvent[1],
-            context: snowplowEvent[2]
-          };
-        }
-
-        eventsBus.emit(event);
-        throwOrLogInvalidEvent(event);
-      }
-
-      function throwOrLogInvalidEvent(event) {
-        if (event.isValid) {
-          return;
-        }
-
-        const message = 'Invalid analytical event name: ' + event.name;
-        if (isEnabled) {
-          throw new Error(message);
-        } else {
-          logger.logWarn(message, { data: { event: event } });
-        }
-      }
-    }
-  ]);
-
-  registerDirective('cfAnalyticsConsole', [
-    '$timeout',
-    $timeout => ({
-      template: JST.analytics_console(),
-      link: function(scope, $el) {
-        const containerEl = $el.find('.analytics-console__content').get(0);
-
-        scope.toggleSessionData = () => {
-          scope.showingSnowplowDebugInfo = false;
-          scope.showSessionData = !scope.showSessionData;
-
-          if (scope.showSessionData) {
-            scrollUp();
-          } else {
-            scrollDown();
-          }
-        };
-
-        scope.$watchGroup(
-          ['events', 'filterText', 'clearedEventsIndex', 'showingSnowplowDebugInfo'],
-          (_new, _old, scope) => {
-            const relevantEvents = scope.events
-              .map((event, index) => ({ ...event, index }))
-              .filter(isRelevantEvent);
-            scope.filteredEvents = relevantEvents.filter(isSearchResultEvent);
-            scope.relevantEventsCount = relevantEvents.length;
-          }
-        );
-
-        function isRelevantEvent(event, index) {
-          if (index <= scope.clearedEventsIndex) return false;
-          if (scope.showingSnowplowDebugInfo && !event.snowplow) return false;
-          return true;
-        }
-
-        function isSearchResultEvent(event) {
-          if (!scope.filterText) return true;
-          const isMatch = text => text.indexOf(scope.filterText) !== -1;
-          return isMatch(event.name) || (event.snowplow && isMatch(event.snowplow.name));
-        }
-
-        scope.toggleSnowplowDebugInfo = () => {
-          scope.showSessionData = false;
-          scope.showingSnowplowDebugInfo = !scope.showingSnowplowDebugInfo;
-
-          if (scope.showingSnowplowDebugInfo) {
-            scrollDown();
-          }
-        };
-
-        scope.clearEvents = () => (scope.clearedEventsIndex = scope.events.length - 1);
-        scope.unclearEvents = () => (scope.clearedEventsIndex = -1);
-        scope.clearSearch = () => (scope.filterText = '');
-
-        scope.events$.onValue(events => {
-          scope.events = events;
-          if (scope.clearedEventsIndex === undefined) {
-            // When opening the console, show no events for great performance and
-            // no crazy scrolling. User can restore them if desired.
-            scope.clearEvents();
-          }
-          if (!scope.showSessionData) {
-            scrollDown();
-          }
-        });
-
-        scope.sessionData$.onValue(data => {
-          scope.sessionData = data;
-        });
-
-        function scrollDown() {
-          $timeout(() => {
-            containerEl.scrollTop = containerEl.scrollHeight;
-          });
-        }
-
-        function scrollUp() {
-          $timeout(() => {
-            containerEl.scrollTop = 0;
-          });
-        }
-      }
-    })
-  ]);
+  return scope;
 }
+
+/**
+ * @param {Object?} overrideScopeOptions
+ * @returns {string|undefined}
+ * @description
+ * Activates the console.
+ */
+function show(overrideScopeOptions) {
+  const $compile = getModule('$compile');
+  const scope = getScope();
+
+  el = el || $compile('<cf-analytics-console />')(scope);
+  const first = el[0];
+  if (!first.parentElement) {
+    document.body.appendChild(first);
+  }
+
+  scope.$applyAsync(() => {
+    scope.isVisible = true;
+    Object.assign(scope, overrideScopeOptions);
+  });
+
+  return 'enjoy tracking! :wave:';
+}
+
+/**
+ * @param {string} name
+ * @param {object?} data
+ * @description
+ * Adds an event to the console.
+ */
+export function add(name, data) {
+  const snowplowEvent = buildSnowplowEvent(name, data);
+
+  const event = {
+    time: moment().format('HH:mm:ss'),
+    name: name,
+    data: data,
+    isValid: validateEvent(name)
+  };
+
+  if (snowplowEvent) {
+    const snowplowSchema = getSnowplowSchema(name);
+
+    event.snowplow = {
+      name: snowplowSchema.name,
+      version: snowplowSchema.version,
+      data: snowplowEvent[1],
+      context: snowplowEvent[2]
+    };
+  }
+
+  eventsBus.emit(event);
+  throwOrLogInvalidEvent(event);
+}
+
+function throwOrLogInvalidEvent(event) {
+  if (event.isValid) {
+    return;
+  }
+
+  const message = 'Invalid analytical event name: ' + event.name;
+  if (isEnabled) {
+    throw new Error(message);
+  } else {
+    logger.logWarn(message, { data: { event: event } });
+  }
+}
+
+export function init(overrideScopeOptions) {
+  isEnabled = true;
+  show(overrideScopeOptions);
+}
+
+export const setSessionData = sessionDataBus.set;

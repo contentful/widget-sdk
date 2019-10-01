@@ -3,9 +3,9 @@ import * as Snowplow from 'analytics/snowplow/Snowplow.es6';
 import stringifySafe from 'json-stringify-safe';
 import { prepareUserData } from 'analytics/UserData.es6';
 import _ from 'lodash';
-import { getModule } from 'NgRegistry.es6';
 import segment from 'analytics/segment.es6';
 import * as logger from 'services/logger.es6';
+import * as analyticsConsole from 'analytics/analyticsConsole.es6';
 
 function removeCircularRefs(obj) {
   return JSON.parse(stringifySafe(obj));
@@ -29,8 +29,7 @@ function removeCircularRefs(obj) {
  * Calling `enable` doesn't mean that the events
  * will be sent to Segment and Snowplow automatically. We perform
  * an environment check to determine if we should do
- * networking. Events are always sent to an instance
- * of `analytics/console`.
+ * networking.
  *
  * Once disabled, this service cannot be enabled
  * again.
@@ -108,8 +107,6 @@ export function getSessionData(path, defaultValue) {
  * if it is on the valid events list.
  */
 export function track(event, data) {
-  const analyticsConsole = getModule('analytics/console');
-
   try {
     data = _.isObject(data) ? _.cloneDeep(data) : {};
     data = removeCircularRefs(Object.assign({}, getBasicPayload(), data));
@@ -274,7 +271,5 @@ function getBasicPayload() {
 }
 
 function sendSessionDataToConsole() {
-  const analyticsConsole = getModule('analytics/console');
-
   analyticsConsole.setSessionData(session);
 }
