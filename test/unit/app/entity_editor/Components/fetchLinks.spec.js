@@ -30,15 +30,13 @@ describe('fetchLinks', () => {
     };
 
     const getModuleStub = sinon.stub();
-    getModuleStub
-      .withArgs('spaceContext')
-      .returns(this.spaceContext)
-      .withArgs('EntityHelpers')
-      .returns(EntityHelpers);
+    getModuleStub.withArgs('spaceContext').returns(this.spaceContext);
 
     this.system.set('NgRegistry.es6', {
       getModule: getModuleStub
     });
+
+    this.system.set('app/entity_editor/entityHelpers.es6', EntityHelpers);
 
     this.system.set('services/localeStore.es6', {
       default: TheLocaleStore

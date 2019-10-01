@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { isNodeTypeEnabled } from 'app/widgets/rich_text/validations/index.es6';
 import { can, canCreateAsset } from 'access_control/AccessChecker/index.es6';
 import { INLINES, BLOCKS } from '@contentful/rich-text-types';
-import { getModule } from 'NgRegistry.es6';
+import * as EntityHelpers from 'app/entity_editor/entityHelpers.es6';
 
 export async function fetchContentTypes(widgetAPI) {
   const contentTypes = await widgetAPI.space.getContentTypes();
@@ -24,7 +24,6 @@ export async function fetchAssets(widgetAPI, query = '') {
 }
 
 export async function fetchEntries(widgetAPI, contentType, query = '') {
-  const EntityHelpers = getModule('EntityHelpers');
   const entityHelpers = EntityHelpers.newForLocale(widgetAPI.field.locale);
   const entries = await widgetAPI.space.getEntries({
     content_type: contentType.sys.id,

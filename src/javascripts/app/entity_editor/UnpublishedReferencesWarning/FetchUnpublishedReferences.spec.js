@@ -3,7 +3,6 @@ import { getRichTextEntityLinks } from '@contentful/rich-text-links';
 import { fetchEntities } from './EntityService.es6';
 
 jest.mock('@contentful/rich-text-links');
-jest.mock('ng/EntityHelpers', () => ({}), { virtual: true });
 jest.mock('./EntityService.es6');
 
 const SPACE_ID = 'space-id';

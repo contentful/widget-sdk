@@ -132,13 +132,13 @@ describe('Rich Text toolbar', () => {
       track: sinon.stub()
     });
 
+    this.system.set('app/entity_editor/entityHelpers.es6', {
+      newForLocale: sinon.stub()
+    });
+
     const { default: RichTextEditor } = await this.system.import('app/widgets/rich_text/index.es6');
 
     await $initialize(this.system, $provide => {
-      $provide.constant('EntityHelpers', {
-        newForLocale: sinon.stub()
-      });
-
       $provide.constant('entitySelector', {
         open: () => Promise.resolve([this.selectedEntity])
       });

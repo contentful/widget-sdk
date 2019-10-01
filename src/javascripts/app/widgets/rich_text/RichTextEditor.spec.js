@@ -4,7 +4,6 @@ import Enzyme from 'enzyme';
 import RichTextEditor from './RichTextEditor.es6';
 import Toolbar from './Toolbar/index.es6';
 
-jest.mock('ng/EntityHelpers', () => ({}), { virtual: true });
 jest.mock('ng/data/CMA/EntityState.es6', () => ({}), { virtual: true });
 jest.mock('directives/thumbnailHelpers.es6', () => ({}), { virtual: true });
 jest.mock('access_control/AccessChecker/index.es6', () => ({}), { virtual: true });

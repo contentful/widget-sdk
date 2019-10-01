@@ -20,7 +20,7 @@ jest.mock('states/Navigator.es6', () => ({
 }));
 
 jest.mock(
-  'ng/EntityHelpers',
+  'app/entity_editor/entityHelpers.es6',
   () => ({
     newForLocale: () => ({ entityTitle: () => 'title' })
   }),

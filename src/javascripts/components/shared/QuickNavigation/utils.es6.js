@@ -3,6 +3,7 @@ import { getModule } from 'NgRegistry.es6';
 import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
 import { includes, get, orderBy, compact } from 'lodash';
 import TheLocaleStore from 'services/localeStore.es6';
+import * as EntityHelpers from 'app/entity_editor/entityHelpers.es6';
 
 const RESULTS_LIMIT = 20;
 export const MIN_QUERY_LENGTH = 2;
@@ -28,7 +29,6 @@ const buildPathParams = (id, type) => {
 
 const queryEntries = async query => {
   const spaceContext = getModule('spaceContext');
-  const EntityHelpers = getModule('EntityHelpers');
 
   const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
   const entityHelpers = EntityHelpers.newForLocale(defaultLocaleCode);
@@ -61,7 +61,6 @@ const queryEntries = async query => {
 
 const queryAssets = async query => {
   const spaceContext = getModule('spaceContext');
-  const EntityHelpers = getModule('EntityHelpers');
 
   const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
   const entityHelpers = EntityHelpers.newForLocale(defaultLocaleCode);

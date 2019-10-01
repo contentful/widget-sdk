@@ -35,31 +35,31 @@ describe('FetchEntity', () => {
       getState: sinon.stub()
     });
 
+    this.system.set('app/entity_editor/entityHelpers.es6', {
+      newForLocale: sinon
+        .stub()
+        .withArgs('lo-LOCALE')
+        .returns({
+          entityFile: sinon
+            .stub()
+            .withArgs(this.entity)
+            .returns(Promise.resolve('FILE')),
+          entityTitle: sinon
+            .stub()
+            .withArgs(this.entity)
+            .returns(Promise.resolve('TITLE')),
+          entityDescription: sinon
+            .stub()
+            .withArgs(this.entity)
+            .returns(Promise.resolve('DESCRIPTION'))
+        })
+    });
+
     const FetchEntityModule = await this.system.import('app/widgets/shared/FetchEntity/index.es6');
     FetchEntity = FetchEntityModule.default;
     RequestStatus = FetchEntityModule.RequestStatus;
 
-    await $initialize(this.system, $provide => {
-      $provide.constant('EntityHelpers', {
-        newForLocale: sinon
-          .stub()
-          .withArgs('lo-LOCALE')
-          .returns({
-            entityFile: sinon
-              .stub()
-              .withArgs(this.entity)
-              .returns(Promise.resolve('FILE')),
-            entityTitle: sinon
-              .stub()
-              .withArgs(this.entity)
-              .returns(Promise.resolve('TITLE')),
-            entityDescription: sinon
-              .stub()
-              .withArgs(this.entity)
-              .returns(Promise.resolve('DESCRIPTION'))
-          })
-      });
-    });
+    await $initialize(this.system);
 
     this.entity = {
       sys: {

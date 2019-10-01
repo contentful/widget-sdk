@@ -4,7 +4,7 @@ import * as Kefir from 'kefir';
 import * as K from 'utils/kefir.es6';
 import { Operator } from 'app/ContentList/Search/Operators.es6';
 import Paginator from 'classes/Paginator.es6';
-
+import * as EntityHelpers from 'app/entity_editor/entityHelpers.es6';
 import getAccessibleCTs from 'data/ContentTypeRepo/accessibleCTs.es6';
 import createSearchInput from 'app/ContentList/Search/index.es6';
 
@@ -42,8 +42,7 @@ export default function register() {
     '$timeout',
     'spaceContext',
     'overridingRequestQueue',
-    'EntityHelpers',
-    function EntitySelectorController($scope, $timeout, spaceContext, createQueue, EntityHelpers) {
+    function EntitySelectorController($scope, $timeout, spaceContext, createQueue) {
       const MIN_SEARCH_TRIGGERING_LEN = 1;
       const MODES = { AVAILABLE: 1, SELECTED: 2 };
 

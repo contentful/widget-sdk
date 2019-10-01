@@ -9,6 +9,7 @@ import { userInputFromDatetime } from 'app/widgets/datetime/data.es6';
 import * as EntityResolver from 'data/CMA/EntityResolver.es6';
 import generatePreview from 'markdown_editor/PreviewGenerator.es6';
 import { isRtlLocale } from 'utils/locales.es6';
+import * as EntityHelpers from 'app/entity_editor/entityHelpers.es6';
 
 export default function register() {
   /**
@@ -98,8 +99,7 @@ export default function register() {
 
   registerDirective('cfSnapshotPresenterLink', [
     'spaceContext',
-    'EntityHelpers',
-    (spaceContext, EntityHelpers) => ({
+    spaceContext => ({
       restrict: 'E',
 
       template:

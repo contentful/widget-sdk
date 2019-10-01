@@ -53,7 +53,6 @@ export const angularInitRun = [
       import('components/field_dialog/fieldDialog.es6'),
       import('app/ContentModel/Editor/contentTypeEditorController.es6'),
       import('app/api/api_key_list/apiKeyListDirective.es6'),
-      import('app/entity_editor/entityHelpers.es6'),
       import('components/app_container/entityCreator.es6'),
       import('app/asset_editor/cfAssetEditorDirective.es6'),
       import('app/entity_editor/bulk_editor/cfBulkEditorDirective.es6'),

@@ -1,44 +1,49 @@
 import _ from 'lodash';
-import sinon from 'sinon';
-import { $initialize, $inject } from 'test/utils/ng';
-import { beforeEach, it } from 'test/utils/dsl';
+import { newForLocale } from './entityHelpers.es6';
+import * as spaceContextMocked from 'ng/spaceContext';
+
+const mockRewrittenUrl = 'http://rewritten.url/file.txt';
+
+const mockInternalLocale = {
+  'en-US': 'en-US',
+  de: 'de-internal'
+};
+
+jest.mock('services/AssetUrlService.es6', () => {
+  return {
+    transformHostname: () => mockRewrittenUrl
+  };
+});
+
+jest.mock('services/localeStore.es6', () => {
+  return {
+    toInternalCode: code => mockInternalLocale[code]
+  };
+});
 
 describe('EntityHelpers', () => {
-  const REWRITTEN_URL = 'http://rewritten.url/file.txt';
-  const INTERNAL_LOCALE_BY_LOCALE = {
-    'en-US': 'en-US',
-    de: 'de-internal'
-  };
   const throwingFn = () => {
     throw new Error('Should not end up here!');
   };
 
+  let helpers;
+
   beforeEach(async function() {
-    this.system.set('services/AssetUrlService.es6', {
-      transformHostname: _.constant(REWRITTEN_URL)
-    });
-    this.system.set('services/localeStore.es6', {
-      default: {
-        toInternalCode: code => INTERNAL_LOCALE_BY_LOCALE[code]
-      }
-    });
-
-    await $initialize(this.system);
-
-    this.spaceContext = $inject('mocks/spaceContext').init();
-    this.EntityHelpers = $inject('EntityHelpers');
-
-    this.helpers = this.EntityHelpers.newForLocale('en-US');
+    helpers = newForLocale('en-US');
+    spaceContextMocked.entityTitle.mockClear();
+    spaceContextMocked.entityDescription.mockClear();
+    spaceContextMocked.entryImage.mockClear();
+    spaceContextMocked.publishedCTs.get.mockClear();
   });
 
   describe('#assetFileUrl', () => {
     it('rejects if invalid file is provided', async function() {
-      await this.helpers.assetFileUrl({}).then(throwingFn, _.noop);
+      await helpers.assetFileUrl({}).then(throwingFn, _.noop);
     });
 
     it('resolves with URL', async function() {
-      const url = await this.helpers.assetFileUrl({ url: 'http://some.url/file.txt' });
-      expect(url).toBe(REWRITTEN_URL);
+      const url = await helpers.assetFileUrl({ url: 'http://some.url/file.txt' });
+      expect(url).toBe(mockRewrittenUrl);
     });
   });
 
@@ -68,7 +73,7 @@ describe('EntityHelpers', () => {
       };
 
       beforeEach(function() {
-        this.spaceContext.publishedCTs.get.returns({ data: contentType });
+        spaceContextMocked.publishedCTs.get.mockReturnValue({ data: contentType });
       });
 
       it(`converts data to entry and calls spaceContext.${spaceContextMethodName}()`, async function() {
@@ -77,10 +82,11 @@ describe('EntityHelpers', () => {
           fieldBRealId: { 'en-US': 'valEN', 'de-internal': 'valDE' }
         };
 
-        await this.helpers[methodName](entry);
+        await helpers[methodName](entry);
 
-        sinon.assert.calledOnce(this.spaceContext[spaceContextMethodName]);
-        const [entity, locale] = this.spaceContext[spaceContextMethodName].firstCall.args;
+        expect(spaceContextMocked[spaceContextMethodName]).toHaveBeenCalledTimes(1);
+
+        const [entity, locale] = spaceContextMocked[spaceContextMethodName].mock.calls[0];
 
         expect(entity.data.fields).toEqual(transformedFields);
         expect(entity.getType()).toBe('Entry');
@@ -89,11 +95,11 @@ describe('EntityHelpers', () => {
       });
 
       it(`passes internal locale to spaceContext`, async function() {
-        const helpers = this.EntityHelpers.newForLocale('de');
+        const helpers = newForLocale('de');
         await helpers[methodName]({
           sys: { type: 'Entry' }
         });
-        const locale = this.spaceContext[spaceContextMethodName].firstCall.args[1];
+        const locale = spaceContextMocked[spaceContextMethodName].mock.calls[0][1];
         expect(locale).toBe('de-internal');
       });
     });
@@ -103,12 +109,13 @@ describe('EntityHelpers', () => {
     spaceContextMethodName = spaceContextMethodName || methodName;
 
     it(`#${methodName}() converts data to asset and calls spaceContext.${spaceContextMethodName}()`, async function() {
-      await this.helpers[methodName]({
+      await helpers[methodName]({
         sys: { type: 'Asset' }
       });
 
-      sinon.assert.calledOnce(this.spaceContext[spaceContextMethodName]);
-      const [asset, locale] = this.spaceContext[spaceContextMethodName].firstCall.args;
+      expect(spaceContextMocked[spaceContextMethodName]).toHaveBeenCalledTimes(1);
+
+      const [asset, locale] = spaceContextMocked[spaceContextMethodName].mock.calls[0];
 
       expect(asset.getType()).toBe('Asset');
       expect(locale).toBe('en-US');

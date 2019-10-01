@@ -1,7 +1,7 @@
 import React from 'react';
-import { getModule } from 'NgRegistry.es6';
 import PropTypes from 'prop-types';
 import RequestStatus from './RequestStatus.es6';
+import * as EntityHelpers from 'app/entity_editor/entityHelpers.es6';
 
 import * as EntityState from 'data/CMA/EntityState.es6';
 
@@ -48,9 +48,6 @@ export default class FetchEntity extends React.PureComponent {
     }
   }
   fetchEntity = async () => {
-    // TODO: Move this to an es6 module depending on parts of `widgetApi`
-    const EntityHelpers = getModule('EntityHelpers');
-
     const { widgetAPI, entityId, entityType, localeCode, fetchFile } = this.props;
 
     this.setStateSafe({

@@ -2,6 +2,7 @@ import { makeEntityRef, href } from 'states/Navigator.es6';
 import { EntityType } from '../constants.es6';
 import TheLocaleStore from 'services/localeStore.es6';
 import { getModule } from 'NgRegistry.es6';
+import * as EntityHelpers from 'app/entity_editor/entityHelpers.es6';
 
 const assertEntityTypeIsValid = entityType => {
   if (entityType !== EntityType.ENTRY && entityType !== EntityType.ASSET) {
@@ -11,7 +12,6 @@ const assertEntityTypeIsValid = entityType => {
 
 export default (id, type) => {
   const spaceContext = getModule('spaceContext');
-  const EntityHelpers = getModule('EntityHelpers');
 
   const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
   const entityHelpers = EntityHelpers.newForLocale(defaultLocaleCode);

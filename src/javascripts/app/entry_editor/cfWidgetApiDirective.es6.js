@@ -3,6 +3,7 @@ import _ from 'lodash';
 import * as K from 'utils/kefir.es6';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient/index.es6';
 import * as PublicContentType from 'widgets/PublicContentType.es6';
+import * as EntityHelpers from 'app/entity_editor/entityHelpers.es6';
 
 import TheLocaleStore from 'services/localeStore.es6';
 
@@ -34,8 +35,7 @@ export default function register() {
   registerController('WidgetApiController', [
     '$scope',
     'spaceContext',
-    'EntityHelpers',
-    function($scope, spaceContext, EntityHelpers) {
+    function($scope, spaceContext) {
       const {
         locale,
         fieldLocale,
