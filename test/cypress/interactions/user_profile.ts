@@ -150,3 +150,27 @@ export const deleteIdentity = {
         return '@deleteIdentity';
     }
 };
+
+function queryDeleteUserAccount(): RequestOptions {
+    return {
+        method: 'POST',
+        path: '/users/me/user_cancellations',
+        headers: defaultHeader
+    };
+}
+
+export const deleteUserAccount = {
+    willReturnIt() {
+        cy.addInteraction({
+            provider: 'user_profile',
+            state: 'user/default',
+            uponReceiving: `a request to delete the user account`,
+            withRequest: queryDeleteUserAccount(),
+            willRespondWith: {
+                status: 201
+            }
+        }).as('deleteUserAccount');
+
+        return '@deleteUserAccount';
+    }
+};

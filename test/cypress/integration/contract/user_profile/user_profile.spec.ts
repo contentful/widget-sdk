@@ -1,5 +1,5 @@
 import { getTokenForUser } from '../../../interactions/token';
-import { getUserProfileData, deleteIdentity, updateDefaultUserProfileData, changePassword } from '../../../interactions/user_profile';
+import { getUserProfileData, deleteIdentity, updateDefaultUserProfileData, changePassword, deleteUserAccount } from '../../../interactions/user_profile';
 
 describe('User profile page', () => {
     before(() =>
@@ -123,6 +123,14 @@ describe('User profile page', () => {
                     .should('be.visible');
             });
         });
+
+        it('delete user', () => {
+            const deleteUserAccountInteraction = [deleteUserAccount.willReturnIt()];
+            cy.getByTestId('delete-account-button').click();
+            cy.getByTestId('confirm-delete-account-button').click();
+            cy.wait(deleteUserAccountInteraction);
+            cy.url().should('include', '/goodbye');
+        })
     });
     context('identity only logged in user', () => {
         beforeEach(() => {

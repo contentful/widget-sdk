@@ -121,6 +121,7 @@ const DeleteUserModal = ({ singleOwnerOrganizations, onConfirm, onCancel, isShow
       </Typography>
       <div className={styles.buttons}>
         <Button
+          testId="confirm-delete-account-button"
           buttonType="negative"
           disabled={deleting}
           loading={deleting}

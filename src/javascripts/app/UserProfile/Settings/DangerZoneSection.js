@@ -34,7 +34,10 @@ export default function DangerZoneSection({ singleOwnerOrganizations }) {
   return (
     <Typography className={styles.paddingS}>
       <Heading>Danger zone</Heading>
-      <Button buttonType="negative" onClick={() => openDeleteUserModal(singleOwnerOrganizations)}>
+      <Button
+        testId="delete-account-button"
+        buttonType="negative"
+        onClick={() => openDeleteUserModal(singleOwnerOrganizations)}>
         Delete my account
       </Button>
     </Typography>
