@@ -66,7 +66,7 @@ describe('Schedule Publication', () => {
 
       cy.wait(validateAnEntryInteraction);
       cy.wait(scheduledPubinteraction);
-      cy.wait(200); // extra wait for notification animation 200ms
+      cy.wait(500); // extra wait for notification animation 200ms
       cy.getAllByTestId('cf-ui-notification')
         .should('be.visible')
         .should('contain', 'There is a limit of 20 scheduled entries');

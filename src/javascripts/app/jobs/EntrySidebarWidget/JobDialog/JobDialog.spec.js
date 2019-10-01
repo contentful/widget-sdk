@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, cleanup, fireEvent, wait, getByText } from '@testing-library/react';
+import { render, cleanup, fireEvent, wait } from '@testing-library/react';
 import { Notification } from '@contentful/forma-36-react-components';
 
 import 'jest-dom/extend-expect';
@@ -84,21 +84,24 @@ describe('JobDialog', () => {
   });
 
   it.each([
-    ['2017-06-18T15:30', '(GMT+03:00)', '2017-06-18T16:00:00.000+03:00'],
-    ['2017-06-18T16:30', '(GMT+03:00)', '2017-06-18T17:00:00.000+03:00'],
-    ['2017-06-18T16:30', '(GMT+01:00)', '2017-06-18T17:00:00.000+01:00']
-  ])('allows to set timezone: %p + %p => %p', async (now, offset, expected) => {
+    ['2017-06-18T15:59', '(GMT+03:00) - Africa/Nairobi', '2017-06-18T16:00:00.000+03:00'],
+    ['2017-06-18T16:59', '(GMT+03:00) - Africa/Nairobi', '2017-06-18T17:00:00.000+03:00'],
+    ['2017-06-18T16:59', '(GMT+01:00) - Europe/London', '2017-06-18T17:00:00.000+01:00'],
+    ['2017-12-01T16:59', '(GMT+02:00) - Europe/Berlin', '2017-12-01T17:00:00.000+01:00']
+  ])('allows to set timezone: %p + %p => %p', async (now, timezone, expected) => {
     DateMocks.mockNowOnce(dateNowSpy, now);
 
     const [renderResult, props] = build();
 
-    const tz = renderResult.getByLabelText('timezone', {
-      selector: 'select'
+    const tz = renderResult.getByTestId('autocomplete.input');
+
+    fireEvent.focus(tz);
+    fireEvent.change(tz, {
+      target: { value: timezone }
     });
 
-    fireEvent.change(tz, {
-      target: { value: getByText(tz, offset, { exact: false }).value }
-    });
+    const selectedItem = renderResult.getByText(timezone);
+    fireEvent.click(selectedItem);
 
     const expectedLocalTime = moment(expected).format('ddd, MMM Do, YYYY - hh:mm A');
 

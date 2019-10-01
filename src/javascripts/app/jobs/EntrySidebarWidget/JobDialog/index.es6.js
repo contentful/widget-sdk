@@ -16,13 +16,13 @@ import {
 import * as EndpointFactory from 'data/EndpointFactory.es6';
 import APIClient from 'data/APIClient.es6';
 
-import { getTimezoneOptions } from './Timezones.es6';
 import { createDialogClose, createDialogOpen } from 'app/jobs/Analytics/JobsAnalytics.es6';
 
 import JobsTimeline from '../JobsTimeline/index.es6';
 import DatePicker from './DatePicker/index.es6';
 import TimePicker from './TimePicker/index.es6';
 import JobAction, { actionToLabelText } from 'app/jobs/JobAction.es6';
+import TimezonePicker from './TimezonePicker/index.es6';
 
 const styles = {
   timezoneNote: css({
@@ -33,8 +33,7 @@ const styles = {
   })
 };
 
-function TimezoneNote({ date, time, utcOffset }) {
-  const localOffset = moment().utcOffset();
+function TimezoneNote({ date, time, timezone }) {
   const localTimezoneName = moment.tz.guess();
 
   return (
@@ -44,12 +43,11 @@ function TimezoneNote({ date, time, utcOffset }) {
       noteType="primary"
       title="Timezone changed">
       The scheduled time you have selected will be:{' '}
-      {moment(formatScheduledAtDate({ date, time, utcOffset })).format(
+      {moment(formatScheduledAtDate({ date, time, timezone })).format(
         'ddd, MMM Do, YYYY - hh:mm A'
       )}
       <br />
-      in your local time. ({moment.tz.zone(localTimezoneName).abbr(localOffset)}
-      {moment().format('Z')} {localTimezoneName})
+      in your local time. ({localTimezoneName})
     </Note>
   );
 }
@@ -57,15 +55,13 @@ function TimezoneNote({ date, time, utcOffset }) {
 TimezoneNote.propTypes = {
   date: PropTypes.string,
   time: PropTypes.string,
-  utcOffset: PropTypes.number
+  timezone: PropTypes.string
 };
 
-function formatScheduledAtDate({ date, time, utcOffset }) {
-  const res = moment(`${date} ${time}`, 'YYYY-MM-DD HH:mm')
-    .utcOffset(utcOffset, true)
-    .toISOString(true);
-
-  return res;
+function formatScheduledAtDate({ date, time, timezone }) {
+  const scheduledDate = moment(`${date} ${time}`, 'YYYY-MM-DD HH:mm');
+  const scheduledOffset = moment.tz(scheduledDate, timezone).utcOffset();
+  return scheduledDate.utcOffset(scheduledOffset, true).toISOString(true);
 }
 
 function JobDialog({
@@ -81,13 +77,14 @@ function JobDialog({
   isMasterEnvironment
 }) {
   const now = moment(Date.now());
+  const currentTimezone = moment.tz.guess();
   const suggestedDate = getSuggestedDate(pendingJobs, now);
   const [date, setDate] = useState(suggestedDate.format('YYYY-MM-DD'));
   const [time, setTime] = useState(suggestedDate.format('HH:mm'));
   const [action, setAction] = useState(JobAction.Publish);
   const [isSubmitDisabled, setSubmitDisabled] = useState(isSubmitting);
   const [formError, setFormError] = useState('');
-  const [utcOffset, setUtcOffset] = useState(suggestedDate.utcOffset());
+  const [timezone, setTimezone] = useState(currentTimezone);
 
   useEffect(() => {
     createDialogOpen();
@@ -102,7 +99,7 @@ function JobDialog({
         pendingJobs.find(
           job =>
             job.scheduledAt ===
-            moment(formatScheduledAtDate({ date, time, utcOffset })).toISOString()
+            moment(formatScheduledAtDate({ date, time, timezone })).toISOString()
         )
       ) {
         setFormError(
@@ -114,7 +111,7 @@ function JobDialog({
         setFormError(null);
       }
 
-      if (moment(formatScheduledAtDate({ date, time, utcOffset })).isAfter(moment.now())) {
+      if (moment(formatScheduledAtDate({ date, time, timezone })).isAfter(moment.now())) {
         setFormError(null);
         if (onFormValid) {
           onFormValid();
@@ -125,7 +122,7 @@ function JobDialog({
 
       setSubmitDisabled(false);
     },
-    [time, utcOffset, date, pendingJobs]
+    [time, timezone, date, pendingJobs]
   );
 
   const endpoint = EndpointFactory.createSpaceEndpoint(spaceId, environmentId);
@@ -153,8 +150,9 @@ function JobDialog({
           return;
         }
       }
+
       onCreate({
-        scheduledAt: formatScheduledAtDate({ date, time, utcOffset }),
+        scheduledAt: formatScheduledAtDate({ date, time, timezone }),
         action
       });
     });
@@ -218,25 +216,11 @@ function JobDialog({
                 />
               </FieldGroup>
               <FieldGroup row>
-                <SelectField
-                  name="timezone"
-                  id="timezone"
-                  testId="timezone"
-                  onChange={e => {
-                    setUtcOffset(Number(e.target.value));
-                  }}
-                  labelText="Timezone"
-                  value={utcOffset.toString()}>
-                  {getTimezoneOptions().map(({ timezone, offset, label }) => (
-                    <Option key={timezone} value={offset}>
-                      {label}
-                    </Option>
-                  ))}
-                </SelectField>
+                <TimezonePicker onSelect={value => setTimezone(value)} />
               </FieldGroup>
-              {utcOffset !== now.utcOffset() && (
+              {timezone !== currentTimezone && (
                 <FieldGroup>
-                  <TimezoneNote date={date} time={time} utcOffset={utcOffset} />
+                  <TimezoneNote date={date} time={time} timezone={timezone} />
                 </FieldGroup>
               )}
               {formError && (

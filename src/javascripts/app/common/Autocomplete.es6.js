@@ -97,7 +97,9 @@ export default function Autocomplete({
   validationMessage,
   isLoading = false,
   emptyListMessage = 'No options to choose from',
-  noMatchesMessage = 'No items found'
+  noMatchesMessage = 'No items found',
+  dropdownProps,
+  willClearQueryOnClose = false
 }) {
   const listRef = useRef();
   const inputRef = useRef();
@@ -154,7 +156,10 @@ export default function Autocomplete({
     <>
       <Dropdown
         isOpen={isOpen}
-        onClose={() => dispatch({ type: TOGGLED_LIST })}
+        onClose={() => {
+          willClearQueryOnClose && updateQuery('');
+          dispatch({ type: TOGGLED_LIST });
+        }}
         className={className}
         toggleElement={
           <div className={styles.autocompleteInput}>
@@ -180,7 +185,8 @@ export default function Autocomplete({
               label={query ? 'Clear' : 'Show list'}
             />
           </div>
-        }>
+        }
+        {...dropdownProps}>
         {validationMessage && <ValidationMessage>{validationMessage}</ValidationMessage>}
         <DropdownList testId="autocomplete.dropdown-list" maxHeight={maxHeight}>
           <div ref={listRef}>
@@ -226,7 +232,9 @@ Autocomplete.propTypes = {
   isLoading: PropTypes.bool,
   disabled: PropTypes.bool,
   emptyListMessage: PropTypes.string,
-  noMatchesMessage: PropTypes.string
+  noMatchesMessage: PropTypes.string,
+  dropdownProps: PropTypes.object,
+  willClearQueryOnClose: PropTypes.bool
 };
 
 function OptionSkeleton() {

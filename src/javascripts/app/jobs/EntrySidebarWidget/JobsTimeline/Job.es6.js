@@ -24,7 +24,7 @@ const FormattedTime = ({ time, size }) =>
 
 FormattedTime.propTypes = {
   time: PropTypes.string.isRequired,
-  size: PropTypes.oneOf(['default', 'size'])
+  size: PropTypes.oneOf(['default', 'small'])
 };
 
 FormattedTime.defaultProps = {
