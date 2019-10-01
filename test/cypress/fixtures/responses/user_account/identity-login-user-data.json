@@ -1,0 +1,40 @@
+{
+  "firstName": "TestUser",
+  "lastName": "LastName",
+  "avatarUrl": "https://avatars0.githubusercontent.com/u/12238477?v=4",
+  "email": "testuser1569933289297@mailinator.com",
+  "activated": true,
+  "signInCount": 2,
+  "confirmed": false,
+  "unconfirmedEmail": null,
+  "passwordSet": false,
+  "ssoLoginOnly": false,
+  "logAnalyticsFeature": true,
+  "sys": {
+    "type": "User",
+    "id": "6gft2XAzeJonvGwWoz8cHB",
+    "version": 2,
+    "createdAt": "2019-10-01T12:34:58Z",
+    "updatedAt": "2019-10-01T14:10:16Z"
+  },
+  "identities": [
+    {
+      "provider": "github",
+      "sys": {
+        "type": "Identity",
+        "id": 35251,
+        "version": 0,
+        "createdAt": "2019-10-01T12:34:58Z",
+        "updatedAt": "2019-10-01T12:34:58Z"
+      }
+    }
+  ],
+  "userCancellationWarning": {
+    "singleOwnerOrganizations": [
+      {
+        "name": "ACME Corp",
+        "spaceNames": []
+      }
+    ]
+  }
+}
