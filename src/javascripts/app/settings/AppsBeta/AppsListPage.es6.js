@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import { partition } from 'lodash';
+import { identity, partition } from 'lodash';
 
 import tokens from '@contentful/forma-36-tokens';
 import {
@@ -34,6 +34,7 @@ import { getProductCatalogFlagForApp, hasAllowedAppFeatureFlag } from './AppProd
 import * as AppLifecycleTracking from './AppLifecycleTracking.es6';
 import StateLink from 'app/common/StateLink.es6';
 import createAppsClient from '../apps/AppsClient.es6';
+import { APP_ORDER } from './AppsRepo.es6';
 
 const styles = {
   intro: css({
@@ -313,7 +314,11 @@ export default class AppsListPage extends React.Component {
 
       const appsFeatureDisabled = await this.props.productCatalog.isAppsFeatureDisabled();
 
-      const preparedApps = Object.values(appsListing)
+      const flatApps = Object.values(appsListing);
+      const preparedApps = APP_ORDER.map(appId => {
+        return flatApps.find(app => app.fields.slug === appId);
+      })
+        .filter(identity)
         .map(prepareApp(repoApps, productCatalogFlags))
         .filter(app => app.visible);
       const preparedDevApps = devApps.map(prepareDevApp);

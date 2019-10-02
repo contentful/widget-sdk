@@ -13,7 +13,14 @@ const APP_TO_EXTENSION_DEFINITION = {
 };
 
 // Order on the list, values are App IDs
-const APP_ORDER = ['netlify', 'gatsby', 'optimizely', 'cloudinary', 'bynder', 'image-focal-point'];
+export const APP_ORDER = [
+  'netlify',
+  'gatsby',
+  'optimizely',
+  'cloudinary',
+  'bynder',
+  'image-focal-point'
+];
 
 const DEV_APP_PREFIX = 'dev-app';
 const DEV_APP_SEPARATOR = '_';
