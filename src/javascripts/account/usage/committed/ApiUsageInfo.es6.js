@@ -40,7 +40,7 @@ export default class ApiUsageInfo extends React.Component {
                     <em>deleted space</em>
                   )}
                   {isPoC[spaceId] && (
-                    <Tooltip content="Proof of concept">
+                    <Tooltip content="Proof of concept (space trial)">
                       <Tag tagType="muted" style={{ marginLeft: '10px' }}>
                         POC
                       </Tag>
