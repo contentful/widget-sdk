@@ -39,7 +39,7 @@ jest.mock('account/pricing/PricingDataProvider.es6', () => {
   const getPlansWithSpaces = jest.fn(() => ({
     items: [
       { name: 'Test plan', space: { sys: { id: 'space1' } } },
-      { name: 'Proof of concept', space: { sys: { id: 'space2' } } }
+      { name: 'Proof of concept (space trial)', space: { sys: { id: 'space2' } } }
     ]
   }));
   return {
