@@ -8,11 +8,12 @@ const APP_TO_EXTENSION_DEFINITION = {
   gatsby: '35f8xJFaJpOUFAKepAWiUj',
   optimizely: 'i43PggcHag2PCrGjYTiIX',
   cloudinary: 'zjcnWgBknf9zB7IM9HZjE',
-  bynder: '5KySdUzG7OWuCE2V3fgtIa'
+  bynder: '5KySdUzG7OWuCE2V3fgtIa',
+  'image-focal-point': '342Q2DqCjmsdN5BJCEPkrJ'
 };
 
 // Order on the list, values are App IDs
-const APP_ORDER = ['netlify', 'gatsby', 'optimizely', 'cloudinary', 'bynder'];
+const APP_ORDER = ['netlify', 'gatsby', 'optimizely', 'cloudinary', 'bynder', 'image-focal-point'];
 
 const DEV_APP_PREFIX = 'dev-app';
 const DEV_APP_SEPARATOR = '_';
