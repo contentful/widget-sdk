@@ -7,14 +7,23 @@ import createResourceService from 'services/ResourceService.es6';
 const ENFORCEMENT_INFO_REFRESH_INTERVAL = 30 * 1000;
 const enforcements = {};
 
-let active = true;
+// If the window is currently in focus. We do not make calls
+// if the window is blurred, e.g. if the tab is changed
+let windowIsFocused = true;
+
+// A cache of the refresh intervals so that multiple `init` calls do not
+// refresh multiple times
+const refreshIntervals = {};
+
+// A cache of the enforcments that are actively being fetched right now
+const currentlyFetching = {};
 
 function onBlur() {
-  active = false;
+  windowIsFocused = false;
 }
 
 function onFocus() {
-  active = true;
+  windowIsFocused = true;
 }
 
 window.onfocus = onFocus;
@@ -39,6 +48,10 @@ export function getEnforcements(spaceId) {
   in the service(s) that initialize this.
  */
 export function init(spaceId) {
+  if (refreshIntervals[spaceId]) {
+    return createDeinit(refreshIntervals[spaceId], spaceId);
+  }
+
   // Call initial refresh
   refresh(spaceId);
 
@@ -48,8 +61,17 @@ export function init(spaceId) {
     ENFORCEMENT_INFO_REFRESH_INTERVAL
   );
 
+  refreshIntervals[spaceId] = refreshInterval;
+
+  return createDeinit(refreshIntervals[spaceId], spaceId);
+}
+
+function createDeinit(refreshInterval, spaceId) {
   return function deinit() {
+    // Clear the interval, plus any cached values for this spaceId
     window.clearInterval(refreshInterval);
+    delete refreshIntervals[spaceId];
+    delete currentlyFetching[spaceId];
     delete enforcements[spaceId];
   };
 }
@@ -59,13 +81,25 @@ export function init(spaceId) {
  * if the enforcements change.
  */
 export async function refresh(spaceId) {
-  if (active) {
-    const newEnforcements = await fetchEnforcements(spaceId);
+  if (windowIsFocused && !currentlyFetching[spaceId]) {
+    currentlyFetching[spaceId] = true;
+
+    let newEnforcements;
+    try {
+      newEnforcements = await fetchEnforcements(spaceId);
+    } catch (_) {
+      // Do nothing, we don't care if there is an error
+      currentlyFetching[spaceId] = false;
+      return;
+    }
+
     const currentEnforcements = get(enforcements, spaceId);
 
     if (!enforcementsEqual(currentEnforcements, newEnforcements)) {
       enforcements[spaceId] = newEnforcements;
     }
+
+    currentlyFetching[spaceId] = false;
   }
 }
 
@@ -122,7 +156,6 @@ function generateNewUsageCheckEnforcements(allowedToCreate) {
 
 async function fetchEnforcements(spaceId) {
   const endpoint = createSpaceEndpoint(spaceId);
-
   const raw = await endpoint({
     method: 'GET',
     path: ['enforcements']
