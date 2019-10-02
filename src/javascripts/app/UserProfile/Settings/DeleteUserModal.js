@@ -85,7 +85,10 @@ const DeleteUserModal = ({ singleOwnerOrganizations, onConfirm, onCancel, isShow
       cancelTestId="cancel-user-cancellation">
       <Typography>
         {singleOwnerOrganizations.length && (
-          <Note className={styles.warningNote} noteType="negative">
+          <Note
+            testId="single-owner-orgs-warning"
+            className={styles.warningNote}
+            noteType="negative">
             <strong>
               We will delete {warningNoteCountCopy}, including all spaces and all content, as soon
               as you delete your account.
@@ -102,6 +105,7 @@ const DeleteUserModal = ({ singleOwnerOrganizations, onConfirm, onCancel, isShow
             <RadioButtonField
               key={index}
               id={reasons[reason].key}
+              testId={`reason-${reasons[reason].key}`}
               labelText={reasons[reason].name}
               name={reasons[reason].key}
               checked={activeOption === reasons[reason].key}
@@ -116,6 +120,7 @@ const DeleteUserModal = ({ singleOwnerOrganizations, onConfirm, onCancel, isShow
         <Textarea
           name="cancellationDetails"
           id="cancellationDetails"
+          testId="cancellation-details"
           value={details}
           onChange={e => setDetails(e.target.value)}></Textarea>
       </Typography>
@@ -123,6 +128,7 @@ const DeleteUserModal = ({ singleOwnerOrganizations, onConfirm, onCancel, isShow
         <Button
           testId="confirm-delete-account-button"
           buttonType="negative"
+          testId="confirm"
           disabled={deleting}
           loading={deleting}
           onClick={() => {
@@ -132,6 +138,7 @@ const DeleteUserModal = ({ singleOwnerOrganizations, onConfirm, onCancel, isShow
         </Button>
         <Button
           buttonType="muted"
+          testId="cancel"
           onClick={() => {
             setActiveOption(reasons.other.key);
             setDetails('');

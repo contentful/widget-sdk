@@ -32,10 +32,10 @@ const openDeleteUserModal = async singleOwnerOrganizations => {
 
 export default function DangerZoneSection({ singleOwnerOrganizations }) {
   return (
-    <Typography className={styles.paddingS}>
+    <Typography testId="danger-zone-section" className={styles.paddingS}>
       <Heading>Danger zone</Heading>
       <Button
-        testId="delete-account-button"
+        testId="delete-cta"
         buttonType="negative"
         onClick={() => openDeleteUserModal(singleOwnerOrganizations)}>
         Delete my account

@@ -1,7 +1,39 @@
+import React from 'react';
+import { render, cleanup, fireEvent, wait } from '@testing-library/react';
+import * as ModalLauncher from 'app/common/ModalLauncher.es6';
+import { cancelUser } from 'Authentication.es6';
+import DangerZoneSection from './DangerZoneSection';
+
+import 'jest-dom/extend-expect';
+
 describe('DangerZoneSection', () => {
-  it('should open the DeleteUserModal when clicking on the delete account button', () => {});
+  const build = () => {
+    return render(<DangerZoneSection singleOwnerOrganizations={[]} />);
+  };
 
-  it('should not call cancelUser if ModalLauncher.open resolves false', () => {});
+  afterEach(cleanup);
 
-  it('should call cancelUser if ModalLauncher.open does not resolve false', () => {});
+  it('should not call cancelUser if ModalLauncher.open resolves false', async () => {
+    ModalLauncher.open.mockResolvedValueOnce(false);
+
+    const { queryByTestId } = build();
+
+    fireEvent.click(queryByTestId('delete-cta'));
+
+    await wait();
+
+    expect(cancelUser).not.toBeCalled();
+  });
+
+  it('should call cancelUser if ModalLauncher.open does not resolve false', async () => {
+    ModalLauncher.open.mockResolvedValueOnce();
+
+    const { queryByTestId } = build();
+
+    fireEvent.click(queryByTestId('delete-cta'));
+
+    await wait();
+
+    expect(cancelUser).toBeCalled();
+  });
 });

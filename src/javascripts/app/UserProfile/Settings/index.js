@@ -17,16 +17,13 @@ const styles = {
   })
 };
 
-export default function Settings({ title, onReady }) {
+export default function IndexPage({ title, onReady }) {
   const { isLoading, error, data: userData } = useAsync(useCallback(fetchUserData));
-  useEffect(
-    isLoading => {
-      if (!isLoading) {
-        onReady();
-      }
-    },
-    [isLoading, onReady]
-  );
+  useEffect(() => {
+    if (!isLoading) {
+      onReady();
+    }
+  }, [isLoading, onReady]);
 
   if (isLoading || error) {
     // TODO handle error state separately
@@ -55,7 +52,7 @@ export default function Settings({ title, onReady }) {
   );
 }
 
-Settings.propTypes = {
+IndexPage.propTypes = {
   onReady: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired
 };
