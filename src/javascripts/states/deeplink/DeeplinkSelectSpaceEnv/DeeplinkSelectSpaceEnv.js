@@ -46,16 +46,19 @@ const styles = {
   })
 };
 
-function getCardTitle({ selectEnvironment, link }) {
-  if (isInstallLink(link)) {
+function getCardTitle({ selectEnvironment, link, id }) {
+  if (isInstallLink(link, id)) {
     return 'Choose where to install';
+  } else if (selectEnvironment === true) {
+    return 'Select space & environment';
+  } else {
+    return 'Select space';
   }
-  return selectEnvironment === true ? 'Select space & environment' : 'Select space';
 }
 
 export default function DeeplinkSelectSpaceEnv(props) {
   const { state, fetchInitialData, selectEnvironment, selectSpace } = useComponentState();
-  const link = props.searchParams.link;
+  const { link, id, url } = props.searchParams;
 
   useEffect(() => {
     fetchInitialData();
@@ -64,13 +67,14 @@ export default function DeeplinkSelectSpaceEnv(props) {
   return (
     <div className={styles.root}>
       <div className={styles.card}>
-        {isWebhookLink(link) && <WebhookLinkHeader templateId={props.searchParams.id} />}
-        {isAppLink(link) && <AppLinkHeader appId={props.searchParams.id} />}
-        {isExtensionLink(link) && <ExtensionLinkHeader url={props.searchParams.url} />}
+        {id && isWebhookLink(link) && <WebhookLinkHeader templateId={id} />}
+        {id && isAppLink(link) && <AppLinkHeader appId={id} />}
+        {url && isExtensionLink(link) && <ExtensionLinkHeader url={url} />}
         <Heading className={styles.title}>
           {getCardTitle({
             selectEnvironment: props.selectEnvironment,
-            link
+            link,
+            id: id || url
           })}
         </Heading>
         <Form className={styles.form}>

@@ -78,8 +78,10 @@ export function isExtensionLink(link) {
   return link === 'install-extension';
 }
 
-export function isInstallLink(link) {
-  return isWebhookLink(link) || isAppLink(link) || isExtensionLink(link);
+export function isInstallLink(link, id) {
+  const isInstallableType = isWebhookLink(link) || isAppLink(link) || isExtensionLink(link);
+
+  return isInstallableType && id;
 }
 
 export function InstallHeader(props) {

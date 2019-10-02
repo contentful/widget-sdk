@@ -202,8 +202,8 @@ async function resolveInstallExtension({ url, referrer }) {
     params: {
       spaceId,
       environmentId: 'master',
-      extensionUrl: url,
-      referrer: referrer ? `deeplink-${referrer}` : 'deeplink'
+      referrer: referrer ? `deeplink-${referrer}` : 'deeplink',
+      ...(url ? { extensionUrl: url } : {})
     },
     deeplinkOptions: {
       selectSpace: true,
@@ -241,7 +241,11 @@ async function resolveWebhookTemplate({ id, referrer }) {
   const { spaceId } = await getSpaceInfo();
   return {
     path: ['spaces', 'detail', 'settings', 'webhooks', 'list'],
-    params: { spaceId, templateId: id, referrer: referrer ? `deeplink-${referrer}` : 'deeplink' },
+    params: {
+      spaceId,
+      referrer: referrer ? `deeplink-${referrer}` : 'deeplink',
+      ...(id ? { templateId: id } : {})
+    },
     deeplinkOptions: {
       selectSpace: true
     }
@@ -256,8 +260,8 @@ async function resolveApps({ id, referrer }) {
     params: {
       spaceId,
       environmentId: 'master',
-      appId: id,
-      referrer: referrer ? `deeplink-${referrer}` : 'deeplink'
+      referrer: referrer ? `deeplink-${referrer}` : 'deeplink',
+      ...(id ? { appId: id } : {})
     },
     deeplinkOptions: {
       selectSpace: true,
