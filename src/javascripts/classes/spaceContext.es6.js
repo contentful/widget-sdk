@@ -36,9 +36,7 @@ export default function register() {
       let TheLocaleStore;
       let createExtensionDefinitionLoader;
       let createExtensionLoader;
-      let createCachedAppConfig;
       let createSpaceMembersRepo;
-      let createWebhookRepo;
       let createEnvironmentsRepo;
       let createAliasesRepo;
       let createLocaleRepo;
@@ -72,9 +70,7 @@ export default function register() {
             { default: createExtensionDefinitionLoader },
 
             { createExtensionLoader },
-            { default: createCachedAppConfig },
             { default: createSpaceMembersRepo },
-            { default: createWebhookRepo },
             { create: createEnvironmentsRepo },
             { create: createAliasesRepo },
             { default: createLocaleRepo },
@@ -102,9 +98,7 @@ export default function register() {
             import('services/localeStore.es6'),
             import('app/settings/AppsBeta/ExtensionDefinitionLoader.es6'),
             import('widgets/ExtensionLoader.es6'),
-            import('app/settings/apps/CachedAppConfig.es6'),
             import('data/CMA/SpaceMembersRepo.es6'),
-            import('data/CMA/WebhookRepo.es6'),
             import('data/CMA/SpaceEnvironmentsRepo.es6'),
             import('data/CMA/SpaceAliasesRepo.es6'),
             import('data/CMA/LocaleRepo.es6'),
@@ -180,7 +174,6 @@ export default function register() {
           self.cma = new APIClient(self.endpoint);
           self.users = createUserCache(self.endpoint);
           self.apiKeyRepo = createApiKeyRepo(self.endpoint);
-          self.webhookRepo = createWebhookRepo(space);
           self.localeRepo = createLocaleRepo(self.endpoint);
           self.organization = deepFreezeClone(self.getData('organization'));
 
@@ -237,12 +230,6 @@ export default function register() {
 
           self.contentPreview = createContentPreview({ space, cma: self.cma });
 
-          self.netlifyAppConfig = createCachedAppConfig({
-            spaceId,
-            appId: 'netlify',
-            makeDefaultConfig: () => ({ sites: [] })
-          });
-
           // This happens here, rather than in `prelude.js`, since it's scoped to a space
           // and not the user, so the spaceId is required.
           enforcementsDeInit = EnforcementsService.init(spaceId);
@@ -274,14 +261,21 @@ export default function register() {
         },
 
         /**
-         * @ngdoc method
-         * @name spaceContext#getId
          * @description
          * Returns ID of current space, if set
          * @returns String
          */
         getId: function() {
           return this.space && this.space.getId();
+        },
+
+        /**
+         * @description
+         * Returns current space, if set
+         * @returns Object
+         */
+        getSpace: function() {
+          return this.space;
         },
 
         /**

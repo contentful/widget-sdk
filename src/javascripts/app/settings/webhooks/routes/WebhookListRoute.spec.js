@@ -3,8 +3,19 @@ import { render, cleanup } from '@testing-library/react';
 import 'jest-dom/extend-expect';
 import WebhookListRoute from './WebhookListRoute.es6';
 import * as $stateMocked from 'ng/$state';
-import * as spaceContextMocked from 'ng/spaceContext';
 import * as AccessCheckerMocked from 'access_control/AccessChecker/index.es6';
+
+const mockWebhookRepo = {
+  getAll: jest.fn().mockResolvedValue([])
+};
+
+jest.mock(
+  '../WebhookRepoInstance',
+  () => ({
+    getWebhookRepo: () => mockWebhookRepo
+  }),
+  { virtual: true }
+);
 
 jest.mock(
   'access_control/AccessChecker/index.es6',
@@ -27,9 +38,7 @@ jest.mock('data/CMA/ProductCatalog.es6', () => ({ getOrgFeature: () => Promise.r
 describe('WebhookListRoute', () => {
   beforeEach(() => {
     $stateMocked.go.mockClear();
-    spaceContextMocked.getData.mockReset();
-    spaceContextMocked.webhookRepo.getAll.mockClear();
-    spaceContextMocked.publishedCTs.getAllBare.mockClear();
+    mockWebhookRepo.getAll.mockClear();
     AccessCheckerMocked.getSectionVisibility.mockReset();
   });
 
@@ -49,7 +58,7 @@ describe('WebhookListRoute', () => {
       undefined,
       undefined
     );
-    expect(spaceContextMocked.webhookRepo.getAll).not.toHaveBeenCalled();
+    expect(mockWebhookRepo.getAll).not.toHaveBeenCalled();
   });
 
   it('should show WebhookForbiddenPage if non-admin reaches page via deeplink templateId', () => {
@@ -59,7 +68,7 @@ describe('WebhookListRoute', () => {
     const { getByTestId } = render(<WebhookListRoute templateId="algolia-index-entries" />);
 
     expect($stateMocked.go).not.toHaveBeenCalled();
-    expect(spaceContextMocked.webhookRepo.getAll).not.toHaveBeenCalled();
+    expect(mockWebhookRepo.getAll).not.toHaveBeenCalled();
     expect(getByTestId('webhooks.forbidden')).toBeInTheDocument();
   });
 
@@ -68,7 +77,7 @@ describe('WebhookListRoute', () => {
     setSectionVisibility(true);
     const { queryByTestId } = render(<WebhookListRoute />);
     expect($stateMocked.go).not.toHaveBeenCalled();
-    expect(spaceContextMocked.webhookRepo.getAll).toHaveBeenCalledTimes(1);
+    expect(mockWebhookRepo.getAll).toHaveBeenCalledTimes(1);
     expect(queryByTestId('webhooks.forbidden')).toBeNull();
   });
 });

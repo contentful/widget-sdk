@@ -9,6 +9,7 @@ import {
   Note,
   TextLink
 } from '@contentful/forma-36-react-components';
+import { getWebhookRepo } from 'app/settings/webhooks/WebhookRepoInstance';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
@@ -207,9 +208,7 @@ export default class AlgoliaAppPage extends Component {
   };
 
   getIntegrationContext = async () => {
-    const spaceContext = getModule('spaceContext');
-
-    const allWebhooks = await spaceContext.webhookRepo.getAll();
+    const allWebhooks = await getWebhookRepo().getAll();
 
     return {
       installed: this.state.installed,

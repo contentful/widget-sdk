@@ -5,21 +5,17 @@ import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
+import { getWebhookRepo } from '../WebhookRepoInstance';
 
 const WebhookCallFetcher = createFetcherComponent(props => {
-  const { webhookRepo, webhookId, callId } = props;
+  const { webhookId, callId } = props;
+  const webhookRepo = getWebhookRepo();
 
   return Promise.all([webhookRepo.get(webhookId), webhookRepo.logs.getCall(webhookId, callId)]);
 });
 
 export class WebhookCallRoute extends React.Component {
   static propTypes = {
-    webhookRepo: PropTypes.shape({
-      get: PropTypes.func.isRequired,
-      logs: PropTypes.shape({
-        getCall: PropTypes.func.isRequired
-      }).isRequired
-    }).isRequired,
     webhookId: PropTypes.string.isRequired,
     callId: PropTypes.string.isRequired,
     onGoBack: PropTypes.func.isRequired

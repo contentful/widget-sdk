@@ -75,13 +75,11 @@ class WebhookEditor extends React.Component {
   }
 
   save = () => {
-    const spaceContext = getModule('spaceContext');
-
     const { webhook, fresh } = this.state;
 
     this.setState({ busy: true });
 
-    return WebhookEditorActions.save(spaceContext.webhookRepo, webhook, null).then(
+    return WebhookEditorActions.save(webhook, null).then(
       saved => (fresh ? this.navigateToSaved(saved) : this.onSave(saved)),
       err => {
         Notification.error(err.message);
@@ -92,14 +90,12 @@ class WebhookEditor extends React.Component {
   };
 
   remove = () => {
-    const spaceContext = getModule('spaceContext');
-
     const { webhook } = this.state;
 
     const notBusy = () => this.setState({ busy: false });
     this.setState({ busy: true });
 
-    return WebhookEditorActions.remove(spaceContext.webhookRepo, webhook).then(
+    return WebhookEditorActions.remove(webhook).then(
       ({ removed }) => (removed ? this.navigateToList(true) : notBusy()),
       () => notBusy()
     );
@@ -137,7 +133,6 @@ class WebhookEditor extends React.Component {
   }
 
   render() {
-    const spaceContext = getModule('spaceContext');
     const $state = getModule('$state');
 
     const { tab, webhook, fresh, dirty, busy } = this.state;
@@ -204,7 +199,6 @@ class WebhookEditor extends React.Component {
               <TabPanel id="webhook_activity_log">
                 <WebhookActivityLog
                   webhookId={webhook.sys.id}
-                  webhookRepo={spaceContext.webhookRepo}
                   registerLogRefreshAction={refreshLog => this.setState({ refreshLog })}
                 />
               </TabPanel>

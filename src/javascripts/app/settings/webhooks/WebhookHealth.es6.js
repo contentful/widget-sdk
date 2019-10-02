@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getModule } from 'NgRegistry.es6';
+import { getWebhookRepo } from './WebhookRepoInstance';
 
 const THRESHOLD = { WARNING: 70, SUCCESS: 90 };
 
@@ -30,11 +30,10 @@ export class WebhookHealth extends React.Component {
   };
 
   componentDidMount() {
-    const spaceContext = getModule('spaceContext');
-
     const { webhookId } = this.props;
+    const webhookRepo = getWebhookRepo();
 
-    spaceContext.webhookRepo.logs
+    webhookRepo.logs
       .getHealth(webhookId)
       .then(
         data => this.setState(calculateHealth(data) || { status: STATUS.NODATA }),

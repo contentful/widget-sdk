@@ -9,7 +9,7 @@ import WebhookTemplateDialog from './WebhookTemplateDialog.es6';
 const isNonEmptyString = s => typeof s === 'string' && s.length > 0;
 
 export default function createWebhookTemplateDialogOpener(config) {
-  const { contentTypes, defaultLocaleCode, domain, hasAwsProxy, webhookRepo } = config;
+  const { contentTypes, defaultLocaleCode, domain, hasAwsProxy } = config;
 
   const validTemplateIds = Templates.map(template => template.id);
   const templateContentTypes = prepareContentTypesForTemplates(
@@ -31,12 +31,7 @@ export default function createWebhookTemplateDialogOpener(config) {
         onCreate={(webhooks, templateId) =>
           Promise.all(
             webhooks.map(webhook => {
-              return WebhookEditorActions.save(
-                webhookRepo,
-                webhook,
-                templateId,
-                templateIdReferrer
-              );
+              return WebhookEditorActions.save(webhook, templateId, templateIdReferrer);
             })
           ).then(webhooks => {
             onClose();

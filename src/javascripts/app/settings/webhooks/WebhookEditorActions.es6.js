@@ -2,6 +2,7 @@ import { get } from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 import * as Analytics from 'analytics/Analytics.es6';
+import { getWebhookRepo } from './WebhookRepoInstance';
 
 const INVALID_BODY_TRANSFORMATION_ERROR_MSG =
   'Please make sure your custom payload is a valid JSON.';
@@ -20,7 +21,9 @@ const PATH_TO_ERROR_MSG = {
   http_basic_password: HTTP_BASIC_ERROR_MSG
 };
 
-export async function save(webhookRepo, webhook, templateId = null, templateIdReferrer = null) {
+export async function save(webhook, templateId = null, templateIdReferrer = null) {
+  const webhookRepo = getWebhookRepo();
+
   if (!webhookRepo.hasValidBodyTransformation(webhook)) {
     throw new Error(INVALID_BODY_TRANSFORMATION_ERROR_MSG);
   }
@@ -45,7 +48,8 @@ function getSaveApiErrorMessage(err) {
   }
 }
 
-export async function remove(webhookRepo, webhook) {
+export async function remove(webhook) {
+  const webhookRepo = getWebhookRepo();
   try {
     await webhookRepo.remove(webhook);
     Notification.success(`Webhook "${webhook.name}" deleted successfully.`);

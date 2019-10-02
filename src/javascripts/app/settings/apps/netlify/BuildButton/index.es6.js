@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
+import { getSpaceNetlifyConfig } from '../NetlifyAppConfig';
 import { get } from 'lodash';
 
 import BuildButton from './BuildButton.es6';
@@ -37,8 +37,8 @@ export default class NetlifyBuildButton extends Component {
     if (contentPreviewIds.length < 1) {
       return;
     }
-
-    const config = await spaceContext.netlifyAppConfig.get();
+    const netlifyAppConfig = getSpaceNetlifyConfig();
+    const config = netlifyAppConfig.get();
     const sites = get(config, ['sites'], []).filter(s => validId(s.contentPreviewId));
     if (sites.length < 1) {
       return;

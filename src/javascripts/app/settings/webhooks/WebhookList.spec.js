@@ -2,18 +2,27 @@ import React from 'react';
 import 'jest-dom/extend-expect';
 import { render, cleanup } from '@testing-library/react';
 import WebhookList from './WebhookList.es6';
-import * as spaceContextMocked from 'ng/spaceContext';
 
-describe('WebhookList', () => {
-  beforeEach(() => {
-    spaceContextMocked.webhookRepo.logs.getHealth.mockReset().mockResolvedValue({
+const mockWebhookRepo = {
+  logs: {
+    getHealth: jest.fn().mockResolvedValue({
       calls: {
         healthy: 50,
         total: 100
       }
-    });
-  });
+    })
+  }
+};
 
+jest.mock(
+  './WebhookRepoInstance',
+  () => ({
+    getWebhookRepo: () => mockWebhookRepo
+  }),
+  { virtual: true }
+);
+
+describe('WebhookList', () => {
   afterEach(cleanup);
 
   const renderComponent = webhooks => {

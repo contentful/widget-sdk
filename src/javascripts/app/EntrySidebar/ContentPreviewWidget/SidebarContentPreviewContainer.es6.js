@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import SidebarContentPreview from './SidebarContentPreview.es6';
+import { getSpaceNetlifyConfig } from 'app/settings/apps/netlify/NetlifyAppConfig';
 import * as Analytics from 'analytics/Analytics.es6';
 import { getModule } from 'NgRegistry.es6';
 import TheLocaleStore from 'services/localeStore.es6';
@@ -77,8 +78,6 @@ export class SidebarContentPreviewContainer extends Component {
   };
 
   onTrackPreviewOpened = async () => {
-    const spaceContext = getModule('spaceContext');
-
     if (!this.state.isPreviewSetup) {
       return;
     }
@@ -119,8 +118,8 @@ export class SidebarContentPreviewContainer extends Component {
       ...eventOptions
     });
 
-    const netlifyAppConfig = await spaceContext.netlifyAppConfig.get();
-    const sites = get(netlifyAppConfig, ['sites'], []);
+    const netlifyConfig = await getSpaceNetlifyConfig().get();
+    const sites = get(netlifyConfig, ['sites'], []);
     const sitesArray = Array.isArray(sites) ? sites : [];
 
     if (sitesArray.find(s => s.contentPreviewId === selectedContentPreview.envId)) {

@@ -1,20 +1,39 @@
 import React from 'react';
 import 'jest-dom/extend-expect';
 import { render, cleanup } from '@testing-library/react';
-import * as spaceContextMocked from 'ng/spaceContext';
 import WebhookHealth from './WebhookHealth.es6';
+
+const mockWebhookRepo = {
+  logs: {
+    getCall: jest.fn().mockResolvedValue({}),
+    getHealth: jest.fn().mockResolvedValue({
+      calls: {
+        health: 50,
+        total: 100
+      }
+    })
+  }
+};
+
+jest.mock(
+  './WebhookRepoInstance',
+  () => ({
+    getWebhookRepo: () => mockWebhookRepo
+  }),
+  { virtual: true }
+);
 
 describe('WebhookHealth', () => {
   beforeEach(() => {
-    spaceContextMocked.webhookRepo.logs.getHealth.mockReset();
+    mockWebhookRepo.logs.getCall.mockReset();
+    mockWebhookRepo.logs.getHealth.mockReset();
   });
 
   afterEach(cleanup);
 
   const stubAndMount = (calls = {}) => {
-    const getStub = jest.fn().mockResolvedValue({ calls });
-    spaceContextMocked.webhookRepo.logs.getHealth = getStub;
-    return [render(<WebhookHealth webhookId="whid" />), getStub];
+    mockWebhookRepo.logs.getHealth.mockResolvedValue({ calls });
+    return [render(<WebhookHealth webhookId="whid" />)];
   };
 
   it('starts in the loading state', () => {
@@ -23,20 +42,21 @@ describe('WebhookHealth', () => {
   });
 
   it('fetches health status when mounted', () => {
-    const [_, getStub] = stubAndMount();
-    expect(getStub).toHaveBeenCalledTimes(1);
-    expect(getStub).toHaveBeenCalledWith('whid');
+    stubAndMount();
+    expect(mockWebhookRepo.logs.getHealth).toHaveBeenCalledTimes(1);
+    expect(mockWebhookRepo.logs.getHealth).toHaveBeenCalledWith('whid');
   });
 
   it('displays "no data..." when fetching failed', async () => {
     expect.assertions(2);
     const ERROR = new Error('failed to fetch');
-    const getStub = jest.fn().mockRejectedValue(ERROR);
-    spaceContextMocked.webhookRepo.logs.getHealth = getStub;
+
+    mockWebhookRepo.logs.getHealth.mockRejectedValue(ERROR);
+
     const { container } = render(<WebhookHealth webhookId="whid" />);
 
     try {
-      await getStub();
+      await mockWebhookRepo.logs.getHealth();
     } catch (err) {
       expect(err).toBe(ERROR);
     }
@@ -46,16 +66,16 @@ describe('WebhookHealth', () => {
 
   it('calculates percentage when fetched', async () => {
     expect.assertions(1);
-    const [{ getByTestId }, getStub] = stubAndMount({ total: 2, healthy: 1 });
-    await getStub();
+    const [{ getByTestId }] = stubAndMount({ total: 2, healthy: 1 });
+    await mockWebhookRepo.logs.getHealth();
 
     expect(getByTestId('health-percentage')).toHaveTextContent('50%');
   });
 
   const testStatus = async (calls, expected) => {
     expect.assertions(1);
-    const [{ getByTestId }, getStub] = stubAndMount(calls);
-    await getStub();
+    const [{ getByTestId }] = stubAndMount(calls);
+    await mockWebhookRepo.logs.getHealth();
 
     expect(getByTestId('health-status-indicator')).toHaveAttribute('data-status', expected);
   };

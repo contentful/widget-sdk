@@ -1,5 +1,5 @@
 import { cloneDeep } from 'lodash';
-import { getModule } from 'NgRegistry.es6';
+import { getWebhookRepo } from 'app/settings/webhooks/WebhookRepoInstance';
 
 export const UNINDEXABLE_FIELD_TYPES = ['Object', 'Array', 'Link', 'Location'];
 export const META_FIELDS = [
@@ -183,8 +183,6 @@ async function saveRecord(record, context) {
 }
 
 function saveWebhook(draftWebhook, context, existingWebhookId) {
-  const spaceContext = getModule('spaceContext');
-
   if (existingWebhookId) {
     const existing = findWebhookById(existingWebhookId, context);
     if (!existing) {
@@ -195,11 +193,11 @@ function saveWebhook(draftWebhook, context, existingWebhookId) {
     draftWebhook.headers = existing.headers || {};
   }
 
-  return spaceContext.webhookRepo.save(draftWebhook);
+  return getWebhookRepo().save(draftWebhook);
 }
 
 export async function remove(context) {
-  const spaceContext = getModule('spaceContext');
+  const webhookRepo = getWebhookRepo();
 
   const algoliaWebhookIds = [];
   context.config.records
@@ -214,14 +212,14 @@ export async function remove(context) {
     .filter(webhook => !!webhook);
 
   try {
-    await Promise.all(algoliaWebhooks.map(wh => spaceContext.webhookRepo.remove(wh)));
+    await Promise.all(algoliaWebhooks.map(wh => webhookRepo.remove(wh)));
   } catch (err) {
     // Failed to remove some webhooks. We can live with that.
   }
 }
 
 export async function removeRecord(record, context) {
-  const spaceContext = getModule('spaceContext');
+  const webhookRepo = getWebhookRepo();
 
   const algoliaWebhooks = [record.publishWebhookId, record.unpublishWebhookId]
     .map(id => findWebhookById(id, context))
@@ -230,7 +228,7 @@ export async function removeRecord(record, context) {
   if (algoliaWebhooks.length === 0) return;
 
   try {
-    await Promise.all(algoliaWebhooks.map(wh => spaceContext.webhookRepo.remove(wh)));
+    await Promise.all(algoliaWebhooks.map(wh => webhookRepo.remove(wh)));
   } catch (err) {
     // Failed to remove some webhooks. We can live with that.
   }

@@ -12,12 +12,14 @@ import * as Config from 'Config.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import TheLocaleStore from 'services/localeStore.es6';
+import { getWebhookRepo } from '../WebhookRepoInstance';
 
 const WebhooksFetcher = createFetcherComponent(() => {
   const spaceContext = getModule('spaceContext');
+  const webhookRepo = getWebhookRepo();
 
   return Promise.all([
-    spaceContext.webhookRepo.getAll(),
+    webhookRepo.getAll(),
     getOrgFeature(spaceContext.organization.sys.id, 'webhook_aws_proxy')
   ]).then(([webhooks, hasAwsProxyFeature]) => {
     const isContentfulUser = (spaceContext.user.email || '').endsWith('@contentful.com');
@@ -36,7 +38,6 @@ export class WebhookListRoute extends React.Component {
     const spaceContext = getModule('spaceContext');
 
     return createWebhookTemplateDialogOpener({
-      webhookRepo: spaceContext.webhookRepo,
       contentTypes: spaceContext.publishedCTs.getAllBare(),
       defaultLocaleCode: get(TheLocaleStore.getDefaultLocale(), ['code'], 'en-US'),
       domain: Config.domain,

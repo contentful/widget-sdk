@@ -11,13 +11,13 @@ import {
 } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink.es6';
 import WebhookCallStatus from './WebhookCallStatus.es6';
+import { getWebhookRepo } from './WebhookRepoInstance';
 
 const PER_PAGE = 30;
 
 class WebhookActivityLog extends React.Component {
   static propTypes = {
     webhookId: PropTypes.string,
-    webhookRepo: PropTypes.object.isRequired,
     registerLogRefreshAction: PropTypes.func.isRequired
   };
 
@@ -32,7 +32,8 @@ class WebhookActivityLog extends React.Component {
   }
 
   fetch() {
-    const { webhookId, webhookRepo } = this.props;
+    const { webhookId } = this.props;
+    const webhookRepo = getWebhookRepo();
 
     if (typeof webhookId !== 'string' || this.state.loading) {
       return Promise.resolve();

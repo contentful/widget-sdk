@@ -1,6 +1,7 @@
 import { cloneDeep, get, uniqBy } from 'lodash';
 import { getPostPublishUrl } from './BuildButton/PubNubClient.es6';
 import * as NetlifyClient from './NetlifyClient.es6';
+import { getSpaceNetlifyConfig } from './NetlifyAppConfig';
 import { getModule } from 'NgRegistry.es6';
 
 const ARTIFACT_KEYS = ['buildHookUrl', 'buildHookId', 'contentPreviewId'];
@@ -74,7 +75,7 @@ export async function install({ config, contentTypeIds, appsClient, accessToken 
   // Save configuration and return updated config.
   await appsClient.save('netlify', config);
 
-  spaceContext.netlifyAppConfig.invalidate();
+  getSpaceNetlifyConfig().invalidate();
 
   return config;
 }
@@ -99,13 +100,11 @@ export async function update(context) {
 }
 
 export async function uninstall({ appsClient, accessToken }) {
-  const spaceContext = getModule('spaceContext');
-
   await removeExistingArtifacts(appsClient, accessToken);
 
   await appsClient.remove('netlify');
 
-  spaceContext.netlifyAppConfig.invalidate();
+  getSpaceNetlifyConfig().invalidate();
 }
 
 function prepareConfig(config) {

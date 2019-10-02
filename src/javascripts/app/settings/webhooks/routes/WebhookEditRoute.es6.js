@@ -6,16 +6,16 @@ import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
+import { getWebhookRepo } from '../WebhookRepoInstance';
 
 const WebhookFetcher = createFetcherComponent(props => {
-  const { webhookRepo, webhookId } = props;
-
+  const { webhookId } = props;
+  const webhookRepo = getWebhookRepo();
   return webhookRepo.get(webhookId);
 });
 
 export class WebhookEditRoute extends React.Component {
   static propTypes = {
-    webhookRepo: PropTypes.shape({ get: PropTypes.func.isRequired }).isRequired,
     registerSaveAction: PropTypes.func.isRequired,
     setDirty: PropTypes.func.isRequired,
     webhookId: PropTypes.string.isRequired
@@ -26,7 +26,7 @@ export class WebhookEditRoute extends React.Component {
       return <ForbiddenPage />;
     }
     return (
-      <WebhookFetcher webhookRepo={this.props.webhookRepo} webhookId={this.props.webhookId}>
+      <WebhookFetcher webhookId={this.props.webhookId}>
         {({ isLoading, isError, data }) => {
           if (isLoading) {
             return <FetcherLoading message="Loading webhook..." />;

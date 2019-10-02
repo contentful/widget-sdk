@@ -7,11 +7,9 @@ import WebhookCallRoute from './WebhookCallRoute.es6';
 const mapInjectedToEditorProps = [
   '$scope',
   '$stateParams',
-  'spaceContext',
-  ($scope, { webhookId }, { webhookRepo }) => {
+  ($scope, { webhookId }) => {
     return {
       webhookId,
-      webhookRepo,
       registerSaveAction: save => {
         $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
         $scope.$applyAsync();
@@ -65,11 +63,9 @@ export default {
           component: WebhookCallRoute,
           mapInjectedToProps: [
             '$stateParams',
-            'spaceContext',
             '$state',
-            ({ webhookId, callId }, { webhookRepo }, $state) => {
+            ({ webhookId, callId }, $state) => {
               return {
-                webhookRepo,
                 webhookId,
                 callId,
                 onGoBack: () => {

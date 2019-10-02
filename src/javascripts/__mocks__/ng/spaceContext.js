@@ -25,20 +25,6 @@ export const cma = {
   getAssets: jest.fn().mockResolvedValue({ items: [] })
 };
 
-export const webhookRepo = {
-  getAll: jest.fn().mockResolvedValue([]),
-  get: jest.fn().mockResolvedValue({}),
-  logs: {
-    getCall: jest.fn().mockResolvedValue({}),
-    getHealth: jest.fn().mockResolvedValue({
-      calls: {
-        health: 50,
-        total: 100
-      }
-    })
-  }
-};
-
 export const publishedCTs = {
   get: jest.fn(),
   getAllBare: jest.fn().mockReturnValue([])
@@ -59,10 +45,6 @@ export const contentPreview = {
 
 export const getData = jest.fn();
 export const getId = jest.fn();
-
-export const netlifyAppConfig = {
-  get: jest.fn().mockResolvedValue({})
-};
 
 export const endpoint = jest.fn();
 
