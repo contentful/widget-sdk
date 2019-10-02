@@ -710,14 +710,14 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
                       >
                         <img
                           class="emotion-3"
-                          src="//images.ctfassets.net/lpjm8d10rkpy/3vNJZRjthatucy2mBJMy1u/0e5d501207427780021e7580cc384761/bynder.5e9e457b9d.svg"
+                          src="//images.ctfassets.net/lpjm8d10rkpy/4X7O4Q0pIgQZNcONoQrQlp/9262ad9a935fa92e9cacd9207ae0a401/optimizely-logo.svg"
                         />
                         <div>
-                          Bynder
+                          Optimizely
                           <div
                             class="emotion-4"
                           >
-                            Reference assets from Bynder - digital asset management
+                            Experimentation made easy
                           </div>
                         </div>
                       </div>
@@ -757,14 +757,14 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
                       >
                         <img
                           class="emotion-3"
-                          src="//images.ctfassets.net/lpjm8d10rkpy/4X7O4Q0pIgQZNcONoQrQlp/9262ad9a935fa92e9cacd9207ae0a401/optimizely-logo.svg"
+                          src="//images.ctfassets.net/lpjm8d10rkpy/3vNJZRjthatucy2mBJMy1u/0e5d501207427780021e7580cc384761/bynder.5e9e457b9d.svg"
                         />
                         <div>
-                          Optimizely
+                          Bynder
                           <div
                             class="emotion-4"
                           >
-                            Experimentation made easy
+                            Reference assets from Bynder - digital asset management
                           </div>
                         </div>
                       </div>
