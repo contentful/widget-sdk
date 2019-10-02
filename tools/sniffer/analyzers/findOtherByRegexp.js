@@ -17,10 +17,6 @@ module.exports = function findOtherByRegexp({ src }) {
     usages.push('cf-context-menu');
   }
 
-  if (findByRegexp(src, /\b(cf-ui-sticky-container)\b/)) {
-    usages.push('cf-ui-sticky-container');
-  }
-
   if (findByRegexp(src, /\b(cf-component-bridge)\b/)) {
     usages.push('cf-component-bridge');
   }

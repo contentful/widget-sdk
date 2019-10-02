@@ -148,7 +148,6 @@ export const angularInitRun = [
       import('states/cfSrefDirective.es6'),
       import('ui/Framework/ReactDirective.es6'),
       import('ui/cfIconDirective.es6'),
-      import('ui/cfUiSticky.es6'),
       import('ui/cfUiTab.es6'),
       import('ui/highlightMatchDirective.es6'),
       import('ui/loader.es6')

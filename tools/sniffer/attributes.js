@@ -51,8 +51,7 @@ const angular = node => {
     'command',
     'spaceContext',
     'cf-context-menu-trigger',
-    'cf-context-menu',
-    'cf-ui-sticky-container'
+    'cf-context-menu'
   ];
   const intersection = _.intersectionWith(modules, attributes, _.isEqual);
   return intersection.length > 0 ? intersection : false;
