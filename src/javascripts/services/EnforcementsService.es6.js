@@ -26,12 +26,8 @@ function onFocus() {
   windowIsFocused = true;
 }
 
-window.onfocus = onFocus;
-window.onblur = onBlur;
-
-// IE
-document.onfocusin = onFocus;
-document.onfocusout = onBlur;
+window.addEventListener('blur', onBlur);
+window.addEventListener('focus', onFocus);
 
 export function getEnforcements(spaceId) {
   if (!spaceId) {
