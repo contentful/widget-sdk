@@ -3,6 +3,7 @@ import mimetype from '@contentful/mimetype';
 import getLinkedContentTypeIdsForNodeType from 'app/widgets/rich_text/plugins/shared/GetLinkedContentTypeIdsForNodeType.es6';
 import { getModule } from 'NgRegistry.es6';
 import TheLocaleStore from 'services/localeStore.es6';
+import * as ListQuery from 'search/listQuery.es6';
 
 const getDefaultLocaleCode = () => TheLocaleStore.getDefaultLocale().code;
 
@@ -146,7 +147,6 @@ export function newConfigFromExtension(options = {}) {
  * Creates fetch function for Entity and Asset entity types
  */
 function makeFetch(config) {
-  const ListQuery = getModule('ListQuery');
   const spaceContext = getModule('spaceContext');
 
   if (['Entry', 'Asset'].indexOf(config.entityType) < 0) {

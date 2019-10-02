@@ -7,12 +7,17 @@ import spaceContext from 'ng/spaceContext';
 jest.mock('services/localeStore', () => ({
   getDefaultLocale: () => ({
     code: 'en-US'
-  })
+  }),
+  toInternalCode: () => 'en-US'
 }));
 
-jest.mock('TheStore/index.es6', () => ({
-  getStore: jest.fn()
-}));
+jest.mock(
+  'TheStore/index.es6',
+  () => ({
+    getStore: jest.fn()
+  }),
+  { virtual: true }
+);
 
 jest.mock('states/Navigator.es6', () => ({
   href: jest.fn(),

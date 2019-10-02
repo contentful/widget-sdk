@@ -9,6 +9,7 @@ import { Notification } from '@contentful/forma-36-react-components';
 import { assetContentType } from 'libs/legacy_client/client';
 import * as SystemFields from 'data/SystemFields.es6';
 import * as logger from 'services/logger.es6';
+import * as ListQuery from 'search/listQuery.es6';
 
 import createSearchInput from 'app/ContentList/Search/index.es6';
 import * as Tracking from 'analytics/events/SearchAndViews.es6';
@@ -18,9 +19,8 @@ export default function register() {
     '$scope',
     '$q',
     'spaceContext',
-    'ListQuery',
     'PromisedLoader',
-    function($scope, $q, spaceContext, ListQuery, PromisedLoader) {
+    function($scope, $q, spaceContext, PromisedLoader) {
       const controller = this;
       const assetLoader = new PromisedLoader();
 

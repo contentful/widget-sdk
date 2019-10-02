@@ -10,6 +10,7 @@ import getAccessibleCTs from 'data/ContentTypeRepo/accessibleCTs.es6';
 import createSearchInput from 'app/ContentList/Search/index.es6';
 import * as Tracking from 'analytics/events/SearchAndViews.es6';
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as ListQuery from 'search/listQuery.es6';
 
 export default function register() {
   registerController('EntryListSearchController', [
@@ -17,8 +18,7 @@ export default function register() {
     '$q',
     'spaceContext',
     'overridingRequestQueue',
-    'ListQuery',
-    function($scope, $q, spaceContext, createRequestQueue, ListQuery) {
+    function($scope, $q, spaceContext, createRequestQueue) {
       let initialized = false;
       let lastUISearchState = null;
 

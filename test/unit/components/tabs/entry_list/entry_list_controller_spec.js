@@ -2,8 +2,10 @@ import sinon from 'sinon';
 import _ from 'lodash';
 import { $initialize, $inject, $apply, $removeControllers } from 'test/utils/ng';
 
+let ListQueryOriginal;
+
 describe('Entry List Controller', () => {
-  let scope, spaceContext, ListQuery;
+  let scope, spaceContext;
 
   const VIEW = {
     id: 'VIEW_ID',
@@ -30,7 +32,8 @@ describe('Entry List Controller', () => {
 
   beforeEach(async function() {
     this.stubs = {
-      apiErrorHandler: sinon.stub()
+      apiErrorHandler: sinon.stub(),
+      getQuery: sinon.stub().resolves({})
     };
 
     this.system.set('analytics/Analytics.es6', {
@@ -60,6 +63,15 @@ describe('Entry List Controller', () => {
       }
     });
 
+    if (!ListQueryOriginal) {
+      ListQueryOriginal = await this.system.import('search/listQuery.es6');
+    }
+
+    this.system.set('search/listQuery.es6', {
+      ...ListQueryOriginal,
+      getForEntries: this.stubs.getQuery
+    });
+
     this.ComponentLibrary = await this.system.import('@contentful/forma-36-react-components');
     this.ComponentLibrary.Notification.error = sinon.stub();
     this.ComponentLibrary.Notification.success = sinon.stub();
@@ -86,13 +98,10 @@ describe('Entry List Controller', () => {
 
     $controller('EntryListController', { $scope: scope });
     scope.selection.updateList = sinon.stub();
-
-    ListQuery = $inject('ListQuery');
   });
 
   describe('#loadView()', () => {
     beforeEach(function() {
-      ListQuery.getForEntries = this.getQuery = sinon.stub().resolves({});
       scope.loadView(VIEW);
     });
 
@@ -103,7 +112,7 @@ describe('Entry List Controller', () => {
 
     it('resets entries', function() {
       scope.$apply();
-      sinon.assert.calledOnce(this.getQuery);
+      sinon.assert.calledOnce(this.stubs.getQuery);
     });
 
     describe('with `order.fieldId` value not in `displayedFieldIds`', () => {
@@ -140,10 +149,6 @@ describe('Entry List Controller', () => {
   });
 
   describe('page parameters change', () => {
-    beforeEach(function() {
-      ListQuery.getForEntries = this.getQuery = sinon.stub().resolves({});
-    });
-
     describe('triggers query on change', () => {
       beforeEach(() => {
         scope.context.view = {};
@@ -153,25 +158,25 @@ describe('Entry List Controller', () => {
       it('page', function() {
         scope.paginator.setPage(1);
         scope.$apply();
-        sinon.assert.calledTwice(this.getQuery);
+        sinon.assert.calledTwice(this.stubs.getQuery);
       });
 
       it('`searchText`', function() {
         scope.context.view.searchText = 'thing';
         scope.$apply();
-        sinon.assert.calledTwice(this.getQuery);
+        sinon.assert.calledTwice(this.stubs.getQuery);
       });
 
       it('`searchFilters`', function() {
         scope.context.view.searchFilters = ['__status', '', 'published'];
         scope.$apply();
-        sinon.assert.calledTwice(this.getQuery);
+        sinon.assert.calledTwice(this.stubs.getQuery);
       });
 
       it('`contentTypeId`', function() {
         scope.context.view = { contentTypeId: 'something' };
         scope.$apply();
-        sinon.assert.calledTwice(this.getQuery);
+        sinon.assert.calledTwice(this.stubs.getQuery);
       });
     });
   });
@@ -224,6 +229,12 @@ describe('Entry List Controller', () => {
     });
 
     describe('creates a query object', () => {
+      beforeEach(function() {
+        this.stubs.getQuery.callsFake((...args) => {
+          return ListQueryOriginal.getForEntries(...args);
+        });
+      });
+
       it('with a default order', () => {
         scope.updateEntries();
         scope.$apply();
@@ -331,6 +342,9 @@ describe('Entry List Controller', () => {
     });
 
     it('shows error notification on invalid content type', function() {
+      this.stubs.getQuery.callsFake((...args) => {
+        return ListQueryOriginal.getForEntries(...args);
+      });
       const defaultQuery = {
         order: '-sys.updatedAt',
         limit: 40,

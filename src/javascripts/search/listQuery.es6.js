@@ -1,133 +1,112 @@
-import { registerFactory } from 'NgRegistry.es6';
+import { getModule } from 'NgRegistry.es6';
 import _ from 'lodash';
 import { assetContentType } from 'libs/legacy_client/client';
 import * as SystemFields from 'data/SystemFields.es6';
 
 import { buildQuery as buildQueryFromUISearch } from 'app/ContentList/Search/QueryBuilder.es6';
 
-export default function register() {
-  /**
-   * @ngdoc service
-   * @name ListQuery
-   * @description
-   * Various helpers for preparing API queries.
-   */
+/**
+ * @description
+ * Prepares an API query for the entry list.
+ *
+ * @param {string} opts.contentTypeId
+ * @param {string} opts.searchText
+ * @param {object} opts.order
+ * @param {Paginator} opts.paginator
+ * @returns {object}
+ */
+export function getForEntries(opts) {
+  const spaceContext = getModule('spaceContext');
+  if (opts.contentTypeId) {
+    return spaceContext.publishedCTs
+      .fetch(opts.contentTypeId)
+      .then(contentType => prepareEntityListQuery(contentType, opts));
+  } else {
+    return prepareEntityListQuery(null, opts);
+  }
+}
+/**
+ * @description
+ * Prepares an API query for the asset list.
+ *
+ * @param {string} opts.searchText
+ * @param {object} opts.order
+ * @param {Paginator} opts.paginator
+ * @returns {object}
+ */
+export function getForAssets(opts) {
+  return prepareEntityListQuery(assetContentType, opts);
+}
+/**
+ * @description
+ * Prepares an API query for the user list.
+ *
+ * @param {Paginator} opts.paginator
+ * @returns {object}
+ */
+export function getForUsers(opts) {
+  const userContentType = {
+    data: {},
+    getId: _.constant(undefined)
+  };
+  return prepareEntityListQuery(userContentType, opts);
+}
 
-  registerFactory('ListQuery', [
-    '$q',
-    'spaceContext',
-    ($q, spaceContext) => {
-      const DEFAULT_ORDER = SystemFields.getDefaultOrder();
+function prepareEntityListQuery(contentType, opts) {
+  const $q = getModule('$q');
+  const queryObject = {
+    order: getOrderQuery(opts.order, contentType),
+    limit: opts.paginator.getPerPage(),
+    skip: opts.paginator.getSkipParam(),
+    'sys.archivedAt[exists]': 'false' // By default, don't get archived entries.
+  };
+  const searchQuery = buildQueryFromUISearch({
+    contentType: _.get(contentType, 'data'),
+    search: opts
+  });
+  // TODO: Lets not return a promise here.
+  return $q.resolve(_.assign(queryObject, searchQuery));
+}
 
-      return {
-        /**
-         * @ngdoc method
-         * @name ListQuery#getForEntries
-         * @description
-         * Prepares an API query for the entry list.
-         *
-         * @param {string} opts.contentTypeId
-         * @param {string} opts.searchText
-         * @param {object} opts.order
-         * @param {Paginator} opts.paginator
-         * @returns {object}
-         */
-        getForEntries: function(opts) {
-          if (opts.contentTypeId) {
-            return spaceContext.publishedCTs
-              .fetch(opts.contentTypeId)
-              .then(contentType => prepareEntityListQuery(contentType, opts));
-          } else {
-            return prepareEntityListQuery(null, opts);
-          }
-        },
-        /**
-         * @ngdoc method
-         * @name ListQuery#getForAssets
-         * @description
-         * Prepares an API query for the asset list.
-         *
-         * @param {string} opts.searchText
-         * @param {object} opts.order
-         * @param {Paginator} opts.paginator
-         * @returns {object}
-         */
-        getForAssets: function(opts) {
-          return prepareEntityListQuery(assetContentType, opts);
-        },
-        /**
-         * @ngdoc method
-         * @name ListQuery#getForUsers
-         * @description
-         * Prepares an API query for the user list.
-         *
-         * @param {Paginator} opts.paginator
-         * @returns {object}
-         */
-        getForUsers: function(opts) {
-          const userContentType = {
-            data: {},
-            getId: _.constant(undefined)
-          };
-          return prepareEntityListQuery(userContentType, opts);
-        }
-      };
+function getOrderQuery(order, contentType) {
+  const DEFAULT_ORDER = SystemFields.getDefaultOrder();
 
-      function prepareEntityListQuery(contentType, opts) {
-        const queryObject = {
-          order: getOrderQuery(opts.order, contentType),
-          limit: opts.paginator.getPerPage(),
-          skip: opts.paginator.getSkipParam(),
-          'sys.archivedAt[exists]': 'false' // By default, don't get archived entries.
-        };
-        const searchQuery = buildQueryFromUISearch({
-          contentType: _.get(contentType, 'data'),
-          search: opts
-        });
-        // TODO: Lets not return a promise here.
-        return $q.resolve(_.assign(queryObject, searchQuery));
-      }
+  order = prepareOrderObject(order, DEFAULT_ORDER);
+  const prefix = order.direction === 'descending' ? '-' : '';
 
-      function getOrderQuery(order, contentType) {
-        order = prepareOrderObject(order);
-        const prefix = order.direction === 'descending' ? '-' : '';
+  return prefix + getOrderPath(order, contentType, DEFAULT_ORDER).join('.');
+}
 
-        return prefix + getOrderPath(order, contentType).join('.');
-      }
+function prepareOrderObject(order, defaultOrder) {
+  order = _.clone(order) || {};
+  order.fieldId = order.fieldId || defaultOrder.fieldId;
+  order.direction = order.direction || defaultOrder.direction;
 
-      function prepareOrderObject(order) {
-        order = _.clone(order) || {};
-        order.fieldId = order.fieldId || DEFAULT_ORDER.fieldId;
-        order.direction = order.direction || DEFAULT_ORDER.direction;
+  return order;
+}
 
-        return order;
-      }
+// handling stored list order w/o distinction
+// between sys.% and fields.% paths
+function getOrderPath(order, contentType, defaultOrder) {
+  // check system fields first:
+  if (isSystemField(order.fieldId)) {
+    return ['sys', order.fieldId];
+  }
 
-      // handling stored list order w/o distinction
-      // between sys.% and fields.% paths
-      function getOrderPath(order, contentType) {
-        // check system fields first:
-        if (isSystemField(order.fieldId)) {
-          return ['sys', order.fieldId];
-        }
+  // and CT fields afterwards:
+  const ctField = getCtField(order.fieldId, contentType);
+  if (ctField) {
+    return ['fields', ctField.apiName || ctField.id];
+  }
 
-        // and CT fields afterwards:
-        const ctField = getCtField(order.fieldId, contentType);
-        if (ctField) {
-          return ['fields', ctField.apiName || ctField.id];
-        }
+  return ['sys', defaultOrder.fieldId];
+}
 
-        return ['sys', DEFAULT_ORDER.fieldId];
-      }
+function isSystemField(id) {
+  return !!_.find(SystemFields.getList(), { id: id });
+}
 
-      function isSystemField(id) {
-        return !!_.find(SystemFields.getList(), { id: id });
-      }
-
-      function getCtField(id, ct) {
-        const ctFields = _.get(ct, 'data.fields', []);
-        return _.find(ctFields, { id: id });
-      }
-    }
-  ]);
+function getCtField(id, ct) {
+  const ctFields = _.get(ct, 'data.fields', []);
+  return _.find(ctFields, { id: id });
 }

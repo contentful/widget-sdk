@@ -1,12 +1,16 @@
-import { $initialize, $inject } from 'test/utils/ng';
-import { it } from 'test/utils/dsl';
+import * as ListQuery from './listQuery.es6';
+import Paginator from 'classes/Paginator.es6';
+
+jest.mock('ng/spaceContext', () => ({
+  publishedCTs: {
+    fetch: jest.fn().mockResolvedValue({
+      data: { fields: [] },
+      getId: () => 'test'
+    })
+  }
+}));
 
 describe('ListQuery service', () => {
-  let ListQuery, paginator;
-  afterEach(() => {
-    ListQuery = paginator = null;
-  });
-
   function testQuery(q) {
     expect(q.order).toBe('-sys.updatedAt');
     expect(q.limit).toBe(40);
@@ -15,26 +19,12 @@ describe('ListQuery service', () => {
     expect(q['sys.archivedAt[exists]']).toBe('false');
   }
 
-  beforeEach(async function() {
-    paginator = (await this.system.import('classes/Paginator.es6')).default.create();
-
-    await $initialize(this.system);
-
-    ListQuery = $inject('ListQuery');
-
-    const spaceContext = $inject('mocks/spaceContext').init();
-    spaceContext.publishedCTs.fetch.resolves({
-      data: { fields: [] },
-      getId: () => 'test'
-    });
-  });
-
   function assetOpts(more) {
     return Object.assign(
       {
         order: { direction: 'descending', fieldId: 'updatedAt' },
         searchText: 'test',
-        paginator
+        paginator: Paginator.create()
       },
       more
     );
