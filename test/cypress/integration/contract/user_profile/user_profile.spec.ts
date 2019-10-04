@@ -13,7 +13,6 @@ describe('User profile page', () => {
     );
     context('default user', () => {
         beforeEach(() => {
-
             cy.resetAllFakeServers();
             const interactions = [
                 getTokenForUser.willReturnAValidToken(),
@@ -126,7 +125,7 @@ describe('User profile page', () => {
 
         it('delete user', () => {
             const deleteUserAccountInteraction = [deleteUserAccount.willReturnIt()];
-            cy.getByTestId('delete-account-button').click();
+            cy.getByTestId('delete-cta').click();
             cy.getByTestId('confirm-delete-account-button').click();
             cy.wait(deleteUserAccountInteraction);
             cy.url().should('include', '/goodbye');

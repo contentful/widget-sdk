@@ -47,7 +47,8 @@ const styles = {
   name: css({
     fontWeight: tokens.fontWeightMedium,
     fontSize: tokens.fontSizeL,
-    marginBottom: tokens.spacing2Xs
+    marginBottom: tokens.spacing2Xs,
+    wordWrap: 'break-word'
   }),
   email: css({
     marginTop: tokens.spacingXs,
