@@ -39,6 +39,14 @@ describe('ChangePasswordModal', () => {
     );
   };
 
+  const getValidationMessage = ele => {
+    try {
+      return within(ele).queryByTestId('cf-ui-validation-message').textContent;
+    } catch (_) {
+      return null;
+    }
+  };
+
   afterEach(cleanup);
 
   it('should call onCancel if the user presses the cancel button', () => {
@@ -57,17 +65,32 @@ describe('ChangePasswordModal', () => {
     expect(queryByTestId('confirm-change-password')).toHaveAttribute('disabled');
   });
 
+  it('should enable the submit button on first field interaction', () => {
+    const { queryByTestId } = build();
+
+    expect(queryByTestId('confirm-change-password')).toHaveAttribute('disabled');
+
+    fireEvent.change(queryByTestId('new-password').querySelector('input'), {
+      target: { value: 'a' }
+    });
+
+    expect(queryByTestId('confirm-change-password')).not.toHaveAttribute('disabled');
+  });
+
   it('should warn on blur when typing in a trimmed new password less than 8 characters', async () => {
     const { queryByTestId } = build();
     const newPasswordField = queryByTestId('new-password');
     const input = newPasswordField.querySelector('input');
 
+    expect(getValidationMessage(newPasswordField)).toBeNull();
+
     fireEvent.change(input, { target: { value: '      mypass' } });
+
+    expect(getValidationMessage(newPasswordField)).toBeNull();
+
     fireEvent.blur(input);
 
-    expect(within(newPasswordField).queryByTestId('cf-ui-validation-message').textContent).toEqual(
-      expect.any(String)
-    );
+    expect(getValidationMessage(newPasswordField)).toEqual(expect.any(String));
   });
 
   it('should warn on blur when the current password field is empty', () => {
@@ -75,12 +98,11 @@ describe('ChangePasswordModal', () => {
     const currentPasswordField = queryByTestId('current-password');
     const input = currentPasswordField.querySelector('input');
 
+    expect(getValidationMessage(currentPasswordField)).toBeNull();
+
     fireEvent.blur(input);
 
-    const validationMessage = within(currentPasswordField).queryByTestId('cf-ui-validation-message')
-      .textContent;
-
-    expect(validationMessage).toEqual(expect.any(String));
+    expect(getValidationMessage(currentPasswordField)).toEqual(expect.any(String));
   });
 
   it('should warn on blur when typing in a trimmed new password confirmation less than 8 characters', () => {
@@ -88,14 +110,15 @@ describe('ChangePasswordModal', () => {
     const newPasswordConfirmField = queryByTestId('new-password-confirm');
     const input = newPasswordConfirmField.querySelector('input');
 
+    expect(getValidationMessage(newPasswordConfirmField)).toBeNull();
+
     fireEvent.change(input, { target: { value: '      myconf' } });
+
+    expect(getValidationMessage(newPasswordConfirmField)).toBeNull();
+
     fireEvent.blur(input);
 
-    const validationMessage = within(newPasswordConfirmField).queryByTestId(
-      'cf-ui-validation-message'
-    ).textContent;
-
-    expect(validationMessage).toEqual(expect.any(String));
+    expect(getValidationMessage(newPasswordConfirmField)).toEqual(expect.any(String));
   });
 
   it('should warn on blur if the password confirmation does not match the password', () => {
@@ -106,22 +129,22 @@ describe('ChangePasswordModal', () => {
     const passwordInput = newPasswordField.querySelector('input');
     const confirmInput = newPasswordConfirmField.querySelector('input');
 
+    expect(getValidationMessage(newPasswordField)).toBeNull();
+    expect(getValidationMessage(newPasswordConfirmField)).toBeNull();
+
     fireEvent.change(passwordInput, { target: { value: 'my-awesome-password' } });
+
+    expect(getValidationMessage(newPasswordField)).toBeNull();
+    expect(getValidationMessage(newPasswordConfirmField)).toBeNull();
+
     fireEvent.blur(passwordInput);
 
-    const passwordValidationMessage = within(newPasswordField).queryByTestId(
-      'cf-ui-validation-message'
-    );
-    expect(passwordValidationMessage).toBeNull();
+    expect(getValidationMessage(newPasswordField)).toBeNull();
 
     fireEvent.change(confirmInput, { target: { value: 'my-confirmation-that-does-not-match' } });
     fireEvent.blur(confirmInput);
 
-    const confirmValidationMessage = within(newPasswordConfirmField).queryByTestId(
-      'cf-ui-validation-message'
-    ).textContent;
-
-    expect(confirmValidationMessage).toEqual(expect.any(String));
+    expect(getValidationMessage(newPasswordConfirmField)).toEqual(expect.any(String));
   });
 
   it('should not submit if there are errors on the form when submitting', async () => {
@@ -203,11 +226,7 @@ describe('ChangePasswordModal', () => {
 
     await wait();
 
-    const newPasswordValidationMessage = within(newPasswordField).queryByTestId(
-      'cf-ui-validation-message'
-    ).textContent;
-
-    expect(newPasswordValidationMessage).toEqual(expect.any(String));
+    expect(getValidationMessage(newPasswordField)).toEqual(expect.any(String));
   });
 
   it('should show a notification if an unknown error occurs', async () => {

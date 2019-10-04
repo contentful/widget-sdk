@@ -38,37 +38,21 @@ const validators = {
     }
   },
   currentPassword: field => {
-    const { value, blurred } = field;
-
-    if (!blurred) {
-      return null;
-    }
+    const { value } = field;
 
     if (!validations.presence(value)) {
       return 'Current password is required';
     }
   },
   newPassword: field => {
-    const { value, blurred } = field;
-
-    if (!blurred) {
-      return null;
-    }
-
-    if (!value) {
-      return;
-    }
+    const { value } = field;
 
     if (!validations.minLength(8, value)) {
       return 'New password must be at least 8 characters';
     }
   },
   newPasswordConfirm: (field, fields) => {
-    const { value, blurred } = field;
-
-    if (!blurred) {
-      return null;
-    }
+    const { value } = field;
 
     if (!validations.minLength(8, value)) {
       return 'New password confirmation must be at least 8 characters';

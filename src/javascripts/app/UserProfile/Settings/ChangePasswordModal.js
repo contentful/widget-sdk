@@ -12,7 +12,7 @@ import { css } from 'emotion';
 import { createImmerReducer } from 'redux/utils/createImmerReducer.es6';
 import { updateUserData } from './AccountRepository';
 import { getValidationMessageFor } from './utils';
-import { fromPairs, get } from 'lodash';
+import { get } from 'lodash';
 
 const styles = {
   controlsPanel: css({ display: 'flex' }),
@@ -20,6 +20,7 @@ const styles = {
 };
 
 const createFieldData = (initialValue = '') => ({
+  interacted: false,
   blurred: false,
   value: initialValue,
   serverValidationMessage: null
@@ -49,6 +50,7 @@ const initializeReducer = user => {
 const reducer = createImmerReducer({
   UPDATE_FIELD_VALUE: (state, { payload }) => {
     state.fields[payload.field].value = payload.value;
+    state.fields[payload.field].interacted = true;
     state.formInvalid = false;
     state.fields[payload.field].serverValidationMessage = null;
   },
@@ -67,6 +69,7 @@ const reducer = createImmerReducer({
     state.formInvalid = true;
   },
   SERVER_VALIDATION_FAILURE: (state, { payload }) => {
+    state.formInvalid = true;
     state.fields[payload.field].serverValidationMessage = payload.value;
   },
   RESET: (_, { payload }) => {
@@ -124,22 +127,10 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
   const validateForm = () => {
     dispatch({ type: 'SET_ALL_FIELDS_BLURRED' });
 
-    // We need to manually set each field as touched as well, since
-    // the update will happen after this function call
-    const fields = fromPairs(
-      Object.entries(formData.fields).map(([name, data]) => {
-        return [
-          name,
-          {
-            ...data,
-            blurred: true
-          }
-        ];
-      })
-    );
-
     const formIsInvalid = Boolean(
-      Object.keys(formData.fields).find(fieldName => getValidationMessageFor(fields, fieldName))
+      Object.keys(formData.fields).find(fieldName =>
+        getValidationMessageFor(formData.fields, fieldName)
+      )
     );
 
     if (formIsInvalid) {
@@ -154,9 +145,8 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
   const fields = formData.fields;
   const submitButtonDisabled = Boolean(
     formData.submitting ||
-      fields.newPassword.value === '' ||
-      fields.newPassword.value !== fields.newPasswordConfirm.value ||
-      fields.newPassword.serverValidationMessage
+      !Object.values(formData.fields).find(field => field.interacted) ||
+      formData.formInvalid
   );
 
   const userHasPassword = user.passwordSet;
@@ -177,7 +167,11 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
         {userHasPassword && (
           <TextField
             required
-            validationMessage={getValidationMessageFor(formData.fields, 'currentPassword')}
+            validationMessage={
+              formData.fields.currentPassword.blurred
+                ? getValidationMessageFor(formData.fields, 'currentPassword')
+                : ''
+            }
             testId="current-password"
             id="current-password"
             name="current-password"
@@ -197,7 +191,11 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
         )}
         <TextField
           required
-          validationMessage={getValidationMessageFor(formData.fields, 'newPassword')}
+          validationMessage={
+            formData.fields.newPassword.blurred
+              ? getValidationMessageFor(formData.fields, 'newPassword')
+              : ''
+          }
           testId="new-password"
           id="new-password"
           name="new-password"
@@ -214,7 +212,11 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
         />
         <TextField
           required
-          validationMessage={getValidationMessageFor(formData.fields, 'newPasswordConfirm')}
+          validationMessage={
+            formData.fields.newPasswordConfirm.blurred
+              ? getValidationMessageFor(formData.fields, 'newPasswordConfirm')
+              : ''
+          }
           testId="new-password-confirm"
           id="new-password-confirm"
           name="new-password-confirm"

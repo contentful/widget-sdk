@@ -24,6 +24,7 @@ const styles = {
 
 const createFieldData = (initialValue = '') => ({
   blurred: false,
+  interacted: false,
   value: initialValue,
   serverValidationMessage: null
 });
@@ -33,12 +34,9 @@ const initializeReducer = user => {
     firstName: createFieldData(user.firstName),
     lastName: createFieldData(user.lastName),
     email: createFieldData(user.email),
+    currentPassword: createFieldData(),
     logAnalyticsFeature: createFieldData(user.logAnalyticsFeature)
   };
-
-  if (user.passwordSet) {
-    fields.currentPassword = createFieldData();
-  }
 
   return {
     fields,
@@ -50,6 +48,7 @@ const initializeReducer = user => {
 const reducer = createImmerReducer({
   UPDATE_FIELD_VALUE: (state, { payload }) => {
     state.fields[payload.field].value = payload.value;
+    state.fields[payload.field].interacted = true;
     state.formInvalid = false;
     state.fields[payload.field].serverValidationMessage = null;
   },
@@ -68,6 +67,7 @@ const reducer = createImmerReducer({
     state.formInvalid = true;
   },
   SERVER_VALIDATION_FAILURE: (state, { payload }) => {
+    state.formInvalid = true;
     state.fields[payload.field].serverValidationMessage = payload.value;
   },
   RESET: (_, { payload }) => {
@@ -100,14 +100,13 @@ const submitForm = async (formData, user, dispatch, onConfirm) => {
   } catch (err) {
     const { data } = err;
 
-    if (data.sys && data.sys.type === 'Error') {
+    if (_.get(data, ['sys', 'type']) === 'Error') {
       const errorDetails = data.details.errors;
 
       errorDetails.forEach(({ path, name }) => {
         const pathFieldMapping = {
           first_name: 'firstName',
           last_name: 'lastName',
-          password: 'newPassword',
           current_password: 'currentPassword',
           email: 'email'
         };
@@ -129,12 +128,6 @@ const submitForm = async (formData, user, dispatch, onConfirm) => {
           case 'email': {
             if (name === 'invalid') {
               message = 'The email you entered is not valid';
-            }
-            break;
-          }
-          case 'password': {
-            if (name === 'insecure') {
-              message = 'The password you entered is not secure';
             }
             break;
           }
@@ -177,11 +170,21 @@ const submitForm = async (formData, user, dispatch, onConfirm) => {
 export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
   const [formData, dispatch] = useReducer(reducer, user, initializeReducer);
 
+  const fields = formData.fields;
+  const userHasPassword = user.passwordSet;
+  const currentPasswordIsRequired = userHasPassword && fields.email.interacted;
+
   const validateForm = () => {
+    dispatch({ type: 'SET_ALL_FIELDS_BLURRED' });
+
     const formIsInvalid = Boolean(
-      Object.keys(formData.fields).find(fieldName =>
-        getValidationMessageFor(formData.fields, fieldName)
-      )
+      Object.keys(formData.fields).find(fieldName => {
+        if (fieldName === 'currentPassword' && !currentPasswordIsRequired) {
+          return null;
+        }
+
+        return getValidationMessageFor(formData.fields, fieldName);
+      })
     );
 
     if (formIsInvalid) {
@@ -193,11 +196,8 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
     return true;
   };
 
-  const fields = formData.fields;
-  const currentPasswordIsRequired = user.passwordSet && fields.email.dirty;
-  const userHasPassword = user.passwordSet;
   const submitButtonDisabled =
-    !Object.values(formData.fields).find(field => field.dirty) ||
+    !Object.values(formData.fields).find(field => field.interacted) ||
     formData.formInvalid ||
     formData.submitting;
 
@@ -227,7 +227,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
               payload: { field: 'firstName', value: e.target.value }
             })
           }
-          onBlur={() => dispatch({ type: 'SET_FIELD_TOUCHED', payload: { field: 'firstName' } })}
+          onBlur={() => dispatch({ type: 'SET_FIELD_BLURRED', payload: { field: 'firstName' } })}
           labelText="First Name"
           textInputProps={{
             type: 'text',
@@ -248,7 +248,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
               payload: { field: 'lastName', value: e.target.value }
             })
           }
-          onBlur={() => dispatch({ type: 'SET_FIELD_TOUCHED', payload: { field: 'lastName' } })}
+          onBlur={() => dispatch({ type: 'SET_FIELD_BLURRED', payload: { field: 'lastName' } })}
           labelText="Last Name"
           textInputProps={{
             type: 'text',
@@ -269,7 +269,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
               payload: { field: 'email', value: e.target.value }
             })
           }
-          onBlur={() => dispatch({ type: 'SET_FIELD_TOUCHED', payload: { field: 'email' } })}
+          onBlur={() => dispatch({ type: 'SET_FIELD_BLURRED', payload: { field: 'email' } })}
           labelText="Email"
           textInputProps={{
             type: 'email',
@@ -277,7 +277,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
             placeholder: 'felix.mueller@example.com'
           }}
           helpText={
-            userHasPassword && fields.email.dirty
+            userHasPassword && fields.email.interacted
               ? 'Enter your password to confirm your updated email.'
               : ''
           }
@@ -287,7 +287,11 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
             <Subheading>Confirm changes</Subheading>
             <TextField
               required
-              validationMessage={getValidationMessageFor(formData.fields, 'currentPassword')}
+              validationMessage={
+                formData.fields.currentPassword.blurred
+                  ? getValidationMessageFor(formData.fields, 'currentPassword')
+                  : ''
+              }
               id="current-password-field"
               testId="current-password-field"
               name="current-password"
@@ -299,7 +303,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
                 })
               }
               onBlur={() =>
-                dispatch({ type: 'SET_FIELD_TOUCHED', payload: { field: 'currentPassword' } })
+                dispatch({ type: 'SET_FIELD_BLURRED', payload: { field: 'currentPassword' } })
               }
               labelText="Current Password"
               textInputProps={{ type: 'password', autoComplete: 'off' }}
@@ -333,6 +337,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
           </Button>
           <Button
             className={styles.marginLeftM}
+            testId="cancel-account-data-changes"
             onClick={() => {
               dispatch({ type: 'RESET', payload: { user } });
               onCancel();

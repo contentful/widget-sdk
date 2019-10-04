@@ -54,7 +54,7 @@ describe('DeleteUser', () => {
 
     fireEvent.click(queryByTestId('reason-not_useful').querySelector('input'));
 
-    fireEvent.click(queryByTestId('confirm'));
+    fireEvent.click(queryByTestId('confirm-delete-account-button'));
 
     await wait();
 
@@ -71,7 +71,7 @@ describe('DeleteUser', () => {
     fireEvent.change(queryByTestId('cancellation-details'), {
       target: { value: 'This is too complicated!!!!' }
     });
-    fireEvent.click(queryByTestId('confirm'));
+    fireEvent.click(queryByTestId('confirm-delete-account-button'));
 
     await wait();
 
@@ -86,7 +86,7 @@ describe('DeleteUser', () => {
 
     const { queryByTestId } = build({ onConfirm });
 
-    fireEvent.click(queryByTestId('confirm'));
+    fireEvent.click(queryByTestId('confirm-delete-account-button'));
 
     await wait();
 
@@ -101,7 +101,7 @@ describe('DeleteUser', () => {
 
     const { queryByTestId } = build({ onConfirm });
 
-    fireEvent.click(queryByTestId('confirm'));
+    fireEvent.click(queryByTestId('confirm-delete-account-button'));
 
     await wait();
 
