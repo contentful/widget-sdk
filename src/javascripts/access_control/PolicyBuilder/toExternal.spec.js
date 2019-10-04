@@ -22,12 +22,14 @@ describe('Policy Builder, to external representation', () => {
         contentModel: 'all',
         contentDelivery: 'all',
         settings: 'all',
-        environments: 'all'
+        environments: 'all',
+        environmentAliases: 'all'
       });
       expect(external.permissions.contentModel).toBe('all');
       expect(external.permissions.contentDelivery).toBe('all');
       expect(external.permissions.settings).toBe('all');
       expect(external.permissions.environments).toBe('all');
+      expect(external.permissions.environmentAliases).toBe('all');
     });
   });
 

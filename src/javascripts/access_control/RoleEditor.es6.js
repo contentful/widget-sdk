@@ -13,7 +13,16 @@ import {
   cloneDeep
 } from 'lodash';
 import PropTypes from 'prop-types';
-import { TextField, Button, Notification } from '@contentful/forma-36-react-components';
+import {
+  TextLink,
+  TextField,
+  Textarea,
+  Button,
+  Notification,
+  Heading,
+  Checkbox,
+  Paragraph
+} from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 import FormSection from 'components/forms/FormSection.es6';
 import * as ResourceUtils from 'utils/ResourceUtils.es6';
@@ -30,6 +39,8 @@ import * as logger from 'services/logger.es6';
 import createLegacyFeatureService from 'services/LegacyFeatureService.es6';
 import { getSubscriptionState } from 'account/AccountUtils.es6';
 import TheLocaleStore from 'services/localeStore.es6';
+import { getSpaceFeature } from 'data/CMA/ProductCatalog.es6';
+import { ENVIRONMENT_ALIASING } from '../featureFlags.es6';
 
 import * as createResourceService from 'services/ResourceService.es6';
 import * as RoleRepository from 'access_control/RoleRepository.es6';
@@ -69,6 +80,7 @@ class RoleEditor extends React.Component {
     this.state = {
       canModifyRoles: undefined,
       hasCustomRolesFeature: undefined,
+      hasEnvironmentAliasesEnabled: undefined,
       loading: undefined,
       saving: false,
       accountUpgradeState: getSubscriptionState(),
@@ -298,12 +310,14 @@ class RoleEditor extends React.Component {
 
     this.setState({ loading: true });
 
-    const [featureEnabled, resource] = await Promise.all([
+    const [hasEnvironmentAliasesEnabled, featureEnabled, resource] = await Promise.all([
+      getSpaceFeature(spaceContext.space.getId(), ENVIRONMENT_ALIASING),
       FeatureService.get('customRoles'),
       createResourceService.default(spaceContext.getId()).get('role')
     ]);
 
     const stateUpdates = [];
+    stateUpdates.push(set('hasEnvironmentAliasesEnabled', hasEnvironmentAliasesEnabled));
     stateUpdates.push(set('isLegacy', ResourceUtils.isLegacyOrganization(organization)));
     let autofixedInternals = null;
 
@@ -338,6 +352,7 @@ class RoleEditor extends React.Component {
     const {
       canModifyRoles,
       hasCustomRolesFeature,
+      hasEnvironmentAliasesEnabled,
       loading,
       saving,
       internal,
@@ -423,21 +438,21 @@ class RoleEditor extends React.Component {
               </React.Fragment>
             ) : (
               <FormSection title="Policies">
-                <h3>Policies</h3>
-                <p>
+                <Heading element="h3">Policies</Heading>
+                <Paragraph>
                   <span>The policy for this role cannot be represented visually.</span>
                   {canModifyRoles && (
                     <span>
                       You can continue to edit the JSON directly, or{' '}
-                      <a href="" onClick={this.resetPolicies}>
+                      <TextLink href="" onClick={this.resetPolicies}>
                         clear the policy
-                      </a>{' '}
+                      </TextLink>{' '}
                       to define policy rules visually.
                     </span>
                   )}
-                </p>
+                </Paragraph>
                 <div className="cfnext-form-option">
-                  <textarea
+                  <Textarea
                     className="cfnext-form__input--full-size"
                     disabled={!canModifyRoles}
                     value={internal.policyString || ''}
@@ -449,7 +464,7 @@ class RoleEditor extends React.Component {
             )}
             <FormSection title="Content model">
               <div className="cfnext-form-option">
-                <input
+                <Checkbox
                   id="opt_content_types_access"
                   disabled={!canModifyRoles}
                   checked={internal.contentModel.manage}
@@ -468,7 +483,7 @@ class RoleEditor extends React.Component {
             </FormSection>
             <FormSection title="API keys">
               <div className="cfnext-form-option">
-                <input
+                <Checkbox
                   id="opt_api_keys_view"
                   disabled={!canModifyRoles || internal.contentDelivery.manage}
                   checked={internal.contentDelivery.read}
@@ -480,7 +495,7 @@ class RoleEditor extends React.Component {
                 </label>
               </div>
               <div className="cfnext-form-option">
-                <input
+                <Checkbox
                   id="opt_space_settings_edit"
                   disabled={!canModifyRoles}
                   checked={internal.contentDelivery.manage}
@@ -492,9 +507,9 @@ class RoleEditor extends React.Component {
                 </label>
               </div>
             </FormSection>
-            <FormSection title="Sandbox environments settings">
+            <FormSection title="Environments settings">
               <div className="cfnext-form-option">
-                <input
+                <Checkbox
                   id="opt_manage_environments_access"
                   disabled={!canModifyRoles}
                   checked={internal.environments.manage}
@@ -502,14 +517,29 @@ class RoleEditor extends React.Component {
                   type="checkbox"
                 />
                 <label htmlFor="opt_manage_environments_access">
-                  Can manage and use all sandbox environments in this space.
-                  <em> (Content level permissions do not apply in a sandbox environment)</em>.
+                  Can manage and use all environments for this space.
+                  <em> (Content level permissions only apply to the master environment)</em>.
                 </label>
               </div>
+              {hasEnvironmentAliasesEnabled && (
+                <label className="cfnext-form-option">
+                  <Checkbox
+                    id="opt_manage_environment_aliases_access"
+                    disabled={!canModifyRoles || !internal.environments.manage}
+                    checked={internal.environmentAliases.manage}
+                    onChange={this.updateRoleFromCheckbox('environmentAliases.manage')}
+                    type="checkbox"
+                  />
+                  <label htmlFor="opt_manage_environment_aliases_access">
+                    Can create environment aliases and change their target environment for this
+                    space.
+                  </label>
+                </label>
+              )}
             </FormSection>
             <FormSection title="Space settings">
               <div className="cfnext-form-option">
-                <input
+                <Checkbox
                   id="opt_space_settings_access"
                   disabled={!canModifyRoles}
                   checked={internal.settings.manage}
@@ -529,7 +559,9 @@ class RoleEditor extends React.Component {
           <Workbench.Sidebar>
             {!loading && !hasCustomRolesFeature && !canModifyRoles && (
               <div className="entity-sidebar">
-                <h2 className="entity-sidebar__heading">Role</h2>
+                <Heading element="h2" className="entity-sidebar__heading">
+                  Role
+                </Heading>
                 <div className="entity-sidebar__state-select">
                   {showTranslator && (
                     <Button
@@ -542,9 +574,9 @@ class RoleEditor extends React.Component {
                   )}
                 </div>
                 {!showTranslator && (
-                  <p>
+                  <Paragraph>
                     This role can‘t be customized because your plan does not include custom roles.
-                  </p>
+                  </Paragraph>
                 )}
                 <CustomRolesPlanInfo isLegacy={isLegacy} />
               </div>
@@ -569,8 +601,10 @@ class RoleEditor extends React.Component {
                     </span>
                   </div>
                 )}
-                <h2 className="entity-sidebar__heading">Learn more</h2>
-                <p>
+                <Heading element="h2" className="entity-sidebar__heading">
+                  Learn more
+                </Heading>
+                <Paragraph>
                   To create or customize a role, such as a translator for a specific language, read
                   the documentation on{' '}
                   <KnowledgeBase
@@ -580,8 +614,10 @@ class RoleEditor extends React.Component {
                     icon={false}
                   />
                   .
-                </p>
-                <h2 className="entity-sidebar__heading">Hint from our staff</h2>
+                </Paragraph>
+                <Heading element="h2" className="entity-sidebar__heading">
+                  Hint from our staff
+                </Heading>
                 <div className="staff-hint">
                   <i className="fa fa-quote-left" />
                   <div className="staff-hint__quote">
@@ -592,7 +628,7 @@ class RoleEditor extends React.Component {
                       <div className="staff-hint__author-photo" />
                       <div className="staff-hint__authr-name">
                         <strong>Hervé Labas</strong>
-                        <p>Group Product manager at Contentful</p>
+                        <Paragraph>Group Product manager at Contentful</Paragraph>
                       </div>
                     </div>
                   </div>

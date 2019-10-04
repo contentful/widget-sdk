@@ -4,14 +4,16 @@ const AVAILABLE_PERMISSIONS = {
   ContentModel: ['read', 'manage'],
   ContentDelivery: ['read', 'manage'],
   Settings: ['manage'],
-  Environments: ['manage']
+  Environments: ['manage'],
+  EnvironmentAliases: ['manage']
 };
 
 const PERMISSION_GROUP_NAME_MAP = {
   ContentModel: 'contentModel',
   ContentDelivery: 'contentDelivery',
   Settings: 'settings',
-  Environments: 'environments'
+  Environments: 'environments',
+  EnvironmentAliases: 'environmentAliases'
 };
 
 export function getInstance(space) {
@@ -79,7 +81,8 @@ export function getEmpty() {
       ContentModel: ['read'],
       ContentDelivery: [],
       Settings: [],
-      Environments: []
+      Environments: [],
+      EnvironmentAliases: []
     }
   });
 }

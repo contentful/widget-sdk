@@ -127,6 +127,12 @@ export function toExternal(internal) {
     name: internal.name,
     description: internal.description,
     policies: translatePolicies(internal),
-    permissions: _.pick(internal, ['contentModel', 'contentDelivery', 'settings', 'environments'])
+    permissions: _.pick(internal, [
+      'contentModel',
+      'contentDelivery',
+      'settings',
+      'environments',
+      'environmentAliases'
+    ])
   };
 }

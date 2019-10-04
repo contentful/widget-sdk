@@ -29,6 +29,7 @@ import {
   optInStart,
   changeEnvironmentOpen
 } from 'analytics/events/EnvironmentAliases.es6';
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
 
 const aliasHeaderStyles = {
   alphaTag: css({
@@ -65,13 +66,14 @@ function EnvironmentAlias({
   environment: { aliases, id },
   setModalOpen,
   canChangeEnvironment,
+  children,
   alias
 }) {
   const changeEnvironment = () => {
     changeEnvironmentOpen();
     setModalOpen(true);
   };
-  const content = (
+  const actionWidget = (
     <TextLink
       testId="openChangeDialog"
       onClick={changeEnvironment}
@@ -91,18 +93,10 @@ function EnvironmentAlias({
           isSelected
           hasCopy={false}></EnvironmentDetails>
         {canChangeEnvironment ? (
-          content
+          actionWidget
         ) : (
-          <Tooltip
-            content={
-              <div>
-                You cannot change the environment.
-                <br />
-                Create a new environment first.
-              </div>
-            }
-            place="top">
-            {content}
+          <Tooltip content={children} place="top">
+            {actionWidget}
           </Tooltip>
         )}
       </div>
@@ -133,7 +127,7 @@ EnvironmentAlias.propTypes = {
     })
   }).isRequired,
   setModalOpen: PropTypes.func.isRequired,
-  canChangeEnvironment: PropTypes.bool.isRequired
+  canChangeEnvironment: PropTypes.bool
 };
 
 const aliasesStyles = {
@@ -184,6 +178,7 @@ export default function EnvironmentAliases(props) {
     .map(alias => {
       const targetEnv = environments.find(({ aliases }) => aliases.includes(alias.sys.id));
       if (targetEnv) {
+        const canAccessAliases = accessChecker.can('manage', 'EnvironmentAliases');
         return (
           <span data-test-id={testId} key={alias.sys.id}>
             <EnvironmentAliasHeader></EnvironmentAliasHeader>
@@ -191,9 +186,17 @@ export default function EnvironmentAliases(props) {
               alias={alias}
               environment={targetEnv}
               setModalOpen={setModalOpen}
-              canChangeEnvironment={environments.some(
-                ({ aliases }) => aliases.length <= 0
-              )}></EnvironmentAlias>
+              canChangeEnvironment={
+                canAccessAliases && environments.some(({ aliases }) => aliases.length <= 0)
+              }>
+              <div>
+                You cannot change the alias target.
+                <br />
+                {canAccessAliases
+                  ? 'Create a new environment first.'
+                  : 'You don’t have the necessary permissions.'}
+              </div>
+            </EnvironmentAlias>
             <Feedback></Feedback>
             <ChangeEnvironmentModal
               alias={alias}
