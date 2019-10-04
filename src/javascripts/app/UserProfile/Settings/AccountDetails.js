@@ -131,7 +131,9 @@ export default function AccountDetails({ userData }) {
                 {user.unconfirmedEmail && (
                   <>
                     <br />
-                    <span data-test-id='unconfirmed-email'>Unconfirmed email: {user.unconfirmedEmail}</span>
+                    <span data-test-id="unconfirmed-email">
+                      Unconfirmed email: {user.unconfirmedEmail}
+                    </span>
                   </>
                 )}
               </span>
@@ -139,16 +141,14 @@ export default function AccountDetails({ userData }) {
                 <TextLink
                   testId="link-change-password"
                   onClick={() => openChangePasswordModal(user, setUser)}>
-                  { user.passwordSet && (
-                    <span data-test-id='change-password-cta'>Change password</span>
+                  {user.passwordSet && (
+                    <span data-test-id="change-password-cta">Change password</span>
                   )}
-                  { !user.passwordSet && (
-                    <span data-test-id='add-password-cta'>Add password</span>
-                  )}
+                  {!user.passwordSet && <span data-test-id="add-password-cta">Add password</span>}
                 </TextLink>
               )}
               {user.ssoLoginOnly && (
-                <TextLink testId='sso-active' href={websiteUrl('faq/sso')}>
+                <TextLink testId="sso-active" href={websiteUrl('faq/sso')}>
                   Single sign-on is active for your account.
                 </TextLink>
               )}

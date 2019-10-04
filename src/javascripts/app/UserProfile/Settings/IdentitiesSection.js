@@ -91,7 +91,7 @@ const IdentitiesSection = ({ userHasPassword, identities, onRemoveIdentity }) =>
   );
 
   return (
-    <div data-test-id='identities-section'>
+    <div data-test-id="identities-section">
       {identities.length ? (
         <>
           <Heading className={styles.heading}>Connected open identities:</Heading>
@@ -211,7 +211,10 @@ function AddIdentityProvider({ provider }) {
   const humanName = idpMap[provider];
 
   return (
-    <form action={oauthUrl(provider, '/account/user/profile')} method="post">
+    <form
+      data-test-id={`add-${provider}-identity-form`}
+      action={oauthUrl(provider, '/account/user/profile')}
+      method="post">
       <div className={cx(styles[provider], styles.identityItem)}>
         <IdentityIcon provider={provider} />
         <input
