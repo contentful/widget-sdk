@@ -13,11 +13,12 @@ div(ng-if="data.hasEditor")
       style="display: none"
       role="progressbar"
       aria-busy="{{data.isSaving}}")
+
     div.bulk-editor-entry__header-main(ng-click="actions.toggleExpansion()")
-      cf-icon.bulk-editor-entry__header-icon(name="page-content", scale="0.75")
-      h2.bulk-editor-entry__header-title
-        | {{title}}
-      div.bulk-editor-entry__header-expander(ng-class="!data.expanded && 'x--collapsed'")
+      react-component(
+        name="app/entity_editor/bulk_editor/BulkEditorTitle.es6"
+        props="{title, isCollapsed: !data.expanded, contentTypeName: entityInfo.contentType.name}"
+      ) 
 
     button.btn-link.bulk-editor-entry__actions(cf-context-menu-trigger ng-show="data.expanded")
       | Actions

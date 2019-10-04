@@ -7,15 +7,10 @@ react-component(
     header.workbench-header
       react-component(name="app/entity_editor/Components/BackNav/index.es6")
       cf-icon.workbench-header__icon(name="page-content", scale="0.75")
-      h1.workbench-header__title
-        | {{ title }}
-        span.locale(ng-if="localeData.isSingleLocaleModeOn")
-          | &nbsp;- {{localeData.focusedLocale.name}}
-        react-component(
-          name="components/shared/knowledge_base_icon/KnowledgeBase.es6"
-          props="{target: 'entry', className: 'workbench-header__kb-link'}"
-        )
-
+      react-component(
+        name="components/shared/WorkbenchTitle.es6"
+        props="{title, localeName: localeData.focusedLocale.name, isSingleLocaleModeOn: localeData.isSingleLocaleModeOn, contentTypeName: editorData.contentType.data.name }"
+      )
       .workbench-header__actions
         button.btn-secondary-action(
           cf-context-menu-trigger

@@ -34,6 +34,7 @@ import * as appApiApiKeysNavigationEs6 from 'app/api/ApiKeysNavigation.es6';
 import * as appApiKeyEditorBoilerplateEs6 from 'app/api/KeyEditor/Boilerplate.es6';
 import * as appApiKeyEditorContactUsEs6 from 'app/api/KeyEditor/ContactUs.es6';
 import * as componentsSharedDocumentTitleEs6 from 'components/shared/DocumentTitle.es6';
+import * as componentsSharedWorkbenchTitleEs6 from 'components/shared/WorkbenchTitle.es6';
 import * as appApiApiKeyListApiKeyListEs6 from 'app/api/api_key_list/ApiKeyList.es6';
 import * as appEntityEditorComponentsBackNavIndexEs6 from 'app/entity_editor/Components/BackNav/index.es6';
 import * as appEntityEditorEntityAuxToggleEs6 from 'app/entity_editor/EntityAuxToggle.es6';
@@ -85,6 +86,7 @@ import * as componentsSharedStackOnboardingScreensCopyScreenEs6 from 'components
 import * as componentsSharedStackOnboardingScreensExploreScreenEs6 from 'components/shared/stack-onboarding/screens/ExploreScreen.es6';
 import * as componentsSharedStackOnboardingScreensDeployScreenEs6 from 'components/shared/stack-onboarding/screens/DeployScreen.es6';
 import * as accountAccountViewEs6 from 'account/AccountView.es6';
+import * as appEntityEditorBulkEditorTitleEs6 from 'app/entity_editor/bulk_editor/BulkEditorTitle.es6';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -306,6 +308,7 @@ function getModule(name) {
     'app/api/KeyEditor/Boilerplate.es6': appApiKeyEditorBoilerplateEs6,
     'app/api/KeyEditor/ContactUs.es6': appApiKeyEditorContactUsEs6,
     'components/shared/DocumentTitle.es6': componentsSharedDocumentTitleEs6,
+    'components/shared/WorkbenchTitle.es6': componentsSharedWorkbenchTitleEs6,
     'app/api/api_key_list/ApiKeyList.es6': appApiApiKeyListApiKeyListEs6,
     'app/entity_editor/Components/BackNav/index.es6': appEntityEditorComponentsBackNavIndexEs6,
     'app/entity_editor/EntityAuxToggle.es6': appEntityEditorEntityAuxToggleEs6,
@@ -356,7 +359,8 @@ function getModule(name) {
     'components/shared/stack-onboarding/screens/CopyScreen.es6': componentsSharedStackOnboardingScreensCopyScreenEs6,
     'components/shared/stack-onboarding/screens/ExploreScreen.es6': componentsSharedStackOnboardingScreensExploreScreenEs6,
     'components/shared/stack-onboarding/screens/DeployScreen.es6': componentsSharedStackOnboardingScreensDeployScreenEs6,
-    'account/AccountView.es6': accountAccountViewEs6
+    'account/AccountView.es6': accountAccountViewEs6,
+    'app/entity_editor/bulk_editor/BulkEditorTitle.es6': appEntityEditorBulkEditorTitleEs6
   };
 
   return get(allowedModules, name, null);
