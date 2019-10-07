@@ -276,7 +276,7 @@ registerSchema({
 
 registerSchema({
   name: 'jobs_create',
-  version: '1-0-1'
+  version: '1-0-2'
 });
 
 registerSchema({

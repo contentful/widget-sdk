@@ -77,18 +77,41 @@ describe('JobDialog', () => {
 
     await schedulePublication(renderResult);
 
-    expect(props.onCreate).toHaveBeenCalledWith({
-      scheduledAt: expected,
-      action: 'publish'
-    });
+    expect(props.onCreate).toHaveBeenCalledWith(
+      {
+        scheduledAt: expected,
+        action: 'publish'
+      },
+      'Africa/Abidjan'
+    );
   });
 
   it.each([
-    ['2017-06-18T15:59', '(GMT+03:00) - Africa/Nairobi', '2017-06-18T16:00:00.000+03:00'],
-    ['2017-06-18T16:59', '(GMT+03:00) - Africa/Nairobi', '2017-06-18T17:00:00.000+03:00'],
-    ['2017-06-18T16:59', '(GMT+01:00) - Europe/London', '2017-06-18T17:00:00.000+01:00'],
-    ['2017-12-01T16:59', '(GMT+02:00) - Europe/Berlin', '2017-12-01T17:00:00.000+01:00']
-  ])('allows to set timezone: %p + %p => %p', async (now, timezone, expected) => {
+    [
+      '2017-06-18T15:59',
+      '(GMT+03:00) - Africa/Nairobi',
+      '2017-06-18T16:00:00.000+03:00',
+      'Africa/Nairobi'
+    ],
+    [
+      '2017-06-18T16:59',
+      '(GMT+03:00) - Africa/Nairobi',
+      '2017-06-18T17:00:00.000+03:00',
+      'Africa/Nairobi'
+    ],
+    [
+      '2017-06-18T16:59',
+      '(GMT+01:00) - Europe/London',
+      '2017-06-18T17:00:00.000+01:00',
+      'Europe/London'
+    ],
+    [
+      '2017-12-01T16:59',
+      '(GMT+02:00) - Europe/Berlin',
+      '2017-12-01T17:00:00.000+01:00',
+      'Europe/Berlin'
+    ]
+  ])('allows to set timezone: %p + %p => %p', async (now, timezone, expected, expectedTimezone) => {
     DateMocks.mockNowOnce(dateNowSpy, now);
 
     const [renderResult, props] = build();
@@ -99,6 +122,7 @@ describe('JobDialog', () => {
     fireEvent.change(tz, {
       target: { value: timezone }
     });
+    fireEvent.blur(tz);
 
     const selectedItem = renderResult.getByText(timezone);
     fireEvent.click(selectedItem);
@@ -111,10 +135,13 @@ describe('JobDialog', () => {
       })
     ).toBeInTheDocument();
     await schedulePublication(renderResult);
-    expect(props.onCreate).toHaveBeenCalledWith({
-      scheduledAt: expected,
-      action: 'publish'
-    });
+    expect(props.onCreate).toHaveBeenCalledWith(
+      {
+        scheduledAt: expected,
+        action: 'publish'
+      },
+      expectedTimezone
+    );
   });
 
   it('prevents to schedule a publication if selected date is in the past', async () => {

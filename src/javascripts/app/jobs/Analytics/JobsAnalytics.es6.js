@@ -1,4 +1,5 @@
 import { once } from 'lodash';
+import moment from 'moment-timezone';
 import * as Analytics from 'analytics/Analytics.es6';
 import * as Intercom from 'services/intercom.es6';
 import JobAction from '../JobAction.es6';
@@ -50,12 +51,14 @@ export function createDialogClose() {
   return Analytics.track(AnalyticsEventName.Dialog, payload);
 }
 
-export function createJob(job) {
+export function createJob(job, scheduledForTimezone) {
   const payload = {
     action: convertActionToAnalyticsFormat(job.action),
     job_id: job.sys.id,
     scheduled_for: job.scheduledAt,
     entity_id: job.sys.entity.sys.id,
+    scheduled_for_timezone: scheduledForTimezone,
+    local_timezone: moment.tz.guess(),
     timezone_offset: new Date().getTimezoneOffset()
   };
 

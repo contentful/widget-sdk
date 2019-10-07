@@ -16,6 +16,8 @@ function getJobsCreateData(_eventName, data) {
       job_id: data.job_id,
       action: data.action,
       scheduled_for: data.scheduled_for,
+      scheduled_for_timezone: data.scheduled_for_timezone,
+      local_timezone: data.local_timezone,
       timezone_offset: data.timezone_offset,
       entity_id: data.entity_id
     }

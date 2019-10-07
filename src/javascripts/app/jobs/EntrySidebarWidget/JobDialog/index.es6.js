@@ -150,11 +150,13 @@ function JobDialog({
           return;
         }
       }
-
-      onCreate({
-        scheduledAt: formatScheduledAtDate({ date, time, timezone }),
-        action
-      });
+      onCreate(
+        {
+          scheduledAt: formatScheduledAtDate({ date, time, timezone }),
+          action
+        },
+        timezone
+      );
     });
   }
 

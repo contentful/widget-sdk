@@ -165,14 +165,14 @@ export default function JobsWidget({
     }
   };
 
-  const handleCreate = async ({ scheduledAt, action }) => {
+  const handleCreate = async ({ scheduledAt, action }, timezone) => {
     setIsCreatingJob(true);
     const job = await createJob({ scheduledAt, action });
     if (job && job.sys) {
       Notification.success(`${entryTitle} was scheduled successfully`);
       setIsCreatingJob(false);
       setIsDialogShown(false);
-      trackCreatedJob(job);
+      trackCreatedJob(job, timezone);
       setJobs([job, ...jobs]);
     }
   };
@@ -262,8 +262,8 @@ export default function JobsWidget({
               validator={validator}
               entryTitle={entryTitle}
               pendingJobs={pendingJobs}
-              onCreate={newJob => {
-                handleCreate(newJob);
+              onCreate={(newJob, timezone) => {
+                handleCreate(newJob, timezone);
               }}
               onCancel={() => {
                 setIsDialogShown(false);

@@ -213,6 +213,7 @@ describe('<JobsWidget />', () => {
   it('creates the job', async () => {
     const job = createPendingJob();
     const createJobSpy = jest.spyOn(JobsAnalytics, 'createJob');
+    const defaultTimezone = 'Africa/Abidjan';
 
     createJobService.mockResolvedValueOnce(job);
     getNotCanceledJobsForEntity.mockResolvedValueOnce([]);
@@ -227,7 +228,7 @@ describe('<JobsWidget />', () => {
     await wait();
 
     expect(createJobSpy).toHaveBeenCalledTimes(1);
-    expect(createJobSpy).toHaveBeenCalledWith(job);
+    expect(createJobSpy).toHaveBeenCalledWith(job, defaultTimezone);
     expect(Notification.success).toHaveBeenCalledWith('Test was scheduled successfully');
   });
 

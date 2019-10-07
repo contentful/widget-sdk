@@ -4,6 +4,7 @@ import * as JobsAnalytics from './JobsAnalytics.es6';
 import JobAction from '../JobAction.es6';
 
 jest.mock('analytics/Analytics.es6');
+jest.mock('moment-timezone');
 describe('JobsAnalytics', () => {
   beforeEach(() => {
     jest.spyOn(Analytics, 'track').mockImplementation(() => {});
