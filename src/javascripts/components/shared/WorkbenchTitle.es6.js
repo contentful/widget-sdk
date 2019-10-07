@@ -19,6 +19,7 @@ const styles = {
     lineHeight: tokens.spacingM
   }),
   contentType: css({
+    lineHeight: tokens.lineHeightDefault,
     textOverflow: 'ellipsis',
     overflow: 'hidden',
     whiteSpace: 'nowrap',
