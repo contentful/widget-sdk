@@ -184,7 +184,7 @@ export class OrganizationUsage extends React.Component {
           mapValues(
             flow(
               get('name'),
-              eq('Proof of concept')
+              eq('Proof of concept (space trial)')
             )
           )
         )(plans.items);

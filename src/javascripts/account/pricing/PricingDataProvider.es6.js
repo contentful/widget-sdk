@@ -99,7 +99,7 @@ export async function getPlansWithSpaces(endpoint) {
       ...freeSpaces.map(space => ({
         sys: { id: uniqueId('free-space-plan-') },
         gatekeeperKey: space.sys.id,
-        name: isEnterprise ? 'Proof of concept' : 'Free',
+        name: isEnterprise ? 'Proof of concept (space trial)' : 'Free',
         planType: 'free_space',
         space
       }))
