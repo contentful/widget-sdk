@@ -4,7 +4,7 @@ import * as slideInNavigator from 'navigation/SlideInNavigator/index.es6';
 
 import CreateEntity, { entityTypes } from '../index.es6';
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
-import entityCreator from 'ng/entityCreator';
+import * as entityCreator from 'components/app_container/entityCreator.es6';
 
 import flushPromises from 'testHelpers/flushPromises';
 
@@ -17,7 +17,7 @@ jest.mock(
 );
 
 jest.mock(
-  'ng/entityCreator',
+  'components/app_container/entityCreator.es6',
   () => ({
     newEntry: jest.fn().mockResolvedValue({}),
     newAsset: jest.fn().mockResolvedValue({})

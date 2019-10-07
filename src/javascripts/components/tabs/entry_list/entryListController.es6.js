@@ -11,6 +11,7 @@ import EntityListCache from 'classes/entityListCache.es6';
 import createSavedViewsSidebar from 'app/ContentList/SavedViewsSidebar.es6';
 import * as Analytics from 'analytics/Analytics.es6';
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as entityCreator from 'components/app_container/entityCreator.es6';
 
 export default function register() {
   /**
@@ -22,8 +23,7 @@ export default function register() {
     '$state',
     '$controller',
     'spaceContext',
-    'entityCreator',
-    function EntryListController($scope, $state, $controller, spaceContext, entityCreator) {
+    function EntryListController($scope, $state, $controller, spaceContext) {
       const searchController = $controller('EntryListSearchController', { $scope: $scope });
       $controller('DisplayedFieldsController', { $scope: $scope });
       $controller('EntryListColumnsController', { $scope: $scope });

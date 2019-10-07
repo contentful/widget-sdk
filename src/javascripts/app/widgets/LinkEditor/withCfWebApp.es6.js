@@ -10,7 +10,7 @@ import { newConfigFromField } from 'search/EntitySelector/Config.es6';
 import * as slideInNavigator from 'navigation/SlideInNavigator/index.es6';
 import { getModule } from 'NgRegistry.es6';
 import connectToWidgetApi from 'app/widgets/WidgetApi/connectToWidgetApi.es6';
-
+import * as entityCreator from 'components/app_container/entityCreator.es6';
 import { track } from 'analytics/Analytics.es6';
 import BaseLinkEditor from './LinkEditor.es6';
 import { canLinkToContentType } from './Util.es6';
@@ -140,18 +140,16 @@ function selectEntities(widgetAPI) {
 }
 
 async function createEntityOfType(type, contentType = null) {
-  const entityCreatorModule = getModule('entityCreator');
-
   const entityCreatorsByType = {
-    Entry: entityCreatorModule.newEntry,
-    Asset: entityCreatorModule.newAsset
+    Entry: entityCreator.newEntry,
+    Asset: entityCreator.newAsset
   };
 
   const ctId = contentType && contentType.sys.id;
-  const entityCreator = entityCreatorsByType[type];
+  const entityCreatorFn = entityCreatorsByType[type];
   let legacyClientEntity;
   try {
-    legacyClientEntity = await entityCreator(ctId);
+    legacyClientEntity = await entityCreatorFn(ctId);
   } catch (e) {
     return; // `entityCreator` shows a notification already.
   }

@@ -3,6 +3,7 @@ import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient/in
 import { getModule } from 'NgRegistry.es6';
 import { goToSlideInEntity } from 'navigation/SlideInNavigator/index.es6';
 import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
+import * as entitySelector from 'search/EntitySelector/entitySelector.es6';
 
 /**
  * @deprecated  Use and extend the new `app/widgets/NewWidgetApi/createNewWidgetApi.es6.js` instead.
@@ -22,7 +23,6 @@ import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
  */
 export default function buildWidgetApi({ field, entry, currentUrl, settings }) {
   const spaceContext = getModule('spaceContext');
-  const entitySelector = getModule('entitySelector');
 
   const { entry: canAccessEntries, asset: canAccessAssets } = getSectionVisibility();
 

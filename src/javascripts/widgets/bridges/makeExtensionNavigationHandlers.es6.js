@@ -1,10 +1,11 @@
 import checkDependencies from './checkDependencies.es6';
+import * as entityCreator from 'components/app_container/entityCreator.es6';
 
 export default function makeExtensionNavigationHandlers(dependencies, handlerOptions = {}) {
-  const { spaceContext, entityCreator, Navigator, SlideInNavigator } = checkDependencies(
+  const { spaceContext, Navigator, SlideInNavigator } = checkDependencies(
     'ExtensionNavigationHandlers',
     dependencies,
-    ['spaceContext', 'entityCreator', 'Navigator', 'SlideInNavigator']
+    ['spaceContext', 'Navigator', 'SlideInNavigator']
   );
 
   return async function navigate(options) {

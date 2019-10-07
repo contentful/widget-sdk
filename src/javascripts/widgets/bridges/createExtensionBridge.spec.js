@@ -1,6 +1,8 @@
 import createExtensionBridge from './createExtensionBridge.es6';
 import { createBus } from 'utils/kefir.es6';
 import { LOCATION_ENTRY_FIELD } from '../WidgetLocations.es6';
+import * as entityCreator from 'components/app_container/entityCreator.es6';
+import * as entitySelector from 'search/EntitySelector/entitySelector.es6';
 
 function createMockProperty(initial) {
   const bus = createBus();
@@ -35,6 +37,14 @@ jest.mock('widgets/WidgetStore.es6', () => ({
   getForSingleExtension: jest.fn()
 }));
 
+jest.mock('components/app_container/entityCreator.es6', () => ({
+  newEntry: jest.fn(() => ({ sys: { type: 'Entry', id: 'some-entry-id' } }))
+}));
+
+jest.mock('search/EntitySelector/entitySelector.es6', () => ({
+  openFromExtension: jest.fn(() => Promise.resolve('DIALOG RESULT'))
+}));
+
 describe('createExtensionBridge', () => {
   const makeBridge = () => {
     const stubs = {
@@ -45,11 +55,9 @@ describe('createExtensionBridge', () => {
       errors: createMockProperty([]),
       setValueAt: jest.fn(val => Promise.resolve(val)),
       removeValueAt: jest.fn(() => Promise.resolve(undefined)),
-      openFromExtension: jest.fn(() => Promise.resolve('DIALOG RESULT')),
       updateEntry: jest.fn(() => Promise.resolve('Entry updated')),
       setInvalid: jest.fn(),
       setActive: jest.fn(),
-      newEntry: jest.fn(() => ({ sys: { type: 'Entry', id: 'some-entry-id' } })),
       goToSlideInEntity: jest.fn(),
       navigatorGo: jest.fn(() => Promise.resolve()),
       makeEntityRef: jest.fn(() => 'ENTITY REF'),
@@ -93,8 +101,6 @@ describe('createExtensionBridge', () => {
         cma: { updateEntry: stubs.updateEntry, getEntry: stubs.getEntry },
         space: { data: { spaceMember: 'MEMBER ', spaceMembership: 'MEMBERSHIP ' } }
       },
-      entitySelector: { openFromExtension: stubs.openFromExtension },
-      entityCreator: { newEntry: stubs.newEntry },
       SlideInNavigator: { goToSlideInEntity: stubs.goToSlideInEntity },
       Navigator: {
         go: stubs.navigatorGo,
@@ -111,6 +117,11 @@ describe('createExtensionBridge', () => {
     send: jest.fn(),
     update: jest.fn(),
     destroy: jest.fn()
+  });
+
+  beforeEach(() => {
+    entitySelector.openFromExtension.mockClear();
+    entityCreator.newEntry.mockClear();
   });
 
   describe('#getData()', () => {
@@ -231,7 +242,7 @@ describe('createExtensionBridge', () => {
     });
 
     it('registers entity selector dialog handler', async () => {
-      const [bridge, stubs] = makeBridge();
+      const [bridge] = makeBridge();
       const api = makeStubbedApi();
       bridge.install(api);
 
@@ -241,7 +252,7 @@ describe('createExtensionBridge', () => {
       expect(typeof openDialog).toBe('function');
 
       const result = await openDialog('entitySelector', { opts: true });
-      expect(stubs.openFromExtension).toBeCalledWith({ opts: true });
+      expect(entitySelector.openFromExtension).toBeCalledWith({ opts: true });
       expect(result).toBe('DIALOG RESULT');
     });
 
@@ -329,8 +340,8 @@ describe('createExtensionBridge', () => {
 
     const createResult = await navigate({ entityType: 'Entry', contentTypeId: 'ctid' });
     expect(createResult).toEqual({ navigated: true });
-    expect(stubs.newEntry).toBeCalledTimes(1);
-    expect(stubs.newEntry).toBeCalledWith('ctid');
+    expect(entityCreator.newEntry).toBeCalledTimes(1);
+    expect(entityCreator.newEntry).toBeCalledWith('ctid');
     expect(stubs.navigatorGo).toBeCalledWith('ENTITY REF');
   });
 

@@ -9,6 +9,7 @@ import { getAllUsers } from 'access_control/OrganizationMembershipRepository.es6
 import { getModule } from 'NgRegistry.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import * as ListQuery from 'search/listQuery.es6';
+import * as entitySelector from 'search/EntitySelector/entitySelector.es6';
 
 const MODAL_OPTS_BASE = {
   noNewScope: true,
@@ -26,7 +27,6 @@ const MODAL_OPTS_BASE = {
 export function create(spaceContext, userListHandler, TokenStore) {
   const modalDialog = getModule('modalDialog');
   const Command = getModule('command');
-  const entitySelector = getModule('entitySelector');
 
   return {
     openRemovalConfirmationDialog,

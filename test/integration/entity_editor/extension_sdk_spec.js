@@ -14,8 +14,14 @@ import { it } from 'test/utils/dsl';
 
 describe('Extension SDK', () => {
   beforeEach(async function() {
+    this.openStub = sinon.stub().resolves(null);
+
     this.system.set('services/localeStore.es6', {
       default: createLocaleStoreMock()
+    });
+
+    this.system.set('search/EntitySelector/entitySelector.es6', {
+      openFromExtension: this.openStub
     });
 
     await $initialize(this.system);
@@ -559,12 +565,6 @@ describe('Extension SDK', () => {
       ['selectMultipleEntries', 'Entry', true],
       ['selectMultipleAssets', 'Asset', true]
     ];
-
-    beforeEach(function() {
-      this.selector = $inject('entitySelector');
-      this.openStub = sinon.stub().resolves(null);
-      this.selector.openFromExtension = this.openStub;
-    });
 
     it('delegates to entity selector call', async function(api) {
       for (const [method, entityType, multiple] of methods) {

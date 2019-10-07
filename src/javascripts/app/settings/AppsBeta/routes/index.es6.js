@@ -47,8 +47,7 @@ export default {
         '$stateParams',
         'spaceContext',
         '$state',
-        'entitySelector',
-        ({ appId }, spaceContext, $state, entitySelector) => {
+        ({ appId }, spaceContext, $state) => {
           const repo = createAppsRepo(
             spaceContext.extensionDefinitionLoader,
             spaceContext.endpoint
@@ -58,7 +57,6 @@ export default {
           const bridge = createAppExtensionBridge({
             spaceContext,
             appHookBus,
-            entitySelector,
             Navigator,
             SlideInNavigator
           });

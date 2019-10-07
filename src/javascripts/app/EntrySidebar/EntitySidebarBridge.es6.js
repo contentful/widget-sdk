@@ -14,8 +14,6 @@ export default ({ $scope, emitter }) => {
   const $controller = getModule('$controller');
   const $rootScope = getModule('$rootScope');
   const spaceContext = getModule('spaceContext');
-  const entitySelector = getModule('entitySelector');
-  const entityCreator = getModule('entityCreator');
 
   const isEntry = $scope.entityInfo.type === 'Entry';
   const isMasterEnvironment = spaceContext.isMasterEnvironment();
@@ -229,8 +227,6 @@ export default ({ $scope, emitter }) => {
         $rootScope,
         $scope: fieldLocaleScope,
         spaceContext,
-        entitySelector,
-        entityCreator,
         Navigator,
         SlideInNavigator
       },
@@ -245,8 +241,6 @@ export default ({ $scope, emitter }) => {
       $rootScope,
       $scope,
       spaceContext,
-      entitySelector,
-      entityCreator,
       Navigator,
       SlideInNavigator
     },

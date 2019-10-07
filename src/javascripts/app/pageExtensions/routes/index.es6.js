@@ -10,9 +10,7 @@ export default {
   mapInjectedToProps: [
     '$stateParams',
     'spaceContext',
-    'entitySelector',
-    'entityCreator',
-    ($stateParams, spaceContext, entitySelector, entityCreator) => {
+    ($stateParams, spaceContext) => {
       const { extensionId, path = '' } = $stateParams;
       return {
         extensionId,
@@ -22,8 +20,6 @@ export default {
           {
             spaceContext,
             Navigator,
-            entitySelector,
-            entityCreator,
             SlideInNavigator
           },
           extensionId

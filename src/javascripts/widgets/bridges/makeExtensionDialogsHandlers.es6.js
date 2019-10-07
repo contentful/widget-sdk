@@ -9,6 +9,7 @@ import { applyDefaultValues } from '../WidgetParametersUtils.es6';
 import trackExtensionRender from '../TrackExtensionRender.es6';
 import { LOCATION_DIALOG } from '../WidgetLocations.es6';
 import * as WidgetStore from '../WidgetStore.es6';
+import * as entitySelector from 'search/EntitySelector/entitySelector.es6';
 
 import createDialogExtensionBridge from './createDialogExtensionBridge.es6';
 import checkDependencies from './checkDependencies.es6';
@@ -20,11 +21,9 @@ const SIMPLE_DIALOG_TYPE_TO_OPENER = {
 };
 
 export default function makeExtensionDialogsHandlers(dependencies) {
-  const { entitySelector, spaceContext } = checkDependencies(
-    'ExtensionDialogsHandlers',
-    dependencies,
-    ['entitySelector', 'spaceContext']
-  );
+  const { spaceContext } = checkDependencies('ExtensionDialogsHandlers', dependencies, [
+    'spaceContext'
+  ]);
 
   return openDialog;
 

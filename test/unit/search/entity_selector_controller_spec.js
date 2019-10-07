@@ -14,8 +14,6 @@ describe('EntitySelectorController', () => {
     this.spaceContext.publishedCTs.getAllBare.returns([]);
     this.spaceContext.space.getEntries.defers();
 
-    this.entitySelector = $inject('entitySelector');
-
     this.fetch = sinon.stub().resolves({ items: [] });
 
     const scope = $rootScope.$new();

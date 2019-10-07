@@ -136,13 +136,13 @@ describe('Rich Text toolbar', () => {
       newForLocale: sinon.stub()
     });
 
+    this.system.set('search/EntitySelector/entitySelector.es6', {
+      open: () => Promise.resolve([this.selectedEntity])
+    });
+
     const { default: RichTextEditor } = await this.system.import('app/widgets/rich_text/index.es6');
 
     await $initialize(this.system, $provide => {
-      $provide.constant('entitySelector', {
-        open: () => Promise.resolve([this.selectedEntity])
-      });
-
       $provide.constant('spaceContext', {
         cma: {
           getEntries: sinon.stub().returns(Promise.resolve({})),

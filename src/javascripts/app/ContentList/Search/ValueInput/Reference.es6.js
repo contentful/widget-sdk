@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import keycodes from 'utils/keycodes.es6';
-import { getModule } from 'NgRegistry.es6';
+import * as entitySelector from 'search/EntitySelector/entitySelector.es6';
 
 export default function FilterValueReference({
   ctField = {},
@@ -12,8 +12,6 @@ export default function FilterValueReference({
   onChange,
   onKeyDown
 }) {
-  const entitySelector = getModule('entitySelector');
-
   // We do not want to support field type arrays of references yet.
   const ctFieldClone = cloneDeep(ctField);
   ctFieldClone.type = 'Link';

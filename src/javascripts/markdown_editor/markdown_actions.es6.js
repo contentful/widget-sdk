@@ -5,6 +5,7 @@ import { defaults, isObject, get, mapValues } from 'lodash';
 import { fileNameToTitle, truncate } from 'utils/StringUtils.es6';
 import { trackMarkdownEditorAction } from 'analytics/MarkdownEditorActions.es6';
 import { track } from 'analytics/Analytics.es6';
+import * as entitySelector from 'search/EntitySelector/entitySelector.es6';
 import * as BulkAssetsCreator from 'services/BulkAssetsCreator.es6';
 import * as AssetUrlService from 'services/AssetUrlService.es6';
 import LinkOrganizer from './linkOrganizer.es6';
@@ -12,7 +13,6 @@ import { getModule } from 'NgRegistry.es6';
 
 export function create(editor, locale, defaultLocaleCode, { zen }) {
   const modalDialog = getModule('modalDialog');
-  const entitySelector = getModule('entitySelector');
 
   const {
     fallbackCode,

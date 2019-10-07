@@ -27,9 +27,7 @@ export default function register() {
     '$compile',
     '$rootScope',
     'spaceContext',
-    'entitySelector',
-    'entityCreator',
-    ($compile, $rootScope, spaceContext, entitySelector, entityCreator) => {
+    ($compile, $rootScope, spaceContext) => {
       return {
         scope: true,
         require: '?^cfWidgetApi',
@@ -116,8 +114,6 @@ export default function register() {
                 $rootScope,
                 $scope: scope,
                 spaceContext,
-                entitySelector,
-                entityCreator,
                 Navigator,
                 SlideInNavigator
               })

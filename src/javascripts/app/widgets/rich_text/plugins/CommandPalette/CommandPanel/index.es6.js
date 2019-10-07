@@ -3,11 +3,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { BLOCKS, INLINES } from '@contentful/rich-text-types';
-import { getModule } from 'NgRegistry.es6';
 import isHotKey from 'is-hotkey';
 import _ from 'lodash';
 import { insertBlock } from 'app/widgets/rich_text/plugins/EmbeddedEntityBlock/Util.es6';
 import { insertInline } from 'app/widgets/rich_text/plugins/EmbeddedEntryInline/Utils.es6';
+import * as entityCreator from 'components/app_container/entityCreator.es6';
 import {
   fetchEntries,
   fetchContentTypes,
@@ -151,8 +151,6 @@ class CommandPalette extends React.PureComponent {
   });
 
   onCreateAndEmbedEntry = async (contentTypeId, nodeType) => {
-    const entityCreator = getModule('entityCreator');
-
     removeCommand(this.props.editor, this.props.command);
     const createEntity = () =>
       contentTypeId !== null ? entityCreator.newEntry(contentTypeId) : entityCreator.newAsset();

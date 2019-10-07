@@ -13,6 +13,7 @@ import createSavedViewsSidebar from 'app/ContentList/SavedViewsSidebar.es6';
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
 import * as BulkAssetsCreator from 'services/BulkAssetsCreator.es6';
 import * as Analytics from 'analytics/Analytics.es6';
+import * as entityCreator from 'components/app_container/entityCreator.es6';
 
 export default function register() {
   registerController('AssetListController', [
@@ -20,8 +21,7 @@ export default function register() {
     '$controller',
     '$state',
     'spaceContext',
-    'entityCreator',
-    function AssetListController($scope, $controller, $state, spaceContext, entityCreator) {
+    function AssetListController($scope, $controller, $state, spaceContext) {
       const searchController = $controller('AssetSearchController', { $scope: $scope });
 
       $controller('ListViewsController', {

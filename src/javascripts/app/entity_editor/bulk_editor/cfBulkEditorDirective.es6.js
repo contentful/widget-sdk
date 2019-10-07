@@ -9,12 +9,12 @@ import * as accessChecker from 'access_control/AccessChecker/index.es6';
 import * as Analytics from 'analytics/Analytics.es6';
 import * as DataLoader from 'app/entity_editor/DataLoader.es6';
 import * as Tracking from 'app/entity_editor/bulk_editor/Tracking.es6';
+import * as entitySelector from 'search/EntitySelector/entitySelector.es6';
 
 export default function register() {
   registerDirective('cfBulkEditor', [
     'spaceContext',
-    'entitySelector',
-    (spaceContext, entitySelector) => {
+    spaceContext => {
       return {
         scope: {
           referenceContext: '='

@@ -6,7 +6,6 @@ import createExtensionBridge from 'widgets/bridges/createExtensionBridge.es6';
 import { user$ } from 'services/TokenStore.es6';
 import * as WidgetLocations from 'widgets/WidgetLocations.es6';
 import * as SlideInNavigator from 'navigation/SlideInNavigator/index.es6';
-
 import * as Validator from './Validator.es6';
 import * as Focus from './Focus.es6';
 import initDocErrorHandler from './DocumentErrorHandler.es6';
@@ -60,8 +59,6 @@ export default async function create($scope, editorData, preferences, trackLoadE
   const $controller = getModule('$controller');
   const spaceContext = getModule('spaceContext');
   const $rootScope = getModule('$rootScope');
-  const entitySelector = getModule('entitySelector');
-  const entityCreator = getModule('entityCreator');
   const spaceId = spaceContext.space.getId();
 
   $scope.context = {};
@@ -200,8 +197,6 @@ export default async function create($scope, editorData, preferences, trackLoadE
         $rootScope,
         $scope,
         spaceContext,
-        entitySelector,
-        entityCreator,
         Navigator,
         SlideInNavigator
       },

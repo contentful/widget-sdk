@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getModule } from 'NgRegistry.es6';
 import { TextLink } from '@contentful/forma-36-react-components';
 import { goToSlideInEntity } from 'navigation/SlideInNavigator/index.es6';
 import CreateEntryButton, { Style } from 'components/CreateEntryButton/index.es6';
 import Visible from 'components/shared/Visible/index.es6';
 import * as logger from 'services/logger.es6';
+import * as entityCreator from 'components/app_container/entityCreator.es6';
 
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
 
@@ -85,8 +85,6 @@ CreateAsset.propTypes = {
 };
 
 async function onSelectHandler(contentTypeId, cb) {
-  const entityCreator = getModule('entityCreator');
-
   const createEntity = () =>
     contentTypeId !== null ? entityCreator.newEntry(contentTypeId) : entityCreator.newAsset();
   try {
