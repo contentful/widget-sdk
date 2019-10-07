@@ -9,13 +9,8 @@ const EntityCommentsToggle = ({ onClick, isActive, commentsCount }) => {
   }
 
   return (
-    <Button
-      buttonType="muted"
-      className="btn--has-alpha-button-label"
-      isActive={isActive}
-      onClick={onClick}>
+    <Button buttonType="muted" isActive={isActive} onClick={onClick}>
       {buttonText}
-      <div className="btn__alpha-button-label">Alpha</div>
     </Button>
   );
 };

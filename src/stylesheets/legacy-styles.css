@@ -1321,23 +1321,6 @@ pre,
     top: 3px;
     margin-right: 4px;
   }
-  .btn--has-alpha-button-label {
-    position: relative;
-    overflow: visible;
-  }
-  .btn__alpha-button-label {
-    position: absolute;
-    top: -9px;
-    right: -10px;
-    background: #3072be;
-    color: #fff;
-    padding: 3px 5px;
-    font-size: 10px;
-    line-height: 10px;
-    border-radius: 3px;
-    text-transform: uppercase;
-    letter-spacing: 0.05rem;
-  }
   .gallery-file {
     width: 120px;
   }
