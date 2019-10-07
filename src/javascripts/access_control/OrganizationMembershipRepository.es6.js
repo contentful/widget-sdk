@@ -165,14 +165,15 @@ export function getInvitation(endpoint, invitationId, query) {
   });
 }
 
-export function invite(endpoint, { role, email, spaceInvitations }, useAlpha) {
+export function invite(endpoint, { role, email, spaceInvitations, teamInvitations }, useAlpha) {
   return endpoint(
     {
       method: 'POST',
       data: {
         role,
         email,
-        spaceInvitations
+        spaceInvitations,
+        teamInvitations
       },
       path: ['invitations']
     },
