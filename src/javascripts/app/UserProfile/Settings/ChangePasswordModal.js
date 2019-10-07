@@ -102,17 +102,36 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
       const { data } = err;
 
       if (get(data, ['sys', 'type']) === 'Error') {
-        const error = data.details.errors[0];
+        const errorDetails = data.details.errors;
 
-        if (error.name === 'insecure') {
-          dispatch({
-            type: 'SERVER_VALIDATION_FAILURE',
-            payload: {
-              field: 'newPassword',
-              value: 'The password you entered is not secure'
+        errorDetails.forEach(({ path, name }) => {
+          const pathFieldMapping = {
+            current_password: 'currentPassword',
+            password: 'newPassword'
+          };
+          let message;
+
+          switch (path) {
+            case 'current_password': {
+              if (name === 'invalid') {
+                message = 'The password you entered is not valid';
+              }
+              break;
             }
-          });
-        }
+            case 'password': {
+              if (name === 'insecure') {
+                message = 'The password you entered is not secure';
+              }
+            }
+          }
+
+          if (message) {
+            dispatch({
+              type: 'SERVER_VALIDATION_FAILURE',
+              payload: { field: pathFieldMapping[path], value: message }
+            });
+          }
+        });
       } else {
         Notification.error('Something went wrong. Try again.');
       }

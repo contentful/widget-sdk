@@ -50,28 +50,36 @@ describe('IndexPage', () => {
     expect(fetchUserData).toHaveBeenCalled();
   });
 
-  it('should call onReady once the data loads', async () => {
+  it('should render a loading state while the data is loading', async () => {
+    const { queryByTestId } = build();
+
+    expect(queryByTestId('cf-ui-loading-state')).toBeVisible();
+
+    await wait();
+
+    expect(queryByTestId('cf-ui-loading-state')).toBeNull();
+  });
+
+  it('should call onReady immediately, but only once', async () => {
     const onReady = jest.fn();
     build({ onReady });
 
-    expect(onReady).not.toHaveBeenCalled();
+    expect(onReady).toHaveBeenCalled();
 
     await wait();
 
-    expect(onReady).toHaveBeenCalled();
+    expect(onReady).toHaveBeenCalledTimes(1);
   });
 
-  it('should render null if the data fails to load', async () => {
+  it('should render an error if the data fails to load', async () => {
     fetchUserData.mockReset().mockRejectedValueOnce(new Error());
 
-    const { container } = build();
+    const { queryByTestId } = build();
 
     await wait();
 
-    expect(container.firstChild).toBeNull();
+    expect(queryByTestId('cf-ui-error-state')).toBeVisible();
   });
-
-  it.todo('should render an error state if fetching errs');
 
   it('should render the account details and user deletion sections if user is not SSO restricted', async () => {
     const { queryByTestId } = build();

@@ -22,8 +22,8 @@ const styles = {
   }),
   paddingS: css({ padding: tokens.spacingS }),
   accountImage: css({
-    height: '68px',
-    width: '68px',
+    height: '10%',
+    width: '10%',
     marginTop: tokens.spacing2Xs,
     borderRadius: '50%'
   }),
@@ -38,8 +38,9 @@ const styles = {
   flexGrow1: css({
     flexGrow: 1
   }),
-  paddingLeftL: css({
-    paddingLeft: tokens.spacingL
+  typographyContainer: css({
+    paddingLeft: tokens.spacingL,
+    width: '90%'
   }),
   paddingTopS: css({
     paddingTop: tokens.spacingS
@@ -48,7 +49,7 @@ const styles = {
     fontWeight: tokens.fontWeightMedium,
     fontSize: tokens.fontSizeL,
     marginBottom: tokens.spacing2Xs,
-    wordWrap: 'break-word'
+    wordBreak: 'break-word'
   }),
   email: css({
     marginTop: tokens.spacingXs,
@@ -123,7 +124,7 @@ export default function AccountDetails({ userData }) {
               alt={`Profile image for ${user.firstName} ${user.lastName}`}
               src={user.avatarUrl}
             />
-            <Typography className={cx(styles.column, styles.paddingLeftL)}>
+            <Typography className={cx(styles.column, styles.typographyContainer)}>
               <span data-test-id="user-full-name" className={styles.name}>
                 {user.firstName} {user.lastName}
               </span>
