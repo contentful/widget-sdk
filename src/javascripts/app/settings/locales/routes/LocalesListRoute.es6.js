@@ -2,9 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { getModule } from 'NgRegistry.es6';
+import { SkeletonContainer, SkeletonBodyText } from '@contentful/forma-36-react-components';
+import Icon from 'ui/Components/Icon.es6';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import LocalesListPricingOne from '../LocalesListPricingOne.es6';
 import LocalesListPricingTwo from '../LocalesListPricingTwo.es6';
-import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
+import createFetcherComponent from 'app/common/createFetcherComponent.es6';
 import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import createLegacyFeatureService from 'services/LegacyFeatureService.es6';
@@ -35,6 +38,23 @@ const LocalesFetcher = createFetcherComponent(() => {
   ]);
 });
 
+function LocalesLoadingShell() {
+  return (
+    <Workbench testId="locale-list-workbench">
+      <Workbench.Header icon={<Icon name="page-settings" scale="0.8" />} title="Locales" />
+      <Workbench.Content type="full">
+        <SkeletonContainer
+          svgWidth={600}
+          svgHeight={300}
+          ariaLabel="Loading locales..."
+          clipId="loading-locales-list">
+          <SkeletonBodyText numberOfLines={5} offsetLeft={20} marginBottom={15} offsetTop={20} />
+        </SkeletonContainer>
+      </Workbench.Content>
+    </Workbench>
+  );
+}
+
 class LocalesListRoute extends React.Component {
   static propTypes = {
     showUpgradeSpaceDialog: PropTypes.func.isRequired,
@@ -52,7 +72,7 @@ class LocalesListRoute extends React.Component {
         <LocalesFetcher>
           {({ isLoading, isError, data, fetch }) => {
             if (isLoading) {
-              return <FetcherLoading message="Loading locales..." />;
+              return <LocalesLoadingShell />;
             }
             if (isError) {
               return <StateRedirect to="spaces.detail.entries.list" />;

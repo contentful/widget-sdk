@@ -145,7 +145,11 @@ export const ExtensionListShell = props => (
     <Workbench.Content type="full">
       {props.children || (
         <React.Fragment>
-          <SkeletonContainer svgWidth={600} ariaLabel="Loading extensions list..." clipId="content">
+          <SkeletonContainer
+            svgWidth={600}
+            svgHeight={300}
+            ariaLabel="Loading extensions list..."
+            clipId="extesions-loading-list">
             <SkeletonBodyText numberOfLines={5} offsetLeft={20} marginBottom={15} offsetTop={20} />
           </SkeletonContainer>
         </React.Fragment>

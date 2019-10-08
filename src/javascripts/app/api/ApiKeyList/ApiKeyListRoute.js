@@ -231,7 +231,7 @@ export default function ApiKeyListRoute() {
           clipId="loading-api-keys"
           ariaLabel="Loading..."
           svgWidth="60%"
-          svgHeight={120}>
+          svgHeight={300}>
           <SkeletonBodyText numberOfLines={5} />
         </SkeletonContainer>
       )}

@@ -1,11 +1,8 @@
-import base from 'states/Base.es6';
-
-const list = base({
+const list = {
   name: 'list',
   url: '',
-  loadingText: 'Loading users…',
   template: '<cf-user-list class="workbench user-list" />'
-});
+};
 
 export default {
   name: 'users',
