@@ -32,17 +32,21 @@ import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import EnvironmentAliases from '../EnvironmentAliases/EnvironmentAliases.es6';
 import EnvironmentDetails from 'app/common/EnvironmentDetails.es6';
 import ExternalTextLink from 'app/common/ExternalTextLink.es6';
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
 
 export default function View({ state, actions }) {
   const { items, aliasesEnabled } = state;
   const optedInEnv = items.find(({ aliases }) => aliases.length > 0);
+  const canManageAliases = accessChecker.can('manage', 'EnvironmentAliases');
+  const sidebarProps = { canManageAliases, optedInEnv };
+
   return (
     <Fragment>
       <DocumentTitle title="Environments" />
       <Workbench>
         <Workbench.Header icon={<Icon name="page-settings" scale="0.8" />} title="Environments" />
         <Workbench.Content>
-          {aliasesEnabled && (
+          {aliasesEnabled && canManageAliases && (
             <EnvironmentAliases {...state} {...actions} testId="environmentaliases.card" />
           )}
           {aliasesEnabled && optedInEnv && (
@@ -61,7 +65,7 @@ export default function View({ state, actions }) {
           <EnvironmentList {...state} {...actions} />
         </Workbench.Content>
         <Workbench.Sidebar position="right">
-          <Sidebar {...state} {...actions} />
+          <Sidebar {...state} {...actions} {...sidebarProps} />
         </Workbench.Sidebar>
       </Workbench>
     </Fragment>
@@ -327,11 +331,14 @@ function Sidebar({
   canUpgradeSpace,
   OpenCreateDialog,
   OpenUpgradeSpaceDialog,
-  aliasesEnabled
+  aliasesEnabled,
+  canManageAliases,
+  optedInEnv
 }) {
   // Master is not included in the api, display +1 usage and limit
   const usage = resource.usage + 1;
   const limit = get(resource, 'limits.maximum', -1) + 1;
+  const shouldShowAliasDefinition = canManageAliases || optedInEnv;
 
   return (
     <>
@@ -383,7 +390,7 @@ function Sidebar({
           <span> document.</span>
         </Paragraph>
       </div>
-      {aliasesEnabled && (
+      {aliasesEnabled && shouldShowAliasDefinition && (
         <Fragment>
           <Paragraph className={sidebarStyles.subHeader}>Environment Aliases</Paragraph>
           <div className="entity-sidebar__text-profile">
@@ -412,7 +419,9 @@ Sidebar.propTypes = {
   isLegacyOrganization: PropTypes.bool,
   canUpgradeSpace: PropTypes.bool,
   OpenCreateDialog: PropTypes.func.isRequired,
-  OpenUpgradeSpaceDialog: PropTypes.func.isRequired
+  OpenUpgradeSpaceDialog: PropTypes.func.isRequired,
+  canManageAliases: PropTypes.bool.isRequired,
+  optedInEnv: PropTypes.bool.isRequired
 };
 
 function UsageTooltip({ resource }) {

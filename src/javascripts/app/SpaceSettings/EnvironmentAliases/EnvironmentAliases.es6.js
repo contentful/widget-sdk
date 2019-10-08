@@ -29,7 +29,6 @@ import {
   optInStart,
   changeEnvironmentOpen
 } from 'analytics/events/EnvironmentAliases.es6';
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
 
 const aliasHeaderStyles = {
   alphaTag: css({
@@ -178,7 +177,6 @@ export default function EnvironmentAliases(props) {
     .map(alias => {
       const targetEnv = environments.find(({ aliases }) => aliases.includes(alias.sys.id));
       if (targetEnv) {
-        const canAccessAliases = accessChecker.can('manage', 'EnvironmentAliases');
         return (
           <span data-test-id={testId} key={alias.sys.id}>
             <EnvironmentAliasHeader></EnvironmentAliasHeader>
@@ -186,15 +184,11 @@ export default function EnvironmentAliases(props) {
               alias={alias}
               environment={targetEnv}
               setModalOpen={setModalOpen}
-              canChangeEnvironment={
-                canAccessAliases && environments.some(({ aliases }) => aliases.length <= 0)
-              }>
+              canChangeEnvironment={environments.some(({ aliases }) => aliases.length <= 0)}>
               <div>
                 You cannot change the alias target.
                 <br />
-                {canAccessAliases
-                  ? 'Create a new environment first.'
-                  : 'You don’t have the necessary permissions.'}
+                Create a new environment first.
               </div>
             </EnvironmentAlias>
             <Feedback></Feedback>

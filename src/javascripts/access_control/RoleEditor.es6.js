@@ -286,6 +286,14 @@ class RoleEditor extends React.Component {
         set('contentDelivery.read', true)
       );
     }
+
+    if (property === 'environments.manage' && checked === false) {
+      update = flow(
+        update,
+        set('environmentAliases.manage', false)
+      );
+    }
+
     this.updateInternal(update);
   };
 
@@ -526,7 +534,7 @@ class RoleEditor extends React.Component {
                   <Checkbox
                     id="opt_manage_environment_aliases_access"
                     disabled={!canModifyRoles || !internal.environments.manage}
-                    checked={internal.environmentAliases.manage}
+                    checked={internal.environments.manage && internal.environmentAliases.manage}
                     onChange={this.updateRoleFromCheckbox('environmentAliases.manage')}
                     type="checkbox"
                   />

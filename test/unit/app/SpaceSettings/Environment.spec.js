@@ -24,6 +24,10 @@ describe('app/SpaceSettings/Environments', () => {
     const canSelectSource = sinon.stub().returns(true);
     const aliasesEnabled = sinon.stub().returns(false);
 
+    this.accessChecker = {
+      can: sinon.stub().returns(true)
+    };
+
     this.system.set('services/ResourceService.es6', {
       default: () => resourceService
     });
@@ -31,6 +35,7 @@ describe('app/SpaceSettings/Environments', () => {
     this.system.set('app/SpaceSettings/EnvironmentAliases/Feedback.es6', {
       default: () => () => 'feedback'
     });
+    this.system.set('access_control/AccessChecker/index.es6', this.accessChecker);
 
     this.ComponentLibrary = await this.system.import('@contentful/forma-36-react-components');
     this.ComponentLibrary.Notification.success = sinon.stub();
@@ -154,44 +159,62 @@ describe('app/SpaceSettings/Environments', () => {
   });
 
   describe('when aliases feature is enabled', function() {
-    it('shows the aliases opt-in', function() {
-      this.setEnvironmentAliasesFeatureEnabled(true);
+    describe('when user has the manage aliases permission', function() {
+      it('shows the aliases opt-in', function() {
+        this.setEnvironmentAliasesFeatureEnabled(true);
+        this.accessChecker.can.returns(true);
 
-      this.putEnvironment({ id: 'e1', status: 'ready' });
-      this.putEnvironment({ id: 'e2', status: 'ready' });
+        this.putEnvironment({ id: 'e1', status: 'ready' });
+        this.putEnvironment({ id: 'e2', status: 'ready' });
 
-      this.init();
+        this.init();
 
-      this.container.find('environments.header').assertNonExistent();
-      this.container.find('environmentaliases.card').assertIsVisible();
+        this.container.find('environments.header').assertNonExistent();
+        this.container.find('environmentaliases.card').assertIsVisible();
+      });
+
+      it('shows the aliases', function() {
+        this.setEnvironmentAliasesFeatureEnabled(true);
+        this.accessChecker.can.returns(true);
+        spaceContext.getAliasesIds.returns(['master']);
+
+        this.putEnvironment({ id: 'e1', status: 'ready', aliases: ['master'] });
+        this.putEnvironment({ id: 'e2', status: 'ready' });
+
+        this.init();
+
+        this.container.find('environments.header').assertIsVisible();
+        this.container.find('environmentaliases.card').assertIsVisible();
+      });
+
+      it('cannot be deleted when environment has aliases', async function() {
+        this.setEnvironmentAliasesFeatureEnabled(true);
+        this.accessChecker.can.returns(true);
+
+        spaceContext.getAliasesIds.returns(['master']);
+
+        this.putEnvironment({ id: 'e1', status: 'ready', aliases: ['master'] });
+
+        this.init();
+
+        const deleteBtn = this.container.find('environment.e1', 'openDeleteDialog');
+        deleteBtn.assertIsDisabled();
+        deleteBtn.click();
+        await $wait();
+        this.container.find('spaceEnvironmentsDeleteDialog').assertNonExistent();
+      });
     });
 
-    it('shows the aliases', function() {
-      this.setEnvironmentAliasesFeatureEnabled(true);
-      spaceContext.getAliasesIds.returns(['master']);
+    describe('when user does not have the manage aliases permission', function() {
+      it('hides the aliases section', function() {
+        this.setEnvironmentAliasesFeatureEnabled(true);
+        this.accessChecker.can.returns(false);
 
-      this.putEnvironment({ id: 'e1', status: 'ready', aliases: ['master'] });
-      this.putEnvironment({ id: 'e2', status: 'ready' });
+        this.init();
 
-      this.init();
-
-      this.container.find('environments.header').assertIsVisible();
-      this.container.find('environmentaliases.card').assertIsVisible();
-    });
-
-    it('cannot be deleted when environment has aliases', async function() {
-      this.setEnvironmentAliasesFeatureEnabled(true);
-      spaceContext.getAliasesIds.returns(['master']);
-
-      this.putEnvironment({ id: 'e1', status: 'ready', aliases: ['master'] });
-
-      this.init();
-
-      const deleteBtn = this.container.find('environment.e1', 'openDeleteDialog');
-      deleteBtn.assertIsDisabled();
-      deleteBtn.click();
-      await $wait();
-      this.container.find('spaceEnvironmentsDeleteDialog').assertNonExistent();
+        this.container.find('environments.header').assertNonExistent();
+        this.container.find('environmentaliases.card').assertNonExistent();
+      });
     });
   });
 
