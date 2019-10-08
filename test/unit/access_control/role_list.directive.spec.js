@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { $inject, $compile, $apply, $initialize } from 'test/utils/ng';
+import { $compile, $apply, $initialize } from 'test/utils/ng';
 
 describe('Role List Directive', () => {
   beforeEach(async function() {
@@ -52,6 +52,12 @@ describe('Role List Directive', () => {
       usage: 2
     };
 
+    this.system.set('services/ResourceService.es6', {
+      default: () => ({
+        get: () => Promise.resolve(this.rolesResource)
+      })
+    });
+
     this.organization = {
       usage: {
         permanent: {
@@ -66,6 +72,7 @@ describe('Role List Directive', () => {
           }
         }
       },
+      pricingVersion: 'pricing_version_2',
       sys: {
         id: 'org_1234'
       }
@@ -93,27 +100,47 @@ describe('Role List Directive', () => {
       rolesResource: this.rolesResource
     });
 
-    await $initialize(this.system, $provide => {
-      $provide.constant('$state', { href: sinon.stub(), current: {} });
-      $provide.constant('UserListHandler', {
-        create: sinon.stub().returns({
-          reset: this.reset,
-          getMembershipCounts: sinon.stub().returns({})
-        })
-      });
-    });
-
-    const spaceContext = $inject('spaceContext');
-
-    spaceContext.organization = this.organization;
-
-    spaceContext.space = {
-      data: this.space,
-      getId: sinon.stub().returns(this.space.sys.id),
-      getOrganizationId: sinon.stub().returns(this.organization.sys.id)
+    const spaceContext = {
+      organization: this.organization,
+      space: {
+        data: this.space,
+        getId: sinon.stub().returns(this.space.sys.id),
+        getOrganizationId: sinon.stub().returns(this.organization.sys.id)
+      },
+      getData: sinon.stub(),
+      getId: sinon.stub(),
+      endpoint: sinon.stub()
     };
 
-    // window.jQuery = window.$ = $;
+    const getModuleStub = sinon.stub();
+    getModuleStub.withArgs('spaceContext').returns(spaceContext);
+
+    this.system.override('NgRegistry.es6', {
+      getModule: getModuleStub
+    });
+
+    this.system.set('data/CMA/SpaceMembersRepo.es6', {
+      default: () => ({
+        getAll: () => Promise.resolve([])
+      })
+    });
+
+    this.system.set('access_control/RoleRepository.es6', {
+      getInstance: () => ({
+        getAll: () => Promise.resolve(this.roles)
+      })
+    });
+
+    this.system.override('access_control/RoleListHandler.es6', {
+      create: sinon.stub().returns({
+        reset: this.reset,
+        getRoleCounts: sinon.stub().returns({})
+      })
+    });
+
+    await $initialize(this.system, $provide => {
+      $provide.constant('$state', { href: sinon.stub(), current: {} });
+    });
 
     this.compileElement = function() {
       this.container = $compile('<cf-role-list />', { context: {} });
@@ -164,22 +191,16 @@ describe('Role List Directive', () => {
 
     describe('for a user that can modify roles', () => {
       it('should show the Add Role button', function() {
-        // let container;
-
         this.canModifyRoles.resolves(true);
 
         this.toggleLegacy(true);
         this.compileElement();
-
-        // debugger;
 
         expect(this.getButton().length).toBe(1);
 
         this.toggleLegacy(false);
         this.container.remove();
         this.compileElement();
-
-        // debugger;
 
         expect(this.getButton().length).toBe(1);
       });
