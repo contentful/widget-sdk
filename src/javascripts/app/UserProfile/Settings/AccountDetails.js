@@ -22,8 +22,8 @@ const styles = {
   }),
   paddingS: css({ padding: tokens.spacingS }),
   accountImage: css({
-    height: '10%',
-    width: '10%',
+    height: '75px',
+    width: '75px',
     marginTop: tokens.spacing2Xs,
     borderRadius: '50%'
   }),
@@ -40,7 +40,7 @@ const styles = {
   }),
   typographyContainer: css({
     paddingLeft: tokens.spacingL,
-    width: '90%'
+    width: '620px'
   }),
   paddingTopS: css({
     paddingTop: tokens.spacingS
@@ -49,7 +49,7 @@ const styles = {
     fontWeight: tokens.fontWeightMedium,
     fontSize: tokens.fontSizeL,
     marginBottom: tokens.spacing2Xs,
-    wordBreak: 'break-word'
+    wordWrap: 'break-word'
   }),
   email: css({
     marginTop: tokens.spacingXs,

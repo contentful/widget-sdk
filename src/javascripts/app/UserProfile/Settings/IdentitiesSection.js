@@ -47,7 +47,7 @@ const styles = {
     border: 'none',
     fontSize: tokens.fontSizeM,
     position: 'absolute',
-    backgroundColor: 'rgb(255, 255, 255, 0)',
+    backgroundColor: 'rgba(255, 255, 255, 0)',
     height: '100%',
     width: '100%',
     paddingLeft: '42px'
