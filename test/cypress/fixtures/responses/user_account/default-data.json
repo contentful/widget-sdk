@@ -1,20 +1,17 @@
 {
   "firstName": "TestUser",
   "lastName": "LastName",
-  "avatarUrl": "https://pbs.twimg.com/profile_images/432797347714580480/X0UGf61Y_normal.jpeg",
   "email": "testuser1568299076511@mailinator.com",
-  "activated": true,
-  "signInCount": 1,
-  "confirmed": false,
+  "activated": false,
+  "signInCount": 0,
+  "confirmed": true,
   "unconfirmedEmail": null,
   "passwordSet": true,
   "ssoLoginOnly": false,
   "sys": {
     "type": "User",
     "id": "6TTXlu6ty7C3t4frLhd4nF",
-    "version": 1,
-    "createdAt": "2019-09-12T14:38:18Z",
-    "updatedAt": "2019-09-12T14:38:19Z"
+    "version": 2
   },
   "identities": [
     {
@@ -22,18 +19,11 @@
       "sys": {
         "type": "Identity",
         "id": 3035,
-        "version": 0,
-        "createdAt": "2019-09-16T12:17:52Z",
-        "updatedAt": "2019-09-16T12:17:52Z"
+        "version": 0
       }
     }
   ],
   "userCancellationWarning": {
-    "singleOwnerOrganizations": [
-      {
-        "name": "ACME Corp",
-        "spaceNames": ["The example project"]
-      }
-    ]
+    "singleOwnerOrganizations": []
   }
 }

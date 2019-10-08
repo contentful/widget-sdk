@@ -1,5 +1,5 @@
 import { getTokenForUser } from '../../../interactions/token';
-import { getUserProfileData, deleteIdentity, updateDefaultUserProfileData, changePassword, deleteUserAccount } from '../../../interactions/user_profile';
+import { getUserProfileData, deleteIdentity, updateDefaultUserProfileData, addPassword, changePassword, deleteUserAccount } from '../../../interactions/user_profile';
 
 describe('User profile page', () => {
     before(() =>
@@ -53,7 +53,7 @@ describe('User profile page', () => {
                 cy.getByTestId('current-password-field')
                     .should('be.visible')
                     .find('input')
-                    .type('currentPassword');
+                    .type('test12345');
 
                 cy.getByTestId('confirm-account-data-changes').click();
                 cy.wait(updateUserProfileInteraction);
@@ -74,7 +74,7 @@ describe('User profile page', () => {
                 cy.getByTestId('current-password-field')
                     .should('be.visible')
                     .find('input')
-                    .type('incorrectPassword');
+                    .type('invalid-current-password');
 
                 cy.getByTestId('confirm-account-data-changes').click();
                 cy.wait(updateUserProfileInteraction);
@@ -91,9 +91,9 @@ describe('User profile page', () => {
                 cy.getByTestId('link-change-password').should('be.visible').click();
                 cy.getByTestId('change-password-modal').should('be.visible');
 
-                cy.getByTestId('current-password').find('input').clear().type('currentPasswordj2YZ8DfohVHS');
-                cy.getByTestId('new-password').find('input').clear().type('newPassword0mc0lA5BE79W');
-                cy.getByTestId('new-password-confirm').find('input').clear().type('newPassword0mc0lA5BE79W');
+                cy.getByTestId('current-password').find('input').clear().type('test12345');
+                cy.getByTestId('new-password').find('input').clear().type('new-password');
+                cy.getByTestId('new-password-confirm').find('input').clear().type('new-password');
 
                 cy.getByTestId('confirm-change-password').click();
                 cy.wait(changePasswordInteraction);
@@ -110,9 +110,9 @@ describe('User profile page', () => {
                 cy.getByTestId('link-change-password').should('be.visible').click();
                 cy.getByTestId('change-password-modal').should('be.visible');
 
-                cy.getByTestId('current-password').find('input').clear().type('currentPasswordj2YZ8DfohVHS');
-                cy.getByTestId('new-password').find('input').clear().type('newPassword');
-                cy.getByTestId('new-password-confirm').find('input').clear().type('newPassword');
+                cy.getByTestId('current-password').find('input').clear().type('test12345');
+                cy.getByTestId('new-password').find('input').clear().type('password');
+                cy.getByTestId('new-password-confirm').find('input').clear().type('password');
 
                 cy.getByTestId('confirm-change-password').click();
                 cy.wait(changePasswordInteraction);
@@ -145,13 +145,13 @@ describe('User profile page', () => {
         });
 
         it('add valid password', () => {
-            const changePasswordInteraction = [changePassword.willReturnSuccess()];
+            const changePasswordInteraction = [addPassword.willReturnSuccess()];
             cy.getByTestId('user-account-data').should('be.visible');
             cy.getByTestId('link-change-password').should('be.visible').click();
             cy.getByTestId('change-password-modal').should('be.visible');
 
-            cy.getByTestId('new-password').find('input').clear().type('newPassword0mc0lA5BE79W');
-            cy.getByTestId('new-password-confirm').find('input').clear().type('newPassword0mc0lA5BE79W');
+            cy.getByTestId('new-password').find('input').clear().type('new-password');
+            cy.getByTestId('new-password-confirm').find('input').clear().type('new-password');
 
             cy.getByTestId('confirm-change-password').click();
             cy.wait(changePasswordInteraction);
@@ -164,13 +164,13 @@ describe('User profile page', () => {
         });
 
         it('add invalid password', () => {
-            const changePasswordInteraction = [changePassword.willReturnError()];
+            const changePasswordInteraction = [addPassword.willReturnError()];
             cy.getByTestId('user-account-data').should('be.visible');
             cy.getByTestId('link-change-password').should('be.visible').click();
             cy.getByTestId('change-password-modal').should('be.visible');
 
-            cy.getByTestId('new-password').find('input').clear().type('newPassword');
-            cy.getByTestId('new-password-confirm').find('input').clear().type('newPassword');
+            cy.getByTestId('new-password').find('input').clear().type('password');
+            cy.getByTestId('new-password-confirm').find('input').clear().type('password');
 
             cy.getByTestId('confirm-change-password').click();
             cy.wait(changePasswordInteraction);

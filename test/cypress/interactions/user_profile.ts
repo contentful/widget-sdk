@@ -9,6 +9,11 @@ const updateDefaultData = require('../fixtures/responses/user_account/udated-def
 const invalidCurrentPasswordData = require('../fixtures/responses/user_account/invalid-current-password.json');
 const insecureNewPasswordData = require('../fixtures/responses/user_account/insecure-new-password.json');
 
+const userProfileHeader = {
+    ...defaultHeader,
+    "CONTENT-TYPE": "application/vnd.contentful.management.v1+json"
+}
+
 function queryUserProfileDataRequest(): RequestOptions {
     return {
         method: 'GET',
@@ -22,7 +27,7 @@ export const getUserProfileData = {
     willReturnDefault() {
         cy.addInteraction({
             provider: 'user_profile',
-            state: 'user/default',
+            state: 'user profile default login',
             uponReceiving: `a request to get the user profile data`,
             withRequest: queryUserProfileDataRequest(),
             willRespondWith: {
@@ -36,7 +41,7 @@ export const getUserProfileData = {
     willReturnIdentityLoginUser() {
         cy.addInteraction({
             provider: 'user_profile',
-            state: 'user/identity_login',
+            state: 'user profile identity login',
             uponReceiving: `a request to get the user profile data for user with identity login only`,
             withRequest: queryUserProfileDataRequest(),
             willRespondWith: {
@@ -49,11 +54,13 @@ export const getUserProfileData = {
     }
 };
 
-function queryUserProfileUpdateRequest(): RequestOptions {
+function queryUserProfileUpdateRequest(body): RequestOptions {
+    console.log('body')
     return {
         method: 'PUT',
         path: `/users/me`,
-        headers: defaultHeader
+        headers: { ...userProfileHeader, "X-Contentful-Version": "2" },
+        body
     };
 }
 
@@ -61,9 +68,15 @@ export const updateDefaultUserProfileData = {
     willReturnSuccess() {
         cy.addInteraction({
             provider: 'user_profile',
-            state: 'user/default',
+            state: 'user profile default login',
             uponReceiving: `a request to update the user profile data`,
-            withRequest: queryUserProfileUpdateRequest(),
+            withRequest: queryUserProfileUpdateRequest({
+                firstName: "NewFirstName",
+                lastName: "NewLastName",
+                email: "new-email@example.com",
+                currentPassword: "test12345",
+                logAnalyticsFeature: ""
+            }),
             willRespondWith: {
                 status: 200,
                 body: updateDefaultData
@@ -75,9 +88,15 @@ export const updateDefaultUserProfileData = {
     willReturnError() {
         cy.addInteraction({
             provider: 'user_profile',
-            state: 'user/default',
+            state: 'user profile default login',
             uponReceiving: `a request to update the user profile data with wrong password`,
-            withRequest: queryUserProfileUpdateRequest(),
+            withRequest: queryUserProfileUpdateRequest({
+                email: "new-email@example.com",
+                firstName: "NewFirstName",
+                lastName: "NewLastName",
+                logAnalyticsFeature: "",
+                currentPassword: "invalid-current-password"
+            }),
             willRespondWith: {
                 status: 422,
                 body: invalidCurrentPasswordData
@@ -88,21 +107,59 @@ export const updateDefaultUserProfileData = {
     }
 };
 
-function queryChangePasswordRequest(): RequestOptions {
+function queryChangePasswordRequest(body): RequestOptions {
     return {
         method: 'PUT',
         path: `/users/me`,
-        headers: defaultHeader
+        headers: userProfileHeader,
+        body
     };
 }
+export const addPassword = {
+    willReturnSuccess() {
+        cy.addInteraction({
+            provider: 'user_profile',
+            state: 'user profile default login',
+            uponReceiving: `a request to add account password with valid password`,
+            withRequest: queryChangePasswordRequest({
+                password: "new-password"
+            }),
+            willRespondWith: {
+                status: 200,
+                body: defaultData
+            }
+        }).as('addPasswordSuccess');
+
+        return '@addPasswordSuccess';
+    },
+    willReturnError() {
+        cy.addInteraction({
+            provider: 'user_profile',
+            state: 'user profile default login',
+            uponReceiving: `a request to add account password with insecure password`,
+            withRequest: queryChangePasswordRequest({
+                password: "password"
+            }),
+            willRespondWith: {
+                status: 422,
+                body: insecureNewPasswordData
+            }
+        }).as('addPasswordError');
+
+        return '@addPasswordError';
+    }
+};
 
 export const changePassword = {
     willReturnSuccess() {
         cy.addInteraction({
             provider: 'user_profile',
-            state: 'user/default',
+            state: 'user profile default login',
             uponReceiving: `a request to change account password with valid password`,
-            withRequest: queryChangePasswordRequest(),
+            withRequest: queryChangePasswordRequest({
+                currentPassword: "test12345",
+                password: "new-password"
+            }),
             willRespondWith: {
                 status: 200,
                 body: defaultData
@@ -114,9 +171,12 @@ export const changePassword = {
     willReturnError() {
         cy.addInteraction({
             provider: 'user_profile',
-            state: 'user/default',
+            state: 'user profile default login',
             uponReceiving: `a request to change account password with insecure password`,
-            withRequest: queryChangePasswordRequest(),
+            withRequest: queryChangePasswordRequest({
+                currentPassword: "test12345",
+                password: "password"
+            }),
             willRespondWith: {
                 status: 422,
                 body: insecureNewPasswordData
@@ -139,11 +199,11 @@ export const deleteIdentity = {
     willReturnIt() {
         cy.addInteraction({
             provider: 'user_profile',
-            state: 'user/default',
+            state: 'user profile default login',
             uponReceiving: `a request to delete a user identity`,
             withRequest: queryIdentityDeleteRequest(),
             willRespondWith: {
-                status: 200
+                status: 204
             }
         }).as('deleteIdentity');
 
@@ -155,7 +215,11 @@ function queryDeleteUserAccount(): RequestOptions {
     return {
         method: 'POST',
         path: '/users/me/user_cancellations',
-        headers: defaultHeader
+        headers: { ...defaultHeader, "CONTENT-TYPE": "application/vnd.contentful.management.v1+json" },
+        body: {
+            "reason": "other",
+            "description": ""
+        }
     };
 }
 
@@ -163,7 +227,7 @@ export const deleteUserAccount = {
     willReturnIt() {
         cy.addInteraction({
             provider: 'user_profile',
-            state: 'user/default',
+            state: 'user profile default login',
             uponReceiving: `a request to delete the user account`,
             withRequest: queryDeleteUserAccount(),
             willRespondWith: {
