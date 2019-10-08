@@ -65,7 +65,11 @@ const JobsListShell = props => (
   <Workbench>
     <Workbench.Header
       icon={<Icon name="schedule-calendar" scale={0.75} />}
-      title="Scheduled Content"></Workbench.Header>
+      title="Scheduled Content"
+      onBack={() => {
+        window.history.back();
+      }}
+    />
     <Workbench.Content type="text" className={styles.workbenchContent}>
       <div>{props.children}</div>
     </Workbench.Content>
