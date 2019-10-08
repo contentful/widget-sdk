@@ -7,7 +7,9 @@ import { Tabs, Tab } from '@contentful/forma-36-react-components';
 
 const styles = {
   container: css({
-    paddingLeft: tokens.spacingXl,
+    margin: `-${tokens.spacingL}`,
+    marginBottom: tokens.spacingL,
+    paddingLeft: tokens.spacingL,
     zIndex: 1,
     background: 'white'
   })

@@ -25,8 +25,8 @@ export default function ApiKeyList({ apiKeys }) {
   const hasKeys = apiKeys && apiKeys.length;
 
   return (
-    <div className="api-key-list entity-list">
-      {(hasKeys ? apiKeys : placeholderKeys).map(key => (
+    <div className="api-key-list" data-test-id="api-key-list">
+      {(hasKeys ? apiKeys : []).map(key => (
         <StateLink
           key={hasKeys ? key.sys.id : key.name}
           className={cx('entity-list__item x--with-icon', {
@@ -40,6 +40,19 @@ export default function ApiKeyList({ apiKeys }) {
             <span className="entityt-list__description">{key.description}</span>
           </span>
         </StateLink>
+      ))}
+      {(!hasKeys ? placeholderKeys : []).map(key => (
+        <div
+          key={hasKeys ? key.sys.id : key.name}
+          className={cx('entity-list__item x--with-icon', {
+            'api-key-list__placeholder': !hasKeys
+          })}
+          data-test-id="api-link">
+          <span>
+            <h3 className="entity-list__heading">{key.name}</h3>
+            <span className="entityt-list__description">{key.description}</span>
+          </span>
+        </div>
       ))}
     </div>
   );

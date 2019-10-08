@@ -3,7 +3,7 @@ import * as Analytics from 'analytics/Analytics.es6';
 import { getCurrentStateName } from 'states/Navigator.es6';
 import { refresh, user$ } from 'services/TokenStore.es6';
 import client from 'services/client.es6';
-import { create as createToken } from 'app/api/CMATokens/Resource.es6';
+import { create as createToken } from 'app/api/CMATokens/TokenResourceManager';
 import * as auth from 'Authentication.es6';
 import { getValue } from 'utils/kefir.es6';
 import { getModule } from 'NgRegistry.es6';

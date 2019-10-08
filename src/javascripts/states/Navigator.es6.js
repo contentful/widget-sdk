@@ -20,7 +20,7 @@
  * Instead of passing them around as separate arguments (as
  * Angular UI router does) we treat them as one value.
  */
-import { get } from 'lodash';
+import { get, isArray } from 'lodash';
 import { getModule } from 'NgRegistry.es6';
 
 const ENTITY_PLURALS = {
@@ -38,8 +38,11 @@ const ENTITY_PLURALS = {
  */
 export function go(state) {
   const $state = getModule('$state');
-
-  return $state.go(state.path.join('.'), state.params, state.options);
+  return $state.go(
+    isArray(state.path) ? state.path.join('.') : state.path,
+    state.params,
+    state.options
+  );
 }
 
 /**
@@ -57,7 +60,11 @@ export function href(state) {
     };
   }
   const $state = getModule('$state');
-  return $state.href(state.path.join('.'), state.params, state.options);
+  return $state.href(
+    isArray(state.path) ? state.path.join('.') : state.path,
+    state.params,
+    state.options
+  );
 }
 
 /**

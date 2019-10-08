@@ -3872,39 +3872,6 @@ pre,
     -webkit-box-flex: 0;
             flex: 0 0 auto;
   }
-  .cfnext-advice-box {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-direction: column;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-            flex-direction: column;
-    -ms-flex-pack: center;
-    -webkit-box-pack: center;
-            justify-content: center;
-  }
-  .cfnext-advice-box__frame {
-    margin: 0 auto;
-    text-align: center;
-    background-color: #f7f9fa;
-    border: 1px solid #d3dce0;
-    padding: 1.928571428571429em 3.214285714285714em;
-    min-width: 500px;
-  }
-  .cfnext-advice-box__title {
-    font-size: 1.33em;
-    margin: 0.424285714285714em 0 0.424285714285714em;
-  }
-  .cfnext-advice-box__sub-title {
-    font-size: 1.1em;
-    margin-bottom: 1.285714285714286em;
-  }
   .advice {
     position: absolute;
     top: 0;
@@ -10713,9 +10680,6 @@ pre,
   }
   .content-model__description {
     color: #8091a5;
-  }
-  .api-key-list__reached-limit {
-    color: #d9453f;
   }
   .api-key-list__advice {
     margin-top: 100px;

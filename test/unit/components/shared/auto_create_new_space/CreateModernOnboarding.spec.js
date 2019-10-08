@@ -10,7 +10,7 @@ describe('CreateModernOnboarding service', function() {
     this.system.set('services/TokenStore.es6', {
       user$: this.user$
     });
-    this.system.set('app/api/CMATokens/Resource.es6', {
+    this.system.set('app/api/CMATokens/TokenResourceManager', {
       create: () => ({ create: this.createCMAKey })
     });
 

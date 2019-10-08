@@ -11,7 +11,8 @@ const styles = {
   closeWrapper: css({ marginTop: tokens.spacingXl }),
   closeButton: css({ marginLeft: tokens.spacingM }),
   note: css({ marginBottom: tokens.spacingL }),
-  testInput: css({ marginBottom: tokens.spacingL })
+  testInput: css({ marginBottom: tokens.spacingL }),
+  doneButton: css({ marginTop: tokens.spacingL })
 };
 
 export function openGenerateTokenDialog(createToken, successHandler) {
@@ -110,7 +111,11 @@ export function SuccessStatus(props) {
       </Note>
       <TextInput className={styles.textInput} value={props.tokenValue} disabled withCopyButton />
       <div>
-        <Button testId="pat.create.done-button" buttonType="primary" onClick={props.onDoneClick}>
+        <Button
+          className={styles.doneButton}
+          testId="pat.create.done-button"
+          buttonType="primary"
+          onClick={props.onDoneClick}>
           Done
         </Button>
       </div>
@@ -136,7 +141,11 @@ export default function GenerateCMATokenDialog(props) {
         setTokenValue(data.token);
         setStatus('success');
         if (props.successHandler) {
-          props.successHandler();
+          props.successHandler({
+            sys: data.sys,
+            name: data.name,
+            token: data.token
+          });
         }
       },
       () => {

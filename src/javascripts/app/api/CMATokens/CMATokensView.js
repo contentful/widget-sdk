@@ -1,16 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { assign } from 'lodash';
-import { createSlot, Success, Failure } from 'utils/Concurrent.es6';
-import { truncate } from 'utils/StringUtils.es6';
-import { makeCtor, match } from 'utils/TaggedValues.es6';
 import {
   Table,
   TableHead,
   TableRow,
   TableCell,
   TableBody,
-  Notification,
   Dropdown,
   DropdownList,
   Button,
@@ -18,35 +13,21 @@ import {
   Typography,
   Subheading,
   Note,
-  TextLink
+  TextLink,
+  SkeletonContainer,
+  SkeletonBodyText
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { createStore, bindActions, makeReducer } from 'ui/Framework/Store.es6';
-import escape from 'utils/escape.es6';
 import { DocsLink, LinkOpen } from 'ui/Content.es6';
-
+import * as Auth from 'Authentication.es6';
 import * as Config from 'Config.es6';
-import * as ResourceManager from './Resource.es6';
-import { openGenerateTokenDialog } from './GenerateCMATokenDialog.es6';
-import { track } from 'analytics/Analytics.es6';
+import * as TokenResourceManager from './TokenResourceManager';
 
 import Paginator from 'ui/Components/Paginator.es6';
-
-// Number of tokens to fetch and show per page
-const PER_PAGE = 10;
-
-// Actions
-const SelectPage = makeCtor('SelectPage');
-const Revoke = makeCtor('Revoke');
-const Reload = makeCtor('Reload');
-const OpenCreateDialog = makeCtor('OpenCreateDialog');
-const ReceiveResponse = makeCtor('ReceiveResponse');
+import { useTokensState } from './CMATokensViewReducer';
 
 const styles = {
-  page: css({
-    padding: tokens.spacingXl
-  }),
   pageSection: css({
     marginBottom: tokens.spacing2Xl
   }),
@@ -76,112 +57,18 @@ const styles = {
   })
 };
 
-export function initController($scope, auth) {
-  // TODO This hack is unfortunate. But until we come up with a better
-  // way to write components with side effects it is necessary.
-  /* eslint-disable no-use-before-define */
-  const tokenResourceManager = ResourceManager.create(auth);
-
-  const initialState = {
-    tokens: [],
-    currentPage: 0,
-    totalPages: 0
-  };
-
-  // Request slot for updating the list.
-  const putRequest = createSlot(result => {
-    store.dispatch(ReceiveResponse, result);
-  });
-
-  const reduce = makeReducer({
-    [SelectPage]: selectPage,
-    [Reload]: state => {
-      return selectPage(state, state.currentPage);
-    },
-    [Revoke]: (state, token) => {
-      const id = token.id;
-      tokenResourceManager.revoke(id).then(
-        () => {
-          track('personal_access_token:action', { action: 'revoke', patId: id });
-          Notification.success(
-            `The token “${escape(truncate(token.name, 30))}” has been successfully revoked.`
-          );
-          actions.Reload();
-        },
-        () => {
-          Notification.error(
-            'Revoking failed, please try again. If the problem persists, contact support.'
-          );
-        }
-      );
-      return state;
-    },
-    [OpenCreateDialog]: state => {
-      openGenerateTokenDialog(tokenResourceManager.create, actions.Reload);
-      return state;
-    },
-    [ReceiveResponse]: (state, result) =>
-      match(result, {
-        [Success]: ({ total, items }) => {
-          const totalPages = Math.ceil(total / PER_PAGE);
-          if (state.currentPage >= totalPages && totalPages > 0) {
-            return selectPage(state, totalPages - 1);
-          } else {
-            return assign({}, state, {
-              tokens: items.map(token => ({
-                id: token.sys.id,
-                name: token.name
-              })),
-              loadingTokens: false,
-              totalPages
-            });
-          }
-        },
-        [Failure]: () => assign(state, { loadingTokensError: true })
-      })
-  });
-
-  function selectPage(state, page) {
-    const request = tokenResourceManager.fetch({
-      skip: page * PER_PAGE,
-      limit: PER_PAGE
-    });
-    putRequest(request);
-    return assign(state, {
-      currentPage: page,
-      loadingTokens: true
-    });
-  }
-
-  const store = createStore(initialState, reduce);
-  const actions = bindActions(store, {
-    SelectPage,
-    Revoke,
-    OpenCreateDialog,
-    Reload
-  });
-
-  actions.SelectPage(0);
-
-  $scope.component = {
-    store,
-    render: (state, actions) => <PageComponent state={state} actions={actions} />,
-    actions: {
-      SelectPage,
-      Revoke,
-      OpenCreateDialog,
-      Reload
-    }
-  };
-  /* eslint-enable no-use-before-define */
+export function CMATokensView() {
+  const tokenResourceManager = TokenResourceManager.create(Auth);
+  const [state, actions] = useTokensState(tokenResourceManager);
+  return <PageComponent state={state} actions={actions} />;
 }
 
 function PageComponent({ state, actions }) {
   return (
-    <div className={styles.page}>
+    <React.Fragment>
       <OauthSection />
       <PATSection state={state} actions={actions} />
-    </div>
+    </React.Fragment>
   );
 }
 
@@ -259,10 +146,13 @@ function TokenList({ state, actions }) {
     <div data-test-id="pat.list">
       <div className={styles.tableWrapper}>
         {loadingTokens && (
-          <div className="loading-box--stretched animate">
-            <div className="loading-box__spinner" />
-            <div className="loading-box__message">Loading</div>
-          </div>
+          <SkeletonContainer
+            clipId="loading-tokens"
+            ariaLabel="Loading..."
+            svgWidth="100%"
+            svgHeight={120}>
+            <SkeletonBodyText numberOfLines={5} />
+          </SkeletonContainer>
         )}
         <TokenTable tokens={tokens} revoke={actions.Revoke} />
       </div>

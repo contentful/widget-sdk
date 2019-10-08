@@ -1,17 +1,15 @@
 import { assign } from 'lodash';
-import baseState from 'states/Base.es6';
 import contextHistory from 'navigation/Breadcrumbs/History.es6';
 import * as crumbFactory from 'navigation/Breadcrumbs/Factory.es6';
-import * as Auth from 'Authentication.es6';
 
 import attachEditorController from './KeyEditor/Controller.es6';
 import editorTemplate from './KeyEditor/Template.es6';
-import * as CMATokensPage from './CMATokens/Page.es6';
-import CMATokensPageTemplate from './CMATokens/PageTemplate.es6';
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo.es6';
 import * as SpaceAliasesRepo from 'data/CMA/SpaceAliasesRepo.es6';
 import { redirectReadOnlySpace } from 'states/SpaceSettingsBase.es6';
 import { spaceResolver } from 'states/Resolvers.es6';
+import ApiKeyListRoute from './ApiKeyList/ApiKeyListRoute';
+import CMATokensRoute from './CMATokens/CMATokensRoute';
 
 /**
  * @ngdoc service
@@ -75,12 +73,6 @@ const keyDetail = assign(
   apiKeyEditorState
 );
 
-const cdaKeyList = baseState({
-  name: 'list',
-  url: '',
-  template: '<cf-api-key-list class="workbench"></cf-api-key-list>'
-});
-
 export default {
   name: 'api',
   url: '/api',
@@ -101,7 +93,14 @@ export default {
       name: 'keys',
       abstract: true,
       url: '/keys',
-      children: [cdaKeyList, keyDetail]
+      children: [
+        {
+          name: 'list',
+          url: '',
+          component: ApiKeyListRoute
+        },
+        keyDetail
+      ]
     },
     {
       // Legacy path
@@ -112,13 +111,7 @@ export default {
     {
       name: 'cma_tokens',
       url: '/cma_tokens',
-      template: CMATokensPageTemplate(),
-      controller: [
-        '$scope',
-        $scope => {
-          CMATokensPage.initController($scope, Auth);
-        }
-      ]
+      component: CMATokensRoute
     },
     {
       name: 'content_model',
