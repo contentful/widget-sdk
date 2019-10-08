@@ -4,7 +4,7 @@ import * as ModalLauncher from 'app/common/ModalLauncher.es6';
 import { cancelUser } from 'Authentication.es6';
 import DangerZoneSection from './DangerZoneSection';
 
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 
 describe('DangerZoneSection', () => {
   const build = () => {

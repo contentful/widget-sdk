@@ -3,7 +3,7 @@ import { render, cleanup, wait } from '@testing-library/react';
 import IndexPage from './index';
 import { fetchUserData } from './AccountRepository';
 
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 
 jest.mock('./AccountRepository', () => ({
   fetchUserData: jest.fn()

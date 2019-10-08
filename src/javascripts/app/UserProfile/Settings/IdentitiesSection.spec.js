@@ -4,7 +4,7 @@ import { Notification } from '@contentful/forma-36-react-components';
 import IdentitiesSection from './IdentitiesSection';
 import { deleteUserIdentityData } from './AccountRepository';
 
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 
 jest.mock('./AccountRepository', () => ({
   deleteUserIdentityData: jest.fn()

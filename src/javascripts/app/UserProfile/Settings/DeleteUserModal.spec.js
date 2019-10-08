@@ -4,7 +4,7 @@ import { Notification } from '@contentful/forma-36-react-components';
 import DeleteUserModal from './DeleteUserModal';
 import { deleteUserAccount } from './AccountRepository';
 
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 
 jest.mock('./AccountRepository', () => ({
   deleteUserAccount: jest.fn()

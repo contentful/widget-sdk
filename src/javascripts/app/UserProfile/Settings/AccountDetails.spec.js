@@ -2,7 +2,7 @@ import React from 'react';
 import { render, cleanup, fireEvent, wait } from '@testing-library/react';
 import AccountDetails from './AccountDetails';
 import * as ModalLauncher from 'app/common/ModalLauncher.es6';
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 
 describe('AccountDetails', () => {
   const makeUser = custom => {

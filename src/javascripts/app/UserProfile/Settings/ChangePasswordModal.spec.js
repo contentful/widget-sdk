@@ -4,7 +4,7 @@ import ChangePasswordModal from './ChangePasswordModal';
 import { updateUserData } from './AccountRepository';
 import { Notification } from '@contentful/forma-36-react-components';
 
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 
 jest.mock('./AccountRepository', () => ({
   updateUserData: jest.fn()
