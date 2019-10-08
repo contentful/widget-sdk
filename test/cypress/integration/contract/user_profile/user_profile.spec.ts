@@ -145,7 +145,7 @@ describe('User profile page', () => {
         });
 
         it('add valid password', () => {
-            const changePasswordInteraction = [addPassword.willReturnSuccess()];
+            const addPasswordInteraction = [addPassword.willReturnSuccess()];
             cy.getByTestId('user-account-data').should('be.visible');
             cy.getByTestId('link-change-password').should('be.visible').click();
             cy.getByTestId('change-password-modal').should('be.visible');
@@ -154,7 +154,7 @@ describe('User profile page', () => {
             cy.getByTestId('new-password-confirm').find('input').clear().type('new-password');
 
             cy.getByTestId('confirm-change-password').click();
-            cy.wait(changePasswordInteraction);
+            cy.wait(addPasswordInteraction);
 
             cy.getByTestId('user-account-data')
                 .should('be.visible').
@@ -164,7 +164,7 @@ describe('User profile page', () => {
         });
 
         it('add invalid password', () => {
-            const changePasswordInteraction = [addPassword.willReturnError()];
+            const addPasswordInteraction = [addPassword.willReturnError()];
             cy.getByTestId('user-account-data').should('be.visible');
             cy.getByTestId('link-change-password').should('be.visible').click();
             cy.getByTestId('change-password-modal').should('be.visible');
@@ -173,7 +173,7 @@ describe('User profile page', () => {
             cy.getByTestId('new-password-confirm').find('input').clear().type('password');
 
             cy.getByTestId('confirm-change-password').click();
-            cy.wait(changePasswordInteraction);
+            cy.wait(addPasswordInteraction);
 
             cy.getByTestId('new-password')
                 .find('[data-test-id="cf-ui-validation-message"]')

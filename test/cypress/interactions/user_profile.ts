@@ -55,11 +55,10 @@ export const getUserProfileData = {
 };
 
 function queryUserProfileUpdateRequest(body): RequestOptions {
-    console.log('body')
     return {
         method: 'PUT',
         path: `/users/me`,
-        headers: { ...userProfileHeader, "X-Contentful-Version": "2" },
+        headers: { ...userProfileHeader, "X-Contentful-Version": "1" },
         body
     };
 }
@@ -111,7 +110,7 @@ function queryChangePasswordRequest(body): RequestOptions {
     return {
         method: 'PUT',
         path: `/users/me`,
-        headers: userProfileHeader,
+        headers: { ...userProfileHeader, "X-Contentful-Version": "1" },
         body
     };
 }
@@ -119,7 +118,7 @@ export const addPassword = {
     willReturnSuccess() {
         cy.addInteraction({
             provider: 'user_profile',
-            state: 'user profile default login',
+            state: 'user profile identity login',
             uponReceiving: `a request to add account password with valid password`,
             withRequest: queryChangePasswordRequest({
                 password: "new-password"
@@ -135,7 +134,7 @@ export const addPassword = {
     willReturnError() {
         cy.addInteraction({
             provider: 'user_profile',
-            state: 'user profile default login',
+            state: 'user profile identity login',
             uponReceiving: `a request to add account password with insecure password`,
             withRequest: queryChangePasswordRequest({
                 password: "password"
