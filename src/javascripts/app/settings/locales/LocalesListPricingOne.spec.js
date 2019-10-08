@@ -1,5 +1,5 @@
 import React from 'react';
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 import { render, cleanup, fireEvent } from '@testing-library/react';
 import * as $stateMocked from 'ng/$state';
 import { Notification } from '@contentful/forma-36-react-components';

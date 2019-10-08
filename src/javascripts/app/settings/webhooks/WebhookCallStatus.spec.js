@@ -1,5 +1,5 @@
 import React from 'react';
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 import { cleanup, render } from '@testing-library/react';
 import WebhookCallStatus from './WebhookCallStatus.es6';
 

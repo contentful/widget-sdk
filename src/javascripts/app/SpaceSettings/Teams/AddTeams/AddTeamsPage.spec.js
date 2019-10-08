@@ -6,7 +6,7 @@ import { go } from 'states/Navigator.es6';
 import { track } from 'analytics/Analytics.es6';
 import AddTeamsPage from './AddTeamsPage.es6';
 
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 
 jest.mock('states/Navigator.es6', () => ({
   go: jest.fn().mockResolvedValue(true)

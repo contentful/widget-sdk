@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, cleanup, fireEvent } from '@testing-library/react';
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 import AccountView from './AccountView.es6';
 
 jest.mock('account/UrlSyncHelper.es6', () => ({

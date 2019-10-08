@@ -1,5 +1,5 @@
 import React from 'react';
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 import { render, fireEvent, cleanup, waitForElement } from '@testing-library/react';
 import GenerateCMATokenDialog from './GenerateCMATokenDialog.es6';
 import * as Analytics from 'analytics/Analytics.es6';

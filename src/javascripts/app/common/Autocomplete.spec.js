@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, cleanup, fireEvent, within } from '@testing-library/react';
 import Autocomplete from './Autocomplete.es6';
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 
 const items = [
   { label: 'Jalapeño', id: 'jalapeno' },

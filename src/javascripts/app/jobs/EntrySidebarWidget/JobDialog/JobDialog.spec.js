@@ -2,7 +2,7 @@ import React from 'react';
 import { render, cleanup, fireEvent, wait } from '@testing-library/react';
 import { Notification } from '@contentful/forma-36-react-components';
 
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 import * as DateMocks from 'DateMocks';
 import JobDialog from './index.es6';
 import moment from 'moment';

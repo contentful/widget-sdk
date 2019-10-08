@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, cleanup } from '@testing-library/react';
 import EnvironmentDetails from './EnvironmentDetails.es6';
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 
 const getComponent = (props = {}) => {
   return (

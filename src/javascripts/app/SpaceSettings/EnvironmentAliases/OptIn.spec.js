@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, cleanup, fireEvent, wait } from '@testing-library/react';
 import OptIn from './OptIn.es6';
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 import { STEPS } from './Utils.es6';
 
 const setStep = jest.fn();

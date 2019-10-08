@@ -1,7 +1,7 @@
 import React from 'react';
 import { render as renderReact, cleanup, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 import { forEach } from 'lodash';
 
 import Task from './Task.es6';

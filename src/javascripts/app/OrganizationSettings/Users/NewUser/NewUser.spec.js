@@ -9,7 +9,7 @@ import {
   act,
   wait
 } from '@testing-library/react';
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 import {
   getAllSpaces,
   getAllRoles,

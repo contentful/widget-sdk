@@ -1,5 +1,5 @@
 import React from 'react';
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 import { render, cleanup, fireEvent } from '@testing-library/react';
 import WebhookSegmentation from './WebhookSegmentation.es6';
 import { transformMapToTopics, transformTopicsToMap } from './WebhookSegmentationState.es6';

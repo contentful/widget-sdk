@@ -1,7 +1,7 @@
 import React from 'react';
 import { noop } from 'lodash';
 import { cleanup, render, fireEvent } from '@testing-library/react';
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 
 import SpaceMembershipsPresentation from './SpaceMembershipsPresentation.es6';
 

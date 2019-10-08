@@ -170,7 +170,7 @@ You can use custom Jest DOM matchers by including them in the test file, like so
 
 ```js
 
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 
 // ...
 

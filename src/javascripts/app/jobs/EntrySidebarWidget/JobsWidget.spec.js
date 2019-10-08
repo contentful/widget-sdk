@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, cleanup, wait, fireEvent } from '@testing-library/react';
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 
 import { Notification } from '@contentful/forma-36-react-components';
 import { default as JobsWidget } from './JobsWidget.es6';

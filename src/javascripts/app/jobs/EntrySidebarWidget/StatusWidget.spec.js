@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, cleanup, fireEvent } from '@testing-library/react';
 import StatusWidget from './StatusWidget.es6';
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 
 const createCommand = props => ({
   isDisabled: () => false,

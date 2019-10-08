@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, cleanup } from '@testing-library/react';
 import EnvOrAliasLabel from './EnvOrAliasLabel.es6';
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 import tokens from '@contentful/forma-36-tokens';
 
 const getAttribute = (el, property) => window.getComputedStyle(el, null).getPropertyValue(property);

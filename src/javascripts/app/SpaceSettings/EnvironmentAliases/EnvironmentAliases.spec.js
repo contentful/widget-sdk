@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, cleanup } from '@testing-library/react';
 import EnvironmentAliases from './EnvironmentAliases.es6';
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 
 jest.mock('./Feedback.es6', () => () => <div>Feedback</div>);
 

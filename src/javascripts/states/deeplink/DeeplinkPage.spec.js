@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, cleanup, waitForElement, fireEvent } from '@testing-library/react';
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 import DeeplinkPage from './DeeplinkPage';
 import { resolveLink } from './resolver.es6';
 import { getSpaceInfo, getAllEnviroments } from './utils.es6';

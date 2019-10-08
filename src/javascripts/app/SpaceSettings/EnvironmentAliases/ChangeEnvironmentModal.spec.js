@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, cleanup, wait } from '@testing-library/react';
 import ChangeEnvironmentModal from './ChangeEnvironmentModal.es6';
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 
 jest.mock('./Utils.es6', () => ({
   handleChangeEnvironment: jest.fn().mockImplementation((...res) => Promise.resolve(res))

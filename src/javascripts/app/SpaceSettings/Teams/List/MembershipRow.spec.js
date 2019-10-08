@@ -1,7 +1,7 @@
 import React from 'react';
 import { cleanup, render, fireEvent, getByTestId } from '@testing-library/react';
 import { Table, TableBody } from '@contentful/forma-36-react-components';
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 import { noop } from 'lodash';
 
 import MembershipRow from './MembershipRow.es6';

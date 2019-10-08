@@ -1,6 +1,6 @@
 import React from 'react';
 import { render as renderReact, within, cleanup, fireEvent } from '@testing-library/react';
-import 'jest-dom/extend-expect';
+import '@testing-library/jest-dom/extend-expect';
 import { mapValues, toArray } from 'lodash';
 
 import PublicationWidget from './PublicationWidget.es6';
