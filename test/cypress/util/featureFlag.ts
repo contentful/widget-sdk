@@ -7,8 +7,6 @@ export enum FeatureFlag {
   ENTRY_COMMENTS = 'feature-04-2019-entry-comments',
   MODERN_STACK_ONBOARDING = 'feature-dl-05-2018-modern-stack-onboarding',
   SCHEDULED_PUBLICATION = 'feature-pul-04-2019-scheduled-publication-enabled',
-  TEAMS = 'feature-bv-11-2018-teams',
-  TEAMS_FOR_MEMBERS = 'feature-bv-01-2019-teams-for-members',
   TEAMS_SPACE_MEMBERSHIP = 'feature-bv-01-2019-team-space-memberships',
   QUICK_NAVIGATION = 'feature-ht-04-2019-quick-navigation',
   DEFAULT = ENVIRONMENTS
