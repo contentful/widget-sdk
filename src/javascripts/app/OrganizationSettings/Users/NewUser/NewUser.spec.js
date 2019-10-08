@@ -188,7 +188,7 @@ describe('NewUser', () => {
         role: 'owner',
         email: 'john.doe@enterprise.com',
         spaceInvitations: [{ spaceId: '123', admin: false, roleIds: ['editorid'] }],
-        teams: []
+        teamInvitations: []
       });
     });
 
@@ -236,7 +236,7 @@ describe('NewUser', () => {
               spaceId: '123'
             }
           ],
-          teams: []
+          teamInvitations: []
         });
         expect(createSpaceMembershipRepo).not.toHaveBeenCalled();
         expect(mockInviteToSpaceFn).not.toHaveBeenCalled();
@@ -300,7 +300,7 @@ describe('NewUser', () => {
           email: 'john.doe@enterprise.com',
           role: 'member',
           spaceInvitations: [],
-          teams: ['superteam', 'thepeople']
+          teamInvitations: [{ teamId: 'superteam' }, { teamId: 'thepeople' }]
         });
       });
     });
