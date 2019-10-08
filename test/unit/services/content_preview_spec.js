@@ -1,6 +1,7 @@
 import sinon from 'sinon';
 import { times, merge, cloneDeep } from 'lodash';
-import createContentPreview from 'services/contentPreview.es6';
+import createContentPreview from 'services/contentPreview/createContentPreview';
+import { contentPreviewToInternal } from 'services/contentPreview/contentPreviewToInternal';
 import { getStore } from 'TheStore/index.es6';
 import { beforeEach, it } from 'test/utils/dsl';
 
@@ -146,7 +147,7 @@ describe('contentPreview', () => {
 
   describe('#create', () => {
     beforeEach(async function() {
-      const internal = this.contentPreview.toInternal(makeEnv('foo'), [makeCt('ct-1')]);
+      const internal = contentPreviewToInternal(makeEnv('foo'), [makeCt('ct-1')]);
       this.env = await this.contentPreview.create(internal);
     });
 
@@ -170,7 +171,7 @@ describe('contentPreview', () => {
       this.contentPreview.clearCache();
 
       const create = idx => {
-        const internal = this.contentPreview.toInternal(makeEnv('foo' + idx), [makeCt('ct-1')]);
+        const internal = contentPreviewToInternal(makeEnv('foo' + idx), [makeCt('ct-1')]);
         this.space.post.resolves(makeEnv('foo' + idx));
         return this.contentPreview.create(internal);
       };
@@ -198,14 +199,11 @@ describe('contentPreview', () => {
       this.space.put.resolves(makeEnv('foo'));
 
       const env = await this.contentPreview.create(
-        this.contentPreview.toInternal(makeEnv('bar'), [makeCt('ct-1')])
+        contentPreviewToInternal(makeEnv('bar'), [makeCt('ct-1')])
       );
       this.id = env.sys.id;
 
-      const payload = this.contentPreview.toInternal(makeEnv('foo'), [
-        makeCt('ct-1'),
-        makeCt('ct-2')
-      ]);
+      const payload = contentPreviewToInternal(makeEnv('foo'), [makeCt('ct-1'), makeCt('ct-2')]);
 
       await this.contentPreview.update(merge(payload, { version: 0 }));
 
@@ -240,7 +238,7 @@ describe('contentPreview', () => {
     beforeEach(async function() {
       this.space.delete.resolves();
 
-      const internal = this.contentPreview.toInternal(makeEnv('foo'), [makeCt('ct-1')]);
+      const internal = contentPreviewToInternal(makeEnv('foo'), [makeCt('ct-1')]);
       const env = await this.contentPreview.create(internal);
       this.id = env.sys.id;
 

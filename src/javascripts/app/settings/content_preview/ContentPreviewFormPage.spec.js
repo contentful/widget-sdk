@@ -3,13 +3,25 @@ import _ from 'lodash';
 import ContentPreviewFormPage from './ContentPreviewFormPage.es6';
 import Enzyme from 'enzyme';
 import { Notification } from '@contentful/forma-36-react-components';
-import { contentPreview } from 'ng/spaceContext';
 import * as Analytics from 'analytics/Analytics.es6';
 import $state from 'ng/$state';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 
+const mockContentPreview = {
+  create: jest.fn(),
+  update: jest.fn(),
+  remove: jest.fn()
+};
+
+jest.mock('services/contentPreview', () => ({
+  getContentPreview: () => mockContentPreview
+}));
+
 describe('app/settings/content_preview/ContentPreviewFormPage', () => {
   beforeEach(() => {
+    mockContentPreview.create.mockReset();
+    mockContentPreview.update.mockReset();
+    mockContentPreview.remove.mockReset();
     jest.spyOn(Notification, 'success').mockImplementation(() => {});
     jest.spyOn(Notification, 'error').mockImplementation(() => {});
   });
@@ -157,7 +169,7 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
     });
 
     it('shows notification if create fails', done => {
-      contentPreview.create.mockRejectedValueOnce(new Error('API returned error'));
+      mockContentPreview.create.mockRejectedValueOnce(new Error('API returned error'));
 
       const { wrapper } = render();
 
@@ -166,7 +178,7 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
 
       wrapper.find(selectors.saveBtn).simulate('click');
 
-      expect(contentPreview.create).toHaveBeenCalledWith({
+      expect(mockContentPreview.create).toHaveBeenCalledWith({
         ...initialValue,
         name: 'preview name',
         description: 'preview description'
@@ -187,7 +199,7 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
         }
       };
 
-      contentPreview.create.mockResolvedValueOnce(resolvedObject);
+      mockContentPreview.create.mockResolvedValueOnce(resolvedObject);
 
       const { wrapper } = render();
 
@@ -204,7 +216,7 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
       const newConfigs = [...initialValue.configs];
       newConfigs[0].enabled = true;
       newConfigs[0].url = 'https://contentful.com';
-      expect(contentPreview.create).toHaveBeenCalledWith({
+      expect(mockContentPreview.create).toHaveBeenCalledWith({
         ...initialValue,
         name: 'preview name',
         description: 'preview description',
@@ -320,7 +332,7 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
     });
 
     it('displays error when fails', done => {
-      contentPreview.update.mockRejectedValueOnce(new Error('API returned error'));
+      mockContentPreview.update.mockRejectedValueOnce(new Error('API returned error'));
 
       const { wrapper } = render();
 
@@ -328,7 +340,7 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
 
       wrapper.find(selectors.saveBtn).simulate('click');
 
-      expect(contentPreview.update).toHaveBeenCalledWith({
+      expect(mockContentPreview.update).toHaveBeenCalledWith({
         ...initialValue,
         name: 'test name new'
       });
@@ -342,11 +354,11 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
 
     it('calls remove method and redirects on delete', done => {
       jest.spyOn(ModalLauncher, 'open').mockResolvedValue(true);
-      contentPreview.remove.mockResolvedValueOnce();
+      mockContentPreview.remove.mockResolvedValueOnce();
       const { wrapper, stubs } = render();
       wrapper.find(selectors.deleteBtn).simulate('click');
       process.nextTick(() => {
-        expect(contentPreview.remove).toHaveBeenCalledWith({
+        expect(mockContentPreview.remove).toHaveBeenCalledWith({
           id: initialValue.id
         });
         expect(Notification.success).toHaveBeenCalledWith(
@@ -371,7 +383,7 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
         }
       };
 
-      contentPreview.update.mockResolvedValueOnce(resolvedObject);
+      mockContentPreview.update.mockResolvedValueOnce(resolvedObject);
       const { wrapper } = render();
 
       updateName(wrapper, 'preview name new');
@@ -387,7 +399,7 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
       const newConfigs = [...initialValue.configs];
       newConfigs[1].enabled = true;
       newConfigs[1].url = 'https://google.com';
-      expect(contentPreview.update).toHaveBeenCalledWith({
+      expect(mockContentPreview.update).toHaveBeenCalledWith({
         ...initialValue,
         name: 'preview name new',
         description: 'preview description new',

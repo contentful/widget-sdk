@@ -1,6 +1,5 @@
 import { getSpaces, getOrganizations, getOrganization, user$ } from 'services/TokenStore.es6';
 import { getStore } from 'TheStore/index.es6';
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import { getValue, onValue } from 'utils/kefir.es6';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
@@ -107,17 +106,6 @@ export async function getOrg() {
     const { space } = await getSpaceInfo();
     return { orgId: space.organization.sys.id, org: space.organization };
   }
-}
-
-/**
- * @description check whether user can read API keys
- * we use {accessChecker}, and we use a sync method
- * it means that we need to initialize with space first,
- * using {spaceContext}, and only after you should
- * call this check
- */
-export function checkSpaceApiAccess() {
-  return accessChecker.canReadApiKeys();
 }
 
 /**

@@ -1,10 +1,5 @@
-import {
-  getSpaceInfo,
-  getOrg,
-  checkSpaceApiAccess,
-  checkOrgAccess,
-  getOnboardingSpaceId
-} from './utils.es6';
+import { getSpaceInfo, getOrg, checkOrgAccess, getOnboardingSpaceId } from './utils.es6';
+import * as accessChecker from 'access_control/AccessChecker/index.es6';
 import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
 import { getStore } from 'TheStore/index.es6';
@@ -166,7 +161,7 @@ async function resolveApi() {
 
   // we need to set up space first, so accesses will be
   // updated for this specific space
-  const hasAccess = checkSpaceApiAccess();
+  const hasAccess = accessChecker.canReadApiKeys();
 
   if (!hasAccess) {
     throw new Error('user is not authorized');

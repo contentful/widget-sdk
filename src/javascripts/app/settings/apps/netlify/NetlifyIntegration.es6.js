@@ -2,14 +2,12 @@ import { cloneDeep, get, uniqBy } from 'lodash';
 import { getPostPublishUrl } from './BuildButton/PubNubClient.es6';
 import * as NetlifyClient from './NetlifyClient.es6';
 import { getSpaceNetlifyConfig } from './NetlifyAppConfig';
-import { getModule } from 'NgRegistry.es6';
+import { getContentPreview } from 'services/contentPreview';
 
 const ARTIFACT_KEYS = ['buildHookUrl', 'buildHookId', 'contentPreviewId'];
 const NETLIFY_HOOK_EVENTS = ['deploy_building', 'deploy_created', 'deploy_failed'];
 
 export async function install({ config, contentTypeIds, appsClient, accessToken }) {
-  const spaceContext = getModule('spaceContext');
-
   config = prepareConfig(config);
 
   // Create build hooks for all sites.
@@ -55,7 +53,7 @@ export async function install({ config, contentTypeIds, appsClient, accessToken 
 
   // Create content previews for all sites.
   const contentPreviewPromises = config.sites.map(siteConfig => {
-    return spaceContext.contentPreview.create({
+    return getContentPreview().create({
       name: `${siteConfig.name} (Netlify app)`,
       description: `Created by the Netlify app. Previews "${siteConfig.netlifySiteName}" Netlify site.`,
       configs: contentTypeIds.map(ctId => {
@@ -148,8 +146,6 @@ function makeError(message) {
 }
 
 async function removeExistingArtifacts(appsClient, accessToken) {
-  const spaceContext = getModule('spaceContext');
-
   // Fetch the current remote version of configuration and...
   const remote = await appsClient.get('netlify');
   const siteConfigs = get(remote, ['config', 'sites'], []);
@@ -181,7 +177,7 @@ async function removeExistingArtifacts(appsClient, accessToken) {
   // ...remove content previews for it.
   const contentPreviewRemovalPromises = siteConfigs.map(siteConfig => {
     if (siteConfig.contentPreviewId) {
-      return spaceContext.contentPreview.remove({ id: siteConfig.contentPreviewId });
+      return getContentPreview().remove({ id: siteConfig.contentPreviewId });
     } else {
       return Promise.resolve();
     }

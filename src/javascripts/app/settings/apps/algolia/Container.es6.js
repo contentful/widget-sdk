@@ -9,7 +9,7 @@ import {
   Note,
   TextLink
 } from '@contentful/forma-36-react-components';
-import { getWebhookRepo } from 'app/settings/webhooks/WebhookRepoInstance';
+import { getWebhookRepo } from 'app/settings/webhooks/services/WebhookRepoInstance';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 import ModalLauncher from 'app/common/ModalLauncher.es6';

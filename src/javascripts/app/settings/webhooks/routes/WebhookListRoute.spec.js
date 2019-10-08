@@ -10,7 +10,7 @@ const mockWebhookRepo = {
 };
 
 jest.mock(
-  '../WebhookRepoInstance',
+  'app/settings/webhooks/services/WebhookRepoInstance',
   () => ({
     getWebhookRepo: () => mockWebhookRepo
   }),

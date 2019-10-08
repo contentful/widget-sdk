@@ -13,6 +13,7 @@ import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer.
 import ContentTypeForbiddenRemoval from './Dialogs/ContenTypeForbiddenRemoval.es6';
 import DeleteContentTypeDialog from './Dialogs/DeleteContentTypeDialog.es6';
 import { openDuplicateContentTypeDialog } from './Dialogs/index.es6';
+import { getContentPreview } from 'services/contentPreview';
 
 /**
  * @description
@@ -265,7 +266,7 @@ export default function create($scope, contentTypeIds) {
         .then(setPristine)
         .then(() => {
           setPristine();
-          spaceContext.contentPreview.clearCache();
+          getContentPreview().clearCache();
           return spaceContext.uiConfig;
         })
         .then(uiConfig => {

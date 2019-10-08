@@ -4,6 +4,16 @@ import * as mockedSpaceContext from 'ng/spaceContext';
 import SidebarContentPreviewContainer from './SidebarContentPreviewContainer.es6';
 import flushPromises from 'testHelpers/flushPromises';
 
+const mockContentPreview = {
+  replaceVariablesInUrl: jest.fn(),
+  getForContentType: jest.fn(),
+  getSelected: jest.fn()
+};
+
+jest.mock('services/contentPreview', () => ({
+  getContentPreview: () => mockContentPreview
+}));
+
 jest.mock(
   'services/localeStore.es6',
   () => ({
@@ -60,19 +70,19 @@ describe('entity_editor/Components/SidebarContentPreviewContainer.es6', () => {
         return true;
       }
     });
-    mockedSpaceContext.contentPreview.replaceVariablesInUrl.mockImplementation(url => {
+    mockContentPreview.replaceVariablesInUrl.mockImplementation(url => {
       return new Promise(resolve => {
         resolve(url.replace(`{entry.fields.slug}`, 'VALUE'));
       });
     });
-    mockedSpaceContext.contentPreview.getForContentType.mockResolvedValue(contentPreviews);
-    mockedSpaceContext.contentPreview.getSelected.mockReturnValue(contentPreviews[0].envId);
+    mockContentPreview.getForContentType.mockResolvedValue(contentPreviews);
+    mockContentPreview.getSelected.mockReturnValue(contentPreviews[0].envId);
   });
   afterEach(() => {
     mockedSpaceContext.getData.mockReset();
-    mockedSpaceContext.contentPreview.getForContentType.mockReset();
-    mockedSpaceContext.contentPreview.getSelected.mockReset();
-    mockedSpaceContext.contentPreview.replaceVariablesInUrl.mockReset();
+    mockContentPreview.getForContentType.mockReset();
+    mockContentPreview.getSelected.mockReset();
+    mockContentPreview.replaceVariablesInUrl.mockReset();
   });
 
   it('compiles the preview URL only when the user clicks the open preview button', async () => {
@@ -89,19 +99,19 @@ describe('entity_editor/Components/SidebarContentPreviewContainer.es6', () => {
 
     await wrapper.instance().componentDidMount();
 
-    expect(mockedSpaceContext.contentPreview.replaceVariablesInUrl).not.toHaveBeenCalled();
+    expect(mockContentPreview.replaceVariablesInUrl).not.toHaveBeenCalled();
 
     wrapper.setProps({
       entry
     });
 
-    expect(mockedSpaceContext.contentPreview.replaceVariablesInUrl).not.toHaveBeenCalled();
+    expect(mockContentPreview.replaceVariablesInUrl).not.toHaveBeenCalled();
 
     wrapper.find('[data-test-id="open-preview"]').simulate('click');
     await flushPromises();
     wrapper.update();
 
-    expect(mockedSpaceContext.contentPreview.replaceVariablesInUrl).toHaveBeenCalledTimes(1);
+    expect(mockContentPreview.replaceVariablesInUrl).toHaveBeenCalledTimes(1);
     expect(window.open).toHaveBeenCalledWith('https://google.com/search?q=VALUE');
   });
 });

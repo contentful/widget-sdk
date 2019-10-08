@@ -1,18 +1,16 @@
 import * as logger from 'services/logger.es6';
 import TheStore from 'TheStore/index.es6';
-import {
-  getSpaceInfo,
-  checkSpaceApiAccess,
-  checkOrgAccess,
-  getOrg,
-  getOnboardingSpaceId
-} from './utils.es6';
+import { getSpaceInfo, checkOrgAccess, getOrg, getOnboardingSpaceId } from './utils.es6';
 import spaceContextMock from 'ng/spaceContext';
+import * as AccessCheckerMocked from 'access_control/AccessChecker/index.es6';
 import { resolveLink } from './resolver.es6';
+
+jest.mock('access_control/AccessChecker/index.es6', () => ({
+  canReadApiKeys: jest.fn()
+}));
 
 jest.mock('./utils.es6', () => ({
   getSpaceInfo: jest.fn(),
-  checkSpaceApiAccess: jest.fn(),
   getOnboardingSpaceId: jest.fn(),
   getOrg: jest.fn(),
   checkOrgAccess: jest.fn()
@@ -113,7 +111,7 @@ describe('states/deeplink/resolver.es6', () => {
       });
       spaceContextMock.apiKeyRepo.getAll.mockResolvedValue([]);
 
-      checkSpaceApiAccess.mockReturnValue(true);
+      AccessCheckerMocked.canReadApiKeys.mockReturnValue(true);
 
       const result = await resolveLink('api', {});
 
@@ -134,7 +132,7 @@ describe('states/deeplink/resolver.es6', () => {
         space,
         spaceId: space.sys.id
       });
-      checkSpaceApiAccess.mockReturnValue(false);
+      AccessCheckerMocked.canReadApiKeys.mockReturnValue(false);
       const result = await resolveLink('api', {});
       expect(result).toEqual({ onboarding: false });
     });
@@ -150,7 +148,7 @@ describe('states/deeplink/resolver.es6', () => {
       });
       spaceContextMock.apiKeyRepo.getAll.mockResolvedValue([{ sys: { id: 'api-key-id' } }]);
 
-      checkSpaceApiAccess.mockReturnValue(true);
+      AccessCheckerMocked.canReadApiKeys.mockReturnValue(true);
 
       const result = await resolveLink('api', {});
 

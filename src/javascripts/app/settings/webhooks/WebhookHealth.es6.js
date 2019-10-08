@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getWebhookRepo } from './WebhookRepoInstance';
+import { getWebhookRepo } from 'app/settings/webhooks/services/WebhookRepoInstance';
 
 const THRESHOLD = { WARNING: 70, SUCCESS: 90 };
 

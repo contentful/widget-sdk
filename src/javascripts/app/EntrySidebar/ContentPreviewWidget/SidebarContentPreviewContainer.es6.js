@@ -7,6 +7,7 @@ import * as Analytics from 'analytics/Analytics.es6';
 import { getModule } from 'NgRegistry.es6';
 import TheLocaleStore from 'services/localeStore.es6';
 import * as Entries from 'data/entries.es6';
+import { getContentPreview } from 'services/contentPreview';
 
 const getEmptyContentPreview = () => ({
   compiledUrl: '',
@@ -32,12 +33,10 @@ export class SidebarContentPreviewContainer extends Component {
   };
 
   componentDidMount = async () => {
-    const spaceContext = getModule('spaceContext');
-
     // getForContentType does not return API objects, but some non-standard
     // internal representation with `envId` property
     // TODO: refactor to use just API objects
-    const contentPreviews = await spaceContext.contentPreview
+    const contentPreviews = await getContentPreview()
       .getForContentType(this.props.contentType.sys.id)
       .then(previews => previews || []);
     const selectedContentPreview = this.getSelectedContentPreview(contentPreviews);
@@ -51,9 +50,7 @@ export class SidebarContentPreviewContainer extends Component {
   };
 
   getSelectedContentPreview = contentPreviews => {
-    const spaceContext = getModule('spaceContext');
-
-    const selectedContentPreviewId = spaceContext.contentPreview.getSelected();
+    const selectedContentPreviewId = getContentPreview().getSelected();
     return (
       contentPreviews.find(preview => preview.envId === selectedContentPreviewId) ||
       contentPreviews[0] ||
@@ -62,10 +59,8 @@ export class SidebarContentPreviewContainer extends Component {
   };
 
   getCompiledUrls = async (contentPreviews, entry, contentType) => {
-    const spaceContext = getModule('spaceContext');
-
     const selectedContentPreview = this.getSelectedContentPreview(contentPreviews);
-    const compiledUrl = await spaceContext.contentPreview.replaceVariablesInUrl(
+    const compiledUrl = await getContentPreview().replaceVariablesInUrl(
       selectedContentPreview.url,
       Entries.internalToExternal(entry, contentType),
       TheLocaleStore.getDefaultLocale().code
@@ -128,9 +123,7 @@ export class SidebarContentPreviewContainer extends Component {
   };
 
   onChangeContentPreview = preview => {
-    const spaceContext = getModule('spaceContext');
-
-    spaceContext.contentPreview.setSelected(preview);
+    getContentPreview().setSelected(preview);
     this.setState({ selectedContentPreview: preview });
   };
 

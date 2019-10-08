@@ -36,6 +36,13 @@ describe('Space Template creation service', () => {
       }
     });
 
+    this.system.set('services/contentPreview', {
+      getContentPreview: () => ({
+        getAll: stubs.getContentPreview,
+        create: stubs.createContentPreview
+      })
+    });
+
     spaceTemplateCreator = await this.system.import('services/SpaceTemplateCreator/index.es6');
 
     await $initialize(this.system);
@@ -153,10 +160,6 @@ describe('Space Template creation service', () => {
         },
         cma: {
           updateEditorInterface: sinon.stub().resolves()
-        },
-        contentPreview: {
-          getAll: stubs.getContentPreview,
-          create: stubs.createContentPreview
         }
       };
 

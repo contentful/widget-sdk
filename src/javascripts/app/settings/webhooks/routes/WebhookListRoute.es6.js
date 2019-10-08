@@ -12,7 +12,7 @@ import * as Config from 'Config.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import TheLocaleStore from 'services/localeStore.es6';
-import { getWebhookRepo } from '../WebhookRepoInstance';
+import { getWebhookRepo } from 'app/settings/webhooks/services/WebhookRepoInstance';
 
 const WebhooksFetcher = createFetcherComponent(() => {
   const spaceContext = getModule('spaceContext');

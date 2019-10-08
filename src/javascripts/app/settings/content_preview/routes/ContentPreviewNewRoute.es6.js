@@ -8,6 +8,7 @@ import ContentPreviewFormPage, {
   ContentPreviewFormPageSkeleton
 } from '../ContentPreviewFormPage.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
+import { contentPreviewToInternal } from 'services/contentPreview/contentPreviewToInternal';
 
 const ContentTypesFetcher = createFetcherComponent(() => {
   const spaceContext = getModule('spaceContext');
@@ -22,8 +23,6 @@ export default class ContentPreviewNewRoute extends Component {
   };
 
   render() {
-    const spaceContext = getModule('spaceContext');
-
     return (
       <AdminOnly>
         <ContentTypesFetcher>
@@ -35,7 +34,7 @@ export default class ContentPreviewNewRoute extends Component {
               return <StateRedirect to="^.list" />;
             }
 
-            const initialValue = spaceContext.contentPreview.toInternal(
+            const initialValue = contentPreviewToInternal(
               {
                 name: '',
                 description: '',

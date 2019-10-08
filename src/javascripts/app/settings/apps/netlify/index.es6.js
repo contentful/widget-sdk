@@ -6,6 +6,7 @@ import createFetcherComponent from 'app/common/createFetcherComponent.es6';
 import NetlifyAppPage from './NetlifyAppPage.es6';
 import * as NetlifyClient from './NetlifyClient.es6';
 import AppPageShell from '../_common/AppPageShell.es6';
+import { getContentPreview } from 'services/contentPreview';
 import { getModule } from 'NgRegistry.es6';
 
 const NetlifyFetcher = createFetcherComponent(({ client }) => {
@@ -16,7 +17,7 @@ const NetlifyFetcher = createFetcherComponent(({ client }) => {
     NetlifyClient.createTicket(),
     spaceContext.publishedCTs.getAllBare(),
     // We'll be updating content previews. Keep the content preview cache warm:
-    spaceContext.contentPreview.getAll()
+    getContentPreview().getAll()
   ]);
 });
 

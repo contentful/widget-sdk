@@ -5,6 +5,7 @@ import * as K from 'utils/kefir.es6';
 import { deepFreeze, deepFreezeClone } from 'utils/Freeze.es6';
 import { ENVIRONMENT_ALIASING } from '../featureFlags.es6';
 import client from 'services/client.es6';
+import { purgeContentPreviewCache } from 'services/contentPreview';
 const MASTER_ENVIRONMENT_ID = 'master';
 
 export default function register() {
@@ -32,7 +33,6 @@ export default function register() {
       let Telemetry;
       let createUserCache;
       let EntityFieldValueHelpers;
-      let createContentPreview;
       let TheLocaleStore;
       let createExtensionDefinitionLoader;
       let createExtensionLoader;
@@ -65,7 +65,6 @@ export default function register() {
             Telemetry,
             { default: createUserCache },
             EntityFieldValueHelpers,
-            { default: createContentPreview },
             { default: TheLocaleStore },
             { default: createExtensionDefinitionLoader },
 
@@ -94,7 +93,6 @@ export default function register() {
             import('i13n/Telemetry.es6'),
             import('data/userCache.es6'),
             import('./EntityFieldValueHelpers.es6'),
-            import('services/contentPreview.es6'),
             import('services/localeStore.es6'),
             import('app/settings/AppsBeta/ExtensionDefinitionLoader.es6'),
             import('widgets/ExtensionLoader.es6'),
@@ -227,8 +225,6 @@ export default function register() {
           _.assign(self.publishedCTs, _.omit(publishedCTsForSpace, 'items$'));
 
           self.user = K.getValue(TokenStore.user$);
-
-          self.contentPreview = createContentPreview({ space, cma: self.cma });
 
           // This happens here, rather than in `prelude.js`, since it's scoped to a space
           // and not the user, so the spaceId is required.
@@ -570,7 +566,9 @@ export default function register() {
         spaceContext.uiConfig = null;
         spaceContext.space = null;
         spaceContext.users = null;
-        spaceContext.contentPreview = null;
+
+        purgeContentPreviewCache();
+
         if (spaceContext.docPool) {
           spaceContext.docPool.destroy();
           spaceContext.docPool = null;

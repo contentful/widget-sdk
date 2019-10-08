@@ -6,7 +6,7 @@ import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
-import { getWebhookRepo } from '../WebhookRepoInstance';
+import { getWebhookRepo } from 'app/settings/webhooks/services/WebhookRepoInstance';
 
 const WebhookFetcher = createFetcherComponent(props => {
   const { webhookId } = props;

@@ -8,13 +8,15 @@ import ContentPreviewFormPage, {
   ContentPreviewFormPageSkeleton
 } from '../ContentPreviewFormPage.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
+import { getContentPreview } from 'services/contentPreview';
+import { contentPreviewToInternal } from 'services/contentPreview/contentPreviewToInternal';
 
 const ContentTypesFetcher = createFetcherComponent(({ contentPreviewId }) => {
   const spaceContext = getModule('spaceContext');
 
   return Promise.all([
     spaceContext.publishedCTs.refreshBare(),
-    spaceContext.contentPreview.get(contentPreviewId)
+    getContentPreview().get(contentPreviewId)
   ]);
 });
 
@@ -26,8 +28,6 @@ export default class ContentPreviewEditRoute extends Component {
   };
 
   render() {
-    const spaceContext = getModule('spaceContext');
-
     return (
       <AdminOnly>
         <ContentTypesFetcher contentPreviewId={this.props.contentPreviewId}>
@@ -39,7 +39,7 @@ export default class ContentPreviewEditRoute extends Component {
               return <StateRedirect to="^.list" />;
             }
             const [contentTypes, preview] = data;
-            const initialValue = spaceContext.contentPreview.toInternal(preview, contentTypes);
+            const initialValue = contentPreviewToInternal(preview, contentTypes);
             return (
               <React.Fragment>
                 <DocumentTitle title={[initialValue.name, 'Content Preview']} />

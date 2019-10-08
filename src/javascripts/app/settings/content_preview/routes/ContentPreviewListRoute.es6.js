@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { values } from 'lodash';
-import { getModule } from 'NgRegistry.es6';
 
 import * as AccessChecker from 'access_control/AccessChecker/index.es6';
 import createFetcherComponent from 'app/common/createFetcherComponent.es6';
@@ -9,11 +8,12 @@ import ContentPreviewListPage, {
   ContentPreviewListPageSkeleton
 } from '../ContentPreviewListPage.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
+import { getContentPreview } from 'services/contentPreview';
 
 const ContentPreviewsFetcher = createFetcherComponent(() => {
-  const spaceContext = getModule('spaceContext');
-
-  return spaceContext.contentPreview.getAll().then(previews => values(previews));
+  return getContentPreview()
+    .getAll()
+    .then(previews => values(previews));
 });
 
 export default class ContentPreviewListRoute extends Component {

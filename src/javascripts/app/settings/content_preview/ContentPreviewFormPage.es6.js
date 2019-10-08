@@ -19,6 +19,7 @@ import Icon from 'ui/Components/Icon.es6';
 import validate from './ContentPreviewFormValidation.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { slugify } from 'services/slug.es6';
+import { getContentPreview } from 'services/contentPreview';
 import {
   WhatIsContentPreview,
   TokensForContentPreview,
@@ -161,7 +162,6 @@ export default class ContentPreviewFormPage extends Component {
 
   remove = async () => {
     const $state = getModule('$state');
-    const spaceContext = getModule('spaceContext');
 
     const confirmed = await ModalLauncher.open(({ isShown, onClose }) => (
       <ModalConfirm
@@ -183,7 +183,7 @@ export default class ContentPreviewFormPage extends Component {
     }
 
     this.setState({ busy: true });
-    return spaceContext.contentPreview
+    return getContentPreview()
       .remove({
         id: this.state.preview.id
       })
@@ -203,7 +203,6 @@ export default class ContentPreviewFormPage extends Component {
 
   save = () => {
     const $state = getModule('$state');
-    const spaceContext = getModule('spaceContext');
 
     const isValid = this.validate();
     if (!isValid) {
@@ -213,7 +212,8 @@ export default class ContentPreviewFormPage extends Component {
     const action = this.props.isNew ? 'create' : 'update';
 
     this.setState({ busy: true });
-    return spaceContext.contentPreview[action](this.state.preview).then(
+    const contentPreview = getContentPreview();
+    return contentPreview[action](this.state.preview).then(
       env => {
         this.updateField('version', env.sys.version);
 

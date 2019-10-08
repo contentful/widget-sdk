@@ -5,7 +5,7 @@ import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
-import { getWebhookRepo } from '../WebhookRepoInstance';
+import { getWebhookRepo } from 'app/settings/webhooks/services/WebhookRepoInstance';
 
 const WebhookCallFetcher = createFetcherComponent(props => {
   const { webhookId, callId } = props;

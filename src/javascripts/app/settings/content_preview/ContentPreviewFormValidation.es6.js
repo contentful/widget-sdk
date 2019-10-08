@@ -1,5 +1,8 @@
 import _ from 'lodash';
-import { VALID_URL_PATTERN, ENTRY_FIELD_PATTERN } from 'services/contentPreview.es6';
+import {
+  VALID_URL_PATTERN,
+  ENTRY_FIELD_PATTERN
+} from 'services/contentPreview/createContentPreview';
 
 function getWarnings(config) {
   const warnings = [];

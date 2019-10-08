@@ -23,7 +23,7 @@ const CONTENT_PREVIEW_LIMIT = 100;
  * entities only, also for rendering views.
  * TODO: add methods for subscribing to the currently selected content preview.
  */
-export default function create({ space, cma }) {
+export default function createContentPreview({ space, cma }) {
   let cache;
   const store = getStore();
 
@@ -35,8 +35,6 @@ export default function create({ space, cma }) {
     create,
     update,
     remove,
-    new: makeNew,
-    toInternal,
     replaceVariablesInUrl,
     getSelected,
     setSelected
@@ -260,58 +258,6 @@ export default function create({ space, cma }) {
         },
         []
       )
-    };
-  }
-
-  function getDefaultConfig(ct) {
-    return {
-      name: ct.name || 'Untitled',
-      contentType: ct.sys.id,
-      url: '',
-      enabled: false,
-      contentTypeFields: _.map(ct.fields, field => _.pick(field, ['apiName', 'type']))
-    };
-  }
-
-  /**
-   * @ngdoc method
-   * @name contentPreview#new
-   * @param {Array<ContentType>} contentTypes
-   * @returns {object} environment
-   *
-   * @description
-   * Returns a new content preview environment based on the content types in the space.
-   */
-  function makeNew(contentTypes) {
-    return {
-      configs: contentTypes.map(getDefaultConfig)
-    };
-  }
-
-  /**
-   * @ngdoc method
-   * @name contentPreview#toInternal
-   * @param {object} external
-   * @param {Array<ContentType>} contentTypes
-   * @returns {object}
-   *
-   * @description
-   * Converts a preview environment object from external to internal format.
-   */
-  function toInternal(external, contentTypes) {
-    function getConfigs() {
-      return contentTypes.map(ct => {
-        const config = _.find(external.configurations, _.matches({ contentType: ct.sys.id })) || {};
-        return _.defaults(config, getDefaultConfig(ct));
-      });
-    }
-
-    return {
-      name: external.name,
-      description: external.description,
-      configs: getConfigs(),
-      version: external.sys.version,
-      id: external.sys.id
     };
   }
 

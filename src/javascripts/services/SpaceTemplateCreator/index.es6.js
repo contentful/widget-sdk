@@ -11,6 +11,7 @@ import { enrichTemplate } from './enrichTemplate.es6';
 import * as Config from 'Config.es6';
 import { getModule } from 'NgRegistry.es6';
 import TheLocaleStore from 'services/localeStore.es6';
+import { getContentPreview } from 'services/contentPreview';
 
 const ASSET_PROCESSING_TIMEOUT = 60000;
 
@@ -454,7 +455,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
 
     const [keys, contentPreviews] = yield Promise.all([
       spaceContext.apiKeyRepo.getAll(),
-      spaceContext.contentPreview.getAll()
+      getContentPreview().getAll()
     ]);
 
     // Create default content preview if there is none existing, and an API key is present
@@ -498,7 +499,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
           .filter(Boolean)
       };
 
-      return spaceContext.contentPreview
+      return getContentPreview()
         .create(contentPreviewConfig)
         .then(createdContentPreview => {
           Analytics.track('content_preview:created', {
@@ -515,49 +516,47 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
     const baseUrl = DISCOVERY_APP_BASE_URL;
     const spaceId = spaceContext.space.getId();
 
-    return Promise.all([
-      spaceContext.apiKeyRepo.getAll(),
-      spaceContext.contentPreview.getAll()
-    ]).then(([keys, contentPreviews]) => {
-      function createConfig(ct, token) {
-        return {
-          contentType: ct.sys.id,
-          url:
-            baseUrl +
-            ct.sys.id +
-            '/{entry_id}/?space_id=' +
-            spaceId +
-            '&delivery_access_token=' +
-            token,
-          enabled: true,
-          example: true
-        };
-      }
+    return Promise.all([spaceContext.apiKeyRepo.getAll(), getContentPreview().getAll()]).then(
+      ([keys, contentPreviews]) => {
+        function createConfig(ct, token) {
+          return {
+            contentType: ct.sys.id,
+            url:
+              baseUrl +
+              ct.sys.id +
+              '/{entry_id}/?space_id=' +
+              spaceId +
+              '&delivery_access_token=' +
+              token,
+            enabled: true,
+            example: true
+          };
+        }
 
-      // Create default content preview if there is none existing, and an API key is present
-      if (keys.length && !Object.keys(contentPreviews).length) {
-        const accessToken = keys[0].accessToken;
+        // Create default content preview if there is none existing, and an API key is present
+        if (keys.length && !Object.keys(contentPreviews).length) {
+          const accessToken = keys[0].accessToken;
 
-        const contentPreviewConfig = {
-          name: 'Discovery App',
-          description:
-            "To help you get started, we've added our own Discovery App to preview content.",
-          configs: contentTypes.map(ct => createConfig(ct, accessToken))
-        };
-        return spaceContext.contentPreview
-          .create(contentPreviewConfig)
-          .then(createdContentPreview => {
-            Analytics.track('content_preview:created', {
-              name: createdContentPreview.name,
-              id: createdContentPreview.sys.id,
-              isDiscoveryApp: true
+          const contentPreviewConfig = {
+            name: 'Discovery App',
+            description:
+              "To help you get started, we've added our own Discovery App to preview content.",
+            configs: contentTypes.map(ct => createConfig(ct, accessToken))
+          };
+          return getContentPreview()
+            .create(contentPreviewConfig)
+            .then(createdContentPreview => {
+              Analytics.track('content_preview:created', {
+                name: createdContentPreview.name,
+                id: createdContentPreview.sys.id,
+                isDiscoveryApp: true
+              });
             });
-          });
-      } else {
-        // Don't do anything
-        Promise.resolve();
+        }
+
+        return Promise.resolve();
       }
-    });
+    );
   }
 }
 

@@ -1,5 +1,5 @@
 import { cloneDeep } from 'lodash';
-import { getWebhookRepo } from 'app/settings/webhooks/WebhookRepoInstance';
+import { getWebhookRepo } from 'app/settings/webhooks/services/WebhookRepoInstance';
 
 export const UNINDEXABLE_FIELD_TYPES = ['Object', 'Array', 'Link', 'Location'];
 export const META_FIELDS = [

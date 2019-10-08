@@ -11,7 +11,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink.es6';
 import WebhookCallStatus from './WebhookCallStatus.es6';
-import { getWebhookRepo } from './WebhookRepoInstance';
+import { getWebhookRepo } from 'app/settings/webhooks/services/WebhookRepoInstance';
 
 const PER_PAGE = 30;
 

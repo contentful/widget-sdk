@@ -2,17 +2,15 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { getSpaceNetlifyConfig } from '../NetlifyAppConfig';
 import { get } from 'lodash';
+import { getContentPreview } from 'services/contentPreview';
 
 import BuildButton from './BuildButton.es6';
-import { getModule } from 'NgRegistry.es6';
 
 const validId = id => typeof id === 'string' && id.length > 0;
 
 const getContentPreviewIdsFor = async contentType => {
-  const spaceContext = getModule('spaceContext');
-
   const ctId = get(contentType, ['sys', 'id']);
-  const contentPreviews = await spaceContext.contentPreview.getForContentType(ctId);
+  const contentPreviews = await getContentPreview().getForContentType(ctId);
 
   return (Array.isArray(contentPreviews) ? contentPreviews : []).map(p => p.envId);
 };
@@ -29,8 +27,6 @@ export default class NetlifyBuildButton extends Component {
   state = {};
 
   async componentDidMount() {
-    const spaceContext = getModule('spaceContext');
-
     const contentPreviewIds = await getContentPreviewIdsFor(this.props.contentType);
 
     // At least one content preview is required for Netlify app to operate.
@@ -54,7 +50,7 @@ export default class NetlifyBuildButton extends Component {
       // content type or we cannot get selected content preview
       // at all - just use the first one what matches behavior
       // of the preview button.
-      let selectedPreviewId = spaceContext.contentPreview.getSelected();
+      let selectedPreviewId = getContentPreview().getSelected();
 
       if (!contentPreviewIds.includes(selectedPreviewId)) {
         selectedPreviewId = contentPreviewIds[0];
