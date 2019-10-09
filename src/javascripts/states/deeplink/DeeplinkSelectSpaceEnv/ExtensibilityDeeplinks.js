@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
-import { Icon, TextLink } from '@contentful/forma-36-react-components';
+import { Icon, Paragraph } from '@contentful/forma-36-react-components';
 import AppIcon from 'app/settings/apps/_common/AppIcon.es6';
 import { css } from 'emotion';
 import WebhookTemplates from 'app/settings/webhooks/templates/index.es6';
@@ -150,9 +150,8 @@ export function ExtensionLinkHeader({ url }) {
         <AppIcon appId="generic" className={styles.appIcon} />
       </InstallLogos>
       <div className={styles.extensionLink}>
-        <TextLink href={url} target="_blank">
-          {url}
-        </TextLink>
+        <Paragraph>Make sure this extension comes from a trusted source.</Paragraph>
+        <pre>{url}</pre>
       </div>
     </>
   );
