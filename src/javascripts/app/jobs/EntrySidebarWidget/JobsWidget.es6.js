@@ -250,7 +250,6 @@ export default function JobsWidget({
               jobs={pendingJobs}
               onCancel={handleCancel}
               isReadOnly={primary.isDisabled()}
-              hasAlphaTag
             />
           )}
           {isDialogShown && (

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TextLink, Tag } from '@contentful/forma-36-react-components';
+import { TextLink } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import StateLink from 'app/common/StateLink.es6';
 
@@ -42,7 +42,6 @@ export default function JobsPageLink({ isMasterEnvironment }) {
                   <TextLink href={getHref()} icon="Clock">
                     Scheduled Content
                   </TextLink>
-                  <Tag className={styles.jobsAlphaTag}>ALPHA</Tag>
                 </React.Fragment>
               )}
             </JobsStateLink>

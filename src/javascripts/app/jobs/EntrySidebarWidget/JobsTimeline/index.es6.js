@@ -6,7 +6,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import Job from './Job.es6';
-import { TextLink, Tag, Subheading, List } from '@contentful/forma-36-react-components';
+import { TextLink, Subheading, List } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import { JobsStateLink } from 'app/jobs/JobsPageLink.es6';
@@ -140,8 +140,7 @@ const JobsTimeline = ({
   onCancel,
   isReadOnly,
   showAllScheduleLink,
-  size,
-  hasAlphaTag
+  size
 }) => {
   const jobsSortedByScheduledAt = _.sortBy(jobs, 'scheduledAt');
   return (
@@ -153,7 +152,7 @@ const JobsTimeline = ({
             size === 'small' ? styles.headingSmall : '',
             'entity-sidebar__heading'
           )}>
-          Current Schedule {hasAlphaTag && <Tag className={styles.alphaTag}>Alpha</Tag>}
+          Current Schedule
         </Subheading>
       </header>
       <div

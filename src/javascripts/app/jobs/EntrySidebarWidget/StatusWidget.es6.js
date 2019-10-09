@@ -10,7 +10,6 @@ import {
   DropdownListItem,
   TextLink,
   Icon,
-  Tag,
   Subheading
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
@@ -83,7 +82,7 @@ export default class StatusWidget extends React.PureComponent {
         }}>
         <div className={styles.scheduleListItemInnerWrapper}>
           <Icon icon="Clock" color="muted" className={styles.scheduledIcon} />
-          Set Schedule <Tag className={styles.alphaTag}>Alpha</Tag>
+          Set Schedule
         </div>
       </DropdownListItem>
     );
