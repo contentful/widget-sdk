@@ -117,8 +117,8 @@ export default function NewUser({ orgId, onReady, hasSsoEnabled, hasTeamsFeature
     if (spaceMemberships.length && spaceMemberships.some(membership => !membership.roles.length))
       return;
 
-    if (!spaceMemberships.length) {
-      // if no spaces were selected, display a confirmation dialog
+    if (!spaceMemberships.length && !teams.length) {
+      // if no spaces or teams were selected, display a confirmation dialog
       const confirmed = await confirmNoSpaces(emailList.length);
       if (!confirmed) return;
     }

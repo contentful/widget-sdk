@@ -114,14 +114,15 @@ async function addToTeams(endpoint, orgMembershipId, teams) {
  * @param {Object} endpoint Org endpoint
  * @param {String[]} email
  * @param {String} role An org role. One of 'owner', 'admin' or 'member'
- * @param {*} spaceMemberships An array with objects containing the space and the role ids. { space: {}, roles: []}
+ * @param {Object[]} spaceMemberships An array with objects containing the space and the role ids. { space: {}, roles: []}
+ * @param {Object[]} teams An array of teams
  */
 async function inviteToOrg(endpoint, email, role, spaceMemberships, teams) {
   return invite(endpoint, {
     role,
     email,
     spaceInvitations: convertSpaceMemberships(spaceMemberships),
-    teams: teams.map(team => team.sys.id)
+    teamInvitations: teams.map(team => ({ teamId: team.sys.id }))
   });
 }
 
