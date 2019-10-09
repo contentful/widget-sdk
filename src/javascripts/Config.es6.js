@@ -150,6 +150,18 @@ export function microBackendsUrl(path) {
   return settings.microBackendsUrl + ensureLeadingSlash(path);
 }
 
+/*
+  Creates an internal GK oauth URL, optionally with the origin/referrer (so that GK knows
+  where to return the user after completing the oauth flow).
+
+  Will, by default, return a URL in this shape:
+
+  https://be.contentful.com/account/profile/auth/github
+
+  With the origin, it will look like this:
+
+  https://be.contentful.com/account/profile/auth/github?origin=https://app.contentful.com/account/user/profile
+ */
 export function oauthUrl(identityKey, originSuffix) {
   let base = `https://be.${domain}/account/profile/auth/${identityKey}`;
 

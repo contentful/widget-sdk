@@ -78,9 +78,7 @@ const openEditModal = async (user, setUser) => {
     return;
   }
 
-  const updatedUser = Object.assign({}, user, result);
-
-  setUser(updatedUser);
+  setUser(result);
 };
 
 const openChangePasswordModal = async (user, setUser) => {
@@ -99,9 +97,7 @@ const openChangePasswordModal = async (user, setUser) => {
     return;
   }
 
-  const updatedUser = Object.assign({}, user, result);
-
-  setUser(updatedUser);
+  setUser(result);
 };
 
 export default function AccountDetails({ userData }) {
@@ -158,7 +154,7 @@ export default function AccountDetails({ userData }) {
           </div>
         </div>
         <div className={styles.column}>
-          <Tooltip place="bottom" id="edit-user-account" content="Edit account">
+          <Tooltip place="bottom" content="Edit account">
             <IconButton
               label="Edit user account details"
               iconProps={{ icon: 'Edit' }}

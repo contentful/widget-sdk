@@ -51,7 +51,7 @@ const DeleteUserModal = ({ singleOwnerOrganizations, onConfirm, onCancel, isShow
 
     try {
       await deleteUserAccount({ reason: activeOption, description: details });
-    } catch (_) {
+    } catch {
       setDeleting(false);
 
       Notification.error('Something went wrong while deleting your account. Try again.');

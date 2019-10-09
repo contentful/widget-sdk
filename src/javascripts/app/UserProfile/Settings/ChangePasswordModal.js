@@ -77,6 +77,37 @@ const reducer = createImmerReducer({
   }
 });
 
+function handlePasswordChangeErrors(errorDetails, dispatch) {
+  errorDetails.forEach(({ path, name }) => {
+    const pathFieldMapping = {
+      current_password: 'currentPassword',
+      password: 'newPassword'
+    };
+    let message;
+
+    switch (path) {
+      case 'current_password': {
+        if (name === 'invalid') {
+          message = 'The password you entered is not valid';
+        }
+        break;
+      }
+      case 'password': {
+        if (name === 'insecure') {
+          message = 'The password you entered is not secure';
+        }
+      }
+    }
+
+    if (message) {
+      dispatch({
+        type: 'SERVER_VALIDATION_FAILURE',
+        payload: { field: pathFieldMapping[path], value: message }
+      });
+    }
+  });
+}
+
 export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown }) {
   const [formData, dispatch] = useReducer(reducer, user, initializeReducer);
 
@@ -102,36 +133,7 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
       const { data } = err;
 
       if (get(data, ['sys', 'type']) === 'Error') {
-        const errorDetails = data.details.errors;
-
-        errorDetails.forEach(({ path, name }) => {
-          const pathFieldMapping = {
-            current_password: 'currentPassword',
-            password: 'newPassword'
-          };
-          let message;
-
-          switch (path) {
-            case 'current_password': {
-              if (name === 'invalid') {
-                message = 'The password you entered is not valid';
-              }
-              break;
-            }
-            case 'password': {
-              if (name === 'insecure') {
-                message = 'The password you entered is not secure';
-              }
-            }
-          }
-
-          if (message) {
-            dispatch({
-              type: 'SERVER_VALIDATION_FAILURE',
-              payload: { field: pathFieldMapping[path], value: message }
-            });
-          }
-        });
+        handlePasswordChangeErrors(data.details.errors, dispatch);
       } else {
         Notification.error('Something went wrong. Try again.');
       }
