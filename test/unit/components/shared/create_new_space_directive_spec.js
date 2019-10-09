@@ -54,6 +54,9 @@ describe('cfCreateNewSpace directive', () => {
       },
       dialog: {
         confirm: sinon.stub()
+      },
+      apiKeyRepo: {
+        create: sinon.stub()
       }
     };
 
@@ -66,6 +69,10 @@ describe('cfCreateNewSpace directive', () => {
     this.system.set('services/client.es6', {
       default: stubs.client
     });
+    this.system.set('app/api/services/ApiKeyRepoInstance', {
+      getApiKeyRepo: () => stubs.apiKeyRepo,
+      purgeApiKeyRepoCache: () => {}
+    });
 
     await $initialize(this.system, $provide => {
       $provide.value('$state', stubs.state);
@@ -73,7 +80,6 @@ describe('cfCreateNewSpace directive', () => {
 
     this.spaceContext = $inject('mocks/spaceContext').init();
     this.spaceContext.getData = sinon.stub();
-    this.spaceContext.apiKeyRepo = { create: sinon.stub() };
 
     stubs.spaceTemplateLoader.getTemplatesList.resolves(true);
 
@@ -181,7 +187,7 @@ describe('cfCreateNewSpace directive', () => {
       beforeEach(function() {
         stubs.tokenStore.refresh.resolves();
         stubs.client.createSpace.resolves({ sys: { id: 'spaceid' }, name: 'oldspace' });
-        this.spaceContext.apiKeyRepo.create.resolves();
+        stubs.apiKeyRepo.create.resolves();
         stubs.spaceTemplateLoader.getTemplate.resolves();
         this.setupDirective();
       });
@@ -219,7 +225,7 @@ describe('cfCreateNewSpace directive', () => {
         });
 
         it('creates one API key', function() {
-          sinon.assert.calledOnce(this.spaceContext.apiKeyRepo.create);
+          sinon.assert.calledOnce(stubs.apiKeyRepo.create);
         });
       });
 

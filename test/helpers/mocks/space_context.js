@@ -3,7 +3,6 @@ import { stubAll } from 'test/utils/sinon';
 import createMockEndpoint from 'test/utils/createSpaceEndpointMock';
 import APIClient from 'data/APIClient.es6';
 import * as CTRepo from 'data/ContentTypeRepo/Published.es6';
-import createApiKeyRepo from 'data/CMA/ApiKeyRepo.es6';
 
 /**
  * @ngdoc service
@@ -56,7 +55,6 @@ angular.module('contentful/mocks').factory('mocks/spaceContext', [
       spaceContextMock._mockEndpoint = createMockEndpoint();
       spaceContextMock.endpoint = spaceContextMock._mockEndpoint.request;
       spaceContextMock.cma = new APIClient(spaceContextMock.endpoint);
-      spaceContextMock.apiKeyRepo = createApiKeyRepo(spaceContextMock.endpoint);
       spaceContextMock.organization = {
         subscriptionPlan: {
           limits: {}

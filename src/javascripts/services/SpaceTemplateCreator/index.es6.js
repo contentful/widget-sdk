@@ -12,6 +12,7 @@ import * as Config from 'Config.es6';
 import { getModule } from 'NgRegistry.es6';
 import TheLocaleStore from 'services/localeStore.es6';
 import { getContentPreview } from 'services/contentPreview';
+import { getApiKeyRepo } from 'app/api/services/ApiKeyRepoInstance';
 
 const ASSET_PROCESSING_TIMEOUT = 60000;
 
@@ -425,7 +426,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
     if (handlers.itemWasHandled) {
       return Promise.resolve(handlers.response);
     }
-    return spaceContext.apiKeyRepo
+    return getApiKeyRepo()
       .create(apiKey.name, apiKey.description)
       .then(res => handlers.success({ data: res })) // `handlers` expect Client-style "data" objects
       .catch(handlers.error);
@@ -454,7 +455,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
     };
 
     const [keys, contentPreviews] = yield Promise.all([
-      spaceContext.apiKeyRepo.getAll(),
+      getApiKeyRepo().getAll(),
       getContentPreview().getAll()
     ]);
 
@@ -464,7 +465,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
 
       // we need to have Preview key as well, so the user can switch to preview API
       // in order to do that, we need to make another cal
-      const resolvedKey = yield spaceContext.apiKeyRepo.get(key.sys.id);
+      const resolvedKey = yield getApiKeyRepo().get(key.sys.id);
 
       const {
         accessToken: cdaToken,
@@ -516,7 +517,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
     const baseUrl = DISCOVERY_APP_BASE_URL;
     const spaceId = spaceContext.space.getId();
 
-    return Promise.all([spaceContext.apiKeyRepo.getAll(), getContentPreview().getAll()]).then(
+    return Promise.all([getApiKeyRepo().getAll(), getContentPreview().getAll()]).then(
       ([keys, contentPreviews]) => {
         function createConfig(ct, token) {
           return {

@@ -1,5 +1,4 @@
 import { pick } from 'lodash';
-import { getModule } from 'NgRegistry.es6';
 
 /**
  * @ngdoc service
@@ -29,8 +28,6 @@ import { getModule } from 'NgRegistry.es6';
  * @returns {ApiKeyRepo}
  */
 export default function create(spaceEndpoint) {
-  const $q = getModule('$q');
-
   // Promise to cached list of deliver keys
   let deliveryKeys = null;
 
@@ -116,7 +113,7 @@ export default function create(spaceEndpoint) {
         return apiKey;
       });
     } else {
-      return $q.resolve(apiKey);
+      return Promise.resolve(apiKey);
     }
   }
 

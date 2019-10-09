@@ -10,6 +10,7 @@ import { redirectReadOnlySpace } from 'states/SpaceSettingsBase.es6';
 import { spaceResolver } from 'states/Resolvers.es6';
 import ApiKeyListRoute from './ApiKeyList/ApiKeyListRoute';
 import CMATokensRoute from './CMATokens/CMATokensRoute';
+import { getApiKeyRepo } from 'app/api/services/ApiKeyRepoInstance';
 
 /**
  * @ngdoc service
@@ -63,11 +64,7 @@ const keyDetail = assign(
           return repo.getAll();
         }
       ],
-      apiKey: [
-        '$stateParams',
-        'spaceContext',
-        ($stateParams, spaceContext) => spaceContext.apiKeyRepo.get($stateParams.apiKeyId)
-      ]
+      apiKey: ['$stateParams', $stateParams => getApiKeyRepo().get($stateParams.apiKeyId)]
     }
   },
   apiKeyEditorState
@@ -81,11 +78,10 @@ export default {
     space: spaceResolver
   },
   onEnter: [
-    'spaceContext',
     'space',
-    async (spaceContext, space) => {
+    async space => {
       redirectReadOnlySpace(space);
-      spaceContext.apiKeyRepo.refresh();
+      getApiKeyRepo().refresh();
     }
   ],
   children: [

@@ -4,12 +4,13 @@ import ReloadNotification from 'app/common/ReloadNotification.es6';
 import createResourceService from 'services/ResourceService.es6';
 import * as ResourceUtils from 'utils/ResourceUtils.es6';
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import { getApiKeyRepo } from 'app/api/services/ApiKeyRepoInstance';
 
 async function getData() {
   const spaceContext = getModule('spaceContext');
   const resources = createResourceService(spaceContext.getId());
   const [apiKeys, resource] = await Promise.all([
-    spaceContext.apiKeyRepo.getAll(),
+    getApiKeyRepo().getAll(),
     resources.get('apiKey')
   ]);
 
@@ -43,7 +44,7 @@ export function useApiKeysState() {
 
   function createAPIKey() {
     const spaceName = spaceContext.getData(['name']);
-    return spaceContext.apiKeyRepo.create(spaceName);
+    return getApiKeyRepo().create(spaceName);
   }
 
   useEffect(() => {

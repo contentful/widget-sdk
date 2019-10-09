@@ -92,7 +92,7 @@ describe('Space Wizard action creators', function() {
       calculateTotalPrice: this.stubs.calculateTotalPrice
     });
 
-    this.system.set('data/CMA/ApiKeyRepo.es6', {
+    this.system.set('app/api/services/ApiKeyRepo', {
       default: () => {
         return {
           create: this.stubs.ApiKeyRepo_create

@@ -5,6 +5,10 @@ import spaceContextMock from 'ng/spaceContext';
 import * as AccessCheckerMocked from 'access_control/AccessChecker/index.es6';
 import { resolveLink } from './resolver.es6';
 
+const mockApiKeyRepo = {
+  getAll: jest.fn()
+};
+
 jest.mock('access_control/AccessChecker/index.es6', () => ({
   canReadApiKeys: jest.fn()
 }));
@@ -16,11 +20,12 @@ jest.mock('./utils.es6', () => ({
   checkOrgAccess: jest.fn()
 }));
 
+jest.mock('app/api/services/ApiKeyRepoInstance', () => ({
+  getApiKeyRepo: () => mockApiKeyRepo
+}));
+
 jest.mock('ng/spaceContext', () => ({
-  resetWithSpace: jest.fn(),
-  apiKeyRepo: {
-    getAll: jest.fn()
-  }
+  resetWithSpace: jest.fn()
 }));
 
 jest.mock('TheStore/index.es6', () => ({ getStore: jest.fn() }));
@@ -90,6 +95,10 @@ async function testModernStackOnboardingDeeplinks(link, expected) {
 }
 
 describe('states/deeplink/resolver.es6', () => {
+  beforeEach(() => {
+    mockApiKeyRepo.getAll.mockReset();
+  });
+
   it('should give generic error in case no link', async function() {
     const result = await resolveLink('', {});
     expect(result).toEqual({ onboarding: false });
@@ -109,7 +118,7 @@ describe('states/deeplink/resolver.es6', () => {
         space,
         spaceId: space.sys.id
       });
-      spaceContextMock.apiKeyRepo.getAll.mockResolvedValue([]);
+      mockApiKeyRepo.getAll.mockResolvedValue([]);
 
       AccessCheckerMocked.canReadApiKeys.mockReturnValue(true);
 
@@ -146,7 +155,7 @@ describe('states/deeplink/resolver.es6', () => {
         space,
         spaceId: space.sys.id
       });
-      spaceContextMock.apiKeyRepo.getAll.mockResolvedValue([{ sys: { id: 'api-key-id' } }]);
+      mockApiKeyRepo.getAll.mockResolvedValue([{ sys: { id: 'api-key-id' } }]);
 
       AccessCheckerMocked.canReadApiKeys.mockReturnValue(true);
 

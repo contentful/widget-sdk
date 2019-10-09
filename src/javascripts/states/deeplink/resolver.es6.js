@@ -5,6 +5,7 @@ import { getStoragePrefix } from 'components/shared/auto_create_new_space/Create
 import { getStore } from 'TheStore/index.es6';
 import { getModule } from 'NgRegistry.es6';
 import * as logger from 'services/logger.es6';
+import { getApiKeyRepo } from 'app/api/services/ApiKeyRepoInstance';
 
 const ONBOARDING_ERROR = 'modern onboarding space id does not exist';
 
@@ -167,7 +168,7 @@ async function resolveApi() {
     throw new Error('user is not authorized');
   }
 
-  const apiKeys = await spaceContext.apiKeyRepo.getAll();
+  const apiKeys = await getApiKeyRepo().getAll();
 
   if (!apiKeys || apiKeys.length === 0) {
     return {

@@ -15,8 +15,5 @@ export function getContentPreview() {
 }
 
 export function purgeContentPreviewCache() {
-  if (contentPreviewInstance) {
-    contentPreviewInstance.clearCache();
-  }
   contentPreviewInstance = null;
 }

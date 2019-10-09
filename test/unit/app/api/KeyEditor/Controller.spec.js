@@ -21,6 +21,16 @@ describe('app/api/KeyEditor/Controller.es6', () => {
       getResponseByActionAndEntity: sinon.stub()
     });
 
+    this.apiKeyRepo = {
+      remove: sinon.stub(),
+      save: sinon.stub()
+    };
+
+    this.system.set('app/api/services/ApiKeyRepoInstance', {
+      getApiKeyRepo: () => this.apiKeyRepo,
+      purgeApiKeyRepoCache: () => {}
+    });
+
     const attachController = (await this.system.import('app/api/KeyEditor/Controller.es6')).default;
     const template = (await this.system.import('app/api/KeyEditor/Template.es6')).default();
 
@@ -35,7 +45,6 @@ describe('app/api/KeyEditor/Controller.es6', () => {
     sinon.stub($state, 'go').resolves();
 
     this.spaceContext = $inject('mocks/spaceContext').init();
-    this.apiKeyRepo = this.spaceContext.apiKeyRepo;
 
     this.compile = apiKey => {
       apiKey = _.assign(
@@ -86,7 +95,7 @@ describe('app/api/KeyEditor/Controller.es6', () => {
   describe('delete action', () => {
     it('removes api key from repo', function() {
       const $state = $inject('$state');
-      this.apiKeyRepo.remove = sinon.stub().resolves();
+      this.apiKeyRepo.remove.resolves();
 
       const editor = this.compile();
       editor.actions.deleteConfirm().click();
@@ -98,9 +107,7 @@ describe('app/api/KeyEditor/Controller.es6', () => {
 
   describe('save action', () => {
     it('saves key to repo', function() {
-      this.apiKeyRepo.save = sinon.spy(data => {
-        return $inject('$q').resolve(data);
-      });
+      this.apiKeyRepo.save.resolves({});
 
       const editor = this.compile();
 

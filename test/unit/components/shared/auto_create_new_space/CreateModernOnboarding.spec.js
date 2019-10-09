@@ -7,9 +7,20 @@ describe('CreateModernOnboarding service', function() {
     this.createCMAKey = sinon.stub().returns({ token: 'token' });
     this.user$ = K.createMockProperty({ sys: { id: 'someUser' } });
 
+    this.apiKeyRepo = {
+      getAll: sinon.stub(),
+      create: sinon.stub()
+    };
+
     this.system.set('services/TokenStore.es6', {
       user$: this.user$
     });
+
+    this.system.set('app/api/services/ApiKeyRepoInstance', {
+      getApiKeyRepo: () => this.apiKeyRepo,
+      purgeApiKeyRepoCache: () => {}
+    });
+
     this.system.set('app/api/CMATokens/TokenResourceManager', {
       create: () => ({ create: this.createCMAKey })
     });
@@ -18,17 +29,7 @@ describe('CreateModernOnboarding service', function() {
       'components/shared/auto_create_new_space/CreateModernOnboarding.es6'
     );
 
-    await $initialize(this.system, $provide => {
-      this.getAllKeys = sinon.stub();
-      this.createKey = sinon.stub();
-
-      $provide.constant('spaceContext', {
-        apiKeyRepo: {
-          getAll: this.getAllKeys,
-          create: this.createKey
-        }
-      });
-    });
+    await $initialize(this.system);
   });
 
   describe('getUser', function() {
@@ -48,7 +49,7 @@ describe('CreateModernOnboarding service', function() {
   describe('getDeliveryToken', function() {
     it('should return a first key from the list', async function() {
       const key = { accessToken: 'some' };
-      this.getAllKeys.returns(Promise.resolve([key]));
+      this.apiKeyRepo.getAll.returns(Promise.resolve([key]));
       const deliveryToken = await this.CreateModernOnboarding.getDeliveryToken();
 
       expect(deliveryToken).toBe(key.accessToken);
@@ -56,8 +57,8 @@ describe('CreateModernOnboarding service', function() {
 
     it('should create a new key if list is empty', async function() {
       const key = { accessToken: 'newly created key' };
-      this.getAllKeys.returns(Promise.resolve([]));
-      this.createKey.returns(Promise.resolve(key));
+      this.apiKeyRepo.getAll.returns(Promise.resolve([]));
+      this.apiKeyRepo.create.returns(Promise.resolve(key));
       const deliveryToken = await this.CreateModernOnboarding.getDeliveryToken();
 
       expect(deliveryToken).toBe(key.accessToken);

@@ -11,6 +11,7 @@ import { getModule } from 'NgRegistry.es6';
 import * as logger from 'services/logger.es6';
 import * as Intercom from 'services/intercom.es6';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog.es6';
+import { getApiKeyRepo } from 'app/api/services/ApiKeyRepoInstance';
 
 import initKeyEditor from './KeyEditor.es6';
 import { get as getBoilerplates } from './BoilerplateCode.es6';
@@ -174,9 +175,8 @@ function mountKeyEditor($scope, apiKey, spaceEnvironments, spaceAliases) {
 
   function remove() {
     const $state = getModule('$state');
-    const spaceContext = getModule('spaceContext');
 
-    return spaceContext.apiKeyRepo
+    return getApiKeyRepo()
       .remove(apiKey.sys.id)
       .then(
         () => $state.go('^.list').then(() => notify.deleteSuccess(apiKey)),
@@ -198,8 +198,6 @@ function mountKeyEditor($scope, apiKey, spaceEnvironments, spaceAliases) {
   }
 
   function save() {
-    const spaceContext = getModule('spaceContext');
-
     if (model.environments.length < 1) {
       notify.saveNoEnvironments(model.aliasesExist);
       return;
@@ -211,14 +209,16 @@ function mountKeyEditor($scope, apiKey, spaceEnvironments, spaceAliases) {
       }
     });
 
-    return spaceContext.apiKeyRepo.save(toPersist).then(
-      newKey => {
-        apiKey = newKey;
-        pristineModel = makeApiKeyModel(apiKey);
-        $scope.context.dirty = false;
-        notify.saveSuccess(newKey);
-      },
-      err => notify.saveFail(err, apiKey)
-    );
+    return getApiKeyRepo()
+      .save(toPersist)
+      .then(
+        newKey => {
+          apiKey = newKey;
+          pristineModel = makeApiKeyModel(apiKey);
+          $scope.context.dirty = false;
+          notify.saveSuccess(newKey);
+        },
+        err => notify.saveFail(err, apiKey)
+      );
   }
 }

@@ -22,6 +22,7 @@ import * as accessChecker from 'access_control/AccessChecker/index.es6';
 import useAsync from 'app/common/hooks/useAsync.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 import * as logger from 'services/logger.es6';
+import { getApiKeyRepo } from 'app/api/services/ApiKeyRepoInstance';
 
 const isTEASpace = () => {
   const spaceContext = getModule('spaceContext');
@@ -50,13 +51,13 @@ const fetchData = (setLoading, setState, isSpaceAdmin) => async () => {
     runTask(function*() {
       let key;
       try {
-        [key] = yield spaceContext.apiKeyRepo.getAll();
+        [key] = yield getApiKeyRepo().getAll();
       } catch (e) {
         logger.logError('Space Home', e);
       }
       // there might be no keys - it was not created yet, or user explicitly removed them
       if (key) {
-        const keyWithPreview = yield spaceContext.apiKeyRepo.get(key.sys.id);
+        const keyWithPreview = yield getApiKeyRepo().get(key.sys.id);
         setState({
           hasTeamsEnabled,
           cdaToken: key.accessToken,

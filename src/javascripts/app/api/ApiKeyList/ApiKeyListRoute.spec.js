@@ -6,6 +6,11 @@ import * as spaceContextMocked from 'ng/spaceContext';
 
 let mockedResource;
 
+const mockApiKeyRepo = {
+  getAll: jest.fn().mockResolvedValue([]),
+  create: jest.fn().mockResolvedValue()
+};
+
 const mockKeyData = [
   {
     name: 'My Api Key',
@@ -23,14 +28,14 @@ const mockKeyData = [
   }
 ];
 
+jest.mock('app/api/services/ApiKeyRepoInstance', () => ({
+  getApiKeyRepo: () => mockApiKeyRepo
+}));
+
 jest.mock('ng/spaceContext', () => ({
   getId: () => 'space-id',
   organization: {
     pricingVersion: 'pricing_version_2'
-  },
-  apiKeyRepo: {
-    getAll: jest.fn().mockResolvedValue([]),
-    create: jest.fn().mockResolvedValue()
   },
   getData: jest.fn().mockImplementation(type => {
     if (type === 'name') {
@@ -47,7 +52,8 @@ describe('ApiKeyListRoute', () => {
   afterEach(cleanup);
 
   beforeEach(() => {
-    spaceContextMocked.apiKeyRepo.getAll.mockReset();
+    mockApiKeyRepo.create.mockReset();
+    mockApiKeyRepo.getAll.mockReset();
     spaceContextMocked.organization.pricingVersion = 'pricing_version_2';
     mockedResource = {
       usage: 0,
@@ -59,7 +65,7 @@ describe('ApiKeyListRoute', () => {
   });
 
   it('should render empty list', async () => {
-    spaceContextMocked.apiKeyRepo.getAll.mockResolvedValue([]);
+    mockApiKeyRepo.getAll.mockResolvedValue([]);
 
     const { getByTestId, getByText } = render(<ApiKeyListRoute />);
 
@@ -73,7 +79,7 @@ describe('ApiKeyListRoute', () => {
 
   it('should render non-empty list', async () => {
     spaceContextMocked.organization.pricingVersion = 'pricing_version_1';
-    spaceContextMocked.apiKeyRepo.getAll.mockResolvedValue(mockKeyData);
+    mockApiKeyRepo.getAll.mockResolvedValue(mockKeyData);
 
     const { getByTestId, getByText } = render(<ApiKeyListRoute />);
 
@@ -99,7 +105,7 @@ describe('ApiKeyListRoute', () => {
     });
 
     it('should render non-empty list', async () => {
-      spaceContextMocked.apiKeyRepo.getAll.mockResolvedValue(mockKeyData);
+      mockApiKeyRepo.getAll.mockResolvedValue(mockKeyData);
 
       const { getByTestId, getByText } = render(<ApiKeyListRoute />);
 

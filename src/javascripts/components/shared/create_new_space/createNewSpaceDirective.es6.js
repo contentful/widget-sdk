@@ -12,6 +12,7 @@ import * as spaceTemplateCreator from 'services/SpaceTemplateCreator/index.es6';
 import * as Analytics from 'analytics/Analytics.es6';
 import * as enforcements from 'access_control/Enforcements.es6';
 import * as TokenStore from 'services/TokenStore.es6';
+import { getApiKeyRepo } from 'app/api/services/ApiKeyRepoInstance';
 
 export default function register() {
   registerDirective('cfCreateNewSpace', () => ({
@@ -242,7 +243,7 @@ export default function register() {
             Analytics.track('space:create', spaceCreateEventData);
 
             if (templateName === 'Blank') {
-              spaceContext.apiKeyRepo.create(
+              getApiKeyRepo().create(
                 'Example Key',
                 'We’ve created an example API key for you to help you get started.'
               );

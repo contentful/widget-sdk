@@ -6,6 +6,7 @@ import { deepFreeze, deepFreezeClone } from 'utils/Freeze.es6';
 import { ENVIRONMENT_ALIASING } from '../featureFlags.es6';
 import client from 'services/client.es6';
 import { purgeContentPreviewCache } from 'services/contentPreview';
+import { purgeApiKeyRepoCache } from 'app/api/services/ApiKeyRepoInstance';
 const MASTER_ENVIRONMENT_ID = 'master';
 
 export default function register() {
@@ -26,7 +27,6 @@ export default function register() {
       let enforcementsDeInit;
 
       let ShareJSConnection;
-      let createApiKeyRepo;
       let shouldUseEnvEndpoint;
       let APIClient;
       let logger;
@@ -58,7 +58,6 @@ export default function register() {
         async init() {
           [
             ShareJSConnection,
-            { default: createApiKeyRepo },
             { default: shouldUseEnvEndpoint },
             { default: APIClient },
             logger,
@@ -86,7 +85,6 @@ export default function register() {
             { getSpaceFeature }
           ] = await Promise.all([
             import('data/sharejs/Connection.es6'),
-            import('data/CMA/ApiKeyRepo.es6'),
             import('data/shouldUseEnvEndpoint.es6'),
             import('data/APIClient.es6'),
             import('services/logger.es6'),
@@ -171,7 +169,6 @@ export default function register() {
           self.space = space;
           self.cma = new APIClient(self.endpoint);
           self.users = createUserCache(self.endpoint);
-          self.apiKeyRepo = createApiKeyRepo(self.endpoint);
           self.localeRepo = createLocaleRepo(self.endpoint);
           self.organization = deepFreezeClone(self.getData('organization'));
 
@@ -568,6 +565,7 @@ export default function register() {
         spaceContext.users = null;
 
         purgeContentPreviewCache();
+        purgeApiKeyRepoCache();
 
         if (spaceContext.docPool) {
           spaceContext.docPool.destroy();

@@ -8,6 +8,7 @@ import * as auth from 'Authentication.es6';
 import { getValue } from 'utils/kefir.es6';
 import { getModule } from 'NgRegistry.es6';
 import * as Entries from 'data/entries.es6';
+import { getApiKeyRepo } from 'app/api/services/ApiKeyRepoInstance';
 
 const DEFAULT_LOCALE = 'en-US';
 
@@ -72,8 +73,7 @@ export const checkSpace = spaceId => store.get(getMSOnboardingSpaceKey()) === sp
 // used for grouping all related analytics events
 export const getGroupId = () => 'modernStackOnboarding';
 export const createDeliveryToken = () => {
-  const spaceContext = getModule('spaceContext');
-  return spaceContext.apiKeyRepo.create(
+  return getApiKeyRepo().create(
     'Example Key',
     'We’ve created an example API key for you to help you get started.'
   );
@@ -109,8 +109,7 @@ export const track = (elementId, toState) => {
   Analytics.track('element:click', payload);
 };
 export const getDeliveryToken = async () => {
-  const spaceContext = getModule('spaceContext');
-  const keys = await spaceContext.apiKeyRepo.getAll();
+  const keys = await getApiKeyRepo().getAll();
   const key = keys[0];
 
   if (key) {

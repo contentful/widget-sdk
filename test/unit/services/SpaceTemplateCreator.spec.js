@@ -19,7 +19,9 @@ describe('Space Template creation service', () => {
       getContentPreview: sinon.stub(),
       createContentPreview: sinon.stub(),
       refreshLocaleStore: sinon.stub(),
-      setActiveLocales: sinon.stub()
+      setActiveLocales: sinon.stub(),
+      createApiKey: sinon.stub().returns(Promise.resolve()),
+      getAllApiKeys: sinon.stub().returns(Promise.resolve([{ accessToken: 'mock-token' }]))
     };
 
     this.system.set('analytics/Analytics.es6', { track: _.noop });
@@ -41,6 +43,14 @@ describe('Space Template creation service', () => {
         getAll: stubs.getContentPreview,
         create: stubs.createContentPreview
       })
+    });
+
+    this.system.set('app/api/services/ApiKeyRepoInstance', {
+      getApiKeyRepo: () => ({
+        create: stubs.createApiKey,
+        getAll: stubs.getAllApiKeys
+      }),
+      purgeApiKeyRepoCache: () => {}
     });
 
     spaceTemplateCreator = await this.system.import('services/SpaceTemplateCreator/index.es6');
@@ -151,10 +161,6 @@ describe('Space Template creation service', () => {
             })
           )
         },
-        apiKeyRepo: {
-          create: sinon.stub().resolves(),
-          getAll: () => Promise.resolve([{ accessToken: 'mock-token' }])
-        },
         localeRepo: {
           save: sinon.stub()
         },
@@ -259,7 +265,7 @@ describe('Space Template creation service', () => {
     });
 
     it('creates 2 apikeys', () => {
-      expect(spaceContext.apiKeyRepo.create.callCount).toBe(2);
+      expect(stubs.createApiKey.callCount).toBe(2);
     });
 
     it('creates 1 preview environment', () => {
