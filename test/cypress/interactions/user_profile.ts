@@ -6,6 +6,8 @@ import {
 const defaultData = require('../fixtures/responses/user_account/default-data.json');
 const identityLoginData = require('../fixtures/responses/user_account/identity-login-user-data.json');
 const updateDefaultData = require('../fixtures/responses/user_account/udated-default-data.json');
+const updatePasswordDefaultData = require('../fixtures/responses/user_account/updated-password-default-data.json');
+const updateIdentityLoginData = require('../fixtures/responses/user_account/updated-password-identity-login.json');
 const invalidCurrentPasswordData = require('../fixtures/responses/user_account/invalid-current-password.json');
 const insecureNewPasswordData = require('../fixtures/responses/user_account/insecure-new-password.json');
 
@@ -125,7 +127,7 @@ export const addPassword = {
             }),
             willRespondWith: {
                 status: 200,
-                body: defaultData
+                body: updateIdentityLoginData
             }
         }).as('addPasswordSuccess');
 
@@ -161,7 +163,7 @@ export const changePassword = {
             }),
             willRespondWith: {
                 status: 200,
-                body: defaultData
+                body: updatePasswordDefaultData
             }
         }).as('changePasswordSuccess');
 
