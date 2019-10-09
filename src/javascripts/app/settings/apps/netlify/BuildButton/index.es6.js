@@ -34,7 +34,7 @@ export default class NetlifyBuildButton extends Component {
       return;
     }
     const netlifyAppConfig = getSpaceNetlifyConfig();
-    const config = netlifyAppConfig.get();
+    const config = await netlifyAppConfig.get();
     const sites = get(config, ['sites'], []).filter(s => validId(s.contentPreviewId));
     if (sites.length < 1) {
       return;
