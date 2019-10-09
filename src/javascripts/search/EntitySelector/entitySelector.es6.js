@@ -54,6 +54,7 @@ export function open(options) {
     showCustomEmptyMessage: false
   };
   const dialog = modalDialog.open({
+    attachTo: 'body',
     template: 'entity_selector_dialog',
     backgroundClose: true,
     ignoreEsc: false,
