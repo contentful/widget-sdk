@@ -2,10 +2,13 @@ import base from 'states/Base.es6';
 import { iframeStateWrapper, reactStateWrapper } from './utils.es6';
 import { noop } from 'lodash';
 
-const user = userBase({
+const user = reactStateWrapper({
+  loadingText: 'Loading your account…',
+  onEnter: [noop],
   name: 'user',
-  title: 'User settings',
-  url: '/user{pathSuffix:PathSuffix}'
+  title: 'User profile',
+  url: '/user',
+  componentPath: 'app/UserProfile/Settings'
 });
 
 const spaceMemberships = reactStateWrapper({
@@ -41,15 +44,11 @@ const userCancellation = userBase({
 });
 
 function userBase(definition) {
-  return iframeStateWrapper(
-    Object.assign(
-      {
-        loadingText: 'Loading your account…',
-        onEnter: [noop]
-      },
-      definition
-    )
-  );
+  return iframeStateWrapper({
+    loadingText: 'Loading your account…',
+    onEnter: [noop],
+    ...definition
+  });
 }
 
 export default base({

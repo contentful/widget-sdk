@@ -113,7 +113,7 @@ function processJsFile(filename) {
           const { properties } = args[0];
 
           for (const prop of properties) {
-            if (prop.key.name === 'componentPath') {
+            if (prop.key && prop.key.name === 'componentPath') {
               names.push(prop.value.value);
             }
           }

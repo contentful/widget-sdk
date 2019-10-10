@@ -50,7 +50,7 @@ export function iframeStateWrapper(definition = {}) {
 export function reactStateWrapper(definition = {}) {
   const { componentPath } = definition;
   const defaults = {
-    controller: getController(),
+    controller: getController(definition.title),
     resolve: {
       useNewView: () => {}
     },
@@ -87,7 +87,7 @@ export function conditionalIframeWrapper(definition = {}) {
   return organizationBase(Object.assign(defaults, definition));
 }
 
-function getController(title) {
+function getController(title = '') {
   return [
     '$scope',
     '$stateParams',

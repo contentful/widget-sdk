@@ -4,3 +4,4 @@ export const createEndpoint = jest.fn().mockReturnValue(mockEndpoint);
 
 export const createOrganizationEndpoint = jest.fn().mockReturnValue(mockEndpoint);
 export const createSpaceEndpoint = jest.fn().mockReturnValue(mockEndpoint);
+export const createUsersEndpoint = jest.fn().mockReturnValue(mockEndpoint);

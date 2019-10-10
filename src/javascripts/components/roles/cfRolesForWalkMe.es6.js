@@ -29,8 +29,10 @@ export default function register() {
 
               if (variation && variation !== lastVariation) {
                 const spaceMember = spaceContext.getData('spaceMember');
-                const isSpaceAdmin = spaceMember.admin;
-                const spaceRoleNames = _.sortBy(_.map(spaceMember.roles, 'name')).join(',');
+                const isSpaceAdmin = spaceMember ? spaceMember.admin : false;
+                const spaceRoleNames = _.sortBy(
+                  _.map(spaceMember ? spaceMember.roles : [], 'name')
+                ).join(',');
 
                 // load attributes needed by walkME
                 $el.attr(isAdminAttr, isSpaceAdmin);
