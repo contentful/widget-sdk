@@ -14,7 +14,7 @@ import {
   ModalConfirm,
   Typography
 } from '@contentful/forma-36-react-components';
-import Workbench from 'app/common/Workbench.es6';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import pluralize from 'pluralize';
 import { orgRoles } from 'utils/MembershipUtils.es6';
 import { useAddToOrg } from './NewUserHooks.es6';
@@ -26,6 +26,7 @@ import NewUserProgress from './NewUserProgress.es6';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
+import Icon from 'ui/Components/Icon.es6';
 
 const styles = {
   subheading: css({
@@ -190,7 +191,8 @@ export default function NewUser({ orgId, onReady, hasSsoEnabled, hasTeamsFeature
 
   return (
     <Workbench title="Invite users">
-      <Workbench.Content centered>
+      <Workbench.Header title="Invite users" icon={<Icon name="page-users" scale="0.75" />} />
+      <Workbench.Content type="text">
         {error && <Paragraph>Something went wrong</Paragraph>}
         {isLoading && <NewUserProgress progress={progress} emailList={emailList} />}
         {data && (
