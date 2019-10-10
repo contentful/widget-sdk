@@ -14,7 +14,7 @@ import { getModule } from 'NgRegistry.es6';
 
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo.es6';
 import { openCreateDialog } from './EditDialog.es6';
-import { openDeleteDialog } from './DeleteDialog.es6';
+import { openDeleteEnvironmentDialog } from './DeleteDialog.es6';
 import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService.es6';
 import View from './View.es6';
 const environmentsFlagName = 'feature-dv-11-2017-environments';
@@ -91,9 +91,15 @@ const reduce = makeReducer({
     return state;
   },
   [OpenDeleteDialog]: (state, environment, { resourceEndpoint, dispatch }) => {
+    const $state = getModule('$state');
+    const activeEnvironmentId = $state.params.environmentId;
     C.runTask(function*() {
-      const updated = yield openDeleteDialog(resourceEndpoint.remove, environment);
-      if (updated) {
+      const deleted = yield openDeleteEnvironmentDialog(
+        resourceEndpoint.remove,
+        environment.id,
+        activeEnvironmentId
+      );
+      if (deleted) {
         dispatch(Reload);
       }
     });

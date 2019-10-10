@@ -262,19 +262,6 @@ describe('app/SpaceSettings/Environments', () => {
     });
   });
 
-  it('deletes an environment', async function() {
-    this.putEnvironment({ id: 'e1', status: 'ready' });
-    this.init();
-
-    this.container.find('environment.e1', 'openDeleteDialog').click();
-    await $wait();
-    this.container.find('spaceEnvironmentsDeleteDialog', 'confirmId').setValue('e1');
-    this.container.find('spaceEnvironmentsDeleteDialog', 'delete').click();
-    await $wait();
-
-    this.container.find('environment.e1').assertNonExistent();
-  });
-
   describe('shows usage info in the sidebar', function() {
     beforeEach(function() {
       this.getUsageText = () => this.container.find('environmentsUsage');
