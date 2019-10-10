@@ -56,6 +56,10 @@ function getCardTitle({ selectEnvironment, link, id }) {
   }
 }
 
+function isUrlSafe(url) {
+  return ['http://', 'https://'].some(proto => url.trim().startsWith(proto));
+}
+
 export default function DeeplinkSelectSpaceEnv(props) {
   const { state, fetchInitialData, selectEnvironment, selectSpace } = useComponentState();
   const { link, id, url } = props.searchParams;
@@ -69,7 +73,7 @@ export default function DeeplinkSelectSpaceEnv(props) {
       <div className={styles.card}>
         {id && isWebhookLink(link) && <WebhookLinkHeader templateId={id} />}
         {id && isAppLink(link) && <AppLinkHeader appId={id} />}
-        {url && isExtensionLink(link) && <ExtensionLinkHeader url={url} />}
+        {url && isExtensionLink(link) && isUrlSafe(url) && <ExtensionLinkHeader url={url} />}
         <Heading className={styles.title}>
           {getCardTitle({
             selectEnvironment: props.selectEnvironment,
