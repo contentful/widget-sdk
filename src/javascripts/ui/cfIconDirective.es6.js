@@ -213,7 +213,6 @@ import svgSpacetemplateBlogEs6 from 'svg/spacetemplate-blog.es6';
 import svgSpacetemplateCatalogueEs6 from 'svg/spacetemplate-catalogue.es6';
 import svgSpacetemplateGalleryEs6 from 'svg/spacetemplate-gallery.es6';
 import svgSpacetemplateTeaEs6 from 'svg/spacetemplate-tea.es6';
-import svgStarEs6 from 'svg/star.es6';
 import svgSubscriptionEs6 from 'svg/subscription.es6';
 import svgSwiftEs6 from 'svg/swift.es6';
 import svgTagsWidgetEs6 from 'svg/tags-widget.es6';
@@ -436,7 +435,6 @@ const SVGs = {
   'spacetemplate-catalogue': svgSpacetemplateCatalogueEs6,
   'spacetemplate-gallery': svgSpacetemplateGalleryEs6,
   'spacetemplate-tea': svgSpacetemplateTeaEs6,
-  star: svgStarEs6,
   subscription: svgSubscriptionEs6,
   swift: svgSwiftEs6,
   'tags-widget': svgTagsWidgetEs6,

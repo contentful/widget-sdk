@@ -9452,28 +9452,6 @@ pre,
   .sticky-parent {
     padding-top: 0;
   }
-  .rating-editor {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-  }
-  .rating-editor__star {
-    padding-right: 0.5em;
-    margin-top: -2px;
-    cursor: pointer;
-  }
-  .rating-editor__star[aria-disabled="true"] {
-    cursor: default;
-  }
-  .rating-editor__star svg path {
-    fill: #e5ebed;
-  }
-  .rating-editor__star[data-active="true"] svg path {
-    fill: #4a90e2;
-  }
-  .rating-editor__clear {
-    margin-left: 0.5em;
-  }
   .json-editor__disabled-content {
     font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;
     color: #8091a5;

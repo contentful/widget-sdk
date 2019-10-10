@@ -15,6 +15,7 @@ import { ListEditor } from '@contentful/field-editor-list';
 import { CheckboxEditor } from '@contentful/field-editor-checkbox';
 import { RadioEditor } from '@contentful/field-editor-radio';
 import { BooleanEditor } from '@contentful/field-editor-boolean';
+import { RatingEditor } from '@contentful/field-editor-rating';
 
 const CfLinkEditor = linkEditorWithCfWebApp(LinkEditor);
 const CfSingleLinkEditor = linkEditorWithCfWebApp(SingleLinkEditor);
@@ -120,6 +121,9 @@ export function create() {
     fieldTypes: ['Integer', 'Number'],
     name: 'Rating',
     icon: 'rating',
+    renderFieldEditor: ({ widgetApi }) => (
+      <RatingEditor field={widgetApi.field} parameters={widgetApi.parameters} />
+    ),
     parameters: [
       {
         id: 'stars',
@@ -130,8 +134,7 @@ export function create() {
         required: true
       }
     ],
-    notFocusable: true,
-    template: '<cf-rating-editor />'
+    notFocusable: true
   });
 
   registerWidget('datePicker', {
