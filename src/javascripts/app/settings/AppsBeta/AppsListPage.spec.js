@@ -34,7 +34,7 @@ describe('AppsListPage', () => {
   it('should match snapshot for loading state', async () => {
     const mockRepo = {
       getApps: jest.fn(),
-      getAppsListing: jest.fn(),
+      getMarketplaceApps: jest.fn(),
       getDevApps: jest.fn(),
       isDevApp: jest.fn()
     };
@@ -55,7 +55,7 @@ describe('AppsListPage', () => {
   it('should match snapshot of apps loaded state', async () => {
     const mockRepo = {
       getApps: jest.fn(() => Promise.resolve(repoAppsMock)),
-      getAppsListing: jest.fn(() => Promise.resolve(appsListingMock)),
+      getMarketplaceApps: jest.fn(() => Promise.resolve(appsListingMock)),
       getDevApps: jest.fn(() => Promise.resolve(devAppsMock)),
       isDevApp: jest.fn()
     };

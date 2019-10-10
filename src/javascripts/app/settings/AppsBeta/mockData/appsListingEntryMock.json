@@ -1,0 +1,1737 @@
+{
+  "sys": {
+    "type": "Array"
+  },
+  "total": 1,
+  "skip": 0,
+  "limit": 100,
+  "items": [
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "lpjm8d10rkpy"
+          }
+        },
+        "id": "2fPbSMx3baxlwZoCyXC7F1",
+        "type": "Entry",
+        "createdAt": "2019-10-02T14:57:50.083Z",
+        "updatedAt": "2019-10-07T13:03:08.718Z",
+        "environment": {
+          "sys": {
+            "id": "master",
+            "type": "Link",
+            "linkType": "Environment"
+          }
+        },
+        "revision": 10,
+        "contentType": {
+          "sys": {
+            "type": "Link",
+            "linkType": "ContentType",
+            "id": "appsListing"
+          }
+        },
+        "locale": "en-US"
+      },
+      "fields": {
+        "title": "Apps Listing",
+        "apps": [
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "5ZSCLEfnoPdTF3agzaGGRb"
+            }
+          },
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "2t7RmuPtaiBrZBMF03OG6F"
+            }
+          },
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "4G5XR4RY5wufPETJcBloQW"
+            }
+          },
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "1IOh4r7oQ9IsWomUj2df76"
+            }
+          },
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "1NIoC98vO7Py7mDPeIg1p4"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "includes": {
+    "Entry": [
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "1BXEviTUPYGYdZ55zroLDT",
+          "type": "Entry",
+          "createdAt": "2019-10-02T11:23:33.242Z",
+          "updatedAt": "2019-10-02T11:23:33.242Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "uninstallMessages"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "negative": false,
+          "info": "This will remove the Image Focal Point widget from the entry editor"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "1IOh4r7oQ9IsWomUj2df76",
+          "type": "Entry",
+          "createdAt": "2019-08-09T11:32:44.920Z",
+          "updatedAt": "2019-09-09T10:31:12.440Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 24,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "app"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Bynder",
+          "slug": "bynder",
+          "extensionDefinitionId": "5KySdUzG7OWuCE2V3fgtIa",
+          "productCatalogFlag": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "70TgnulvTrc1P8KDb65kjn"
+            }
+          },
+          "icon": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "3vNJZRjthatucy2mBJMy1u"
+            }
+          },
+          "developer": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "jN06evDcSVRSRoiXmXDf6"
+            }
+          },
+          "categories": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "qYTN9WyCKNTJrX7kpL2eO"
+              }
+            }
+          ],
+          "links": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "7KhLuYMTCGwLv8m7CLBLEW"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "61a7RiQcOFFlznaRu1wpdd"
+              }
+            }
+          ],
+          "description": "### About the Bynder app \n\nAfter you’ve installed the Bynder app, you can easily reference assets hosted on Bynder directly inside the Contentful web app.\n\nThe app is a widget that allows editors to select media from their Bynder account. Simply click __Select or upload a file on Bynder__ and select the assets you want to be referenced from your entry.\n\n---\n\n### Features:\n- Directly link your assets on Bynder from your Contentful entries\n- Browse your collection on Bynder\n- Preview selected assets in Contentful\n- Standard JSON based asset reference format\n\n---\n\n### Requirements:\n\nTo use this app, you will need:\n\n- An account with [Bynder](https://www.bynder.com)\n- The URL of your Bynder account\n- A content type with a field of type JSON object to hold the references to Bynder\n\n\n---\n\n### Screenshots:\n![apps-bynder-dialog](//images.ctfassets.net/lpjm8d10rkpy/36TMeTeEpwqraMSTldDeVH/3ed9980af3eb5318d5631c3c6ef3e5f3/apps-bynder-dialog.png)",
+          "tagLine": "Reference assets from Bynder's digital asset management systems",
+          "permissions": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "6ewjUhTBPGwQGoY6pguFTA"
+            }
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "1Mn5YKCqMdToArOeFW1qUP",
+          "type": "Entry",
+          "createdAt": "2019-10-02T11:23:39.486Z",
+          "updatedAt": "2019-10-02T11:23:39.486Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "uninstallMessages"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "negative": true,
+          "info": "If you want the content type we created during installation removed, you will have to delete it manually"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "1NIoC98vO7Py7mDPeIg1p4",
+          "type": "Entry",
+          "createdAt": "2019-10-02T11:25:44.273Z",
+          "updatedAt": "2019-10-04T09:27:31.931Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "app"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Image Focal Point",
+          "slug": "image-focal-point",
+          "extensionDefinitionId": "342Q2DqCjmsdN5BJCEPkrJ",
+          "productCatalogFlag": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "70TgnulvTrc1P8KDb65kjn"
+            }
+          },
+          "icon": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "7v1wryVbq6dooI1OqbkIpg"
+            }
+          },
+          "developer": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "jN06evDcSVRSRoiXmXDf6"
+            }
+          },
+          "categories": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "qYTN9WyCKNTJrX7kpL2eO"
+              }
+            }
+          ],
+          "links": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "5NQ0Gmf6lZyKdvByYsw9gm"
+              }
+            }
+          ],
+          "description": "### About the Image Focal Point app \n\nThe Image Focal Point app allows you to set a focal point for an image, which you can use to achieve better cropping amongst different devices and screen sizes.\n\nDuring the installation the app sets up a content type you can use for your images with focal point data and provides you with a widget to set the focal point.\n\n---\n\n### Screenshots:\n![apps-image-focal-point-dialog](//images.ctfassets.net/lpjm8d10rkpy/2TuSk1vWvUU0SJ8O5Qsz9a/51ce3e4c6b1d8fab44171ebd22efbdfa/Optimized-apps-image-focal-point-cover.png)",
+          "tagLine": "Set a focal point on your images to achieve better cropping amongst different screen sizes",
+          "uninstallMessages": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "1Mn5YKCqMdToArOeFW1qUP"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "1BXEviTUPYGYdZ55zroLDT"
+              }
+            }
+          ],
+          "permissions": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "6ewjUhTBPGwQGoY6pguFTA"
+            }
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "2IMJj30UZvFBpa6QVVAT39",
+          "type": "Entry",
+          "createdAt": "2019-09-26T09:21:34.081Z",
+          "updatedAt": "2019-09-26T09:21:34.081Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "developer"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "name": "Michel Bitter and Contentful",
+          "slug": "michel-bitter-and-contentful",
+          "icon": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "4DxiiBjixHZVjc69WpJX95"
+            }
+          },
+          "organizationId": "5EJGHo8tYJcjnEhYWDxivp",
+          "websiteUrl": "https://www.contentful.com"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "2t7RmuPtaiBrZBMF03OG6F",
+          "type": "Entry",
+          "createdAt": "2019-08-09T11:12:43.847Z",
+          "updatedAt": "2019-09-12T08:13:55.215Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 82,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "app"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Optimizely",
+          "slug": "optimizely",
+          "extensionDefinitionId": "i43PggcHag2PCrGjYTiIX",
+          "productCatalogFlag": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "7HOYzLzHcE0qEpjNv1QtKG"
+            }
+          },
+          "icon": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "4X7O4Q0pIgQZNcONoQrQlp"
+            }
+          },
+          "developer": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "jN06evDcSVRSRoiXmXDf6"
+            }
+          },
+          "categories": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "6WAyrpcoXyjr6n417JDsB"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "6sEFitPSgteJDAg37d3EA6"
+              }
+            }
+          ],
+          "links": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "3uhz1fIdvjEaXl5x7X3Nqe"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "6jmbd2XfZ5xk8MV9hX8zzG"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "QQmTXecNm8eu91TZr5Bc6"
+              }
+            }
+          ],
+          "description": "### About the Optimizely app\n\n⭐️This app is available to customers on an enterprise plan.⭐️\n\nThe Optimizely app is a new and simple way to run experiments inside Contentful. It connects your content in Contentful with experiments in Optimizely. Marketers can run more experiments and obtain better insights faster.\n\n---\n\n### Features:\n\n- Run A/B tests or multivariate tests  on structured content (copy, components, layouts and pages)\n- Allow marketers to be more independent from developers\n- Enable marketers to act on results and make a winning variation the new default\n- Reduce the amount of manual work needed to set up experiments\n\n---\n\n### Installation:\n\nInstalling this app will:\n\n- Create a new content type called \"Variation Container\" \n- Create \"Variation Container\" entries\n- Read your projects, experiments and variations from Optimizely\n\n---\n\n### Requirements:\n\n- A website powered by Contentful\n- An __Optimizely Full Stack__ plan with access to the REST API\n- A small proxy that combines data from Contentful and Optimizely [(view docs)](https://www.contentful.com/developers/docs/extensibility/apps/optimizely/)\n- A content type with a reference field\n\n---\n\n### Screenshots:\n\n![Optimizely editor](//images.ctfassets.net/lpjm8d10rkpy/6BKTGsRNAzlQgllHDclqYe/ad9bad07083d102d1deff54a6a62e57f/optimizely-editor.png)",
+          "tagLine": "Enable experimentation of structured content with Optimizely",
+          "uninstallMessages": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "4QCalRSs6Gfy2fDDGNs5cP"
+              }
+            }
+          ],
+          "permissions": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "6ewjUhTBPGwQGoY6pguFTA"
+            }
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "3Hqy4jdIkK6HwRDukvbSRe",
+          "type": "Entry",
+          "createdAt": "2019-09-04T08:39:31.231Z",
+          "updatedAt": "2019-09-04T08:39:31.231Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "appLink"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Cloudinary website",
+          "url": "https://cloudinary.com"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "3U6j4B3Xiez3LiVrsiXkC8",
+          "type": "Entry",
+          "createdAt": "2019-09-30T12:28:34.208Z",
+          "updatedAt": "2019-09-30T12:28:34.208Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "appLink"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Michel Bitter's Github profile",
+          "url": "https://github.com/michelbitter"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "3fmZlrqpt2fTnMgP6vMLYi",
+          "type": "Entry",
+          "createdAt": "2019-08-09T11:36:58.832Z",
+          "updatedAt": "2019-09-04T08:02:51.331Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "appLink"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Netlify Docs",
+          "url": "https://www.netlify.com/docs/"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "3uhz1fIdvjEaXl5x7X3Nqe",
+          "type": "Entry",
+          "createdAt": "2019-08-09T10:56:21.176Z",
+          "updatedAt": "2019-08-09T11:02:00.628Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "appLink"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Documentation",
+          "url": "https://www.contentful.com/developers/docs/extensibility/apps/optimizely/"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "4G5XR4RY5wufPETJcBloQW",
+          "type": "Entry",
+          "createdAt": "2019-08-09T11:28:16.630Z",
+          "updatedAt": "2019-09-30T12:29:36.929Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 25,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "app"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Cloudinary",
+          "slug": "cloudinary",
+          "extensionDefinitionId": "zjcnWgBknf9zB7IM9HZjE",
+          "productCatalogFlag": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "70TgnulvTrc1P8KDb65kjn"
+            }
+          },
+          "icon": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "3ZH89y9VHHd53v4OQ3BG0V"
+            }
+          },
+          "developer": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "2IMJj30UZvFBpa6QVVAT39"
+            }
+          },
+          "categories": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "qYTN9WyCKNTJrX7kpL2eO"
+              }
+            }
+          ],
+          "links": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "3Hqy4jdIkK6HwRDukvbSRe"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "4oKh0kkp0F3OzD2pYvlEWb"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "3U6j4B3Xiez3LiVrsiXkC8"
+              }
+            }
+          ],
+          "description": "### About the Cloudinary app \n\nAfter you’ve installed the Cloudinary app, you can easily reference assets hosted on Cloudinary directly inside the Contentful web app.\n\nThe app is a widget that allows editors to select media from their Cloudinary account. Simply click __Select or upload a file on Cloudinary__ and select the assets you want to be referenced from your entry.\n\n---\n\n### Features:\n- Directly link your assets on Cloudinary from your Contentful entries\n- Browse your collection on Cloudinary\n- Preview selected assets in Contentful\n- Standard JSON based asset reference format\n\n---\n\n### Requirements:\n\nTo use this app, you will need:\n\n- An account with [Cloudinary](https://cloudinary.com)\n- The __cloud name__ of your Cloudinary account\n- The __API key__ of your Cloudinary account\n- A content type with a field of type Object to hold the references to Cloudinary\n\nYou can find both cloud name and API key on your [Cloudinary dashboard](https://cloudinary.com/console).\n\n\n---\n\n### Screenshots:\n\n![Cloudinary dialog](//images.ctfassets.net/lpjm8d10rkpy/4QAxpe5mbLZWkTAWucplJ4/1155818e1422f30fac24a51aab302670/apps-cloudinary-dialog.png)",
+          "tagLine": "Reference assets from Cloudinary's digital asset management systems",
+          "permissions": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "6ewjUhTBPGwQGoY6pguFTA"
+            }
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "4QCalRSs6Gfy2fDDGNs5cP",
+          "type": "Entry",
+          "createdAt": "2019-09-03T08:06:54.224Z",
+          "updatedAt": "2019-09-04T14:39:55.430Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 4,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "uninstallMessages"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "negative": true,
+          "info": "This will not remove the variation container content type or any created entries. Please remove them manually if they are no longer needed."
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "4oKh0kkp0F3OzD2pYvlEWb",
+          "type": "Entry",
+          "createdAt": "2019-09-04T08:25:29.041Z",
+          "updatedAt": "2019-09-04T08:25:29.041Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "appLink"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Documentation for the Cloudinary App",
+          "url": "https://www.contentful.com/developers/docs/extensibility/apps/cloudinary/"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "5NQ0Gmf6lZyKdvByYsw9gm",
+          "type": "Entry",
+          "createdAt": "2019-10-02T11:23:25.078Z",
+          "updatedAt": "2019-10-02T11:23:25.078Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "appLink"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Documentation for the Image Focal Point App",
+          "url": "https://www.contentful.com/developers/docs/extensibility/apps/image-focal-point/"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "5ZSCLEfnoPdTF3agzaGGRb",
+          "type": "Entry",
+          "createdAt": "2019-08-09T11:39:29.930Z",
+          "updatedAt": "2019-09-04T13:24:58.378Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 41,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "app"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Netlify",
+          "slug": "netlify",
+          "extensionDefinitionId": "1VchawWvbIClHuMIyxwR5m",
+          "productCatalogFlag": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "70TgnulvTrc1P8KDb65kjn"
+            }
+          },
+          "icon": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "2dYQ3x6VMNZJgDXYmMzLBx"
+            }
+          },
+          "developer": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "jN06evDcSVRSRoiXmXDf6"
+            }
+          },
+          "categories": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "6WAyrpcoXyjr6n417JDsB"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "6dW0gbwnMQc72Ids7LWdY5"
+              }
+            }
+          ],
+          "links": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "3fmZlrqpt2fTnMgP6vMLYi"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "fsEW61GC7F9wRjFVWMds0"
+              }
+            }
+          ],
+          "description": "### About the app\n\nThe Netlify App gives content editors control over static site builds and makes the process more transparent.\n\n---\n\n### This app provides the following functionality:\n\n- triggers Netlify builds with a simple click in the sidebar\n- displays build status so editors don't preview outdated sites\n- brings Netlify functionality into the Contentful web app\n- makes it possible to configure on a per-content-type level\n\n---\n\n### To use this app, you need:\n\n- a static site based on a service such as Gatsby, Middleman or Hugo\n- your site configured to load content from Contentful and its code pushed to a remote repository, such as GitHub or Gitlab\n- a Netlify setup where the site is connected to the remote repository and enabled for continuous deployment\n\n---\n\n### Screenshots\n\n![Netlify config](//images.ctfassets.net/lpjm8d10rkpy/4Rf8yoGPw4AQwdMboiVwhF/a0a9a8b8e73a5ace1fdf78adebc24a49/apps-netlify-site-setup.b4a24a69c0.png)\n\n![Netlify sidebar](//images.ctfassets.net/lpjm8d10rkpy/RrSqXTcdlpfkPt7sJzkEb/57172d0fd3eaa36a5ab90e7d183ed171/apps-netlify-sidebar.0ffd73e12b.png) ",
+          "tagLine": "Easily build and preview Netlify sites directly from Contentful ",
+          "uninstallMessages": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "730R5aewoZKRiarsuUC3xk"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "6yWHAPUwwUw4B9GMQqk6wp"
+              }
+            }
+          ],
+          "permissions": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "6ewjUhTBPGwQGoY6pguFTA"
+            }
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "61a7RiQcOFFlznaRu1wpdd",
+          "type": "Entry",
+          "createdAt": "2019-09-09T09:52:00.106Z",
+          "updatedAt": "2019-09-09T09:52:00.106Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "appLink"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Documentation for the Bynder App",
+          "url": "https://www.contentful.com/developers/docs/extensibility/apps/bynder/"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "6WAyrpcoXyjr6n417JDsB",
+          "type": "Entry",
+          "createdAt": "2019-08-09T11:04:37.884Z",
+          "updatedAt": "2019-08-09T11:04:37.884Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "category"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "name": "Featured",
+          "slug": "featured",
+          "description": "This category contains apps that are either popular or outstanding implementations of their respective use cases."
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "6dW0gbwnMQc72Ids7LWdY5",
+          "type": "Entry",
+          "createdAt": "2019-08-09T11:36:19.327Z",
+          "updatedAt": "2019-08-09T11:36:19.327Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "category"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "name": "Website Hosting",
+          "slug": "website-hosting",
+          "description": "Website Hosting apps enable tighter integration with the presentation layer of your content."
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "6ewjUhTBPGwQGoY6pguFTA",
+          "type": "Entry",
+          "createdAt": "2019-09-04T09:13:32.530Z",
+          "updatedAt": "2019-09-05T12:28:13.464Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "permissionExplanation"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "text": "is asking for permissions to access this Contentful environment.\n\nThe app will be able to manage this environment and any content in it.\n\nYou can revoke access at any time by uninstalling the app."
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "6jmbd2XfZ5xk8MV9hX8zzG",
+          "type": "Entry",
+          "createdAt": "2019-09-03T09:56:24.161Z",
+          "updatedAt": "2019-09-03T09:56:24.161Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "appLink"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Optimizely privacy policy",
+          "url": "https://www.optimizely.com/privacy/"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "6sEFitPSgteJDAg37d3EA6",
+          "type": "Entry",
+          "createdAt": "2019-08-09T11:07:00.821Z",
+          "updatedAt": "2019-09-03T08:50:54.181Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 4,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "category"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "name": "Experimentation and Personalization",
+          "slug": "personalization",
+          "description": "Experimentation and personalization apps allow the editor to customise content based on the audience viewing it."
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "6yWHAPUwwUw4B9GMQqk6wp",
+          "type": "Entry",
+          "createdAt": "2019-08-23T14:35:08.673Z",
+          "updatedAt": "2019-09-04T08:01:42.018Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 5,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "uninstallMessages"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "negative": false,
+          "info": "This will not modify your Netlify sites. You may want to remove unneeded deploy notifications and build hooks from your Netlify site."
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "70TgnulvTrc1P8KDb65kjn",
+          "type": "Entry",
+          "createdAt": "2019-08-22T07:30:32.700Z",
+          "updatedAt": "2019-08-22T09:05:40.579Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 3,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "appProductCatalogFlag"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "flagId": "basic_apps"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "730R5aewoZKRiarsuUC3xk",
+          "type": "Entry",
+          "createdAt": "2019-09-04T08:00:52.853Z",
+          "updatedAt": "2019-09-04T08:00:52.853Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "uninstallMessages"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "negative": true,
+          "info": "Build widget will be removed from sidebars of all content types"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "7HOYzLzHcE0qEpjNv1QtKG",
+          "type": "Entry",
+          "createdAt": "2019-08-20T14:38:05.580Z",
+          "updatedAt": "2019-08-22T09:06:18.705Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "appProductCatalogFlag"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "flagId": "optimizely_app"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "7KhLuYMTCGwLv8m7CLBLEW",
+          "type": "Entry",
+          "createdAt": "2019-08-09T11:31:45.933Z",
+          "updatedAt": "2019-09-09T09:51:03.387Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 3,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "appLink"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Bynder website",
+          "url": "https://www.bynder.com"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "QQmTXecNm8eu91TZr5Bc6",
+          "type": "Entry",
+          "createdAt": "2019-09-02T15:05:26.362Z",
+          "updatedAt": "2019-09-03T09:56:25.920Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "appLink"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Get support",
+          "url": "https://www.contentful.com/support/"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "fsEW61GC7F9wRjFVWMds0",
+          "type": "Entry",
+          "createdAt": "2019-08-26T10:55:13.860Z",
+          "updatedAt": "2019-08-26T10:55:13.860Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "appLink"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Documentation for the Netlify app",
+          "url": "https://www.contentful.com/developers/docs/extensibility/apps/netlify/"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "jN06evDcSVRSRoiXmXDf6",
+          "type": "Entry",
+          "createdAt": "2019-08-09T10:32:29.626Z",
+          "updatedAt": "2019-08-09T11:49:08.398Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "developer"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "name": "Contentful",
+          "slug": "contentful",
+          "icon": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "4DxiiBjixHZVjc69WpJX95"
+            }
+          },
+          "organizationId": "5EJGHo8tYJcjnEhYWDxivp",
+          "websiteUrl": "https://www.contentful.com"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "qYTN9WyCKNTJrX7kpL2eO",
+          "type": "Entry",
+          "createdAt": "2019-08-09T11:22:27.963Z",
+          "updatedAt": "2019-08-09T11:22:27.963Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "category"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "name": "Digital Asset Management",
+          "slug": "digital-asset-management",
+          "description": "DAM Apps allow efficient management of digital assets and their usage licences.\n"
+        }
+      }
+    ],
+    "Asset": [
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "2dYQ3x6VMNZJgDXYmMzLBx",
+          "type": "Asset",
+          "createdAt": "2019-08-09T11:34:11.059Z",
+          "updatedAt": "2019-08-09T11:34:11.059Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Netlify Logo",
+          "description": "Netlify logomark",
+          "file": {
+            "url": "//images.ctfassets.net/lpjm8d10rkpy/2dYQ3x6VMNZJgDXYmMzLBx/b338ad4b50cd0ff31e7157671b801b4d/logomark.svg",
+            "details": {
+              "size": 4081,
+              "image": {
+                "width": 40,
+                "height": 40
+              }
+            },
+            "fileName": "logomark.svg",
+            "contentType": "image/svg+xml"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "3ZH89y9VHHd53v4OQ3BG0V",
+          "type": "Asset",
+          "createdAt": "2019-08-09T11:28:05.008Z",
+          "updatedAt": "2019-08-09T11:28:05.008Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Cloudinary Logo",
+          "description": "cloudinary icon for white bg",
+          "file": {
+            "url": "//images.ctfassets.net/lpjm8d10rkpy/3ZH89y9VHHd53v4OQ3BG0V/cc62043a88cd5fb80719687f299e7351/cloudinary_icon_for_white_bg.svg",
+            "details": {
+              "size": 7491,
+              "image": {
+                "width": 142,
+                "height": 142
+              }
+            },
+            "fileName": "cloudinary_icon_for_white_bg.svg",
+            "contentType": "image/svg+xml"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "3vNJZRjthatucy2mBJMy1u",
+          "type": "Asset",
+          "createdAt": "2019-08-09T11:31:00.887Z",
+          "updatedAt": "2019-08-09T12:03:28.026Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Bynder Logo",
+          "description": "Large-Bynder Blue Logo Vertical",
+          "file": {
+            "url": "//images.ctfassets.net/lpjm8d10rkpy/3vNJZRjthatucy2mBJMy1u/0e5d501207427780021e7580cc384761/bynder.5e9e457b9d.svg",
+            "details": {
+              "size": 991,
+              "image": {
+                "width": 40,
+                "height": 30
+              }
+            },
+            "fileName": "bynder.5e9e457b9d.svg",
+            "contentType": "image/svg+xml"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "4DxiiBjixHZVjc69WpJX95",
+          "type": "Asset",
+          "createdAt": "2019-08-09T10:31:47.328Z",
+          "updatedAt": "2019-08-09T10:31:47.328Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Contentful Logo Square",
+          "file": {
+            "url": "//images.ctfassets.net/lpjm8d10rkpy/4DxiiBjixHZVjc69WpJX95/4708b0bdc8e713faf69a667f8266d190/472182",
+            "details": {
+              "size": 11294,
+              "image": {
+                "width": 283,
+                "height": 283
+              }
+            },
+            "fileName": "472182",
+            "contentType": "image/png"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "4X7O4Q0pIgQZNcONoQrQlp",
+          "type": "Asset",
+          "createdAt": "2019-08-09T11:18:08.768Z",
+          "updatedAt": "2019-08-21T13:04:30.913Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 4,
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Optimizely Logo",
+          "description": "Optimizely Logo Secondary Full Color Light",
+          "file": {
+            "url": "//images.ctfassets.net/lpjm8d10rkpy/4X7O4Q0pIgQZNcONoQrQlp/9262ad9a935fa92e9cacd9207ae0a401/optimizely-logo.svg",
+            "details": {
+              "size": 1444,
+              "image": {
+                "width": 60,
+                "height": 60
+              }
+            },
+            "fileName": "optimizely-logo.svg",
+            "contentType": "image/svg+xml"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "7v1wryVbq6dooI1OqbkIpg",
+          "type": "Asset",
+          "createdAt": "2019-10-02T11:23:07.213Z",
+          "updatedAt": "2019-10-02T11:23:07.213Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Image Focal Point logo",
+          "description": "Logo of the Image Focal Point app",
+          "file": {
+            "url": "//images.ctfassets.net/lpjm8d10rkpy/7v1wryVbq6dooI1OqbkIpg/32e947099d5253c56fa344fc7aadfbff/app-logo.svg",
+            "details": {
+              "size": 862,
+              "image": {
+                "width": 30,
+                "height": 30
+              }
+            },
+            "fileName": "app-logo.svg",
+            "contentType": "image/svg+xml"
+          }
+        }
+      }
+    ]
+  }
+}

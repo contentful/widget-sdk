@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import { identity, partition } from 'lodash';
+import { partition } from 'lodash';
 
 import tokens from '@contentful/forma-36-tokens';
 import {
@@ -34,7 +34,6 @@ import { getProductCatalogFlagForApp, hasAllowedAppFeatureFlag } from './AppProd
 import * as AppLifecycleTracking from './AppLifecycleTracking.es6';
 import StateLink from 'app/common/StateLink.es6';
 import createAppsClient from '../apps/AppsClient.es6';
-import { APP_ORDER } from './AppsRepo.es6';
 
 const styles = {
   intro: css({
@@ -245,21 +244,8 @@ const AppsListPageLoading = () => {
   );
 };
 
-const prepareApp = (repoApps, featureFlags) => app => ({
-  id: app.fields.slug,
-  title: app.fields.title,
-  tagLine: app.fields.tagLine,
-  description: app.fields.description,
-  icon: app.fields.icon.fields.file.url,
-  author: {
-    name: app.fields.developer.fields.name,
-    url: app.fields.developer.fields.websiteUrl,
-    icon: app.fields.developer.fields.icon.fields.file.url
-  },
-  links: app.fields.links.map(link => link.fields),
-  categories: app.fields.categories.map(c => c.fields.name),
-  permissions: `__${app.fields.title} app__ ${app.fields.permissions.fields.text}`,
-  installed: !!(repoApps.find(a => a.sys.id === app.fields.slug) || {}).extension,
+const prepareApp = featureFlags => app => ({
+  ...app,
   enabled: getProductCatalogFlagForApp(app, featureFlags),
   visible: hasAllowedAppFeatureFlag(app)
 });
@@ -277,9 +263,8 @@ export default class AppsListPage extends React.Component {
   static propTypes = {
     goToContent: PropTypes.func.isRequired,
     repo: PropTypes.shape({
-      getApps: PropTypes.func.isRequired,
       getDevApps: PropTypes.func.isRequired,
-      getAppsListing: PropTypes.func.isRequired,
+      getMarketplaceApps: PropTypes.func.isRequired,
       isDevApp: PropTypes.func.isRequired
     }).isRequired,
     organizationId: PropTypes.string.isRequired,
@@ -297,9 +282,8 @@ export default class AppsListPage extends React.Component {
 
   async componentDidMount() {
     try {
-      const [repoApps, appsListing, devApps, hasAlphaApps] = await Promise.all([
-        this.props.repo.getApps(),
-        this.props.repo.getAppsListing(),
+      const [marketplaceApps, devApps, hasAlphaApps] = await Promise.all([
+        this.props.repo.getMarketplaceApps(),
         this.props.repo.getDevApps(),
         // Recover with not showing link to apps alpha
         // This enables us to delete the micro backend without effect after beta release.
@@ -309,17 +293,13 @@ export default class AppsListPage extends React.Component {
       ]);
 
       const productCatalogFlags = await this.props.productCatalog.loadProductCatalogFlags(
-        appsListing
+        marketplaceApps
       );
 
       const appsFeatureDisabled = await this.props.productCatalog.isAppsFeatureDisabled();
 
-      const flatApps = Object.values(appsListing);
-      const preparedApps = APP_ORDER.map(appId => {
-        return flatApps.find(app => app.fields.slug === appId);
-      })
-        .filter(identity)
-        .map(prepareApp(repoApps, productCatalogFlags))
+      const preparedApps = marketplaceApps
+        .map(prepareApp(productCatalogFlags))
         .filter(app => app.visible);
       const preparedDevApps = devApps.map(prepareDevApp);
 
@@ -334,7 +314,7 @@ export default class AppsListPage extends React.Component {
           availableApps,
           hasAlphaApps,
           installedApps,
-          appsListing,
+          marketplaceApps,
           appsFeatureDisabled
         },
         () => {

@@ -1,37 +1,34 @@
-import { countBy, get } from 'lodash';
+import { countBy, get, identity } from 'lodash';
 import resolveResponse from 'contentful-resolve-response';
-
-// App ID to ExtensionDefinition ID
-// https://contentful.atlassian.net/wiki/spaces/PROD/pages/1512800260/Contentful+Apps+organization
-const APP_TO_EXTENSION_DEFINITION = {
-  netlify: '1VchawWvbIClHuMIyxwR5m',
-  gatsby: '35f8xJFaJpOUFAKepAWiUj',
-  optimizely: 'i43PggcHag2PCrGjYTiIX',
-  cloudinary: 'zjcnWgBknf9zB7IM9HZjE',
-  bynder: '5KySdUzG7OWuCE2V3fgtIa',
-  'image-focal-point': '342Q2DqCjmsdN5BJCEPkrJ'
-};
-
-// Order on the list, values are App IDs
-export const APP_ORDER = [
-  'netlify',
-  'gatsby',
-  'optimizely',
-  'cloudinary',
-  'bynder',
-  'image-focal-point'
-];
 
 const DEV_APP_PREFIX = 'dev-app';
 const DEV_APP_SEPARATOR = '_';
 const APP_MARKETPLACE_SPACE_ID = 'lpjm8d10rkpy';
 const APP_MARKETPLACE_TOKEN = 'XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk';
+const APPS_LISTING_ENTRY_ID = '2fPbSMx3baxlwZoCyXC7F1';
+
+const SPACE_ENDPOINT = `https://cdn.contentful.com/spaces/${APP_MARKETPLACE_SPACE_ID}`;
+const APP_LISTING_ENDPOINT = `${SPACE_ENDPOINT}/entries?include=10&sys.id[in]=${APPS_LISTING_ENTRY_ID}`;
+const getAppEndpoint = appId =>
+  `${SPACE_ENDPOINT}/entries?include=10&content_type=app&fields.slug[in]=${appId}`;
+const FETCH_CONFIG = {
+  headers: {
+    Authorization: `Bearer ${APP_MARKETPLACE_TOKEN}`
+  }
+};
+
+async function fetchMarketplaceApps() {
+  const res = await window.fetch(APP_LISTING_ENDPOINT, FETCH_CONFIG);
+  const data = res.ok ? await res.json() : {};
+  const [marketplaceApps] = resolveResponse(data);
+  return get(marketplaceApps, ['fields', 'apps'], []);
+}
 
 export default function createAppsRepo(extensionDefinitionLoader, spaceEndpoint) {
   return {
-    getAppsListing,
+    getAppWidgets,
+    getMarketplaceApps,
     getDefinitionIdsOfApps,
-    getApps,
     getDevApps,
     getExtensionDefinitionForApp,
     getExtensionForExtensionDefinition,
@@ -47,52 +44,68 @@ export default function createAppsRepo(extensionDefinitionLoader, spaceEndpoint)
   }
 
   async function getDefinitionIdsOfApps() {
-    const appsListing = await this.getAppsListing();
+    const marketplaceApps = await this.getMarketplaceApps();
 
-    return Object.keys(appsListing)
-      .map(key => get(appsListing[key], ['fields', 'extensionDefinitionId']))
+    return marketplaceApps
+      .map(app => app.extensionDefinitionId)
       .filter(id => typeof id === 'string' && id.length > 0);
   }
 
-  async function getAppsListing() {
-    const res = await window.fetch(
-      `https://cdn.contentful.com/spaces/${APP_MARKETPLACE_SPACE_ID}/entries?include=10&content_type=app`,
-      {
-        headers: {
-          Authorization: `Bearer ${APP_MARKETPLACE_TOKEN}`
-        }
-      }
-    );
+  async function getAppWidgets() {
+    const marketplaceApps = await fetchMarketplaceApps();
 
-    const data = res.ok ? await res.json() : {};
-    const entries = resolveResponse(data);
-
-    if (!Array.isArray(entries)) {
-      return {};
-    }
-
-    return entries.reduce((acc, entry) => {
-      return { ...acc, [entry.sys.id]: entry };
-    }, {});
+    return marketplaceApps.map(app => ({
+      extensionDefinitionId: get(app, ['fields', 'extensionDefinitionId']),
+      icon: get(app, ['fields', 'icon', 'fields', 'file', 'url'], ''),
+      id: get(app, ['fields', 'slug'], '')
+    }));
   }
 
-  async function getApps() {
-    const ids = APP_ORDER.map(appId => APP_TO_EXTENSION_DEFINITION[appId]);
+  async function getMarketplaceApps() {
+    const marketplaceApps = await fetchMarketplaceApps();
 
+    const definitionIds = marketplaceApps
+      .map(app => get(app, ['fields', 'extensionDefinitionId'], null))
+      .filter(identity);
     const [extensionDefinitionMap, extensionMap] = await Promise.all([
-      extensionDefinitionLoader.getByIds(ids),
-      getExtensionsForExtensionDefinitions(ids)
+      extensionDefinitionLoader.getByIds(definitionIds),
+      getExtensionsForExtensionDefinitions(definitionIds)
     ]);
 
-    return APP_ORDER.map(appId => {
-      const definitionId = APP_TO_EXTENSION_DEFINITION[appId];
-
-      return {
-        sys: { type: 'App', id: appId },
-        extensionDefinition: extensionDefinitionMap[definitionId],
-        extension: extensionMap[definitionId]
-      };
-    }).filter(app => !!app.extensionDefinition);
+    return (
+      marketplaceApps
+        .map(app => {
+          const extensionDefinitionId = get(app, ['fields', 'extensionDefinitionId']);
+          const title = get(app, ['fields', 'title'], '');
+          const permissionsText = get(app, ['fields', 'permissions', 'fields', 'text'], '');
+          const actionList = get(app, ['fields', 'uninstallMessages'], []).map(
+            ({ fields }) => fields
+          );
+          return {
+            actionList,
+            author: {
+              name: get(app, ['fields', 'developer', 'fields', 'name']),
+              url: get(app, ['fields', 'developer', 'fields', 'websiteUrl']),
+              icon: get(app, ['fields', 'developer', 'fields', 'icon', 'fields', 'file', 'url'])
+            },
+            categories: get(app, ['fields', 'categories'], []).map(category => category.fields),
+            description: get(app, ['fields', 'description'], ''),
+            extensionDefinitionId,
+            extensionDefinition: extensionDefinitionMap[extensionDefinitionId],
+            flagId: get(app, ['fields', 'productCatalogFlag', 'fields', 'flagId']),
+            icon: get(app, ['fields', 'icon', 'fields', 'file', 'url'], ''),
+            id: get(app, ['fields', 'slug'], ''),
+            installed: !!extensionMap[extensionDefinitionId],
+            links: get(app, ['fields', 'links'], []).map(link => link.fields),
+            permissions: `__${title} app__ ${permissionsText}`,
+            permissionsExplanation: get(app, ['fields', 'permissionsExplanation']),
+            tagLine: get(app, ['fields', 'tagLine'], ''),
+            title
+          };
+        })
+        // Filter out - possibly forgotten - broken references in the Apps Listing entry
+        .filter(app => !!app.extensionDefinition)
+    );
   }
 
   // This mechanism is only for us for developing Apps Beta.
@@ -119,13 +132,18 @@ export default function createAppsRepo(extensionDefinitionLoader, spaceEndpoint)
     });
   }
 
-  function getExtensionDefinitionForApp(appId) {
+  async function getExtensionDefinitionForApp(appId) {
     if (appId.startsWith(DEV_APP_PREFIX + DEV_APP_SEPARATOR)) {
       const [, extensionDefinitionId] = appId.split(DEV_APP_SEPARATOR);
       return extensionDefinitionLoader.getById(extensionDefinitionId);
     }
 
-    return extensionDefinitionLoader.getById(APP_TO_EXTENSION_DEFINITION[appId]);
+    const res = await window.fetch(getAppEndpoint(appId), FETCH_CONFIG);
+    const data = res.ok ? await res.json() : {};
+    const [app] = resolveResponse(data);
+    const definitionId = get(app, ['fields', 'extensionDefinitionId'], null);
+
+    return extensionDefinitionLoader.getById(definitionId);
   }
 
   async function getExtensionForExtensionDefinition(extensionDefinitionId) {

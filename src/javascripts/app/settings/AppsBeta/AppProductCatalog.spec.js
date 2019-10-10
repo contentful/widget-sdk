@@ -6,15 +6,7 @@ describe('AppProductCatalog', () => {
   describe('getProductCatalogFlagForApp', () => {
     it('returns the flag value from the map if flagId is present and allowed', async () => {
       const result = getProductCatalogFlagForApp(
-        {
-          fields: {
-            productCatalogFlag: {
-              fields: {
-                flagId: 'optimizely_app'
-              }
-            }
-          }
-        },
+        { flagId: 'optimizely_app' },
         { optimizely_app: false }
       );
 
@@ -22,29 +14,13 @@ describe('AppProductCatalog', () => {
     });
 
     it('uses the default flagId and value from the map if flagId is not present on app', async () => {
-      const result = getProductCatalogFlagForApp(
-        {
-          fields: {}
-        },
-        { basic_apps: false }
-      );
+      const result = getProductCatalogFlagForApp({}, { basic_apps: false });
 
       expect(result).toEqual(false);
     });
 
     it('uses the default flagId and value from the map if flagId not allowed', async () => {
-      const result = getProductCatalogFlagForApp(
-        {
-          fields: {
-            productCatalogFlag: {
-              fields: {
-                flagId: 'unknown'
-              }
-            }
-          }
-        },
-        { basic_apps: false }
-      );
+      const result = getProductCatalogFlagForApp({ flagId: 'unknown' }, { basic_apps: false });
 
       expect(result).toEqual(false);
     });
@@ -55,15 +31,7 @@ describe('AppProductCatalog', () => {
       const getSpaceFeature = jest.fn().mockReturnValue(Promise.resolve(false));
 
       const catalog = new AppProductCatalog(spaceId, getSpaceFeature);
-      const result = await catalog.isAppEnabled({
-        fields: {
-          productCatalogFlag: {
-            fields: {
-              flagId: 'optimizely_app'
-            }
-          }
-        }
-      });
+      const result = await catalog.isAppEnabled({ flagId: 'optimizely_app' });
 
       expect(result).toEqual(false);
       expect(getSpaceFeature).toBeCalledWith(spaceId, 'optimizely_app', true);
@@ -73,9 +41,7 @@ describe('AppProductCatalog', () => {
       const getSpaceFeature = jest.fn().mockReturnValue(Promise.resolve(false));
 
       const catalog = new AppProductCatalog(spaceId, getSpaceFeature);
-      const result = await catalog.isAppEnabled({
-        fields: {}
-      });
+      const result = await catalog.isAppEnabled({});
 
       expect(result).toEqual(false);
       expect(getSpaceFeature).toBeCalledWith(spaceId, 'basic_apps', true);
@@ -87,38 +53,12 @@ describe('AppProductCatalog', () => {
       const getSpaceFeature = jest.fn().mockReturnValue(Promise.resolve(true));
 
       const catalog = new AppProductCatalog(spaceId, getSpaceFeature);
-      const result = await catalog.loadProductCatalogFlags({
-        app1: {
-          fields: {
-            productCatalogFlag: {
-              fields: {
-                flagId: 'optimizely_app'
-              }
-            }
-          }
-        },
-        app2: {
-          fields: {
-            productCatalogFlag: {
-              fields: {
-                flagId: 'unknownFlagId'
-              }
-            }
-          }
-        },
-        app3: {
-          fields: {
-            productCatalogFlag: {
-              fields: {
-                flagId: 'optimizely_app'
-              }
-            }
-          }
-        },
-        app4: {
-          fields: {}
-        }
-      });
+      const result = await catalog.loadProductCatalogFlags([
+        { flagId: 'optimizely_app' },
+        { flagId: 'unknownFlagId' },
+        { flagId: 'optimizely_app' },
+        {}
+      ]);
 
       expect(result).toEqual({
         optimizely_app: true,

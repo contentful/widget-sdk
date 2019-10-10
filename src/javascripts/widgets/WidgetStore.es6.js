@@ -10,22 +10,16 @@ export function getBuiltinsOnly() {
 }
 
 export async function getForContentTypeManagement(extensionLoader, appsRepo) {
-  const [extensions, appsListing] = await Promise.all([
+  const [extensions, marketplaceApps] = await Promise.all([
     extensionLoader.getAllExtensionsForListing(),
-    appsRepo.getAppsListing()
+    appsRepo.getAppWidgets()
   ]);
-
-  const apps = Object.keys(appsListing)
-    .map(key => ({
-      definitionId: get(appsListing[key], ['fields', 'extensionDefinitionId']),
-      appId: get(appsListing[key], ['fields', 'slug']),
-      icon: get(appsListing[key], ['fields', 'icon', 'fields', 'file', 'url'])
-    }))
-    .filter(({ definitionId }) => typeof definitionId === 'string' && definitionId.length > 0);
 
   return {
     [NAMESPACE_BUILTIN]: createBuiltinWidgetList(),
-    [NAMESPACE_EXTENSION]: extensions.map(extension => buildExtensionWidget(extension, apps))
+    [NAMESPACE_EXTENSION]: extensions.map(extension =>
+      buildExtensionWidget(extension, marketplaceApps)
+    )
   };
 }
 
@@ -82,7 +76,7 @@ function buildExtensionWidget({ sys, extension, extensionDefinition, parameters 
   // (due to `stripSrcdoc`) we indicate it by `true`
   const base = typeof sys.srcdocSha256 === 'string' ? { srcdoc: srcdoc || true } : { src };
   const extensionDefinitionId = get(extensionDefinition, ['sys', 'id']);
-  const app = apps.find(app => app.definitionId === extensionDefinitionId);
+  const app = apps.find(app => app.extensionDefinitionId === extensionDefinitionId);
 
   return {
     ...base,
@@ -91,8 +85,8 @@ function buildExtensionWidget({ sys, extension, extensionDefinition, parameters 
     name: extension.name,
     fieldTypes: (extension.fieldTypes || []).map(toInternalFieldType),
     isApp: !!app,
-    appId: get(app, 'appId'),
-    appIconUrl: get(app, 'icon'),
+    appId: get(app, ['id']),
+    appIconUrl: get(app, ['icon']),
     sidebar: extension.sidebar,
     locations: extension.locations,
     parameters: get(extension, ['parameters', 'instance'], []),

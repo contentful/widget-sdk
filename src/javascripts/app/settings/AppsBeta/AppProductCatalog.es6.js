@@ -1,6 +1,5 @@
-import { get, uniq } from 'lodash';
+import { uniq } from 'lodash';
 
-const APP_PRODUCT_CATALOG_FLAG_PATH = 'fields.productCatalogFlag.fields.flagId';
 const DEFAULT_STATUS = true;
 const DEFAULT_FLAG_ID = 'basic_apps';
 
@@ -11,7 +10,7 @@ const DEFAULT_FLAG_ID = 'basic_apps';
 const ALLOWED_FLAG_IDS = ['basic_apps', 'optimizely_app'];
 
 const getFlagId = app => {
-  const flagId = get(app, APP_PRODUCT_CATALOG_FLAG_PATH, DEFAULT_FLAG_ID);
+  const flagId = app.flagId || DEFAULT_FLAG_ID;
 
   if (!ALLOWED_FLAG_IDS.includes(flagId)) {
     return DEFAULT_FLAG_ID;
@@ -28,7 +27,7 @@ export const getProductCatalogFlagForApp = (app, productCatalogFlags) => {
 };
 
 export const hasAllowedAppFeatureFlag = app =>
-  ALLOWED_FLAG_IDS.includes(get(app, APP_PRODUCT_CATALOG_FLAG_PATH, DEFAULT_FLAG_ID));
+  ALLOWED_FLAG_IDS.includes(app.flagId || DEFAULT_FLAG_ID);
 
 export class AppProductCatalog {
   constructor(spaceId, getSpaceFeature) {
@@ -55,8 +54,8 @@ export class AppProductCatalog {
     }
   }
 
-  async loadProductCatalogFlags(apps) {
-    const flagsToLoad = uniq(Object.keys(apps).map(key => getFlagId(apps[key])));
+  async loadProductCatalogFlags(marketplaceApps) {
+    const flagsToLoad = uniq(marketplaceApps.map(app => getFlagId(app)));
 
     const productCatalogFlags = await Promise.all(
       flagsToLoad.map(async feature => ({

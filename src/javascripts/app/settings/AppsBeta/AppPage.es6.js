@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { css, keyframes } from 'emotion';
-import { get } from 'lodash';
 import tokens from '@contentful/forma-36-tokens';
 import {
   Button,
@@ -141,7 +140,7 @@ export default class AppRoute extends Component {
     repo: PropTypes.shape({
       getExtensionDefinitionForApp: PropTypes.func.isRequired,
       getExtensionForExtensionDefinition: PropTypes.func.isRequired,
-      getAppsListing: PropTypes.func.isRequired
+      getMarketplaceApps: PropTypes.func.isRequired
     }).isRequired,
     bridge: PropTypes.object.isRequired,
     appHookBus: PropTypes.shape({
@@ -211,16 +210,16 @@ export default class AppRoute extends Component {
   initialize = async () => {
     const { appHookBus, appId, repo, productCatalog } = this.props;
 
-    const [extensionDefinition, appsListing] = await Promise.all([
+    const [extensionDefinition, marketplaceApps] = await Promise.all([
       repo.getExtensionDefinitionForApp(appId),
-      repo.getAppsListing()
+      repo.getMarketplaceApps()
     ]);
 
-    const appInfo = Object.values(appsListing).find(app => app.fields.slug === appId);
+    const app = marketplaceApps.find(app => app.id === appId);
 
     const [{ extension }, appEnabled] = await Promise.all([
       this.checkAppStatus(extensionDefinition),
-      productCatalog.isAppEnabled(appInfo)
+      productCatalog.isAppEnabled(app)
     ]);
 
     appHookBus.setExtension(extension);
@@ -234,10 +233,10 @@ export default class AppRoute extends Component {
       appEnabled,
       isInstalled: !!extension,
       extensionDefinition,
-      title: get(appInfo, ['fields', 'title'], extensionDefinition.name),
-      appIcon: get(appInfo, ['fields', 'icon', 'fields', 'file', 'url'], ''),
-      permissions: get(appInfo, ['fields', 'permissionsExplanation'], ''),
-      actionList: get(appInfo, ['fields', 'uninstallMessages'], []).map(mes => get(mes, ['fields']))
+      title: app.title || extensionDefinition.name,
+      appIcon: app.icon,
+      permissions: app.permissionsExplanation,
+      actionList: app.actionList
     });
   };
 
