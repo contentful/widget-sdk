@@ -3,6 +3,7 @@ export const websiteUrl = path => `https://www.contentful.com${path}`;
 export const appUrl = `https://app.contentful.com/`;
 export const apiUrl = path => `//api.test.com/${path || ''}`;
 export const oauthUrl = key => `//be.test.com/account/profile/auth/${key}`;
+export const supportUrl = `https://support.contentful.com/`;
 
 export const launchDarkly = {
   envId: 'jest'

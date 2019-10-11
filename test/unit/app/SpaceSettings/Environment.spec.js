@@ -120,30 +120,6 @@ describe('app/SpaceSettings/Environments', () => {
     this.container.find('environmentList', 'environment.e3').assertHasText('Failed');
   });
 
-  describe('when environment branching is disabled', function() {
-    it('does not show the env selector and uses master', async function() {
-      this.setEnvironmentBranchingFeatureEnabled(false);
-
-      this.putEnvironment({ id: 'e1', status: 'ready' });
-      this.putEnvironment({ id: 'e2', status: 'ready' });
-
-      this.init();
-
-      this.container.find('openCreateDialog').click();
-      await $wait();
-      this.container.find('spaceEnvironmentsEditDialog', 'source.id').assertNonExistent();
-
-      this.container.find('spaceEnvironmentsEditDialog', 'field.id').setValue('env_id');
-      this.container.find('spaceEnvironmentsEditDialog', 'submit').click();
-
-      const updateRequest = this.envRequests.find(r => r.method === 'PUT');
-      expect(updateRequest.headers['X-Contentful-Source-Environment']).toEqual('master');
-
-      await $wait();
-      this.container.find('environmentList', 'environment.env_id').assertHasText('env_id');
-    });
-  });
-
   describe('when aliases feature is disabled', function() {
     it('does not show the aliases opt-in', function() {
       this.setEnvironmentAliasesFeatureEnabled(false);
@@ -215,50 +191,6 @@ describe('app/SpaceSettings/Environments', () => {
         this.container.find('environments.header').assertNonExistent();
         this.container.find('environmentaliases.card').assertNonExistent();
       });
-    });
-  });
-
-  describe('when environment branching is enabled', function() {
-    it('does not show the env selector if there is just one env', async function() {
-      this.setEnvironmentBranchingFeatureEnabled(true);
-
-      this.putEnvironment({ id: 'e1', status: 'ready' });
-
-      this.init();
-
-      this.container.find('openCreateDialog').click();
-      await $wait();
-      this.container.find('spaceEnvironmentsEditDialog', 'source.id').assertNonExistent();
-    });
-
-    it('shows the selector if there are multiple envs', async function() {
-      this.setEnvironmentBranchingFeatureEnabled(true);
-
-      this.putEnvironment({ id: 'e1', status: 'ready' });
-      this.putEnvironment({ id: 'e2', status: 'ready' });
-
-      this.init();
-
-      this.container.find('openCreateDialog').click();
-      await $wait();
-
-      this.container.find('spaceEnvironmentsEditDialog', 'source.id').assertIsVisible();
-      this.container.find('spaceEnvironmentsEditDialog', 'source.id').assertValue('e1');
-
-      const sources = this.container
-        .find('spaceEnvironmentsEditDialog', 'source.id')
-        .element.querySelectorAll('option');
-      expect(Array.from(sources).map(s => s.value)).toEqual(['e1', 'e2']);
-
-      this.container.find('spaceEnvironmentsEditDialog', 'source.id').setValue('e2');
-      this.container.find('spaceEnvironmentsEditDialog', 'field.id').setValue('env_id');
-      this.container.find('spaceEnvironmentsEditDialog', 'submit').click();
-
-      const updateRequest = this.envRequests.find(r => r.method === 'PUT');
-      expect(updateRequest.headers['X-Contentful-Source-Environment']).toEqual('e2');
-
-      await $wait();
-      this.container.find('environmentList', 'environment.env_id').assertHasText('env_id');
     });
   });
 

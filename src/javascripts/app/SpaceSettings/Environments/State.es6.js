@@ -13,7 +13,7 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import { getModule } from 'NgRegistry.es6';
 
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo.es6';
-import { openCreateDialog } from './EditDialog.es6';
+import { openCreateEnvDialog } from './CreateEnvDialog';
 import { openDeleteEnvironmentDialog } from './DeleteDialog.es6';
 import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService.es6';
 import View from './View.es6';
@@ -77,7 +77,7 @@ const reduce = makeReducer({
   },
   [OpenCreateDialog]: (state, _, { resourceEndpoint, dispatch }) => {
     C.runTask(function*() {
-      const created = yield openCreateDialog(
+      const created = yield openCreateEnvDialog(
         resourceEndpoint.create,
         state.items,
         state.currentEnvironment,

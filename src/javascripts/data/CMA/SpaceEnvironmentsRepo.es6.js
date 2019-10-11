@@ -1,6 +1,5 @@
 import { pick } from 'lodash';
 import { get } from 'utils/Collections.es6';
-import { makeCtor } from 'utils/TaggedValues.es6';
 
 // Hardcoded limit for v1 orgs is 100 + 1 (master).
 // It is less for all v2 space plans.
@@ -8,10 +7,10 @@ const ENVIRONMENTS_LIMIT = 101;
 
 // These are the response constructors for the values returned by
 // `create` and `update`.
-export const EnvironmentUpdated = makeCtor('EnvironmentUpdated');
-export const IdExistsError = makeCtor('IdExistsError');
-export const NameExistsError = makeCtor('NameExistsError');
-export const ServerError = makeCtor('ServerError');
+export const EnvironmentUpdated = 'EnvironmentUpdated';
+export const IdExistsError = 'IdExistsError';
+export const NameExistsError = 'NameExistsError';
+export const ServerError = 'ServerError';
 
 /**
  * Create a repository to manage space environments through the CMA.
@@ -68,7 +67,9 @@ export function create(spaceEndpoint) {
       {
         'X-Contentful-Source-Environment': source || 'master'
       }
-    ).then(EnvironmentUpdated, mapCreateError);
+    ).then(() => {
+      return { type: EnvironmentUpdated };
+    }, mapCreateError);
   }
 
   function remove(id) {
@@ -95,25 +96,27 @@ export function create(spaceEndpoint) {
       version: env.sys.version,
       // Gatekeeper only allows you to send `name` attribute
       data: pick(env, ['name'])
-    }).then(EnvironmentUpdated, mapUpdateError);
+    }).then(() => {
+      return { type: EnvironmentUpdated };
+    }, mapUpdateError);
   }
 }
 
 function mapCreateError(error) {
   if (error.status === 409) {
-    return IdExistsError();
+    return { type: IdExistsError };
   } else if (isNameExistsError(error)) {
-    return NameExistsError();
+    return { type: NameExistsError };
   } else {
-    return ServerError(error);
+    return { type: ServerError, error };
   }
 }
 
 function mapUpdateError(error) {
   if (isNameExistsError(error)) {
-    return NameExistsError();
+    return { type: NameExistsError };
   } else {
-    return ServerError(error);
+    return { type: ServerError };
   }
 }
 

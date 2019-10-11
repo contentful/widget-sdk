@@ -21,9 +21,11 @@ import * as StateNavigator from 'states/Navigator.es6';
  *   ID of a current environment
  */
 export function openDeleteEnvironmentDialog(runDelete, environmentId, activeEnvironmentId) {
+  const uniqueModalKey = Date.now();
   return ModalLauncher.open(({ isShown, onClose }) => {
     return (
       <SpaceEnvironmentsDeleteDialog
+        key={uniqueModalKey}
         isShown={isShown}
         runDelete={runDelete}
         confirmationId={environmentId}

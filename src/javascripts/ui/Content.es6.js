@@ -70,6 +70,10 @@ LinkOpen.propTypes = {
   modifier: PropTypes.string
 };
 
+LinkOpen.defaultProps = {
+  modifier: ''
+};
+
 /**
  * Styles the content as an inline code fragment
  */
