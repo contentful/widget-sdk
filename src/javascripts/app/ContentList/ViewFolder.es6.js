@@ -155,17 +155,25 @@ function editViewRoles(view, endpoint, tracking, UpdateView) {
   });
 }
 
-function editViewTitle(view, tracking, UpdateView) {
-  openInputDialog({
-    title: 'Edit view',
-    message: 'View name',
-    confirmLabel: 'Save',
-    input: { value: view.title, min: 1, max: 32 }
-  }).promise.then(title => {
+async function editViewTitle(view, tracking, UpdateView) {
+  const title = await openInputDialog(
+    {
+      title: 'Rename view',
+      confirmLabel: 'Rename view',
+      message: 'New name for the folder',
+      intent: 'positive',
+      isValid: value => {
+        const trimmed = (value || '').trim();
+        return trimmed.length > 0 && trimmed.length <= 32;
+      }
+    },
+    view.title
+  );
+  if (title) {
     view = assign(view, { title });
     tracking.viewTitleEdited(view);
     UpdateView(view);
-  });
+  }
 }
 
 function deleteView(view, tracking, DeleteView) {
