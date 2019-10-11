@@ -1,4 +1,4 @@
-import { uniq } from 'lodash';
+import { get, uniq } from 'lodash';
 
 const DEFAULT_STATUS = true;
 const DEFAULT_FLAG_ID = 'basic_apps';
@@ -10,7 +10,7 @@ const DEFAULT_FLAG_ID = 'basic_apps';
 const ALLOWED_FLAG_IDS = ['basic_apps', 'optimizely_app'];
 
 const getFlagId = app => {
-  const flagId = app.flagId || DEFAULT_FLAG_ID;
+  const flagId = get(app, ['flagId'], DEFAULT_FLAG_ID);
 
   if (!ALLOWED_FLAG_IDS.includes(flagId)) {
     return DEFAULT_FLAG_ID;

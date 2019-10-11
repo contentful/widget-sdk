@@ -12,6 +12,7 @@ import {
   SkeletonBodyText
 } from '@contentful/forma-36-react-components';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import { get } from 'lodash';
 
 import AdminOnly from 'app/common/AdminOnly.es6';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer.es6';
@@ -180,9 +181,7 @@ export default class AppRoute extends Component {
     }
   }
 
-  checkAppStatus = async extensionDefinition => {
-    extensionDefinition = extensionDefinition || this.state.extensionDefinition;
-
+  checkAppStatus = async (extensionDefinition = this.state.extensionDefinition) => {
     const { repo, appId } = this.props;
     const result = { appId, extensionDefinition };
 
@@ -214,7 +213,6 @@ export default class AppRoute extends Component {
       repo.getExtensionDefinitionForApp(appId),
       repo.getMarketplaceApps()
     ]);
-
     const app = marketplaceApps.find(app => app.id === appId);
 
     const [{ extension }, appEnabled] = await Promise.all([
@@ -233,10 +231,10 @@ export default class AppRoute extends Component {
       appEnabled,
       isInstalled: !!extension,
       extensionDefinition,
-      title: app.title || extensionDefinition.name,
-      appIcon: app.icon,
-      permissions: app.permissionsExplanation,
-      actionList: app.actionList
+      title: get(app, ['title'], extensionDefinition.name),
+      appIcon: get(app, ['icon'], ''),
+      permissions: get(app, ['permissionsExplanation'], ''),
+      actionList: get(app, ['actionList'], [])
     });
   };
 
