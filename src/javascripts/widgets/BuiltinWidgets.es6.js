@@ -16,6 +16,7 @@ import { CheckboxEditor } from '@contentful/field-editor-checkbox';
 import { RadioEditor } from '@contentful/field-editor-radio';
 import { BooleanEditor } from '@contentful/field-editor-boolean';
 import { RatingEditor } from '@contentful/field-editor-rating';
+import { NumberEditor } from '@contentful/field-editor-number';
 
 const CfLinkEditor = linkEditorWithCfWebApp(LinkEditor);
 const CfSingleLinkEditor = linkEditorWithCfWebApp(SingleLinkEditor);
@@ -65,7 +66,7 @@ export function create() {
     fieldTypes: ['Integer', 'Number'],
     name: 'Number editor',
     icon: 'number',
-    template: '<cf-number-editor />'
+    renderFieldEditor: ({ widgetApi }) => <NumberEditor field={widgetApi.field} />
   });
 
   registerWidget('markdown', {

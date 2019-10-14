@@ -74,7 +74,6 @@ export const angularInitRun = [
       import('app/widgets/link/entityLinkDirectives.es6'),
       import('app/widgets/location/cfLocationEditorDirective.es6'),
       import('app/widgets/location/searchController.es6'),
-      import('app/widgets/number/cfNumberEditorDirective.es6'),
       import('app/widgets/shared/cfEditorCharacterInfoDirective.es6'),
       import('app/widgets/slug/cfSlugEditorDirective.es6'),
       import('app/widgets/url/cfUrlEditorDirective.es6'),
