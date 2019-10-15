@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import _, { groupBy, first, map, orderBy, filter, get } from 'lodash';
+import _, { groupBy, first, map, filter, get } from 'lodash';
 
 import { create as createMembershipRepo } from 'access_control/SpaceMembershipRepository.es6';
 import { canModifyUsers } from 'access_control/AccessChecker/index.es6';
@@ -52,7 +52,11 @@ const UserList = ({ onReady, jumpToRole }) => {
   const hasTeamsFeature = get(data, 'hasTeamsFeature', false);
 
   const sortedMembers = useMemo(
-    () => orderBy(resolvedMembers, ['sys.user.firstName', 'sys.user.lastName'], ['asc', 'asc']),
+    () =>
+      _(resolvedMembers)
+        .filter('sys.user.email')
+        .orderBy(['sys.user.firstName', 'sys.user.lastName'], ['asc', 'asc'])
+        .value(),
     [resolvedMembers]
   );
 
@@ -60,7 +64,9 @@ const UserList = ({ onReady, jumpToRole }) => {
 
   const usersByName = useMemo(
     () =>
-      groupBy(sortedMembers, ({ sys: { user: { firstName } } }) => first(firstName.toUpperCase())),
+      groupBy(sortedMembers, ({ sys: { user: { firstName, email } } }) =>
+        first((firstName || email).toUpperCase())
+      ),
     [sortedMembers]
   );
 
