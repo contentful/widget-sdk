@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import cx from 'classnames';
 import { css, keyframes } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import {
@@ -24,6 +25,7 @@ import EmptyStateContainer, {
 import EmptyStateIllustration from 'svg/connected-forms-illustration.es6';
 import { installOrUpdate, uninstall } from './AppOperations.es6';
 import { APP_EVENTS_IN, APP_EVENTS_OUT } from './AppHookBus.es6';
+import UnknownErrorMessage from 'components/shared/UnknownErrorMessage.es6';
 import UninstallModal from './UninstallModal.es6';
 import AppPermissions from './AppPermissions.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
@@ -43,6 +45,9 @@ const BUSY_STATE_TO_TEXT = {
   [BUSY_STATE_UPDATE]: 'Updating configuration...',
   [BUSY_STATE_UNINSTALLATION]: 'Uninstalling the app...'
 };
+
+const APP_STILL_LOADING_TIMEOUT = 3000;
+const APP_HAS_ERROR_TIMEOUT = 15000;
 
 const fadeIn = keyframes({
   from: {
@@ -64,6 +69,9 @@ const styles = {
       width: '100%'
     },
     overflow: 'hidden'
+  }),
+  hideRenderer: css({
+    display: 'none'
   }),
   actionButton: css({
     marginLeft: tokens.spacingM
@@ -114,6 +122,9 @@ const styles = {
     height: '45px',
     verticalAlign: 'middle',
     marginRight: tokens.spacingS
+  }),
+  stillLoadingText: css({
+    marginTop: '-80px'
   })
 };
 
@@ -162,6 +173,9 @@ export default class AppRoute extends Component {
 
   state = {
     ready: false,
+    appLoaded: false,
+    showStillLoadingText: false,
+    loadingError: false,
     acceptedPermissions: isAppAlreadyAuthorized(this.props.repo, this.props.appId)
   };
 
@@ -223,19 +237,37 @@ export default class AppRoute extends Component {
     appHookBus.setExtension(extension);
     appHookBus.on(APP_EVENTS_IN.CONFIGURED, this.onAppConfigured);
     appHookBus.on(APP_EVENTS_IN.MISCONFIGURED, this.onAppMisconfigured);
+    appHookBus.on(APP_EVENTS_IN.MARKED_AS_READY, this.onAppMarkedAsReady);
 
     AppLifecycleTracking.configurationOpened(appId);
 
-    this.setState({
-      ready: true,
-      appEnabled,
-      isInstalled: !!extension,
-      extensionDefinition,
-      title: get(app, ['title'], extensionDefinition.name),
-      appIcon: get(app, ['icon'], ''),
-      permissions: get(app, ['permissionsExplanation'], ''),
-      actionList: get(app, ['actionList'], [])
-    });
+    this.setState(
+      {
+        ready: true,
+        appEnabled,
+        isInstalled: !!extension,
+        extensionDefinition,
+        title: get(app, ['title'], extensionDefinition.name),
+        appIcon: get(app, ['icon'], ''),
+        permissions: get(app, ['permissionsExplanation'], ''),
+        actionList: get(app, ['actionList'], [])
+      },
+      this.afterInitialize
+    );
+  };
+
+  afterInitialize = () => {
+    setTimeout(() => {
+      if (!this.state.appLoaded) {
+        this.setState({ showStillLoadingText: true });
+      }
+    }, APP_STILL_LOADING_TIMEOUT);
+
+    setTimeout(() => {
+      if (!this.state.appLoaded) {
+        this.setState({ loadingError: true });
+      }
+    }, APP_HAS_ERROR_TIMEOUT);
   };
 
   onAppConfigured = async ({ installationRequestId, config }) => {
@@ -283,6 +315,13 @@ export default class AppRoute extends Component {
   onAppMisconfigured = async () => {
     const { extension } = await this.checkAppStatus();
     this.setState({ isInstalled: !!extension, busyWith: false });
+  };
+
+  onAppMarkedAsReady = () => {
+    const { loadingError } = this.state;
+    if (!loadingError) {
+      this.setState({ appLoaded: true });
+    }
   };
 
   update = busyWith => {
@@ -395,10 +434,10 @@ export default class AppRoute extends Component {
   }
 
   renderActions() {
-    const { isInstalled, busyWith } = this.state;
+    const { isInstalled, busyWith, appLoaded, loadingError } = this.state;
     return (
       <>
-        {!isInstalled && (
+        {appLoaded && !isInstalled && (
           <Button
             buttonType="primary"
             onClick={() => this.update(BUSY_STATE_INSTALLATION)}
@@ -408,7 +447,7 @@ export default class AppRoute extends Component {
             Install
           </Button>
         )}
-        {isInstalled && (
+        {(appLoaded || loadingError) && isInstalled && (
           <Button
             buttonType="muted"
             onClick={this.uninstall}
@@ -418,7 +457,7 @@ export default class AppRoute extends Component {
             Uninstall
           </Button>
         )}
-        {isInstalled && (
+        {appLoaded && isInstalled && (
           <Button
             buttonType="primary"
             onClick={() => this.update(BUSY_STATE_UPDATE)}
@@ -433,7 +472,7 @@ export default class AppRoute extends Component {
   }
 
   renderContent() {
-    const { extensionDefinition } = this.state;
+    const { extensionDefinition, appLoaded } = this.state;
 
     // Artifical widget descriptor for rendering `src`
     // of `ExtensionDefinition` entity without corresponding
@@ -445,7 +484,9 @@ export default class AppRoute extends Component {
     };
 
     return (
-      <Workbench.Content type="full" className={styles.renderer}>
+      <Workbench.Content
+        type="full"
+        className={cx(styles.renderer, { [styles.hideRenderer]: !appLoaded })}>
         <ExtensionIFrameRenderer
           bridge={this.props.bridge}
           descriptor={descriptor}
@@ -456,15 +497,26 @@ export default class AppRoute extends Component {
     );
   }
 
-  renderLoading() {
+  renderLoading(withoutWorkbench) {
+    const loadingContent = (
+      <Workbench.Content type="text">
+        <SkeletonContainer ariaLabel="Loading app..." svgWidth="100%" svgHeight="300px">
+          <SkeletonBodyText numberOfLines={5} marginBottom={15} offsetTop={60} />
+        </SkeletonContainer>
+        {this.state.showStillLoadingText && (
+          <Paragraph className={styles.stillLoadingText}>Still loading...</Paragraph>
+        )}
+      </Workbench.Content>
+    );
+
+    if (withoutWorkbench) {
+      return loadingContent;
+    }
+
     return (
       <Workbench>
         <Workbench.Header title="" onBack={this.props.goBackToList} />
-        <Workbench.Content type="text">
-          <SkeletonContainer ariaLabel="Loading app..." svgWidth="100%" svgHeight="300px">
-            <SkeletonBodyText numberOfLines={5} marginBottom={15} offsetTop={60} />
-          </SkeletonContainer>
-        </Workbench.Content>
+        {loadingContent}
       </Workbench>
     );
   }
@@ -473,9 +525,24 @@ export default class AppRoute extends Component {
     this.setState({ acceptedPermissions: true });
   };
 
+  renderLoadingError = () => {
+    const { title } = this.state;
+
+    return (
+      <UnknownErrorMessage
+        buttonText="View all apps"
+        description={`The ${title} app cannot be reached or is not responding.`}
+        heading="App failed to load"
+        onButtonClick={this.props.goBackToList}
+      />
+    );
+  };
+
   render() {
     const {
       ready,
+      appLoaded,
+      loadingError,
       isInstalled,
       acceptedPermissions,
       appIcon,
@@ -521,7 +588,9 @@ export default class AppRoute extends Component {
             title={this.renderTitle()}
             actions={this.renderActions()}
           />
-          {this.renderContent()}
+          {loadingError && this.renderLoadingError()}
+          {!appLoaded && !loadingError && this.renderLoading(true)}
+          {!loadingError && this.renderContent()}
         </Workbench>
       </AdminOnly>
     );
