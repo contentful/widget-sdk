@@ -144,7 +144,7 @@ const UserListPresentation = ({
                 const {
                   sys: {
                     id,
-                    user: { avatarUrl, firstName, lastName, email, confirmed }
+                    user: { avatarUrl, firstName, lastName, email, activated }
                   },
                   roles
                 } = member;
@@ -164,7 +164,7 @@ const UserListPresentation = ({
                       <strong data-test-id="user-list.name" className={styles.userName}>
                         {displayName}
                       </strong>
-                      {!confirmed && (
+                      {!activated && (
                         <small className={styles.notConfirmed}>This account is not confirmed</small>
                       )}
                       <div data-test-id="user-list.roles">{displayRoles}</div>
