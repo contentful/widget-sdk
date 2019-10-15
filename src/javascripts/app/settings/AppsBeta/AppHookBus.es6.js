@@ -27,8 +27,7 @@ export const APP_EVENTS_OUT = {
 
 export const APP_EVENTS_IN = {
   CONFIGURED: 'app-events-in-configured',
-  MISCONFIGURED: 'app-events-in-misconfigured',
-  MARKED_AS_READY: 'app-events-in-ready'
+  MISCONFIGURED: 'app-events-in-misconfigured'
 };
 
 export function makeAppHookBus() {
