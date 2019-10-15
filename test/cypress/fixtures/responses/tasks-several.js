@@ -19,3 +19,7 @@ export const definition = {
     }
   }))
 };
+
+export function getTaskDefinitionById(taskId) {
+  return definition.items.find(taskDefinition => taskDefinition.sys.id.getValue() === taskId);
+}

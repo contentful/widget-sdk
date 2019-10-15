@@ -1,12 +1,14 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import { queryFirst100UsersInDefaultSpace } from '../../../interactions/users';
 import {
+  TaskUpdate,
+  TaskStates,
   PROVIDER as TASKS_PROVIDER,
   getAllCommentsForDefaultEntry,
   createTask,
-  openTask,
-  reopenTask,
-  resolveTask
+  updateTaskTitleAndAssignee,
+  resolveTask,
+  reopenTask
 } from '../../../interactions/tasks';
 
 import {
@@ -107,27 +109,23 @@ describe('Tasks entry editor sidebar', () => {
     });
 
     describe('updating a task', () => {
-      it('updates tasks without error', () => {
-        const updatedTaskData = {
+      it('changes task title and assignee without error', () => {
+        const taskUpdate:TaskUpdate = {
           title: 'Updated task body!',
           assigneeId: users.items[1].sys.id
         }
+        const interaction = updateTaskTitleAndAssignee(taskUpdate).willSucceed();
 
-        const interaction = openTask(updatedTaskData).willSucceed();
-
-        updateTaskAndSave(getTasks().first(), updatedTaskData);
+        updateTaskAndSave(getTasks().first(), taskUpdate);
 
         cy.wait(interaction);
       });
 
       it('resolves tasks without error', () => {
-        const [openTask] = severalTasks.items;
-        const updatedTaskData = {
-          title: openTask.body,
-          assigneeId: openTask.assignment.assignedTo.sys.id,
-          taskId: openTask.sys.id
+        const taskUpdate:TaskUpdate = {
+          status: TaskStates.RESOLVED
         }
-        const interaction = resolveTask(updatedTaskData).willSucceed();
+        const interaction = resolveTask(taskUpdate).willSucceed();
 
         const task = () => getTasks().first();
         expectTask(task(), { isResolved: false });
@@ -139,15 +137,13 @@ describe('Tasks entry editor sidebar', () => {
       });
 
       it('reopens tasks without error', () => {
-        const [, resolvedTask] = severalTasks.items;
-        const updatedTaskData = {
-          title: resolvedTask.body,
-          assigneeId: resolvedTask.assignment.assignedTo.sys.id,
-          taskId: resolvedTask.sys.id
+        const taskUpdate:TaskUpdate = {
+          status: TaskStates.OPEN
         }
-        const interaction = reopenTask(updatedTaskData).willSucceed();
+        const interaction = reopenTask(taskUpdate).willSucceed();
 
         const task = () => getTasks().eq(1);
+        expectTask(task(), { isResolved: true});
         getTaskCheckbox(task()).uncheck();
 
         cy.wait(interaction);
@@ -155,7 +151,7 @@ describe('Tasks entry editor sidebar', () => {
         expectTask(task(), { isResolved: false });
       });
 
-      function updateTaskAndSave(task: Cypress.Chainable, { title, assigneeId }) {
+      function updateTaskAndSave(task: Cypress.Chainable, { title, assigneeId }: TaskUpdate) {
         task.click();
         getTaskKebabMenu(task)
           .should('be.enabled')
@@ -163,11 +159,15 @@ describe('Tasks entry editor sidebar', () => {
         getTaskKebabMenuItems(task)
           .getByTestId('edit-task')
           .click();
-        getTaskBodyTextarea(task)
-          .should('have.text', severalTasks.items[0].body)
-          .clear()
-          .type(title);
-        selectTaskAssignee(assigneeId);
+        if (title) {
+          getTaskBodyTextarea(task)
+            .should('have.text', severalTasks.items[0].body)
+            .clear()
+            .type(title);
+        }
+        if (assigneeId) {
+          selectTaskAssignee(assigneeId);
+        }
         saveUpdatedTask();
       }
     });

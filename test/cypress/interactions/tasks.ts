@@ -2,7 +2,6 @@ import { omit } from 'lodash'
 import {
   defaultSpaceId,
   defaultEntryId,
-  defaultTaskId,
   defaultHeader as commonDefaultHeader
 } from '../util/requests';
 import { RequestOptions } from '@pact-foundation/pact-web';
@@ -10,6 +9,7 @@ const emptyWithTotal = require('../fixtures/responses/empty.json');
 const serverError = require('../fixtures/responses/server-error.json');
 import {
   definition as severalTasksDefinition,
+  getTaskDefinitionById as getSeveralTasksTaskDefinitionById
 } from '../fixtures/responses/tasks-several.js';
 
 // Tasks doesn't currently support "total" like most other collection endpoints.
@@ -21,9 +21,15 @@ export enum States {
   INTERNAL_SERVER_ERROR = 'tasks/internal-server-error'
 }
 
-enum Status {
+export enum TaskStates {
   OPEN = 'open',
   RESOLVED = 'resolved',
+}
+
+export type TaskUpdate = {
+  title?: string,
+  assigneeId?: string,
+  status?: TaskStates
 }
 
 export const PROVIDER = 'tasks';
@@ -68,7 +74,7 @@ export const getAllCommentsForDefaultEntry = {
       }
     }).as('getAllCommentsForDefaultEntry');
 
-    return '@getAllCommentsForDefaultEntry';;
+    return '@getAllCommentsForDefaultEntry';
   },
   willFailWithAnInternalServerError() {
     cy.addInteraction({
@@ -145,29 +151,29 @@ export function createTask({ title, assigneeId }) {
     }
   }
 }
-const capitalize = (str: string): string => str.length > 0 ?
-  str[0].toUpperCase().concat(str.slice(1)) :
-  ''
 
-function changeTaskStatus(status: Status, stateName: States) {
-  return function ({ title, assigneeId, taskId = defaultTaskId }, ) {
-    const alias = `changeTask(${taskId})To${capitalize(status.toString())}`
+function updateTask(taskId: string, alias: string, change: string) {
+  const taskDefinition = getSeveralTasksTaskDefinitionById(taskId);
+
+  return function (update: TaskUpdate, ) {
+    const { title, assigneeId, status } = update;
     const updatedTask = {
-      body: title,
+      body: title || taskDefinition.body,
       assignment: {
         assignedTo: {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: assigneeId,
+            id: assigneeId || taskDefinition.assignment.assignedTo.sys.id,
           }
-        }
+        },
+        status: status || taskDefinition.assignment.status
       }
     };
 
     const interactionRequestInfo = {
       provider: PROVIDER,
-      uponReceiving: `a request to change status of task "${taskId}" to "${status}"`,
+      uponReceiving: `a request for task "${taskId}" to ${change}`,
       withRequest: {
         method: 'PUT',
         path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}/tasks/${taskId}`,
@@ -176,10 +182,7 @@ function changeTaskStatus(status: Status, stateName: States) {
           'Content-Type': 'application/vnd.contentful.management.v1+json',
           'X-Contentful-Version': '1'
         },
-        body: {
-          ...updatedTask,
-          assignment: { ...updatedTask.assignment, status }
-        }
+        body: updatedTask
       } as RequestOptions
     };
 
@@ -189,7 +192,7 @@ function changeTaskStatus(status: Status, stateName: States) {
           task.sys.id.getValue() === taskId)
         cy.addInteraction({
           ...interactionRequestInfo,
-          state: stateName,
+          state: States.SEVERAL,
           willRespondWith: {
             status: 200,
             body: {
@@ -197,14 +200,14 @@ function changeTaskStatus(status: Status, stateName: States) {
                 ...newTaskSysDefinition,
                 version: newTaskSysDefinition.version + 1
               },
-              ...updatedTask,
-              assignment: { ...updatedTask.assignment, status },
+              ...updatedTask
             }
           }
         }).as(alias);
 
         return `@${alias}`;
       },
+      // TODO: Add a test actually using this or remove.
       willFailWithAnInternalServerError() {
         cy.addInteraction({
           ...interactionRequestInfo,
@@ -221,6 +224,6 @@ function changeTaskStatus(status: Status, stateName: States) {
   }
 }
 
-export const openTask = changeTaskStatus(Status.OPEN, States.SEVERAL);
-export const reopenTask = changeTaskStatus(Status.OPEN, States.SEVERAL);
-export const resolveTask = changeTaskStatus(Status.RESOLVED, States.SEVERAL);
+export const updateTaskTitleAndAssignee = updateTask('taskId1', 'changeTaskId1TitleAndReassignUser', 'change title and assignee');
+export const resolveTask = updateTask('taskId1', 'resolveTaskId1', 'set status to "done"');
+export const reopenTask = updateTask('taskId2', 'reopenTaskId2', 'set "done" task back to "open"');
