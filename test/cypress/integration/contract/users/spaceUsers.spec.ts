@@ -1,23 +1,141 @@
 import { defaultRequestsMock } from '../../../util/factories';
-import { defaultHeader, defaultSpaceId } from '../../../util/requests';
-// import { defaultSpaceId } from '../../../util/requests';
+import { defaultHeader, defaultSpaceId, defaultOrgId } from '../../../util/requests';
 
 const empty = require('../../../fixtures/responses/empty.json');
 
-const loadPageWithServerState = () => {
+const twoMembersBody = {
+  total: 2,
+  sys: {
+    type: 'Array'
+  },
+  items: [
+    {
+      admin: true,
+      roles: [],
+      relatedMemberships: [
+        {
+          sys: {
+            type: 'Link',
+            linkType: 'SpaceMembership',
+            id: 'space_membership_1'
+          }
+        }
+      ],
+      sys: {
+        type: 'SpaceMember',
+        id: 'space_member_1',
+        space: {
+          type: 'Link',
+          linkType: 'Space',
+          id: defaultSpaceId
+        },
+        user: {
+          sys: {
+            type: 'Link',
+            linkType: 'User',
+            id: 'user1'
+          }
+        }
+      }
+    },
+    {
+      admin: false,
+      roles: [
+        {
+          sys: {
+            type: 'Link',
+            linkType: 'Role',
+            id: 'role1'
+          }
+        },
+        {
+          sys: {
+            type: 'Link',
+            linkType: 'Role',
+            id: 'role2'
+          }
+        }
+      ],
+      relatedMemberships: [
+        {
+          sys: {
+            type: 'Link',
+            linkType: 'SpaceMembership',
+            id: 'space_membership_2'
+          }
+        },
+        {
+          sys: {
+            type: 'Link',
+            linkType: 'TeamSpaceMembership',
+            id: 'team_space_membership_1'
+          }
+        }
+      ],
+      sys: {
+        type: 'SpaceMember',
+        id: 'space_member_2',
+        space: {
+          type: 'Link',
+          linkType: 'Space',
+          id: defaultSpaceId
+        },
+        user: {
+          sys: {
+            type: 'Link',
+            linkType: 'User',
+            id: 'user2'
+          }
+        }
+      }
+    }
+  ]
+};
+
+const getOrgUsersInteraction = 'query_org_users';
+const postSpaceMembership = 'post_space_membership';
+
+const spaceUsers = [
+  {
+    email: 'user1@mail.com',
+    firstName: 'One',
+    lastName: 'Eins',
+    sys: { id: 'user1' }
+  },
+  {
+    email: 'user2@mail.com',
+    firstName: 'Two',
+    lastName: 'Zwei',
+    sys: { id: 'user2' }
+  }
+];
+
+const user3 = {
+  email: 'user3@mail.com',
+  firstName: 'Three',
+  lastName: 'Drei',
+  sys: { id: 'user3' }
+};
+
+const orgUsers = [
+  ...spaceUsers,
+  user3
+];
+
+const loadPageWithUserState = ({ stateName, responseBody, message }) => {
   cy.setAuthTokenToLocalStorage();
 
   cy.resetAllFakeServers();
 
   const getSpaceMembersInteraction = 'query_space_members';
-  const getSpaceMembershipsInteraction = 'query_space_memberships';
   const getRolesInteraction = 'query_space_roles';
-  const getUsersInteraction = 'query_org_users';
+  const getSpaceUsersInteraction = 'query_space_users';
+
 
   cy.addInteraction({
     provider: 'users',
-    state: 'empty',
-    uponReceiving: 'request for members in space',
+    state: stateName,
+    uponReceiving: message,
     withRequest: {
       method: 'GET',
       path: `/spaces/${defaultSpaceId}/space_members`,
@@ -26,27 +144,12 @@ const loadPageWithServerState = () => {
     },
     willRespondWith: {
       status: 200,
-      body: empty
+      body: responseBody
     }
   }).as(getSpaceMembersInteraction);
   cy.addInteraction({
-    provider: 'users',
-    state: 'empty',
-    uponReceiving: 'request for memberships in space',
-    withRequest: {
-      method: 'GET',
-      path: `/spaces/${defaultSpaceId}/space_memberships`,
-      query: { limit: '100', skip: '0' },
-      headers: defaultHeader
-    },
-    willRespondWith: {
-      status: 200,
-      body: empty
-    }
-  }).as(getSpaceMembershipsInteraction);
-  cy.addInteraction({
     provider: 'roles',
-    state: 'empty',
+    state: '2_roles',
     uponReceiving: 'request available roles of space',
     withRequest: {
       method: 'GET',
@@ -56,12 +159,31 @@ const loadPageWithServerState = () => {
     },
     willRespondWith: {
       status: 200,
-      body: empty
+      body: {
+        total: 2,
+        sys: {
+          type: 'Array'
+        },
+        items: [
+          {
+            name: 'Role 1',
+            sys: {
+              id: 'role1'
+            }
+          },
+          {
+            name: 'Role 2',
+            sys: {
+              id: 'role2'
+            }
+          }
+        ]
+      }
     }
   }).as(getRolesInteraction);
   cy.addInteraction({
     provider: 'users',
-    state: 'empty',
+    state: '2_users',
     uponReceiving: 'request for users in space',
     withRequest: {
       method: 'GET',
@@ -71,16 +193,21 @@ const loadPageWithServerState = () => {
     },
     willRespondWith: {
       status: 200,
-      body: empty
+      body: {
+        total: spaceUsers.length,
+        sys: {
+          type: 'Array'
+        },
+        items: spaceUsers
+      }
     }
-  }).as(getUsersInteraction);
+  }).as(getSpaceUsersInteraction);
 
   const interactions = [
     ...defaultRequestsMock(),
     `@${getSpaceMembersInteraction}`,
-    `@${getSpaceMembershipsInteraction}`,
     `@${getRolesInteraction}`,
-    `@${getUsersInteraction}`
+    `@${getSpaceUsersInteraction}`
   ];
 
   cy.visit(`/spaces/${defaultSpaceId}/settings/users`);
@@ -100,20 +227,97 @@ describe('Users in space page', () => {
     });
   });
 
-  describe('opening page with not users in space', () => {
+  describe('opening page with no users in space', () => {
     beforeEach(() => {
-      loadPageWithServerState();
+      loadPageWithUserState({
+        stateName: 'empty',
+        message: 'request for members in space',
+        responseBody: empty
+      });
     });
 
     it('should render sidebar, but no user items', () => {
       cy.queryByTestId('cf-ui-workbench-sidebar-right').should('exist');
       cy.queryByTestId('user-list.item').should('not.exist');
     });
+
+    it('should make post request when adding user to space', () => {
+      cy.addInteraction({
+        provider: 'users',
+        state: '3_users',
+        uponReceiving: 'request for users in org',
+        withRequest: {
+          method: 'GET',
+          path: `/organizations/${defaultOrgId}/users`,
+          query: { limit: '100', order: '-sys.updatedAt', skip: '0', 'sys.archivedAt[exists]': 'false' },
+          headers: defaultHeader
+        },
+        willRespondWith: {
+          status: 200,
+          body: {
+            total: orgUsers.length,
+            sys: {
+              type: 'Array'
+            },
+            items: orgUsers
+          }
+        }
+      }).as(getOrgUsersInteraction);
+      cy.addInteraction({
+        provider: 'users',
+        state: '3_users',
+        uponReceiving: 'adding space membership',
+        withRequest: {
+          method: 'POST',
+          path: `/spaces/${defaultSpaceId}/space_memberships`,
+          headers: defaultHeader,
+          body: {
+            admin: false,
+            email: user3.email,
+            roles: [
+              {
+                type: 'Link',
+                linkType: 'Role',
+                id: 'role1'
+              }
+            ]
+          }
+        },
+        willRespondWith: {
+          status: 201,
+          body: {
+            admin: true,
+            roles: [],
+            sys: {
+              id: 'space_membership_3'
+            },
+            user: user3
+          }
+        }
+      }).as(postSpaceMembership);
+
+      cy.getByTestId('add-users-to-space').click();
+      cy.wait(`@${getOrgUsersInteraction}`);
+      cy.getByTestId('entity-selector-item').first().click();
+      cy.getByTestId('entity-selector-confirm').click();
+      cy.getByTestId('user-role-select').first().select('role1');
+      cy.getByTestId('user-space-invitation-confirm').click();
+      cy.wait(`@${postSpaceMembership}`);
+    });
   });
 
-  describe('inviting a user into a space', () => {
-    it('send user invitation request and display user in list', () => {
-      loadPageWithServerState();
+  describe('opening page with two users in space', () => {
+    beforeEach(() => {
+      loadPageWithUserState({
+        stateName: '2_members',
+        message: 'request for members in space',
+        responseBody: twoMembersBody
+      });
+    });
+
+    it('should render sidebar and user items', () => {
+      cy.queryByTestId('cf-ui-workbench-sidebar-right').should('exist');
+      cy.queryByTestId('user-list.item').should('exist');
     });
   });
 });

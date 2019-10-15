@@ -8,6 +8,29 @@ const teamHeaders = {
   'x-contentful-enable-alpha-feature': 'teams-api'
 };
 
+const membership1 = {
+  admin: true,
+  roles: [],
+  sys: {
+    type: 'TeamSpaceMembership',
+    id: 'TSM1',
+    team: {
+      sys: {
+        type: 'Link',
+        linkType: 'Team',
+        id: 'team1'
+      }
+    }
+  }
+};
+const role1 = {
+  name: 'Role 1',
+  sys: { id: 'role1' }
+};
+const linkRole1 = {
+  sys: { type: 'Link', linkType: 'Role', id: 'role1' }
+};
+
 const loadPageWithServerState = (stateName, responseBody, message) => {
   cy.setAuthTokenToLocalStorage();
 
@@ -115,29 +138,6 @@ const loadPageWithServerState = (stateName, responseBody, message) => {
   cy.visit(`/spaces/${defaultSpaceId}/settings/teams`);
 
   cy.wait(interactions);
-};
-
-const membership1 = {
-  admin: true,
-  roles: [],
-  sys: {
-    type: 'TeamSpaceMembership',
-    id: 'TSM1',
-    team: {
-      sys: {
-        type: 'Link',
-        linkType: 'Team',
-        id: 'team1'
-      }
-    }
-  }
-};
-const role1 = {
-  name: 'Role 1',
-  sys: { id: 'role1' }
-};
-const linkRole1 = {
-  sys: { type: 'Link', linkType: 'Role', id: 'role1' }
 };
 
 describe('Teams in space page', () => {

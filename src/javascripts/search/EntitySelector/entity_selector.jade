@@ -54,6 +54,7 @@ mixin single-list-item
         |  for <strong>{{ view.searchText }}</strong>
 
     .entity-selector__item(
+      data-test-id="entity-selector-item"
       ng-repeat="entity in items track by entity.sys.id"
       ng-class="{'x--selected': selectedIds[entity.sys.id],'entity-selector__last-item': $last && paginator.atLast()}")
       +single-list-item

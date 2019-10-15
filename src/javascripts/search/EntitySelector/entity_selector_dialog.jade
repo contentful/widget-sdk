@@ -24,6 +24,7 @@
 
     .modal-dialog__controls(ng-if="entitySelector.config.multiple && !showCustomEmptyMessage")
       button.btn-primary-action.modal-dialog__controls-confirm(
+        data-test-id="entity-selector-confirm"
         type="button"
         ng-click="dialog.confirm(selected)"
         ng-disabled="selected.length < entitySelector.config.min || selected.length > entitySelector.config.max")
