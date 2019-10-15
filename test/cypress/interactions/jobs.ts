@@ -31,13 +31,11 @@ const entryIdQuery = {
 
 enum States {
   NO_JOBS_FOR_DEFAULT_SPACE = 'jobs/no-jobs-for-default-space',
-  ONE_JOB_FOR_DEFAULT_SPACE = 'jobs/one-job-for-default-space',
-  SEVERAL_JOBS_FOR_DEFAULT_SPACE = 'jobs/several-jobs-for-default-space',
-  INTERNAL_SERVER_ERROR = 'jobs/internal-server-error',
-  JOB_EXECUTION_FAILED = 'jobs/job-execution-failed',
-  //NO_JOBS_SCHEDULED_FOR_DEFAULT_ENTRY = 'jobs/no-jobs-scheduled-for-default-entry',
   ONE_PENDING_JOB_SCHEDULED_FOR_DEFAULT_ENTRY = 'jobs/one-pending-job-scheduled-for-default-entry',
-  MAX_PENDING_JOBS = 'jobs/max-pending-jobs'
+  SEVERAL_JOBS_FOR_DEFAULT_SPACE = 'jobs/several-jobs-for-default-space',
+  JOB_EXECUTION_FAILED = 'jobs/job-execution-failed',
+  MAX_PENDING_JOBS = 'jobs/max-pending-jobs',
+  INTERNAL_SERVER_ERROR = 'jobs/internal-server-error'
 }
 
 function queryJobsForDefaultSpaceRequest(query: Query): RequestOptions {
@@ -250,7 +248,7 @@ export const cancelDefaultJobInDefaultSpace = {
   willSucceed() {
     cy.addInteraction({
       provider: 'jobs',
-      state: States.ONE_JOB_FOR_DEFAULT_SPACE,
+      state: States.ONE_PENDING_JOB_SCHEDULED_FOR_DEFAULT_ENTRY,
       uponReceiving: `a request to cancel the job "${defaultJobId}" in space "${defaultSpaceId}"`,
       withRequest: {
         method: 'DELETE',
