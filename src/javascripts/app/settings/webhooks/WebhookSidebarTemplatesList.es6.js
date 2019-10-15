@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Templates from './templates/index.es6';
+import WorkbenchSidebarItem from 'app/common/WorkbenchSidebarItem';
 
 const WebhookSidebarTemplatesList = ({ openTemplateDialog }) => (
-  <React.Fragment>
-    <h2 className="entity-sidebar__heading">Webhook Templates</h2>
+  <WorkbenchSidebarItem title="Webhook Templates">
     {Templates.slice(0, 5).map(template => (
       <div className="webhook-template-item" key={template.id}>
         <div className="webhook-template-item__logo">{template.logo}</div>
@@ -26,7 +26,7 @@ const WebhookSidebarTemplatesList = ({ openTemplateDialog }) => (
         See all {Templates.length} templates
       </button>
     </div>
-  </React.Fragment>
+  </WorkbenchSidebarItem>
 );
 
 WebhookSidebarTemplatesList.propTypes = {

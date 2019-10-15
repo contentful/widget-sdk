@@ -47,7 +47,11 @@ export const ExtensionEditorShell = props => (
     />
     <Workbench.Content>
       {props.children || (
-        <SkeletonContainer svgWidth={600} ariaLabel="Loading extension..." clipId="content">
+        <SkeletonContainer
+          svgWidth={600}
+          svgHeight={300}
+          ariaLabel="Loading extension..."
+          clipId="content">
           <SkeletonBodyText numberOfLines={5} offsetLeft={28} marginBottom={15} offsetTop={18} />
         </SkeletonContainer>
       )}

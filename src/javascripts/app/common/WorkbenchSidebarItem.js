@@ -28,7 +28,7 @@ const styles = {
 
 export default function WorkbenchSidebarItem(props) {
   return (
-    <div className={styles.root}>
+    <div className={styles.root} data-test-id={props.testId}>
       <div className={styles.title}>{props.title}</div>
       {props.children}
     </div>
@@ -36,5 +36,6 @@ export default function WorkbenchSidebarItem(props) {
 }
 
 WorkbenchSidebarItem.propTypes = {
-  title: PropTypes.string.isRequired
+  title: PropTypes.string.isRequired,
+  testId: PropTypes.string
 };

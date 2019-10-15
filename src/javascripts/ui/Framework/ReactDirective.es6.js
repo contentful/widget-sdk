@@ -44,8 +44,6 @@ import * as appEntityEditorEntityCommentsToggleEs6 from 'app/entity_editor/Entit
 import * as appEntryEditorCustomEditorExtensionRendererEs6 from 'app/entry_editor/CustomEditorExtensionRenderer.es6';
 import * as componentsTabsNoLocalizedFieldsAdviceIndexEs6 from 'components/tabs/NoLocalizedFieldsAdvice/index.es6';
 import * as appHomeSpaceHomePageEs6 from 'app/home/SpaceHomePage.es6';
-import * as appSettingsLocalesRoutesLocalesListRouteEs6 from 'app/settings/locales/routes/LocalesListRoute.es6';
-import * as appSettingsLocalesRoutesLocalesNewRouteEs6 from 'app/settings/locales/routes/LocalesNewRoute.es6';
 import * as appSettingsLocalesRoutesLocalesEditRouteEs6 from 'app/settings/locales/routes/LocalesEditRoute.es6';
 import * as appWidgetsRichTextReadOnlyRichTextEditorEs6 from 'app/widgets/rich_text/ReadOnlyRichTextEditor.es6';
 import * as componentsSharedRelativeDateTimeIndexEs6 from 'components/shared/RelativeDateTime/index.es6';
@@ -75,7 +73,6 @@ import * as componentsSharedUserInvitationEs6 from 'components/shared/UserInvita
 import * as appUserProfileSettings from 'app/UserProfile/Settings';
 import * as appUserSettingsSpaceMembershipsEs6 from 'app/UserSettings/SpaceMemberships.es6';
 import * as componentsTabsContentTypeListContentTypeListPageEs6 from 'components/tabs/content_type_list/ContentTypeListPage.es6';
-import * as appSettingsSpaceSpaceSettingsRouteEs6 from 'app/settings/space/SpaceSettingsRoute.es6';
 import * as accessControlRoleEditorEs6 from 'access_control/RoleEditor.es6';
 import * as appSpaceSettingsTeamsSpaceTeamsPageEs6 from 'app/SpaceSettings/Teams/SpaceTeamsPage.es6';
 import * as appSpaceSettingsTeamsAddTeamsAddTeamsRouterEs6 from 'app/SpaceSettings/Teams/AddTeams/AddTeamsRouter.es6';
@@ -316,8 +313,6 @@ function getModule(name) {
     'app/entry_editor/CustomEditorExtensionRenderer.es6': appEntryEditorCustomEditorExtensionRendererEs6,
     'components/tabs/NoLocalizedFieldsAdvice/index.es6': componentsTabsNoLocalizedFieldsAdviceIndexEs6,
     'app/home/SpaceHomePage.es6': appHomeSpaceHomePageEs6,
-    'app/settings/locales/routes/LocalesListRoute.es6': appSettingsLocalesRoutesLocalesListRouteEs6,
-    'app/settings/locales/routes/LocalesNewRoute.es6': appSettingsLocalesRoutesLocalesNewRouteEs6,
     'app/settings/locales/routes/LocalesEditRoute.es6': appSettingsLocalesRoutesLocalesEditRouteEs6,
     'app/widgets/rich_text/ReadOnlyRichTextEditor.es6': appWidgetsRichTextReadOnlyRichTextEditorEs6,
     'components/shared/RelativeDateTime/index.es6': componentsSharedRelativeDateTimeIndexEs6,
@@ -347,7 +342,6 @@ function getModule(name) {
     'app/UserProfile/Settings': appUserProfileSettings,
     'app/UserSettings/SpaceMemberships.es6': appUserSettingsSpaceMembershipsEs6,
     'components/tabs/content_type_list/ContentTypeListPage.es6': componentsTabsContentTypeListContentTypeListPageEs6,
-    'app/settings/space/SpaceSettingsRoute.es6': appSettingsSpaceSpaceSettingsRouteEs6,
     'access_control/RoleEditor.es6': accessControlRoleEditorEs6,
     'app/SpaceSettings/Teams/SpaceTeamsPage.es6': appSpaceSettingsTeamsSpaceTeamsPageEs6,
     'app/SpaceSettings/Teams/AddTeams/AddTeamsRouter.es6': appSpaceSettingsTeamsAddTeamsAddTeamsRouterEs6,

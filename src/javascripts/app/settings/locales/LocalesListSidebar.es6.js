@@ -1,20 +1,18 @@
-/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@contentful/forma-36-react-components';
 import Pluralized from 'ui/Components/Pluralized.es6';
 import StateLink from 'app/common/StateLink.es6';
+import { Typography, Paragraph } from '@contentful/forma-36-react-components';
+import WorkbenchSidebarItem from 'app/common/WorkbenchSidebarItem';
 
 const DocumentationsSection = () => (
-  <div data-test-id="locales-documentation">
-    <h2 className="entity-sidebar__heading">Documentation</h2>
-    <div className="entity-sidebar__text-profile">
-      <p>
-        Contentful enables publishing content in multiple language. To translate your content, add a
-        locale, and enable translation for each necessary field in your content.
-      </p>
-    </div>
-  </div>
+  <WorkbenchSidebarItem testId="locales-documentation" title="Documentation">
+    <Paragraph>
+      Contentful enables publishing content in multiple language. To translate your content, add a
+      locale, and enable translation for each necessary field in your content.
+    </Paragraph>
+  </WorkbenchSidebarItem>
 );
 
 export default class LocalesListSidebar extends React.Component {
@@ -63,7 +61,9 @@ export default class LocalesListSidebar extends React.Component {
     }
     return (
       <div data-test-id="change-space-block">
-        <p>{instruction}</p>
+        <Typography>
+          <Paragraph>{instruction}</Paragraph>
+        </Typography>
         {canChangeSpace && (
           <div className="entity-sidebar__widget">
             <Button
@@ -83,19 +83,16 @@ export default class LocalesListSidebar extends React.Component {
     const { localeResource } = this.props;
     const isReachedLimit = localeResource.usage >= localeResource.limits.maximum;
     return (
-      <div data-test-id="locales-usage">
-        <h2 style={{ marginTop: 0 }} className="entity-sidebar__heading">
-          Usage
-        </h2>
-        <div className="entity-sidebar__text-profile">
-          <p>
+      <WorkbenchSidebarItem testId="locales-usage" title="Usage">
+        <Typography>
+          <Paragraph>
             You are using {localeResource.usage} out of{' '}
             <Pluralized text="locale" count={localeResource.limits.maximum} /> available in this
             space.
-          </p>
-          {isReachedLimit ? this.renderChangeSpace() : this.renderAddButton()}
-        </div>
-      </div>
+          </Paragraph>
+        </Typography>
+        {isReachedLimit ? this.renderChangeSpace() : this.renderAddButton()}
+      </WorkbenchSidebarItem>
     );
   }
 

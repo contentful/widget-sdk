@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
+import { SkeletonContainer, SkeletonBodyText } from '@contentful/forma-36-react-components';
 import WebhookForbiddenPage from '../WebhookForbiddenPage.es6';
-import WebhookList from '../WebhookList.es6';
+import WebhookList, { WebhookListShell } from '../WebhookList.es6';
 import createWebhookTemplateDialogOpener from '../createWebhookTemplateDialogOpener.es6';
-import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
+import createFetcherComponent from 'app/common/createFetcherComponent.es6';
 import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import { getModule } from 'NgRegistry.es6';
@@ -27,6 +28,20 @@ const WebhooksFetcher = createFetcherComponent(() => {
     return [webhooks, hasAwsProxy];
   });
 });
+
+function WebhooksLoadingSkeleton() {
+  return (
+    <WebhookListShell>
+      <SkeletonContainer
+        svgWidth={600}
+        svgHeight={300}
+        ariaLabel="Loading webhooks"
+        clipId="loading-webhooks">
+        <SkeletonBodyText numberOfLines={5} offsetLeft={20} marginBottom={15} offsetTop={20} />
+      </SkeletonContainer>
+    </WebhookListShell>
+  );
+}
 
 export class WebhookListRoute extends React.Component {
   static propTypes = {
@@ -56,7 +71,7 @@ export class WebhookListRoute extends React.Component {
       <WebhooksFetcher>
         {({ isLoading, isError, data }) => {
           if (isLoading) {
-            return <FetcherLoading message="Loading webhooks..." />;
+            return <WebhooksLoadingSkeleton />;
           }
           if (isError) {
             return <StateRedirect to="spaces.detail.entries.list" />;

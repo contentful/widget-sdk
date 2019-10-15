@@ -8,7 +8,6 @@ export default function CreatePreviewButton() {
       {({ onClick }) => (
         <Button
           icon="PlusCircle"
-          isFullWidth
           buttonType="primary"
           onClick={onClick}
           testId="add-content-preview-button">

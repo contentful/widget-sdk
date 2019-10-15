@@ -8,6 +8,7 @@ import contentPreviewSettingsState from 'app/settings/content_preview/routes/ind
 import rolesSettingsState from './settingsRoles.es6';
 import usersSettingsState from './settingsUsers.es6';
 import teamsSettingsState from './settingsTeams.es6';
+import SpaceSettingsRoute from 'app/settings/space/SpaceSettingsRoute.es6';
 
 export default SpaceSettingsBase({
   name: 'settings',
@@ -17,7 +18,7 @@ export default SpaceSettingsBase({
     {
       name: 'space',
       url: '/space',
-      template: '<react-component name="app/settings/space/SpaceSettingsRoute.es6" />'
+      component: SpaceSettingsRoute
     },
     localesSettingsState,
     usersSettingsState,
