@@ -88,7 +88,9 @@ export default function createAppsRepo(extensionDefinitionLoader, spaceEndpoint)
               url: get(app, ['fields', 'developer', 'fields', 'websiteUrl']),
               icon: get(app, ['fields', 'developer', 'fields', 'icon', 'fields', 'file', 'url'])
             },
-            categories: get(app, ['fields', 'categories'], []).map(category => category.fields),
+            categories: get(app, ['fields', 'categories'], [])
+              .map(category => get(category, ['fields', 'name'], null))
+              .filter(identity),
             description: get(app, ['fields', 'description'], ''),
             extensionDefinitionId,
             extensionDefinition: extensionDefinitionMap[extensionDefinitionId],

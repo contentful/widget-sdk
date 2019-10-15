@@ -49,16 +49,8 @@ Array [
       "url": "https://www.contentful.com",
     },
     "categories": Array [
-      Object {
-        "description": "This category contains apps that are either popular or outstanding implementations of their respective use cases.",
-        "name": "Featured",
-        "slug": "featured",
-      },
-      Object {
-        "description": "Website Hosting apps enable tighter integration with the presentation layer of your content.",
-        "name": "Website Hosting",
-        "slug": "website-hosting",
-      },
+      "Featured",
+      "Website Hosting",
     ],
     "description": "### About the app
 
