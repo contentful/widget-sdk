@@ -19,7 +19,7 @@
       div(
         bind-html-compile="entitySelector.labels.noEntitiesCustomHtml"
         data-test-id="custom-empty-message")
-      button.btn-primary-action(type="button" ng-click="dialog.cancel()" style="margin: 0 20px 0 10px;")
+      button.btn-primary-action(type="button" ng-click="dialog.cancel()" style="margin: 24px 20px 0 0")
         | Okay, got it
 
     .modal-dialog__controls(ng-if="entitySelector.config.multiple && !showCustomEmptyMessage")
