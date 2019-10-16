@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { isEmpty, xor, without } from 'lodash';
 import { ModalConfirm, Note } from '@contentful/forma-36-react-components';
@@ -22,17 +22,11 @@ const RoleChangeDialog = ({
   displayName,
   isShown,
   onClose,
-  memberId,
   isLastAdmin
 }) => {
   const [selectedRoleIds, setSelectedRoleIds] = useState(initiallySelectedRoleIds);
   const isCurrentlyAdmin = isEmpty(initiallySelectedRoleIds);
   const [isAdminSelected, setAdminSelected] = useState(isCurrentlyAdmin);
-  const reset = useCallback(() => {
-    setSelectedRoleIds(initiallySelectedRoleIds);
-    setAdminSelected(isEmpty(initiallySelectedRoleIds));
-  }, [initiallySelectedRoleIds]);
-  useEffect(reset, [memberId]);
   return (
     <ModalConfirm
       title={`Change role for ${displayName}`}
@@ -41,7 +35,6 @@ const RoleChangeDialog = ({
       isShown={isShown}
       onConfirm={() => onClose(selectedRoleIds)}
       onCancel={() => {
-        reset();
         onClose(false);
       }}
       allowHeightOverflow={true}

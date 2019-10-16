@@ -97,19 +97,21 @@ export function create(availableRoles, spaceUsers) {
    */
   async function openRoleChangeDialog(member, adminCount) {
     const {
-      sys: { id: memberId, user },
+      sys: { user },
       roles,
       relatedMemberships
     } = member;
 
+    const uniqueModalKey = Date.now();
+
     const selectedRoleIds = await ModalLauncher.open(({ isShown, onClose }) => (
       <RoleChangeDialog
+        key={uniqueModalKey}
         availableRoles={availableRoles}
         displayName={getDisplayName(user)}
         isShown={isShown}
         initiallySelectedRoleIds={map(roles, 'sys.id')}
         onClose={onClose}
-        memberId={memberId}
         isLastAdmin={isLastAdmin(member, adminCount)}
       />
     ));
