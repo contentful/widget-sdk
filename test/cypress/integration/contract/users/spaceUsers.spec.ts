@@ -117,6 +117,38 @@ const user3 = {
   sys: { id: 'user3' }
 };
 
+const roles = [
+  {
+    name: 'Role 1',
+    sys: {
+      id: 'role1'
+    }
+  },
+  {
+    name: 'Role 2',
+    sys: {
+      id: 'role2'
+    }
+  }
+];
+
+const spaceMemberships = [
+  {
+    sys: {
+      id: 'space_membership_1',
+      type: 'SpaceMembership',
+      version: 0
+    }
+  },
+  {
+    sys: {
+      id: 'space_membership_2',
+      type: 'SpaceMembership',
+      version: 0
+    }
+  }
+];
+
 const orgUsers = [
   ...spaceUsers,
   user3
@@ -128,9 +160,9 @@ const loadPageWithUserState = ({ stateName, responseBody, message }) => {
   cy.resetAllFakeServers();
 
   const getSpaceMembersInteraction = 'query_space_members';
+  const getSpaceMembershipsInteraction = 'query_space_memberships';
   const getRolesInteraction = 'query_space_roles';
   const getSpaceUsersInteraction = 'query_space_users';
-
 
   cy.addInteraction({
     provider: 'users',
@@ -148,6 +180,27 @@ const loadPageWithUserState = ({ stateName, responseBody, message }) => {
     }
   }).as(getSpaceMembersInteraction);
   cy.addInteraction({
+    provider: 'users',
+    state: '2_membership',
+    uponReceiving: 'request space memberships',
+    withRequest: {
+      method: 'GET',
+      path: `/spaces/${defaultSpaceId}/space_memberships`,
+      query: { limit: '100', skip: '0' },
+      headers: defaultHeader
+    },
+    willRespondWith: {
+      status: 200,
+      body: {
+        total: 2,
+        sys: {
+          type: 'Array'
+        },
+        items: spaceMemberships
+      }
+    }
+  }).as(getSpaceMembershipsInteraction);
+  cy.addInteraction({
     provider: 'roles',
     state: '2_roles',
     uponReceiving: 'request available roles of space',
@@ -164,20 +217,7 @@ const loadPageWithUserState = ({ stateName, responseBody, message }) => {
         sys: {
           type: 'Array'
         },
-        items: [
-          {
-            name: 'Role 1',
-            sys: {
-              id: 'role1'
-            }
-          },
-          {
-            name: 'Role 2',
-            sys: {
-              id: 'role2'
-            }
-          }
-        ]
+        items: roles
       }
     }
   }).as(getRolesInteraction);
@@ -206,6 +246,7 @@ const loadPageWithUserState = ({ stateName, responseBody, message }) => {
   const interactions = [
     ...defaultRequestsMock(),
     `@${getSpaceMembersInteraction}`,
+    `@${getSpaceMembershipsInteraction}`,
     `@${getRolesInteraction}`,
     `@${getSpaceUsersInteraction}`
   ];
@@ -265,7 +306,7 @@ describe('Users in space page', () => {
       }).as(getOrgUsersInteraction);
       cy.addInteraction({
         provider: 'users',
-        state: '3_users',
+        state: 'default',
         uponReceiving: 'adding space membership',
         withRequest: {
           method: 'POST',
@@ -318,6 +359,49 @@ describe('Users in space page', () => {
     it('should render sidebar and user items', () => {
       cy.queryByTestId('cf-ui-workbench-sidebar-right').should('exist');
       cy.queryByTestId('user-list.item').should('exist');
+    });
+
+    it('should make put request when changing role', () => {
+      cy.getByTestId('user-list.actions').first().click();
+      cy.getByTestId('user-change-role').click();
+      cy.getByTestId('RoleSelector.admin_false').click();
+      cy.getByTestId('cf-ui-checkbox-field').click();
+
+      const putRoleUpdate = 'put_role_update';
+      const roleLink = {
+        type: 'Link',
+        linkType: 'Role',
+        id: roles[0].sys.id
+      };
+      cy.addInteraction({
+        provider: 'users',
+        state: 'default',
+        uponReceiving: 'updating membership role',
+        withRequest: {
+          method: 'PUT',
+          path: `/spaces/${defaultSpaceId}/space_memberships/${spaceMemberships[0].sys.id}`,
+          headers: defaultHeader,
+          body: {
+            admin: false,
+            roles: [roleLink]
+          }
+        },
+        willRespondWith: {
+          status: 200,
+          body: {
+            admin: false,
+            roles: [roleLink],
+            sys: {
+              id: roleLink.id,
+              version: 1
+            }
+          }
+        }
+      }).as(putRoleUpdate);
+
+      cy.getByTestId('cf-ui-modal-confirm-confirm-button').click();
+
+      cy.wait(`@${putRoleUpdate}`);
     });
   });
 });

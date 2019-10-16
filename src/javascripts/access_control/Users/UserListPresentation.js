@@ -191,14 +191,14 @@ const UserListPresentation = ({
                             label: 'Change role',
                             action: () => openRoleChangeDialog(member, adminCount),
                             otherProps: {
-                              'data-ui-trigger': 'user-change-role'
+                              'data-test-id': 'user-change-role'
                             }
                           },
                           {
                             label: 'Remove from this space',
                             action: () => openRemovalConfirmationDialog(member, adminCount),
                             otherProps: {
-                              'data-ui-trigger': 'user-remove-from-space'
+                              'data-test-id': 'user-remove-from-space'
                             }
                           }
                         ]}
