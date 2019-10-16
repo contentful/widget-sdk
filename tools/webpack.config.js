@@ -126,7 +126,7 @@ module.exports = () => {
               app: {
                 name: 'main',
                 test: (_, chunks) => {
-                  if (chunks[0].name === 'app.js') {
+                  if (chunks[0] && chunks[0].name === 'app.js') {
                     return false;
                   }
 

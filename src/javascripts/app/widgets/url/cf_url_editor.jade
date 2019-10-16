@@ -19,4 +19,7 @@ div(ng-show="urlStatus === 'loading'")
     .loading-box__message
       | Preview will be ready in a few moments
 div(ng-hide="urlStatus === 'loading'")
-  cf-embedly-preview(preview-url="previewUrl" url-status="urlStatus")
+  react-component(
+    name="components/forms/embedly_preview/EmbedlyPreview"
+    props="{ previewUrl: previewUrl }"
+  )

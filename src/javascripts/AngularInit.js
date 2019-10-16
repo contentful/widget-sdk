@@ -87,7 +87,6 @@ export const angularInitRun = [
       import('components/field_dialog/validationAssetTypesController.es6'),
       import('components/field_dialog/validationLinkTypeController.es6'),
       import('components/forms/datetime_editor/cfDatetimeEditorDirective.es6'),
-      import('components/forms/embedly_preview/cfEmbedlyPreviewDirective.es6'),
       import('components/forms/field_alert/cfFieldAlertDirective.es6'),
       import('components/roles/cfRolesForWalkMe.es6'),
       import('components/shared/cfImgLoadEvent.es6'),

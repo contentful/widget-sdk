@@ -224,7 +224,16 @@ export function create(editor, locale, defaultLocaleCode, { zen }) {
           model: { value: 'https://', width: { px: 600, percent: 100 }, widthSuffix: 'percent' },
           urlStatus: 'invalid'
         },
-        template: 'markdown_embed_dialog'
+        template: 'markdown_embed_dialog',
+        controller: scope => {
+          scope.onEmbedlyLoad = () => {
+            scope.urlStatus = 'ok';
+            scope.$applyAsync();
+          };
+          scope.$watch('urlStatus', () => {
+            scope.$emit('centerOn:reposition');
+          });
+        }
       })
       .promise.then(data => {
         editor.insert(_makeEmbedlyLink(data));

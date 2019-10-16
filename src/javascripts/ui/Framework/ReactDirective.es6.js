@@ -82,6 +82,7 @@ import * as componentsSharedStackOnboardingScreensExploreScreenEs6 from 'compone
 import * as componentsSharedStackOnboardingScreensDeployScreenEs6 from 'components/shared/stack-onboarding/screens/DeployScreen.es6';
 import * as accountAccountViewEs6 from 'account/AccountView.es6';
 import * as appEntityEditorBulkEditorTitleEs6 from 'app/entity_editor/bulk_editor/BulkEditorTitle.es6';
+import * as embedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -350,7 +351,8 @@ function getModule(name) {
     'components/shared/stack-onboarding/screens/ExploreScreen.es6': componentsSharedStackOnboardingScreensExploreScreenEs6,
     'components/shared/stack-onboarding/screens/DeployScreen.es6': componentsSharedStackOnboardingScreensDeployScreenEs6,
     'account/AccountView.es6': accountAccountViewEs6,
-    'app/entity_editor/bulk_editor/BulkEditorTitle.es6': appEntityEditorBulkEditorTitleEs6
+    'app/entity_editor/bulk_editor/BulkEditorTitle.es6': appEntityEditorBulkEditorTitleEs6,
+    'components/forms/embedly_preview/EmbedlyPreview': embedlyPreview
   };
 
   return get(allowedModules, name, null);

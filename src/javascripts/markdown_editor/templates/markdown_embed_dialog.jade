@@ -1,5 +1,3 @@
-include ../../components/forms/embedly_preview/embedly_status.mixin.jade
-
 .modal-background
   .modal-dialog.embed-content-dialog
     header.modal-dialog__header
@@ -17,7 +15,18 @@ include ../../components/forms/embedly_preview/embedly_status.mixin.jade
         name="url"
         autocomplete="off"
         cf-focus-on-render="model")
-        +embedly-status
+        i.fa.fa-exclamation-triangle.is-url-invalid(
+          ng-show="urlStatus === 'invalid'"
+          tooltip="Invalid URL"
+          tooltip-placement="bottom")
+        i.fa.fa-spin.fa-spinner.is-preview-loading(
+          ng-show="urlStatus === 'loading'"
+          tooltip="Loading preview…"
+          tooltip-placement="bottom")
+        i.fa.fa-chain-broken.is-url-broken(
+          ng-show="urlStatus === 'broken'"
+          tooltip="Cannot access URL, possibly broken"
+          tooltip-placement="bottom")
         .cfnext-form__hint Please include protocol (e.g. <code>http://</code>).
 
       .cfnext-form__field
@@ -54,7 +63,10 @@ include ../../components/forms/embedly_preview/embedly_status.mixin.jade
         a(href="http://embed.ly/docs/products/cards" target="_blank" rel="noopener noreferrer") Embedly's platform.js
         |  on your development environment
 
-      cf-embedly-preview(preview-url="model.value" url-status="urlStatus")
+      react-component(
+        name="components/forms/embedly_preview/EmbedlyPreview"
+        props="{ previewUrl: model.value, onLoad: onEmbedlyLoad }"
+      )
 
     .modal-dialog__controls
       button.btn-primary-action.modal-dialog__controls-confirm(
