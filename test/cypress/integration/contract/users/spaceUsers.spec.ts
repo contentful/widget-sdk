@@ -403,5 +403,29 @@ describe('Users in space page', () => {
 
       cy.wait(`@${putRoleUpdate}`);
     });
+
+    it('should make delete request when revoking membership', () => {
+      cy.getByTestId('user-list.actions').first().click();
+      cy.getByTestId('user-remove-from-space').click();
+      cy.getByTestId('cf-ui-text-input').type('I UNDERSTAND');
+
+      const deleteMembership = 'delete_membership';
+      cy.addInteraction({
+        provider: 'users',
+        state: 'default',
+        uponReceiving: 'delete space membership',
+        withRequest: {
+          method: 'DELETE',
+          path: `/spaces/${defaultSpaceId}/space_memberships/${spaceMemberships[0].sys.id}`,
+          headers: defaultHeader
+        },
+        willRespondWith: {
+          status: 204
+        }
+      }).as(deleteMembership);
+
+      cy.getByTestId('cf-ui-modal-confirm-confirm-button').click();
+      cy.wait(`@${deleteMembership}`);
+    });
   });
 });
