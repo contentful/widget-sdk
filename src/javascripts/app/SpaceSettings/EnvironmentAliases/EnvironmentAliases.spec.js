@@ -34,7 +34,7 @@ const getComponent = (props = {}) => {
           payload: { sys: { createdAt: Date.now() } }
         }
       ]}
-      spaceData={{ sys: { id: '123456' } }}
+      spaceId="123456"
       {...props}></EnvironmentAliases>
   );
 };

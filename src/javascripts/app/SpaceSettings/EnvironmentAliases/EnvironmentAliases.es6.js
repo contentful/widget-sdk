@@ -164,7 +164,7 @@ const aliasesStyles = {
 };
 
 export default function EnvironmentAliases(props) {
-  const { items: environments, spaceData, testId, allSpaceAliases } = props;
+  const { items: environments, spaceId, testId, allSpaceAliases } = props;
 
   const [step, setStep] = useState(STEPS.IDLE);
   const [modalOpen, setModalOpen] = useState(false);
@@ -197,7 +197,7 @@ export default function EnvironmentAliases(props) {
               environments={environments}
               setModalOpen={setModalOpen}
               modalOpen={modalOpen}
-              spaceId={spaceData.sys.id}
+              spaceId={spaceId}
               targetEnv={targetEnv}></ChangeEnvironmentModal>
           </span>
         );
@@ -259,7 +259,7 @@ export default function EnvironmentAliases(props) {
         testId="environmentaliases.opt-in"
         step={step}
         setStep={trackedSetStep}
-        spaceId={spaceData.sys.id}></OptIn>
+        spaceId={spaceId}></OptIn>
     </span>
   );
 }
@@ -267,7 +267,7 @@ export default function EnvironmentAliases(props) {
 EnvironmentAliases.propTypes = {
   testId: PropTypes.string,
   items: PropTypes.array.isRequired,
-  spaceData: PropTypes.object.isRequired,
+  spaceId: PropTypes.string.isRequired,
   allSpaceAliases: PropTypes.arrayOf(PropTypes.object)
 };
 

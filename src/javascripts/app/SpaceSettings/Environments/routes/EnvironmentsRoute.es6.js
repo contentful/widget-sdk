@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
 import moment from 'moment';
@@ -21,7 +21,9 @@ import {
   DisplayText,
   Heading,
   Paragraph,
-  Button
+  Button,
+  SkeletonContainer,
+  SkeletonBodyText
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -29,16 +31,25 @@ import QuestionMarkIcon from 'svg/QuestionMarkIcon.es6';
 import Icon from 'ui/Components/Icon.es6';
 import { Tooltip } from '@contentful/forma-36-react-components';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
-import EnvironmentAliases from '../EnvironmentAliases/EnvironmentAliases.es6';
+import EnvironmentAliases from 'app/SpaceSettings/EnvironmentAliases/EnvironmentAliases.es6';
 import EnvironmentDetails from 'app/common/EnvironmentDetails.es6';
 import ExternalTextLink from 'app/common/ExternalTextLink.es6';
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import { useEnvironmentsRouteState } from './EnvironmentsRouteReducer.es6';
 
-export default function View({ state, actions }) {
-  const { items, aliasesEnabled } = state;
-  const optedInEnv = items.find(({ aliases }) => aliases.length > 0);
-  const canManageAliases = accessChecker.can('manage', 'EnvironmentAliases');
-  const sidebarProps = { canManageAliases, optedInEnv };
+export default function EnvironmentsRoute(props) {
+  const [state, { FetchPermissions, FetchEnvironments, ...actions }] = useEnvironmentsRouteState(
+    props
+  );
+
+  useEffect(() => {
+    (async () => {
+      await FetchPermissions();
+      await FetchEnvironments();
+    })();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // top: effect forced to happen only once
+
+  const { aliasesEnabled, canManageAliases, hasOptedInEnv } = state;
 
   return (
     <Fragment>
@@ -49,7 +60,7 @@ export default function View({ state, actions }) {
           {aliasesEnabled && canManageAliases && (
             <EnvironmentAliases {...state} {...actions} testId="environmentaliases.card" />
           )}
-          {aliasesEnabled && optedInEnv && (
+          {aliasesEnabled && hasOptedInEnv && (
             <DisplayText
               testId="environments.header"
               className={css({
@@ -65,15 +76,25 @@ export default function View({ state, actions }) {
           <EnvironmentList {...state} {...actions} />
         </Workbench.Content>
         <Workbench.Sidebar position="right">
-          <Sidebar {...state} {...actions} {...sidebarProps} />
+          <Sidebar {...state} {...actions} />
         </Workbench.Sidebar>
       </Workbench>
     </Fragment>
   );
 }
-View.propTypes = {
-  state: PropTypes.any.isRequired,
-  actions: PropTypes.any.isRequired
+
+EnvironmentsRoute.propTypes = {
+  endpoint: PropTypes.func.isRequired,
+  getSpaceData: PropTypes.func.isRequired,
+  getAliases: PropTypes.func.isRequired,
+  getAliasesIds: PropTypes.func.isRequired,
+  goToSpaceDetail: PropTypes.func.isRequired,
+  isMasterEnvironment: PropTypes.func.isRequired,
+  spaceId: PropTypes.string.isRequired,
+  organizationId: PropTypes.string.isRequired,
+  currentEnvironmentId: PropTypes.string.isRequired,
+  canUpgradeSpace: PropTypes.bool.isRequired,
+  isLegacyOrganization: PropTypes.bool.isRequired
 };
 
 const environmentListStyles = {
@@ -92,11 +113,10 @@ const environmentListStyles = {
  * - A paginator for the items
  * - A warning message if loading the items failed
  */
-function EnvironmentList({ isLoading, loadingError, items, OpenDeleteDialog, OpenEditDialog }) {
+function EnvironmentList({ isLoading, loadingError, items, OpenDeleteDialog }) {
   const environments = items.map(env =>
     assign(env, {
-      Delete: () => OpenDeleteDialog(env),
-      Edit: () => OpenEditDialog(env)
+      Delete: () => OpenDeleteDialog(env)
     })
   );
 
@@ -114,10 +134,12 @@ function EnvironmentList({ isLoading, loadingError, items, OpenDeleteDialog, Ope
     <div data-test-id="environmentList" aria-busy={isLoading ? 'true' : 'false'}>
       <div className={environmentListStyles.wrapper}>
         {isLoading ? (
-          <div className="loading-box--stretched">
-            <div className="loading-box__spinner" />
-            <div className="loading-box__message">Loading</div>
-          </div>
+          <SkeletonContainer
+            testId="environments-loader"
+            ariaLabel="Loading environments list"
+            svgWidth="100%">
+            <SkeletonBodyText numberOfLines={5} />
+          </SkeletonContainer>
         ) : (
           <EnvironmentTable environments={environments} />
         )}
@@ -130,8 +152,7 @@ EnvironmentList.propTypes = {
   isLoading: PropTypes.bool,
   loadingError: PropTypes.any,
   items: PropTypes.array,
-  OpenDeleteDialog: PropTypes.func,
-  OpenEditDialog: PropTypes.func
+  OpenDeleteDialog: PropTypes.func
 };
 
 const IN_PROGRESS_TOOLTIP = [
@@ -183,7 +204,7 @@ function EnvironmentTable({ environments }) {
   }
 
   return (
-    <Table>
+    <Table testId="environment-table">
       <TableHead>
         <TableRow>
           <TableCell className={css({ width: '40%' })}>Environment ID</TableCell>
@@ -333,12 +354,12 @@ function Sidebar({
   OpenUpgradeSpaceDialog,
   aliasesEnabled,
   canManageAliases,
-  optedInEnv
+  hasOptedInEnv
 }) {
   // Master is not included in the api, display +1 usage and limit
   const usage = resource.usage + 1;
   const limit = get(resource, 'limits.maximum', -1) + 1;
-  const shouldShowAliasDefinition = canManageAliases || optedInEnv;
+  const shouldShowAliasDefinition = canManageAliases || hasOptedInEnv;
 
   return (
     <>
@@ -421,7 +442,7 @@ Sidebar.propTypes = {
   OpenCreateDialog: PropTypes.func.isRequired,
   OpenUpgradeSpaceDialog: PropTypes.func.isRequired,
   canManageAliases: PropTypes.bool.isRequired,
-  optedInEnv: PropTypes.bool.isRequired
+  hasOptedInEnv: PropTypes.bool.isRequired
 };
 
 function UsageTooltip({ resource }) {

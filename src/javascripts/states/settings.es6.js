@@ -1,6 +1,6 @@
 import SpaceSettingsBase from 'states/SpaceSettingsBase.es6';
 import localesSettingsState from 'app/settings/locales/routes/index.es6';
-import environmentsSettingsState from 'app/SpaceSettings/Environments/State.es6';
+import environmentsSettingsState from 'app/SpaceSettings/Environments/routes/index.es6';
 import spaceUsageState from 'app/SpaceSettings/Usage/SpaceUsageState.es6';
 import extensionsSettingsState from 'app/settings/extensions/routes/index.es6';
 import webhooksSettingsState from 'app/settings/webhooks/routes/index.es6';
