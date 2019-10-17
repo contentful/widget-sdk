@@ -43,17 +43,6 @@ const styles = {
     marginBottom: tokens.spacingL,
     zIndex: 3
   }),
-  betaLabel: css({
-    marginRight: tokens.spacingS,
-    background: tokens.colorBlueDark,
-    color: tokens.colorWhite,
-    padding: tokens.spacing2Xs,
-    letterSpacing: tokens.letterSpacingWide,
-    lineHeight: '0.65rem',
-    fontSize: '0.65rem',
-    borderRadius: '3px',
-    textTransform: 'uppercase'
-  }),
   workbench: css({
     backgroundColor: tokens.colorElementLightest
   }),
@@ -135,11 +124,7 @@ const openFeedback = async ({ organizationId, userId }) => {
   }
 };
 
-const Header = () => (
-  <Heading>
-    Apps <span className={styles.betaLabel}>Beta</span>
-  </Heading>
-);
+const Header = () => <Heading>Apps</Heading>;
 
 const PricingInfo = () => (
   <Note
