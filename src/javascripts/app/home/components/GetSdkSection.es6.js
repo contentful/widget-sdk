@@ -292,11 +292,8 @@ const SelectedLanguage = ({ language }) => {
           description={'Get the Python SDK and use it in your project:'}
           codeBlockContent={
             <div>
-              <div className={styles.codeBlock.language}>groovy</div>
-              <div className={styles.codeBlock.line}>
-                compile{' '}
-                <span className={styles.codeBlock.s1}>{'com.contentful.java:java-sdk:+'}</span>
-              </div>
+              <div className={styles.codeBlock.language}>bash</div>
+              <div className={styles.codeBlock.line}>pip install contentful</div>
             </div>
           }
         />
