@@ -17,7 +17,7 @@ describe('Webhooks', () => {
     })
   );
 
-  let interactions: string[]
+  let interactions: string[];
   beforeEach(() => {
     cy.resetAllFakeServers();
 
@@ -35,10 +35,8 @@ describe('Webhooks', () => {
     });
 
     it('renders table and heading', () => {
-      cy.getByTestId('workbench-title')
-        .should('be.visible')
-        .and('contain', 'Webhooks (0)');
       cy.getByTestId('cf-ui-table').should('be.visible');
+      cy.queryAllByTestId('webhook-row').should('have.length', 0);
     });
   });
 
@@ -52,7 +50,7 @@ describe('Webhooks', () => {
       cy.wait(slowInteraction, { timeout: 10000 });
     });
 
-    it.skip('renders error message', () => { });
+    it.skip('renders error message', () => {});
     //Test will be added after fixing https://contentful.atlassian.net/browse/EXT-907.
   });
 
@@ -70,10 +68,7 @@ describe('Webhooks', () => {
     });
 
     it('renders title and table raw', () => {
-      cy.getByTestId('workbench-title')
-        .should('be.visible')
-        .and('contain', 'Webhooks (1)');
-      cy.getByTestId('webhook-row').should('have.length', 1);
+      cy.getAllByTestId('webhook-row').should('have.length', 1);
     });
   });
 });

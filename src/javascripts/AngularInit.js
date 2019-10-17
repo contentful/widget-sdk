@@ -121,7 +121,6 @@ export const angularInitRun = [
       import('directives/cfSchemaDirectives.es6'),
       import('directives/cfThumbnailDirective.es6'),
       import('directives/cfValidateDirective.es6'),
-      import('directives/cfWhenDisabled.es6'),
       import('directives/tooltipDirective.es6'),
       import('directives/watchersTogglerDirective.es6'),
       import('filters.es6'),

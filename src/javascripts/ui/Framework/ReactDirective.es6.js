@@ -29,8 +29,6 @@ import * as appOrganizationSettingsUsersNewUserNewUserBridgeEs6 from 'app/Organi
 import * as appOrganizationSettingsUsersUserDetailUserDetailRouteEs6 from 'app/OrganizationSettings/Users/UserDetail/UserDetailRoute.es6';
 import * as appOrganizationSettingsUsersUsersListUserListRouteEs6 from 'app/OrganizationSettings/Users/UsersList/UserListRoute.es6';
 import * as appSpaceSettingsUsageSpaceUsageEs6 from 'app/SpaceSettings/Usage/SpaceUsage.es6';
-import * as appApiKeyEditorBoilerplateEs6 from 'app/api/KeyEditor/Boilerplate.es6';
-import * as appApiKeyEditorContactUsEs6 from 'app/api/KeyEditor/ContactUs.es6';
 import * as componentsSharedDocumentTitleEs6 from 'components/shared/DocumentTitle.es6';
 import * as componentsSharedWorkbenchTitleEs6 from 'components/shared/WorkbenchTitle.es6';
 import * as appEntityEditorComponentsBackNavIndexEs6 from 'app/entity_editor/Components/BackNav/index.es6';
@@ -299,8 +297,6 @@ function getModule(name) {
     'app/OrganizationSettings/Users/UserDetail/UserDetailRoute.es6': appOrganizationSettingsUsersUserDetailUserDetailRouteEs6,
     'app/OrganizationSettings/Users/UsersList/UserListRoute.es6': appOrganizationSettingsUsersUsersListUserListRouteEs6,
     'app/SpaceSettings/Usage/SpaceUsage.es6': appSpaceSettingsUsageSpaceUsageEs6,
-    'app/api/KeyEditor/Boilerplate.es6': appApiKeyEditorBoilerplateEs6,
-    'app/api/KeyEditor/ContactUs.es6': appApiKeyEditorContactUsEs6,
     'components/shared/DocumentTitle.es6': componentsSharedDocumentTitleEs6,
     'components/shared/WorkbenchTitle.es6': componentsSharedWorkbenchTitleEs6,
     'app/entity_editor/Components/BackNav/index.es6': appEntityEditorComponentsBackNavIndexEs6,

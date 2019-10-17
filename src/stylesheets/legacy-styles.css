@@ -11259,28 +11259,6 @@ pre,
     cursor: not-allowed;
     color: #8091a5;
   }
-  .boilerplate-page-contact-us__container {
-    color: #536171;
-    border: 1px solid #c5d2d8;
-    padding: 0.75em 2em;
-    margin-top: -2.5em;
-    text-align: center;
-  }
-  .boilerplate-page-contact-us__title {
-    margin-bottom: 15px;
-    font-size: 18px;
-  }
-  .boilerplate-page-contact-us__description {
-    margin-bottom: 16px;
-  }
-  .boilerplate-page-contact-us__img {
-    display: block;
-    margin: 20px auto -10px;
-    width: 326px;
-    height: 114px;
-    background-size: contain;
-    background-image: url("/app/images/faces/contact-experts-boilerplate.jpg");
-  }
   .space-home-page-contact-us__container {
     display: -webkit-box;
     display: -ms-flexbox;
