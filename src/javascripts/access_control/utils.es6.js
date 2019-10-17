@@ -8,14 +8,6 @@ export function getMembershipRoles(membership) {
   }
 }
 
-export function getSpaceMembershipRoleNames(membership) {
-  if (membership.admin) {
-    return [ADMIN_ROLE.name];
-  } else {
-    return membership.roles.map(role => role.name);
-  }
-}
-
 /**
  *
  * @param {String[]} roleIds A list a role ids, where a fake admin admin could be

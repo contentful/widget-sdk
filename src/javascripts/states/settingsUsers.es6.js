@@ -1,8 +1,15 @@
-const list = {
+import { reactStateWrapper } from './utils.es6';
+
+const list = reactStateWrapper({
   name: 'list',
+  title: 'Space users',
+  loadingText: 'Loading users…',
   url: '',
-  template: '<cf-user-list class="workbench user-list" />'
-};
+  params: {
+    jumpToRole: null
+  },
+  componentPath: 'access_control/Users/UserList.es6'
+});
 
 export default {
   name: 'users',

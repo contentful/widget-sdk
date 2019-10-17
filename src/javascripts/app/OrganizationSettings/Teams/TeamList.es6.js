@@ -1,4 +1,3 @@
-/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
@@ -27,7 +26,7 @@ import ExperimentalFeatureNote from './ExperimentalFeatureNote.es6';
 
 const styles = {
   section: css({
-    padding: `${tokens.spaceMembership} ${tokens.spacingXl} ${tokens.spacingXl}`
+    padding: `${tokens.spacingM} ${tokens.spacingXl} ${tokens.spacingXl}`
   }),
   headerActions: css({
     display: 'flex',

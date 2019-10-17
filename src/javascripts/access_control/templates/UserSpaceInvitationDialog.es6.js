@@ -18,7 +18,8 @@ export default function() {
             'button.btn-primary-action',
             {
               ngIf: '!invitationsScheduled',
-              ngClick: 'userSpaceInvitation.tryInviteSelectedUsers()'
+              ngClick: 'userSpaceInvitation.tryInviteSelectedUsers()',
+              dataTestId: 'user-space-invitation-confirm'
             },
             ['Add selected {{ users.length === 1 ? "user" : "users (" + users.length + ")" }}']
           ),
@@ -101,6 +102,7 @@ function userRoleSelector() {
             'select.cfnext-select-box',
             {
               id: 'user-role-{{user.sys.id}}',
+              dataTestId: 'user-role-select',
               ngModel: 'selectedRoles[user.sys.id]',
               ariaInvalid: '{{ canNotInvite && !selectedRoles[user.sys.id] }}'
             },
@@ -118,6 +120,7 @@ function userRoleSelector() {
                 'option',
                 {
                   ngRepeat: 'role in roleOptions track by role.id',
+                  dataTestId: 'user-role-option',
                   value: '{{ role.id }}'
                 },
                 ['{{ role.name }}']

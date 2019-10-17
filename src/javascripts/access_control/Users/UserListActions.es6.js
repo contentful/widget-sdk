@@ -1,21 +1,35 @@
+import React from 'react';
 import { Notification } from '@contentful/forma-36-react-components';
+import { get, includes, extend, filter, map, isEmpty } from 'lodash';
+
 import ReloadNotification from 'app/common/ReloadNotification.es6';
-import * as stringUtils from 'utils/StringUtils.es6';
-import { go } from 'states/Navigator.es6';
-import { get, includes, extend } from 'lodash';
 import UserSpaceInvitationDialog from 'access_control/templates/UserSpaceInvitationDialog.es6';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { getAllUsers } from 'access_control/OrganizationMembershipRepository.es6';
 import { getModule } from 'NgRegistry.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import * as ListQuery from 'search/listQuery.es6';
+import ModalLauncher from 'app/common/ModalLauncher.es6';
+import * as TokenStore from 'services/TokenStore.es6';
+import { go } from 'states/Navigator.es6';
 import * as entitySelector from 'search/EntitySelector/entitySelector.es6';
+
+import { ADMIN_ROLE_ID } from '../constants.es6';
+
+import RoleChangeDialog from './RoleChangeDialog';
+import UserRemovalConfirmDialog from './UserRemovalConfirmDialog';
+import LastAdminRemovalConfirmDialog from './LastAdminRemovalConfirmDialog';
 
 const MODAL_OPTS_BASE = {
   noNewScope: true,
   ignoreEsc: true,
   backgroundClose: false
 };
+
+const getDisplayName = ({ firstName, lastName, email }) =>
+  firstName || lastName ? `${firstName} ${lastName}` : email;
+
+const isLastAdmin = (member, adminCount) => !!member.admin && adminCount === 1;
 
 /**
  * Creates a instance of actions used in space users list view to open the following dialogs:
@@ -24,9 +38,14 @@ const MODAL_OPTS_BASE = {
  * - `.openRoleChangeDialog()` change user's role
  * - `.openSpaceInvitationDialog()` invite users to the space from a list of organization's users
  */
-export function create(spaceContext, userListHandler, TokenStore) {
+export function create(availableRoles, spaceUsers) {
+  const spaceContext = getModule('spaceContext');
   const modalDialog = getModule('modalDialog');
-  const Command = getModule('command');
+  const roleOptions = [
+    { id: ADMIN_ROLE_ID, name: 'Administrator' },
+    ...availableRoles.map(({ sys: { id }, name }) => ({ id, name }))
+  ];
+  const spaceUserIds = map(spaceUsers, 'sys.id');
 
   return {
     openRemovalConfirmationDialog,
@@ -37,139 +56,142 @@ export function create(spaceContext, userListHandler, TokenStore) {
   /**
    * Remove a user from a space
    */
-  function openRemovalConfirmationDialog(user) {
-    const templateName = userListHandler.isLastAdmin(user.id)
-      ? 'admin_removal_confirm_dialog'
-      : 'user_removal_confirm_dialog';
+  function openRemovalConfirmationDialog(fetch) {
+    return async (member, adminCount) => {
+      const ConfirmDialog = isLastAdmin(member, adminCount)
+        ? LastAdminRemovalConfirmDialog
+        : UserRemovalConfirmDialog;
+      const confirmed = await ModalLauncher.open(({ isShown, onClose }) => (
+        <ConfirmDialog
+          displayName={getDisplayName(member.sys.user)}
+          isShown={isShown}
+          onClose={onClose}
+        />
+      ));
 
-    const currentUserId = spaceContext.getData('spaceMember.sys.user.sys.id');
-    const isCurrentUser = currentUserId === user.id;
-
-    return openDialog(templateName, controller);
-
-    function controller(scope) {
-      extend(scope, {
-        user,
-        input: {},
-        removeUser: Command.create(
-          () =>
-            spaceContext.memberships
-              .remove(user.spaceMembership)
-              .then(() => {
-                Notification.success('User successfully removed from this space.');
-                if (isCurrentUser) {
-                  TokenStore.refresh().then(() => go({ path: ['home'] }));
-                }
-              })
-              .catch(ReloadNotification.basicErrorHandler)
-              .finally(() => {
-                scope.dialog.confirm();
-              }),
-          {
-            disabled: isDisabled
-          }
-        )
-      });
-
-      function isDisabled() {
-        return userListHandler.isLastAdmin(user.id) && scope.input.confirm !== 'I UNDERSTAND';
+      if (confirmed) {
+        const spaceContext = getModule('spaceContext');
+        const currentUserId = spaceContext.getData('spaceMember.sys.user.sys.id');
+        const isCurrentUser = currentUserId === member.sys.user.sys.id;
+        const spaceMembership = filter(member.relatedMemberships, {
+          sys: { type: 'SpaceMembership' }
+        })[0];
+        return spaceContext.memberships
+          .remove(spaceMembership)
+          .then(() => {
+            Notification.success('User successfully removed from this space.');
+            if (isCurrentUser) {
+              TokenStore.refresh().then(() => go({ path: ['home'] }));
+            } else {
+              fetch();
+            }
+          })
+          .catch(ReloadNotification.basicErrorHandler);
       }
-    }
+      return Promise.resolve();
+    };
   }
 
   /**
    * Change a role of an user
    */
-  function openRoleChangeDialog(user) {
-    return openDialog('role_change_dialog', controller);
+  async function openRoleChangeDialog(member, adminCount) {
+    const {
+      sys: { user },
+      roles,
+      relatedMemberships
+    } = member;
 
-    function controller(scope) {
-      extend(scope, {
-        user,
-        startsWithVowel: stringUtils.startsWithVowel,
-        input: {},
-        roleOptions: userListHandler.getRoleOptions(),
-        changeRole: Command.create(
-          () =>
-            spaceContext.memberships
-              .changeRoleTo(user.spaceMembership, [scope.input.id])
-              .then(() => {
-                Notification.success('User role successfully changed.');
-              })
-              .catch(ReloadNotification.basicErrorHandler)
-              .finally(() => {
-                scope.dialog.confirm();
-              }),
-          {
-            disabled: function() {
-              return !scope.input.id;
-            }
-          }
-        )
-      });
+    const uniqueModalKey = Date.now();
+
+    const selectedRoleIds = await ModalLauncher.open(({ isShown, onClose }) => (
+      <RoleChangeDialog
+        key={uniqueModalKey}
+        availableRoles={availableRoles}
+        displayName={getDisplayName(user)}
+        isShown={isShown}
+        initiallySelectedRoleIds={map(roles, 'sys.id')}
+        onClose={onClose}
+        isLastAdmin={isLastAdmin(member, adminCount)}
+      />
+    ));
+
+    if (selectedRoleIds !== false) {
+      const spaceMembership = relatedMemberships.filter(
+        ({ sys: { type } }) => type === 'SpaceMembership'
+      )[0];
+      const spaceContext = getModule('spaceContext');
+      return spaceContext.memberships
+        .changeRoleTo(spaceMembership, isEmpty(selectedRoleIds) ? [ADMIN_ROLE_ID] : selectedRoleIds)
+        .then(() => {
+          Notification.success('User role successfully changed.');
+        })
+        .catch(ReloadNotification.basicErrorHandler);
     }
+    return Promise.resolve();
   }
 
   /**
    * Invite an existing user to space
    */
   function openSpaceInvitationDialog() {
-    const canAddUsers = isOwnerOrAdmin(spaceContext.organization);
-    const labels = {
-      title: 'Add users to space',
-      insert: 'Assign roles to selected users',
-      infoHtml: `<react-component name="access_control/AddUsersToSpaceNote.es6"  props="{isOwnerOrAdmin: ${canAddUsers}}" />`,
-      noEntitiesCustomHtml: `<react-component name="access_control/NoUsersToAddNote.es6"  props="{isOwnerOrAdmin: ${canAddUsers}}" />`
-    };
+    return () => {
+      const canAddUsers = isOwnerOrAdmin(spaceContext.organization);
+      const labels = {
+        title: 'Add users to space',
+        insert: 'Assign roles to selected users',
+        infoHtml: `<react-component name="access_control/AddUsersToSpaceNote.es6"  props="{isOwnerOrAdmin: ${canAddUsers}}" />`,
+        noEntitiesCustomHtml: `<react-component name="access_control/NoUsersToAddNote.es6"  props="{isOwnerOrAdmin: ${canAddUsers}}" />`
+      };
 
-    return entitySelector
-      .open({
-        entityType: 'User',
-        fetch: fetchUsers,
-        multiple: true,
-        min: 1,
-        max: Infinity,
-        labels,
-        // since in `fetchUsers` we download all existing users
-        // for the current query, there is no need to fetch more
-        // after we reach bottom of the page
-        noPagination: true
-      })
-      .then(result => {
-        return openDialog(UserSpaceInvitationDialog(), controller);
-
-        function controller(scope) {
-          extend(scope, {
-            users: result,
-            roleOptions: userListHandler.getRoleOptions(),
-            selectedRoles: {},
-            goBackToSelection: function() {
-              openSpaceInvitationDialog();
-              scope.dialog.confirm();
-            }
-          });
-        }
-      })
-      .then(() => {
-        Notification.success('Invitations successfully sent.');
-      });
-
-    function fetchUsers(params) {
-      return ListQuery.getForUsers(params)
-        .then(query => {
-          const orgId = spaceContext.organization.sys.id;
-          const endpoint = createOrganizationEndpoint(orgId);
-          return getAllUsers(endpoint, query);
+      return entitySelector
+        .open({
+          entityType: 'User',
+          fetch: fetchUsers,
+          multiple: true,
+          min: 1,
+          max: Infinity,
+          labels,
+          // since in `fetchUsers` we download all existing users
+          // for the current query, there is no need to fetch more
+          // after we reach bottom of the page
+          noPagination: true
         })
-        .then(organizationUsers => {
-          const spaceUserIds = userListHandler.getUserIds();
-          const displayedUsers = organizationUsers.filter(item => {
-            const id = get(item, 'sys.id');
-            return id && !includes(spaceUserIds, id);
-          });
-          return { items: displayedUsers, total: displayedUsers.length };
+        .then(result => {
+          return openDialog(UserSpaceInvitationDialog(), controller);
+
+          function controller(scope) {
+            extend(scope, {
+              users: result,
+              roleOptions: roleOptions,
+              selectedRoles: {},
+              goBackToSelection: function() {
+                openSpaceInvitationDialog();
+                scope.dialog.confirm();
+              }
+            });
+          }
+        })
+        .then(() => {
+          Notification.success('Invitations successfully sent.');
         });
-    }
+
+      function fetchUsers(params) {
+        return ListQuery.getForUsers(params)
+          .then(query => {
+            const orgId = spaceContext.organization.sys.id;
+            const endpoint = createOrganizationEndpoint(orgId);
+            return getAllUsers(endpoint, query);
+          })
+          .then(organizationUsers => {
+            const displayedUsers = organizationUsers.filter(item => {
+              const id = get(item, 'sys.id');
+              return id && !includes(spaceUserIds, id);
+            });
+            return { items: displayedUsers, total: displayedUsers.length };
+          });
+      }
+    };
   }
 
   function openDialog(template, controller) {

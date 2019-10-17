@@ -1,12 +1,13 @@
-import { registerDirective, registerController } from 'NgRegistry.es6';
-import _ from 'lodash';
+import _, { sortBy } from 'lodash';
+
+import { registerDirective, registerController, getModule } from 'NgRegistry.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 import * as ResourceUtils from 'utils/ResourceUtils.es6';
-import { ADMIN_ROLE_ID } from './constants.es6';
-import { getSubscriptionState } from 'account/AccountUtils.es6';
-
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as RoleListHandler from 'access_control/RoleListHandler.es6';
+import createResourceService from 'services/ResourceService.es6';
+import { getSubscriptionState } from 'account/AccountUtils.es6';
 
 export default function register() {
   registerDirective('cfRoleList', () => ({
@@ -18,12 +19,11 @@ export default function register() {
   registerController('RoleListController', [
     '$scope',
     '$state',
-    'UserListHandler',
     'createRoleRemover',
     'UserListController/jumpToRole',
-    'spaceContext',
-    ($scope, $state, UserListHandler, createRoleRemover, jumpToRoleMembers, spaceContext) => {
-      const listHandler = UserListHandler.create();
+    ($scope, $state, createRoleRemover, jumpToRoleMembers) => {
+      const spaceContext = getModule('spaceContext');
+      const listHandler = RoleListHandler.create();
       const organization = spaceContext.organization;
 
       $scope.legacy = ResourceUtils.isLegacyOrganization(organization);
@@ -54,7 +54,7 @@ export default function register() {
       }
 
       function jumpToAdminRoleMembers() {
-        jumpToRoleMembers(ADMIN_ROLE_ID);
+        jumpToRoleMembers(RoleListHandler.ADMIN_ROLE_NAME);
       }
 
       function duplicateRole(role) {
@@ -67,21 +67,24 @@ export default function register() {
           .then(onResetResponse, accessChecker.wasForbidden($scope.context));
       }
 
-      function onResetResponse(data) {
-        $scope.memberships = listHandler.getMembershipCounts();
-        $scope.countAdmin = $scope.memberships.admin || 0;
+      async function onResetResponse(data) {
+        const rolesResource = await createResourceService(spaceContext.getId()).get('role');
 
-        $scope.roles = _.sortBy(data.roles, 'name').map(role => {
-          role.count = $scope.memberships[role.sys.id] || 0;
+        const roleCounts = listHandler.getRoleCounts();
+        $scope.countAdmin = roleCounts.admin;
+        $scope.memberships = roleCounts;
+
+        $scope.roles = sortBy(data.roles, 'name').map(role => {
+          role.count = roleCounts[role.sys.id] || 0;
 
           return role;
         });
         $scope.hasAnyTranslatorRole = hasAnyTranslatorRole($scope.roles);
         $scope.removeRole = createRoleRemover(listHandler, reload);
         $scope.context.ready = true;
-        $scope.usage = data.rolesResource.usage;
-        $scope.limit = ResourceUtils.getResourceLimits(data.rolesResource).maximum;
-        $scope.reachedLimit = !ResourceUtils.canCreate(data.rolesResource);
+        $scope.usage = rolesResource.usage;
+        $scope.limit = ResourceUtils.getResourceLimits(rolesResource).maximum;
+        $scope.reachedLimit = !ResourceUtils.canCreate(rolesResource);
       }
     }
   ]);
