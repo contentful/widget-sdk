@@ -59,7 +59,7 @@ exports[`OrganizationUsage should render page without errors 1`] = `
       isPoC={
         Object {
           "space1": false,
-          "space2": true,
+          "space2": false,
         }
       }
       periodicUsage={

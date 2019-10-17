@@ -30,8 +30,8 @@ export default class POCSpaceWarningModal extends React.Component {
             <Modal.Content>
               <Typography>
                 <Paragraph>
-                  It seems like you’re ready to launch a proof of concept (space trial) space. Talk
-                  to us to make that happen as soon as possible.
+                  It seems like you’re ready to launch a proof of concept space. Talk to us to make
+                  that happen as soon as possible.
                 </Paragraph>
               </Typography>
             </Modal.Content>
