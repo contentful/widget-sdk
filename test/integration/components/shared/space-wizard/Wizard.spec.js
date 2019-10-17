@@ -187,7 +187,7 @@ describe('Space Wizard', function() {
       changeSpace: this.stubs.changeSpace
     });
 
-    this.system.set('app/api/services/ApiKeyRepo', {
+    this.system.set('app/settings/api/services/ApiKeyRepo', {
       default: () => {
         return {
           create: this.stubs.ApiKeyRepo_create

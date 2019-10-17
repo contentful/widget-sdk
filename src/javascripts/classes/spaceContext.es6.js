@@ -6,7 +6,7 @@ import { deepFreeze, deepFreezeClone } from 'utils/Freeze.es6';
 import { ENVIRONMENT_ALIASING } from '../featureFlags.es6';
 import client from 'services/client.es6';
 import { purgeContentPreviewCache } from 'services/contentPreview';
-import { purgeApiKeyRepoCache } from 'app/api/services/ApiKeyRepoInstance';
+import { purgeApiKeyRepoCache } from 'app/settings/api/services/ApiKeyRepoInstance';
 const MASTER_ENVIRONMENT_ID = 'master';
 
 export default function register() {

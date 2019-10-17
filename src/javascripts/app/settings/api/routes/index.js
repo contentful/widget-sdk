@@ -2,9 +2,9 @@ import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo.es6';
 import * as SpaceAliasesRepo from 'data/CMA/SpaceAliasesRepo.es6';
 import { redirectReadOnlySpace } from 'states/SpaceSettingsBase.es6';
 import { spaceResolver } from 'states/Resolvers.es6';
-import ApiKeyListRoute from '../ApiKeyList/ApiKeyListRoute';
-import CMATokensRoute from '../CMATokens/CMATokensRoute';
-import KeyEditorRoute from '../KeyEditor/KeyEditorRoute';
+import ApiKeyListRoute from '../api-keys-list/ApiKeyListRoute';
+import CMATokensRoute from '../cma-tokens/CMATokensRoute';
+import KeyEditorRoute from '../api-key-editor/KeyEditorRoute';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog.es6';
 
 /**

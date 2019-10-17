@@ -5,7 +5,7 @@ import { getStoragePrefix } from 'components/shared/auto_create_new_space/Create
 import { getStore } from 'TheStore/index.es6';
 import { getModule } from 'NgRegistry.es6';
 import * as logger from 'services/logger.es6';
-import { getApiKeyRepo } from 'app/api/services/ApiKeyRepoInstance';
+import { getApiKeyRepo } from 'app/settings/api/services/ApiKeyRepoInstance';
 
 const ONBOARDING_ERROR = 'modern onboarding space id does not exist';
 

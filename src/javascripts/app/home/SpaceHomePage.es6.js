@@ -22,7 +22,7 @@ import * as accessChecker from 'access_control/AccessChecker/index.es6';
 import useAsync from 'app/common/hooks/useAsync.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 import * as logger from 'services/logger.es6';
-import { getApiKeyRepo } from 'app/api/services/ApiKeyRepoInstance';
+import { getApiKeyRepo } from 'app/settings/api/services/ApiKeyRepoInstance';
 
 const isTEASpace = () => {
   const spaceContext = getModule('spaceContext');

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getApiKeyRepo } from 'app/api/services/ApiKeyRepoInstance';
+import { getApiKeyRepo } from 'app/settings/api/services/ApiKeyRepoInstance';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import createFetcherComponent from 'app/common/createFetcherComponent.es6';
 import * as accessChecker from 'access_control/AccessChecker/index.es6';

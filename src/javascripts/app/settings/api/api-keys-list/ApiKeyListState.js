@@ -4,7 +4,7 @@ import ReloadNotification from 'app/common/ReloadNotification.es6';
 import createResourceService from 'services/ResourceService.es6';
 import * as ResourceUtils from 'utils/ResourceUtils.es6';
 import * as accessChecker from 'access_control/AccessChecker/index.es6';
-import { getApiKeyRepo } from 'app/api/services/ApiKeyRepoInstance';
+import { getApiKeyRepo } from 'app/settings/api/services/ApiKeyRepoInstance';
 
 async function getData() {
   const spaceContext = getModule('spaceContext');

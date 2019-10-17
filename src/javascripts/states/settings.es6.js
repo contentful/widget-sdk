@@ -27,7 +27,6 @@ export default SpaceSettingsBase({
     contentPreviewSettingsState,
     environmentsSettingsState,
     spaceUsageState,
-    // Note: app/api/State is in the "Settings" menu but is not a child here.
     extensionsSettingsState,
     webhooksSettingsState
   ]

@@ -45,7 +45,7 @@ describe('Space Template creation service', () => {
       })
     });
 
-    this.system.set('app/api/services/ApiKeyRepoInstance', {
+    this.system.set('app/settings/api/services/ApiKeyRepoInstance', {
       getApiKeyRepo: () => ({
         create: stubs.createApiKey,
         getAll: stubs.getAllApiKeys

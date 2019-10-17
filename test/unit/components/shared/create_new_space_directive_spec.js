@@ -69,7 +69,7 @@ describe('cfCreateNewSpace directive', () => {
     this.system.set('services/client.es6', {
       default: stubs.client
     });
-    this.system.set('app/api/services/ApiKeyRepoInstance', {
+    this.system.set('app/settings/api/services/ApiKeyRepoInstance', {
       getApiKeyRepo: () => stubs.apiKeyRepo,
       purgeApiKeyRepoCache: () => {}
     });

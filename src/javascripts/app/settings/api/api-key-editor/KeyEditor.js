@@ -18,7 +18,7 @@ import {
   Paragraph
 } from '@contentful/forma-36-react-components';
 import KeyEditorActions from './KeyEditorActions';
-import { getApiKeyRepo } from 'app/api/services/ApiKeyRepoInstance';
+import { getApiKeyRepo } from 'app/settings/api/services/ApiKeyRepoInstance';
 import * as Navigator from 'states/Navigator.es6';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as logger from 'services/logger.es6';

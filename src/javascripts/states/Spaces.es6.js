@@ -9,7 +9,7 @@ import * as TokenStore from 'services/TokenStore.es6';
 import contentTypes from './contentTypes.es6';
 import apps from 'app/settings/apps/routes/index.es6';
 import appsBeta from 'app/settings/AppsBeta/routes/index.es6';
-import api from 'app/api/routes/index';
+import api from 'app/settings/api/routes/index';
 import entries from './entries.es6';
 import assets from './assets.es6';
 import home from './spaceHome.es6';

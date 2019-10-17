@@ -12,7 +12,7 @@ import * as Config from 'Config.es6';
 import { getModule } from 'NgRegistry.es6';
 import TheLocaleStore from 'services/localeStore.es6';
 import { getContentPreview } from 'services/contentPreview';
-import { getApiKeyRepo } from 'app/api/services/ApiKeyRepoInstance';
+import { getApiKeyRepo } from 'app/settings/api/services/ApiKeyRepoInstance';
 
 const ASSET_PROCESSING_TIMEOUT = 60000;
 

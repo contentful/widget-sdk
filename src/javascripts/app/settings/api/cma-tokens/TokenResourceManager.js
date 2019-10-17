@@ -2,8 +2,6 @@ import * as Config from 'Config.es6';
 import { create as createEndpoint } from 'data/Endpoint.es6';
 
 /**
- * @ngdoc method
- * @name app/api/CMATokens/Resource#create
  * @description
  * Creates an object that acts as a client for the access tokens API.
  *
