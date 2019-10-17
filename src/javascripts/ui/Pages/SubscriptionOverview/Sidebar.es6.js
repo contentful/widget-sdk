@@ -121,8 +121,7 @@ function EnterpriseCopy() {
     <>
       <Heading className="entity-sidebar__heading">Help</Heading>
       <Paragraph>
-        Talk to us if you want to make changes to your spaces or launch a proof of concept (space
-        trial) space.
+        Talk to us if you want to make changes to your spaces or launch a proof of concept space.
       </Paragraph>
       <Paragraph>
         <ContactUsButton

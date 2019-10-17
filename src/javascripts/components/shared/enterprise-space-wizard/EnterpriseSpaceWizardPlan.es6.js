@@ -25,7 +25,7 @@ export default class EnterpriseSpaceWizardPlan extends React.Component {
         `}
         style={{ marginBottom: '30px' }}>
         <div className="space-plans-list__item__heading">
-          <strong data-test-id="space-plan-name">Proof of concept (space trial)</strong>
+          <strong data-test-id="space-plan-name">Proof of concept</strong>
           <span data-test-id="space-plan-price">
             {' '}
             - {isDisabled ? 'unavailable' : `${usage}/${limit} used`}
