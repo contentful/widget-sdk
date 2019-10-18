@@ -1,7 +1,16 @@
 /* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TextField, RadioButtonField } from '@contentful/forma-36-react-components';
+import {
+  Button,
+  List,
+  ListItem,
+  Modal,
+  Paragraph,
+  RadioButtonField,
+  TextField,
+  Typography
+} from '@contentful/forma-36-react-components';
 import keycodes from 'utils/keycodes.es6';
 import { css } from 'emotion';
 
@@ -14,92 +23,96 @@ const styles = {
   paragraph: css({ marginBottom: '25px' })
 };
 
-export default class SaveViewDialog extends React.Component {
+export default class SaveViewDialogComponent extends React.Component {
   static propTypes = {
-    confirm: PropTypes.func.isRequired,
-    cancel: PropTypes.func.isRequired,
+    allowRoleAssignment: PropTypes.bool.isRequired,
     allowViewTypeSelection: PropTypes.bool.isRequired,
-    allowRoleAssignment: PropTypes.bool.isRequired
+    isShown: PropTypes.bool.isRequired,
+    onConfirm: PropTypes.func.isRequired,
+    onCancel: PropTypes.func.isRequired
   };
 
   state = { value: '', viewType: 'isPrivate' };
 
   render() {
-    const { cancel, allowViewTypeSelection, allowRoleAssignment } = this.props;
+    const { onCancel, allowViewTypeSelection, allowRoleAssignment, isShown } = this.props;
     const { value, viewType } = this.state;
 
     const trimmed = value.trim();
     const isValid = !(trimmed.length < MIN_LENGTH || trimmed.length > MAX_LENGTH);
-    const confirm = () =>
-      isValid && this.props.confirm({ title: trimmed, isShared: viewType === 'isShared' });
-    const onKeyDown = e => e.keyCode === keycodes.ENTER && confirm();
+    const onConfirm = () =>
+      isValid && this.props.onConfirm({ title: trimmed, isShared: viewType === 'isShared' });
+    const onKeyDown = e => e.keyCode === keycodes.ENTER && onConfirm();
 
     return (
-      <div className="modal-dialog">
-        <header className="modal-dialog__header">
-          <h1>Save as view</h1>
-          <button className="modal-dialog__close" onClick={cancel} />
-        </header>
-        <div className="modal-dialog__content">
-          <p className={`${styles.paragraph} modal-dialog__richtext`}>
-            A view displays a list of entries you searched for. By saving the current view, you will
-            be able to re-use it later.
-          </p>
-          <TextField
-            id="name"
-            name="name"
-            labelText="Name of the view"
-            required
-            countCharacters
-            value={value}
-            onChange={e => this.setState({ value: e.target.value })}
-            onKeyDown={onKeyDown}
-            textInputProps={{
-              maxLength: MAX_LENGTH
-            }}
-            className={styles.input}
-          />
-          {allowViewTypeSelection && (
-            <ul className={styles.list}>
-              <li>
-                <RadioButtonField
-                  id="option-private"
-                  labelText="Save under my views"
-                  helpText="Only you will see this view."
-                  value="isPrivate"
-                  onChange={e => this.setState({ viewType: e.target.value })}
-                  checked={viewType === 'isPrivate'}
-                  labelIsLight
-                />
-              </li>
-              <li>
-                <RadioButtonField
-                  labelText="Save under shared views"
-                  id="option-shared"
-                  value="isShared"
-                  helpText="You can select which roles should see this view in the next step."
-                  onChange={e => this.setState({ viewType: e.target.value })}
-                  checked={viewType === 'isShared'}
-                  labelIsLight
-                />
-              </li>
-            </ul>
-          )}
-        </div>
-        <div className="modal-dialog__controls">
-          <button
-            className="btn-primary-action"
-            onClick={confirm}
-            disabled={trimmed.length < MIN_LENGTH}>
-            {viewType === 'isShared' && allowRoleAssignment
-              ? 'Proceed and select roles'
-              : 'Save view'}
-          </button>
-          <button className="btn-secondary-action" onClick={cancel}>
-            Cancel
-          </button>
-        </div>
-      </div>
+      <Modal isShown={isShown} onClose={onCancel}>
+        {() => (
+          <>
+            <Modal.Header title="Save as view" onClose={onCancel} />
+            <Modal.Content>
+              <Typography>
+                <Paragraph className={styles.paragraph}>
+                  A view displays a list of entries you searched for. By saving the current <br />
+                  view, you will be able to re-use it later.
+                </Paragraph>
+              </Typography>
+              <TextField
+                id="name"
+                name="name"
+                labelText="Name of the view"
+                required
+                countCharacters
+                value={value}
+                onChange={e => this.setState({ value: e.target.value })}
+                onKeyDown={onKeyDown}
+                textInputProps={{
+                  maxLength: MAX_LENGTH
+                }}
+                className={styles.input}
+              />
+              {allowViewTypeSelection && (
+                <List className={styles.list}>
+                  <ListItem>
+                    <RadioButtonField
+                      id="option-private"
+                      labelText="Save under my views"
+                      helpText="Only you will see this view."
+                      value="isPrivate"
+                      onChange={e => this.setState({ viewType: e.target.value })}
+                      checked={viewType === 'isPrivate'}
+                      labelIsLight
+                    />
+                  </ListItem>
+                  <ListItem>
+                    <RadioButtonField
+                      labelText="Save under shared views"
+                      id="option-shared"
+                      value="isShared"
+                      helpText="You can select which roles should see this view in the next step."
+                      onChange={e => this.setState({ viewType: e.target.value })}
+                      checked={viewType === 'isShared'}
+                      labelIsLight
+                    />
+                  </ListItem>
+                </List>
+              )}
+            </Modal.Content>
+            <Modal.Controls>
+              <Button
+                buttonType="positive"
+                onClick={onConfirm}
+                disabled={trimmed.length < MIN_LENGTH}>
+                {viewType === 'isShared' && allowRoleAssignment
+                  ? 'Proceed and select roles'
+                  : 'Save view'}
+              </Button>
+              <Button buttonType="muted" onClick={onCancel}>
+                Cancel
+              </Button>
+            </Modal.Controls>
+          </>
+        )}
+      </Modal>
     );
   }
 }

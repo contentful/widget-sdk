@@ -111,7 +111,12 @@ export default function({ entityFolders, loadView, getCurrentView, roleAssignmen
     return SaveCurrentViewDialog({
       allowViewTypeSelection: entityFolders.shared.canEdit,
       allowRoleAssignment: roleAssignment
-    }).promise.then(({ title, isShared }) => {
+    }).then(result => {
+      if (!result) {
+        return;
+      }
+
+      const { title, isShared } = result;
       const [api, tab] = isShared
         ? [sharedViews.api, VIEWS_SHARED]
         : [privateViews.api, VIEWS_PRIVATE];
