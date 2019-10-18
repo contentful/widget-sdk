@@ -15,11 +15,11 @@ import {
   getAllRoles,
   invite,
   createOrgMembership
-} from 'access_control/OrganizationMembershipRepository.es6';
+} from 'access_control/OrganizationMembershipRepository';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { getVariation } from 'LaunchDarkly.es6';
-import { create as createSpaceMembershipRepo } from 'access_control/SpaceMembershipRepository.es6';
-import { createTeamMembership, getAllTeams } from 'access_control/TeamRepository.es6';
+import { create as createSpaceMembershipRepo } from 'access_control/SpaceMembershipRepository';
+import { createTeamMembership, getAllTeams } from 'access_control/TeamRepository';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory.es6';
 
 const mockRoles = [
@@ -79,18 +79,18 @@ jest.mock('data/EndpointFactory.es6', () => ({
   createSpaceEndpoint: jest.fn()
 }));
 
-jest.mock('access_control/OrganizationMembershipRepository.es6', () => ({
+jest.mock('access_control/OrganizationMembershipRepository', () => ({
   getAllRoles: jest.fn(),
   getAllSpaces: jest.fn(),
   invite: jest.fn().mockResolvedValue({}),
   createOrgMembership: jest.fn()
 }));
 
-jest.mock('access_control/SpaceMembershipRepository.es6', () => ({
+jest.mock('access_control/SpaceMembershipRepository', () => ({
   create: jest.fn()
 }));
 
-jest.mock('access_control/TeamRepository.es6', () => ({
+jest.mock('access_control/TeamRepository', () => ({
   createTeamMembership: jest.fn().mockResolvedValue({}),
   getAllTeams: jest.fn().mockResolvedValue(mockTeams),
   getAllTeamsSpaceMemberships: jest.fn().mockResolvedValue(mockTeamSpaceMemberships)

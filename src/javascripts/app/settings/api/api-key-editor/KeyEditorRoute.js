@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { getApiKeyRepo } from 'app/settings/api/services/ApiKeyRepoInstance';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import createFetcherComponent from 'app/common/createFetcherComponent.es6';
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as accessChecker from 'access_control/AccessChecker';
 import KeyEditorWorkbench from './KeyEditorWorkbench';
 import KeyEditor from './KeyEditor';
 import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';

@@ -56,11 +56,11 @@ xdescribe('Role List Controller', () => {
 
     this.canModifyRoles = sinon.stub().resolves(true);
 
-    await this.system.override('access_control/AccessChecker/index.es6', {
+    await this.system.override('access_control/AccessChecker', {
       canModifyRoles: this.canModifyRoles
     });
 
-    await this.system.override('access_control/RoleListHandler.es6', {
+    await this.system.override('access_control/RoleListHandler', {
       create: () => ({
         reset: this.reset,
         getMemberships: sinon.stub().returns([]),

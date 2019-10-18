@@ -20,7 +20,7 @@ describe('entityEditor/Document', () => {
     this.system.set('services/localeStore.es6', {
       default: createLocaleStoreMock()
     });
-    this.system.set('access_control/AccessChecker/index.es6', {
+    this.system.set('access_control/AccessChecker', {
       canUpdateEntity: sinon.stub().returns(true),
       canPerformActionOnEntity: this.stubs.canPerformActionOnEntity,
       canUpdateEntry: this.stubs.canUpdateEntry,

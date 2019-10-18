@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Space } from 'app/OrganizationSettings/PropTypes.es6';
 import Autocomplete from './Autocomplete.es6';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
-import { getAllTeams } from 'access_control/TeamRepository.es6';
+import { getAllTeams } from 'access_control/TeamRepository';
 import useAsync from 'app/common/hooks/useAsync.es6';
 
 export default function SpacesAutoComplete({

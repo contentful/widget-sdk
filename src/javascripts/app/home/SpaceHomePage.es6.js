@@ -18,7 +18,7 @@ import { getModule } from 'NgRegistry.es6';
 import { runTask } from 'utils/Concurrent.es6';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer.es6';
 import * as K from 'utils/kefir.es6';
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as accessChecker from 'access_control/AccessChecker';
 import useAsync from 'app/common/hooks/useAsync.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 import * as logger from 'services/logger.es6';

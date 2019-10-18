@@ -15,8 +15,8 @@ import FilterPill from 'app/ContentList/Search/FilterPill.es6';
 import ValueInput from 'app/ContentList/Search/FilterValueInputs.es6';
 import { joinAnd } from 'utils/StringUtils.es6';
 
-import AddUsersToSpaceNote from './AddUsersToSpaceNote.es6';
-import { VIEW_LABELS } from './constants.es6';
+import AddUsersToSpaceNote from './AddUsersToSpaceNote';
+import { VIEW_LABELS } from './constants';
 
 const styles = {
   workbench: {

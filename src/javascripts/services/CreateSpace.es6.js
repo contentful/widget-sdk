@@ -2,7 +2,7 @@ import { Notification } from '@contentful/forma-36-react-components';
 import { getOrganization } from 'services/TokenStore.es6';
 import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
 import createResourceService from 'services/ResourceService.es6';
-import { canCreateSpaceInOrganization } from 'access_control/AccessChecker/index.es6';
+import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import {
   getSpaceRatePlans,

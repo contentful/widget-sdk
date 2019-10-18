@@ -1,4 +1,4 @@
-import * as accessChecker from './AccessChecker/index.es6';
+import * as accessChecker from './AccessChecker';
 import { getModule } from 'NgRegistry.es6';
 
 /**

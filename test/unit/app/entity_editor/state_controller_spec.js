@@ -37,7 +37,7 @@ describe('entityEditor/StateController', () => {
       track: sinon.stub()
     });
 
-    this.system.set('access_control/AccessChecker/index.es6', {
+    this.system.set('access_control/AccessChecker', {
       canPerformActionOnEntity: sinon.stub.returns(true)
     });
 

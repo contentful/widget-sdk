@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { PolicyBuilderConfig } from './PolicyBuilderConfig.es6';
+import { PolicyBuilderConfig } from './PolicyBuilderConfig';
 
 const PATHS = ['entries.allowed', 'entries.denied', 'assets.allowed', 'assets.denied'];
 

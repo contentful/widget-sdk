@@ -4,7 +4,7 @@ import { Notification, ModalConfirm } from '@contentful/forma-36-react-component
 import { without } from 'lodash';
 
 import * as TokenStore from 'services/TokenStore.es6';
-import * as SpaceMembershipRepository from 'access_control/SpaceMembershipRepository.es6';
+import * as SpaceMembershipRepository from 'access_control/SpaceMembershipRepository';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 

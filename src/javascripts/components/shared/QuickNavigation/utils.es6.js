@@ -1,6 +1,6 @@
 import qs from 'qs';
 import { getModule } from 'NgRegistry.es6';
-import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
+import { getSectionVisibility } from 'access_control/AccessChecker';
 import { includes, get, orderBy, compact } from 'lodash';
 import TheLocaleStore from 'services/localeStore.es6';
 import * as EntityHelpers from 'app/entity_editor/entityHelpers.es6';

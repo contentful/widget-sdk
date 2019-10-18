@@ -1,5 +1,5 @@
-import { toInternal } from './toInternal.es6';
-import { removeOutdatedRules } from './removeOutdatedRules.es6';
+import { toInternal } from './toInternal';
+import { removeOutdatedRules } from './removeOutdatedRules';
 
 describe('Remove outdated rules', () => {
   function createPolicy(ctId, path, type, effect) {

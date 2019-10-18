@@ -1,5 +1,5 @@
 import { isObject, get, isString } from 'lodash';
-import { shouldPerformNewUsageCheck } from './Utils.es6';
+import { shouldPerformNewUsageCheck } from './Utils';
 
 let cache = {};
 let context = null;

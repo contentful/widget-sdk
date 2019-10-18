@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Heading, Paragraph } from '@contentful/forma-36-react-components';
-import { can, Action } from 'access_control/AccessChecker/index.es6';
+import { can, Action } from 'access_control/AccessChecker';
 import { getModule } from 'NgRegistry.es6';
 import CreateEntryButton from 'components/CreateEntryButton/index.es6';
 import FolderIllustration from 'svg/folder-illustration.es6';

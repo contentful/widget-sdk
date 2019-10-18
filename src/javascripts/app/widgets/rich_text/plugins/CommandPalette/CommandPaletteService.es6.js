@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { isNodeTypeEnabled } from 'app/widgets/rich_text/validations/index.es6';
-import { can, canCreateAsset } from 'access_control/AccessChecker/index.es6';
+import { can, canCreateAsset } from 'access_control/AccessChecker';
 import { INLINES, BLOCKS } from '@contentful/rich-text-types';
 import * as EntityHelpers from 'app/entity_editor/entityHelpers.es6';
 

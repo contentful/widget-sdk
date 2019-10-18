@@ -4,7 +4,7 @@ import { groupBy } from 'lodash';
 import tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
-import { getAllRoles } from 'access_control/OrganizationMembershipRepository.es6';
+import { getAllRoles } from 'access_control/OrganizationMembershipRepository';
 import { SectionHeading, Icon } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
 import SpacesAutoComplete from 'app/common/SpacesAutocomplete.es6';

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
-import getLocales from './getLocales.es6';
+import getLocales from './getLocales';
 
 export default class TranslatorRoleSelector extends React.Component {
   static propTypes = {

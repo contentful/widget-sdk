@@ -11,7 +11,7 @@ import createFetcherComponent from 'app/common/createFetcherComponent.es6';
 import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import createLegacyFeatureService from 'services/LegacyFeatureService.es6';
-import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
+import { getSectionVisibility } from 'access_control/AccessChecker';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import { getSubscriptionState } from 'account/AccountUtils.es6';

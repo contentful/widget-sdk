@@ -1,7 +1,7 @@
 import { registerDirective } from 'NgRegistry.es6';
 import insertMediaActionTemplate from 'markdown_editor/templates/InsertMediaAction.es6';
 
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as accessChecker from 'access_control/AccessChecker';
 
 export default function register() {
   registerDirective('cfMarkdownAction', () => {

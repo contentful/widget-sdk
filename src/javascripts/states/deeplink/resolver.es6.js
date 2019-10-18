@@ -1,5 +1,5 @@
 import { getSpaceInfo, getOrg, checkOrgAccess, getOnboardingSpaceId } from './utils.es6';
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as accessChecker from 'access_control/AccessChecker';
 import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
 import { getStore } from 'TheStore/index.es6';

@@ -15,7 +15,7 @@ import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog.es6';
 
 import createActions from 'app/ContentModel/Editor/Actions.es6';
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as accessChecker from 'access_control/AccessChecker';
 
 export default function register() {
   registerDirective('cfContentTypeEditor', [

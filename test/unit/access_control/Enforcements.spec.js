@@ -1,10 +1,10 @@
-describe('access_control/Enforcements.es6', () => {
+describe('access_control/Enforcements', () => {
   let enforcements;
   let OrganizationRoles;
   let spaceMock;
 
   beforeEach(async function() {
-    enforcements = await this.system.import('access_control/Enforcements.es6');
+    enforcements = await this.system.import('access_control/Enforcements');
     OrganizationRoles = await this.system.import('services/OrganizationRoles.es6');
 
     OrganizationRoles.setUser({ sys: { id: 123 } });

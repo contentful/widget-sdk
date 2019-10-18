@@ -1,5 +1,5 @@
-import { toInternal } from './toInternal.es6';
-import { PolicyBuilderConfig } from './PolicyBuilderConfig.es6';
+import { toInternal } from './toInternal';
+import { PolicyBuilderConfig } from './PolicyBuilderConfig';
 
 describe('Policy Builder, to internal representation', () => {
   describe('takes external and returns internal representation', () => {

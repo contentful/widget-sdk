@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import { toExternal } from './toExternal.es6';
-import { PolicyBuilderConfig } from './PolicyBuilderConfig.es6';
+import { toExternal } from './toExternal';
+import { PolicyBuilderConfig } from './PolicyBuilderConfig';
 
 describe('Policy Builder, to external representation', () => {
   describe('takes internal and returns external representation', () => {

@@ -25,10 +25,7 @@ import UserListFilters from './UserListFilters.es6';
 import UserCard from '../UserCard.es6';
 import Pagination from 'app/common/Pagination.es6';
 import { href } from 'states/Navigator.es6';
-import {
-  getMemberships,
-  removeMembership
-} from 'access_control/OrganizationMembershipRepository.es6';
+import { getMemberships, removeMembership } from 'access_control/OrganizationMembershipRepository';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import RemoveOrgMemberDialog from '../RemoveUserDialog.es6';

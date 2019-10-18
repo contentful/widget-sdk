@@ -5,7 +5,7 @@ import createTeamSpaceMembershipService from 'app/OrganizationSettings/Teams/Tea
 import createTeamMembershipService from 'app/OrganizationSettings/Teams/TeamMemberships/TeamMembershipService.es6';
 import { isTaken } from 'utils/ServerErrorUtils.es6';
 import getOrgMemberships from 'redux/selectors/getOrgMemberships.es6';
-import { createSpaceRoleLinks } from 'access_control/utils.es6';
+import { createSpaceRoleLinks } from 'access_control/utils';
 
 import { getDatasets } from '../selectors/datasets.es6';
 import { getCurrentTeam, getTeams } from '../selectors/teams.es6';

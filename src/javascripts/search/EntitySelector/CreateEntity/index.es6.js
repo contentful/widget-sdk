@@ -7,7 +7,7 @@ import Visible from 'components/shared/Visible/index.es6';
 import * as logger from 'services/logger.es6';
 import * as entityCreator from 'components/app_container/entityCreator.es6';
 
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as accessChecker from 'access_control/AccessChecker';
 
 export const entityTypes = {
   Entry: 'Entry',

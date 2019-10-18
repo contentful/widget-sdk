@@ -6,14 +6,14 @@ import { assign } from 'utils/Collections.es6';
 import { getOrganization } from 'services/TokenStore.es6';
 import { getCurrentStateName } from 'states/Navigator.es6';
 import { runTask } from 'utils/Concurrent.es6';
-import { ADMIN_ROLE_ID } from 'access_control/constants.es6';
+import { ADMIN_ROLE_ID } from 'access_control/constants';
 import { createOrganizationEndpoint as createEndpoint } from 'data/EndpointFactory.es6';
 import {
   getUsers,
   getAllSpaces,
   getAllRoles,
   getInvitations
-} from 'access_control/OrganizationMembershipRepository.es6';
+} from 'access_control/OrganizationMembershipRepository';
 import { makeCtor, match } from 'utils/TaggedValues.es6';
 import {
   sendInvites,

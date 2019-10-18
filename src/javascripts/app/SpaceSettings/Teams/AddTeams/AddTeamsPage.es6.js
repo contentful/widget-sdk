@@ -19,7 +19,7 @@ import Workbench from 'app/common/Workbench.es6';
 import Autocomplete from 'app/common/Autocomplete.es6';
 import { useAsyncFn } from 'app/common/hooks/useAsync.es6';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
-import { createTeamSpaceMembership } from 'access_control/TeamRepository.es6';
+import { createTeamSpaceMembership } from 'access_control/TeamRepository';
 import { go } from 'states/Navigator.es6';
 import { createImmerReducer } from 'redux/utils/createImmerReducer.es6';
 import EmptyStateTeams from 'svg/empty-state-teams.es6';

@@ -8,7 +8,7 @@ const list = reactStateWrapper({
   params: {
     jumpToRole: null
   },
-  componentPath: 'access_control/Users/UserList.es6'
+  componentPath: 'access_control/Users/UserList'
 });
 
 export default {

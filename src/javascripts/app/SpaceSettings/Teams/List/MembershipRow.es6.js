@@ -20,7 +20,7 @@ import {
   SpaceRole as SpaceRolePropType,
   TeamSpaceMembership as TeamSpaceMembershipPropType
 } from 'app/OrganizationSettings/PropTypes.es6';
-import { ADMIN_ROLE } from 'access_control/constants.es6';
+import { ADMIN_ROLE } from 'access_control/constants';
 import { href } from 'states/Navigator.es6';
 
 import RowMenu from './RowMenu.es6';

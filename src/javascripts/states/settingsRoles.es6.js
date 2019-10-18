@@ -1,7 +1,7 @@
 import base from 'states/Base.es6';
 import contextHistory from 'navigation/Breadcrumbs/History.es6';
 import * as crumbFactory from 'navigation/Breadcrumbs/Factory.es6';
-import RoleRepository from 'access_control/RoleRepository.es6';
+import RoleRepository from 'access_control/RoleRepository';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog.es6';
 
 const list = base({
@@ -26,7 +26,7 @@ const newRole = {
         $stateParams.baseRoleId ? roleRepo.get($stateParams.baseRoleId) : null
     ]
   },
-  template: '<react-component name="access_control/RoleEditor.es6" props="props" />',
+  template: '<react-component name="access_control/RoleEditor" props="props" />',
   controller: [
     '$scope',
     'baseRole',
@@ -61,7 +61,7 @@ const detail = {
         RoleRepository.getInstance(spaceContext.space).get($stateParams.roleId)
     ]
   },
-  template: '<react-component name="access_control/RoleEditor.es6" props="props" />',
+  template: '<react-component name="access_control/RoleEditor" props="props" />',
   controller: [
     '$scope',
     '$stateParams',

@@ -46,7 +46,7 @@ jest.mock(
   { virtual: true }
 );
 
-jest.mock('access_control/AccessChecker/index.es6', () => ({
+jest.mock('access_control/AccessChecker', () => ({
   getSectionVisibility: jest.fn().mockReturnValue({ entry: true, asset: true, contentType: true })
 }));
 

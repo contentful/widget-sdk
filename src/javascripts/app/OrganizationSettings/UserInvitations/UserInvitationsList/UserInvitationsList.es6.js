@@ -17,7 +17,7 @@ import { href, go } from 'states/Navigator.es6';
 import {
   removeMembership,
   removeInvitation
-} from 'access_control/OrganizationMembershipRepository.es6';
+} from 'access_control/OrganizationMembershipRepository';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { getInvitedUsers } from '../UserInvitationUtils.es6';
 import { FetcherLoading } from 'app/common/createFetcherComponent.es6';

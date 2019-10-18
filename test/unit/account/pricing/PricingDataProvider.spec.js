@@ -32,7 +32,7 @@ describe('account/pricing/PricingDataProvider.es6', () => {
     this.getUsersByIds = sinon.stub().resolves([]);
     this.endpoint = sinon.stub().resolves();
 
-    await this.system.set('access_control/OrganizationMembershipRepository.es6', {
+    await this.system.set('access_control/OrganizationMembershipRepository', {
       getAllSpaces: this.getAllSpaces,
       getUsersByIds: this.getUsersByIds
     });

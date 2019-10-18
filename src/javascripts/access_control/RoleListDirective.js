@@ -4,8 +4,8 @@ import { registerDirective, registerController, getModule } from 'NgRegistry.es6
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 import * as ResourceUtils from 'utils/ResourceUtils.es6';
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
-import * as RoleListHandler from 'access_control/RoleListHandler.es6';
+import * as accessChecker from 'access_control/AccessChecker';
+import * as RoleListHandler from 'access_control/RoleListHandler';
 import createResourceService from 'services/ResourceService.es6';
 import { getSubscriptionState } from 'account/AccountUtils.es6';
 

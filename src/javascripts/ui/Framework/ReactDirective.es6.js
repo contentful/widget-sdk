@@ -10,9 +10,9 @@ import * as Forma36Components from '@contentful/forma-36-react-components';
 
 import store from 'redux/store.es6';
 
-import * as accessControlAddUsersToSpaceNoteEs6 from 'access_control/AddUsersToSpaceNote.es6';
-import * as accessControlNoUsersToAddNoteEs6 from 'access_control/NoUsersToAddNote.es6';
-import * as accessControlUsersUserListEs6 from 'access_control/Users/UserList.es6';
+import * as accessControlAddUsersToSpaceNoteEs6 from 'access_control/AddUsersToSpaceNote';
+import * as accessControlNoUsersToAddNoteEs6 from 'access_control/NoUsersToAddNote';
+import * as accessControlUsersUserListEs6 from 'access_control/Users/UserList';
 import * as componentsSharedKnowledgeBaseIconKnowledgeBaseEs6 from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
 import * as uiComponentsContactUsButtonEs6 from 'ui/Components/ContactUsButton.es6';
 import * as appContentListSaveViewDialogComponentEs6 from 'app/ContentList/SaveViewDialogComponent.es6';
@@ -71,7 +71,7 @@ import * as componentsSharedUserInvitationEs6 from 'components/shared/UserInvita
 import * as appUserProfileSettings from 'app/UserProfile/Settings';
 import * as appUserSettingsSpaceMembershipsEs6 from 'app/UserSettings/SpaceMemberships.es6';
 import * as componentsTabsContentTypeListContentTypeListPageEs6 from 'components/tabs/content_type_list/ContentTypeListPage.es6';
-import * as accessControlRoleEditorEs6 from 'access_control/RoleEditor.es6';
+import * as accessControlRoleEditorEs6 from 'access_control/RoleEditor';
 import * as appSpaceSettingsTeamsSpaceTeamsPageEs6 from 'app/SpaceSettings/Teams/SpaceTeamsPage.es6';
 import * as appSpaceSettingsTeamsAddTeamsAddTeamsRouterEs6 from 'app/SpaceSettings/Teams/AddTeams/AddTeamsRouter.es6';
 import * as componentsSharedStackOnboardingScreensGetStartedScreenEs6 from 'components/shared/stack-onboarding/screens/GetStartedScreen.es6';
@@ -278,9 +278,9 @@ export default function register() {
 
 function getModule(name) {
   const allowedModules = {
-    'access_control/AddUsersToSpaceNote.es6': accessControlAddUsersToSpaceNoteEs6,
-    'access_control/NoUsersToAddNote.es6': accessControlNoUsersToAddNoteEs6,
-    'access_control/Users/UserList.es6': accessControlUsersUserListEs6,
+    'access_control/AddUsersToSpaceNote': accessControlAddUsersToSpaceNoteEs6,
+    'access_control/NoUsersToAddNote': accessControlNoUsersToAddNoteEs6,
+    'access_control/Users/UserList': accessControlUsersUserListEs6,
     'components/shared/knowledge_base_icon/KnowledgeBase.es6': componentsSharedKnowledgeBaseIconKnowledgeBaseEs6,
     'ui/Components/ContactUsButton.es6': uiComponentsContactUsButtonEs6,
     'app/ContentList/SaveViewDialogComponent.es6': appContentListSaveViewDialogComponentEs6,
@@ -339,7 +339,7 @@ function getModule(name) {
     'app/UserProfile/Settings': appUserProfileSettings,
     'app/UserSettings/SpaceMemberships.es6': appUserSettingsSpaceMembershipsEs6,
     'components/tabs/content_type_list/ContentTypeListPage.es6': componentsTabsContentTypeListContentTypeListPageEs6,
-    'access_control/RoleEditor.es6': accessControlRoleEditorEs6,
+    'access_control/RoleEditor': accessControlRoleEditorEs6,
     'app/SpaceSettings/Teams/SpaceTeamsPage.es6': appSpaceSettingsTeamsSpaceTeamsPageEs6,
     'app/SpaceSettings/Teams/AddTeams/AddTeamsRouter.es6': appSpaceSettingsTeamsAddTeamsAddTeamsRouterEs6,
     'components/shared/stack-onboarding/screens/GetStartedScreen.es6': componentsSharedStackOnboardingScreensGetStartedScreenEs6,

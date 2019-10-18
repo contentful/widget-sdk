@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import WebhookEditor from '../WebhookEditor.es6';
-import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
+import { getSectionVisibility } from 'access_control/AccessChecker';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';

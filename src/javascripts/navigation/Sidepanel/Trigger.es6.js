@@ -30,7 +30,7 @@ export default class Trigger extends React.Component {
   async UNSAFE_componentWillMount() {
     const [{ navState$, NavStates }, accessChecker, TokenStore] = await Promise.all([
       import('navigation/NavState.es6'),
-      import('access_control/AccessChecker/index.es6'),
+      import('access_control/AccessChecker'),
       import('services/TokenStore.es6')
     ]);
 

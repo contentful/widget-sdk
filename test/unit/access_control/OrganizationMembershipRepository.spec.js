@@ -2,10 +2,10 @@ import { times } from 'lodash';
 import sinon from 'sinon';
 import { it } from 'test/utils/dsl';
 
-describe('access_control/OrganizationMembershipRepository.es6', () => {
+describe('access_control/OrganizationMembershipRepository', () => {
   beforeEach(async function() {
     this.OrganizationMembershipRepository = await this.system.import(
-      'access_control/OrganizationMembershipRepository.es6'
+      'access_control/OrganizationMembershipRepository'
     );
     this.endpoint = sinon.stub().resolves(true);
     this.makeUser = id => ({ sys: { id }, email: `${id}@foo.com` });

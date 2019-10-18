@@ -44,7 +44,7 @@ const stubAll = async ({ isolatedSystem }) => {
     detect: () => ({ name: 'chrome' })
   });
 
-  isolatedSystem.set('access_control/AccessChecker/index.es6', {
+  isolatedSystem.set('access_control/AccessChecker', {
     getSectionVisibility: sinon.stub().returns({
       asset: true,
       entry: true

@@ -5,8 +5,8 @@ import {
   User as UserPropType,
   SpaceMembership as SpaceMembershipPropType
 } from 'app/OrganizationSettings/PropTypes.es6';
-import { ADMIN_ROLE_ID } from 'access_control/constants.es6';
-import { getMembershipRoles } from 'access_control/utils.es6';
+import { ADMIN_ROLE_ID } from 'access_control/constants';
+import { getMembershipRoles } from 'access_control/utils';
 
 import {
   TableRow,
@@ -18,7 +18,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import SpaceRoleEditor from 'app/OrganizationSettings/SpaceRoleEditor.es6';
 
-import * as SpaceMembershipRepository from 'access_control/SpaceMembershipRepository.es6';
+import * as SpaceMembershipRepository from 'access_control/SpaceMembershipRepository';
 import * as EndpointFactory from 'data/EndpointFactory.es6';
 
 class SpaceMembershipEditor extends React.Component {

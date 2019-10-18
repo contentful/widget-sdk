@@ -50,7 +50,7 @@ describe('Entry List Actions Controller', () => {
       track: stubs.track
     });
 
-    this.system.set('access_control/AccessChecker/index.es6', {
+    this.system.set('access_control/AccessChecker', {
       shouldHide: stubs.shouldHide,
       shouldDisable: stubs.shouldDisable,
       canPerformActionOnEntity: stubs.canPerformActionOnEntity

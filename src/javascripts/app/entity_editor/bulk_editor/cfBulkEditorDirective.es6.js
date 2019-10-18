@@ -5,7 +5,7 @@ import { deepFreeze } from 'utils/Freeze.es6';
 import * as List from 'utils/List.es6';
 
 import * as localeData from 'app/entity_editor/setLocaleData.es6';
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as accessChecker from 'access_control/AccessChecker';
 import * as Analytics from 'analytics/Analytics.es6';
 import * as DataLoader from 'app/entity_editor/DataLoader.es6';
 import * as Tracking from 'app/entity_editor/bulk_editor/Tracking.es6';

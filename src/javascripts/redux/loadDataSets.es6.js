@@ -1,10 +1,7 @@
 import { zipObject } from 'lodash/fp';
-import {
-  getAllUsers,
-  getAllMemberships
-} from '../access_control/OrganizationMembershipRepository.es6';
+import { getAllUsers, getAllMemberships } from '../access_control/OrganizationMembershipRepository';
 import { createOrganizationEndpoint } from '../data/EndpointFactory.es6';
-import { getAllSpaces, getAllRoles } from 'access_control/OrganizationMembershipRepository.es6';
+import { getAllSpaces, getAllRoles } from 'access_control/OrganizationMembershipRepository';
 import createTeamService from 'app/OrganizationSettings/Teams/TeamService.es6';
 import createTeamMembershipService from 'app/OrganizationSettings/Teams/TeamMemberships/TeamMembershipService.es6';
 import createTeamSpaceMembershipService from 'app/OrganizationSettings/Teams/TeamSpaceMemberships/TeamSpaceMembershipsService.es6';

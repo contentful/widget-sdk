@@ -7,7 +7,7 @@ const mockStubs = {
 };
 
 jest.mock(
-  'access_control/OrganizationMembershipRepository.es6',
+  'access_control/OrganizationMembershipRepository',
   () => ({
     invite: (...args) => mockStubs.invite(...args),
     createOrgMembership: () => mockStubs.createOrgMembership()
@@ -25,7 +25,7 @@ jest.mock(
 );
 
 jest.mock(
-  'access_control/SpaceMembershipRepository.es6',
+  'access_control/SpaceMembershipRepository',
   () => ({
     create: jest.fn().mockReturnValue({
       invite: () => mockStubs.SpaceMembershipRepository_create_invite()

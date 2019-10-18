@@ -16,10 +16,10 @@ import {
   updateTeamSpaceMembership,
   deleteTeamSpaceMembership,
   getAllTeams
-} from 'access_control/TeamRepository.es6';
-import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
-import { ADMIN_ROLE_ID } from 'access_control/constants.es6';
-import * as SpaceMembershipRepository from 'access_control/SpaceMembershipRepository.es6';
+} from 'access_control/TeamRepository';
+import { getSectionVisibility } from 'access_control/AccessChecker';
+import { ADMIN_ROLE_ID } from 'access_control/constants';
+import * as SpaceMembershipRepository from 'access_control/SpaceMembershipRepository';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 import styles from './styles.es6';

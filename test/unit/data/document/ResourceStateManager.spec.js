@@ -9,7 +9,7 @@ const OtDocMock = createOtDocMock();
 
 describe('data/document/ResourceStateManager.es6', () => {
   beforeEach(async function() {
-    this.system.set('access_control/AccessChecker/index.es6', {
+    this.system.set('access_control/AccessChecker', {
       canUpdateEntity: sinon.stub().returns(true)
     });
 

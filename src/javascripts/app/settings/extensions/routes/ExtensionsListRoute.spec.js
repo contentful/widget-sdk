@@ -4,10 +4,10 @@ import * as spaceContextMocked from 'ng/spaceContext';
 import * as $stateMocked from 'ng/$state';
 import ExtensionsListRoute from './ExtensionsListRoute.es6';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
-import * as AccessCheckerMocked from 'access_control/AccessChecker/index.es6';
+import * as AccessCheckerMocked from 'access_control/AccessChecker';
 
 jest.mock(
-  'access_control/AccessChecker/index.es6',
+  'access_control/AccessChecker',
   () => ({
     getSectionVisibility: jest.fn(() => {})
   }),

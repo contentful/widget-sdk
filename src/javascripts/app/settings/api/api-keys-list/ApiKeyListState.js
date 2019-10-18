@@ -3,7 +3,7 @@ import { getModule } from 'NgRegistry.es6';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 import createResourceService from 'services/ResourceService.es6';
 import * as ResourceUtils from 'utils/ResourceUtils.es6';
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as accessChecker from 'access_control/AccessChecker';
 import { getApiKeyRepo } from 'app/settings/api/services/ApiKeyRepoInstance';
 
 async function getData() {

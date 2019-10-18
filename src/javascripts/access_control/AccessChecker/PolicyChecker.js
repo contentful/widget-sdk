@@ -1,5 +1,5 @@
 import { get, isString, identity } from 'lodash';
-import * as PolicyBuilder from 'access_control/PolicyBuilder/index.es6';
+import * as PolicyBuilder from 'access_control/PolicyBuilder';
 
 const policies = {
   entry: {

@@ -1,9 +1,9 @@
 import { useAsyncFn } from 'app/common/hooks/useAsync.es6';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory.es6';
-import { createOrgMembership, invite } from 'access_control/OrganizationMembershipRepository.es6';
-import { create as createSpaceMembershipRepo } from 'access_control/SpaceMembershipRepository.es6';
-import { createTeamMembership } from 'access_control/TeamRepository.es6';
-import { ADMIN_ROLE_ID } from 'access_control/constants.es6';
+import { createOrgMembership, invite } from 'access_control/OrganizationMembershipRepository';
+import { create as createSpaceMembershipRepo } from 'access_control/SpaceMembershipRepository';
+import { createTeamMembership } from 'access_control/TeamRepository';
+import { ADMIN_ROLE_ID } from 'access_control/constants';
 import { PENDING_ORG_MEMBERSHIPS } from 'featureFlags.es6';
 import { getVariation } from 'LaunchDarkly.es6';
 

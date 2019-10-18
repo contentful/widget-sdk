@@ -1,6 +1,6 @@
 import { fetchAll } from 'data/CMA/FetchAll.es6';
 import { extend, includes, omit } from 'lodash';
-import { ADMIN_ROLE_ID } from './constants.es6';
+import { ADMIN_ROLE_ID } from './constants';
 
 // `GET /spaces/:id/space_memberships` endpoint returns a max of 100 items
 const PER_PAGE = 100;

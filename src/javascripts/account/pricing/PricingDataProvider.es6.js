@@ -1,5 +1,5 @@
 import { get, uniqueId, uniq, reject } from 'lodash';
-import { getAllSpaces, getUsersByIds } from 'access_control/OrganizationMembershipRepository.es6';
+import { getAllSpaces, getUsersByIds } from 'access_control/OrganizationMembershipRepository';
 
 const alphaHeader = {
   'x-contentful-enable-alpha-feature': 'subscriptions-api'

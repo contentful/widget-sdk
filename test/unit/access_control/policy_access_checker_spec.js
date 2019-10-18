@@ -6,7 +6,7 @@ describe('Policy Access Checker', () => {
   let pac;
 
   beforeEach(async function() {
-    pac = await this.system.import('access_control/AccessChecker/PolicyChecker.es6');
+    pac = await this.system.import('access_control/AccessChecker/PolicyChecker');
   });
 
   const roles = {

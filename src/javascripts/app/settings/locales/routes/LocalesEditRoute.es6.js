@@ -10,7 +10,7 @@ import LocaleRemovalConfirmDialog from '../dialogs/LocaleRemovalConfirmDialog.es
 import ChooseNewFallbackLocaleDialog from '../dialogs/ChooseNewFallbackLocaleDialog.es6';
 import LocaleCodeChangeConfirmation from '../dialogs/LocaleCodeChangeConfirmDialog.es6';
 import { getModule } from 'NgRegistry.es6';
-import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
+import { getSectionVisibility } from 'access_control/AccessChecker';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import TheLocaleStore from 'services/localeStore.es6';

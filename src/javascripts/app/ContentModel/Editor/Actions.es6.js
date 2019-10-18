@@ -6,7 +6,7 @@ import ModalLauncher from 'app/common/ModalLauncher.es6';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 import * as notify from './Notifications.es6';
 import * as Analytics from 'analytics/Analytics.es6';
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as accessChecker from 'access_control/AccessChecker';
 import assureDisplayField from 'data/ContentTypeRepo/assureDisplayField.es6';
 import * as logger from 'services/logger.es6';
 import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer.es6';

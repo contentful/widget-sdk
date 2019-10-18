@@ -1,5 +1,5 @@
 import * as logger from 'services/logger.es6';
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as accessChecker from 'access_control/AccessChecker';
 import worf from '@contentful/worf';
 
 class Authorization {

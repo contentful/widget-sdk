@@ -9,8 +9,8 @@ import {
   getMembership,
   getUser,
   getSpaceMemberships
-} from 'access_control/OrganizationMembershipRepository.es6';
-import { getAllSpaces, getAllRoles } from 'access_control/OrganizationMembershipRepository.es6';
+} from 'access_control/OrganizationMembershipRepository';
+import { getAllSpaces, getAllRoles } from 'access_control/OrganizationMembershipRepository';
 import ResolveLinks from 'data/LinkResolver.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 

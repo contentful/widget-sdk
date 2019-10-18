@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import { DefaultRule } from './DefaultRule.es6';
-import { PolicyBuilderConfig } from './PolicyBuilderConfig.es6';
+import { DefaultRule } from './DefaultRule';
+import { PolicyBuilderConfig } from './PolicyBuilderConfig';
 
 describe('Policy Builder, default rule', () => {
   it('getting default rule for entry', () => {

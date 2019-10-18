@@ -34,7 +34,7 @@ describe('spaceContext', () => {
     };
 
     this.system.set('widgets/ExtensionLoader.es6', { createExtensionLoader: sinon.stub() });
-    this.system.set('access_control/AccessChecker/index.es6', this.AccessChecker);
+    this.system.set('access_control/AccessChecker', this.AccessChecker);
     this.system.set('data/Endpoint.es6', {
       createSpaceEndpoint: () => this.mockSpaceEndpoint.request,
       createOrganizationEndpoint: sinon.stub(),

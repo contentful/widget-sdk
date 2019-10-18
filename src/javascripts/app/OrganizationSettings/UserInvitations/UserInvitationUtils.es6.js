@@ -3,7 +3,7 @@ import {
   getAllMembershipsWithQuery,
   getInvitations,
   getMemberships
-} from 'access_control/OrganizationMembershipRepository.es6';
+} from 'access_control/OrganizationMembershipRepository';
 import { fetchAll } from 'data/CMA/FetchAll.es6';
 import ResolveLinks from 'data/LinkResolver.es6';
 

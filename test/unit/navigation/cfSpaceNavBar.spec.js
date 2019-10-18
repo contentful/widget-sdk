@@ -15,7 +15,7 @@ describe('Space nav bar directive', () => {
       default: () => null
     });
 
-    this.system.set('access_control/AccessChecker/index.es6', {
+    this.system.set('access_control/AccessChecker', {
       getSectionVisibility: this.stubs.getSectionVisibility
     });
 

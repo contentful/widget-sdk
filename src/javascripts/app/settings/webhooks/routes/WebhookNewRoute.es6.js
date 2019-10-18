@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import WebhookEditor from '../WebhookEditor.es6';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
-import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
+import { getSectionVisibility } from 'access_control/AccessChecker';
 
 export class WebhookNewRoute extends React.Component {
   static propTypes = {

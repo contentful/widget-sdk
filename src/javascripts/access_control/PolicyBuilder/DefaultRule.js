@@ -1,4 +1,4 @@
-import { PolicyBuilderConfig } from './PolicyBuilderConfig.es6';
+import { PolicyBuilderConfig } from './PolicyBuilderConfig';
 import { extend } from 'lodash';
 import * as random from 'utils/Random.es6';
 

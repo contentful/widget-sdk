@@ -15,7 +15,7 @@ import * as Analytics from 'analytics/Analytics.es6';
 
 import * as TokenStore from 'services/TokenStore.es6';
 import * as EndpointFactory from 'data/EndpointFactory.es6';
-import * as OrganizationMembershipRepository from 'access_control/OrganizationMembershipRepository.es6';
+import * as OrganizationMembershipRepository from 'access_control/OrganizationMembershipRepository';
 import * as PricingDataProvider from 'account/pricing/PricingDataProvider.es6';
 import createResourceService from 'services/ResourceService.es6';
 import * as OrganizationRoles from 'services/OrganizationRoles.es6';

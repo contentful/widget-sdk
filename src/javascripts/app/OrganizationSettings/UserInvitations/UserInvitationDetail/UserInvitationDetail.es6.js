@@ -23,11 +23,11 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import {
   removeInvitation,
   removeMembership
-} from 'access_control/OrganizationMembershipRepository.es6';
+} from 'access_control/OrganizationMembershipRepository';
 import { go } from 'states/Navigator.es6';
 import UserInvitationRemovalModal from '../UserInvitationRemovalModal.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
-import { getMembershipRoles } from 'access_control/utils.es6';
+import { getMembershipRoles } from 'access_control/utils';
 
 export default class UserInvitationDetail extends React.Component {
   static propTypes = {

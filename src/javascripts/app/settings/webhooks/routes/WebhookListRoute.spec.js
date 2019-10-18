@@ -3,7 +3,7 @@ import { render, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import WebhookListRoute from './WebhookListRoute.es6';
 import * as $stateMocked from 'ng/$state';
-import * as AccessCheckerMocked from 'access_control/AccessChecker/index.es6';
+import * as AccessCheckerMocked from 'access_control/AccessChecker';
 
 const mockWebhookRepo = {
   getAll: jest.fn().mockResolvedValue([])
@@ -18,7 +18,7 @@ jest.mock(
 );
 
 jest.mock(
-  'access_control/AccessChecker/index.es6',
+  'access_control/AccessChecker',
   () => ({
     getSectionVisibility: jest.fn(() => {})
   }),

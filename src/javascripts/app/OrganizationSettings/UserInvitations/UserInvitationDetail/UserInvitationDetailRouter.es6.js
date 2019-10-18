@@ -11,7 +11,7 @@ import {
   getAllRoles,
   getSpaceMemberships,
   getAllSpaces
-} from 'access_control/OrganizationMembershipRepository.es6';
+} from 'access_control/OrganizationMembershipRepository';
 import { map, flatten } from 'lodash';
 import ResolveLinks from 'data/LinkResolver.es6';
 

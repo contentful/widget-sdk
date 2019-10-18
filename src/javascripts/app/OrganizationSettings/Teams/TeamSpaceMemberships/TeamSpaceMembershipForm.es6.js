@@ -9,7 +9,7 @@ import { getTeamSpaceMembershipsOfCurrentTeamToDisplay } from 'redux/selectors/t
 import getRolesBySpace from 'redux/selectors/getRolesBySpace.es6';
 import SpaceRoleEditor from 'app/OrganizationSettings/SpaceRoleEditor.es6';
 import { TableCell, TableRow, Button, Select, Option } from '@contentful/forma-36-react-components';
-import { getMembershipRoles } from 'access_control/utils.es6';
+import { getMembershipRoles } from 'access_control/utils';
 import {
   Space as SpacePropType,
   SpaceRole as SpaceRolePropType,

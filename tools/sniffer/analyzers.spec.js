@@ -14,7 +14,7 @@ describe('analyze', () => {
         import { getModule, getModules, registerController, registerValue } from 'NgRegistry.es6';
         const $state = getModule('$state');
         const $timeout = getModule('$timeout');
-        const SpaceMembershipRepository = getModule('access_control/SpaceMembershipRepository.es6');
+        const SpaceMembershipRepository = getModule('access_control/SpaceMembershipRepository');
 
 
         registerController('controllerWithNoDeps', [() => {

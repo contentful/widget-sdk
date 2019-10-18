@@ -6,9 +6,9 @@ import UnknownErrorMessage from 'components/shared/UnknownErrorMessage.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import { getSpace } from 'services/TokenStore.es6';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory.es6';
-import { getAllTeams, getTeamsSpaceMembershipsOfSpace } from 'access_control/TeamRepository.es6';
-import { getInstance as createRoleRepo } from 'access_control/RoleRepository.es6';
-import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
+import { getAllTeams, getTeamsSpaceMembershipsOfSpace } from 'access_control/TeamRepository';
+import { getInstance as createRoleRepo } from 'access_control/RoleRepository';
+import { getSectionVisibility } from 'access_control/AccessChecker';
 import { getModule } from 'NgRegistry.es6';
 
 import AddTeamsPage from './AddTeamsPage.es6';
