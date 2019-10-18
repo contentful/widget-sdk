@@ -1,36 +1,21 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`AppsListPage should match snapshot for loading state 1`] = `
-.emotion-1 {
+.emotion-0 {
   margin-bottom: 1.5rem;
 }
 
-.emotion-0 {
-  margin-right: 0.75rem;
-  background: #3072be;
-  color: #ffffff;
-  padding: 0.25rem;
-  -webkit-letter-spacing: 0.1rem;
-  -moz-letter-spacing: 0.1rem;
-  -ms-letter-spacing: 0.1rem;
-  letter-spacing: 0.1rem;
-  line-height: 0.65rem;
-  font-size: 0.65rem;
-  border-radius: 3px;
-  text-transform: uppercase;
-}
-
-.emotion-4 {
+.emotion-3 {
   background-color: #f7f9fa;
 }
 
-.emotion-3 {
+.emotion-2 {
   position: relative;
 }
 
 <div>
   <div
-    class="Workbench__Workbench___THi9K emotion-4"
+    class="Workbench__Workbench___THi9K emotion-3"
     data-test-id="cf-ui-workbench"
   >
     <div
@@ -74,12 +59,7 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
           class="Heading__Heading___83D3K"
           data-test-id="cf-ui-heading"
         >
-          Apps 
-          <span
-            class="emotion-0"
-          >
-            Beta
-          </span>
+          Apps
         </h1>
       </div>
       <div
@@ -112,7 +92,7 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
           class="Workbench__Workbench__content-inner___36_Hx Workbench__Workbench__content-inner--text___7nfTX"
         >
           <div
-            class="Note__Note___2eSKN emotion-1 Note__Note--primary___-8-7D"
+            class="Note__Note___2eSKN emotion-0 Note__Note--primary___-8-7D"
             data-test-id="cf-ui-note"
           >
             <div
@@ -154,11 +134,11 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
             </div>
           </div>
           <div
-            class="Card__Card___xXJsT emotion-3 Card__Card--padding-large___3Fgal"
+            class="Card__Card___xXJsT emotion-2 Card__Card--padding-large___3Fgal"
             data-test-id="cf-ui-card"
           >
             <p
-              class="Paragraph__Paragraph___2aO-9 emotion-1"
+              class="Paragraph__Paragraph___2aO-9 emotion-0"
               data-test-id="cf-ui-paragraph"
             >
               Contentful apps extend and expand the capabilities of the Contentful web app. You can integrate your favorite third-party services, build better workflows and customize what you can do with Contentful.
@@ -321,36 +301,21 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
 `;
 
 exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
-.emotion-1 {
+.emotion-0 {
   margin-bottom: 1.5rem;
 }
 
-.emotion-0 {
-  margin-right: 0.75rem;
-  background: #3072be;
-  color: #ffffff;
-  padding: 0.25rem;
-  -webkit-letter-spacing: 0.1rem;
-  -moz-letter-spacing: 0.1rem;
-  -ms-letter-spacing: 0.1rem;
-  letter-spacing: 0.1rem;
-  line-height: 0.65rem;
-  font-size: 0.65rem;
-  border-radius: 3px;
-  text-transform: uppercase;
-}
-
-.emotion-4 {
+.emotion-3 {
   background-color: #f7f9fa;
 }
 
-.emotion-3 {
+.emotion-2 {
   position: relative;
 }
 
 <div>
   <div
-    class="Workbench__Workbench___THi9K emotion-4"
+    class="Workbench__Workbench___THi9K emotion-3"
     data-test-id="cf-ui-workbench"
   >
     <div
@@ -394,12 +359,7 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
           class="Heading__Heading___83D3K"
           data-test-id="cf-ui-heading"
         >
-          Apps 
-          <span
-            class="emotion-0"
-          >
-            Beta
-          </span>
+          Apps
         </h1>
       </div>
       <div
@@ -432,7 +392,7 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
           class="Workbench__Workbench__content-inner___36_Hx Workbench__Workbench__content-inner--text___7nfTX"
         >
           <div
-            class="Note__Note___2eSKN emotion-1 Note__Note--primary___-8-7D"
+            class="Note__Note___2eSKN emotion-0 Note__Note--primary___-8-7D"
             data-test-id="cf-ui-note"
           >
             <div
@@ -474,11 +434,11 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
             </div>
           </div>
           <div
-            class="Card__Card___xXJsT emotion-3 Card__Card--padding-large___3Fgal"
+            class="Card__Card___xXJsT emotion-2 Card__Card--padding-large___3Fgal"
             data-test-id="cf-ui-card"
           >
             <p
-              class="Paragraph__Paragraph___2aO-9 emotion-1"
+              class="Paragraph__Paragraph___2aO-9 emotion-0"
               data-test-id="cf-ui-paragraph"
             >
               Contentful apps extend and expand the capabilities of the Contentful web app. You can integrate your favorite third-party services, build better workflows and customize what you can do with Contentful.
