@@ -1,4 +1,4 @@
-import { ADMIN_ROLE, ADMIN_ROLE_ID } from './constants.es6';
+import { ADMIN_ROLE, ADMIN_ROLE_ID } from './constants';
 
 export function getMembershipRoles(membership) {
   if (membership.admin) {

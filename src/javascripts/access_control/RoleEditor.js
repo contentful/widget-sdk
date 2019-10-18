@@ -27,14 +27,14 @@ import Workbench from 'app/common/Workbench.es6';
 import FormSection from 'components/forms/FormSection.es6';
 import * as ResourceUtils from 'utils/ResourceUtils.es6';
 import { getModule } from 'NgRegistry.es6';
-import RuleList from './RuleList.es6';
+import RuleList from './RuleList';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
-import CustomRolesPlanInfo from './CustomRolesPlanInfo.es6';
-import TranslatorRoleSelector from './TranslatorRoleSelector.es6';
-import RoleEditorButton from './RoleEditorButton.es6';
+import CustomRolesPlanInfo from './CustomRolesPlanInfo';
+import TranslatorRoleSelector from './TranslatorRoleSelector';
+import RoleEditorButton from './RoleEditorButton';
 import Icon from '../ui/Components/Icon.es6';
-import getLocales from './getLocales.es6';
-import * as PolicyBuilder from 'access_control/PolicyBuilder/index.es6';
+import getLocales from './getLocales';
+import * as PolicyBuilder from 'access_control/PolicyBuilder';
 import * as logger from 'services/logger.es6';
 import createLegacyFeatureService from 'services/LegacyFeatureService.es6';
 import { getSubscriptionState } from 'account/AccountUtils.es6';
@@ -43,9 +43,9 @@ import { getSpaceFeature } from 'data/CMA/ProductCatalog.es6';
 import { ENVIRONMENT_ALIASING } from '../featureFlags.es6';
 
 import * as createResourceService from 'services/ResourceService.es6';
-import * as RoleRepository from 'access_control/RoleRepository.es6';
+import * as RoleRepository from 'access_control/RoleRepository';
 
-import * as RoleListHandler from './RoleListHandler.es6';
+import * as RoleListHandler from './RoleListHandler';
 
 const PermissionPropType = PropTypes.shape({
   manage: PropTypes.bool,

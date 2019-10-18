@@ -10,7 +10,7 @@ import OrganizationResourceUsageList from 'account/usage/non_committed/Organizat
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 import * as OrganizationRolesMocked from 'services/OrganizationRoles.es6';
 import * as TokenStoreMocked from 'services/TokenStore.es6';
-import * as OrganizationMembershipRepositoryMocked from 'access_control/OrganizationMembershipRepository.es6';
+import * as OrganizationMembershipRepositoryMocked from 'access_control/OrganizationMembershipRepository';
 
 jest.mock('services/intercom.es6', () => ({}));
 jest.mock('utils/ResourceUtils.es6', () => ({}));
@@ -49,7 +49,7 @@ jest.mock('account/pricing/PricingDataProvider.es6', () => {
   };
 });
 
-jest.mock('access_control/OrganizationMembershipRepository.es6', () => ({
+jest.mock('access_control/OrganizationMembershipRepository', () => ({
   getAllSpaces: jest.fn(() => [
     { name: 'Test1', sys: { id: 'test1' } },
     { name: 'Test2', sys: { id: 'test2' } }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent, cleanup, wait, within } from '@testing-library/react';
 import { Notification } from '@contentful/forma-36-react-components';
-import { createTeamSpaceMembership } from 'access_control/TeamRepository.es6';
+import { createTeamSpaceMembership } from 'access_control/TeamRepository';
 import { go } from 'states/Navigator.es6';
 import { track } from 'analytics/Analytics.es6';
 import AddTeamsPage from './AddTeamsPage.es6';
@@ -12,7 +12,7 @@ jest.mock('states/Navigator.es6', () => ({
   go: jest.fn().mockResolvedValue(true)
 }));
 
-jest.mock('access_control/TeamRepository.es6', () => ({
+jest.mock('access_control/TeamRepository', () => ({
   createTeamSpaceMembership: jest.fn()
 }));
 

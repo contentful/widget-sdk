@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { Button } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink.es6';
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as accessChecker from 'access_control/AccessChecker';
 
 const styles = {
   button: css({

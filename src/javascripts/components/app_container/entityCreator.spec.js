@@ -1,9 +1,9 @@
 import * as entityCreator from './entityCreator.es6';
 import * as spaceContextMocked from 'ng/spaceContext';
 import { Notification as NotificationMocked } from '@contentful/forma-36-react-components';
-import * as EnforcementsMocked from 'access_control/Enforcements.es6';
+import * as EnforcementsMocked from 'access_control/Enforcements';
 
-jest.mock('access_control/Enforcements.es6', () => ({
+jest.mock('access_control/Enforcements', () => ({
   determineEnforcement: jest.fn()
 }));
 

@@ -4,7 +4,7 @@ import { ENVIRONMENTS_FLAG, TEAMS_IN_SPACES } from 'featureFlags.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 
 import * as LD from 'utils/LaunchDarkly/index.es6';
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as accessChecker from 'access_control/AccessChecker';
 import * as TokenStore from 'services/TokenStore.es6';
 
 // We don't want to display the following sections within the context of

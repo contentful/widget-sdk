@@ -2,7 +2,7 @@ import { registerController } from 'NgRegistry.es6';
 import * as K from 'utils/kefir.es6';
 import { Notification } from 'app/entity_editor/Notifications.es6';
 
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as accessChecker from 'access_control/AccessChecker';
 import * as Analytics from 'analytics/Analytics.es6';
 
 export default function register() {

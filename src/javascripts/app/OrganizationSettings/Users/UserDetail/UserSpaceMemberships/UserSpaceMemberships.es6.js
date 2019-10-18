@@ -27,9 +27,9 @@ import {
 } from '@contentful/forma-36-react-components';
 import { getUserName } from 'app/OrganizationSettings/Users/UserUtils.es6';
 import moment from 'moment';
-import { getMembershipRoles } from 'access_control/utils.es6';
+import { getMembershipRoles } from 'access_control/utils';
 
-import * as SpaceMembershipRepository from 'access_control/SpaceMembershipRepository.es6';
+import * as SpaceMembershipRepository from 'access_control/SpaceMembershipRepository';
 import * as EndpointFactory from 'data/EndpointFactory.es6';
 
 class UserSpaceMemberships extends React.Component {

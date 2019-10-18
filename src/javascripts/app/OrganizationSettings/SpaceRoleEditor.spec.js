@@ -1,6 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import { ADMIN_ROLE_ID } from 'access_control/constants.es6';
+import { ADMIN_ROLE_ID } from 'access_control/constants';
 import SpaceRoleEditor from './SpaceRoleEditor.es6';
 
 describe('SpaceRoleEditor', () => {

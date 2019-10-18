@@ -95,20 +95,20 @@ describe('Access Checker', () => {
     this.system.set('services/logger.es6', {
       logError: this.stubs.logError
     });
-    this.system.set('access_control/AccessChecker/utils/resetEnforcements.es6', {
+    this.system.set('access_control/AccessChecker/utils/resetEnforcements', {
       default: resetEnforcements
     });
-    this.system.set('access_control/AccessChecker/utils/broadcastEnforcement.es6', {
+    this.system.set('access_control/AccessChecker/utils/broadcastEnforcement', {
       default: broadcastStub
     });
-    this.system.set('access_control/Enforcements.es6', {
+    this.system.set('access_control/Enforcements', {
       determineEnforcement: sinon.stub().returns(undefined)
     });
-    this.system.set('access_control/AccessChecker/ResponseCache.es6', {
+    this.system.set('access_control/AccessChecker/ResponseCache', {
       getResponse: getResStub,
       reset: () => {}
     });
-    this.system.set('access_control/AccessChecker/PolicyChecker.es6', {
+    this.system.set('access_control/AccessChecker/PolicyChecker', {
       canAccessEntries: this.stubs.canAccessEntries,
       canAccessAssets: this.stubs.canAccessAssets,
       setMembership: sinon.stub(),
@@ -122,7 +122,7 @@ describe('Access Checker', () => {
       user$: this.stubs.user$
     });
 
-    enforcements = await this.system.import('access_control/Enforcements.es6');
+    enforcements = await this.system.import('access_control/Enforcements');
     OrganizationRoles = await this.system.import('services/OrganizationRoles.es6');
     TokenStore = await this.system.import('services/TokenStore.es6');
 
@@ -146,7 +146,7 @@ describe('Access Checker', () => {
       }
     };
 
-    ac = await this.system.import('access_control/AccessChecker/index.es6');
+    ac = await this.system.import('access_control/AccessChecker');
 
     await $initialize(this.system);
 

@@ -1,11 +1,11 @@
 import * as K from 'utils/kefir.es6';
 import { get } from 'lodash';
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory.es6';
-import { create as createSpaceRepo } from 'access_control/SpaceMembershipRepository.es6';
+import { create as createSpaceRepo } from 'access_control/SpaceMembershipRepository';
 import {
   invite as inviteToOrg,
   createOrgMembership
-} from 'access_control/OrganizationMembershipRepository.es6';
+} from 'access_control/OrganizationMembershipRepository';
 
 const progressBus = K.createStreamBus();
 

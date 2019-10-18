@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { values } from 'lodash';
 
-import * as AccessChecker from 'access_control/AccessChecker/index.es6';
+import * as AccessChecker from 'access_control/AccessChecker';
 import createFetcherComponent from 'app/common/createFetcherComponent.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import ContentPreviewListPage, {

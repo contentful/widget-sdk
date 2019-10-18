@@ -7,7 +7,7 @@ import * as trackVersioning from 'analytics/events/versioning.es6';
 import TheLocaleStore from 'services/localeStore.es6';
 import * as Entries from 'data/entries.es6';
 
-import * as Permissions from 'access_control/EntityPermissions.es6';
+import * as Permissions from 'access_control/EntityPermissions';
 
 export default function register() {
   /**

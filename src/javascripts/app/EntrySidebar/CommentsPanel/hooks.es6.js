@@ -3,7 +3,7 @@ import { map, uniq } from 'lodash';
 import resolveLinks from 'data/LinkResolver.es6';
 import { getSpace, getUserSync } from 'services/TokenStore.es6';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
-import { getUsers } from 'access_control/OrganizationMembershipRepository.es6';
+import { getUsers } from 'access_control/OrganizationMembershipRepository';
 import { getAllForEntry, create } from 'data/CMA/CommentsRepo.es6';
 import useAsync, { useAsyncFn } from 'app/common/hooks/useAsync.es6';
 import { trackCommentCreated } from './analytics.es6';

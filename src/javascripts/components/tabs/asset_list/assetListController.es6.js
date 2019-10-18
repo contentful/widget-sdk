@@ -10,7 +10,7 @@ import { getBlankAssetView as getBlankView } from 'data/UiConfig/Blanks.es6';
 
 import TheLocaleStore from 'services/localeStore.es6';
 import createSavedViewsSidebar from 'app/ContentList/SavedViewsSidebar.es6';
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as accessChecker from 'access_control/AccessChecker';
 import * as BulkAssetsCreator from 'services/BulkAssetsCreator.es6';
 import * as Analytics from 'analytics/Analytics.es6';
 import * as entityCreator from 'components/app_container/entityCreator.es6';

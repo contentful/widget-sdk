@@ -10,7 +10,7 @@ import { getTemplatesList, getTemplate } from 'services/SpaceTemplateLoader.es6'
 import * as spaceTemplateEvents from 'analytics/events/SpaceCreation.es6';
 import * as spaceTemplateCreator from 'services/SpaceTemplateCreator/index.es6';
 import * as Analytics from 'analytics/Analytics.es6';
-import * as enforcements from 'access_control/Enforcements.es6';
+import * as enforcements from 'access_control/Enforcements';
 import * as TokenStore from 'services/TokenStore.es6';
 import { getApiKeyRepo } from 'app/settings/api/services/ApiKeyRepoInstance';
 

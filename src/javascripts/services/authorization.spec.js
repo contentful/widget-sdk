@@ -3,7 +3,7 @@ import worf from '@contentful/worf';
 
 jest.mock('@contentful/worf', () => jest.fn(), { virtual: true });
 jest.mock(
-  'access_control/AccessChecker/index.es6',
+  'access_control/AccessChecker',
   () => ({
     setAuthContext: jest.fn()
   }),

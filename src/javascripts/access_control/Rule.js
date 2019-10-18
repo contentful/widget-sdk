@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
-import getLocales from './getLocales.es6';
-import { PolicyBuilderConfig } from 'access_control/PolicyBuilder/index.es6';
+import getLocales from './getLocales';
+import { PolicyBuilderConfig } from 'access_control/PolicyBuilder';
 
 const contentTypesToOptions = contentTypes =>
   [

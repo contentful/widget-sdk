@@ -4,7 +4,7 @@ import OrgAdminOnly from 'app/common/OrgAdminOnly.es6';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
-import { getMemberships } from 'access_control/OrganizationMembershipRepository.es6';
+import { getMemberships } from 'access_control/OrganizationMembershipRepository';
 
 import UserInvitationsList from './UserInvitationsList.es6';
 import { membershipExistsParam } from '../UserInvitationUtils.es6';

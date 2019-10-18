@@ -68,7 +68,7 @@ export default function createController($scope) {
       import('services/TokenStore.es6'),
       import('services/OrganizationRoles.es6'),
       import('services/CreateSpace.es6'),
-      import('access_control/AccessChecker/index.es6'),
+      import('access_control/AccessChecker'),
       import('utils/LaunchDarkly/index.es6'),
       import('services/logger.es6'),
       import('./SidepanelView.es6')

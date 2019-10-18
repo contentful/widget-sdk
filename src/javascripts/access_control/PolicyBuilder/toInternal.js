@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import { PolicyBuilderConfig } from './PolicyBuilderConfig.es6';
-import { DefaultRule } from './DefaultRule.es6';
+import { PolicyBuilderConfig } from './PolicyBuilderConfig';
+import { DefaultRule } from './DefaultRule';
 
 function translatePolicies(external) {
   let policyString = '[]';

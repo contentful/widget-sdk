@@ -1,7 +1,7 @@
 import { registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
 
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as accessChecker from 'access_control/AccessChecker';
 
 export default function register() {
   registerController('ListActionsController', [

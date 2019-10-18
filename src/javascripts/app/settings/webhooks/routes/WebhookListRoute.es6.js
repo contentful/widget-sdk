@@ -6,7 +6,7 @@ import WebhookForbiddenPage from '../WebhookForbiddenPage.es6';
 import WebhookList, { WebhookListShell } from '../WebhookList.es6';
 import createWebhookTemplateDialogOpener from '../createWebhookTemplateDialogOpener.es6';
 import createFetcherComponent from 'app/common/createFetcherComponent.es6';
-import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
+import { getSectionVisibility } from 'access_control/AccessChecker';
 import StateRedirect from 'app/common/StateRedirect.es6';
 import { getModule } from 'NgRegistry.es6';
 import * as Config from 'Config.es6';

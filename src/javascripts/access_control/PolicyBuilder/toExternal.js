@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { PolicyBuilderConfig } from './PolicyBuilderConfig.es6';
+import { PolicyBuilderConfig } from './PolicyBuilderConfig';
 import { capitalize } from 'utils/StringUtils.es6';
 
 function translatePolicies(internal) {

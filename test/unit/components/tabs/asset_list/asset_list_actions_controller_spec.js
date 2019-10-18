@@ -31,7 +31,7 @@ describe('Asset List Actions Controller', () => {
       track: stubs.track
     });
 
-    this.system.set('access_control/AccessChecker/index.es6', {
+    this.system.set('access_control/AccessChecker', {
       canPerformActionOnEntity: stubs.canPerformActionOnEntity
     });
 

@@ -20,11 +20,11 @@ describe('Section Access', () => {
   beforeEach(async function() {
     visibilityStub = sinon.stub().returns(allTrue);
 
-    await this.system.override('access_control/AccessChecker/index.es6', {
+    await this.system.override('access_control/AccessChecker', {
       getSectionVisibility: visibilityStub
     });
 
-    sectionAccess = await this.system.import('access_control/SectionAccess.es6');
+    sectionAccess = await this.system.import('access_control/SectionAccess');
 
     await $initialize(this.system);
 

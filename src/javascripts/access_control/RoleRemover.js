@@ -2,7 +2,7 @@ import { registerFactory } from 'NgRegistry.es6';
 import { extend, map } from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
-import { getInstance } from 'access_control/RoleRepository.es6';
+import { getInstance } from 'access_control/RoleRepository';
 
 export default function register() {
   registerFactory('createRoleRemover', [

@@ -1,7 +1,7 @@
 import { useReducer } from 'react';
 import { createImmerReducer } from 'redux/utils/createImmerReducer.es6';
 import createResourceService from 'services/ResourceService.es6';
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as accessChecker from 'access_control/AccessChecker';
 import * as LD from 'utils/LaunchDarkly/index.es6';
 import { getOrgFeature, getSpaceFeature } from 'data/CMA/ProductCatalog.es6';
 import { canCreate } from 'utils/ResourceUtils.es6';

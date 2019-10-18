@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import * as ChangeSpaceService from 'services/ChangeSpaceService.es6';
-import * as Enforcements from 'access_control/Enforcements.es6';
+import * as Enforcements from 'access_control/Enforcements';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog.es6';
 import LocalesListRoute from 'app/settings/locales/routes/LocalesListRoute.es6';
 import LocalesNewRoute from 'app/settings/locales/routes/LocalesNewRoute.es6';

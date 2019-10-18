@@ -1,10 +1,10 @@
 import _, { filter } from 'lodash';
 
 import createSpaceMembersRepo from 'data/CMA/SpaceMembersRepo.es6';
-import { getInstance as getRoleRepoInstance } from 'access_control/RoleRepository.es6';
+import { getInstance as getRoleRepoInstance } from 'access_control/RoleRepository';
 import { getModule } from 'NgRegistry.es6';
 
-import { ADMIN_ROLE_ID } from './constants.es6';
+import { ADMIN_ROLE_ID } from './constants';
 
 export const ADMIN_ROLE_NAME = 'Administrator';
 const ADMIN_OPT = { id: ADMIN_ROLE_ID, name: ADMIN_ROLE_NAME };

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import FolderIcon from 'svg/folder.es6';
 import SpaceWithEnvironments from './SpaceWithEnvironments.es6';
-import { canAccessSpaceEnvironments } from 'access_control/AccessChecker/index.es6';
+import { canAccessSpaceEnvironments } from 'access_control/AccessChecker';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer.es6';
 import { Button, Heading, Paragraph } from '@contentful/forma-36-react-components';
 import EmptyStateAdminIllustration from 'svg/folder-illustration.es6';

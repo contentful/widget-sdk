@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Note } from '@contentful/forma-36-react-components';
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as accessChecker from 'access_control/AccessChecker';
 
 export default class WidgetRenderWarning extends React.Component {
   static propTypes = {

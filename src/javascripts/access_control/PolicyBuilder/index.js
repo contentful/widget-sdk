@@ -1,5 +1,5 @@
-export { PolicyBuilderConfig } from './PolicyBuilderConfig.es6';
-export { DefaultRule } from './DefaultRule.es6';
-export { removeOutdatedRules } from './removeOutdatedRules.es6';
-export { toInternal } from './toInternal.es6';
-export { toExternal } from './toExternal.es6';
+export { PolicyBuilderConfig } from './PolicyBuilderConfig';
+export { DefaultRule } from './DefaultRule';
+export { removeOutdatedRules } from './removeOutdatedRules';
+export { toInternal } from './toInternal';
+export { toExternal } from './toExternal';

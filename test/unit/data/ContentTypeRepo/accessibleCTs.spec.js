@@ -3,7 +3,7 @@ describe('data/ContentTypeRepo/accessibleCTs.es6', () => {
   const accessibleCTsIds = [1, 2, 3];
 
   beforeEach(async function() {
-    this.system.set('access_control/AccessChecker/index.es6', {
+    this.system.set('access_control/AccessChecker', {
       canPerformActionOnEntryOfType: (_, id) => accessibleCTsIds.indexOf(id) > -1,
       Action: {
         READ: 'read'

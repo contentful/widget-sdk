@@ -14,7 +14,7 @@ import tokens from '@contentful/forma-36-tokens';
 import classNames from 'classnames';
 
 import { SpaceRole as SpaceRoleProp } from 'app/OrganizationSettings/PropTypes.es6';
-import { ADMIN_ROLE, ADMIN_ROLE_ID } from 'access_control/constants.es6';
+import { ADMIN_ROLE, ADMIN_ROLE_ID } from 'access_control/constants';
 
 const styles = {
   roleList: css({

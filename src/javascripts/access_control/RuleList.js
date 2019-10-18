@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Rule from 'access_control/Rule.es6';
+import Rule from 'access_control/Rule';
 
 const RulesPropType = PropTypes.arrayOf(
   PropTypes.shape({ id: PropTypes.string, name: PropTypes.string })

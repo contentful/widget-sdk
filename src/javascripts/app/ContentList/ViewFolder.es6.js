@@ -8,7 +8,7 @@ import { ModalConfirm } from '@contentful/forma-36-react-components';
 import { assign, filter } from 'utils/Collections.es6';
 import openRoleSelector from './RoleSelector.es6';
 import { openInputDialog } from 'app/InputDialogComponent.es6';
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as accessChecker from 'access_control/AccessChecker';
 import { htmlEncode } from 'utils/encoder.es6';
 
 export default function ViewFolder({ folder, state, actions }) {

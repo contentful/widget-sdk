@@ -7,7 +7,7 @@ import createFetcherComponent from 'app/common/createFetcherComponent.es6';
 import ExtensionsForbiddenPage from '../ExtensionsForbiddenPage.es6';
 import ExtensionsList, { ExtensionListShell } from '../ExtensionsList.es6';
 import { toInternalFieldType } from 'widgets/FieldTypes.es6';
-import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
+import { getSectionVisibility } from 'access_control/AccessChecker';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 

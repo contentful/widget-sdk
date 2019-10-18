@@ -5,7 +5,7 @@ import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcher
 import StateRedirect from 'app/common/StateRedirect.es6';
 import LocaleNotifications from '../utils/LocaleNotifications.es6';
 import { getModule } from 'NgRegistry.es6';
-import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
+import { getSectionVisibility } from 'access_control/AccessChecker';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import TheLocaleStore from 'services/localeStore.es6';

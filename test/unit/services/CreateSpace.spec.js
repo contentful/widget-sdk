@@ -31,7 +31,7 @@ describe('CreateSpace', () => {
     this.system.set('services/TokenStore.es6', {
       getOrganization: this.getOrganization
     });
-    this.system.set('access_control/AccessChecker/index.es6', this.accessChecker);
+    this.system.set('access_control/AccessChecker', this.accessChecker);
     this.system.set('services/ResourceService.es6', {
       default: () => ({
         get: sinon.stub().returns(

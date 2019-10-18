@@ -22,7 +22,7 @@ xdescribe('Role List Directive', () => {
 
     this.canModifyRoles = sinon.stub().resolves(true);
 
-    await this.system.override('access_control/AccessChecker/index.es6', {
+    await this.system.override('access_control/AccessChecker', {
       canModifyRoles: this.canModifyRoles
     });
 
@@ -128,13 +128,13 @@ xdescribe('Role List Directive', () => {
       })
     });
 
-    this.system.set('access_control/RoleRepository.es6', {
+    this.system.set('access_control/RoleRepository', {
       getInstance: () => ({
         getAll: () => Promise.resolve(this.roles)
       })
     });
 
-    this.system.override('access_control/RoleListHandler.es6', {
+    this.system.override('access_control/RoleListHandler', {
       create: sinon.stub().returns({
         reset: this.reset,
         getRoleCounts: sinon.stub().returns({})

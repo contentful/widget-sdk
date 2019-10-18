@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as logger from 'services/logger.es6';
 
-import * as enforcements from 'access_control/Enforcements.es6';
+import * as enforcements from 'access_control/Enforcements';
 
 export function newEntry(contentTypeId) {
   const spaceContext = getModule('spaceContext');

@@ -22,7 +22,7 @@ import { OrganizationRoleSelector } from './OrganizationRoleSelector.es6';
 import {
   removeMembership,
   updateMembership
-} from 'access_control/OrganizationMembershipRepository.es6';
+} from 'access_control/OrganizationMembershipRepository';
 
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import UserSpaceMemberships from './UserSpaceMemberships/UserSpaceMemberships.es6';

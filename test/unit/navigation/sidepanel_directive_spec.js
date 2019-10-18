@@ -48,7 +48,7 @@ describe('cfNavSidepanel directive', () => {
   beforeEach(async function() {
     this.system.set('services/CreateSpace.es6', CreateSpace);
     this.system.set('states/Navigator.es6', Navigator);
-    this.system.set('access_control/AccessChecker/index.es6', accessChecker);
+    this.system.set('access_control/AccessChecker', accessChecker);
     this.system.set('services/OrganizationRoles.es6', OrganizationRoles);
     this.system.set('utils/LaunchDarkly/index.es6', { onFeatureFlag: sinon.stub() });
     this.system.set('data/EndpointFactory.es6', EndpointFactory);

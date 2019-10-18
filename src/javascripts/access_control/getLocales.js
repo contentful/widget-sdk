@@ -1,5 +1,5 @@
 import { sortBy, flow, map } from 'lodash/fp';
-import { PolicyBuilderConfig } from 'access_control/PolicyBuilder/index.es6';
+import { PolicyBuilderConfig } from 'access_control/PolicyBuilder';
 
 export default privateLocales =>
   [{ code: PolicyBuilderConfig.ALL_LOCALES, name: 'All locales' }].concat(

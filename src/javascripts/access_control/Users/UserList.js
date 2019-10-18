@@ -2,20 +2,20 @@ import React, { useCallback, useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import _, { groupBy, first, map, filter, get } from 'lodash';
 
-import { create as createMembershipRepo } from 'access_control/SpaceMembershipRepository.es6';
-import { canModifyUsers } from 'access_control/AccessChecker/index.es6';
+import { create as createMembershipRepo } from 'access_control/SpaceMembershipRepository';
+import { canModifyUsers } from 'access_control/AccessChecker';
 import createSpaceMembersRepo from 'data/CMA/SpaceMembersRepo.es6';
-import RoleRepository from 'access_control/RoleRepository.es6';
-import { getAllUsers } from 'access_control/OrganizationMembershipRepository.es6';
+import RoleRepository from 'access_control/RoleRepository';
+import { getAllUsers } from 'access_control/OrganizationMembershipRepository';
 import resolveLinks from 'data/LinkResolver.es6';
 import useAsync from 'app/common/hooks/useAsync.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import { getModule } from 'NgRegistry.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 
-import * as UserListActions from './UserListActions.es6';
+import * as UserListActions from './UserListActions';
 import UserListPresentation from './UserListPresentation';
-import { VIEW_BY_NAME, VIEW_BY_ROLE } from './constants.es6';
+import { VIEW_BY_NAME, VIEW_BY_ROLE } from './constants';
 
 const fetch = (orgId, endpoint, space, onReady, setData) => async () => {
   const [members, spaceMemberships, roles, spaceUsers, hasTeamsFeature] = await Promise.all([

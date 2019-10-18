@@ -2,14 +2,14 @@ import * as logger from 'services/logger.es6';
 import TheStore from 'TheStore/index.es6';
 import { getSpaceInfo, checkOrgAccess, getOrg, getOnboardingSpaceId } from './utils.es6';
 import spaceContextMock from 'ng/spaceContext';
-import * as AccessCheckerMocked from 'access_control/AccessChecker/index.es6';
+import * as AccessCheckerMocked from 'access_control/AccessChecker';
 import { resolveLink } from './resolver.es6';
 
 const mockApiKeyRepo = {
   getAll: jest.fn()
 };
 
-jest.mock('access_control/AccessChecker/index.es6', () => ({
+jest.mock('access_control/AccessChecker', () => ({
   canReadApiKeys: jest.fn()
 }));
 

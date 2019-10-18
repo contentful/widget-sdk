@@ -2,7 +2,7 @@ import openHyperlinkDialog from 'app/widgets/WidgetApi/dialogs/openHyperlinkDial
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient/index.es6';
 import { getModule } from 'NgRegistry.es6';
 import { goToSlideInEntity } from 'navigation/SlideInNavigator/index.es6';
-import { getSectionVisibility } from 'access_control/AccessChecker/index.es6';
+import { getSectionVisibility } from 'access_control/AccessChecker';
 import * as entitySelector from 'search/EntitySelector/entitySelector.es6';
 
 /**

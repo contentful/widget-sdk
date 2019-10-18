@@ -23,7 +23,7 @@ jest.mock(
 );
 
 jest.mock(
-  'access_control/AccessChecker/index.es6',
+  'access_control/AccessChecker',
   () => ({
     shouldHide: jest.fn().mockReturnValue(false),
     shouldDisable: jest.fn().mockReturnValue(false),

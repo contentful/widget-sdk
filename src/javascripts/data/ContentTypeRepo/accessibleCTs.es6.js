@@ -1,4 +1,4 @@
-import { canPerformActionOnEntryOfType, Action } from 'access_control/AccessChecker/index.es6';
+import { canPerformActionOnEntryOfType, Action } from 'access_control/AccessChecker';
 
 export default function getAccessibleCTs(publishedCTs, selectedCtId) {
   return publishedCTs.getAllBare().filter(ct => accessibleOrSelected(selectedCtId, ct));

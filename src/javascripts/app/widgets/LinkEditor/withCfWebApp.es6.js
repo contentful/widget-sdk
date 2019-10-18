@@ -4,7 +4,7 @@ import {
   canPerformActionOnEntryOfType,
   canCreateAsset,
   Action
-} from 'access_control/AccessChecker/index.es6';
+} from 'access_control/AccessChecker';
 import { noop, find, get } from 'lodash';
 import { newConfigFromField } from 'search/EntitySelector/Config.es6';
 import * as slideInNavigator from 'navigation/SlideInNavigator/index.es6';

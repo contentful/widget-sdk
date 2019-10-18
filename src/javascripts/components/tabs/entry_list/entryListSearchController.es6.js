@@ -9,7 +9,7 @@ import ReloadNotification from 'app/common/ReloadNotification.es6';
 import getAccessibleCTs from 'data/ContentTypeRepo/accessibleCTs.es6';
 import createSearchInput from 'app/ContentList/Search/index.es6';
 import * as Tracking from 'analytics/events/SearchAndViews.es6';
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as accessChecker from 'access_control/AccessChecker';
 import * as ListQuery from 'search/listQuery.es6';
 
 export default function register() {

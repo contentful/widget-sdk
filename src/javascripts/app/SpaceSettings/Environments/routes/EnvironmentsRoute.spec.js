@@ -3,7 +3,7 @@ import { render, cleanup, waitForElement, wait } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import * as Environment from 'data/CMA/SpaceEnvironmentsRepo.es6';
 import EnvironmentsRoute from './EnvironmentsRoute.es6';
-import * as accessChecker from 'access_control/AccessChecker/index.es6';
+import * as accessChecker from 'access_control/AccessChecker';
 import * as LD from 'utils/LaunchDarkly/index.es6';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog.es6';
 import { openDeleteEnvironmentDialog } from '../DeleteDialog.es6';
@@ -23,7 +23,7 @@ jest.mock('data/CMA/SpaceEnvironmentsRepo.es6', () => ({
   })
 }));
 
-jest.mock('access_control/AccessChecker/index.es6', () => ({
+jest.mock('access_control/AccessChecker', () => ({
   can: jest.fn().mockReturnValue(true)
 }));
 

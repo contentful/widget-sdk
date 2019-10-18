@@ -3,9 +3,9 @@ import { Notification } from '@contentful/forma-36-react-components';
 import { get, includes, extend, filter, map, isEmpty } from 'lodash';
 
 import ReloadNotification from 'app/common/ReloadNotification.es6';
-import UserSpaceInvitationDialog from 'access_control/templates/UserSpaceInvitationDialog.es6';
+import UserSpaceInvitationDialog from 'access_control/templates/UserSpaceInvitationDialog';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
-import { getAllUsers } from 'access_control/OrganizationMembershipRepository.es6';
+import { getAllUsers } from 'access_control/OrganizationMembershipRepository';
 import { getModule } from 'NgRegistry.es6';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import * as ListQuery from 'search/listQuery.es6';
@@ -14,7 +14,7 @@ import * as TokenStore from 'services/TokenStore.es6';
 import { go } from 'states/Navigator.es6';
 import * as entitySelector from 'search/EntitySelector/entitySelector.es6';
 
-import { ADMIN_ROLE_ID } from '../constants.es6';
+import { ADMIN_ROLE_ID } from '../constants';
 
 import RoleChangeDialog from './RoleChangeDialog';
 import UserRemovalConfirmDialog from './UserRemovalConfirmDialog';
@@ -140,8 +140,8 @@ export function create(availableRoles, spaceUsers) {
       const labels = {
         title: 'Add users to space',
         insert: 'Assign roles to selected users',
-        infoHtml: `<react-component name="access_control/AddUsersToSpaceNote.es6"  props="{isOwnerOrAdmin: ${canAddUsers}}" />`,
-        noEntitiesCustomHtml: `<react-component name="access_control/NoUsersToAddNote.es6"  props="{isOwnerOrAdmin: ${canAddUsers}}" />`
+        infoHtml: `<react-component name="access_control/AddUsersToSpaceNote"  props="{isOwnerOrAdmin: ${canAddUsers}}" />`,
+        noEntitiesCustomHtml: `<react-component name="access_control/NoUsersToAddNote"  props="{isOwnerOrAdmin: ${canAddUsers}}" />`
       };
 
       return entitySelector
