@@ -1,7 +1,7 @@
 import { getOrganization } from 'services/TokenStore.es6';
 import { openModal as openCommittedSpaceWarningDialog } from 'components/shared/space-wizard/CommittedSpaceWarningModal.es6';
 import { openModal as openPOCSpaceWarningDialog } from 'components/shared/space-wizard/POCSpaceWarningModal.es6';
-import { getSingleSpacePlan, isPOCSpacePlan } from 'account/pricing/PricingDataProvider.es6';
+import { getSingleSpacePlan, isPOCSpacePlan } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { getModule } from 'NgRegistry.es6';
 

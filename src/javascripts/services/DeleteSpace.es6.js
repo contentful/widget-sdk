@@ -7,7 +7,7 @@ import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import { openModal as openCommittedSpaceWarningDialog } from 'components/shared/space-wizard/CommittedSpaceWarningModal.es6';
 import { getModule } from 'NgRegistry.es6';
 import APIClient from 'data/APIClient.es6';
-import { isEnterprisePlan, isFreeSpacePlan } from 'account/pricing/PricingDataProvider.es6';
+import { isEnterprisePlan, isFreeSpacePlan } from 'account/pricing/PricingDataProvider';
 
 export function openDeleteSpaceDialog({ space, plan, onSuccess }) {
   const $rootScope = getModule('$rootScope');

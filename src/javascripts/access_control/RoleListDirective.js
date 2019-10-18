@@ -7,7 +7,7 @@ import * as ResourceUtils from 'utils/ResourceUtils.es6';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as RoleListHandler from 'access_control/RoleListHandler';
 import createResourceService from 'services/ResourceService.es6';
-import { getSubscriptionState } from 'account/AccountUtils.es6';
+import { getSubscriptionState } from 'account/AccountUtils';
 
 export default function register() {
   registerDirective('cfRoleList', () => ({

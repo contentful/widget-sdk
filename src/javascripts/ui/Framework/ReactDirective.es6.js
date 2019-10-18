@@ -22,7 +22,7 @@ import * as appContentModelEditorContentTypesPageEs6 from 'app/ContentModel/Edit
 import * as appOrganizationSettingsSsoSsoSetupEs6 from 'app/OrganizationSettings/SSO/SSOSetup.es6';
 import * as uiPagesSubscriptionOverviewIndexEs6 from 'ui/Pages/SubscriptionOverview/index.es6';
 import * as appOrganizationSettingsTeamsTeamPageEs6 from 'app/OrganizationSettings/Teams/TeamPage.es6';
-import * as accountUsageOrganizationUsageEs6 from 'account/usage/OrganizationUsage.es6';
+import * as accountUsageOrganizationUsageEs6 from 'account/usage/OrganizationUsage';
 import * as appOrganizationSettingsUserInvitationsUserInvitationDetailUserInvitationDetailRouterEs6 from 'app/OrganizationSettings/UserInvitations/UserInvitationDetail/UserInvitationDetailRouter.es6';
 import * as appOrganizationSettingsUserInvitationsUserInvitationsListUserInvitationsListRouterEs6 from 'app/OrganizationSettings/UserInvitations/UserInvitationsList/UserInvitationsListRouter.es6';
 import * as appOrganizationSettingsUsersNewUserNewUserBridgeEs6 from 'app/OrganizationSettings/Users/NewUser/NewUserBridge.es6';
@@ -78,7 +78,7 @@ import * as componentsSharedStackOnboardingScreensGetStartedScreenEs6 from 'comp
 import * as componentsSharedStackOnboardingScreensCopyScreenEs6 from 'components/shared/stack-onboarding/screens/CopyScreen.es6';
 import * as componentsSharedStackOnboardingScreensExploreScreenEs6 from 'components/shared/stack-onboarding/screens/ExploreScreen.es6';
 import * as componentsSharedStackOnboardingScreensDeployScreenEs6 from 'components/shared/stack-onboarding/screens/DeployScreen.es6';
-import * as accountAccountViewEs6 from 'account/AccountView.es6';
+import * as accountAccountViewEs6 from 'account/AccountView';
 import * as appEntityEditorBulkEditorTitleEs6 from 'app/entity_editor/bulk_editor/BulkEditorTitle.es6';
 import * as embedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
 
@@ -290,7 +290,7 @@ function getModule(name) {
     'app/OrganizationSettings/SSO/SSOSetup.es6': appOrganizationSettingsSsoSsoSetupEs6,
     'ui/Pages/SubscriptionOverview/index.es6': uiPagesSubscriptionOverviewIndexEs6,
     'app/OrganizationSettings/Teams/TeamPage.es6': appOrganizationSettingsTeamsTeamPageEs6,
-    'account/usage/OrganizationUsage.es6': accountUsageOrganizationUsageEs6,
+    'account/usage/OrganizationUsage': accountUsageOrganizationUsageEs6,
     'app/OrganizationSettings/UserInvitations/UserInvitationDetail/UserInvitationDetailRouter.es6': appOrganizationSettingsUserInvitationsUserInvitationDetailUserInvitationDetailRouterEs6,
     'app/OrganizationSettings/UserInvitations/UserInvitationsList/UserInvitationsListRouter.es6': appOrganizationSettingsUserInvitationsUserInvitationsListUserInvitationsListRouterEs6,
     'app/OrganizationSettings/Users/NewUser/NewUserBridge.es6': appOrganizationSettingsUsersNewUserNewUserBridgeEs6,
@@ -346,7 +346,7 @@ function getModule(name) {
     'components/shared/stack-onboarding/screens/CopyScreen.es6': componentsSharedStackOnboardingScreensCopyScreenEs6,
     'components/shared/stack-onboarding/screens/ExploreScreen.es6': componentsSharedStackOnboardingScreensExploreScreenEs6,
     'components/shared/stack-onboarding/screens/DeployScreen.es6': componentsSharedStackOnboardingScreensDeployScreenEs6,
-    'account/AccountView.es6': accountAccountViewEs6,
+    'account/AccountView': accountAccountViewEs6,
     'app/entity_editor/bulk_editor/BulkEditorTitle.es6': appEntityEditorBulkEditorTitleEs6,
     'components/forms/embedly_preview/EmbedlyPreview': embedlyPreview
   };

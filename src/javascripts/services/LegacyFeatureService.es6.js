@@ -1,7 +1,7 @@
 import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
 import { getSpace, getOrganization } from 'services/TokenStore.es6';
-import { getEnabledFeatures as getFeaturesFromApi } from 'account/pricing/PricingDataProvider.es6';
+import { getEnabledFeatures as getFeaturesFromApi } from 'account/pricing/PricingDataProvider';
 
 import { get, snakeCase } from 'lodash';
 

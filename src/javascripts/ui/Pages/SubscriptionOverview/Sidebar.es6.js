@@ -18,7 +18,7 @@ import Icon from 'ui/Components/Icon.es6';
 import Price from 'ui/Components/Price.es6';
 import ContactUsButton from 'ui/Components/ContactUsButton.es6';
 
-import { isEnterprisePlan } from 'account/pricing/PricingDataProvider.es6';
+import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 
 const styles = {
   icon: css({

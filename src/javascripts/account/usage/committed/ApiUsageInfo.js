@@ -6,7 +6,7 @@ import { Tooltip, Tag } from '@contentful/forma-36-react-components';
 
 import { shorten } from 'utils/NumberUtils.es6';
 
-import { organizationResourceUsagePropType } from './propTypes.es6';
+import { organizationResourceUsagePropType } from './propTypes';
 
 export const calcRelativeSpaceUsage = (spaceUsage, totalUsage) => {
   const spaceUsageSum = sum(spaceUsage);

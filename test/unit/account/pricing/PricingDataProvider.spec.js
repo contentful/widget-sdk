@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import { it } from 'test/utils/dsl';
 
-describe('account/pricing/PricingDataProvider.es6', () => {
+describe('account/pricing/PricingDataProvider', () => {
   beforeEach(async function() {
     this.baseRatePlanChargeData = {
       items: [
@@ -37,7 +37,7 @@ describe('account/pricing/PricingDataProvider.es6', () => {
       getUsersByIds: this.getUsersByIds
     });
 
-    this.PricingDataProvider = await this.system.import('account/pricing/PricingDataProvider.es6');
+    this.PricingDataProvider = await this.system.import('account/pricing/PricingDataProvider');
   });
 
   describe('#getPlansWithSpaces()', () => {

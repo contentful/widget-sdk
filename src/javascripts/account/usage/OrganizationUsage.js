@@ -6,17 +6,17 @@ import { Spinner } from '@contentful/forma-36-react-components';
 import Workbench from 'app/common/Workbench.es6';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 
-import OrganizationResourceUsageList from './non_committed/OrganizationResourceUsageList.es6';
-import OrganizationUsagePage from './committed/OrganizationUsagePage.es6';
-import { getPeriods, getOrgUsage, getApiUsage } from './UsageService.es6';
-import PeriodSelector from './committed/PeriodSelector.es6';
-import NoSpacesPlaceholder from './NoSpacesPlaceholder.es6';
+import OrganizationResourceUsageList from './non_committed/OrganizationResourceUsageList';
+import OrganizationUsagePage from './committed/OrganizationUsagePage';
+import { getPeriods, getOrgUsage, getApiUsage } from './UsageService';
+import PeriodSelector from './committed/PeriodSelector';
+import NoSpacesPlaceholder from './NoSpacesPlaceholder';
 import * as Analytics from 'analytics/Analytics.es6';
 
 import * as TokenStore from 'services/TokenStore.es6';
 import * as EndpointFactory from 'data/EndpointFactory.es6';
 import * as OrganizationMembershipRepository from 'access_control/OrganizationMembershipRepository';
-import * as PricingDataProvider from 'account/pricing/PricingDataProvider.es6';
+import * as PricingDataProvider from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService.es6';
 import * as OrganizationRoles from 'services/OrganizationRoles.es6';
 

@@ -4,7 +4,7 @@ import _ from 'lodash';
 
 import { get, isUndefined } from 'lodash';
 
-import { getPlansWithSpaces, getRatePlans } from 'account/pricing/PricingDataProvider.es6';
+import { getPlansWithSpaces, getRatePlans } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 import createResourceService from 'services/ResourceService.es6';
 import { getSpaces, getOrganization } from 'services/TokenStore.es6';

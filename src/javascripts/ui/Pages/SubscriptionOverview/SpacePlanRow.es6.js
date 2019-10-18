@@ -13,7 +13,7 @@ import { go } from 'states/Navigator.es6';
 import { getEnabledFeatures } from 'utils/SubscriptionUtils.es6';
 import { getUserName } from 'utils/UserUtils.es6';
 
-import { isEnterprisePlan } from 'account/pricing/PricingDataProvider.es6';
+import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import HelpIcon from 'ui/Components/HelpIcon.es6';
 import Tooltip from 'ui/Components/Tooltip.es6';
 import Price from 'ui/Components/Price.es6';

@@ -1,4 +1,4 @@
-import { calcRelativeSpaceUsage } from './ApiUsageInfo.es6';
+import { calcRelativeSpaceUsage } from './ApiUsageInfo';
 
 describe('calcRelativeSpaceUsage', () => {
   it('should return correct relative space usage for values > 0', () => {

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import cn from 'classnames';
 import { merge, update, flow, isArray } from 'lodash/fp';
 
-import baseStyle, { seriesBaseStyle } from './lineChartBaseStyle.es6';
+import baseStyle, { seriesBaseStyle } from './lineChartBaseStyle';
 import { Spinner } from '@contentful/forma-36-react-components';
 
 export default class LineChart extends React.Component {

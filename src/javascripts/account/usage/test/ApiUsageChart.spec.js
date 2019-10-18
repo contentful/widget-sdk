@@ -3,9 +3,9 @@ import { shallow } from 'enzyme';
 import moment from 'moment';
 import { shorten } from 'utils/NumberUtils.es6';
 
-import LineChart from '../committed/charts/LineChart.es6';
-import ApiUsageChart from '../committed/charts/ApiUsageChart.es6';
-import EmptyChartPlaceholder from '../committed/charts/EmptyChartPlaceholder.es6';
+import LineChart from '../committed/charts/LineChart';
+import ApiUsageChart from '../committed/charts/ApiUsageChart';
+import EmptyChartPlaceholder from '../committed/charts/EmptyChartPlaceholder';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 

@@ -4,7 +4,7 @@ import { getModule } from 'NgRegistry.es6';
 import * as Authentication from 'Authentication.es6';
 import * as TokenStore from 'services/TokenStore.es6';
 import * as Analytics from 'analytics/Analytics.es6';
-import * as UrlSyncHelper from 'account/UrlSyncHelper.es6';
+import * as UrlSyncHelper from 'account/UrlSyncHelper';
 import * as createSpace from 'services/CreateSpace.es6';
 
 export default function handleGatekeeperMessage(data) {

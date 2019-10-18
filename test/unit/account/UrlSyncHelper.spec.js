@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import { $initialize } from 'test/utils/ng';
 
-describe('account/UrlSyncHelper.es6', () => {
+describe('account/UrlSyncHelper', () => {
   beforeEach(async function() {
     this.$state = {
       href: sinon.stub(),
@@ -17,7 +17,7 @@ describe('account/UrlSyncHelper.es6', () => {
       $provide.constant('$location', this.$location);
     });
 
-    this.UrlSyncHelper = await this.system.import('account/UrlSyncHelper.es6');
+    this.UrlSyncHelper = await this.system.import('account/UrlSyncHelper');
   });
 
   describe('.getGatekeeperUrl()', () => {

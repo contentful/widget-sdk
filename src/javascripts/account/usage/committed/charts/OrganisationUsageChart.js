@@ -5,10 +5,10 @@ import moment from 'moment';
 
 import { shorten } from 'utils/NumberUtils.es6';
 
-import { periodPropType } from '../propTypes.es6';
-import periodToDates from './periodToDates.es6';
-import EmptyChartPlaceholder from './EmptyChartPlaceholder.es6';
-import LineChart from './LineChart.es6';
+import { periodPropType } from '../propTypes';
+import periodToDates from './periodToDates';
+import EmptyChartPlaceholder from './EmptyChartPlaceholder';
+import LineChart from './LineChart';
 
 const accumulateUsage = usage =>
   usage.reduce((acc, value) => acc.concat(value + (last(acc) || 0)), []);

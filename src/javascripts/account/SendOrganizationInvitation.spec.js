@@ -1,4 +1,4 @@
-import { sendInvites, progress$ } from './SendOrganizationInvitation.es6';
+import { sendInvites, progress$ } from './SendOrganizationInvitation';
 
 const mockStubs = {
   invite: jest.fn().mockResolvedValue(true),
@@ -34,7 +34,7 @@ jest.mock(
   { virtual: true }
 );
 
-describe('account/SendOrganizationInvitation.es6', () => {
+describe('account/SendOrganizationInvitation', () => {
   describe('#invite', () => {
     const emails = ['user@example.com', 'user2@example.com'];
     const spaceMemberships = {

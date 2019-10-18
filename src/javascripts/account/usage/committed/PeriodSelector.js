@@ -4,7 +4,7 @@ import moment from 'moment';
 import { Select, Option } from '@contentful/forma-36-react-components';
 import { cond, constant, stubTrue } from 'lodash';
 
-import { periodPropType } from './propTypes.es6';
+import { periodPropType } from './propTypes';
 
 const formatDate = date => moment(date).format('DD MMM');
 

@@ -40,7 +40,7 @@ export const angularInitRun = [
       import('access_control/Users/jumpToRole'),
       import('access_control/RoleListDirective'),
       import('access_control/UserSpaceInvitationController'),
-      import('account/cfNewOrganizationMembership.es6'),
+      import('account/cfNewOrganizationMembership'),
       import('app/ContentModel/Editor/addFieldDialogController.es6'),
       import('app/ContentModel/Editor/apiNameController.es6'),
       import('app/ContentModel/Editor/cfApiNameShadowDirective.es6'),
