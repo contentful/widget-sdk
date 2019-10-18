@@ -22,6 +22,7 @@
     "@contentful/field-editor-rating": "0.1.0",
     "@contentful/field-editor-list": "0.4.0",
     "@contentful/field-editor-number": "0.2.0",
+    "@contentful/field-editor-url": "0.1.0",
     "@contentful/forma-36-fcss": "^0.0.31",
     "@contentful/forma-36-react-components": "^3.20.4",
     "@contentful/forma-36-tokens": "^0.4.5",

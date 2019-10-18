@@ -7,6 +7,7 @@ import LinkEditor, {
   SingleLinkEditor,
   withCfWebApp as linkEditorWithCfWebApp
 } from 'app/widgets/LinkEditor/index.es6';
+import EmbedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
 import { TagsEditor } from '@contentful/field-editor-tags';
 import { SingleLineEditor } from '@contentful/field-editor-single-line';
 import { MultipleLineEditor } from '@contentful/field-editor-multiple-line';
@@ -17,6 +18,7 @@ import { RadioEditor } from '@contentful/field-editor-radio';
 import { BooleanEditor } from '@contentful/field-editor-boolean';
 import { RatingEditor } from '@contentful/field-editor-rating';
 import { NumberEditor } from '@contentful/field-editor-number';
+import { UrlEditor } from '@contentful/field-editor-url';
 
 const CfLinkEditor = linkEditorWithCfWebApp(LinkEditor);
 const CfSingleLinkEditor = linkEditorWithCfWebApp(SingleLinkEditor);
@@ -59,7 +61,15 @@ export function create() {
     fieldTypes: ['Symbol'],
     name: 'URL',
     icon: 'preview',
-    template: '<cf-url-editor />'
+    renderFieldEditor: ({ widgetApi }) => {
+      return (
+        <UrlEditor field={widgetApi.field}>
+          {({ value }) => {
+            return <EmbedlyPreview previewUrl={value} />;
+          }}
+        </UrlEditor>
+      );
+    }
   });
 
   registerWidget('numberEditor', {

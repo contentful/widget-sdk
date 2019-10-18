@@ -74,7 +74,6 @@ export const angularInitRun = [
       import('app/widgets/location/searchController.es6'),
       import('app/widgets/shared/cfEditorCharacterInfoDirective.es6'),
       import('app/widgets/slug/cfSlugEditorDirective.es6'),
-      import('app/widgets/url/cfUrlEditorDirective.es6'),
       import('components/CreateEntryButton/buttonDirective.es6'),
       import('services/activationEmailResender.es6'),
       import('components/client/activationEmailResendController.es6'),
