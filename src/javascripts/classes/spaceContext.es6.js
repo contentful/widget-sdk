@@ -320,13 +320,13 @@ export default function register() {
         },
 
         /**
-         * @name spaceContext#getAliases
+         * @name spaceContext#getAllSpaceAliases
          * @description
          * Returns full alias objects of all environment aliases in this space
-         * @returns array<string>
+         * @returns Promise<array<string>>
          */
-        getAliases: function() {
-          return _.get(this, ['aliases'], []);
+        getAllSpaceAliases: async function() {
+          return await setupAliases(spaceContext);
         },
 
         /**
@@ -657,17 +657,20 @@ export default function register() {
        * @returns {Promise}
        */
       function setupAliases(spaceContext) {
-        getSpaceFeature(spaceContext.space.getId(), ENVIRONMENT_ALIASING).then(aliasesEnabled => {
-          if (aliasesEnabled) {
-            return createAliasesRepo(spaceContext.endpoint)
-              .getAll()
-              .then(aliases => {
-                spaceContext.aliases = deepFreeze(aliases);
-              });
+        return getSpaceFeature(spaceContext.space.getId(), ENVIRONMENT_ALIASING).then(
+          aliasesEnabled => {
+            if (aliasesEnabled) {
+              return createAliasesRepo(spaceContext.endpoint)
+                .getAll()
+                .then(aliases => {
+                  spaceContext.aliases = deepFreeze(aliases);
+                  return spaceContext.aliases;
+                });
+            }
+            spaceContext.aliases = [];
+            return spaceContext.aliases;
           }
-          spaceContext.aliases = [];
-          return;
-        });
+        );
       }
 
       /**

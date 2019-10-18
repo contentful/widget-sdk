@@ -15,7 +15,7 @@ export default {
       const currentEnvironmentId = spaceContext.getEnvironmentId();
       const organizationId = organization.sys.id;
       const isMasterEnvironment = spaceContext.isMasterEnvironment;
-      const getAliases = spaceContext.getAliases;
+      const getAllSpaceAliases = spaceContext.getAllSpaceAliases;
       const getAliasesIds = spaceContext.getAliasesIds;
 
       return {
@@ -27,7 +27,7 @@ export default {
         isLegacyOrganization: isLegacyOrganization(organization),
         endpoint,
         getSpaceData: () => space.data,
-        getAliases,
+        getAllSpaceAliases,
         getAliasesIds,
         goToSpaceDetail: () => $state.go('spaces.detail')
       };

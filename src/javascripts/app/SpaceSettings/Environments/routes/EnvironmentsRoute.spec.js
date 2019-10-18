@@ -52,7 +52,7 @@ describe('EnvironmentsRoute', () => {
   const defaultProps = {
     endpoint: () => {},
     getSpaceData: () => {},
-    getAliases: jest.fn().mockReturnValue([]),
+    getAllSpaceAliases: jest.fn().mockResolvedValue([]),
     getAliasesIds: jest.fn().mockReturnValue([]),
     goToSpaceDetail: jest.fn(),
     isMasterEnvironment: () => {},

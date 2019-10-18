@@ -86,7 +86,7 @@ export default function EnvironmentsRoute(props) {
 EnvironmentsRoute.propTypes = {
   endpoint: PropTypes.func.isRequired,
   getSpaceData: PropTypes.func.isRequired,
-  getAliases: PropTypes.func.isRequired,
+  getAllSpaceAliases: PropTypes.func.isRequired,
   getAliasesIds: PropTypes.func.isRequired,
   goToSpaceDetail: PropTypes.func.isRequired,
   isMasterEnvironment: PropTypes.func.isRequired,

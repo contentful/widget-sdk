@@ -103,12 +103,13 @@ export const useEnvironmentsRouteState = props => {
   };
 
   const FetchEnvironments = async () => {
-    const { getAliases, isLegacyOrganization } = props;
+    const { getAllSpaceAliases, isLegacyOrganization } = props;
     dispatch({ type: SET_IS_LOADING, value: true });
 
-    const [environments, resource] = await Promise.all([
+    const [environments, resource, allSpaceAliases] = await Promise.all([
       resourceEndpoint.getAll(),
-      resourceService.get('environment')
+      resourceService.get('environment'),
+      getAllSpaceAliases()
     ]);
 
     const items = environments.map(makeEnvironmentModel);
@@ -121,7 +122,7 @@ export const useEnvironmentsRouteState = props => {
       items,
       canCreateEnv: isLegacyOrganization || canCreate(resource),
       hasOptedInEnv: items.some(({ aliases }) => aliases.length > 0),
-      allSpaceAliases: getAliases()
+      allSpaceAliases
     });
     dispatch({ type: SET_IS_LOADING, value: false });
   };
