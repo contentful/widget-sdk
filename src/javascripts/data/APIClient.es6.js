@@ -41,6 +41,10 @@ APIClient.prototype.getContentTypes = function(query) {
   return this._getResources('content_types', query);
 };
 
+APIClient.prototype.getEditorInterfaces = function() {
+  return this._getResources('editor_interfaces');
+};
+
 APIClient.prototype.getEntries = function(query) {
   return this._getResources('entries', query);
 };

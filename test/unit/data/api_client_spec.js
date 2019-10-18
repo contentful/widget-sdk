@@ -151,6 +151,15 @@ describe('data/APIClient', () => {
       })(result);
     });
 
+    it('getEditorInterfaces()', async function() {
+      const result = await this.client.getEditorInterfaces();
+
+      assertRequestResponse('DATA', {
+        method: 'GET',
+        url: '//api.test.local/spaces/SPACE/editor_interfaces'
+      })(result);
+    });
+
     it('getAssets(query)', async function() {
       const result = await this.client.getAssets('QUERY');
 
