@@ -1,6 +1,6 @@
 import { registerDirective } from 'NgRegistry.es6';
 
-import controller from 'account/NewOrganizationMembership.es6';
+import controller from 'account/NewOrganizationMembership';
 
 export default function register() {
   registerDirective('cfNewOrganizationMembership', [

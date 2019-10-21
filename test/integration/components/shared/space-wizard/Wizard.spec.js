@@ -180,7 +180,7 @@ describe('Space Wizard', function() {
       }
     });
 
-    this.system.set('account/pricing/PricingDataProvider.es6', {
+    this.system.set('account/pricing/PricingDataProvider', {
       getSpaceRatePlans: this.stubs.getSpaceRatePlans,
       getSubscriptionRatePlans: this.stubs.getSubscriptionRatePlans,
       calculateTotalPrice: this.stubs.getTotalPrice,

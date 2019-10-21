@@ -1,9 +1,9 @@
 import React from 'react';
 import { render, cleanup, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import AccountView from './AccountView.es6';
+import AccountView from './AccountView';
 
-jest.mock('account/UrlSyncHelper.es6', () => ({
+jest.mock('account/UrlSyncHelper', () => ({
   getGatekeeperUrl: jest.fn().mockReturnValue('account/gatekeeperpage')
 }));
 

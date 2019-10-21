@@ -40,7 +40,7 @@ describe('Gatekeeper Message Handler', () => {
       track: this.stubs.track
     });
 
-    await this.system.set('account/UrlSyncHelper.es6', {
+    await this.system.set('account/UrlSyncHelper', {
       updateWebappUrl: this.stubs.updateWebappUrl
     });
 
@@ -49,7 +49,7 @@ describe('Gatekeeper Message Handler', () => {
       cancelUser: this.stubs.cancelUser
     });
 
-    this.handle = (await this.system.import('account/handleGatekeeperMessage.es6')).default;
+    this.handle = (await this.system.import('account/handleGatekeeperMessage')).default;
 
     await $initialize(this.system, $provide => {
       $provide.constant('$state', this.stubs.$state);

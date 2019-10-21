@@ -8,7 +8,7 @@ import {
   getSpaceRatePlans,
   isEnterprisePlan,
   getBasePlan
-} from 'account/pricing/PricingDataProvider.es6';
+} from 'account/pricing/PricingDataProvider';
 import { openModal as showLoading } from 'components/shared/LoadingModal.es6';
 import { getModule } from 'NgRegistry.es6';
 

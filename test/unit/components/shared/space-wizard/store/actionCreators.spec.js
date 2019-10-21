@@ -85,7 +85,7 @@ describe('Space Wizard action creators', function() {
       createSpaceEndpoint: this.stubs.createSpaceEndpoint
     });
 
-    this.system.set('account/pricing/PricingDataProvider.es6', {
+    this.system.set('account/pricing/PricingDataProvider', {
       getSpaceRatePlans: this.stubs.getSpaceRatePlans,
       changeSpace: this.stubs.changeSpace,
       getSubscriptionPlans: this.stubs.getSubscriptionPlans,

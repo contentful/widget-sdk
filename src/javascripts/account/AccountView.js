@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { getGatekeeperUrl } from 'account/UrlSyncHelper.es6';
+import { getGatekeeperUrl } from 'account/UrlSyncHelper';
 import { css } from 'emotion';
 
 import Workbench from 'app/common/Workbench.es6';

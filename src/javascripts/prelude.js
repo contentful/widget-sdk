@@ -276,7 +276,7 @@ angular
       await initSpaceContext();
 
       const Config = await import('Config.es6');
-      const { default: handleGKMessage } = await import('account/handleGatekeeperMessage.es6');
+      const { default: handleGKMessage } = await import('account/handleGatekeeperMessage');
       const { init: initDebug } = await import('Debug.es6');
       const { init: initAuthentication } = await import('Authentication.es6');
       const { init: initTokenStore } = await import('services/TokenStore.es6');

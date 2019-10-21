@@ -22,7 +22,7 @@ const migratedStates = [
   }
 ];
 
-const iframeTemplate = getReactTemplate('account/AccountView.es6');
+const iframeTemplate = getReactTemplate('account/AccountView');
 
 /**
  * Define a state for an old GK iframe view

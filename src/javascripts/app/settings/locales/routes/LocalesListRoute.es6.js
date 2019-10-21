@@ -14,7 +14,7 @@ import createLegacyFeatureService from 'services/LegacyFeatureService.es6';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
-import { getSubscriptionState } from 'account/AccountUtils.es6';
+import { getSubscriptionState } from 'account/AccountUtils';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog.es6';
 import { ENVIRONMENT_USAGE_ENFORCEMENT } from 'featureFlags.es6';
 

@@ -19,7 +19,7 @@ import ApiKeysNavigation from '../ApiKeysNavigation';
 import WorkbenchSidebarItem from 'app/common/WorkbenchSidebarItem';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
 import ApiKeyList from './ApiKeyList';
-import { getSubscriptionState } from 'account/AccountUtils.es6';
+import { getSubscriptionState } from 'account/AccountUtils';
 import { useApiKeysState } from './ApiKeyListState';
 import * as Navigator from 'states/Navigator.es6';
 

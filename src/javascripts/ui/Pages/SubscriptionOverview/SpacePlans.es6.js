@@ -17,7 +17,7 @@ import { calculatePlansCost } from 'utils/SubscriptionUtils.es6';
 
 import Pluralized from 'ui/Components/Pluralized.es6';
 import Price from 'ui/Components/Price.es6';
-import { isEnterprisePlan } from 'account/pricing/PricingDataProvider.es6';
+import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 
 import SpacePlanRow from './SpacePlanRow.es6';
 

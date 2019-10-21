@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Note, TextLink } from '@contentful/forma-36-react-components';
-import { goToUsers } from 'account/AccountUtils.es6';
+import { goToUsers } from 'account/AccountUtils';
 
 const AddUsersNote = ({ isOwnerOrAdmin }) => {
   return (

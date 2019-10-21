@@ -44,13 +44,13 @@ describe('CreateSpace', () => {
         )
       })
     });
-    this.system.set('account/pricing/PricingDataProvider.es6', {
+    this.system.set('account/pricing/PricingDataProvider', {
       getSpaceRatePlans: this.getSpaceRatePlans,
       isEnterprisePlan: sinon.stub().returns(false),
       getBasePlan: sinon.stub().returns({ customerType: 'Self-service' })
     });
 
-    this.PricingDataProvider = await this.system.import('account/pricing/PricingDataProvider.es6');
+    this.PricingDataProvider = await this.system.import('account/pricing/PricingDataProvider');
     this.CreateSpace = await this.system.import('services/CreateSpace.es6');
 
     await $initialize(this.system, $provide => {

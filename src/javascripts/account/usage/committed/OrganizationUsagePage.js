@@ -9,12 +9,12 @@ import {
   organizationUsagePropType,
   arrayPropType,
   periodPropType
-} from './propTypes.es6';
-import OrganizationUsageInfo from './OrganizationUsageInfo.es6';
-import AssetBandwidthSection from './AssetBandwidthSection.es6';
-import OrganisationUsageChart from './charts/OrganisationUsageChart.es6';
-import ApiUsageInfo from './ApiUsageInfo.es6';
-import ApiUsageChart from './charts/ApiUsageChart.es6';
+} from './propTypes';
+import OrganizationUsageInfo from './OrganizationUsageInfo';
+import AssetBandwidthSection from './AssetBandwidthSection';
+import OrganisationUsageChart from './charts/OrganisationUsageChart';
+import ApiUsageInfo from './ApiUsageInfo';
+import ApiUsageChart from './charts/ApiUsageChart';
 import * as Intercom from 'services/intercom.es6';
 import * as Analytics from 'analytics/Analytics.es6';
 

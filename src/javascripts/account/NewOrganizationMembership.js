@@ -15,11 +15,7 @@ import {
   getInvitations
 } from 'access_control/OrganizationMembershipRepository';
 import { makeCtor, match } from 'utils/TaggedValues.es6';
-import {
-  sendInvites,
-  createOrgMemberships,
-  progress$
-} from 'account/SendOrganizationInvitation.es6';
+import { sendInvites, createOrgMemberships, progress$ } from 'account/SendOrganizationInvitation';
 import { isValidEmail } from 'utils/StringUtils.es6';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import {
@@ -31,7 +27,7 @@ import {
   ProgressMessage,
   ErrorMessage,
   SuccessMessage
-} from 'account/NewOrganizationMembershipTemplate.es6';
+} from 'account/NewOrganizationMembershipTemplate';
 import createResourceService from 'services/ResourceService.es6';
 import { getStore } from 'TheStore/index.es6';
 

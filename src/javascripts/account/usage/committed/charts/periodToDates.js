@@ -1,7 +1,7 @@
 import { range } from 'lodash';
 import moment from 'moment';
 
-import formatDate from './formatDate.es6';
+import formatDate from './formatDate';
 
 export default ({ startDate, endDate }) =>
   range(

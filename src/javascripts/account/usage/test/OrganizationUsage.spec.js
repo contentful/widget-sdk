@@ -2,11 +2,11 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import { Spinner } from '@contentful/forma-36-react-components';
 
-import { OrganizationUsage, WorkbenchContent, WorkbenchActions } from '../OrganizationUsage.es6';
-import PeriodSelector from '../committed/PeriodSelector.es6';
-import NoSpacesPlaceholder from '../NoSpacesPlaceholder.es6';
-import OrganizationUsagePage from '../committed/OrganizationUsagePage.es6';
-import OrganizationResourceUsageList from 'account/usage/non_committed/OrganizationResourceUsageList.es6';
+import { OrganizationUsage, WorkbenchContent, WorkbenchActions } from '../OrganizationUsage';
+import PeriodSelector from '../committed/PeriodSelector';
+import NoSpacesPlaceholder from '../NoSpacesPlaceholder';
+import OrganizationUsagePage from '../committed/OrganizationUsagePage';
+import OrganizationResourceUsageList from 'account/usage/non_committed/OrganizationResourceUsageList';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 import * as OrganizationRolesMocked from 'services/OrganizationRoles.es6';
 import * as TokenStoreMocked from 'services/TokenStore.es6';
@@ -33,7 +33,7 @@ jest.mock('services/ResourceService.es6', () => () => ({
   getAll: jest.fn()
 }));
 
-jest.mock('account/pricing/PricingDataProvider.es6', () => {
+jest.mock('account/pricing/PricingDataProvider', () => {
   const isEnterprisePlan = jest.fn(() => true);
 
   const getPlansWithSpaces = jest.fn(() => ({

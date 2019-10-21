@@ -7,7 +7,7 @@ import {
   getSubscriptionPlans,
   calculateTotalPrice,
   changeSpace as changeSpaceApiCall
-} from 'account/pricing/PricingDataProvider.es6';
+} from 'account/pricing/PricingDataProvider';
 import createApiKeyRepo from 'app/settings/api/services/ApiKeyRepo';
 import * as TokenStore from 'services/TokenStore.es6';
 import * as Analytics from 'analytics/Analytics.es6';

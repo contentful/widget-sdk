@@ -37,7 +37,7 @@ import getLocales from './getLocales';
 import * as PolicyBuilder from 'access_control/PolicyBuilder';
 import * as logger from 'services/logger.es6';
 import createLegacyFeatureService from 'services/LegacyFeatureService.es6';
-import { getSubscriptionState } from 'account/AccountUtils.es6';
+import { getSubscriptionState } from 'account/AccountUtils';
 import TheLocaleStore from 'services/localeStore.es6';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog.es6';
 import { ENVIRONMENT_ALIASING } from '../featureFlags.es6';

@@ -7,7 +7,7 @@ import ReloadNotification from 'app/common/ReloadNotification.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
 
 import * as EndpointFactory from 'data/EndpointFactory.es6';
-import * as PricingDataProvider from 'account/pricing/PricingDataProvider.es6';
+import * as PricingDataProvider from 'account/pricing/PricingDataProvider';
 import * as DeleteSpace from 'services/DeleteSpace.es6';
 import * as TokenStore from 'services/TokenStore.es6';
 

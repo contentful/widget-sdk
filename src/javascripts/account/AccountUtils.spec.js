@@ -1,4 +1,4 @@
-import * as utils from './AccountUtils.es6';
+import * as utils from './AccountUtils';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import { go } from 'states/Navigator.es6';
 

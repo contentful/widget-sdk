@@ -4,10 +4,10 @@ import moment from 'moment';
 import { h } from 'utils/legacy-html-hyperscript/index.es6';
 import { shorten } from 'utils/NumberUtils.es6';
 
-import { organizationResourceUsagePropType, periodPropType } from '../propTypes.es6';
-import periodToDates from './periodToDates.es6';
-import EmptyChartPlaceholder from './EmptyChartPlaceholder.es6';
-import LineChart from './LineChart.es6';
+import { organizationResourceUsagePropType, periodPropType } from '../propTypes';
+import periodToDates from './periodToDates';
+import EmptyChartPlaceholder from './EmptyChartPlaceholder';
+import LineChart from './LineChart';
 
 const seriesLineSymbol = ['circle', 'diamond', 'triangle'];
 const tooltipIcon = ['chart-symbol-circle', 'chart-symbol-diamond', 'chart-symbol-triangle'];
