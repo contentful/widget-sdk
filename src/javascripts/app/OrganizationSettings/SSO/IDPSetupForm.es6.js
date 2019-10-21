@@ -134,7 +134,7 @@ export class IDPSetupForm extends React.Component {
     } = this.props;
 
     const allowConnectionTest = connectionTestingAllowed(fields, connectionTest);
-    const metadataUrl = authUrl(`/sso/${orgId}/metadata`);
+    const metadataUrl = authUrl(`/sso/${orgId}/metadata.xml`);
 
     const testResultIsSuccess = connectionTest.result === TEST_RESULTS.success;
     const testResultIsFailure = connectionTest.result === TEST_RESULTS.failure;
