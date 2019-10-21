@@ -15,8 +15,10 @@ export default function() {
       h('div.app-top-bar__child.app-top-bar__main-nav', {
         uiView: 'nav-bar'
       }),
-      h('cf-account-dropdown.app-top-bar__child', {
-        user: 'user'
+      h('react-component', {
+        name: 'navigation/templates/AccountDropdown.es6',
+        props:
+          '{firstName: user.firstName, lastName: user.lastName, avatarUrl: user.avatarUrl, email: user.email}'
       })
     ]),
     h('div.app-container__content', {
