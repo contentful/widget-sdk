@@ -3,7 +3,7 @@ import Enzyme from 'enzyme';
 import { IDPSetupForm } from './IDPSetupForm.es6';
 import { TEST_RESULTS } from './constants.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 
 import { connectionTestingAllowed, formatConnectionTestErrors } from './utils.es6';
 

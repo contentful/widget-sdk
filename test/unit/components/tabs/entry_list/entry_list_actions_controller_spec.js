@@ -46,7 +46,7 @@ describe('Entry List Actions Controller', () => {
       canPerformActionOnEntity: sinon.stub()
     };
 
-    this.system.set('analytics/Analytics.es6', {
+    this.system.set('analytics/Analytics', {
       track: stubs.track
     });
 

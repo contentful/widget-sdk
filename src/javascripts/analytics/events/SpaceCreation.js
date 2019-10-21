@@ -1,5 +1,5 @@
 import { snakeCase, omitBy, isUndefined, includes } from 'lodash';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 
 const EVENTS_TO_SEND = ['content_type:create', 'entry:create', 'asset:create', 'api_key:create'];
 const EVENTS_WITH_ORIGIN_FIELD = ['entry:create'];

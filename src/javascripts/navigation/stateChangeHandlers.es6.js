@@ -5,7 +5,7 @@ import * as logger from 'services/logger.es6';
 import * as AppPerformanceMetrics from 'i13n/AppPerformance/index.es6';
 
 import * as NavState from 'navigation/NavState.es6';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 
 export default function register() {
   /**

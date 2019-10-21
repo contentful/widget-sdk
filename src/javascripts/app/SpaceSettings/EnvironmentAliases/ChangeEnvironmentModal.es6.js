@@ -24,7 +24,7 @@ import { spacingM, spacingXs } from '@contentful/forma-36-tokens';
 import {
   changeEnvironmentAbort,
   changeEnvironmentConfirm
-} from 'analytics/events/EnvironmentAliases.es6';
+} from 'analytics/events/EnvironmentAliases';
 import { CodeFragment } from 'ui/Content.es6';
 import AnimateHeight from 'react-animate-height';
 

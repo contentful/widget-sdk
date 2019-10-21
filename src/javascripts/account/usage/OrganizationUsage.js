@@ -11,7 +11,7 @@ import OrganizationUsagePage from './committed/OrganizationUsagePage';
 import { getPeriods, getOrgUsage, getApiUsage } from './UsageService';
 import PeriodSelector from './committed/PeriodSelector';
 import NoSpacesPlaceholder from './NoSpacesPlaceholder';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 
 import * as TokenStore from 'services/TokenStore.es6';
 import * as EndpointFactory from 'data/EndpointFactory.es6';

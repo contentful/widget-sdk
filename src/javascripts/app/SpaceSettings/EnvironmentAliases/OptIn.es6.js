@@ -22,7 +22,7 @@ import EnvironmentDetails from 'app/common/EnvironmentDetails.es6';
 import StaticDropdown from './StaticDropdown.es6';
 import { handleOptIn, STEPS } from './Utils.es6';
 import { aliasStyles } from './SharedStyles.es6';
-import { optInAbortStep, optInComplete } from 'analytics/events/EnvironmentAliases.es6';
+import { optInAbortStep, optInComplete } from 'analytics/events/EnvironmentAliases';
 import moment from 'moment';
 
 const aliasOptInStyles = {

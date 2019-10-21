@@ -3,7 +3,7 @@ import * as K from 'utils/kefir.es6';
 import { Notification } from 'app/entity_editor/Notifications.es6';
 
 import * as accessChecker from 'access_control/AccessChecker';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 
 export default function register() {
   registerController('EntryActionsController', [

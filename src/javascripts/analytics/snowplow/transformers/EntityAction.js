@@ -1,5 +1,5 @@
 import { get, extend, snakeCase } from 'lodash';
-import { getSchema } from 'analytics/snowplow/Schemas.es6';
+import { getSchema } from 'analytics/snowplow/Schemas';
 
 /**
  * @ngdoc service

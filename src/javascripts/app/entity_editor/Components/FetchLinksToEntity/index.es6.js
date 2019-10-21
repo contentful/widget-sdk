@@ -5,7 +5,7 @@ import fetchLinks from 'app/entity_editor/Components/FetchLinksToEntity/fetchLin
 import {
   onFetchLinks as trackFetchLinks,
   Origin as IncomingLinksOrigin
-} from 'analytics/events/IncomingLinks.es6';
+} from 'analytics/events/IncomingLinks';
 
 export const RequestState = {
   PENDING: 'pending',

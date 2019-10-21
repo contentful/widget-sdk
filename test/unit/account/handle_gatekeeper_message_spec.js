@@ -36,7 +36,7 @@ describe('Gatekeeper Message Handler', () => {
       refresh: this.stubs.refresh
     });
 
-    await this.system.set('analytics/Analytics.es6', {
+    await this.system.set('analytics/Analytics', {
       track: this.stubs.track
     });
 

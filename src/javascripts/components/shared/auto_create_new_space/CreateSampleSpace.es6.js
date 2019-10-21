@@ -1,9 +1,9 @@
 import { runTask } from 'utils/Concurrent.es6';
 import { getCurrentStateName } from 'states/Navigator.es6';
 import { getCreator } from 'services/SpaceTemplateCreator/index.es6';
-import { track, updateUserInSegment } from 'analytics/Analytics.es6';
+import { track, updateUserInSegment } from 'analytics/Analytics';
 import { go as gotoState } from 'states/Navigator.es6';
-import { entityActionSuccess } from 'analytics/events/SpaceCreation.es6';
+import { entityActionSuccess } from 'analytics/events/SpaceCreation';
 import { find, noop } from 'lodash';
 import { getTemplate, getTemplatesList } from 'services/SpaceTemplateLoader.es6';
 import autoCreateSpaceTemplate from './Template.es6';

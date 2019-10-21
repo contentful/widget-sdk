@@ -3,7 +3,7 @@ import { render, fireEvent, cleanup, wait, within } from '@testing-library/react
 import { Notification } from '@contentful/forma-36-react-components';
 import { createTeamSpaceMembership } from 'access_control/TeamRepository';
 import { go } from 'states/Navigator.es6';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 import AddTeamsPage from './AddTeamsPage.es6';
 
 import '@testing-library/jest-dom/extend-expect';
@@ -20,7 +20,7 @@ jest.mock('data/EndpointFactory.es6', () => ({
   createSpaceEndpoint: jest.fn()
 }));
 
-jest.mock('analytics/Analytics.es6', () => ({
+jest.mock('analytics/Analytics', () => ({
   track: jest.fn()
 }));
 

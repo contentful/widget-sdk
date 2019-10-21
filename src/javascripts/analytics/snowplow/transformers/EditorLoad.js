@@ -1,4 +1,4 @@
-import { addUserOrgSpace } from './Decorators.es6';
+import { addUserOrgSpace } from './Decorators';
 
 const extractAction = eventName => eventName.split(':')[1];
 

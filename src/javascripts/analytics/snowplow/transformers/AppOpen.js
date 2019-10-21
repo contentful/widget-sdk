@@ -1,4 +1,4 @@
-import { getSchema } from 'analytics/snowplow/Schemas.es6';
+import { getSchema } from 'analytics/snowplow/Schemas';
 import { isUndefined, omitBy } from 'lodash';
 
 /**

@@ -2,7 +2,7 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
 import withTracking from './withTracking.es6';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 import * as logger from 'services/logger.es6';
 
 const LOC = class extends React.Component {};

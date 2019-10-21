@@ -4,7 +4,7 @@ import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import TranslationWidgetPills from './TranslationWidgetPills.es6';
 import ModalLauncherMocked from 'app/common/ModalLauncher.es6';
 import { TextLink, Pill } from '@contentful/forma-36-react-components';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 
 jest.mock('app/common/ModalLauncher.es6', () => ({
   open: jest.fn()

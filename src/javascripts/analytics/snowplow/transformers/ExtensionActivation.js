@@ -1,4 +1,4 @@
-import { addUserOrgSpace } from './Decorators.es6';
+import { addUserOrgSpace } from './Decorators';
 
 export default addUserOrgSpace((_, data) => {
   return {

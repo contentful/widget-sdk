@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { snakeCase } from 'lodash';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 import { Button, IconButton, Subheading } from '@contentful/forma-36-react-components';
 import { getCurrentStateName } from 'states/Navigator.es6';
 import styles from './styles.es6';

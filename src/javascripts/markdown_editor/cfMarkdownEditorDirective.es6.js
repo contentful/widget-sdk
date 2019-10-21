@@ -5,7 +5,7 @@ import * as K from 'utils/kefir.es6';
 import * as LazyLoader from 'utils/LazyLoader.es6';
 
 import TheLocaleStore from 'services/localeStore.es6';
-import { trackMarkdownEditorAction } from 'analytics/MarkdownEditorActions.es6';
+import { trackMarkdownEditorAction } from 'analytics/MarkdownEditorActions';
 import { isRtlLocale } from 'utils/locales.es6';
 import makePreview from 'markdown_editor/PreviewGenerator.es6';
 import * as actions from 'markdown_editor/markdown_actions.es6';

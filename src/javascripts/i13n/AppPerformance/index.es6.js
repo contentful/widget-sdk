@@ -1,5 +1,5 @@
 import { once } from 'lodash';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 import * as Telemetry from '../Telemetry.es6';
 
 import * as Tti from './Tti.es6';

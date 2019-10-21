@@ -1,4 +1,4 @@
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 
 export function selectedLanguage(language) {
   track('home:language_selected', {

@@ -5,7 +5,7 @@ describe('markdown actions', function() {
   beforeEach(async function() {
     this.analytics = { track: sinon.spy() };
 
-    this.system.set('analytics/Analytics.es6', this.analytics);
+    this.system.set('analytics/Analytics', this.analytics);
 
     this.markdownActions = await this.system.import('markdown_editor/markdown_actions.es6');
 

@@ -2,7 +2,7 @@ import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
 
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 
 export default function register() {
   registerFactory('batchPerformer', [

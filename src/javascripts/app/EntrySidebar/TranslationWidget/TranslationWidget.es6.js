@@ -8,7 +8,7 @@ import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import TranslationWidgetDropdown from './TranslationWidgetDropdown.es6';
 import { Select, Option } from '@contentful/forma-36-react-components';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 
 const Tab = {
   MULTI: 'multiple',

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import SidebarContentPreview from './SidebarContentPreview.es6';
 import { getSpaceNetlifyConfig } from 'app/settings/apps/netlify/NetlifyAppConfig';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 import { getModule } from 'NgRegistry.es6';
 import TheLocaleStore from 'services/localeStore.es6';
 import * as Entries from 'data/entries.es6';

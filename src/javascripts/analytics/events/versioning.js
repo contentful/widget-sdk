@@ -1,5 +1,5 @@
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog.es6';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 
 let data = {};
 const restoredVersions = {};

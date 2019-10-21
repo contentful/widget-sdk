@@ -1,4 +1,4 @@
-import { addUserOrgSpace } from './Decorators.es6';
+import { addUserOrgSpace } from './Decorators';
 import { getModule } from 'NgRegistry.es6';
 
 export default addUserOrgSpace((eventName, data) => ({

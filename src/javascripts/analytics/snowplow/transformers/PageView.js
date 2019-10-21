@@ -1,4 +1,4 @@
-import { addUserOrgSpace } from './Decorators.es6';
+import { addUserOrgSpace } from './Decorators';
 import { pickBy, identity } from 'lodash';
 
 export default addUserOrgSpace((_, data) => {

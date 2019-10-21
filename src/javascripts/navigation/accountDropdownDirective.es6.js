@@ -45,7 +45,7 @@ export default function register() {
       async function initialize() {
         [Intercom, Analytics, Config, Authentication] = await Promise.all([
           import('services/intercom.es6'),
-          import('analytics/Analytics.es6'),
+          import('analytics/Analytics'),
           import('Config.es6'),
           import('Authentication.es6')
         ]);

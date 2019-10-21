@@ -15,7 +15,7 @@ describe('FetchLinksToEntity', () => {
 
   beforeEach(function() {
     this.onFetchLinks = sinon.stub();
-    this.system.set('analytics/events/IncomingLinks.es6', {
+    this.system.set('analytics/events/IncomingLinks', {
       onFetchLinks: this.onFetchLinks,
       Origin: {
         DIALOG: 'dialog',

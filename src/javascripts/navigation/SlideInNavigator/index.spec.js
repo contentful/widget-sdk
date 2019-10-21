@@ -3,7 +3,7 @@ import { getSlideInEntities, goToSlideInEntity } from './index.es6';
 import $location from 'ng/$location';
 import $state from 'ng/$state';
 
-jest.mock('analytics/Analytics.es6', () => ({}));
+jest.mock('analytics/Analytics', () => ({}));
 jest.mock('ng/$location', () => ({ search: jest.fn() }));
 jest.mock('ng/$state', () => ({ params: {}, go: jest.fn() }));
 

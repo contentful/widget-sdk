@@ -3,7 +3,7 @@ import Enzyme from 'enzyme';
 import TranslationWidget from './TranslationWidget.es6';
 import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 
 describe('EntrySidebar/TranslationWidget', () => {
   const locales = [

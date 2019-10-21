@@ -2,11 +2,11 @@ import { getModule } from 'NgRegistry.es6';
 import _ from 'lodash';
 import * as K from 'utils/kefir.es6';
 import moment from 'moment';
-import { validateEvent } from 'analytics/Validator.es6';
+import { validateEvent } from 'analytics/Validator';
 import * as logger from 'services/logger.es6';
 
-import * as SnowplowEvents from 'analytics/snowplow/Events.es6';
-import * as Snowplow from 'analytics/snowplow/Snowplow.es6';
+import * as SnowplowEvents from 'analytics/snowplow/Events';
+import * as Snowplow from 'analytics/snowplow/Snowplow';
 
 /**
  * @description

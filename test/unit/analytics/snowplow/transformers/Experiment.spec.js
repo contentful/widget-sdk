@@ -1,7 +1,7 @@
 describe('Experiment transformer', () => {
   beforeEach(async function() {
     const experimentTransformer = (await this.system.import(
-      'analytics/snowplow/transformers/Experiment.es6'
+      'analytics/snowplow/transformers/Experiment'
     )).default;
 
     this.data = {

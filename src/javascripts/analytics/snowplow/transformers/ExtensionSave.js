@@ -1,4 +1,4 @@
-import { addUserOrgSpace } from './Decorators.es6';
+import { addUserOrgSpace } from './Decorators';
 
 /**
  * @ngdoc service

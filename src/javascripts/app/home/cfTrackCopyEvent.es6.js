@@ -2,7 +2,7 @@ import { registerDirective } from 'NgRegistry.es6';
 import _ from 'lodash';
 import $ from 'jquery';
 import window from 'utils/ngCompat/window.es6';
-import * as HomeAnalyticsEvents from 'analytics/events/home.es6';
+import * as HomeAnalyticsEvents from 'analytics/events/home';
 
 export default function register() {
   /**

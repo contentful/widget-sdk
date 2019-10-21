@@ -1,4 +1,4 @@
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 import * as Telemetry from 'i13n/Telemetry.es6';
 import { noop, cloneDeep, find, mapValues } from 'lodash';
 import * as K from 'utils/kefir.es6';

@@ -3,7 +3,7 @@ import _ from 'lodash';
 import ContentPreviewFormPage from './ContentPreviewFormPage.es6';
 import Enzyme from 'enzyme';
 import { Notification } from '@contentful/forma-36-react-components';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 import $state from 'ng/$state';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 

@@ -1,4 +1,4 @@
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 
 export function init() {
   // When the window loses focus ("blur" event) it may

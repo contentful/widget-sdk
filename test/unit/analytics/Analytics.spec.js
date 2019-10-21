@@ -8,13 +8,13 @@ describe('Analytics', () => {
     this.segment = makeMock(['enable', 'disable', 'identify', 'track', 'page']);
     this.Snowplow = makeMock(['enable', 'disable', 'identify', 'track', 'buildUnstructEventData']);
 
-    this.system.set('analytics/segment.es6', {
+    this.system.set('analytics/segment', {
       default: this.segment
     });
-    this.system.set('analytics/snowplow/Snowplow.es6', this.Snowplow);
-    this.system.set('analytics/analyticsConsole.es6', makeMock(['setSessionData', 'add']));
+    this.system.set('analytics/snowplow/Snowplow', this.Snowplow);
+    this.system.set('analytics/analyticsConsole', makeMock(['setSessionData', 'add']));
 
-    this.analytics = await this.system.import('analytics/Analytics.es6');
+    this.analytics = await this.system.import('analytics/Analytics');
 
     await $initialize(this.system);
 

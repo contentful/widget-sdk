@@ -1,4 +1,4 @@
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 
 export const Origin = {
   DIALOG: 'dialog',

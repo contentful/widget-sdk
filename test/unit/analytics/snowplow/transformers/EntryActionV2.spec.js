@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 
-describe('analytics/snowplow/transformers/EntryActionV2.es6', () => {
+describe('analytics/snowplow/transformers/EntryActionV2', () => {
   const BASE_EVENT = {
     data: {},
     contexts: [{ data: 1 }, { bar: 2 }]
@@ -9,12 +9,12 @@ describe('analytics/snowplow/transformers/EntryActionV2.es6', () => {
   beforeEach(async function() {
     this.EntityActionStub = sinon.stub();
 
-    this.system.set('analytics/snowplow/transformers/EntityAction.es6', {
+    this.system.set('analytics/snowplow/transformers/EntityAction', {
       default: this.EntityActionStub
     });
 
     const transformer = (await this.system.import(
-      'analytics/snowplow/transformers/EntryActionV2.es6'
+      'analytics/snowplow/transformers/EntryActionV2'
     )).default;
 
     this.transform = eventData => {

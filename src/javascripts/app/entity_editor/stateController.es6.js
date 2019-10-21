@@ -6,14 +6,14 @@ import { caseofEq as caseof, otherwise } from 'sum-types';
 import { State, Action } from 'data/CMA/EntityState.es6';
 import { Notification } from 'app/entity_editor/Notifications.es6';
 
-import * as trackVersioning from 'analytics/events/versioning.es6';
+import * as trackVersioning from 'analytics/events/versioning';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import * as random from 'utils/Random.es6';
 
 import StateChangeConfirmationDialog from 'app/entity_editor/Components/StateChangeConfirmationDialog/index.es6';
 import { showUnpublishedReferencesWarning } from 'app/entity_editor/UnpublishedReferencesWarning/index.es6';
 import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator/index.es6';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 
 export default function register() {
   registerController('entityEditor/StateController', [

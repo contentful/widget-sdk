@@ -5,7 +5,7 @@ import * as K from 'utils/kefir.es6';
 import contextHistory from 'navigation/Breadcrumbs/History.es6';
 import { template as breakcrumbsTemplateDef } from 'navigation/Breadcrumbs/Template.es6';
 
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 
 export default function register() {
   /**

@@ -1,4 +1,4 @@
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 import { getCurrentStateName } from 'states/Navigator.es6';
 
 const trackingGroupId = 'quick_navigation';

@@ -5,7 +5,7 @@ import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import LocaleSelectDialog from './LocaleSelectDialog.es6';
 import { Pill, TextLink } from '@contentful/forma-36-react-components';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 import { orderBy } from 'lodash';
 
 const sortLocales = locales => orderBy(locales, ['default', 'code'], ['desc', 'asc']);

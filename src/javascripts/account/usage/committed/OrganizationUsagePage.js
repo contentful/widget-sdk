@@ -16,7 +16,7 @@ import OrganisationUsageChart from './charts/OrganisationUsageChart';
 import ApiUsageInfo from './ApiUsageInfo';
 import ApiUsageChart from './charts/ApiUsageChart';
 import * as Intercom from 'services/intercom.es6';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 
 const apiUsagePropType = arrayPropType(organizationResourceUsagePropType);
 const apiSeriesColors = ['#3072BE', '#14D997', '#CD3F39'];

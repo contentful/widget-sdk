@@ -15,7 +15,7 @@ import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import FeedbackButton from 'app/common/FeedbackButton.es6';
 
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 import * as Random from 'utils/Random.es6';
 import * as Intercom from 'services/intercom.es6';
 

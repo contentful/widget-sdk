@@ -6,7 +6,7 @@ import { getIncludedResources } from 'components/shared/space-wizard/WizardUtils
 import { go } from 'states/Navigator.es6';
 
 import * as actionCreators from 'redux/actions/spaceWizard/actionCreators.es6';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 
 import TemplateSelector from 'components/shared/space-wizard/TemplateSelector.es6';
 import ProgressScreen from 'components/shared/space-wizard/ProgressScreen.es6';

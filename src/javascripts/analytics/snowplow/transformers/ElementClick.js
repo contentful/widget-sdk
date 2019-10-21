@@ -1,6 +1,6 @@
 import { flow, mapKeys, snakeCase, isEmpty, omit, omitBy, find } from 'lodash';
-import { addUserOrgSpace } from './Decorators.es6';
-import { getSchema } from 'analytics/snowplow/Schemas.es6';
+import { addUserOrgSpace } from './Decorators';
+import { getSchema } from 'analytics/snowplow/Schemas';
 
 const toSnakeCase = data => mapKeys(data, (_v, k) => snakeCase(k));
 

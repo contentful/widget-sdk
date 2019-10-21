@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
 import { TextLink } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 import { go } from 'states/Navigator.es6';
 
 import StateLink from 'app/common/StateLink.es6';

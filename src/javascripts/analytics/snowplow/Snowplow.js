@@ -1,6 +1,6 @@
 import { once } from 'lodash';
 import { snowplow as snowplowConfig, domain } from 'Config.es6';
-import { getSchema as getSchemaForEvent, transform } from 'analytics/snowplow/Events.es6';
+import { getSchema as getSchemaForEvent, transform } from 'analytics/snowplow/Events';
 import * as LazyLoader from 'utils/LazyLoader.es6';
 import window from 'utils/ngCompat/window.es6';
 

@@ -1,5 +1,5 @@
 import { first, last, merge } from 'lodash';
-import { getSchema } from 'analytics/snowplow/Schemas.es6';
+import { getSchema } from 'analytics/snowplow/Schemas';
 
 export default function(eventName, data) {
   const experiment = {

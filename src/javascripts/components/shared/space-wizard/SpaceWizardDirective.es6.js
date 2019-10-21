@@ -1,7 +1,7 @@
 import { registerDirective } from 'NgRegistry.es6';
 
 import * as actionCreators from 'redux/actions/spaceWizard/actionCreators.es6';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 import ReduxStore from 'redux/store.es6';
 
 export default function register() {

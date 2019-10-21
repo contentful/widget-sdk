@@ -13,7 +13,7 @@ describe('Account Dropdown Controller', () => {
       document: window.document
     };
 
-    this.system.set('analytics/Analytics.es6', stubs.analytics);
+    this.system.set('analytics/Analytics', stubs.analytics);
     this.system.set('Authentication.es6', stubs.authentication);
     this.system.set('utils/ngCompat/window.es6', {
       default: stubs.window

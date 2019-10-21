@@ -26,7 +26,7 @@ import {
   LinkedEntries,
   LegacyTokens
 } from './ContentPreviewSidebar.es6';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 import { getModule } from 'NgRegistry.es6';
 
 export const ContentPreviewFormPageSkeleton = props => {

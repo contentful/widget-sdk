@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 
 const eventProperties = [
   'fullscreen',

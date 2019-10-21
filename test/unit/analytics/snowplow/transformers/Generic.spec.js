@@ -3,7 +3,7 @@ import _ from 'lodash';
 describe('Generic transformer', () => {
   beforeEach(async function() {
     this.transformer = (await this.system.import(
-      'analytics/snowplow/transformers/Generic.es6'
+      'analytics/snowplow/transformers/Generic'
     )).default;
     this.baseObj = {
       userId: 'user-1',

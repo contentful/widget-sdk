@@ -1,7 +1,7 @@
 import { get } from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 import { getWebhookRepo } from 'app/settings/webhooks/services/WebhookRepoInstance';
 
 const INVALID_BODY_TRANSFORMATION_ERROR_MSG =

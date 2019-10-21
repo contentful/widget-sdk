@@ -3,7 +3,7 @@ import { Notification } from '@contentful/forma-36-react-components';
 import { getModule } from 'NgRegistry.es6';
 import * as Authentication from 'Authentication.es6';
 import * as TokenStore from 'services/TokenStore.es6';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 import * as UrlSyncHelper from 'account/UrlSyncHelper';
 import * as createSpace from 'services/CreateSpace.es6';
 

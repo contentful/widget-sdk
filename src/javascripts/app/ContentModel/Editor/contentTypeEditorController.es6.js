@@ -1,7 +1,7 @@
 import { registerController, registerDirective } from 'NgRegistry.es6';
 import _ from 'lodash';
 import validation from '@contentful/validation';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 
 import { syncControls } from 'widgets/EditorInterfaceTransformer.es6';
 import {

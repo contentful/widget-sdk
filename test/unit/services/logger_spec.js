@@ -12,7 +12,7 @@ describe('logger service', () => {
       notifyException: sinon.stub()
     };
 
-    this.system.set('analytics/Bugsnag.es6', this.bugsnag);
+    this.system.set('analytics/Bugsnag', this.bugsnag);
 
     this.logger = await this.system.import('services/logger.es6');
   });

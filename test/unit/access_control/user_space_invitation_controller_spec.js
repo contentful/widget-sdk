@@ -9,7 +9,7 @@ describe('UserSpaceInvitationController', () => {
       track: sinon.stub()
     };
 
-    await this.system.set('analytics/Analytics.es6', {
+    await this.system.set('analytics/Analytics', {
       track: this.stubs.track
     });
 

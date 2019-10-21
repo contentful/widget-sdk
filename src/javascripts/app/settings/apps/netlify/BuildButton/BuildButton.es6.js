@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, ValidationMessage } from '@contentful/forma-36-react-components';
 
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 import FeedbackButton from 'app/common/FeedbackButton.es6';
 
 import { createPubSub } from './PubNubClient.es6';

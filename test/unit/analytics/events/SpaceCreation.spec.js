@@ -5,11 +5,11 @@ describe('analytics/events/SpaceCreation#entityActionSuccess()', () => {
   beforeEach(async function() {
     this.track = sinon.stub();
 
-    this.system.set('analytics/Analytics.es6', {
+    this.system.set('analytics/Analytics', {
       track: this.track
     });
 
-    this.SpaceCreation = await this.system.import('analytics/events/SpaceCreation.es6');
+    this.SpaceCreation = await this.system.import('analytics/events/SpaceCreation');
   });
 
   describeTrackingOf({

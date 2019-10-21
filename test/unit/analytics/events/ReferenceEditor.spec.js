@@ -14,9 +14,9 @@ describe('ReferenceEditor', () => {
       default: this.TheLocaleStore
     });
 
-    this.system.set('analytics/Analytics.es6', this.analytics);
+    this.system.set('analytics/Analytics', this.analytics);
 
-    const referenceEditorEvents = await this.system.import('analytics/events/ReferenceEditor.es6');
+    const referenceEditorEvents = await this.system.import('analytics/events/ReferenceEditor');
 
     this.referenceEditorEvents = referenceEditorEvents;
 

@@ -10,7 +10,7 @@ import SSOEnabled from './SSOEnabled.es6';
 import * as ssoActionCreators from 'redux/actions/sso/actionCreators.es6';
 import * as ssoSelectors from 'redux/selectors/sso.es6';
 import getOrganizationSelector from 'redux/selectors/getOrganization.es6';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';

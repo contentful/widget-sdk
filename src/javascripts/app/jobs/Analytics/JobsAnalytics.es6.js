@@ -1,6 +1,6 @@
 import { once } from 'lodash';
 import moment from 'moment-timezone';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 import * as Intercom from 'services/intercom.es6';
 import JobAction from '../JobAction.es6';
 

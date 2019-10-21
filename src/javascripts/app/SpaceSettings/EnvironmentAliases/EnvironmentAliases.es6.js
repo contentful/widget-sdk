@@ -28,7 +28,7 @@ import {
   optInStep,
   optInStart,
   changeEnvironmentOpen
-} from 'analytics/events/EnvironmentAliases.es6';
+} from 'analytics/events/EnvironmentAliases';
 
 const aliasHeaderStyles = {
   alphaTag: css({

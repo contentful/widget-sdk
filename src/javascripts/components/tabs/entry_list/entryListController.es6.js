@@ -9,7 +9,7 @@ import { getBlankEntryView as getBlankView } from 'data/UiConfig/Blanks.es6';
 import * as ResourceUtils from 'utils/ResourceUtils.es6';
 import EntityListCache from 'classes/entityListCache.es6';
 import createSavedViewsSidebar from 'app/ContentList/SavedViewsSidebar.es6';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as entityCreator from 'components/app_container/entityCreator.es6';
 

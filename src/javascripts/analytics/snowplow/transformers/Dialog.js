@@ -1,5 +1,5 @@
-import { addUserOrgSpace } from './Decorators.es6';
-import { getSchema } from 'analytics/snowplow/Schemas.es6';
+import { addUserOrgSpace } from './Decorators';
+import { getSchema } from 'analytics/snowplow/Schemas';
 
 /**
  * @ngdoc service

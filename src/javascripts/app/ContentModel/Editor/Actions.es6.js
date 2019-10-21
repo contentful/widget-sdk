@@ -5,7 +5,7 @@ import { ModalConfirm, Paragraph } from '@contentful/forma-36-react-components';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 import * as notify from './Notifications.es6';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 import * as accessChecker from 'access_control/AccessChecker';
 import assureDisplayField from 'data/ContentTypeRepo/assureDisplayField.es6';
 import * as logger from 'services/logger.es6';

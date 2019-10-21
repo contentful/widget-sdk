@@ -8,7 +8,7 @@ import userLinkTemplateDef from 'app/widgets/link/UserLinkTemplate.es6';
 import { makeEntityRef } from 'states/Navigator.es6';
 import * as EntityState from 'data/CMA/EntityState.es6';
 
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 
 export default function register() {
   /**

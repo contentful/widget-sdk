@@ -4,7 +4,7 @@ import { orderBy } from 'lodash';
 import { Select, Option } from '@contentful/forma-36-react-components';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import { truncate } from 'utils/StringUtils.es6';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 
 const sortLocales = locales => orderBy(locales, ['default', 'name'], ['desc', 'asc']);
 

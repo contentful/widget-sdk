@@ -1,4 +1,4 @@
-import isAnalyticsAllowed from './isAnalyticsAllowed.es6';
+import isAnalyticsAllowed from './isAnalyticsAllowed';
 
 describe('isAnalyticsAllowed', () => {
   const makeUser = () => ({

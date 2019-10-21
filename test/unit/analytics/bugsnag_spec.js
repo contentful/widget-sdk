@@ -17,7 +17,7 @@ describe('bugsnag', () => {
       get: this.get
     });
 
-    this.bugsnag = await this.system.import('analytics/Bugsnag.es6');
+    this.bugsnag = await this.system.import('analytics/Bugsnag');
 
     await $initialize(this.system);
   });

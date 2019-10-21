@@ -1,6 +1,6 @@
 import { registerController } from 'NgRegistry.es6';
 import _ from 'lodash';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 
 export default function register() {
   /**

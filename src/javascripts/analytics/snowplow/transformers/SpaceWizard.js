@@ -1,4 +1,4 @@
-import { addUserOrgSpace } from './Decorators.es6';
+import { addUserOrgSpace } from './Decorators';
 import { env } from 'Config.es6';
 import * as logger from 'services/logger.es6';
 

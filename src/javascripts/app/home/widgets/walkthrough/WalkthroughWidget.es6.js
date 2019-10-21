@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 import * as logger from 'services/logger.es6';
 import { getReactJoyride } from './utils.es6';
 import WalkthroughComponent from './WalkthroughComponent.es6';

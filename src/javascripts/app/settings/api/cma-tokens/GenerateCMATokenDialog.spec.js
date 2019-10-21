@@ -2,7 +2,7 @@ import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import { render, fireEvent, cleanup, waitForElement } from '@testing-library/react';
 import GenerateCMATokenDialog from './GenerateCMATokenDialog';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 
 describe('CMATokens/GenerateCMATokenDialog', () => {
   afterEach(cleanup);

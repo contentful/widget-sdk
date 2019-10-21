@@ -1,6 +1,6 @@
 import * as utils from './utils.es6';
 
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 
 jest.mock('./validators.es6', () => ({
   myAwesomeField: str => {

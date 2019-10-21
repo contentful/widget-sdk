@@ -36,7 +36,7 @@ describe('Entry List Controller', () => {
       getQuery: sinon.stub().resolves({})
     };
 
-    this.system.set('analytics/Analytics.es6', {
+    this.system.set('analytics/Analytics', {
       track: sinon.stub()
     });
 

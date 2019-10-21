@@ -5,7 +5,7 @@ import tokens from '@contentful/forma-36-tokens';
 import KeyEditorWorkbench from './KeyEditorWorkbench';
 import { inRange, isEqual, get, assignWith } from 'lodash';
 import { DocsLink } from 'ui/Content.es6';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 import EnvironmentSelector from './EnvironmentSelector';
 import { concat, assign } from 'utils/Collections.es6';
 import {

@@ -1,7 +1,7 @@
 describe('Space create transformer', () => {
   beforeEach(async function() {
     this.transformer = (await this.system.import(
-      'analytics/snowplow/transformers/SpaceCreate.es6'
+      'analytics/snowplow/transformers/SpaceCreate'
     )).default;
   });
 
