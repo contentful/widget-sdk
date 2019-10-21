@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import stringifySafe from 'json-stringify-safe';
 import { env } from 'Config.es6';
-import * as Bugsnag from 'analytics/Bugsnag.es6';
+import * as Bugsnag from 'analytics/Bugsnag';
 
 /**
  * Log errors and exceptions to Bugsnag or the console.

@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import * as Random from 'utils/Random.es6';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 import * as Intercom from 'services/intercom.es6';
 
 const INTERCOM_PREFIX = 'feature-apps-beta';

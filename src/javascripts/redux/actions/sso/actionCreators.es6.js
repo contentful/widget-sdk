@@ -4,7 +4,7 @@ import * as selectors from 'redux/selectors/sso.es6';
 import { validate } from 'app/OrganizationSettings/SSO/utils.es6';
 import { fieldErrorMessage, trackTestResult } from 'app/OrganizationSettings/SSO/utils.es6';
 import { authUrl } from 'Config.es6';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 
 import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
 

@@ -1,5 +1,5 @@
 import { getStore } from 'TheStore/index.es6';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 import { getCurrentStateName } from 'states/Navigator.es6';
 import { refresh, user$ } from 'services/TokenStore.es6';
 import client from 'services/client.es6';

@@ -4,7 +4,7 @@ import { go } from 'states/Navigator.es6';
 import { get, merge, findKey, forEach } from 'lodash';
 import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
 import { supportUrl } from 'Config.es6';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 
 const USAGE_METRICS = {
   apiKey: 'API keys',

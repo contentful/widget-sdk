@@ -25,7 +25,7 @@ import { connectionTestingAllowed, formatConnectionTestErrors } from './utils.es
 import { SSO_PROVIDERS, TEST_RESULTS } from './constants.es6';
 import * as ssoActionCreators from 'redux/actions/sso/actionCreators.es6';
 import * as ssoSelectors from 'redux/selectors/sso.es6';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 
 import { connect } from 'react-redux';
 

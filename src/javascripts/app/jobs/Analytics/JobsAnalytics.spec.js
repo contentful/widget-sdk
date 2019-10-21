@@ -1,9 +1,9 @@
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 import * as Intercom from 'services/intercom.es6';
 import * as JobsAnalytics from './JobsAnalytics.es6';
 import JobAction from '../JobAction.es6';
 
-jest.mock('analytics/Analytics.es6');
+jest.mock('analytics/Analytics');
 jest.mock('moment-timezone');
 describe('JobsAnalytics', () => {
   beforeEach(() => {

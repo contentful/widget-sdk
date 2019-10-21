@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 
 export default function trackExtensionRender(location, widget) {
   const data = makeEventFromWidget(location, widget);

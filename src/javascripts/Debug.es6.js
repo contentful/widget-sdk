@@ -2,7 +2,7 @@ import * as Config from 'Config.es6';
 import { includes, mapValues } from 'lodash';
 import * as UIVersionSwitcher from 'debug/UIVersionSwitcher.es6';
 import * as EnforceFlags from 'debug/EnforceFlags.es6';
-import * as analyticsConsole from 'analytics/analyticsConsole.es6';
+import * as analyticsConsole from 'analytics/analyticsConsole';
 
 const DEBUG_ENVS = ['development', 'preview', 'staging'];
 

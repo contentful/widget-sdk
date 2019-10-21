@@ -4,7 +4,7 @@ import * as actions from './actions.es6';
 import createMockStore from 'redux/utils/createMockStore.es6';
 import { mockEndpoint } from 'data/EndpointFactory.es6';
 import { Notification } from '@contentful/forma-36-react-components';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 import * as ssoUtils from 'app/OrganizationSettings/SSO/utils.es6';
 
 describe('SSO Redux actionCreators', () => {

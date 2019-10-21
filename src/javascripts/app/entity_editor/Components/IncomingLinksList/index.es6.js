@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { template } from '../template.es6';
-import { Origin as IncomingLinksOrigin } from 'analytics/events/IncomingLinks.es6';
+import { Origin as IncomingLinksOrigin } from 'analytics/events/IncomingLinks';
 
 class IncomingLinksList extends React.Component {
   static propTypes = {

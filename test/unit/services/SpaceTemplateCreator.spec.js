@@ -24,7 +24,7 @@ describe('Space Template creation service', () => {
       getAllApiKeys: sinon.stub().returns(Promise.resolve([{ accessToken: 'mock-token' }]))
     };
 
-    this.system.set('analytics/Analytics.es6', { track: _.noop });
+    this.system.set('analytics/Analytics', { track: _.noop });
     this.system.set('services/SpaceTemplateCreator/enrichTemplate.es6', {
       // we don't care about template info, because we describe enrichTemplate
       // function by ourselves

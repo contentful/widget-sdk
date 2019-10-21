@@ -14,13 +14,9 @@ const mockWebhookRepo = {
   }
 };
 
-jest.mock(
-  'app/settings/webhooks/services/WebhookRepoInstance',
-  () => ({
-    getWebhookRepo: () => mockWebhookRepo
-  }),
-  { virtual: true }
-);
+jest.mock('app/settings/webhooks/services/WebhookRepoInstance', () => ({
+  getWebhookRepo: () => mockWebhookRepo
+}));
 
 describe('WebhookList', () => {
   afterEach(cleanup);

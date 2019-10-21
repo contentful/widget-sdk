@@ -2,7 +2,7 @@ import React from 'react';
 import ReactPlayer from 'react-player';
 import { getCurrentStateName } from 'states/Navigator.es6';
 import { Card, Subheading } from '@contentful/forma-36-react-components';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 import * as logger from 'services/logger.es6';
 
 export default class ConceptVideoWidget extends React.Component {

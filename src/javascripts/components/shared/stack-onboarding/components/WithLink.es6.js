@@ -5,7 +5,7 @@ import {
   getStoragePrefix
 } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
 import { getStore } from 'TheStore/index.es6';
-import { updateUserInSegment } from 'analytics/Analytics.es6';
+import { updateUserInSegment } from 'analytics/Analytics';
 import { getModule } from 'NgRegistry.es6';
 
 const store = getStore();

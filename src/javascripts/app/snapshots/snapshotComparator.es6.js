@@ -3,7 +3,7 @@ import _ from 'lodash';
 import * as K from 'utils/kefir.es6';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as versionPicker from 'app/snapshots/VersionPicker.es6';
-import * as trackVersioning from 'analytics/events/versioning.es6';
+import * as trackVersioning from 'analytics/events/versioning';
 import TheLocaleStore from 'services/localeStore.es6';
 import * as Entries from 'data/entries.es6';
 

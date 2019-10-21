@@ -37,7 +37,7 @@ structure and track the event.
 ## Tracking in Snowplow
 Snowplow requires much more structured data than Segment. Whilst every tracking
 event is simply emitted to Segment as-is when you call `analytics.track`, we only
-send the event to Snowplow if it's on the list `analytics/snowplow/Events.es6.js`.
+send the event to Snowplow if it's on the list `analytics/snowplow/Events.js`.
 Events in Snowplow should be registered here with their corresponding schema and
 transformer (a function that takes the event name and data and transforms it to
 a format required by Snowplow).
@@ -46,7 +46,7 @@ To view or update available schemas, go to the
 [schema respository](https://github.com/contentful/com.contentful-schema-registry)
 and follow the instructions provided there. If you are creating or updating a
 schema you will also need to add the schema or bump the version in the file
-`analytics/snowplow/Schemas.es6.js`.
+`analytics/snowplow/Schemas.js`.
 
 To debug sent events, you can use Kibana for [non-production
 environments][kibana-staing] and the [production environment][kibana-production]
@@ -96,15 +96,15 @@ Please follow this checklist:
 - Come up with an internal / Segment event name - select one of existing namespaces or
   introduce a new one as required
 - Add the name to the list of valid event names (`validEvents`
-  constant in [analytics/Validator](../../src/javascripts/analytics/Validator.es6.js))
+  constant in [analytics/Validator](../../src/javascripts/analytics/Validator.js))
 - Add a call to `analytics.track` method
 - If computing a payload requires some logic or events can be grouped
   together, introduce a special service for tracking purposes only
   (put this service into [analytics/events](.././src/javascripts/analytics/events))
 - To send the event to Snowplow as well as Segment, you need to register the event
-  in [analytics/snowplow/Events](../../src/javascripts/analytics/snowplow/Events.es6.js) together with the relevant `schema` and
+  in [analytics/snowplow/Events](../../src/javascripts/analytics/snowplow/Events.js) together with the relevant `schema` and
   `transformer`. The schema will be the Snowplow schema to send to from the list
-  [analytics/snowplow/Schemas](../../src/javascripts/analytics/snowplow/Schemas.es6.js). Transformer is a function that accepts event
+  [analytics/snowplow/Schemas](../../src/javascripts/analytics/snowplow/Schemas.js). Transformer is a function that accepts event
   name and data and returns the output sent to Snowplow
 
 

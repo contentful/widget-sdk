@@ -33,7 +33,7 @@ describe('entityEditor/StateController', () => {
       default: createLocaleStoreMock()
     });
 
-    this.system.set('analytics/Analytics.es6', {
+    this.system.set('analytics/Analytics', {
       track: sinon.stub()
     });
 
@@ -48,7 +48,7 @@ describe('entityEditor/StateController', () => {
       })
     });
 
-    this.analytics = await this.system.import('analytics/Analytics.es6');
+    this.analytics = await this.system.import('analytics/Analytics');
     this.Notification = (await this.system.import(
       'app/entity_editor/Notifications.es6'
     )).Notification;

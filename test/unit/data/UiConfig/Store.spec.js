@@ -9,7 +9,7 @@ describe('data/UiConfig/Store.es6', () => {
   beforeEach(async function() {
     this.trackMigrationSpy = sinon.spy();
 
-    this.system.set('analytics/events/SearchAndViews.es6', {
+    this.system.set('analytics/events/SearchAndViews', {
       searchTermsMigrated: this.trackMigrationSpy
     });
 

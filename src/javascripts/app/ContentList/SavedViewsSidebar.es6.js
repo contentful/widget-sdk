@@ -5,7 +5,7 @@ import { makeCtor } from 'utils/TaggedValues.es6';
 import { assign } from 'utils/Collections.es6';
 import { Tabs, Tab, TabPanel } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { forScopedViews as trackingForScopedViews } from 'analytics/events/SearchAndViews.es6';
+import { forScopedViews as trackingForScopedViews } from 'analytics/events/SearchAndViews';
 
 import { createStore, makeReducer, combineStoreComponents } from 'ui/Framework/Store.es6';
 

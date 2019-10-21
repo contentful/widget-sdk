@@ -32,7 +32,7 @@ import createResourceService from 'services/ResourceService.es6';
 import { getStore } from 'TheStore/index.es6';
 
 // Start: For Next Steps for a TEA space (a space created using the example space template)
-import { track, updateUserInSegment } from 'analytics/Analytics.es6';
+import { track, updateUserInSegment } from 'analytics/Analytics';
 
 const GROUP_ID = 'tea_onboarding_steps';
 const store = getStore('local');

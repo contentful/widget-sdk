@@ -1,6 +1,6 @@
 import { registerController } from 'NgRegistry.es6';
 
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as logger from 'services/logger.es6';
 

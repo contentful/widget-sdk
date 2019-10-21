@@ -1,4 +1,4 @@
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 import { runTask } from 'utils/Concurrent.es6';
 import * as _ from 'lodash';
 import qs from 'qs';

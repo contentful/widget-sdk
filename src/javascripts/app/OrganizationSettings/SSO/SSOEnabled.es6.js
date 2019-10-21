@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import { Heading, Paragraph, TextLink, TextField } from '@contentful/forma-36-react-components';
 import { authUrl } from 'Config.es6';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 
 export default class SSOEnabled extends React.Component {
   static propTypes = {

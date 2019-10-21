@@ -25,12 +25,12 @@ describe('Tracking versioning', () => {
 
     this.openConfirmator = sinon.stub().resolves(true);
 
-    this.system.set('analytics/Analytics.es6', this.analytics);
+    this.system.set('analytics/Analytics', this.analytics);
     this.system.set('app/common/UnsavedChangesDialog.es6', {
       default: () => this.openConfirmator
     });
 
-    this.track = await this.system.import('analytics/events/versioning.es6');
+    this.track = await this.system.import('analytics/events/versioning');
     this.track.setData(data.entry, data.snapshot);
 
     this.getTrackingData = () => {

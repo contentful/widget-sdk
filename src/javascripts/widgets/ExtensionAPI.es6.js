@@ -1,7 +1,7 @@
 import { pick, get, difference } from 'lodash';
 import createIDMap from './IDMap.es6';
 import * as PublicContentType from './PublicContentType.es6';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 
 const sharedFieldProps = field => ({
   id: field.apiName || field.id,

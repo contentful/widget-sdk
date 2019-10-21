@@ -8,13 +8,13 @@ describe('Snowplow service', () => {
     this.window = {};
 
     this.system.set('utils/LazyLoader.es6', this.LazyLoader);
-    this.system.set('analytics/snowplow/Events.es6', this.Events);
+    this.system.set('analytics/snowplow/Events', this.Events);
 
     this.system.set('utils/ngCompat/window.es6', {
       default: this.window
     });
 
-    this.Snowplow = await this.system.import('analytics/snowplow/Snowplow.es6');
+    this.Snowplow = await this.system.import('analytics/snowplow/Snowplow');
 
     this.getLastEvent = function() {
       return _.last(this.window.snowplow.q);

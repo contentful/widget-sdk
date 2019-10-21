@@ -25,7 +25,7 @@ import { createImmerReducer } from 'redux/utils/createImmerReducer.es6';
 import EmptyStateTeams from 'svg/empty-state-teams.es6';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer.es6';
 import StateLink from 'app/common/StateLink.es6';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 
 import RoleSelector from './RoleSelector.es6';
 

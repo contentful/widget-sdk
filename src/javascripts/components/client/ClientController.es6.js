@@ -172,7 +172,7 @@ export default function register() {
           Analytics,
           TokenStore
         ] = await Promise.all([
-          import('analytics/isAnalyticsAllowed.es6'),
+          import('analytics/isAnalyticsAllowed'),
           import('services/logger.es6'),
           import('services/intercom.es6'),
           import('data/CMA/ProductCatalog.es6'),
@@ -180,7 +180,7 @@ export default function register() {
           import('services/EnforcementsService.es6'),
           import('navigation/NavState.es6'),
           import('services/CreateSpace.es6'),
-          import('analytics/Analytics.es6'),
+          import('analytics/Analytics'),
           import('services/TokenStore.es6')
         ]);
 

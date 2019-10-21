@@ -10,7 +10,7 @@ import {
 } from 'account/pricing/PricingDataProvider';
 import createApiKeyRepo from 'app/settings/api/services/ApiKeyRepo';
 import * as TokenStore from 'services/TokenStore.es6';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 import { getCreator as getTemplateCreator } from 'services/SpaceTemplateCreator/index.es6';
 import { getTemplatesList, getTemplate } from 'services/SpaceTemplateLoader.es6';
 import { canCreate } from 'utils/ResourceUtils.es6';

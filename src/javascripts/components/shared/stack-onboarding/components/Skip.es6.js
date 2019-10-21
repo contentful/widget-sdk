@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { getStore } from 'TheStore/index.es6';
-import { updateUserInSegment } from 'analytics/Analytics.es6';
+import { updateUserInSegment } from 'analytics/Analytics';
 import {
   getStoragePrefix,
   track

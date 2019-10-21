@@ -2,7 +2,7 @@ import { reduce, without, camelCase } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import * as logger from 'services/logger.es6';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 
 const getCountOrNull = count => (typeof count === 'number' ? count : null);
 

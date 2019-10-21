@@ -4,7 +4,7 @@ import FullScreen from 'components/shared/stack-onboarding/components/FullScreen
 import Button from '../components/Button.es6';
 import { getStore } from 'TheStore/index.es6';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboarding.es6';
-import { updateUserInSegment } from 'analytics/Analytics.es6';
+import { updateUserInSegment } from 'analytics/Analytics';
 
 const store = getStore();
 

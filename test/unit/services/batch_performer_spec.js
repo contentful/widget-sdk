@@ -12,7 +12,7 @@ describe('Batch performer service', () => {
       track: sinon.stub()
     };
 
-    this.system.set('analytics/Analytics.es6', this.analytics);
+    this.system.set('analytics/Analytics', this.analytics);
 
     await $initialize(this.system);
 

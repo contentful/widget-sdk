@@ -1,7 +1,7 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 import SSOEnabled from './SSOEnabled.es6';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 
 describe('SSOEnabled', () => {
   const organization = {

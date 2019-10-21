@@ -3,7 +3,7 @@ import Enzyme from 'enzyme';
 import TranslationWidgetDropdown from './TranslationWidgetDropdown.es6';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
 import { Select } from '@contentful/forma-36-react-components';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 
 describe('EntrySidebar/TranslationWidgetDropdown', () => {
   const props = {

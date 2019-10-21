@@ -51,7 +51,7 @@ const stubAll = async ({ isolatedSystem }) => {
     })
   });
 
-  isolatedSystem.set('analytics/Analytics.es6', {
+  isolatedSystem.set('analytics/Analytics', {
     track: sinon.stub()
   });
 };
@@ -128,7 +128,7 @@ describe('Rich Text toolbar', () => {
     this.system.set('app/widgets/WidgetApi/dialogs/openHyperlinkDialog.es6', {
       default: this.openHyperlinkDialog
     });
-    this.system.set('analytics/Analytics.es6', {
+    this.system.set('analytics/Analytics', {
       track: sinon.stub()
     });
 

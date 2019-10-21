@@ -13,7 +13,7 @@ import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 import {
   onIncomingLinkClick as trackIncomingLinkClick,
   Origin as IncomingLinksOrigin
-} from 'analytics/events/IncomingLinks.es6';
+} from 'analytics/events/IncomingLinks';
 
 function getMessages({ entityInfo, links }) {
   const numberOfLinks = getNumberOfLinks(links);

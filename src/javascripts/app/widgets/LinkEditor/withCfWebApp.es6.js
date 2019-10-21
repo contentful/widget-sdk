@@ -11,7 +11,7 @@ import * as slideInNavigator from 'navigation/SlideInNavigator/index.es6';
 import { getModule } from 'NgRegistry.es6';
 import connectToWidgetApi from 'app/widgets/WidgetApi/connectToWidgetApi.es6';
 import * as entityCreator from 'components/app_container/entityCreator.es6';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 import BaseLinkEditor from './LinkEditor.es6';
 import { canLinkToContentType } from './Util.es6';
 

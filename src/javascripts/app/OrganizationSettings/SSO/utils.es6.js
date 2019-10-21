@@ -1,7 +1,7 @@
 import * as validators from './validators.es6';
 import * as fieldErrorMessageGenerators from './fieldErrorMessages.es6';
 import { joinWithAnd } from 'utils/StringUtils.es6';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 
 export function validate(fieldName, value) {
   if (!validators[fieldName]) {

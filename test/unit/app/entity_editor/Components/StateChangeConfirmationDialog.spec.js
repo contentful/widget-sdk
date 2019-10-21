@@ -24,7 +24,7 @@ describe('StateChangeConfirmationDialog', () => {
   };
 
   beforeEach(function() {
-    this.system.set('analytics/events/IncomingLinks.es6', {
+    this.system.set('analytics/events/IncomingLinks', {
       onFetchLinks: sinon.stub(),
       onDialogOpen: sinon.stub(),
       onDialogConfirm: sinon.stub(),

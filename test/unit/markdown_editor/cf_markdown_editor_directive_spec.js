@@ -13,7 +13,7 @@ describe('cfMarkdownEditor', () => {
         getLocales: () => [{ code: 'en-US' }]
       }
     });
-    this.system.set('analytics/MarkdownEditorActions.es6', this.markdownEditorActions);
+    this.system.set('analytics/MarkdownEditorActions', this.markdownEditorActions);
 
     await $initialize(this.system);
 

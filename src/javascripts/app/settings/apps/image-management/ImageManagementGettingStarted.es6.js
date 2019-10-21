@@ -14,7 +14,7 @@ import { uninstallApp } from './InstallationProcess.es6';
 import { APP_ID } from './Constants.es6';
 import FeedbackButton from 'app/common/FeedbackButton.es6';
 
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';

@@ -1,7 +1,7 @@
 import { h } from 'utils/legacy-html-hyperscript/index.es6';
 import { getStore } from 'TheStore/index.es6';
 import { getFirstAccessibleSref } from 'access_control/SectionAccess';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 import * as accessChecker from 'access_control/AccessChecker';
 
 import * as TokenStore from 'services/TokenStore.es6';

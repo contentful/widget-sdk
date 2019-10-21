@@ -6,7 +6,7 @@ import * as List from 'utils/List.es6';
 
 import * as localeData from 'app/entity_editor/setLocaleData.es6';
 import * as accessChecker from 'access_control/AccessChecker';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 import * as DataLoader from 'app/entity_editor/DataLoader.es6';
 import * as Tracking from 'app/entity_editor/bulk_editor/Tracking.es6';
 import * as entitySelector from 'search/EntitySelector/entitySelector.es6';

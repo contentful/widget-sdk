@@ -12,7 +12,7 @@ import * as logger from 'services/logger.es6';
 import * as ListQuery from 'search/listQuery.es6';
 
 import createSearchInput from 'app/ContentList/Search/index.es6';
-import * as Tracking from 'analytics/events/SearchAndViews.es6';
+import * as Tracking from 'analytics/events/SearchAndViews';
 
 export default function register() {
   registerController('AssetSearchController', [

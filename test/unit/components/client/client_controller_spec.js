@@ -37,7 +37,7 @@ describe('Client Controller', () => {
       intercomDisable: sinon.stub()
     };
 
-    this.system.set('analytics/Analytics.es6', {
+    this.system.set('analytics/Analytics', {
       enable: this.stubs.enable,
       disable: this.stubs.disable,
       track: this.stubs.track
@@ -55,7 +55,7 @@ describe('Client Controller', () => {
       newUsageChecker: this.newUsageChecker,
       getEnforcements: this.getEnforcements
     });
-    this.system.set('analytics/isAnalyticsAllowed.es6', {
+    this.system.set('analytics/isAnalyticsAllowed', {
       default: this.isAnalyticsAllowed
     });
     this.system.set('services/logger.es6', this.logger);

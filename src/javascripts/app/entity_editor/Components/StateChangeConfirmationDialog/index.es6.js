@@ -9,7 +9,7 @@ import {
   onDialogConfirm as trackDialogConfirm,
   onIncomingLinkClick as trackIncomingLinkClick,
   Origin as IncomingLinksOrigin
-} from 'analytics/events/IncomingLinks.es6';
+} from 'analytics/events/IncomingLinks';
 
 import Loader from './Loader.es6';
 import IncomingLinksList from '../IncomingLinksList/index.es6';

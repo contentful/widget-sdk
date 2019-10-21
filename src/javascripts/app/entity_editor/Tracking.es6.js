@@ -1,5 +1,5 @@
 import { get, flatten, uniqBy } from 'lodash';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 import { stateName } from 'data/CMA/EntityState.es6';
 import * as K from 'utils/kefir.es6';
 import { getModule } from 'NgRegistry.es6';

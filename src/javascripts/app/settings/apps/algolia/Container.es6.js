@@ -19,7 +19,7 @@ import AppIcon from '../_common/AppIcon.es6';
 
 import { cloneDeep } from 'lodash';
 
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 
 import Setup from './Setup.es6';
 import SelectContent, { SELECT_CONTENT_TYPE } from './SelectContent.es6';

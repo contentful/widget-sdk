@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 import { getToken } from 'Authentication.es6';
 import { uploadApiUrl } from 'Config.es6';
 

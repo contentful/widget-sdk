@@ -1,7 +1,7 @@
-describe('analytics/snowplow/transformers/EntityAction.es6', () => {
+describe('analytics/snowplow/transformers/EntityAction', () => {
   beforeEach(async function() {
     this.transform = (await this.system.import(
-      'analytics/snowplow/transformers/EntityAction.es6'
+      'analytics/snowplow/transformers/EntityAction'
     )).default;
   });
 

@@ -4,7 +4,7 @@ import { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import { SSOSetup } from './SSOSetup.es6';
 import IDPSetupForm from './IDPSetupForm.es6';
 import SSOEnabled from './SSOEnabled.es6';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';

@@ -1,5 +1,5 @@
 import { findIndex, get, isEqual, uniqWith } from 'lodash';
-import { track } from 'analytics/Analytics.es6';
+import { track } from 'analytics/Analytics';
 import slideHelper from './slideHelper.es6';
 import { getModule } from 'NgRegistry.es6';
 

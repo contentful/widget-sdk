@@ -9,7 +9,7 @@ describe('Entry Actions Controller', () => {
       track: sinon.stub()
     };
 
-    this.system.set('analytics/Analytics.es6', {
+    this.system.set('analytics/Analytics', {
       track: this.stubs.track
     });
 
