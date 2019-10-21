@@ -202,6 +202,13 @@ export function create() {
     }
   });
 
+  registerWidget('tagEditor', {
+    fieldTypes: ['Symbols'],
+    name: 'Tag',
+    icon: 'tags',
+    renderFieldEditor: ({ widgetApi }) => <TagsEditor field={widgetApi.field} />
+  });
+
   registerWidget('listInput', {
     fieldTypes: ['Symbols'],
     name: 'List',
@@ -220,13 +227,6 @@ export function create() {
     name: 'Checkbox',
     icon: 'checkbox',
     renderFieldEditor: ({ widgetApi }) => <CheckboxEditor field={widgetApi.field} />
-  });
-
-  registerWidget('tagEditor', {
-    fieldTypes: ['Symbols'],
-    name: 'Tag',
-    icon: 'tags',
-    renderFieldEditor: ({ widgetApi }) => <TagsEditor field={widgetApi.field} />
   });
 
   registerWidget('fileEditor', {

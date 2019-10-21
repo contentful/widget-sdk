@@ -14,7 +14,7 @@ export const DEFAULTS = {
   RichText: 'richTextEditor',
   Entry: 'entryLinkEditor',
   Asset: 'assetLinkEditor',
-  Symbols: 'listInput',
+  Symbols: 'tagEditor',
   Entries: 'entryLinksEditor',
   Assets: 'assetLinksEditor',
   File: 'fileEditor'
