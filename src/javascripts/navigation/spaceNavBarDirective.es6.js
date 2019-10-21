@@ -48,7 +48,6 @@ export default function register() {
 
             controller.spaceId = $stateParams.spaceId;
             controller.canNavigateTo = canNavigateTo;
-            controller.makeRef = makeRef;
 
             TokenStore.getOrganization(orgId).then(org => {
               controller.usageEnabled = org.pricingVersion === 'pricing_version_2';
@@ -60,16 +59,6 @@ export default function register() {
             getOrgFeature(orgId, 'teams').then(value => {
               controller.hasOrgTeamFeature = value;
             });
-
-            function makeRef(spaceRef) {
-              const useScopedRoute = !environmentMeta.isMasterEnvironment;
-
-              if (useScopedRoute) {
-                return `spaces.detail.environment.${spaceRef}`;
-              } else {
-                return `spaces.detail.${spaceRef}`;
-              }
-            }
 
             function canNavigateTo(section) {
               const isSpaceSettingsSection = SPACE_SETTINGS_SECTIONS.includes(section);
