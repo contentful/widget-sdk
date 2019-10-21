@@ -3,7 +3,7 @@ import { cx, css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import enhanceWithClickOutside from 'react-click-outside';
 
-import * as Analytics from 'analytics/Analytics.es6';
+import * as Analytics from 'analytics/Analytics';
 import * as Authentication from 'Authentication.es6';
 import * as Intercom from 'services/intercom.es6';
 import * as Config from 'Config.es6';
@@ -135,7 +135,6 @@ class AccountDropdown extends Component {
                   />
                 )}
               </span>
-
               <Icon className={styles.dropdownIcon} icon="ArrowDownTrimmed" color="white" />
             </TabFocusTrap>
           </button>
