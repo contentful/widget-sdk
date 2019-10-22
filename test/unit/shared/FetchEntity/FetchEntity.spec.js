@@ -9,6 +9,9 @@ const sandbox = sinon.sandbox.create();
 
 const newMockWidgetAPI = (entity, contentType) => {
   return {
+    jobs: {
+      getPendingJobs: sandbox.stub().returns(Promise.resolve([]))
+    },
     space: {
       getEntry: sandbox
         .stub()
@@ -69,6 +72,12 @@ describe('FetchEntity', () => {
           sys: {
             id: 'CT-ID'
           }
+        },
+        environment: {
+          sys: { id: 'envId' }
+        },
+        space: {
+          sys: { id: 'spaceId' }
         }
       }
     };
@@ -118,8 +127,9 @@ describe('FetchEntity', () => {
   const EXPECTED_RENDER_CALLS = 3;
 
   describe('(pending/success) props.render()', function() {
-    beforeEach(function() {
+    beforeEach(async function() {
       this.mount();
+      await flushPromises();
     });
 
     it('is called initially, while fetching entity', function() {
@@ -135,6 +145,7 @@ describe('FetchEntity', () => {
         entityTitle: 'TITLE',
         entityDescription: 'DESCRIPTION',
         entityStatus: 'draft',
+        statusIcon: '',
         entityFile: undefined,
         requestStatus: RequestStatus.Pending
       });
@@ -147,6 +158,7 @@ describe('FetchEntity', () => {
         entityTitle: 'TITLE',
         entityDescription: 'DESCRIPTION',
         entityStatus: 'draft',
+        statusIcon: '',
         entityFile: 'FILE',
         requestStatus: RequestStatus.Success
       });

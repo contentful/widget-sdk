@@ -137,7 +137,8 @@ export default function register() {
             publishButtonName: $scope.publishButtonName
           },
           entryCache: $scope.entryCache,
-          assetCache: $scope.assetCache
+          assetCache: $scope.assetCache,
+          jobs: $scope.jobs
         };
         $scope.paginatorProps = {
           page: $scope.paginator.getPage(),

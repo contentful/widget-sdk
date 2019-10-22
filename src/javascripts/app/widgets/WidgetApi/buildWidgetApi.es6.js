@@ -1,9 +1,12 @@
+import * as logger from 'services/logger.es6';
 import openHyperlinkDialog from 'app/widgets/WidgetApi/dialogs/openHyperlinkDialog.es6';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient/index.es6';
 import { getModule } from 'NgRegistry.es6';
 import { goToSlideInEntity } from 'navigation/SlideInNavigator/index.es6';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import * as entitySelector from 'search/EntitySelector/entitySelector.es6';
+import * as JobsService from 'app/jobs/DataManagement/JobsService.es6';
+import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 
 /**
  * @deprecated  Use and extend the new `app/widgets/NewWidgetApi/createNewWidgetApi.es6.js` instead.
@@ -30,6 +33,29 @@ export default function buildWidgetApi({ field, entry, currentUrl, settings }) {
     field,
     entry,
     space: getBatchingApiClient(spaceContext.cma),
+    jobs: {
+      getPendingJobs: async () => {
+        let jobs = [];
+        try {
+          const spaceEndpoint = createSpaceEndpoint(
+            spaceContext.space.data.sys.id,
+            spaceContext.space.environment.sys.id
+          );
+          const jobsCollection = await JobsService.getJobs(spaceEndpoint, {
+            order: 'sys.scheduledAt',
+            'sys.status': 'pending'
+          });
+          jobs = jobsCollection;
+        } catch (err) {
+          logger.logError('Failed to fetch pending jobs for reference card', {
+            err
+          });
+          return [];
+        }
+
+        return jobs.items;
+      }
+    },
     dialogs: {
       /**
        * TODO: Add to ui-extensions-sdk when open sourcing the RichText widget.

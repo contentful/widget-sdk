@@ -83,6 +83,7 @@ export default class FetchEntity extends React.PureComponent {
     ]);
 
     const entityStatus = EntityState.stateName(EntityState.getState(entity.sys));
+    const jobs = await widgetAPI.jobs.getPendingJobs();
 
     this.setStateSafe({
       entity,
@@ -91,7 +92,8 @@ export default class FetchEntity extends React.PureComponent {
       entityFile: this.state.entityFile || undefined,
       entityStatus,
       contentTypeName: contentType && contentType.name,
-      requestStatus: fetchFile ? RequestStatus.Pending : RequestStatus.Success
+      requestStatus: fetchFile ? RequestStatus.Pending : RequestStatus.Success,
+      statusIcon: jobs.some(job => job.sys.entity.sys.id === entity.sys.id) ? 'Clock' : ''
     });
 
     const entityFile = await entityFilePromise;

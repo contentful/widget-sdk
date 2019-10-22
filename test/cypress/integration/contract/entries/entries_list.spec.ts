@@ -11,6 +11,7 @@ import {
   getFirst7SnapshotsOfDefaultEntry,
   createAnEntryInDefaultSpace
 } from '../../../interactions/entries';
+import { queryPendingJobsForDefaultSpace } from '../../../interactions/jobs';
 
 const empty = require('../../../fixtures/responses/empty.json');
 const severalEntriesResponse = require('../../../fixtures/responses/entries-several.json');
@@ -30,7 +31,7 @@ describe('Entries list page', () => {
     // TODO: Move this to a before block
     cy.startFakeServers({
       consumer: 'user_interface',
-      providers: ['entries', 'users'],
+      providers: ['entries', 'users', 'jobs'],
       cors: true,
       pactfileWriteMode: 'merge',
       dir: Cypress.env('pactDir'),
@@ -67,11 +68,11 @@ describe('Entries list page', () => {
         '@queryArchivedEntriesCount',
         '@queryNonArchivedEntries',
         ...defaultRequestsMock({}),
-        queryFirst100UsersInDefaultSpace.willFindSeveral()
+        queryFirst100UsersInDefaultSpace.willFindSeveral(),
+        queryPendingJobsForDefaultSpace.willFindSeveral()
       ]
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
-
       cy.wait(interactions);
     });
 
@@ -112,7 +113,8 @@ describe('Entries list page', () => {
         ...defaultRequestsMock({
           publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
         }),
-        queryFirst100UsersInDefaultSpace.willFindSeveral()
+        queryFirst100UsersInDefaultSpace.willFindSeveral(),
+        queryPendingJobsForDefaultSpace.willFindSeveral()
       ]
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
@@ -162,7 +164,8 @@ describe('Entries list page', () => {
       const interactions = [
         '@queryNonArchivedEntries',
         ...defaultRequestsMock({}),
-        queryFirst100UsersInDefaultSpace.willFindSeveral()
+        queryFirst100UsersInDefaultSpace.willFindSeveral(),
+        queryPendingJobsForDefaultSpace.willFindSeveral()
       ]
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
@@ -204,7 +207,8 @@ describe('Entries list page', () => {
       const interactions = [
         ...defaultRequestsMock({}),
         '@queryNonArchivedEntries',
-        queryFirst100UsersInDefaultSpace.willFindSeveral()
+        queryFirst100UsersInDefaultSpace.willFindSeveral(),
+        queryPendingJobsForDefaultSpace.willFindSeveral()
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);

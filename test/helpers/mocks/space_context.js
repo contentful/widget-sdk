@@ -41,6 +41,7 @@ angular.module('contentful/mocks').factory('mocks/spaceContext', [
 
       const space = cfStub.space('test');
       space.environmentMeta = {};
+      space.environment = { sys: { id: 'testEnv' } };
       spaceContextMock.space = stubAll(space);
 
       spaceContextMock.docPool = {

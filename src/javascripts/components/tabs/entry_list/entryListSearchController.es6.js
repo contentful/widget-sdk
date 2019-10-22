@@ -11,6 +11,8 @@ import createSearchInput from 'app/ContentList/Search/index.es6';
 import * as Tracking from 'analytics/events/SearchAndViews';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as ListQuery from 'search/listQuery.es6';
+import * as JobsService from 'app/jobs/DataManagement/JobsService.es6';
+import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 
 export default function register() {
   registerController('EntryListSearchController', [
@@ -24,6 +26,15 @@ export default function register() {
 
       $scope.context.ready = false;
       $scope.context.loading = true;
+      $scope.jobs = [];
+      const spaceEndpoint = createSpaceEndpoint(
+        spaceContext.space.data.sys.id,
+        spaceContext.space.environment.sys.id
+      );
+      JobsService.getJobs(spaceEndpoint, {
+        order: 'sys.scheduledAt',
+        'sys.status': 'pending'
+      }).then(({ items = [] }) => ($scope.jobs = items));
 
       // HACK: This makes sure that component bridge renders
       // somethings until search UI is initialized.
@@ -231,7 +242,6 @@ export default function register() {
             const lastPage = $scope.paginator.getPageCount() - 1;
             $scope.setPage(lastPage);
           }
-
           $scope.entries = entries.filter(entry => !entry.isDeleted());
         }
         refreshEntityCaches();

@@ -22,6 +22,7 @@ import {
 } from '@contentful/forma-36-react-components';
 
 import tokens from '@contentful/forma-36-tokens';
+import { Icon } from '@contentful/forma-36-react-components';
 
 import isHotkey from 'is-hotkey';
 import StateLink from 'app/common/StateLink.es6';
@@ -52,6 +53,9 @@ const styles = {
   }),
 
   tableCell: css({}),
+  marginRightXS: css({
+    marginRight: tokens.spacing2Xs
+  }),
   marginBottomXXS: css({
     marginBottom: '0.25rem'
   }),
@@ -350,7 +354,8 @@ export default function EntryList({
   entries = [],
   actions,
   entryCache,
-  assetCache
+  assetCache,
+  jobs = []
 }) {
   const hasContentTypeSelected = !!context.view.contentTypeId;
 
@@ -530,6 +535,14 @@ export default function EntryList({
                   ))}
                   <TableCell testId="status" className={styles.mediumCell}>
                     <SecretiveLink href={getHref()}>
+                      {jobs.find(job => job.sys.entity.sys.id === entry.data.sys.id) && (
+                        <Icon
+                          icon="Clock"
+                          size="small"
+                          className={cn(styles.marginRightXS)}
+                          color="muted"
+                        />
+                      )}
                       <EntityStatusTag
                         statusLabel={EntityState.stateName(EntityState.getState(entry.data.sys))}
                       />
@@ -563,7 +576,8 @@ EntryList.propTypes = {
   entries: PropTypes.array,
   actions: PropTypes.object,
   entryCache: PropTypes.object,
-  assetCache: PropTypes.object
+  assetCache: PropTypes.object,
+  jobs: PropTypes.array
 };
 
 function isTargetInput(e) {

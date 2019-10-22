@@ -63,6 +63,14 @@ describe('Entry List Controller', () => {
       }
     });
 
+    this.system.set('data/EndpointFactory.es6', {
+      createSpaceEndpoint: sinon.stub().returns('/spaces/test/')
+    });
+
+    this.system.set('app/jobs/DataManagement/JobsService.es6', {
+      getJobs: sinon.stub().resolves([])
+    });
+
     if (!ListQueryOriginal) {
       ListQueryOriginal = await this.system.import('search/listQuery.es6');
     }

@@ -16,6 +16,7 @@ export default class WrappedEntityCard extends React.Component {
     entityFile: PropTypes.object,
     entityTitle: PropTypes.string,
     entityStatus: PropTypes.string,
+    statusIcon: PropTypes.string,
     href: PropTypes.string,
     isLoading: PropTypes.bool,
     className: PropTypes.string,
@@ -58,6 +59,7 @@ export default class WrappedEntityCard extends React.Component {
       size,
       selected,
       entityStatus,
+      statusIcon,
       isLoading,
       onClick,
       href,
@@ -76,6 +78,7 @@ export default class WrappedEntityCard extends React.Component {
         size={size}
         selected={selected}
         status={entityStatus}
+        statusIcon={statusIcon}
         thumbnailElement={entityFile && <Thumbnail thumbnail={entityFile} />}
         loading={isLoading}
         dropdownListElements={this.renderActions()}
