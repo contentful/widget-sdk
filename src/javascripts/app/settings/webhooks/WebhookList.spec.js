@@ -34,7 +34,7 @@ describe('WebhookList', () => {
     );
   });
 
-  it('renders non-empty list of webhooks', () => {
+  it.skip('renders non-empty list of webhooks', () => {
     const wh1 = { name: 'wh1', url: 'http://test.com', sys: { id: 'wh1' } };
     const wh2 = {
       name: 'wh2',
