@@ -36,7 +36,8 @@ describe('AppOperations', () => {
     it('creates an extension if not installed yet', async () => {
       const cma = {
         createExtension: jest.fn(ext => Promise.resolve(ext)),
-        updateExtension: jest.fn()
+        updateExtension: jest.fn(),
+        getEditorInterfaces: jest.fn(() => Promise.resolve({ items: [] }))
       };
       const loader = {
         evictExtension: jest.fn()
@@ -78,7 +79,8 @@ describe('AppOperations', () => {
     it('updates an extension if already installed', async () => {
       const cma = {
         createExtension: jest.fn(),
-        updateExtension: jest.fn(ext => Promise.resolve(ext))
+        updateExtension: jest.fn(ext => Promise.resolve(ext)),
+        getEditorInterfaces: jest.fn(() => Promise.resolve({ items: [] }))
       };
       const loader = {
         evictExtension: jest.fn()
@@ -151,10 +153,16 @@ describe('AppOperations', () => {
     it('executes the target state plan', async () => {
       const cma = {
         createExtension: jest.fn(ext => Promise.resolve(ext)),
-        getEditorInterface: jest.fn(() => {
+        getEditorInterfaces: jest.fn(() => {
           return Promise.resolve({
-            sys: { contentType: { sys: { id: 'CT1' } } },
-            controls: [{ fieldId: 'xxx', widgetNamespace: NAMESPACE_BUILTIN, widgetId: 'markdown' }]
+            items: [
+              {
+                sys: { contentType: { sys: { id: 'CT1' } } },
+                controls: [
+                  { fieldId: 'xxx', widgetNamespace: NAMESPACE_BUILTIN, widgetId: 'markdown' }
+                ]
+              }
+            ]
           });
         }),
         updateEditorInterface: jest.fn(ext => Promise.resolve(ext))
@@ -182,8 +190,7 @@ describe('AppOperations', () => {
       expect(cma.createExtension).toBeCalledTimes(1);
       const id = cma.createExtension.mock.calls[0][0].sys.id;
 
-      expect(cma.getEditorInterface).toBeCalledTimes(1);
-      expect(cma.getEditorInterface).toBeCalledWith('CT1');
+      expect(cma.getEditorInterfaces).toBeCalledTimes(1);
       expect(cma.updateEditorInterface).toBeCalledTimes(1);
 
       expect(cma.updateEditorInterface).toBeCalledWith({
@@ -197,25 +204,28 @@ describe('AppOperations', () => {
     it('removes extension references from editor interfaces', async () => {
       const extensionId = 'test-extesnions';
       const cma = {
-        getContentTypes: jest.fn(() => Promise.resolve({ items: [{ sys: { id: 'CT1' } }] })),
-        getEditorInterface: jest.fn(() => {
-          return Promise.resolve({
-            sys: { contentType: { sys: { id: 'CT1' } } },
-            controls: [
-              { fieldId: 'title', widgetNamespace: NAMESPACE_BUILTIN, widgetId: extensionId },
-              { fieldId: 'content', widgetNamespace: NAMESPACE_BUILTIN, widgetId: 'markdown' },
-              { fieldId: 'author', widgetNamespace: NAMESPACE_EXTENSION, widgetId: extensionId }
-            ],
-            sidebar: [
-              { widgetNamespace: NAMESPACE_BUILTIN_SIDEBAR, widgetId: 'publication-widget' },
-              { widgetNamespace: NAMESPACE_EXTENSION, widgetId: extensionId }
-            ],
-            editor: {
-              widgetNamespace: NAMESPACE_EXTENSION,
-              widgetId: extensionId
-            }
-          });
-        }),
+        getEditorInterfaces: jest.fn(() =>
+          Promise.resolve({
+            items: [
+              {
+                sys: { contentType: { sys: { id: 'CT1' } } },
+                controls: [
+                  { fieldId: 'title', widgetNamespace: NAMESPACE_BUILTIN, widgetId: extensionId },
+                  { fieldId: 'content', widgetNamespace: NAMESPACE_BUILTIN, widgetId: 'markdown' },
+                  { fieldId: 'author', widgetNamespace: NAMESPACE_EXTENSION, widgetId: extensionId }
+                ],
+                sidebar: [
+                  { widgetNamespace: NAMESPACE_BUILTIN_SIDEBAR, widgetId: 'publication-widget' },
+                  { widgetNamespace: NAMESPACE_EXTENSION, widgetId: extensionId }
+                ],
+                editor: {
+                  widgetNamespace: NAMESPACE_EXTENSION,
+                  widgetId: extensionId
+                }
+              }
+            ]
+          })
+        ),
         updateEditorInterface: jest.fn(ei => Promise.resolve(ei)),
         deleteExtension: jest.fn(() => Promise.resolve())
       };
@@ -228,9 +238,7 @@ describe('AppOperations', () => {
 
       await AppOperations.uninstall(cma, loader, checkAppStatus);
 
-      expect(cma.getContentTypes).toBeCalledTimes(1);
-      expect(cma.getEditorInterface).toBeCalledTimes(1);
-      expect(cma.getEditorInterface).toBeCalledWith('CT1');
+      expect(cma.getEditorInterfaces).toBeCalledTimes(1);
       expect(cma.updateEditorInterface).toBeCalledTimes(1);
 
       expect(cma.updateEditorInterface).toBeCalledWith({
@@ -247,7 +255,7 @@ describe('AppOperations', () => {
     it('deletes the extension', async () => {
       const extensionId = 'test-extension';
       const cma = {
-        getContentTypes: jest.fn(() => Promise.resolve({ items: [] })),
+        getEditorInterfaces: jest.fn(() => Promise.resolve({ items: [] })),
         deleteExtension: jest.fn(() => Promise.resolve())
       };
       const loader = {
@@ -268,7 +276,7 @@ describe('AppOperations', () => {
 
     it('fails if an extension cannot be deleted', async () => {
       const cma = {
-        getContentTypes: jest.fn(() => Promise.resolve({ items: [] })),
+        getEditorInterfaces: jest.fn(() => Promise.resolve({ items: [] })),
         deleteExtension: jest.fn(() => Promise.reject('unauthorized'))
       };
       const loader = {

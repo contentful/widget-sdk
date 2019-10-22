@@ -3,10 +3,7 @@ import { isObject } from 'lodash';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces.es6';
 
 export default async function getCurrentAppState(cma, extensionId) {
-  const { items } = await cma.getContentTypes();
-  const contentTypeIds = items.map(ct => ct.sys.id);
-
-  const editorInterfaces = await Promise.all(contentTypeIds.map(id => cma.getEditorInterface(id)));
+  const { items: editorInterfaces } = await cma.getEditorInterfaces();
 
   const editorInterfacesState = editorInterfaces
     .map(ei => {

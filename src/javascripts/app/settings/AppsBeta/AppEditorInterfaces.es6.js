@@ -49,12 +49,8 @@ function isCurrentExtension(widget, extensionId) {
  * }
  */
 export async function transformEditorInterfacesToTargetState(cma, targetState, extensionId) {
-  const editorInterfaceIds = Object.keys(targetState);
-  const editorInterfacePromises = editorInterfaceIds.map(id => cma.getEditorInterface(id));
-  const [editorInterfaces, defaultSidebar] = await Promise.all([
-    promiseAllSafe(editorInterfacePromises),
-    getDefaultSidebar()
-  ]);
+  const { items: editorInterfaces } = await cma.getEditorInterfaces();
+  const defaultSidebar = await getDefaultSidebar();
 
   const updatePromises = editorInterfaces
     .map(ei => {
@@ -134,11 +130,7 @@ function transformSingleEditorInterfaceToTargetState(ei, defaultSidebar, targetS
 }
 
 export async function removeAllEditorInterfaceReferences(cma, extensionId) {
-  const { items } = await cma.getContentTypes();
-  const contentTypeIds = items.map(ct => ct.sys.id);
-
-  const editorInterfacePromises = contentTypeIds.map(id => cma.getEditorInterface(id));
-  const editorInterfaces = await promiseAllSafe(editorInterfacePromises);
+  const { items: editorInterfaces } = await cma.getEditorInterfaces();
 
   const updatePromises = editorInterfaces
     .map(ei => removeSingleEditorInterfaceReferences(ei, extensionId))
