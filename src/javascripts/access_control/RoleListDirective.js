@@ -8,6 +8,7 @@ import * as accessChecker from 'access_control/AccessChecker';
 import * as RoleListHandler from 'access_control/RoleListHandler';
 import createResourceService from 'services/ResourceService.es6';
 import { getSubscriptionState } from 'account/AccountUtils';
+import { createRoleRemover } from 'access_control/RoleRemover';
 
 export default function register() {
   registerDirective('cfRoleList', () => ({
@@ -19,9 +20,8 @@ export default function register() {
   registerController('RoleListController', [
     '$scope',
     '$state',
-    'createRoleRemover',
     'UserListController/jumpToRole',
-    ($scope, $state, createRoleRemover, jumpToRoleMembers) => {
+    ($scope, $state, jumpToRoleMembers) => {
       const spaceContext = getModule('spaceContext');
       const listHandler = RoleListHandler.create();
       const organization = spaceContext.organization;
@@ -80,7 +80,12 @@ export default function register() {
           return role;
         });
         $scope.hasAnyTranslatorRole = hasAnyTranslatorRole($scope.roles);
-        $scope.removeRole = createRoleRemover(listHandler, reload);
+        $scope.removeRole = role =>
+          createRoleRemover(listHandler, role).then(removed => {
+            if (removed) {
+              reload();
+            }
+          });
         $scope.context.ready = true;
         $scope.usage = rolesResource.usage;
         $scope.limit = ResourceUtils.getResourceLimits(rolesResource).maximum;

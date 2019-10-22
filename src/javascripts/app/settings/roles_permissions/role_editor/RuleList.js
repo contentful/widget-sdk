@@ -1,7 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
+import { Note, TextLink } from '@contentful/forma-36-react-components';
+import Rule from './Rule';
 
-import Rule from 'access_control/Rule';
+const styles = {
+  note: css({
+    marginTop: tokens.spacingM,
+    marginBottom: tokens.spacingM
+  }),
+  addLink: css({
+    marginBottom: tokens.spacingL
+  })
+};
 
 const RulesPropType = PropTypes.arrayOf(
   PropTypes.shape({ id: PropTypes.string, name: PropTypes.string })
@@ -39,12 +51,12 @@ export default class RuleList extends React.Component {
         <div className="rule-list__section">
           <label>Users with this role can:</label>
           {rules.allowed.length === 0 && (
-            <div className="rule-list__note note-box note-box--info">
+            <Note className={styles.note}>
               <span>Currently, everything is denied for this role. </span>
               {!isDisabled && (
                 <span>To allow certain actions add a rule by clicking the link below.</span>
               )}
-            </div>
+            </Note>
           )}
           {rules.allowed.map(rule => (
             <Rule
@@ -59,12 +71,12 @@ export default class RuleList extends React.Component {
             />
           ))}
           {!isDisabled && (
-            <a
-              className="rule-list__add"
-              data-test-id="add-allowed-rule"
+            <TextLink
+              className={styles.addLink}
+              testId="add-allowed-rule"
               onClick={onAddRule('allowed')}>
               {rules.allowed.length > 0 ? 'Add another rule' : 'Add a rule'}
-            </a>
+            </TextLink>
           )}
         </div>
         {rules.allowed.length > 0 && (
@@ -74,12 +86,10 @@ export default class RuleList extends React.Component {
               <strong> not</strong>:
             </label>
             {!(rules.denied.length > 0 || isDisabled) && (
-              <div className="rule-list__note note-box note-box--info">
-                <span>
-                  You can add exceptions to the rules you defined above. Add an exception by
-                  clicking on the link below.
-                </span>
-              </div>
+              <Note className={styles.note}>
+                You can add exceptions to the rules you defined above. Add an exception by clicking
+                on the link below.
+              </Note>
             )}
             <div className="rule-list__rule">
               {rules.denied.map(rule => (
@@ -96,12 +106,12 @@ export default class RuleList extends React.Component {
               ))}
             </div>
             {!isDisabled && (
-              <a
-                className="rule-list__add"
-                data-test-id="add-denied-rule"
+              <TextLink
+                className={styles.addLink}
+                testId="add-denied-rule"
                 onClick={onAddRule('denied')}>
                 {rules.denied.length > 0 ? 'Add another exception' : 'Add an exception'}
-              </a>
+              </TextLink>
             )}
           </div>
         )}

@@ -1,7 +1,6 @@
 import base from 'states/Base.es6';
-import contextHistory from 'navigation/Breadcrumbs/History.es6';
-import * as crumbFactory from 'navigation/Breadcrumbs/Factory.es6';
 import RoleRepository from 'access_control/RoleRepository';
+import RoleEditor from '../role_editor/RoleEditor';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog.es6';
 
 const list = base({
@@ -26,12 +25,12 @@ const newRole = {
         $stateParams.baseRoleId ? roleRepo.get($stateParams.baseRoleId) : null
     ]
   },
-  template: '<react-component name="access_control/RoleEditor" props="props" />',
-  controller: [
+  component: RoleEditor,
+  mapInjectedToProps: [
     '$scope',
     'baseRole',
     ($scope, baseRole) => {
-      $scope.props = {
+      return {
         isNew: true,
         role: RoleRepository.getEmpty(),
         baseRole,
@@ -44,8 +43,6 @@ const newRole = {
           $scope.$applyAsync();
         }
       };
-
-      contextHistory.set([crumbFactory.RoleList(), crumbFactory.Role(null, $scope.context)]);
     }
   ]
 };
@@ -53,6 +50,12 @@ const newRole = {
 const detail = {
   name: 'detail',
   url: '/:roleId',
+  onEnter: [
+    'spaceContext',
+    spaceContext => {
+      spaceContext.publishedCTs.refresh();
+    }
+  ],
   resolve: {
     role: [
       'spaceContext',
@@ -61,14 +64,12 @@ const detail = {
         RoleRepository.getInstance(spaceContext.space).get($stateParams.roleId)
     ]
   },
-  template: '<react-component name="access_control/RoleEditor" props="props" />',
-  controller: [
+  component: RoleEditor,
+  mapInjectedToProps: [
     '$scope',
-    '$stateParams',
-    'spaceContext',
     'role',
-    ($scope, $stateParams, spaceContext, role) => {
-      $scope.props = {
+    ($scope, role) => {
+      return {
         isNew: false,
         role,
         registerSaveAction: save => {
@@ -80,13 +81,6 @@ const detail = {
           $scope.$applyAsync();
         }
       };
-
-      spaceContext.publishedCTs.refresh();
-
-      contextHistory.set([
-        crumbFactory.RoleList(),
-        crumbFactory.Role($stateParams.roleId, $scope.context)
-      ]);
     }
   ]
 };

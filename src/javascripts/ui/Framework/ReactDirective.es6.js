@@ -71,7 +71,6 @@ import * as componentsSharedUserInvitationEs6 from 'components/shared/UserInvita
 import * as appUserProfileSettings from 'app/UserProfile/Settings';
 import * as appUserSettingsSpaceMembershipsEs6 from 'app/UserSettings/SpaceMemberships.es6';
 import * as componentsTabsContentTypeListContentTypeListPageEs6 from 'components/tabs/content_type_list/ContentTypeListPage.es6';
-import * as accessControlRoleEditorEs6 from 'access_control/RoleEditor';
 import * as appSpaceSettingsTeamsSpaceTeamsPageEs6 from 'app/SpaceSettings/Teams/SpaceTeamsPage.es6';
 import * as appSpaceSettingsTeamsAddTeamsAddTeamsRouterEs6 from 'app/SpaceSettings/Teams/AddTeams/AddTeamsRouter.es6';
 import * as componentsSharedStackOnboardingScreensGetStartedScreenEs6 from 'components/shared/stack-onboarding/screens/GetStartedScreen.es6';
@@ -339,7 +338,6 @@ function getModule(name) {
     'app/UserProfile/Settings': appUserProfileSettings,
     'app/UserSettings/SpaceMemberships.es6': appUserSettingsSpaceMembershipsEs6,
     'components/tabs/content_type_list/ContentTypeListPage.es6': componentsTabsContentTypeListContentTypeListPageEs6,
-    'access_control/RoleEditor': accessControlRoleEditorEs6,
     'app/SpaceSettings/Teams/SpaceTeamsPage.es6': appSpaceSettingsTeamsSpaceTeamsPageEs6,
     'app/SpaceSettings/Teams/AddTeams/AddTeamsRouter.es6': appSpaceSettingsTeamsAddTeamsAddTeamsRouterEs6,
     'components/shared/stack-onboarding/screens/GetStartedScreen.es6': componentsSharedStackOnboardingScreensGetStartedScreenEs6,
