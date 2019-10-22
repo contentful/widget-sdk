@@ -1,6 +1,6 @@
 import navBar from 'navigation/templates/NavBar.es6';
 
-const makeRef = (isMaster, ref) => {
+const makeRef = (ref, isMaster) => {
   if (isMaster) {
     return `spaces.detail.${ref}`;
   } else {
@@ -12,77 +12,77 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
   const dropdownItems = {
     locales: {
       if: 'nav.canNavigateTo("locales")',
-      sref: makeRef(isMaster, 'settings.locales.list'),
-      rootSref: makeRef(isMaster, 'settings.locales'),
+      sref: makeRef('settings.locales.list', isMaster),
+      rootSref: makeRef('settings.locales', isMaster),
       dataViewType: 'spaces-settings-locales',
       title: 'Locales'
     },
     extensions: {
       if: 'nav.canNavigateTo("extensions")',
-      sref: makeRef(isMaster, 'settings.extensions.list'),
-      rootSref: makeRef(isMaster, 'settings.extensions'),
+      sref: makeRef('settings.extensions.list', isMaster),
+      rootSref: makeRef('settings.extensions', isMaster),
       dataViewType: 'spaces-settings-extensions',
       title: 'Extensions'
     },
     settings: {
       if: 'nav.canNavigateTo("settings")',
-      sref: makeRef(isMaster, 'settings.space'),
+      sref: makeRef('settings.space', isMaster),
       dataViewType: 'spaces-settings-space',
       title: 'General settings'
     },
     users: {
       if: 'nav.canNavigateTo("users")',
-      sref: makeRef(isMaster, 'settings.users.list'),
-      rootSref: makeRef(isMaster, 'settings.users'),
+      sref: makeRef('settings.users.list', isMaster),
+      rootSref: makeRef('settings.users', isMaster),
       dataViewType: 'spaces-settings-users',
       title: 'Users'
     },
     teams: {
       if: 'nav.teamsInSpacesFF && nav.hasOrgTeamFeature && nav.canNavigateTo("teams")',
-      sref: makeRef(isMaster, 'settings.teams.list'),
-      rootSref: makeRef(isMaster, 'settings.teams'),
+      sref: makeRef('settings.teams.list', isMaster),
+      rootSref: makeRef('settings.teams', isMaster),
       dataViewType: 'spaces-settings-teams',
       label: 'new',
       title: 'Teams'
     },
     roles: {
       if: 'nav.canNavigateTo("roles")',
-      sref: makeRef(isMaster, 'settings.roles.list'),
-      rootSref: makeRef(isMaster, 'settings.roles'),
+      sref: makeRef('settings.roles.list', isMaster),
+      rootSref: makeRef('settings.roles', isMaster),
       dataViewType: 'spaces-settings-roles',
       title: 'Roles & permissions'
     },
     environments: {
       if: 'nav.canNavigateTo("environments")',
-      sref: makeRef(isMaster, 'settings.environments'),
+      sref: makeRef('settings.environments', isMaster),
       dataViewType: 'spaces-settings-environments',
       title: 'Environments'
     },
     keys: {
       if: 'nav.canNavigateTo("apiKey")',
-      sref: makeRef(isMaster, 'api.keys.list'),
-      rootSref: makeRef(isMaster, 'api'),
+      sref: makeRef('api.keys.list', isMaster),
+      rootSref: makeRef('api', isMaster),
       dataViewType: 'spaces-settings-api',
       title: 'API keys'
     },
     webhooks: {
       if: 'nav.canNavigateTo("webhooks")',
-      sref: makeRef(isMaster, 'settings.webhooks.list'),
-      rootSref: makeRef(isMaster, 'settings.webhooks'),
+      sref: makeRef('settings.webhooks.list', isMaster),
+      rootSref: makeRef('settings.webhooks', isMaster),
       dataViewType: 'spaces-settings-webhooks',
       title: 'Webhooks'
     },
     previews: {
       if: 'nav.canNavigateTo("previews")',
-      sref: makeRef(isMaster, 'settings.content_preview.list'),
-      rootSref: makeRef(isMaster, 'settings.content_preview'),
+      sref: makeRef('settings.content_preview.list', isMaster),
+      rootSref: makeRef('settings.content_preview', isMaster),
       dataViewType: 'spaces-settings-content-preview',
       title: 'Content preview',
       reload: useSpaceEnv
     },
     usage: {
       if: 'nav.usageEnabled && nav.canNavigateTo("usage")',
-      sref: makeRef(isMaster, 'settings.usage'),
+      sref: makeRef('settings.usage', isMaster),
       dataViewType: 'spaces-settings-usage',
       title: 'Usage',
       reload: useSpaceEnv
@@ -150,24 +150,24 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
           },
       {
         if: 'nav.canNavigateTo("contentType")',
-        sref: makeRef(isMaster, 'content_types.list'),
-        rootSref: makeRef(isMaster, 'content_types'),
+        sref: makeRef('content_types.list', isMaster),
+        rootSref: makeRef('content_types', isMaster),
         dataViewType: 'content-type-list',
         icon: 'nav-ct',
         title: 'Content model'
       },
       {
         if: 'nav.canNavigateTo("entry")',
-        sref: makeRef(isMaster, 'entries.list'),
-        rootSref: makeRef(isMaster, 'entries'),
+        sref: makeRef('entries.list', isMaster),
+        rootSref: makeRef('entries', isMaster),
         dataViewType: 'entry-list',
         icon: 'nav-entries',
         title: 'Content'
       },
       {
         if: 'nav.canNavigateTo("asset")',
-        sref: makeRef(isMaster, 'assets.list'),
-        rootSref: makeRef(isMaster, 'assets'),
+        sref: makeRef('assets.list', isMaster),
+        rootSref: makeRef('assets', isMaster),
         dataViewType: 'asset-list',
         icon: 'nav-media',
         title: 'Media'
@@ -176,15 +176,15 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
         if: 'nav.canNavigateTo("apps")',
         dataViewType: 'apps',
         icon: 'nav-apps',
-        sref: makeRef(isMaster, 'apps.list'),
-        rootSref: makeRef(isMaster, 'apps'),
+        sref: makeRef('apps.list', isMaster),
+        rootSref: makeRef('apps', isMaster),
         title: 'Apps'
       },
       {
         if:
           'nav.canNavigateTo("settings") || nav.canNavigateTo("apiKey") || nav.canNavigateTo("environments")',
         dataViewType: 'space-settings',
-        rootSref: makeRef(isMaster, 'settings'),
+        rootSref: makeRef('settings', isMaster),
         icon: 'nav-settings',
         title: useSpaceEnv ? 'Settings' : 'Space settings',
         children: useSpaceEnv ? envSettingsDropdown : spaceSettingsDropdown
