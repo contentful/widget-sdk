@@ -1,5 +1,15 @@
-import * as utils from './utils';
 import { padEnd } from 'lodash';
+import { create } from 'qrcode';
+import { renderToDataURL } from 'qrcode/lib/renderer/canvas';
+import * as utils from './utils';
+
+jest.mock('qrcode', () => ({
+  create: jest.fn()
+}));
+
+jest.mock('qrcode/lib/renderer/canvas', () => ({
+  renderToDataURL: jest.fn()
+}));
 
 describe('UserProfile Settings utils', () => {
   describe('getValidationMessageFor', () => {
@@ -122,6 +132,25 @@ describe('UserProfile Settings utils', () => {
           expect.any(String)
         );
       });
+    });
+  });
+
+  describe('createQRCodeDataURI', () => {
+    it('should return null if not given data', () => {
+      expect(utils.createQRCodeDataURI()).toBeNull();
+    });
+
+    it('should return null if given non-string data', () => {
+      expect(utils.createQRCodeDataURI({})).toBeNull();
+      expect(utils.createQRCodeDataURI(1234)).toBeNull();
+      expect(utils.createQRCodeDataURI([])).toBeNull();
+    });
+
+    it('should call qrcode utilities to create the data URI', () => {
+      utils.createQRCodeDataURI('hello');
+
+      expect(create).toHaveBeenCalled();
+      expect(renderToDataURL).toHaveBeenCalled();
     });
   });
 });

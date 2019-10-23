@@ -11,6 +11,9 @@ const updateIdentityLoginData = require('../fixtures/responses/user_account/upda
 const invalidCurrentPasswordData = require('../fixtures/responses/user_account/invalid-current-password.json');
 const insecureNewPasswordData = require('../fixtures/responses/user_account/insecure-new-password.json');
 
+const verify2FASuccess = require('../fixtures/responses/user_account/2fa-verify-success.json');
+const verify2FAFail = require('../fixtures/responses/user_account/2fa-verify-fail.json');
+
 const userProfileHeader = {
     ...defaultHeader,
     "CONTENT-TYPE": "application/vnd.contentful.management.v1+json"
@@ -27,6 +30,8 @@ function queryUserProfileDataRequest(): RequestOptions {
 
 export const getUserProfileData = {
     willReturnDefault() {
+        const interactionName = 'getDefaultUserProfileData';
+
         cy.addInteraction({
             provider: 'user_profile',
             state: 'user profile default login',
@@ -36,11 +41,12 @@ export const getUserProfileData = {
                 status: 200,
                 body: defaultData
             }
-        }).as('getDefaultUserProfileData');
+        }).as(interactionName);
 
-        return '@getDefaultUserProfileData';
+        return `@${interactionName}`;
     },
     willReturnIdentityLoginUser() {
+
         cy.addInteraction({
             provider: 'user_profile',
             state: 'user profile identity login',
@@ -237,5 +243,79 @@ export const deleteUserAccount = {
         }).as('deleteUserAccount');
 
         return '@deleteUserAccount';
+    }
+};
+
+function queryPostTwoFA(): RequestOptions {
+    return {
+        method: 'POST',
+        path: '/users/me/mfa/totp',
+        headers: {
+            ...defaultHeader,
+            "CONTENT-TYPE": "application/vnd.contentful.management.v1+json",
+            'X-Contentful-Enable-Alpha-Feature': 'mfa-api'
+        },
+        body: {}
+    }
+}
+
+export const getTwoFAData = {
+    willReturnIt() {
+        cy.addInteraction({
+            provider: 'user_profile',
+            state: 'user 2FA eligible',
+            uponReceiving: `a request to get data for 2FA`,
+            withRequest: queryPostTwoFA(),
+            willRespondWith: {
+                status: 201,
+                body: {}
+            }
+        }).as('deleteUserAccount');
+
+        return '@deleteUserAccount';
+    }
+};
+
+function queryPutTwoFA(body): RequestOptions {
+    return {
+        method: 'PUT',
+        path: '/users/me/mfa/totp/verify',
+        headers: {
+            ...defaultHeader,
+            "CONTENT-TYPE": "application/vnd.contentful.management.v1+json",
+            'X-Contentful-Enable-Alpha-Feature': 'mfa-api'
+        },
+        body
+    }
+}
+
+export const verifyTwoFAData = {
+    willReturnSuccess() {
+        cy.addInteraction({
+            provider: 'user_profile',
+            state: 'user 2FA eligible',
+            uponReceiving: `a request to verify 2FA setup`,
+            withRequest: queryPutTwoFA({ totpCode: "123456" }),
+            willRespondWith: {
+                status: 200,
+                body: verify2FASuccess
+            }
+        }).as('verifyTwoFASuccess');
+
+        return '@verifyTwoFASuccess';
+    },
+    willReturnFail() {
+        cy.addInteraction({
+            provider: 'user_profile',
+            state: 'user 2FA eligible',
+            uponReceiving: `a request to verify 2FA setup with invalid code`,
+            withRequest: queryPutTwoFA({ totpCode: "111111" }),
+            willRespondWith: {
+                status: 422,
+                body: verify2FAFail
+            }
+        }).as('verifyTwoFAFail');
+
+        return '@verifyTwoFAFail';
     }
 };

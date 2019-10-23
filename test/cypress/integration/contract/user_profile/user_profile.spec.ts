@@ -1,5 +1,15 @@
 import { getTokenForUser } from '../../../interactions/token';
-import { getUserProfileData, deleteIdentity, updateDefaultUserProfileData, addPassword, changePassword, deleteUserAccount } from '../../../interactions/user_profile';
+import {
+    getUserProfileData,
+    deleteIdentity,
+    updateDefaultUserProfileData,
+    addPassword,
+    changePassword,
+    deleteUserAccount,
+    getTwoFAData,
+    verifyTwoFAData
+} from '../../../interactions/user_profile';
+import { FeatureFlag } from '../../../util/featureFlag';
 
 describe('User profile page', () => {
     before(() =>
@@ -14,6 +24,7 @@ describe('User profile page', () => {
     context('default user', () => {
         beforeEach(() => {
             cy.resetAllFakeServers();
+            cy.enableFeatureFlags([FeatureFlag.TWO_FA]);
             const interactions = [
                 getTokenForUser.willReturnAValidToken(),
                 getUserProfileData.willReturnDefault()
@@ -37,6 +48,34 @@ describe('User profile page', () => {
                 .should('be.visible').
                 find('[data-test-id="remove-twitter-button"]')
                 .should('not.exist');
+        });
+
+        it('setup 2FA with invalid code', () => {
+            const get2FAInteraction = [getTwoFAData.willReturnIt()];
+            const verify2FAInteraction = [verifyTwoFAData.willReturnFail()];
+            cy.getByTestId('security-section-card').should('be.visible');
+            cy.getByTestId('enable-2fa-cta').click();
+            cy.wait(get2FAInteraction);
+
+            cy.getByTestId('code-input').find('input').should('be.visible').clear().type('111111');
+            cy.getByTestId('submit').should('be.visible').click();
+            cy.wait(verify2FAInteraction);
+
+            cy.getByTestId('cf-ui-validation-message').contains('The code you entered is not correct');
+        });
+
+        it('setup 2FA with valid code', () => {
+            const get2FAInteraction = [getTwoFAData.willReturnIt()];
+            const verify2FAInteraction = [verifyTwoFAData.willReturnSuccess()];
+            cy.getByTestId('security-section-card').should('be.visible');
+            cy.getByTestId('enable-2fa-cta').click();
+            cy.wait(get2FAInteraction);
+
+            cy.getByTestId('code-input').find('input').should('be.visible').clear().type('123456');
+            cy.getByTestId('submit').should('be.visible').click();
+            cy.wait(verify2FAInteraction);
+
+            cy.getByTestId('security-section').contains('Enabled with authenticator app');
         });
 
         describe('update user profile data', () => {
@@ -129,12 +168,13 @@ describe('User profile page', () => {
             cy.getByTestId('confirm-delete-account-button').click();
             cy.wait(deleteUserAccountInteraction);
             cy.url().should('include', '/goodbye');
-        })
+        });
     });
+
     context('identity only logged in user', () => {
         beforeEach(() => {
-
             cy.resetAllFakeServers();
+            cy.enableFeatureFlags([FeatureFlag.TWO_FA]);
             const interactions = [
                 getTokenForUser.willReturnAValidToken(),
                 getUserProfileData.willReturnIdentityLoginUser()
@@ -142,6 +182,12 @@ describe('User profile page', () => {
             cy.server();
             cy.visit('/account/profile/user');
             cy.wait(interactions);
+        });
+
+        it('check 2FA eligibility', () => {
+            cy.getByTestId('security-section-card').should('be.visible');
+            cy.getByTestId('add-password-cta').should('be.visible').click();
+            cy.getByTestId('change-password-modal').should('be.visible');
         });
 
         it('add valid password', () => {

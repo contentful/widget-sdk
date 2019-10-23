@@ -6,5 +6,9 @@ export const User = PropTypes.shape({
   avatarUrl: PropTypes.string,
   email: PropTypes.string,
   identities: PropTypes.array,
+  passwordSet: PropTypes.bool,
+  confirmed: PropTypes.bool,
+  mfaEligible: PropTypes.bool,
+  mfaEnabled: PropTypes.bool,
   sys: PropTypes.shape({ version: PropTypes.number })
 });

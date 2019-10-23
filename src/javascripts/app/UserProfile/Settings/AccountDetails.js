@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import {
   Heading,
   IconButton,
@@ -20,7 +21,6 @@ const styles = {
     marginLeft: tokens.spacingXs,
     cursor: 'pointer'
   }),
-  paddingS: css({ padding: tokens.spacingS }),
   accountImage: css({
     height: '75px',
     width: '75px',
@@ -62,7 +62,7 @@ const styles = {
   })
 };
 
-const openEditModal = async (user, setUser) => {
+const openEditModal = async (user, onEdit) => {
   const result = await ModalLauncher.open(({ isShown, onClose }) => {
     return (
       <UserEditModal
@@ -78,10 +78,10 @@ const openEditModal = async (user, setUser) => {
     return;
   }
 
-  setUser(result);
+  onEdit(result);
 };
 
-const openChangePasswordModal = async (user, setUser) => {
+const openChangePasswordModal = async (user, onChangePassword) => {
   const result = await ModalLauncher.open(({ isShown, onClose }) => {
     return (
       <ChangePasswordModal
@@ -97,11 +97,10 @@ const openChangePasswordModal = async (user, setUser) => {
     return;
   }
 
-  setUser(result);
+  onChangePassword(result);
 };
 
-export default function AccountDetails({ userData }) {
-  const [user, setUser] = useState(userData);
+export default function AccountDetails({ user, onEdit, onChangePassword }) {
   const [identities, setIdentities] = useState(user.identities);
   const removeIdentity = identityId => {
     const updatedIdentities = identities.filter(identity => identity.sys.id !== identityId);
@@ -110,7 +109,7 @@ export default function AccountDetails({ userData }) {
   };
 
   return (
-    <div data-test-id="user-account-data" className={styles.paddingS}>
+    <div data-test-id="user-account-data">
       <section className={styles.flexContainer}>
         <div className={cx(styles.column, styles.flexGrow1)}>
           <Heading>Account</Heading>
@@ -138,7 +137,7 @@ export default function AccountDetails({ userData }) {
               {!user.ssoLoginOnly && (
                 <TextLink
                   testId="link-change-password"
-                  onClick={() => openChangePasswordModal(user, setUser)}>
+                  onClick={() => openChangePasswordModal(user, onChangePassword)}>
                   {user.passwordSet && (
                     <span data-test-id="change-password-cta">Change password</span>
                   )}
@@ -159,7 +158,7 @@ export default function AccountDetails({ userData }) {
               label="Edit user account details"
               iconProps={{ icon: 'Edit' }}
               buttonType="muted"
-              onClick={() => openEditModal(user, setUser)}
+              onClick={() => openEditModal(user, onEdit)}
               testId="edit-user-account-details"
             />
           </Tooltip>
@@ -177,5 +176,7 @@ export default function AccountDetails({ userData }) {
 }
 
 AccountDetails.propTypes = {
-  userData: UserPropType.isRequired
+  user: UserPropType.isRequired,
+  onEdit: PropTypes.func.isRequired,
+  onChangePassword: PropTypes.func.isRequired
 };

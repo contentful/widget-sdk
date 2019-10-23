@@ -8,6 +8,8 @@
   "unconfirmedEmail": null,
   "passwordSet": true,
   "ssoLoginOnly": false,
+  "mfaEligible": true,
+  "mfaEnabled": false,
   "sys": {
     "type": "User",
     "id": "6TTXlu6ty7C3t4frLhd4nF",

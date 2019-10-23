@@ -1,15 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Heading, Button, Typography } from '@contentful/forma-36-react-components';
-import { css } from 'emotion';
-import tokens from '@contentful/forma-36-tokens';
 import { cancelUser } from 'Authentication.es6';
 import * as ModalLauncher from 'app/common/ModalLauncher.es6';
 import DeleteUserModal from './DeleteUserModal';
-
-const styles = {
-  paddingS: css({ padding: tokens.spacingS })
-};
 
 const openDeleteUserModal = async singleOwnerOrganizations => {
   const result = await ModalLauncher.open(({ isShown, onClose }) => {
@@ -32,7 +26,7 @@ const openDeleteUserModal = async singleOwnerOrganizations => {
 
 export default function DangerZoneSection({ singleOwnerOrganizations }) {
   return (
-    <Typography testId="danger-zone-section" className={styles.paddingS}>
+    <Typography testId="danger-zone-section">
       <Heading>Danger zone</Heading>
       <Button
         testId="delete-cta"

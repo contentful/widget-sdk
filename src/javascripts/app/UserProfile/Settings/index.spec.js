@@ -2,6 +2,7 @@ import React from 'react';
 import { render, cleanup, wait } from '@testing-library/react';
 import IndexPage from './index';
 import { fetchUserData } from './AccountRepository';
+import { getVariation } from 'LaunchDarkly.es6';
 
 import '@testing-library/jest-dom/extend-expect';
 
@@ -86,8 +87,8 @@ describe('IndexPage', () => {
 
     await wait();
 
-    expect(queryByTestId('user-account-data')).toBeVisible();
-    expect(queryByTestId('danger-zone-section')).toBeVisible();
+    expect(queryByTestId('account-details-section-card')).toBeVisible();
+    expect(queryByTestId('danger-zone-section-card')).toBeVisible();
   });
 
   it('should only render account details section if user is SSO restricted', async () => {
@@ -98,7 +99,41 @@ describe('IndexPage', () => {
 
     await wait();
 
-    expect(queryByTestId('user-account-data')).toBeVisible();
-    expect(queryByTestId('danger-zone-section')).toBeNull();
+    expect(queryByTestId('account-details-section-card')).toBeVisible();
+    expect(queryByTestId('danger-zone-section-card')).toBeNull();
+  });
+
+  describe('Security section', () => {
+    it('should show the security section if the feature flag is enabled and the user is not SSO restricted', async () => {
+      getVariation.mockResolvedValueOnce(true);
+
+      const { queryByTestId } = build();
+
+      await wait();
+
+      expect(queryByTestId('security-section-card')).toBeVisible();
+    });
+
+    it('should not show the security section if the feature flag is enabled but the user is SSO restricted', async () => {
+      getVariation.mockResolvedValueOnce(true);
+      const profile = createProfile({ ssoLoginOnly: true });
+      fetchUserData.mockReset().mockResolvedValueOnce(profile);
+
+      const { queryByTestId } = build();
+
+      await wait();
+
+      expect(queryByTestId('security-section-card')).toBeNull();
+    });
+
+    it('should not show the security section if the feature flag is disabled', async () => {
+      getVariation.mockResolvedValueOnce(false);
+
+      const { queryByTestId } = build();
+
+      await wait();
+
+      expect(queryByTestId('security-section-card')).toBeNull();
+    });
   });
 });

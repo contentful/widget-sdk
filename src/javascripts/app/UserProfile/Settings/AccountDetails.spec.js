@@ -18,8 +18,11 @@ describe('AccountDetails', () => {
       custom
     );
   };
-  const build = user => {
-    return render(<AccountDetails userData={user} />);
+
+  const build = ({ user, onEdit = () => {}, onChangePassword = () => {} }) => {
+    return render(
+      <AccountDetails user={user} onEdit={onEdit} onChangePassword={onChangePassword} />
+    );
   };
 
   afterEach(cleanup);
@@ -29,7 +32,7 @@ describe('AccountDetails', () => {
       passwordSet: true
     });
 
-    const { queryByTestId } = build(user);
+    const { queryByTestId } = build({ user });
 
     expect(queryByTestId('change-password-cta')).toBeVisible();
     expect(queryByTestId('add-password-cta')).toBeNull();
@@ -40,7 +43,7 @@ describe('AccountDetails', () => {
       passwordSet: false
     });
 
-    const { queryByTestId } = build(user);
+    const { queryByTestId } = build({ user });
 
     expect(queryByTestId('add-password-cta')).toBeVisible();
     expect(queryByTestId('change-password-cta')).toBeNull();
@@ -49,17 +52,18 @@ describe('AccountDetails', () => {
   it('should show the open identities section', () => {
     const user = makeUser();
 
-    const { queryByTestId } = build(user);
+    const { queryByTestId } = build({ user });
 
     expect(queryByTestId('identities-section')).toBeVisible();
   });
 
-  it('should do nothing if the user attempts to edit their profile but cancels', async () => {
+  it('should not call onEdit if the user attempts to edit their profile but cancels', async () => {
     ModalLauncher.open.mockResolvedValueOnce(false);
 
+    const onEdit = jest.fn();
     const user = makeUser();
 
-    const { queryByTestId } = build(user);
+    const { queryByTestId } = build({ user, onEdit });
 
     expect(queryByTestId('user-full-name')).toHaveTextContent('Jack Nicholson');
 
@@ -67,10 +71,10 @@ describe('AccountDetails', () => {
 
     await wait();
 
-    expect(queryByTestId('user-full-name')).toHaveTextContent('Jack Nicholson');
+    expect(onEdit).not.toHaveBeenCalled();
   });
 
-  it('should update the user if the UserEditModal is confirmed', async () => {
+  it('should call onEdit if the UserEditModal is confirmed', async () => {
     ModalLauncher.open.mockResolvedValueOnce(
       makeUser({
         firstName: 'Bruce',
@@ -78,9 +82,10 @@ describe('AccountDetails', () => {
       })
     );
 
+    const onEdit = jest.fn();
     const user = makeUser();
 
-    const { queryByTestId } = build(user);
+    const { queryByTestId } = build({ user, onEdit });
 
     expect(queryByTestId('user-full-name')).toHaveTextContent('Jack Nicholson');
 
@@ -88,47 +93,49 @@ describe('AccountDetails', () => {
 
     await wait();
 
-    expect(queryByTestId('user-full-name')).toHaveTextContent('Bruce Wayne');
+    expect(onEdit).toHaveBeenCalled();
   });
 
-  it('should do nothing if the ChangePasswordModal result is false', async () => {
+  it('should not call onChangePassword if the ChangePasswordModal result is false', async () => {
     ModalLauncher.open.mockResolvedValueOnce(false);
 
     const user = makeUser({
       passwordSet: false
     });
 
-    const { queryByTestId } = build(user);
+    const onChangePassword = jest.fn();
+    const { queryByTestId } = build({ user, onChangePassword });
 
     expect(queryByTestId('add-password-cta')).toBeVisible();
 
-    fireEvent.click(queryByTestId('edit-user-account-details'));
+    fireEvent.click(queryByTestId('add-password-cta'));
 
     await wait();
 
-    expect(queryByTestId('add-password-cta')).toBeVisible();
+    expect(onChangePassword).not.toHaveBeenCalled();
   });
 
-  it('should update the user if the ChangePasswordModal result is not false', async () => {
+  it('should call onChangePassword if the ChangePasswordModal result is not false', async () => {
     ModalLauncher.open.mockResolvedValueOnce(
       makeUser({
         passwordSet: true
       })
     );
 
+    const onChangePassword = jest.fn();
     const user = makeUser({
       passwordSet: false
     });
 
-    const { queryByTestId } = build(user);
+    const { queryByTestId } = build({ user, onChangePassword });
 
     expect(queryByTestId('add-password-cta')).toBeVisible();
 
-    fireEvent.click(queryByTestId('edit-user-account-details'));
+    fireEvent.click(queryByTestId('add-password-cta'));
 
     await wait();
 
-    expect(queryByTestId('change-password-cta')).toBeVisible();
+    expect(onChangePassword).toHaveBeenCalled();
   });
 
   it('should show the unconfirmed email if one is present', () => {
@@ -138,7 +145,7 @@ describe('AccountDetails', () => {
       unconfirmedEmail
     });
 
-    const { queryByTestId } = build(user);
+    const { queryByTestId } = build({ user });
 
     expect(queryByTestId('unconfirmed-email')).toHaveTextContent(
       `Unconfirmed email: ${unconfirmedEmail}`
@@ -152,20 +159,20 @@ describe('AccountDetails', () => {
     });
 
     it('should tell the user that the account is SSO enabled', () => {
-      const { queryByTestId } = build(user);
+      const { queryByTestId } = build({ user });
 
       expect(queryByTestId('sso-active')).toBeVisible();
     });
 
     it('should not allow the user to set their password', () => {
-      const { queryByTestId } = build(user);
+      const { queryByTestId } = build({ user });
 
       expect(queryByTestId('add-password-cta')).toBeNull();
       expect(queryByTestId('change-password-cta')).toBeNull();
     });
 
     it('should not show the open identities section', () => {
-      const { queryByTestId } = build(user);
+      const { queryByTestId } = build({ user });
 
       expect(queryByTestId('identities-section')).toBeNull();
     });

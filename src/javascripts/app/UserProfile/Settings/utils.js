@@ -1,3 +1,6 @@
+import { create as createQrCode } from 'qrcode';
+import { renderToDataURL } from 'qrcode/lib/renderer/canvas';
+
 const validations = {
   presence: value => (value.trim() ? true : false),
   minLength: (length, value) => (value && value.trim().length >= length ? true : false),
@@ -83,4 +86,12 @@ export function getValidationMessageFor(fields, fieldName) {
   }
 
   return validator(fieldData, fields);
+}
+
+export function createQRCodeDataURI(data) {
+  if (!data || typeof data !== 'string') {
+    return null;
+  }
+
+  return renderToDataURL(createQrCode(data));
 }

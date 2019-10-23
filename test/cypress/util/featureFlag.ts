@@ -9,5 +9,6 @@ export enum FeatureFlag {
   SCHEDULED_PUBLICATION = 'feature-pul-04-2019-scheduled-publication-enabled',
   TEAMS_SPACE_MEMBERSHIP = 'feature-bv-01-2019-team-space-memberships',
   QUICK_NAVIGATION = 'feature-ht-04-2019-quick-navigation',
-  DEFAULT = ENVIRONMENTS
+  DEFAULT = ENVIRONMENTS,
+  TWO_FA = 'feature-ogg-10-2019-2fa'
 }
