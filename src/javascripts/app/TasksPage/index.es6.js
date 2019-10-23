@@ -21,6 +21,7 @@ import EmptyStateContainer, {
 import FolderIllustration from 'svg/folder-illustration.es6';
 import RelativeDateTime from 'components/shared/RelativeDateTime/index.es6';
 import { href } from 'states/Navigator.es6';
+import { getToken } from 'Authentication.es6';
 
 const styles = {
   workbenchContent: css({
@@ -34,36 +35,48 @@ const styles = {
 export default class TasksPage extends Component {
   static propTypes = {
     spaceId: PropTypes.string.isRequired,
+    currentUserId: PropTypes.string.isRequired,
     environmentId: PropTypes.string.isRequired,
-    contentTypes: PropTypes.array.isRequired,
+    users: PropTypes.object.isRequired,
     defaultLocale: PropTypes.object.isRequired
   };
 
   state = {
-    tasks: [
-      {
-        id: 'someId',
-        body: 'New task!',
-        environmentUuId: 'environmentUuId',
-        spaceId: 'spaceId',
-        entryId: 'entryId',
-        createdById: 'createdById',
-        updatedById: 'updatedById',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      },
-      {
-        id: 'someId',
-        body: 'New task!',
-        environmentUuId: 'environmentUuId',
-        spaceId: 'spaceId',
-        entryId: 'entryId',
-        createdById: 'createdById',
-        updatedById: 'updatedById',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
-    ]
+    tasks: []
+  };
+
+  componentDidMount = async () => {
+    const { currentUserId, spaceId, users, getEntries, getEntryTitle } = this.props;
+
+    const API_BASE = 'https://api.flinkly.com';
+    const url = `/spaces/${spaceId}/tasks?assignedTo.sys.id=${currentUserId}`;
+
+    // TODO: Get actual Auth token
+
+    const headers = {
+      'x-contentful-enable-alpha-feature': 'comments-api,tasks-dashboard',
+      Authorization: `Bearer ${await getToken()}`
+    };
+
+    const res = await window.fetch(API_BASE + url, { method: 'GET', headers });
+    const { items } = await res.json();
+    const spaceUsers = await users.getAll();
+    const entries = await getEntries({
+      'sys.id[in]': items.map(item => item.sys.reference.sys.id).join(',')
+    });
+    const entriesTitles = entries.items.map(entry => getEntryTitle(entry));
+
+    const filteredItems = items.map(item => ({
+      body: item.body,
+      createdBy: spaceUsers.find(user => user.sys.id === item.sys.createdBy.sys.id),
+      createdAt: item.sys.createdAt,
+      entryId: item.sys.reference.sys.id,
+      entryTitle: item.sys.reference.sys.id
+    }));
+
+    console.log({ spaceUsers, items, filteredItems, entries, entriesTitles });
+
+    this.setState({ tasks: filteredItems });
   };
 
   renderEmptyState = () => (
@@ -81,7 +94,7 @@ export default class TasksPage extends Component {
       <TableHead>
         <TableRow>
           <TableCell>Task</TableCell>
-          <TableCell>Assigned by</TableCell>
+          <TableCell>Created by</TableCell>
           <TableCell>Assigned at</TableCell>
           <TableCell>Appears in</TableCell>
         </TableRow>
@@ -91,9 +104,9 @@ export default class TasksPage extends Component {
         {this.state.tasks.map((task, index) => (
           <TableRow key={index}>
             <TableCell>{task.body}</TableCell>
-            <TableCell>{task.createdById}</TableCell>
+            <TableCell>{task.createdBy.firstName}</TableCell>
             <TableCell>
-              <RelativeDateTime value={task.updatedAt} />
+              <RelativeDateTime value={task.createdAt} />
             </TableCell>
             <TableCell>
               <TextLink
@@ -104,7 +117,7 @@ export default class TasksPage extends Component {
                     entryId: task.entryId
                   }
                 })}>
-                Name of entry
+                {task.entryTitle}
               </TextLink>
             </TableCell>
           </TableRow>
@@ -114,11 +127,13 @@ export default class TasksPage extends Component {
   );
 
   render() {
+    console.log({ props: this.props });
+
     return (
       <Workbench>
         <Workbench.Header title="Pending tasks"></Workbench.Header>
         <Workbench.Content className={styles.workbenchContent}>
-          {this.state.tasks.length && (
+          {!!this.state.tasks.length && (
             <Note className={styles.note}>
               Your pending tasks appear here. You must resolve these tasks in order for the related
               entry to become publishable (TODO: replace with actual message).

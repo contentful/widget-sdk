@@ -17,8 +17,12 @@ export default {
         ({ spaceId }, spaceContext) => ({
           spaceId,
           environmentId: spaceContext.getEnvironmentId(),
+          currentUser: spaceContext.getCurrentUser,
+          currentUserId: spaceContext.getData('spaceMember.sys.user.sys.id'),
+          users: spaceContext.users,
           defaultLocale: TheLocaleStore.getDefaultLocale(),
-          contentTypes: spaceContext.publishedCTs.getAllBare()
+          getEntries: query => spaceContext.cma.getEntries(query),
+          getEntryTitle: entry => spaceContext.entryTitle(entry)
         })
       ]
     }
