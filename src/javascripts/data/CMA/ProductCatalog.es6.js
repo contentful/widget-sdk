@@ -75,7 +75,13 @@ const load = async (loader, featureId, defaultValue = false, common = []) => {
   }
 };
 
-export const getOrgFeature = (orgId, featureId, defaultValue) => {
+export const getOrgFeature = async (orgId, featureId, defaultValue) => {
+  if (!orgId || !featureId) {
+    return isUndefined(defaultValue)
+      ? Promise.reject('No orgId or featureId provided when fetching an org feature')
+      : Promise.resolve(defaultValue);
+  }
+
   return load(getLoaderForOrg(orgId), featureId, defaultValue, COMMON_FOR_ORG);
 };
 
