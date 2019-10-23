@@ -19,25 +19,33 @@ class FeedbackButton extends Component {
     label: PropTypes.string,
 
     onFeedbackConfirmed: PropTypes.func.isRequired,
+    onClick: PropTypes.func,
+    onConfirm: PropTypes.func,
+    onCancel: PropTypes.func,
     organizationId: PropTypes.string,
     userId: PropTypes.string,
     teamId: PropTypes.string
   };
 
   onClick = async () => {
-    const { about, onFeedbackConfirmed } = this.props;
+    const { about, onFeedbackConfirmed, onClick, onConfirm, onCancel } = this.props;
+    if (onClick) onClick(this.state);
     const { feedback, canBeContacted } = await ModalLauncher.open(({ isShown, onClose }) => (
       <FeedbackDialog
         key={Date.now()}
         about={about}
         isShown={isShown}
-        onCancel={() => onClose(false)}
+        onCancel={() => {
+          onClose(false);
+          if (onCancel) onCancel(this.state);
+        }}
         onConfirm={onClose}
       />
     ));
 
     if (feedback) {
       onFeedbackConfirmed(feedback, canBeContacted);
+      if (onConfirm) onConfirm(this.state);
     }
   };
 

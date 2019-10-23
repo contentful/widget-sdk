@@ -115,6 +115,9 @@ export const validEvents = {
   extension: ['save', 'install', 'render', 'activate', 'set_value'],
   entity_button: ['click'],
   environment_aliases: [
+    'custom_alias_feedback_start',
+    'custom_alias_feedback_complete',
+    'custom_alias_feedback_abort',
     'opt_in_start',
     'opt_in_complete',
     'opt_in_step_1',

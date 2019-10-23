@@ -4,6 +4,11 @@ import tokens from '@contentful/forma-36-tokens';
 import FeedbackButton from 'app/common/FeedbackButton.es6';
 import { Provider } from 'react-redux';
 import store from 'redux/store.es6';
+import {
+  customAliasFeedbackStart,
+  customAliasFeedbackAbort,
+  customAliasFeedbackComplete
+} from 'analytics/events/EnvironmentAliases';
 
 const feedbackModalStyles = {
   box: css({
@@ -41,6 +46,9 @@ export default function Feedback() {
       <Provider store={store}>
         <FeedbackButton
           type="link"
+          onClick={customAliasFeedbackStart}
+          onConfirm={customAliasFeedbackComplete}
+          onCancel={customAliasFeedbackAbort}
           target="devWorkflows"
           about="Environment Aliases"
           label="+ Want more aliases?"

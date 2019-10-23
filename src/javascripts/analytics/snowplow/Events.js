@@ -83,6 +83,9 @@ registerGenericEvent('incoming_links:dialog_link_click');
 registerGenericEvent('incoming_links:sidebar_link_click');
 registerGenericEvent('incoming_links:query');
 
+registerEnvironmentAliasesEvent('environment_aliases:custom_alias_feedback_start');
+registerEnvironmentAliasesEvent('environment_aliases:custom_alias_feedback_complete');
+registerEnvironmentAliasesEvent('environment_aliases:custom_alias_feedback_abort');
 registerEnvironmentAliasesEvent('environment_aliases:opt_in_start');
 registerEnvironmentAliasesEvent('environment_aliases:opt_in_complete');
 registerEnvironmentAliasesEvent('environment_aliases:opt_in_step_1');
