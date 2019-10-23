@@ -53,16 +53,25 @@ export default class TasksPage extends Component {
       this.props.users.getAll()
     ]);
     const entryTitles = this.getEntryTitles(entries);
-
-    this.setState({
-      tasks: tasks.map(task => ({
+    const taskState = tasks.reduce((tasks, task) => {
+      if (!entryTitles[task.sys.reference.sys.id]) {
+        // getEntryTitles() should always return a title for a valid entry, even
+        // if it's just "Untitled". This gives us a cheap way of detecting
+        // whether the entries are visible or not (whether the user has
+        // permission or some other bug has rendered the entry missing or
+        // inaccessible to the user).
+        return tasks;
+      }
+      const newTask = {
         body: task.body,
         createdBy: spaceUsers.find(user => user.sys.id === task.sys.createdBy.sys.id),
         createdAt: task.sys.createdAt,
         entryId: task.sys.reference.sys.id,
         entryTitle: entryTitles[task.sys.reference.sys.id]
-      }))
-    });
+      };
+      return [...tasks, newTask];
+    }, []);
+    this.setState({ tasks: taskState });
   };
 
   getTasksAndEntries = async () => {
