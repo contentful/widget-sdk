@@ -9,8 +9,8 @@ import statesConfigEs6 from 'states/config.es6';
 import componentsAppContainerCfAppContainerDirectiveEs6 from 'components/app_container/cfAppContainerDirective.es6';
 import navigationSidepanelDirectiveEs6 from 'navigation/Sidepanel/directive.es6';
 import uiFrameworkCfComponentBridgeDirectiveEs6 from 'ui/Framework/CfComponentBridgeDirective.es6';
-import uiFrameworkReactDirectiveEs6 from 'ui/Framework/ReactDirective.es6';
 import navigationSidepanelTriggerDirectiveEs6 from 'navigation/Sidepanel/TriggerDirective.es6';
+import navigationAccountDropdownDirectiveEs6 from 'navigation/accountDropdownDirective.es6';
 import componentsSharedPersistentNotificationCfPersistentNotificationDirectiveEs6 from 'components/shared/persistent_notification/cfPersistentNotificationDirective.es6';
 
 export const angularInitRun = [
@@ -28,8 +28,8 @@ export const angularInitRun = [
     componentsAppContainerCfAppContainerDirectiveEs6();
     navigationSidepanelDirectiveEs6();
     uiFrameworkCfComponentBridgeDirectiveEs6();
-    uiFrameworkReactDirectiveEs6();
     navigationSidepanelTriggerDirectiveEs6();
+    navigationAccountDropdownDirectiveEs6();
     componentsSharedPersistentNotificationCfPersistentNotificationDirectiveEs6();
 
     const modules = await Promise.all([
@@ -131,6 +131,7 @@ export const angularInitRun = [
       import('search/EntitySelector/entitySelectorDirective.es6'),
       import('services/exceptionHandler.es6'),
       import('states/cfSrefDirective.es6'),
+      import('ui/Framework/ReactDirective.es6'),
       import('ui/cfIconDirective.es6'),
       import('ui/cfUiTab.es6'),
       import('ui/highlightMatchDirective.es6'),
