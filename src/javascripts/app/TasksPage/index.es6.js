@@ -20,8 +20,8 @@ import EmptyStateContainer, {
 } from 'components/EmptyStateContainer/EmptyStateContainer.es6';
 import FolderIllustration from 'svg/folder-illustration.es6';
 import RelativeDateTime from 'components/shared/RelativeDateTime/index.es6';
+import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
 import { href } from 'states/Navigator.es6';
-import { getToken } from 'Authentication.es6';
 
 const styles = {
   workbenchContent: css({
@@ -38,7 +38,9 @@ export default class TasksPage extends Component {
     currentUserId: PropTypes.string.isRequired,
     environmentId: PropTypes.string.isRequired,
     users: PropTypes.object.isRequired,
-    defaultLocale: PropTypes.object.isRequired
+    defaultLocale: PropTypes.object.isRequired,
+    getEntries: PropTypes.func.isRequired,
+    getEntryTitle: PropTypes.func.isRequired
   };
 
   state = {
@@ -46,44 +48,49 @@ export default class TasksPage extends Component {
   };
 
   componentDidMount = async () => {
-    const { currentUserId, spaceId, users, getEntries, getEntryTitle } = this.props;
+    const { currentUserId, spaceId, users, getEntries } = this.props;
 
-    const API_BASE = 'https://api.flinkly.com';
-    const url = `/spaces/${spaceId}/tasks?assignedTo.sys.id=${currentUserId}`;
-
-    // TODO: Get actual Auth token
-
-    const headers = {
-      'x-contentful-enable-alpha-feature': 'comments-api,tasks-dashboard',
-      Authorization: `Bearer ${await getToken()}`
-    };
-
-    const res = await window.fetch(API_BASE + url, { method: 'GET', headers });
-    const { items } = await res.json();
-    const spaceUsers = await users.getAll();
-    const entries = await getEntries({
-      'sys.id[in]': items.map(item => item.sys.reference.sys.id).join(',')
+    const endpoint = createSpaceEndpoint(spaceId);
+    const getTasks = endpoint(
+      {
+        method: 'GET',
+        path: ['tasks'],
+        query: { 'assignedTo.sys.id': currentUserId }
+      },
+      { 'x-contentful-enable-alpha-feature': 'comments-api,tasks-dashboard' }
+    );
+    const [{ items: tasks }, spaceUsers] = await Promise.all([getTasks, users.getAll()]);
+    const { items: entries } = await getEntries({
+      'sys.id[in]': tasks.map(item => item.sys.reference.sys.id).join(',')
     });
 
-    const entryTitles = entries.items.map(entry =>
-      getEntryTitle({
-        getContentTypeId: () => entry.sys.contentType.sys.id,
-        data: entry
-      })
-    );
+    const entryTitles = this.getEntryTitles(entries);
 
-    const filteredItems = items.map(item => ({
-      body: item.body,
-      createdBy: spaceUsers.find(user => user.sys.id === item.sys.createdBy.sys.id),
-      createdAt: item.sys.createdAt,
-      entryId: item.sys.reference.sys.id,
-      entryTitle: item.sys.reference.sys.id
-    }));
-
-    console.log({ spaceUsers, items, filteredItems, entries, entryTitles });
-
-    this.setState({ tasks: filteredItems });
+    this.setState({
+      tasks: tasks.map(task => ({
+        body: task.body,
+        createdBy: spaceUsers.find(user => user.sys.id === task.sys.createdBy.sys.id),
+        createdAt: task.sys.createdAt,
+        entryId: task.sys.reference.sys.id,
+        entryTitle: entryTitles[task.sys.reference.sys.id]
+      }))
+    });
   };
+
+  getEntryTitles = entries => {
+    const entryTitles = {};
+    for (const entry of entries) {
+      const { id } = entry.sys;
+      entryTitles[id] = entryTitles[id] || this.getEntryTitle(entry);
+    }
+    return entryTitles;
+  };
+
+  getEntryTitle = entry =>
+    this.props.getEntryTitle({
+      getContentTypeId: () => entry.sys.contentType.sys.id,
+      data: entry
+    });
 
   renderEmptyState = () => (
     <EmptyStateContainer data-test-id="tasks-empty-state">
@@ -133,8 +140,6 @@ export default class TasksPage extends Component {
   );
 
   render() {
-    console.log({ props: this.props });
-
     return (
       <Workbench>
         <Workbench.Header title="Pending tasks"></Workbench.Header>
