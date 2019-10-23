@@ -1,15 +1,7 @@
 import { getModule } from 'NgRegistry.es6';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { map } from 'lodash';
-import {
-  Notification,
-  ModalConfirm,
-  Paragraph,
-  Typography,
-  SelectField,
-  Option
-} from '@contentful/forma-36-react-components';
+import { Notification, ModalConfirm, Paragraph } from '@contentful/forma-36-react-components';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 import { getInstance } from 'access_control/RoleRepository';
@@ -27,11 +19,8 @@ export function createRoleRemover(listHandler, role) {
         key={uniqueModalKey}
         isShown={isShown}
         role={role}
-        onConfirm={async moveToRoleId => {
+        onConfirm={async () => {
           try {
-            if (moveToRoleId) {
-              await moveUsersAndRemoveRole(moveToRoleId);
-            }
             await remove();
             onClose(true);
           } catch (error) {
@@ -53,58 +42,35 @@ export function createRoleRemover(listHandler, role) {
       Notification.success('Role successfully deleted.');
     });
   }
-
-  function moveUsersAndRemoveRole(moveToRoleId) {
-    const memberships = listHandler.getMemberships();
-    const promises = map(memberships, membership =>
-      spaceContext.memberships.changeRoleTo(membership, [moveToRoleId])
-    );
-    return Promise.all(promises);
-  }
 }
 
 export function RemoveRoleModalConfirm(props) {
   const [loading, setLoading] = React.useState(false);
-  const [selectedRole, setSelectedRole] = React.useState('');
 
   return (
     <ModalConfirm
       intent="negative"
       isShown={props.isShown}
-      cancelLabel="Cancel"
+      cancelLabel={props.isUsed ? 'OK' : 'Cancel'}
       isConfirmLoading={loading}
-      isConfirmDisabled={props.isUsed ? selectedRole === '' : false}
       onConfirm={() => {
         setLoading(true);
-        props.onConfirm(selectedRole).finally(() => {
+        props.onConfirm().finally(() => {
           setLoading(false);
         });
       }}
       onCancel={props.onCancel}
-      confirmLabel={props.isUsed ? 'Move users and delete the role' : 'Delete the role'}
-      title={`Delete role`}
+      confirmLabel={props.isUsed ? false : 'Delete the role'}
+      title="Delete role"
       shouldCloseOnOverlayClick={false}>
       {props.isUsed ? (
-        <Typography>
+        <>
           <Paragraph>
-            Before deleting the <strong>{props.role.name}</strong> role you need to move all the{' '}
+            Before deleting the <strong>{props.role.name}</strong> role, you need to move all the{' '}
             {props.count} users to another role.
           </Paragraph>
-          <SelectField
-            labelText="New role"
-            id="field-role"
-            name="field-role"
-            onChange={e => {
-              setSelectedRole(e.target.value);
-            }}>
-            <Option value="">Select the role to which you want to move users</Option>
-            {props.roleOptions.map(roleOption => (
-              <Option key={roleOption.id} value={roleOption.id}>
-                {roleOption.name}
-              </Option>
-            ))}
-          </SelectField>
-        </Typography>
+          <Paragraph>Some of these users might recieve this role via a team membership.</Paragraph>
+        </>
       ) : (
         <Paragraph>
           Are you sure that you want to delete <strong>{props.role.name}</strong>?
