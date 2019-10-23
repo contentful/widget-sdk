@@ -15,7 +15,7 @@ describe('WebhookBodyTransformation', () => {
 
   const findRadioButtons = element =>
     element.querySelectorAll('.webhook-editor__settings-option input[type="radio"]');
-  const findEditor = element => element.querySelector('.ReactCodeMirror textarea');
+  const findEditor = element => element.querySelector('.react-codemirror2 .CodeMirror-code');
 
   const assertRadioButtons = (wrapper, [e1, e2]) => {
     const radioButtons = findRadioButtons(wrapper);
@@ -33,14 +33,7 @@ describe('WebhookBodyTransformation', () => {
     const [{ container }] = renderComponent('');
     assertRadioButtons(container, [false, true]);
     const editor = findEditor(container);
-    expect(editor.value).toBe('');
-  });
-
-  it('renders editor if non-empty body provided', () => {
-    const [{ container }] = renderComponent('test');
-    assertRadioButtons(container, [false, true]);
-    const editor = findEditor(container);
-    expect(editor.value).toBe('test');
+    expect(editor.textContent).toBe('');
   });
 
   it('shows editor and sets empty value when selecting custom body', () => {

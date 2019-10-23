@@ -45,7 +45,6 @@ import * as appHomeSpaceHomePageEs6 from 'app/home/SpaceHomePage.es6';
 import * as appSettingsLocalesRoutesLocalesEditRouteEs6 from 'app/settings/locales/routes/LocalesEditRoute.es6';
 import * as appWidgetsRichTextReadOnlyRichTextEditorEs6 from 'app/widgets/rich_text/ReadOnlyRichTextEditor.es6';
 import * as componentsSharedRelativeDateTimeIndexEs6 from 'components/shared/RelativeDateTime/index.es6';
-import * as appWidgetsJsonJsonEditorWarningEs6 from 'app/widgets/json/JsonEditorWarning.es6';
 import * as appWidgetsLocationLocationEditorWarningEs6 from 'app/widgets/location/LocationEditorWarning.es6';
 import * as componentsFieldDialogValidationValuesEs6 from 'components/field_dialog/ValidationValues.es6';
 import * as componentsFieldDialogAppearanceFieldDialogAppearanceTabEs6 from 'components/field_dialog/appearance/FieldDialogAppearanceTab.es6';
@@ -312,7 +311,6 @@ function getModule(name) {
     'app/settings/locales/routes/LocalesEditRoute.es6': appSettingsLocalesRoutesLocalesEditRouteEs6,
     'app/widgets/rich_text/ReadOnlyRichTextEditor.es6': appWidgetsRichTextReadOnlyRichTextEditorEs6,
     'components/shared/RelativeDateTime/index.es6': componentsSharedRelativeDateTimeIndexEs6,
-    'app/widgets/json/JsonEditorWarning.es6': appWidgetsJsonJsonEditorWarningEs6,
     'app/widgets/location/LocationEditorWarning.es6': appWidgetsLocationLocationEditorWarningEs6,
     'components/field_dialog/ValidationValues.es6': componentsFieldDialogValidationValuesEs6,
     'components/field_dialog/appearance/FieldDialogAppearanceTab.es6': componentsFieldDialogAppearanceFieldDialogAppearanceTabEs6,

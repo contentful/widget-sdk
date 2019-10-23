@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import CodeMirror from 'react-codemirror';
+import { Controlled as CodeMirror } from 'react-codemirror2';
 import { get } from 'lodash';
 import WidgetParametersForm from 'widgets/WidgetParametersForm.es6';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils.es6';
@@ -20,9 +20,13 @@ const Editor = ({ height, value, onChange, options }) => {
   return (
     <div className={`extension-form__cm${options.readOnly ? ' x--readonly' : ''}`}>
       <CodeMirror
-        ref={el => el && el.getCodeMirror().setSize(null, height || DEFAULT_CM_HEIGHT)}
+        editorDidMount={editor => {
+          editor.setSize(null, height || DEFAULT_CM_HEIGHT);
+        }}
         value={value || ''}
-        onChange={onChange}
+        onBeforeChange={(_editor, _data, value) => {
+          onChange(value);
+        }}
         options={options}
       />
     </div>

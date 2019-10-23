@@ -19,6 +19,7 @@ import { BooleanEditor } from '@contentful/field-editor-boolean';
 import { RatingEditor } from '@contentful/field-editor-rating';
 import { NumberEditor } from '@contentful/field-editor-number';
 import { UrlEditor } from '@contentful/field-editor-url';
+import { JsonEditor } from '@contentful/field-editor-json';
 
 const CfLinkEditor = linkEditorWithCfWebApp(LinkEditor);
 const CfSingleLinkEditor = linkEditorWithCfWebApp(SingleLinkEditor);
@@ -186,7 +187,9 @@ export function create() {
   registerWidget('objectEditor', {
     fieldTypes: ['Object'],
     name: 'Object',
-    template: '<cf-json-editor />'
+    renderFieldEditor: ({ widgetApi }) => (
+      <JsonEditor field={widgetApi.field} parameters={widgetApi.parameters} />
+    )
   });
 
   registerWidget('richTextEditor', {

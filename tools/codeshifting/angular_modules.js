@@ -45,7 +45,7 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
       'react',
       'react-animate-height',
       'react-click-outside',
-      'react-codemirror',
+      'react-codemirror2',
       'react-dom',
       'react-dom/server',
       'react-highlight-words',

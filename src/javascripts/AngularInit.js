@@ -66,8 +66,6 @@ export const angularInitRun = [
       import('app/snapshots/snapshotComparator.es6'),
       import('app/widgets/cfFileEditorDirective.es6'),
       import('app/widgets/datetime/cfEntryDatetimeEditorDirective.es6'),
-      import('app/widgets/json/cfJsonEditorCodeEditorDirective.es6'),
-      import('app/widgets/json/cfJsonEditorDirective.es6'),
       import('app/widgets/link/entityLinkDirectives.es6'),
       import('app/widgets/location/cfLocationEditorDirective.es6'),
       import('app/widgets/location/searchController.es6'),

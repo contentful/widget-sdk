@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import CodeMirror from 'react-codemirror';
+import { Controlled as CodeMirror } from 'react-codemirror2';
 import { throttle } from 'lodash';
 
 const TRANSFORMATION_EXAMPLE = {
@@ -18,11 +18,10 @@ const CODE_MIRROR_OPTIONS = {
   lineWrapping: true
 };
 
-const refreshCodeMirror = throttle(el => {
-  const cm = el && el.getCodeMirror();
-  if (cm) {
-    cm.setSize(null, '250px');
-    cm.refresh();
+const refreshCodeMirror = throttle(editor => {
+  if (editor) {
+    editor.setSize(null, '250px');
+    editor.refresh();
   }
 }, 300);
 
@@ -31,6 +30,8 @@ export default class WebhookBodyTransformation extends React.Component {
     body: PropTypes.string,
     onChange: PropTypes.func.isRequired
   };
+
+  editor = null;
 
   constructor(props) {
     super(props);
@@ -41,7 +42,7 @@ export default class WebhookBodyTransformation extends React.Component {
   }
 
   componentDidUpdate() {
-    refreshCodeMirror(this.el);
+    refreshCodeMirror(this.editor);
   }
 
   render() {
@@ -84,14 +85,14 @@ export default class WebhookBodyTransformation extends React.Component {
         {hasBodyTransformation && (
           <div className="webhook-editor__settings_payload">
             <CodeMirror
-              ref={el => {
-                this.el = el;
+              editorDidMount={el => {
+                this.editor = el;
               }}
               options={CODE_MIRROR_OPTIONS}
               value={body}
-              onChange={body => {
-                this.last = body;
-                onChange(body);
+              onBeforeChange={(_editor, _data, value) => {
+                this.last = value;
+                onChange(value);
               }}
             />
           </div>

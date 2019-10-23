@@ -90,7 +90,6 @@ const react = node => {
     'react-dom',
     'react-redux',
     'react-router-dom',
-    'react-codemirror',
     'react-animate-height',
     'redux/store',
     'slate-react',
