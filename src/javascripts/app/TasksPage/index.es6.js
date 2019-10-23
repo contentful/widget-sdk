@@ -64,7 +64,13 @@ export default class TasksPage extends Component {
     const entries = await getEntries({
       'sys.id[in]': items.map(item => item.sys.reference.sys.id).join(',')
     });
-    const entriesTitles = entries.items.map(entry => getEntryTitle(entry));
+
+    const entryTitles = entries.items.map(entry =>
+      getEntryTitle({
+        getContentTypeId: () => entry.sys.contentType.sys.id,
+        data: entry
+      })
+    );
 
     const filteredItems = items.map(item => ({
       body: item.body,
@@ -74,7 +80,7 @@ export default class TasksPage extends Component {
       entryTitle: item.sys.reference.sys.id
     }));
 
-    console.log({ spaceUsers, items, filteredItems, entries, entriesTitles });
+    console.log({ spaceUsers, items, filteredItems, entries, entryTitles });
 
     this.setState({ tasks: filteredItems });
   };
