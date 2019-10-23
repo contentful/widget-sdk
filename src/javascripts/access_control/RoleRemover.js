@@ -1,5 +1,6 @@
 import { getModule } from 'NgRegistry.es6';
 import React from 'react';
+import pluralize from 'pluralize';
 import PropTypes from 'prop-types';
 import { Notification, ModalConfirm, Paragraph } from '@contentful/forma-36-react-components';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
@@ -44,36 +45,36 @@ export function createRoleRemover(listHandler, role) {
   }
 }
 
-export function RemoveRoleModalConfirm(props) {
+export function RemoveRoleModalConfirm({ isUsed, isShown, onCancel, onConfirm, role, count }) {
   const [loading, setLoading] = React.useState(false);
 
   return (
     <ModalConfirm
-      intent="negative"
-      isShown={props.isShown}
-      cancelLabel={props.isUsed ? 'OK' : 'Cancel'}
+      intent={isUsed ? 'primary' : 'negative'}
+      isShown={isShown}
+      cancelLabel={isUsed ? 'OK' : 'Cancel'}
       isConfirmLoading={loading}
       onConfirm={() => {
         setLoading(true);
-        props.onConfirm().finally(() => {
+        onConfirm().finally(() => {
           setLoading(false);
         });
       }}
-      onCancel={props.onCancel}
-      confirmLabel={props.isUsed ? false : 'Delete the role'}
+      onCancel={onCancel}
+      confirmLabel={isUsed ? false : 'Delete the role'}
       title="Delete role"
       shouldCloseOnOverlayClick={false}>
-      {props.isUsed ? (
+      {isUsed ? (
         <>
           <Paragraph>
-            Before deleting the <strong>{props.role.name}</strong> role, you need to move all the{' '}
-            {props.count} users to another role.
+            Before deleting the <strong>{role.name}</strong> role, you need to move{' '}
+            {pluralize('user', count, true)} to another role.
           </Paragraph>
-          <Paragraph>Some of these users might recieve this role via a team membership.</Paragraph>
+          <Paragraph>This might require changing the role of teams.</Paragraph>
         </>
       ) : (
         <Paragraph>
-          Are you sure that you want to delete <strong>{props.role.name}</strong>?
+          Are you sure that you want to delete <strong>{role.name}</strong>?
         </Paragraph>
       )}
     </ModalConfirm>
