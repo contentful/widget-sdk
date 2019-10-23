@@ -20,7 +20,7 @@ import EmptyStateContainer, {
 } from 'components/EmptyStateContainer/EmptyStateContainer.es6';
 import FolderIllustration from 'svg/folder-illustration.es6';
 import RelativeDateTime from 'components/shared/RelativeDateTime/index.es6';
-import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
+import { getOpenAssignedTasks } from './helpers.es6';
 import { href } from 'states/Navigator.es6';
 
 const styles = {
@@ -48,22 +48,10 @@ export default class TasksPage extends Component {
   };
 
   componentDidMount = async () => {
-    const { currentUserId, spaceId, users, getEntries } = this.props;
-
-    const endpoint = createSpaceEndpoint(spaceId);
-    const getTasks = endpoint(
-      {
-        method: 'GET',
-        path: ['tasks'],
-        query: { 'assignedTo.sys.id': currentUserId }
-      },
-      { 'x-contentful-enable-alpha-feature': 'comments-api,tasks-dashboard' }
-    );
-    const [{ items: tasks }, spaceUsers] = await Promise.all([getTasks, users.getAll()]);
-    const { items: entries } = await getEntries({
-      'sys.id[in]': tasks.map(item => item.sys.reference.sys.id).join(',')
-    });
-
+    const [[tasks, entries], spaceUsers] = await Promise.all([
+      this.getTasksAndEntries(),
+      this.props.users.getAll()
+    ]);
     const entryTitles = this.getEntryTitles(entries);
 
     this.setState({
@@ -75,6 +63,15 @@ export default class TasksPage extends Component {
         entryTitle: entryTitles[task.sys.reference.sys.id]
       }))
     });
+  };
+
+  getTasksAndEntries = async () => {
+    const { spaceId, currentUserId, getEntries } = this.props;
+    const { items: tasks } = await getOpenAssignedTasks(spaceId, currentUserId);
+    const { items: entries } = await getEntries({
+      'sys.id[in]': tasks.map(item => item.sys.reference.sys.id).join(',')
+    });
+    return [tasks, entries];
   };
 
   getEntryTitles = entries => {
