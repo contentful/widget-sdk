@@ -55,7 +55,7 @@ export default base({
   name: 'profile',
   url: '/profile',
   abstract: true,
-  navTemplate: '<cf-profile-nav class="app-top-bar__child" />',
+  navTemplate: '<cf-profile-nav class="app-top-bar__child app-top-bar__child-wide" />',
   children: [
     userCancellation,
     user,

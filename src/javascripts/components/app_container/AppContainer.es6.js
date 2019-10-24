@@ -12,7 +12,7 @@ export default function() {
       h('cf-nav-sidepanel-trigger', {
         toggleSidePanel: 'toggleSidePanel'
       }),
-      h('div.test-nav-bar', {
+      h('div.app-top-bar__outer-wrapper', {
         uiView: 'nav-bar'
       })
     ]),

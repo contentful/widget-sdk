@@ -21,7 +21,7 @@ import {
 
 const styles = {
   dropdown: css({
-    height: '100%',
+    height: '70px', // Height of navigation bar
     backgroundColor: tokens.colorContrastMid,
     boxShadow: 'inset 1px 0 2px 0 rgba(0,0,0,0.4), inset 2px 0 5px 0 rgba(0,0,0,0.35)',
     transition: `
@@ -68,8 +68,19 @@ const styles = {
 };
 
 class AccountDropdown extends Component {
+  constructor(props) {
+    super(props);
+    const currentUser = K.getValue(TokenStore.user$);
+
+    this.state = {
+      isOpen: false,
+      currentUser: currentUser
+    };
+  }
+
   state = {
-    isOpen: false
+    isOpen: false,
+    user: {}
   };
 
   handleToggle = () => {
@@ -102,8 +113,6 @@ class AccountDropdown extends Component {
   };
 
   render() {
-    const currentUser = K.getValue(TokenStore.user$);
-
     return (
       <Dropdown
         className={cx(styles.dropdown, this.state.isOpen && styles.dropdownActive)}
@@ -120,12 +129,12 @@ class AccountDropdown extends Component {
             data-ui-tour-step="account-menu-trigger">
             <TabFocusTrap className={styles.focusTrap}>
               <span className={styles.imageWrapper}>
-                {currentUser.avatarUrl && (
+                {!!this.state.currentUser && (
                   <img
                     className={styles.avatar}
-                    src={currentUser.avatarUrl}
-                    data-user-email={currentUser.email}
-                    alt={`Avatar for user ${currentUser.firstName} ${currentUser.lastName}`}
+                    src={this.state.currentUser.avatarUrl}
+                    data-user-email={this.state.currentUser.email}
+                    alt={`Avatar for user ${this.state.currentUser.firstName} ${this.state.currentUser.lastName}`}
                   />
                 )}
               </span>

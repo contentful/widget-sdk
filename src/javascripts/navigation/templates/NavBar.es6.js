@@ -34,7 +34,7 @@ import { isBoolean } from 'lodash';
  * }
  */
 export default function(listItems = [], showQuickNavigation) {
-  return h('div', [
+  return h('div.app-top-bar__inner-wrapper', [
     h('.app-top-bar__child.app-top-bar__main-nav', [
       h('nav.nav-bar', [
         h(
