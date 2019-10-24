@@ -47,30 +47,36 @@ export function createRoleRemover(listHandler, role) {
 
 export function RemoveRoleModalConfirm({ isUsed, isShown, onCancel, onConfirm, role, count }) {
   const [loading, setLoading] = React.useState(false);
+  const jumpToRole = getModule('UserListController/jumpToRole');
 
   return (
     <ModalConfirm
       intent={isUsed ? 'primary' : 'negative'}
       isShown={isShown}
-      cancelLabel={isUsed ? 'OK' : 'Cancel'}
+      cancelLabel={isUsed ? 'OK, got it' : 'Cancel'}
       isConfirmLoading={loading}
       onConfirm={() => {
+        if (isUsed) {
+          jumpToRole(role.name);
+          onCancel();
+          return;
+        }
         setLoading(true);
         onConfirm().finally(() => {
           setLoading(false);
         });
       }}
       onCancel={onCancel}
-      confirmLabel={isUsed ? false : 'Delete the role'}
-      title="Delete role"
+      confirmLabel={isUsed ? 'View users with this role' : 'Delete the role'}
+      title={isUsed ? 'Move users before deleting' : 'Delete role'}
       shouldCloseOnOverlayClick={false}>
       {isUsed ? (
         <>
           <Paragraph>
-            Before deleting the <strong>{role.name}</strong> role, you need to move{' '}
-            {pluralize('user', count, true)} to another role.
+            Assign a different role to <strong>{pluralize('user', count, true)}</strong> with the{' '}
+            {role.name} role before deleting.
           </Paragraph>
-          <Paragraph>This might require changing the role of teams.</Paragraph>
+          <Paragraph>They might have the role because they’re a member of a team.</Paragraph>
         </>
       ) : (
         <Paragraph>
