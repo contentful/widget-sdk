@@ -149,6 +149,23 @@ describe('IDPSetupForm', () => {
     expect(updateFieldValue).toHaveBeenCalledTimes(1);
   });
 
+  it('should handle legacy idpName values', () => {
+    const fields = {
+      idpName: {
+        // The current name is "Ping Identity", with the space. This is the legacy version
+        value: 'PingIdentity'
+      },
+      ssoName: {},
+      idpSsoTargetUrl: {},
+      idpCert: {}
+    };
+
+    const rendered = render({ fields, identityProvider, organization });
+    const idpNameSelect = rendered.find('[testId="ssoProvider"]').first();
+
+    expect(idpNameSelect.prop('value')).toEqual('Ping Identity');
+  });
+
   it('should not allow testing the connection if connectionTestingAllowed returns false', () => {
     connectionTestingAllowed.mockReturnValueOnce(false);
 
