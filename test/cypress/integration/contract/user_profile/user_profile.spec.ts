@@ -37,15 +37,15 @@ describe('User profile page', () => {
         it('remove twitter identity', () => {
             const deleteIdentityInteraction = [deleteIdentity.willReturnIt()];
 
-            cy.getByTestId('user-account-data').should('be.visible');
-            cy.getByTestId('remove-twitter-button').should('be.visible').click();
-            cy.getByTestId('dialog-remove-twitter-identity').should('be.visible');
-            cy.getByTestId('confirm-remove-twitter-identity').should('be.visible').click();
+            cy.getByTestId('user-account-data').should('exist');
+            cy.getByTestId('remove-twitter-button').should('exist').click();
+            cy.getByTestId('dialog-remove-twitter-identity').should('exist');
+            cy.getByTestId('confirm-remove-twitter-identity').should('exist').click();
 
             cy.wait(deleteIdentityInteraction);
 
             cy.getByTestId('user-account-data')
-                .should('be.visible').
+                .should('exist').
                 find('[data-test-id="remove-twitter-button"]')
                 .should('not.exist');
         });
@@ -53,12 +53,12 @@ describe('User profile page', () => {
         it('setup 2FA with invalid code', () => {
             const get2FAInteraction = [getTwoFAData.willReturnIt()];
             const verify2FAInteraction = [verifyTwoFAData.willReturnFail()];
-            cy.getByTestId('security-section-card').should('be.visible');
+            cy.getByTestId('security-section-card').should('exist');
             cy.getByTestId('enable-2fa-cta').click();
             cy.wait(get2FAInteraction);
 
-            cy.getByTestId('code-input').find('input').should('be.visible').clear().type('111111');
-            cy.getByTestId('submit').should('be.visible').click();
+            cy.getByTestId('code-input').find('input').should('exist').clear().type('111111');
+            cy.getByTestId('submit').should('exist').click();
             cy.wait(verify2FAInteraction);
 
             cy.getByTestId('cf-ui-validation-message').contains('The code you entered is not correct');
@@ -67,12 +67,12 @@ describe('User profile page', () => {
         it('setup 2FA with valid code', () => {
             const get2FAInteraction = [getTwoFAData.willReturnIt()];
             const verify2FAInteraction = [verifyTwoFAData.willReturnSuccess()];
-            cy.getByTestId('security-section-card').should('be.visible');
+            cy.getByTestId('security-section-card').should('exist');
             cy.getByTestId('enable-2fa-cta').click();
             cy.wait(get2FAInteraction);
 
-            cy.getByTestId('code-input').find('input').should('be.visible').clear().type('123456');
-            cy.getByTestId('submit').should('be.visible').click();
+            cy.getByTestId('code-input').find('input').should('exist').clear().type('123456');
+            cy.getByTestId('submit').should('exist').click();
             cy.wait(verify2FAInteraction);
 
             cy.getByTestId('security-section').contains('Enabled with authenticator app');
@@ -82,15 +82,15 @@ describe('User profile page', () => {
             it('with correct password', () => {
                 const updateUserProfileInteraction = [updateDefaultUserProfileData.willReturnSuccess()];
 
-                cy.getByTestId('user-account-data').should('be.visible');
-                cy.getByTestId('edit-user-account-details').should('be.visible').click();
-                cy.getByTestId('edit-account-data-modal').should('be.visible');
+                cy.getByTestId('user-account-data').should('exist');
+                cy.getByTestId('edit-user-account-details').should('exist').click();
+                cy.getByTestId('edit-account-data-modal').should('exist');
 
                 cy.getByTestId('first-name-field').find('input').clear().type('NewFirstName');
                 cy.getByTestId('last-name-field').find('input').clear().type('NewLastName');
                 cy.getByTestId('email-field').find('input').clear().type('new-email@example.com');
                 cy.getByTestId('current-password-field')
-                    .should('be.visible')
+                    .should('exist')
                     .find('input')
                     .type('test12345');
 
@@ -103,15 +103,15 @@ describe('User profile page', () => {
             it('with incorrect password', () => {
                 const updateUserProfileInteraction = [updateDefaultUserProfileData.willReturnError()];
 
-                cy.getByTestId('user-account-data').should('be.visible');
-                cy.getByTestId('edit-user-account-details').should('be.visible').click();
-                cy.getByTestId('edit-account-data-modal').should('be.visible');
+                cy.getByTestId('user-account-data').should('exist');
+                cy.getByTestId('edit-user-account-details').should('exist').click();
+                cy.getByTestId('edit-account-data-modal').should('exist');
 
                 cy.getByTestId('first-name-field').find('input').clear().type('NewFirstName');
                 cy.getByTestId('last-name-field').find('input').clear().type('NewLastName');
                 cy.getByTestId('email-field').find('input').clear().type('new-email@example.com');
                 cy.getByTestId('current-password-field')
-                    .should('be.visible')
+                    .should('exist')
                     .find('input')
                     .type('invalid-current-password');
 
@@ -120,15 +120,15 @@ describe('User profile page', () => {
 
                 cy.getByTestId('current-password-field')
                     .find('[data-test-id="cf-ui-validation-message"]')
-                    .should('be.visible');
+                    .should('exist');
             });
         });
         describe('update user profile password', () => {
             it('with valid new password', () => {
                 const changePasswordInteraction = [changePassword.willReturnSuccess()];
-                cy.getByTestId('user-account-data').should('be.visible');
-                cy.getByTestId('link-change-password').should('be.visible').click();
-                cy.getByTestId('change-password-modal').should('be.visible');
+                cy.getByTestId('user-account-data').should('exist');
+                cy.getByTestId('link-change-password').should('exist').click();
+                cy.getByTestId('change-password-modal').should('exist');
 
                 cy.getByTestId('current-password').find('input').clear().type('test12345');
                 cy.getByTestId('new-password').find('input').clear().type('new-password');
@@ -138,16 +138,16 @@ describe('User profile page', () => {
                 cy.wait(changePasswordInteraction);
 
                 cy.getByTestId('user-account-data')
-                    .should('be.visible').
+                    .should('exist').
                     find('[data-test-id="change-password-modal"]')
                     .should('not.exist');
             });
 
             it('with invalid new password', () => {
                 const changePasswordInteraction = [changePassword.willReturnError()];
-                cy.getByTestId('user-account-data').should('be.visible');
-                cy.getByTestId('link-change-password').should('be.visible').click();
-                cy.getByTestId('change-password-modal').should('be.visible');
+                cy.getByTestId('user-account-data').should('exist');
+                cy.getByTestId('link-change-password').should('exist').click();
+                cy.getByTestId('change-password-modal').should('exist');
 
                 cy.getByTestId('current-password').find('input').clear().type('test12345');
                 cy.getByTestId('new-password').find('input').clear().type('password');
@@ -158,7 +158,7 @@ describe('User profile page', () => {
 
                 cy.getByTestId('new-password')
                     .find('[data-test-id="cf-ui-validation-message"]')
-                    .should('be.visible');
+                    .should('exist');
             });
         });
 
@@ -185,16 +185,16 @@ describe('User profile page', () => {
         });
 
         it('check 2FA eligibility', () => {
-            cy.getByTestId('security-section-card').should('be.visible');
-            cy.getByTestId('add-password-cta').should('be.visible').click();
-            cy.getByTestId('change-password-modal').should('be.visible');
+            cy.getByTestId('security-section-card').should('exist');
+            cy.getByTestId('add-password-cta').should('exist').click();
+            cy.getByTestId('change-password-modal').should('exist');
         });
 
         it('add valid password', () => {
             const addPasswordInteraction = [addPassword.willReturnSuccess()];
-            cy.getByTestId('user-account-data').should('be.visible');
-            cy.getByTestId('link-change-password').should('be.visible').click();
-            cy.getByTestId('change-password-modal').should('be.visible');
+            cy.getByTestId('user-account-data').should('exist');
+            cy.getByTestId('link-change-password').should('exist').click();
+            cy.getByTestId('change-password-modal').should('exist');
 
             cy.getByTestId('new-password').find('input').clear().type('new-password');
             cy.getByTestId('new-password-confirm').find('input').clear().type('new-password');
@@ -203,7 +203,7 @@ describe('User profile page', () => {
             cy.wait(addPasswordInteraction);
 
             cy.getByTestId('user-account-data')
-                .should('be.visible').
+                .should('exist').
                 find('[data-test-id="change-password-modal"]')
                 .should('not.exist');
             cy.getByTestId('link-change-password').contains('Change password');
@@ -211,9 +211,9 @@ describe('User profile page', () => {
 
         it('add invalid password', () => {
             const addPasswordInteraction = [addPassword.willReturnError()];
-            cy.getByTestId('user-account-data').should('be.visible');
-            cy.getByTestId('link-change-password').should('be.visible').click();
-            cy.getByTestId('change-password-modal').should('be.visible');
+            cy.getByTestId('user-account-data').should('exist');
+            cy.getByTestId('link-change-password').should('exist').click();
+            cy.getByTestId('change-password-modal').should('exist');
 
             cy.getByTestId('new-password').find('input').clear().type('password');
             cy.getByTestId('new-password-confirm').find('input').clear().type('password');
@@ -223,7 +223,7 @@ describe('User profile page', () => {
 
             cy.getByTestId('new-password')
                 .find('[data-test-id="cf-ui-validation-message"]')
-                .should('be.visible');
+                .should('exist');
         });
     });
 });
