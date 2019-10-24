@@ -130,6 +130,7 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
   ];
 
   const showQuickNavigation = true;
+  const showModernStackOnboardingRelaunch = true;
 
   return navBar(
     [
@@ -190,6 +191,7 @@ export default function spaceNavTemplate(useSpaceEnv, isMaster) {
         children: useSpaceEnv ? envSettingsDropdown : spaceSettingsDropdown
       }
     ].filter(item => typeof item === 'object'),
-    showQuickNavigation
+    showQuickNavigation,
+    showModernStackOnboardingRelaunch
   );
 }

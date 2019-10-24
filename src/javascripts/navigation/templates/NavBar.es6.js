@@ -33,7 +33,7 @@ import { isBoolean } from 'lodash';
  *   ]
  * }
  */
-export default function(listItems = [], showQuickNavigation) {
+export default function(listItems = [], showQuickNavigation, showModernStackOnboardingRelaunch) {
   return h('div.app-top-bar__inner-wrapper', [
     h('.app-top-bar__child.app-top-bar__main-nav', [
       h('nav.nav-bar', [
@@ -55,10 +55,11 @@ export default function(listItems = [], showQuickNavigation) {
           })
         ),
         h('div.nav-bar__end', [
-          h('react-component', {
-            name: 'navigation/modernStackOnboardingRelaunch.es6',
-            class: 'app-top-bar__child'
-          }),
+          showModernStackOnboardingRelaunch &&
+            h('react-component', {
+              name: 'navigation/modernStackOnboardingRelaunch.es6',
+              class: 'app-top-bar__child'
+            }),
           showQuickNavigation &&
             h('react-component', {
               name: 'components/shared/QuickNavigation/QuickNavWithFeatureFlag.es6'
