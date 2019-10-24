@@ -56,3 +56,7 @@ export const extensionLoader = {
   getExtensionsById: jest.fn(),
   getAllExtensionsForListing: jest.fn()
 };
+
+export const space = {
+  getId: jest.fn()
+};

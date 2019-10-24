@@ -7,6 +7,8 @@ import * as Intercom from 'services/intercom.es6';
 import * as Config from 'Config.es6';
 import { getUser } from 'services/TokenStore.es6';
 import { getCurrentStateName, href } from 'states/Navigator.es6';
+import { getOpenAssignedTasksAndEntries } from 'app/TasksPage/helpers.es6';
+import { getModule } from 'NgRegistry.es6';
 
 import {
   Icon,
@@ -18,63 +20,127 @@ import {
 
 const styles = {
   dropdown: css({
-    height: '70px', // Height of navigation bar
+    height: '100%',
     backgroundColor: tokens.colorContrastMid,
     boxShadow: 'inset 1px 0 2px 0 rgba(0,0,0,0.4), inset 2px 0 5px 0 rgba(0,0,0,0.35)',
     transition: `
       background-color ${tokens.transitionDurationShort} ${tokens.transitionEasingDefault},
-      box-shadow ${tokens.transitionDurationShort} ${tokens.transitionEasingDefault}
+      background-color ${tokens.transitionDurationShort} ${tokens.transitionEasingDefault}
     `,
-
     '&:hover': {
       backgroundColor: tokens.colorContrastDark,
       boxShadow: 'inset 1px 0 2px 0 rgba(0,0,0,0.9), inset 2px 0 5px 0 rgba(0,0,0,0.75)'
     }
   }),
-
   dropdownActive: css({
     backgroundColor: tokens.colorContrastDark,
     boxShadow: 'inset 1px 0 2px 0 rgba(0,0,0,0.9), inset 2px 0 5px 0 rgba(0,0,0,0.75)'
   }),
-
   accountDropdownButton: css({
     height: '100%'
   }),
-
   focusTrap: css({
     height: '100%',
     display: 'flex',
     alignItems: 'center',
-    padding: `0 ${tokens.spacingL}`
+    padding: `0 ${tokens.spacingM}`
   }),
-
   imageWrapper: css({
     position: 'relative'
   }),
-
   avatar: css({
     display: 'block',
     height: '24px',
     width: '24px',
     borderRadius: '50%'
   }),
-
   dropdownIcon: css({
     marginLeft: tokens.spacingXs
+  }),
+  notificationIcon: css({
+    position: 'absolute',
+    top: '20px',
+    right: '26px',
+    height: '12px',
+    width: '12px',
+    borderRadius: '50%',
+    backgroundColor: tokens.colorWarning,
+    border: `2px solid ${tokens.colorContrastMid}`
+  }),
+  pendingTasksItem: css({
+    display: 'inline-flex'
+  }),
+  pendingTaskCount: css({
+    marginLeft: tokens.spacing2Xs,
+    borderRadius: '50%',
+    background: tokens.colorWarning,
+    width: '1rem',
+    height: '1rem',
+    display: 'inline-flex',
+    alignContent: 'center',
+    justifyContent: 'center',
+    color: '#fff',
+    lineHeight: '1rem',
+    alignSelf: 'center',
+    fontSize: '0.6rem'
   })
+};
+
+const getPendingTasksCount = (tasks, entries) => {
+  // eslint-disable-next-line no-undef
+  const seenEntries = new Map();
+  let taskCount = 0;
+  for (const task of tasks) {
+    const entryId = task.sys.reference.sys.id;
+    if (seenEntries.has(entryId)) {
+      if (seenEntries.get(entryId)) {
+        taskCount++;
+      }
+      continue;
+    }
+    const isEntryAccessible = !!entries.find(e => e.sys.id === entryId);
+    seenEntries.set(entryId, isEntryAccessible);
+    if (isEntryAccessible) {
+      taskCount++;
+    }
+  }
+  return taskCount;
 };
 
 export default class AccountDropdown extends Component {
   state = {
     isOpen: false,
-    currentUser: {}
+    currentUser: {},
+    pendingTasksCount: 0,
+    shouldShowPendingTasks: false
   };
 
   componentDidMount = async () => {
+    const updates = {}
+    const spaceContext = getModule('spaceContext');
     const currentUser = await getUser();
+
+    if (spaceContext.space && currentUser) {
+      const [tasks, entries] = await getOpenAssignedTasksAndEntries(
+        spaceContext.space.getId(),
+        currentUser.sys.id
+      );
+      const pendingTasksCount = getPendingTasksCount(tasks, entries);
+      Object.assign(updates, {
+        pendingTasksCount,
+        shouldShowPendingTasks: true
+      });
+      Analytics.track('account_dropdown:pending_tasks_fetched', {
+        numPendingTasks: tasks.length,
+        numVisiblePendingTasks: pendingTasksCount,
+        hasInaccessibleTasks: tasks.length > pendingTasksCount
+      });
+    }
+
     this.setState({
       isOpen: this.state.isOpen,
-      currentUser
+      currentUser,
+      ...updates
     });
   };
 
@@ -102,7 +168,9 @@ export default class AccountDropdown extends Component {
   };
 
   render() {
-    if (Object.keys(this.state.currentUser).length === 0) return null;
+    if (Object.keys(this.state.currentUser).length === 0) {
+      return null;
+    }
 
     return (
       <Dropdown
@@ -128,6 +196,7 @@ export default class AccountDropdown extends Component {
                   alt={`Avatar for user ${this.state.currentUser.firstName} ${this.state.currentUser.lastName}`}
                 />
               </span>
+              {this.state.pendingTasksCount > 0 && <span className={styles.notificationIcon} />}
               <Icon className={styles.dropdownIcon} icon="ArrowDownTrimmed" color="white" />
             </TabFocusTrap>
           </button>
@@ -138,11 +207,18 @@ export default class AccountDropdown extends Component {
             href={href({ path: ['account', 'profile', 'user'] })}>
             User Profile
           </DropdownListItem>
+          <DropdownListItem
+            data-test-id="nav.account.pendingTasks"
+            href={href({ path: ['spaces', 'detail', 'tasks'] })}>
+            <span className={styles.pendingTasksItem}>
+              {`Pending tasks (${this.state.pendingTasksCount})`}
+            </span>
+          </DropdownListItem>
         </DropdownList>
 
         <DropdownList border="bottom">
           {Intercom.isEnabled && (
-            <DropdownListItem testId="nav.account.intercom" onClick={this.handleLiveChat}>
+            <DropdownListItem testId="nav.account.intercom" onMouseDown={this.handleLiveChat}>
               Talk to us
             </DropdownListItem>
           )}
@@ -156,10 +232,8 @@ export default class AccountDropdown extends Component {
           </DropdownListItem>
         </DropdownList>
 
-        <DropdownList>
-          <DropdownListItem testId="nav.account.logout" onClick={this.handleLogout}>
-            Log out
-          </DropdownListItem>
+        <DropdownList onMouseDown={this.handleLogout}>
+          <DropdownListItem testId="nav.account.logout">Log out</DropdownListItem>
         </DropdownList>
       </Dropdown>
     );

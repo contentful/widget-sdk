@@ -77,7 +77,7 @@ export default class TasksPage extends Component {
 
   getTasksAndEntries = async () => {
     const { spaceId, currentUserId, getEntries } = this.props;
-    const { items: tasks } = await getOpenAssignedTasks(spaceId, currentUserId);
+    const tasks = await getOpenAssignedTasks(spaceId, currentUserId);
     const { items: entries } = await getEntries({
       'sys.id[in]': tasks.map(item => item.sys.reference.sys.id).join(',')
     });
