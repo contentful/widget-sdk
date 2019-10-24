@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { cx, css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import enhanceWithClickOutside from 'react-click-outside';
-import * as K from 'utils/kefir.es6';
 
 import * as Analytics from 'analytics/Analytics';
 import * as Authentication from 'Authentication.es6';
@@ -68,16 +67,6 @@ const styles = {
 };
 
 class AccountDropdown extends Component {
-  constructor(props) {
-    super(props);
-    const currentUser = K.getValue(TokenStore.user$);
-
-    this.state = {
-      isOpen: false,
-      currentUser: currentUser
-    };
-  }
-
   state = {
     isOpen: false,
     currentUser: {}
