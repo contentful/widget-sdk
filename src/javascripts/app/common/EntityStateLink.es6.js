@@ -1,13 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import StateLink from './StateLink.es6';
+import { getModule } from 'NgRegistry.es6';
 
 export default function EntityStateLink({ entity, children }) {
-  const to =
-    entity.sys.type === 'Entry' ? 'spaces.detail.entries.detail' : 'spaces.detail.assets.detail';
-  const params = { [entity.sys.type === 'Entry' ? 'entryId' : 'assetId']: entity.sys.id };
+  const spaceContext = getModule('spaceContext');
+  const { id, type } = entity.sys;
+  const path = ['spaces', 'detail', type === 'Entry' ? 'entries' : 'assets', 'detail'];
+  if (!spaceContext.isMasterEnvironment()) {
+    path.splice(2, 0, 'environment');
+  }
+  const params = { [type === 'Entry' ? 'entryId' : 'assetId']: id };
+
   return (
-    <StateLink to={to} params={params}>
+    <StateLink to={path.join('.')} params={params}>
       {children}
     </StateLink>
   );

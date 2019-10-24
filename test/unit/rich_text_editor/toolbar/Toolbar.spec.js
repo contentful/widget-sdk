@@ -147,7 +147,8 @@ describe('Rich Text toolbar', () => {
         cma: {
           getEntries: sinon.stub().returns(Promise.resolve({})),
           getAssets: sinon.stub().returns(Promise.resolve({}))
-        }
+        },
+        isMasterEnvironment: sinon.stub().returns(false)
       });
 
       $provide.constant('modalDialog', { open: sinon.stub() });
