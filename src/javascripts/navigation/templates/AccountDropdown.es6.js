@@ -68,6 +68,16 @@ const styles = {
 };
 
 class AccountDropdown extends Component {
+  constructor(props) {
+    super(props);
+    const currentUser = K.getValue(TokenStore.user$);
+
+    this.state = {
+      isOpen: false,
+      currentUser: currentUser
+    };
+  }
+
   state = {
     isOpen: false,
     currentUser: {}
@@ -111,8 +121,6 @@ class AccountDropdown extends Component {
   };
 
   render() {
-    const currentUser = K.getValue(TokenStore.user$);
-
     return (
       <Dropdown
         className={cx(styles.dropdown, this.state.isOpen && styles.dropdownActive)}
