@@ -2,13 +2,12 @@ import React, { Component } from 'react';
 import { cx, css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import enhanceWithClickOutside from 'react-click-outside';
-import * as K from 'utils/kefir.es6';
 
 import * as Analytics from 'analytics/Analytics.es6';
 import * as Authentication from 'Authentication.es6';
 import * as Intercom from 'services/intercom.es6';
 import * as Config from 'Config.es6';
-import * as TokenStore from 'services/TokenStore.es6';
+import { getUser } from 'services/TokenStore.es6';
 import { getCurrentStateName, href } from 'states/Navigator.es6';
 
 import {
@@ -68,19 +67,17 @@ const styles = {
 };
 
 class AccountDropdown extends Component {
-  constructor(props) {
-    super(props);
-    const currentUser = K.getValue(TokenStore.user$);
-
-    this.state = {
-      isOpen: false,
-      currentUser: currentUser
-    };
-  }
-
   state = {
     isOpen: false,
-    user: {}
+    currentUser: {}
+  };
+
+  componentDidMount = async () => {
+    const currentUser = await getUser();
+    this.setState({
+      isOpen: this.state.isOpen,
+      currentUser
+    });
   };
 
   handleToggle = () => {
