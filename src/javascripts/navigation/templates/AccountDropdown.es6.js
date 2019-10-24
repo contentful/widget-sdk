@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { cx, css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import enhanceWithClickOutside from 'react-click-outside';
+import * as K from 'utils/kefir.es6';
 
 import * as Analytics from 'analytics/Analytics';
 import * as Authentication from 'Authentication.es6';
@@ -110,6 +111,8 @@ class AccountDropdown extends Component {
   };
 
   render() {
+    const currentUser = K.getValue(TokenStore.user$);
+
     return (
       <Dropdown
         className={cx(styles.dropdown, this.state.isOpen && styles.dropdownActive)}
