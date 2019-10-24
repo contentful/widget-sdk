@@ -1,7 +1,6 @@
 // List of feature flags from LaunchDarkly
 
 export enum FeatureFlag {
-  CONTENT_WORKFLOW_TASKS = 'feature-05-2019-content-workflows-tasks',
   ENVIRONMENTS = 'feature-dv-11-2017-environments',
   ENVIRONMENTS_USAGE_ENFORCEMENTS = 'feature-dw-04-2019-environment-usage-enforcements',
   ENTRY_COMMENTS = 'feature-04-2019-entry-comments',

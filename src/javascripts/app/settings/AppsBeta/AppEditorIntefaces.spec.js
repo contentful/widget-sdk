@@ -13,6 +13,7 @@ import {
 const EXTENSION_ID = 'extid';
 
 jest.mock('i13n/Telemetry.es6', () => ({ count: () => {} }));
+jest.mock('data/CMA/ProductCatalog.es6', () => ({ getCurrentSpaceFeature: () => true }));
 
 describe('AppEditorInterfaces', () => {
   let cma, transform, remove;

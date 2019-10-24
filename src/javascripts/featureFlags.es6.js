@@ -5,7 +5,6 @@ export const ENVIRONMENTS_FLAG = 'feature-dv-11-2017-environments';
 export const UPGRADE_PRICING_FLAG = 'feature-dl-09-2018-upgrade-pricing-space-home';
 export const SSO_SELF_CONFIG_FLAG = 'feature-bv-2019-01-sso-self-config';
 export const JOBS = 'feature-pul-04-2019-scheduled-publication-enabled';
-export const TASKS = 'feature-05-2019-content-workflows-tasks';
 export const QUICK_NAVIGATION = 'feature-ht-04-2019-quick-navigation';
 export const ENTRY_COMMENTS = 'feature-04-2019-entry-comments';
 export const TEAMS_IN_SPACES = 'feature-bv-04-2019-teams-iteration-2';
@@ -19,3 +18,4 @@ export const TWO_FA = 'feature-ogg-10-2019-2fa';
 // Gatekeeper Product Catalog Flags
 export const ENVIRONMENT_USAGE_ENFORCEMENT = 'environment_usage_enforcements';
 export const ENVIRONMENT_ALIASING = 'environment_aliasing';
+export const CONTENT_WORKFLOW_TASKS = 'tasks';

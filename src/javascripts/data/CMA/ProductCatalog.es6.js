@@ -1,5 +1,6 @@
 import DataLoader from 'dataloader';
 import { memoize, get, uniq, isUndefined } from 'lodash';
+import { getModule } from 'NgRegistry.es6';
 
 import { createOrganizationEndpoint, createSpaceEndpoint } from '../EndpointFactory.es6';
 
@@ -92,4 +93,10 @@ export const getSpaceFeature = (spaceId, featureId, defaultValue) => {
       : Promise.resolve(defaultValue);
   }
   return load(getLoaderForSpace(spaceId), featureId, defaultValue, COMMON_FOR_SPACE);
+};
+
+export const getCurrentSpaceFeature = (featureId, defaultValue) => {
+  const spaceContext = getModule('spaceContext');
+  const spaceId = spaceContext.space.getId();
+  return getSpaceFeature(spaceId, featureId, defaultValue);
 };
