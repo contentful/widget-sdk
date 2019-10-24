@@ -20,6 +20,7 @@ import EmptyStateContainer, {
 } from 'components/EmptyStateContainer/EmptyStateContainer.es6';
 import FolderIllustration from 'svg/folder-illustration.es6';
 import RelativeDateTime from 'components/shared/RelativeDateTime/index.es6';
+import { getEntryTitle } from 'classes/EntityFieldValueHelpers.es6';
 import { getOpenAssignedTasks } from './helpers.es6';
 import { href } from 'states/Navigator.es6';
 
@@ -38,9 +39,9 @@ export default class TasksPage extends Component {
     currentUserId: PropTypes.string.isRequired,
     environmentId: PropTypes.string.isRequired,
     users: PropTypes.object.isRequired,
-    defaultLocale: PropTypes.object.isRequired,
     getEntries: PropTypes.func.isRequired,
-    getEntryTitle: PropTypes.func.isRequired
+    getContentType: PropTypes.func.isRequired,
+    defaultLocaleCode: PropTypes.string.isRequired
   };
 
   state = {
@@ -85,18 +86,32 @@ export default class TasksPage extends Component {
 
   getEntryTitles = entries => {
     const entryTitles = {};
+    const contentTypes = {};
     for (const entry of entries) {
-      const { id } = entry.sys;
-      entryTitles[id] = entryTitles[id] || this.getEntryTitle(entry);
+      if (entryTitles[entry.sys.id]) {
+        continue;
+      }
+      const { id } = entry.sys.contentType.sys;
+      contentTypes[id] = contentTypes[id] || this.props.getContentType(id);
+      entryTitles[entry.sys.id] = this.getEntryTitle(entry, contentTypes[id]);
     }
     return entryTitles;
   };
 
-  getEntryTitle = entry =>
-    this.props.getEntryTitle({
-      getContentTypeId: () => entry.sys.contentType.sys.id,
-      data: entry
+  getEntryTitle = (entry, contentType) => {
+    const fields = _.mapKeys(entry.fields, (_value, key) => {
+      // getEntryTitle expects the entry field to be keyed by their internal ID,
+      // not their API name. But we're using API data, so we need to convert
+      // the field keys before passing them along.
+      return _.find(contentType.data.fields, { apiName: key }).id;
     });
+    return getEntryTitle({
+      entry: { ...entry, fields },
+      contentType: contentType.data,
+      defaultInternalLocaleCode: this.props.defaultLocaleCode,
+      defaultTitle: 'Untilted'
+    });
+  };
 
   renderEmptyState = () => (
     <EmptyStateContainer data-test-id="tasks-empty-state">

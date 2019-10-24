@@ -9,7 +9,6 @@ export default {
     {
       name: 'list',
       url: '',
-
       component: TasksPage,
       mapInjectedToProps: [
         '$stateParams',
@@ -20,9 +19,9 @@ export default {
           currentUser: spaceContext.getCurrentUser,
           currentUserId: spaceContext.getData('spaceMember.sys.user.sys.id'),
           users: spaceContext.users,
-          defaultLocale: TheLocaleStore.getDefaultLocale(),
+          defaultLocaleCode: TheLocaleStore.getDefaultLocale().code,
           getEntries: query => spaceContext.cma.getEntries(query),
-          getEntryTitle: entry => spaceContext.entryTitle(entry)
+          getContentType: contentTypeId => spaceContext.publishedCTs.get(contentTypeId)
         })
       ]
     }
