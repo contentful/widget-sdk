@@ -159,11 +159,7 @@ export default {
   url: '/spaces',
   abstract: true,
   navTemplate: h('div.app-top-bar__child.app-top-bar__main-nav.app-top-bar__with-right-part', [
-    h('cf-space-nav-bar-wrapped', { class: 'app-top-bar__child app-top-bar__child-wide' }),
-    h('react-component', {
-      name: 'navigation/modernStackOnboardingRelaunch.es6',
-      class: 'app-top-bar__child'
-    })
+    h('cf-space-nav-bar-wrapped', { class: 'app-top-bar__child app-top-bar__child-wide' })
   ]),
   children: [newSpace, spaceDetail]
 };

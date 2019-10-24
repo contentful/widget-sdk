@@ -54,10 +54,16 @@ export default function(listItems = [], showQuickNavigation) {
             return h('li.app-top-bar__action.nav-bar__list-item', attrs, [html]);
           })
         ),
-        showQuickNavigation &&
+        h('div.nav-bar__end', [
           h('react-component', {
-            name: 'components/shared/QuickNavigation/QuickNavWithFeatureFlag.es6'
-          })
+            name: 'navigation/modernStackOnboardingRelaunch.es6',
+            class: 'app-top-bar__child'
+          }),
+          showQuickNavigation &&
+            h('react-component', {
+              name: 'components/shared/QuickNavigation/QuickNavWithFeatureFlag.es6'
+            })
+        ])
       ])
     ]),
     h('react-component', {

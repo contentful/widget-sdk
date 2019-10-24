@@ -3509,6 +3509,11 @@ pre,
     -webkit-box-pack: justify;
             justify-content: space-between;
   }
+
+  .nav-bar__end {
+    display: flex;
+  }
+
   .nav-bar__separator:not(:first-child) {
     margin-top: 15px;
     border-top: 1px solid #d3dce0;
