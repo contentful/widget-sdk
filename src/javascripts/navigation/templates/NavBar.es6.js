@@ -34,28 +34,35 @@ import { isBoolean } from 'lodash';
  * }
  */
 export default function(listItems = [], showQuickNavigation) {
-  return h('nav.nav-bar', [
-    h(
-      'ul.nav-bar__list',
-      listItems.map((data, index) => {
-        const html = data.children ? navbarDropdown(data, index) : navbarItem(data);
-        const attrs = { 'data-ui-tour-step': `nav-item-${data.dataViewType}` };
+  return h('div', [
+    h('.app-top-bar__child.app-top-bar__main-nav', [
+      h('nav.nav-bar', [
+        h(
+          'ul.nav-bar__list',
+          listItems.map((data, index) => {
+            const html = data.children ? navbarDropdown(data, index) : navbarItem(data);
+            const attrs = { 'data-ui-tour-step': `nav-item-${data.dataViewType}` };
 
-        if (data.if) {
-          attrs.ngIf = data.if;
-        }
-        if (data.tooltip) {
-          attrs.tooltip = data.tooltip;
-          attrs.tooltipPlacement = 'bottom';
-        }
+            if (data.if) {
+              attrs.ngIf = data.if;
+            }
+            if (data.tooltip) {
+              attrs.tooltip = data.tooltip;
+              attrs.tooltipPlacement = 'bottom';
+            }
 
-        return h('li.app-top-bar__action.nav-bar__list-item', attrs, [html]);
-      })
-    ),
-    showQuickNavigation &&
-      h('react-component', {
-        name: 'components/shared/QuickNavigation/QuickNavWithFeatureFlag.es6'
-      })
+            return h('li.app-top-bar__action.nav-bar__list-item', attrs, [html]);
+          })
+        ),
+        showQuickNavigation &&
+          h('react-component', {
+            name: 'components/shared/QuickNavigation/QuickNavWithFeatureFlag.es6'
+          })
+      ])
+    ]),
+    h('react-component', {
+      name: 'navigation/templates/AccountDropdown.es6'
+    })
   ]);
 }
 

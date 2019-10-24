@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { cx, css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import enhanceWithClickOutside from 'react-click-outside';
+import * as K from 'utils/kefir.es6';
 
 import * as Analytics from 'analytics/Analytics.es6';
 import * as Authentication from 'Authentication.es6';
 import * as Intercom from 'services/intercom.es6';
 import * as Config from 'Config.es6';
+import * as TokenStore from 'services/TokenStore.es6';
 import { getCurrentStateName, href } from 'states/Navigator.es6';
 
 import {
@@ -67,13 +68,6 @@ const styles = {
 };
 
 class AccountDropdown extends Component {
-  static propTypes = {
-    firstName: PropTypes.string,
-    lastName: PropTypes.string,
-    email: PropTypes.string,
-    avatarUrl: PropTypes.string
-  };
-
   state = {
     isOpen: false
   };
@@ -108,6 +102,8 @@ class AccountDropdown extends Component {
   };
 
   render() {
+    const currentUser = K.getValue(TokenStore.user$);
+
     return (
       <Dropdown
         className={cx(styles.dropdown, this.state.isOpen && styles.dropdownActive)}
@@ -124,12 +120,12 @@ class AccountDropdown extends Component {
             data-ui-tour-step="account-menu-trigger">
             <TabFocusTrap className={styles.focusTrap}>
               <span className={styles.imageWrapper}>
-                {this.props.avatarUrl && (
+                {currentUser.avatarUrl && (
                   <img
                     className={styles.avatar}
-                    src={this.props.avatarUrl}
-                    data-user-email={this.props.email}
-                    alt={`Avatar for user ${this.props.firstName} ${this.props.lastName}`}
+                    src={currentUser.avatarUrl}
+                    data-user-email={currentUser.email}
+                    alt={`Avatar for user ${currentUser.firstName} ${currentUser.lastName}`}
                   />
                 )}
               </span>

@@ -349,7 +349,5 @@ function getModule(name) {
     'navigation/templates/AccountDropdown.es6': navigationTemplatesAccountDropdownEs6
   };
 
-  console.log(get(allowedModules, name, null));
-
   return get(allowedModules, name, null);
 }
