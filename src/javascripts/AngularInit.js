@@ -10,7 +10,6 @@ import componentsAppContainerCfAppContainerDirectiveEs6 from 'components/app_con
 import navigationSidepanelDirectiveEs6 from 'navigation/Sidepanel/directive.es6';
 import uiFrameworkCfComponentBridgeDirectiveEs6 from 'ui/Framework/CfComponentBridgeDirective.es6';
 import navigationSidepanelTriggerDirectiveEs6 from 'navigation/Sidepanel/TriggerDirective.es6';
-import navigationAccountDropdownDirectiveEs6 from 'navigation/accountDropdownDirective.es6';
 import componentsSharedPersistentNotificationCfPersistentNotificationDirectiveEs6 from 'components/shared/persistent_notification/cfPersistentNotificationDirective.es6';
 
 export const angularInitRun = [
@@ -29,7 +28,6 @@ export const angularInitRun = [
     navigationSidepanelDirectiveEs6();
     uiFrameworkCfComponentBridgeDirectiveEs6();
     navigationSidepanelTriggerDirectiveEs6();
-    navigationAccountDropdownDirectiveEs6();
     componentsSharedPersistentNotificationCfPersistentNotificationDirectiveEs6();
 
     const modules = await Promise.all([

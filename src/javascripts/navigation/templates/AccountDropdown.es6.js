@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { cx, css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-
 import * as Analytics from 'analytics/Analytics';
 import * as Authentication from 'Authentication.es6';
 import * as Intercom from 'services/intercom.es6';

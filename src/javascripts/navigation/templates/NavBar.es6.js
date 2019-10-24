@@ -33,6 +33,7 @@ import { isBoolean } from 'lodash';
  *   ]
  * }
  */
+
 export default function(listItems = [], showQuickNavigation, showModernStackOnboardingRelaunch) {
   return h('div.app-top-bar__inner-wrapper', [
     h('.app-top-bar__child.app-top-bar__main-nav', [

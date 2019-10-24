@@ -14,9 +14,6 @@ export default function() {
       }),
       h('div.app-top-bar__outer-wrapper', {
         uiView: 'nav-bar'
-      }),
-      h('cf-account-dropdown', {
-        user: 'user'
       })
     ]),
     h('div.app-container__content', {
