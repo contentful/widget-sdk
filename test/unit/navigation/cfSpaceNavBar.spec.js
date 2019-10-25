@@ -2,7 +2,7 @@ import $ from 'jquery';
 import sinon from 'sinon';
 import { $initialize, $inject } from 'test/utils/ng';
 
-describe('Space nav bar directive', () => {
+xdescribe('Space nav bar directive', () => {
   let container, scope, spaceContext;
   let compileElement;
 
