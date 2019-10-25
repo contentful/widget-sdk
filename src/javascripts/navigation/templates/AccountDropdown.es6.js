@@ -110,6 +110,8 @@ class AccountDropdown extends Component {
   };
 
   render() {
+    if (Object.keys(this.state.currentUser).length === 0) return null;
+
     return (
       <Dropdown
         className={cx(styles.dropdown, this.state.isOpen && styles.dropdownActive)}
@@ -126,14 +128,12 @@ class AccountDropdown extends Component {
             data-ui-tour-step="account-menu-trigger">
             <TabFocusTrap className={styles.focusTrap}>
               <span className={styles.imageWrapper}>
-                {!!this.state.currentUser && (
-                  <img
-                    className={styles.avatar}
-                    src={this.state.currentUser.avatarUrl}
-                    data-user-email={this.state.currentUser.email}
-                    alt={`Avatar for user ${this.state.currentUser.firstName} ${this.state.currentUser.lastName}`}
-                  />
-                )}
+                <img
+                  className={styles.avatar}
+                  src={this.state.currentUser.avatarUrl}
+                  data-user-email={this.state.currentUser.email}
+                  alt={`Avatar for user ${this.state.currentUser.firstName} ${this.state.currentUser.lastName}`}
+                />
               </span>
               <Icon className={styles.dropdownIcon} icon="ArrowDownTrimmed" color="white" />
             </TabFocusTrap>
@@ -163,8 +163,10 @@ class AccountDropdown extends Component {
           </DropdownListItem>
         </DropdownList>
 
-        <DropdownList onMouseDown={this.handleLogout}>
-          <DropdownListItem testId="nav.account.logout">Log out</DropdownListItem>
+        <DropdownList>
+          <DropdownListItem testId="nav.account.logout" onClick={this.handleLogout}>
+            Log out
+          </DropdownListItem>
         </DropdownList>
       </Dropdown>
     );
