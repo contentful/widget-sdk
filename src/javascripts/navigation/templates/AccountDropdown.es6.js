@@ -163,10 +163,8 @@ class AccountDropdown extends Component {
           </DropdownListItem>
         </DropdownList>
 
-        <DropdownList>
-          <DropdownListItem testId="nav.account.logout" onClick={this.handleLogout}>
-            Log out
-          </DropdownListItem>
+        <DropdownList onMouseDown={this.handleLogout}>
+          <DropdownListItem testId="nav.account.logout">Log out</DropdownListItem>
         </DropdownList>
       </Dropdown>
     );
