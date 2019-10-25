@@ -1,15 +1,8 @@
 import { getModule } from 'NgRegistry.es6';
 import React from 'react';
+import pluralize from 'pluralize';
 import PropTypes from 'prop-types';
-import { map } from 'lodash';
-import {
-  Notification,
-  ModalConfirm,
-  Paragraph,
-  Typography,
-  SelectField,
-  Option
-} from '@contentful/forma-36-react-components';
+import { Notification, ModalConfirm, Paragraph } from '@contentful/forma-36-react-components';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 import { getInstance } from 'access_control/RoleRepository';
@@ -27,11 +20,8 @@ export function createRoleRemover(listHandler, role) {
         key={uniqueModalKey}
         isShown={isShown}
         role={role}
-        onConfirm={async moveToRoleId => {
+        onConfirm={async () => {
           try {
-            if (moveToRoleId) {
-              await moveUsersAndRemoveRole(moveToRoleId);
-            }
             await remove();
             onClose(true);
           } catch (error) {
@@ -53,61 +43,44 @@ export function createRoleRemover(listHandler, role) {
       Notification.success('Role successfully deleted.');
     });
   }
-
-  function moveUsersAndRemoveRole(moveToRoleId) {
-    const memberships = listHandler.getMemberships();
-    const promises = map(memberships, membership =>
-      spaceContext.memberships.changeRoleTo(membership, [moveToRoleId])
-    );
-    return Promise.all(promises);
-  }
 }
 
-export function RemoveRoleModalConfirm(props) {
+export function RemoveRoleModalConfirm({ isUsed, isShown, onCancel, onConfirm, role, count }) {
   const [loading, setLoading] = React.useState(false);
-  const [selectedRole, setSelectedRole] = React.useState('');
+  const jumpToRole = getModule('UserListController/jumpToRole');
 
   return (
     <ModalConfirm
-      intent="negative"
-      isShown={props.isShown}
-      cancelLabel="Cancel"
+      intent={isUsed ? 'primary' : 'negative'}
+      isShown={isShown}
+      cancelLabel={isUsed ? 'OK, got it' : 'Cancel'}
       isConfirmLoading={loading}
-      isConfirmDisabled={props.isUsed ? selectedRole === '' : false}
       onConfirm={() => {
+        if (isUsed) {
+          jumpToRole(role.name);
+          onCancel();
+          return;
+        }
         setLoading(true);
-        props.onConfirm(selectedRole).finally(() => {
+        onConfirm().finally(() => {
           setLoading(false);
         });
       }}
-      onCancel={props.onCancel}
-      confirmLabel={props.isUsed ? 'Move users and delete the role' : 'Delete the role'}
-      title={`Delete role`}
+      onCancel={onCancel}
+      confirmLabel={isUsed ? 'View users with this role' : 'Delete the role'}
+      title={isUsed ? 'Move users before deleting' : 'Delete role'}
       shouldCloseOnOverlayClick={false}>
-      {props.isUsed ? (
-        <Typography>
+      {isUsed ? (
+        <>
           <Paragraph>
-            Before deleting the <strong>{props.role.name}</strong> role you need to move all the{' '}
-            {props.count} users to another role.
+            Assign a different role to <strong>{pluralize('user', count, true)}</strong> with the{' '}
+            {role.name} role before deleting.
           </Paragraph>
-          <SelectField
-            labelText="New role"
-            id="field-role"
-            name="field-role"
-            onChange={e => {
-              setSelectedRole(e.target.value);
-            }}>
-            <Option value="">Select the role to which you want to move users</Option>
-            {props.roleOptions.map(roleOption => (
-              <Option key={roleOption.id} value={roleOption.id}>
-                {roleOption.name}
-              </Option>
-            ))}
-          </SelectField>
-        </Typography>
+          <Paragraph>They might have the role because they’re a member of a team.</Paragraph>
+        </>
       ) : (
         <Paragraph>
-          Are you sure that you want to delete <strong>{props.role.name}</strong>?
+          Are you sure that you want to delete <strong>{role.name}</strong>?
         </Paragraph>
       )}
     </ModalConfirm>

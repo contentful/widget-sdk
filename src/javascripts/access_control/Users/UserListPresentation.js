@@ -21,7 +21,8 @@ import { VIEW_LABELS } from './constants';
 const styles = {
   workbench: {
     content: css({
-      padding: 0
+      padding: 0,
+      scrollBehavior: 'smooth'
     })
   },
   groupSelect: css({
@@ -102,7 +103,7 @@ const UserListPresentation = ({
   const roleAnchorEl = useRef(null);
   useEffect(() => {
     if (userGroups && jumpToRole && roleAnchorEl.current) {
-      scrollToRole(roleAnchorEl);
+      setTimeout(() => scrollToRole(roleAnchorEl), 500);
     }
   }, [userGroups, jumpToRole]);
 
