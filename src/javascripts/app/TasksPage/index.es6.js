@@ -30,6 +30,12 @@ const styles = {
   }),
   note: css({
     marginBottom: tokens.spacingXl
+  }),
+  taskColumn: css({
+    width: '420px'
+  }),
+  entryColumn: css({
+    width: '420px'
   })
 };
 
@@ -119,7 +125,7 @@ export default class TasksPage extends Component {
         <FolderIllustration />
       </div>
       <Heading>No pending tasks</Heading>
-      <Paragraph>You have no pending tasks</Paragraph>
+      <Paragraph>You don&apos;t currently have any pending tasks assigned to you</Paragraph>
     </EmptyStateContainer>
   );
 
@@ -127,22 +133,22 @@ export default class TasksPage extends Component {
     <Table>
       <TableHead>
         <TableRow>
-          <TableCell>Task</TableCell>
+          <TableCell className={styles.taskColumn}>Task</TableCell>
           <TableCell>Created by</TableCell>
           <TableCell>Assigned at</TableCell>
-          <TableCell>Appears in</TableCell>
+          <TableCell className={styles.entryColumn}>Appears in</TableCell>
         </TableRow>
       </TableHead>
 
       <TableBody>
         {this.state.tasks.map((task, index) => (
           <TableRow key={index}>
-            <TableCell>{task.body}</TableCell>
+            <TableCell className={styles.taskColumn}>{task.body}</TableCell>
             <TableCell>{task.createdBy.firstName}</TableCell>
             <TableCell>
               <RelativeDateTime value={task.createdAt} />
             </TableCell>
-            <TableCell>
+            <TableCell className={styles.entryColumn}>
               <TextLink
                 icon="Entry"
                 href={href({
@@ -167,8 +173,8 @@ export default class TasksPage extends Component {
         <Workbench.Content className={styles.workbenchContent}>
           {!!this.state.tasks.length && (
             <Note className={styles.note}>
-              Your pending tasks appear here. You must resolve these tasks in order for the related
-              entry to become publishable (TODO: replace with actual message).
+              These are your pending tasks. An entry can only be published when all its pending
+              tasks are resolved.
             </Note>
           )}
           {this.state.tasks.length ? this.renderTable() : this.renderEmptyState()}
