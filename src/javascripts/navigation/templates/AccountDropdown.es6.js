@@ -207,13 +207,15 @@ export default class AccountDropdown extends Component {
             href={href({ path: ['account', 'profile', 'user'] })}>
             User Profile
           </DropdownListItem>
-          <DropdownListItem
-            data-test-id="nav.account.pendingTasks"
-            href={href({ path: ['spaces', 'detail', 'tasks'] })}>
-            <span className={styles.pendingTasksItem}>
-              {`Pending tasks (${this.state.pendingTasksCount})`}
-            </span>
-          </DropdownListItem>
+          {this.state.shouldShowPendingTasks && (
+            <DropdownListItem
+              data-test-id="nav.account.pendingTasks"
+              href={href({ path: ['spaces', 'detail', 'tasks'] })}>
+              <span className={styles.pendingTasksItem}>
+                {`Pending tasks (${this.state.pendingTasksCount})`}
+              </span>
+            </DropdownListItem>
+          )}
         </DropdownList>
 
         <DropdownList border="bottom">

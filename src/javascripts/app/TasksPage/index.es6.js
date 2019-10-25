@@ -21,7 +21,7 @@ import EmptyStateContainer, {
 import FolderIllustration from 'svg/folder-illustration.es6';
 import RelativeDateTime from 'components/shared/RelativeDateTime/index.es6';
 import { getEntryTitle } from 'classes/EntityFieldValueHelpers.es6';
-import { getOpenAssignedTasks } from './helpers.es6';
+import { getOpenAssignedTasksAndEntries } from './helpers.es6';
 import { href } from 'states/Navigator.es6';
 
 const styles = {
@@ -45,7 +45,6 @@ export default class TasksPage extends Component {
     currentUserId: PropTypes.string.isRequired,
     environmentId: PropTypes.string.isRequired,
     users: PropTypes.object.isRequired,
-    getEntries: PropTypes.func.isRequired,
     getContentType: PropTypes.func.isRequired,
     defaultLocaleCode: PropTypes.string.isRequired
   };
@@ -56,7 +55,7 @@ export default class TasksPage extends Component {
 
   componentDidMount = async () => {
     const [[tasks, entries], spaceUsers] = await Promise.all([
-      this.getTasksAndEntries(),
+      getOpenAssignedTasksAndEntries(this.props.spaceId, this.props.currentUserId),
       this.props.users.getAll()
     ]);
     const entryTitles = this.getEntryTitles(entries);
@@ -79,15 +78,6 @@ export default class TasksPage extends Component {
       return [...tasks, newTask];
     }, []);
     this.setState({ tasks: taskState });
-  };
-
-  getTasksAndEntries = async () => {
-    const { spaceId, currentUserId, getEntries } = this.props;
-    const tasks = await getOpenAssignedTasks(spaceId, currentUserId);
-    const { items: entries } = await getEntries({
-      'sys.id[in]': tasks.map(item => item.sys.reference.sys.id).join(',')
-    });
-    return [tasks, entries];
   };
 
   getEntryTitles = entries => {

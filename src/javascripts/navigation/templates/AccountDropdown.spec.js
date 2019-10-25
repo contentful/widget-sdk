@@ -34,7 +34,7 @@ jest.mock('Authentication.es6', () => ({
 }));
 
 jest.mock('app/TasksPage/helpers.es6', () => ({
-  getOpenAssignedTasks: jest.fn()
+  getOpenAssignedTasksAndEntries: jest.fn()
 }));
 
 beforeEach(() => {
@@ -43,7 +43,6 @@ beforeEach(() => {
   jest.spyOn(Analytics, 'track').mockImplementation(() => {});
   jest.spyOn(Analytics, 'disable').mockImplementation(() => {});
   jest.spyOn(Authentication, 'logout').mockImplementation(() => {});
-  getOpenAssignedTasksAndEntries.mockResolvedValue([[], []]);
   Analytics.track.mockClear();
   Analytics.disable.mockClear();
   getUser.mockClear();
