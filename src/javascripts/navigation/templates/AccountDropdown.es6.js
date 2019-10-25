@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { cx, css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import enhanceWithClickOutside from 'react-click-outside';
 
 import * as Analytics from 'analytics/Analytics';
 import * as Authentication from 'Authentication.es6';
@@ -66,7 +65,7 @@ const styles = {
   })
 };
 
-class AccountDropdown extends Component {
+export default class AccountDropdown extends Component {
   state = {
     isOpen: false,
     currentUser: {}
@@ -85,12 +84,6 @@ class AccountDropdown extends Component {
       return {
         isOpen: !prevState.isOpen
       };
-    });
-  };
-
-  handleClickOutside = () => {
-    this.setState({
-      isOpen: false
     });
   };
 
@@ -116,6 +109,7 @@ class AccountDropdown extends Component {
       <Dropdown
         className={cx(styles.dropdown, this.state.isOpen && styles.dropdownActive)}
         isOpen={this.state.isOpen}
+        onClose={this.handleToggle}
         role="menu"
         aria-label="Account Menu"
         testId="account-menu"
@@ -172,5 +166,3 @@ class AccountDropdown extends Component {
     );
   }
 }
-
-export default enhanceWithClickOutside(AccountDropdown);
