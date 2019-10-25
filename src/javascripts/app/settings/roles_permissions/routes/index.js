@@ -1,14 +1,25 @@
-import base from 'states/Base.es6';
 import RoleRepository from 'access_control/RoleRepository';
-import RoleEditor from '../role_editor/RoleEditor';
+import RoleEditorRoute from './RoleEditorRoute';
+import RolesListRoute from './RolesListRoute';
+import * as ResourceUtils from 'utils/ResourceUtils.es6';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog.es6';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 
-const list = base({
+const list = {
   name: 'list',
   url: '',
-  loadingText: 'Loading roles…',
-  template: '<cf-role-list class="workbench role-list" />'
-});
+  component: RolesListRoute,
+  mapInjectedToProps: [
+    'spaceContext',
+    spaceContext => {
+      return {
+        spaceId: spaceContext.getId(),
+        isLegacyOrganization: ResourceUtils.isLegacyOrganization(spaceContext.organization),
+        canUpgradeOrganization: isOwnerOrAdmin(spaceContext.organization)
+      };
+    }
+  ]
+};
 
 const newRole = {
   name: 'new',
@@ -25,15 +36,23 @@ const newRole = {
         $stateParams.baseRoleId ? roleRepo.get($stateParams.baseRoleId) : null
     ]
   },
-  component: RoleEditor,
+  component: RoleEditorRoute,
   mapInjectedToProps: [
     '$scope',
+    'spaceContext',
     'baseRole',
-    ($scope, baseRole) => {
+    ($scope, spaceContext, baseRole) => {
       return {
         isNew: true,
         role: RoleRepository.getEmpty(),
+        roleRepo: RoleRepository.getInstance(spaceContext.space),
+        spaceId: spaceContext.getId(),
         baseRole,
+        isLegacyOrganization: ResourceUtils.isLegacyOrganization(spaceContext.organization),
+        getContentTypes: async () => {
+          await spaceContext.publishedCTs.refresh();
+          return spaceContext.publishedCTs.getAllBare();
+        },
         registerSaveAction: save => {
           $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
           $scope.$applyAsync();
@@ -50,12 +69,6 @@ const newRole = {
 const detail = {
   name: 'detail',
   url: '/:roleId',
-  onEnter: [
-    'spaceContext',
-    spaceContext => {
-      spaceContext.publishedCTs.refresh();
-    }
-  ],
   resolve: {
     role: [
       'spaceContext',
@@ -64,14 +77,22 @@ const detail = {
         RoleRepository.getInstance(spaceContext.space).get($stateParams.roleId)
     ]
   },
-  component: RoleEditor,
+  component: RoleEditorRoute,
   mapInjectedToProps: [
     '$scope',
+    'spaceContext',
     'role',
-    ($scope, role) => {
+    ($scope, spaceContext, role) => {
       return {
         isNew: false,
+        spaceId: spaceContext.getId(),
         role,
+        roleRepo: RoleRepository.getInstance(spaceContext.space),
+        isLegacyOrganization: ResourceUtils.isLegacyOrganization(spaceContext.organization),
+        getContentTypes: async () => {
+          await spaceContext.publishedCTs.refresh();
+          return spaceContext.publishedCTs.getAllBare();
+        },
         registerSaveAction: save => {
           $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
           $scope.$applyAsync();

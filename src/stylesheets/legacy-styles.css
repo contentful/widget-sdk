@@ -2303,102 +2303,12 @@ pre,
     display: block;
     margin: 8px 0;
   }
-  .role-list .context-menu.x--arrow-up:before,
   .user-list .workbench-header__actions .context-menu.x--arrow-up:before,
-  .role-list .context-menu.x--arrow-up:after,
   .user-list .workbench-header__actions .context-menu.x--arrow-up:after {
     left: 92%;
   }
-  .role-list__actions {
-    min-width: 25px;
-    font-size: 0.6em;
-    letter-spacing: 0.18em;
-  }
-  .role-list__actions--disabled {
-    color: #a9b9c0;
-    cursor: default;
-  }
-  .role-list__item {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-align: center;
-    -webkit-box-align: center;
-            align-items: center;
-    -ms-flex-pack: justify;
-    -webkit-box-pack: justify;
-            justify-content: space-between;
-    border-bottom: 1px solid #e5ebed;
-    padding: 20px 25px 19px;
-  }
-  .role-list__item h3 {
-    margin-top: 0;
-  }
-  .role-list__item p {
-    margin-bottom: 0;
-  }
-  .role-list__item:first-child {
-    margin-top: -19px;
-  }
-  .role-list__item.disabled {
-    background: #f7f9fa;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    cursor: default;
-  }
-  .role-list__item.disabled > .role-list__member-count {
-    color: #a9b9c0;
-  }
-  .role-list__link {
-    width: 70%;
-  }
-  .role-list__link h3 {
-    color: #2a3039;
-  }
-  .role-list__link p {
-    color: #a9b9c0;
-  }
-  .role-list__link.admin-role {
-    cursor: default;
-  }
-  .role-list__link:not(.admin-role) {
-    cursor: pointer;
-  }
-  .role-list__link:not(.admin-role):hover > * {
-    color: #4a90e2;
-  }
-  .role-list__action--disabled {
-    color: #a9b9c0;
-    cursor: default;
-  }
-  .role-list__action--disabled:hover {
-    background: transparent;
-    color: #a9b9c0;
-  }
-  .admin-role h3 small {
-    display: inline-block;
-    padding-left: 10px;
-    font-size: 0.7em;
-    font-weight: normal;
-    color: #a9b9c0;
-  }
   .role-details {
     padding: 10px 0;
-  }
-  .rule-list__note {
-    margin: 10px 0;
-  }
-  .rule-list__rule {
-    margin: 10px 0;
-  }
-  .rule-list__rule select {
-    margin-right: 10px;
-    margin-bottom: 5px;
-  }
-  .rule-list__remove {
-    font-size: 1.3rem;
   }
   .settings-form__section {
     margin-top: 1.285714285714286em;

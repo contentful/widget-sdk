@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { websiteUrl } from 'Config.es6';
 
 const items = {
+  sales: 'contact/sales/',
   space: 'faq/terminology/#what-is-a-space',
   content_model: 'developers/docs/concepts/data-model/',
   content_type: 'faq/terminology/#what-is-a-content-type',

@@ -1,29 +1,11 @@
-import { registerFactory } from 'NgRegistry.es6';
+import { getModule } from 'NgRegistry.es6';
+import { go } from 'states/Navigator.es6';
 
-export default function register() {
-  registerFactory('UserListController/jumpToRole', [
-    '$state',
-    'spaceContext',
-    ($state, spaceContext) => {
-      let jumpToRole = null;
-
-      jump.popRoleId = popRoleId;
-      return jump;
-
-      function jump(roleName) {
-        jumpToRole = roleName;
-        if (spaceContext.isMasterEnvironment()) {
-          $state.go('spaces.detail.settings.users.list', { jumpToRole });
-        } else {
-          $state.go('spaces.detail.environment.settings.users.list', { jumpToRole });
-        }
-      }
-
-      function popRoleId() {
-        const roleId = jumpToRole;
-        jumpToRole = null;
-        return roleId;
-      }
-    }
-  ]);
+export default function jumpToRole(roleName) {
+  const spaceContext = getModule('spaceContext');
+  if (spaceContext.isMasterEnvironment()) {
+    go({ path: 'spaces.detail.settings.users.list', params: { jumpToRole: roleName } });
+  } else {
+    go({ path: 'spaces.detail.environment.settings.users.list', params: { jumpToRole: roleName } });
+  }
 }

@@ -1,7 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
+import { css } from 'emotion';
 import getLocales from 'access_control/getLocales';
+import tokens from '@contentful/forma-36-tokens';
+import { Select, Option, Button } from '@contentful/forma-36-react-components';
 import { PolicyBuilderConfig } from 'access_control/PolicyBuilder';
 
 const contentTypesToOptions = contentTypes =>
@@ -18,6 +21,20 @@ const getEntityName = entity => {
   } else {
     return ['asset', 'Assets'];
   }
+};
+
+const styles = {
+  ruleList: css({
+    display: 'flex',
+    margin: `${tokens.spacingM} 0`,
+    alignItems: 'center',
+    flexWrap: 'wrap'
+  }),
+  select: css({
+    marginRight: tokens.spacingS,
+    marginTop: tokens.spacingXs,
+    marginBottom: tokens.spacingXs
+  })
 };
 
 class Rule extends React.Component {
@@ -70,78 +87,83 @@ class Rule extends React.Component {
     const entityName = getEntityName(entity);
 
     return (
-      <div className="rule-list__rule">
-        <select
-          className="cfnext-select-box"
-          data-test-id="action"
-          disabled={isDisabled}
+      <div className={styles.ruleList} data-test-id="rule-item">
+        <Select
+          className={styles.select}
+          width="medium"
+          testId="action"
+          isDisabled={isDisabled}
           value={rule.action}
           onChange={onUpdateAttribute('action')}>
-          <option value="all">All actions</option>
-          <option value="read">Read</option>
-          <option value="update">Edit</option>
-          <option value="create">Create</option>
-          <option value="delete">Delete</option>
-          <option value="archive">Archive/Unarchive</option>
-          <option value="publish">Publish/Unpublish</option>
-        </select>
-        <select
-          className="cfnext-select-box"
-          data-test-id="scope"
-          disabled={rule.action === 'create' || isDisabled}
+          <Option value="all">All actions</Option>
+          <Option value="read">Read</Option>
+          <Option value="update">Edit</Option>
+          <Option value="create">Create</Option>
+          <Option value="delete">Delete</Option>
+          <Option value="archive">Archive/Unarchive</Option>
+          <Option value="publish">Publish/Unpublish</Option>
+        </Select>
+        <Select
+          className={styles.select}
+          width="medium"
+          testId="scope"
+          isDisabled={rule.action === 'create' || isDisabled}
           value={rule.scope}
           onChange={onUpdateAttribute('scope')}>
-          <option value="any">{`Any ${entityName[0]}`}</option>
-          <option value="user">{`${entityName[1]} created by user`}</option>
-        </select>
+          <Option value="any">{`Any ${entityName[0]}`}</Option>
+          <Option value="user">{`${entityName[1]} created by user`}</Option>
+        </Select>
         {entity === 'entry' && (
           <React.Fragment>
-            <select
-              className="cfnext-select-box"
-              data-test-id="contentType"
-              disabled={isDisabled}
+            <Select
+              className={styles.select}
+              width="medium"
+              testId="contentType"
+              isDisabled={isDisabled}
               value={rule.contentType}
               onChange={onUpdateAttribute('contentType')}>
               {this.contentTypes.map(({ id, name }) => (
-                <option value={id} key={id}>
+                <Option value={id} key={id}>
                   {name}
-                </option>
+                </Option>
               ))}
-            </select>
+            </Select>
             {rule.action === 'update' && (
-              <select
-                className="cfnext-select-box"
-                data-test-id="field"
-                disabled={rule.contentType === 'all' || isDisabled}
+              <Select
+                className={styles.select}
+                width="medium"
+                testId="field"
+                isDisabled={rule.contentType === 'all' || isDisabled}
                 value={rule.field}
                 onChange={onUpdateAttribute('field')}>
                 {this.state.contentTypeFields.map(({ id, name }) => (
-                  <option value={id} key={id}>
+                  <Option value={id} key={id}>
                     {name}
-                  </option>
+                  </Option>
                 ))}
-              </select>
+              </Select>
             )}
           </React.Fragment>
         )}
         {rule.action === 'update' && (
-          <select
-            className="cfnext-select-box"
-            data-test-id="locale"
-            disabled={isDisabled}
+          <Select
+            className={styles.select}
+            width="medium"
+            testId="locale"
+            isDisabled={isDisabled}
             value={rule.locale}
             onChange={onUpdateAttribute('locale')}>
             {getLocales(privateLocales).map(({ code, name }) => (
-              <option value={code} key={code}>
+              <Option value={code} key={code}>
                 {name}
-              </option>
+              </Option>
             ))}
-          </select>
+          </Select>
         )}
         {!isDisabled && (
-          <a className="rule-list__remove" onClick={onRemove}>
-            <i className="fa fa-trash" />
-          </a>
+          <Button onClick={onRemove} buttonType="naked" icon="Close" size="small">
+            Delete rule
+          </Button>
         )}
       </div>
     );

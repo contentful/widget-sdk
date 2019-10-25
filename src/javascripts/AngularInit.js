@@ -36,8 +36,6 @@ export const angularInitRun = [
       import('analytics/analyticsConsoleDirective'),
       import('services/modalDialogService.es6'),
       import('ui/command.es6'),
-      import('access_control/Users/jumpToRole'),
-      import('access_control/RoleListDirective'),
       import('access_control/UserSpaceInvitationController'),
       import('account/cfNewOrganizationMembership'),
       import('app/ContentModel/Editor/addFieldDialogController.es6'),

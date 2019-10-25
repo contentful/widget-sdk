@@ -6,6 +6,7 @@ import { Notification, ModalConfirm, Paragraph } from '@contentful/forma-36-reac
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 import { getInstance } from 'access_control/RoleRepository';
+import jumpToRole from 'access_control/Users/jumpToRole';
 
 export function createRoleRemover(listHandler, role) {
   const spaceContext = getModule('spaceContext');
@@ -47,8 +48,6 @@ export function createRoleRemover(listHandler, role) {
 
 export function RemoveRoleModalConfirm({ isUsed, isShown, onCancel, onConfirm, role, count }) {
   const [loading, setLoading] = React.useState(false);
-  const jumpToRole = getModule('UserListController/jumpToRole');
-
   return (
     <ModalConfirm
       intent={isUsed ? 'primary' : 'negative'}

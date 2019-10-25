@@ -48,7 +48,7 @@ export default class RuleList extends React.Component {
 
     return (
       <div className="rule-list" data-test-id={`rule-list-${entity}`}>
-        <div className="rule-list__section">
+        <div className="rule-list__section" data-test-id={`rule-list-${entity}-section`}>
           <label>Users with this role can:</label>
           {rules.allowed.length === 0 && (
             <Note className={styles.note}>
@@ -91,7 +91,7 @@ export default class RuleList extends React.Component {
                 on the link below.
               </Note>
             )}
-            <div className="rule-list__rule">
+            <div className="rule-list__rule" data-test-id="rule-exceptions">
               {rules.denied.map(rule => (
                 <Rule
                   key={rule.id}

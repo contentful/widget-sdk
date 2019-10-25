@@ -1,25 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Paragraph,
-  Typography,
-  SkeletonContainer,
-  SkeletonBodyText
-} from '@contentful/forma-36-react-components';
+import { Paragraph, Typography } from '@contentful/forma-36-react-components';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
 import ContactUsButton from 'ui/Components/ContactUsButton.es6';
 import WorkbenchSidebarItem from 'app/common/WorkbenchSidebarItem';
 
 export default function RoleEditorSidebar(props) {
-  const { hasCustomRolesFeature, isLegacy, loading } = props;
-
-  if (loading) {
-    return (
-      <SkeletonContainer>
-        <SkeletonBodyText numberOfLines={3} />
-      </SkeletonContainer>
-    );
-  }
+  const { hasCustomRolesFeature, isLegacy } = props;
 
   if (hasCustomRolesFeature) {
     return (
@@ -95,7 +82,6 @@ export default function RoleEditorSidebar(props) {
 }
 
 RoleEditorSidebar.propTypes = {
-  loading: PropTypes.bool,
   hasCustomRolesFeature: PropTypes.bool,
   isLegacy: PropTypes.bool
 };
