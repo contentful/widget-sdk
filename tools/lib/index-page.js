@@ -92,7 +92,7 @@ function indexPage(uiVersion, config, resolve, entryScripts) {
             ngShow: 'user && appReady',
             cfRolesForWalkMe: ''
           }),
-          h('div', { ngIf: '!user || !appReady' }, [appLoader()])
+          h('div.app-loader', { ngIf: '!user || !appReady' }, [appLoader()])
         ])
       ].concat(entryScripts.map(src => scriptTag(resolve(src))))
     )
