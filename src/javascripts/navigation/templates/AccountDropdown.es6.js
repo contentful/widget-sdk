@@ -116,7 +116,7 @@ export default class AccountDropdown extends Component {
   };
 
   componentDidMount = async () => {
-    const updates = {}
+    const updates = {};
     const spaceContext = getModule('spaceContext');
     const currentUser = await getUser();
 
@@ -145,14 +145,11 @@ export default class AccountDropdown extends Component {
   };
 
   handleToggle = () => {
-    this.setState(prevState => {
-      return {
-        isOpen: !prevState.isOpen
-      };
-    });
+    this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
 
-  handleLogout = () => {
+  handleLogout = e => {
+    e.preventDefault();
     Analytics.track('global:logout_clicked');
     Analytics.disable();
     Authentication.logout();
@@ -234,8 +231,10 @@ export default class AccountDropdown extends Component {
           </DropdownListItem>
         </DropdownList>
 
-        <DropdownList onMouseDown={this.handleLogout}>
-          <DropdownListItem testId="nav.account.logout">Log out</DropdownListItem>
+        <DropdownList onClick={this.handleLogout}>
+          <DropdownListItem href="#" testId="nav.account.logout">
+            Log out
+          </DropdownListItem>
         </DropdownList>
       </Dropdown>
     );

@@ -73,7 +73,7 @@ describe('AccountDropdown', () => {
 
   it('logs out the user', async () => {
     fireEvent.click(wrapper.getByTestId('account-menu-trigger'));
-    fireEvent.mouseDown(wrapper.queryByTestId('nav.account.logout'));
+    fireEvent.click(wrapper.queryByTestId('nav.account.logout'));
 
     await wait();
 
