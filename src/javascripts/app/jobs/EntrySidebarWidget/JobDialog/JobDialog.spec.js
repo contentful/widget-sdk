@@ -86,32 +86,12 @@ describe('JobDialog', () => {
     );
   });
 
-  it.skip.each([
-    [
-      '2017-06-18T15:59',
-      '(GMT+03:00) - Africa/Nairobi',
-      '2017-06-18T16:00:00.000+03:00',
-      'Africa/Nairobi'
-    ],
-    [
-      '2017-06-18T16:59',
-      '(GMT+03:00) - Africa/Nairobi',
-      '2017-06-18T17:00:00.000+03:00',
-      'Africa/Nairobi'
-    ],
-    [
-      '2017-06-18T16:59',
-      '(GMT+01:00) - Europe/London',
-      '2017-06-18T17:00:00.000+01:00',
-      'Europe/London'
-    ],
-    [
-      '2017-12-01T16:59',
-      '(GMT+02:00) - Europe/Berlin',
-      '2017-12-01T17:00:00.000+01:00',
-      'Europe/Berlin'
-    ]
-  ])('allows to set timezone: %p + %p => %p', async (now, timezone, expected, expectedTimezone) => {
+  it.each([
+    ['2017-06-18T15:59', 'Africa/Nairobi', '2017-06-18T16:00:00.000+03:00'],
+    ['2017-06-18T16:59', 'Africa/Nairobi', '2017-06-18T17:00:00.000+03:00'],
+    ['2017-06-18T16:59', 'Europe/London', '2017-06-18T17:00:00.000+01:00'],
+    ['2017-12-01T16:59', 'Europe/Berlin', '2017-12-01T17:00:00.000+01:00']
+  ])('allows to set timezone: %p + %p => %p', async (now, timezone, expected) => {
     DateMocks.mockNowOnce(dateNowSpy, now);
 
     const [renderResult, props] = build();
@@ -124,7 +104,7 @@ describe('JobDialog', () => {
     });
     fireEvent.blur(tz);
 
-    const selectedItem = renderResult.getByText(timezone);
+    const selectedItem = renderResult.getByText(timezone, { exact: false });
     fireEvent.click(selectedItem);
 
     const expectedLocalTime = moment(expected).format('ddd, MMM Do, YYYY - hh:mm A');
@@ -140,7 +120,7 @@ describe('JobDialog', () => {
         scheduledAt: expected,
         action: 'publish'
       },
-      expectedTimezone
+      timezone
     );
   });
 
