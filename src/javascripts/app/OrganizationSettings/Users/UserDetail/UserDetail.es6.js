@@ -1,11 +1,10 @@
-/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { getValue } from 'utils/kefir.es6';
-import Workbench from 'app/common/Workbench.es6';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import { go } from 'states/Navigator.es6';
-import { Button, Notification } from '@contentful/forma-36-react-components';
+import { Button, Notification, Paragraph } from '@contentful/forma-36-react-components';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import UserCard from '../UserCard.es6';
 import { getRoleDescription } from 'utils/MembershipUtils.es6';
@@ -32,7 +31,17 @@ import ChangeOwnRoleConfirmation from './ChangeOwnRoleConfirmation.es6';
 
 import * as OrganizationRoles from 'services/OrganizationRoles.es6';
 import * as TokenStore from 'services/TokenStore.es6';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 
+const styles = {
+  roleSelector: css({
+    marginTop: '-5px'
+  }),
+  roleSelectorParagraph: css({
+    marginTop: tokens.spacing2Xs
+  })
+};
 class UserDetail extends React.Component {
   static propTypes = {
     initialMembership: OrganizationMembershipPropType.isRequired,
@@ -166,10 +175,14 @@ class UserDetail extends React.Component {
 
     return (
       <Workbench className="organization-users-page" testId="organization-users-page">
-        <Workbench.Header>
-          <Workbench.Header.Back to="^.list" />
-          <Workbench.Title>User details</Workbench.Title>
-        </Workbench.Header>
+        <Workbench.Header
+          title="User details"
+          onBack={() => {
+            go({
+              path: ['account', 'organizations', 'users', 'list']
+            });
+          }}
+        />
         <Workbench.Content>
           <div className="user-details">
             <div className="user-details__sidebar">
@@ -200,7 +213,7 @@ class UserDetail extends React.Component {
                   <dt>Organization role</dt>
                   <dd>
                     <OrganizationRoleSelector
-                      style={{ marginTop: '-5px' }}
+                      className={styles.roleSelector}
                       isSelf={this.isSelf}
                       disableOwnerRole={disableOwnerRole}
                       initialRole={membership.role}
@@ -208,7 +221,9 @@ class UserDetail extends React.Component {
                     />
                   </dd>
                 </dl>
-                <p style={{ marginTop: 10 }}>{getRoleDescription(membership.role)}</p>
+                <Paragraph className={styles.roleSelectorParagraph}>
+                  {getRoleDescription(membership.role)}
+                </Paragraph>
               </section>
               <Button buttonType="negative" size="small" onClick={() => this.removeMembership()}>
                 Remove membership

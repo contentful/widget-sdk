@@ -128,15 +128,6 @@ describe('TeamDetails', () => {
         );
         expect(wrapper.find('[data-test-id="team-details"]')).toHaveLength(0);
       });
-
-      it('should render link to team list', () => {
-        const { wrapper } = renderComponent(actions);
-
-        expect(wrapper.find('a[data-test-id="link-to-list"]').props()).toHaveProperty(
-          'href',
-          ROUTES.organization.children.teams.build({ orgId: activeOrgId })
-        );
-      });
     });
 
     describe('is at route with existing team', () => {
@@ -161,15 +152,6 @@ describe('TeamDetails', () => {
           0
         );
         expect(wrapper.find('[data-test-id="team-details"]')).toHaveLength(1);
-      });
-
-      it('should render link to team list', () => {
-        const { wrapper } = renderComponent(actions);
-
-        expect(wrapper.find('a[data-test-id="link-to-list"]').props()).toHaveProperty(
-          'href',
-          ROUTES.organization.children.teams.build({ orgId: activeOrgId })
-        );
       });
 
       it('should render team details', () => {

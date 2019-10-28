@@ -5,7 +5,7 @@ import { css } from 'emotion';
 
 import { Notification } from '@contentful/forma-36-react-components';
 
-import Workbench from 'app/common/Workbench.es6';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import { showDialog as showCreateSpaceModal } from 'services/CreateSpace.es6';
 import { showDialog as showChangeSpaceModal } from 'services/ChangeSpaceService.es6';
 import { openDeleteSpaceDialog } from 'services/DeleteSpace.es6';
@@ -15,11 +15,15 @@ import BasePlan from './BasePlan.es6';
 import UsersForPlan from './UsersForPlan.es6';
 import SpacePlans from './SpacePlans.es6';
 import Sidebar from './Sidebar.es6';
+import Icon from 'ui/Components/Icon.es6';
 
 const styles = {
   content: css({
     // TODO: $rhythm for emotion?
     padding: '1.28rem 2rem 0'
+  }),
+  sidebar: css({
+    position: 'relative'
   }),
   header: css({
     display: 'grid',
@@ -114,7 +118,8 @@ export default function SubscriptionPage({ organizationId, data }) {
   const { basePlan, usersMeta, organization, grandTotal } = data;
 
   return (
-    <Workbench title="Subscription" icon="subscription" testId="subscription-page">
+    <Workbench testId="subscription-page">
+      <Workbench.Header icon={<Icon name="subscription" />} title="Subscription" />
       <Workbench.Content className={styles.content}>
         <div className={styles.header}>
           <BasePlan basePlan={basePlan} organizationId={organizationId} />
@@ -130,7 +135,7 @@ export default function SubscriptionPage({ organizationId, data }) {
           isOrgOwner={isOwner(organization)}
         />
       </Workbench.Content>
-      <Workbench.Sidebar>
+      <Workbench.Sidebar position="right" className={styles.sidebar}>
         <Sidebar
           basePlan={basePlan}
           organizationId={organizationId}

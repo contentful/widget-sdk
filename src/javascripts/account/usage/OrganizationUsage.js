@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { mapValues, flow, keyBy, get, eq, isNumber, pick } from 'lodash/fp';
 
 import { Spinner } from '@contentful/forma-36-react-components';
-import Workbench from 'app/common/Workbench.es6';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 
 import OrganizationResourceUsageList from './non_committed/OrganizationResourceUsageList';
@@ -19,6 +19,7 @@ import * as OrganizationMembershipRepository from 'access_control/OrganizationMe
 import * as PricingDataProvider from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService.es6';
 import * as OrganizationRoles from 'services/OrganizationRoles.es6';
+import Icon from 'ui/Components/Icon.es6';
 
 export class WorkbenchContent extends React.Component {
   static propTypes = {
@@ -280,10 +281,10 @@ export class OrganizationUsage extends React.Component {
     } = this.state;
     return (
       <Workbench testId="organization.usage">
-        <Workbench.Header>
-          <Workbench.Icon icon="page-usage" />
-          <Workbench.Title>Usage</Workbench.Title>
-          <Workbench.Header.Actions>
+        <Workbench.Header
+          title="Usage"
+          icon={<Icon name="page-usage" scale="0.75" />}
+          actions={
             <WorkbenchActions
               {...{
                 isLoading,
@@ -294,8 +295,7 @@ export class OrganizationUsage extends React.Component {
                 setPeriodIndex: this.setPeriodIndex
               }}
             />
-          </Workbench.Header.Actions>
-        </Workbench.Header>
+          }></Workbench.Header>
         <Workbench.Content>
           <WorkbenchContent
             {...{

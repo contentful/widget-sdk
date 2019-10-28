@@ -18,9 +18,10 @@ import {
   Notification,
   TextLink
 } from '@contentful/forma-36-react-components';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import tokens from '@contentful/forma-36-tokens';
 import { formatQuery } from './QueryBuilder.es6';
 import ResolveLinks from 'data/LinkResolver.es6';
-import Workbench from 'app/common/Workbench.es6';
 import UserListFilters from './UserListFilters.es6';
 import UserCard from '../UserCard.es6';
 import Pagination from 'app/common/Pagination.es6';
@@ -44,10 +45,34 @@ import {
   Space as SpacePropType,
   Team as TeamPropType
 } from 'app/OrganizationSettings/PropTypes.es6';
+import Icon from 'ui/Components/Icon.es6';
 
 const styles = {
   filters: css({
     padding: '1em 2em 2em'
+  }),
+  search: css({
+    maxWidth: '1100px',
+    marginLeft: 'auto',
+    paddingLeft: tokens.spacingL
+  }),
+  ctaWrapper: css({
+    paddingLeft: tokens.spacingM,
+    marginLeft: 'auto',
+    display: 'flex'
+  }),
+  numberOrgMemberships: css({
+    marginRight: tokens.spacingXs
+  }),
+  actionsWrapper: css({
+    width: '100%',
+    display: 'flex'
+  }),
+  membershipLink: css({
+    textDecoration: 'none',
+    ':link': {
+      textDecoration: 'none'
+    }
   }),
   list: css({ position: 'relative' })
 };
@@ -232,32 +257,37 @@ class UsersList extends React.Component {
 
     return (
       <Workbench testId="organization-users-page">
-        <Workbench.Header>
-          <Workbench.Header.Left>
-            <Workbench.Icon icon="page-users" />
-            <Workbench.Title>Users</Workbench.Title>
-          </Workbench.Header.Left>
-          <Workbench.Header.Search>
-            <TextInput
-              autoFocus
-              type="search"
-              placeholder="Search by first name, last name, email or user ID"
-              onChange={this.search}
-              value={searchTerm}
-            />
-          </Workbench.Header.Search>
-          <Workbench.Header.Actions>
-            <div>
-              <div>{`${pluralize('users', numberOrgMemberships, true)} in your organization`}</div>
-              {invitedUsersCount != null && invitedUsersCount > 0 && (
-                <TextLink href={this.getLinkToInvitationsList()}>
-                  {invitedUsersCount} invited users
-                </TextLink>
-              )}
+        <Workbench.Header
+          icon={<Icon name="page-users" scale="0.75" />}
+          title="Users"
+          actions={
+            <div className={styles.actionsWrapper}>
+              <TextInput
+                className={styles.search}
+                autoFocus
+                type="search"
+                placeholder="Search by first name, last name, email or user ID"
+                onChange={this.search}
+                value={searchTerm}
+              />
+              <div className={styles.ctaWrapper}>
+                <div className={styles.numberOrgMemberships}>
+                  <div>{`${pluralize(
+                    'users',
+                    numberOrgMemberships,
+                    true
+                  )} in your organization`}</div>
+                  {invitedUsersCount != null && invitedUsersCount > 0 && (
+                    <TextLink href={this.getLinkToInvitationsList()}>
+                      {invitedUsersCount} invited users
+                    </TextLink>
+                  )}
+                </div>
+                <Button href={this.getLinkToInvitation()}>Invite users</Button>
+              </div>
             </div>
-            <Button href={this.getLinkToInvitation()}>Invite users</Button>
-          </Workbench.Header.Actions>
-        </Workbench.Header>
+          }
+        />
         <Workbench.Content>
           <section className={styles.filters}>
             <UserListFilters
@@ -290,9 +320,11 @@ class UsersList extends React.Component {
                         className="membership-list__item"
                         data-test-id="organization-membership-list-row">
                         <TableCell>
-                          <a href={this.getLinkToUser(membership)}>
+                          <TextLink
+                            href={this.getLinkToUser(membership)}
+                            className={styles.membershipLink}>
                             <UserCard user={membership.sys.user} />
-                          </a>
+                          </TextLink>
                         </TableCell>
                         <TableCell>{startCase(membership.role)}</TableCell>
                         <TableCell>{getLastActivityDate(membership)}</TableCell>

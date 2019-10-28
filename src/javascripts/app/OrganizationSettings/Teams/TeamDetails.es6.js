@@ -10,8 +10,10 @@ import {
   Tab,
   TabPanel,
   Heading,
-  Paragraph
+  Paragraph,
+  Subheading
 } from '@contentful/forma-36-react-components';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes.es6';
@@ -19,9 +21,7 @@ import { getTeams, getCurrentTeam, hasReadOnlyPermission } from 'redux/selectors
 import { getTeamSpaceMembershipsOfCurrentTeamToDisplay } from 'redux/selectors/teamSpaceMemberships.es6';
 import getMembershipsOfCurrentTeamToDisplay from 'redux/selectors/teamMemberships/getMembershipsOfCurrentTeamToDisplay.es6';
 import getOrgId from 'redux/selectors/getOrgId.es6';
-import Workbench from 'app/common/Workbench.es6';
 import Placeholder from 'app/common/Placeholder.es6';
-import Icon from 'ui/Components/Icon.es6';
 import ellipsisStyle from 'ellipsisStyle.es6';
 import TeamsEmptyStateImage from 'svg/add-user-illustration.es6';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer.es6';
@@ -202,18 +202,13 @@ class TeamDetails extends React.Component {
 
     return (
       <Workbench testId="organization-team-page">
-        <Workbench.Header>
-          <div className="breadcrumbs-widget">
-            <div className="breadcrumbs-container">
-              <a data-test-id="link-to-list" href={pathBack}>
-                <div data-test-id="teams-back" className="btn btn__back">
-                  <Icon name="back" />
-                </div>
-              </a>
-            </div>
-          </div>
-          <Workbench.Title>Teams</Workbench.Title>
-        </Workbench.Header>
+        <Workbench.Header
+          testId="link-to-list"
+          onBack={() => {
+            window.location.href = pathBack;
+          }}
+          title="Teams"
+        />
         <Workbench.Content>
           <div className={styles.note}>
             <ExperimentalFeatureNote />
@@ -223,9 +218,9 @@ class TeamDetails extends React.Component {
               <div className={styles.sidebar}>
                 <section className={styles.profileSection}>
                   <div className={styles.card}>
-                    <h2 className={styles.name} data-test-id="team-card-name" title={team.name}>
+                    <Subheading className={styles.name} testId="team-card-name" title={team.name}>
                       {team.name}
-                    </h2>
+                    </Subheading>
                     {team.description && (
                       <div
                         className={styles.description}

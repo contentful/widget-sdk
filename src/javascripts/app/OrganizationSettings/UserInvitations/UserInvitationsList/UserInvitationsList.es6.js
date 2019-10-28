@@ -1,4 +1,3 @@
-/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -13,6 +12,7 @@ import {
   Button,
   Notification
 } from '@contentful/forma-36-react-components';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import { href, go } from 'states/Navigator.es6';
 import {
   removeMembership,
@@ -23,8 +23,21 @@ import { getInvitedUsers } from '../UserInvitationUtils.es6';
 import { FetcherLoading } from 'app/common/createFetcherComponent.es6';
 import UserInvitationRemovalModal from '../UserInvitationRemovalModal.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 
-import Workbench from 'app/common/Workbench.es6';
+const styles = {
+  workbenchContent: css({
+    padding: tokens.spacingXl
+  }),
+  actionsWrapper: css({
+    display: 'flex',
+    alignItems: 'center'
+  }),
+  userListLink: css({
+    marginRight: tokens.spacingXs
+  })
+};
 
 export default class InvitationsList extends React.Component {
   static propTypes = {
@@ -119,15 +132,17 @@ export default class InvitationsList extends React.Component {
 
     return (
       <Workbench className="user-invitations-list">
-        <Workbench.Header>
-          <Workbench.Title>{`Invited users (${invitations.length})`}</Workbench.Title>
-          <TextLink href={this.getLinkToUsersList()}>View all users ({membershipsCount})</TextLink>
-
-          <Workbench.Header.Actions>
-            <Button href={this.getLinkToInviteUsersPage()}>Invite users</Button>
-          </Workbench.Header.Actions>
-        </Workbench.Header>
-        <Workbench.Content style={{ padding: '2.5em 2em' }}>
+        <Workbench.Header
+          title={`Invited users (${invitations.length})`}
+          actions={
+            <div className={styles.actionsWrapper}>
+              <TextLink href={this.getLinkToUsersList()} className={styles.userListLink}>
+                View all users ({membershipsCount})
+              </TextLink>
+              <Button href={this.getLinkToInviteUsersPage()}>Invite users</Button>
+            </div>
+          }></Workbench.Header>
+        <Workbench.Content className={styles.workbenchContent}>
           <Table>
             <TableHead>
               <TableRow>

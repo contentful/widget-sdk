@@ -1,12 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
 import ReloadNotification from 'app/common/ReloadNotification.es6';
 import createResourceService from 'services/ResourceService.es6';
 import { update, add, keyBy, flow, filter } from 'lodash/fp';
-import Workbench from 'app/common/Workbench.es6';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import ResourceUsageList from './ResourceUsageList.es6';
 import SpaceUsageSidebar from './SpaceUsageSidebar.es6';
 import DocumentTitle from 'components/shared/DocumentTitle.es6';
+import Icon from 'ui/Components/Icon.es6';
 
 const addMasterEnvironment = flow(
   update(
@@ -18,6 +20,12 @@ const addMasterEnvironment = flow(
   ),
   update('usage', add(1))
 );
+
+const styles = {
+  sidebar: css({
+    position: 'relative'
+  })
+};
 
 class SpaceUsage extends React.Component {
   static propTypes = {
@@ -66,10 +74,7 @@ class SpaceUsage extends React.Component {
       <React.Fragment>
         <DocumentTitle title="Usage" />
         <Workbench>
-          <Workbench.Header>
-            <Workbench.Icon icon="page-usage" />
-            <Workbench.Title>Space usage</Workbench.Title>
-          </Workbench.Header>
+          <Workbench.Header icon={<Icon name="page-usage" />} title="Space usage" />
           <Workbench.Content>
             <ResourceUsageList
               spaceResources={spaceResources}
@@ -77,7 +82,7 @@ class SpaceUsage extends React.Component {
               environmentMeta={environmentMeta}
             />
           </Workbench.Content>
-          <Workbench.Sidebar>
+          <Workbench.Sidebar position="right" className={styles.sidebar}>
             <SpaceUsageSidebar
               spaceResources={spaceResources}
               environmentResources={environmentResources}

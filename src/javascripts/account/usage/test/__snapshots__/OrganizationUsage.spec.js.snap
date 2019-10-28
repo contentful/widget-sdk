@@ -4,14 +4,8 @@ exports[`OrganizationUsage should render page without errors 1`] = `
 <Workbench
   testId="organization.usage"
 >
-  <Workbench.Header>
-    <Workbench.Icon
-      icon="page-usage"
-    />
-    <Workbench.Title>
-      Usage
-    </Workbench.Title>
-    <HeaderActions>
+  <WorkbenchHeader
+    actions={
       <WorkbenchActions
         committed={true}
         hasSpaces={true}
@@ -39,9 +33,20 @@ exports[`OrganizationUsage should render page without errors 1`] = `
         selectedPeriodIndex={0}
         setPeriodIndex={[Function]}
       />
-    </HeaderActions>
-  </Workbench.Header>
-  <Workbench.Content>
+    }
+    icon={
+      <Icon
+        name="page-usage"
+        scale="0.75"
+      />
+    }
+    testId="cf-ui-workbench-header"
+    title="Usage"
+  />
+  <WorkbenchContent
+    testId="cf-ui-workbench-content"
+    type="default"
+  >
     <WorkbenchContent
       apiRequestIncludedLimit={1000000}
       assetBandwidthData={
@@ -100,7 +105,7 @@ exports[`OrganizationUsage should render page without errors 1`] = `
         }
       }
     />
-  </Workbench.Content>
+  </WorkbenchContent>
 </Workbench>
 `;
 

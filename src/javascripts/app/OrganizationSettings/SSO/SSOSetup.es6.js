@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Workbench from 'app/common/Workbench.es6';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import { IdentityProviderStatePropType } from './PropTypes.es6';
 import { Button, TextLink, Heading, Paragraph } from '@contentful/forma-36-react-components';
@@ -14,10 +14,22 @@ import { track } from 'analytics/Analytics';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
 import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
+import Icon from 'ui/Components/Icon.es6';
 import _ from 'lodash';
 
 import { connect } from 'react-redux';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 
+const styles = {
+  heading: css({
+    marginBottom: tokens.spacingM,
+    marginTop: tokens.spacing2Xl
+  }),
+  setupParagraph: css({
+    marginBottom: tokens.spacing2Xl
+  })
+};
 export class SSOSetup extends React.Component {
   static propTypes = {
     organization: OrganizationPropType,
@@ -117,18 +129,18 @@ export class SSOSetup extends React.Component {
 
     return (
       <Workbench className="sso-setup">
-        <Workbench.Header>
-          <Workbench.Icon icon="page-sso" />
-          <Workbench.Title>Single Sign-On (SSO)</Workbench.Title>
-        </Workbench.Header>
+        <Workbench.Header
+          icon={<Icon name="page-sso" scale="0.75" />}
+          title="Single Sign-On (SSO)"
+        />
         <Workbench.Content>
           <div className="sso-setup__main">
             {!isEnabled && (
               <React.Fragment>
-                <Heading element="h1" className="f36-margin-bottom--m f36-margin-top--2xl">
+                <Heading element="h1" className={styles.heading}>
                   Set up Single Sign-On (SSO) SAML 2.0
                 </Heading>
-                <Paragraph className="f36-line-height--default f36-margin-bottom--2xl">
+                <Paragraph className={styles.setupParagraph}>
                   Set up SSO for your organization in Contentful in a few steps.&nbsp;&nbsp;
                   <TextLink href="https://www.contentful.com/faq/sso/">Check out the FAQs</TextLink>
                   &nbsp;&nbsp;

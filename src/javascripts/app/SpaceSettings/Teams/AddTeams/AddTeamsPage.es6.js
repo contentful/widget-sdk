@@ -10,12 +10,12 @@ import {
   Subheading,
   HelpText
 } from '@contentful/forma-36-react-components';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import _ from 'lodash';
 import * as tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';
 import { css, cx } from 'emotion';
 
-import Workbench from 'app/common/Workbench.es6';
 import Autocomplete from 'app/common/Autocomplete.es6';
 import { useAsyncFn } from 'app/common/hooks/useAsync.es6';
 import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
@@ -28,6 +28,7 @@ import StateLink from 'app/common/StateLink.es6';
 import { track } from 'analytics/Analytics';
 
 import RoleSelector from './RoleSelector.es6';
+import Icon from 'ui/Components/Icon.es6';
 
 const styles = {
   workbench: css({
@@ -363,11 +364,15 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
 
   return (
     <Workbench className={styles.workbench}>
-      <Workbench.Header>
-        <Workbench.Header.Back to="^.list" />
-        <Workbench.Icon icon="page-teams" />
-        <Workbench.Title>Add teams</Workbench.Title>
-      </Workbench.Header>
+      <Workbench.Header
+        title="Add teams"
+        icon={<Icon name="page-teams" scale="0.75" />}
+        onBack={() =>
+          go({
+            path: ['spaces', 'detail', 'settings', 'teams', 'list']
+          })
+        }
+      />
       <Workbench.Content>
         <Typography>{availableTeams.length > 0 ? content : noTeamsAvailablePlaceholder}</Typography>
       </Workbench.Content>

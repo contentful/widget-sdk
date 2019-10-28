@@ -1,8 +1,8 @@
-/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import Workbench from 'app/common/Workbench.es6';
+import { css } from 'emotion';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import { getUserName } from 'app/OrganizationSettings/Users/UserUtils.es6';
 import {
   Table,
@@ -12,8 +12,11 @@ import {
   TableCell,
   Button,
   Notification,
-  Tooltip
+  Tooltip,
+  Subheading,
+  Paragraph
 } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 import {
   User as UserPropType,
   SpaceMembership as SpaceMembershipPropType
@@ -28,6 +31,15 @@ import { go } from 'states/Navigator.es6';
 import UserInvitationRemovalModal from '../UserInvitationRemovalModal.es6';
 import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { getMembershipRoles } from 'access_control/utils';
+
+const styles = {
+  spaceMembershipHeading: css({ marginBottom: tokens.spacing4Xl }),
+  spaceMembershipHeader: css({
+    display: 'flex',
+    alignItems: 'baseline',
+    justifyContent: 'space-between'
+  })
+};
 
 export default class UserInvitationDetail extends React.Component {
   static propTypes = {
@@ -82,15 +94,19 @@ export default class UserInvitationDetail extends React.Component {
 
     return (
       <Workbench className="user-invitation-detail">
-        <Workbench.Header>
-          <Workbench.Header.Back to="^.invitations" />
-          <Workbench.Title>Invitation details</Workbench.Title>
-        </Workbench.Header>
+        <Workbench.Header
+          onBack={() => {
+            go({
+              path: ['account', 'organizations', 'users', 'list']
+            });
+          }}
+          title="Invitation details"
+        />
         <Workbench.Content>
           <div className="user-invitation-detail__main">
             <div className="user-invitation-detail__sidebar">
               <section className="user-invitation-detail__section">
-                <h2>{email}</h2>
+                <Subheading>{email}</Subheading>
               </section>
               <section className="user-invitation-detail__section">
                 <dl className="user-invitation-detail__definition-list">
@@ -105,9 +121,9 @@ export default class UserInvitationDetail extends React.Component {
                   <dt>Organization role</dt>
                   <dd>{role}</dd>
                 </dl>
-                <p className="user-invitation-detail__role-description">
+                <Paragraph className="user-invitation-detail__role-description">
                   {getRoleDescription(role)}
-                </p>
+                </Paragraph>
               </section>
               <Button buttonType="negative" size="small" onClick={() => this.revokeInvitation()}>
                 Revoke
@@ -115,13 +131,10 @@ export default class UserInvitationDetail extends React.Component {
             </div>
             <div className="user-invitation-detail__space-invitations">
               <section>
-                <header
-                  style={{
-                    display: 'flex',
-                    alignItems: 'baseline',
-                    justifyContent: 'space-between'
-                  }}>
-                  <h3 style={{ marginBottom: 30 }}>Space memberships</h3>
+                <header className={styles.spaceMembershipHeader}>
+                  <Subheading element="h3" className={styles.spaceMembershipHeading}>
+                    Space memberships
+                  </Subheading>
                   <Tooltip content="Invitations can’t be modified" place="left">
                     <Button size="small" buttonType="primary" disabled>
                       Add to space

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { getGatekeeperUrl } from 'account/UrlSyncHelper';
 import { css } from 'emotion';
 
-import Workbench from 'app/common/Workbench.es6';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 
 const wrapperStyle = css({
   position: 'absolute',
@@ -17,7 +17,8 @@ export default function AccountView({ title, onReady }) {
   const gatekeeperUrl = useMemo(() => getGatekeeperUrl(), []);
 
   return (
-    <Workbench title={title} testId="account-iframe-page">
+    <Workbench testId="account-iframe-page">
+      <Workbench.Header title={title} />
       <Workbench.Content>
         <div className={wrapperStyle}>
           <iframe
