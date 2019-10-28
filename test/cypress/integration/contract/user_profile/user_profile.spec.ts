@@ -11,6 +11,10 @@ import {
 } from '../../../interactions/user_profile';
 import { FeatureFlag } from '../../../util/featureFlag';
 
+function waitForAppLoadFinish() {
+    cy.get('cf-app-container').should('be.visible');
+}
+
 describe('User profile page', () => {
     before(() =>
         cy.startFakeServer({
@@ -32,6 +36,8 @@ describe('User profile page', () => {
             cy.server();
             cy.visit('/account/profile/user');
             cy.wait(interactions);
+
+            waitForAppLoadFinish();
         });
 
         it('remove twitter identity', () => {
@@ -184,7 +190,7 @@ describe('User profile page', () => {
             cy.server();
             cy.visit('/account/profile/user');
             cy.wait(interactions);
-            cy.get('cf-app-container').should('be.visible');
+            waitForAppLoadFinish();
         });
 
         it('check 2FA eligibility', () => {
