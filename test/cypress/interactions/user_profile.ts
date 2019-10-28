@@ -293,7 +293,7 @@ export const verifyTwoFAData = {
     willReturnSuccess() {
         cy.addInteraction({
             provider: 'user_profile',
-            state: 'user 2FA eligible',
+            state: 'user with 2FA not yet enabled',
             uponReceiving: `a request to verify 2FA setup`,
             withRequest: queryPutTwoFA({ totpCode: "123456" }),
             willRespondWith: {
@@ -307,7 +307,7 @@ export const verifyTwoFAData = {
     willReturnFail() {
         cy.addInteraction({
             provider: 'user_profile',
-            state: 'user 2FA eligible',
+            state: 'user with 2FA not yet enabled',
             uponReceiving: `a request to verify 2FA setup with invalid code`,
             withRequest: queryPutTwoFA({ totpCode: "111111" }),
             willRespondWith: {
