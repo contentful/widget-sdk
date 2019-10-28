@@ -22,7 +22,7 @@ import ModalLauncher from 'app/common/ModalLauncher.es6';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes.es6';
 import { IdentityProviderPropType, FieldsStatePropType } from './PropTypes.es6';
 import { connectionTestingAllowed, formatConnectionTestErrors } from './utils.es6';
-import { SSO_PROVIDERS, TEST_RESULTS } from './constants.es6';
+import { SSO_PROVIDERS_MAP, TEST_RESULTS } from './constants.es6';
 import * as ssoActionCreators from 'redux/actions/sso/actionCreators.es6';
 import * as ssoSelectors from 'redux/selectors/sso.es6';
 import { track } from 'analytics/Analytics';
@@ -143,6 +143,10 @@ export class IDPSetupForm extends React.Component {
       connectionTest.result !== TEST_RESULTS.success &&
       connectionTest.result !== TEST_RESULTS.failure;
 
+    const idpNameSelectValue = _.findKey(SSO_PROVIDERS_MAP, names =>
+      names.includes(fields.idpName.value)
+    );
+
     return (
       <React.Fragment>
         <section className="f36-margin-top--xl">
@@ -249,10 +253,10 @@ export class IDPSetupForm extends React.Component {
               testId="ssoProvider"
               width="medium"
               className="f36-margin-bottom--l f36-margin-right--m sso-setup__select"
-              value={fields.idpName.value}
+              value={idpNameSelectValue}
               onChange={this.updateField('idpName', true)}>
               <Option value="">Select provider</Option>
-              {SSO_PROVIDERS.map(name => {
+              {Object.keys(SSO_PROVIDERS_MAP).map(name => {
                 return (
                   <Option key={name} value={name}>
                     {name}
