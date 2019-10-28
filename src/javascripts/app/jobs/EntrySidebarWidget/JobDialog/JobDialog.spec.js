@@ -86,7 +86,7 @@ describe('JobDialog', () => {
     );
   });
 
-  it.each([
+  it.skip.each([
     [
       '2017-06-18T15:59',
       '(GMT+03:00) - Africa/Nairobi',
