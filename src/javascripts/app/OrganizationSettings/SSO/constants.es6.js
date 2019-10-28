@@ -3,6 +3,7 @@ export const SSO_PROVIDERS_MAP = {
   'Google Suite': ['Google Suite'],
   'Microsoft ADFS': ['Microsoft ADFS'],
   'Microsoft Azure AD': ['Microsoft Azure', 'Microsoft Azure AD'],
+  miniOrange: ['miniOrange'],
   Okta: ['Okta'],
   OneLogin: ['OneLogin'],
   'Ping Identity': ['PingIdentity', 'Ping Identity'],

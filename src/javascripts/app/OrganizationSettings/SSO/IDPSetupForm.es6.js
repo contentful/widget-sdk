@@ -272,6 +272,7 @@ export class IDPSetupForm extends React.Component {
                 labelText="Single Sign-On Redirect URL"
                 className="sso-setup__field f36-margin-right--m f36-margin-bottom--l"
                 id="idpSsoTargetUrl"
+                helpText="Sometimes called the SSO Login URL"
                 name="idpSsoTargetUrl"
                 onChange={this.updateField('idpSsoTargetUrl')}
                 onBlur={this.updateField('idpSsoTargetUrl', true)}
