@@ -7,7 +7,8 @@ import {
     changePassword,
     deleteUserAccount,
     getTwoFAData,
-    verifyTwoFAData
+    verifyTwoFAData,
+    deleteTwoFA
 } from '../../../interactions/user_profile';
 import { FeatureFlag } from '../../../util/featureFlag';
 
@@ -234,5 +235,28 @@ describe('User profile page', () => {
                 .find('[data-test-id="cf-ui-validation-message"]')
                 .should('be.visible');
         });
+    });
+
+    context('user with 2FA enabled', () => {
+        beforeEach(() => {
+            cy.resetAllFakeServers();
+            cy.enableFeatureFlags([FeatureFlag.TWO_FA]);
+            const interactions = [
+                getTokenForUser.willReturnAValidToken(),
+                getUserProfileData.willReturnUserWithTwoFA()
+            ];
+            cy.server();
+            cy.visit('/account/profile/user');
+            cy.wait(interactions);
+        });
+
+        it('disable 2FA', () => {
+            const interactions = [deleteTwoFA.willReturnSuccess()];
+            cy.getByTestId('security-section-card').should('exist');
+            cy.getByTestId('delete-2fa-cta').click();
+            cy.getByTestId('confirm-disable-2fa-button').click();
+            cy.wait(interactions);
+            cy.getByTestId('enable-2fa-cta').should('exist');
+        })
     });
 });

@@ -70,6 +70,9 @@ export default function IndexPage({ title, onReady }) {
                     onEnable2FA={() => {
                       setUser({ ...user, mfaEnabled: true });
                     }}
+                    onDisable2FA={() => {
+                      setUser({ ...user, mfaEnabled: false });
+                    }}
                   />
                 </Card>
               )}

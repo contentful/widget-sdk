@@ -6,14 +6,15 @@ import {
   Paragraph,
   Button,
   Typography,
-  Notification
+  Notification,
+  ModalConfirm
 } from '@contentful/forma-36-react-components';
 import { authUrl } from 'Config.es6';
 import $window from 'utils/ngCompat/window.es6';
 import { joinWithAnd } from 'utils/StringUtils.es6';
 import * as ModalLauncher from 'app/common/ModalLauncher.es6';
 import { useAsyncFn } from 'app/common/hooks/useAsync.es6';
-import { getUserTotp } from './AccountRepository';
+import { getUserTotp, deleteUserTotp } from './AccountRepository';
 import ChangePasswordModal from './ChangePasswordModal';
 import Enable2FAModal from './Enable2FAModal';
 import { User as UserPropType } from './propTypes';
@@ -52,6 +53,44 @@ const openEnable2FAModal = async onEnable2FA => {
   onEnable2FA();
 };
 
+const openDisable2FAModal = async onDisable2FA => {
+  const result = await ModalLauncher.open(({ isShown, onClose }) => {
+    return (
+      <ModalConfirm
+        isShown={isShown}
+        intent="negative"
+        onConfirm={() => onClose(true)}
+        confirmTestId="confirm-disable-2fa-button"
+        onCancel={() => onClose(false)}
+        confirmLabel="Disable">
+        <Typography>
+          <Paragraph>
+            By disabling two-factor authentication your account will be less secure. Are you sure
+            you want to disable two-factor authentication on your account?
+          </Paragraph>
+          <Paragraph>
+            You will not be asked about your second authentication factor anymore and will be able
+            to login with your password.
+          </Paragraph>
+        </Typography>
+      </ModalConfirm>
+    );
+  });
+
+  if (result === false) {
+    return;
+  }
+
+  try {
+    await deleteUserTotp();
+  } catch (e) {
+    Notification.error('Something went wrong while disabling your 2FA');
+    return;
+  }
+  onDisable2FA();
+  Notification.success('You successfully disabled 2FA on your account');
+};
+
 const openAddPasswordModal = async (user, onAddPassword) => {
   const result = await ModalLauncher.open(({ isShown, onClose }) => {
     return (
@@ -71,7 +110,7 @@ const openAddPasswordModal = async (user, onAddPassword) => {
   onAddPassword(result);
 };
 
-export default function SecuritySection({ user, onAddPassword, onEnable2FA }) {
+export default function SecuritySection({ user, onAddPassword, onEnable2FA, onDisable2FA }) {
   const [{ isLoading: loadingTotp }, getTotp] = useAsyncFn(
     useCallback(() => openEnable2FAModal(onEnable2FA), [onEnable2FA])
   );
@@ -127,7 +166,17 @@ export default function SecuritySection({ user, onAddPassword, onEnable2FA }) {
           Enable 2FA
         </Button>
       )}
-      {enabled && <Paragraph>Enabled with authenticator app</Paragraph>}
+      {enabled && (
+        <>
+          <Paragraph>Enabled with authenticator app</Paragraph>
+          <Button
+            testId="delete-2fa-cta"
+            buttonType="negative"
+            onClick={() => openDisable2FAModal(onDisable2FA)}>
+            Disable
+          </Button>
+        </>
+      )}
     </Typography>
   );
 }
@@ -135,5 +184,6 @@ export default function SecuritySection({ user, onAddPassword, onEnable2FA }) {
 SecuritySection.propTypes = {
   onAddPassword: PropTypes.func.isRequired,
   onEnable2FA: PropTypes.func.isRequired,
-  user: UserPropType.isRequired
+  user: UserPropType.isRequired,
+  onDisable2FA: PropTypes.func.isRequired
 };

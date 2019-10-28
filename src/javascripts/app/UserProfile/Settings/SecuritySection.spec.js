@@ -20,7 +20,8 @@ jest.mock('utils/ngCompat/window.es6', () => {
 });
 
 jest.mock('./AccountRepository', () => ({
-  getUserTotp: jest.fn()
+  getUserTotp: jest.fn(),
+  deleteUserTotp: jest.fn()
 }));
 
 describe('SecuritySection', () => {
@@ -28,7 +29,8 @@ describe('SecuritySection', () => {
     const props = Object.assign(
       {
         onAddPassword: () => {},
-        onEnable2FA: () => {}
+        onEnable2FA: () => {},
+        onDisable2FA: () => {}
       },
       custom
     );
@@ -216,10 +218,51 @@ describe('SecuritySection', () => {
   });
 
   describe('enabled', () => {
-    it.todo('should show a CTA to disable 2FA');
+    it('should show a CTA to disable 2FA', () => {
+      const user = {
+        mfaEligible: true,
+        mfaEnabled: true
+      };
 
-    it.todo('should not disable if the Disable2FA modal resolves false');
+      const { queryByTestId } = build({ user });
 
-    it.todo('should disable if the Disable2FA modal resolves true');
+      expect(queryByTestId('delete-2fa-cta')).toBeVisible();
+    });
+
+    it('should not disable if the Disable2FA modal resolves false', async () => {
+      ModalLauncher.open.mockResolvedValueOnce(false);
+
+      const onDisable2FA = jest.fn();
+      const user = {
+        mfaEligible: true,
+        mfaEnabled: true
+      };
+
+      const { queryByTestId } = build({ user, onDisable2FA });
+
+      fireEvent.click(queryByTestId('delete-2fa-cta'));
+
+      await wait();
+
+      expect(onDisable2FA).not.toHaveBeenCalled();
+    });
+
+    it('should disable if the Disable2FA modal resolves true', async () => {
+      ModalLauncher.open.mockResolvedValueOnce(true);
+
+      const onDisable2FA = jest.fn();
+      const user = {
+        mfaEligible: true,
+        mfaEnabled: true
+      };
+
+      const { queryByTestId } = build({ user, onDisable2FA });
+
+      fireEvent.click(queryByTestId('delete-2fa-cta'));
+
+      await wait();
+
+      expect(onDisable2FA).toHaveBeenCalled();
+    });
   });
 });

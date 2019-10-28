@@ -5,6 +5,7 @@ import {
 
 const defaultData = require('../fixtures/responses/user_account/default-data.json');
 const identityLoginData = require('../fixtures/responses/user_account/identity-login-user-data.json');
+const twoFAData = require('../fixtures/responses/user_account/2fa-enabled-user-data.json');
 const updateDefaultData = require('../fixtures/responses/user_account/udated-default-data.json');
 const updatePasswordDefaultData = require('../fixtures/responses/user_account/updated-password-default-data.json');
 const updateIdentityLoginData = require('../fixtures/responses/user_account/updated-password-identity-login.json');
@@ -59,6 +60,21 @@ export const getUserProfileData = {
         }).as('getIdentityLoginUserProfileData');
 
         return '@getIdentityLoginUserProfileData';
+    },
+    willReturnUserWithTwoFA() {
+
+        cy.addInteraction({
+            provider: 'user_profile',
+            state: 'user 2FA enabled',
+            uponReceiving: 'a request to get the user profile data for user with 2FA enabled',
+            withRequest: queryUserProfileDataRequest(),
+            willRespondWith: {
+                status: 200,
+                body: twoFAData
+            }
+        }).as('getTwoFAEnabledUserProfileData');
+
+        return '@getTwoFAEnabledUserProfileData';
     }
 };
 
@@ -319,3 +335,29 @@ export const verifyTwoFAData = {
         return '@verifyTwoFAFail';
     }
 };
+
+function queryDeleteTwoFA(): RequestOptions {
+    return {
+        method: 'DELETE',
+        path: '/users/me/mfa/totp',
+        headers: {
+            ...defaultHeader,
+            'X-Contentful-Enable-Alpha-Feature': 'mfa-api'
+        }
+    }
+}
+
+export const deleteTwoFA = {
+    willReturnSuccess() {
+        cy.addInteraction({
+            provider: 'user_profile',
+            state: 'user 2FA enabled',
+            uponReceiving: 'a request to delete 2FA',
+            withRequest: queryDeleteTwoFA(),
+            willRespondWith: {
+                status: 204
+            }
+        }).as('deleteTwoFA');
+        return '@deleteTwoFA';
+    }
+}

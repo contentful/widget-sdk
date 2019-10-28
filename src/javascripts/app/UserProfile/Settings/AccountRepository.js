@@ -33,6 +33,18 @@ export async function getUserTotp() {
   );
 }
 
+export async function deleteUserTotp() {
+  const usersEndpoint = createUsersEndpoint();
+
+  return usersEndpoint(
+    {
+      method: 'DELETE',
+      path: ['mfa', 'totp']
+    },
+    { ...totpAlphaHeader }
+  );
+}
+
 export async function enableTotp(code) {
   const usersEndpoint = createUsersEndpoint();
 
