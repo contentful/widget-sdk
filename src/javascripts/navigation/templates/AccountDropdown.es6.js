@@ -121,20 +121,25 @@ export default class AccountDropdown extends Component {
     const currentUser = await getUser();
 
     if (spaceContext.space && currentUser) {
-      const [tasks, entries] = await getOpenAssignedTasksAndEntries(
-        spaceContext.space.getId(),
-        currentUser.sys.id
-      );
-      const pendingTasksCount = getPendingTasksCount(tasks, entries);
-      Object.assign(updates, {
-        pendingTasksCount,
-        shouldShowPendingTasks: true
-      });
-      Analytics.track('account_dropdown:pending_tasks_fetched', {
-        numPendingTasks: tasks.length,
-        numVisiblePendingTasks: pendingTasksCount,
-        hasInaccessibleTasks: tasks.length > pendingTasksCount
-      });
+      let pendingTasksCount;
+      let shouldShowPendingTasks;
+      try {
+        const [tasks, entries] = await getOpenAssignedTasksAndEntries(
+          spaceContext.space.getId(),
+          currentUser.sys.id
+        );
+        pendingTasksCount = getPendingTasksCount(tasks, entries);
+        shouldShowPendingTasks = true;
+        Analytics.track('account_dropdown:pending_tasks_fetched', {
+          numPendingTasks: tasks.length,
+          numVisiblePendingTasks: pendingTasksCount,
+          hasInaccessibleTasks: tasks.length > pendingTasksCount
+        });
+      } catch (e) {
+        pendingTasksCount = 0;
+        shouldShowPendingTasks = false;
+      }
+      Object.assign(updates, { pendingTasksCount, shouldShowPendingTasks });
     }
 
     this.setState({ currentUser, ...updates });
