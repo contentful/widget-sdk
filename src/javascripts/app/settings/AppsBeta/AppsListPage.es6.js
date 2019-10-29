@@ -169,7 +169,15 @@ const AppsListShell = props => (
         <PricingInfo />
       ) : (
         <Note className={styles.intro}>
-          <TextLink onClick={() => openFeedback(props)}>Share your feedback</TextLink> about apps.
+          Let us know if you want to{' '}
+          <TextLink
+            href="https://docs.google.com/forms/d/1LYQlFwjLKVtSDsneEBdu_ocMQb90QOwG_d8NqzWqqgM"
+            target="_blank"
+            rel="noopener noreferrer">
+            build an app
+          </TextLink>
+          , or <TextLink onClick={() => openFeedback(props)}>share your feedback</TextLink> about
+          apps.
         </Note>
       )}
       {props.hasAlphaApps ? (

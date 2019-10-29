@@ -117,6 +117,23 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
             </div>
             <div>
               <div>
+                Let us know if you want to
+                 
+                <a
+                  class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                  data-test-id="cf-ui-text-link"
+                  href="https://docs.google.com/forms/d/1LYQlFwjLKVtSDsneEBdu_ocMQb90QOwG_d8NqzWqqgM"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  <span
+                    class="TabFocusTrap__TabFocusTrap___39Vty"
+                    tabindex="-1"
+                  >
+                    build an app
+                  </span>
+                </a>
+                , or 
                 <button
                   class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
                   data-test-id="cf-ui-text-link"
@@ -126,7 +143,7 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
                     class="TabFocusTrap__TabFocusTrap___39Vty"
                     tabindex="-1"
                   >
-                    Share your feedback
+                    share your feedback
                   </span>
                 </button>
                  about apps.
@@ -417,6 +434,23 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
             </div>
             <div>
               <div>
+                Let us know if you want to
+                 
+                <a
+                  class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                  data-test-id="cf-ui-text-link"
+                  href="https://docs.google.com/forms/d/1LYQlFwjLKVtSDsneEBdu_ocMQb90QOwG_d8NqzWqqgM"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  <span
+                    class="TabFocusTrap__TabFocusTrap___39Vty"
+                    tabindex="-1"
+                  >
+                    build an app
+                  </span>
+                </a>
+                , or 
                 <button
                   class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
                   data-test-id="cf-ui-text-link"
@@ -426,7 +460,7 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
                     class="TabFocusTrap__TabFocusTrap___39Vty"
                     tabindex="-1"
                   >
-                    Share your feedback
+                    share your feedback
                   </span>
                 </button>
                  about apps.
