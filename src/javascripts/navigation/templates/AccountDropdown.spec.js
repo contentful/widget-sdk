@@ -15,6 +15,10 @@ jest.mock('analytics/Analytics', () => ({
   disable: jest.fn()
 }));
 
+jest.mock('Authentication.es6', () => ({
+  logout: jest.fn()
+}));
+
 jest.mock('services/TokenStore.es6', () => ({
   getUser: jest.fn().mockResolvedValue({
     firstName: 'Dolly',
@@ -29,10 +33,6 @@ jest.mock('states/Navigator.es6', () => ({
   href: jest.fn()
 }));
 
-jest.mock('Authentication.es6', () => ({
-  logout: jest.fn()
-}));
-
 jest.mock('app/TasksPage/helpers.es6', () => ({
   getOpenAssignedTasksAndEntries: jest.fn()
 }));
@@ -40,11 +40,9 @@ jest.mock('app/TasksPage/helpers.es6', () => ({
 beforeEach(() => {
   wrapper = render(<AccountDropdown />);
   getOpenAssignedTasksAndEntries.mockResolvedValue([[], []]);
-  jest.spyOn(Analytics, 'track').mockImplementation(() => {});
-  jest.spyOn(Analytics, 'disable').mockImplementation(() => {});
-  jest.spyOn(Authentication, 'logout').mockImplementation(() => {});
   Analytics.track.mockClear();
   Analytics.disable.mockClear();
+  Authentication.logout.mockClear();
   getUser.mockClear();
 });
 

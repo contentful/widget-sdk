@@ -137,11 +137,7 @@ export default class AccountDropdown extends Component {
       });
     }
 
-    this.setState({
-      isOpen: this.state.isOpen,
-      currentUser,
-      ...updates
-    });
+    this.setState({ currentUser, ...updates });
   };
 
   handleToggle = () => {

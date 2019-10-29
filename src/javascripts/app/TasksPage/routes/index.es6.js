@@ -16,7 +16,6 @@ export default {
         ({ spaceId }, spaceContext) => ({
           spaceId,
           environmentId: spaceContext.getEnvironmentId(),
-          currentUser: spaceContext.getCurrentUser,
           currentUserId: spaceContext.getData('spaceMember.sys.user.sys.id'),
           users: spaceContext.users,
           defaultLocaleCode: TheLocaleStore.getDefaultLocale().code,
