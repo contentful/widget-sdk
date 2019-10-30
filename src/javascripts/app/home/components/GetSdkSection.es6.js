@@ -321,7 +321,7 @@ SelectedLanguage.propTypes = {
 
 const LanguageSection = ({ sdkDocsLink, githubLink, description, codeBlockContent }) => {
   return (
-    <section className={styles.section} cf-track-copy-event="cf-track-copy-event">
+    <section className={styles.section}>
       <Heading className={styles.heading}>Get the SDK</Heading>
       <div className={cx('f36-margin-top--2xs', 'f36-margin-bottom--s', 'separated-links')}>
         <TextLink href={sdkDocsLink} target="_blank" rel="noopener noreferrer">

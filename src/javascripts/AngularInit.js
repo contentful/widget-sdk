@@ -58,7 +58,6 @@ export const angularInitRun = [
       import('app/entry_editor/cfWidgetApiDirective.es6'),
       import('app/entry_editor/entryActionsController.es6'),
       import('app/entry_editor/formWidgetsController.es6'),
-      import('app/home/cfTrackCopyEvent.es6'),
       import('app/snapshots/cfSnapshotPresenter.es6'),
       import('app/snapshots/cfSnapshotSelector.es6'),
       import('app/snapshots/snapshotComparator.es6'),
