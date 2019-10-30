@@ -1,6 +1,4 @@
 import _ from 'lodash';
-import contextHistory from 'navigation/Breadcrumbs/History.es6';
-import * as crumbFactory from 'navigation/Breadcrumbs/Factory.es6';
 import base from 'states/Base.es6';
 import { loadEntry as loadEditorData } from 'app/entity_editor/DataLoader.es6';
 import createEntityPageController from 'app/entity_editor/EntityPageController.es6';
@@ -65,10 +63,6 @@ const compareWithCurrent = base({
 
       trackVersioning.setData(entry.data, snapshot);
       trackVersioning.opened($stateParams.source);
-
-      contextHistory.add(crumbFactory.EntryList());
-      contextHistory.add(crumbFactory.Entry(entry.data.sys, $scope.context));
-      contextHistory.add(crumbFactory.EntrySnapshot(snapshot.sys.id, $scope.context));
     }
   ]
 });

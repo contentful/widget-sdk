@@ -28,11 +28,6 @@ describe('navigation/stateChangeHandlers', () => {
     modalCloseStub = sinon.stub();
 
     this.system.set('services/TokenStore.es6', this.tokenStore);
-    this.system.set('navigation/Breadcrumbs/History.es6', {
-      default: {
-        purge: sinon.stub()
-      }
-    });
 
     this.system.set('services/logger.es6', this.logger);
 

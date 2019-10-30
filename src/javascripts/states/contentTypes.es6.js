@@ -1,5 +1,3 @@
-import contextHistory from 'navigation/Breadcrumbs/History.es6';
-import * as crumbFactory from 'navigation/Breadcrumbs/Factory.es6';
 import base from 'states/Base.es6';
 import * as WidgetStore from 'widgets/WidgetStore.es6';
 import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer.es6';
@@ -140,7 +138,6 @@ function editorBase(options, isNew) {
     children: [fields, preview, sidebarConfiguration],
     controller: [
       '$scope',
-      '$stateParams',
       'contentType',
       'widgets',
       'editorInterface',
@@ -149,7 +146,6 @@ function editorBase(options, isNew) {
       'hasAdvancedExtensibility',
       (
         $scope,
-        $stateParams,
         contentType,
         widgets,
         editorInterface,
@@ -164,11 +160,6 @@ function editorBase(options, isNew) {
         $scope.publishedContentType = publishedContentType;
         $scope.contentTypeIds = contentTypeIds;
         $scope.hasAdvancedExtensibility = hasAdvancedExtensibility;
-
-        contextHistory.set([
-          crumbFactory.ContentTypeList(),
-          crumbFactory.ContentType($stateParams.contentTypeId, $scope.context)
-        ]);
       }
     ],
     template:

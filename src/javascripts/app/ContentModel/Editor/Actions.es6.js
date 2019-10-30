@@ -35,7 +35,6 @@ export default function create($scope, contentTypeIds) {
   const $q = getModule('$q');
   const $state = getModule('$state');
   const Command = getModule('command');
-  const closeState = getModule('navigation/closeState');
 
   const controller = {};
 
@@ -171,7 +170,7 @@ export default function create($scope, contentTypeIds) {
   function sendDeleteRequest() {
     return $scope.contentType.delete().then(() => {
       notify.deleteSuccess();
-      return closeState();
+      $state.go('^.^.list');
     }, notify.deleteFail);
   }
 

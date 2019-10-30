@@ -1,6 +1,5 @@
 import { registerFactory } from 'NgRegistry.es6';
 import _ from 'lodash';
-import contextHistory from 'navigation/Breadcrumbs/History.es6';
 import * as logger from 'services/logger.es6';
 import * as AppPerformanceMetrics from 'i13n/AppPerformance/index.es6';
 
@@ -144,10 +143,6 @@ export default function register() {
 
         // Close all modals which have persistOnNavigation = false
         modalDialog.closeAll();
-
-        if (!toStateParams.addToContext) {
-          contextHistory.purge();
-        }
 
         // Redirect if redirectTo is set
         if (toState.redirectTo) {
