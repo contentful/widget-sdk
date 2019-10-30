@@ -12,11 +12,8 @@ export default function() {
       h('cf-nav-sidepanel-trigger', {
         toggleSidePanel: 'toggleSidePanel'
       }),
-      h('div.app-top-bar__child.app-top-bar__main-nav', {
+      h('div.app-top-bar__outer-wrapper', {
         uiView: 'nav-bar'
-      }),
-      h('cf-account-dropdown.app-top-bar__child', {
-        user: 'user'
       })
     ]),
     h('div.app-container__content', {

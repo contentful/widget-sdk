@@ -3484,8 +3484,20 @@ pre,
       filter: alpha(opacity=0);
     }
   }
+
+  .app-top-bar__outer-wrapper {
+    display: flex;
+    width: 100%;
+  }
+
+  .app-top-bar__inner-wrapper {
+    display: flex;
+    height: 100%;
+  }
+
   .nav-bar {
     height: 100%;
+    width: 100%;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -3497,6 +3509,11 @@ pre,
     -webkit-box-pack: justify;
             justify-content: space-between;
   }
+
+  .nav-bar__end {
+    display: flex;
+  }
+
   .nav-bar__separator:not(:first-child) {
     margin-top: 15px;
     border-top: 1px solid #d3dce0;
@@ -3512,7 +3529,6 @@ pre,
     width: 200px;
   }
   .nav-bar__list {
-    height: inherit;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;

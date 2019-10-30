@@ -26,7 +26,6 @@ const exceptions = [
   'navigation/Sidepanel/directive.es6.js',
   'ui/Framework/CfComponentBridgeDirective.es6.js',
   'navigation/Sidepanel/TriggerDirective.es6.js',
-  'navigation/accountDropdownDirective.es6.js',
   'components/shared/persistent_notification/cfPersistentNotificationDirective.es6.js'
 ];
 

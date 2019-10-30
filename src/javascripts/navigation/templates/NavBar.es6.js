@@ -33,29 +33,44 @@ import { isBoolean } from 'lodash';
  *   ]
  * }
  */
-export default function(listItems = [], showQuickNavigation) {
-  return h('nav.nav-bar', [
-    h(
-      'ul.nav-bar__list',
-      listItems.map((data, index) => {
-        const html = data.children ? navbarDropdown(data, index) : navbarItem(data);
-        const attrs = { 'data-ui-tour-step': `nav-item-${data.dataViewType}` };
 
-        if (data.if) {
-          attrs.ngIf = data.if;
-        }
-        if (data.tooltip) {
-          attrs.tooltip = data.tooltip;
-          attrs.tooltipPlacement = 'bottom';
-        }
+export default function(listItems = [], showQuickNavigation, showModernStackOnboardingRelaunch) {
+  return h('div.app-top-bar__inner-wrapper', [
+    h('.app-top-bar__child.app-top-bar__main-nav', [
+      h('nav.nav-bar', [
+        h(
+          'ul.nav-bar__list',
+          listItems.map((data, index) => {
+            const html = data.children ? navbarDropdown(data, index) : navbarItem(data);
+            const attrs = { 'data-ui-tour-step': `nav-item-${data.dataViewType}` };
 
-        return h('li.app-top-bar__action.nav-bar__list-item', attrs, [html]);
-      })
-    ),
-    showQuickNavigation &&
-      h('react-component', {
-        name: 'components/shared/QuickNavigation/QuickNavWithFeatureFlag.es6'
-      })
+            if (data.if) {
+              attrs.ngIf = data.if;
+            }
+            if (data.tooltip) {
+              attrs.tooltip = data.tooltip;
+              attrs.tooltipPlacement = 'bottom';
+            }
+
+            return h('li.app-top-bar__action.nav-bar__list-item', attrs, [html]);
+          })
+        ),
+        h('div.nav-bar__end', [
+          showModernStackOnboardingRelaunch &&
+            h('react-component', {
+              name: 'navigation/modernStackOnboardingRelaunch.es6',
+              class: 'app-top-bar__child'
+            }),
+          showQuickNavigation &&
+            h('react-component', {
+              name: 'components/shared/QuickNavigation/QuickNavWithFeatureFlag.es6'
+            })
+        ])
+      ])
+    ]),
+    h('react-component', {
+      name: 'navigation/templates/AccountDropdown.es6'
+    })
   ]);
 }
 

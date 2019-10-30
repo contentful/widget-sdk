@@ -58,6 +58,11 @@ export default function() {
           uiSref: 'account.profile.user'
         },
         {
+          text: 'Your pending tasks',
+          dataTestId: 'spaces.detail.tasks',
+          href: '{{pendingTasksUrl()}}'
+        },
+        {
           text: 'Talk to us',
           ngClick: 'talkToUsClicked()',
           dataTestId: 'nav.account.intercom',
