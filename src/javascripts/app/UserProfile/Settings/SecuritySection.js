@@ -5,6 +5,7 @@ import {
   Subheading,
   Paragraph,
   Button,
+  TextLink,
   Typography,
   Notification,
   ModalConfirm
@@ -14,6 +15,7 @@ import $window from 'utils/ngCompat/window.es6';
 import { joinWithAnd } from 'utils/StringUtils.es6';
 import * as ModalLauncher from 'app/common/ModalLauncher.es6';
 import { useAsyncFn } from 'app/common/hooks/useAsync.es6';
+import { websiteUrl } from 'Config.es6';
 import { getUserTotp, deleteUserTotp } from './AccountRepository';
 import ChangePasswordModal from './ChangePasswordModal';
 import Enable2FAModal from './Enable2FAModal';
@@ -110,6 +112,12 @@ const openAddPasswordModal = async (user, onAddPassword) => {
   onAddPassword(result);
 };
 
+const TwoFactorAuthenticationFaqLink = () => (
+  <TextLink href={websiteUrl('faq/two-factor-authentication/')} target="_blank">
+    Learn more about 2FA
+  </TextLink>
+);
+
 export default function SecuritySection({ user, onAddPassword, onEnable2FA, onDisable2FA }) {
   const [{ isLoading: loadingTotp }, getTotp] = useAsyncFn(
     useCallback(() => openEnable2FAModal(onEnable2FA), [onEnable2FA])
@@ -139,11 +147,16 @@ export default function SecuritySection({ user, onAddPassword, onEnable2FA, onDi
       <Heading>Security</Heading>
       <Subheading>Two-factor authentication (2FA) </Subheading>
       {!enabled && (
-        <Paragraph>
-          Add an extra layer of security to your account by using a one-time security code. Each
-          time you sign into your Contentful account, you’ll need your password and your security
-          code.
-        </Paragraph>
+        <>
+          <Paragraph>
+            Add an extra layer of security to your account by using a one-time security code. Each
+            time you sign into your Contentful account, you’ll need your password and your security
+            code.
+          </Paragraph>
+          <Paragraph>
+            <TwoFactorAuthenticationFaqLink />
+          </Paragraph>
+        </>
       )}
       {!enabled && !eligible && (
         <>
@@ -169,6 +182,9 @@ export default function SecuritySection({ user, onAddPassword, onEnable2FA, onDi
       {enabled && (
         <>
           <Paragraph>Enabled with authenticator app</Paragraph>
+          <Paragraph>
+            <TwoFactorAuthenticationFaqLink />
+          </Paragraph>
           <Button
             testId="delete-2fa-cta"
             buttonType="negative"
