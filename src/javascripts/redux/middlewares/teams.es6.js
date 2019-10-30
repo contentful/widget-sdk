@@ -191,7 +191,7 @@ export default ({ dispatch, getState }) => next => async action => {
         roles: updatedData.roles,
         sys
       };
-      const { roles: resolvedRoles } = resolveRolesInTSM(updatedMembership);
+      const { roles: resolvedRoles } = resolveRolesInTSM(state, updatedMembership);
       dispatch({
         type: 'ADD_TO_DATASET',
         payload: {
