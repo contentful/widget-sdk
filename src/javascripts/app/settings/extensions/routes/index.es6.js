@@ -25,7 +25,7 @@ export default {
             extensionUrl: decodeURI($stateParams.extensionUrl || ''),
             extensionUrlReferrer: $stateParams.referrer || null,
             extensionLoader: spaceContext.extensionLoader,
-            appsRepo: createAppsRepo(spaceContext.extensionDefinitionLoader, spaceContext.endpoint)
+            appsRepo: createAppsRepo(spaceContext.appDefinitionLoader, spaceContext.endpoint)
           };
         }
       ]

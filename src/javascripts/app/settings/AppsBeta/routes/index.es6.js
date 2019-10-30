@@ -28,7 +28,7 @@ export default {
         (spaceContext, $state, $stateParams) => {
           return {
             goToContent: () => $state.go('^.^.entries.list'),
-            repo: createAppsRepo(spaceContext.extensionDefinitionLoader, spaceContext.endpoint),
+            repo: createAppsRepo(spaceContext.appDefinitionLoader, spaceContext.endpoint),
             productCatalog: new AppProductCatalog(spaceContext.space.data.sys.id, getSpaceFeature),
             organizationId: spaceContext.organization.sys.id,
             spaceId: spaceContext.space.data.sys.id,
@@ -48,10 +48,7 @@ export default {
         'spaceContext',
         '$state',
         ({ appId }, spaceContext, $state) => {
-          const repo = createAppsRepo(
-            spaceContext.extensionDefinitionLoader,
-            spaceContext.endpoint
-          );
+          const repo = createAppsRepo(spaceContext.appDefinitionLoader, spaceContext.endpoint);
           const appHookBus = makeAppHookBus();
 
           const bridge = createAppExtensionBridge({

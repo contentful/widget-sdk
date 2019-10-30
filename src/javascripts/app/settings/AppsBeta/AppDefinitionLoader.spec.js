@@ -1,6 +1,6 @@
-import createExtensionDefinitionLoader from './ExtensionDefinitionLoader.es6';
+import createAppDefinitionLoader from './AppDefinitionLoader.es6';
 
-describe('ExtensionDefinitionLoader', () => {
+describe('AppDefinitionLoader', () => {
   describe('getById', () => {
     it('fetches from the public endpoint', async () => {
       const definitionsEndpoint = jest.fn(() => {
@@ -14,7 +14,7 @@ describe('ExtensionDefinitionLoader', () => {
 
       const orgEndpoint = jest.fn();
 
-      const loader = createExtensionDefinitionLoader(definitionsEndpoint, orgEndpoint);
+      const loader = createAppDefinitionLoader(definitionsEndpoint, orgEndpoint);
 
       const result = await loader.getById('def2');
 
@@ -47,7 +47,7 @@ describe('ExtensionDefinitionLoader', () => {
         });
       });
 
-      const loader = createExtensionDefinitionLoader(definitionsEndpoint, orgEndpoint);
+      const loader = createAppDefinitionLoader(definitionsEndpoint, orgEndpoint);
 
       const result = await loader.getById('def2');
 
@@ -63,7 +63,7 @@ describe('ExtensionDefinitionLoader', () => {
       expect(orgEndpoint).toBeCalledTimes(1);
       expect(orgEndpoint).toBeCalledWith({
         method: 'GET',
-        path: ['extension_definitions'],
+        path: ['app_definitions'],
         query: {
           'sys.id[in]': 'def2'
         }
@@ -81,7 +81,7 @@ describe('ExtensionDefinitionLoader', () => {
         });
       });
 
-      const loader = createExtensionDefinitionLoader(definitionsEndpoint, orgEndpoint);
+      const loader = createAppDefinitionLoader(definitionsEndpoint, orgEndpoint);
 
       expect.assertions(3);
       try {
@@ -107,7 +107,7 @@ describe('ExtensionDefinitionLoader', () => {
 
       const orgEndpoint = jest.fn();
 
-      const loader = createExtensionDefinitionLoader(definitionsEndpoint, orgEndpoint);
+      const loader = createAppDefinitionLoader(definitionsEndpoint, orgEndpoint);
 
       const result = await loader.getByIds(['def1', 'def2']);
 
@@ -141,7 +141,7 @@ describe('ExtensionDefinitionLoader', () => {
         });
       });
 
-      const loader = createExtensionDefinitionLoader(definitionsEndpoint, orgEndpoint);
+      const loader = createAppDefinitionLoader(definitionsEndpoint, orgEndpoint);
 
       const result = await loader.getByIds(['def1', 'def2', 'def3']);
 
@@ -157,7 +157,7 @@ describe('ExtensionDefinitionLoader', () => {
       expect(orgEndpoint).toBeCalledTimes(1);
       expect(orgEndpoint).toBeCalledWith({
         method: 'GET',
-        path: ['extension_definitions'],
+        path: ['app_definitions'],
         query: {
           'sys.id[in]': 'def2,def3'
         }
@@ -176,7 +176,7 @@ describe('ExtensionDefinitionLoader', () => {
       const definitionsEndpoint = jest.fn();
       const orgEndpoint = jest.fn(() => Promise.resolve({ items: 'DEFINITIONS' }));
 
-      const loader = createExtensionDefinitionLoader(definitionsEndpoint, orgEndpoint);
+      const loader = createAppDefinitionLoader(definitionsEndpoint, orgEndpoint);
 
       const result = await loader.getAllForCurrentOrganization();
 
@@ -184,7 +184,7 @@ describe('ExtensionDefinitionLoader', () => {
       expect(orgEndpoint).toBeCalledTimes(1);
       expect(orgEndpoint).toBeCalledWith({
         method: 'GET',
-        path: ['extension_definitions']
+        path: ['app_definitions']
       });
 
       expect(result).toBe('DEFINITIONS');

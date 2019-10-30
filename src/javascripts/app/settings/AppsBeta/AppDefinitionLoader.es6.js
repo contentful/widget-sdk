@@ -1,6 +1,6 @@
 import { uniq, difference } from 'lodash';
 
-export default function createExtensionDefinitionLoader(extensionDefinitionsEndpoint, orgEndpoint) {
+export default function createAppDefinitionLoader(appDefinitionsEndpoint, orgEndpoint) {
   return {
     getById,
     getByIds,
@@ -29,7 +29,7 @@ export default function createExtensionDefinitionLoader(extensionDefinitionsEndp
     }
 
     // Try to fetch all from the public endpoint.
-    const publicResponse = await extensionDefinitionsEndpoint({
+    const publicResponse = await appDefinitionsEndpoint({
       method: 'GET',
       path: [],
       query: { 'sys.id[in]': uniqueIds.join(',') }
@@ -66,7 +66,7 @@ export default function createExtensionDefinitionLoader(extensionDefinitionsEndp
   async function fetchFromOrganizationEndpoint(ids) {
     const { items } = await orgEndpoint({
       method: 'GET',
-      path: ['extension_definitions'],
+      path: ['app_definitions'],
       query: { 'sys.id[in]': ids.join(',') }
     });
 
@@ -76,7 +76,7 @@ export default function createExtensionDefinitionLoader(extensionDefinitionsEndp
   async function getAllForCurrentOrganization() {
     const { items } = await orgEndpoint({
       method: 'GET',
-      path: ['extension_definitions']
+      path: ['app_definitions']
     });
 
     return items;

@@ -109,9 +109,9 @@ export function createUsersEndpoint(baseUrl, auth) {
   return create(usersBaseUrl, auth);
 }
 
-export function createExtensionDefinitionsEndpoint(baseUrl, auth) {
-  const extensionDefinitionsBaseUrl = joinPath([baseUrl, 'extension_definitions']);
-  return create(extensionDefinitionsBaseUrl, auth);
+export function createAppDefinitionsEndpoint(baseUrl, auth) {
+  const appDefinitionsBaseUrl = joinPath([baseUrl, 'app_definitions']);
+  return create(appDefinitionsBaseUrl, auth);
 }
 
 /*

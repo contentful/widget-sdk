@@ -191,7 +191,7 @@ describe('AppsRepo', () => {
     });
   });
 
-  describe('getExtensionDefinitionForApp', () => {
+  describe('getAppDefinitionForApp', () => {
     const originalFetch = global.window.fetch;
 
     beforeAll(() => {
@@ -209,7 +209,7 @@ describe('AppsRepo', () => {
       const loader = { getById: jest.fn(() => Promise.resolve('DEFINITION')) };
 
       const repo = createAppsRepo(loader);
-      const result = await repo.getExtensionDefinitionForApp(NETLIFY_APP_ID);
+      const result = await repo.getAppDefinitionForApp(NETLIFY_APP_ID);
 
       expect(loader.getById).toBeCalledTimes(1);
       expect(loader.getById).toBeCalledWith(NETLIFY_EXTENSION_DEFINITION_ID);
@@ -226,7 +226,7 @@ describe('AppsRepo', () => {
       const repo = createAppsRepo(loader);
       expect.assertions(2);
       try {
-        await repo.getExtensionDefinitionForApp('netlify');
+        await repo.getAppDefinitionForApp('netlify');
       } catch (err) {
         expect(loader.getById).toBeCalledTimes(1);
         expect(err.message).toBe('boom');
@@ -237,7 +237,7 @@ describe('AppsRepo', () => {
       const loader = { getById: jest.fn(() => Promise.resolve('DEFINITION')) };
 
       const repo = createAppsRepo(loader);
-      const result = await repo.getExtensionDefinitionForApp('dev-app_my-definition');
+      const result = await repo.getAppDefinitionForApp('dev-app_my-definition');
 
       expect(loader.getById).toBeCalledTimes(1);
       expect(loader.getById).toBeCalledWith('my-definition');

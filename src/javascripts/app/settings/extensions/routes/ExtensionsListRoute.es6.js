@@ -19,15 +19,15 @@ const prepareExtension = definitionsThatAreApps => ({
   parameters
 }) => {
   const fieldTypes = (extension.fieldTypes || []).map(toInternalFieldType);
-  const extensionDefinitionId = get(extensionDefinition, ['sys', 'id']);
+  const appDefinitionId = get(extensionDefinition, ['sys', 'id']);
 
   return {
     id: sys.id,
     name: extension.name,
     fieldTypes: fieldTypes.length > 0 ? fieldTypes.join(', ') : 'none',
     hosting: typeof sys.srcdocSha256 === 'string' ? 'Contentful' : 'self-hosted',
-    isBasedOnDefinition: !!extensionDefinitionId,
-    isApp: extensionDefinitionId && definitionsThatAreApps.includes(extensionDefinitionId),
+    isBasedOnDefinition: !!appDefinitionId,
+    isApp: appDefinitionId && definitionsThatAreApps.includes(appDefinitionId),
     parameterCounts: {
       instanceDefinitions: get(extension, ['parameters', 'instance', 'length']),
       installationDefinitions: get(extension, ['parameters', 'installation', 'length']),

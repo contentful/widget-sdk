@@ -48,7 +48,7 @@ const widgetResolvers = {
     spaceContext => {
       return WidgetStore.getForContentTypeManagement(
         spaceContext.extensionLoader,
-        createAppsRepo(spaceContext.extensionDefinitionLoader, spaceContext.endpoint)
+        createAppsRepo(spaceContext.appDefinitionLoader, spaceContext.endpoint)
       );
     }
   ],

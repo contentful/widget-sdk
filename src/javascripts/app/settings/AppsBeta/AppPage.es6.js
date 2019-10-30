@@ -150,7 +150,7 @@ export default class AppRoute extends Component {
       isAppEnabled: PropTypes.func.isRequired
     }),
     repo: PropTypes.shape({
-      getExtensionDefinitionForApp: PropTypes.func.isRequired,
+      getAppDefinitionForApp: PropTypes.func.isRequired,
       getExtensionForExtensionDefinition: PropTypes.func.isRequired,
       getMarketplaceApps: PropTypes.func.isRequired
     }).isRequired,
@@ -195,14 +195,14 @@ export default class AppRoute extends Component {
     }
   }
 
-  checkAppStatus = async (extensionDefinition = this.state.extensionDefinition) => {
+  checkAppStatus = async (appDefinition = this.state.appDefinition) => {
     const { repo, appId } = this.props;
-    const result = { appId, extensionDefinition };
+    const result = { appId, extensionDefinition: appDefinition };
 
     try {
       return {
         ...result,
-        extension: await repo.getExtensionForExtensionDefinition(extensionDefinition.sys.id)
+        extension: await repo.getExtensionForExtensionDefinition(appDefinition.sys.id)
       };
     } catch (err) {
       // If there are 2 or more extensions for the same definition
@@ -223,14 +223,14 @@ export default class AppRoute extends Component {
   initialize = async () => {
     const { appHookBus, appId, repo, productCatalog } = this.props;
 
-    const [extensionDefinition, marketplaceApps] = await Promise.all([
-      repo.getExtensionDefinitionForApp(appId),
+    const [appDefinition, marketplaceApps] = await Promise.all([
+      repo.getAppDefinitionForApp(appId),
       repo.getMarketplaceApps()
     ]);
     const app = marketplaceApps.find(app => app.id === appId);
 
     const [{ extension }, appEnabled] = await Promise.all([
-      this.checkAppStatus(extensionDefinition),
+      this.checkAppStatus(appDefinition),
       productCatalog.isAppEnabled(app)
     ]);
 
@@ -246,8 +246,8 @@ export default class AppRoute extends Component {
         ready: true,
         appEnabled,
         isInstalled: !!extension,
-        extensionDefinition,
-        title: get(app, ['title'], extensionDefinition.name),
+        appDefinition,
+        title: get(app, ['title'], appDefinition.name),
         appIcon: get(app, ['icon'], ''),
         permissions: get(app, ['permissionsExplanation'], ''),
         actionList: get(app, ['actionList'], [])
@@ -472,15 +472,15 @@ export default class AppRoute extends Component {
   }
 
   renderContent() {
-    const { extensionDefinition, appLoaded } = this.state;
+    const { appDefinition, appLoaded } = this.state;
 
     // Artifical widget descriptor for rendering `src`
     // of `ExtensionDefinition` entity without corresponding
     // `Extension` being present in a space-env.
     const descriptor = {
       id: '__undefined-in-app-location__',
-      extensionDefinitionId: extensionDefinition.sys.id,
-      src: extensionDefinition.src
+      extensionDefinitionId: appDefinition.sys.id,
+      src: appDefinition.src
     };
 
     return (

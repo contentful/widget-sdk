@@ -34,13 +34,13 @@ const mergeExtensionsAndDefinitions = (extensions, definitions) => {
     .filter(identity);
 };
 
-export function createExtensionLoader(extensionDefinitionLoader, spaceEndpoint) {
+export function createExtensionLoader(appDefinitionLoader, spaceEndpoint) {
   const resolveExtensionDefinitions = async extensions => {
     const definitionIDs = extensions
       .filter(isBasedOnExtensionDefinition)
       .map(getExtensionDefinitionID);
 
-    const definitions = await extensionDefinitionLoader.getByIds(definitionIDs);
+    const definitions = await appDefinitionLoader.getByIds(definitionIDs);
 
     return mergeExtensionsAndDefinitions(extensions, definitions);
   };

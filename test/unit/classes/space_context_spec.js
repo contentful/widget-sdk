@@ -38,7 +38,7 @@ describe('spaceContext', () => {
     this.system.set('data/Endpoint.es6', {
       createSpaceEndpoint: () => this.mockSpaceEndpoint.request,
       createOrganizationEndpoint: sinon.stub(),
-      createExtensionDefinitionsEndpoint: sinon.stub()
+      createAppDefinitionsEndpoint: sinon.stub()
     });
     this.system.set('data/UiConfig/Store.es6', {
       default: sinon.stub().resolves({ store: true })

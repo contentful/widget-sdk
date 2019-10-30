@@ -24,13 +24,13 @@ async function fetchMarketplaceApps() {
   return get(marketplaceApps, ['fields', 'apps'], []);
 }
 
-export default function createAppsRepo(extensionDefinitionLoader, spaceEndpoint) {
+export default function createAppsRepo(appDefinitionLoader, spaceEndpoint) {
   return {
     getAppWidgets,
     getMarketplaceApps,
     getDefinitionIdsOfApps,
     getDevApps,
-    getExtensionDefinitionForApp,
+    getAppDefinitionForApp,
     getExtensionForExtensionDefinition,
     isDevApp
   };
@@ -67,15 +67,15 @@ export default function createAppsRepo(extensionDefinitionLoader, spaceEndpoint)
     const definitionIds = marketplaceApps
       .map(app => get(app, ['fields', 'extensionDefinitionId'], null))
       .filter(identity);
-    const [extensionDefinitionMap, extensionMap] = await Promise.all([
-      extensionDefinitionLoader.getByIds(definitionIds),
+    const [appDefinitionMap, extensionMap] = await Promise.all([
+      appDefinitionLoader.getByIds(definitionIds),
       getExtensionsForExtensionDefinitions(definitionIds)
     ]);
 
     return (
       marketplaceApps
         .map(app => {
-          const extensionDefinitionId = get(app, ['fields', 'extensionDefinitionId']);
+          const definitionId = get(app, ['fields', 'extensionDefinitionId']);
           const title = get(app, ['fields', 'title'], '');
           const permissionsText = get(app, ['fields', 'permissions', 'fields', 'text'], '');
           const actionList = get(app, ['fields', 'uninstallMessages'], []).map(
@@ -92,12 +92,12 @@ export default function createAppsRepo(extensionDefinitionLoader, spaceEndpoint)
               .map(category => get(category, ['fields', 'name'], null))
               .filter(identity),
             description: get(app, ['fields', 'description'], ''),
-            extensionDefinitionId,
-            extensionDefinition: extensionDefinitionMap[extensionDefinitionId],
+            extensionDefinitionId: definitionId,
+            appDefinition: appDefinitionMap[definitionId],
             flagId: get(app, ['fields', 'productCatalogFlag', 'fields', 'flagId']),
             icon: get(app, ['fields', 'icon', 'fields', 'file', 'url'], ''),
             id: get(app, ['fields', 'slug'], ''),
-            installed: !!extensionMap[extensionDefinitionId],
+            installed: !!extensionMap[definitionId],
             links: get(app, ['fields', 'links'], []).map(link => link.fields),
             permissions: `__${title} app__ ${permissionsText}`,
             permissionsExplanation: get(app, ['fields', 'permissionsExplanation']),
@@ -106,23 +106,23 @@ export default function createAppsRepo(extensionDefinitionLoader, spaceEndpoint)
           };
         })
         // Filter out - possibly forgotten - broken references in the Apps Listing entry
-        .filter(app => !!app.extensionDefinition)
+        .filter(app => !!app.appDefinition)
     );
   }
 
   // This mechanism is only for us for developing Apps Beta.
   // TODO: remove or improve before we release.
   async function getDevApps() {
-    const extensionDefinitions = await extensionDefinitionLoader.getAllForCurrentOrganization();
+    const appDefinitions = await appDefinitionLoader.getAllForCurrentOrganization();
 
-    if (extensionDefinitions.length < 1) {
+    if (appDefinitions.length < 1) {
       return [];
     }
 
-    const extensionDefinitionIds = extensionDefinitions.map(def => def.sys.id);
-    const extensionMap = await getExtensionsForExtensionDefinitions(extensionDefinitionIds);
+    const appDefinitionIds = appDefinitions.map(def => def.sys.id);
+    const extensionMap = await getExtensionsForExtensionDefinitions(appDefinitionIds);
 
-    return extensionDefinitions.map(def => {
+    return appDefinitions.map(def => {
       return {
         sys: {
           type: 'DevApp',
@@ -134,10 +134,10 @@ export default function createAppsRepo(extensionDefinitionLoader, spaceEndpoint)
     });
   }
 
-  async function getExtensionDefinitionForApp(appId) {
+  async function getAppDefinitionForApp(appId) {
     if (appId.startsWith(DEV_APP_PREFIX + DEV_APP_SEPARATOR)) {
-      const [, extensionDefinitionId] = appId.split(DEV_APP_SEPARATOR);
-      return extensionDefinitionLoader.getById(extensionDefinitionId);
+      const [, definitionId] = appId.split(DEV_APP_SEPARATOR);
+      return appDefinitionLoader.getById(definitionId);
     }
 
     const res = await window.fetch(getAppEndpoint(appId), FETCH_CONFIG);
@@ -145,7 +145,7 @@ export default function createAppsRepo(extensionDefinitionLoader, spaceEndpoint)
     const [app] = resolveResponse(data);
     const definitionId = get(app, ['fields', 'extensionDefinitionId'], null);
 
-    return extensionDefinitionLoader.getById(definitionId);
+    return appDefinitionLoader.getById(definitionId);
   }
 
   async function getExtensionForExtensionDefinition(extensionDefinitionId) {

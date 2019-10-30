@@ -22,14 +22,14 @@ const makeExtensionWithDefinition = (id, definitionId) => ({
 });
 
 describe('ExtensionLoader', () => {
-  let extensionDefinitionLoader;
+  let appDefinitionLoader;
   let spaceEndpoint;
   let loader;
 
   beforeEach(function() {
-    extensionDefinitionLoader = { getByIds: jest.fn() };
+    appDefinitionLoader = { getByIds: jest.fn() };
     spaceEndpoint = jest.fn();
-    loader = createExtensionLoader(extensionDefinitionLoader, spaceEndpoint);
+    loader = createExtensionLoader(appDefinitionLoader, spaceEndpoint);
   });
 
   describe('getAllExtensionsForListing()', () => {
@@ -51,7 +51,7 @@ describe('ExtensionLoader', () => {
         }
       });
 
-      expect(extensionDefinitionLoader.getByIds).toBeCalledWith([]);
+      expect(appDefinitionLoader.getByIds).toBeCalledWith([]);
 
       expect(result).toEqual([makeExtension('id1'), makeExtension('id2')]);
     });
@@ -67,7 +67,7 @@ describe('ExtensionLoader', () => {
         })
       );
 
-      extensionDefinitionLoader.getByIds.mockReturnValue(
+      appDefinitionLoader.getByIds.mockReturnValue(
         Promise.resolve({
           definitionId2: {
             sys: { id: 'definitionId2' },
@@ -96,7 +96,7 @@ describe('ExtensionLoader', () => {
         }
       });
 
-      expect(extensionDefinitionLoader.getByIds).toBeCalledWith(['definitionId2', 'definitionId3']);
+      expect(appDefinitionLoader.getByIds).toBeCalledWith(['definitionId2', 'definitionId3']);
 
       expect(result).toEqual([
         makeExtension('id1'),
@@ -133,7 +133,7 @@ describe('ExtensionLoader', () => {
         path: ['extensions'],
         query: { 'sys.id[in]': 'id1,id2,id3' }
       });
-      expect(extensionDefinitionLoader.getByIds).toBeCalledWith([]);
+      expect(appDefinitionLoader.getByIds).toBeCalledWith([]);
 
       expect(result).toEqual([makeExtension('id1'), makeExtension('id2')]);
     });
@@ -145,7 +145,7 @@ describe('ExtensionLoader', () => {
         })
       );
 
-      extensionDefinitionLoader.getByIds.mockReturnValue(
+      appDefinitionLoader.getByIds.mockReturnValue(
         Promise.resolve({
           definitionId2: {
             sys: { id: 'definitionId2' },
@@ -164,7 +164,7 @@ describe('ExtensionLoader', () => {
         query: { 'sys.id[in]': 'id2' }
       });
 
-      expect(extensionDefinitionLoader.getByIds).toBeCalledWith(['definitionId2']);
+      expect(appDefinitionLoader.getByIds).toBeCalledWith(['definitionId2']);
 
       expect(result).toEqual([
         {

@@ -34,7 +34,7 @@ export default function register() {
       let createUserCache;
       let EntityFieldValueHelpers;
       let TheLocaleStore;
-      let createExtensionDefinitionLoader;
+      let createAppDefinitionLoader;
       let createExtensionLoader;
       let createSpaceMembersRepo;
       let createEnvironmentsRepo;
@@ -43,7 +43,7 @@ export default function register() {
       let createUiConfigStore;
       let createSpaceEndpoint;
       let createOrganizationEndpoint;
-      let createExtensionDefinitionsEndpoint;
+      let createAppDefinitionsEndpoint;
       let PublishedCTRepo;
       let MembershipRepo;
       let accessChecker;
@@ -65,7 +65,7 @@ export default function register() {
             { default: createUserCache },
             EntityFieldValueHelpers,
             { default: TheLocaleStore },
-            { default: createExtensionDefinitionLoader },
+            { default: createAppDefinitionLoader },
 
             { createExtensionLoader },
             { default: createSpaceMembersRepo },
@@ -73,7 +73,7 @@ export default function register() {
             { create: createAliasesRepo },
             { default: createLocaleRepo },
             { default: createUiConfigStore },
-            { createSpaceEndpoint, createOrganizationEndpoint, createExtensionDefinitionsEndpoint },
+            { createSpaceEndpoint, createOrganizationEndpoint, createAppDefinitionsEndpoint },
             PublishedCTRepo,
             MembershipRepo,
             accessChecker,
@@ -92,7 +92,7 @@ export default function register() {
             import('data/userCache.es6'),
             import('./EntityFieldValueHelpers.es6'),
             import('services/localeStore.es6'),
-            import('app/settings/AppsBeta/ExtensionDefinitionLoader.es6'),
+            import('app/settings/AppsBeta/AppDefinitionLoader.es6'),
             import('widgets/ExtensionLoader.es6'),
             import('data/CMA/SpaceMembersRepo.es6'),
             import('data/CMA/SpaceEnvironmentsRepo.es6'),
@@ -172,10 +172,7 @@ export default function register() {
           self.localeRepo = createLocaleRepo(self.endpoint);
           self.organization = deepFreezeClone(self.getData('organization'));
 
-          const extensionDefinitionsEndpoint = createExtensionDefinitionsEndpoint(
-            Config.apiUrl(),
-            Auth
-          );
+          const appDefinitionsEndpoint = createAppDefinitionsEndpoint(Config.apiUrl(), Auth);
 
           const orgEndpoint = createOrganizationEndpoint(
             Config.apiUrl(),
@@ -183,15 +180,9 @@ export default function register() {
             Auth
           );
 
-          self.extensionDefinitionLoader = createExtensionDefinitionLoader(
-            extensionDefinitionsEndpoint,
-            orgEndpoint
-          );
+          self.appDefinitionLoader = createAppDefinitionLoader(appDefinitionsEndpoint, orgEndpoint);
 
-          self.extensionLoader = createExtensionLoader(
-            self.extensionDefinitionLoader,
-            self.endpoint
-          );
+          self.extensionLoader = createExtensionLoader(self.appDefinitionLoader, self.endpoint);
 
           // TODO: publicly accessible docConnection is
           // used only in a process of creating space out
