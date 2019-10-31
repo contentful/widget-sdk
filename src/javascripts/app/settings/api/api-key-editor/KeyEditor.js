@@ -247,7 +247,7 @@ export default function KeyEditor({
         <Separator key="content-preview-api-separator" />
         <InputWithCopy
           key="content-preview-api"
-          value={apiKey.preview_api_key.accessToken}
+          value={get(apiKey, 'preview_api_key.accessToken', '')}
           name="preview-token"
           track={() => {
             trackCopy('cpa');
