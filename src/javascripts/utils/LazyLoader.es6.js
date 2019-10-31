@@ -35,10 +35,6 @@ const RESOURCES = {
       return embedly;
     }
   },
-  googleMaps: {
-    url: 'https://maps.googleapis.com/maps/api/js?v=3&key=' + Config.services.google.maps_api_key,
-    globalObject: ['google', 'maps']
-  },
   bugsnag: {
     url: 'https://d2wy8f7a9ursnm.cloudfront.net/bugsnag-3.min.js',
     globalObject: ['Bugsnag']

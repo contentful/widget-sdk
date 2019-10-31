@@ -63,8 +63,6 @@ export const angularInitRun = [
       import('app/widgets/cfFileEditorDirective.es6'),
       import('app/widgets/datetime/cfEntryDatetimeEditorDirective.es6'),
       import('app/widgets/link/entityLinkDirectives.es6'),
-      import('app/widgets/location/cfLocationEditorDirective.es6'),
-      import('app/widgets/location/searchController.es6'),
       import('app/widgets/shared/cfEditorCharacterInfoDirective.es6'),
       import('app/widgets/slug/cfSlugEditorDirective.es6'),
       import('components/CreateEntryButton/buttonDirective.es6'),
@@ -131,7 +129,6 @@ export const angularInitRun = [
       import('states/cfSrefDirective.es6'),
       import('ui/cfIconDirective.es6'),
       import('ui/cfUiTab.es6'),
-      import('ui/highlightMatchDirective.es6'),
       import('ui/loader.es6')
     ]);
 

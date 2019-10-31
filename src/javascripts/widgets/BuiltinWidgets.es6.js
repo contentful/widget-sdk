@@ -2,6 +2,7 @@
 
 import { range } from 'lodash';
 import React from 'react';
+import * as Config from 'Config.es6';
 import { default as RichTextEditor } from 'app/widgets/rich_text/index.es6';
 import LinkEditor, {
   SingleLinkEditor,
@@ -20,6 +21,7 @@ import { RatingEditor } from '@contentful/field-editor-rating';
 import { NumberEditor } from '@contentful/field-editor-number';
 import { UrlEditor } from '@contentful/field-editor-url';
 import { JsonEditor } from '@contentful/field-editor-json';
+import { LocationEditor } from '@contentful/field-editor-location';
 
 const CfLinkEditor = linkEditorWithCfWebApp(LinkEditor);
 const CfSingleLinkEditor = linkEditorWithCfWebApp(SingleLinkEditor);
@@ -181,7 +183,12 @@ export function create() {
   registerWidget('locationEditor', {
     fieldTypes: ['Location'],
     name: 'Location',
-    template: '<cf-location-editor />'
+    renderFieldEditor: ({ widgetApi }) => (
+      <LocationEditor
+        field={widgetApi.field}
+        parameters={{ instance: { googleMapsKey: Config.services.google.maps_api_key } }}
+      />
+    )
   });
 
   registerWidget('objectEditor', {

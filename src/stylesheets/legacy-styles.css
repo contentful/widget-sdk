@@ -9865,49 +9865,6 @@ pre,
     font-size: 0.875rem;
     font-weight: 700;
   }
-  .location-editor__input-select {
-    margin-bottom: 1em;
-  }
-  .location-editor__input-select > .cfnext-form-option {
-    margin-bottom: 0;
-  }
-  .location-editor__input-select label {
-    padding-bottom: 0 !important;
-  }
-  .location-editor__coordinates {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-  }
-  .location-editor__coord-input {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-align: baseline;
-    -webkit-box-align: baseline;
-            align-items: baseline;
-    width: 50%;
-  }
-  .location-editor__coord-input:not(:last-child) {
-    margin-right: 1em;
-  }
-  .location-editor__coord-label {
-    margin-right: 1em;
-  }
-  .location-editor__map {
-    display: block;
-    margin-bottom: 1em;
-  }
-  .location-editor__google-map {
-    position: relative;
-    height: 300px;
-  }
-  .location-editor__google-map [aria-hidden=true] {
-    display: initial;
-  }
-  .location-editor__address-search {
-    position: relative;
-  }
   .link-editor {
     position: relative;
   }
