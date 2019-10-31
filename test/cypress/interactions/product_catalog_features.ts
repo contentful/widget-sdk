@@ -7,16 +7,19 @@ import { RequestOptions, Query } from '@pact-foundation/pact';
 
 const productCatalogOrg = require('../fixtures/responses/product-catalog-org.json');
 const productCatalogSpace = require('../fixtures/responses/product-catalog-space.json');
+const productCatalogTasksAndApps = require('../fixtures/responses/product-catalog-tasks-and-apps.json');
 
 enum States {
   ORG_WITH_SEVERAL_FEATURES = 'product_catalog_features/org-with-several',
   SPACE_WITH_SEVERAL_FEATURES = 'product_catalog_features/space-with-several'
 }
 
+export const PROVIDER = 'product_catalog_features';
+
 export const getAllProductCatalogFeaturesForDefaultOrg = {
   willFindSeveral() {
     cy.addInteraction({
-      provider: 'product_catalog_features',
+      provider: PROVIDER,
       state: States.ORG_WITH_SEVERAL_FEATURES,
       uponReceiving: `a request to get all product catalog features for org "${defaultOrgId}"`,
       withRequest: {
@@ -46,7 +49,7 @@ function productCatalogFeaturesForDefaultSpaceRequest(query?: Query): RequestOpt
 export const getAllCatalogFeaturesForDefaultSpace = {
   willFindSeveral() {
     cy.addInteraction({
-      provider: 'product_catalog_features',
+      provider: PROVIDER,
       state: States.SPACE_WITH_SEVERAL_FEATURES,
       uponReceiving: `a request to get all features for space "${defaultSpaceId}"`,
       withRequest: productCatalogFeaturesForDefaultSpaceRequest(),
@@ -60,21 +63,39 @@ export const getAllCatalogFeaturesForDefaultSpace = {
   }
 }
 
-export const queryForTwoSpecificFeaturesInDefaultSpace = {
+export const queryForTasksAndAppsInDefaultSpace = {
   willFindBothOfThem() {
     cy.addInteraction({
-      provider: 'product_catalog_features',
+      provider: PROVIDER,
       state: States.SPACE_WITH_SEVERAL_FEATURES,
-      uponReceiving: `a query for the "environment_usage_enforcements" and "basic_apps" features for space "${defaultSpaceId}"`,
+      uponReceiving: `a query for the "tasks" and "basic_apps" features for space "${defaultSpaceId}"`,
       withRequest: productCatalogFeaturesForDefaultSpaceRequest(
-        'sys.featureId[]=environment_usage_enforcements&sys.featureId[]=basic_apps'
+        'sys.featureId[]=tasks&sys.featureId[]=basic_apps'
       ),
       willRespondWith: {
         status: 200,
-        body: productCatalogSpace
+        body: productCatalogTasksAndApps
       }
-    }).as('queryForTwoSpecificFeaturesInDefaultSpace');
+    }).as('queryForTasksAndAppsInDefaultSpace');
 
-    return '@queryForTwoSpecificFeaturesInDefaultSpace'
+    return '@queryForTasksAndAppsInDefaultSpace'
+  }
+}
+
+export const queryForEnvironmentAliasingAndAppsInDefaultSpace = {
+  willFindNone() {
+    cy.addInteraction({
+      provider: PROVIDER,
+      state: States.SPACE_WITH_SEVERAL_FEATURES,
+      uponReceiving: `a query for the "environment_aliasing" and "basic_apps" features for space "${defaultSpaceId}"`,
+      withRequest: productCatalogFeaturesForDefaultSpaceRequest(
+        'sys.featureId[]=environment_aliasing&sys.featureId[]=basic_apps'
+      ),
+      willRespondWith: {
+        status: 404
+      }
+    }).as('queryForEnvironmentAliasingAndAppsInDefaultSpace');
+
+    return '@queryForEnvironmentAliasingAndAppsInDefaultSpace'
   }
 }

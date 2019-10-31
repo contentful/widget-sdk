@@ -1,17 +1,18 @@
 import React from 'react';
-import { render, cleanup } from '@testing-library/react';
+import { render, cleanup, wait } from '@testing-library/react';
 
 import * as FeatureFlagKey from 'featureFlags.es6';
 import TasksWidgetContainer from './TasksWidgetContainer.es6';
 
-import BooleanFeatureFlag from 'utils/LaunchDarkly/BooleanFeatureFlag.es6';
-jest.mock('utils/LaunchDarkly/BooleanFeatureFlag.es6', () => jest.fn());
-
 import { trackIsTasksAlphaEligible } from './analytics.es6';
+import ProductCatalog from 'data/CMA/ProductCatalog.es6';
+
+jest.mock('data/CMA/ProductCatalog.es6', () => ({ getCurrentSpaceFeature: jest.fn() }));
 jest.mock('./analytics.es6');
 
 describe('<TasksWidgetContainer />', () => {
   afterEach(() => {
+    ProductCatalog.getCurrentSpaceFeature.mockClear();
     jest.clearAllMocks();
     cleanup();
   });
@@ -34,8 +35,9 @@ describe('<TasksWidgetContainer />', () => {
       mockBooleanFeatureFlag(false);
     });
 
-    it('does not track to intercom', () => {
+    it('does not track to intercom', async () => {
       build();
+      await wait();
       expect(trackIsTasksAlphaEligible).not.toHaveBeenCalled();
     });
 
@@ -50,13 +52,14 @@ describe('<TasksWidgetContainer />', () => {
       mockBooleanFeatureFlag(true);
     });
 
-    it('tracks to intercom', () => {
+    it('tracks to intercom', async () => {
       build();
+      await wait();
       expect(trackIsTasksAlphaEligible).toHaveBeenCalled();
     });
   });
 });
 
 function mockBooleanFeatureFlag(currentVariation) {
-  BooleanFeatureFlag.mockImplementation(({ children }) => children({ currentVariation }));
+  ProductCatalog.getCurrentSpaceFeature.mockResolvedValue(currentVariation);
 }

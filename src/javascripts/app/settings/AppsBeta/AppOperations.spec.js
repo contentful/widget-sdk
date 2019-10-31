@@ -7,6 +7,7 @@ import {
 } from 'widgets/WidgetNamespaces.es6';
 
 jest.mock('i13n/Telemetry.es6', () => ({ count: () => {} }));
+jest.mock('data/CMA/ProductCatalog.es6', () => ({ getCurrentSpaceFeature: () => true }));
 
 describe('AppOperations', () => {
   describe('installOrUpdate', () => {

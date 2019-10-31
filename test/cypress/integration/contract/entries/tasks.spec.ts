@@ -16,8 +16,12 @@ import {
   getAllPublicContentTypesInDefaultSpace
 } from '../../../interactions/content_types';
 import { getDefaultEntry, getFirst7SnapshotsOfDefaultEntry } from '../../../interactions/entries';
+import {
+  PROVIDER as PRODUCT_CATALOG_PROVIDER,
+  queryForTasksAndAppsInDefaultSpace,
+  queryForEnvironmentAliasingAndAppsInDefaultSpace
+} from '../../../interactions/product_catalog_features'
 import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
-import { FeatureFlag } from '../../../util/featureFlag';
 
 const users = require('../../../fixtures/responses/users.json');
 import severalTasks from '../../../fixtures/responses/tasks-several.js';
@@ -26,7 +30,13 @@ describe('Tasks entry editor sidebar', () => {
   before(() =>
     cy.startFakeServers({
       consumer: 'user_interface',
-      providers: [TASKS_PROVIDER, 'entries', 'users', 'microbackend'],
+      providers: [
+        TASKS_PROVIDER,
+        'entries',
+        'users',
+        'microbackend',
+        PRODUCT_CATALOG_PROVIDER
+      ],
       cors: true,
       pactfileWriteMode: 'merge',
       dir: Cypress.env('pactDir'),
@@ -36,7 +46,6 @@ describe('Tasks entry editor sidebar', () => {
 
   beforeEach(() => {
     cy.resetAllFakeServers();
-    cy.enableFeatureFlags([FeatureFlag.CONTENT_WORKFLOW_TASKS]);
   });
 
   function visitEntry() {
@@ -52,6 +61,8 @@ describe('Tasks entry editor sidebar', () => {
     cy.route('**/channel/**', []).as('shareJS');
 
     return [
+      queryForEnvironmentAliasingAndAppsInDefaultSpace.willFindNone(),
+      queryForTasksAndAppsInDefaultSpace.willFindBothOfThem(),
       ...defaultRequestsMock({
         publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
       }),

@@ -1,10 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import SidebarEventTypes from '../SidebarEventTypes.es6';
 import SidebarWidgetTypes from '../SidebarWidgetTypes.es6';
 import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 import ErrorHandler from 'components/shared/ErrorHandlerComponent.es6';
-import BooleanFeatureFlag from 'utils/LaunchDarkly/BooleanFeatureFlag.es6';
 import * as FeatureFlagKey from 'featureFlags.es6';
 import { createTaskListViewData } from './ViewData/TaskViewData.es6';
 import { createTasksStoreForEntry } from './TasksStore.es6';
@@ -16,21 +15,23 @@ import { isOpenTask, onStoreFetchingStatusChange, onPromiseFetchingStatusChange 
 import TaskList from './View/TaskList.es6';
 import { Tag } from '@contentful/forma-36-react-components';
 import { trackIsTasksAlphaEligible } from './analytics.es6';
+import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog.es6';
 
 export default function TasksWidgetContainerWithFeatureFlag(props) {
-  return (
-    <ErrorHandler>
-      <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.TASKS}>
-        {({ currentVariation: isEnabled }) => {
-          if (isEnabled) {
-            trackIsTasksAlphaEligible();
-            return <TasksWidgetContainer {...props} />;
-          }
-          return null;
-        }}
-      </BooleanFeatureFlag>
-    </ErrorHandler>
-  );
+  const [isEnabled, setIsEnabled] = useState(false);
+
+  useEffect(() => {
+    async function fetchFeatureFlag() {
+      const isEnabled = await getCurrentSpaceFeature(FeatureFlagKey.CONTENT_WORKFLOW_TASKS, false);
+      setIsEnabled(isEnabled);
+      if (isEnabled) {
+        trackIsTasksAlphaEligible();
+      }
+    }
+    fetchFeatureFlag();
+  }, []);
+
+  return <ErrorHandler>{isEnabled ? <TasksWidgetContainer {...props} /> : null}</ErrorHandler>;
 }
 
 export class TasksWidgetContainer extends Component {

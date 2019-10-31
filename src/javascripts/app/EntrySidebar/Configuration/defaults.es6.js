@@ -1,7 +1,7 @@
 import SidebarWidgetTypes from '../SidebarWidgetTypes.es6';
 import { NAMESPACE_SIDEBAR_BUILTIN } from 'widgets/WidgetNamespaces.es6';
 import * as FeatureFlagKey from 'featureFlags.es6';
-import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
+import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog.es6';
 
 export const Publication = {
   widgetId: SidebarWidgetTypes.PUBLICATION,
@@ -79,8 +79,7 @@ export const AssetConfiguration = [Publication, Links, Translation, Users];
 
 const availabilityMap = {
   [Publication.widgetId]: true,
-  [Tasks.widgetId]: () =>
-    getCurrentVariation(FeatureFlagKey.TASKS).then(variation => Boolean(variation)),
+  [Tasks.widgetId]: () => getCurrentSpaceFeature(FeatureFlagKey.CONTENT_WORKFLOW_TASKS, false),
   [ContentPreview.widgetId]: true,
   [Links.widgetId]: true,
   [Translation.widgetId]: true,
