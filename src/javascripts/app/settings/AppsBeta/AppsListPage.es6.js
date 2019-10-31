@@ -171,7 +171,7 @@ const AppsListShell = props => (
         <Note className={styles.intro}>
           Let us know if you want to{' '}
           <TextLink
-            href="https://docs.google.com/forms/d/1LYQlFwjLKVtSDsneEBdu_ocMQb90QOwG_d8NqzWqqgM"
+            href="https://forms.gle/3U15mGcRMy4NkcCg6"
             target="_blank"
             rel="noopener noreferrer">
             build an app

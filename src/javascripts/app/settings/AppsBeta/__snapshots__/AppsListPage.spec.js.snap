@@ -122,7 +122,7 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
                 <a
                   class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
                   data-test-id="cf-ui-text-link"
-                  href="https://docs.google.com/forms/d/1LYQlFwjLKVtSDsneEBdu_ocMQb90QOwG_d8NqzWqqgM"
+                  href="https://forms.gle/3U15mGcRMy4NkcCg6"
                   rel="noopener noreferrer"
                   target="_blank"
                 >
@@ -439,7 +439,7 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
                 <a
                   class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
                   data-test-id="cf-ui-text-link"
-                  href="https://docs.google.com/forms/d/1LYQlFwjLKVtSDsneEBdu_ocMQb90QOwG_d8NqzWqqgM"
+                  href="https://forms.gle/3U15mGcRMy4NkcCg6"
                   rel="noopener noreferrer"
                   target="_blank"
                 >
