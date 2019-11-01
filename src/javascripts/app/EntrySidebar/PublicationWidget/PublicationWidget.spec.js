@@ -92,7 +92,7 @@ describe('app/EntrySidebar/PublicationWidget', () => {
     };
 
     itRendersStatus(props, {
-      expectedText: 'Status: Draft'
+      expectedText: 'Draft'
     });
     itCanRenderRevert(props);
     itRendersPrimaryActions(props);
@@ -105,7 +105,7 @@ describe('app/EntrySidebar/PublicationWidget', () => {
     };
 
     itRendersStatus(props, {
-      expectedText: 'Status: Published (pending changes)'
+      expectedText: 'Changed'
     });
     itCanRenderRevert(props);
     itRendersPrimaryActions(props);
@@ -118,7 +118,7 @@ describe('app/EntrySidebar/PublicationWidget', () => {
     };
 
     itRendersStatus(props, {
-      expectedText: 'Status: Archived'
+      expectedText: 'Archived'
     });
     itCanRenderRevert(props);
     itRendersPrimaryActions(props);
@@ -131,7 +131,7 @@ describe('app/EntrySidebar/PublicationWidget', () => {
     };
 
     itRendersStatus(props, {
-      expectedText: 'Status: Published'
+      expectedText: 'Published'
     });
     itCanRenderRevert(props);
     itCanRenderSecondaryActions(props);

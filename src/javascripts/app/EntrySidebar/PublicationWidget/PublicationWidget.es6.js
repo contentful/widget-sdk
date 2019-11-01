@@ -16,34 +16,13 @@ import { css } from 'emotion';
 import EntrySidebarWidget from '../EntrySidebarWidget.es6';
 import RelativeTimeData from 'components/shared/RelativeDateTime/index.es6';
 import CommandPropType from 'app/entity_editor/CommandPropType.es6';
+import StatusBadge from './StatusBadge';
 
 const styles = {
   actionRestrictionNote: css({
     color: tokens.colorTextLight,
     marginTop: tokens.spacingXs
   })
-};
-
-const StatusBadge = ({ status }) => (
-  <div
-    className={classNames('published-status', css({ marginBottom: tokens.spacing2Xs }))}
-    data-state={status}
-    data-test-id="entity-state">
-    <span
-      className="entity-sidebar__state-indicator"
-      data-state={status}
-      data-test-id="entity-status"
-    />
-    <strong>Status: </strong>
-    {status === 'archived' && <span>Archived</span>}
-    {status === 'draft' && <span>Draft</span>}
-    {status === 'published' && <span>Published</span>}
-    {status === 'changes' && <span>Published (pending changes)</span>}
-  </div>
-);
-
-StatusBadge.propTypes = {
-  status: PropTypes.string.isRequired
 };
 
 const ActionRestrictedNote = ({ actionName, reason }) => (

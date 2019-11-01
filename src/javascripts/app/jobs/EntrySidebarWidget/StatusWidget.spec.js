@@ -13,8 +13,7 @@ const createCommand = props => ({
 });
 
 const selectors = {
-  statusState: renderResult => renderResult.getByTestId('entity-state'),
-  stateText: renderResult => renderResult.container.querySelector('.entity-sidebar__state'),
+  stateText: renderResult => renderResult.getByTestId('entity-state'),
   dateText: renderResult => renderResult.container.querySelector('.entity-sidebar__last-saved'),
   publishBtn: renderResult => renderResult.getByTestId('change-state-published'),
   secondaryArchiveBtn: renderResult => renderResult.getByTestId('change-state-archived'),
@@ -65,7 +64,7 @@ describe('<StatusWidget />', () => {
       ]
     });
 
-    expect(selectors.stateText(renderResult).textContent).toBe('Status: Draft');
+    expect(selectors.stateText(renderResult).textContent).toBe('Draft');
     expect(selectors.dateText(renderResult).textContent).toBe('Last saved 01/14/2018');
 
     expect(selectors.publishBtn(renderResult)).toBeInTheDocument();
@@ -111,9 +110,7 @@ describe('<StatusWidget />', () => {
       ]
     });
 
-    expect(selectors.stateText(renderResult).textContent).toBe(
-      'Status: Published (pending changes)'
-    );
+    expect(selectors.stateText(renderResult).textContent).toBe('Changed');
     expect(selectors.dateText(renderResult).textContent).toBe('Last saved 01/14/2018');
 
     expect(selectors.publishBtn(renderResult)).toBeInTheDocument();
@@ -165,7 +162,7 @@ describe('<StatusWidget />', () => {
       ]
     });
 
-    expect(selectors.stateText(renderResult).textContent).toBe('Status: Published');
+    expect(selectors.stateText(renderResult).textContent).toBe('Published');
     expect(selectors.dateText(renderResult).textContent).toBe('Last saved 01/14/2018');
 
     expect(renderResult.queryByTestId('change-state-published')).toBeNull();

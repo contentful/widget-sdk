@@ -208,6 +208,7 @@ export default function JobsWidget({
         spaceId={spaceId}
         environmentId={environmentId}
         primary={primary}
+        isScheduled={hasScheduledActions}
         entity={entity}
         secondary={secondary}
         revert={revert}

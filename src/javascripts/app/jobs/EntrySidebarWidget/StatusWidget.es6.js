@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { every } from 'lodash';
-import { css } from 'emotion';
+import { css, cx } from 'emotion';
 import {
   Button,
   Dropdown,
@@ -14,11 +13,11 @@ import {
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import RelativeTimeData from 'components/shared/RelativeDateTime/index.es6';
-import StatusBadge from './StatusBadge.es6';
 import ActionRestrictedNote from './ActionRestrictedNote.es6';
 import RestrictedAction from './RestrictedAction.es6';
 
 import CommandPropType from 'app/entity_editor/CommandPropType.es6';
+import StatusBadge from 'app/EntrySidebar/PublicationWidget/StatusBadge';
 
 // TODO: This code started as a copy of <PublicationWidget />, there should be
 //  some shared code as there are still a lot of similarities.
@@ -44,6 +43,12 @@ const styles = {
   }),
   alphaTag: css({
     marginLeft: tokens.spacing2Xs
+  }),
+  sidebarHeading: css({
+    display: 'flex'
+  }),
+  sidebarHeadingStatus: css({
+    marginRight: 'auto'
   })
 };
 
@@ -52,6 +57,7 @@ export default class StatusWidget extends React.PureComponent {
     status: PropTypes.string.isRequired,
     isSaving: PropTypes.bool.isRequired,
     updatedAt: PropTypes.string,
+    isScheduled: PropTypes.bool,
     revert: CommandPropType,
     primary: CommandPropType,
     secondary: PropTypes.arrayOf(CommandPropType.isRequired).isRequired,
@@ -101,6 +107,7 @@ export default class StatusWidget extends React.PureComponent {
       updatedAt,
       revert,
       isDisabled,
+      isScheduled,
       publicationBlockedReason
     } = this.props;
     const secondaryActionsDisabled =
@@ -108,10 +115,12 @@ export default class StatusWidget extends React.PureComponent {
     return (
       <div data-test-id="status-widget">
         <header className="entity-sidebar__header">
-          <Subheading className="entity-sidebar__heading">Status</Subheading>
+          <Subheading className={cx('entity-sidebar__heading', styles.sidebarHeading)}>
+            <span className={styles.sidebarHeadingStatus}>Status</span>
+          </Subheading>
         </header>
-        <StatusBadge status={status} />
         <div className="entity-sidebar__state-select">
+          <StatusBadge status={status} isScheduled={isScheduled} />
           <div className="publish-buttons-row">
             {status !== 'published' && primary && (
               <React.Fragment>
@@ -191,7 +200,7 @@ export default class StatusWidget extends React.PureComponent {
           {updatedAt && (
             <div className="entity-sidebar__save-status">
               <i
-                className={classNames('entity-sidebar__saving-spinner', {
+                className={cx('entity-sidebar__saving-spinner', {
                   'x--active': isSaving
                 })}
               />
