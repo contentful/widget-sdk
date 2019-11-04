@@ -1,3 +1,4 @@
+import React from 'react';
 import { Notification } from '@contentful/forma-36-react-components';
 import { getCurrentStateName } from 'states/Navigator.es6';
 import specialCharacters from './markdown_special_characters.es6';
@@ -10,6 +11,8 @@ import * as BulkAssetsCreator from 'services/BulkAssetsCreator.es6';
 import * as AssetUrlService from 'services/AssetUrlService.es6';
 import LinkOrganizer from './linkOrganizer.es6';
 import { getModule } from 'NgRegistry.es6';
+import * as ModalLauncher from 'app/common/ModalLauncher.es6';
+import InsertLinkModal from './components/InsertLinkModal';
 
 export function create(editor, locale, defaultLocaleCode, { zen }) {
   const modalDialog = getModule('modalDialog');
@@ -40,22 +43,21 @@ export function create(editor, locale, defaultLocaleCode, { zen }) {
     return handler(...args);
   });
 
-  function link() {
+  async function link() {
     editor.usePrimarySelection();
     const selectedText = editor.getSelectedText();
-    modalDialog
-      .open({
-        scopeData: {
-          showLinkTextInput: !selectedText,
-          model: {
-            url: 'https://'
-          }
-        },
-        template: 'markdown_link_dialog'
-      })
-      .promise.then(({ url, text, title }) => {
-        editor.actions.link(url, selectedText || text, title);
-      });
+    const modalKey = Date.now();
+    const result = await ModalLauncher.open(({ isShown, onClose }) => (
+      <InsertLinkModal
+        selectedText={selectedText}
+        isShown={isShown}
+        onClose={onClose}
+        key={modalKey}
+      />
+    ));
+    if (result) {
+      editor.actions.link(result.url, selectedText || result.text, result.title);
+    }
   }
 
   function existingAssets() {
