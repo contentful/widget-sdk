@@ -154,6 +154,7 @@ export default class AccountDropdown extends Component {
     Analytics.track('global:logout_clicked');
     Analytics.disable();
     Authentication.logout();
+    this.handleDropdownListItemClick();
   };
 
   handleLiveChat = () => {
@@ -163,6 +164,11 @@ export default class AccountDropdown extends Component {
       fromState: getCurrentStateName()
     });
     Intercom.open();
+    this.handleDropdownListItemClick();
+  };
+
+  handleDropdownListItemClick = () => {
+    this.setState({ isOpen: false });
   };
 
   render() {
@@ -202,12 +208,14 @@ export default class AccountDropdown extends Component {
         <DropdownList border="bottom">
           <DropdownListItem
             testId="nav.account.userProfile"
+            onClick={this.handleDropdownListItemClick}
             href={href({ path: ['account', 'profile', 'user'] })}>
             User Profile
           </DropdownListItem>
           {this.state.shouldShowPendingTasks && (
             <DropdownListItem
               data-test-id="nav.account.pendingTasks"
+              onClick={this.handleDropdownListItemClick}
               href={href({ path: ['spaces', 'detail', 'tasks'] })}>
               <span className={styles.pendingTasksItem}>
                 {`Pending tasks (${this.state.pendingTasksCount})`}
@@ -227,6 +235,7 @@ export default class AccountDropdown extends Component {
             testId="nav.account.support"
             href={Config.supportUrl}
             target="_blank"
+            onClick={this.handleDropdownListItemClick}
             rel="noopener noreferrer">
             Get support
           </DropdownListItem>
