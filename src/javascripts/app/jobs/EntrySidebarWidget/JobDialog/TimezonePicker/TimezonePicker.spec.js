@@ -47,7 +47,7 @@ describe('TimezonePicker', () => {
       target: { value: 'New Y' }
     });
 
-    const newYorkItem = renderResult.queryByText(/\(GMT-0[45]:00\) - America\/New York/);
+    const newYorkItem = renderResult.queryByText('America/New York', { exact: false });
     fireEvent.click(newYorkItem);
 
     expect(props.onSelect).toHaveBeenCalledWith('America/New_York');
