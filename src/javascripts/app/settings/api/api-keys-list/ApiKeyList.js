@@ -1,60 +1,36 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { cx } from 'emotion';
 import StateLink from 'app/common/StateLink.es6';
-
-const placeholderKeys = [
-  {
-    id: '1',
-    name: 'Website key',
-    description: 'Use this key in your website'
-  },
-  {
-    id: '2',
-    name: 'iOS key',
-    description: 'Use this key in your iOS app'
-  },
-  {
-    id: '3',
-    name: 'Android key',
-    description: 'Use this key in your Android app'
-  }
-];
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell
+} from '@contentful/forma-36-react-components';
 
 export default function ApiKeyList({ apiKeys }) {
-  const hasKeys = apiKeys && apiKeys.length;
-
   return (
-    <div className="api-key-list" data-test-id="api-key-list">
-      {(hasKeys ? apiKeys : []).map(key => (
-        <StateLink
-          key={hasKeys ? key.sys.id : key.name}
-          className={cx('entity-list__item x--with-icon', {
-            'api-key-list__placeholder': !hasKeys
-          })}
-          to={hasKeys ? '^.detail' : ''}
-          params={hasKeys ? { apiKeyId: key.sys.id } : null}
-          data-test-id="api-link">
-          <span>
-            <h3 className="entity-list__heading">{key.name}</h3>
-            <span className="entityt-list__description">{key.description}</span>
-          </span>
-        </StateLink>
-      ))}
-      {(!hasKeys ? placeholderKeys : []).map(key => (
-        <div
-          key={hasKeys ? key.sys.id : key.name}
-          className={cx('entity-list__item x--with-icon', {
-            'api-key-list__placeholder': !hasKeys
-          })}
-          data-test-id="api-link">
-          <span>
-            <h3 className="entity-list__heading">{key.name}</h3>
-            <span className="entityt-list__description">{key.description}</span>
-          </span>
-        </div>
-      ))}
-    </div>
+    <Table testId="api-key-table">
+      <TableHead>
+        <TableRow>
+          <TableCell>Name</TableCell>
+          <TableCell>Description</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {apiKeys.map(key => (
+          <TableRow key={key.sys.id}>
+            <TableCell>
+              <StateLink to="^.detail" params={{ apiKeyId: key.sys.id }} data-test-id="api-link">
+                {key.name}
+              </StateLink>
+            </TableCell>
+            <TableCell>{key.description}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 }
 

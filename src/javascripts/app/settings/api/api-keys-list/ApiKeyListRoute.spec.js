@@ -70,11 +70,11 @@ describe('ApiKeyListRoute', () => {
     const { getByTestId, getByText } = render(<ApiKeyListRoute />);
 
     await waitForElement(() => {
-      return getByTestId('api-key-list');
+      return getByTestId('api-keys.empty');
     });
 
     expect(getByTestId('add-api-key')).toBeEnabled();
-    expect(getByText("You don't have any API keys yet")).toBeInTheDocument();
+    expect(getByText('Add the first API key to start delivering content')).toBeInTheDocument();
   });
 
   it('should render non-empty list', async () => {
@@ -110,7 +110,7 @@ describe('ApiKeyListRoute', () => {
       const { getByTestId, getByText } = render(<ApiKeyListRoute />);
 
       await waitForElement(() => {
-        return getByTestId('api-key-list');
+        return getByTestId('api-key-table');
       });
 
       expect(getByTestId('add-api-key')).toBeDisabled();

@@ -21,6 +21,7 @@ export default function ApiKeyWorkbench(props) {
               </div>
             </>
           }
+          actions={props.actions}
         />
         <Workbench.Content type="full">{props.children}</Workbench.Content>
         <Workbench.Sidebar position="right">{props.sidebar}</Workbench.Sidebar>
@@ -30,5 +31,6 @@ export default function ApiKeyWorkbench(props) {
 }
 
 ApiKeyWorkbench.propTypes = {
-  sidebar: PropTypes.any
+  sidebar: PropTypes.any,
+  actions: PropTypes.any
 };

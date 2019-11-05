@@ -2243,40 +2243,6 @@ pre,
   .asset-list .icon {
     font-size: 24px;
   }
-  .entity-list__item:hover {
-    background-color: #e1e1e1;
-    cursor: pointer;
-  }
-  .entity-list__item.x--with-icon {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-align: center;
-    -webkit-box-align: center;
-            align-items: center;
-    border-bottom: 1px solid #e5ebed;
-    padding: 20px 25px 19px;
-  }
-  .entity-list__item.x--with-icon,
-  .entity-list__item.x--with-icon:link,
-  .entity-list__item.x--with-icon:hover,
-  .entity-list__item.x--with-icon:active {
-    color: #8091a5;
-  }
-  .entity-list__item.x--with-icon:hover {
-    background-color: #f7f9fa;
-  }
-  .entity-list__item.x--with-icon .entity-list__icon {
-    margin-left: auto;
-    -webkit-transform: rotate(-90deg);
-    transform: rotate(-90deg);
-  }
-  .entity-list__item.x--with-icon .entity-list__icon path {
-    fill: #a9b9c0;
-  }
-  .entity-list__item.x--with-icon__heading {
-    margin-top: 0;
-  }
   .entity-list .add-entity__advice {
     margin-bottom: 0;
   }
@@ -10537,25 +10503,6 @@ pre,
   }
   .content-model__description {
     color: #8091a5;
-  }
-  .api-key-list__advice {
-    margin-top: 100px;
-    max-height: 246px;
-  }
-  .api-key-list__placeholder:nth-child(1) {
-    opacity: 0.3;
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-    filter: alpha(opacity=30);
-  }
-  .api-key-list__placeholder:nth-child(2) {
-    opacity: 0.2;
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
-    filter: alpha(opacity=20);
-  }
-  .api-key-list__placeholder:nth-child(3) {
-    opacity: 0.1;
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
-    filter: alpha(opacity=10);
   }
   .api-key-boilerplate-instructions code {
     font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace!important;

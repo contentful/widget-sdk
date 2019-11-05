@@ -5,59 +5,53 @@ import {
   ListItem,
   SkeletonContainer,
   SkeletonBodyText,
-  Subheading,
-  Typography,
   Paragraph,
   Button,
-  Notification
+  Notification,
+  Heading
 } from '@contentful/forma-36-react-components';
-import StateLink from 'app/common/StateLink.es6';
-import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 import ApiKeysWorkbench from '../ApiKeysWorkbench';
 import ApiKeysNavigation from '../ApiKeysNavigation';
 import WorkbenchSidebarItem from 'app/common/WorkbenchSidebarItem';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
 import ApiKeyList from './ApiKeyList';
-import { getSubscriptionState } from 'account/AccountUtils';
 import { useApiKeysState } from './ApiKeyListState';
 import * as Navigator from 'states/Navigator.es6';
+import EmptyStateContainer, {
+  defaultSVGStyle
+} from 'components/EmptyStateContainer/EmptyStateContainer.es6';
+import ApiKeysEmptyIllustration from 'svg/api-keys-empty-illustation';
 
 const styles = {
-  emptyStateRoot: css({
-    marginTop: '100px',
-    maxHeight: '246px',
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
+  actions: css({
     display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center'
-  }),
-  emptyStateFrame: css({
-    textAlign: 'center',
-    minWidth: '500px',
-    margin: '0 auto',
-    padding: tokens.spacingL,
-    backgroundColor: tokens.colorElementLightest,
-    border: `1px solid ${tokens.colorElementMid}`
+    alignItems: 'center',
+    button: {
+      marginLeft: tokens.spacingM
+    }
   })
 };
 
-function EmptyStateAdvice() {
-  return (
-    <div className={styles.emptyStateRoot}>
-      <div className={styles.emptyStateFrame}>
-        <Typography>
-          <Subheading element="h1">{"You don't have any API keys yet"}</Subheading>
-        </Typography>
-        <Paragraph>Create your first API key to get started delivering content.</Paragraph>
-      </div>
+const EmptyState = () => (
+  <EmptyStateContainer data-test-id="api-keys.empty">
+    <div className={defaultSVGStyle}>
+      <ApiKeysEmptyIllustration />
     </div>
-  );
-}
+    <Heading>Add the first API key to start delivering content</Heading>
+    <Paragraph>
+      To learn more about delivering content, read about{' '}
+      <KnowledgeBase target="content_apis" text="four content APIs" inlineText /> or{' '}
+      <KnowledgeBase
+        target="delivery_api"
+        text="content delivery API reference documentation"
+        inlineText
+      />
+      . If you are delivering content to multiple platforms, consider adding multiple API keys.
+    </Paragraph>
+  </EmptyStateContainer>
+);
 
 function StaffHint() {
   return (
@@ -104,30 +98,6 @@ function Documentation() {
 }
 
 function UsageInformation(props) {
-  if (props.reachedLimit) {
-    const subscriptionState = getSubscriptionState();
-    return (
-      <>
-        <Paragraph>
-          Your space is using {props.usedAPIKeys} out of {props.limits.maximum} API keys.
-        </Paragraph>
-        {subscriptionState ? (
-          <Paragraph>
-            If you want to create additional keys, you need to either delete an existing one or{' '}
-            <StateLink to={subscriptionState.path.join('.')} params={subscriptionState.params}>
-              upgrade your account
-            </StateLink>
-            .
-          </Paragraph>
-        ) : (
-          <Paragraph>
-            If you want to create additional keys, you need to either delete an existing one or
-            contact the owner of your organization to upgrade the account.
-          </Paragraph>
-        )}
-      </>
-    );
-  }
   return props.isLegacyOrganization ? (
     <Paragraph>
       Your space is using {props.usedAPIKeys} out of {props.limits.maximum} API Keys.
@@ -167,21 +137,18 @@ function AddApiKeys(props) {
   };
 
   return (
-    <WorkbenchSidebarItem title="Add API keys">
-      <Typography>
-        {props.loaded && props.usedAPIKeys > 0 && <UsageInformation {...props} />}
-      </Typography>
+    <div className={styles.actions}>
+      {props.loaded && props.usedAPIKeys > 0 && <UsageInformation {...props} />}
       <Button
         testId="add-api-key"
-        loading={!props.loaded || creating}
-        disabled={props.reachedLimit}
+        loading={creating}
+        disabled={!props.loaded || props.reachedLimit}
         buttonType="primary"
-        isFullWidth
         icon="PlusCircle"
         onClick={onCreateClick}>
         Add API key
       </Button>
-    </WorkbenchSidebarItem>
+    </div>
   );
 }
 
@@ -209,18 +176,20 @@ export default function ApiKeyListRoute() {
 
   return (
     <ApiKeysWorkbench
+      actions={
+        enableCreateApiKeyCreation ? (
+          <AddApiKeys
+            loaded={loaded}
+            usedAPIKeys={apiKeys.length}
+            reachedLimit={reachedLimit}
+            limits={limits}
+            isLegacyOrganization={isLegacyOrganization}
+            createAPIKey={createAPIKey}
+          />
+        ) : null
+      }
       sidebar={
         <React.Fragment>
-          {enableCreateApiKeyCreation && (
-            <AddApiKeys
-              loaded={loaded}
-              usedAPIKeys={apiKeys.length}
-              reachedLimit={reachedLimit}
-              limits={limits}
-              isLegacyOrganization={isLegacyOrganization}
-              createAPIKey={createAPIKey}
-            />
-          )}
           <StaffHint />
           <Documentation />
         </React.Fragment>
@@ -235,8 +204,12 @@ export default function ApiKeyListRoute() {
           <SkeletonBodyText numberOfLines={5} />
         </SkeletonContainer>
       )}
-      {loaded === true && <ApiKeyList apiKeys={apiKeys} />}
-      {loaded === true && hasApiKeys === false && <EmptyStateAdvice />}
+      {loaded === true && (
+        <div data-test-id="api-key-list">
+          {hasApiKeys && <ApiKeyList apiKeys={apiKeys} />}
+          {!hasApiKeys && <EmptyState />}
+        </div>
+      )}
     </ApiKeysWorkbench>
   );
 }
