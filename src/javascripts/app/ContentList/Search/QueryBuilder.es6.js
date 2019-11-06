@@ -32,7 +32,8 @@ export function buildQuery({
       query = applyStatus(query, value);
     } else if (fieldInfo && fieldInfo.type === 'Date') {
       query = applyDate(query, [queryKey, operator, value]);
-    } else if (queryKey.indexOf('.size') > -1) {
+    } else if (queryKey.indexOf('fields.file.details.size') > -1) {
+      // the condition asserts that field is called `size` and there's no selected ct (asset search)
       query = applyGenericValue(query, [queryKey, operator, value * 1000]);
     } else {
       query = applyGenericValue(query, [queryKey, operator, value]);
