@@ -10,7 +10,6 @@ import componentsAppContainerCfAppContainerDirectiveEs6 from 'components/app_con
 import navigationSidepanelDirectiveEs6 from 'navigation/Sidepanel/directive.es6';
 import uiFrameworkCfComponentBridgeDirectiveEs6 from 'ui/Framework/CfComponentBridgeDirective.es6';
 import navigationSidepanelTriggerDirectiveEs6 from 'navigation/Sidepanel/TriggerDirective.es6';
-import navigationAccountDropdownDirectiveEs6 from 'navigation/accountDropdownDirective.es6';
 import componentsSharedPersistentNotificationCfPersistentNotificationDirectiveEs6 from 'components/shared/persistent_notification/cfPersistentNotificationDirective.es6';
 
 export const angularInitRun = [
@@ -29,19 +28,17 @@ export const angularInitRun = [
     navigationSidepanelDirectiveEs6();
     uiFrameworkCfComponentBridgeDirectiveEs6();
     navigationSidepanelTriggerDirectiveEs6();
-    navigationAccountDropdownDirectiveEs6();
     componentsSharedPersistentNotificationCfPersistentNotificationDirectiveEs6();
 
     const modules = await Promise.all([
-      import('analytics/analyticsConsoleDirective'),
-      import('services/modalDialogService.es6'),
-      import('ui/command.es6'),
       import('access_control/UserSpaceInvitationController'),
       import('account/cfNewOrganizationMembership'),
+      import('analytics/analyticsConsoleDirective'),
       import('app/ContentModel/Editor/addFieldDialogController.es6'),
+      import('services/modalDialogService.es6'),
       import('app/ContentModel/Editor/apiNameController.es6'),
       import('app/ContentModel/Editor/cfApiNameShadowDirective.es6'),
-      import('navigation/stateChangeHandlers.es6'),
+      import('ui/command.es6'),
       import('components/field_dialog/fieldDialog.es6'),
       import('app/ContentModel/Editor/contentTypeEditorController.es6'),
       import('app/asset_editor/cfAssetEditorDirective.es6'),
@@ -119,19 +116,20 @@ export const angularInitRun = [
       import('markdown_editor/cfMarkdownEditorDirective.es6'),
       import('markdown_editor/cfZenmodeDirective.es6'),
       import('markdown_editor/markdownPreviewDirective.es6'),
+      import('navigation/accountDropdownDirective.es6'),
       import('navigation/organizationNavDirective.es6'),
       import('navigation/profileNavDirective.es6'),
       import('navigation/spaceNavBarDirective.es6'),
+      import('navigation/stateChangeHandlers.es6'),
       import('search/EntitySelector/entitySelectorController.es6'),
       import('search/EntitySelector/entitySelectorDirective.es6'),
       import('services/exceptionHandler.es6'),
-      import('ui/Framework/ReactDirective.es6'),
       import('states/cfSrefDirective.es6'),
+      import('ui/Framework/ReactDirective.es6'),
       import('ui/cfIconDirective.es6'),
       import('ui/cfUiTab.es6'),
       import('ui/loader.es6')
     ]);
-
     modules.forEach(module => module.default());
 
     angular.module('contentful/init').loaded = true;

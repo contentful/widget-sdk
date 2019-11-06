@@ -184,7 +184,7 @@ describe('Extension SDK', () => {
       });
     });
 
-    describe('#onValueChanged()', () => {
+    xdescribe('#onValueChanged()', () => {
       it('calls callback after when document changes', async function(api) {
         const valueChanged = sinon.stub();
         api.field.onValueChanged(valueChanged);
