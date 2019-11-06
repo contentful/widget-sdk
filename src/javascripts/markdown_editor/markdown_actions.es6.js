@@ -13,6 +13,7 @@ import LinkOrganizer from './linkOrganizer.es6';
 import { getModule } from 'NgRegistry.es6';
 import * as ModalLauncher from 'app/common/ModalLauncher.es6';
 import InsertLinkModal from './components/InsertLinkModal';
+import FormatingHelpModal from './components/FormatingHelpModal';
 
 export function create(editor, locale, defaultLocaleCode, { zen }) {
   const modalDialog = getModule('modalDialog');
@@ -266,8 +267,8 @@ export function create(editor, locale, defaultLocaleCode, { zen }) {
       groupId: 'editors_authors_help',
       fromState: getCurrentStateName()
     });
-    modalDialog.open({
-      template: 'markdown_help_dialog'
-    });
+    ModalLauncher.open(({ isShown, onClose }) => (
+      <FormatingHelpModal isShown={isShown} onClose={onClose} />
+    ));
   }
 }

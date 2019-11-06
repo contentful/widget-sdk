@@ -8389,44 +8389,6 @@ pre,
   .zenmode-reqs {
     min-width: 450px;
   }
-  .markdown-help-dialog a {
-    text-decoration: underline;
-  }
-  .markdown-help-columns {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    width: 720px;
-  }
-  .markdown-help-column {
-    width: 340px;
-  }
-  .markdown-help-column:first-child {
-    border-right: 1px solid #dedede;
-    margin-right: 20px;
-  }
-  .markdown-help-item {
-    width: 340px;
-    font-size: 1.5em;
-    margin-bottom: 15px;
-    line-height: 1.5em;
-  }
-  .markdown-help__preview {
-    width: 170px;
-    display: inline-block;
-  }
-  .markdown-help__markup {
-    width: 170px;
-    display: inline-block;
-    color: #9b9b9b;
-  }
-  .markdown-help-link {
-    padding: 20px;
-    text-align: center;
-  }
-  .markdown-help-link a {
-    font-size: 1.1em;
-  }
   .markdown-insert-confirmation__list {
     margin-top: 15px;
   }
