@@ -9,7 +9,7 @@ import WebhookSidebar from './WebhookSidebar.es6';
 import * as WebhookEditorActions from './WebhookEditorActions.es6';
 import WebhookRemovalDialog from './dialogs/WebhookRemovalDialog.es6';
 import WebhookActivityLog from './WebhookActivityLog.es6';
-import { getModule } from 'NgRegistry.es6';
+import * as Navigator from 'states/Navigator.es6';
 
 const TABS = { SETTINGS: 1, LOG: 2 };
 
@@ -61,17 +61,13 @@ class WebhookEditor extends React.Component {
   }
 
   navigateToSaved(webhook) {
-    const $state = getModule('$state');
-
     this.props.setDirty(false);
-    return $state.go('^.detail', { webhookId: webhook.sys.id });
+    return Navigator.go({ path: '^.detail', params: { webhookId: webhook.sys.id } });
   }
 
   navigateToList(force = false) {
-    const $state = getModule('$state');
-
     force && this.props.setDirty(false);
-    return $state.go('^.list');
+    return Navigator.go({ path: '^.list' });
   }
 
   save = () => {
@@ -133,8 +129,6 @@ class WebhookEditor extends React.Component {
   }
 
   render() {
-    const $state = getModule('$state');
-
     const { tab, webhook, fresh, dirty, busy } = this.state;
 
     return (
@@ -142,7 +136,7 @@ class WebhookEditor extends React.Component {
         <Workbench testId="webhook-editor-page">
           <Workbench.Header
             onBack={() => {
-              $state.go('^.list');
+              Navigator.go({ path: '^.list' });
             }}
             icon={<Icon name="page-settings" scale="0.8" />}
             title={`Webhook: ${webhook.name || 'Unnamed'}${dirty ? '*' : ''}`}

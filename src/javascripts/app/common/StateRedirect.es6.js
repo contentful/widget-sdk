@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getModule } from 'NgRegistry.es6';
+import * as Navigator from 'states/Navigator.es6';
 
 class StateRedirect extends React.Component {
   static propTypes = {
@@ -10,9 +10,7 @@ class StateRedirect extends React.Component {
   };
 
   componentDidMount() {
-    const $state = getModule('$state');
-
-    $state.go(this.props.to, this.props.params, this.props.options);
+    Navigator.go({ path: this.props.to, params: this.props.params, options: this.props.options });
   }
 
   render() {

@@ -26,7 +26,7 @@ import NetlifyConfigEditor from './NetlifyConfigEditor.es6';
 import NetlifyConnection from './NetlifyConnection.es6';
 import AppUninstallDialog from '../dialogs/AppUninstallDialog.es6';
 import NoConnectionUninstallDialog from './NoConnectionUninstallDialog.es6';
-import { getModule } from 'NgRegistry.es6';
+import * as Navigator from 'states/Navigator.es6';
 
 const notifyError = (err, fallbackMessage) => {
   Notification.error(err.useMessage ? err.message || fallbackMessage : fallbackMessage);
@@ -156,14 +156,12 @@ export default class NetlifyAppPage extends Component {
   };
 
   uninstall = async () => {
-    const $state = getModule('$state');
-
     try {
       this.setState({ busyWith: 'uninstall' });
       await NetlifyIntegration.uninstall(this.getIntegrationContext());
       Notification.success('Netlify app uninstalled successfully.');
       Analytics.track('netlify:uninstalled');
-      $state.go('^.list');
+      Navigator.go({ path: '^.list' });
     } catch (err) {
       notifyError(err, 'Failed to uninstall Netlify app.');
       this.setState({ busyWith: false });

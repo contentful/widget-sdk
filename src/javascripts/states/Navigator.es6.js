@@ -60,11 +60,7 @@ export function href(state) {
     };
   }
   const $state = getModule('$state');
-  return $state.href(
-    isArray(state.path) ? state.path.join('.') : state.path,
-    state.params,
-    state.options
-  );
+  return $state.href(isArray(state.path) ? state.path.join('.') : state.path, state.params);
 }
 
 /**

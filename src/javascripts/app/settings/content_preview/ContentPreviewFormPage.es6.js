@@ -26,17 +26,15 @@ import {
   LinkedEntries,
   LegacyTokens
 } from './ContentPreviewSidebar.es6';
+import * as Navigator from 'states/Navigator.es6';
 import * as Analytics from 'analytics/Analytics';
-import { getModule } from 'NgRegistry.es6';
 
 export const ContentPreviewFormPageSkeleton = props => {
-  const $state = getModule('$state');
-
   return (
     <Workbench>
       <Workbench.Header
         onBack={() => {
-          $state.go('^.list');
+          Navigator.go({ path: '^.list' });
         }}
         icon={<Icon name="page-settings" scale="0.8" />}
         title={
@@ -161,8 +159,6 @@ export default class ContentPreviewFormPage extends Component {
   }
 
   remove = async () => {
-    const $state = getModule('$state');
-
     const confirmed = await ModalLauncher.open(({ isShown, onClose }) => (
       <ModalConfirm
         isShown={isShown}
@@ -194,7 +190,7 @@ export default class ContentPreviewFormPage extends Component {
           name: this.state.preview.name,
           sys: { id: this.state.preview.id }
         });
-        $state.go('^.list');
+        Navigator.go({ path: '^.list' });
       })
       .catch(() => {
         Notification.error('An error occurred');
@@ -202,8 +198,6 @@ export default class ContentPreviewFormPage extends Component {
   };
 
   save = () => {
-    const $state = getModule('$state');
-
     const isValid = this.validate();
     if (!isValid) {
       return;
@@ -237,7 +231,11 @@ export default class ContentPreviewFormPage extends Component {
 
         // redirect if it's new
         if (this.props.isNew) {
-          $state.go('^.detail', { contentPreviewId: env.sys.id }, { reload: true });
+          Navigator.go({
+            path: '^.detail',
+            params: { contentPreviewId: env.sys.id },
+            options: { reload: true }
+          });
         }
       },
       err => {

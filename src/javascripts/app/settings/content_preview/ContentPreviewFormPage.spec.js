@@ -369,7 +369,7 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
           name: initialValue.name,
           sys: { id: initialValue.id }
         });
-        expect($state.go).toHaveBeenCalledWith('^.list');
+        expect($state.go).toHaveBeenCalledWith('^.list', undefined, undefined);
         done();
       });
     });

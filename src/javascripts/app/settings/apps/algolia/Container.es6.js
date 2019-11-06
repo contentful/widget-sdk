@@ -26,8 +26,8 @@ import SelectContent, { SELECT_CONTENT_TYPE } from './SelectContent.es6';
 import DraftRecordModal, { SELECT_LOCALE } from './DraftRecordModal.es6';
 import APIKeyModal from './APIKeyModal.es6';
 import * as Webhooks from './Webhooks.es6';
-import { getModule } from 'NgRegistry.es6';
 import * as Intercom from 'services/intercom.es6';
+import * as Navigator from 'states/Navigator.es6';
 
 const DEFAULT_NEW_RECORD = {
   isNewRecord: true,
@@ -250,15 +250,13 @@ export default class AlgoliaAppPage extends Component {
   };
 
   uninstall = async () => {
-    const $state = getModule('$state');
-
     try {
       this.setState({ busyWith: 'uninstall' });
       await Webhooks.remove(await this.getIntegrationContext());
       await this.props.client.remove(this.props.app.id);
       Notification.success('Algolia app uninstalled successfully.');
       Analytics.track('algolia:uninstalled');
-      $state.go('^.list');
+      Navigator.go({ path: '^.list' });
     } catch (err) {
       this.setState({ busyWith: false });
       notifyError(err, 'Failed to uninstall Algolia app. Try again!');
@@ -285,15 +283,13 @@ export default class AlgoliaAppPage extends Component {
   };
 
   render() {
-    const $state = getModule('$state');
-
     const { installed, busyWith, draftRecord, isDraftModalOpen, isAPIKeyRequired } = this.state;
 
     return (
       <Workbench>
         <Workbench.Header
           onBack={() => {
-            $state.go('^.list');
+            Navigator.go({ path: '^.list' });
           }}
           title={`App: ${this.props.app.title}`}
           icon={<AppIcon appId="algolia" />}
