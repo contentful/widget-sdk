@@ -103,8 +103,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
         'widgetId',
         'widgetNamespace',
         'name',
-        'description',
-        'availabilityStatus'
+        'description'
       ]);
     });
 
@@ -116,8 +115,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
         },
         {
           widgetId: TasksWidget.widgetId,
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
-          availabilityStatus: 'alpha'
+          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
         },
         {
           widgetId: VersionsWidget.widgetId,
@@ -170,8 +168,7 @@ describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
         },
         {
           widgetId: TasksWidget.widgetId,
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
-          availabilityStatus: 'alpha'
+          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
         },
         {
           widgetId: VersionsWidget.widgetId,
