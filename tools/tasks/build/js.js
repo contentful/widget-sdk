@@ -24,20 +24,6 @@ function bundleAppJs() {
   return prodBundleSteeam;
 }
 
-/**
- * Concatenates and minifies application JS files to
- * `application.min.js` and creates a manifest.
- */
-function bundleTestJs() {
-  // The "test" application, bundled with test dependencies
-  const testBundleStream = generateBundleFromFiles({
-    files: ['public/app/templates.js', 'public/app/dependencies.js'],
-    isTestBuild: true
-  });
-
-  return testBundleStream;
-}
-
 function generateBundleFromFiles({ bundlePath, manifestPath, files, isTestBuild = false }) {
   if (isTestBuild) {
     return gulp
@@ -69,6 +55,5 @@ function generateBundleFromFiles({ bundlePath, manifestPath, files, isTestBuild 
 }
 
 module.exports = {
-  bundleAppJs,
-  bundleTestJs
+  bundleAppJs
 };

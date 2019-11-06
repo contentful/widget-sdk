@@ -5,7 +5,6 @@ require('@babel/polyfill');
 const gulp = require('gulp');
 const all = require('./tools/tasks/all');
 const serve = require('./tools/tasks/serve');
-const prepareTests = require('./tools/tasks/prepare-tests');
 const { buildTest, buildApp } = require('./tools/tasks/build/build');
 
 // Gulp does not produce stack traces when logging errors.
@@ -19,6 +18,5 @@ gulp.on('err', e => {
 
 module.exports['build-app'] = buildApp;
 module.exports['build-test'] = buildTest;
-module.exports['prepare-tests'] = prepareTests;
 module.exports.all = all;
 module.exports.serve = serve;

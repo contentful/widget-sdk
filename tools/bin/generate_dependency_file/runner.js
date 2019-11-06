@@ -8,7 +8,7 @@ const _ = require('lodash');
 
 const rootPath = path.resolve(__dirname, '..', '..', '..');
 const srcPath = path.resolve(rootPath, 'src', 'javascripts');
-const depsFilePath = path.resolve(rootPath, 'build', 'dependencies-pre.js');
+const depsFilePath = path.resolve(rootPath, 'test', 'dependencies-pre.js');
 
 async function generate() {
   const testDepNames = [
@@ -86,8 +86,6 @@ ${uniqDeps
 ];
 `;
 
-  ensureBuildDirExists();
-
   fs.writeFileSync(depsFilePath, stringifiedDeps);
 
   print(' Done.', true);
@@ -138,10 +136,6 @@ function gatherFiles(p) {
   });
 
   return _.flatten(filenames);
-}
-
-function ensureBuildDirExists() {
-  fs.mkdirSync(path.resolve(rootPath, 'build'), { recursive: true });
 }
 
 function print(message, newline = false) {

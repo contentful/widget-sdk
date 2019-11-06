@@ -10,10 +10,9 @@ helpers are contained in `test/helpers`.
 
 You can run the tests with
 ~~~bash
-$ gulp prepare-tests
 $ npm test # run with watching
 $ or:
-$ npm run test:once # run only once
+$ npm run test -- --once # run only once
 ~~~
 
 Jest and Karma

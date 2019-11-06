@@ -176,11 +176,5 @@ function wrap$q(method) {
 }
 
 function get$q() {
-  const $q = $inject('$q');
-
-  if (!$q) {
-    throw new Error('$q called in non-Angular context');
-  }
-
-  return $q;
+  return $inject('$q');
 }

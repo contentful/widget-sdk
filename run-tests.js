@@ -15,12 +15,11 @@
  * Production run is determined by NODE_ENV
  */
 
-const { buildTestDeps } = require('./tools/webpack-tasks');
 const {
   Server,
   config: { parseConfig }
 } = require('karma');
-const { filesNeededToRunTests } = require('./karma.conf');
+const { buildTestDeps } = require('./tools/webpack-tasks');
 const { resolve } = require('path');
 const { argv } = require('yargs');
 
@@ -35,8 +34,6 @@ if (singleRun) {
   });
 
   if (ci) {
-    const specs = process.argv.slice(3); // 0 -> node, 1 -> run-tests.js, 2 -> --once
-
     config.set({
       reporters: ['dots', 'junit'],
       junitReporter: {
@@ -44,10 +41,6 @@ if (singleRun) {
         outputFile: process.env.JUNIT_REPORT_NAME,
         useBrowserName: false
       },
-      files: ['build/app/**/*.css', 'build/templates.js', 'build/dependencies.js'].concat(
-        filesNeededToRunTests,
-        specs
-      ), // we get specs to run from circleci as we parallelize karma runs
       browsers: ['ChromeHeadlessNoSandbox'],
       customLaunchers: {
         ChromeHeadlessNoSandbox: {
@@ -56,17 +49,10 @@ if (singleRun) {
         }
       }
     });
-  } else {
-    // we don't show a detailed report for single runs
-    config.set({
-      files: config.files.concat(['test/unit/**/*.js', 'test/integration/**/*.js'])
-    });
   }
-
-  runTests();
-} else {
-  buildTestDeps(runTests);
 }
+
+buildTestDeps(runTests);
 
 function runTests() {
   const server = new Server(config, exitCode => {
