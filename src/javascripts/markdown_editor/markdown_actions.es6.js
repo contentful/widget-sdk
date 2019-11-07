@@ -1,7 +1,6 @@
 import React from 'react';
 import { Notification } from '@contentful/forma-36-react-components';
 import { getCurrentStateName } from 'states/Navigator.es6';
-import specialCharacters from './markdown_special_characters.es6';
 import { defaults, isObject, get, mapValues } from 'lodash';
 import { fileNameToTitle, truncate } from 'utils/StringUtils.es6';
 import { trackMarkdownEditorAction } from 'analytics/MarkdownEditorActions';
@@ -14,6 +13,7 @@ import { getModule } from 'NgRegistry.es6';
 import * as ModalLauncher from 'app/common/ModalLauncher.es6';
 import InsertLinkModal from './components/InsertLinkModal';
 import FormatingHelpModal from './components/FormatingHelpModal';
+import InsertCharacterModal from './components/InsertCharacterModal';
 
 export function create(editor, locale, defaultLocaleCode, { zen }) {
   const modalDialog = getModule('modalDialog');
@@ -194,21 +194,14 @@ export function create(editor, locale, defaultLocaleCode, { zen }) {
     }
   }
 
-  function special() {
-    const scopeData = {
-      specialCharacters,
-      model: { choice: specialCharacters[0] },
-      entity: function(x) {
-        return '&' + x.id + ';';
-      }
-    };
-
-    modalDialog
-      .open({
-        scopeData,
-        template: 'markdown_special_character_dialog'
-      })
-      .promise.then(editor.insert);
+  async function special() {
+    const modalKey = Date.now();
+    const result = await ModalLauncher.open(({ isShown, onClose }) => (
+      <InsertCharacterModal isShown={isShown} onClose={onClose} key={modalKey} />
+    ));
+    if (result) {
+      editor.insert(result);
+    }
   }
 
   function table() {
