@@ -15,8 +15,7 @@ export const Tasks = {
   widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
   name: 'Tasks',
   description:
-    'Built-in - Assign tasks to be completed before publishing. Currently only supported for master environment.',
-  availabilityStatus: 'alpha'
+    'Built-in - Assign tasks to be completed before publishing. Currently only supported for master environment.'
 };
 
 export const ContentPreview = {

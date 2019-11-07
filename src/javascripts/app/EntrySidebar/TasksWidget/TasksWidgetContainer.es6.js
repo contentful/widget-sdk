@@ -13,7 +13,6 @@ import createTaskPermissionChecker, {
 } from './TaskPermissionChecker.es6';
 import { isOpenTask, onStoreFetchingStatusChange, onPromiseFetchingStatusChange } from './util.es6';
 import TaskList from './View/TaskList.es6';
-import { Tag } from '@contentful/forma-36-react-components';
 import { trackIsTasksAlphaEligible } from './analytics.es6';
 import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog.es6';
 
@@ -123,7 +122,7 @@ export class TasksWidgetContainer extends Component {
 
   render() {
     return (
-      <EntrySidebarWidget testId="sidebar-tasks-widget" title="Tasks" headerNode={<Tag>Alpha</Tag>}>
+      <EntrySidebarWidget testId="sidebar-tasks-widget" title="Tasks">
         {this.renderTasks()}
       </EntrySidebarWidget>
     );
