@@ -13,7 +13,7 @@ export function create(spaceEndpoint) {
   return { getAll };
 
   /**
-   * Returns a list of all environments for the given space
+   * Returns a list of all environment aliases for the given space
    */
   function getAll() {
     return spaceEndpoint(

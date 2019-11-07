@@ -19,7 +19,6 @@ import { getDefaultEntry, getFirst7SnapshotsOfDefaultEntry } from '../../../inte
 import {
   PROVIDER as PRODUCT_CATALOG_PROVIDER,
   queryForTasksAndAppsInDefaultSpace,
-  queryForEnvironmentAliasingAndAppsInDefaultSpace
 } from '../../../interactions/product_catalog_features'
 import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 
@@ -61,7 +60,6 @@ describe('Tasks entry editor sidebar', () => {
     cy.route('**/channel/**', []).as('shareJS');
 
     return [
-      queryForEnvironmentAliasingAndAppsInDefaultSpace.willFindNone(),
       queryForTasksAndAppsInDefaultSpace.willFindBothOfThem(),
       ...defaultRequestsMock({
         publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne

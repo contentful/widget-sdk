@@ -24,11 +24,7 @@ import { aliasStyles } from './SharedStyles.es6';
 import { STEPS } from './Utils.es6';
 import Feedback from './Feedback.es6';
 import ExternalTextLink from 'app/common/ExternalTextLink.es6';
-import {
-  optInStep,
-  optInStart,
-  changeEnvironmentOpen
-} from 'analytics/events/EnvironmentAliases';
+import { optInStep, optInStart, changeEnvironmentOpen } from 'analytics/events/EnvironmentAliases';
 
 const aliasHeaderStyles = {
   alphaTag: css({
@@ -272,5 +268,6 @@ EnvironmentAliases.propTypes = {
 };
 
 EnvironmentAliases.defaultProps = {
-  testId: 'environmentaliases.wrapper'
+  testId: 'environmentaliases.wrapper',
+  allSpaceAliases: []
 };

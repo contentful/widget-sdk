@@ -85,7 +85,7 @@ describe('Content Preview Page', () => {
       const interactions = [
         '@preview_environments/add',
         queryFirst100PreviewEnvironments.willFindNone()
-      ]
+      ];
 
       cy.getByTestId('cf-ui-text-input')
         .type(defaultPreviewName)

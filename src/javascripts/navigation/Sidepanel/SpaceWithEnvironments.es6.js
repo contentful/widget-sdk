@@ -118,7 +118,8 @@ export default class SpaceWithEnvironments extends React.Component {
     let allEnvs;
 
     try {
-      allEnvs = await repo.getAll();
+      const { environments } = await repo.getAll();
+      allEnvs = environments;
     } catch (_e) {
       this.setState({ loading: false });
       return;

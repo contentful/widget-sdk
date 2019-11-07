@@ -1,0 +1,47 @@
+{
+  "total": 1,
+  "limit": 25,
+  "skip": 0,
+  "sys": {
+    "type": "Array"
+  },
+  "items": [
+    {
+      "sys": {
+        "type": "EnvironmentAlias",
+        "id": "master",
+        "version": 343,
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "1ustzobjs3hp"
+          }
+        },
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "7mTyJ6IsA8qtMGsaEqyX0Z"
+          }
+        },
+        "createdAt": "2019-10-18T12:43:39Z",
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "7mTyJ6IsA8qtMGsaEqyX0Z"
+          }
+        },
+        "updatedAt": "2019-10-31T10:31:19Z"
+      },
+      "environment": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Environment",
+          "id": "production"
+        }
+      }
+    }
+  ]
+}

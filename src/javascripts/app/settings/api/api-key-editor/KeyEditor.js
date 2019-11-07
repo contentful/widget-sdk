@@ -312,6 +312,10 @@ KeyEditor.propTypes = {
   setDirty: PropTypes.func.isRequired
 };
 
+KeyEditor.defaultProps = {
+  spaceAliases: []
+};
+
 /* eslint-disable react/prop-types */
 function Input({ canEdit, model, update, name, isRequired = false, label, description }) {
   const hasError = !inRange(model[name].value.length, model[name].minLength, model[name].maxLength);

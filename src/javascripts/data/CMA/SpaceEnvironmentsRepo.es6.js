@@ -1,9 +1,10 @@
 import { pick } from 'lodash';
 import { get } from 'utils/Collections.es6';
+import * as SpaceAliasesRepo from 'data/CMA/SpaceAliasesRepo.es6';
 
 // Hardcoded limit for v1 orgs is 100 + 1 (master).
 // It is less for all v2 space plans.
-const ENVIRONMENTS_LIMIT = 101;
+export const ENVIRONMENTS_LIMIT = 101;
 
 // These are the response constructors for the values returned by
 // `create` and `update`.
@@ -27,14 +28,23 @@ export function create(spaceEndpoint) {
   return { getAll, create, remove, update, get };
 
   /**
-   * Returns a list of all environments for the given space
+   * Returns a list of all environments and environment aliases for the given space
    */
-  function getAll() {
-    return spaceEndpoint({
+  async function getAll() {
+    const { items } = await spaceEndpoint({
       method: 'GET',
       path: ['environments'],
       query: { limit: ENVIRONMENTS_LIMIT }
-    }).then(response => response.items);
+    });
+
+    // the response from the api gives a combination of real environments and aliased environments
+    const aliases = await SpaceAliasesRepo.create(spaceEndpoint).getAll();
+    const hasNotOptedIntoEnvironmentAliases = !aliases || aliases.length === 0;
+    if (hasNotOptedIntoEnvironmentAliases) return { environments: items };
+
+    // if the space is opted in we filter the real environments
+    const environments = items.filter(env => env.sys.aliases !== undefined);
+    return { environments, aliases };
   }
 
   /**

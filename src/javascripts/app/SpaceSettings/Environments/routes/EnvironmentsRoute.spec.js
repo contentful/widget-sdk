@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, cleanup, waitForElement, wait } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import * as Environment from 'data/CMA/SpaceEnvironmentsRepo.es6';
 import EnvironmentsRoute from './EnvironmentsRoute.es6';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as LD from 'utils/LaunchDarkly/index.es6';
@@ -9,6 +8,8 @@ import { getSpaceFeature } from 'data/CMA/ProductCatalog.es6';
 import { openDeleteEnvironmentDialog } from '../DeleteDialog.es6';
 import createResourceService from 'services/ResourceService.es6';
 import { canCreate } from 'utils/ResourceUtils.es6';
+import { createPaginationEndpoint } from '__mocks__/data/EndpointFactory.es6';
+import * as SpaceAliasesRepo from 'data/CMA/SpaceAliasesRepo.es6';
 
 jest.mock('services/ResourceService.es6', () => ({
   __esModule: true, // this property makes it work
@@ -17,14 +18,14 @@ jest.mock('services/ResourceService.es6', () => ({
   })
 }));
 
-jest.mock('data/CMA/SpaceEnvironmentsRepo.es6', () => ({
+jest.mock('access_control/AccessChecker', () => ({
+  can: jest.fn().mockReturnValue(true)
+}));
+
+jest.mock('data/CMA/SpaceAliasesRepo.es6', () => ({
   create: jest.fn().mockReturnValue({
     getAll: jest.fn().mockResolvedValue([])
   })
-}));
-
-jest.mock('access_control/AccessChecker', () => ({
-  can: jest.fn().mockReturnValue(true)
 }));
 
 jest.mock('utils/LaunchDarkly/index.es6', () => ({
@@ -50,9 +51,8 @@ jest.mock('../DeleteDialog.es6', () => ({
 
 describe('EnvironmentsRoute', () => {
   const defaultProps = {
-    endpoint: () => {},
+    endpoint: createPaginationEndpoint([]),
     getSpaceData: () => {},
-    getAllSpaceAliases: jest.fn().mockResolvedValue([]),
     getAliasesIds: jest.fn().mockReturnValue([]),
     goToSpaceDetail: jest.fn(),
     isMasterEnvironment: () => {},
@@ -68,21 +68,21 @@ describe('EnvironmentsRoute', () => {
     defaultProps.goToSpaceDetail.mockClear();
   });
 
-  const setEnvironments = (...args) => {
-    Environment.create().getAll.mockResolvedValue(
-      args.map(({ id, status, aliases }) => ({
-        sys: {
-          id,
-          status: { sys: { id: status } },
-          aliases
-        }
-      }))
-    );
+  const generateEnvironments = (...args) => {
+    return args.map(({ id, status, aliases }) => ({
+      sys: {
+        id,
+        status: { sys: { id: status } },
+        aliases
+      }
+    }));
   };
 
   const renderEnvironmentsComponent = async (...args) => {
-    setEnvironments(...args);
-    const rendered = render(<EnvironmentsRoute {...defaultProps} />);
+    const envs = generateEnvironments(...args);
+    const rendered = render(
+      <EnvironmentsRoute {...defaultProps} endpoint={createPaginationEndpoint(envs)} />
+    );
     expect(defaultProps.goToSpaceDetail).not.toHaveBeenCalled();
 
     await waitForElement(() => rendered.getByTestId('environment-table'));
@@ -154,6 +154,15 @@ describe('EnvironmentsRoute', () => {
 
       it('shows the aliases', async () => {
         defaultProps.getAliasesIds.mockReturnValueOnce(['master']);
+        SpaceAliasesRepo.create().getAll = jest.fn().mockResolvedValue(
+          generateEnvironments([
+            {
+              id: 'e1',
+              status: 'ready',
+              aliases: ['master']
+            }
+          ])
+        );
 
         const { getByTestId } = await renderEnvironmentsComponent(
           { id: 'e1', status: 'ready', aliases: ['master'] },
@@ -162,6 +171,8 @@ describe('EnvironmentsRoute', () => {
 
         expect(getByTestId('environments.header')).toBeInTheDocument();
         expect(getByTestId('environmentaliases.card')).toBeInTheDocument();
+
+        SpaceAliasesRepo.create().getAll = jest.fn().mockResolvedValue([]);
       });
 
       it('cannot be deleted when environment has aliases', async () => {

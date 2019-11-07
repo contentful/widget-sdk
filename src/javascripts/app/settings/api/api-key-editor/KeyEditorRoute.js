@@ -10,40 +10,33 @@ import { getCurrentVariation } from 'utils/LaunchDarkly/index.es6';
 
 import { ENVIRONMENTS_FLAG } from 'featureFlags.es6';
 
-const ApiKeyFetcher = createFetcherComponent(
-  async ({ apiKeyId, spaceAliasesRepo, spaceEnvironmentsRepo }) => {
-    const [
-      apiKey,
-      canEdit,
-      shouldDisableCreate,
-      environmentsEnabled,
-      spaceAliases,
-      spaceEnvironments
-    ] = await Promise.all([
-      getApiKeyRepo().get(apiKeyId),
-      accessChecker.canModifyApiKeys(),
-      accessChecker.shouldDisable('create', 'apiKey'),
-      getCurrentVariation(ENVIRONMENTS_FLAG),
-      spaceAliasesRepo.getAll(),
-      spaceEnvironmentsRepo.getAll()
-    ]);
-    return {
-      apiKey,
-      canEdit,
-      canCreate: !shouldDisableCreate,
-      environmentsEnabled,
-      spaceAliases,
-      spaceEnvironments
-    };
-  }
-);
+const ApiKeyFetcher = createFetcherComponent(async ({ apiKeyId, spaceEnvironmentsRepo }) => {
+  const [
+    apiKey,
+    canEdit,
+    shouldDisableCreate,
+    environmentsEnabled,
+    { environments: spaceEnvironments, aliases: spaceAliases }
+  ] = await Promise.all([
+    getApiKeyRepo().get(apiKeyId),
+    accessChecker.canModifyApiKeys(),
+    accessChecker.shouldDisable('create', 'apiKey'),
+    getCurrentVariation(ENVIRONMENTS_FLAG),
+    spaceEnvironmentsRepo.getAll()
+  ]);
+  return {
+    apiKey,
+    canEdit,
+    canCreate: !shouldDisableCreate,
+    environmentsEnabled,
+    spaceAliases,
+    spaceEnvironments
+  };
+});
 
 export default function KeyEditorRoute(props) {
   return (
-    <ApiKeyFetcher
-      apiKeyId={props.apiKeyId}
-      spaceEnvironmentsRepo={props.spaceEnvironmentsRepo}
-      spaceAliasesRepo={props.spaceAliasesRepo}>
+    <ApiKeyFetcher apiKeyId={props.apiKeyId} spaceEnvironmentsRepo={props.spaceEnvironmentsRepo}>
       {({ isLoading, isError, data }) => {
         if (isLoading) {
           return <KeyEditorWorkbench />;

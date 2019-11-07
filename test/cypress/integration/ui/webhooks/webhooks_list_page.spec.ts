@@ -13,10 +13,10 @@ describe('Webhooks List Page', () => {
     })
   );
 
-  let interactions: string[]
+  let interactions: string[];
   beforeEach(() => {
     cy.resetAllFakeServers();
-    
+
     interactions = defaultRequestsMock();
   });
 

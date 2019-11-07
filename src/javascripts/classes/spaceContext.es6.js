@@ -3,7 +3,6 @@ import _ from 'lodash';
 import { create as createViewMigrator } from 'saved-views-migrator';
 import * as K from 'utils/kefir.es6';
 import { deepFreeze, deepFreezeClone } from 'utils/Freeze.es6';
-import { ENVIRONMENT_ALIASING } from '../featureFlags.es6';
 import client from 'services/client.es6';
 import { purgeContentPreviewCache } from 'services/contentPreview';
 import { purgeApiKeyRepoCache } from 'app/settings/api/services/ApiKeyRepoInstance';
@@ -38,7 +37,6 @@ export default function register() {
       let createExtensionLoader;
       let createSpaceMembersRepo;
       let createEnvironmentsRepo;
-      let createAliasesRepo;
       let createLocaleRepo;
       let createUiConfigStore;
       let createSpaceEndpoint;
@@ -52,7 +50,6 @@ export default function register() {
       let TokenStore;
       let Auth;
       let Config;
-      let getSpaceFeature;
 
       const spaceContext = {
         async init() {
@@ -70,7 +67,6 @@ export default function register() {
             { createExtensionLoader },
             { default: createSpaceMembersRepo },
             { create: createEnvironmentsRepo },
-            { create: createAliasesRepo },
             { default: createLocaleRepo },
             { default: createUiConfigStore },
             { createSpaceEndpoint, createOrganizationEndpoint, createAppDefinitionsEndpoint },
@@ -81,8 +77,7 @@ export default function register() {
             EnforcementsService,
             TokenStore,
             Auth,
-            Config,
-            { getSpaceFeature }
+            Config
           ] = await Promise.all([
             import('data/sharejs/Connection.es6'),
             import('data/shouldUseEnvEndpoint.es6'),
@@ -96,7 +91,6 @@ export default function register() {
             import('widgets/ExtensionLoader.es6'),
             import('data/CMA/SpaceMembersRepo.es6'),
             import('data/CMA/SpaceEnvironmentsRepo.es6'),
-            import('data/CMA/SpaceAliasesRepo.es6'),
             import('data/CMA/LocaleRepo.es6'),
             import('data/UiConfig/Store.es6'),
             import('data/Endpoint.es6'),
@@ -107,8 +101,7 @@ export default function register() {
             import('services/EnforcementsService.es6'),
             import('services/TokenStore.es6'),
             import('Authentication.es6'),
-            import('Config.es6'),
-            import('data/CMA/ProductCatalog.es6')
+            import('Config.es6')
           ]);
         },
 
@@ -221,7 +214,6 @@ export default function register() {
           const start = Date.now();
           return Promise.all([
             setupEnvironments(self, uriEnvOrAliasId),
-            setupAliases(self),
             TheLocaleStore.init(self.localeRepo),
             self.publishedCTs.refresh().then(() => {
               const ctMap = self.publishedCTs.getAllBare().reduce((acc, ct) => {
@@ -308,16 +300,6 @@ export default function register() {
         ) {
           if (!env.sys.aliases) return [];
           return env.sys.aliases.map(({ sys }) => sys.id);
-        },
-
-        /**
-         * @name spaceContext#getAllSpaceAliases
-         * @description
-         * Returns full alias objects of all environment aliases in this space
-         * @returns Promise<array<string>>
-         */
-        getAllSpaceAliases: async function() {
-          return await setupAliases(spaceContext);
         },
 
         /**
@@ -606,13 +588,14 @@ export default function register() {
       function setupEnvironments(spaceContext, uriEnvOrAliasId = MASTER_ENVIRONMENT_ID) {
         return createEnvironmentsRepo(spaceContext.endpoint)
           .getAll()
-          .then(environments => {
+          .then(({ environments, aliases = [] }) => {
             spaceContext.environments = deepFreeze(
               environments.sort(
                 (envA, envB) =>
                   spaceContext.isMasterEnvironment(envB) - spaceContext.isMasterEnvironment(envA)
               )
             );
+            spaceContext.aliases = deepFreeze(aliases);
           })
           .then(() => {
             let environment = spaceContext.environments.find(
@@ -638,30 +621,6 @@ export default function register() {
               )
             };
           });
-      }
-
-      /**
-       * Set-up aliases and add them to the spaceContext
-       *
-       * @param {SpaceContext} spaceContext
-       * @param {string} uriEnvOrAliasId
-       * @returns {Promise}
-       */
-      function setupAliases(spaceContext) {
-        return getSpaceFeature(spaceContext.space.getId(), ENVIRONMENT_ALIASING).then(
-          aliasesEnabled => {
-            if (aliasesEnabled) {
-              return createAliasesRepo(spaceContext.endpoint)
-                .getAll()
-                .then(aliases => {
-                  spaceContext.aliases = deepFreeze(aliases);
-                  return spaceContext.aliases;
-                });
-            }
-            spaceContext.aliases = [];
-            return spaceContext.aliases;
-          }
-        );
       }
 
       /**

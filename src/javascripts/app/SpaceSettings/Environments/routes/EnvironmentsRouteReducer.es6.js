@@ -6,7 +6,7 @@ import * as LD from 'utils/LaunchDarkly/index.es6';
 import { getOrgFeature, getSpaceFeature } from 'data/CMA/ProductCatalog.es6';
 import { canCreate } from 'utils/ResourceUtils.es6';
 import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService.es6';
-import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo.es6';
+import * as SpaceEnvironmentsRepo from 'data/CMA/SpaceEnvironmentsRepo.es6';
 import { openCreateEnvDialog } from '../CreateEnvDialog';
 import { openDeleteEnvironmentDialog } from '../DeleteDialog.es6';
 import { ENVIRONMENTS_FLAG } from 'featureFlags.es6';
@@ -64,7 +64,7 @@ export const useEnvironmentsRouteState = props => {
 
   const { endpoint, spaceId } = props;
 
-  const resourceEndpoint = SpaceEnvironmentRepo.create(endpoint, spaceId);
+  const resourceEndpoint = SpaceEnvironmentsRepo.create(endpoint);
   const resourceService = createResourceService(spaceId, 'space');
 
   const FetchPermissions = async () => {
@@ -103,26 +103,24 @@ export const useEnvironmentsRouteState = props => {
   };
 
   const FetchEnvironments = async () => {
-    const { getAllSpaceAliases, isLegacyOrganization } = props;
+    const { isLegacyOrganization } = props;
     dispatch({ type: SET_IS_LOADING, value: true });
 
-    const [environments, resource, allSpaceAliases] = await Promise.all([
-      resourceEndpoint.getAll(),
-      resourceService.get('environment'),
-      getAllSpaceAliases()
-    ]);
+    const { environments, aliases } = await resourceEndpoint.getAll();
 
     const items = environments.map(makeEnvironmentModel);
 
+    const resource = isLegacyOrganization
+      ? { usage: items.length && items.length - 1 } // exclude master for consistency with v2 api
+      : await resourceService.get('environment');
+
     dispatch({
       type: SET_ENVIRONMENTS,
-      resource: isLegacyOrganization
-        ? { usage: items.length && items.length - 1 } // exclude master for consistency with v2 api
-        : resource,
+      resource,
       items,
       canCreateEnv: isLegacyOrganization || canCreate(resource),
-      hasOptedInEnv: items.some(({ aliases }) => aliases.length > 0),
-      allSpaceAliases
+      hasOptedInEnv: !!aliases,
+      allSpaceAliases: aliases
     });
     dispatch({ type: SET_IS_LOADING, value: false });
   };
