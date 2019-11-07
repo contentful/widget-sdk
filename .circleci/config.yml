@@ -337,6 +337,7 @@ jobs:
       - image: circleci/node:10.15.3-browsers
     environment:
       CYPRESS_INSTALL_BINARY: 0
+    parallelism: 2
     steps:
       - checkout
       - run:
@@ -344,12 +345,21 @@ jobs:
           command: |
             echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
             echo 'export SSH_KEY="$(openssl rsa -in ~/.ssh/id_rsa)"' >> $BASH_ENV
+      - run:
+          name: Split tests into specs for the run
+          command: |
+            TESTFILES=$(circleci tests glob "test/{unit,integration}/**/*.js" | circleci tests split --split-by=timings --timings-type=filename)
+            echo "export TESTFILES=\"$TESTFILES\"" >> $BASH_ENV
+      - run: echo $TESTFILES
       - run: npm ci
+      - run:
+          name: Build test artifacts
+          command: NODE_ENV=test node --max_old_space_size=3072 ./node_modules/.bin/gulp build-test
       - run:
           name: Run Karma tests
           command: |
             mkdir -p ./reports/karma
-            npm run test -- --once
+            npm run test:once -- $TESTFILES
           environment:
             JUNIT_REPORT_PATH: ./reports/karma
             JUNIT_REPORT_NAME: karma-test-results.xml
