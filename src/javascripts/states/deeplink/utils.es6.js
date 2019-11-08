@@ -82,10 +82,12 @@ export async function getSpaceInfo() {
   return { space, spaces, spaceId: space.sys.id };
 }
 
-export function getAllEnviroments(spaceId) {
+export async function getAllEnviroments(spaceId) {
   const spaceEndpoint = createSpaceEndpoint(spaceId, 'master');
   const spaceEnvRepo = createSpaceEnvRepo(spaceEndpoint);
-  return spaceEnvRepo.getAll();
+  const { environments } = await spaceEnvRepo.getAll();
+
+  return environments;
 }
 
 /**
