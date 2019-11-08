@@ -189,7 +189,7 @@ describe('navigation/stateChangeHandlers', () => {
     });
 
     it('sets new org state', async function() {
-      this.emitStateChange('account.organizations.new');
+      this.emitStateChange('account.new_organization');
       await this.expectNavState(this.NavStates.NewOrg);
     });
 

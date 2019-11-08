@@ -12,7 +12,7 @@ const VALID_DEFINITION_PROPS = [
   'name',
   'url',
   'abstract',
-  'navTemplate',
+  'navComponent',
   'children',
   'template',
   'resolve',
@@ -76,20 +76,17 @@ export default function register() {
       function composeViews(state, stateName) {
         const views = {};
 
-        if (!['string', 'undefined'].includes(typeof state.navTemplate)) {
-          throw new Error(`${stateName}: navTemplate should be string or undefined`);
-        }
-
-        if (state.navTemplate) {
+        if (state.navComponent) {
           views['nav-bar@'] = {
-            template: state.navTemplate
+            template: '<react-component component="component" props="props" style="width: 100%" />',
+            controller: makeReactNavigationController(state.navComponent)
           };
         }
 
         if (state.component) {
           views['content@'] = {
             template: '<react-component component="component" props="props" />',
-            controller: makeReactController(state)
+            controller: makeReactController(state, state.component)
           };
         }
 
@@ -111,7 +108,36 @@ export default function register() {
         return views;
       }
 
-      function makeReactController(state) {
+      function makeReactNavigationController(component) {
+        return [
+          '$scope',
+          '$stateParams',
+          '$rootScope',
+          function($scope, $stateParams, $rootScope) {
+            $scope.component = component;
+
+            // force nav component rerender on every navigation change
+            const unsubscribe = $rootScope.$on('$stateChangeSuccess', () => {
+              $scope.props.navVersion = $scope.props.navVersion + 1;
+            });
+
+            $scope.props = {
+              navVersion: 0,
+              stateParams: $stateParams
+            };
+
+            $scope.$on('$destroy', () => {
+              if (typeof unsubscribe === 'function') {
+                unsubscribe();
+              }
+            });
+
+            $scope.$applyAsync();
+          }
+        ];
+      }
+
+      function makeReactController(state, component) {
         const mapping = state.mapInjectedToProps || [() => ({})];
         const injectables = mapping.slice(0, mapping.length - 1);
         const mapperFn = mapping[mapping.length - 1];
@@ -121,7 +147,7 @@ export default function register() {
             const args = Array.prototype.slice.call(arguments).slice(2);
             $scope.context = {};
             $state.current.data = $scope.context;
-            $scope.component = state.component;
+            $scope.component = component;
             $scope.props = mapperFn(...args);
             $scope.$applyAsync();
           }

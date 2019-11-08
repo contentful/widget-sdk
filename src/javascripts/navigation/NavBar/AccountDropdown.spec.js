@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, cleanup, fireEvent, wait } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import AccountDropdown from './AccountDropdown.es6';
+import AccountDropdown from './AccountDropdown';
 import { href } from 'states/Navigator.es6';
 import { getUser } from 'services/TokenStore.es6';
 import { getOpenAssignedTasksAndEntries } from 'app/TasksPage/helpers.es6';

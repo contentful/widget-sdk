@@ -88,8 +88,8 @@ function indexPage(uiVersion, config, resolve, entryScripts) {
       },
       [
         h('.client', [
-          h('cf-app-container.app-container.ng-hide', {
-            ngShow: 'user && appReady',
+          h('cf-app-container.app-container', {
+            ngIf: 'user && appReady',
             cfRolesForWalkMe: ''
           }),
           h('div', { ngIf: '!user || !appReady' }, [appLoader()])

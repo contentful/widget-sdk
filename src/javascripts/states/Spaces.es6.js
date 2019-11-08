@@ -1,8 +1,8 @@
-import { h } from 'utils/legacy-html-hyperscript/index.es6';
 import { getStore } from 'TheStore/index.es6';
 import { getFirstAccessibleSref } from 'access_control/SectionAccess';
 import * as Analytics from 'analytics/Analytics';
 import * as accessChecker from 'access_control/AccessChecker';
+import SpaceNavigationBar from 'navigation/SpaceNavigationBar';
 
 import * as TokenStore from 'services/TokenStore.es6';
 
@@ -39,7 +39,7 @@ const newSpace = {
 const hibernation = {
   name: 'hibernation',
   url: '/hibernation',
-  navTemplate: '<div />',
+  navComponent: () => null,
   template: JST.cf_space_hibernation_advice()
 };
 
@@ -161,8 +161,6 @@ export default {
   name: 'spaces',
   url: '/spaces',
   abstract: true,
-  navTemplate: h('div.app-top-bar__child.app-top-bar__main-nav.app-top-bar__with-right-part', [
-    h('cf-space-nav-bar-wrapped', { class: 'app-top-bar__child app-top-bar__child-wide' })
-  ]),
+  navComponent: SpaceNavigationBar,
   children: [newSpace, spaceDetail]
 };

@@ -1,6 +1,7 @@
 import base from 'states/Base.es6';
 import { iframeStateWrapper, reactStateWrapper } from './utils.es6';
 import { noop } from 'lodash';
+import ProfileNavigationBar from 'navigation/ProfileNavigationBar';
 
 const user = reactStateWrapper({
   loadingText: 'Loading your account…',
@@ -55,7 +56,7 @@ export default base({
   name: 'profile',
   url: '/profile',
   abstract: true,
-  navTemplate: '<cf-profile-nav class="app-top-bar__child app-top-bar__child-wide" />',
+  navComponent: ProfileNavigationBar,
   children: [
     userCancellation,
     user,

@@ -95,8 +95,46 @@ import FieldRichTextSmall from 'svg/field-richtext-small.es6';
 import FieldRichText from 'svg/field-richtext.es6';
 import InvitationNotFound from 'svg/invitation-not-found.es6';
 import ScheduleCalendar from 'svg/schedule-calendar.es6';
+import svgNavApiEs6 from 'svg/nav-api.es6';
+import svgNavAppsEs6 from 'svg/nav-apps.es6';
+import svgNavCtEs6 from 'svg/nav-ct.es6';
+import svgNavEntriesEs6 from 'svg/nav-entries.es6';
+import svgNavHomeEs6 from 'svg/nav-home.es6';
+import svgNavMediaEs6 from 'svg/nav-media.es6';
+import svgNavOrganizationBillingEs6 from 'svg/nav-organization-billing.es6';
+import svgNavOrganizationInformationEs6 from 'svg/nav-organization-information.es6';
+import svgNavOrganizationSsoEs6 from 'svg/nav-organization-sso.es6';
+import svgNavOrganizationSubscriptionEs6 from 'svg/nav-organization-subscription.es6';
+import svgNavOrganizationTeamsEs6 from 'svg/nav-organization-teams.es6';
+import svgNavOrganizationUsersEs6 from 'svg/nav-organization-users.es6';
+import svgNavSettingsEs6 from 'svg/nav-settings.es6';
+import svgNavSpacesEs6 from 'svg/nav-spaces.es6';
+import svgNavUsageEs6 from 'svg/nav-usage.es6';
+import svgNavUserApplicationsEs6 from 'svg/nav-user-applications.es6';
+import svgNavUserOauthEs6 from 'svg/nav-user-oauth.es6';
+import svgNavUserOrganizationsEs6 from 'svg/nav-user-organizations.es6';
+import svgNavUserSettingsEs6 from 'svg/nav-user-settings.es6';
 
 const SVGs = {
+  'nav-api': svgNavApiEs6,
+  'nav-apps': svgNavAppsEs6,
+  'nav-ct': svgNavCtEs6,
+  'nav-entries': svgNavEntriesEs6,
+  'nav-home': svgNavHomeEs6,
+  'nav-media': svgNavMediaEs6,
+  'nav-organization-billing': svgNavOrganizationBillingEs6,
+  'nav-organization-information': svgNavOrganizationInformationEs6,
+  'nav-organization-sso': svgNavOrganizationSsoEs6,
+  'nav-organization-subscription': svgNavOrganizationSubscriptionEs6,
+  'nav-organization-teams': svgNavOrganizationTeamsEs6,
+  'nav-organization-users': svgNavOrganizationUsersEs6,
+  'nav-settings': svgNavSettingsEs6,
+  'nav-spaces': svgNavSpacesEs6,
+  'nav-usage': svgNavUsageEs6,
+  'nav-user-applications': svgNavUserApplicationsEs6,
+  'nav-user-oauth': svgNavUserOauthEs6,
+  'nav-user-organizations': svgNavUserOrganizationsEs6,
+  'nav-user-settings': svgNavUserSettingsEs6,
   'home-welcome': HomeWelcomeIcon,
   'page-media': PageMediaIcon,
   'question-mark': QuestionMarkIcon,

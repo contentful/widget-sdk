@@ -11,6 +11,6 @@ export default reactStateWrapper({
   name: 'teams',
   children: [teamDetailState],
   title: 'Teams',
-  url: '/:orgId/teams',
+  url: '/teams',
   componentPath: 'app/OrganizationSettings/Teams/TeamPage.es6'
 });

@@ -1,4 +1,5 @@
-import Base from 'states/Base.es6';
+import base from 'states/Base.es6';
+import { iframeStateWrapper } from 'states/utils.es6';
 
 import subscriptionState from './Subscription/SubscriptionState.es6';
 import usageState from './Usage/UsageState.es6';
@@ -8,8 +9,9 @@ import userInvitationsState from './UserInvitations/UserInvitationsList/UserInvi
 import userInvitationDetailState from './UserInvitations/UserInvitationDetail/UserInvitationDetailRoutingState.es6';
 import ssoRoutingState from './SSO/SSOSetupRoutingState.es6';
 import gatekeeperStates from './OrganizationSettingsGatekeeperStates.es6';
+import OrganizationNavBar from 'navigation/OrganizationNavBar';
 
-const usersAndInvitationsState = Base({
+const usersAndInvitationsState = base({
   name: 'users',
   abstract: true,
   params: {
@@ -24,17 +26,25 @@ const usersAndInvitationsState = Base({
   ]
 });
 
-export default Base({
-  name: 'organizations',
-  url: '/organizations',
-  abstract: true,
-  navTemplate: '<cf-organization-nav class="app-top-bar__child app-top-bar__child-wide" />',
-  children: [
-    usageState,
-    usersAndInvitationsState,
-    subscriptionState,
-    teamsState,
-    ssoRoutingState,
-    ...gatekeeperStates
-  ]
-});
+export default [
+  iframeStateWrapper({
+    name: 'new_organization',
+    url: '/organizations/new',
+    title: 'Create new organization',
+    navComponent: () => null
+  }),
+  base({
+    name: 'organizations',
+    url: '/organizations/:orgId',
+    abstract: true,
+    navComponent: OrganizationNavBar,
+    children: [
+      usageState,
+      usersAndInvitationsState,
+      subscriptionState,
+      teamsState,
+      ssoRoutingState,
+      ...gatekeeperStates
+    ]
+  })
+];

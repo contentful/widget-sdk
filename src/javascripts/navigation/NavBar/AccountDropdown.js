@@ -36,6 +36,9 @@ const styles = {
     backgroundColor: tokens.colorContrastDark,
     boxShadow: 'inset 1px 0 2px 0 rgba(0,0,0,0.9), inset 2px 0 5px 0 rgba(0,0,0,0.75)'
   }),
+  dropdownList: css({
+    minWidth: '150px'
+  }),
   accountDropdownButton: css({
     height: '100%'
   }),
@@ -205,7 +208,7 @@ export default class AccountDropdown extends Component {
             </TabFocusTrap>
           </button>
         }>
-        <DropdownList border="bottom">
+        <DropdownList border="bottom" className={styles.dropdownList}>
           <DropdownListItem
             testId="nav.account.userProfile"
             onClick={this.handleDropdownListItemClick}

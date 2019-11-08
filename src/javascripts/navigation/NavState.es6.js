@@ -26,7 +26,7 @@ export const navState$ = navStateBus.property;
  * @param {spaceContext} spaceContext
  */
 export async function updateNavState(state, params, { space, organization, environments }) {
-  if (state.name === 'account.organizations.new') {
+  if (state.name === 'account.new_organization') {
     navStateBus.set(NavStates.NewOrg());
   } else if (startsWith(state.name, 'account.profile')) {
     navStateBus.set(NavStates.UserProfile());

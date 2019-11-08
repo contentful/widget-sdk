@@ -63,6 +63,18 @@ export function href(state) {
   return $state.href(isArray(state.path) ? state.path.join('.') : state.path, state.params);
 }
 
+export function includes(state) {
+  if (!state) {
+    return false;
+  }
+  const $state = getModule('$state');
+  return $state.includes(
+    isArray(state.path) ? state.path.join('.') : state.path,
+    state.params,
+    state.options
+  );
+}
+
 /**
  * @ngdoc method
  * @name state/Navigator#makeEntityRef

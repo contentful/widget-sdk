@@ -36,7 +36,7 @@ The following properties are processed:
 - `template` and `controller` will be automatically used in the `content@`
   view (as in `<ui-view />` directive). It basically means it'll be used
   for rendering everything but the top nav bar.
-- `navTemplate` will be used as a template for the top nav bar.
+- `navComponent` will be used as a component for the top nav bar.
 - `redirectTo` - makes the state redirect to some other state.
 - `children` as described above.
 

@@ -142,7 +142,7 @@ export default function createController($scope) {
   function createNewOrg() {
     closeSidePanel();
     Navigator.go({
-      path: ['account', 'organizations', 'new']
+      path: ['account', 'new_organization']
     });
   }
 

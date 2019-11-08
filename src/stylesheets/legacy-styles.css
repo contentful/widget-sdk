@@ -168,107 +168,22 @@ pre,
   .cf-icon.cf-icon--plus.inverted path {
     stroke: #4a90e2;
   }
-  cf-icon[name="nav-home"] path,
-  cf-icon[name="nav-ct"] path,
-  cf-icon[name="nav-entries"] path,
-  cf-icon[name="nav-media"] path,
-  cf-icon[name="nav-settings"] path,
-  cf-icon[name="nav-apps"] path,
-  cf-icon[name="nav-api"] path,
-  cf-icon[name="nav-user-settings"] path,
-  cf-icon[name="nav-spaces"] path,
-  cf-icon[name="nav-user-organizations"] path,
-  cf-icon[name="nav-user-oauth"] path,
-  cf-icon[name="nav-user-applications"] path,
-  cf-icon[name="nav-organization-information"] path,
-  cf-icon[name="nav-organization-subscription"] path,
-  cf-icon[name="nav-organization-users"] path,
-  cf-icon[name="nav-organization-teams"] path,
-  cf-icon[name="nav-organization-sso"] path,
-  cf-icon[name="nav-organization-billing"] path,
-  cf-icon[name="nav-usage"] path {
+  cf-icon[name^="nav"] path,
+  .icon-component[data-icon-name^='nav'] path {
     fill: #fff;
     -webkit-transition: all 0.1s ease-in-out;
     transition: all 0.1s ease-in-out;
   }
-  a:hover cf-icon[name="nav-home"] path,
-  a:hover cf-icon[name="nav-ct"] path,
-  a:hover cf-icon[name="nav-entries"] path,
-  a:hover cf-icon[name="nav-media"] path,
-  a:hover cf-icon[name="nav-settings"] path,
-  a:hover cf-icon[name="nav-apps"] path,
-  a:hover cf-icon[name="nav-api"] path,
-  a:hover cf-icon[name="nav-user-settings"] path,
-  a:hover cf-icon[name="nav-spaces"] path,
-  a:hover cf-icon[name="nav-user-organizations"] path,
-  a:hover cf-icon[name="nav-user-oauth"] path,
-  a:hover cf-icon[name="nav-user-applications"] path,
-  a:hover cf-icon[name="nav-organization-information"] path,
-  a:hover cf-icon[name="nav-organization-subscription"] path,
-  a:hover cf-icon[name="nav-organization-users"] path,
-  a:hover cf-icon[name="nav-organization-teams"] path,
-  a:hover cf-icon[name="nav-organization-sso"] path,
-  a:hover cf-icon[name="nav-organization-billing"] path,
-  a:hover cf-icon[name="nav-usage"] path,
-  .is-active cf-icon[name="nav-home"] path,
-  .is-active cf-icon[name="nav-ct"] path,
-  .is-active cf-icon[name="nav-entries"] path,
-  .is-active cf-icon[name="nav-media"] path,
-  .is-active cf-icon[name="nav-settings"] path,
-  .is-active cf-icon[name="nav-apps"] path,
-  .is-active cf-icon[name="nav-api"] path,
-  .is-active cf-icon[name="nav-user-settings"] path,
-  .is-active cf-icon[name="nav-spaces"] path,
-  .is-active cf-icon[name="nav-user-organizations"] path,
-  .is-active cf-icon[name="nav-user-oauth"] path,
-  .is-active cf-icon[name="nav-user-applications"] path,
-  .is-active cf-icon[name="nav-organization-information"] path,
-  .is-active cf-icon[name="nav-organization-subscription"] path,
-  .is-active cf-icon[name="nav-organization-users"] path,
-  .is-active cf-icon[name="nav-organization-teams"] path,
-  .is-active cf-icon[name="nav-organization-sso"] path,
-  .is-active cf-icon[name="nav-organization-billing"] path,
-  .is-active cf-icon[name="nav-usage"] path {
+  a:hover cf-icon[name^="nav"] path,
+  a:hover .icon-component[data-icon-name^='nav'] path,
+  .is-active cf-icon[name^="nav"] path,
+  .is-active .icon-component[data-icon-name^='nav'] path {
     fill: #4a90e2;
   }
-  .is-disabled:hover cf-icon[name="nav-home"] path,
-  .is-disabled:hover cf-icon[name="nav-ct"] path,
-  .is-disabled:hover cf-icon[name="nav-entries"] path,
-  .is-disabled:hover cf-icon[name="nav-media"] path,
-  .is-disabled:hover cf-icon[name="nav-settings"] path,
-  .is-disabled:hover cf-icon[name="nav-apps"] path,
-  .is-disabled:hover cf-icon[name="nav-api"] path,
-  .is-disabled:hover cf-icon[name="nav-user-settings"] path,
-  .is-disabled:hover cf-icon[name="nav-spaces"] path,
-  .is-disabled:hover cf-icon[name="nav-user-organizations"] path,
-  .is-disabled:hover cf-icon[name="nav-user-oauth"] path,
-  .is-disabled:hover cf-icon[name="nav-user-applications"] path,
-  .is-disabled:hover cf-icon[name="nav-organization-information"] path,
-  .is-disabled:hover cf-icon[name="nav-organization-subscription"] path,
-  .is-disabled:hover cf-icon[name="nav-organization-users"] path,
-  .is-disabled:hover cf-icon[name="nav-organization-teams"] path,
-  .is-disabled:hover cf-icon[name="nav-organization-sso"] path,
-  .is-disabled:hover cf-icon[name="nav-organization-billing"] path,
-  .is-disabled:hover cf-icon[name="nav-usage"] path,
-  .is-disabled cf-icon[name="nav-home"] path,
-  .is-disabled cf-icon[name="nav-ct"] path,
-  .is-disabled cf-icon[name="nav-entries"] path,
-  .is-disabled cf-icon[name="nav-media"] path,
-  .is-disabled cf-icon[name="nav-settings"] path,
-  .is-disabled cf-icon[name="nav-apps"] path,
-  .is-disabled cf-icon[name="nav-api"] path,
-  .is-disabled cf-icon[name="nav-user-settings"] path,
-  .is-disabled cf-icon[name="nav-spaces"] path,
-  .is-disabled cf-icon[name="nav-user-organizations"] path,
-  .is-disabled cf-icon[name="nav-user-oauth"] path,
-  .is-disabled cf-icon[name="nav-user-applications"] path,
-  .is-disabled cf-icon[name="nav-organization-information"] path,
-  .is-disabled cf-icon[name="nav-organization-subscription"] path,
-  .is-disabled cf-icon[name="nav-organization-users"] path,
-  .is-disabled cf-icon[name="nav-organization-teams"] path,
-  .is-disabled cf-icon[name="nav-organization-sso"] path,
-  .is-disabled cf-icon[name="nav-organization-billing"] path,
-  .is-disabled cf-icon[name="nav-usage"] path {
+  .is-disabled:hover cf-icon[name^="nav"] path,
+  .is-disabled cf-icon[name^="nav"] path,
+  .is-disabled .icon-component[data-icon-name^='nav'] path,
+  .is-disabled:hover .icon-component[data-icon-name^='nav'] path {
     fill: #8091a5;
   }
   .tab-list {
@@ -3514,6 +3429,7 @@ pre,
     -webkit-transition: color 0.1s ease-in-out;
     transition: color 0.1s ease-in-out;
     position: relative;
+    cursor: pointer;
   }
   .nav-bar__link .nav-bar__list-top-label {
     position: absolute;
@@ -3538,12 +3454,19 @@ pre,
             align-items: center;
     border-bottom: 3px solid transparent;
   }
-  .nav-bar__link .nav-bar__list-label cf-icon {
+  .nav-bar__link .nav-bar__list-label cf-icon,
+  .nav-bar__link .nav-bar__list-label .icon-component {
     margin-right: 10px;
   }
+
   .nav-bar__link:hover,
   .nav-bar__link.is-active {
     color: #4a90e2;
+  }
+  .nav-bar__link.is-disabled,
+  .nav-bar__link.is-disabled:hover {
+    color: #8091a5;
+    cursor: not-allowed;
   }
   .nav-bar__link:hover .nav-bar__list-label,
   .nav-bar__link.is-active .nav-bar__list-label {
@@ -3560,11 +3483,7 @@ pre,
   .app-top-bar__menu-trigger.is-active {
     padding: 0 20px;
   }
-  .app-top-bar__menu-trigger.is-disabled,
-  .app-top-bar__menu-trigger.is-disabled:hover {
-    color: #8091a5;
-    cursor: not-allowed;
-  }
+
   .note-box {
     clear: both;
     overflow: hidden;

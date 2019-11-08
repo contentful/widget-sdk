@@ -8,6 +8,7 @@ import TEAAdminSpaceHome from './TEAAdminSpaceHome.es6';
 import ModernStackAdminSpaceHome from './ModernStackAdminSpaceHome.es6';
 import ReadOnlySpaceHome from './ReadOnlySpaceHome.es6';
 import EmptySpaceHome from './EmptySpaceHome.es6';
+import DocumentTitle from 'components/shared/DocumentTitle.es6';
 import {
   getPerson,
   getCredentials,
@@ -159,6 +160,7 @@ const SpaceHomePage = ({ spaceTemplateCreated, lastUsedOrg, orgOwnerOrAdmin }) =
 
   return (
     <div className="home home-section" data-test-id="space-home-page-container">
+      <DocumentTitle title="Space home" />
       {isLoading && (
         <EmptyStateContainer>
           <Spinner size="large" />

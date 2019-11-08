@@ -2,7 +2,7 @@ import { reactStateWrapper } from 'states/utils.es6';
 
 export default reactStateWrapper({
   name: 'invitation',
-  url: '/:orgId/invitations/:invitationId',
+  url: '/invitations/:invitationId',
   params: {
     invitationId: ''
   },
