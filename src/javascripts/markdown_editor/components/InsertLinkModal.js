@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import startsWith from 'lodash/startsWith';
 import { Modal, TextField, Form, Button } from '@contentful/forma-36-react-components';
+import { isValidUrl } from 'utils/StringUtils.es6';
 
 const styles = {
   controlsContainer: css({
@@ -17,9 +17,9 @@ const styles = {
 const InsertLinkModal = ({ selectedText, isShown, onClose }) => {
   const [text, setText] = useState('');
   const [url, setUrl] = useState('https://');
+  const [urlIsValid, setUrlValidity] = useState(true);
   const [title, setTitle] = useState('');
   const onInsert = ({ url, text, title }) => onClose({ url, text, title });
-  const isValidURL = url => startsWith(url, 'http://') || startsWith(url, 'https://');
   return (
     <Modal title="Insert link" isShown={isShown} onClose={() => onClose(false)}>
       <Form onSubmit={() => onInsert({ url, text, title })}>
@@ -41,8 +41,11 @@ const InsertLinkModal = ({ selectedText, isShown, onClose }) => {
           id="target-url-field"
           labelText="Target URL"
           helpText="Include protocol (e.g. https://)"
-          onChange={({ target: { value } }) => setUrl(value)}
-          validationMessage={!isValidURL(url) ? 'Protocol is missing' : ''}
+          onChange={({ target: { value } }) => {
+            setUrl(value);
+            setUrlValidity(isValidUrl(value));
+          }}
+          validationMessage={urlIsValid ? '' : 'Invalid URL'}
           textInputProps={{
             type: 'url',
             placeholder: 'https://example.com',

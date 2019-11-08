@@ -14,6 +14,7 @@ import * as ModalLauncher from 'app/common/ModalLauncher.es6';
 import InsertLinkModal from './components/InsertLinkModal';
 import FormatingHelpModal from './components/FormatingHelpModal';
 import InsertCharacterModal from './components/InsertCharacterModal';
+import EmbedExternalContentModal from './components/EmbedExternalContentModal';
 
 export function create(editor, locale, defaultLocaleCode, { zen }) {
   const modalDialog = getModule('modalDialog');
@@ -93,9 +94,9 @@ export function create(editor, locale, defaultLocaleCode, { zen }) {
           } else if (unpublishableAssets.length) {
             Notification.error(
               `Failed to publish ${
-                unpublishableAssets.length === 1
-                  ? 'the asset'
-                  : `${unpublishableAssets.length} assets`
+              unpublishableAssets.length === 1
+                ? 'the asset'
+                : `${unpublishableAssets.length} assets`
               }`
             );
           }
@@ -158,7 +159,7 @@ export function create(editor, locale, defaultLocaleCode, { zen }) {
         .promise.then(() => {
           editor.insert(links);
         })
-        .catch(() => {});
+        .catch(() => { });
     } else {
       editor.insert(links);
       return Promise.resolve();
@@ -213,37 +214,14 @@ export function create(editor, locale, defaultLocaleCode, { zen }) {
       .promise.then(editor.actions.table);
   }
 
-  function embed() {
-    modalDialog
-      .open({
-        scopeData: {
-          model: { value: 'https://', width: { px: 600, percent: 100 }, widthSuffix: 'percent' },
-          urlStatus: 'invalid'
-        },
-        template: 'markdown_embed_dialog',
-        controller: scope => {
-          scope.onEmbedlyLoad = () => {
-            scope.urlStatus = 'ok';
-            scope.$applyAsync();
-          };
-          scope.$watch('urlStatus', () => {
-            scope.$emit('centerOn:reposition');
-          });
-        }
-      })
-      .promise.then(data => {
-        editor.insert(_makeEmbedlyLink(data));
-      });
-  }
-
-  function _makeEmbedlyLink(data) {
-    const s = { percent: '%', px: 'px' };
-    return [
-      '<a href="' + data.value + '" class="embedly-card" ',
-      'data-card-width="' + data.width[data.widthSuffix] + s[data.widthSuffix] + '" ',
-      'data-card-controls="' + (data.social ? '1' : '0') + '"',
-      '>Embedded content: ' + data.value + '</a>'
-    ].join('');
+  async function embed() {
+    const modalKey = Date.now();
+    const result = await ModalLauncher.open(({ isShown, onClose }) => (
+      <EmbedExternalContentModal isShown={isShown} onClose={onClose} key={modalKey} />
+    ));
+    if (result) {
+      editor.insert(result);
+    }
   }
 
   function organizeLinks() {
