@@ -145,6 +145,7 @@ export const validEvents = {
   approval: ['installed', 'uninstalled'],
   sso: ['start_setup', 'connection_test_result', 'contact_support', 'enable'],
   quick_navigation: ['opened_by_shortcut'],
+  ie11_deprecation_notice: ['shown'],
   perf: ['dom_content_loaded', 'first_contentful_paint', 'time_to_interactive'],
   jobs: ['cancel', 'create'],
   teams_in_space: ['teams_added', 'users_added', 'users_to_teams_page_navigation'],

@@ -19,7 +19,10 @@ function appContainerTemplateDef() {
     ]),
     h('div.app-container__content', {
       uiView: 'content'
-    })
+    }),
+    h('div', { 'ng-if': 'showIeNotice' }, [
+      h('react-component', { name: 'components/Ie11DeprecationNotice/index.es6' })
+    ])
   ].join('');
 }
 
@@ -30,6 +33,11 @@ export default function register() {
     controller: [
       '$scope',
       function($scope) {
+        // requires a timeout because appContainer is initialized before
+        // react-component directive
+        setTimeout(() => {
+          $scope.showIeNotice = true;
+        }, 4000);
         $scope.sidePanelIsShown = false;
         $scope.toggleSidePanel = () => {
           $scope.sidePanelIsShown = !$scope.sidePanelIsShown;
