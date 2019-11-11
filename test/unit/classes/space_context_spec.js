@@ -30,8 +30,7 @@ describe('spaceContext', () => {
       DocumentPool_create: sinon.stub().returns({
         // close: sinon.stub(),
         destroy: sinon.stub()
-      }),
-      spaceAliasesRepoGetAll: sinon.stub()
+      })
     };
 
     this.system.set('widgets/ExtensionLoader.es6', { createExtensionLoader: sinon.stub() });
@@ -63,12 +62,6 @@ describe('spaceContext', () => {
 
     this.system.set('data/sharejs/DocumentPool.es6', {
       create: this.stubs.DocumentPool_create
-    });
-
-    this.system.set('data/CMA/SpaceAliasesRepo.es6', {
-      create: sinon.stub().returns({
-        getAll: this.stubs.spaceAliasesRepoGetAll
-      })
     });
 
     this.system.set('data/CMA/ProductCatalog.es6', this.ProductCatalog);
@@ -194,23 +187,42 @@ describe('spaceContext', () => {
       const alias = {
         name: 'master',
         sys: {
-          id: 'master'
-        },
-        environment: 'prod-1'
+          id: 'master',
+          aliasedEnvironment: {
+            sys: {
+              id: 'prod-1'
+            }
+          }
+        }
       };
-      const aliases = [alias];
-      Object.assign(this.mockSpaceEndpoint.stores.environment_aliases, aliases);
-
-      this.stubs.spaceAliasesRepoGetAll.returns(aliases);
+      const prod1 = {
+        name: 'prod-1',
+        sys: {
+          id: 'prod-1',
+          aliases: [
+            {
+              sys: { id: 'master' }
+            }
+          ]
+        }
+      };
+      const staging = {
+        name: 'staging',
+        sys: {
+          id: 'staging',
+          aliases: []
+        }
+      };
+      const environments = { prod1, staging, alias };
+      Object.assign(this.mockSpaceEndpoint.stores.environments, environments);
 
       await this.reset();
 
-      expect(this.spaceContext.aliases).toEqual(aliases);
+      expect(this.spaceContext.aliases).toEqual([alias]);
     });
 
     it('sets `aliases` property to empty array if aliases are not enabled', async function() {
       this.ProductCatalog.getSpaceFeature.resolves(false);
-      this.stubs.spaceAliasesRepoGetAll.returns([]);
       await this.reset();
 
       expect(this.spaceContext.aliases).toEqual([]);

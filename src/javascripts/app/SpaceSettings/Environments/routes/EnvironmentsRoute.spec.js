@@ -9,7 +9,6 @@ import { openDeleteEnvironmentDialog } from '../DeleteDialog.es6';
 import createResourceService from 'services/ResourceService.es6';
 import { canCreate } from 'utils/ResourceUtils.es6';
 import { createPaginationEndpoint } from '__mocks__/data/EndpointFactory.es6';
-import * as SpaceAliasesRepo from 'data/CMA/SpaceAliasesRepo.es6';
 
 jest.mock('services/ResourceService.es6', () => ({
   __esModule: true, // this property makes it work
@@ -20,12 +19,6 @@ jest.mock('services/ResourceService.es6', () => ({
 
 jest.mock('access_control/AccessChecker', () => ({
   can: jest.fn().mockReturnValue(true)
-}));
-
-jest.mock('data/CMA/SpaceAliasesRepo.es6', () => ({
-  create: jest.fn().mockReturnValue({
-    getAll: jest.fn().mockResolvedValue([])
-  })
 }));
 
 jest.mock('utils/LaunchDarkly/index.es6', () => ({
@@ -144,7 +137,7 @@ describe('EnvironmentsRoute', () => {
     describe('when user has the manage aliases permission', () => {
       it('shows the aliases opt-in', async () => {
         const { queryByTestId } = await renderEnvironmentsComponent(
-          { id: 'e1', status: 'ready', aliases: ['master'] },
+          { id: 'e1', status: 'ready' },
           { id: 'e2', status: 'ready' }
         );
 
@@ -154,16 +147,6 @@ describe('EnvironmentsRoute', () => {
 
       it('shows the aliases', async () => {
         defaultProps.getAliasesIds.mockReturnValueOnce(['master']);
-        SpaceAliasesRepo.create().getAll = jest.fn().mockResolvedValue(
-          generateEnvironments([
-            {
-              id: 'e1',
-              status: 'ready',
-              aliases: ['master']
-            }
-          ])
-        );
-
         const { getByTestId } = await renderEnvironmentsComponent(
           { id: 'e1', status: 'ready', aliases: ['master'] },
           { id: 'e2', status: 'ready' }
@@ -171,8 +154,6 @@ describe('EnvironmentsRoute', () => {
 
         expect(getByTestId('environments.header')).toBeInTheDocument();
         expect(getByTestId('environmentaliases.card')).toBeInTheDocument();
-
-        SpaceAliasesRepo.create().getAll = jest.fn().mockResolvedValue([]);
       });
 
       it('cannot be deleted when environment has aliases', async () => {

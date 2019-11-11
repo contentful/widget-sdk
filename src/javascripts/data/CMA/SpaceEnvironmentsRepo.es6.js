@@ -1,6 +1,5 @@
 import { pick } from 'lodash';
 import { get } from 'utils/Collections.es6';
-import * as SpaceAliasesRepo from 'data/CMA/SpaceAliasesRepo.es6';
 
 // Hardcoded limit for v1 orgs is 100 + 1 (master).
 // It is less for all v2 space plans.
@@ -28,7 +27,7 @@ export function create(spaceEndpoint) {
   return { getAll, create, remove, update, get };
 
   /**
-   * Returns a list of all environments and environment aliases for the given space
+   * Returns a list of all environments i.e .real environments and aliased environments
    */
   async function getAll() {
     const { items } = await spaceEndpoint({
@@ -38,13 +37,29 @@ export function create(spaceEndpoint) {
     });
 
     // the response from the api gives a combination of real environments and aliased environments
-    const aliases = await SpaceAliasesRepo.create(spaceEndpoint).getAll();
-    const hasNotOptedIntoEnvironmentAliases = !aliases || aliases.length === 0;
-    if (hasNotOptedIntoEnvironmentAliases) return { environments: items };
+    const hasOptedIntoEnvironmentAliases = items.some(
+      ({ sys: { aliasedEnvironment, aliases } }) =>
+        aliasedEnvironment !== undefined || aliases !== undefined
+    );
 
-    // if the space is opted in we filter the real environments
-    const environments = items.filter(env => env.sys.aliases !== undefined);
-    return { environments, aliases };
+    if (!hasOptedIntoEnvironmentAliases) return { environments: items };
+
+    // here we separate aliased environments from real environments
+    return items.reduce(
+      (envsAndAliases, env) => {
+        if (env.sys.aliases !== undefined) {
+          return {
+            ...envsAndAliases,
+            environments: [...envsAndAliases.environments, env]
+          };
+        }
+        return {
+          ...envsAndAliases,
+          aliases: [...envsAndAliases.aliases, env]
+        };
+      },
+      { aliases: [], environments: [] }
+    );
   }
 
   /**
