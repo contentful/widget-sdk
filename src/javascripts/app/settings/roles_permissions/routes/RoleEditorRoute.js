@@ -25,28 +25,30 @@ const RoleEditorFetcher = createFetcherComponent(async ({ spaceId, getContentTyp
     createResourceService(spaceId).get('role')
   ]);
 
-  const state = {
-    canModifyRoles: undefined,
-    hasCustomRolesFeature: undefined,
-    hasEnvironmentAliasesEnabled: undefined
-  };
-
   if (!hasCustomRolesFeature) {
-    state.hasCustomRolesFeature = false;
-    state.canModifyRoles = false;
-  } else if (isNew && !ResourceUtils.canCreate(resource)) {
+    return {
+      contentTypes,
+      hasEnvironmentAliasesEnabled,
+      hasCustomRolesFeature: false,
+      canModifyRoles: false
+    };
+  }
+
+  if (isNew && !ResourceUtils.canCreate(resource)) {
     Notification.error('Your organization has reached the limit for custom roles.');
-    state.hasCustomRolesFeature = true;
-    state.canModifyRoles = false;
-  } else {
-    state.hasCustomRolesFeature = true;
-    state.canModifyRoles = true;
+    return {
+      contentTypes,
+      hasEnvironmentAliasesEnabled,
+      hasCustomRolesFeature: true,
+      canModifyRoles: false
+    };
   }
 
   return {
     contentTypes,
     hasEnvironmentAliasesEnabled,
-    ...state
+    hasCustomRolesFeature: true,
+    canModifyRoles: true
   };
 });
 
