@@ -119,7 +119,7 @@ describe('Tasks entry editor sidebar', () => {
 
     describe('updating a task', () => {
       it('changes task title and assignee without error', () => {
-        const taskUpdate:TaskUpdate = {
+        const taskUpdate: TaskUpdate = {
           title: 'Updated task body!',
           assigneeId: users.items[1].sys.id
         }
@@ -131,7 +131,7 @@ describe('Tasks entry editor sidebar', () => {
       });
 
       it('resolves tasks without error', () => {
-        const taskUpdate:TaskUpdate = {
+        const taskUpdate: TaskUpdate = {
           status: TaskStates.RESOLVED
         }
         const interaction = resolveTask(taskUpdate).willSucceed();
@@ -145,8 +145,24 @@ describe('Tasks entry editor sidebar', () => {
         expectTask(task(), { isResolved: true });
       });
 
+      it('restricts editing resolved tasks', () => {
+        const taskUpdate: TaskUpdate = {
+          status: TaskStates.RESOLVED
+        }
+        const interaction = resolveTask(taskUpdate).willSucceed();
+
+        const task = () => getTasks().first();
+        expectTask(task(), { isResolved: false });
+        getTaskCheckbox(task()).check();
+
+        cy.wait(interaction);
+
+        getEditTaskKebabMenuItem(task())
+          .should('have.length', 0);
+      });
+
       it('reopens tasks without error', () => {
-        const taskUpdate:TaskUpdate = {
+        const taskUpdate: TaskUpdate = {
           status: TaskStates.OPEN
         }
         const interaction = reopenTask(taskUpdate).willSucceed();
@@ -160,14 +176,19 @@ describe('Tasks entry editor sidebar', () => {
         expectTask(task(), { isResolved: false });
       });
 
-      function updateTaskAndSave(task: Cypress.Chainable, { title, assigneeId }: TaskUpdate) {
+      function getEditTaskKebabMenuItem(task: Cypress.Chainable): Cypress.Chainable {
         task.click();
+
         getTaskKebabMenu(task)
           .should('be.enabled')
           .click();
-        getTaskKebabMenuItems(task)
-          .getByTestId('edit-task')
-          .click();
+
+        return getTaskKebabMenuItems(task)
+          .get('[data-test-id="edit-task"]');
+      }
+
+      function updateTaskAndSave(task: Cypress.Chainable, { title, assigneeId }: TaskUpdate) {
+        getEditTaskKebabMenuItem(task).click();
         if (title) {
           getTaskBodyTextarea(task)
             .should('have.text', severalTasks.items[0].body)

@@ -19,21 +19,27 @@ MOCKS.UserViewData = {
   }
 };
 
+const validTask = {
+  key: 'task-id-1',
+  version: 42,
+  body: 'Do something already!',
+  assignee: MOCKS.UserViewData.existingLoadedSpaceUser,
+  creator: MOCKS.UserViewData.existingLoadedSpaceUser,
+  createdAt: '2019-01-10T13:21:40.467Z',
+  isDone: false,
+  isDraft: false,
+  isInEditMode: false,
+  validationMessage: null,
+  assignableUsersInfo: null,
+  canEdit: false,
+  canUpdateStatus: false
+};
+
 MOCKS.TaskViewData = {
-  valid: {
-    key: 'task-id-1',
-    version: 42,
-    body: 'Do something already!',
-    assignee: MOCKS.UserViewData.existingLoadedSpaceUser,
-    creator: MOCKS.UserViewData.existingLoadedSpaceUser,
-    createdAt: '2019-01-10T13:21:40.467Z',
-    isDone: false,
-    isDraft: false,
-    isInEditMode: false,
-    validationMessage: null,
-    assignableUsersInfo: null,
-    canEdit: false,
-    canUpdateStatus: false
+  valid: validTask,
+  validDone: {
+    ...validTask,
+    isDone: true
   },
   draft: {
     key: '<<DRAFT-TASK>>',
@@ -70,7 +76,8 @@ const TEST_IDS = {
   statusCheckbox: 'status-checkbox',
   disabledTaskTooltip: 'disabled-task-tooltip',
   saveButton: 'save-task',
-  taskActions: 'task-actions'
+  taskActions: 'task-actions',
+  editTaskDropdownListItem: 'edit-task'
 };
 
 describe('<Task />', () => {
@@ -109,8 +116,7 @@ describe('<Task />', () => {
     };
 
     beforeEach(() => {
-      const viewData = MOCKS.TaskViewData.draft;
-      elems = render({ viewData }).elems;
+      ({ elems } = render({ viewData: MOCKS.TaskViewData.draft }));
     });
 
     it('disables save button initially', () => {
@@ -157,6 +163,13 @@ describe('<Task />', () => {
     it('does not render the task actions', () => {
       const { elems } = render();
       expect(elems.taskActions).not.toBeInTheDocument();
+    });
+  });
+
+  describe('when the task is completed', () => {
+    it('does not render the edit task dropdown list item', () => {
+      const { elems } = render({ viewData: MOCKS.TaskViewData.validDone });
+      expect(elems.editTaskDropdownListItem).not.toBeInTheDocument();
     });
   });
 
