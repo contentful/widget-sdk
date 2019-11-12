@@ -1,8 +1,8 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import SidebarContentPreview from './SidebarContentPreview.es6';
+import SidebarContentPreview from './SidebarContentPreview';
 
-describe('entity_editor/Components/SidebarContentPreview.es6', () => {
+describe('entity_editor/Components/SidebarContentPreview', () => {
   const render = props => {
     return Enzyme.mount(
       <SidebarContentPreview

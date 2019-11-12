@@ -1,5 +1,5 @@
 import { forEach } from 'lodash';
-import { slugify } from './slug.es6';
+import { slugify } from './slug';
 
 describe('slugify(text)', () => {
   const cases = {

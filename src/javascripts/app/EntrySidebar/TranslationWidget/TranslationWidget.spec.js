@@ -1,8 +1,8 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import TranslationWidget from './TranslationWidget.es6';
-import EntrySidebarWidget from '../EntrySidebarWidget.es6';
-import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
+import TranslationWidget from './TranslationWidget';
+import EntrySidebarWidget from '../EntrySidebarWidget';
+import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
 import { track } from 'analytics/Analytics';
 
 describe('EntrySidebar/TranslationWidget', () => {

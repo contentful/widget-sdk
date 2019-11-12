@@ -1,10 +1,10 @@
-import { getModule } from 'NgRegistry.es6';
+import { getModule } from 'NgRegistry';
 import React from 'react';
 import pluralize from 'pluralize';
 import PropTypes from 'prop-types';
 import { Notification, ModalConfirm, Paragraph } from '@contentful/forma-36-react-components';
-import ModalLauncher from 'app/common/ModalLauncher.es6';
-import ReloadNotification from 'app/common/ReloadNotification.es6';
+import ModalLauncher from 'app/common/ModalLauncher';
+import ReloadNotification from 'app/common/ReloadNotification';
 import { getInstance } from 'access_control/RoleRepository';
 import jumpToRole from 'access_control/Users/jumpToRole';
 

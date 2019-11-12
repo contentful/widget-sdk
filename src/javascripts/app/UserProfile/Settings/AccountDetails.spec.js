@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, cleanup, fireEvent, wait } from '@testing-library/react';
 import AccountDetails from './AccountDetails';
-import * as ModalLauncher from 'app/common/ModalLauncher.es6';
+import * as ModalLauncher from 'app/common/ModalLauncher';
 import '@testing-library/jest-dom/extend-expect';
 
 describe('AccountDetails', () => {

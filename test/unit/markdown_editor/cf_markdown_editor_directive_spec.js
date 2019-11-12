@@ -7,7 +7,7 @@ describe('cfMarkdownEditor', () => {
   beforeEach(async function() {
     this.markdownEditorActions = { trackMarkdownEditorAction: sinon.stub() };
 
-    this.system.set('services/localeStore.es6', {
+    this.system.set('services/localeStore', {
       default: {
         getDefaultLocale: () => ({ code: 'some random locale' }),
         getLocales: () => [{ code: 'en-US' }]

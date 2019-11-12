@@ -2,11 +2,11 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import reducer from 'redux/reducer/index.es6';
-import ROUTES from 'redux/routes.es6';
-import { TEAM_SPACE_MEMBERSHIPS, TEAMS, ORG_SPACES } from 'redux/datasets.es6';
-import TeamSpaceMemberships from './TeamSpaceMemberships.es6';
-import TeamSpaceMembershipRow from './TeamSpaceMembershipRow.es6';
+import reducer from 'redux/reducer/index';
+import ROUTES from 'redux/routes';
+import { TEAM_SPACE_MEMBERSHIPS, TEAMS, ORG_SPACES } from 'redux/datasets';
+import TeamSpaceMemberships from './TeamSpaceMemberships';
+import TeamSpaceMembershipRow from './TeamSpaceMembershipRow';
 
 const renderComponent = (
   actions,

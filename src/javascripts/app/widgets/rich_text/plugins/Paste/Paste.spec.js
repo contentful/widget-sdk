@@ -1,7 +1,7 @@
-import { getCharacterCount } from './Paste.es6';
+import { getCharacterCount } from './Paste';
 import * as contentfulSlateJSAdapter from '@contentful/contentful-slatejs-adapter';
 import * as richTextPlainTextRenderer from '@contentful/rich-text-plain-text-renderer';
-import schema from '../../constants/Schema.es6';
+import schema from '../../constants/Schema';
 
 describe('PastePlugin utils', () => {
   describe('getCharacterCount', () => {

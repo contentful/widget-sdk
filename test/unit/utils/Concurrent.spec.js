@@ -3,13 +3,13 @@ import sinon from 'sinon';
 import { $initialize, $inject, $apply } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
 
-describe('utils/Concurrent.es6', () => {
+describe('utils/Concurrent', () => {
   let C;
   let C$q;
 
   beforeEach(async function() {
-    C = await this.system.import('utils/Concurrent.es6');
-    C$q = await this.system.import('utils/ConcurrentQ.es6');
+    C = await this.system.import('utils/Concurrent');
+    C$q = await this.system.import('utils/ConcurrentQ');
 
     await $initialize(this.system);
 

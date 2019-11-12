@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { PolicyBuilderConfig } from './PolicyBuilderConfig';
-import { capitalize } from 'utils/StringUtils.es6';
+import { capitalize } from 'utils/StringUtils';
 
 function translatePolicies(internal) {
   if (!internal.uiCompatible) {

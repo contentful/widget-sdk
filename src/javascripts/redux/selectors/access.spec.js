@@ -1,5 +1,5 @@
-import reducer from '../reducer/index.es6';
-import { hasAccess, getReasonDenied } from './access.es6';
+import reducer from '../reducer/index';
+import { hasAccess, getReasonDenied } from './access';
 
 describe('access selectors', () => {
   describe('initial state', () => {

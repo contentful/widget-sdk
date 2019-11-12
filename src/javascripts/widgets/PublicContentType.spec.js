@@ -1,4 +1,4 @@
-import * as PublicContentType from './PublicContentType.es6';
+import * as PublicContentType from './PublicContentType';
 
 describe('PublicContentType', () => {
   describe('#internalToPublic()', () => {

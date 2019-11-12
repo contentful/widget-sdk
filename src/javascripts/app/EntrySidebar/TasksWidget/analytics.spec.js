@@ -1,5 +1,5 @@
-import * as Intercom from 'services/intercom.es6';
-import { trackTaskCreated, trackTaskResolved, trackIsTasksAlphaEligible } from './analytics.es6';
+import * as Intercom from 'services/intercom';
+import { trackTaskCreated, trackTaskResolved, trackIsTasksAlphaEligible } from './analytics';
 
 describe('TasksWidget/analytics', () => {
   beforeEach(() => {

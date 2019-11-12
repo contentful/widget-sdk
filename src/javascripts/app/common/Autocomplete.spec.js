@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, cleanup, fireEvent, within } from '@testing-library/react';
-import Autocomplete from './Autocomplete.es6';
+import Autocomplete from './Autocomplete';
 import '@testing-library/jest-dom/extend-expect';
 
 const items = [

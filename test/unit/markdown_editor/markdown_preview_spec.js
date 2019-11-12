@@ -5,7 +5,7 @@ describe('Markdown preview', () => {
   beforeEach(async function() {
     this.markdown = K.createMockProperty('__test__');
 
-    const PreviewGenerator = await this.system.import('markdown_editor/PreviewGenerator.es6');
+    const PreviewGenerator = await this.system.import('markdown_editor/PreviewGenerator');
 
     await $initialize(this.system);
 

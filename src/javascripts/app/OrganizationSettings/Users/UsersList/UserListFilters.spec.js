@@ -1,9 +1,9 @@
 import React from 'react';
 import { cloneDeep } from 'lodash';
 import { shallow } from 'enzyme';
-import { generateFilterDefinitions } from './FilterDefinitions.es6';
-import SearchFilter from './SearchFilter.es6';
-import { UserListFilters } from './UserListFilters.es6';
+import { generateFilterDefinitions } from './FilterDefinitions';
+import SearchFilter from './SearchFilter';
+import { UserListFilters } from './UserListFilters';
 import { TextLink } from '@contentful/forma-36-react-components';
 
 describe('UserListFilters', () => {

@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import getDefaultWidgetId, { DEFAULTS } from './DefaultWidget.es6';
-import { FIELD_TYPES, toApiFieldType } from './FieldTypes.es6';
+import getDefaultWidgetId, { DEFAULTS } from './DefaultWidget';
+import { FIELD_TYPES, toApiFieldType } from './FieldTypes';
 
 describe('DefaultWidget', () => {
   it('with an unsupported field type', () => {

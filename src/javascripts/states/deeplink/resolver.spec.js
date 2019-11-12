@@ -1,9 +1,9 @@
-import * as logger from 'services/logger.es6';
-import TheStore from 'TheStore/index.es6';
-import { getSpaceInfo, checkOrgAccess, getOrg, getOnboardingSpaceId } from './utils.es6';
+import * as logger from 'services/logger';
+import TheStore from 'TheStore/index';
+import { getSpaceInfo, checkOrgAccess, getOrg, getOnboardingSpaceId } from './utils';
 import spaceContextMock from 'ng/spaceContext';
 import * as AccessCheckerMocked from 'access_control/AccessChecker';
-import { resolveLink } from './resolver.es6';
+import { resolveLink } from './resolver';
 
 const mockApiKeyRepo = {
   getAll: jest.fn()
@@ -13,7 +13,7 @@ jest.mock('access_control/AccessChecker', () => ({
   canReadApiKeys: jest.fn()
 }));
 
-jest.mock('./utils.es6', () => ({
+jest.mock('./utils', () => ({
   getSpaceInfo: jest.fn(),
   getOnboardingSpaceId: jest.fn(),
   getOrg: jest.fn(),
@@ -28,14 +28,14 @@ jest.mock('ng/spaceContext', () => ({
   resetWithSpace: jest.fn()
 }));
 
-jest.mock('TheStore/index.es6', () => ({ getStore: jest.fn() }));
+jest.mock('TheStore/index', () => ({ getStore: jest.fn() }));
 
-jest.mock('components/shared/auto_create_new_space/CreateModernOnboarding.es6', () => ({
+jest.mock('components/shared/auto_create_new_space/CreateModernOnboarding', () => ({
   getStoragePrefix: jest.fn()
 }));
 
 jest.mock(
-  'services/TokenStore.es6',
+  'services/TokenStore',
   () => ({
     getSpaces: jest.fn(),
     getOrganizations: jest.fn()
@@ -44,7 +44,7 @@ jest.mock(
 );
 
 jest.mock(
-  'utils/ResourceUtils.es6',
+  'utils/ResourceUtils',
   () => ({
     isLegacyOrganization: jest.fn().mockReturnValue(true)
   }),
@@ -94,7 +94,7 @@ async function testModernStackOnboardingDeeplinks(link, expected) {
   });
 }
 
-describe('states/deeplink/resolver.es6', () => {
+describe('states/deeplink/resolver', () => {
   beforeEach(() => {
     mockApiKeyRepo.getAll.mockReset();
   });

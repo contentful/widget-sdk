@@ -11,7 +11,7 @@ describe('SlugEditor directive', () => {
       { code: 'optional-with-fallback-LOCALE', optional: true, fallbackCode: 'some-LOCALE' }
     ];
 
-    this.system.set('services/localeStore.es6', {
+    this.system.set('services/localeStore', {
       default: {
         getPrivateLocales: () => this.locales
       }

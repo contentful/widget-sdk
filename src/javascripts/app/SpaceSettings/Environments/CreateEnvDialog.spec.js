@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, cleanup, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import * as Environment from 'data/CMA/SpaceEnvironmentsRepo.es6';
+import * as Environment from 'data/CMA/SpaceEnvironmentsRepo';
 import { CreateEnvironmentView } from './CreateEnvDialog';
 
 describe('CreateEnvironmentDialog', () => {

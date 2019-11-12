@@ -5,7 +5,7 @@ import { $initialize, $inject } from 'test/utils/ng';
 describe('cfThumbnailDirective', () => {
   beforeEach(async function() {
     // This is needed to transform the image domain
-    this.system.set('services/TokenStore.es6', {
+    this.system.set('services/TokenStore', {
       getDomains: sinon.stub().returns({})
     });
 

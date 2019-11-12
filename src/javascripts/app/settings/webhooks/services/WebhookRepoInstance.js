@@ -1,4 +1,4 @@
-import { getModule } from 'NgRegistry.es6';
+import { getModule } from 'NgRegistry';
 import createWebhookRepo from './WebhookRepo';
 
 const perSpaceCache = {};

@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import * as K from 'test/utils/kefir';
 import _ from 'lodash';
-import { create as createResourceState } from 'data/document/ResourceStateManager.es6';
+import { create as createResourceState } from 'data/document/ResourceStateManager';
 
 /**
  * @ngdoc service

@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import { times, merge, cloneDeep } from 'lodash';
 import createContentPreview from 'services/contentPreview/createContentPreview';
 import { contentPreviewToInternal } from 'services/contentPreview/contentPreviewToInternal';
-import { getStore } from 'TheStore/index.es6';
+import { getStore } from 'TheStore/index';
 import { beforeEach, it } from 'test/utils/dsl';
 
 describe('contentPreview', () => {

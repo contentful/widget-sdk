@@ -44,7 +44,7 @@ jest.mock('ng/spaceContext', () => ({
   })
 }));
 
-jest.mock('services/ResourceService.es6', () => () => ({
+jest.mock('services/ResourceService', () => () => ({
   get: jest.fn().mockResolvedValue(mockedResource)
 }));
 

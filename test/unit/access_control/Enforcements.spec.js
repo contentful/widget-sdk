@@ -5,7 +5,7 @@ describe('access_control/Enforcements', () => {
 
   beforeEach(async function() {
     enforcements = await this.system.import('access_control/Enforcements');
-    OrganizationRoles = await this.system.import('services/OrganizationRoles.es6');
+    OrganizationRoles = await this.system.import('services/OrganizationRoles');
 
     OrganizationRoles.setUser({ sys: { id: 123 } });
 

@@ -9,12 +9,12 @@ import {
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css, cx } from 'emotion';
-import { websiteUrl } from 'Config.es6';
+import { websiteUrl } from 'Config';
 import { User as UserPropType } from './propTypes';
 import IdentitiesSection from './IdentitiesSection';
 import UserEditModal from './UserEditModal';
 import ChangePasswordModal from './ChangePasswordModal';
-import * as ModalLauncher from 'app/common/ModalLauncher.es6';
+import * as ModalLauncher from 'app/common/ModalLauncher';
 
 const styles = {
   spaceLeft: css({

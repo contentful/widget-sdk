@@ -4,31 +4,31 @@ import sinon from 'sinon';
 import { $initialize, $inject } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
 
-describe('app/entity_editor/DataLoader.es6', () => {
+describe('app/entity_editor/DataLoader', () => {
   beforeEach(async function() {
     this.stubs = {
       buildRenderables: sinon.stub().returns({})
     };
 
-    this.system.set('widgets/WidgetRenderable.es6', {
+    this.system.set('widgets/WidgetRenderable', {
       buildRenderables: this.stubs.buildRenderables,
       buildSidebarRenderables: sinon.stub().returns([]),
       buildEditorRenderable: sinon.stub().returns(undefined)
     });
 
-    this.system.set('services/localeStore.es6', {
+    this.system.set('services/localeStore', {
       default: {
         getPrivateLocales: sinon.stub().returns([])
       }
     });
 
-    this.system.set('data/CMA/ProductCatalog.es6', {
+    this.system.set('data/CMA/ProductCatalog', {
       getOrgFeature: () => Promise.resolve(true)
     });
 
-    this.localeStore = (await this.system.import('services/localeStore.es6')).default;
+    this.localeStore = (await this.system.import('services/localeStore')).default;
 
-    const DataLoader = await this.system.import('app/entity_editor/DataLoader.es6');
+    const DataLoader = await this.system.import('app/entity_editor/DataLoader');
 
     await $initialize(this.system);
 

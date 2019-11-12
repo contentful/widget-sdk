@@ -1,4 +1,4 @@
-import { fetchAll } from 'data/CMA/FetchAll.es6';
+import { fetchAll } from 'data/CMA/FetchAll';
 import { extend, includes, omit } from 'lodash';
 import { ADMIN_ROLE_ID } from './constants';
 

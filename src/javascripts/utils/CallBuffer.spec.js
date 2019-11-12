@@ -1,4 +1,4 @@
-import * as CallBuffer from './CallBuffer.es6';
+import * as CallBuffer from './CallBuffer';
 
 describe('utils/CallBuffer', () => {
   it('should record and playback calls', function() {

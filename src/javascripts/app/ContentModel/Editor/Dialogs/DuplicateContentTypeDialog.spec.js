@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import { DuplicateContentTypeForm } from './DuplicateContentTypeDialog.es6';
+import { DuplicateContentTypeForm } from './DuplicateContentTypeDialog';
 import { Promise } from 'bluebird';
 
 describe('ContentModel/Editor/DuplicateContentTypeDialog', () => {

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { Modal, Button, Tooltip, DisplayText } from '@contentful/forma-36-react-components';
-import specialCharacters from '../markdown_special_characters.es6';
+import specialCharacters from '../markdown_special_characters';
 
 const styles = {
   buttonPanel: css({

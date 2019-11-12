@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import UsersWidget from './UsersWidget.es6';
+import UsersWidget from './UsersWidget';
 
 describe('EntrySidebar/UsersWidget', () => {
   const render = (props = {}, renderFn = Enzyme.shallow) => {

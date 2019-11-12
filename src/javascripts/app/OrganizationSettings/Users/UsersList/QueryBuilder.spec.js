@@ -1,4 +1,4 @@
-import { formatQuery } from './QueryBuilder.es6';
+import { formatQuery } from './QueryBuilder';
 
 describe('QueryBuilder', () => {
   const filterA = {

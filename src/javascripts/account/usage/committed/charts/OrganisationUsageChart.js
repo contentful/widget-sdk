@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { last } from 'lodash';
 import moment from 'moment';
 
-import { shorten } from 'utils/NumberUtils.es6';
+import { shorten } from 'utils/NumberUtils';
 
 import { periodPropType } from '../propTypes';
 import periodToDates from './periodToDates';

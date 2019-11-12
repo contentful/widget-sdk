@@ -2,12 +2,12 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import reducer from 'redux/reducer/index.es6';
-import ROUTES from 'redux/routes.es6';
-import { TEAM_MEMBERSHIPS, TEAMS, USERS } from 'redux/datasets.es6';
-import TeamMemberships from './TeamMemberships.es6';
-import TeamMembershipRow from './TeamMembershipRow.es6';
-import TeamMembershipRowPlaceholder from './TeamMembershipRowPlaceholder.es6';
+import reducer from 'redux/reducer/index';
+import ROUTES from 'redux/routes';
+import { TEAM_MEMBERSHIPS, TEAMS, USERS } from 'redux/datasets';
+import TeamMemberships from './TeamMemberships';
+import TeamMembershipRow from './TeamMembershipRow';
+import TeamMembershipRowPlaceholder from './TeamMembershipRowPlaceholder';
 
 const renderComponent = (
   actions,

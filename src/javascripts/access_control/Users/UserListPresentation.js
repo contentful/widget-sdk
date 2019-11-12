@@ -7,13 +7,13 @@ import { css } from 'emotion';
 import pluralize from 'pluralize';
 import { map, isEmpty } from 'lodash';
 
-import { SpaceMember as SpaceMemberPropType } from 'app/OrganizationSettings/PropTypes.es6';
-import Icon from 'ui/Components/Icon.es6';
-import ContextMenu from 'ui/Components/ContextMenu.es6';
-import DocumentTitle from 'components/shared/DocumentTitle.es6';
-import FilterPill from 'app/ContentList/Search/FilterPill.es6';
-import ValueInput from 'app/ContentList/Search/FilterValueInputs.es6';
-import { joinAnd } from 'utils/StringUtils.es6';
+import { SpaceMember as SpaceMemberPropType } from 'app/OrganizationSettings/PropTypes';
+import Icon from 'ui/Components/Icon';
+import ContextMenu from 'ui/Components/ContextMenu';
+import DocumentTitle from 'components/shared/DocumentTitle';
+import FilterPill from 'app/ContentList/Search/FilterPill';
+import ValueInput from 'app/ContentList/Search/FilterValueInputs';
+import { joinAnd } from 'utils/StringUtils';
 
 import AddUsersToSpaceNote from './AddUsersToSpaceNote';
 import { VIEW_LABELS } from './constants';

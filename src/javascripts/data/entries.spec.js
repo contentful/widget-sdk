@@ -1,9 +1,9 @@
 import _ from 'lodash';
-import * as Entries from './entries.es6';
-import TheLocaleStore from 'services/localeStore.es6';
+import * as Entries from './entries';
+import TheLocaleStore from 'services/localeStore';
 
 jest.mock(
-  'services/localeStore.es6',
+  'services/localeStore',
   () => ({
     toPublicCode: jest.fn(),
     toInternalCode: jest.fn()
@@ -11,7 +11,7 @@ jest.mock(
   { virtual: true }
 );
 
-describe('data/entries.es6', () => {
+describe('data/entries', () => {
   beforeEach(() => {
     TheLocaleStore.toPublicCode.mockReset();
     TheLocaleStore.toInternalCode.mockReset();

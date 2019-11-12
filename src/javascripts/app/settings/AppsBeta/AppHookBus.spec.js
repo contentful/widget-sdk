@@ -1,4 +1,4 @@
-import { makeAppHookBus } from './AppHookBus.es6';
+import { makeAppHookBus } from './AppHookBus';
 
 describe('AppHookBus', () => {
   const extension = {

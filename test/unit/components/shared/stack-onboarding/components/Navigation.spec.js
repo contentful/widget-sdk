@@ -12,18 +12,18 @@ describe('Navigation', () => {
   beforeEach(async function() {
     goStub = sinon.spy();
 
-    this.system.set('components/shared/auto_create_new_space/CreateModernOnboarding.es6', {
+    this.system.set('components/shared/auto_create_new_space/CreateModernOnboarding', {
       track: () => {},
       getStoragePrefix: sinon.stub().returns('prefix'),
       isOnboardingComplete: sinon.stub().returns(false)
     });
 
-    this.system.set('services/TokenStore.es6', {
+    this.system.set('services/TokenStore', {
       user$: K.createMockProperty({ sys: { id: 1 } })
     });
 
     Navigation = (await this.system.import(
-      'components/shared/stack-onboarding/components/Navigation.es6'
+      'components/shared/stack-onboarding/components/Navigation'
     )).default;
 
     await $initialize(this.system, $provide => {

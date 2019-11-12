@@ -1,11 +1,11 @@
 import _ from 'lodash';
-import * as actionCreators from './actionCreators.es6';
-import * as actions from './actions.es6';
-import createMockStore from 'redux/utils/createMockStore.es6';
-import { mockEndpoint } from 'data/EndpointFactory.es6';
+import * as actionCreators from './actionCreators';
+import * as actions from './actions';
+import createMockStore from 'redux/utils/createMockStore';
+import { mockEndpoint } from 'data/EndpointFactory';
 import { Notification } from '@contentful/forma-36-react-components';
 import { track } from 'analytics/Analytics';
-import * as ssoUtils from 'app/OrganizationSettings/SSO/utils.es6';
+import * as ssoUtils from 'app/OrganizationSettings/SSO/utils';
 
 describe('SSO Redux actionCreators', () => {
   let mockStore;

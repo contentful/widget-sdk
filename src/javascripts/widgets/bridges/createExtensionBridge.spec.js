@@ -1,8 +1,8 @@
-import createExtensionBridge from './createExtensionBridge.es6';
-import { createBus } from 'utils/kefir.es6';
-import { LOCATION_ENTRY_FIELD } from '../WidgetLocations.es6';
-import * as entityCreator from 'components/app_container/entityCreator.es6';
-import * as entitySelector from 'search/EntitySelector/entitySelector.es6';
+import createExtensionBridge from './createExtensionBridge';
+import { createBus } from 'utils/kefir';
+import { LOCATION_ENTRY_FIELD } from '../WidgetLocations';
+import * as entityCreator from 'components/app_container/entityCreator';
+import * as entitySelector from 'search/EntitySelector/entitySelector';
 
 function createMockProperty(initial) {
   const bus = createBus();
@@ -12,14 +12,14 @@ function createMockProperty(initial) {
   return property;
 }
 
-jest.mock('Authentication.es6', () => ({ getToken: () => '<TOKEN>' }));
+jest.mock('Authentication', () => ({ getToken: () => '<TOKEN>' }));
 
-jest.mock('services/localeStore.es6', () => ({
+jest.mock('services/localeStore', () => ({
   getPrivateLocales: () => [{ code: 'pl', name: 'Polski' }, { code: 'en', name: 'English' }],
   getDefaultLocale: () => ({ code: 'pl', name: 'Polski', default: true })
 }));
 
-jest.mock('../ExtensionDialogs.es6', () => ({
+jest.mock('../ExtensionDialogs', () => ({
   openAlert: jest.fn(() => Promise.resolve('ALERT RESULT')),
   openConfirm: jest.fn(() => Promise.resolve('CONFIRM RESULT')),
   openPrompt: jest.fn(() => Promise.resolve('PROMPT RESULT'))
@@ -29,19 +29,19 @@ jest.mock('@contentful/forma-36-react-components', () => ({
   Notification: { success: jest.fn() }
 }));
 
-jest.mock('TheStore/index.es6', () => ({
+jest.mock('TheStore/index', () => ({
   getStore: jest.fn()
 }));
 
-jest.mock('widgets/WidgetStore.es6', () => ({
+jest.mock('widgets/WidgetStore', () => ({
   getForSingleExtension: jest.fn()
 }));
 
-jest.mock('components/app_container/entityCreator.es6', () => ({
+jest.mock('components/app_container/entityCreator', () => ({
   newEntry: jest.fn(() => ({ sys: { type: 'Entry', id: 'some-entry-id' } }))
 }));
 
-jest.mock('search/EntitySelector/entitySelector.es6', () => ({
+jest.mock('search/EntitySelector/entitySelector', () => ({
   openFromExtension: jest.fn(() => Promise.resolve('DIALOG RESULT'))
 }));
 
@@ -272,7 +272,7 @@ describe('createExtensionBridge', () => {
         ['prompt', 'openPrompt']
       ].map(async ([type, openMethod]) => {
         const result = await openDialog(type, { opts: true });
-        const dialogs = jest.requireMock('../ExtensionDialogs.es6');
+        const dialogs = jest.requireMock('../ExtensionDialogs');
         expect(dialogs[openMethod]).toBeCalledTimes(1);
         expect(dialogs[openMethod]).toBeCalledWith({ opts: true });
         expect(result).toBe(`${type.toUpperCase()} RESULT`);

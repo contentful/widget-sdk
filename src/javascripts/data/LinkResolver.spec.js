@@ -1,4 +1,4 @@
-import ResolveLinks from './LinkResolver.es6';
+import ResolveLinks from './LinkResolver';
 
 describe('LinkResolver', () => {
   it('returns an unchanged array if no link paths are given', () => {

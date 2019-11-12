@@ -1,6 +1,6 @@
-import * as Dialogs from './ExtensionDialogs.es6';
+import * as Dialogs from './ExtensionDialogs';
 
-jest.mock('app/common/ModalLauncher.es6', () => ({ open: jest.fn() }));
+jest.mock('app/common/ModalLauncher', () => ({ open: jest.fn() }));
 
 describe('ExtensionDialogs', () => {
   describe('options validation', () => {
@@ -58,7 +58,7 @@ describe('ExtensionDialogs', () => {
     beforeEach(() => jest.clearAllMocks());
 
     it('alert always resolves to true', async () => {
-      const { open } = jest.requireMock('app/common/ModalLauncher.es6');
+      const { open } = jest.requireMock('app/common/ModalLauncher');
       open.mockResolvedValue('blah blah blah');
 
       const result = await Dialogs.openAlert({ title: 'test', message: 'hello' });
@@ -67,7 +67,7 @@ describe('ExtensionDialogs', () => {
     });
 
     it('confirm and prompt resolve to the modal close value', async () => {
-      const { open } = jest.requireMock('app/common/ModalLauncher.es6');
+      const { open } = jest.requireMock('app/common/ModalLauncher');
 
       open.mockResolvedValue('CONFIRM OPEN RETURN VALUE');
       const confirmResult = await Dialogs.openConfirm({ title: 'test', message: 'hello' });

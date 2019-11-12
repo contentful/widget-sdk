@@ -24,7 +24,7 @@ mixin single-list-item
     p(ng-if="labels.input") {{ labels.input }}
     should
     p.entity-selector__mode-switcher(ng-if="config.withCreate")
-      <react-component name="search/EntitySelector/CreateEntity/index.es6" props="createEntityProps"></react-component>
+      <react-component name="search/EntitySelector/CreateEntity/index" props="createEntityProps"></react-component>
     p.entity-selector__mode-switcher(ng-if="config.multiple")
       a(href ng-click="view.mode = SELECTED" ng-if="view.mode === AVAILABLE")
         | Show {{ labels.selected }} ({{ selected.length }})
@@ -49,7 +49,7 @@ mixin single-list-item
     .entity-selector__item-list-placeholder(ng-if="!isLoading && items.length < 1")
       | {{ labels.empty }} found.
       span(ng-if="!isLoading && items.length < 1 && config.withCreate")
-        <react-component name="search/EntitySelector/CreateEntity/index.es6" props="createEntityInlineProps"/>
+        <react-component name="search/EntitySelector/CreateEntity/index" props="createEntityInlineProps"/>
       span(ng-if="!supportsAdvancedSearch && view.searchText.length > 0")
         |  for <strong>{{ view.searchText }}</strong>
 

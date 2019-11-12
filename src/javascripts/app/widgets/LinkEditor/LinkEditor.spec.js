@@ -3,13 +3,13 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import { newLink } from './__test__/helpers.js';
 
-import LinkEditor from './LinkEditor.es6';
-import LinkingActions from './LinkingActions.es6';
-import SortableLinkList from './SortableLinkList.es6';
+import LinkEditor from './LinkEditor';
+import LinkingActions from './LinkingActions';
+import SortableLinkList from './SortableLinkList';
 
 const link = newLink();
 
-jest.mock('../shared/FetchedEntityCard/index.es6', () => 'FetchedEntityCard', { virtual: true });
+jest.mock('../shared/FetchedEntityCard/index', () => 'FetchedEntityCard', { virtual: true });
 
 describe('LinkEditor', () => {
   function mount(customProps) {

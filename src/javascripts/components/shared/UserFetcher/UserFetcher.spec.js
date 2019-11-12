@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import UserFetcher from './index.es6';
+import UserFetcher from './index';
 
 import * as spaceContextMock from 'ng/spaceContext';
 

@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import * as CallBuffer from 'utils/CallBuffer.es6';
-import * as Config from 'Config.es6';
-import * as LazyLoader from 'utils/LazyLoader.es6';
+import * as CallBuffer from 'utils/CallBuffer';
+import * as Config from 'Config';
+import * as LazyLoader from 'utils/LazyLoader';
 
 // Bugsnag wrapper.
 // See https://bugsnag.com/docs/notifiers/js for more details

@@ -1,9 +1,9 @@
 import _ from 'lodash';
-import * as entitySelector from './entitySelector.es6';
+import * as entitySelector from './entitySelector';
 import * as modalDialogMocked from 'ng/modalDialog';
 import * as spaceContextMocked from 'ng/spaceContext';
 
-jest.mock('services/localeStore.es6', () => ({
+jest.mock('services/localeStore', () => ({
   getDefaultLocale: () => ({ code: 'de-DE' })
 }));
 

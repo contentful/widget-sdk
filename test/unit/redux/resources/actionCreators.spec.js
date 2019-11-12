@@ -17,7 +17,7 @@ describe('App Resources action creators', function() {
       return expect(this.stubs.dispatch.args[order]).toEqual([object]);
     };
 
-    this.system.set('services/ResourceService.es6', {
+    this.system.set('services/ResourceService', {
       default: () => {
         return {
           getAll: this.stubs.ResourceService_getAll
@@ -26,8 +26,8 @@ describe('App Resources action creators', function() {
     });
 
     this.spaceId = 'space_1234';
-    this.actionCreators = await this.system.import('redux/actions/resources/actionCreators.es6');
-    this.actions = await this.system.import('redux/actions/resources/actions.es6');
+    this.actionCreators = await this.system.import('redux/actions/resources/actionCreators');
+    this.actions = await this.system.import('redux/actions/resources/actions');
 
     await $initialize(this.system);
   });

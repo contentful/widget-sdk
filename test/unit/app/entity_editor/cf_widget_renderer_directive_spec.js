@@ -4,7 +4,7 @@ import { $initialize, $compile, $apply } from 'test/utils/ng';
 
 describe('cfWidgetRenderer Directive', () => {
   beforeEach(async function() {
-    this.system.set('app/entity_editor/LoadEventTracker.es6', {
+    this.system.set('app/entity_editor/LoadEventTracker', {
       createLinksRenderedEvent: () => () => {},
       createWidgetLinkRenderEventsHandler: () => () => {}
     });

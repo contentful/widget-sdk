@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import VersionsWidget, { noSnapshotsText, compareHelpText } from './VersionsWidget.es6';
+import VersionsWidget, { noSnapshotsText, compareHelpText } from './VersionsWidget';
 import $state from 'ng/$state';
 
 describe('EntrySidebar/VersionsWidget', () => {

@@ -2,14 +2,14 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import { Editor } from 'slate';
 
-import Toolbar from '../index.es6';
+import Toolbar from '../index';
 import ValidationType, {
   VALIDATABLE_NODE_TYPES
-} from 'components/field_dialog/RichTextValidationType.es6';
+} from 'components/field_dialog/RichTextValidationType';
 import { BLOCKS, INLINES } from '@contentful/rich-text-types';
 
-jest.mock('ng/data/CMA/EntityState.es6', () => ({}), { virtual: true });
-jest.mock('directives/thumbnailHelpers.es6', () => ({}), { virtual: true });
+jest.mock('ng/data/CMA/EntityState', () => ({}), { virtual: true });
+jest.mock('directives/thumbnailHelpers', () => ({}), { virtual: true });
 
 const fakeProps = () => ({
   isDisabled: false,

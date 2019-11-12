@@ -7,18 +7,18 @@ import createOtDocMock from 'test/helpers/mocks/ot_doc';
 
 const OtDocMock = createOtDocMock();
 
-describe('data/document/ResourceStateManager.es6', () => {
+describe('data/document/ResourceStateManager', () => {
   beforeEach(async function() {
     this.system.set('access_control/AccessChecker', {
       canUpdateEntity: sinon.stub().returns(true)
     });
 
-    const { Action, State } = await this.system.import('data/document/ResourceStateManager.es6');
+    const { Action, State } = await this.system.import('data/document/ResourceStateManager');
     this.Action = Action;
     this.State = State;
 
-    const { DocLoad } = await this.system.import('data/sharejs/Connection.es6');
-    const Doc = await this.system.import('app/entity_editor/Document.es6');
+    const { DocLoad } = await this.system.import('data/sharejs/Connection');
+    const Doc = await this.system.import('app/entity_editor/Document');
 
     await $initialize(this.system);
 

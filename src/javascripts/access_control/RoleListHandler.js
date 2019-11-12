@@ -1,8 +1,8 @@
 import _, { filter } from 'lodash';
 
-import createSpaceMembersRepo from 'data/CMA/SpaceMembersRepo.es6';
+import createSpaceMembersRepo from 'data/CMA/SpaceMembersRepo';
 import { getInstance as getRoleRepoInstance } from 'access_control/RoleRepository';
-import { getModule } from 'NgRegistry.es6';
+import { getModule } from 'NgRegistry';
 
 import { ADMIN_ROLE_ID } from './constants';
 

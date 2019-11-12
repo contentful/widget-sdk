@@ -1,7 +1,7 @@
 import { BLOCKS } from '@contentful/rich-text-types';
-import * as RichTextFieldSetter from './RichTextFieldSetter.es6';
-import emptyDoc from './constants/EmptyDoc.es6';
-import { document, block, mark, text } from './helpers/nodeFactory.es6';
+import * as RichTextFieldSetter from './RichTextFieldSetter';
+import emptyDoc from './constants/EmptyDoc';
+import { document, block, mark, text } from './helpers/nodeFactory';
 
 const mocks = {
   ShareJS: {
@@ -11,7 +11,7 @@ const mocks = {
 };
 
 jest.mock(
-  'data/sharejs/utils.es6',
+  'data/sharejs/utils',
   () => ({
     setDeep: (...args) => mocks.ShareJS.setDeep(...args),
     peek: (...args) => mocks.ShareJS.peek(...args)

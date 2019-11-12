@@ -1,4 +1,4 @@
-import ExtensionIFrameChannel from './ExtensionIFrameChannel.es6';
+import ExtensionIFrameChannel from './ExtensionIFrameChannel';
 
 describe('ExtensionIFrameChannel', () => {
   const makeChannel = () => {

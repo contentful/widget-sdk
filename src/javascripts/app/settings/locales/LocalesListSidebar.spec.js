@@ -1,7 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import { render, cleanup, fireEvent } from '@testing-library/react';
-import LocalesListSidebar from './LocalesListSidebar.es6';
+import LocalesListSidebar from './LocalesListSidebar';
 import * as $stateMocked from 'ng/$state';
 
 describe('settings/locales/LocalesListSidebar', () => {

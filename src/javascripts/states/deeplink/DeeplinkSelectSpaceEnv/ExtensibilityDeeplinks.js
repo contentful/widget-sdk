@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
 import { Icon, Paragraph } from '@contentful/forma-36-react-components';
-import AppIcon from 'app/settings/apps/_common/AppIcon.es6';
+import AppIcon from 'app/settings/apps/_common/AppIcon';
 import { css } from 'emotion';
-import WebhookTemplates from 'app/settings/webhooks/templates/index.es6';
+import WebhookTemplates from 'app/settings/webhooks/templates/index';
 
 const styles = {
   installHeader: css({

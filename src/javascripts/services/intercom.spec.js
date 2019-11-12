@@ -1,6 +1,6 @@
-import * as Intercom from './intercom.es6';
+import * as Intercom from './intercom';
 
-jest.mock('utils/LazyLoader.es6', () => ({ getFromGlobal: jest.fn() }));
+jest.mock('utils/LazyLoader', () => ({ getFromGlobal: jest.fn() }));
 
 describe('intercom', () => {
   it('is enabled by default', () => {
@@ -8,7 +8,7 @@ describe('intercom', () => {
   });
 
   it('should open an Intercom dialog if enabled', async () => {
-    const loader = jest.requireMock('utils/LazyLoader.es6');
+    const loader = jest.requireMock('utils/LazyLoader');
     const IntercomMock = jest.fn();
     loader.getFromGlobal.mockImplementationOnce(() => Promise.resolve(IntercomMock));
 
@@ -26,7 +26,7 @@ describe('intercom', () => {
   });
 
   it('should not open the dialog if disabled', async () => {
-    const loader = jest.requireMock('utils/LazyLoader.es6');
+    const loader = jest.requireMock('utils/LazyLoader');
     const IntercomMock = jest.fn();
     loader.getFromGlobal.mockReset().mockImplementationOnce(() => Promise.resolve(IntercomMock));
 

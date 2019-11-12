@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, cleanup } from '@testing-library/react';
-import EnvironmentDetails from './EnvironmentDetails.es6';
+import EnvironmentDetails from './EnvironmentDetails';
 import '@testing-library/jest-dom/extend-expect';
 
 const getComponent = (props = {}) => {

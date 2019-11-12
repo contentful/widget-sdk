@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, wait, cleanup } from '@testing-library/react';
 
-import { AppDetails } from './AppDetailsModal.es6';
+import { AppDetails } from './AppDetailsModal';
 
 jest.mock(
-  'services/TokenStore.es6',
+  'services/TokenStore',
   () => ({
     getDomains: () => ({
       images: ''

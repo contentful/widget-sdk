@@ -1,4 +1,4 @@
-import { isValidResourceId } from './utils.es6';
+import { isValidResourceId } from './utils';
 
 describe('isValidResourceId(id)', function() {
   test.each(['a', 'A', '_', '-', '.', '._-', 'x'.repeat(64), 'A_z-019.'.repeat(8)])(

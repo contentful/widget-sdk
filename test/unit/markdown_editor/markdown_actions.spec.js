@@ -7,7 +7,7 @@ describe('markdown actions', function() {
 
     this.system.set('analytics/Analytics', this.analytics);
 
-    this.markdownActions = await this.system.import('markdown_editor/markdown_actions.es6');
+    this.markdownActions = await this.system.import('markdown_editor/markdown_actions');
 
     await $initialize(this.system);
 

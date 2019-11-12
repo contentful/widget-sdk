@@ -11,9 +11,9 @@ describe('DeleteSpace', () => {
     this.TokenStore = { refresh: sinon.stub() };
     this.ReloadNotification = { basicErrorHandler: sinon.stub() };
 
-    this.system.set('data/EndpointFactory.es6', { createSpaceEndpoint: this.createEndpoint });
-    this.system.set('services/TokenStore.es6', this.TokenStore);
-    this.system.set('app/common/ReloadNotification.es6', {
+    this.system.set('data/EndpointFactory', { createSpaceEndpoint: this.createEndpoint });
+    this.system.set('services/TokenStore', this.TokenStore);
+    this.system.set('app/common/ReloadNotification', {
       default: this.ReloadNotification
     });
 
@@ -21,7 +21,7 @@ describe('DeleteSpace', () => {
     this.ComponentLibrary.Notification.success = sinon.stub();
 
     this.openDeleteSpaceDialog = (await this.system.import(
-      'services/DeleteSpace.es6'
+      'services/DeleteSpace'
     )).openDeleteSpaceDialog;
 
     await $initialize(this.system);

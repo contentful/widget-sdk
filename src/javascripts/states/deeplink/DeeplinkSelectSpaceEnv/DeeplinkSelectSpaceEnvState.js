@@ -1,6 +1,6 @@
 import { useCallback, useReducer } from 'react';
-import { createImmerReducer } from 'redux/utils/createImmerReducer.es6';
-import { getSpaceInfo, getAllEnviroments } from '../utils.es6';
+import { createImmerReducer } from 'redux/utils/createImmerReducer';
+import { getSpaceInfo, getAllEnviroments } from '../utils';
 
 const actionTypes = {
   initialize: 'initialize',

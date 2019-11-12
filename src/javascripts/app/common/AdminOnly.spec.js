@@ -1,7 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import { render, cleanup } from '@testing-library/react';
-import AdminOnly from './AdminOnly.es6';
+import AdminOnly from './AdminOnly';
 
 import * as spaceContextMocked from 'ng/spaceContext';
 import * as $stateMocked from 'ng/$state';

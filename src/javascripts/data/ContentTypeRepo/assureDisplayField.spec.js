@@ -1,4 +1,4 @@
-import assureDisplayField from './assureDisplayField.es6';
+import assureDisplayField from './assureDisplayField';
 
 describe('assureDisplayField', () => {
   it('does not change valid display field', () => {

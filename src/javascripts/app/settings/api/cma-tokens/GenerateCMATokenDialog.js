@@ -2,7 +2,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import ModalLauncher from 'app/common/ModalLauncher.es6';
+import ModalLauncher from 'app/common/ModalLauncher';
 import { track } from 'analytics/Analytics';
 import { Modal, TextField, Button, Note, TextInput } from '@contentful/forma-36-react-components';
 

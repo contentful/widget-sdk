@@ -10,7 +10,7 @@ describe('activationEmailResender', () => {
       logError: sinon.stub()
     };
 
-    this.system.set('services/logger.es6', {
+    this.system.set('services/logger', {
       logError: this.stubs.logError
     });
 

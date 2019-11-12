@@ -12,7 +12,7 @@ xdescribe('CodeMirror wrapper', () => {
   }
 
   beforeEach(async function() {
-    const Wrapper = await this.system.import('markdown_editor/codemirror_wrapper.es6');
+    const Wrapper = await this.system.import('markdown_editor/codemirror_wrapper');
 
     textarea = document.createElement('textarea');
     document.body.appendChild(textarea);

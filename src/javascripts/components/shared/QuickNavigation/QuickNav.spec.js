@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, cleanup, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import QuickNav from './QuickNav.es6';
-import ModalLauncher from 'app/common/ModalLauncher.es6';
+import QuickNav from './QuickNav';
+import ModalLauncher from 'app/common/ModalLauncher';
 
 let wrapper;
 
@@ -15,7 +15,7 @@ afterEach(() => {
   cleanup();
 });
 
-describe('shared/QuickNav.es6', () => {
+describe('shared/QuickNav', () => {
   it('renders the CTA', () => {
     expect(wrapper.getByTestId('quick-nav-search-button')).toBeVisible();
   });

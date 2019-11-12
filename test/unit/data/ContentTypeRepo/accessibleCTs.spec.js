@@ -1,4 +1,4 @@
-describe('data/ContentTypeRepo/accessibleCTs.es6', () => {
+describe('data/ContentTypeRepo/accessibleCTs', () => {
   let accessibleCTs;
   const accessibleCTsIds = [1, 2, 3];
 
@@ -10,7 +10,7 @@ describe('data/ContentTypeRepo/accessibleCTs.es6', () => {
       }
     });
 
-    accessibleCTs = await this.system.import('data/ContentTypeRepo/accessibleCTs.es6');
+    accessibleCTs = await this.system.import('data/ContentTypeRepo/accessibleCTs');
     accessibleCTs = accessibleCTs.default;
   });
 

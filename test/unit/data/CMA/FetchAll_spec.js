@@ -12,9 +12,9 @@ describe('FetchAll', () => {
       default: _.identity
     });
 
-    this.fetchAll = (await this.system.import('data/CMA/FetchAll.es6')).fetchAll;
+    this.fetchAll = (await this.system.import('data/CMA/FetchAll')).fetchAll;
     this.fetchAllWithIncludes = (await this.system.import(
-      'data/CMA/FetchAll.es6'
+      'data/CMA/FetchAll'
     )).fetchAllWithIncludes;
 
     await $initialize(this.system);

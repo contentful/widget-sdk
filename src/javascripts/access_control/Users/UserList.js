@@ -4,14 +4,14 @@ import _, { groupBy, first, map, filter, get } from 'lodash';
 
 import { create as createMembershipRepo } from 'access_control/SpaceMembershipRepository';
 import { canModifyUsers } from 'access_control/AccessChecker';
-import createSpaceMembersRepo from 'data/CMA/SpaceMembersRepo.es6';
+import createSpaceMembersRepo from 'data/CMA/SpaceMembersRepo';
 import RoleRepository from 'access_control/RoleRepository';
 import { getAllUsers } from 'access_control/OrganizationMembershipRepository';
-import resolveLinks from 'data/LinkResolver.es6';
-import useAsync from 'app/common/hooks/useAsync.es6';
-import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
-import { getModule } from 'NgRegistry.es6';
-import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
+import resolveLinks from 'data/LinkResolver';
+import useAsync from 'app/common/hooks/useAsync';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { getModule } from 'NgRegistry';
+import { getOrgFeature } from 'data/CMA/ProductCatalog';
 
 import * as UserListActions from './UserListActions';
 import UserListPresentation from './UserListPresentation';

@@ -10,12 +10,12 @@ import {
   Notification,
   ModalConfirm
 } from '@contentful/forma-36-react-components';
-import { authUrl } from 'Config.es6';
-import $window from 'utils/ngCompat/window.es6';
-import { joinWithAnd } from 'utils/StringUtils.es6';
-import * as ModalLauncher from 'app/common/ModalLauncher.es6';
-import { useAsyncFn } from 'app/common/hooks/useAsync.es6';
-import { websiteUrl } from 'Config.es6';
+import { authUrl } from 'Config';
+import $window from 'utils/ngCompat/window';
+import { joinWithAnd } from 'utils/StringUtils';
+import * as ModalLauncher from 'app/common/ModalLauncher';
+import { useAsyncFn } from 'app/common/hooks/useAsync';
+import { websiteUrl } from 'Config';
 import { getUserTotp, deleteUserTotp } from './AccountRepository';
 import ChangePasswordModal from './ChangePasswordModal';
 import Enable2FAModal from './Enable2FAModal';

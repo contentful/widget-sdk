@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 describe('ViewSerializer', () => {
   beforeEach(async function() {
-    const ViewSerializer = await this.system.import('data/ViewSerializer.es6');
+    const ViewSerializer = await this.system.import('data/ViewSerializer');
     this.serialize = ViewSerializer.serialize;
     this.unserialize = ViewSerializer.unserialize;
   });

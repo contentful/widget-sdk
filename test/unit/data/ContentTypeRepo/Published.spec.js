@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { $initialize, $inject, $apply } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
 
-describe('data/ContentTypeRepo/Published.es6', () => {
+describe('data/ContentTypeRepo/Published', () => {
   let $q;
 
   afterEach(() => {
@@ -12,7 +12,7 @@ describe('data/ContentTypeRepo/Published.es6', () => {
   });
 
   beforeEach(async function() {
-    const CTRepo = await this.system.import('data/ContentTypeRepo/Published.es6');
+    const CTRepo = await this.system.import('data/ContentTypeRepo/Published');
 
     await $initialize(this.system);
 

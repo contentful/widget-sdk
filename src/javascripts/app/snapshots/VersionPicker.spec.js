@@ -1,4 +1,4 @@
-import * as versionPicker from './VersionPicker.es6';
+import * as versionPicker from './VersionPicker';
 
 describe('snapshots/VersionPicker', () => {
   let picker;

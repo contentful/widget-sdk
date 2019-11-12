@@ -1,16 +1,16 @@
 import React from 'react';
 import { render, cleanup, waitForElement, wait } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import EnvironmentsRoute from './EnvironmentsRoute.es6';
+import EnvironmentsRoute from './EnvironmentsRoute';
 import * as accessChecker from 'access_control/AccessChecker';
-import * as LD from 'utils/LaunchDarkly/index.es6';
-import { getSpaceFeature } from 'data/CMA/ProductCatalog.es6';
-import { openDeleteEnvironmentDialog } from '../DeleteDialog.es6';
-import createResourceService from 'services/ResourceService.es6';
-import { canCreate } from 'utils/ResourceUtils.es6';
-import { createPaginationEndpoint } from '__mocks__/data/EndpointFactory.es6';
+import * as LD from 'utils/LaunchDarkly/index';
+import { getSpaceFeature } from 'data/CMA/ProductCatalog';
+import { openDeleteEnvironmentDialog } from '../DeleteDialog';
+import createResourceService from 'services/ResourceService';
+import { canCreate } from 'utils/ResourceUtils';
+import { createPaginationEndpoint } from '__mocks__/data/EndpointFactory';
 
-jest.mock('services/ResourceService.es6', () => ({
+jest.mock('services/ResourceService', () => ({
   __esModule: true, // this property makes it work
   default: jest.fn().mockReturnValue({
     get: jest.fn().mockResolvedValue({ usage: 0, limits: { maximum: 3 } })
@@ -21,24 +21,24 @@ jest.mock('access_control/AccessChecker', () => ({
   can: jest.fn().mockReturnValue(true)
 }));
 
-jest.mock('utils/LaunchDarkly/index.es6', () => ({
+jest.mock('utils/LaunchDarkly/index', () => ({
   getCurrentVariation: jest.fn().mockResolvedValue(true) // environmentsEnabled
 }));
 
-jest.mock('data/CMA/ProductCatalog.es6', () => ({
+jest.mock('data/CMA/ProductCatalog', () => ({
   getOrgFeature: jest.fn().mockResolvedValue(true), // canSelectSource
   getSpaceFeature: jest.fn().mockResolvedValue(true) // aliasesEnabled
 }));
 
-jest.mock('utils/ResourceUtils.es6', () => ({
+jest.mock('utils/ResourceUtils', () => ({
   canCreate: jest.fn().mockReturnValue(true)
 }));
 
-jest.mock('services/ChangeSpaceService.es6', () => ({
+jest.mock('services/ChangeSpaceService', () => ({
   showUpgradeSpaceDialog: jest.fn()
 }));
 
-jest.mock('../DeleteDialog.es6', () => ({
+jest.mock('../DeleteDialog', () => ({
   openDeleteEnvironmentDialog: jest.fn()
 }));
 

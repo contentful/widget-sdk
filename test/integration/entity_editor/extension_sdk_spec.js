@@ -3,7 +3,7 @@ import * as K from 'test/utils/kefir';
 import createLocaleStoreMock from 'test/utils/createLocaleStoreMock';
 import _ from 'lodash';
 import $ from 'jquery';
-import APIClient from 'data/APIClient.es6';
+import APIClient from 'data/APIClient';
 import { $initialize, $inject, $compile, $apply } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
 
@@ -16,11 +16,11 @@ describe('Extension SDK', () => {
   beforeEach(async function() {
     this.openStub = sinon.stub().resolves(null);
 
-    this.system.set('services/localeStore.es6', {
+    this.system.set('services/localeStore', {
       default: createLocaleStoreMock()
     });
 
-    this.system.set('search/EntitySelector/entitySelector.es6', {
+    this.system.set('search/EntitySelector/entitySelector', {
       openFromExtension: this.openStub
     });
 

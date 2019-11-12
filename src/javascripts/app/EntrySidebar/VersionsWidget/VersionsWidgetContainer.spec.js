@@ -1,12 +1,12 @@
 import React from 'react';
 import mitt from 'mitt';
 import Enzyme from 'enzyme';
-import { deepFreeze } from 'utils/Freeze.es6';
+import { deepFreeze } from 'utils/Freeze';
 import { cloneDeep } from 'lodash';
-import VersionsWidgetContainer, { PREVIEW_COUNT } from './VersionsWidgetContainer.es6';
-import VersionsWidget from './VersionsWidget.es6';
+import VersionsWidgetContainer, { PREVIEW_COUNT } from './VersionsWidgetContainer';
+import VersionsWidget from './VersionsWidget';
 import spaceContextMocked from 'ng/spaceContext';
-import SidebarEventTypes from '../SidebarEventTypes.es6';
+import SidebarEventTypes from '../SidebarEventTypes';
 
 jest.mock('ng/spaceContext', () => ({
   cma: {

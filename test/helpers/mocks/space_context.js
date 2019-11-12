@@ -1,8 +1,8 @@
 import sinon from 'sinon';
 import { stubAll } from 'test/utils/sinon';
 import createMockEndpoint from 'test/utils/createSpaceEndpointMock';
-import APIClient from 'data/APIClient.es6';
-import * as CTRepo from 'data/ContentTypeRepo/Published.es6';
+import APIClient from 'data/APIClient';
+import * as CTRepo from 'data/ContentTypeRepo/Published';
 
 /**
  * @ngdoc service

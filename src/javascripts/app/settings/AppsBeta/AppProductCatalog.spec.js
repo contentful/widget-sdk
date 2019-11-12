@@ -1,4 +1,4 @@
-import { AppProductCatalog, getProductCatalogFlagForApp } from './AppProductCatalog.es6';
+import { AppProductCatalog, getProductCatalogFlagForApp } from './AppProductCatalog';
 
 describe('AppProductCatalog', () => {
   const spaceId = '1234567';

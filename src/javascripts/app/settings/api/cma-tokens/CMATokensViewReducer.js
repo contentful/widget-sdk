@@ -1,9 +1,9 @@
 import { useReducer, useEffect } from 'react';
-import { createImmerReducer } from 'redux/utils/createImmerReducer.es6';
+import { createImmerReducer } from 'redux/utils/createImmerReducer';
 import { openGenerateTokenDialog } from './GenerateCMATokenDialog';
 import { Notification } from '@contentful/forma-36-react-components';
 import { track } from 'analytics/Analytics';
-import { truncate } from 'utils/StringUtils.es6';
+import { truncate } from 'utils/StringUtils';
 
 const PER_PAGE = 10;
 

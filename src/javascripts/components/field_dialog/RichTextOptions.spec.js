@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 
-import RichTextOptions from './RichTextOptions.es6';
+import RichTextOptions from './RichTextOptions';
 
 describe('RichTextOptions', () => {
   let wrapper;

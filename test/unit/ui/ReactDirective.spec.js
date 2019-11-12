@@ -10,7 +10,7 @@ describe('ReactDirective', () => {
       default: null
     };
 
-    this.system.set('ui/Components/Icon.es6', this.component);
+    this.system.set('ui/Components/Icon', this.component);
 
     await $initialize(this.system);
 
@@ -30,7 +30,7 @@ describe('ReactDirective', () => {
   it('renders react component inside angular template', function() {
     const template = `
       <div>
-        <react-component name="ui/Components/Icon.es6"></react-component>
+        <react-component name="ui/Components/Icon"></react-component>
       </div>
     `;
     const component = class X extends React.Component {
@@ -58,7 +58,7 @@ describe('ReactDirective', () => {
   it('should pass props to react component', function() {
     const template = `
       <div>
-        <react-component name="ui/Components/Icon.es6" props="props"></react-component>
+        <react-component name="ui/Components/Icon" props="props"></react-component>
       </div>
     `;
     const component = class X extends React.Component {
@@ -82,7 +82,7 @@ describe('ReactDirective', () => {
   it('should update react component if props changed', function() {
     const template = `
       <div>
-        <react-component name="ui/Components/Icon.es6" props="props"></react-component>
+        <react-component name="ui/Components/Icon" props="props"></react-component>
       </div>
     `;
     const component = class X extends React.Component {
@@ -109,7 +109,7 @@ describe('ReactDirective', () => {
   it('should be able to pass functions as props to react component', function() {
     const template = `
       <div>
-        <react-component name="ui/Components/Icon.es6" props="props"></react-component>
+        <react-component name="ui/Components/Icon" props="props"></react-component>
       </div>
     `;
     const component = class X extends React.Component {
@@ -133,7 +133,7 @@ describe('ReactDirective', () => {
   it('should update react component if props property replaced using reference watch', function() {
     const template = `
     <div>
-      <react-component name="ui/Components/Icon.es6" props="props" watch-depth="reference"></react-component>
+      <react-component name="ui/Components/Icon" props="props" watch-depth="reference"></react-component>
     </div>
     `;
     const component = class X extends React.Component {
@@ -160,7 +160,7 @@ describe('ReactDirective', () => {
   it('should NOT update react component if props property updated using reference watch', function() {
     const template = `
     <div>
-      <react-component name="ui/Components/Icon.es6" props="props" watch-depth="reference"></react-component>
+      <react-component name="ui/Components/Icon" props="props" watch-depth="reference"></react-component>
     </div>
     `;
     const component = class X extends React.Component {

@@ -1,7 +1,7 @@
 .snapshot-comparator__presenter(
   ng-class="{ 'x--dir-rtl': methods.shouldDisplayRtl(locale.code) }")
   div(ng-if="hasValue && extensionProps")
-    <react-component name="widgets/ExtensionIFrameRenderer.es6" props="extensionProps" />
+    <react-component name="widgets/ExtensionIFrameRenderer" props="extensionProps" />
 
   div(
     ng-if="hasValue && !extensionProps"
@@ -20,7 +20,7 @@
       cf-snapshot-presenter-markdown
 
     div.x--directed(ng-switch-when="RichText")
-      <react-component name="app/widgets/rich_text/ReadOnlyRichTextEditor.es6" props="{value, entry: entity}"" />
+      <react-component name="app/widgets/rich_text/ReadOnlyRichTextEditor" props="{value, entry: entity}"" />
 
     div(ng-switch-when="Boolean")
       span(ng-if="value === true") {{ widget.settings.trueLabel || 'Yes' }}

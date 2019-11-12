@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Note, Paragraph } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
-import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
+import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 
 import tokens from '@contentful/forma-36-tokens';
 

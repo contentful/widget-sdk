@@ -26,7 +26,7 @@ describe('Legacy Feature Service', () => {
     this.stubs = {};
     this.spies = {};
 
-    this.system.set('utils/ResourceUtils.es6', {
+    this.system.set('utils/ResourceUtils', {
       isLegacyOrganization: () => {
         return this.mocks.legacyOrganization;
       }
@@ -59,18 +59,18 @@ describe('Legacy Feature Service', () => {
     this.spies.createSpaceEndpoint = sinon.spy(createSpaceEndpoint);
     this.stubs.createOrganizationEndpoint = sinon.stub();
 
-    this.system.set('data/EndpointFactory.es6', {
+    this.system.set('data/EndpointFactory', {
       createSpaceEndpoint: this.spies.createSpaceEndpoint,
       createOrganizationEndpoint: this.stubs.createOrganizationEndpoint
     });
 
-    this.system.set('services/TokenStore.es6', {
+    this.system.set('services/TokenStore', {
       getSpace: sinon.stub().resolves(this.mocks.space),
       getOrganization: sinon.stub().resolves(this.mocks.organization)
     });
 
     this.createLegacyFeatureService = (await this.system.import(
-      'services/LegacyFeatureService.es6'
+      'services/LegacyFeatureService'
     )).default;
   });
 

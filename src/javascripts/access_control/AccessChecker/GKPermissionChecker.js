@@ -1,8 +1,8 @@
-import * as OrganizationRoles from 'services/OrganizationRoles.es6';
-import * as TokenStore from 'services/TokenStore.es6';
-import * as K from 'utils/kefir.es6';
+import * as OrganizationRoles from 'services/OrganizationRoles';
+import * as TokenStore from 'services/TokenStore';
+import * as K from 'utils/kefir';
 import { get } from 'lodash';
-import createLegacyFeatureService from 'services/LegacyFeatureService.es6';
+import createLegacyFeatureService from 'services/LegacyFeatureService';
 
 export function create({ space, organization }) {
   const userQuota = {

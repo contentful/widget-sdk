@@ -1,4 +1,4 @@
-import { registerController } from 'NgRegistry.es6';
+import { registerController } from 'NgRegistry';
 import _ from 'lodash';
 import { track } from 'analytics/Analytics';
 

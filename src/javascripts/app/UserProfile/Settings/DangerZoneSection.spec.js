@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, cleanup, fireEvent, wait } from '@testing-library/react';
-import * as ModalLauncher from 'app/common/ModalLauncher.es6';
-import { cancelUser } from 'Authentication.es6';
+import * as ModalLauncher from 'app/common/ModalLauncher';
+import { cancelUser } from 'Authentication';
 import DangerZoneSection from './DangerZoneSection';
 
 import '@testing-library/jest-dom/extend-expect';

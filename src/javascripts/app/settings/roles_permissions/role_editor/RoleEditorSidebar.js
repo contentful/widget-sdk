@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Paragraph, Typography } from '@contentful/forma-36-react-components';
-import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
-import ContactUsButton from 'ui/Components/ContactUsButton.es6';
+import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
+import ContactUsButton from 'ui/Components/ContactUsButton';
 import WorkbenchSidebarItem from 'app/common/WorkbenchSidebarItem';
 
 export default function RoleEditorSidebar(props) {

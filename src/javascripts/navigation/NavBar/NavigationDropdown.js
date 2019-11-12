@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import cn from 'classnames';
-import keycodes from 'utils/keycodes.es6';
+import keycodes from 'utils/keycodes';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import {
@@ -12,8 +12,8 @@ import {
   Tooltip
 } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
-import * as Navigator from 'states/Navigator.es6';
-import Icon from 'ui/Components/Icon.es6';
+import * as Navigator from 'states/Navigator';
+import Icon from 'ui/Components/Icon';
 
 const styles = {
   triangleArrow: css({

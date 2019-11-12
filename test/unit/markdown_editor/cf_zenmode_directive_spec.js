@@ -22,7 +22,7 @@ describe('cfZenmode', () => {
   };
 
   beforeEach(async function() {
-    this.system.set('services/localeStore.es6', {
+    this.system.set('services/localeStore', {
       default: {
         getLocales: () => [{ code: 'en', name: 'English' }, { code: 'de', name: 'German' }],
         getDefaultLocale: () => 'en'

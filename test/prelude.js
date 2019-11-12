@@ -80,7 +80,7 @@
 
     try {
       // This needs to be registered early because prelude depends on it (and it not being in `this.system`);
-      SystemJS.register('Config.es6', [], _export => {
+      SystemJS.register('Config', [], _export => {
         _export({
           authUrl: x => `//be.test.com${ensureLeadingSlash(x)}`,
           apiUrl: x => `//api.test.com${ensureLeadingSlash(x)}`,

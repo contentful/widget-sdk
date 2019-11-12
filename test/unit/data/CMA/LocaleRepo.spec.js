@@ -4,11 +4,11 @@ import { it } from 'test/utils/dsl';
 
 describe('Locale Repo', () => {
   beforeEach(async function() {
-    this.system.set('data/CMA/FetchAll.es6', {
+    this.system.set('data/CMA/FetchAll', {
       fetchAll: sinon.stub().resolves([{}, {}, {}])
     });
 
-    const { default: LocaleRepo } = await this.system.import('data/CMA/LocaleRepo.es6');
+    const { default: LocaleRepo } = await this.system.import('data/CMA/LocaleRepo');
 
     await $initialize(this.system);
 

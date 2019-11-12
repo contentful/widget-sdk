@@ -1,10 +1,10 @@
 import _ from 'lodash';
-import { createStore, bindActions } from 'ui/Framework/Store.es6';
+import { createStore, bindActions } from 'ui/Framework/Store';
 import * as K from 'test/utils/kefir';
-import * as State from 'app/ContentList/Search/State.es6';
-import { buildFilterFieldByQueryKey } from 'app/ContentList/Search/Filters.es6';
+import * as State from 'app/ContentList/Search/State';
+import { buildFilterFieldByQueryKey } from 'app/ContentList/Search/Filters';
 
-describe('app/ContentList/Search/State.es6', () => {
+describe('app/ContentList/Search/State', () => {
   let store, actions;
 
   const brand = {

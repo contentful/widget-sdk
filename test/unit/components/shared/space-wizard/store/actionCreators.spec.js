@@ -72,7 +72,7 @@ describe('Space Wizard action creators', function() {
       return action(...args)(this.stubs.dispatch);
     };
 
-    this.system.set('services/ResourceService.es6', {
+    this.system.set('services/ResourceService', {
       default: () => {
         return {
           get: this.stubs.ResourceService_get
@@ -80,7 +80,7 @@ describe('Space Wizard action creators', function() {
       }
     });
 
-    this.system.set('data/EndpointFactory.es6', {
+    this.system.set('data/EndpointFactory', {
       createOrganizationEndpoint: this.stubs.createOrganizationEndpoint,
       createSpaceEndpoint: this.stubs.createSpaceEndpoint
     });
@@ -100,22 +100,22 @@ describe('Space Wizard action creators', function() {
       }
     });
 
-    this.system.set('services/SpaceTemplateLoader.es6', {
+    this.system.set('services/SpaceTemplateLoader', {
       getTemplatesList: this.stubs.getTemplatesList
     });
 
-    this.system.set('services/TokenStore.es6', {
+    this.system.set('services/TokenStore', {
       refresh: this.stubs.TokenStore_refresh
     });
 
-    this.system.set('services/client.es6', {
+    this.system.set('services/client', {
       default: {
         createSpace: this.stubs.createSpace
       }
     });
 
-    this.actionCreators = await this.system.import('redux/actions/spaceWizard/actionCreators.es6');
-    this.actions = await this.system.import('redux/actions/spaceWizard/actions.es6');
+    this.actionCreators = await this.system.import('redux/actions/spaceWizard/actionCreators');
+    this.actions = await this.system.import('redux/actions/spaceWizard/actions');
 
     await $initialize(this.system);
   });

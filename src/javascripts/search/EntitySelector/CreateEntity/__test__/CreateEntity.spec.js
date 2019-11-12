@@ -1,15 +1,15 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import * as slideInNavigator from 'navigation/SlideInNavigator/index.es6';
+import * as slideInNavigator from 'navigation/SlideInNavigator/index';
 
-import CreateEntity, { entityTypes } from '../index.es6';
+import CreateEntity, { entityTypes } from '../index';
 import * as accessChecker from 'access_control/AccessChecker';
-import * as entityCreator from 'components/app_container/entityCreator.es6';
+import * as entityCreator from 'components/app_container/entityCreator';
 
 import flushPromises from 'testHelpers/flushPromises';
 
 jest.mock(
-  'navigation/SlideInNavigator/index.es6',
+  'navigation/SlideInNavigator/index',
   () => ({
     goToSlideInEntity: jest.fn()
   }),
@@ -17,7 +17,7 @@ jest.mock(
 );
 
 jest.mock(
-  'components/app_container/entityCreator.es6',
+  'components/app_container/entityCreator',
   () => ({
     newEntry: jest.fn().mockResolvedValue({}),
     newAsset: jest.fn().mockResolvedValue({})

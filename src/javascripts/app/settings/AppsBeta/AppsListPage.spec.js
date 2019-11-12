@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, wait, cleanup } from '@testing-library/react';
-import AppsListPage from './AppsListPage.es6';
+import AppsListPage from './AppsListPage';
 import appsListingMock from './mockData/appsListingMock.json';
 import devAppsMock from './mockData/devAppsMock.json';
 import repoAppsMock from './mockData/repoAppsMock.json';
@@ -8,9 +8,9 @@ import * as spaceContextMocked from 'ng/spaceContext';
 
 spaceContextMocked.getData.mockReturnValue(true);
 
-jest.mock('./AppMarkdown.es6', () => () => null, { virtual: true });
+jest.mock('./AppMarkdown', () => () => null, { virtual: true });
 
-jest.mock('MicroBackendsClient.es6', () => {
+jest.mock('MicroBackendsClient', () => {
   return () => {};
 });
 

@@ -25,13 +25,13 @@ describe('Space Template creation service', () => {
     };
 
     this.system.set('analytics/Analytics', { track: _.noop });
-    this.system.set('services/SpaceTemplateCreator/enrichTemplate.es6', {
+    this.system.set('services/SpaceTemplateCreator/enrichTemplate', {
       // we don't care about template info, because we describe enrichTemplate
       // function by ourselves
       enrichTemplate: (_templateInfo, template) => enrichTemplate(template)
     });
 
-    this.system.set('services/localeStore.es6', {
+    this.system.set('services/localeStore', {
       default: {
         refresh: stubs.refreshLocaleStore,
         setActiveLocales: stubs.setActiveLocales
@@ -53,7 +53,7 @@ describe('Space Template creation service', () => {
       purgeApiKeyRepoCache: () => {}
     });
 
-    spaceTemplateCreator = await this.system.import('services/SpaceTemplateCreator/index.es6');
+    spaceTemplateCreator = await this.system.import('services/SpaceTemplateCreator/index');
 
     await $initialize(this.system);
   });

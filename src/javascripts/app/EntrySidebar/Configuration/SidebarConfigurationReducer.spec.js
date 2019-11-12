@@ -6,8 +6,8 @@ import {
   removeItemFromSidebar,
   addItemToSidebar,
   changeItemPosition
-} from './SidebarConfigurationReducer.es6';
-import { SidebarType } from './constants.es6';
+} from './SidebarConfigurationReducer';
+import { SidebarType } from './constants';
 
 describe('EntrySidebar/Configuration/SidebarConfigurationReducer', () => {
   it('should change sidebar type from default to custom', () => {

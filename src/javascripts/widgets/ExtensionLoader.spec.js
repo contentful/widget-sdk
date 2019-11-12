@@ -1,6 +1,6 @@
 'use strict';
 
-import { createExtensionLoader } from './ExtensionLoader.es6.js';
+import { createExtensionLoader } from './ExtensionLoader.js';
 
 const makeExtension = id => ({
   sys: {

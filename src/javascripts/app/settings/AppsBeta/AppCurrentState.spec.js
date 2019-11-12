@@ -1,10 +1,10 @@
-import getCurrentAppState from './AppCurrentState.es6';
+import getCurrentAppState from './AppCurrentState';
 
 import {
   NAMESPACE_EXTENSION,
   NAMESPACE_BUILTIN,
   NAMESPACE_SIDEBAR_BUILTIN
-} from 'widgets/WidgetNamespaces.es6';
+} from 'widgets/WidgetNamespaces';
 
 const EXTENSION_ID = 'test';
 

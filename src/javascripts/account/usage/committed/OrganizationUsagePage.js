@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { map, sum, get } from 'lodash';
-import * as Config from 'Config.es6';
-import { getCurrentStateName } from 'states/Navigator.es6';
+import * as Config from 'Config';
+import { getCurrentStateName } from 'states/Navigator';
 
 import {
   organizationResourceUsagePropType,
@@ -15,7 +15,7 @@ import AssetBandwidthSection from './AssetBandwidthSection';
 import OrganisationUsageChart from './charts/OrganisationUsageChart';
 import ApiUsageInfo from './ApiUsageInfo';
 import ApiUsageChart from './charts/ApiUsageChart';
-import * as Intercom from 'services/intercom.es6';
+import * as Intercom from 'services/intercom';
 import * as Analytics from 'analytics/Analytics';
 
 const apiUsagePropType = arrayPropType(organizationResourceUsagePropType);

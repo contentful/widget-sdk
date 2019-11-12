@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import * as K from 'test/utils/kefir';
 import _ from 'lodash';
-import * as Focus from 'app/entity_editor/Focus.es6';
+import * as Focus from 'app/entity_editor/Focus';
 
 angular
   .module('contentful/mocks')

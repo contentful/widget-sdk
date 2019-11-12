@@ -27,11 +27,11 @@ describe('navigation/stateChangeHandlers', () => {
     };
     modalCloseStub = sinon.stub();
 
-    this.system.set('services/TokenStore.es6', this.tokenStore);
+    this.system.set('services/TokenStore', this.tokenStore);
 
-    this.system.set('services/logger.es6', this.logger);
+    this.system.set('services/logger', this.logger);
 
-    const NavState = await this.system.import('navigation/NavState.es6');
+    const NavState = await this.system.import('navigation/NavState');
     this.NavStates = NavState.NavStates;
     this.navState$ = NavState.navState$;
 

@@ -1,7 +1,7 @@
 import { forEach } from 'lodash';
-import { getEndpoint } from './Utils.es6';
+import { getEndpoint } from './Utils';
 
-describe('data/Request/Utils.es6', () => {
+describe('data/Request/Utils', () => {
   describe('getEndpoint(url)', () => {
     const urlsByExpectedEndpoint = {
       '/spaces': ['https://api.contentful.com/spaces'],

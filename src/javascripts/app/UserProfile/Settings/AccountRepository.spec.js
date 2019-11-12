@@ -1,5 +1,5 @@
 import * as AccountRepository from './AccountRepository';
-import { mockEndpoint } from 'data/EndpointFactory.es6';
+import { mockEndpoint } from 'data/EndpointFactory';
 
 describe('AccountRepository', () => {
   describe('fetchUserData', () => {

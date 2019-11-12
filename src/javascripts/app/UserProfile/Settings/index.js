@@ -2,12 +2,12 @@ import React, { useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Card } from '@contentful/forma-36-react-components';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
-import DocumentTitle from 'components/shared/DocumentTitle.es6';
+import DocumentTitle from 'components/shared/DocumentTitle';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
-import useAsync from 'app/common/hooks/useAsync.es6';
-import { getVariation } from 'LaunchDarkly.es6';
-import { TWO_FA as TWO_FA_FLAG } from 'featureFlags.es6';
+import useAsync from 'app/common/hooks/useAsync';
+import { getVariation } from 'LaunchDarkly';
+import { TWO_FA as TWO_FA_FLAG } from 'featureFlags';
 
 import { fetchUserData } from './AccountRepository';
 import AccountDetails from './AccountDetails';

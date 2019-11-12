@@ -1,4 +1,4 @@
-import authorization from './authorization.es6';
+import authorization from './authorization';
 import worf from '@contentful/worf';
 
 jest.mock('@contentful/worf', () => jest.fn(), { virtual: true });

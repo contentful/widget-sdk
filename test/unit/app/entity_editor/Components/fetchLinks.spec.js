@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import sinon from 'sinon';
-import { EntityType } from 'app/entity_editor/Components/constants.es6';
+import { EntityType } from 'app/entity_editor/Components/constants';
 import { beforeEach, it } from 'test/utils/dsl';
 
 describe('fetchLinks', () => {
@@ -32,20 +32,20 @@ describe('fetchLinks', () => {
     const getModuleStub = sinon.stub();
     getModuleStub.withArgs('spaceContext').returns(this.spaceContext);
 
-    this.system.set('NgRegistry.es6', {
+    this.system.set('NgRegistry', {
       getModule: getModuleStub
     });
 
-    this.system.set('app/entity_editor/entityHelpers.es6', EntityHelpers);
+    this.system.set('app/entity_editor/entityHelpers', EntityHelpers);
 
-    this.system.set('services/localeStore.es6', {
+    this.system.set('services/localeStore', {
       default: TheLocaleStore
     });
 
-    this.system.set('states/Navigator.es6', this.navigator);
+    this.system.set('states/Navigator', this.navigator);
 
     const { default: fetchLinks } = await this.system.import(
-      'app/entity_editor/Components/FetchLinksToEntity/fetchLinks.es6'
+      'app/entity_editor/Components/FetchLinksToEntity/fetchLinks'
     );
 
     this.fetchLinks = fetchLinks;

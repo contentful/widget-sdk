@@ -1,5 +1,5 @@
-import * as ListQuery from './listQuery.es6';
-import Paginator from 'classes/Paginator.es6';
+import * as ListQuery from './listQuery';
+import Paginator from 'classes/Paginator';
 
 jest.mock('ng/spaceContext', () => ({
   publishedCTs: {

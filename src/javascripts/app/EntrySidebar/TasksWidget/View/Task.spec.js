@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom/extend-expect';
 import { forEach } from 'lodash';
 
-import Task from './Task.es6';
+import Task from './Task';
 
 // TODO: Move to a mocks folder and use in related tests.
 const MOCKS = {};

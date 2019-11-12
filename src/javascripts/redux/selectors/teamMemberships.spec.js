@@ -1,8 +1,8 @@
-import reducer from 'redux/reducer/index.es6';
-import routes from '../routes.es6';
-import { TEAM_MEMBERSHIPS, TEAMS, USERS } from '../datasets.es6';
+import reducer from 'redux/reducer/index';
+import routes from '../routes';
+import { TEAM_MEMBERSHIPS, TEAMS, USERS } from '../datasets';
 
-import getMembershipsOfCurrentTeamToDisplay from './teamMemberships/getMembershipsOfCurrentTeamToDisplay.es6';
+import getMembershipsOfCurrentTeamToDisplay from './teamMemberships/getMembershipsOfCurrentTeamToDisplay';
 
 const testOrgId = 'testOrg';
 const testTeamId = 'testTeam';

@@ -1,5 +1,5 @@
 import { track } from 'analytics/Analytics';
-import localeStore from 'services/localeStore.es6';
+import localeStore from 'services/localeStore';
 
 export function onEntryCreate({ contentType }) {
   track('reference_editor:create_entry', {

@@ -3,7 +3,7 @@ import { $initialize, $inject } from 'test/utils/ng';
 
 describe('Displayed Fields Controller', () => {
   beforeEach(async function() {
-    this.system.set('data/SystemFields.es6', {
+    this.system.set('data/SystemFields', {
       getList: sinon.stub().returns([]),
       getDefaultFieldIds: () => [1, 2, 3]
     });

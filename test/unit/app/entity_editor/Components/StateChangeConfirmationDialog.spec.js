@@ -4,9 +4,9 @@ import { mount } from 'enzyme';
 import sinon from 'sinon';
 import { assertElementExists, assertMessageEquals, getElement } from 'test/utils/expectations';
 
-import { Action } from 'data/CMA/EntityActions.es6';
-import { EntityType, NumberOfLinks } from 'app/entity_editor/Components/constants.es6';
-import messages from 'app/entity_editor/Components/StateChangeConfirmationDialog/messages.es6';
+import { Action } from 'data/CMA/EntityActions';
+import { EntityType, NumberOfLinks } from 'app/entity_editor/Components/constants';
+import messages from 'app/entity_editor/Components/StateChangeConfirmationDialog/messages';
 
 import flushPromises from 'test/utils/flushPromises';
 
@@ -40,7 +40,7 @@ describe('StateChangeConfirmationDialog', () => {
     this.importModule = async function importModule(
       fetchLinksStub = sinon.stub().returns(Promise.resolve([]))
     ) {
-      system.set('app/entity_editor/Components/FetchLinksToEntity/fetchLinks.es6', {
+      system.set('app/entity_editor/Components/FetchLinksToEntity/fetchLinks', {
         default: fetchLinksStub
       });
 

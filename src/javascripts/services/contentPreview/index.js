@@ -1,4 +1,4 @@
-import { getModule } from 'NgRegistry.es6';
+import { getModule } from 'NgRegistry';
 import createContentPreview from './createContentPreview';
 
 let contentPreviewInstance = null;

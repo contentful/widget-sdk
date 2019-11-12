@@ -1,7 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import { render, cleanup, fireEvent } from '@testing-library/react';
-import WebhookForm from './WebhookForm.es6';
+import WebhookForm from './WebhookForm';
 
 describe('WebhookForm', () => {
   afterEach(cleanup);

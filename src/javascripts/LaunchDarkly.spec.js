@@ -1,17 +1,17 @@
 import _ from 'lodash';
 import moment from 'moment';
 import ldClient from 'ldclient-js';
-import { getVariation, clearCache } from './LaunchDarkly.es6';
-import { getOrganization, getSpace, getUser } from 'services/TokenStore.es6';
-import { launchDarkly } from 'Config.es6';
-import { logError } from 'services/logger.es6';
-import { isFlagOverridden, getFlagOverride } from 'debug/EnforceFlags.es6';
+import { getVariation, clearCache } from './LaunchDarkly';
+import { getOrganization, getSpace, getUser } from 'services/TokenStore';
+import { launchDarkly } from 'Config';
+import { logError } from 'services/logger';
+import { isFlagOverridden, getFlagOverride } from 'debug/EnforceFlags';
 
 jest.mock('ldclient-js', () => ({
   initialize: jest.fn()
 }));
 
-jest.mock('data/User/index.es6', () => ({
+jest.mock('data/User/index', () => ({
   getOrgRole: jest.fn().mockReturnValue('org role'),
   getUserAgeInDays: jest.fn().mockReturnValue(7),
   hasAnOrgWithSpaces: jest.fn().mockReturnValue(false),
@@ -22,21 +22,21 @@ jest.mock('data/User/index.es6', () => ({
   getUserSpaceRoles: jest.fn().mockReturnValue(['editor', 'translator3'])
 }));
 
-jest.mock('utils/ShallowObjectDiff.es6', () => jest.fn().mockReturnValue({}));
+jest.mock('utils/ShallowObjectDiff', () => jest.fn().mockReturnValue({}));
 
-jest.mock('debug/EnforceFlags.es6', () => ({
+jest.mock('debug/EnforceFlags', () => ({
   isFlagOverridden: jest.fn().mockReturnValue(false),
   getFlagOverride: jest.fn()
 }));
 
-jest.mock('services/TokenStore.es6', () => ({
+jest.mock('services/TokenStore', () => ({
   getOrganization: jest.fn(),
   getSpace: jest.fn(),
   getUser: jest.fn(),
   getSpacesByOrganization: jest.fn()
 }));
 
-jest.mock('debug/EnforceFlags.es6', () => ({
+jest.mock('debug/EnforceFlags', () => ({
   isFlagOverridden: jest.fn(),
   getFlagOverride: jest.fn()
 }));
@@ -234,7 +234,7 @@ describe('LaunchDarkly', () => {
       await getVariation('FLAG', { organizationId: 'org_5678' });
 
       // Note a lot of this data is provided from functions in
-      // data/User/index.es6
+      // data/User/index
       //
       // See the mocked functions above
       expect(client.identify).toHaveBeenCalledTimes(1);
@@ -267,7 +267,7 @@ describe('LaunchDarkly', () => {
       await getVariation('FLAG', { spaceId: 'space_5678' });
 
       // Note a lot of this data is provided from functions in
-      // data/User/index.es6
+      // data/User/index
       //
       // See the mocked functions above
       expect(client.identify).toHaveBeenCalledTimes(1);

@@ -1,19 +1,19 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import { FetcherLoading } from 'app/common/createFetcherComponent.es6';
-import { SSOSetup } from './SSOSetup.es6';
-import IDPSetupForm from './IDPSetupForm.es6';
-import SSOEnabled from './SSOEnabled.es6';
+import { FetcherLoading } from 'app/common/createFetcherComponent';
+import { SSOSetup } from './SSOSetup';
+import IDPSetupForm from './IDPSetupForm';
+import SSOEnabled from './SSOEnabled';
 import { track } from 'analytics/Analytics';
-import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
-import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
-import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { getOrgFeature } from 'data/CMA/ProductCatalog';
+import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 
-jest.mock('services/OrganizationRoles.es6', () => ({
+jest.mock('services/OrganizationRoles', () => ({
   isOwnerOrAdmin: jest.fn().mockReturnValue(true)
 }));
 
-jest.mock('data/CMA/ProductCatalog.es6', () => ({
+jest.mock('data/CMA/ProductCatalog', () => ({
   getOrgFeature: jest.fn().mockResolvedValue(true)
 }));
 

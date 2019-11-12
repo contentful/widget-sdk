@@ -1,14 +1,14 @@
 import sinon from 'sinon';
 import { $initialize } from 'test/utils/ng';
 
-describe('states/deeplink/resolver.es6', () => {
+describe('states/deeplink/resolver', () => {
   beforeEach(async function() {
     this.logException = sinon.stub();
-    this.system.set('services/logger.es6', {
+    this.system.set('services/logger', {
       logException: this.logException
     });
 
-    this.resolver = await this.system.import('states/deeplink/resolver.es6');
+    this.resolver = await this.system.import('states/deeplink/resolver');
 
     await $initialize(this.system);
   });

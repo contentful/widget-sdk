@@ -1,10 +1,10 @@
-import * as Config from 'Config.es6';
+import * as Config from 'Config';
 import * as Snowplow from 'analytics/snowplow/Snowplow';
 import stringifySafe from 'json-stringify-safe';
 import { prepareUserData } from 'analytics/UserData';
 import _ from 'lodash';
 import segment from 'analytics/segment';
-import * as logger from 'services/logger.es6';
+import * as logger from 'services/logger';
 import * as analyticsConsole from 'analytics/analyticsConsole';
 
 function removeCircularRefs(obj) {

@@ -43,38 +43,38 @@ describe('Client Controller', () => {
       track: this.stubs.track
     });
 
-    this.system.set('data/CMA/ProductCatalog.es6', {
+    this.system.set('data/CMA/ProductCatalog', {
       getSpaceFeature: this.getSpaceFeature
     });
 
-    this.system.set('services/EnforcementsService.es6', {
+    this.system.set('services/EnforcementsService', {
       getEnforcements: this.getEnforcements,
       newUsageChecker: this.newUsageChecker
     });
-    this.system.set('services/EnforcementsService.es6', {
+    this.system.set('services/EnforcementsService', {
       newUsageChecker: this.newUsageChecker,
       getEnforcements: this.getEnforcements
     });
     this.system.set('analytics/isAnalyticsAllowed', {
       default: this.isAnalyticsAllowed
     });
-    this.system.set('services/logger.es6', this.logger);
-    this.system.set('services/TokenStore.es6', {
+    this.system.set('services/logger', this.logger);
+    this.system.set('services/TokenStore', {
       refresh: this.stubs.refresh,
       user$: this.stubs.user$,
       getTokenLookup: this.stubs.getTokenLookup
     });
 
-    this.system.set('services/intercom.es6', {
+    this.system.set('services/intercom', {
       disable: this.stubs.intercomDisable
     });
 
     this.refreshNavState = sinon.stub();
-    this.system.set('navigation/NavState.es6', {
+    this.system.set('navigation/NavState', {
       makeStateRefresher: () => this.refreshNavState
     });
 
-    this.system.set('services/authorization.es6', {
+    this.system.set('services/authorization', {
       default: this.authorizationStubs
     });
 

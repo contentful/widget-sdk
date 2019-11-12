@@ -1,14 +1,14 @@
 import * as utils from './AccountUtils';
-import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
-import { go } from 'states/Navigator.es6';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { go } from 'states/Navigator';
 
 import * as spaceContextMocked from 'ng/spaceContext';
 
-jest.mock('states/Navigator.es6', () => ({
+jest.mock('states/Navigator', () => ({
   go: jest.fn()
 }));
 
-jest.mock('services/OrganizationRoles.es6', () => ({
+jest.mock('services/OrganizationRoles', () => ({
   isOwnerOrAdmin: jest.fn()
 }));
 

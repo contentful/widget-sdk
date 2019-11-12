@@ -1,8 +1,8 @@
 import _ from 'lodash';
-import * as CallBuffer from 'utils/CallBuffer.es6';
-import * as LazyLoader from 'utils/LazyLoader.es6';
-import * as logger from 'services/logger.es6';
-import window from 'utils/ngCompat/window.es6';
+import * as CallBuffer from 'utils/CallBuffer';
+import * as LazyLoader from 'utils/LazyLoader';
+import * as logger from 'services/logger';
+import window from 'utils/ngCompat/window';
 
 /**
  * All calls (`track`, `page`, `identify`)

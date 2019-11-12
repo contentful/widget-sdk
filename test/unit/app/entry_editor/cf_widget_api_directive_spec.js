@@ -6,7 +6,7 @@ import { $initialize, $inject, $apply } from 'test/utils/ng';
 
 describe('cfWidgetApi directive', () => {
   beforeEach(async function() {
-    this.system.set('services/localeStore.es6', {
+    this.system.set('services/localeStore', {
       default: createLocaleStoreMock()
     });
 

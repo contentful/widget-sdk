@@ -1,7 +1,7 @@
 import * as K from 'test/utils/kefir';
 import sinon from 'sinon';
 import moment from 'moment';
-import { update, push } from 'utils/Collections.es6';
+import { update, push } from 'utils/Collections';
 
 xdescribe('LaunchDarkly', () => {
   beforeEach(function() {
@@ -95,13 +95,13 @@ xdescribe('LaunchDarkly', () => {
 
     module('contentful/test', $provide => {
       $provide.constant('ldclient-js', this.LD);
-      $provide.value('data/User/index.es6', userModule);
-      $provide.value('utils/ShallowObjectDiff.es6', this.shallowObjectDiff);
-      $provide.value('debug/EnforceFlags.es6', this.EnforceFlags);
-      $provide.constant('services/logger.es6', this.logger);
+      $provide.value('data/User/index', userModule);
+      $provide.value('utils/ShallowObjectDiff', this.shallowObjectDiff);
+      $provide.value('debug/EnforceFlags', this.EnforceFlags);
+      $provide.constant('services/logger', this.logger);
     });
 
-    const ld = this.$inject('utils/LaunchDarkly/index.es6')._noMock;
+    const ld = this.$inject('utils/LaunchDarkly/index')._noMock;
 
     this.ld = ld;
     this.ld.init();

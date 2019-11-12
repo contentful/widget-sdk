@@ -2,7 +2,7 @@ import React from 'react';
 import { render, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
-import KnowledgeBase from './KnowledgeBase.es6';
+import KnowledgeBase from './KnowledgeBase';
 
 describe('<KnowledgeBase />', () => {
   afterEach(cleanup);

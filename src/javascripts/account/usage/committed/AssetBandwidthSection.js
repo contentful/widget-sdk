@@ -5,7 +5,7 @@ import { partialRight } from 'lodash';
 import { TextLink, Note } from '@contentful/forma-36-react-components';
 import * as tokens from '@contentful/forma-36-tokens';
 
-import { shortenStorageUnit } from 'utils/NumberUtils.es6';
+import { shortenStorageUnit } from 'utils/NumberUtils';
 
 const classes = {
   section: css({

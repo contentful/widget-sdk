@@ -11,7 +11,7 @@ describe('cfPersistentNotification Directive', () => {
       logWarn: sinon.stub()
     };
 
-    this.system.set('services/logger.es6', {
+    this.system.set('services/logger', {
       logWarn: this.stubs.logWarn
     });
 

@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Heading, Button, Typography } from '@contentful/forma-36-react-components';
-import { cancelUser } from 'Authentication.es6';
-import * as ModalLauncher from 'app/common/ModalLauncher.es6';
+import { cancelUser } from 'Authentication';
+import * as ModalLauncher from 'app/common/ModalLauncher';
 import DeleteUserModal from './DeleteUserModal';
 
 const openDeleteUserModal = async singleOwnerOrganizations => {

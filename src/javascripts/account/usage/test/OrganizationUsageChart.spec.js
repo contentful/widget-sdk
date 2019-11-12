@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import moment from 'moment';
-import { shorten } from 'utils/NumberUtils.es6';
+import { shorten } from 'utils/NumberUtils';
 
 import LineChart from '../committed/charts/LineChart';
 import OrganisationUsageChart from '../committed/charts/OrganisationUsageChart';

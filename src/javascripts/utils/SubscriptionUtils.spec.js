@@ -1,6 +1,6 @@
-import * as SubscriptionUtils from './SubscriptionUtils.es6';
+import * as SubscriptionUtils from './SubscriptionUtils';
 
-describe('utils/SubscriptionUtils.es6', () => {
+describe('utils/SubscriptionUtils', () => {
   let basePlan;
   let microPlan;
   let macroPlan;

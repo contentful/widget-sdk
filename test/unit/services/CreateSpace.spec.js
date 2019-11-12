@@ -28,11 +28,11 @@ describe('CreateSpace', () => {
     };
     this.getSpaceRatePlans = sinon.stub().returns([this.ratePlans.onDemand]);
 
-    this.system.set('services/TokenStore.es6', {
+    this.system.set('services/TokenStore', {
       getOrganization: this.getOrganization
     });
     this.system.set('access_control/AccessChecker', this.accessChecker);
-    this.system.set('services/ResourceService.es6', {
+    this.system.set('services/ResourceService', {
       default: () => ({
         get: sinon.stub().returns(
           Promise.resolve({
@@ -51,7 +51,7 @@ describe('CreateSpace', () => {
     });
 
     this.PricingDataProvider = await this.system.import('account/pricing/PricingDataProvider');
-    this.CreateSpace = await this.system.import('services/CreateSpace.es6');
+    this.CreateSpace = await this.system.import('services/CreateSpace');
 
     await $initialize(this.system, $provide => {
       $provide.constant('modalDialog', {

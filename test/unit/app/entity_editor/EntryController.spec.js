@@ -1,4 +1,4 @@
-import * as K from 'utils/kefir.es6';
+import * as K from 'utils/kefir';
 import _ from 'lodash';
 import sinon from 'sinon';
 import createLocaleStoreMock from 'test/utils/createLocaleStoreMock';
@@ -9,40 +9,40 @@ describe('Entry Editor Controller', function() {
   const userBus = K.createPropertyBus(null);
 
   beforeEach(async function() {
-    this.system.set('app/EntrySidebar/EntitySidebarBridge.es6', {
+    this.system.set('app/EntrySidebar/EntitySidebarBridge', {
       default: () => {
         return {};
       }
     });
 
-    this.system.set('app/entity_editor/setLocaleData.es6', {
+    this.system.set('app/entity_editor/setLocaleData', {
       default: () => {
         return {};
       }
     });
-    this.system.set('app/entity_editor/LoadEventTracker.es6', {
+    this.system.set('app/entity_editor/LoadEventTracker', {
       bootstrapEntryEditorLoadEvents: () => {}
     });
 
-    this.system.set('app/entity_editor/Tracking.es6', {
+    this.system.set('app/entity_editor/Tracking', {
       default: sinon.stub()
     });
-    this.system.set('app/entity_editor/Validator.es6', {
+    this.system.set('app/entity_editor/Validator', {
       createForEntry: sinon.stub()
     });
 
-    this.system.set('services/localeStore.es6', {
+    this.system.set('services/localeStore', {
       default: createLocaleStoreMock()
     });
-    this.system.set('services/TokenStore.es6', {
+    this.system.set('services/TokenStore', {
       user$: userBus.property
     });
-    this.system.set('app/entry_editor/formWidgetsController.es6', {
+    this.system.set('app/entry_editor/formWidgetsController', {
       default: () => {}
     });
 
     const createEntryController = (await this.system.import(
-      'app/entity_editor/EntryController.es6'
+      'app/entity_editor/EntryController'
     )).default;
 
     await $initialize(this.system);

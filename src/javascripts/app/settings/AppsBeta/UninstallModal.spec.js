@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, cleanup, fireEvent } from '@testing-library/react';
 
-import UninstallModal from './UninstallModal.es6';
+import UninstallModal from './UninstallModal';
 
 describe('UninstallModal', () => {
   afterEach(cleanup);

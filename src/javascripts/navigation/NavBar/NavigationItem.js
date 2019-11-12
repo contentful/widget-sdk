@@ -4,9 +4,9 @@ import React from 'react';
 import cn from 'classnames';
 import PropTypes from 'prop-types';
 import { Tooltip } from '@contentful/forma-36-react-components';
-import * as Navigator from 'states/Navigator.es6';
-import Icon from 'ui/Components/Icon.es6';
-import keycodes from 'utils/keycodes.es6';
+import * as Navigator from 'states/Navigator';
+import Icon from 'ui/Components/Icon';
+import keycodes from 'utils/keycodes';
 
 function Label({ hasTooptip, children, ...rest }) {
   if (hasTooptip) {

@@ -4,7 +4,7 @@ describe('ui/inputControl', () => {
   let inputEl;
 
   beforeEach(async function() {
-    const { default: createInputUpdater } = await this.system.import('ui/inputUpdater.es6');
+    const { default: createInputUpdater } = await this.system.import('ui/inputUpdater');
 
     this.$inputEl = $('<input type="text" />')
       .appendTo('body')

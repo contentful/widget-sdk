@@ -1,6 +1,6 @@
-import reducer from 'redux/reducer/index.es6';
-import routes from 'redux/routes.es6';
-import getOrgId from './getOrgId.es6';
+import reducer from 'redux/reducer/index';
+import routes from 'redux/routes';
+import getOrgId from './getOrgId';
 
 const testOrgId = 'testOrg';
 const testSpace = 'testSpace';

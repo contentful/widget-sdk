@@ -14,7 +14,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import ContactUsButton from 'ui/Components/ContactUsButton.es6';
+import ContactUsButton from 'ui/Components/ContactUsButton';
 import { deleteUserAccount } from './AccountRepository';
 
 const styles = {

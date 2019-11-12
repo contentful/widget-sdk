@@ -23,7 +23,7 @@ describe('entity editor field integration', () => {
     //   $provide.constant('cfWidgetApiDirective', () => {});
     //   $provide.constant('cfWidgetRendererDirective', () => {});
     // });
-    this.system.set('services/localeStore.es6', {
+    this.system.set('services/localeStore', {
       default: createLocaleStoreMock()
     });
 

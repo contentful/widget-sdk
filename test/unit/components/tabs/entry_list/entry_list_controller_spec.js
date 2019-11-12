@@ -40,42 +40,42 @@ describe('Entry List Controller', () => {
       track: sinon.stub()
     });
 
-    this.system.set('app/common/ReloadNotification.es6', {
+    this.system.set('app/common/ReloadNotification', {
       default: {
         apiErrorHandler: sinon.stub()
       }
     });
 
-    this.system.set('services/localeStore.es6', {
+    this.system.set('services/localeStore', {
       default: {
         resetWithSpace: sinon.stub(),
         getDefaultLocale: sinon.stub().returns({ internal_code: 'en-US' })
       }
     });
 
-    this.system.set('app/ContentList/Search/index.es6', {
+    this.system.set('app/ContentList/Search/index', {
       default: _.noop // TODO: Test search ui integration.
     });
 
-    this.system.set('app/common/ReloadNotification.es6', {
+    this.system.set('app/common/ReloadNotification', {
       default: {
         apiErrorHandler: this.stubs.apiErrorHandler
       }
     });
 
-    this.system.set('data/EndpointFactory.es6', {
+    this.system.set('data/EndpointFactory', {
       createSpaceEndpoint: sinon.stub().returns('/spaces/test/')
     });
 
-    this.system.set('app/jobs/DataManagement/JobsService.es6', {
+    this.system.set('app/jobs/DataManagement/JobsService', {
       getJobs: sinon.stub().resolves([])
     });
 
     if (!ListQueryOriginal) {
-      ListQueryOriginal = await this.system.import('search/listQuery.es6');
+      ListQueryOriginal = await this.system.import('search/listQuery');
     }
 
-    this.system.set('search/listQuery.es6', {
+    this.system.set('search/listQuery', {
       ...ListQueryOriginal,
       getForEntries: this.stubs.getQuery
     });

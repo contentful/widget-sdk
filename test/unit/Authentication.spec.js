@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import { $initialize, $inject, $apply } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
 
-describe('Authentication.es6', () => {
+describe('Authentication', () => {
   beforeEach(async function() {
     this.$http = sinon.stub();
     this.window = {
@@ -15,9 +15,9 @@ describe('Authentication.es6', () => {
       url: sinon.stub()
     };
 
-    this.system.set('utils/ngCompat/window.es6', { default: this.window });
-    const { getStore } = await this.system.import('TheStore/index.es6');
-    this.Auth = await this.system.import('Authentication.es6');
+    this.system.set('utils/ngCompat/window', { default: this.window });
+    const { getStore } = await this.system.import('TheStore/index');
+    this.Auth = await this.system.import('Authentication');
 
     await $initialize(this.system, $provide => {
       $provide.value('$http', this.$http);

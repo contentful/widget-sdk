@@ -1,7 +1,7 @@
-import * as TokenStore from 'services/TokenStore.es6';
-import * as K from 'utils/kefir.es6';
+import * as TokenStore from 'services/TokenStore';
+import * as K from 'utils/kefir';
 import { get, isString } from 'lodash';
-import { getModule } from 'NgRegistry.es6';
+import { getModule } from 'NgRegistry';
 
 import _ from 'lodash';
 

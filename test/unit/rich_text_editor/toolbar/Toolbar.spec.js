@@ -4,8 +4,8 @@ import { parseHotkey } from 'is-hotkey';
 import { mapValues, forEach, upperFirst, identity } from 'lodash';
 
 import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
-import { actionOrigin } from 'app/widgets/rich_text/plugins/shared/PluginApi.es6';
-import { document, block, inline, text } from 'app/widgets/rich_text/helpers/nodeFactory.es6';
+import { actionOrigin } from 'app/widgets/rich_text/plugins/shared/PluginApi';
+import { document, block, inline, text } from 'app/widgets/rich_text/helpers/nodeFactory';
 
 import sinon from 'sinon';
 import { $initialize, $inject } from 'test/utils/ng';
@@ -28,15 +28,15 @@ export const ENTRY = {
 const getWithId = (wrapper, testId) => wrapper.find(`[data-test-id="${testId}"]`).first();
 
 const stubAll = async ({ isolatedSystem }) => {
-  // TODO: Instead of stubbing all kind of services, stub `buildWidgetApi.es6`!
-  isolatedSystem.set('directives/thumbnailHelpers.es6', {});
-  isolatedSystem.set('search/EntitySelector/Config.es6', {
+  // TODO: Instead of stubbing all kind of services, stub `buildWidgetApi`!
+  isolatedSystem.set('directives/thumbnailHelpers', {});
+  isolatedSystem.set('search/EntitySelector/Config', {
     newConfigFromRichTextField: sinon.stub().returns({})
   });
-  isolatedSystem.set('app/widgets/WidgetApi/dialogs/HyperlinkDialog.es6', {
+  isolatedSystem.set('app/widgets/WidgetApi/dialogs/HyperlinkDialog', {
     LINK_TYPES: {}
   });
-  isolatedSystem.set('utils/LaunchDarkly/index.es6', {
+  isolatedSystem.set('utils/LaunchDarkly/index', {
     onFeatureFlag: sinon.stub(),
     getCurrentVariation: sinon.stub()
   });
@@ -114,7 +114,7 @@ describe('Rich Text toolbar', () => {
       isolatedSystem: this.system
     });
 
-    this.system.set('services/logger.es6', {
+    this.system.set('services/logger', {
       logWarn: message => {
         // Guards us from accidentally changing analytic actions without whitelisting them:
         throw new Error(`Unexpected logger.logWarn() call with message: ${message}`);
@@ -125,22 +125,22 @@ describe('Rich Text toolbar', () => {
       default: identity
     });
 
-    this.system.set('app/widgets/WidgetApi/dialogs/openHyperlinkDialog.es6', {
+    this.system.set('app/widgets/WidgetApi/dialogs/openHyperlinkDialog', {
       default: this.openHyperlinkDialog
     });
     this.system.set('analytics/Analytics', {
       track: sinon.stub()
     });
 
-    this.system.set('app/entity_editor/entityHelpers.es6', {
+    this.system.set('app/entity_editor/entityHelpers', {
       newForLocale: sinon.stub()
     });
 
-    this.system.set('search/EntitySelector/entitySelector.es6', {
+    this.system.set('search/EntitySelector/entitySelector', {
       open: () => Promise.resolve([this.selectedEntity])
     });
 
-    const { default: RichTextEditor } = await this.system.import('app/widgets/rich_text/index.es6');
+    const { default: RichTextEditor } = await this.system.import('app/widgets/rich_text/index');
 
     await $initialize(this.system, $provide => {
       $provide.constant('spaceContext', {

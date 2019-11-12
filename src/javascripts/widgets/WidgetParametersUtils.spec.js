@@ -1,5 +1,5 @@
-import * as Utils from './WidgetParametersUtils.es6';
-import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from './WidgetNamespaces.es6';
+import * as Utils from './WidgetParametersUtils';
+import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from './WidgetNamespaces';
 
 describe('WidgetParametersUtils', () => {
   describe('.filterDefinitions', () => {

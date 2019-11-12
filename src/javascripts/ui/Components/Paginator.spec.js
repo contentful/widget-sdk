@@ -1,8 +1,8 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import Paginator from './Paginator.es6';
+import Paginator from './Paginator';
 
-describe('ui/Components/Paginator.es6', () => {
+describe('ui/Components/Paginator', () => {
   const shallow = ({ page, pageCount }) => {
     const onSelectStub = jest.fn();
     const wrapper = Enzyme.shallow(

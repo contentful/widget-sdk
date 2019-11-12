@@ -1,8 +1,8 @@
-import resolveTokenLinks from 'data/CMA/resolveTokenLinks.es6';
+import resolveTokenLinks from 'data/CMA/resolveTokenLinks';
 
 const makeLink = (type, id) => ({ sys: { type: 'Link', linkType: type, id } });
 
-describe('data/CMA/resolveTokenLinks.es6', () => {
+describe('data/CMA/resolveTokenLinks', () => {
   describe('link resolution', () => {
     beforeEach(function() {
       const foo0 = {

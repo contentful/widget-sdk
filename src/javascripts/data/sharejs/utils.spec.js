@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import * as ShareJS from './utils.es6';
+import * as ShareJS from './utils';
 import sinon from 'sinon';
 import createOtDocMock from '../../../../test/helpers/mocks/ot_doc';
 

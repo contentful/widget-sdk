@@ -1,8 +1,8 @@
 import _ from 'lodash';
-import client from './client.es6';
-import makeRequest from 'data/Request.es6';
+import client from './client';
+import makeRequest from 'data/Request';
 
-jest.mock('data/Request.es6', () => jest.fn(), { virtual: true });
+jest.mock('data/Request', () => jest.fn(), { virtual: true });
 
 describe('Client', () => {
   describe('#request', () => {

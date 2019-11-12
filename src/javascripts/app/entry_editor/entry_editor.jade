@@ -1,14 +1,14 @@
 react-component(
-  name="components/shared/DocumentTitle.es6"
+  name="components/shared/DocumentTitle"
   props="{title: [title, 'Content']}"
 )
 .entry-editor
   .workbench
     header.workbench-header
-      react-component(name="app/entity_editor/Components/BackNav/index.es6")
+      react-component(name="app/entity_editor/Components/BackNav/index")
       cf-icon.workbench-header__icon(name="page-content", scale="0.75")
       react-component(
-        name="components/shared/WorkbenchTitle.es6"
+        name="components/shared/WorkbenchTitle"
         props="{title, localeName: localeData.focusedLocale.name, isSingleLocaleModeOn: localeData.isSingleLocaleModeOn, contentTypeName: editorData.contentType.data.name }"
       )
       .workbench-header__actions
@@ -32,30 +32,30 @@ react-component(
           div(role="menuitem" ui-command="actions.toggleDisabledFields")
             | {{command.label()}}
         react-component(
-          name="app/entity_editor/EntityAuxToggle.es6"
+          name="app/entity_editor/EntityAuxToggle"
           props="sidebarToggleProps.auxToggle"
         )
         react-component(
           ng-if="shouldDisplayCommentsToggle"
-          name="app/entity_editor/EntityCommentsToggle.es6"
+          name="app/entity_editor/EntityCommentsToggle"
           props="sidebarToggleProps.commentsToggle"
         )
 
     .workbench-main
       .workbench-main__content.sticky-parent
-        react-component(name="app/entity_editor/StatusNotification.es6" props="statusNotificationProps")
+        react-component(name="app/entity_editor/StatusNotification" props="statusNotificationProps")
         react-component(
           ng-if="editorData.editorExtension"
-          name="app/entry_editor/CustomEditorExtensionRenderer.es6"
+          name="app/entry_editor/CustomEditorExtensionRenderer"
           props="customExtensionProps"
         )
         .entity-editor-form.cf-workbench-content.cf-workbench-content-type__text(ng-if="!editorData.editorExtension")
           cf-error-list.form-box-error(cf-error-path="['fields']")
           cf-entity-field(ng-repeat="widget in widgets track by widget.fieldId")
           react-component(
-            name="components/tabs/NoLocalizedFieldsAdvice/index.es6"
+            name="components/tabs/NoLocalizedFieldsAdvice/index"
             ng-if="shouldDisplayNoLocalizedFieldsAdvice"
             props="noLocalizedFieldsAdviceProps")
 
       .workbench-main__sidebar
-        react-component(name="app/EntrySidebar/EntrySidebar.es6" props="entrySidebarProps")
+        react-component(name="app/EntrySidebar/EntrySidebar" props="entrySidebarProps")

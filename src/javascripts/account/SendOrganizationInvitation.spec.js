@@ -16,7 +16,7 @@ jest.mock(
 );
 
 jest.mock(
-  'data/EndpointFactory.es6',
+  'data/EndpointFactory',
   () => ({
     createOrganizationEndpoint: jest.fn(),
     createSpaceEndpoint: jest.fn()

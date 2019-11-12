@@ -1,14 +1,14 @@
 import React from 'react';
 import { render, cleanup, wait } from '@testing-library/react';
 
-import * as FeatureFlagKey from 'featureFlags.es6';
-import TasksWidgetContainer from './TasksWidgetContainer.es6';
+import * as FeatureFlagKey from 'featureFlags';
+import TasksWidgetContainer from './TasksWidgetContainer';
 
-import { trackIsTasksAlphaEligible } from './analytics.es6';
-import ProductCatalog from 'data/CMA/ProductCatalog.es6';
+import { trackIsTasksAlphaEligible } from './analytics';
+import ProductCatalog from 'data/CMA/ProductCatalog';
 
-jest.mock('data/CMA/ProductCatalog.es6', () => ({ getCurrentSpaceFeature: jest.fn() }));
-jest.mock('./analytics.es6');
+jest.mock('data/CMA/ProductCatalog', () => ({ getCurrentSpaceFeature: jest.fn() }));
+jest.mock('./analytics');
 
 describe('<TasksWidgetContainer />', () => {
   afterEach(() => {

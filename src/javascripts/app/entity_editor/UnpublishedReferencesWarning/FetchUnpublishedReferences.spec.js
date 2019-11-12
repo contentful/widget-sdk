@@ -1,9 +1,9 @@
-import fetchUnpublishedReferences from './FetchUnpublishedReferences.es6';
+import fetchUnpublishedReferences from './FetchUnpublishedReferences';
 import { getRichTextEntityLinks } from '@contentful/rich-text-links';
-import { fetchEntities } from './EntityService.es6';
+import { fetchEntities } from './EntityService';
 
 jest.mock('@contentful/rich-text-links');
-jest.mock('./EntityService.es6');
+jest.mock('./EntityService');
 
 const SPACE_ID = 'space-id';
 const ENVIRONMENT_ID = 'environment-id';

@@ -1,4 +1,4 @@
-import { getSlideInEntities, goToSlideInEntity } from './index.es6';
+import { getSlideInEntities, goToSlideInEntity } from './index';
 
 import $location from 'ng/$location';
 import $state from 'ng/$state';

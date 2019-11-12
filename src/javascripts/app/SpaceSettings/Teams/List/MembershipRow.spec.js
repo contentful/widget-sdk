@@ -4,7 +4,7 @@ import { Table, TableBody } from '@contentful/forma-36-react-components';
 import '@testing-library/jest-dom/extend-expect';
 import { noop } from 'lodash';
 
-import MembershipRow from './MembershipRow.es6';
+import MembershipRow from './MembershipRow';
 
 let onUpdateTeamSpaceMembership;
 let onRemoveTeamSpaceMembership;

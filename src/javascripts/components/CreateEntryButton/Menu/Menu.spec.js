@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import { noop, range } from 'lodash';
-import Menu from './index.es6';
+import Menu from './index';
 
 const sel = id => `[data-test-id="${id}"]`;
 

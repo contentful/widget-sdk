@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import * as SpaceEnvironmentsRepo from './SpaceEnvironmentsRepo.es6';
-import * as SpaceAliasesRepo from 'data/CMA/SpaceAliasesRepo.es6';
-import { createPaginationEndpoint } from '__mocks__/data/EndpointFactory.es6';
+import * as SpaceEnvironmentsRepo from './SpaceEnvironmentsRepo';
+import * as SpaceAliasesRepo from 'data/CMA/SpaceAliasesRepo';
+import { createPaginationEndpoint } from '__mocks__/data/EndpointFactory';
 
 SpaceAliasesRepo.create = jest.fn().mockReturnValue({ getAll: jest.fn() });
 

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-describe('markdown_editor/PreviewRender.es6', () => {
+describe('markdown_editor/PreviewRender', () => {
   let treeBuilder, buildTree;
 
   function getRoot(source, fn) {
@@ -20,7 +20,7 @@ describe('markdown_editor/PreviewRender.es6', () => {
   }
 
   beforeEach(async function() {
-    treeBuilder = await this.system.import('markdown_editor/PreviewRender.es6');
+    treeBuilder = await this.system.import('markdown_editor/PreviewRender');
     buildTree = treeBuilder.default();
   });
 

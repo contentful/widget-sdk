@@ -7,17 +7,17 @@ import PeriodSelector from '../committed/PeriodSelector';
 import NoSpacesPlaceholder from '../NoSpacesPlaceholder';
 import OrganizationUsagePage from '../committed/OrganizationUsagePage';
 import OrganizationResourceUsageList from 'account/usage/non_committed/OrganizationResourceUsageList';
-import ReloadNotification from 'app/common/ReloadNotification.es6';
-import * as OrganizationRolesMocked from 'services/OrganizationRoles.es6';
-import * as TokenStoreMocked from 'services/TokenStore.es6';
+import ReloadNotification from 'app/common/ReloadNotification';
+import * as OrganizationRolesMocked from 'services/OrganizationRoles';
+import * as TokenStoreMocked from 'services/TokenStore';
 import * as OrganizationMembershipRepositoryMocked from 'access_control/OrganizationMembershipRepository';
 
-jest.mock('services/intercom.es6', () => ({}));
-jest.mock('utils/ResourceUtils.es6', () => ({}));
-jest.mock('services/OrganizationRoles.es6', () => ({
+jest.mock('services/intercom', () => ({}));
+jest.mock('utils/ResourceUtils', () => ({}));
+jest.mock('services/OrganizationRoles', () => ({
   isOwnerOrAdmin: jest.fn().mockReturnValue(true)
 }));
-jest.mock('services/ResourceService.es6', () => () => ({
+jest.mock('services/ResourceService', () => () => ({
   get: jest.fn(resource => {
     switch (resource) {
       case 'api_request':
@@ -56,11 +56,11 @@ jest.mock('access_control/OrganizationMembershipRepository', () => ({
   ])
 }));
 
-jest.mock('services/TokenStore.es6', () => ({
+jest.mock('services/TokenStore', () => ({
   getOrganization: jest.fn(() => ({}))
 }));
 
-jest.mock('data/EndpointFactory.es6', () => {
+jest.mock('data/EndpointFactory', () => {
   const moment = require('moment');
   const _ = require('lodash');
   const DATE_FORMAT = 'YYYY-MM-DD';
@@ -94,7 +94,7 @@ jest.mock('data/EndpointFactory.es6', () => {
   };
 });
 
-jest.mock('app/common/ReloadNotification.es6', () => ({
+jest.mock('app/common/ReloadNotification', () => ({
   trigger: jest.fn()
 }));
 

@@ -1,4 +1,4 @@
-import { PasteHtmlPlugin } from './index.es6';
+import { PasteHtmlPlugin } from './index';
 import { Value, Document, Block, Text, Editor } from 'slate';
 import {
   document,
@@ -14,7 +14,7 @@ import {
 
 import { BLOCKS, MARKS, INLINES } from '@contentful/rich-text-types';
 import { List } from 'immutable';
-import SchemaEs6 from '../../constants/Schema.es6';
+import SchemaEs6 from '../../constants/Schema';
 
 const emptyInitialValue = Value.create({
   document: Document.create({

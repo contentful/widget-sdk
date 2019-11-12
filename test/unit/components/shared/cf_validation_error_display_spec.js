@@ -10,7 +10,7 @@ describe('ErrorPathController', () => {
 
   beforeEach(async function() {
     const { default: errorMessageBuilder } = await this.system.import(
-      'services/errorMessageBuilder/errorMessageBuilder.es6'
+      'services/errorMessageBuilder/errorMessageBuilder'
     );
     await $initialize(this.system);
 

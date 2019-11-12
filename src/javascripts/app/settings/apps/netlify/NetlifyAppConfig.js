@@ -1,5 +1,5 @@
-import { getModule } from 'NgRegistry.es6';
-import createCachedAppConfig from '../CachedAppConfig.es6';
+import { getModule } from 'NgRegistry';
+import createCachedAppConfig from '../CachedAppConfig';
 
 const perSpaceCache = {};
 

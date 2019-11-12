@@ -18,11 +18,11 @@ describe('activationEmailResendController', () => {
       user$: K.createMockProperty()
     };
 
-    this.system.set('services/TokenStore.es6', {
+    this.system.set('services/TokenStore', {
       user$: this.stubs.user$
     });
 
-    const { getStore } = await this.system.import('TheStore/index.es6');
+    const { getStore } = await this.system.import('TheStore/index');
     moment = (await this.system.import('moment')).default;
 
     await $initialize(this.system, $provide => {

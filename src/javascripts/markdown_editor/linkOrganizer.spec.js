@@ -1,4 +1,4 @@
-import LinkOrganizer from './linkOrganizer.es6';
+import LinkOrganizer from './linkOrganizer';
 
 describe('Link organizer', () => {
   describe('Inline link finder', () => {

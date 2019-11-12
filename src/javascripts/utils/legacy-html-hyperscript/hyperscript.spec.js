@@ -1,4 +1,4 @@
-import { h } from './index.es6';
+import { h } from './index';
 
 describe('hyperscript', () => {
   describe('generating HTML strings', () => {

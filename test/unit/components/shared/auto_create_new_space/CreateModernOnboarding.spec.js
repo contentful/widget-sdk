@@ -12,7 +12,7 @@ describe('CreateModernOnboarding service', function() {
       create: sinon.stub()
     };
 
-    this.system.set('services/TokenStore.es6', {
+    this.system.set('services/TokenStore', {
       user$: this.user$
     });
 
@@ -26,7 +26,7 @@ describe('CreateModernOnboarding service', function() {
     });
 
     this.CreateModernOnboarding = await this.system.import(
-      'components/shared/auto_create_new_space/CreateModernOnboarding.es6'
+      'components/shared/auto_create_new_space/CreateModernOnboarding'
     );
 
     await $initialize(this.system);

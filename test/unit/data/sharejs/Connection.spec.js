@@ -7,7 +7,7 @@ import createOtDocMock from 'test/helpers/mocks/ot_doc';
 
 const OtDocMock = createOtDocMock();
 
-describe('data/sharejs/Connection.es6', () => {
+describe('data/sharejs/Connection', () => {
   beforeEach(async function() {
     this.baseConnection = {
       socket: {},
@@ -40,7 +40,7 @@ describe('data/sharejs/Connection.es6', () => {
       default: this.sharejs
     });
 
-    this.ShareJSConnection = await this.system.import('data/sharejs/Connection.es6');
+    this.ShareJSConnection = await this.system.import('data/sharejs/Connection');
 
     await $initialize(this.system);
 

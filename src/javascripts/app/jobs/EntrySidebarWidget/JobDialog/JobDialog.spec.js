@@ -4,13 +4,13 @@ import { Notification } from '@contentful/forma-36-react-components';
 
 import '@testing-library/jest-dom/extend-expect';
 import * as DateMocks from 'DateMocks';
-import JobDialog from './index.es6';
+import JobDialog from './index';
 import moment from 'moment';
 
-import * as JobsAnalytics from 'app/jobs/Analytics/JobsAnalytics.es6';
-import APIClient from 'data/APIClient.es6';
+import * as JobsAnalytics from 'app/jobs/Analytics/JobsAnalytics';
+import APIClient from 'data/APIClient';
 
-jest.mock('data/APIClient.es6', () =>
+jest.mock('data/APIClient', () =>
   jest.fn().mockImplementation(() => ({ validateEntry: jest.fn().mockReturnValue() }))
 );
 

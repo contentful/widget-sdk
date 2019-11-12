@@ -2,7 +2,7 @@ import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import { render, cleanup, getByTestId, fireEvent } from '@testing-library/react';
 import { cloneDeep } from 'lodash';
-import { WebhookTemplateForm } from './WebhookTemplateForm.es6';
+import { WebhookTemplateForm } from './WebhookTemplateForm';
 import * as AnalyticsMocked from 'analytics/Analytics';
 
 const TEMPLATE = {

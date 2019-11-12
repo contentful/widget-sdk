@@ -75,7 +75,7 @@ describe('ResourceUtils', () => {
       pricingVersion: this.pricingVersions.pricingVersion2
     };
 
-    this.ResourceUtils = await this.system.import('utils/ResourceUtils.es6');
+    this.ResourceUtils = await this.system.import('utils/ResourceUtils');
   });
 
   describe('#canCreate', () => {

@@ -3,13 +3,13 @@ import { render, cleanup, wait, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
 import { Notification } from '@contentful/forma-36-react-components';
-import { default as JobsWidget } from './JobsWidget.es6';
+import { default as JobsWidget } from './JobsWidget';
 import {
   getNotCanceledJobsForEntity,
   createJob as createJobService,
   cancelJob
-} from '../DataManagement/JobsService.es6';
-import * as JobsAnalytics from 'app/jobs/Analytics/JobsAnalytics.es6';
+} from '../DataManagement/JobsService';
+import * as JobsAnalytics from 'app/jobs/Analytics/JobsAnalytics';
 
 const commandTemplate = {
   execute: () => {},
@@ -19,9 +19,9 @@ const commandTemplate = {
   isRestricted: () => false
 };
 
-jest.mock('../DataManagement/JobsService.es6');
+jest.mock('../DataManagement/JobsService');
 jest.mock('ng/spaceContext', () => ({ entryTitle: () => 'Test' }));
-jest.mock('app/entity_editor/UnpublishedReferencesWarning/index.es6', () => ({
+jest.mock('app/entity_editor/UnpublishedReferencesWarning/index', () => ({
   showUnpublishedReferencesWarning: () => Promise.resolve(true)
 }));
 describe('<JobsWidget />', () => {

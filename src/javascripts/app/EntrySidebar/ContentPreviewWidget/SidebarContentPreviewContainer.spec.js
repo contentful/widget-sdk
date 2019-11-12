@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import * as mockedSpaceContext from 'ng/spaceContext';
-import SidebarContentPreviewContainer from './SidebarContentPreviewContainer.es6';
+import SidebarContentPreviewContainer from './SidebarContentPreviewContainer';
 import flushPromises from 'testHelpers/flushPromises';
 
 const mockContentPreview = {
@@ -15,7 +15,7 @@ jest.mock('services/contentPreview', () => ({
 }));
 
 jest.mock(
-  'services/localeStore.es6',
+  'services/localeStore',
   () => ({
     toPublicCode: _ => _,
     getDefaultLocale: () => ({ code: 'en_US' })
@@ -63,7 +63,7 @@ const entry = {
   }
 };
 
-describe('entity_editor/Components/SidebarContentPreviewContainer.es6', () => {
+describe('entity_editor/Components/SidebarContentPreviewContainer', () => {
   beforeEach(() => {
     mockedSpaceContext.getData.mockImplementation(value => {
       if (value === 'spaceMember.admin') {

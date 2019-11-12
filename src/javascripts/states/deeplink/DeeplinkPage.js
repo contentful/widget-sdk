@@ -2,13 +2,13 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
-import StateLink from 'app/common/StateLink.es6';
+import StateLink from 'app/common/StateLink';
 
-import StateRedirect from 'app/common/StateRedirect.es6';
+import StateRedirect from 'app/common/StateRedirect';
 import DeeplinkSelectSpaceEnv from './DeeplinkSelectSpaceEnv/DeeplinkSelectSpaceEnv';
 import { Heading, Paragraph, Typography, Spinner } from '@contentful/forma-36-react-components';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
-import { resolveLink } from './resolver.es6';
+import { resolveLink } from './resolver';
 
 const styles = {
   messageContainer: css({

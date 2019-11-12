@@ -3,7 +3,7 @@ import { Paragraph, Typography, List, ListItem } from '@contentful/forma-36-reac
 import ApiKeysWorkbench from '../ApiKeysWorkbench';
 import ApiKeysNavigation from '../ApiKeysNavigation';
 import WorkbenchSidebarItem from 'app/common/WorkbenchSidebarItem';
-import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
+import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import { CMATokensView } from './CMATokensView';
 
 export default function CMATokensRoute() {

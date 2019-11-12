@@ -7,10 +7,10 @@ describe('Snowplow service', () => {
     this.Events = { getSchema: sinon.stub(), transform: sinon.stub() };
     this.window = {};
 
-    this.system.set('utils/LazyLoader.es6', this.LazyLoader);
+    this.system.set('utils/LazyLoader', this.LazyLoader);
     this.system.set('analytics/snowplow/Events', this.Events);
 
-    this.system.set('utils/ngCompat/window.es6', {
+    this.system.set('utils/ngCompat/window', {
       default: this.window
     });
 

@@ -1,4 +1,4 @@
-import { onStoreFetchingStatusChange } from './util.es6';
+import { onStoreFetchingStatusChange } from './util';
 import * as K from '../../../../../test/utils/kefir';
 
 const initialStatus = {

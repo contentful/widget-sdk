@@ -1,5 +1,5 @@
-import newEntityBatchLoaderFn from './newEntityBatchLoaderFn.es6';
-import * as logger from 'services/logger.es6';
+import newEntityBatchLoaderFn from './newEntityBatchLoaderFn';
+import * as logger from 'services/logger';
 
 const PENDING = new Promise(() => {});
 

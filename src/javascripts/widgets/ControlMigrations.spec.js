@@ -1,5 +1,5 @@
-import migrateControl from './ControlMigrations.es6';
-import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from './WidgetNamespaces.es6';
+import migrateControl from './ControlMigrations';
+import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from './WidgetNamespaces';
 
 describe('ControlMigrations', () => {
   it('migrates widget regardless of type', () => {

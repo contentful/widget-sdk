@@ -4,15 +4,15 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { Button, IconButton } from '@contentful/forma-36-react-components';
 
-import reducer from 'redux/reducer/index.es6';
-import { TEAMS, TEAM_MEMBERSHIPS } from 'redux/datasets.es6';
-import ROUTES from 'redux/routes.es6';
-import Placeholder from 'app/common/Placeholder.es6';
-import TeamsEmptyState from './TeamsEmptyState.es6';
-import TeamList from './TeamList.es6';
-import TeamListRow from './TeamListRow.es6';
-import TeamDialog from './TeamDialog.es6';
-import ExperimentalFeatureNote from './ExperimentalFeatureNote.es6';
+import reducer from 'redux/reducer/index';
+import { TEAMS, TEAM_MEMBERSHIPS } from 'redux/datasets';
+import ROUTES from 'redux/routes';
+import Placeholder from 'app/common/Placeholder';
+import TeamsEmptyState from './TeamsEmptyState';
+import TeamList from './TeamList';
+import TeamListRow from './TeamListRow';
+import TeamDialog from './TeamDialog';
+import ExperimentalFeatureNote from './ExperimentalFeatureNote';
 
 const renderComponent = actions => {
   const store = createStore(reducer);

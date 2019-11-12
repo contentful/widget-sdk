@@ -15,13 +15,13 @@ import tokens from '@contentful/forma-36-tokens';
 import ApiKeysWorkbench from '../ApiKeysWorkbench';
 import ApiKeysNavigation from '../ApiKeysNavigation';
 import WorkbenchSidebarItem from 'app/common/WorkbenchSidebarItem';
-import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
+import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import ApiKeyList from './ApiKeyList';
 import { useApiKeysState } from './ApiKeyListState';
-import * as Navigator from 'states/Navigator.es6';
+import * as Navigator from 'states/Navigator';
 import EmptyStateContainer, {
   defaultSVGStyle
-} from 'components/EmptyStateContainer/EmptyStateContainer.es6';
+} from 'components/EmptyStateContainer/EmptyStateContainer';
 import ApiKeysEmptyIllustration from 'svg/api-keys-empty-illustation';
 
 const styles = {

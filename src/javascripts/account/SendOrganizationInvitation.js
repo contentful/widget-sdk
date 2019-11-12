@@ -1,6 +1,6 @@
-import * as K from 'utils/kefir.es6';
+import * as K from 'utils/kefir';
 import { get } from 'lodash';
-import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory.es6';
+import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
 import { create as createSpaceRepo } from 'access_control/SpaceMembershipRepository';
 import {
   invite as inviteToOrg,

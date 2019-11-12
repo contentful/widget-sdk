@@ -19,12 +19,12 @@ import {
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { DocsLink, LinkOpen } from 'ui/Content.es6';
-import * as Auth from 'Authentication.es6';
-import * as Config from 'Config.es6';
+import { DocsLink, LinkOpen } from 'ui/Content';
+import * as Auth from 'Authentication';
+import * as Config from 'Config';
 import * as TokenResourceManager from './TokenResourceManager';
 
-import Paginator from 'ui/Components/Paginator.es6';
+import Paginator from 'ui/Components/Paginator';
 import { useTokensState } from './CMATokensViewReducer';
 
 const styles = {

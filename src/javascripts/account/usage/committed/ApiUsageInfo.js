@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { sum } from 'lodash';
 import { Tooltip, Tag } from '@contentful/forma-36-react-components';
 
-import { shorten } from 'utils/NumberUtils.es6';
+import { shorten } from 'utils/NumberUtils';
 
 import { organizationResourceUsagePropType } from './propTypes';
 

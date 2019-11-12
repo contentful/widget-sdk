@@ -2,18 +2,18 @@ import {
   getDefaultSidebar,
   transformEditorInterfacesToTargetState,
   removeAllEditorInterfaceReferences
-} from './AppEditorInterfaces.es6';
+} from './AppEditorInterfaces';
 
 import {
   NAMESPACE_EXTENSION,
   NAMESPACE_BUILTIN,
   NAMESPACE_SIDEBAR_BUILTIN
-} from 'widgets/WidgetNamespaces.es6';
+} from 'widgets/WidgetNamespaces';
 
 const EXTENSION_ID = 'extid';
 
-jest.mock('i13n/Telemetry.es6', () => ({ count: () => {} }));
-jest.mock('data/CMA/ProductCatalog.es6', () => ({ getCurrentSpaceFeature: () => true }));
+jest.mock('i13n/Telemetry', () => ({ count: () => {} }));
+jest.mock('data/CMA/ProductCatalog', () => ({ getCurrentSpaceFeature: () => true }));
 
 describe('AppEditorInterfaces', () => {
   let cma, transform, remove;

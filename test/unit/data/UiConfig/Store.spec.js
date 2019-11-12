@@ -5,7 +5,7 @@ import createMockSpaceEndpoint from 'test/utils/createSpaceEndpointMock';
 import { $initialize } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
 
-describe('data/UiConfig/Store.es6', () => {
+describe('data/UiConfig/Store', () => {
   beforeEach(async function() {
     this.trackMigrationSpy = sinon.spy();
 
@@ -13,7 +13,7 @@ describe('data/UiConfig/Store.es6', () => {
       searchTermsMigrated: this.trackMigrationSpy
     });
 
-    const { default: createUiConfigStore } = await this.system.import('data/UiConfig/Store.es6');
+    const { default: createUiConfigStore } = await this.system.import('data/UiConfig/Store');
 
     await $initialize(this.system);
 

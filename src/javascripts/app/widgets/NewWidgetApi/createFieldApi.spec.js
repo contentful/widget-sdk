@@ -1,9 +1,9 @@
-import { createFieldApi } from './createFieldApi.es6';
+import { createFieldApi } from './createFieldApi';
 import { identity, set } from 'lodash';
-import { onValueScope } from 'utils/kefir.es6';
+import { onValueScope } from 'utils/kefir';
 
 jest.mock(
-  'utils/kefir.es6',
+  'utils/kefir',
   () => ({
     onValueScope: jest.fn().mockImplementation((_scope, stream, onChange) => {
       return onChange(stream);

@@ -1,7 +1,7 @@
 import { get } from 'lodash';
 
-import { fetchAllWithIncludes } from 'data/CMA/FetchAll.es6';
-import ResolveLinks from 'data/LinkResolver.es6';
+import { fetchAllWithIncludes } from 'data/CMA/FetchAll';
+import ResolveLinks from 'data/LinkResolver';
 
 const ALPHA_HEADER = { 'x-contentful-enable-alpha-feature': 'teams-api' };
 const BATCH_LIMIT = 100;

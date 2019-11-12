@@ -1,19 +1,19 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import WalkthroughWidget from './WalkthroughWidget.es6.js';
+import WalkthroughWidget from './WalkthroughWidget.js';
 
 const waitToUpdate = async wrapper => {
   await Promise.resolve();
   await wrapper.update();
 };
 
-jest.mock('utils/StatePersistenceApi.es6', () => ({
+jest.mock('utils/StatePersistenceApi', () => ({
   fetchUserState: () =>
     Promise.resolve({ started: undefined, dismissed: undefined, sys: { version: 1 } }),
   updateUserState: (_, { version }) => Promise.resolve({ sys: version + 1 })
 }));
 
-jest.mock('app/home/widgets/walkthrough/utils.es6', () => ({
+jest.mock('app/home/widgets/walkthrough/utils', () => ({
   getReactJoyride: () => Promise.resolve('')
 }));
 
@@ -38,7 +38,7 @@ describe('WalkthroughWidget', () => {
     await waitToUpdate(wrapper);
     wrapper.find('[testId="start-walkthrough-button"]').simulate('click');
     // because ReactJoyride uses Portal, we simulate event that would be triggered by ReactJoyride
-    // src/javascripts/app/home/widgets/walkthrough/WalkthroughComponent.es6.js:35
+    // src/javascripts/app/home/widgets/walkthrough/WalkthroughComponent.js:35
     expect(wrapper.state('isTourRunning')).toEqual(true);
     await wrapper.instance().updateWalkthroughState({ started: true, dismissed: false });
     await waitToUpdate(wrapper);

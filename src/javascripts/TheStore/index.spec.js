@@ -1,10 +1,10 @@
-import $window from 'utils/ngCompat/window.es6';
-import * as storeUtils from 'TheStore/Utils.es6';
-import { getStore } from 'TheStore/index.es6';
-import ClientStorageWrapper from 'TheStore/ClientStorageWrapper.es6';
-import ClientStorage from 'TheStore/ClientStorage.es6';
+import $window from 'utils/ngCompat/window';
+import * as storeUtils from 'TheStore/Utils';
+import { getStore } from 'TheStore/index';
+import ClientStorageWrapper from 'TheStore/ClientStorageWrapper';
+import ClientStorage from 'TheStore/ClientStorage';
 
-jest.mock('utils/ngCompat/window.es6', () => ({
+jest.mock('utils/ngCompat/window', () => ({
   addEventListener: jest.fn(),
   removeEventListener: jest.fn(),
   localStorage: {
@@ -158,7 +158,7 @@ describe('TheStore', () => {
     });
   });
 
-  describe('TheStore/ClientStorageWrapper.es6', () => {
+  describe('TheStore/ClientStorageWrapper', () => {
     let SessionStorageWrapper;
     let LocalStorageWrapper;
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import Visible from '../index.es6';
+import Visible from '../index';
 
 describe('Visible', () => {
   it('renders children if condition is truthy', () => {

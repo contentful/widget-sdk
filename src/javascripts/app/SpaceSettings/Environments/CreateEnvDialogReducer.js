@@ -1,9 +1,9 @@
 import { useReducer } from 'react';
-import { createImmerReducer } from 'redux/utils/createImmerReducer.es6';
+import { createImmerReducer } from 'redux/utils/createImmerReducer';
 import { mapValues, get } from 'lodash';
-import { isValidResourceId } from 'data/utils.es6';
-import * as Environment from 'data/CMA/SpaceEnvironmentsRepo.es6';
-import * as logger from 'services/logger.es6';
+import { isValidResourceId } from 'data/utils';
+import * as Environment from 'data/CMA/SpaceEnvironmentsRepo';
+import * as logger from 'services/logger';
 
 const ID_EXISTS_ERROR_MESSAGE =
   'This ID already exists in your space. Please make sure it’s unique.';

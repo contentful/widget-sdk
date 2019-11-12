@@ -1,7 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import { render, cleanup, fireEvent } from '@testing-library/react';
-import StateLink from './StateLink.es6';
+import StateLink from './StateLink';
 import * as $stateMocked from 'ng/$state';
 
 describe('StateLink', () => {

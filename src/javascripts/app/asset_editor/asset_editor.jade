@@ -1,17 +1,17 @@
 react-component(
-  name="components/shared/DocumentTitle.es6"
+  name="components/shared/DocumentTitle"
   props="{title: [title, 'Media']}"
 )
 div.asset-editor.workbench
   header.workbench-header
-    react-component(name="app/entity_editor/Components/BackNav/index.es6")
+    react-component(name="app/entity_editor/Components/BackNav/index")
     cf-icon.workbench-header__icon(name="page-media", scale="0.75")
     h1.workbench-header__title
       | {{ title }}
       span.locale(ng-if="localeData.isSingleLocaleModeOn")
         | &nbsp;- {{localeData.focusedLocale.name}}
       react-component(
-        name="components/shared/knowledge_base_icon/KnowledgeBase.es6"
+        name="components/shared/knowledge_base_icon/KnowledgeBase"
         props="{target: 'asset', className: 'workbench-header__kb-link'}"
       )
 
@@ -21,17 +21,17 @@ div.asset-editor.workbench
         ui-command="state.delete")
         | Delete
       react-component(
-        name="app/entity_editor/EntityAuxToggle.es6"
+        name="app/entity_editor/EntityAuxToggle"
         props="sidebarToggleProps.auxToggle"
       )
 
   .workbench-main
     .workbench-main__content
-      react-component(name="app/entity_editor/StatusNotification.es6" props="statusNotificationProps")
+      react-component(name="app/entity_editor/StatusNotification" props="statusNotificationProps")
 
       .entity-editor-form.cf-workbench-content.cf-workbench-content-type__text
         cf-error-list.form-box-error(cf-error-path="['fields']")
         cf-entity-field(ng-repeat="widget in widgets track by widget.fieldId")
 
     .workbench-main__sidebar
-      react-component(name="app/EntrySidebar/EntrySidebar.es6" props="entrySidebarProps")
+      react-component(name="app/EntrySidebar/EntrySidebar" props="entrySidebarProps")

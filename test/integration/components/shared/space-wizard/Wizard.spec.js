@@ -171,7 +171,7 @@ describe('Space Wizard', function() {
       track: this.stubs.track
     });
 
-    this.system.set('services/ResourceService.es6', {
+    this.system.set('services/ResourceService', {
       default: () => {
         return {
           get: this.stubs.resourceService_get,
@@ -195,12 +195,12 @@ describe('Space Wizard', function() {
       }
     });
 
-    this.system.set('data/EndpointFactory.es6', {
+    this.system.set('data/EndpointFactory', {
       createSpaceEndpoint: this.stubs.createSpaceEndpoint,
       createOrganizationEndpoint: this.stubs.createOrganizationEndpoint
     });
 
-    this.system.set('services/SpaceTemplateLoader.es6', {
+    this.system.set('services/SpaceTemplateLoader', {
       getTemplatesList: this.stubs.getTemplatesList,
       getTemplate: this.stubs.getTemplate
     });
@@ -213,20 +213,20 @@ describe('Space Wizard', function() {
       }
     });
 
-    this.system.set('services/TokenStore.es6', {
+    this.system.set('services/TokenStore', {
       refresh: this.stubs.TokenStore_refresh
     });
 
-    this.system.set('services/client.es6', {
+    this.system.set('services/client', {
       default: {
         createSpace: this.stubs.createSpace
       }
     });
 
     const { default: Wizard } = await this.system.import(
-      'components/shared/space-wizard/Wizard.es6'
+      'components/shared/space-wizard/Wizard'
     );
-    this.store = (await this.system.import('redux/store.es6')).default;
+    this.store = (await this.system.import('redux/store')).default;
 
     await $initialize(this.system);
 

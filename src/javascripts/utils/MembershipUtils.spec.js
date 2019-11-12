@@ -1,4 +1,4 @@
-import * as MembershipUtils from './MembershipUtils.es6';
+import * as MembershipUtils from './MembershipUtils';
 
 describe('MembershipUtils', () => {
   describe('#getRoleDescription', () => {

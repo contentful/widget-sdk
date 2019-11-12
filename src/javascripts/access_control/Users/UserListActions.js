@@ -2,17 +2,17 @@ import React from 'react';
 import { Notification } from '@contentful/forma-36-react-components';
 import { get, includes, extend, filter, map, isEmpty } from 'lodash';
 
-import ReloadNotification from 'app/common/ReloadNotification.es6';
+import ReloadNotification from 'app/common/ReloadNotification';
 import UserSpaceInvitationDialog from 'access_control/templates/UserSpaceInvitationDialog';
-import { createOrganizationEndpoint } from 'data/EndpointFactory.es6';
+import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getAllUsers } from 'access_control/OrganizationMembershipRepository';
-import { getModule } from 'NgRegistry.es6';
-import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
-import * as ListQuery from 'search/listQuery.es6';
-import ModalLauncher from 'app/common/ModalLauncher.es6';
-import * as TokenStore from 'services/TokenStore.es6';
-import { go } from 'states/Navigator.es6';
-import * as entitySelector from 'search/EntitySelector/entitySelector.es6';
+import { getModule } from 'NgRegistry';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
+import * as ListQuery from 'search/listQuery';
+import ModalLauncher from 'app/common/ModalLauncher';
+import * as TokenStore from 'services/TokenStore';
+import { go } from 'states/Navigator';
+import * as entitySelector from 'search/EntitySelector/entitySelector';
 
 import { ADMIN_ROLE_ID } from '../constants';
 

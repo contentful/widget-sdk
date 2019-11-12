@@ -7,9 +7,9 @@ import {
   SkeletonBodyText
 } from '@contentful/forma-36-react-components';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
-import Icon from 'ui/Components/Icon.es6';
-import * as Navigator from 'states/Navigator.es6';
-import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase.es6';
+import Icon from 'ui/Components/Icon';
+import * as Navigator from 'states/Navigator';
+import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 
 export default function KeyEditorWorkbench(props) {
   return (

@@ -2,8 +2,8 @@ import React from 'react';
 import { render, cleanup, waitForElement, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import DeeplinkPage from './DeeplinkPage';
-import { resolveLink } from './resolver.es6';
-import { getSpaceInfo, getAllEnviroments } from './utils.es6';
+import { resolveLink } from './resolver';
+import { getSpaceInfo, getAllEnviroments } from './utils';
 import $state from 'ng/$state';
 
 jest.mock('./utils', () => ({
@@ -12,7 +12,7 @@ jest.mock('./utils', () => ({
 }));
 
 jest.mock(
-  './resolver.es6',
+  './resolver',
   () => ({
     resolveLink: jest.fn()
   }),

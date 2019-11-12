@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Spinner } from '@contentful/forma-36-react-components';
 import * as tokens from '@contentful/forma-36-tokens';
-import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer.es6';
+import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import { css } from 'emotion';
 
 const styles = {

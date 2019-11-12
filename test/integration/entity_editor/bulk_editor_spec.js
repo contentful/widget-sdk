@@ -14,7 +14,7 @@ describe('bulk editor', () => {
       default: createLocaleStoreMock()
     };
 
-    this.system.set('services/localeStore.es6', localeStore);
+    this.system.set('services/localeStore', localeStore);
 
     localeStore.default.setLocales([
       { code: 'DEF', name: 'Default' },

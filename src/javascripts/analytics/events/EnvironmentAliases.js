@@ -1,5 +1,5 @@
 import { track as analyticsTrack } from 'analytics/Analytics';
-import * as Intercom from 'services/intercom.es6';
+import * as Intercom from 'services/intercom';
 
 const PREFIX = 'environment_aliases:';
 const track = (e, data) => analyticsTrack(`${PREFIX}${e}`, data);

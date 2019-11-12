@@ -1,10 +1,10 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import BooleanFeatureFlag from './BooleanFeatureFlag.es6';
+import BooleanFeatureFlag from './BooleanFeatureFlag';
 import flushPromises from 'testHelpers/flushPromises';
 import * as spaceContextMocked from 'ng/spaceContext';
 
-import { getVariation } from 'LaunchDarkly.es6';
+import { getVariation } from 'LaunchDarkly';
 
 const organizationId = 'aaaa-dddd';
 const spaceId = 'space-id';

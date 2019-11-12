@@ -28,9 +28,9 @@ describe('Space Wizard', () => {
       }
     };
 
-    this.store = (await this.system.import('redux/store.es6')).default;
+    this.store = (await this.system.import('redux/store')).default;
 
-    this.Wizard = (await this.system.import('components/shared/space-wizard/Wizard.es6')).default;
+    this.Wizard = (await this.system.import('components/shared/space-wizard/Wizard')).default;
 
     await $initialize(this.system);
 

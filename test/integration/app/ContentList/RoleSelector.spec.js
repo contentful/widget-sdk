@@ -28,7 +28,7 @@ describe('app/RoleSelector', () => {
     this.Notification = ComponentLibrary.Notification;
 
     const { default: openRoleSelector } = await this.system.import(
-      'app/ContentList/RoleSelector.es6'
+      'app/ContentList/RoleSelector'
     );
 
     await $initialize(this.system);

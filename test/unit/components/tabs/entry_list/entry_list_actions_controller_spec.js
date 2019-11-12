@@ -56,7 +56,7 @@ describe('Entry List Actions Controller', () => {
       canPerformActionOnEntity: stubs.canPerformActionOnEntity
     });
 
-    const paginatorClass = (await this.system.import('classes/Paginator.es6')).default;
+    const paginatorClass = (await this.system.import('classes/Paginator')).default;
 
     ComponentLibrary = await this.system.import('@contentful/forma-36-react-components');
     ComponentLibrary.Notification.error = stubs.error;

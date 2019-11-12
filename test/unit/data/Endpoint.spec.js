@@ -1,9 +1,9 @@
 import sinon from 'sinon';
-import { assign } from 'utils/Collections.es6';
+import { assign } from 'utils/Collections';
 import { $initialize, $inject } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
 
-describe('data/Endpoint.es6', () => {
+describe('data/Endpoint', () => {
   const baseUrl = '//test.io';
 
   // These headers are set by `$http` by default
@@ -23,7 +23,7 @@ describe('data/Endpoint.es6', () => {
       even though it should be `env unittest`.
      */
 
-    this.Endpoint = await this.system.import('data/Endpoint.es6');
+    this.Endpoint = await this.system.import('data/Endpoint');
 
     await $initialize(this.system);
 

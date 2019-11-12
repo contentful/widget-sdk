@@ -1,6 +1,6 @@
 describe('ShallowObjectDiff', () => {
   beforeEach(async function() {
-    this.shallowObjectDiff = (await this.system.import('utils/ShallowObjectDiff.es6')).default;
+    this.shallowObjectDiff = (await this.system.import('utils/ShallowObjectDiff')).default;
   });
 
   it('should return a shallow diff of input object', function() {

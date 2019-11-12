@@ -1,5 +1,5 @@
-import ExtensionAPI from './ExtensionAPI.es6';
-import { LOCATION_ENTRY_FIELD } from './WidgetLocations.es6';
+import ExtensionAPI from './ExtensionAPI';
+import { LOCATION_ENTRY_FIELD } from './WidgetLocations';
 
 describe('ExtensionAPI', () => {
   const createAPI = extraConfig => {

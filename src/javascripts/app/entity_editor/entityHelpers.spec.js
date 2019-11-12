@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { newForLocale } from './entityHelpers.es6';
+import { newForLocale } from './entityHelpers';
 import * as spaceContextMocked from 'ng/spaceContext';
 
 const mockRewrittenUrl = 'http://rewritten.url/file.txt';
@@ -9,13 +9,13 @@ const mockInternalLocale = {
   de: 'de-internal'
 };
 
-jest.mock('services/AssetUrlService.es6', () => {
+jest.mock('services/AssetUrlService', () => {
   return {
     transformHostname: () => mockRewrittenUrl
   };
 });
 
-jest.mock('services/localeStore.es6', () => {
+jest.mock('services/localeStore', () => {
   return {
     toInternalCode: code => mockInternalLocale[code]
   };

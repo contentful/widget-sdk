@@ -1,10 +1,10 @@
 import {
   convertInternalStateToConfiguration,
   convertConfigirationToInternalState
-} from './SidebarSync.es6';
+} from './SidebarSync';
 import { flatten, uniq } from 'lodash';
-import { SidebarType } from '../constants.es6';
-import { NAMESPACE_EXTENSION, NAMESPACE_SIDEBAR_BUILTIN } from 'widgets/WidgetNamespaces.es6';
+import { SidebarType } from '../constants';
+import { NAMESPACE_EXTENSION, NAMESPACE_SIDEBAR_BUILTIN } from 'widgets/WidgetNamespaces';
 import {
   EntryConfiguration,
   Publication as PublicationWidget,
@@ -14,13 +14,13 @@ import {
   Links as LinksWidget,
   Translation as TranslationWidget,
   Users as UsersWidget
-} from '../defaults.es6';
+} from '../defaults';
 
 function getAllKeys(arr) {
   return uniq(flatten(arr.map(item => Object.keys(item))));
 }
 
-describe('EntrySidebar/Configuration/SidebarSync.es6', () => {
+describe('EntrySidebar/Configuration/SidebarSync', () => {
   describe('convertInternalStateToConfiguration', () => {
     it('should be nullable if default config is selected', () => {
       expect(

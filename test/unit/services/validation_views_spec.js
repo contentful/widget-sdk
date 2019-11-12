@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import validationViews from 'services/validationViews.es6';
+import validationViews from 'services/validationViews';
 
 describe('predefined validation regexps', () => {
   beforeEach(function() {
