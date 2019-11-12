@@ -15,6 +15,7 @@ import InsertLinkModal from './components/InsertLinkModal';
 import FormatingHelpModal from './components/FormatingHelpModal';
 import InsertCharacterModal from './components/InsertCharacterModal';
 import EmbedExternalContentModal from './components/EmbedExternalContentModal';
+import InsertTableModal from './components/InsertTableModal';
 
 export function create(editor, locale, defaultLocaleCode, { zen }) {
   const modalDialog = getModule('modalDialog');
@@ -94,9 +95,9 @@ export function create(editor, locale, defaultLocaleCode, { zen }) {
           } else if (unpublishableAssets.length) {
             Notification.error(
               `Failed to publish ${
-              unpublishableAssets.length === 1
-                ? 'the asset'
-                : `${unpublishableAssets.length} assets`
+                unpublishableAssets.length === 1
+                  ? 'the asset'
+                  : `${unpublishableAssets.length} assets`
               }`
             );
           }
@@ -159,7 +160,7 @@ export function create(editor, locale, defaultLocaleCode, { zen }) {
         .promise.then(() => {
           editor.insert(links);
         })
-        .catch(() => { });
+        .catch(() => {});
     } else {
       editor.insert(links);
       return Promise.resolve();
@@ -205,13 +206,14 @@ export function create(editor, locale, defaultLocaleCode, { zen }) {
     }
   }
 
-  function table() {
-    modalDialog
-      .open({
-        scopeData: { model: { rows: 2, cols: 2 } },
-        template: 'markdown_table_dialog'
-      })
-      .promise.then(editor.actions.table);
+  async function table() {
+    const modalKey = Date.now();
+    const result = await ModalLauncher.open(({ isShown, onClose }) => (
+      <InsertTableModal isShown={isShown} onClose={onClose} key={modalKey} />
+    ));
+    if (result) {
+      editor.actions.table(result);
+    }
   }
 
   async function embed() {
