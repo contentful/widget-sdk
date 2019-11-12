@@ -60,7 +60,7 @@ export default class TasksPage extends Component {
     ]);
     const entryTitles = this.getEntryTitles(entries);
     const taskState = tasks.reduce((tasks, task) => {
-      if (!entryTitles[task.sys.reference.sys.id]) {
+      if (!entryTitles[task.sys.parentEntity.sys.id]) {
         // getEntryTitles() should always return a title for a valid entry, even
         // if it's just "Untitled". This gives us a cheap way of detecting
         // whether the entries are visible or not (whether the user has
@@ -72,8 +72,8 @@ export default class TasksPage extends Component {
         body: task.body,
         createdBy: spaceUsers.find(user => user.sys.id === task.sys.createdBy.sys.id),
         createdAt: task.sys.createdAt,
-        entryId: task.sys.reference.sys.id,
-        entryTitle: entryTitles[task.sys.reference.sys.id]
+        entryId: task.sys.parentEntity.sys.id,
+        entryTitle: entryTitles[task.sys.parentEntity.sys.id]
       };
       return [...tasks, newTask];
     }, []);

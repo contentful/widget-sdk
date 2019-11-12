@@ -44,14 +44,15 @@ import { getModule } from 'NgRegistry';
  * @param {string} baseUrl
  * @param {string} spaceId
  * @param {object} auth
+ * @param {includeHeaders} boolean
  * @param {function(): Promise<string>} auth.getToken
  * @param {function(): Promise<string>} auth.refreshToken
  * @param {string?} envId  if provided will call environment-scoped
  *                         endpoints for applicable entities
  * @returns {function(): Promise<Object>}
  */
-export function createSpaceEndpoint(baseUrl, spaceId, auth, envId) {
-  const spaceEndpoint = create(withBaseUrl, auth);
+export function createSpaceEndpoint(baseUrl, spaceId, auth, envId, includeHeaders) {
+  const spaceEndpoint = create(withBaseUrl, auth, includeHeaders);
 
   // spaceEndpoint is a function. we assign additional
   // properties so we can detect in which environment we
@@ -161,11 +162,10 @@ export function createAppDefinitionsEndpoint(baseUrl, auth) {
  * @param {string|function} baseUrl  can be a string - will be used as is
  *                                   can be a function of path to full URL
  * @param {object} auth
- * @param {function(): Promise<string>} auth.getToken
- * @param {function(): Promise<string>} auth.refreshToken
+ * @param {includeHeaders} boolean
  * @returns {function(): Promise<Object>}
  */
-export function create(baseUrl, auth) {
+export function create(baseUrl, auth, includeHeaders) {
   const $q = getModule('$q');
 
   const baseRequest = makeRequest(auth);
@@ -187,7 +187,16 @@ export function create(baseUrl, auth) {
     };
 
     return baseRequest(req).then(
-      response => response.data,
+      response => {
+        if (includeHeaders) {
+          return {
+            headers: response.headers,
+            data: response.data
+          };
+        } else {
+          return response.data;
+        }
+      },
       response => {
         const status = parseInt(response.status, 10);
         const error = extend(new Error('API request failed'), {

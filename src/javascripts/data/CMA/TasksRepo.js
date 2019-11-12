@@ -40,7 +40,8 @@ export async function getAllForEntry(endpoint, entryId) {
       method: 'GET',
       path: path(entryId)
     },
-    alphaHeader
+    alphaHeader,
+    { includeHeaders: true }
   );
 }
 

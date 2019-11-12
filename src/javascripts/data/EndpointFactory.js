@@ -35,8 +35,12 @@ export function createOrganizationEndpoint(orgId) {
  *                         endpoints for applicable entities
  * @returns {function(): Promise<Object>}
  */
-export function createSpaceEndpoint(spaceId, envId) {
-  return Endpoint.createSpaceEndpoint(apiUrl(), spaceId, auth, envId);
+export function createSpaceEndpoint(
+  spaceId,
+  envId,
+  { includeHeaders } = { includeHeaders: false }
+) {
+  return Endpoint.createSpaceEndpoint(apiUrl(), spaceId, auth, envId, includeHeaders);
 }
 
 export function createUsersEndpoint() {

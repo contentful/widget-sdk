@@ -94,7 +94,7 @@ const getPendingTasksCount = (tasks, entries) => {
   const seenEntries = new Map();
   let taskCount = 0;
   for (const task of tasks) {
-    const entryId = task.sys.reference.sys.id;
+    const entryId = task.sys.parentEntity.sys.id;
     if (seenEntries.has(entryId)) {
       if (seenEntries.get(entryId)) {
         taskCount++;
