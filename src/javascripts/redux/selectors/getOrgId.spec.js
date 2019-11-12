@@ -1,4 +1,4 @@
-import reducer from 'redux/reducer/index';
+import reducer from 'redux/reducer';
 import routes from 'redux/routes';
 import getOrgId from './getOrgId';
 

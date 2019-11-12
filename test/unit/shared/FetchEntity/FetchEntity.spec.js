@@ -58,7 +58,7 @@ describe('FetchEntity', () => {
         })
     });
 
-    const FetchEntityModule = await this.system.import('app/widgets/shared/FetchEntity/index');
+    const FetchEntityModule = await this.system.import('app/widgets/shared/FetchEntity');
     FetchEntity = FetchEntityModule.default;
     RequestStatus = FetchEntityModule.RequestStatus;
 

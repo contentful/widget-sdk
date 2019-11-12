@@ -3,7 +3,7 @@ import { createStore } from 'redux';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { Button, TableCell, Table, TableHead } from '@contentful/forma-36-react-components';
-import reducer from 'redux/reducer/index';
+import reducer from 'redux/reducer';
 import UserCard from '../../Users/UserCard';
 import UnknownUser from '../../Users/UserDetail/UnknownUser';
 

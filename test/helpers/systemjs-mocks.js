@@ -100,7 +100,7 @@ async function stubLaunchDarklyUtil(system) {
     }
   };
 
-  await system.set('utils/LaunchDarkly/index', mockedUtil);
+  await system.set('utils/LaunchDarkly', mockedUtil);
 
   await system.set('LaunchDarkly', {
     getVariation: sinon.stub().resolves(false)

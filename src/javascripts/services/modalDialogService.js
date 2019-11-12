@@ -3,7 +3,7 @@ import _ from 'lodash';
 import debounce from 'lodash/debounce';
 import defer from 'lodash/defer';
 import $ from 'jquery';
-import { h } from 'utils/legacy-html-hyperscript/index';
+import { h } from 'utils/legacy-html-hyperscript';
 import keycodes from 'utils/keycodes';
 import * as logger from 'services/logger';
 import window from 'utils/ngCompat/window';

@@ -1,4 +1,4 @@
-import { getStore } from 'TheStore/index';
+import { getStore } from 'TheStore';
 import * as Analytics from 'analytics/Analytics';
 import { getCurrentStateName } from 'states/Navigator';
 import { refresh, user$ } from 'services/TokenStore';

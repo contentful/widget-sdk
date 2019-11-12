@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import RelativeDateTime from 'components/shared/RelativeDateTime/index';
+import RelativeDateTime from 'components/shared/RelativeDateTime';
 import FetchAndFormatUserName from 'components/shared/UserNameFormatter/FetchAndFormatUserName';
 
 export default class EntryInfoPanel extends Component {

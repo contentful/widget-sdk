@@ -280,9 +280,9 @@ angular
       const { init: initDebug } = await import('./Debug');
       const { init: initAuthentication } = await import('Authentication');
       const { init: initTokenStore } = await import('services/TokenStore');
-      const { init: initLD } = await import('utils/LaunchDarkly/index');
+      const { init: initLD } = await import('utils/LaunchDarkly');
       const { init: initAutoCreateNewSpace } = await import(
-        'components/shared/auto_create_new_space/index'
+        'components/shared/auto_create_new_space'
       );
       const { default: initContextMenuHandler } = await import('ui/ContextMenuHandler');
       const Telemetry = await import('i13n/Telemetry');

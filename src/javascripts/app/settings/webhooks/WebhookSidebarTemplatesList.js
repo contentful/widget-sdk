@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Templates from './templates/index';
+import Templates from './templates';
 import WorkbenchSidebarItem from 'app/common/WorkbenchSidebarItem';
 
 const WebhookSidebarTemplatesList = ({ openTemplateDialog }) => (

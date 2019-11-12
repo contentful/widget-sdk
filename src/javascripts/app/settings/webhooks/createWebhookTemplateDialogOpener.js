@@ -1,4 +1,4 @@
-import Templates from './templates/index';
+import Templates from './templates';
 import React from 'react';
 import { get } from 'lodash';
 import * as Navigator from 'states/Navigator';

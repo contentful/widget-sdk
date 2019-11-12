@@ -1,4 +1,4 @@
-import { h } from 'utils/legacy-html-hyperscript/index';
+import { h } from 'utils/legacy-html-hyperscript';
 
 export default function() {
   return h('.modal-background', [

@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Advice from 'components/tabs/Advice/index';
+import Advice from 'components/tabs/Advice';
 import EmptyContentIcon from 'svg/empty-content-model';
 import { Note, TextLink } from '@contentful/forma-36-react-components';
-import CreateEntryButton from 'components/CreateEntryButton/index';
+import CreateEntryButton from 'components/CreateEntryButton';
 
 export default function NoEntriesAdvice({
   onCreate,

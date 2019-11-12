@@ -50,13 +50,13 @@ describe('cfNavSidepanel directive', () => {
     this.system.set('states/Navigator', Navigator);
     this.system.set('access_control/AccessChecker', accessChecker);
     this.system.set('services/OrganizationRoles', OrganizationRoles);
-    this.system.set('utils/LaunchDarkly/index', { onFeatureFlag: sinon.stub() });
+    this.system.set('utils/LaunchDarkly', { onFeatureFlag: sinon.stub() });
     this.system.set('data/EndpointFactory', EndpointFactory);
     this.system.set('data/CMA/SpaceEnvironmentsRepo', { create: () => environmentsRepo });
 
     this.system.set('services/TokenStore', TokenStore);
 
-    this.system.set('utils/LaunchDarkly/index', LD);
+    this.system.set('utils/LaunchDarkly', LD);
     this.system.override('navigation/NavState', {
       navState$
     });

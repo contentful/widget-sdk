@@ -1,4 +1,4 @@
-import { PastePlugin } from './index';
+import { PastePlugin } from '.';
 import * as pasteUtils from './Paste';
 
 describe('Paste Plugin', () => {

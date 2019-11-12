@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { TaskListViewData } from '../ViewData/TaskViewData';
 import TasksInteractor from '../TasksInteractor';
 import Task from './Task';
-import Visible from 'components/shared/Visible/index';
+import Visible from 'components/shared/Visible';
 import {
   Paragraph,
   TextLink,

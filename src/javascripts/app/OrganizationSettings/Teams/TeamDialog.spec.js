@@ -3,7 +3,7 @@ import { mount } from 'enzyme';
 import { noop } from 'lodash';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import reducer from 'redux/reducer/index';
+import reducer from 'redux/reducer';
 import ROUTES from 'redux/routes';
 import { TEAMS, TEAM_MEMBERSHIPS } from 'redux/datasets';
 import { Button, Modal, TextField } from '@contentful/forma-36-react-components';

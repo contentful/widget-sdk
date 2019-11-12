@@ -10,7 +10,7 @@ import getOrganization from 'redux/selectors/getOrganization';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { FEATURE_INACTIVE } from 'redux/accessConstants';
 import { Organization as OrganizationPropType } from '../PropTypes';
-import { getCurrentVariation } from 'utils/LaunchDarkly/index';
+import { getCurrentVariation } from 'utils/LaunchDarkly';
 
 import TeamList from './TeamList';
 import TeamDetails from './TeamDetails';

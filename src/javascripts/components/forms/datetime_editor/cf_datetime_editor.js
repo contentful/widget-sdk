@@ -1,5 +1,5 @@
 import tokens from '@contentful/forma-36-tokens';
-import { h } from 'utils/legacy-html-hyperscript/index';
+import { h } from 'utils/legacy-html-hyperscript';
 
 export default function template() {
   return h('span', null, [

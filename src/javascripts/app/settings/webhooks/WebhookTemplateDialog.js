@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Modal } from '@contentful/forma-36-react-components';
 import WebhookTemplateDialogTabs, { Tab, TabPane, TabsList } from './WebhookTemplateDialogTabs';
 import WebhookTemplateForm from './WebhookTemplateForm';
-import Templates from './templates/index';
+import Templates from './templates';
 
 export default class WebhookTemplateDialog extends React.Component {
   static propTypes = {

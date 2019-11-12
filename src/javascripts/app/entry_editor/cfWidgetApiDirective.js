@@ -1,7 +1,7 @@
 import { registerDirective, registerController } from 'NgRegistry';
 import _ from 'lodash';
 import * as K from 'utils/kefir';
-import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient/index';
+import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 import * as PublicContentType from 'widgets/PublicContentType';
 import * as EntityHelpers from 'app/entity_editor/entityHelpers';
 

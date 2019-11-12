@@ -5,7 +5,7 @@ import mitt from 'mitt';
 import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
 import { user$ } from 'services/TokenStore';
 import * as WidgetLocations from 'widgets/WidgetLocations';
-import * as SlideInNavigator from 'navigation/SlideInNavigator/index';
+import * as SlideInNavigator from 'navigation/SlideInNavigator';
 import * as Validator from './Validator';
 import * as Focus from './Focus';
 import initDocErrorHandler from './DocumentErrorHandler';

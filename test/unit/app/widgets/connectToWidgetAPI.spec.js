@@ -8,13 +8,13 @@ import { $initialize, $inject } from 'test/utils/ng';
 describe('connectToWidgetAPI', () => {
   beforeEach(async function() {
     this.system.set('search/EntitySelector/Config', {});
-    this.system.set('navigation/SlideInNavigator/index', {
+    this.system.set('navigation/SlideInNavigator', {
       goToSlideInEntity: () => {}
     });
     this.system.set('utils/LazyLoader', {
       get: sinon.stub().resolves({})
     });
-    this.system.set('app/widgets/WidgetApi/BatchingApiClient/index', {
+    this.system.set('app/widgets/WidgetApi/BatchingApiClient', {
       getBatchingApiClient: v => v
     });
     this.system.set('directives/thumbnailHelpers', {});

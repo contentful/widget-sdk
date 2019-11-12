@@ -2,7 +2,7 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import { Editor } from 'slate';
 
-import Toolbar from '../index';
+import Toolbar from '..';
 import ValidationType, {
   VALIDATABLE_NODE_TYPES
 } from 'components/field_dialog/RichTextValidationType';

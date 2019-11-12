@@ -5,7 +5,7 @@ react-component(
 .entry-editor
   .workbench
     header.workbench-header
-      react-component(name="app/entity_editor/Components/BackNav/index")
+      react-component(name="app/entity_editor/Components/BackNav")
       cf-icon.workbench-header__icon(name="page-content", scale="0.75")
       react-component(
         name="components/shared/WorkbenchTitle"
@@ -53,7 +53,7 @@ react-component(
           cf-error-list.form-box-error(cf-error-path="['fields']")
           cf-entity-field(ng-repeat="widget in widgets track by widget.fieldId")
           react-component(
-            name="components/tabs/NoLocalizedFieldsAdvice/index"
+            name="components/tabs/NoLocalizedFieldsAdvice"
             ng-if="shouldDisplayNoLocalizedFieldsAdvice"
             props="noLocalizedFieldsAdviceProps")
 

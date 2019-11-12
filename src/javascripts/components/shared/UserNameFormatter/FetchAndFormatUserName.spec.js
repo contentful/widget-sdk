@@ -4,7 +4,7 @@ import FetchAndFormatUserName from './FetchAndFormatUserName';
 
 import * as spaceContextMock from 'ng/spaceContext';
 
-jest.mock('./index', () => jest.fn().mockReturnValue('Me'), { virtual: true });
+jest.mock('.', () => jest.fn().mockReturnValue('Me'), { virtual: true });
 
 describe('FetchAndFormatUserName', () => {
   afterEach(cleanup);

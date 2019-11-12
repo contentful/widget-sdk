@@ -10,9 +10,9 @@ import * as trackVersioning from 'analytics/events/versioning';
 import ModalLauncher from 'app/common/ModalLauncher';
 import * as random from 'utils/Random';
 
-import StateChangeConfirmationDialog from 'app/entity_editor/Components/StateChangeConfirmationDialog/index';
-import { showUnpublishedReferencesWarning } from 'app/entity_editor/UnpublishedReferencesWarning/index';
-import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator/index';
+import StateChangeConfirmationDialog from 'app/entity_editor/Components/StateChangeConfirmationDialog';
+import { showUnpublishedReferencesWarning } from 'app/entity_editor/UnpublishedReferencesWarning';
+import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 import * as Analytics from 'analytics/Analytics';
 
 export default function register() {

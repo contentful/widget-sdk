@@ -1,6 +1,6 @@
-import { getStore } from 'TheStore/index';
+import { getStore } from 'TheStore';
 import { combine, getValue } from 'utils/kefir';
-import { getCurrentVariation } from 'utils/LaunchDarkly/index';
+import { getCurrentVariation } from 'utils/LaunchDarkly';
 import { user$, spacesByOrganization$ as spacesByOrg$ } from 'services/TokenStore';
 import createSampleSpace from './CreateSampleSpace';
 import seeThinkDoFeatureModalTemplate from './SeeThinkDoTemplate';
@@ -14,7 +14,7 @@ import {
   ownsAtleastOneOrg,
   getCurrOrg,
   isUserOrgCreator
-} from 'data/User/index';
+} from 'data/User';
 
 import { create } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
 

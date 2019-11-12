@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import SidebarEventTypes from '../SidebarEventTypes';
 import SidebarWidgetTypes from '../SidebarWidgetTypes';
-import NetlifyBuildButton from 'app/settings/apps/netlify/BuildButton/index';
+import NetlifyBuildButton from 'app/settings/apps/netlify/BuildButton';
 import SidebarContentPreviewContainer from './SidebarContentPreviewContainer';
 import EntrySidebarWidget from '../EntrySidebarWidget';
 

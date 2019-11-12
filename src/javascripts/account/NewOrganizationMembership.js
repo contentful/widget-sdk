@@ -29,7 +29,7 @@ import {
   SuccessMessage
 } from 'account/NewOrganizationMembershipTemplate';
 import createResourceService from 'services/ResourceService';
-import { getStore } from 'TheStore/index';
+import { getStore } from 'TheStore';
 
 // Start: For Next Steps for a TEA space (a space created using the example space template)
 import { track, updateUserInSegment } from 'analytics/Analytics';

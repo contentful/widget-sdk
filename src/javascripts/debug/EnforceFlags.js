@@ -1,6 +1,6 @@
 /* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
-import { getStore } from 'TheStore/index';
+import { getStore } from 'TheStore';
 import { uniq, without, omit } from 'lodash';
 import { addNotification } from 'debug/DevNotifications';
 import Cookies from 'js-cookie';

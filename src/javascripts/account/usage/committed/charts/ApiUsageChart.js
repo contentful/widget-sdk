@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { h } from 'utils/legacy-html-hyperscript/index';
+import { h } from 'utils/legacy-html-hyperscript';
 import { shorten } from 'utils/NumberUtils';
 
 import { organizationResourceUsagePropType, periodPropType } from '../propTypes';

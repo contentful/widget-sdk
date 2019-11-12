@@ -16,7 +16,7 @@ import {
 import tokens from '@contentful/forma-36-tokens';
 
 import StatusWidget from './StatusWidget';
-import JobDialog from './JobDialog/index';
+import JobDialog from './JobDialog';
 
 import * as EndpointFactory from 'data/EndpointFactory';
 
@@ -27,17 +27,17 @@ import * as logger from 'services/logger';
 
 import { getModule } from 'NgRegistry';
 
-import JobsTimeline from './JobsTimeline/index';
+import JobsTimeline from './JobsTimeline';
 
 import * as JobsService from '../DataManagement/JobsService';
 import { create as createDto } from './JobsFactory';
-import FailedScheduleNote from './FailedScheduleNote/index';
+import FailedScheduleNote from './FailedScheduleNote';
 import {
   createJob as trackCreatedJob,
   cancelJob as trackCancelledJob
 } from './../Analytics/JobsAnalytics';
 
-import { showUnpublishedReferencesWarning } from 'app/entity_editor/UnpublishedReferencesWarning/index';
+import { showUnpublishedReferencesWarning } from 'app/entity_editor/UnpublishedReferencesWarning';
 
 const styles = {
   jobsSkeleton: css({

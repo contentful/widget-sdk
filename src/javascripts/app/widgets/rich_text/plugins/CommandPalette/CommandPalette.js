@@ -4,7 +4,7 @@ import _ from 'lodash';
 import * as logger from 'services/logger';
 import { isEmbeddingEnabled } from './CommandPaletteService';
 import { hasCommandPaletteDecoration, getCommandText } from './Util';
-import CommandPanel from './CommandPanel/index';
+import CommandPanel from './CommandPanel';
 class CommandPalette extends React.PureComponent {
   static propTypes = {
     editor: PropTypes.object,

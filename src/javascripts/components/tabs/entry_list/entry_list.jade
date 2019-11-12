@@ -55,7 +55,7 @@ header.workbench-header
 
     react-component(
       ng-if="!isLegacyOrganization && hasPage()"
-      name="components/RecordsResourceUsage/index"
+      name="components/RecordsResourceUsage"
       props="usageProps"
       watch-depth="reference")
 
@@ -80,6 +80,6 @@ header.workbench-header
 
 .workbench-main.x--content(ng-show="showNoEntriesAdvice()")
   react-component(
-    name="components/tabs/entry_list/EmptyStates/index"
+    name="components/tabs/entry_list/EmptyStates"
     props="{hasContentType: hasContentType, contentTypes: accessibleCts, suggestedContentTypeId: context.view.contentTypeId, onCreate: newEntry}"
   )

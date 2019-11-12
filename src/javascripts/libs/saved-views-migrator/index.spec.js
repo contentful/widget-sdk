@@ -1,5 +1,5 @@
 const { cloneDeep } = require('lodash');
-const savedViewsMigrator = require('./index');
+const savedViewsMigrator = require('.');
 const { isEqual } = require('lodash');
 const { textQueryToUISearch } = require('./text-query-converter');
 

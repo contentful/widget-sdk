@@ -1,5 +1,5 @@
 import tokens from '@contentful/forma-36-tokens';
-import { h } from 'utils/legacy-html-hyperscript/index';
+import { h } from 'utils/legacy-html-hyperscript';
 import BackgroundIcon from 'svg/header-illustration-wide';
 
 export function genBoxShadow(x = 0, y = 2, blur = 3, spread = 0) {

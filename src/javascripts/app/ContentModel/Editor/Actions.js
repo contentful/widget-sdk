@@ -12,7 +12,7 @@ import * as logger from 'services/logger';
 import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer';
 import ContentTypeForbiddenRemoval from './Dialogs/ContenTypeForbiddenRemoval';
 import DeleteContentTypeDialog from './Dialogs/DeleteContentTypeDialog';
-import { openDuplicateContentTypeDialog } from './Dialogs/index';
+import { openDuplicateContentTypeDialog } from './Dialogs';
 import { getContentPreview } from 'services/contentPreview';
 
 /**

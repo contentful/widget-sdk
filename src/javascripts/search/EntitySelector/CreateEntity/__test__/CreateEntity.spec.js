@@ -1,15 +1,15 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import * as slideInNavigator from 'navigation/SlideInNavigator/index';
+import * as slideInNavigator from 'navigation/SlideInNavigator';
 
-import CreateEntity, { entityTypes } from '../index';
+import CreateEntity, { entityTypes } from '..';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as entityCreator from 'components/app_container/entityCreator';
 
 import flushPromises from 'testHelpers/flushPromises';
 
 jest.mock(
-  'navigation/SlideInNavigator/index',
+  'navigation/SlideInNavigator',
   () => ({
     goToSlideInEntity: jest.fn()
   }),

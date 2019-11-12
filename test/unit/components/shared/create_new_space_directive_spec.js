@@ -61,7 +61,7 @@ describe('cfCreateNewSpace directive', () => {
     };
 
     this.system.set('services/SpaceTemplateLoader', stubs.spaceTemplateLoader);
-    this.system.set('services/SpaceTemplateCreator/index', stubs.spaceTemplateCreator);
+    this.system.set('services/SpaceTemplateCreator', stubs.spaceTemplateCreator);
     this.system.set('analytics/Analytics', stubs.analytics);
     this.system.set('services/logger', stubs.logger);
     this.system.set('services/TokenStore', stubs.tokenStore);

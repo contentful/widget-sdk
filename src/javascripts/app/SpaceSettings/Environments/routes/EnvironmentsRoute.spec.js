@@ -3,7 +3,7 @@ import { render, cleanup, waitForElement, wait } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import EnvironmentsRoute from './EnvironmentsRoute';
 import * as accessChecker from 'access_control/AccessChecker';
-import * as LD from 'utils/LaunchDarkly/index';
+import * as LD from 'utils/LaunchDarkly';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { openDeleteEnvironmentDialog } from '../DeleteDialog';
 import createResourceService from 'services/ResourceService';
@@ -21,7 +21,7 @@ jest.mock('access_control/AccessChecker', () => ({
   can: jest.fn().mockReturnValue(true)
 }));
 
-jest.mock('utils/LaunchDarkly/index', () => ({
+jest.mock('utils/LaunchDarkly', () => ({
   getCurrentVariation: jest.fn().mockResolvedValue(true) // environmentsEnabled
 }));
 

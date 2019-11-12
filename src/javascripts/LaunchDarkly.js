@@ -9,7 +9,7 @@ import {
   isAutomationTestUser,
   getUserSpaceRoles,
   getUserCreationDateUnixTimestamp
-} from 'data/User/index';
+} from 'data/User';
 import * as config from 'Config';
 import * as logger from 'services/logger';
 import { isFlagOverridden, getFlagOverride } from 'debug/EnforceFlags';

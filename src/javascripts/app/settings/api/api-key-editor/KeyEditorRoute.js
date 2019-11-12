@@ -6,7 +6,7 @@ import createFetcherComponent from 'app/common/createFetcherComponent';
 import * as accessChecker from 'access_control/AccessChecker';
 import KeyEditorWorkbench from './KeyEditorWorkbench';
 import KeyEditor from './KeyEditor';
-import { getCurrentVariation } from 'utils/LaunchDarkly/index';
+import { getCurrentVariation } from 'utils/LaunchDarkly';
 
 import { ENVIRONMENTS_FLAG } from 'featureFlags';
 

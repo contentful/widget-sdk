@@ -1,4 +1,4 @@
-import reducer from 'redux/reducer/index';
+import reducer from 'redux/reducer';
 import routes from '../routes';
 import { TEAM_MEMBERSHIPS, TEAMS, USERS } from '../datasets';
 

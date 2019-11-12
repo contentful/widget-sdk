@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import enhanceWithClickOutside from 'react-click-outside';
 import cn from 'classnames';
-import Menu from './Menu/index';
+import Menu from './Menu';
 import { Icon, TextLink } from '@contentful/forma-36-react-components';
 
 export const Size = {

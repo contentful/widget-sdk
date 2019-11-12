@@ -2,7 +2,7 @@ import { noop } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import CfPropTypes from 'utils/CfPropTypes';
-import FetchedEntityCard, { WrappedEntityCard } from '../shared/FetchedEntityCard/index';
+import FetchedEntityCard, { WrappedEntityCard } from '../shared/FetchedEntityCard';
 import LinkingActions from './LinkingActions';
 import { TYPES, entityToLink } from './Util';
 import SortableLinkList, { DragHandle, linksToListItems } from './SortableLinkList';

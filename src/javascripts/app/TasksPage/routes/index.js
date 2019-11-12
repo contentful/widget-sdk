@@ -1,4 +1,4 @@
-import TasksPage from './../index';
+import TasksPage from './..';
 import TheLocaleStore from 'services/localeStore';
 
 export default {

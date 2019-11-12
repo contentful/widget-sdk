@@ -1,7 +1,7 @@
 import { registerFactory } from 'NgRegistry';
 import _ from 'lodash';
 import * as logger from 'services/logger';
-import * as AppPerformanceMetrics from 'i13n/AppPerformance/index';
+import * as AppPerformanceMetrics from 'i13n/AppPerformance';
 
 import * as NavState from 'navigation/NavState';
 import * as Analytics from 'analytics/Analytics';

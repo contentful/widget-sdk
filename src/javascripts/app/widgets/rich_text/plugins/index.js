@@ -1,10 +1,10 @@
 import { BLOCKS } from '@contentful/rich-text-types';
-import { BoldPlugin } from './Bold/index';
-import { ItalicPlugin } from './Italic/index';
-import { UnderlinedPlugin } from './Underlined/index';
-import { CodePlugin } from './Code/index';
-import { QuotePlugin } from './Quote/index';
-import { HyperlinkPlugin } from './Hyperlink/index';
+import { BoldPlugin } from './Bold';
+import { ItalicPlugin } from './Italic';
+import { UnderlinedPlugin } from './Underlined';
+import { CodePlugin } from './Code';
+import { QuotePlugin } from './Quote';
+import { HyperlinkPlugin } from './Hyperlink';
 import {
   Heading1Plugin,
   Heading2Plugin,
@@ -12,26 +12,26 @@ import {
   Heading4Plugin,
   Heading5Plugin,
   Heading6Plugin
-} from './Heading/index';
+} from './Heading';
 
-import NewLinePlugin from './NewLinePlugin/index';
-import { ParagraphPlugin } from './Paragraph/index';
+import NewLinePlugin from './NewLinePlugin';
+import { ParagraphPlugin } from './Paragraph';
 import {
   EmbeddedAssetBlockPlugin,
   EmbeddedEntryBlockPlugin
-} from './EmbeddedEntityBlock/index';
-import { EmbeddedEntryInlinePlugin } from './EmbeddedEntryInline/index';
+} from './EmbeddedEntityBlock';
+import { EmbeddedEntryInlinePlugin } from './EmbeddedEntryInline';
 
-import { ListPlugin } from './List/index';
-import { HrPlugin } from './Hr/index';
+import { ListPlugin } from './List';
+import { HrPlugin } from './Hr';
 
 import TrailingBlock from '@wikifactory/slate-trailing-block';
-import { PastePlugin } from './Paste/index';
-import { PasteHtmlPlugin } from './PasteHtml/index';
-import { PasteTextPlugin } from './PasteText/index';
+import { PastePlugin } from './Paste';
+import { PasteHtmlPlugin } from './PasteHtml';
+import { PasteTextPlugin } from './PasteText';
 
-import { CommandPalettePlugin } from './CommandPalette/index';
-import { InsertBeforeFirstVoidBlockPlugin } from './InsertBeforeFirstVoidBlock/index';
+import { CommandPalettePlugin } from './CommandPalette';
+import { InsertBeforeFirstVoidBlockPlugin } from './InsertBeforeFirstVoidBlock';
 
 import schema from '../constants/Schema';
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import EntrySidebarWidget from '../EntrySidebarWidget';
-import Collaborators from 'app/entity_editor/Collaborators/index';
+import Collaborators from 'app/entity_editor/Collaborators';
 
 export default class UsersWidget extends Component {
   static propTypes = {

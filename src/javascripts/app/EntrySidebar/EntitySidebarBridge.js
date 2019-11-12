@@ -6,7 +6,7 @@ import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
 import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes';
 import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
 import * as WidgetLocations from 'widgets/WidgetLocations';
-import * as SlideInNavigator from 'navigation/SlideInNavigator/index';
+import * as SlideInNavigator from 'navigation/SlideInNavigator';
 import * as Navigator from 'states/Navigator';
 import TheLocaleStore from 'services/localeStore';
 

@@ -19,7 +19,7 @@ import EmptyStateContainer, {
   defaultSVGStyle
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import FolderIllustration from 'svg/folder-illustration';
-import RelativeDateTime from 'components/shared/RelativeDateTime/index';
+import RelativeDateTime from 'components/shared/RelativeDateTime';
 import { getEntryTitle } from 'classes/EntityFieldValueHelpers';
 import { getOpenAssignedTasksAndEntries } from './helpers';
 import { href } from 'states/Navigator';

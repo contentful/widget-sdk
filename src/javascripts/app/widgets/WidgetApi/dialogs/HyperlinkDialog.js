@@ -13,10 +13,10 @@ import {
   Form
 } from '@contentful/forma-36-react-components';
 import AngularComponent from 'ui/Framework/AngularComponent';
-import FetchedEntityCard from 'app/widgets/shared/FetchedEntityCard/index';
+import FetchedEntityCard from 'app/widgets/shared/FetchedEntityCard';
 import { values, includes } from 'lodash';
 import { calculateIdealListHeight, getLabels } from 'search/EntitySelector/Config';
-import Visible from 'components/shared/Visible/index';
+import Visible from 'components/shared/Visible';
 
 export const LINK_TYPES = {
   URI: 'uri',

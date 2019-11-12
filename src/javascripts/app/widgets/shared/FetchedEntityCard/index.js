@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { Card, IconButton } from '@contentful/forma-36-react-components';
 import classNames from 'classnames';
 
-import { default as FetchEntity, RequestStatus } from 'app/widgets/shared/FetchEntity/index';
+import { default as FetchEntity, RequestStatus } from 'app/widgets/shared/FetchEntity';
 import WrappedEntityCard from './WrappedEntityCard';
 import WrappedAssetCard from './WrappedAssetCard';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';

@@ -3,13 +3,13 @@ import pluralize from 'pluralize';
 import { css } from 'emotion';
 import React from 'react';
 import PropTypes from 'prop-types';
-import Visible from 'components/shared/Visible/index';
+import Visible from 'components/shared/Visible';
 import { TextLink } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import {
   default as CreateEntryButton,
   Style as CreateEntryStyle
-} from 'components/CreateEntryButton/index';
+} from 'components/CreateEntryButton';
 import { TYPES } from './Util';
 
 const TYPE_NAMES = {

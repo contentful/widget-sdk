@@ -4,7 +4,7 @@ import { stateName } from 'data/CMA/EntityState';
 import * as K from 'utils/kefir';
 import { getModule } from 'NgRegistry';
 
-import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient/index';
+import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 
 export default function install(entityInfo, document, lifeline$) {
   K.onValueWhile(lifeline$, document.resourceState.stateChange$, data => {

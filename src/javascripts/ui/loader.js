@@ -1,6 +1,6 @@
 import { registerDirective } from 'NgRegistry';
 import _ from 'lodash';
-import { h } from 'utils/legacy-html-hyperscript/index';
+import { h } from 'utils/legacy-html-hyperscript';
 
 export default function register() {
   /*

@@ -22,7 +22,7 @@ describe('activationEmailResendController', () => {
       user$: this.stubs.user$
     });
 
-    const { getStore } = await this.system.import('TheStore/index');
+    const { getStore } = await this.system.import('TheStore');
     moment = (await this.system.import('moment')).default;
 
     await $initialize(this.system, $provide => {

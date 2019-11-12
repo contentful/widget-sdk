@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import NoLocalizedFieldsAdvice from './index';
+import NoLocalizedFieldsAdvice from '.';
 
 describe('NoLocalizedFieldsAdvice', () => {
   const props = {

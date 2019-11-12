@@ -19,7 +19,7 @@ import {
   isAutomationTestUser,
   getUserSpaceRoles,
   getUserCreationDateUnixTimestamp
-} from 'data/User/index';
+} from 'data/User';
 
 // mvar to wait until LD context is successfully switched
 const LDContextChangeMVar = createMVar();

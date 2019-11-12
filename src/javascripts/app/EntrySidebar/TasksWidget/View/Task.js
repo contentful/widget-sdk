@@ -16,7 +16,7 @@ import {
   SkeletonBodyText,
   Spinner
 } from '@contentful/forma-36-react-components';
-import Visible from 'components/shared/Visible/index';
+import Visible from 'components/shared/Visible';
 import { cx } from 'emotion';
 import moment from 'moment';
 import isHotKey from 'is-hotkey';

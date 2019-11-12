@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getStore } from 'TheStore/index';
+import { getStore } from 'TheStore';
 import { updateUserInSegment } from 'analytics/Analytics';
 import {
   getStoragePrefix,

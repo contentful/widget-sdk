@@ -5,8 +5,8 @@ import { Tooltip } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import { FetcherLoading } from 'app/common/createFetcherComponent';
-import UserFetcher from 'components/shared/UserFetcher/index';
-import UserNameFormatter from 'components/shared/UserNameFormatter/index';
+import UserFetcher from 'components/shared/UserFetcher';
+import UserNameFormatter from 'components/shared/UserNameFormatter';
 
 const styles = {
   collaborators: css({

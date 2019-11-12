@@ -4,11 +4,11 @@ import PropTypes from 'prop-types';
 import AdminOnly from 'app/common/AdminOnly';
 import StateRedirect from 'app/common/StateRedirect';
 import createAppsClient from '../AppsClient';
-import NetlifyApp from '../netlify/index';
-import AlgoliaApp from '../algolia/index';
-import ImageManagementApp from '../image-management/index';
+import NetlifyApp from '../netlify';
+import AlgoliaApp from '../algolia';
+import ImageManagementApp from '../image-management';
 import { APP_ID as IMAGE_MANAGEMENT_APP_ID } from '../image-management/Constants';
-import ApprovalWorkflowApp from '../basicApprovalWorkflow/index';
+import ApprovalWorkflowApp from '../basicApprovalWorkflow';
 
 const APP_ID_TO_COMPONENT = {
   netlify: NetlifyApp,

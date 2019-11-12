@@ -11,7 +11,7 @@ import {
 import createApiKeyRepo from 'app/settings/api/services/ApiKeyRepo';
 import * as TokenStore from 'services/TokenStore';
 import * as Analytics from 'analytics/Analytics';
-import { getCreator as getTemplateCreator } from 'services/SpaceTemplateCreator/index';
+import { getCreator as getTemplateCreator } from 'services/SpaceTemplateCreator';
 import { getTemplatesList, getTemplate } from 'services/SpaceTemplateLoader';
 import { canCreate } from 'utils/ResourceUtils';
 import { createTrackingData } from 'components/shared/space-wizard/WizardUtils';

@@ -1,5 +1,5 @@
 import { getSpaces, getOrganizations, getOrganization, user$ } from 'services/TokenStore';
-import { getStore } from 'TheStore/index';
+import { getStore } from 'TheStore';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getValue, onValue } from 'utils/kefir';
 import { createSpaceEndpoint } from 'data/EndpointFactory';

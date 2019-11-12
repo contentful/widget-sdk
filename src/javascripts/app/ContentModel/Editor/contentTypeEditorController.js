@@ -9,7 +9,7 @@ import {
   openOmitDialog,
   openSaveDialog
 } from './FieldsTab/FieldTabDialogs';
-import { openCreateContentTypeDialog, openEditContentTypeDialog } from './Dialogs/index';
+import { openCreateContentTypeDialog, openEditContentTypeDialog } from './Dialogs';
 import getContentTypePreview from './PreviewTab/getContentTypePreview';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';

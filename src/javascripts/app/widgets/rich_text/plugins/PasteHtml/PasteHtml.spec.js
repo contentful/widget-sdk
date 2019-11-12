@@ -1,4 +1,4 @@
-import { PasteHtmlPlugin } from './index';
+import { PasteHtmlPlugin } from '.';
 import { Value, Document, Block, Text, Editor } from 'slate';
 import {
   document,

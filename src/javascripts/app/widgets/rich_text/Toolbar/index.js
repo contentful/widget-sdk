@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 
 import { EditorToolbar, EditorToolbarDivider } from '@contentful/forma-36-react-components';
 
-import Bold from '../plugins/Bold/index';
-import Italic from '../plugins/Italic/index';
-import Underlined from '../plugins/Underlined/index';
-import Code from '../plugins/Code/index';
-import Quote from '../plugins/Quote/index';
-import Hyperlink from '../plugins/Hyperlink/index';
+import Bold from '../plugins/Bold';
+import Italic from '../plugins/Italic';
+import Underlined from '../plugins/Underlined';
+import Code from '../plugins/Code';
+import Quote from '../plugins/Quote';
+import Hyperlink from '../plugins/Hyperlink';
 import {
   Heading1,
   Heading2,
@@ -18,20 +18,20 @@ import {
   Heading6,
   Paragraph,
   HeadingDropdown
-} from '../plugins/Heading/index';
+} from '../plugins/Heading';
 
-import EmbeddedEntityBlock from '../plugins/EmbeddedEntityBlock/index';
-import EmbeddedEntryInline from '../plugins/EmbeddedEntryInline/index';
-import EntryEmbedDropdown from '../plugins/EntryEmbedDropdown/index';
+import EmbeddedEntityBlock from '../plugins/EmbeddedEntityBlock';
+import EmbeddedEntryInline from '../plugins/EmbeddedEntryInline';
+import EntryEmbedDropdown from '../plugins/EntryEmbedDropdown';
 
-import { UnorderedList, OrderedList } from '../plugins/List/index';
-import Hr from '../plugins/Hr/index';
+import { UnorderedList, OrderedList } from '../plugins/List';
+import Hr from '../plugins/Hr';
 
 import { BLOCKS, MARKS, INLINES } from '@contentful/rich-text-types';
 
-import { isNodeTypeEnabled, isMarkEnabled } from '../validations/index';
+import { isNodeTypeEnabled, isMarkEnabled } from '../validations';
 
-import Visible from 'components/shared/Visible/index';
+import Visible from 'components/shared/Visible';
 
 export default class Toolbar extends React.Component {
   static propTypes = {

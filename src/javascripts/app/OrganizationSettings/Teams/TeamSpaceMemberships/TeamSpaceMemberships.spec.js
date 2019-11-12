@@ -2,7 +2,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import reducer from 'redux/reducer/index';
+import reducer from 'redux/reducer';
 import ROUTES from 'redux/routes';
 import { TEAM_SPACE_MEMBERSHIPS, TEAMS, ORG_SPACES } from 'redux/datasets';
 import TeamSpaceMemberships from './TeamSpaceMemberships';

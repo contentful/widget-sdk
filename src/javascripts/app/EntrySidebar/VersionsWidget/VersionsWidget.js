@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import StateLink from 'app/common/StateLink';
 import { Button, Tag } from '@contentful/forma-36-react-components';
-import RelativeDateTime from 'components/shared/RelativeDateTime/index';
+import RelativeDateTime from 'components/shared/RelativeDateTime';
 import * as SnapshotStatus from 'app/snapshots/helpers/SnapshotStatus';
 import EntrySidebarWidget from '../EntrySidebarWidget';
 

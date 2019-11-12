@@ -1,5 +1,5 @@
 import qs from 'qs';
-import { getStore } from 'TheStore/index';
+import { getStore } from 'TheStore';
 import { omit, isEmpty } from 'lodash';
 import { serialize, unserialize } from 'data/ViewSerializer';
 import { getQueryString } from 'utils/location';

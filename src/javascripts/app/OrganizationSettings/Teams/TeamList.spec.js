@@ -4,7 +4,7 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { Button, IconButton } from '@contentful/forma-36-react-components';
 
-import reducer from 'redux/reducer/index';
+import reducer from 'redux/reducer';
 import { TEAMS, TEAM_MEMBERSHIPS } from 'redux/datasets';
 import ROUTES from 'redux/routes';
 import Placeholder from 'app/common/Placeholder';

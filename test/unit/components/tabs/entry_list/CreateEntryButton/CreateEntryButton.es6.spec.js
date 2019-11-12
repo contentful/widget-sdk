@@ -1,7 +1,7 @@
 import React from 'react';
 import { noop } from 'lodash';
 import sinon from 'sinon';
-import { default as CreateEntryButton, Style } from 'components/CreateEntryButton/index';
+import { default as CreateEntryButton, Style } from 'components/CreateEntryButton';
 
 import { mount } from 'enzyme';
 import { beforeEach, it } from 'test/utils/dsl';

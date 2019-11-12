@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import UserFetcher from 'components/shared/UserFetcher/index';
-import UserNameFormatter from './index';
+import UserFetcher from 'components/shared/UserFetcher';
+import UserNameFormatter from '.';
 
 /**
  * A wrapper around UserNameFormatter that fetches user and passes the data

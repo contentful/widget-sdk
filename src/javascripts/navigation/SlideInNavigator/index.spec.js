@@ -1,4 +1,4 @@
-import { getSlideInEntities, goToSlideInEntity } from './index';
+import { getSlideInEntities, goToSlideInEntity } from '.';
 
 import $location from 'ng/$location';
 import $state from 'ng/$state';

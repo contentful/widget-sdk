@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import SidebarEventTypes from '../SidebarEventTypes';
 import SidebarWidgetTypes from '../SidebarWidgetTypes';
 import PublicationWidget from './PublicationWidget';
-import { JobsWidget } from 'app/jobs/index';
+import { JobsWidget } from 'app/jobs';
 import JobsFeatureFlag from 'app/jobs/JobsFeatureFlag';
 
 export default class PublicationWidgetContainer extends Component {

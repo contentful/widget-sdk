@@ -4,8 +4,8 @@ import thunk from 'redux-thunk';
 import { onValue } from 'utils/kefir';
 import fclone from 'fclone';
 
-import middlewares from './middlewares/index';
-import reducer from './reducer/index';
+import middlewares from './middlewares';
+import reducer from './reducer';
 import * as actionCreators from 'redux/actions/token/actionCreators';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

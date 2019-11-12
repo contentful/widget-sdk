@@ -72,7 +72,7 @@ describe('spaceContext', () => {
       }
     });
 
-    this.LD = await this.system.import('utils/LaunchDarkly/index');
+    this.LD = await this.system.import('utils/LaunchDarkly');
     this.LD._setFlag('feature-dv-11-2017-environments', true);
 
     await $initialize(this.system);

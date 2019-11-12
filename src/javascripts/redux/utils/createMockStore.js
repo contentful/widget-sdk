@@ -2,7 +2,7 @@ import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import _ from 'lodash';
 
-import reducers from '../reducer/index';
+import reducers from '../reducer';
 
 /*
   Creates a wrapper for a dispatched thunk or action. Returns an object

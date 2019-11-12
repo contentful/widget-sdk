@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import RelativeDateTime from './index';
+import RelativeDateTime from '.';
 import moment from 'moment';
 jest.useFakeTimers();
 

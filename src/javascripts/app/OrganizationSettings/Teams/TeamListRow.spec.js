@@ -4,7 +4,7 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { Button, Table, TableBody, TableCell } from '@contentful/forma-36-react-components';
 
-import reducer from 'redux/reducer/index';
+import reducer from 'redux/reducer';
 import ROUTES from 'redux/routes';
 import { TEAM_MEMBERSHIPS, TEAMS } from 'redux/datasets';
 import TeamListRow from './TeamListRow';

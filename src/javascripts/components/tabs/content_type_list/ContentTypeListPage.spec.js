@@ -15,7 +15,7 @@ jest.mock('detect-browser', () => ({
 }));
 
 jest.mock(
-  './ContentTypeList/index',
+  './ContentTypeList',
   () => {
     return props => props.contentTypes.map(item => item.sys.id).join(',');
   },

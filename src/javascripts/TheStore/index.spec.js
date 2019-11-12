@@ -1,6 +1,6 @@
 import $window from 'utils/ngCompat/window';
 import * as storeUtils from 'TheStore/Utils';
-import { getStore } from 'TheStore/index';
+import { getStore } from 'TheStore';
 import ClientStorageWrapper from 'TheStore/ClientStorageWrapper';
 import ClientStorage from 'TheStore/ClientStorage';
 

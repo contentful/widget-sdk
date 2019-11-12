@@ -1,4 +1,4 @@
-import { h } from 'utils/legacy-html-hyperscript/index';
+import { h } from 'utils/legacy-html-hyperscript';
 import { status, titleText } from './TemplateCommons';
 
 export default function() {

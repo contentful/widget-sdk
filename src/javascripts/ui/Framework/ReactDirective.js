@@ -20,7 +20,7 @@ import * as uiComponentsIconEs6 from 'ui/Components/Icon';
 import * as componentsSharedIe11DeprecationBannerEs6 from 'components/shared/IE11DeprecationBanner';
 import * as appContentModelEditorContentTypesPageEs6 from 'app/ContentModel/Editor/ContentTypesPage';
 import * as appOrganizationSettingsSsoSsoSetupEs6 from 'app/OrganizationSettings/SSO/SSOSetup';
-import * as uiPagesSubscriptionOverviewIndexEs6 from 'ui/Pages/SubscriptionOverview/index';
+import * as uiPagesSubscriptionOverviewIndexEs6 from 'ui/Pages/SubscriptionOverview';
 import * as appOrganizationSettingsTeamsTeamPageEs6 from 'app/OrganizationSettings/Teams/TeamPage';
 import * as accountUsageOrganizationUsageEs6 from 'account/usage/OrganizationUsage';
 import * as appOrganizationSettingsUserInvitationsUserInvitationDetailUserInvitationDetailRouterEs6 from 'app/OrganizationSettings/UserInvitations/UserInvitationDetail/UserInvitationDetailRouter';
@@ -31,20 +31,20 @@ import * as appOrganizationSettingsUsersUsersListUserListRouteEs6 from 'app/Orga
 import * as appSpaceSettingsUsageSpaceUsageEs6 from 'app/SpaceSettings/Usage/SpaceUsage';
 import * as componentsSharedDocumentTitleEs6 from 'components/shared/DocumentTitle';
 import * as componentsSharedWorkbenchTitleEs6 from 'components/shared/WorkbenchTitle';
-import * as appEntityEditorComponentsBackNavIndexEs6 from 'app/entity_editor/Components/BackNav/index';
+import * as appEntityEditorComponentsBackNavIndexEs6 from 'app/entity_editor/Components/BackNav';
 import * as appEntityEditorEntityAuxToggleEs6 from 'app/entity_editor/EntityAuxToggle';
 import * as appEntityEditorStatusNotificationEs6 from 'app/entity_editor/StatusNotification';
 import * as appEntrySidebarEntrySidebarEs6 from 'app/EntrySidebar/EntrySidebar';
 import * as widgetsWidgetRenderWarningEs6 from 'widgets/WidgetRenderWarning';
 import * as widgetsExtensionIFrameRendererEs6 from 'widgets/ExtensionIFrameRenderer';
-import * as appEntityEditorCollaboratorsIndexEs6 from 'app/entity_editor/Collaborators/index';
+import * as appEntityEditorCollaboratorsIndexEs6 from 'app/entity_editor/Collaborators';
 import * as appEntityEditorEntityCommentsToggleEs6 from 'app/entity_editor/EntityCommentsToggle';
 import * as appEntryEditorCustomEditorExtensionRendererEs6 from 'app/entry_editor/CustomEditorExtensionRenderer';
-import * as componentsTabsNoLocalizedFieldsAdviceIndexEs6 from 'components/tabs/NoLocalizedFieldsAdvice/index';
+import * as componentsTabsNoLocalizedFieldsAdviceIndexEs6 from 'components/tabs/NoLocalizedFieldsAdvice';
 import * as appHomeSpaceHomePageEs6 from 'app/home/SpaceHomePage';
 import * as appSettingsLocalesRoutesLocalesEditRouteEs6 from 'app/settings/locales/routes/LocalesEditRoute';
 import * as appWidgetsRichTextReadOnlyRichTextEditorEs6 from 'app/widgets/rich_text/ReadOnlyRichTextEditor';
-import * as componentsSharedRelativeDateTimeIndexEs6 from 'components/shared/RelativeDateTime/index';
+import * as componentsSharedRelativeDateTimeIndexEs6 from 'components/shared/RelativeDateTime';
 import * as componentsFieldDialogValidationValuesEs6 from 'components/field_dialog/ValidationValues';
 import * as componentsFieldDialogAppearanceFieldDialogAppearanceTabEs6 from 'components/field_dialog/appearance/FieldDialogAppearanceTab';
 import * as componentsFieldDialogRichTextOptionsEs6 from 'components/field_dialog/RichTextOptions';
@@ -53,16 +53,16 @@ import * as componentsSharedStackOnboardingScreensChoiceScreenEs6 from 'componen
 import * as componentsSharedSpaceWizardWizardEs6 from 'components/shared/space-wizard/Wizard';
 import * as componentsTabsAssetListAddAssetButtonEs6 from 'components/tabs/asset_list/AddAssetButton';
 import * as componentsTabsPluralizeEntityMessageEs6 from 'components/tabs/PluralizeEntityMessage';
-import * as componentsRecordsResourceUsageIndexEs6 from 'components/RecordsResourceUsage/index';
+import * as componentsRecordsResourceUsageIndexEs6 from 'components/RecordsResourceUsage';
 import * as componentsSharedUserNameFormatterFetchAndFormatUserNameEs6 from 'components/shared/UserNameFormatter/FetchAndFormatUserName';
 import * as uiComponentsPaginatorEs6 from 'ui/Components/Paginator';
 import * as componentsTabsNoSearchResultsAdviceEs6 from 'components/tabs/NoSearchResultsAdvice';
 import * as componentsTabsAssetListAssetsEmptyStateEs6 from 'components/tabs/asset_list/AssetsEmptyState';
 import * as appJobsJobsPageLinkEs6 from 'app/jobs/JobsPageLink';
 import * as componentsTabsEntryListEntryListEs6 from 'components/tabs/entry_list/EntryList';
-import * as componentsTabsEntryListEmptyStatesIndexEs6 from 'components/tabs/entry_list/EmptyStates/index';
+import * as componentsTabsEntryListEmptyStatesIndexEs6 from 'components/tabs/entry_list/EmptyStates';
 import * as componentsSharedQuickNavigationQuickNavWithFeatureFlagEs6 from 'components/shared/QuickNavigation/QuickNavWithFeatureFlag';
-import * as searchEntitySelectorCreateEntityIndexEs6 from 'search/EntitySelector/CreateEntity/index';
+import * as searchEntitySelectorCreateEntityIndexEs6 from 'search/EntitySelector/CreateEntity';
 import * as componentsSharedEnterpriseSpaceWizardEnterpriseSpaceWizardEs6 from 'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard';
 import * as navigationModernStackOnboardingRelaunchEs6 from 'navigation/modernStackOnboardingRelaunch';
 import * as componentsSharedUserInvitationEs6 from 'components/shared/UserInvitation';
@@ -75,7 +75,7 @@ import * as componentsSharedStackOnboardingScreensGetStartedScreenEs6 from 'comp
 import * as componentsSharedStackOnboardingScreensCopyScreenEs6 from 'components/shared/stack-onboarding/screens/CopyScreen';
 import * as componentsSharedStackOnboardingScreensExploreScreenEs6 from 'components/shared/stack-onboarding/screens/ExploreScreen';
 import * as componentsSharedStackOnboardingScreensDeployScreenEs6 from 'components/shared/stack-onboarding/screens/DeployScreen';
-import * as componentsIe11DeprecationNoticeIndexEs6 from 'components/Ie11DeprecationNotice/index';
+import * as componentsIe11DeprecationNoticeIndexEs6 from 'components/Ie11DeprecationNotice';
 import * as accountAccountViewEs6 from 'account/AccountView';
 import * as appEntityEditorBulkEditorTitleEs6 from 'app/entity_editor/bulk_editor/BulkEditorTitle';
 import * as embedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
@@ -286,7 +286,7 @@ function getModule(name) {
     'components/shared/IE11DeprecationBanner': componentsSharedIe11DeprecationBannerEs6,
     'app/ContentModel/Editor/ContentTypesPage': appContentModelEditorContentTypesPageEs6,
     'app/OrganizationSettings/SSO/SSOSetup': appOrganizationSettingsSsoSsoSetupEs6,
-    'ui/Pages/SubscriptionOverview/index': uiPagesSubscriptionOverviewIndexEs6,
+    'ui/Pages/SubscriptionOverview': uiPagesSubscriptionOverviewIndexEs6,
     'app/OrganizationSettings/Teams/TeamPage': appOrganizationSettingsTeamsTeamPageEs6,
     'account/usage/OrganizationUsage': accountUsageOrganizationUsageEs6,
     'app/OrganizationSettings/UserInvitations/UserInvitationDetail/UserInvitationDetailRouter': appOrganizationSettingsUserInvitationsUserInvitationDetailUserInvitationDetailRouterEs6,
@@ -297,20 +297,20 @@ function getModule(name) {
     'app/SpaceSettings/Usage/SpaceUsage': appSpaceSettingsUsageSpaceUsageEs6,
     'components/shared/DocumentTitle': componentsSharedDocumentTitleEs6,
     'components/shared/WorkbenchTitle': componentsSharedWorkbenchTitleEs6,
-    'app/entity_editor/Components/BackNav/index': appEntityEditorComponentsBackNavIndexEs6,
+    'app/entity_editor/Components/BackNav': appEntityEditorComponentsBackNavIndexEs6,
     'app/entity_editor/EntityAuxToggle': appEntityEditorEntityAuxToggleEs6,
     'app/entity_editor/StatusNotification': appEntityEditorStatusNotificationEs6,
     'app/EntrySidebar/EntrySidebar': appEntrySidebarEntrySidebarEs6,
     'widgets/WidgetRenderWarning': widgetsWidgetRenderWarningEs6,
     'widgets/ExtensionIFrameRenderer': widgetsExtensionIFrameRendererEs6,
-    'app/entity_editor/Collaborators/index': appEntityEditorCollaboratorsIndexEs6,
+    'app/entity_editor/Collaborators': appEntityEditorCollaboratorsIndexEs6,
     'app/entity_editor/EntityCommentsToggle': appEntityEditorEntityCommentsToggleEs6,
     'app/entry_editor/CustomEditorExtensionRenderer': appEntryEditorCustomEditorExtensionRendererEs6,
-    'components/tabs/NoLocalizedFieldsAdvice/index': componentsTabsNoLocalizedFieldsAdviceIndexEs6,
+    'components/tabs/NoLocalizedFieldsAdvice': componentsTabsNoLocalizedFieldsAdviceIndexEs6,
     'app/home/SpaceHomePage': appHomeSpaceHomePageEs6,
     'app/settings/locales/routes/LocalesEditRoute': appSettingsLocalesRoutesLocalesEditRouteEs6,
     'app/widgets/rich_text/ReadOnlyRichTextEditor': appWidgetsRichTextReadOnlyRichTextEditorEs6,
-    'components/shared/RelativeDateTime/index': componentsSharedRelativeDateTimeIndexEs6,
+    'components/shared/RelativeDateTime': componentsSharedRelativeDateTimeIndexEs6,
     'components/field_dialog/ValidationValues': componentsFieldDialogValidationValuesEs6,
     'components/field_dialog/appearance/FieldDialogAppearanceTab': componentsFieldDialogAppearanceFieldDialogAppearanceTabEs6,
     'components/field_dialog/RichTextOptions': componentsFieldDialogRichTextOptionsEs6,
@@ -319,16 +319,16 @@ function getModule(name) {
     'components/shared/space-wizard/Wizard': componentsSharedSpaceWizardWizardEs6,
     'components/tabs/asset_list/AddAssetButton': componentsTabsAssetListAddAssetButtonEs6,
     'components/tabs/PluralizeEntityMessage': componentsTabsPluralizeEntityMessageEs6,
-    'components/RecordsResourceUsage/index': componentsRecordsResourceUsageIndexEs6,
+    'components/RecordsResourceUsage': componentsRecordsResourceUsageIndexEs6,
     'components/shared/UserNameFormatter/FetchAndFormatUserName': componentsSharedUserNameFormatterFetchAndFormatUserNameEs6,
     'ui/Components/Paginator': uiComponentsPaginatorEs6,
     'components/tabs/NoSearchResultsAdvice': componentsTabsNoSearchResultsAdviceEs6,
     'components/tabs/asset_list/AssetsEmptyState': componentsTabsAssetListAssetsEmptyStateEs6,
     'app/jobs/JobsPageLink': appJobsJobsPageLinkEs6,
     'components/tabs/entry_list/EntryList': componentsTabsEntryListEntryListEs6,
-    'components/tabs/entry_list/EmptyStates/index': componentsTabsEntryListEmptyStatesIndexEs6,
+    'components/tabs/entry_list/EmptyStates': componentsTabsEntryListEmptyStatesIndexEs6,
     'components/shared/QuickNavigation/QuickNavWithFeatureFlag': componentsSharedQuickNavigationQuickNavWithFeatureFlagEs6,
-    'search/EntitySelector/CreateEntity/index': searchEntitySelectorCreateEntityIndexEs6,
+    'search/EntitySelector/CreateEntity': searchEntitySelectorCreateEntityIndexEs6,
     'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard': componentsSharedEnterpriseSpaceWizardEnterpriseSpaceWizardEs6,
     'navigation/modernStackOnboardingRelaunch': navigationModernStackOnboardingRelaunchEs6,
     'components/shared/UserInvitation': componentsSharedUserInvitationEs6,
@@ -341,7 +341,7 @@ function getModule(name) {
     'components/shared/stack-onboarding/screens/CopyScreen': componentsSharedStackOnboardingScreensCopyScreenEs6,
     'components/shared/stack-onboarding/screens/ExploreScreen': componentsSharedStackOnboardingScreensExploreScreenEs6,
     'components/shared/stack-onboarding/screens/DeployScreen': componentsSharedStackOnboardingScreensDeployScreenEs6,
-    'components/Ie11DeprecationNotice/index': componentsIe11DeprecationNoticeIndexEs6,
+    'components/Ie11DeprecationNotice': componentsIe11DeprecationNoticeIndexEs6,
     'account/AccountView': accountAccountViewEs6,
     'app/entity_editor/bulk_editor/BulkEditorTitle': appEntityEditorBulkEditorTitleEs6,
     'components/forms/embedly_preview/EmbedlyPreview': embedlyPreview

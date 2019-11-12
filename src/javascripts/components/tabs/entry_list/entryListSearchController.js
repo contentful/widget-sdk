@@ -7,7 +7,7 @@ import { Notification } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification';
 
 import getAccessibleCTs from 'data/ContentTypeRepo/accessibleCTs';
-import createSearchInput from 'app/ContentList/Search/index';
+import createSearchInput from 'app/ContentList/Search';
 import * as Tracking from 'analytics/events/SearchAndViews';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as ListQuery from 'search/listQuery';

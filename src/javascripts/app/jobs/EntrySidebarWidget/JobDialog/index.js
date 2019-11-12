@@ -18,11 +18,11 @@ import APIClient from 'data/APIClient';
 
 import { createDialogClose, createDialogOpen } from 'app/jobs/Analytics/JobsAnalytics';
 
-import JobsTimeline from '../JobsTimeline/index';
-import DatePicker from './DatePicker/index';
-import TimePicker from './TimePicker/index';
+import JobsTimeline from '../JobsTimeline';
+import DatePicker from './DatePicker';
+import TimePicker from './TimePicker';
 import JobAction, { actionToLabelText } from 'app/jobs/JobAction';
-import TimezonePicker from './TimezonePicker/index';
+import TimezonePicker from './TimezonePicker';
 
 const styles = {
   timezoneNote: css({

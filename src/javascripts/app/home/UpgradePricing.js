@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card } from '@contentful/forma-36-react-components';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { getCurrentVariation } from 'utils/LaunchDarkly/index';
+import { getCurrentVariation } from 'utils/LaunchDarkly';
 import Icon from 'ui/Components/Icon';
 import { websiteUrl } from 'Config';
 import isLegacyEnterprise from 'data/isLegacyEnterprise';

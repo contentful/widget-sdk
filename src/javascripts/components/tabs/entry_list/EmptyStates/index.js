@@ -3,14 +3,14 @@ import PropTypes from 'prop-types';
 import { Heading, Paragraph } from '@contentful/forma-36-react-components';
 import { can, Action } from 'access_control/AccessChecker';
 import { getModule } from 'NgRegistry';
-import CreateEntryButton from 'components/CreateEntryButton/index';
+import CreateEntryButton from 'components/CreateEntryButton';
 import FolderIllustration from 'svg/folder-illustration';
 import PenIllustration from 'svg/pen-illustration';
 import CoffeeCupIllustration from 'svg/coffee-cup-illustration';
 import EmptyStateContainer, {
   defaultSVGStyle
 } from 'components/EmptyStateContainer/EmptyStateContainer';
-import NoContentTypeAdvice from 'components/tabs/NoContentTypeAdvice/index';
+import NoContentTypeAdvice from 'components/tabs/NoContentTypeAdvice';
 
 export default ({ hasContentType, contentTypes, onCreate, suggestedContentTypeId }) => {
   const spaceContext = getModule('spaceContext');

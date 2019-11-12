@@ -11,7 +11,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import { getModule } from 'NgRegistry';
 import { trackClickCTA } from 'app/home/tracking';
-import { getStore } from 'TheStore/index';
+import { getStore } from 'TheStore';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
 
 const store = getStore();

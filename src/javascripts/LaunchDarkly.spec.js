@@ -11,7 +11,7 @@ jest.mock('ldclient-js', () => ({
   initialize: jest.fn()
 }));
 
-jest.mock('data/User/index', () => ({
+jest.mock('data/User', () => ({
   getOrgRole: jest.fn().mockReturnValue('org role'),
   getUserAgeInDays: jest.fn().mockReturnValue(7),
   hasAnOrgWithSpaces: jest.fn().mockReturnValue(false),

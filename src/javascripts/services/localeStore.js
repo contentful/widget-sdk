@@ -1,5 +1,5 @@
 import createLocaleStore from './createLocaleStore';
-import { getStore } from 'TheStore/index';
+import { getStore } from 'TheStore';
 
 /**
  * @description

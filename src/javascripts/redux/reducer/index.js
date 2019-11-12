@@ -5,7 +5,7 @@ import spaceWizard from './spaceWizard';
 import resources from './resources';
 import token from './token';
 import location from './location';
-import datasets from './datasets/index';
+import datasets from './datasets';
 import optimistic from './optimistic';
 import deleted from './deleted';
 import access from './access';

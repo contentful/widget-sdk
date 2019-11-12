@@ -6,7 +6,7 @@ import moment from 'moment';
 
 import AngularComponent from 'ui/Framework/AngularComponent';
 
-import RelativeDateTime from 'components/shared/RelativeDateTime/index';
+import RelativeDateTime from 'components/shared/RelativeDateTime';
 import UserNameFormatter from 'components/shared/UserNameFormatter/FetchAndFormatUserName';
 
 import { getModule } from 'NgRegistry';

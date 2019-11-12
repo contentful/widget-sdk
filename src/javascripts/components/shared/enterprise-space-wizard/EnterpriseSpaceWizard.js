@@ -11,7 +11,7 @@ import * as Analytics from 'analytics/Analytics';
 import TemplateSelector from 'components/shared/space-wizard/TemplateSelector';
 import ProgressScreen from 'components/shared/space-wizard/ProgressScreen';
 
-import Dialog from 'app/entity_editor/Components/Dialog/index';
+import Dialog from 'app/entity_editor/Components/Dialog';
 
 import ContactUsButton from 'ui/Components/ContactUsButton';
 import EnterpriseSpaceWizardPlan from './EnterpriseSpaceWizardPlan';

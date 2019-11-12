@@ -11,7 +11,7 @@ import {
   goToSlideInEntity,
   getSlideAsString,
   goToPreviousSlideOrExit
-} from 'navigation/SlideInNavigator/index';
+} from 'navigation/SlideInNavigator';
 import * as random from 'utils/Random';
 
 const entityLoaders = {

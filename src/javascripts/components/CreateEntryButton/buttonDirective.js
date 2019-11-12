@@ -2,7 +2,7 @@ import { registerDirective } from 'NgRegistry';
 import _ from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Menu from 'components/CreateEntryButton/index';
+import Menu from 'components/CreateEntryButton';
 
 export default function register() {
   registerDirective('cfCreateEntryButton', () => ({

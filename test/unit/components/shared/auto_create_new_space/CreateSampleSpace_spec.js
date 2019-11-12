@@ -56,7 +56,7 @@ describe('CreateSampleSpace service', () => {
     };
 
     this.system.set('services/TokenStore', this.tokenStore);
-    this.system.set('services/SpaceTemplateCreator/index', {
+    this.system.set('services/SpaceTemplateCreator', {
       getCreator: this.getCreator
     });
     this.system.set('states/Navigator', {

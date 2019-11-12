@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import IncomingLinksList from 'app/entity_editor/Components/IncomingLinksList/index';
+import IncomingLinksList from 'app/entity_editor/Components/IncomingLinksList';
 import IncomingLinksListError from 'app/entity_editor/Components/IncomingLinksList/Error';
 import FetchLinksToEntity, {
   RequestState
-} from 'app/entity_editor/Components/FetchLinksToEntity/index';
+} from 'app/entity_editor/Components/FetchLinksToEntity';
 import { EntityType, getNumberOfLinks } from 'app/entity_editor/Components/constants';
 import messages from './messages';
 import EntrySidebarWidget from '../EntrySidebarWidget';

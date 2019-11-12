@@ -1,5 +1,5 @@
 import qs from 'qs';
-import { getStore } from 'TheStore/index';
+import { getStore } from 'TheStore';
 import { sample } from 'lodash';
 
 const injected = readInjectedConfig();

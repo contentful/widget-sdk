@@ -4,7 +4,7 @@ import { Notification } from '@contentful/forma-36-react-components';
 
 import '@testing-library/jest-dom/extend-expect';
 import * as DateMocks from 'DateMocks';
-import JobDialog from './index';
+import JobDialog from '.';
 import moment from 'moment';
 
 import * as JobsAnalytics from 'app/jobs/Analytics/JobsAnalytics';

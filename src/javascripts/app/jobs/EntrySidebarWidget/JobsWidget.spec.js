@@ -21,7 +21,7 @@ const commandTemplate = {
 
 jest.mock('../DataManagement/JobsService');
 jest.mock('ng/spaceContext', () => ({ entryTitle: () => 'Test' }));
-jest.mock('app/entity_editor/UnpublishedReferencesWarning/index', () => ({
+jest.mock('app/entity_editor/UnpublishedReferencesWarning', () => ({
   showUnpublishedReferencesWarning: () => Promise.resolve(true)
 }));
 describe('<JobsWidget />', () => {

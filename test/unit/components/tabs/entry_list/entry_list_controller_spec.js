@@ -53,7 +53,7 @@ describe('Entry List Controller', () => {
       }
     });
 
-    this.system.set('app/ContentList/Search/index', {
+    this.system.set('app/ContentList/Search', {
       default: _.noop // TODO: Test search ui integration.
     });
 

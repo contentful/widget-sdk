@@ -1,4 +1,4 @@
-import { h } from 'utils/legacy-html-hyperscript/index';
+import { h } from 'utils/legacy-html-hyperscript';
 
 /**
  * This module exports templates common to `EntityLinkTemplate` and

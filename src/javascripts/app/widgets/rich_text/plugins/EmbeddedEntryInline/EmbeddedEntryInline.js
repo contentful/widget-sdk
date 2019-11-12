@@ -6,7 +6,7 @@ import {
   DropdownList
 } from '@contentful/forma-36-react-components';
 
-import { default as FetchEntity, RequestStatus } from 'app/widgets/shared/FetchEntity/index';
+import { default as FetchEntity, RequestStatus } from 'app/widgets/shared/FetchEntity';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';
 import { INLINES } from '@contentful/rich-text-types';
 

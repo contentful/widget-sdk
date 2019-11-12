@@ -2,7 +2,7 @@ import React from 'react';
 import Enzyme from 'enzyme';
 
 import RichTextEditor from './RichTextEditor';
-import Toolbar from './Toolbar/index';
+import Toolbar from './Toolbar';
 
 jest.mock('ng/data/CMA/EntityState', () => ({}), { virtual: true });
 jest.mock('directives/thumbnailHelpers', () => ({}), { virtual: true });

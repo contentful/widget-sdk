@@ -10,7 +10,7 @@ import GetSdkSection from './components/GetSdkSection';
 import UpgradePricing from './UpgradePricing';
 import LearnAboutContentful from './components/LearnAboutContentful';
 import ModernStackOverview from 'components/shared/stack-onboarding/next_steps/ModernStackOverview';
-import { getStore } from 'TheStore/index';
+import { getStore } from 'TheStore';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
 
 const store = getStore();

@@ -1,9 +1,9 @@
 import React from 'react';
 import WithLink from 'components/shared/stack-onboarding/components/WithLink';
 
-import { getStore } from 'TheStore/index';
+import { getStore } from 'TheStore';
 import { getSpaceAutoCreatedKey } from 'components/shared/auto_create_new_space/getSpaceAutoCreatedKey';
-import { getCurrentVariation } from 'utils/LaunchDarkly/index';
+import { getCurrentVariation } from 'utils/LaunchDarkly';
 import {
   MODERN_STACK_ONBOARDING_COMPLETE_EVENT,
   MODERN_STACK_ONBOARDING_FEATURE_FLAG,

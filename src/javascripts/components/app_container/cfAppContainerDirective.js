@@ -1,5 +1,5 @@
 import { registerDirective } from 'NgRegistry';
-import { h } from 'utils/legacy-html-hyperscript/index';
+import { h } from 'utils/legacy-html-hyperscript';
 
 function appContainerTemplateDef() {
   return [
@@ -21,7 +21,7 @@ function appContainerTemplateDef() {
       uiView: 'content'
     }),
     h('div', { 'ng-if': 'showIeNotice' }, [
-      h('react-component', { name: 'components/Ie11DeprecationNotice/index' })
+      h('react-component', { name: 'components/Ie11DeprecationNotice' })
     ])
   ].join('');
 }

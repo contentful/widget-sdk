@@ -1,7 +1,7 @@
 import { get } from 'lodash';
 import * as K from 'utils/kefir';
 import { createMVar, runTask, createExclusiveTask } from 'utils/Concurrent';
-import { getStore } from 'TheStore/index';
+import { getStore } from 'TheStore';
 import * as Config from 'Config';
 import postForm from 'data/Request/PostForm';
 import { getModule } from 'NgRegistry';

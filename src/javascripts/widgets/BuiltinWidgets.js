@@ -3,11 +3,11 @@
 import { range } from 'lodash';
 import React from 'react';
 import * as Config from 'Config';
-import { default as RichTextEditor } from 'app/widgets/rich_text/index';
+import { default as RichTextEditor } from 'app/widgets/rich_text';
 import LinkEditor, {
   SingleLinkEditor,
   withCfWebApp as linkEditorWithCfWebApp
-} from 'app/widgets/LinkEditor/index';
+} from 'app/widgets/LinkEditor';
 import EmbedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
 import { TagsEditor } from '@contentful/field-editor-tags';
 import { SingleLineEditor } from '@contentful/field-editor-single-line';

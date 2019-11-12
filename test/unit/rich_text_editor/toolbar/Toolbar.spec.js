@@ -36,7 +36,7 @@ const stubAll = async ({ isolatedSystem }) => {
   isolatedSystem.set('app/widgets/WidgetApi/dialogs/HyperlinkDialog', {
     LINK_TYPES: {}
   });
-  isolatedSystem.set('utils/LaunchDarkly/index', {
+  isolatedSystem.set('utils/LaunchDarkly', {
     onFeatureFlag: sinon.stub(),
     getCurrentVariation: sinon.stub()
   });
@@ -140,7 +140,7 @@ describe('Rich Text toolbar', () => {
       open: () => Promise.resolve([this.selectedEntity])
     });
 
-    const { default: RichTextEditor } = await this.system.import('app/widgets/rich_text/index');
+    const { default: RichTextEditor } = await this.system.import('app/widgets/rich_text');
 
     await $initialize(this.system, $provide => {
       $provide.constant('spaceContext', {

@@ -9,10 +9,10 @@ import {
 } from '@contentful/forma-36-react-components';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import Icon from 'ui/Components/Icon';
-import ContentTypeList from './ContentTypeList/index';
+import ContentTypeList from './ContentTypeList';
 import NoSearchResultsAdvice from 'components/tabs/NoSearchResultsAdvice';
-import NoContentTypeAdvice from 'components/tabs/NoContentTypeAdvice/index';
-import CreateContentTypeCta from 'components/tabs/CreateContentTypeCta/index';
+import NoContentTypeAdvice from 'components/tabs/NoContentTypeAdvice';
+import CreateContentTypeCta from 'components/tabs/CreateContentTypeCta';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import ContentTypeListSearch from './ContentTypeListSearch';
 import ContentTypeListFilter from './ContentTypeListFilter';

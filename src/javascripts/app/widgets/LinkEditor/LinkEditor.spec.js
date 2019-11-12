@@ -9,7 +9,7 @@ import SortableLinkList from './SortableLinkList';
 
 const link = newLink();
 
-jest.mock('../shared/FetchedEntityCard/index', () => 'FetchedEntityCard', { virtual: true });
+jest.mock('../shared/FetchedEntityCard', () => 'FetchedEntityCard', { virtual: true });
 
 describe('LinkEditor', () => {
   function mount(customProps) {

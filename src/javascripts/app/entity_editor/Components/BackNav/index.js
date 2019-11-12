@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Icon from 'ui/Components/Icon';
-import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator/index';
+import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 
 export default class BackNav extends React.Component {
   static propTypes = {

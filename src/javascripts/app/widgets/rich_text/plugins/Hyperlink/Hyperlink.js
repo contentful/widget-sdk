@@ -3,7 +3,7 @@ import { Tooltip, TextLink } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
 import { truncate } from 'utils/StringUtils';
 import { INLINES } from '@contentful/rich-text-types';
-import { default as FetchEntity, RequestStatus } from 'app/widgets/shared/FetchEntity/index';
+import { default as FetchEntity, RequestStatus } from 'app/widgets/shared/FetchEntity';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';
 import { isIE, isEdge } from 'utils/browser';
 import { EntityStatusTag } from 'components/shared/EntityStatusTag';

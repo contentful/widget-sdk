@@ -53,7 +53,7 @@ header.workbench-header
 
     react-component(
       ng-if="!isLegacyOrganization && paginator.getTotal() > 0"
-      name="components/RecordsResourceUsage/index"
+      name="components/RecordsResourceUsage"
       props="usageProps"
       watch-depth="reference"
     )
@@ -149,7 +149,7 @@ header.workbench-header
                 ui-sref="{{linkToAsset}}")
                 react-component(
                   ng-if="asset.getUpdatedAt()"
-                  name="components/shared/RelativeDateTime/index"
+                  name="components/shared/RelativeDateTime"
                   props="{value: asset.getUpdatedAt()}"
                 )
               +td.x--small-cell(aria-label="cell-author"

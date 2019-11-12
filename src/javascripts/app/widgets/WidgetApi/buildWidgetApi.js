@@ -1,8 +1,8 @@
 import * as logger from 'services/logger';
 import openHyperlinkDialog from 'app/widgets/WidgetApi/dialogs/openHyperlinkDialog';
-import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient/index';
+import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 import { getModule } from 'NgRegistry';
-import { goToSlideInEntity } from 'navigation/SlideInNavigator/index';
+import { goToSlideInEntity } from 'navigation/SlideInNavigator';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import * as entitySelector from 'search/EntitySelector/entitySelector';
 import * as JobsService from 'app/jobs/DataManagement/JobsService';

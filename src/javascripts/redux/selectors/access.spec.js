@@ -1,4 +1,4 @@
-import reducer from '../reducer/index';
+import reducer from '../reducer';
 import { hasAccess, getReasonDenied } from './access';
 
 describe('access selectors', () => {

@@ -1,8 +1,8 @@
 import { get, find } from 'lodash';
 
-import { getCurrentVariation } from 'utils/LaunchDarkly/index';
+import { getCurrentVariation } from 'utils/LaunchDarkly';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
-import { getStore } from 'TheStore/index';
+import { getStore } from 'TheStore';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as TokenStore from 'services/TokenStore';
 

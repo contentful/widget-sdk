@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { TextLink } from '@contentful/forma-36-react-components';
-import { goToSlideInEntity } from 'navigation/SlideInNavigator/index';
-import CreateEntryButton, { Style } from 'components/CreateEntryButton/index';
-import Visible from 'components/shared/Visible/index';
+import { goToSlideInEntity } from 'navigation/SlideInNavigator';
+import CreateEntryButton, { Style } from 'components/CreateEntryButton';
+import Visible from 'components/shared/Visible';
 import * as logger from 'services/logger';
 import * as entityCreator from 'components/app_container/entityCreator';
 

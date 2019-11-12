@@ -1,5 +1,5 @@
 import * as logger from 'services/logger';
-import TheStore from 'TheStore/index';
+import TheStore from 'TheStore';
 import { getSpaceInfo, checkOrgAccess, getOrg, getOnboardingSpaceId } from './utils';
 import spaceContextMock from 'ng/spaceContext';
 import * as AccessCheckerMocked from 'access_control/AccessChecker';
@@ -28,7 +28,7 @@ jest.mock('ng/spaceContext', () => ({
   resetWithSpace: jest.fn()
 }));
 
-jest.mock('TheStore/index', () => ({ getStore: jest.fn() }));
+jest.mock('TheStore', () => ({ getStore: jest.fn() }));
 
 jest.mock('components/shared/auto_create_new_space/CreateModernOnboarding', () => ({
   getStoragePrefix: jest.fn()

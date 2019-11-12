@@ -14,7 +14,7 @@ import {
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import EntrySidebarWidget from '../EntrySidebarWidget';
-import RelativeTimeData from 'components/shared/RelativeDateTime/index';
+import RelativeTimeData from 'components/shared/RelativeDateTime';
 import CommandPropType from 'app/entity_editor/CommandPropType';
 import StatusBadge from './StatusBadge';
 

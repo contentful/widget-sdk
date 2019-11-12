@@ -11,7 +11,7 @@ import * as SystemFields from 'data/SystemFields';
 import * as logger from 'services/logger';
 import * as ListQuery from 'search/listQuery';
 
-import createSearchInput from 'app/ContentList/Search/index';
+import createSearchInput from 'app/ContentList/Search';
 import * as Tracking from 'analytics/events/SearchAndViews';
 
 export default function register() {

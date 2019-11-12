@@ -2,7 +2,7 @@ import { registerFactory } from 'NgRegistry';
 import _ from 'lodash';
 import moment from 'moment';
 
-import { getStore } from 'TheStore/index';
+import { getStore } from 'TheStore';
 import * as TokenStore from 'services/TokenStore';
 
 export default function register() {

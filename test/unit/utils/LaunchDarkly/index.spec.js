@@ -95,13 +95,13 @@ xdescribe('LaunchDarkly', () => {
 
     module('contentful/test', $provide => {
       $provide.constant('ldclient-js', this.LD);
-      $provide.value('data/User/index', userModule);
+      $provide.value('data/User', userModule);
       $provide.value('utils/ShallowObjectDiff', this.shallowObjectDiff);
       $provide.value('debug/EnforceFlags', this.EnforceFlags);
       $provide.constant('services/logger', this.logger);
     });
 
-    const ld = this.$inject('utils/LaunchDarkly/index')._noMock;
+    const ld = this.$inject('utils/LaunchDarkly')._noMock;
 
     this.ld = ld;
     this.ld.init();

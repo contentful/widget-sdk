@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import _ from 'lodash';
 import { ModalConfirm, List, ListItem, Paragraph } from '@contentful/forma-36-react-components';
-import WrappedEntityList from 'app/common/WrappedEntityList/index';
+import WrappedEntityList from 'app/common/WrappedEntityList';
 import tokens from '@contentful/forma-36-tokens';
-import * as slideInNavigator from 'navigation/SlideInNavigator/index';
+import * as slideInNavigator from 'navigation/SlideInNavigator';
 import localeStore from 'services/localeStore';
 
 const humaniseEntityType = (type, references) => {

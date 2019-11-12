@@ -12,7 +12,7 @@ import {
   Subheading
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import RelativeTimeData from 'components/shared/RelativeDateTime/index';
+import RelativeTimeData from 'components/shared/RelativeDateTime';
 import ActionRestrictedNote from './ActionRestrictedNote';
 import RestrictedAction from './RestrictedAction';
 

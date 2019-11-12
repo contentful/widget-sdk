@@ -1,4 +1,4 @@
-import reducer from '../reducer/index';
+import reducer from '../reducer';
 import { getDatasets, isMissingRequiredDatasets, getDataSetsToLoad } from './datasets';
 import ROUTES from '../routes';
 import {

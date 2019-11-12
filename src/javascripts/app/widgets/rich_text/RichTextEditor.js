@@ -13,13 +13,13 @@ import StickyToolbarWrapper from './Toolbar/StickyToolbarWrapper';
 import { toContentfulDocument, toSlatejsDocument } from '@contentful/contentful-slatejs-adapter';
 
 import { createRichTextAPI } from './plugins/shared/PluginApi';
-import { buildPlugins } from './plugins/index';
+import { buildPlugins } from './plugins';
 
 import schema from './constants/Schema';
 import emptyDoc from './constants/EmptyDoc';
 import { BLOCKS } from '@contentful/rich-text-types';
 
-import Toolbar from './Toolbar/index';
+import Toolbar from './Toolbar';
 
 const createSlateValue = contentfulDocument => {
   const document = toSlatejsDocument({

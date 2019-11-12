@@ -4,7 +4,7 @@ import { WALK_FOR_ME } from 'featureFlags';
 import * as LazyLoader from 'utils/LazyLoader';
 import window from 'utils/ngCompat/window';
 
-import * as LD from 'utils/LaunchDarkly/index';
+import * as LD from 'utils/LaunchDarkly';
 
 export default function register() {
   registerDirective('cfRolesForWalkMe', [

@@ -53,7 +53,7 @@ describe('Space Template creation service', () => {
       purgeApiKeyRepoCache: () => {}
     });
 
-    spaceTemplateCreator = await this.system.import('services/SpaceTemplateCreator/index');
+    spaceTemplateCreator = await this.system.import('services/SpaceTemplateCreator');
 
     await $initialize(this.system);
   });

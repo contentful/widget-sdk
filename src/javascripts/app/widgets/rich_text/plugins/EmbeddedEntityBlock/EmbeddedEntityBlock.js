@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import FetchedEntityCard from 'app/widgets/shared/FetchedEntityCard/index';
+import FetchedEntityCard from 'app/widgets/shared/FetchedEntityCard';
 
 class LinkedEntityBlock extends React.Component {
   static propTypes = {

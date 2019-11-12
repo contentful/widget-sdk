@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Action } from 'data/CMA/EntityActions';
 import { ModalConfirm } from '@contentful/forma-36-react-components';
 import { EntityType, getNumberOfLinks } from '../constants';
-import FetchLinksToEntity, { RequestState } from '../FetchLinksToEntity/index';
+import FetchLinksToEntity, { RequestState } from '../FetchLinksToEntity';
 import {
   onDialogOpen as trackDialogOpen,
   onDialogConfirm as trackDialogConfirm,
@@ -12,7 +12,7 @@ import {
 } from 'analytics/events/IncomingLinks';
 
 import Loader from './Loader';
-import IncomingLinksList from '../IncomingLinksList/index';
+import IncomingLinksList from '../IncomingLinksList';
 import IncomingLinksListError from '../IncomingLinksList/Error';
 import messages from './messages';
 

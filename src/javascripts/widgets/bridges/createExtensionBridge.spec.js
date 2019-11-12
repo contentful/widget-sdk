@@ -29,7 +29,7 @@ jest.mock('@contentful/forma-36-react-components', () => ({
   Notification: { success: jest.fn() }
 }));
 
-jest.mock('TheStore/index', () => ({
+jest.mock('TheStore', () => ({
   getStore: jest.fn()
 }));
 

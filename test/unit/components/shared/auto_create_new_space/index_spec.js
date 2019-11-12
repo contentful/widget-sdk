@@ -3,7 +3,7 @@ import * as K from 'test/utils/kefir';
 import { $initialize, $apply, $wait } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
 
-describe('AutoCreateNewSpace/index', () => {
+describe('AutoCreateNewSpace', () => {
   beforeEach(async function() {
     this.tokenStore = {
       user$: K.createMockProperty(null),
@@ -21,14 +21,14 @@ describe('AutoCreateNewSpace/index', () => {
     this.system.set('components/shared/auto_create_new_space/CreateSampleSpace', {
       default: this.createSampleSpace
     });
-    this.system.set('TheStore/index', {
+    this.system.set('TheStore', {
       getStore: sinon.stub().returns(this.store)
     });
-    this.system.set('utils/LaunchDarkly/index', {
+    this.system.set('utils/LaunchDarkly', {
       getCurrentVariation: sinon.stub().returns(false)
     });
 
-    const init = (await this.system.import('components/shared/auto_create_new_space/index'))
+    const init = (await this.system.import('components/shared/auto_create_new_space'))
       .init;
 
     await $initialize(this.system);

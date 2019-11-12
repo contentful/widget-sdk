@@ -1,8 +1,8 @@
 import { getOrg, getSpaceInfo, getOnboardingSpaceId } from './utils';
-import TheStore from 'TheStore/index';
+import TheStore from 'TheStore';
 import * as TokenStore from 'services/TokenStore';
 
-jest.mock('TheStore/index', () => ({ getStore: jest.fn() }));
+jest.mock('TheStore', () => ({ getStore: jest.fn() }));
 
 jest.mock(
   'services/TokenStore',

@@ -27,7 +27,7 @@ import { Icon } from '@contentful/forma-36-react-components';
 import isHotkey from 'is-hotkey';
 import StateLink from 'app/common/StateLink';
 
-import ViewCustomizer from './ViewCustomizer/index';
+import ViewCustomizer from './ViewCustomizer';
 import DisplayField from './DisplayField';
 import SecretiveLink from 'components/shared/SecretiveLink';
 

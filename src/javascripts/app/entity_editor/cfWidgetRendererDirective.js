@@ -6,7 +6,7 @@ import $ from 'jquery';
 import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
 import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';
-import * as SlideInNavigator from 'navigation/SlideInNavigator/index';
+import * as SlideInNavigator from 'navigation/SlideInNavigator';
 import createNewWidgetApi from 'app/widgets/NewWidgetApi/createNewWidgetApi';
 import * as Navigator from 'states/Navigator';
 import * as LoadEventTracker from 'app/entity_editor/LoadEventTracker';

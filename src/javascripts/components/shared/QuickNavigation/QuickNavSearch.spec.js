@@ -12,7 +12,7 @@ jest.mock('services/localeStore', () => ({
 }));
 
 jest.mock(
-  'TheStore/index',
+  'TheStore',
   () => ({
     getStore: jest.fn()
   }),

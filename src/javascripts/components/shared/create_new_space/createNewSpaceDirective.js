@@ -8,7 +8,7 @@ import client from 'services/client';
 import createResourceService from 'services/ResourceService';
 import { getTemplatesList, getTemplate } from 'services/SpaceTemplateLoader';
 import * as spaceTemplateEvents from 'analytics/events/SpaceCreation';
-import * as spaceTemplateCreator from 'services/SpaceTemplateCreator/index';
+import * as spaceTemplateCreator from 'services/SpaceTemplateCreator';
 import * as Analytics from 'analytics/Analytics';
 import * as enforcements from 'access_control/Enforcements';
 import * as TokenStore from 'services/TokenStore';

@@ -69,7 +69,7 @@ export default function createController($scope) {
       import('services/OrganizationRoles'),
       import('services/CreateSpace'),
       import('access_control/AccessChecker'),
-      import('utils/LaunchDarkly/index'),
+      import('utils/LaunchDarkly'),
       import('services/logger'),
       import('./SidepanelView')
     ]);

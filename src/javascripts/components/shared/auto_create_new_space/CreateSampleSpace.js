@@ -1,6 +1,6 @@
 import { runTask } from 'utils/Concurrent';
 import { getCurrentStateName } from 'states/Navigator';
-import { getCreator } from 'services/SpaceTemplateCreator/index';
+import { getCreator } from 'services/SpaceTemplateCreator';
 import { track, updateUserInSegment } from 'analytics/Analytics';
 import { go as gotoState } from 'states/Navigator';
 import { entityActionSuccess } from 'analytics/events/SpaceCreation';

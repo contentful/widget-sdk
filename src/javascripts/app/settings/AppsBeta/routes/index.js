@@ -4,7 +4,7 @@ import { AppProductCatalog } from '../AppProductCatalog';
 import { makeAppHookBus } from '../AppHookBus';
 import createAppExtensionBridge from 'widgets/bridges/createAppExtensionBridge';
 import * as Navigator from 'states/Navigator';
-import * as SlideInNavigator from 'navigation/SlideInNavigator/index';
+import * as SlideInNavigator from 'navigation/SlideInNavigator';
 import createAppsRepo from '../AppsRepo';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 

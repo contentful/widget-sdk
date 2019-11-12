@@ -15,7 +15,7 @@ describe('entityEditor/StateController', () => {
     this.registerWarningSpy = sinon.stub();
     this.showWarningsStub = sinon.stub().resolves();
 
-    this.system.set('navigation/SlideInNavigator/index', {
+    this.system.set('navigation/SlideInNavigator', {
       goToPreviousSlideOrExit: this.stubs.goToPreviousSlideOrExit
     });
 
@@ -25,7 +25,7 @@ describe('entityEditor/StateController', () => {
       }
     });
 
-    this.system.set('app/entity_editor/UnpublishedReferencesWarning/index', {
+    this.system.set('app/entity_editor/UnpublishedReferencesWarning', {
       showUnpublishedReferencesWarning: this.stubs.showUnpublishedReferencesWarning
     });
 
@@ -41,7 +41,7 @@ describe('entityEditor/StateController', () => {
       canPerformActionOnEntity: sinon.stub.returns(true)
     });
 
-    this.system.set('app/entity_editor/PublicationWarnings/index', {
+    this.system.set('app/entity_editor/PublicationWarnings', {
       create: () => ({
         register: this.registerWarningSpy,
         show: this.showWarningsStub

@@ -15,7 +15,7 @@ import {
 } from '@contentful/forma-36-react-components';
 
 import FetchAndFormatUserName from 'components/shared/UserNameFormatter/FetchAndFormatUserName';
-import RelativeDateTime from 'components/shared/RelativeDateTime/index';
+import RelativeDateTime from 'components/shared/RelativeDateTime';
 import { isPublishedAndUpdated, isPublished } from '../ContentTypeListService';
 
 const numFields = ct => (ct.fields || []).length;

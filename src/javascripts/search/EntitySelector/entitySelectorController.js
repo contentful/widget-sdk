@@ -6,7 +6,7 @@ import { Operator } from 'app/ContentList/Search/Operators';
 import Paginator from 'classes/Paginator';
 import * as EntityHelpers from 'app/entity_editor/entityHelpers';
 import getAccessibleCTs from 'data/ContentTypeRepo/accessibleCTs';
-import createSearchInput from 'app/ContentList/Search/index';
+import createSearchInput from 'app/ContentList/Search';
 
 export default function register() {
   /**

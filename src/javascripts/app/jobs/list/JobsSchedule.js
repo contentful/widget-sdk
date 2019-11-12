@@ -7,7 +7,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 
 import JobsEmptyStateMessage from './JobsEmptyStateMessage';
-import WrappedEntityList from 'app/common/WrappedEntityList/index';
+import WrappedEntityList from 'app/common/WrappedEntityList';
 import JobAction from '../JobAction';
 
 const styles = {

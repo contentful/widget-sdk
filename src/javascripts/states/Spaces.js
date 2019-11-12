@@ -1,4 +1,4 @@
-import { getStore } from 'TheStore/index';
+import { getStore } from 'TheStore';
 import { getFirstAccessibleSref } from 'access_control/SectionAccess';
 import * as Analytics from 'analytics/Analytics';
 import * as accessChecker from 'access_control/AccessChecker';
@@ -7,17 +7,17 @@ import SpaceNavigationBar from 'navigation/SpaceNavigationBar';
 import * as TokenStore from 'services/TokenStore';
 
 import contentTypes from './contentTypes';
-import apps from 'app/settings/apps/routes/index';
-import appsBeta from 'app/settings/AppsBeta/routes/index';
-import api from 'app/settings/api/routes/index';
+import apps from 'app/settings/apps/routes';
+import appsBeta from 'app/settings/AppsBeta/routes';
+import api from 'app/settings/api/routes';
 import entries from './entries';
 import assets from './assets';
 import home from './spaceHome';
 import stackOnboarding from './stackOnboarding';
 import settings from './settings';
-import jobs from 'app/jobs/routes/index';
-import tasks from 'app/TasksPage/routes/index';
-import pageExtensions from 'app/pageExtensions/routes/index';
+import jobs from 'app/jobs/routes';
+import tasks from 'app/TasksPage/routes';
+import pageExtensions from 'app/pageExtensions/routes';
 
 const store = getStore();
 
