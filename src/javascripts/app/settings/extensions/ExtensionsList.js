@@ -28,6 +28,7 @@ import EmptyStateContainer, {
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import EmptyStateIllustration from 'svg/connected-forms-illustration';
 import { websiteUrl } from 'Config';
+import { getExtensionLoader } from 'app/settings/webhooks/services/ExtensionLoader';
 
 import ExtensionsActions from './ExtensionsActions';
 
@@ -56,7 +57,7 @@ function deleteExtension(id, refresh) {
     .then(
       () => {
         Notification.success('Your extension was successfully deleted.');
-        spaceContext.extensionLoader.evictExtension(id);
+        getExtensionLoader().evictExtension(id);
       },
       err => {
         Notification.error('There was an error while deleting your extension.');

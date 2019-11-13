@@ -33,15 +33,11 @@ export default function register() {
       let createUserCache;
       let EntityFieldValueHelpers;
       let TheLocaleStore;
-      let createAppDefinitionLoader;
-      let createExtensionLoader;
       let createSpaceMembersRepo;
       let createEnvironmentsRepo;
       let createLocaleRepo;
       let createUiConfigStore;
       let createSpaceEndpoint;
-      let createOrganizationEndpoint;
-      let createAppDefinitionsEndpoint;
       let PublishedCTRepo;
       let MembershipRepo;
       let accessChecker;
@@ -62,14 +58,12 @@ export default function register() {
             { default: createUserCache },
             EntityFieldValueHelpers,
             { default: TheLocaleStore },
-            { default: createAppDefinitionLoader },
 
-            { createExtensionLoader },
             { default: createSpaceMembersRepo },
             { create: createEnvironmentsRepo },
             { default: createLocaleRepo },
             { default: createUiConfigStore },
-            { createSpaceEndpoint, createOrganizationEndpoint, createAppDefinitionsEndpoint },
+            { createSpaceEndpoint },
             PublishedCTRepo,
             MembershipRepo,
             accessChecker,
@@ -87,8 +81,6 @@ export default function register() {
             import('data/userCache'),
             import('./EntityFieldValueHelpers'),
             import('services/localeStore'),
-            import('app/settings/AppsBeta/AppDefinitionLoader'),
-            import('widgets/ExtensionLoader'),
             import('data/CMA/SpaceMembersRepo'),
             import('data/CMA/SpaceEnvironmentsRepo'),
             import('data/CMA/LocaleRepo'),
@@ -164,18 +156,6 @@ export default function register() {
           self.users = createUserCache(self.endpoint);
           self.localeRepo = createLocaleRepo(self.endpoint);
           self.organization = deepFreezeClone(self.getData('organization'));
-
-          const appDefinitionsEndpoint = createAppDefinitionsEndpoint(Config.apiUrl(), Auth);
-
-          const orgEndpoint = createOrganizationEndpoint(
-            Config.apiUrl(),
-            self.organization.sys.id,
-            Auth
-          );
-
-          self.appDefinitionLoader = createAppDefinitionLoader(appDefinitionsEndpoint, orgEndpoint);
-
-          self.extensionLoader = createExtensionLoader(self.appDefinitionLoader, self.endpoint);
 
           // TODO: publicly accessible docConnection is
           // used only in a process of creating space out

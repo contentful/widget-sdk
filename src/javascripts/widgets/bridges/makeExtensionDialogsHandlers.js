@@ -10,9 +10,9 @@ import trackExtensionRender from '../TrackExtensionRender';
 import { LOCATION_DIALOG } from '../WidgetLocations';
 import * as WidgetStore from '../WidgetStore';
 import * as entitySelector from 'search/EntitySelector/entitySelector';
+import { getExtensionLoader } from 'app/settings/webhooks/services/ExtensionLoader';
 
 import createDialogExtensionBridge from './createDialogExtensionBridge';
-import checkDependencies from './checkDependencies';
 
 const SIMPLE_DIALOG_TYPE_TO_OPENER = {
   alert: Dialogs.openAlert,
@@ -21,10 +21,6 @@ const SIMPLE_DIALOG_TYPE_TO_OPENER = {
 };
 
 export default function makeExtensionDialogsHandlers(dependencies) {
-  const { spaceContext } = checkDependencies('ExtensionDialogsHandlers', dependencies, [
-    'spaceContext'
-  ]);
-
   return openDialog;
 
   async function openDialog(type, options) {
@@ -49,10 +45,7 @@ export default function makeExtensionDialogsHandlers(dependencies) {
       throw new Error('No Extension ID provided.');
     }
 
-    const descriptor = await WidgetStore.getForSingleExtension(
-      spaceContext.extensionLoader,
-      options.id
-    );
+    const descriptor = await WidgetStore.getForSingleExtension(getExtensionLoader(), options.id);
 
     if (!descriptor) {
       throw new Error(`No Extension with ID "${options.id}" found.`);

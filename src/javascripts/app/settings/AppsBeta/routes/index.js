@@ -4,9 +4,11 @@ import { AppProductCatalog } from '../AppProductCatalog';
 import { makeAppHookBus } from '../AppHookBus';
 import createAppExtensionBridge from 'widgets/bridges/createAppExtensionBridge';
 import * as Navigator from 'states/Navigator';
-import * as SlideInNavigator from 'navigation/SlideInNavigator';
+import * as SlideInNavigator from 'navigation/SlideInNavigator/index';
 import createAppsRepo from '../AppsRepo';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
+import { getAppDefinitionLoader } from 'app/settings/webhooks/services/AppDefinitionLoaderInstance';
+import { getExtensionLoader } from 'app/settings/webhooks/services/ExtensionLoader';
 
 export default {
   name: 'apps',
@@ -28,7 +30,7 @@ export default {
         (spaceContext, $state, $stateParams) => {
           return {
             goToContent: () => $state.go('^.^.entries.list'),
-            repo: createAppsRepo(spaceContext.appDefinitionLoader, spaceContext.endpoint),
+            repo: createAppsRepo(getAppDefinitionLoader(), spaceContext.endpoint),
             productCatalog: new AppProductCatalog(spaceContext.space.data.sys.id, getSpaceFeature),
             organizationId: spaceContext.organization.sys.id,
             spaceId: spaceContext.space.data.sys.id,
@@ -48,7 +50,7 @@ export default {
         'spaceContext',
         '$state',
         ({ appId }, spaceContext, $state) => {
-          const repo = createAppsRepo(spaceContext.appDefinitionLoader, spaceContext.endpoint);
+          const repo = createAppsRepo(getAppDefinitionLoader(), spaceContext.endpoint);
           const appHookBus = makeAppHookBus();
 
           const bridge = createAppExtensionBridge({
@@ -71,7 +73,7 @@ export default {
             bridge,
             appHookBus,
             cma: spaceContext.cma,
-            extensionLoader: spaceContext.extensionLoader
+            extensionLoader: getExtensionLoader()
           };
         }
       ]

@@ -12,7 +12,9 @@ function createMockProperty(initial) {
   return property;
 }
 
-jest.mock('Authentication', () => ({ getToken: () => '<TOKEN>' }));
+jest.mock('Authentication', () => ({
+  getToken: () => '<TOKEN>'
+}));
 
 jest.mock('services/localeStore', () => ({
   getPrivateLocales: () => [{ code: 'pl', name: 'Polski' }, { code: 'en', name: 'English' }],
@@ -29,7 +31,12 @@ jest.mock('@contentful/forma-36-react-components', () => ({
   Notification: { success: jest.fn() }
 }));
 
-jest.mock('TheStore', () => ({
+jest.mock('data/Endpoint', () => ({
+  createOrganizationEndpoint: () => () => {},
+  createAppDefinitionsEndpoint: () => () => {}
+}));
+
+jest.mock('TheStore/index', () => ({
   getStore: jest.fn()
 }));
 

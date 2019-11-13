@@ -2,6 +2,8 @@ import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
 import ExtensionsListRoute from './ExtensionsListRoute';
 import ExtensionEditorRoute from './ExtensionEditorRoute';
 import createAppsRepo from 'app/settings/AppsBeta/AppsRepo';
+import { getAppDefinitionLoader } from 'app/settings/webhooks/services/AppDefinitionLoaderInstance';
+import { getExtensionLoader } from 'app/settings/webhooks/services/ExtensionLoader';
 
 export default {
   name: 'extensions',
@@ -24,8 +26,8 @@ export default {
           return {
             extensionUrl: decodeURI($stateParams.extensionUrl || ''),
             extensionUrlReferrer: $stateParams.referrer || null,
-            extensionLoader: spaceContext.extensionLoader,
-            appsRepo: createAppsRepo(spaceContext.appDefinitionLoader, spaceContext.endpoint)
+            extensionLoader: getExtensionLoader(),
+            appsRepo: createAppsRepo(getAppDefinitionLoader(), spaceContext.endpoint)
           };
         }
       ]
@@ -54,7 +56,7 @@ export default {
             goToList: () => {
               $state.go('^.list');
             },
-            extensionLoader: spaceContext.extensionLoader
+            extensionLoader: getExtensionLoader()
           };
         }
       ]
