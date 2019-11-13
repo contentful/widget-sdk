@@ -54,8 +54,9 @@ export default class TasksPage extends Component {
   };
 
   componentDidMount = async () => {
+    const { spaceId, environmentId, currentUserId } = this.props;
     const [[tasks, entries], spaceUsers] = await Promise.all([
-      getOpenAssignedTasksAndEntries(this.props.spaceId, this.props.currentUserId),
+      getOpenAssignedTasksAndEntries(spaceId, environmentId, currentUserId),
       this.props.users.getAll()
     ]);
     const entryTitles = this.getEntryTitles(entries);

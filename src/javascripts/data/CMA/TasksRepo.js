@@ -11,17 +11,17 @@ const path = (entryId, taskId) => ['entries', entryId, 'tasks', ...(taskId ? [ta
  * @param {SpaceEndpoint} endpoint
  * @param {String} entryId
  * @param {Object} data Task data without `sys`
+ * @param {Boolean} isPrePreview
  * @returns {Promise<API.Task>}
  */
-export async function create(endpoint, entryId, { body, assignment }) {
+export async function create(endpoint, entryId, task, isPrePreview) {
+  const { body, assignedTo, status } = task;
+  const data = !isPrePreview ? { body, assignment: { assignedTo, status } } : task;
   return endpoint(
     {
       method: 'POST',
       path: path(entryId),
-      data: {
-        body,
-        assignment
-      }
+      data
     },
     alphaHeader
   );
@@ -40,8 +40,7 @@ export async function getAllForEntry(endpoint, entryId) {
       method: 'GET',
       path: path(entryId)
     },
-    alphaHeader,
-    { includeHeaders: true }
+    alphaHeader
   );
 }
 
@@ -68,10 +67,12 @@ export async function remove(endpoint, entryId, taskId) {
  * @param {SpaceEndpoint} endpoint
  * @param {String} entryId
  * @param {API.Task} task
+ * @param {Boolean} isPrePreview
  * @returns {Promise<API.Task>}
  */
-export async function update(endpoint, entryId, task) {
-  const { sys, ...data } = task;
+export async function update(endpoint, entryId, task, isPrePreview) {
+  const { sys, body, assignedTo, status } = task;
+  const data = !isPrePreview ? { body, assignment: { assignedTo, status } } : task;
   const headers = {
     'X-Contentful-Version': sys.version,
     ...alphaHeader

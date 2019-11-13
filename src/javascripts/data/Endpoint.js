@@ -68,7 +68,7 @@ export function createSpaceEndpoint(baseUrl, spaceId, auth, envId, includeHeader
 
   function maybePrefixWithEnv(path) {
     if (envId && shouldUseEnvEndpoint(path)) {
-      return ['environments', envId].concat(path);
+      return ['environments', envId, ...path];
     } else {
       return path;
     }

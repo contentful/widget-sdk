@@ -1,5 +1,6 @@
 import * as K from 'utils/kefir';
 import { getAllForEntry, create, remove, update } from 'data/CMA/TasksRepo';
+import { getTasksFromResponse, transformTask } from 'app/TasksPage/helpers';
 
 // TODO: Introduce Store specific errors rather than passing client errors.
 
@@ -18,7 +19,9 @@ export function createTasksStoreForEntry(endpoint, entryId) {
   const items$ = tasksBus.property;
   const getItems = () => K.getValue(items$);
 
-  initialFetch();
+  let isPrePreview = false;
+
+  initialFetch().then(result => (isPrePreview = result));
 
   return {
     items$,
@@ -26,10 +29,11 @@ export function createTasksStoreForEntry(endpoint, entryId) {
       let newTask;
       const { sys: _sys, ...data } = task;
       try {
-        newTask = await create(endpoint, entryId, data);
+        ({ data: newTask } = await create(endpoint, entryId, data, isPrePreview));
       } catch (error) {
         throw error;
       }
+      newTask = !isPrePreview ? transformTask(newTask) : newTask;
       tasksBus.set([...getItems(), newTask]);
       return newTask;
     },
@@ -44,10 +48,11 @@ export function createTasksStoreForEntry(endpoint, entryId) {
     update: async task => {
       let updatedTask;
       try {
-        updatedTask = await update(endpoint, entryId, task);
+        ({ data: updatedTask } = await update(endpoint, entryId, task, isPrePreview));
       } catch (error) {
         throw error;
       }
+      updatedTask = !isPrePreview ? transformTask(updatedTask) : updatedTask;
       tasksBus.set(
         getItems().map(task => (task.sys.id === updatedTask.sys.id ? updatedTask : task))
       );
@@ -56,14 +61,16 @@ export function createTasksStoreForEntry(endpoint, entryId) {
   };
 
   async function initialFetch() {
+    let res;
     let tasks;
     try {
-      const { items } = await getAllForEntry(endpoint, entryId);
-      tasks = items;
+      res = await getAllForEntry(endpoint, entryId);
+      tasks = getTasksFromResponse(res);
     } catch (error) {
       tasksBus.error(error);
-      return;
+      return false;
     }
     tasksBus.set(tasks);
+    return res.headers['x-contentful-tasks-version'] === 'pre-preview';
   }
 }

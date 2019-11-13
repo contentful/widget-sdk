@@ -8,7 +8,7 @@ import { isEqual } from 'lodash';
  * @returns {boolean}
  */
 export function isOpenTask(task) {
-  return task.assignment.status === 'open';
+  return task.status === 'open';
 }
 
 /**

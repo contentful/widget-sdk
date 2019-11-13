@@ -133,6 +133,7 @@ export default class AccountDropdown extends Component {
       try {
         const [tasks, entries] = await getOpenAssignedTasksAndEntries(
           spaceContext.space.getId(),
+          spaceContext.getEnvironmentId(),
           currentUser.sys.id
         );
         pendingTasksCount = getPendingTasksCount(tasks, entries);

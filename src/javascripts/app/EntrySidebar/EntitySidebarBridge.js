@@ -5,6 +5,7 @@ import { getCurrentStateName } from 'states/Navigator';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
 import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes';
 import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
+import { createSpaceEndpoint } from 'data/EndpointFactory';
 import * as WidgetLocations from 'widgets/WidgetLocations';
 import * as SlideInNavigator from 'navigation/SlideInNavigator';
 import * as Navigator from 'states/Navigator';
@@ -118,7 +119,9 @@ export default ({ $scope, emitter }) => {
       emitter.emit(SidebarEventTypes.UPDATED_TASKS_WIDGET, {
         ...update,
         entityInfo: $scope.entityInfo,
-        endpoint: spaceContext.endpoint,
+        endpoint: createSpaceEndpoint(spaceContext.getId(), spaceContext.getEnvironmentId(), {
+          includeHeaders: true
+        }),
         users: spaceContext.users,
         currentUser: spaceContext.user,
         isSpaceAdmin: user => spaceContext.space.isAdmin(user)

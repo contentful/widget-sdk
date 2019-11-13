@@ -18,8 +18,7 @@ describe('TaskPermissionChecker', () => {
     };
 
     task = {
-      sys: {},
-      assignment: {}
+      sys: {}
     };
   });
 
@@ -99,7 +98,7 @@ describe('TaskPermissionChecker', () => {
 
             describe('when the current user is the task assignee', () => {
               beforeEach(() => {
-                task.assignment.assignedTo = { sys: { id: currentUser.sys.id } };
+                task.assignedTo = { sys: { id: currentUser.sys.id } };
               });
 
               it('returns true', () => {
@@ -116,7 +115,7 @@ describe('TaskPermissionChecker', () => {
 
             describe('when the current user is the task assignee', () => {
               beforeEach(() => {
-                task.assignment.assignedTo = { sys: { id: currentUser.sys.id } };
+                task.assignedTo = { sys: { id: currentUser.sys.id } };
               });
 
               it('returns true', () => {
@@ -127,7 +126,7 @@ describe('TaskPermissionChecker', () => {
 
             describe('when the current user is not the task assignee', () => {
               beforeEach(() => {
-                task.assignment.assignedTo = { sys: { id: 'another-user-id' } };
+                task.assignedTo = { sys: { id: 'another-user-id' } };
               });
 
               it('returns false', () => {
@@ -147,9 +146,7 @@ describe('TaskPermissionChecker', () => {
         sys: {
           createdBy: { sys: { id: currentUser.sys.id } }
         },
-        assignment: {
-          assignedTo: { sys: { id: currentUser.sys.id } }
-        }
+        assignedTo: { sys: { id: currentUser.sys.id } }
       };
 
       isSpaceAdmin = true;

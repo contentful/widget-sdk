@@ -41,10 +41,8 @@ const DRAFT_TASK = {
     createdAt: null
   },
   body: '',
-  assignment: {
-    assignedTo: null,
-    status: 'open'
-  }
+  assignedTo: null,
+  status: 'open'
 };
 
 /**
@@ -120,8 +118,8 @@ export function createLoadingStateTasksViewData() {
  */
 function createTaskViewData(task, usersFetchingStatus) {
   const { id } = task.sys;
-  const assignee = task.assignment.assignedTo
-    ? createUserViewDataFromLinkAndFetcher(task.assignment.assignedTo, usersFetchingStatus)
+  const assignee = task.assignedTo
+    ? createUserViewDataFromLinkAndFetcher(task.assignedTo, usersFetchingStatus)
     : null;
   const creator = task.sys.createdBy
     ? createUserViewDataFromLinkAndFetcher(task.sys.createdBy, usersFetchingStatus)
@@ -134,7 +132,7 @@ function createTaskViewData(task, usersFetchingStatus) {
     creator,
     assignee,
     body: task.body,
-    isDone: task.assignment.status === 'resolved',
+    isDone: task.status === 'resolved',
     isDraft: id === DRAFT_TASK_KEY,
     isInEditMode: false,
     canEdit: false,
