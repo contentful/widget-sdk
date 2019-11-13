@@ -1,9 +1,9 @@
 import React from 'react';
 import { render, cleanup } from '@testing-library/react';
-import EnvironmentAliases from './EnvironmentAliases.es6';
+import EnvironmentAliases from './EnvironmentAliases';
 import '@testing-library/jest-dom/extend-expect';
 
-jest.mock('./Feedback.es6', () => () => <div>Feedback</div>);
+jest.mock('./Feedback', () => () => <div>Feedback</div>);
 
 const optedIn = {
   targetEnv: {

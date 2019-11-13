@@ -1,8 +1,8 @@
 'use strict';
 
-import * as Paginator from './Paginator.es6';
+import * as Paginator from './Paginator';
 
-describe('classes/Paginator.es6', () => {
+describe('classes/Paginator', () => {
   let paginator;
 
   beforeEach(function() {

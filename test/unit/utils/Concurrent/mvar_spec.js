@@ -1,6 +1,6 @@
-import { createMVar } from 'utils/Concurrent.es6';
+import { createMVar } from 'utils/Concurrent';
 
-describe('utils/Concurrent/MVar.es6', function() {
+describe('utils/Concurrent/MVar', function() {
   describe('createMVar', function() {
     describe('#take()', () => {
       it('resolves immediately and empties state when MVar has value', async function() {

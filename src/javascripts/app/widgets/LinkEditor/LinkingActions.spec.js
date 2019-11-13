@@ -2,8 +2,8 @@ import { forEach } from 'lodash';
 import React from 'react';
 import Enzyme from 'enzyme';
 
-import { default as LinkingActions, labels, testIds } from './LinkingActions.es6';
-import { TYPES } from './Util.es6';
+import { default as LinkingActions, labels, testIds } from './LinkingActions';
+import { TYPES } from './Util';
 
 const contentTypes = [
   { name: 'CT one', sys: { id: 'CT1' } },

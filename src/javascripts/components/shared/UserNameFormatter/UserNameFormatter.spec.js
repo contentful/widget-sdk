@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import { UserNameFormatter } from './index.es6';
+import { UserNameFormatter } from '.';
 
 describe('UserNameFormatter', () => {
   const mount = (user, currentUser) =>

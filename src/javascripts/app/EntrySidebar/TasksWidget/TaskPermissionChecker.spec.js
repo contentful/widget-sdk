@@ -1,7 +1,7 @@
 import createTaskPermissionChecker, {
   createProhibitive as createProhibitiveTaskPermissionChecker,
   MissingCurrentUserError
-} from './TaskPermissionChecker.es6';
+} from './TaskPermissionChecker';
 
 describe('TaskPermissionChecker', () => {
   let currentUser;

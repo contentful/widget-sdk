@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { getModule } from 'NgRegistry.es6';
-import ReloadNotification from 'app/common/ReloadNotification.es6';
-import createResourceService from 'services/ResourceService.es6';
-import * as ResourceUtils from 'utils/ResourceUtils.es6';
+import { getModule } from 'NgRegistry';
+import ReloadNotification from 'app/common/ReloadNotification';
+import createResourceService from 'services/ResourceService';
+import * as ResourceUtils from 'utils/ResourceUtils';
 import * as accessChecker from 'access_control/AccessChecker';
 import { getApiKeyRepo } from 'app/settings/api/services/ApiKeyRepoInstance';
 

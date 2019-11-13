@@ -4,10 +4,10 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import KeyEditorWorkbench from './KeyEditorWorkbench';
 import { inRange, isEqual, get, assignWith } from 'lodash';
-import { DocsLink } from 'ui/Content.es6';
+import { DocsLink } from 'ui/Content';
 import { track } from 'analytics/Analytics';
 import EnvironmentSelector from './EnvironmentSelector';
-import { concat, assign } from 'utils/Collections.es6';
+import { concat, assign } from 'utils/Collections';
 import {
   TextField,
   Heading,
@@ -19,9 +19,9 @@ import {
 } from '@contentful/forma-36-react-components';
 import KeyEditorActions from './KeyEditorActions';
 import { getApiKeyRepo } from 'app/settings/api/services/ApiKeyRepoInstance';
-import * as Navigator from 'states/Navigator.es6';
+import * as Navigator from 'states/Navigator';
 import { Notification } from '@contentful/forma-36-react-components';
-import * as logger from 'services/logger.es6';
+import * as logger from 'services/logger';
 
 const styles = {
   readOnlyNote: css({

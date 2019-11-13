@@ -6,7 +6,7 @@ import {
   SkeletonDisplayText
 } from '@contentful/forma-36-react-components';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
-import Icon from 'ui/Components/Icon.es6';
+import Icon from 'ui/Components/Icon';
 
 export default function RolesWorkbenchShell(props) {
   return (

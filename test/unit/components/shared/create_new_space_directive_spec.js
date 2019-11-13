@@ -60,13 +60,13 @@ describe('cfCreateNewSpace directive', () => {
       }
     };
 
-    this.system.set('services/SpaceTemplateLoader.es6', stubs.spaceTemplateLoader);
-    this.system.set('services/SpaceTemplateCreator/index.es6', stubs.spaceTemplateCreator);
+    this.system.set('services/SpaceTemplateLoader', stubs.spaceTemplateLoader);
+    this.system.set('services/SpaceTemplateCreator', stubs.spaceTemplateCreator);
     this.system.set('analytics/Analytics', stubs.analytics);
-    this.system.set('services/logger.es6', stubs.logger);
-    this.system.set('services/TokenStore.es6', stubs.tokenStore);
-    this.system.set('services/ResourceService.es6', stubs.resourceService);
-    this.system.set('services/client.es6', {
+    this.system.set('services/logger', stubs.logger);
+    this.system.set('services/TokenStore', stubs.tokenStore);
+    this.system.set('services/ResourceService', stubs.resourceService);
+    this.system.set('services/client', {
       default: stubs.client
     });
     this.system.set('app/settings/api/services/ApiKeyRepoInstance', {

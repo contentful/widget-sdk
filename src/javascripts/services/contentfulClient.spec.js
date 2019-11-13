@@ -1,4 +1,4 @@
-import { newClient } from './contentfulClient.es6';
+import { newClient } from './contentfulClient';
 import $httpMocked from 'ng/$http';
 
 jest.mock('ng/$http', () => jest.fn(), { virtual: true });

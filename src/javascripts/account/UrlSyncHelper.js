@@ -1,6 +1,6 @@
-import { accountUrl } from 'Config.es6';
+import { accountUrl } from 'Config';
 import { extend, startsWith, endsWith } from 'lodash';
-import { getModule } from 'NgRegistry.es6';
+import { getModule } from 'NgRegistry';
 
 /**
  * @module account/UrlSyncHelper

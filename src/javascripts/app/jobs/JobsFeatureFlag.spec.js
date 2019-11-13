@@ -1,13 +1,13 @@
 import React from 'react';
 import { render, cleanup } from '@testing-library/react';
-import { trackAlphaEligibilityToIntercom } from './Analytics/JobsAnalytics.es6';
+import { trackAlphaEligibilityToIntercom } from './Analytics/JobsAnalytics';
 
-import BooleanFeatureFlag from 'utils/LaunchDarkly/BooleanFeatureFlag.es6';
+import BooleanFeatureFlag from 'utils/LaunchDarkly/BooleanFeatureFlag';
 
-import JobsFeatureFlag from './JobsFeatureFlag.es6';
+import JobsFeatureFlag from './JobsFeatureFlag';
 
-jest.mock('utils/LaunchDarkly/BooleanFeatureFlag.es6', () => jest.fn().mockReturnValue(null));
-jest.mock('./Analytics/JobsAnalytics.es6');
+jest.mock('utils/LaunchDarkly/BooleanFeatureFlag', () => jest.fn().mockReturnValue(null));
+jest.mock('./Analytics/JobsAnalytics');
 describe('<JobsFeatureFlag />', () => {
   afterEach(() => {
     jest.clearAllMocks();

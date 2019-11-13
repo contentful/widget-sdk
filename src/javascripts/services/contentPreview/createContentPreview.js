@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import { resolveReferences } from 'services/ContentPreviewHelper.es6';
-import { getStore } from 'TheStore/index.es6';
+import { resolveReferences } from 'services/ContentPreviewHelper';
+import { getStore } from 'TheStore';
 
 export const ENTRY_ID_PATTERN = /\{\s*entry_id\s*\}/g;
 export const ENTRY_FIELD_PATTERN = /\{\s*entry_field\.(\w+)\s*\}/g;

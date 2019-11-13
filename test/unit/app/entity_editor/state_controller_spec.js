@@ -15,21 +15,21 @@ describe('entityEditor/StateController', () => {
     this.registerWarningSpy = sinon.stub();
     this.showWarningsStub = sinon.stub().resolves();
 
-    this.system.set('navigation/SlideInNavigator/index.es6', {
+    this.system.set('navigation/SlideInNavigator', {
       goToPreviousSlideOrExit: this.stubs.goToPreviousSlideOrExit
     });
 
-    this.system.set('app/common/ModalLauncher.es6', {
+    this.system.set('app/common/ModalLauncher', {
       default: {
         open: sinon.stub().resolves(true)
       }
     });
 
-    this.system.set('app/entity_editor/UnpublishedReferencesWarning/index.es6', {
+    this.system.set('app/entity_editor/UnpublishedReferencesWarning', {
       showUnpublishedReferencesWarning: this.stubs.showUnpublishedReferencesWarning
     });
 
-    this.system.set('services/localeStore.es6', {
+    this.system.set('services/localeStore', {
       default: createLocaleStoreMock()
     });
 
@@ -41,7 +41,7 @@ describe('entityEditor/StateController', () => {
       canPerformActionOnEntity: sinon.stub.returns(true)
     });
 
-    this.system.set('app/entity_editor/PublicationWarnings/index.es6', {
+    this.system.set('app/entity_editor/PublicationWarnings', {
       create: () => ({
         register: this.registerWarningSpy,
         show: this.showWarningsStub
@@ -50,7 +50,7 @@ describe('entityEditor/StateController', () => {
 
     this.analytics = await this.system.import('analytics/Analytics');
     this.Notification = (await this.system.import(
-      'app/entity_editor/Notifications.es6'
+      'app/entity_editor/Notifications'
     )).Notification;
 
     await $initialize(this.system);

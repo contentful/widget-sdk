@@ -1,9 +1,9 @@
 import _ from 'lodash';
-import * as ShareJS from 'data/sharejs/utils.es6';
-import * as StringField from './stringField.es6';
+import * as ShareJS from 'data/sharejs/utils';
+import * as StringField from './stringField';
 
 jest.mock(
-  'data/sharejs/utils.es6',
+  'data/sharejs/utils',
   () => ({
     setDeep: jest.fn().mockResolvedValue(),
     peek: jest.fn().mockReturnValue(undefined)

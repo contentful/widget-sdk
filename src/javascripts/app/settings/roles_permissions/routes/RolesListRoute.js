@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { sortBy } from 'lodash';
-import StateRedirect from 'app/common/StateRedirect.es6';
+import StateRedirect from 'app/common/StateRedirect';
 import RolesWorkbenchShell from './RolesWorkbenchShell';
-import createFetcherComponent from 'app/common/createFetcherComponent.es6';
-import createResourceService from 'services/ResourceService.es6';
+import createFetcherComponent from 'app/common/createFetcherComponent';
+import createResourceService from 'services/ResourceService';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as RoleListHandler from 'access_control/RoleListHandler';
 import RolesList from '../roles_list/RolesList';
-import DocumentTitle from 'components/shared/DocumentTitle.es6';
+import DocumentTitle from 'components/shared/DocumentTitle';
 
 const RolesFetcher = createFetcherComponent(async ({ spaceId }) => {
   const listHandler = RoleListHandler.create();

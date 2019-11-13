@@ -14,7 +14,7 @@ let lastId;
 
 describe('BulkAssetsCreator.tryToPublishProcessingAssets()', () => {
   beforeEach(async function() {
-    this.BulkAssetsCreator = await this.system.import('services/BulkAssetsCreator.es6');
+    this.BulkAssetsCreator = await this.system.import('services/BulkAssetsCreator');
 
     await $initialize(this.system);
 

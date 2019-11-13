@@ -14,7 +14,7 @@ describe('logger service', () => {
 
     this.system.set('analytics/Bugsnag', this.bugsnag);
 
-    this.logger = await this.system.import('services/logger.es6');
+    this.logger = await this.system.import('services/logger');
   });
 
   it('enables', function() {

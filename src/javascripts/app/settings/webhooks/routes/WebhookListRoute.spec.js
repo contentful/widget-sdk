@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import WebhookListRoute from './WebhookListRoute.es6';
+import WebhookListRoute from './WebhookListRoute';
 import * as $stateMocked from 'ng/$state';
 import * as AccessCheckerMocked from 'access_control/AccessChecker';
 
@@ -26,14 +26,14 @@ jest.mock(
 );
 
 jest.mock(
-  'app/common/ReloadNotification.es6',
+  'app/common/ReloadNotification',
   () => ({
     basicErrorHandler: () => {}
   }),
   { virtual: true }
 );
 
-jest.mock('data/CMA/ProductCatalog.es6', () => ({ getOrgFeature: () => Promise.resolve(false) }));
+jest.mock('data/CMA/ProductCatalog', () => ({ getOrgFeature: () => Promise.resolve(false) }));
 
 describe('WebhookListRoute', () => {
   beforeEach(() => {

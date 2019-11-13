@@ -1,5 +1,5 @@
-import { PastePlugin } from './index.es6';
-import * as pasteUtils from './Paste.es6';
+import { PastePlugin } from '.';
+import * as pasteUtils from './Paste';
 
 describe('Paste Plugin', () => {
   let editor;

@@ -8,7 +8,7 @@ describe('ListViewsController', () => {
   });
 
   beforeEach(async function() {
-    this.system.set('data/ListViewPersistor.es6', {
+    this.system.set('data/ListViewPersistor', {
       default: () => ({
         read: () => ({ from_qs: 'test' }),
         save: () => {}

@@ -1,4 +1,4 @@
-import * as validators from './validators.es6';
+import * as validators from './validators';
 
 describe('validators', () => {
   describe('ssoName', () => {

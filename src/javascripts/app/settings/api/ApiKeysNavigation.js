@@ -1,7 +1,7 @@
 import React from 'react';
 import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import StateLink from 'app/common/StateLink.es6';
+import StateLink from 'app/common/StateLink';
 import PropTypes from 'prop-types';
 import { Tabs, Tab } from '@contentful/forma-36-react-components';
 

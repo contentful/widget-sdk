@@ -1,9 +1,9 @@
-import { getModule } from 'NgRegistry.es6';
+import { getModule } from 'NgRegistry';
 import _ from 'lodash';
-import * as K from 'utils/kefir.es6';
+import * as K from 'utils/kefir';
 import moment from 'moment';
 import { validateEvent } from 'analytics/Validator';
-import * as logger from 'services/logger.es6';
+import * as logger from 'services/logger';
 
 import * as SnowplowEvents from 'analytics/snowplow/Events';
 import * as Snowplow from 'analytics/snowplow/Snowplow';

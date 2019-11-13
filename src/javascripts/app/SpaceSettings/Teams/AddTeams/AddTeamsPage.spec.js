@@ -2,13 +2,13 @@ import React from 'react';
 import { render, fireEvent, cleanup, wait, within } from '@testing-library/react';
 import { Notification } from '@contentful/forma-36-react-components';
 import { createTeamSpaceMembership } from 'access_control/TeamRepository';
-import { go } from 'states/Navigator.es6';
+import { go } from 'states/Navigator';
 import { track } from 'analytics/Analytics';
-import AddTeamsPage from './AddTeamsPage.es6';
+import AddTeamsPage from './AddTeamsPage';
 
 import '@testing-library/jest-dom/extend-expect';
 
-jest.mock('states/Navigator.es6', () => ({
+jest.mock('states/Navigator', () => ({
   go: jest.fn().mockResolvedValue(true)
 }));
 
@@ -16,7 +16,7 @@ jest.mock('access_control/TeamRepository', () => ({
   createTeamSpaceMembership: jest.fn()
 }));
 
-jest.mock('data/EndpointFactory.es6', () => ({
+jest.mock('data/EndpointFactory', () => ({
   createSpaceEndpoint: jest.fn()
 }));
 

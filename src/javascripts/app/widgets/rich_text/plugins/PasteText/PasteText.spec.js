@@ -1,4 +1,4 @@
-import { PasteTextPlugin } from './index.es6';
+import { PasteTextPlugin } from '.';
 import { Value, Document, Block, Text, Editor } from 'slate';
 import {
   document,

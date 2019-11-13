@@ -1,9 +1,9 @@
 import { cloneDeep } from 'lodash';
-import { getSpace } from './TokenStore.es6';
-import * as EnforcementsService from './EnforcementsService.es6';
-import { createSpaceEndpoint } from 'data/EndpointFactory.es6';
+import { getSpace } from './TokenStore';
+import * as EnforcementsService from './EnforcementsService';
+import { createSpaceEndpoint } from 'data/EndpointFactory';
 
-jest.mock('services/TokenStore.es6', () => ({
+jest.mock('services/TokenStore', () => ({
   getSpace: jest.fn()
 }));
 

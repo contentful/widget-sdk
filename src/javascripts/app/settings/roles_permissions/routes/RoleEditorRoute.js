@@ -1,16 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import StateRedirect from 'app/common/StateRedirect.es6';
+import StateRedirect from 'app/common/StateRedirect';
 import RolesWorkbenchShell from './RolesWorkbenchShell';
-import createFetcherComponent from 'app/common/createFetcherComponent.es6';
-import createResourceService from 'services/ResourceService.es6';
-import { ENVIRONMENT_ALIASING } from 'featureFlags.es6';
+import createFetcherComponent from 'app/common/createFetcherComponent';
+import createResourceService from 'services/ResourceService';
+import { ENVIRONMENT_ALIASING } from 'featureFlags';
 import { Notification } from '@contentful/forma-36-react-components';
-import { getSpaceFeature } from 'data/CMA/ProductCatalog.es6';
+import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import * as accessChecker from 'access_control/AccessChecker';
-import * as ResourceUtils from 'utils/ResourceUtils.es6';
+import * as ResourceUtils from 'utils/ResourceUtils';
 import RoleEditor from '../role_editor/RoleEditor';
-import DocumentTitle from 'components/shared/DocumentTitle.es6';
+import DocumentTitle from 'components/shared/DocumentTitle';
 
 const RoleEditorFetcher = createFetcherComponent(async ({ spaceId, getContentTypes, isNew }) => {
   const [

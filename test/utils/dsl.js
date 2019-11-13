@@ -1,4 +1,4 @@
-import { runTask } from 'utils/Concurrent.es6';
+import { runTask } from 'utils/Concurrent';
 import { $apply } from 'test/utils/ng';
 import _ from 'lodash';
 

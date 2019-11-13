@@ -3,7 +3,7 @@ import { render, cleanup, fireEvent } from '@testing-library/react';
 import moment from 'moment';
 import '@testing-library/jest-dom/extend-expect';
 
-import TimePicker from './index.es6';
+import TimePicker from '.';
 
 describe('TimePicker', () => {
   let dateNowSpy;

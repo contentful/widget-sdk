@@ -36,25 +36,25 @@ describe('Asset List Controller', () => {
       apiErrorHandler: sinon.stub()
     };
 
-    this.system.set('services/logger.es6', {
+    this.system.set('services/logger', {
       logError: stubs.logError
     });
 
-    this.system.set('app/common/ReloadNotification.es6', {
+    this.system.set('app/common/ReloadNotification', {
       default: {
         apiErrorHandler: stubs.apiErrorHandler
       }
     });
 
-    this.system.set('services/Filestack.es6', {
+    this.system.set('services/Filestack', {
       pickMultiple: stubs.pickMultiple
     });
 
-    this.system.set('utils/ResourceUtils.es6', {
+    this.system.set('utils/ResourceUtils', {
       isLegacyOrganization: () => false
     });
 
-    this.system.set('services/localeStore.es6', {
+    this.system.set('services/localeStore', {
       default: createLocaleStoreMock()
     });
 

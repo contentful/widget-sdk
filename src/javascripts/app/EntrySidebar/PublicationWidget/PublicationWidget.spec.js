@@ -3,7 +3,7 @@ import { render as renderReact, within, cleanup, fireEvent } from '@testing-libr
 import '@testing-library/jest-dom/extend-expect';
 import { mapValues, toArray } from 'lodash';
 
-import PublicationWidget from './PublicationWidget.es6';
+import PublicationWidget from './PublicationWidget';
 
 describe('app/EntrySidebar/PublicationWidget', () => {
   const createCommand = props => ({

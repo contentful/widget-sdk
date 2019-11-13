@@ -1,4 +1,4 @@
-jest.mock('Config.es6', () => ({ apiUrl: v => `https://api.some-domain.com/${v}` }));
+jest.mock('Config', () => ({ apiUrl: v => `https://api.some-domain.com/${v}` }));
 jest.mock('dataloader', () => jest.fn());
 
 // This test verifies that the math we do results in some reasonable numbers.
@@ -24,7 +24,7 @@ describe('newBatchEntityFetcher() invoking new DataLoader() `maxBatchSize` optio
 
   function expectMaxBatchSize(maxBatchSize) {
     const DataLoader = require('dataloader');
-    const { default: newBatchEntityFetcher } = require('./newBatchEntityFetcher.es6');
+    const { default: newBatchEntityFetcher } = require('./newBatchEntityFetcher');
 
     newBatchEntityFetcher({
       getResources: () => {},

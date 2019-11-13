@@ -6,7 +6,7 @@ describe('app/entityEditor/Notifications', () => {
     this.ComponentLibrary = await this.system.import('@contentful/forma-36-react-components');
     this.ComponentLibrary.Notification.success = sinon.stub();
     this.ComponentLibrary.Notification.error = sinon.stub();
-    const N = await this.system.import('app/entity_editor/Notifications.es6');
+    const N = await this.system.import('app/entity_editor/Notifications');
 
     await $initialize(this.system);
 

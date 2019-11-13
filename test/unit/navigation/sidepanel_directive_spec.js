@@ -46,22 +46,22 @@ describe('cfNavSidepanel directive', () => {
   };
 
   beforeEach(async function() {
-    this.system.set('services/CreateSpace.es6', CreateSpace);
-    this.system.set('states/Navigator.es6', Navigator);
+    this.system.set('services/CreateSpace', CreateSpace);
+    this.system.set('states/Navigator', Navigator);
     this.system.set('access_control/AccessChecker', accessChecker);
-    this.system.set('services/OrganizationRoles.es6', OrganizationRoles);
-    this.system.set('utils/LaunchDarkly/index.es6', { onFeatureFlag: sinon.stub() });
-    this.system.set('data/EndpointFactory.es6', EndpointFactory);
-    this.system.set('data/CMA/SpaceEnvironmentsRepo.es6', { create: () => environmentsRepo });
+    this.system.set('services/OrganizationRoles', OrganizationRoles);
+    this.system.set('utils/LaunchDarkly', { onFeatureFlag: sinon.stub() });
+    this.system.set('data/EndpointFactory', EndpointFactory);
+    this.system.set('data/CMA/SpaceEnvironmentsRepo', { create: () => environmentsRepo });
 
-    this.system.set('services/TokenStore.es6', TokenStore);
+    this.system.set('services/TokenStore', TokenStore);
 
-    this.system.set('utils/LaunchDarkly/index.es6', LD);
-    this.system.override('navigation/NavState.es6', {
+    this.system.set('utils/LaunchDarkly', LD);
+    this.system.override('navigation/NavState', {
       navState$
     });
 
-    NavStates = (await this.system.import('navigation/NavState.es6')).NavStates;
+    NavStates = (await this.system.import('navigation/NavState')).NavStates;
     navState$.set(NavStates.Default());
 
     await $initialize(this.system);

@@ -1,7 +1,7 @@
 import * as K from 'test/utils/kefir';
 import _ from 'lodash';
 import sinon from 'sinon';
-import { deepFreeze } from 'utils/Freeze.es6';
+import { deepFreeze } from 'utils/Freeze';
 import createLocaleStoreMock from 'test/utils/createLocaleStoreMock';
 import { $initialize, $apply } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
@@ -17,7 +17,7 @@ describe('entityEditor/Document', () => {
       canUpdateAsset: sinon.stub(),
       canEditFieldLocale: sinon.stub()
     };
-    this.system.set('services/localeStore.es6', {
+    this.system.set('services/localeStore', {
       default: createLocaleStoreMock()
     });
     this.system.set('access_control/AccessChecker', {
@@ -28,7 +28,7 @@ describe('entityEditor/Document', () => {
       canEditFieldLocale: this.stubs.canEditFieldLocale
     });
 
-    this.DocLoad = (await this.system.import('data/sharejs/Connection.es6')).DocLoad;
+    this.DocLoad = (await this.system.import('data/sharejs/Connection')).DocLoad;
 
     this.docLoader = {
       doc: K.createMockProperty(this.DocLoad.None()),
@@ -41,7 +41,7 @@ describe('entityEditor/Document', () => {
       refreshAuth: sinon.stub().resolves()
     };
 
-    const Doc = await this.system.import('app/entity_editor/Document.es6');
+    const Doc = await this.system.import('app/entity_editor/Document');
 
     this.connectAndOpen = function(data) {
       data = _.cloneDeep(data || this.entity.data);
@@ -54,7 +54,7 @@ describe('entityEditor/Document', () => {
       return doc;
     };
 
-    this.localeStore = (await this.system.import('services/localeStore.es6')).default;
+    this.localeStore = (await this.system.import('services/localeStore')).default;
     this.localeStore.setLocales([{ internal_code: 'en' }]);
 
     await $initialize(this.system);

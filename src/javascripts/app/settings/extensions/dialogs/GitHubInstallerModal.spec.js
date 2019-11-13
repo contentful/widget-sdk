@@ -1,7 +1,7 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import * as Fetcher from './ExtensionFetcher.es6';
-import GitHubInstallerModal from './GitHubInstallerModal.es6';
+import * as Fetcher from './ExtensionFetcher';
+import GitHubInstallerModal from './GitHubInstallerModal';
 
 const VALID_URL = 'https://github.com/jelz/sample/blob/master/extension.json';
 const ERR_SELECTOR = '[data-test-id="cf-ui-validation-message"]';

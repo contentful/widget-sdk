@@ -1,6 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import FormSection from './FormSection.es6';
+import FormSection from './FormSection';
 
 describe('FormSection', () => {
   const mount = (title, collapsible) =>

@@ -40,8 +40,7 @@ async function copySvg() {
       'chart-symbol-diamond',
       'chart-symbol-triangle'
     ].map(icon => {
-      const Component = require(path.resolve('src', 'javascripts', 'svg', icon + '.es6.js'))
-        .default;
+      const Component = require(path.resolve('src', 'javascripts', 'svg', icon + '.js')).default;
       const target = path.join(targetDir, icon + '.svg');
       return FS.writeFile(
         target,

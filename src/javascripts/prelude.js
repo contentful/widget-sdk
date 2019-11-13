@@ -56,7 +56,7 @@ import moment from 'moment';
 import _ from 'lodash';
 import qs from 'qs';
 
-import { awaitInitReady } from 'NgRegistry.es6';
+import { awaitInitReady } from 'NgRegistry';
 
 const injectedConfig = readInjectedConfig();
 const env = injectedConfig.config.environment;
@@ -275,21 +275,21 @@ angular
 
       await initSpaceContext();
 
-      const Config = await import('Config.es6');
+      const Config = await import('Config');
       const { default: handleGKMessage } = await import('account/handleGatekeeperMessage');
-      const { init: initDebug } = await import('Debug.es6');
-      const { init: initAuthentication } = await import('Authentication.es6');
-      const { init: initTokenStore } = await import('services/TokenStore.es6');
-      const { init: initLD } = await import('utils/LaunchDarkly/index.es6');
+      const { init: initDebug } = await import('./Debug');
+      const { init: initAuthentication } = await import('Authentication');
+      const { init: initTokenStore } = await import('services/TokenStore');
+      const { init: initLD } = await import('utils/LaunchDarkly');
       const { init: initAutoCreateNewSpace } = await import(
-        'components/shared/auto_create_new_space/index.es6'
+        'components/shared/auto_create_new_space'
       );
-      const { default: initContextMenuHandler } = await import('ui/ContextMenuHandler.es6');
-      const Telemetry = await import('i13n/Telemetry.es6');
-      const { loadAll: loadAllStates } = await import('states/states.es6');
-      const { go } = await import('states/Navigator.es6');
+      const { default: initContextMenuHandler } = await import('ui/ContextMenuHandler');
+      const Telemetry = await import('i13n/Telemetry');
+      const { loadAll: loadAllStates } = await import('states/states');
+      const { go } = await import('states/Navigator');
       const { init: initExtentionActivationTracking } = await import(
-        'widgets/ExtensionActivationTracking.es6'
+        'widgets/ExtensionActivationTracking'
       );
 
       const { init: initDialogs } = $injector.get('dialogsInitController');

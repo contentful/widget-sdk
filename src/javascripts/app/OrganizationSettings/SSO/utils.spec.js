@@ -1,8 +1,8 @@
-import * as utils from './utils.es6';
+import * as utils from './utils';
 
 import { track } from 'analytics/Analytics';
 
-jest.mock('./validators.es6', () => ({
+jest.mock('./validators', () => ({
   myAwesomeField: str => {
     if (str === 'secret') {
       return `${str} is valid!`;

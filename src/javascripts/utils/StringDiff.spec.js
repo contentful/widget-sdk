@@ -1,6 +1,6 @@
 'use string';
 
-import { diff } from './StringDiff.es6';
+import { diff } from './StringDiff';
 import _ from 'lodash';
 
 describe('utils/StringDiff', () => {

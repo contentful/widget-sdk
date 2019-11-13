@@ -1,6 +1,6 @@
 import { PolicyBuilderConfig } from './PolicyBuilderConfig';
 import { extend } from 'lodash';
-import * as random from 'utils/Random.es6';
+import * as random from 'utils/Random';
 
 const DEFAULT_RULE = {
   action: 'all',

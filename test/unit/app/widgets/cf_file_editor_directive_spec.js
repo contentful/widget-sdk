@@ -8,12 +8,12 @@ describe('cfFileEditor Directive', () => {
       pick: sinon.stub().resolves({ fileName: 'x.jpg' }),
       Notification_error: sinon.stub()
     };
-    this.system.set('services/Filestack.es6', {
+    this.system.set('services/Filestack', {
       makeDropPane: sinon.stub(),
       pick: this.stubs.pick
     });
 
-    this.system.set('services/TokenStore.es6', {
+    this.system.set('services/TokenStore', {
       getDomains: sinon.stub().returns({})
     });
 

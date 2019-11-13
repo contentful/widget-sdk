@@ -33,46 +33,46 @@ describe('spaceContext', () => {
       })
     };
 
-    this.system.set('widgets/ExtensionLoader.es6', { createExtensionLoader: sinon.stub() });
+    this.system.set('widgets/ExtensionLoader', { createExtensionLoader: sinon.stub() });
     this.system.set('access_control/AccessChecker', this.AccessChecker);
-    this.system.set('data/Endpoint.es6', {
+    this.system.set('data/Endpoint', {
       createSpaceEndpoint: () => this.mockSpaceEndpoint.request,
       createOrganizationEndpoint: sinon.stub(),
       createAppDefinitionsEndpoint: sinon.stub()
     });
-    this.system.set('data/UiConfig/Store.es6', {
+    this.system.set('data/UiConfig/Store', {
       default: sinon.stub().resolves({ store: true })
     });
-    this.system.set('services/EnforcementsService.es6', {
+    this.system.set('services/EnforcementsService', {
       init: this.initEnforcements
     });
-    this.system.set('data/userCache.es6', {
+    this.system.set('data/userCache', {
       default: this.createUserCache
     });
-    this.system.set('data/sharejs/Connection.es6', {
+    this.system.set('data/sharejs/Connection', {
       create: sinon.stub()
     });
-    this.system.set('services/localeStore.es6', {
+    this.system.set('services/localeStore', {
       default: this.localeStore
     });
 
-    this.system.set('data/sharejs/Connection.es6', {
+    this.system.set('data/sharejs/Connection', {
       create: this.stubs.sharejs_Connection_create
     });
 
-    this.system.set('data/sharejs/DocumentPool.es6', {
+    this.system.set('data/sharejs/DocumentPool', {
       create: this.stubs.DocumentPool_create
     });
 
-    this.system.set('data/CMA/ProductCatalog.es6', this.ProductCatalog);
+    this.system.set('data/CMA/ProductCatalog', this.ProductCatalog);
 
-    this.system.set('services/client.es6', {
+    this.system.set('services/client', {
       default: {
         newSpace: makeClientSpaceMock
       }
     });
 
-    this.LD = await this.system.import('utils/LaunchDarkly/index.es6');
+    this.LD = await this.system.import('utils/LaunchDarkly');
     this.LD._setFlag('feature-dv-11-2017-environments', true);
 
     await $initialize(this.system);
@@ -520,7 +520,7 @@ describe('spaceContext', () => {
 
   describe('#displayedFieldForType()', () => {
     beforeEach(async function() {
-      const CTRepo = await this.system.import('data/ContentTypeRepo/Published.es6');
+      const CTRepo = await this.system.import('data/ContentTypeRepo/Published');
       this.spaceContext.publishedCTs = stubAll(CTRepo.create());
     });
 
@@ -581,7 +581,7 @@ describe('spaceContext', () => {
         }
       };
 
-      const CTRepo = await this.system.import('data/ContentTypeRepo/Published.es6');
+      const CTRepo = await this.system.import('data/ContentTypeRepo/Published');
       this.spaceContext.publishedCTs = stubAll(CTRepo.create());
       this.spaceContext.publishedCTs.get.withArgs('CTID').returns(this.ct);
     });

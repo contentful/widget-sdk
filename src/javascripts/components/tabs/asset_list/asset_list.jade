@@ -1,7 +1,7 @@
 include ../../shared/table_pattern.mixin.jade
 
 react-component(
-  name="components/shared/DocumentTitle.es6"
+  name="components/shared/DocumentTitle"
   props="{title: 'Media'}"
 )
 header.workbench-header
@@ -10,7 +10,7 @@ header.workbench-header
     h1.workbench-header__title
       | Media
       react-component(
-        name="components/shared/knowledge_base_icon/KnowledgeBase.es6"
+        name="components/shared/knowledge_base_icon/KnowledgeBase"
         props="{target: 'asset', className: 'workbench-header__kb-link'}"
       )
 
@@ -25,7 +25,7 @@ header.workbench-header
   .workbench-header__actions(
     ng-show="!showNoAssetsAdvice() && !shouldHide('create', 'asset')")
     react-component(
-      name="components/tabs/asset_list/AddAssetButton.es6"
+      name="components/tabs/asset_list/AddAssetButton"
       props="{ canUploadMultipleAssets: canUploadMultipleAssets, createMultipleAssets: createMultipleAssets, newAsset: newAsset, testId: 'add-asset-menu-trigger', disabled: shouldDisable('create', 'asset') }"
       )
 
@@ -48,12 +48,12 @@ header.workbench-header
   .workbench-main__right-content
     .search-results__count(ng-show="paginator.getTotal() > 0")
       react-component(
-        name="components/tabs/PluralizeEntityMessage.es6"
+        name="components/tabs/PluralizeEntityMessage"
         props="{entityType: 'asset', count: paginator.getTotal(), restOfTheMsg: 'found'}")
 
     react-component(
       ng-if="!isLegacyOrganization && paginator.getTotal() > 0"
-      name="components/RecordsResourceUsage/index.es6"
+      name="components/RecordsResourceUsage"
       props="usageProps"
       watch-depth="reference"
     )
@@ -80,7 +80,7 @@ header.workbench-header
         .workbench-actions(ng-controller="AssetListActionsController")
           .workbench-actions__label
             react-component(
-              name="components/tabs/PluralizeEntityMessage.es6"
+              name="components/tabs/PluralizeEntityMessage"
               props="{entityType: 'asset', count: selection.size(), restOfTheMsg: 'selected:'}")
 
           span(ng-show="!showArchive() && !showUnarchive() && !showDelete() && !showPublish() && !showUnpublish()")
@@ -103,10 +103,10 @@ header.workbench-header
             aria-label="delete")
             | Delete
           .delete-confirm(cf-context-menu="bottom")
-            p 
-              | You are about to delete 
+            p
+              | You are about to delete
               react-component(
-                name="components/tabs/PluralizeEntityMessage.es6"
+                name="components/tabs/PluralizeEntityMessage"
                 props="{entityType: 'asset', count: selection.size()}")
             button.btn-caution(type="button" ng-click="deleteSelected()") Delete
             button.btn-secondary-action(type="button") Don't Delete
@@ -149,13 +149,13 @@ header.workbench-header
                 ui-sref="{{linkToAsset}}")
                 react-component(
                   ng-if="asset.getUpdatedAt()"
-                  name="components/shared/RelativeDateTime/index.es6"
+                  name="components/shared/RelativeDateTime"
                   props="{value: asset.getUpdatedAt()}"
                 )
               +td.x--small-cell(aria-label="cell-author"
                 ui-sref="{{linkToAsset}}")
                 span
-                  react-component(name="components/shared/UserNameFormatter/FetchAndFormatUserName.es6" props="{userId: asset.getUpdatedBy().sys.id}")
+                  react-component(name="components/shared/UserNameFormatter/FetchAndFormatUserName" props="{userId: asset.getUpdatedBy().sys.id}")
 
               +td.x--small-cell(
                 aria-label="cell-status"
@@ -165,16 +165,16 @@ header.workbench-header
     .f36-margin-top--s
       react-component(
         ng-show="paginator.getPageCount()"
-        name="ui/Components/Paginator.es6"
+        name="ui/Components/Paginator"
         props="paginatorProps"
       )
     react-component(
-      name="components/tabs/NoSearchResultsAdvice.es6"
+      name="components/tabs/NoSearchResultsAdvice"
       ng-show="hasNoSearchResults()"
     )
 
 .workbench-main.x--content(ng-show="showNoAssetsAdvice()")
     react-component(
-      name="components/tabs/asset_list/AssetsEmptyState.es6"
+      name="components/tabs/asset_list/AssetsEmptyState"
       props="{ canUploadMultipleAssets: canUploadMultipleAssets, createMultipleAssets: createMultipleAssets, newAsset: newAsset }"
     )

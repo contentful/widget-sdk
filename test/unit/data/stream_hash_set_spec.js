@@ -1,9 +1,9 @@
 import * as K from 'test/utils/kefir';
 import _ from 'lodash';
 
-describe('data/StreamHashSet.es6', () => {
+describe('data/StreamHashSet', () => {
   beforeEach(async function() {
-    this.store = (await this.system.import('data/streamHashSet.es6')).create();
+    this.store = (await this.system.import('data/streamHashSet')).create();
 
     this.itemValues = K.extractValues(this.store.items$);
   });

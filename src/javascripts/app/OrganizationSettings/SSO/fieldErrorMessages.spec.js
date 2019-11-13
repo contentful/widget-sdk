@@ -1,4 +1,4 @@
-import * as fieldErrorMessages from './fieldErrorMessages.es6';
+import * as fieldErrorMessages from './fieldErrorMessages';
 
 describe('fieldErrorMessages', () => {
   describe('#ssoName', () => {

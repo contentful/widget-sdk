@@ -2,9 +2,9 @@ import * as K from 'test/utils/kefir';
 import sinon from 'sinon';
 import { $initialize, $inject } from 'test/utils/ng';
 
-describe('app/entity_editor/Validator.es6', () => {
+describe('app/entity_editor/Validator', () => {
   beforeEach(async function() {
-    const Validator = await this.system.import('app/entity_editor/Validator.es6');
+    const Validator = await this.system.import('app/entity_editor/Validator');
 
     await $initialize(this.system);
 

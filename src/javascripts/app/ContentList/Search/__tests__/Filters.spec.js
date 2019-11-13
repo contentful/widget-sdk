@@ -1,7 +1,7 @@
 import { contentTypes } from './helpers';
-import * as Filters from '../Filters.es6';
+import * as Filters from '../Filters';
 
-describe('app/ContentList/Search/Filters.es6', () => {
+describe('app/ContentList/Search/Filters', () => {
   const isApplicableMacro = (message, contentType, queryKey, expected) => {
     it(message, () => {
       expect(Filters.isFieldFilterApplicableToContentType(contentType, queryKey)).toEqual(expected);

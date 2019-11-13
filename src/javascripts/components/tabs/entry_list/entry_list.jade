@@ -1,7 +1,7 @@
 include ../../shared/table_pattern.mixin.jade
 
 react-component(
-  name="components/shared/DocumentTitle.es6"
+  name="components/shared/DocumentTitle"
   props="{title: 'Content'}"
 )
 header.workbench-header
@@ -10,7 +10,7 @@ header.workbench-header
     h1.workbench-header__title
       | Content
       react-component(
-        name="components/shared/knowledge_base_icon/KnowledgeBase.es6"
+        name="components/shared/knowledge_base_icon/KnowledgeBase"
         props="{target: 'entry', className: 'workbench-header__kb-link'}"
       )
 
@@ -31,7 +31,7 @@ header.workbench-header
 
 .workbench-main(ng-hide="showNoEntriesAdvice()")
   .workbench-main__left-sidebar(style="max-height: 100vh; overflow-y: hidden")
-    react-component(name="app/jobs/JobsPageLink.es6" props="{isMasterEnvironment: isMasterEnvironment}")
+    react-component(name="app/jobs/JobsPageLink" props="{isMasterEnvironment: isMasterEnvironment}")
     .saved-views-wrapper(
       ng-if="savedViewsState === 'loading'"
       style="padding: 4rem 1rem; text-align: center")
@@ -49,19 +49,19 @@ header.workbench-header
   .workbench-main__right-content
     .search-results__count(ng-show="hasPage()")
       react-component(
-        name="components/tabs/PluralizeEntityMessage.es6"
+        name="components/tabs/PluralizeEntityMessage"
         props="{entityType: 'entry', count: paginator.getTotal(), restOfTheMsg: 'found'}")
 
 
     react-component(
       ng-if="!isLegacyOrganization && hasPage()"
-      name="components/RecordsResourceUsage/index.es6"
+      name="components/RecordsResourceUsage"
       props="usageProps"
       watch-depth="reference")
 
     react-component(
       ng-if="hasPage()"
-      name="components/tabs/entry_list/EntryList.es6"
+      name="components/tabs/entry_list/EntryList"
       props="entryProps"
       watch-depth="reference"
     )
@@ -69,17 +69,17 @@ header.workbench-header
     .f36-margin-top--s.f36-margin-bottom--s
       react-component(
         ng-show="paginator.getPageCount() && hasPage()"
-        name="ui/Components/Paginator.es6"
+        name="ui/Components/Paginator"
         props="paginatorProps"
       )
 
     react-component(
-      name="components/tabs/NoSearchResultsAdvice.es6"
+      name="components/tabs/NoSearchResultsAdvice"
       ng-show="hasNoSearchResults()"
     )
 
 .workbench-main.x--content(ng-show="showNoEntriesAdvice()")
   react-component(
-    name="components/tabs/entry_list/EmptyStates/index.es6"
+    name="components/tabs/entry_list/EmptyStates"
     props="{hasContentType: hasContentType, contentTypes: accessibleCts, suggestedContentTypeId: context.view.contentTypeId, onCreate: newEntry}"
   )

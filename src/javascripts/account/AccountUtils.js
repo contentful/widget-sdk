@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import * as Navigator from 'states/Navigator.es6';
-import { getModule } from 'NgRegistry.es6';
-import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
+import * as Navigator from 'states/Navigator';
+import { getModule } from 'NgRegistry';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 
 const getPageRouteRef = (page = '') => {
   const spaceContext = getModule('spaceContext');

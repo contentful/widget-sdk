@@ -1,7 +1,7 @@
 import { render } from 'enzyme';
-import * as WizardUtils from './WizardUtils.es6';
+import * as WizardUtils from './WizardUtils';
 
-jest.mock('utils/ResourceUtils.es6', () => ({
+jest.mock('utils/ResourceUtils', () => ({
   resourceHumanNameMap: {
     asset: 'Assets',
     content_type: 'Content Types',

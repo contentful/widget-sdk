@@ -1,7 +1,7 @@
 import React from 'react';
 import { noop } from 'lodash';
 import { newLink, newAssetLink } from './__test__/helpers.js';
-import { linksToListItems } from './SortableLinkList.es6';
+import { linksToListItems } from './SortableLinkList';
 
 describe('linksToListItems(links, renderLinkFn)', () => {
   it('handles empty link list', () => {

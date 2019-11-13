@@ -1,8 +1,8 @@
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import { render, cleanup, fireEvent } from '@testing-library/react';
-import WebhookFilters from './WebhookFilters.es6';
-import { transformFiltersToList, transformListToFilters } from './WebhookFiltersState.es6';
+import WebhookFilters from './WebhookFilters';
+import { transformFiltersToList, transformListToFilters } from './WebhookFiltersState';
 
 describe('WebhookFilters', () => {
   afterEach(cleanup);

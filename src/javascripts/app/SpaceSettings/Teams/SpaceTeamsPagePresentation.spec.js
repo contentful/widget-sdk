@@ -3,7 +3,7 @@ import { noop } from 'lodash';
 import { cleanup, render } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
-import SpaceTeamsPagePresentation from './SpaceTeamsPagePresentation.es6';
+import SpaceTeamsPagePresentation from './SpaceTeamsPagePresentation';
 
 const build = (props = {}) =>
   render(

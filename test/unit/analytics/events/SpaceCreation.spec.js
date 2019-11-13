@@ -1,4 +1,4 @@
-import { deepFreeze } from 'utils/Freeze.es6';
+import { deepFreeze } from 'utils/Freeze';
 import sinon from 'sinon';
 
 describe('analytics/events/SpaceCreation#entityActionSuccess()', () => {

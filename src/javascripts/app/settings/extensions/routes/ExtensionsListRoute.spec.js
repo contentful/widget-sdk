@@ -2,8 +2,8 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import * as spaceContextMocked from 'ng/spaceContext';
 import * as $stateMocked from 'ng/$state';
-import ExtensionsListRoute from './ExtensionsListRoute.es6';
-import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage.es6';
+import ExtensionsListRoute from './ExtensionsListRoute';
+import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import * as AccessCheckerMocked from 'access_control/AccessChecker';
 
 jest.mock(

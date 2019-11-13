@@ -1,13 +1,13 @@
-import * as AppOperations from './AppOperations.es6';
+import * as AppOperations from './AppOperations';
 
 import {
   NAMESPACE_BUILTIN,
   NAMESPACE_BUILTIN_SIDEBAR,
   NAMESPACE_EXTENSION
-} from 'widgets/WidgetNamespaces.es6';
+} from 'widgets/WidgetNamespaces';
 
-jest.mock('i13n/Telemetry.es6', () => ({ count: () => {} }));
-jest.mock('data/CMA/ProductCatalog.es6', () => ({ getCurrentSpaceFeature: () => true }));
+jest.mock('i13n/Telemetry', () => ({ count: () => {} }));
+jest.mock('data/CMA/ProductCatalog', () => ({ getCurrentSpaceFeature: () => true }));
 
 describe('AppOperations', () => {
   describe('installOrUpdate', () => {

@@ -1,4 +1,4 @@
-import { toLocaleString, shorten, shortenStorageUnit } from './NumberUtils.es6';
+import { toLocaleString, shorten, shortenStorageUnit } from './NumberUtils';
 
 describe('NumberUtils', () => {
   describe('toLocaleString', () => {

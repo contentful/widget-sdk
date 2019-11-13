@@ -4,11 +4,11 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { Button, Table, TableBody, TableCell } from '@contentful/forma-36-react-components';
 
-import reducer from 'redux/reducer/index.es6';
-import ROUTES from 'redux/routes.es6';
-import { TEAM_MEMBERSHIPS, TEAMS } from 'redux/datasets.es6';
-import TeamListRow from './TeamListRow.es6';
-import TeamDialog from './TeamDialog.es6';
+import reducer from 'redux/reducer';
+import ROUTES from 'redux/routes';
+import { TEAM_MEMBERSHIPS, TEAMS } from 'redux/datasets';
+import TeamListRow from './TeamListRow';
+import TeamDialog from './TeamDialog';
 
 const renderComponent = (actions, team) => {
   const store = createStore(reducer);

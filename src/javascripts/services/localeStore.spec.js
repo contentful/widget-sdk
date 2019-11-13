@@ -1,9 +1,9 @@
 'use strict';
 
 import _ from 'lodash';
-import theLocaleStore from './localeStore.es6';
+import theLocaleStore from './localeStore';
 
-describe('services/localeStore.es6', () => {
+describe('services/localeStore', () => {
   const makeLocale = (code, sid = 'SID') => {
     return {
       sys: { space: { sys: { id: sid } } },

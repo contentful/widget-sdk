@@ -1,4 +1,4 @@
-import { createUsersEndpoint } from 'data/EndpointFactory.es6';
+import { createUsersEndpoint } from 'data/EndpointFactory';
 const totpAlphaHeader = {
   'X-Contentful-Enable-Alpha-Feature': 'mfa-api'
 };

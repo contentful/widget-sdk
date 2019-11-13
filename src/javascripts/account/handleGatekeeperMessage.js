@@ -1,11 +1,11 @@
 import _ from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
-import { getModule } from 'NgRegistry.es6';
-import * as Authentication from 'Authentication.es6';
-import * as TokenStore from 'services/TokenStore.es6';
+import { getModule } from 'NgRegistry';
+import * as Authentication from 'Authentication';
+import * as TokenStore from 'services/TokenStore';
 import * as Analytics from 'analytics/Analytics';
 import * as UrlSyncHelper from 'account/UrlSyncHelper';
-import * as createSpace from 'services/CreateSpace.es6';
+import * as createSpace from 'services/CreateSpace';
 
 export default function handleGatekeeperMessage(data) {
   const $rootScope = getModule('$rootScope');

@@ -24,15 +24,15 @@ describe('Gatekeeper Message Handler', () => {
     this.Notification.success = sinon.stub();
     this.Notification.error = sinon.stub();
 
-    await this.system.set('utils/ngCompat/window.es6', {
+    await this.system.set('utils/ngCompat/window', {
       default: this.stubs.window
     });
 
-    await this.system.set('services/CreateSpace.es6', {
+    await this.system.set('services/CreateSpace', {
       showDialog: this.stubs.showDialog
     });
 
-    await this.system.set('services/TokenStore.es6', {
+    await this.system.set('services/TokenStore', {
       refresh: this.stubs.refresh
     });
 
@@ -44,7 +44,7 @@ describe('Gatekeeper Message Handler', () => {
       updateWebappUrl: this.stubs.updateWebappUrl
     });
 
-    await this.system.set('Authentication.es6', {
+    await this.system.set('Authentication', {
       redirectToLogin: this.stubs.redirectToLogin,
       cancelUser: this.stubs.cancelUser
     });

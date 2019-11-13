@@ -3,11 +3,11 @@ import _ from 'lodash';
 import { $initialize, $inject } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
 
-describe('data/Request/Retry.es6', () => {
+describe('data/Request/Retry', () => {
   beforeEach(async function() {
     this.sandbox = sinon.sandbox.create();
 
-    const { default: wrap } = await this.system.import('data/Request/Retry.es6');
+    const { default: wrap } = await this.system.import('data/Request/Retry');
 
     await $initialize(this.system);
 

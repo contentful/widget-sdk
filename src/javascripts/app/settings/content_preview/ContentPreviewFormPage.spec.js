@@ -1,11 +1,11 @@
 import React from 'react';
 import _ from 'lodash';
-import ContentPreviewFormPage from './ContentPreviewFormPage.es6';
+import ContentPreviewFormPage from './ContentPreviewFormPage';
 import Enzyme from 'enzyme';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as Analytics from 'analytics/Analytics';
 import $state from 'ng/$state';
-import ModalLauncher from 'app/common/ModalLauncher.es6';
+import ModalLauncher from 'app/common/ModalLauncher';
 
 const mockContentPreview = {
   create: jest.fn(),

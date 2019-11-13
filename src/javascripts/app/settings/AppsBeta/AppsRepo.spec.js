@@ -1,4 +1,4 @@
-import createAppsRepo from './AppsRepo.es6';
+import createAppsRepo from './AppsRepo';
 import appsListingEntryMock from './mockData/appsListingEntryMock.json';
 import appEntryMock from './mockData/appEntryMock.json';
 

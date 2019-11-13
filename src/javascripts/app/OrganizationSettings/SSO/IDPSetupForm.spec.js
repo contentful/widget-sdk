@@ -1,20 +1,20 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import { IDPSetupForm } from './IDPSetupForm.es6';
-import { TEST_RESULTS } from './constants.es6';
-import ModalLauncher from 'app/common/ModalLauncher.es6';
+import { IDPSetupForm } from './IDPSetupForm';
+import { TEST_RESULTS } from './constants';
+import ModalLauncher from 'app/common/ModalLauncher';
 import { track } from 'analytics/Analytics';
 
-import { connectionTestingAllowed, formatConnectionTestErrors } from './utils.es6';
+import { connectionTestingAllowed, formatConnectionTestErrors } from './utils';
 
 const awaitSetImmediate = () => new Promise(resolve => setImmediate(resolve));
 
-jest.mock('./utils.es6', () => ({
+jest.mock('./utils', () => ({
   connectionTestingAllowed: jest.fn(),
   formatConnectionTestErrors: jest.fn().mockReturnValue([])
 }));
 
-jest.mock('Config.es6', () => ({
+jest.mock('Config', () => ({
   authUrl: path => `https://be.joistio.com${path}`
 }));
 

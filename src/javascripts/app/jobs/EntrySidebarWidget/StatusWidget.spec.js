@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, cleanup, fireEvent } from '@testing-library/react';
-import StatusWidget from './StatusWidget.es6';
+import StatusWidget from './StatusWidget';
 import '@testing-library/jest-dom/extend-expect';
 
 const createCommand = props => ({

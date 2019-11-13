@@ -1,7 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import { render, cleanup, fireEvent } from '@testing-library/react';
-import WebhookBasicAuth from './WebhookBasicAuth.es6';
+import WebhookBasicAuth from './WebhookBasicAuth';
 
 describe('WebhookBasicAuth', () => {
   afterEach(cleanup);

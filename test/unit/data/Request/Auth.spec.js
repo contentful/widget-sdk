@@ -2,9 +2,9 @@ import sinon from 'sinon';
 import { $initialize, $inject, $apply } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
 
-describe('data/Request/Auth.es6', () => {
+describe('data/Request/Auth', () => {
   beforeEach(async function() {
-    const { default: wrapWithAuth } = await this.system.import('data/Request/Auth.es6');
+    const { default: wrapWithAuth } = await this.system.import('data/Request/Auth');
 
     await $initialize(this.system);
 

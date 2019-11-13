@@ -1,9 +1,9 @@
 import RoleRepository from 'access_control/RoleRepository';
 import RoleEditorRoute from './RoleEditorRoute';
 import RolesListRoute from './RolesListRoute';
-import * as ResourceUtils from 'utils/ResourceUtils.es6';
-import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog.es6';
-import { isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
+import * as ResourceUtils from 'utils/ResourceUtils';
+import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 
 const list = {
   name: 'list',

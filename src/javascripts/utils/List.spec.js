@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import * as List from './List.es6';
+import * as List from './List';
 
-describe('utils/List.es6', () => {
+describe('utils/List', () => {
   describe('#makeKeyed', () => {
     const makeKeyed = items => {
       return List.makeKeyed(items, i => i.hash);

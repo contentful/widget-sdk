@@ -1,13 +1,13 @@
 import React from 'react';
 import { mount } from 'enzyme';
 
-import { HyperlinkDialogForm } from 'app/widgets/WidgetApi/dialogs/HyperlinkDialog.es6';
+import { HyperlinkDialogForm } from 'app/widgets/WidgetApi/dialogs/HyperlinkDialog';
 
-jest.mock('ui/Framework/AngularComponent.es6', () => () => null);
-jest.mock('NgRegistry.es6', () => ({ getModule: jest.fn().mockImplementation(() => null) }));
-jest.mock('directives/thumbnailHelpers.es6', () => ({}), { virtual: true });
+jest.mock('ui/Framework/AngularComponent', () => () => null);
+jest.mock('NgRegistry', () => ({ getModule: jest.fn().mockImplementation(() => null) }));
+jest.mock('directives/thumbnailHelpers', () => ({}), { virtual: true });
 
-jest.mock('search/EntitySelector/Config.es6', () => ({
+jest.mock('search/EntitySelector/Config', () => ({
   getLabels: () => ({
     title: '',
     input: '',

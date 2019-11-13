@@ -3,7 +3,7 @@ import { noop } from 'lodash';
 import { cleanup, render, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
-import SpaceMembershipsPresentation from './SpaceMembershipsPresentation.es6';
+import SpaceMembershipsPresentation from './SpaceMembershipsPresentation';
 
 const build = (props = {}) =>
   render(

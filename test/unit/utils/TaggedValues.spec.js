@@ -1,6 +1,6 @@
-import { makeCtor, makeMatcher } from 'utils/TaggedValues.es6';
+import { makeCtor, makeMatcher } from 'utils/TaggedValues';
 
-describe('utils/TaggedValues.es6', () => {
+describe('utils/TaggedValues', () => {
   it('names values with given tag', () => {
     const A = makeCtor('A');
     expect(A().name).toBe('A');

@@ -1,6 +1,6 @@
 import { $q } from 'test/utils/ng';
 import { cloneDeep, mapValues, values } from 'lodash';
-import { assign, update } from 'utils/Collections.es6';
+import { assign, update } from 'utils/Collections';
 
 /**
  * Mock implementation for the 'spaceEndpoint' that simulates a subset

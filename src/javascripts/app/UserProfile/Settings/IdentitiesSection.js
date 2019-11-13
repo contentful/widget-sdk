@@ -10,10 +10,10 @@ import {
   Paragraph,
   Notification
 } from '@contentful/forma-36-react-components';
-import { oauthUrl } from 'Config.es6';
-import GithubIcon from 'svg/github-icon.es6';
-import GoogleIcon from 'svg/google-icon.es6';
-import TwitterIcon from 'svg/twitter-icon.es6';
+import { oauthUrl } from 'Config';
+import GithubIcon from 'svg/github-icon';
+import GoogleIcon from 'svg/google-icon';
+import TwitterIcon from 'svg/twitter-icon';
 import { deleteUserIdentityData } from './AccountRepository';
 
 const styles = {

@@ -2,22 +2,22 @@ import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import { render, within, fireEvent, cleanup } from '@testing-library/react';
 
-import CommentsPanel from './CommentsPanel.es6';
-import { useCommentsFetcher, useCommentCreator } from './hooks.es6';
-import { remove as removeComment } from 'data/CMA/CommentsRepo.es6';
+import CommentsPanel from './CommentsPanel';
+import { useCommentsFetcher, useCommentCreator } from './hooks';
+import { remove as removeComment } from 'data/CMA/CommentsRepo';
 import flushPromises from 'testHelpers/flushPromises';
 
 const mockAuthor = { firstName: 'John', lastName: 'Doe', avatarUrl: '0.jpeg', sys: { id: 'abc' } };
 
-jest.mock('services/TokenStore.es6', () => ({
+jest.mock('services/TokenStore', () => ({
   getSpace: jest.fn(),
   getUserSync: jest.fn().mockReturnValue({ sys: { id: 'abc' } })
 }));
-jest.mock('./hooks.es6', () => ({
+jest.mock('./hooks', () => ({
   useCommentsFetcher: jest.fn(),
   useCommentCreator: jest.fn().mockReturnValue([{}, jest.fn()])
 }));
-jest.mock('data/CMA/CommentsRepo.es6', () => ({
+jest.mock('data/CMA/CommentsRepo', () => ({
   remove: jest.fn()
 }));
 

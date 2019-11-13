@@ -1,7 +1,7 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 
-import { SingleLinkEditor, default as LinkEditor } from './index.es6';
+import { SingleLinkEditor, default as LinkEditor } from '.';
 
 const link = {
   sys: {
@@ -11,8 +11,8 @@ const link = {
   }
 };
 
-jest.mock('./withCfWebApp.es6.js', () => ({}), { virtual: true });
-jest.mock('../shared/FetchedEntityCard/index.es6', () => ({ WrappedEntityCard: {} }), {
+jest.mock('./withCfWebApp.js', () => ({}), { virtual: true });
+jest.mock('../shared/FetchedEntityCard', () => ({ WrappedEntityCard: {} }), {
   virtual: true
 });
 

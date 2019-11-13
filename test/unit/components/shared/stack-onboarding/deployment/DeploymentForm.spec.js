@@ -10,12 +10,12 @@ describe('in DeploymentForm', () => {
   let DeploymentForm;
 
   beforeEach(async function() {
-    this.system.set('services/TokenStore.es6', {
+    this.system.set('services/TokenStore', {
       user$: K.createMockProperty({ sys: { id: 1 } })
     });
 
     DeploymentForm = (await this.system.import(
-      'components/shared/stack-onboarding/deployment/DeploymentForm.es6'
+      'components/shared/stack-onboarding/deployment/DeploymentForm'
     )).default;
 
     await $initialize(this.system);

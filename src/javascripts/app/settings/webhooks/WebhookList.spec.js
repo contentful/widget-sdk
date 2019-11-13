@@ -1,7 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import { render, cleanup } from '@testing-library/react';
-import WebhookList from './WebhookList.es6';
+import WebhookList from './WebhookList';
 
 const mockWebhookRepo = {
   logs: {

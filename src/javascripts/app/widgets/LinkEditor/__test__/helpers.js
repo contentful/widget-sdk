@@ -1,4 +1,4 @@
-import { TYPES } from '../Util.es6';
+import { TYPES } from '../Util';
 
 let linkCount = 0;
 

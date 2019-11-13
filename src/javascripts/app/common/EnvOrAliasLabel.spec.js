@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, cleanup } from '@testing-library/react';
-import EnvOrAliasLabel from './EnvOrAliasLabel.es6';
+import EnvOrAliasLabel from './EnvOrAliasLabel';
 import '@testing-library/jest-dom/extend-expect';
 import tokens from '@contentful/forma-36-tokens';
 

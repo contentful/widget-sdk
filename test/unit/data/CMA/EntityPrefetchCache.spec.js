@@ -3,9 +3,9 @@ import sinon from 'sinon';
 import { $initialize, $inject } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
 
-describe('data/CMA/EntityPrefetchCache.es6', () => {
+describe('data/CMA/EntityPrefetchCache', () => {
   beforeEach(async function() {
-    const { default: createCache } = await this.system.import('data/CMA/EntityPrefetchCache.es6');
+    const { default: createCache } = await this.system.import('data/CMA/EntityPrefetchCache');
 
     await $initialize(this.system);
 

@@ -3,16 +3,16 @@ import { Provider } from 'react-redux';
 import { noop } from 'lodash';
 import { mount } from 'enzyme';
 import { createStore } from 'redux';
-import reducer from 'redux/reducer/index.es6';
-import ROUTES from 'redux/routes.es6';
-import { TEAMS, TEAM_MEMBERSHIPS } from 'redux/datasets.es6';
+import reducer from 'redux/reducer';
+import ROUTES from 'redux/routes';
+import { TEAMS, TEAM_MEMBERSHIPS } from 'redux/datasets';
 
-import { FEATURE_INACTIVE } from 'redux/accessConstants.es6';
+import { FEATURE_INACTIVE } from 'redux/accessConstants';
 
-import TeamPage from './TeamPage.es6';
-import TeamList from './TeamList.es6';
-import TeamDetails from './TeamDetails.es6';
-import TeamsEmptyState from './TeamsEmptyState.es6';
+import TeamPage from './TeamPage';
+import TeamList from './TeamList';
+import TeamDetails from './TeamDetails';
+import TeamsEmptyState from './TeamsEmptyState';
 
 const renderComponent = (actions, onReady = noop) => {
   const store = createStore(reducer);

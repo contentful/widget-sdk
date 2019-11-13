@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { Modal, TextField, Form, Button } from '@contentful/forma-36-react-components';
-import { isValidUrl } from 'utils/StringUtils.es6';
+import { isValidUrl } from 'utils/StringUtils';
 
 const styles = {
   controlsContainer: css({

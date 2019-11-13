@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, cleanup, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import QuickNavSearch from './QuickNavSearch.es6';
+import QuickNavSearch from './QuickNavSearch';
 import spaceContext from 'ng/spaceContext';
 
 jest.mock('services/localeStore', () => ({
@@ -12,20 +12,20 @@ jest.mock('services/localeStore', () => ({
 }));
 
 jest.mock(
-  'TheStore/index.es6',
+  'TheStore',
   () => ({
     getStore: jest.fn()
   }),
   { virtual: true }
 );
 
-jest.mock('states/Navigator.es6', () => ({
+jest.mock('states/Navigator', () => ({
   href: jest.fn(),
   getCurrentStateName: jest.fn()
 }));
 
 jest.mock(
-  'app/entity_editor/entityHelpers.es6',
+  'app/entity_editor/entityHelpers',
   () => ({
     newForLocale: () => ({ entityTitle: () => 'title' })
   }),
@@ -64,7 +64,7 @@ afterEach(() => {
   cleanup();
 });
 
-describe('shared/QuickNavSearch.es6', () => {
+describe('shared/QuickNavSearch', () => {
   it('should send request if query length is more than one character', () => {
     fireEvent.change(wrapper.getByTestId('quick-nav-search-input'), {
       target: { value: 'abc' }

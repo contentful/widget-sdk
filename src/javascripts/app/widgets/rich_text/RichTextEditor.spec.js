@@ -1,14 +1,14 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 
-import RichTextEditor from './RichTextEditor.es6';
-import Toolbar from './Toolbar/index.es6';
+import RichTextEditor from './RichTextEditor';
+import Toolbar from './Toolbar';
 
-jest.mock('ng/data/CMA/EntityState.es6', () => ({}), { virtual: true });
-jest.mock('directives/thumbnailHelpers.es6', () => ({}), { virtual: true });
+jest.mock('ng/data/CMA/EntityState', () => ({}), { virtual: true });
+jest.mock('directives/thumbnailHelpers', () => ({}), { virtual: true });
 jest.mock('access_control/AccessChecker', () => ({}), { virtual: true });
-jest.mock('utils/browser.es6', () => ({}), { virtual: true });
-jest.mock('redux/store.es6', () => ({}), { virtual: true });
+jest.mock('utils/browser', () => ({}), { virtual: true });
+jest.mock('redux/store', () => ({}), { virtual: true });
 jest.mock('ng/entityCreator', () => ({}), { virtual: true });
 jest.mock(
   'ng/debounce',

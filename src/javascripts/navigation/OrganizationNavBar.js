@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import NavBar from './NavBar/NavBar';
-import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
-import * as TokenStore from 'services/TokenStore.es6';
-import { SSO_SELF_CONFIG_FLAG } from 'featureFlags.es6';
-import { getOrgFeature } from '../data/CMA/ProductCatalog.es6';
-import createLegacyFeatureService from 'services/LegacyFeatureService.es6';
+import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
+import * as TokenStore from 'services/TokenStore';
+import { SSO_SELF_CONFIG_FLAG } from 'featureFlags';
+import { getOrgFeature } from '../data/CMA/ProductCatalog';
+import createLegacyFeatureService from 'services/LegacyFeatureService';
 
-import { getVariation } from 'LaunchDarkly.es6';
+import { getVariation } from 'LaunchDarkly';
 
 function getItems(params, { orgId }) {
   return [

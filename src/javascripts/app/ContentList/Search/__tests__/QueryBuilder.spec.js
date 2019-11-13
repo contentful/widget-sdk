@@ -1,8 +1,8 @@
 import moment from 'moment';
 import { contentTypes } from './helpers';
-import { buildQuery } from '../QueryBuilder.es6';
+import { buildQuery } from '../QueryBuilder';
 
-describe('app/ContentList/Search/QueryBuilder.es6', () => {
+describe('app/ContentList/Search/QueryBuilder', () => {
   const buildQueryMacro = (message, input, expected) => {
     it(message, () => {
       expect(buildQuery(input)).toEqual(expected);

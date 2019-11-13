@@ -13,8 +13,8 @@ import {
 import tokens from '@contentful/forma-36-tokens';
 import RolesWorkbenchShell from '../routes/RolesWorkbenchShell';
 import { RoleListItem, AdministratorRoleListItem } from './RoleListItem';
-import { go } from 'states/Navigator.es6';
-import * as ResourceUtils from 'utils/ResourceUtils.es6';
+import { go } from 'states/Navigator';
+import * as ResourceUtils from 'utils/ResourceUtils';
 import ReachedRolesLimitNote from './ReachedRolesLimitNote';
 import CustomRolesPlanNote from './CustomRolesPlanNote';
 import { createRoleRemover } from 'access_control/RoleRemover';

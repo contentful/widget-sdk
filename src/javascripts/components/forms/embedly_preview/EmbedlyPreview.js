@@ -3,8 +3,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDebounce } from 'use-debounce';
-import * as LazyLoader from 'utils/LazyLoader.es6';
-import { isValidUrl } from 'utils/StringUtils.es6';
+import * as LazyLoader from 'utils/LazyLoader';
+import { isValidUrl } from 'utils/StringUtils';
 
 function PreviewRenderer(props) {
   const ref = useRef(null);

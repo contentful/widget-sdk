@@ -1,7 +1,7 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 
-import DocumentTitle from './DocumentTitle.es6';
+import DocumentTitle from './DocumentTitle';
 
 import * as spaceContextMocked from 'ng/spaceContext';
 

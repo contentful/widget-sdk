@@ -7,7 +7,7 @@ describe('entityEditor/FieldLocaleDocument', () => {
 
   beforeEach(async function() {
     const createFieldLocaleDoc = (await this.system.import(
-      'app/entity_editor/FieldLocaleDocument.es6'
+      'app/entity_editor/FieldLocaleDocument'
     )).default;
 
     await $initialize(this.system);

@@ -2,11 +2,11 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import mitt from 'mitt';
 
-import SidebarEventTypes from '../SidebarEventTypes.es6';
-import CommentsPanelContainer from './CommentsPanelContainer.es6';
+import SidebarEventTypes from '../SidebarEventTypes';
+import CommentsPanelContainer from './CommentsPanelContainer';
 
 // TODO: find a better way to avoid the ng dependencies
-jest.mock('services/TokenStore.es6', () => {});
+jest.mock('services/TokenStore', () => {});
 jest.mock('access_control/OrganizationMembershipRepository', () => {});
 
 describe('CommentsPanelContainer', () => {

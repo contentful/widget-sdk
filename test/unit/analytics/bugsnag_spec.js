@@ -13,7 +13,7 @@ describe('bugsnag', () => {
     };
     this.get = sinon.stub().resolves(this.BugsnagStub);
 
-    this.system.set('utils/LazyLoader.es6', {
+    this.system.set('utils/LazyLoader', {
       get: this.get
     });
 

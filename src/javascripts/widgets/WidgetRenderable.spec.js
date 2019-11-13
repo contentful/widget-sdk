@@ -1,5 +1,5 @@
-import { buildRenderables } from './WidgetRenderable.es6';
-import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from './WidgetNamespaces.es6';
+import { buildRenderables } from './WidgetRenderable';
+import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from './WidgetNamespaces';
 
 describe('WidgetRenderables', () => {
   describe('#buildRenderables()', () => {

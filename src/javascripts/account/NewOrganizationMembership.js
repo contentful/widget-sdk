@@ -2,22 +2,22 @@
 import { omit, pick, negate, trim, sortedUniq, isObject, get } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { assign } from 'utils/Collections.es6';
-import { getOrganization } from 'services/TokenStore.es6';
-import { getCurrentStateName } from 'states/Navigator.es6';
-import { runTask } from 'utils/Concurrent.es6';
+import { assign } from 'utils/Collections';
+import { getOrganization } from 'services/TokenStore';
+import { getCurrentStateName } from 'states/Navigator';
+import { runTask } from 'utils/Concurrent';
 import { ADMIN_ROLE_ID } from 'access_control/constants';
-import { createOrganizationEndpoint as createEndpoint } from 'data/EndpointFactory.es6';
+import { createOrganizationEndpoint as createEndpoint } from 'data/EndpointFactory';
 import {
   getUsers,
   getAllSpaces,
   getAllRoles,
   getInvitations
 } from 'access_control/OrganizationMembershipRepository';
-import { makeCtor, match } from 'utils/TaggedValues.es6';
+import { makeCtor, match } from 'utils/TaggedValues';
 import { sendInvites, createOrgMemberships, progress$ } from 'account/SendOrganizationInvitation';
-import { isValidEmail } from 'utils/StringUtils.es6';
-import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles.es6';
+import { isValidEmail } from 'utils/StringUtils';
+import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import {
   Header,
   Sidebar,
@@ -28,8 +28,8 @@ import {
   ErrorMessage,
   SuccessMessage
 } from 'account/NewOrganizationMembershipTemplate';
-import createResourceService from 'services/ResourceService.es6';
-import { getStore } from 'TheStore/index.es6';
+import createResourceService from 'services/ResourceService';
+import { getStore } from 'TheStore';
 
 // Start: For Next Steps for a TEA space (a space created using the example space template)
 import { track, updateUserInSegment } from 'analytics/Analytics';

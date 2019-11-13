@@ -142,27 +142,27 @@ describe('ResourceService', () => {
     this.spies.createSpaceEndpoint = sinon.spy(createSpaceEndpoint);
     this.stubs.createOrganizationEndpoint = sinon.stub();
 
-    this.system.set('data/EndpointFactory.es6', {
+    this.system.set('data/EndpointFactory', {
       createSpaceEndpoint: this.spies.createSpaceEndpoint,
       createOrganizationEndpoint: this.stubs.createOrganizationEndpoint
     });
 
-    this.system.set('Authentication.es6', {});
-    this.system.set('services/TokenStore.es6', {
+    this.system.set('Authentication', {});
+    this.system.set('services/TokenStore', {
       getSpace: sinon.stub().resolves(this.mocks.space),
       getOrganization: sinon.stub().resolves(this.mocks.organization)
     });
-    this.system.set('data/EndpointFactory.es6', {
+    this.system.set('data/EndpointFactory', {
       createSpaceEndpoint: this.spies.createSpaceEndpoint,
       createOrganizationEndpoint: this.stubs.createOrganizationEndpoint
     });
-    this.system.set('Authentication.es6', {});
-    this.system.set('services/TokenStore.es6', {
+    this.system.set('Authentication', {});
+    this.system.set('services/TokenStore', {
       getSpace: sinon.stub().resolves(this.mocks.space),
       getOrganization: sinon.stub().resolves(this.mocks.organization)
     });
 
-    this.createResourceService = (await this.system.import('services/ResourceService.es6')).default;
+    this.createResourceService = (await this.system.import('services/ResourceService')).default;
     this.ResourceService = this.createResourceService('1234');
   });
 

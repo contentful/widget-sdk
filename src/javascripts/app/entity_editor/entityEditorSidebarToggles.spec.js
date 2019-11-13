@@ -1,4 +1,4 @@
-import initSidebarTogglesProps from 'app/entity_editor/entityEditorSidebarToggles.es6';
+import initSidebarTogglesProps from 'app/entity_editor/entityEditorSidebarToggles';
 
 describe('entityEditorSidebarToggles', () => {
   let props;

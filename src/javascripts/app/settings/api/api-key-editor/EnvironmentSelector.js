@@ -2,14 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import StateLink from 'app/common/StateLink.es6';
-import { CodeFragment } from 'ui/Content.es6';
+import StateLink from 'app/common/StateLink';
+import { CodeFragment } from 'ui/Content';
 import { find } from 'lodash';
-import { filter, concat } from 'utils/Collections.es6';
-import InfoIcon from 'svg/info.es6';
+import { filter, concat } from 'utils/Collections';
+import InfoIcon from 'svg/info';
 import { CheckboxField, SectionHeading } from '@contentful/forma-36-react-components';
-import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel.es6';
-import { getModule } from 'NgRegistry.es6';
+import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel';
+import { getModule } from 'NgRegistry';
 
 const styles = {
   aliasSpacer: css({ marginBottom: tokens.spacingL }),

@@ -1,5 +1,5 @@
 import * as accessChecker from './AccessChecker';
-import { getModule } from 'NgRegistry.es6';
+import { getModule } from 'NgRegistry';
 
 /**
  * This service makes use of accessChecker's section visibility data to expose

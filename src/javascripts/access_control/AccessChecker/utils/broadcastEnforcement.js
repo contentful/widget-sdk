@@ -1,4 +1,4 @@
-import { getModule } from 'NgRegistry.es6';
+import { getModule } from 'NgRegistry';
 
 /**
  * TODO move from access checker or get rid of it entirely

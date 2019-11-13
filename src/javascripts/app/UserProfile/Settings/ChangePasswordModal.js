@@ -9,7 +9,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
-import { createImmerReducer } from 'redux/utils/createImmerReducer.es6';
+import { createImmerReducer } from 'redux/utils/createImmerReducer';
 import { updateUserData } from './AccountRepository';
 import { getValidationMessageFor } from './utils';
 import { get } from 'lodash';

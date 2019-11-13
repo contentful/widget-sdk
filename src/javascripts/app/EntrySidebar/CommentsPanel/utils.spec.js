@@ -1,8 +1,8 @@
-import { getUserSync } from 'services/TokenStore.es6';
-import * as utils from './utils.es6';
+import { getUserSync } from 'services/TokenStore';
+import * as utils from './utils';
 import * as spaceContextMocked from 'ng/spaceContext';
 
-jest.mock('services/TokenStore.es6', () => ({
+jest.mock('services/TokenStore', () => ({
   getUserSync: jest.fn()
 }));
 

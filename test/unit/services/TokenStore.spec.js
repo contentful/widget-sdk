@@ -17,10 +17,10 @@ describe('Token store service', () => {
       }
     };
 
-    this.system.set('data/CMA/TokenInfo.es6', {
+    this.system.set('data/CMA/TokenInfo', {
       default: () => this.fetchWithAuth
     });
-    this.system.set('app/common/ReloadNotification.es6', {
+    this.system.set('app/common/ReloadNotification', {
       default: this.stubs.ReloadNotification
     });
 
@@ -30,14 +30,14 @@ describe('Token store service', () => {
       organization: { sys: { id: 'testorg' } }
     }));
 
-    this.system.set('services/client.es6', {
+    this.system.set('services/client', {
       default: {
         newSpace: sinon.stub()
       }
     });
 
-    this.tokenStore = await this.system.import('services/TokenStore.es6');
-    this.OrganizationRoles = await this.system.import('services/OrganizationRoles.es6');
+    this.tokenStore = await this.system.import('services/TokenStore');
+    this.OrganizationRoles = await this.system.import('services/OrganizationRoles');
 
     await $initialize(this.system);
 

@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import * as EntityResolver from './EntityResolver.es6';
+import * as EntityResolver from './EntityResolver';
 
 import * as spaceContextMocked from 'ng/spaceContext';
 

@@ -1,5 +1,5 @@
-import { fromAPI, toAPI } from './EditorInterfaceTransformer.es6';
-import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from './WidgetNamespaces.es6';
+import { fromAPI, toAPI } from './EditorInterfaceTransformer';
+import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from './WidgetNamespaces';
 
 describe('EditorInterfaceTransformer', () => {
   describe('#fromAPI()', () => {

@@ -1,4 +1,4 @@
-import createAppDefinitionLoader from './AppDefinitionLoader.es6';
+import createAppDefinitionLoader from './AppDefinitionLoader';
 
 describe('AppDefinitionLoader', () => {
   describe('getById', () => {

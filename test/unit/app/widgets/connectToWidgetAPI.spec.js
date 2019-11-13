@@ -7,20 +7,20 @@ import { $initialize, $inject } from 'test/utils/ng';
 
 describe('connectToWidgetAPI', () => {
   beforeEach(async function() {
-    this.system.set('search/EntitySelector/Config.es6', {});
-    this.system.set('navigation/SlideInNavigator/index.es6', {
+    this.system.set('search/EntitySelector/Config', {});
+    this.system.set('navigation/SlideInNavigator', {
       goToSlideInEntity: () => {}
     });
-    this.system.set('utils/LazyLoader.es6', {
+    this.system.set('utils/LazyLoader', {
       get: sinon.stub().resolves({})
     });
-    this.system.set('app/widgets/WidgetApi/BatchingApiClient/index.es6', {
+    this.system.set('app/widgets/WidgetApi/BatchingApiClient', {
       getBatchingApiClient: v => v
     });
-    this.system.set('directives/thumbnailHelpers.es6', {});
+    this.system.set('directives/thumbnailHelpers', {});
 
     const { default: connectToWidgetAPI } = await this.system.import(
-      'app/widgets/WidgetApi/connectToWidgetApi.es6'
+      'app/widgets/WidgetApi/connectToWidgetApi'
     );
 
     await $initialize(this.system);

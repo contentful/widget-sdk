@@ -1,4 +1,4 @@
-import { isMarkEnabled, isNodeTypeEnabled } from '../index.es6';
+import { isMarkEnabled, isNodeTypeEnabled } from '..';
 import { MARKS, BLOCKS } from '@contentful/rich-text-types';
 
 const fakeFieldInfo = (enabledNodeTypes, enabledMarks) => {

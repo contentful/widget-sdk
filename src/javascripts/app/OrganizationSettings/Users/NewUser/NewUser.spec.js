@@ -1,5 +1,5 @@
 import React from 'react';
-import NewUser from './NewUser.es6';
+import NewUser from './NewUser';
 import {
   render,
   cleanup,
@@ -16,11 +16,11 @@ import {
   invite,
   createOrgMembership
 } from 'access_control/OrganizationMembershipRepository';
-import ModalLauncher from 'app/common/ModalLauncher.es6';
-import { getVariation } from 'LaunchDarkly.es6';
+import ModalLauncher from 'app/common/ModalLauncher';
+import { getVariation } from 'LaunchDarkly';
 import { create as createSpaceMembershipRepo } from 'access_control/SpaceMembershipRepository';
 import { createTeamMembership, getAllTeams } from 'access_control/TeamRepository';
-import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory.es6';
+import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
 
 const mockRoles = [
   {
@@ -74,7 +74,7 @@ const mockSpaceEndpoint = jest.fn().mockName('space endpoint');
 const mockInviteToSpaceFn = jest.fn();
 const mockOnReady = jest.fn();
 
-jest.mock('data/EndpointFactory.es6', () => ({
+jest.mock('data/EndpointFactory', () => ({
   createOrganizationEndpoint: jest.fn().mockName('create org endpoint'),
   createSpaceEndpoint: jest.fn()
 }));

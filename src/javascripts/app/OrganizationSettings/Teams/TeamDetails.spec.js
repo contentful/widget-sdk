@@ -4,7 +4,7 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { Button, Tab, Tooltip } from '@contentful/forma-36-react-components';
 
-import reducer from 'redux/reducer/index.es6';
+import reducer from 'redux/reducer';
 import {
   TEAMS,
   TEAM_MEMBERSHIPS,
@@ -12,15 +12,15 @@ import {
   ORG_MEMBERSHIPS,
   ORG_SPACES,
   TEAM_SPACE_MEMBERSHIPS
-} from 'redux/datasets.es6';
-import ROUTES from 'redux/routes.es6';
-import Placeholder from 'app/common/Placeholder.es6';
-import TeamDetails from './TeamDetails.es6';
-import TeamDialog from './TeamDialog.es6';
-import TeamMembershipForm from './TeamMemberships/TeamMembershipForm.es6';
-import TeamSpaceMembershipForm from './TeamSpaceMemberships/TeamSpaceMembershipForm.es6';
-import TeamMemberships from './TeamMemberships/TeamMemberships.es6';
-import TeamSpaceMemberships from './TeamSpaceMemberships/TeamSpaceMemberships.es6';
+} from 'redux/datasets';
+import ROUTES from 'redux/routes';
+import Placeholder from 'app/common/Placeholder';
+import TeamDetails from './TeamDetails';
+import TeamDialog from './TeamDialog';
+import TeamMembershipForm from './TeamMemberships/TeamMembershipForm';
+import TeamSpaceMembershipForm from './TeamSpaceMemberships/TeamSpaceMembershipForm';
+import TeamMemberships from './TeamMemberships/TeamMemberships';
+import TeamSpaceMemberships from './TeamSpaceMemberships/TeamSpaceMemberships';
 
 const renderComponent = (actions, props = { spaceMembershipsEnabled: true }) => {
   const store = createStore(reducer);

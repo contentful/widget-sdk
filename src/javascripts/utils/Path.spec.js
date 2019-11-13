@@ -1,6 +1,6 @@
 'use strict';
 
-import { isAffecting, findCommonPrefix, isPrefix } from './Path.es6';
+import { isAffecting, findCommonPrefix, isPrefix } from './Path';
 
 describe('utils/Path', () => {
   describe('#isAffecting', () => {

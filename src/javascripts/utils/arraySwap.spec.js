@@ -1,4 +1,4 @@
-import arraySwap from './arraySwap.es6';
+import arraySwap from './arraySwap';
 
 const fixture = [1, 2, 3, 4, 5];
 

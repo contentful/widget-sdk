@@ -5,7 +5,7 @@ import { ModalConfirm, Note } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 
-import RoleSelector from 'app/SpaceSettings/Teams/AddTeams/RoleSelector.es6';
+import RoleSelector from 'app/SpaceSettings/Teams/AddTeams/RoleSelector';
 
 const styles = {
   roleSelectionContainer: css({

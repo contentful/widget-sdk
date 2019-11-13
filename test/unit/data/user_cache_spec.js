@@ -2,15 +2,15 @@ import sinon from 'sinon';
 import { $initialize, $apply } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
 
-describe('data/userCache.es6', () => {
+describe('data/userCache', () => {
   let userCache, fetchAll;
 
   beforeEach(async function() {
-    this.system.set('data/CMA/FetchAll.es6', {
+    this.system.set('data/CMA/FetchAll', {
       fetchAll: (fetchAll = sinon.stub().resolves())
     });
 
-    const { default: createCache } = await this.system.import('data/userCache.es6');
+    const { default: createCache } = await this.system.import('data/userCache');
 
     await $initialize(this.system);
 

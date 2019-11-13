@@ -1,8 +1,8 @@
-import newBatchEntityFetcher from './newBatchEntityFetcher.es6';
+import newBatchEntityFetcher from './newBatchEntityFetcher';
 
 import flushPromises from 'testHelpers/flushPromises';
 
-jest.mock('Config.es6', () => ({ apiUrl: v => `https://api.some-domain.com/${v}` }));
+jest.mock('Config', () => ({ apiUrl: v => `https://api.some-domain.com/${v}` }));
 jest.mock('detect-browser', () => ({
   detect: jest.fn().mockReturnValue({ name: 'not-ie' })
 }));

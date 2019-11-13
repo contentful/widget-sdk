@@ -4,10 +4,10 @@ import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { noop } from 'lodash';
 import { Button, Option, Select, Table, TableBody } from '@contentful/forma-36-react-components';
-import reducer from 'redux/reducer/index.es6';
-import ROUTES from 'redux/routes.es6';
-import { ORG_MEMBERSHIPS, TEAM_MEMBERSHIPS, TEAMS, USERS } from 'redux/datasets.es6';
-import TeamMembershipForm from './TeamMembershipForm.es6';
+import reducer from 'redux/reducer';
+import ROUTES from 'redux/routes';
+import { ORG_MEMBERSHIPS, TEAM_MEMBERSHIPS, TEAMS, USERS } from 'redux/datasets';
+import TeamMembershipForm from './TeamMembershipForm';
 
 const renderComponent = (actions, onClose = noop) => {
   const store = createStore(reducer);

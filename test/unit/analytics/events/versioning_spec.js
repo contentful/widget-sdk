@@ -26,7 +26,7 @@ describe('Tracking versioning', () => {
     this.openConfirmator = sinon.stub().resolves(true);
 
     this.system.set('analytics/Analytics', this.analytics);
-    this.system.set('app/common/UnsavedChangesDialog.es6', {
+    this.system.set('app/common/UnsavedChangesDialog', {
       default: () => this.openConfirmator
     });
 

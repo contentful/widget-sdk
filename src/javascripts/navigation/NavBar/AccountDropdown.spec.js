@@ -2,11 +2,11 @@ import React from 'react';
 import { render, cleanup, fireEvent, wait } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import AccountDropdown from './AccountDropdown';
-import { href } from 'states/Navigator.es6';
-import { getUser } from 'services/TokenStore.es6';
-import { getOpenAssignedTasksAndEntries } from 'app/TasksPage/helpers.es6';
+import { href } from 'states/Navigator';
+import { getUser } from 'services/TokenStore';
+import { getOpenAssignedTasksAndEntries } from 'app/TasksPage/helpers';
 import * as Analytics from 'analytics/Analytics';
-import * as Authentication from 'Authentication.es6';
+import * as Authentication from 'Authentication';
 
 let wrapper;
 
@@ -15,11 +15,11 @@ jest.mock('analytics/Analytics', () => ({
   disable: jest.fn()
 }));
 
-jest.mock('Authentication.es6', () => ({
+jest.mock('Authentication', () => ({
   logout: jest.fn()
 }));
 
-jest.mock('services/TokenStore.es6', () => ({
+jest.mock('services/TokenStore', () => ({
   getUser: jest.fn().mockResolvedValue({
     firstName: 'Dolly',
     lastName: 'Parton',
@@ -29,11 +29,11 @@ jest.mock('services/TokenStore.es6', () => ({
   })
 }));
 
-jest.mock('states/Navigator.es6', () => ({
+jest.mock('states/Navigator', () => ({
   href: jest.fn()
 }));
 
-jest.mock('app/TasksPage/helpers.es6', () => ({
+jest.mock('app/TasksPage/helpers', () => ({
   getOpenAssignedTasksAndEntries: jest.fn()
 }));
 

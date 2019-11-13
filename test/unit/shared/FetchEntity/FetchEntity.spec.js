@@ -33,12 +33,12 @@ describe('FetchEntity', () => {
   let RequestStatus;
 
   beforeEach(async function() {
-    this.system.set('data/CMA/EntityState.es6', {
+    this.system.set('data/CMA/EntityState', {
       stateName: sinon.stub().returns('draft'),
       getState: sinon.stub()
     });
 
-    this.system.set('app/entity_editor/entityHelpers.es6', {
+    this.system.set('app/entity_editor/entityHelpers', {
       newForLocale: sinon
         .stub()
         .withArgs('lo-LOCALE')
@@ -58,7 +58,7 @@ describe('FetchEntity', () => {
         })
     });
 
-    const FetchEntityModule = await this.system.import('app/widgets/shared/FetchEntity/index.es6');
+    const FetchEntityModule = await this.system.import('app/widgets/shared/FetchEntity');
     FetchEntity = FetchEntityModule.default;
     RequestStatus = FetchEntityModule.RequestStatus;
 

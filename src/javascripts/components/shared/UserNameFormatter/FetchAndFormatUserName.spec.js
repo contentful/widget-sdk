@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, cleanup } from '@testing-library/react';
-import FetchAndFormatUserName from './FetchAndFormatUserName.es6';
+import FetchAndFormatUserName from './FetchAndFormatUserName';
 
 import * as spaceContextMock from 'ng/spaceContext';
 
-jest.mock('./index.es6', () => jest.fn().mockReturnValue('Me'), { virtual: true });
+jest.mock('.', () => jest.fn().mockReturnValue('Me'), { virtual: true });
 
 describe('FetchAndFormatUserName', () => {
   afterEach(cleanup);

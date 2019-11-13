@@ -3,7 +3,7 @@ import '@testing-library/jest-dom/extend-expect';
 import { render, cleanup, waitForElement, fireEvent } from '@testing-library/react';
 import { flatten, concat } from 'lodash';
 
-import { ContentTypesPage as Page } from './ContentTypeListPage.es6';
+import { ContentTypesPage as Page } from './ContentTypeListPage';
 
 import * as spaceContextMocked from 'ng/spaceContext';
 import * as contentTypeFactory from 'testHelpers/contentTypeFactory';
@@ -15,7 +15,7 @@ jest.mock('detect-browser', () => ({
 }));
 
 jest.mock(
-  './ContentTypeList/index.es6',
+  './ContentTypeList',
   () => {
     return props => props.contentTypes.map(item => item.sys.id).join(',');
   },

@@ -1,12 +1,12 @@
 import sinon from 'sinon';
 import _ from 'lodash';
 
-describe('markdown_editor/commands.es6', () => {
+describe('markdown_editor/commands', () => {
   let textarea, editor, commands, cm;
 
   beforeEach(async function() {
-    const Commands = await this.system.import('markdown_editor/commands.es6');
-    const Wrapper = await this.system.import('markdown_editor/codemirror_wrapper.es6');
+    const Commands = await this.system.import('markdown_editor/commands');
+    const Wrapper = await this.system.import('markdown_editor/codemirror_wrapper');
     const CodeMirror = await this.system.import('codemirror');
 
     textarea = document.createElement('textarea');

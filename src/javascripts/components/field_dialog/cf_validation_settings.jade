@@ -100,7 +100,7 @@ include ./validation_settings_mixins
 
   div(ng-switch-when="in")
     react-component(
-      name="components/field_dialog/ValidationValues.es6"
+      name="components/field_dialog/ValidationValues"
       props="{ fieldType: field.type, showPredefinedValueWidgetHint: showPredefinedValueWidgetHint, items: validation.settings, message: validation.message, updateItems: updateValidationSettingsValue, updateMessage: updateValidationMessageValue }"
     )
 

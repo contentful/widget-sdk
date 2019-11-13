@@ -3,7 +3,7 @@ import { render, cleanup, fireEvent } from '@testing-library/react';
 
 import '@testing-library/jest-dom/extend-expect';
 import * as DateMocks from 'DateMocks';
-import TimezonePicker from './index.es6';
+import TimezonePicker from '.';
 
 describe('TimezonePicker', () => {
   let dateNowSpy;

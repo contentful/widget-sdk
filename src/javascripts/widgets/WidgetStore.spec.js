@@ -1,14 +1,14 @@
 import { omit } from 'lodash';
 
-import * as WidgetStore from './WidgetStore.es6';
-import { create as createBuiltinWidgetList } from './BuiltinWidgets.es6';
+import * as WidgetStore from './WidgetStore';
+import { create as createBuiltinWidgetList } from './BuiltinWidgets';
 import {
   NAMESPACE_BUILTIN,
   NAMESPACE_EXTENSION,
   NAMESPACE_SIDEBAR_BUILTIN
-} from './WidgetNamespaces.es6';
+} from './WidgetNamespaces';
 
-jest.mock('./BuiltinWidgets.es6', () => ({
+jest.mock('./BuiltinWidgets', () => ({
   create: () => []
 }));
 

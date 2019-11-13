@@ -1,7 +1,7 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 
-import Form from './ExtensionForm.es6';
+import Form from './ExtensionForm';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 
 const ERR_SELECTOR = '.cfnext-form__field-error';

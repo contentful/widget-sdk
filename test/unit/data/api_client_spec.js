@@ -9,8 +9,8 @@ describe('data/APIClient', () => {
   beforeEach(async function() {
     $http = sinon.stub();
 
-    const { createSpaceEndpoint } = await this.system.import('data/Endpoint.es6');
-    const { default: Client } = await this.system.import('data/APIClient.es6');
+    const { createSpaceEndpoint } = await this.system.import('data/Endpoint');
+    const { default: Client } = await this.system.import('data/APIClient');
 
     await $initialize(this.system, $provide => {
       $provide.value('$http', $http);

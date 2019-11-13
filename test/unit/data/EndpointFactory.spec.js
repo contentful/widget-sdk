@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 
-describe('data/EndpointFactory.es6', () => {
+describe('data/EndpointFactory', () => {
   beforeEach(async function() {
     this.Authentication = {};
     this.Config = { apiUrl: sinon.stub().returns('API_URL') };
@@ -11,10 +11,10 @@ describe('data/EndpointFactory.es6', () => {
       createSpaceEndpoint: sinon.stub().returns(this.spaceEndpoint)
     };
 
-    this.system.set('Authentication.es6', this.Authentication);
-    this.system.set('Config.es6', this.Config);
-    this.system.set('data/Endpoint.es6', this.Endpoint);
-    this.factory = await this.system.import('data/EndpointFactory.es6');
+    this.system.set('Authentication', this.Authentication);
+    this.system.set('Config', this.Config);
+    this.system.set('data/Endpoint', this.Endpoint);
+    this.factory = await this.system.import('data/EndpointFactory');
   });
 
   describe('#createOrganizationEndpoint', () => {

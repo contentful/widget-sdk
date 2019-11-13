@@ -12,7 +12,7 @@ describe('OrganizationRoles', () => {
   }
 
   beforeEach(async function() {
-    OrganizationRoles = await this.system.import('services/OrganizationRoles.es6');
+    OrganizationRoles = await this.system.import('services/OrganizationRoles');
 
     ORG_1 = { sys: { id: 'org1' }, name: '1st ORG' };
     ORG_2 = { sys: { id: 'org2' }, name: '2nd ORG' };

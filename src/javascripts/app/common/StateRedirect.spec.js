@@ -2,7 +2,7 @@ import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import { render, cleanup } from '@testing-library/react';
 import * as $stateMocked from 'ng/$state';
-import StateRedirect from './StateRedirect.es6';
+import StateRedirect from './StateRedirect';
 
 describe('StateRedirect', () => {
   beforeEach(() => {

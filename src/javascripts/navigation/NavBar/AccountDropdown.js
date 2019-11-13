@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import { cx, css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import * as Analytics from 'analytics/Analytics';
-import * as Authentication from 'Authentication.es6';
-import * as Intercom from 'services/intercom.es6';
-import * as Config from 'Config.es6';
-import { getUser } from 'services/TokenStore.es6';
-import { getCurrentStateName, href } from 'states/Navigator.es6';
-import { getOpenAssignedTasksAndEntries } from 'app/TasksPage/helpers.es6';
-import { getModule } from 'NgRegistry.es6';
+import * as Authentication from 'Authentication';
+import * as Intercom from 'services/intercom';
+import * as Config from 'Config';
+import { getUser } from 'services/TokenStore';
+import { getCurrentStateName, href } from 'states/Navigator';
+import { getOpenAssignedTasksAndEntries } from 'app/TasksPage/helpers';
+import { getModule } from 'NgRegistry';
 
 import {
   Icon,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, cleanup } from '@testing-library/react';
-import StaticDropdown from './StaticDropdown.es6';
+import StaticDropdown from './StaticDropdown';
 import '@testing-library/jest-dom/extend-expect';
 import { spacingM } from '@contentful/forma-36-tokens';
 

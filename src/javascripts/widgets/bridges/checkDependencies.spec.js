@@ -1,4 +1,4 @@
-import checkDependencies from './checkDependencies.es6';
+import checkDependencies from './checkDependencies';
 
 describe('checkDependencies', () => {
   it('throws if not all required dependencies are provided', () => {

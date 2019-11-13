@@ -1,5 +1,5 @@
-import * as reducers from './sso.es6';
-import * as actions from 'redux/actions/sso/actions.es6';
+import * as reducers from './sso';
+import * as actions from 'redux/actions/sso/actions';
 
 const callReducer = (reducer, action) => {
   return reducer(undefined, action);

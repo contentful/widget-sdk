@@ -1,11 +1,11 @@
 import React from 'react';
 import { render, cleanup, wait } from '@testing-library/react';
-import RecordsResourceUsage from './index.es6';
-import createResourceService from 'services/ResourceService.es6';
+import RecordsResourceUsage from '.';
+import createResourceService from 'services/ResourceService';
 
 import '@testing-library/jest-dom/extend-expect';
 
-jest.mock('services/ResourceService.es6', () => {
+jest.mock('services/ResourceService', () => {
   const get = jest.fn();
 
   const result = () => ({

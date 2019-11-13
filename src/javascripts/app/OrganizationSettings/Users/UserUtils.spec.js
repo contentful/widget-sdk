@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { getLastActivityDate } from './UserUtils.es6';
+import { getLastActivityDate } from './UserUtils';
 
 describe('UserUtils', () => {
   function getMembership(amount, unit) {

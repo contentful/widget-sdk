@@ -1,12 +1,12 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
-import TranslationWidgetPills from './TranslationWidgetPills.es6';
-import ModalLauncherMocked from 'app/common/ModalLauncher.es6';
+import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
+import TranslationWidgetPills from './TranslationWidgetPills';
+import ModalLauncherMocked from 'app/common/ModalLauncher';
 import { TextLink, Pill } from '@contentful/forma-36-react-components';
 import { track } from 'analytics/Analytics';
 
-jest.mock('app/common/ModalLauncher.es6', () => ({
+jest.mock('app/common/ModalLauncher', () => ({
   open: jest.fn()
 }));
 

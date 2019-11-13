@@ -1,8 +1,8 @@
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import { render, cleanup } from '@testing-library/react';
-import Comment from './Comment.es6';
-import * as TokenStore from 'services/TokenStore.es6';
+import Comment from './Comment';
+import * as TokenStore from 'services/TokenStore';
 import * as spaceContextMocked from 'ng/spaceContext';
 
 const mockAuthor = { firstName: 'John', lastName: 'Doe', avatarUrl: '0.jpeg', sys: { id: 'abc' } };
@@ -26,7 +26,7 @@ const withUnknownAuthor = {
     id: 'xyz'
   }
 };
-jest.mock('services/TokenStore.es6', () => ({
+jest.mock('services/TokenStore', () => ({
   getSpace: jest.fn(),
   getUserSync: jest.fn()
 }));

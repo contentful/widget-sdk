@@ -1,4 +1,4 @@
-import makePageExtensionHandlers from './makePageExtensionHandlers.es6';
+import makePageExtensionHandlers from './makePageExtensionHandlers';
 
 let spaceContext;
 let navigatorMock;

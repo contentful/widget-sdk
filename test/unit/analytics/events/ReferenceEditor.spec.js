@@ -10,7 +10,7 @@ describe('ReferenceEditor', () => {
       getActiveLocales: sinon.stub()
     };
 
-    this.system.set('services/localeStore.es6', {
+    this.system.set('services/localeStore', {
       default: this.TheLocaleStore
     });
 

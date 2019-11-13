@@ -1,7 +1,7 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 
-import Form from './WidgetParametersForm.es6';
+import Form from './WidgetParametersForm';
 
 describe('WidgetParametersForm', () => {
   const mount = (definitions = [], values = {}, missing = {}) => {

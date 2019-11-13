@@ -4,10 +4,10 @@ import { render, cleanup, fireEvent } from '@testing-library/react';
 import { noop } from 'lodash';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
-import reducer from 'redux/reducer/index.es6';
-import routes from 'redux/routes.es6';
+import reducer from 'redux/reducer';
+import routes from 'redux/routes';
 
-import SpaceSettings from './SpaceSettings.es6';
+import SpaceSettings from './SpaceSettings';
 
 const activeOrgId = 'testOrgId';
 describe('SpaceSettings', () => {

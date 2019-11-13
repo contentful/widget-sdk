@@ -1,7 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import { render, cleanup, fireEvent } from '@testing-library/react';
-import SearchFilter from './SearchFilter.es6';
+import SearchFilter from './SearchFilter';
 
 describe('SearchFilter', () => {
   const options = [

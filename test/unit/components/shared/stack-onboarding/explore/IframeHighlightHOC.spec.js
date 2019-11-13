@@ -12,7 +12,7 @@ describe('IframeHighlightHOC', () => {
     goStub = sinon.spy();
 
     IframeHighlightHOC = (await this.system.import(
-      'components/shared/stack-onboarding/explore/IframeHighlightHOC.es6'
+      'components/shared/stack-onboarding/explore/IframeHighlightHOC'
     )).default;
 
     await $initialize(this.system, $provide => {

@@ -1,9 +1,9 @@
-import { uncapitalize } from 'utils/StringUtils.es6';
-import * as OrganizationRoles from 'services/OrganizationRoles.es6';
-import { go } from 'states/Navigator.es6';
+import { uncapitalize } from 'utils/StringUtils';
+import * as OrganizationRoles from 'services/OrganizationRoles';
+import { go } from 'states/Navigator';
 import { get, merge, findKey, forEach } from 'lodash';
-import { isLegacyOrganization } from 'utils/ResourceUtils.es6';
-import { supportUrl } from 'Config.es6';
+import { isLegacyOrganization } from 'utils/ResourceUtils';
+import { supportUrl } from 'Config';
 import * as Analytics from 'analytics/Analytics';
 
 const USAGE_METRICS = {

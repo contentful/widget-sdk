@@ -1,18 +1,18 @@
 import React from 'react';
 import Enzyme from 'enzyme';
 import { mapValues } from 'lodash';
-import View from '../View.es6';
-import { Actions } from '../State.es6';
-import * as Filters from '../Filters.es6';
+import View from '../View';
+import { Actions } from '../State';
+import * as Filters from '../Filters';
 import { contentTypes } from './helpers';
-import keycodes from 'utils/keycodes.es6';
+import keycodes from 'utils/keycodes';
 
 const MockComponent = () => <div />;
 
-jest.mock('../ValueInput/Date.es6', () => MockComponent);
-jest.mock('../ValueInput/Reference.es6', () => MockComponent);
+jest.mock('../ValueInput/Date', () => MockComponent);
+jest.mock('../ValueInput/Reference', () => MockComponent);
 
-describe('app/ContentList/Search/View.es6', () => {
+describe('app/ContentList/Search/View', () => {
   const render = (props = {}) => {
     const actions = mapValues(Actions, () => {
       return jest.fn();

@@ -1,13 +1,13 @@
-import { getOrg, getSpaceInfo, getOnboardingSpaceId } from './utils.es6';
-import TheStore from 'TheStore/index.es6';
-import * as TokenStore from 'services/TokenStore.es6';
+import { getOrg, getSpaceInfo, getOnboardingSpaceId } from './utils';
+import TheStore from 'TheStore';
+import * as TokenStore from 'services/TokenStore';
 
-jest.mock('TheStore/index.es6', () => ({ getStore: jest.fn() }));
+jest.mock('TheStore', () => ({ getStore: jest.fn() }));
 
 jest.mock(
-  'services/TokenStore.es6',
+  'services/TokenStore',
   () => {
-    const Kefir = require('utils/kefir.es6');
+    const Kefir = require('utils/kefir');
 
     function createMockKefirProperty(initial) {
       const { property, end, set, error } = Kefir.createPropertyBus(initial);
@@ -27,7 +27,7 @@ jest.mock(
 );
 
 jest.mock(
-  'components/shared/auto_create_new_space/CreateModernOnboarding.es6',
+  'components/shared/auto_create_new_space/CreateModernOnboarding',
   () => ({
     getStoragePrefix: jest.fn().mockReturnValue('prefix'),
     MODERN_STACK_ONBOARDING_SPACE_NAME: 'modern stack name'
@@ -35,7 +35,7 @@ jest.mock(
   { virtual: true }
 );
 
-describe('states/deeplink/utils.es6', () => {
+describe('states/deeplink/utils', () => {
   describe('#getOrg', () => {
     it('returns orgId from the store', async function() {
       const returnedOrg = { sys: { id: 'some_org_id' }, pricing: 'old' };

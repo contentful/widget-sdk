@@ -1,4 +1,4 @@
-import validateTargetState from './validateTargetState.es6';
+import validateTargetState from './validateTargetState';
 
 describe('validateTargetState', () => {
   it('accepts empty target states', () => {

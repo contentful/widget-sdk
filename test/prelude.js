@@ -80,7 +80,7 @@
 
     try {
       // This needs to be registered early because prelude depends on it (and it not being in `this.system`);
-      SystemJS.register('Config.es6', [], _export => {
+      SystemJS.register('Config', [], _export => {
         _export({
           authUrl: x => `//be.test.com${ensureLeadingSlash(x)}`,
           apiUrl: x => `//api.test.com${ensureLeadingSlash(x)}`,
@@ -121,7 +121,7 @@
 
       await SystemJS.import('test/helpers/systemjs-mocks');
 
-      await SystemJS.import('test/helpers/mocks/index');
+      await SystemJS.import('test/helpers/mocks');
       await SystemJS.import('test/helpers/mocks/entity_editor_document');
       await SystemJS.import('test/helpers/mocks/editor_context');
       await SystemJS.import('test/helpers/mocks/cf_stub');
@@ -171,13 +171,16 @@
   }
 
   /**
-   * If module ID matches 'a/b/index.js' then also register as 'a/b'.
+   * If module ID matches 'a/b/index.js' then register both 'a/b/' and 'a/b'.
    */
   function registerDirectoryAlias(moduleId) {
     const path = moduleId.split('/');
     const last = path.pop();
     if (last === 'index') {
       SystemJS.register(path.join('/'), [moduleId], $export => ({
+        setters: [$export]
+      }));
+      SystemJS.register(`${path.join('/')}/`, [moduleId], $export => ({
         setters: [$export]
       }));
     }

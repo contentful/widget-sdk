@@ -1,5 +1,5 @@
-import * as Intercom from 'services/intercom.es6';
-import { trackCommentCreated, trackIsCommentsAlphaEligible } from './analytics.es6';
+import * as Intercom from 'services/intercom';
+import { trackCommentCreated, trackIsCommentsAlphaEligible } from './analytics';
 
 describe('CommentsPanel/analytics', () => {
   beforeEach(() => {

@@ -1,5 +1,5 @@
 import { uniq } from 'lodash';
-import * as fieldFactory from './fieldFactory.es6';
+import * as fieldFactory from './fieldFactory';
 
 describe('fieldFactory', () => {
   describe('type descriptor', () => {

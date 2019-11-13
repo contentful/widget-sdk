@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, cleanup, wait } from '@testing-library/react';
-import IndexPage from './index';
+import IndexPage from '.';
 import { fetchUserData } from './AccountRepository';
-import { getVariation } from 'LaunchDarkly.es6';
+import { getVariation } from 'LaunchDarkly';
 
 import '@testing-library/jest-dom/extend-expect';
 

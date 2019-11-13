@@ -3,12 +3,12 @@ import { createStore } from 'redux';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { Button, TableCell, Table, TableHead } from '@contentful/forma-36-react-components';
-import reducer from 'redux/reducer/index.es6';
-import UserCard from '../../Users/UserCard.es6';
-import UnknownUser from '../../Users/UserDetail/UnknownUser.es6';
+import reducer from 'redux/reducer';
+import UserCard from '../../Users/UserCard';
+import UnknownUser from '../../Users/UserDetail/UnknownUser';
 
-import TeamMembershipRow from './TeamMembershipRow.es6';
-import ROUTES from '../../../../redux/routes.es6';
+import TeamMembershipRow from './TeamMembershipRow';
+import ROUTES from '../../../../redux/routes';
 
 const renderComponent = (actions, membership) => {
   const store = createStore(reducer);

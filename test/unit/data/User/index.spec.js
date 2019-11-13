@@ -32,7 +32,7 @@ describe('data/User', () => {
       }
     ];
 
-    this.system.set('services/TokenStore.es6', this.tokenStore);
+    this.system.set('services/TokenStore', this.tokenStore);
     this.moment = (await this.system.import('moment')).default;
     this.utils = await this.system.import('data/User');
 

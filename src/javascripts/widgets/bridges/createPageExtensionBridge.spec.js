@@ -1,14 +1,14 @@
-import createPageExtensionBridge from './createPageExtensionBridge.es6';
-import { LOCATION_PAGE } from '../WidgetLocations.es6';
+import createPageExtensionBridge from './createPageExtensionBridge';
+import { LOCATION_PAGE } from '../WidgetLocations';
 
-jest.mock('Authentication.es6', () => ({ getToken: () => '<TOKEN>' }));
+jest.mock('Authentication', () => ({ getToken: () => '<TOKEN>' }));
 
-jest.mock('services/localeStore.es6', () => ({
+jest.mock('services/localeStore', () => ({
   getPrivateLocales: () => [{ code: 'pl' }, { code: 'en' }],
   getDefaultLocale: () => ({ code: 'pl' })
 }));
 
-jest.mock('widgets/WidgetStore.es6', () => ({
+jest.mock('widgets/WidgetStore', () => ({
   getForSingleExtension: jest.fn()
 }));
 

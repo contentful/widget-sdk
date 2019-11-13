@@ -1,5 +1,5 @@
-import { getModule } from 'NgRegistry.es6';
-import { go } from 'states/Navigator.es6';
+import { getModule } from 'NgRegistry';
+import { go } from 'states/Navigator';
 
 export default function jumpToRole(roleName) {
   const spaceContext = getModule('spaceContext');

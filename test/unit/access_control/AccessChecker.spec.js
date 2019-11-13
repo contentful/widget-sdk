@@ -76,14 +76,14 @@ describe('Access Checker', () => {
     resetEnforcements = sinon.stub();
     getResStub = sinon.stub().returns(false);
 
-    this.system.set('data/EndpointFactory.es6', {
+    this.system.set('data/EndpointFactory', {
       createOrganizationEndpoint: () => mockOrgEndpoint,
       createSpaceEndpoint: () => mockSpaceEndpoint
     });
     this.system.set('utils/LaunchDarkly', {
       getCurrentVariation: sinon.stub().resolves(false)
     });
-    this.system.set('services/LegacyFeatureService.es6', {
+    this.system.set('services/LegacyFeatureService', {
       default: () => {
         return {
           get: () => {
@@ -92,7 +92,7 @@ describe('Access Checker', () => {
         };
       }
     });
-    this.system.set('services/logger.es6', {
+    this.system.set('services/logger', {
       logError: this.stubs.logError
     });
     this.system.set('access_control/AccessChecker/utils/resetEnforcements', {
@@ -117,14 +117,14 @@ describe('Access Checker', () => {
       canUpdateAssets: this.stubs.canUpdateAssets,
       canUpdateOwnAssets: this.stubs.canUpdateOwnAssets
     });
-    this.system.set('services/TokenStore.es6', {
+    this.system.set('services/TokenStore', {
       organizations$: this.stubs.organizations$,
       user$: this.stubs.user$
     });
 
     enforcements = await this.system.import('access_control/Enforcements');
-    OrganizationRoles = await this.system.import('services/OrganizationRoles.es6');
-    TokenStore = await this.system.import('services/TokenStore.es6');
+    OrganizationRoles = await this.system.import('services/OrganizationRoles');
+    TokenStore = await this.system.import('services/TokenStore');
 
     reasonsDeniedStub = sinon.stub().returns([]);
     isPermissionDeniedStub = sinon.stub().returns(false);

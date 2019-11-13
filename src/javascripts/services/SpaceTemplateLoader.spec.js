@@ -3,12 +3,12 @@ import {
   getTemplatesList,
   getClientParams,
   _resetGlobals
-} from './SpaceTemplateLoader.es6';
-import * as contentfulClient from 'services/contentfulClient.es6';
-import { contentTypesCDA, assetsCDA, entriesCDA, spaceCDA } from 'fixtures/SpaceTemplateLoader.es6';
+} from './SpaceTemplateLoader';
+import * as contentfulClient from 'services/contentfulClient';
+import { contentTypesCDA, assetsCDA, entriesCDA, spaceCDA } from 'fixtures/SpaceTemplateLoader';
 
 jest.mock(
-  'services/contentfulClient.es6',
+  'services/contentfulClient',
   _ => ({
     newClient: jest.fn()
   }),
@@ -116,7 +116,7 @@ describe('SpaceTemplateLoader', () => {
       expect(contentfulClient.newClient).toHaveBeenCalledTimes(1);
       expect(clientGetEntriesMock).toHaveBeenCalledTimes(1);
       expect(clientGetEntriesMock).toHaveBeenCalledWith({
-        content_type: 'space-template-ct-id' // comes from __mocks__/Config.es6.js
+        content_type: 'space-template-ct-id' // comes from __mocks__/Config.js
       });
       expect(templates).toEqual(sortedEntries);
     });
@@ -165,7 +165,7 @@ describe('SpaceTemplateLoader', () => {
 
       expect(contentfulClient.newClient).toHaveBeenCalledTimes(1);
       expect(contentfulClient.newClient).toHaveBeenCalledWith({
-        host: 'cda-api-url', // comes from __mocks__/Config.es6.js
+        host: 'cda-api-url', // comes from __mocks__/Config.js
         space: templateInfo.spaceId,
         accessToken: templateInfo.spaceApiKey
       });

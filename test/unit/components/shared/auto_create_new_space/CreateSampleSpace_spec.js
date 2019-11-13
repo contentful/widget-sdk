@@ -55,21 +55,21 @@ describe('CreateSampleSpace service', () => {
       refresh: sinon.stub().resolves()
     };
 
-    this.system.set('services/TokenStore.es6', this.tokenStore);
-    this.system.set('services/SpaceTemplateCreator/index.es6', {
+    this.system.set('services/TokenStore', this.tokenStore);
+    this.system.set('services/SpaceTemplateCreator', {
       getCreator: this.getCreator
     });
-    this.system.set('states/Navigator.es6', {
+    this.system.set('states/Navigator', {
       go: this.go
     });
-    this.system.set('services/SpaceTemplateLoader.es6', this.spaceTemplateLoader);
+    this.system.set('services/SpaceTemplateLoader', this.spaceTemplateLoader);
 
-    this.system.set('services/client.es6', {
+    this.system.set('services/client', {
       default: this.client
     });
 
     this.createSampleSpace = (await this.system.import(
-      'components/shared/auto_create_new_space/CreateSampleSpace.es6'
+      'components/shared/auto_create_new_space/CreateSampleSpace'
     )).default;
 
     await $initialize(this.system, $provide => {

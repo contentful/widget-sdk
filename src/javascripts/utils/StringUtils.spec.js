@@ -1,6 +1,6 @@
-import * as utils from './StringUtils.es6';
+import * as utils from './StringUtils';
 
-describe('utils/StringUtils.es6', () => {
+describe('utils/StringUtils', () => {
   describe('#joinAndTruncate()', () => {
     it('does not truncate short lists', function() {
       expect(utils.joinAndTruncate(split('a b c'), 3)).toEqual('a, b and c');

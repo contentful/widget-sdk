@@ -1,10 +1,10 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import BackNav from './index.es6';
-import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator/index.es6';
+import BackNav from '.';
+import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 
 jest.mock(
-  'navigation/SlideInNavigator/index.es6',
+  'navigation/SlideInNavigator',
   () => ({
     goToPreviousSlideOrExit: jest.fn()
   }),

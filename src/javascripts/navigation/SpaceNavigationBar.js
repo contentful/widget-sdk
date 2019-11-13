@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getModule } from 'NgRegistry.es6';
+import { getModule } from 'NgRegistry';
 import * as accessChecker from 'access_control/AccessChecker';
-import { getOrgFeature } from 'data/CMA/ProductCatalog.es6';
-import { ENVIRONMENTS_FLAG, TEAMS_IN_SPACES } from 'featureFlags.es6';
+import { getOrgFeature } from 'data/CMA/ProductCatalog';
+import { ENVIRONMENTS_FLAG, TEAMS_IN_SPACES } from 'featureFlags';
 import NavBar from './NavBar/NavBar';
-import { getVariation } from 'LaunchDarkly.es6';
+import { getVariation } from 'LaunchDarkly';
 import { getSpaceNavigationItems } from './SpaceNavigationBarItems';
 
 // We don't want to display the following sections within the context of

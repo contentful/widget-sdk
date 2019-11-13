@@ -14,7 +14,7 @@ import {
   DropdownListItem
 } from '@contentful/forma-36-react-components';
 import jumpToRoleMembers from 'access_control/Users/jumpToRole';
-import { go } from 'states/Navigator.es6';
+import { go } from 'states/Navigator';
 
 const styles = {
   clickableCell: css({

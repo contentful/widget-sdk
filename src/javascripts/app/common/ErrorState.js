@@ -2,7 +2,7 @@ import React from 'react';
 import { Typography, Heading, Paragraph } from '@contentful/forma-36-react-components';
 import EmptyStateContainer, {
   defaultSVGStyle
-} from 'components/EmptyStateContainer/EmptyStateContainer.es6';
+} from 'components/EmptyStateContainer/EmptyStateContainer';
 import BrokenPencil from 'svg/broken-pencil';
 
 export default function ErrorState() {

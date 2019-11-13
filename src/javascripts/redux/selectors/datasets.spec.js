@@ -1,13 +1,13 @@
-import reducer from '../reducer/index.es6';
-import { getDatasets, isMissingRequiredDatasets, getDataSetsToLoad } from './datasets.es6';
-import ROUTES from '../routes.es6';
+import reducer from '../reducer';
+import { getDatasets, isMissingRequiredDatasets, getDataSetsToLoad } from './datasets';
+import ROUTES from '../routes';
 import {
   TEAMS,
   TEAM_MEMBERSHIPS,
   USERS,
   ORG_MEMBERSHIPS,
   TEAM_SPACE_MEMBERSHIPS
-} from '../datasets.es6';
+} from '../datasets';
 import { ORG_SPACE_ROLES, ORG_SPACES } from '../datasets';
 
 const activeOrgId = 'testOrg';

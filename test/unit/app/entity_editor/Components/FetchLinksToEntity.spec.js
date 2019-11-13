@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import { mount } from 'enzyme';
 import sinon from 'sinon';
-import { EntityType } from 'app/entity_editor/Components/constants.es6';
+import { EntityType } from 'app/entity_editor/Components/constants';
 
 import flushPromises from 'test/utils/flushPromises';
 
@@ -26,7 +26,7 @@ describe('FetchLinksToEntity', () => {
     const system = this.system;
 
     this.importModule = async function({ fetchLinksStub }) {
-      system.set('app/entity_editor/Components/FetchLinksToEntity/fetchLinks.es6', {
+      system.set('app/entity_editor/Components/FetchLinksToEntity/fetchLinks', {
         default: fetchLinksStub
       });
 

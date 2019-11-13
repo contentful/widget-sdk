@@ -1,4 +1,4 @@
-import { registerDirective } from 'NgRegistry.es6';
+import { registerDirective } from 'NgRegistry';
 
 import controller from 'account/NewOrganizationMembership';
 

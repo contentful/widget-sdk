@@ -4,11 +4,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { includes, negate } from 'lodash';
-import { match, isTag } from 'utils/TaggedValues.es6';
-import SuccessIcon from 'svg/checkmark-alt.es6';
+import { match, isTag } from 'utils/TaggedValues';
+import SuccessIcon from 'svg/checkmark-alt';
 import pluralize from 'pluralize';
-import Icon from 'ui/Components/Icon.es6';
-import StateLink from 'app/common/StateLink.es6';
+import Icon from 'ui/Components/Icon';
+import StateLink from 'app/common/StateLink';
 
 const orgRoles = [
   {

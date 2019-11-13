@@ -13,7 +13,7 @@ import {
   Form
 } from '@contentful/forma-36-react-components';
 import EmbedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
-import { isValidUrl } from 'utils/StringUtils.es6';
+import { isValidUrl } from 'utils/StringUtils';
 
 const styles = {
   widthFiledGroup: css({

@@ -1,4 +1,4 @@
-import { h } from 'utils/legacy-html-hyperscript/index.es6';
+import { h } from 'utils/legacy-html-hyperscript';
 
 export default function() {
   return h('.modal-background', [
@@ -58,7 +58,7 @@ function dialogContent() {
     userRoleSelector(),
     h('p', [
       h('react-component', {
-        name: 'components/shared/knowledge_base_icon/KnowledgeBase.es6',
+        name: 'components/shared/knowledge_base_icon/KnowledgeBase',
         props: `{
           target: 'roles',
           text: "What's the difference between Administrator, Developer and Editor?",

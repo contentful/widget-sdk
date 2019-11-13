@@ -3,8 +3,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import AccountDropdown from './AccountDropdown';
-import QuickNavigation from 'components/shared/QuickNavigation/QuickNavWithFeatureFlag.es6';
-import OnboardingRelaunch from 'navigation/modernStackOnboardingRelaunch.es6';
+import QuickNavigation from 'components/shared/QuickNavigation/QuickNavWithFeatureFlag';
+import OnboardingRelaunch from 'navigation/modernStackOnboardingRelaunch';
 import NavigationItem from './NavigationItem';
 import NavigationDropdown from './NavigationDropdown';
 

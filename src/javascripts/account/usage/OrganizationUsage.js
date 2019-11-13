@@ -4,7 +4,7 @@ import { mapValues, flow, keyBy, get, eq, isNumber, pick } from 'lodash/fp';
 
 import { Spinner } from '@contentful/forma-36-react-components';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
-import ReloadNotification from 'app/common/ReloadNotification.es6';
+import ReloadNotification from 'app/common/ReloadNotification';
 
 import OrganizationResourceUsageList from './non_committed/OrganizationResourceUsageList';
 import OrganizationUsagePage from './committed/OrganizationUsagePage';
@@ -13,13 +13,13 @@ import PeriodSelector from './committed/PeriodSelector';
 import NoSpacesPlaceholder from './NoSpacesPlaceholder';
 import * as Analytics from 'analytics/Analytics';
 
-import * as TokenStore from 'services/TokenStore.es6';
-import * as EndpointFactory from 'data/EndpointFactory.es6';
+import * as TokenStore from 'services/TokenStore';
+import * as EndpointFactory from 'data/EndpointFactory';
 import * as OrganizationMembershipRepository from 'access_control/OrganizationMembershipRepository';
 import * as PricingDataProvider from 'account/pricing/PricingDataProvider';
-import createResourceService from 'services/ResourceService.es6';
-import * as OrganizationRoles from 'services/OrganizationRoles.es6';
-import Icon from 'ui/Components/Icon.es6';
+import createResourceService from 'services/ResourceService';
+import * as OrganizationRoles from 'services/OrganizationRoles';
+import Icon from 'ui/Components/Icon';
 
 export class WorkbenchContent extends React.Component {
   static propTypes = {

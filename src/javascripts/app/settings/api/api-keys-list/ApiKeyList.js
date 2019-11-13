@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import StateLink from 'app/common/StateLink.es6';
+import StateLink from 'app/common/StateLink';
 import {
   Table,
   TableBody,

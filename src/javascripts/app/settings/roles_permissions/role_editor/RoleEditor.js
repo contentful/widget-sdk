@@ -26,20 +26,20 @@ import {
 import RolesWorkbenchShell from '../routes/RolesWorkbenchShell';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import FormSection from 'components/forms/FormSection.es6';
+import FormSection from 'components/forms/FormSection';
 import RuleList from './RuleList';
 import TranslatorRoleSelector from './TranslatorRoleSelector';
 import getLocales from 'access_control/getLocales';
 import * as PolicyBuilder from 'access_control/PolicyBuilder';
-import * as logger from 'services/logger.es6';
-import TheLocaleStore from 'services/localeStore.es6';
-import * as Navigator from 'states/Navigator.es6';
+import * as logger from 'services/logger';
+import TheLocaleStore from 'services/localeStore';
+import * as Navigator from 'states/Navigator';
 
 import * as RoleListHandler from 'access_control/RoleListHandler';
 import RoleEditorSidebar from './RoleEditorSidebar';
 import RoleEditorActions from './RoleEditorActions';
 import { createRoleRemover } from 'access_control/RoleRemover';
-import DocumentTitle from 'components/shared/DocumentTitle.es6';
+import DocumentTitle from 'components/shared/DocumentTitle';
 
 const PermissionPropType = PropTypes.shape({
   manage: PropTypes.bool,

@@ -1,12 +1,12 @@
-import { handleOptIn, handleChangeEnvironment } from './Utils.es6';
+import { handleOptIn, handleChangeEnvironment } from './Utils';
 
-jest.mock('data/EndpointFactory.es6', () => ({
+jest.mock('data/EndpointFactory', () => ({
   createSpaceEndpoint: jest
     .fn()
     .mockReturnValue(jest.fn().mockImplementation((...res) => Promise.resolve(res)))
 }));
 
-jest.mock('data/CMA/SpaceAliasesRepo.es6', () => ({
+jest.mock('data/CMA/SpaceAliasesRepo', () => ({
   create: jest.fn().mockReturnValue({
     get: jest.fn().mockReturnValue({ sys: { id: 'alias', version: 1 } }),
     update: jest.fn().mockImplementation((...res) => res),

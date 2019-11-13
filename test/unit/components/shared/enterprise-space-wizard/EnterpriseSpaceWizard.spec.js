@@ -66,13 +66,13 @@ describe('Enterprise Space Wizard', () => {
       }
     };
 
-    this.store = (await this.system.import('redux/store.es6')).default;
+    this.store = (await this.system.import('redux/store')).default;
     this.PlanFeatures = (await this.system.import(
-      'components/shared/space-wizard/PlanFeatures.es6'
+      'components/shared/space-wizard/PlanFeatures'
     )).default;
 
     const EnterpriseSpaceWizard = (await this.system.import(
-      'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard.es6'
+      'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard'
     )).default;
 
     await $initialize(this.system);

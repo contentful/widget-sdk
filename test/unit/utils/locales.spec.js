@@ -1,4 +1,4 @@
-describe('utils/locales.es6', () => {
+describe('utils/locales', () => {
   beforeEach(async function() {
     this.system.set('libs/locales_list.json', {
       default: [{ code: 'ar-AE' }, { code: 'hr-BA' }]
@@ -8,7 +8,7 @@ describe('utils/locales.es6', () => {
       isRtlLang: code => ['hr-BA', 'he-IL'].includes(code)
     });
 
-    this.localeUtils = await this.system.import('utils/locales.es6');
+    this.localeUtils = await this.system.import('utils/locales');
   });
 
   describe('#isRtlLocale()', () => {

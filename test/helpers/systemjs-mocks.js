@@ -29,7 +29,7 @@ async function stubConfig(system) {
     readInjectedConfig: () => ({ config: {} })
   };
 
-  await system.set('Config.es6', mocked);
+  await system.set('Config', mocked);
 }
 
 async function stubClientStorage(system) {
@@ -55,7 +55,7 @@ async function stubClientStorage(system) {
     }
   };
 
-  await system.set('TheStore/ClientStorageWrapper.es6', mocked);
+  await system.set('TheStore/ClientStorageWrapper', mocked);
 }
 
 async function stubShareJsLibClient(system) {
@@ -69,7 +69,7 @@ async function stubShareJsLibClient(system) {
 }
 
 async function stubFilestack(system) {
-  await system.set('services/Filestack.es6', {
+  await system.set('services/Filestack', {
     makeDropPane: sinon.stub(),
     pick: sinon.stub(),
     pickMultiple: sinon.stub(),
@@ -100,9 +100,9 @@ async function stubLaunchDarklyUtil(system) {
     }
   };
 
-  await system.set('utils/LaunchDarkly/index.es6', mockedUtil);
+  await system.set('utils/LaunchDarkly', mockedUtil);
 
-  await system.set('LaunchDarkly.es6', {
+  await system.set('LaunchDarkly', {
     getVariation: sinon.stub().resolves(false)
   });
 }

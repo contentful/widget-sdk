@@ -1,7 +1,7 @@
 import React from 'react';
 import Enzyme from 'enzyme';
-import TranslationWidgetDropdown from './TranslationWidgetDropdown.es6';
-import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes.es6';
+import TranslationWidgetDropdown from './TranslationWidgetDropdown';
+import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
 import { Select } from '@contentful/forma-36-react-components';
 import { track } from 'analytics/Analytics';
 
