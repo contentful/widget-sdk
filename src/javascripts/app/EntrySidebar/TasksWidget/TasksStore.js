@@ -33,7 +33,7 @@ export function createTasksStoreForEntry(endpoint, entryId) {
       } catch (error) {
         throw error;
       }
-      newTask = !isPrePreview ? transformTask(newTask) : newTask;
+      newTask = isPrePreview ? transformTask(newTask) : newTask;
       tasksBus.set([...getItems(), newTask]);
       return newTask;
     },
@@ -52,7 +52,7 @@ export function createTasksStoreForEntry(endpoint, entryId) {
       } catch (error) {
         throw error;
       }
-      updatedTask = !isPrePreview ? transformTask(updatedTask) : updatedTask;
+      updatedTask = isPrePreview ? transformTask(updatedTask) : updatedTask;
       tasksBus.set(
         getItems().map(task => (task.sys.id === updatedTask.sys.id ? updatedTask : task))
       );
@@ -71,6 +71,8 @@ export function createTasksStoreForEntry(endpoint, entryId) {
       return false;
     }
     tasksBus.set(tasks);
+    // eslint-disable-next-line no-console
+    console.log(res.headers('x-contentful-tasks-version'));
     return res.headers['x-contentful-tasks-version'] === 'pre-preview';
   }
 }

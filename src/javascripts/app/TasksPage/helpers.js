@@ -14,7 +14,7 @@ export async function getOpenAssignedTasksAndEntries(spaceId, envId, userId) {
 }
 
 export function getTasksFromResponse({ headers, data: { items } }) {
-  if (headers['x-contentful-tasks-version'] !== 'pre-preview') {
+  if (headers['x-contentful-tasks-version'] === 'pre-preview') {
     return items.map(transformTask);
   } else {
     return items;
