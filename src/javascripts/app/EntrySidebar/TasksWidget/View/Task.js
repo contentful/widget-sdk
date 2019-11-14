@@ -163,9 +163,11 @@ export default class Task extends React.Component {
         data-test-id="task-actions"
         className={cx(styles.actions, this.state.isExpanded && styles.actionsVisible)}>
         <DropdownList>
-          <DropdownListItem testId="edit-task" onClick={this.handleEditClick}>
-            Edit task
-          </DropdownListItem>
+          {!this.props.viewData.isDone && (
+            <DropdownListItem testId="edit-task" onClick={this.handleEditClick}>
+              Edit task
+            </DropdownListItem>
+          )}
           <DropdownListItem onClick={event => this.handleDeleteClick(event)}>
             Delete task
           </DropdownListItem>
