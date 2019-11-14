@@ -29,7 +29,7 @@ export function createTasksStoreForEntry(endpoint, entryId) {
       let newTask;
       const { sys: _sys, ...data } = task;
       try {
-        ({ data: newTask } = await create(endpoint, entryId, data, isPrePreview));
+        newTask = await create(endpoint, entryId, data, isPrePreview);
       } catch (error) {
         throw error;
       }
@@ -48,7 +48,7 @@ export function createTasksStoreForEntry(endpoint, entryId) {
     update: async task => {
       let updatedTask;
       try {
-        ({ data: updatedTask } = await update(endpoint, entryId, task, isPrePreview));
+        updatedTask = await update(endpoint, entryId, task, isPrePreview);
       } catch (error) {
         throw error;
       }
@@ -61,18 +61,16 @@ export function createTasksStoreForEntry(endpoint, entryId) {
   };
 
   async function initialFetch() {
-    let res;
+    let data;
     let tasks;
     try {
-      res = await getAllForEntry(endpoint, entryId);
-      tasks = getTasksFromResponse(res);
+      data = await getAllForEntry(endpoint, entryId);
+      tasks = getTasksFromResponse(data);
     } catch (error) {
       tasksBus.error(error);
       return false;
     }
     tasksBus.set(tasks);
-    // eslint-disable-next-line no-console
-    console.log(res.headers('x-contentful-tasks-version'));
-    return res.headers['x-contentful-tasks-version'] === 'pre-preview';
+    return data.isPrePreview;
   }
 }

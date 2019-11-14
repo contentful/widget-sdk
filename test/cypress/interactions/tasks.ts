@@ -12,8 +12,12 @@ import {
   getTaskDefinitionById as getSeveralTasksTaskDefinitionById
 } from '../fixtures/responses/tasks-several.js';
 
-// Tasks doesn't currently support "total" like most other collection endpoints.
-const empty = omit(emptyWithTotal, 'total')
+const empty = {
+  // Tasks doesn't currently support "total" like most other collection endpoints.
+  ...omit(emptyWithTotal, 'total'),
+  // We also have to account for the temporary isPrePreview property.
+  isPrePreview: true
+}
 
 export enum States {
   NONE = 'tasks/none',

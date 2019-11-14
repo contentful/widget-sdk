@@ -152,5 +152,6 @@
   ],
   "sys": {
     "type": "Array"
-  }
+  },
+  "isPrePreview": true
 }

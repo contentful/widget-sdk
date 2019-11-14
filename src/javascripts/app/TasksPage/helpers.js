@@ -13,8 +13,8 @@ export async function getOpenAssignedTasksAndEntries(spaceId, envId, userId) {
   return [tasks, entries];
 }
 
-export function getTasksFromResponse({ headers, data: { items } }) {
-  if (headers['x-contentful-tasks-version'] === 'pre-preview') {
+export function getTasksFromResponse({ items, isPrePreview }) {
+  if (isPrePreview) {
     return items.map(transformTask);
   } else {
     return items;
@@ -33,8 +33,8 @@ export function transformTask(task) {
 }
 
 async function getOpenAssignedTasks(spaceId, envId, userId) {
-  const endpoint = createSpaceEndpoint(spaceId, envId, { includeHeaders: true });
-  const res = await endpoint(
+  const endpoint = createSpaceEndpoint(spaceId, envId);
+  const data = await endpoint(
     {
       method: 'GET',
       path: ['tasks'],
@@ -42,5 +42,5 @@ async function getOpenAssignedTasks(spaceId, envId, userId) {
     },
     { 'x-contentful-enable-alpha-feature': 'comments-api,tasks-dashboard' }
   );
-  return getTasksFromResponse(res);
+  return getTasksFromResponse(data);
 }

@@ -16,7 +16,7 @@ const path = (entryId, taskId) => ['entries', entryId, 'tasks', ...(taskId ? [ta
  */
 export async function create(endpoint, entryId, task, isPrePreview) {
   const { body, assignedTo, status } = task;
-  const data = !isPrePreview ? { body, assignment: { assignedTo, status } } : task;
+  const data = isPrePreview ? { body, assignment: { assignedTo, status } } : task;
   return endpoint(
     {
       method: 'POST',
@@ -72,7 +72,7 @@ export async function remove(endpoint, entryId, taskId) {
  */
 export async function update(endpoint, entryId, task, isPrePreview) {
   const { sys, body, assignedTo, status } = task;
-  const data = !isPrePreview ? { body, assignment: { assignedTo, status } } : task;
+  const data = isPrePreview ? { body, assignment: { assignedTo, status } } : task;
   const headers = {
     'X-Contentful-Version': sys.version,
     ...alphaHeader
