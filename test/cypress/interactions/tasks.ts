@@ -14,9 +14,7 @@ import {
 
 const empty = {
   // Tasks doesn't currently support "total" like most other collection endpoints.
-  ...omit(emptyWithTotal, 'total'),
-  // We also have to account for the temporary isPrePreview property.
-  isPrePreview: true
+  ...omit(emptyWithTotal, 'total')
 }
 
 export enum States {
@@ -30,9 +28,14 @@ export enum TaskStates {
   RESOLVED = 'resolved',
 }
 
-export type TaskUpdate = {
-  title?: string,
-  assigneeId?: string,
+export interface NewTask {
+  body: string
+  assigneeId: string
+}
+
+export interface TaskUpdate {
+  body?: string
+  assigneeId?: string
   status?: TaskStates
 }
 
@@ -45,71 +48,69 @@ const defaultHeader = {
   'x-contentful-enable-alpha-feature': 'comments-api'
 }
 
-const getEntryCommentsAndTasksRequest: RequestOptions = {
+const getEntryTasksRequest: RequestOptions = {
   method: 'GET',
   path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}/tasks`,
   headers: defaultHeader
 };
 
-export const getAllCommentsForDefaultEntry = {
+export const getAllTasksForDefaultEntry = {
   willReturnNone() {
     cy.addInteraction({
       provider: PROVIDER,
       state: States.NONE,
       uponReceiving: GET_TASK_LIST,
-      withRequest: getEntryCommentsAndTasksRequest,
+      withRequest: getEntryTasksRequest,
       willRespondWith: {
         status: 200,
         body: empty
       }
-    }).as('getAllCommentsForDefaultEntry');
+    }).as('getAllTasksForDefaultEntry');
 
-    return '@getAllCommentsForDefaultEntry';
+    return '@getAllTasksForDefaultEntry';
   },
   willReturnSeveral() {
     cy.addInteraction({
       provider: PROVIDER,
       state: States.SEVERAL,
       uponReceiving: GET_TASK_LIST,
-      withRequest: getEntryCommentsAndTasksRequest,
+      withRequest: getEntryTasksRequest,
       willRespondWith: {
         status: 200,
         body: severalTasksDefinition
       }
-    }).as('getAllCommentsForDefaultEntry');
+    }).as('getAllTasksForDefaultEntry');
 
-    return '@getAllCommentsForDefaultEntry';
+    return '@getAllTasksForDefaultEntry';
   },
   willFailWithAnInternalServerError() {
     cy.addInteraction({
       provider: PROVIDER,
       state: States.INTERNAL_SERVER_ERROR,
       uponReceiving: GET_TASK_LIST,
-      withRequest: getEntryCommentsAndTasksRequest,
+      withRequest: getEntryTasksRequest,
       willRespondWith: {
         status: 500,
         body: serverError
       }
-    }).as('getAllCommentsForDefaultEntry');
+    }).as('getAllTasksForDefaultEntry');
 
-    return '@getAllCommentsForDefaultEntry';
+    return '@getAllTasksForDefaultEntry';
   }
 }
 
-export function createTask({ title, assigneeId }) {
+export function createTask({ body, assigneeId }) {
   const alias = `createTask-for-${assigneeId}`;
   const newTask = {
-    body: title,
-    assignment: {
-      assignedTo: {
-        sys: {
-          type: 'Link',
-          linkType: 'User',
-          id: assigneeId,
-        }
-      },
-      status: 'open'
-    }
+    body,
+    assignedTo: {
+      sys: {
+        type: 'Link',
+        linkType: 'User',
+        id: assigneeId,
+      }
+    },
+    status: 'open'
   };
   const interactionRequestInfo = {
     provider: PROVIDER,
@@ -160,19 +161,17 @@ function updateTask(taskId: string, alias: string, change: string) {
   const taskDefinition = getSeveralTasksTaskDefinitionById(taskId);
 
   return function (update: TaskUpdate, ) {
-    const { title, assigneeId, status } = update;
+    const { body, assigneeId, status } = update;
     const updatedTask = {
-      body: title || taskDefinition.body,
-      assignment: {
-        assignedTo: {
-          sys: {
-            type: 'Link',
-            linkType: 'User',
-            id: assigneeId || taskDefinition.assignment.assignedTo.sys.id,
-          }
-        },
-        status: status || taskDefinition.assignment.status
-      }
+      body: body || taskDefinition.body,
+      assignedTo: {
+        sys: {
+          type: 'Link',
+          linkType: 'User',
+          id: assigneeId || taskDefinition.assignedTo.sys.id,
+        }
+      },
+      status: status || taskDefinition.status
     };
 
     const interactionRequestInfo = {
@@ -228,6 +227,6 @@ function updateTask(taskId: string, alias: string, change: string) {
   }
 }
 
-export const updateTaskTitleAndAssignee = updateTask('taskId1', 'changeTaskId1TitleAndReassignUser', 'change title and assignee');
+export const updateTaskBodyAndAssignee = updateTask('taskId1', 'changeTaskId1BodyAndReassignUser', 'change body and assignee');
 export const resolveTask = updateTask('taskId1', 'resolveTaskId1', 'set status to "done"');
 export const reopenTask = updateTask('taskId2', 'reopenTaskId2', 'set "done" task back to "open"');

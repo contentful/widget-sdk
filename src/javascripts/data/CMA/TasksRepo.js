@@ -71,8 +71,10 @@ export async function remove(endpoint, entryId, taskId) {
  * @returns {Promise<API.Task>}
  */
 export async function update(endpoint, entryId, task, isPrePreview) {
-  const { sys, body, assignedTo, status } = task;
-  const data = isPrePreview ? { body, assignment: { assignedTo, status } } : task;
+  const { sys, body, assignedTo, status: uiStatus } = task;
+  const status = isPrePreview && uiStatus === 'active' ? 'open' : uiStatus;
+  const assignment = { assignedTo, status };
+  const data = isPrePreview ? { body, assignment } : { body, ...assignment };
   const headers = {
     'X-Contentful-Version': sys.version,
     ...alphaHeader

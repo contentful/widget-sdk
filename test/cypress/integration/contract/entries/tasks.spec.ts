@@ -1,12 +1,13 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import { queryFirst100UsersInDefaultSpace } from '../../../interactions/users';
 import {
+  NewTask,
   TaskUpdate,
   TaskStates,
   PROVIDER as TASKS_PROVIDER,
-  getAllCommentsForDefaultEntry,
+  getAllTasksForDefaultEntry,
   createTask,
-  updateTaskTitleAndAssignee,
+  updateTaskBodyAndAssignee,
   resolveTask,
   reopenTask
 } from '../../../interactions/tasks';
@@ -73,7 +74,7 @@ describe('Tasks entry editor sidebar', () => {
 
   context('tasks service error', () => {
     beforeEach(() => {
-      const interaction = getAllCommentsForDefaultEntry.willFailWithAnInternalServerError();
+      const interaction = getAllTasksForDefaultEntry.willFailWithAnInternalServerError();
 
       visitEntry();
 
@@ -87,7 +88,7 @@ describe('Tasks entry editor sidebar', () => {
 
   context('no tasks on the entry', () => {
     beforeEach(() => {
-      const interaction = getAllCommentsForDefaultEntry.willReturnNone();
+      const interaction = getAllTasksForDefaultEntry.willReturnNone();
 
       visitEntry();
 
@@ -102,7 +103,7 @@ describe('Tasks entry editor sidebar', () => {
 
   context('several tasks on the entry', () => {
     beforeEach(() => {
-      const interaction = getAllCommentsForDefaultEntry.willReturnSeveral();
+      const interaction = getAllTasksForDefaultEntry.willReturnSeveral();
 
       visitEntry();
 
@@ -112,18 +113,18 @@ describe('Tasks entry editor sidebar', () => {
     it('renders list of tasks', () => {
       getTasks().should('have.length', 3);
 
-      severalTasks.items.forEach(({ assignment: { status } }, i: number) => {
-        expectTask(getTasks().eq(i), { isResolved: status === 'resolved' });
+      severalTasks.items.forEach(({ status }, i: number) => {
+        expectTask(getTasks().eq(i), { isResolved: status === TaskStates.RESOLVED });
       })
     });
 
     describe('updating a task', () => {
-      it('changes task title and assignee without error', () => {
+      it('changes task body and assignee without error', () => {
         const taskUpdate: TaskUpdate = {
-          title: 'Updated task body!',
+          body: 'Updated task body!',
           assigneeId: users.items[1].sys.id
         }
-        const interaction = updateTaskTitleAndAssignee(taskUpdate).willSucceed();
+        const interaction = updateTaskBodyAndAssignee(taskUpdate).willSucceed();
 
         updateTaskAndSave(getTasks().first(), taskUpdate);
 
@@ -187,13 +188,13 @@ describe('Tasks entry editor sidebar', () => {
           .get('[data-test-id="edit-task"]');
       }
 
-      function updateTaskAndSave(task: Cypress.Chainable, { title, assigneeId }: TaskUpdate) {
+      function updateTaskAndSave(task: Cypress.Chainable, { body, assigneeId }: TaskUpdate) {
         getEditTaskKebabMenuItem(task).click();
-        if (title) {
+        if (body) {
           getTaskBodyTextarea(task)
             .should('have.text', severalTasks.items[0].body)
             .clear()
-            .type(title);
+            .type(body);
         }
         if (assigneeId) {
           selectTaskAssignee(assigneeId);
@@ -204,18 +205,21 @@ describe('Tasks entry editor sidebar', () => {
   });
 
   describe('creating a new task', () => {
-    const newTaskData = { title: 'Great new task!', assigneeId: 'userID' };
+    const newTaskData: NewTask = {
+      body: 'Great new task!',
+      assigneeId: 'userID'
+    };
 
-    let getAllCommentsInteraction: string
+    let getAllTasksInteraction: string
     beforeEach(() => {
-      getAllCommentsInteraction = getAllCommentsForDefaultEntry.willReturnNone();
+      getAllTasksInteraction = getAllTasksForDefaultEntry.willReturnNone();
     });
 
     context('task creation error', () => {
       beforeEach(() => {
         visitEntry();
 
-        cy.wait(getAllCommentsInteraction);
+        cy.wait(getAllTasksInteraction);
       });
 
       it('creates task on API and adds it to task list', () => {
@@ -236,7 +240,7 @@ describe('Tasks entry editor sidebar', () => {
       beforeEach(() => {
         visitEntry();
 
-        cy.wait(getAllCommentsInteraction);
+        cy.wait(getAllTasksInteraction);
       });
 
       it('creates task on API and adds it to task list', () => {
@@ -251,7 +255,7 @@ describe('Tasks entry editor sidebar', () => {
       });
     });
 
-    function createNewTaskAndSave({ title, assigneeId }) {
+    function createNewTaskAndSave({ body, assigneeId }) {
       getCreateTaskAction()
         .should('be.enabled')
         .click();
@@ -259,8 +263,8 @@ describe('Tasks entry editor sidebar', () => {
         .should('have.length', 1)
         .should('be.visible');
       getDraftTaskInput()
-        .type(title)
-        .should('have.value', title);
+        .type(body)
+        .should('have.value', body);
       getDraftAssigneeSelector().select(assigneeId);
       getDraftTaskSaveAction().click();
     }

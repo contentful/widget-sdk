@@ -4,20 +4,17 @@
   "items": [
     {
       "body": "Translate all the things",
-      "assignment": {
-        "assignedTo": {
-          "sys": {
-            "type": "Link",
-            "linkType": "User",
-            "id": "userID"
-          }
-        },
-        "status": "open"
+      "assignedTo": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "userID"
+        }
       },
+      "status": "open",
       "sys": {
         "id": "taskId1",
         "type": "Task",
-        "commentType": "Entry",
         "space": {
           "sys": {
             "type": "Link",
@@ -25,7 +22,7 @@
             "id": "fuuami4adicz"
           }
         },
-        "reference": {
+        "parentEntity": {
           "sys": {
             "type": "Link",
             "linkType": "Entry",
@@ -53,20 +50,17 @@
     },
     {
       "body": "Walk the dog",
-      "assignment": {
-        "assignedTo": {
-          "sys": {
-            "type": "Link",
-            "linkType": "User",
-            "id": "userID"
-          }
-        },
-        "status": "resolved"
+      "assignedTo": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "userID"
+        }
       },
+      "status": "resolved",
       "sys": {
         "id": "taskId2",
         "type": "Task",
-        "commentType": "Entry",
         "space": {
           "sys": {
             "type": "Link",
@@ -74,7 +68,7 @@
             "id": "fuuami4adicz"
           }
         },
-        "reference": {
+        "parentEntity": {
           "sys": {
             "type": "Link",
             "linkType": "Entry",
@@ -102,20 +96,17 @@
     },
     {
       "body": "Do something else!",
-      "assignment": {
-        "assignedTo": {
-          "sys": {
-            "type": "Link",
-            "linkType": "User",
-            "id": "userID"
-          }
-        },
-        "status": "open"
+      "assignedTo": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "userID"
+        }
       },
+      "status": "open",
       "sys": {
         "id": "taskId3",
         "type": "Task",
-        "commentType": "Entry",
         "space": {
           "sys": {
             "type": "Link",
@@ -123,7 +114,7 @@
             "id": "fuuami4adicz"
           }
         },
-        "reference": {
+        "parentEntity": {
           "sys": {
             "type": "Link",
             "linkType": "Entry",
@@ -152,6 +143,5 @@
   ],
   "sys": {
     "type": "Array"
-  },
-  "isPrePreview": true
+  }
 }
