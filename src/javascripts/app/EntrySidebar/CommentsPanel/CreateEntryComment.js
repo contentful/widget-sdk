@@ -92,6 +92,7 @@ export default function CreateEntryComment({
         disabled={isLoading}
         testId="comments.form.textarea"
         placeholder={placeholder}
+        maxLength={512}
       />
       {active && error && (
         <ValidationMessage className={styles.validationMessage}>{error.message}</ValidationMessage>
