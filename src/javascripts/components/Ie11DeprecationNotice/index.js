@@ -34,7 +34,7 @@ function DeprecationNotice() {
           buttonType="secondary"
           onClick={() => setIsVisible(false)}
         />
-        {`Your current browser "Internet Explorer 11" is no longer supported for more information `}
+        {`Support for your current browser "Internet Explorer 11" will be discontinued as of January 2020. For more information `}
         <TextLink
           href="//www.contentful.com/faq/about-contentful/#which-browsers-does-contentful-support"
           target="_blank">
