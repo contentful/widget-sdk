@@ -28,17 +28,6 @@ describe('ResourceService', () => {
       expect(createOrganizationEndpoint).toHaveBeenCalledTimes(1);
     });
 
-    it('should return the expected object definition', () => {
-      const service = createResourceService('space_1234');
-
-      expect(service).toHaveProperty('get');
-      expect(service).toHaveProperty('getAll');
-      expect(service).toHaveProperty('canCreate');
-      expect(service).toHaveProperty('messagesFor');
-      expect(service).toHaveProperty('messages');
-      expect(service).toHaveProperty('canCreateEnvironmentResources');
-    });
-
     it('should optionally take and use the environment ID', () => {
       createResourceService('space_1234', 'space', 'env_1234');
 
@@ -205,15 +194,13 @@ describe('ResourceService', () => {
 
     describe('messages', () => {
       it('should get all resources and return an object of mapped messages from the generateMessage utility', async () => {
-        mockEndpoint
-          .mockReset()
-          .mockResolvedValueOnce({
-            items: [
-              { sys: { id: 'resource_a' } },
-              { sys: { id: 'resource_b' } },
-              { sys: { id: 'resource_c' } }
-            ]
-          });
+        mockEndpoint.mockReset().mockResolvedValueOnce({
+          items: [
+            { sys: { id: 'resource_a' } },
+            { sys: { id: 'resource_b' } },
+            { sys: { id: 'resource_c' } }
+          ]
+        });
 
         generateMessage.mockReturnValue('a message');
 
