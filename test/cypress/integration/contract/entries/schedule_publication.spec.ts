@@ -14,7 +14,8 @@ import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 import {
   createScheduledPublicationForDefaultSpace,
   cancelDefaultJobInDefaultSpace,
-  queryAllScheduledJobsForDefaultEntry
+  queryAllScheduledJobsForDefaultEntry,
+  queryPendingJobsForDefaultSpace
 } from '../../../interactions/jobs';
 import { FeatureFlag } from '../../../util/featureFlag';
 
@@ -28,6 +29,7 @@ describe('Schedule Publication', () => {
   describe('scheduling a publication', () => {
     beforeEach(() => {
       interactions.push(queryAllScheduledJobsForDefaultEntry.willFindNone());
+
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
       cy.wait(interactions, { timeout: 10000 });
     });
@@ -150,6 +152,7 @@ function basicServerSetUp(): string[] {
     getDefaultEntry.willReturnIt(),
     queryLinksToDefaultEntry.willReturnNone(),
     getFirst7SnapshotsOfDefaultEntry.willReturnNone(),
-    getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar()
+    getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
+    queryPendingJobsForDefaultSpace.willFindNone()
   ];
 }
