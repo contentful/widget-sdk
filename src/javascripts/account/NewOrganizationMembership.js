@@ -1,5 +1,5 @@
 /* eslint "rulesdir/restrict-inline-styles": "warn" */
-import { omit, pick, negate, trim, sortedUniq, isObject, get } from 'lodash';
+import { omit, pick, negate, trim, sortedUniq, isObject } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { assign } from 'utils/Collections';
@@ -29,6 +29,7 @@ import {
   SuccessMessage
 } from 'account/NewOrganizationMembershipTemplate';
 import createResourceService from 'services/ResourceService';
+import { getResourceLimits } from 'utils/ResourceUtils';
 import { getStore } from 'TheStore';
 
 // Start: For Next Steps for a TEA space (a space created using the example space template)
@@ -393,7 +394,7 @@ export default function($scope) {
 
     const resourceService = createResourceService(orgId, 'organization');
     const orgMembershipResource = yield resourceService.get('organization_membership');
-    const membershipLimit = get(orgMembershipResource, 'limits.maximum');
+    const membershipLimit = getResourceLimits(orgMembershipResource).maximum;
 
     // We cannot rely on usage data from organization (token) since the cache
     // is not invalidated on user creation.

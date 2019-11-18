@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import { get } from 'lodash';
 
 import { showDialog as showUpgradeSpaceDialog } from 'services/ChangeSpaceService';
+import { getResourceLimits } from 'utils/ResourceUtils';
 
 import createResourceService from 'services/ResourceService';
 import { TextLink } from '@contentful/forma-36-react-components';
@@ -49,7 +50,7 @@ export default function RecordsResourceUsage({
   }
 
   const usage = get(resource, 'usage');
-  const limit = get(resource, 'limits.maximum');
+  const limit = getResourceLimits(resource).maximum;
 
   const warnThreshold = 0.9;
   const errorThreshold = 0.95;
