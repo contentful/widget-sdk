@@ -67,6 +67,7 @@ export default function register() {
 
       this.space = getBatchingApiClient(spaceContext.cma);
       this.entityHelpers = EntityHelpers.newForLocale(locale.code);
+      this.jobs = $scope.jobsStore;
 
       // This interface is not exposed on the Extensions SDK. It serves for
       // internal convenience. Everything that uses these values can be

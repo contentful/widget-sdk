@@ -1,12 +1,9 @@
-import * as logger from 'services/logger';
 import openHyperlinkDialog from 'app/widgets/WidgetApi/dialogs/openHyperlinkDialog';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 import { getModule } from 'NgRegistry';
 import { goToSlideInEntity } from 'navigation/SlideInNavigator';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import * as entitySelector from 'search/EntitySelector/entitySelector';
-import * as JobsService from 'app/jobs/DataManagement/JobsService';
-import { createSpaceEndpoint } from 'data/EndpointFactory';
 
 /**
  * @deprecated  Use and extend the new `app/widgets/NewWidgetApi/createNewWidgetApi.js` instead.
@@ -24,7 +21,7 @@ import { createSpaceEndpoint } from 'data/EndpointFactory';
  * @param {string} currentUrl
  * @returns {Object}
  */
-export default function buildWidgetApi({ field, entry, currentUrl, settings }) {
+export default function buildWidgetApi({ field, entry, currentUrl, settings, jobs }) {
   const spaceContext = getModule('spaceContext');
 
   const { entry: canAccessEntries, asset: canAccessAssets } = getSectionVisibility();
@@ -33,29 +30,7 @@ export default function buildWidgetApi({ field, entry, currentUrl, settings }) {
     field,
     entry,
     space: getBatchingApiClient(spaceContext.cma),
-    jobs: {
-      getPendingJobs: async () => {
-        let jobs = [];
-        try {
-          const spaceEndpoint = createSpaceEndpoint(
-            spaceContext.space.data.sys.id,
-            spaceContext.space.environment.sys.id
-          );
-          const jobsCollection = await JobsService.getJobs(spaceEndpoint, {
-            order: 'sys.scheduledAt',
-            'sys.status': 'pending'
-          });
-          jobs = jobsCollection;
-        } catch (err) {
-          logger.logError('Failed to fetch pending jobs for reference card', {
-            err
-          });
-          return [];
-        }
-
-        return jobs.items;
-      }
-    },
+    jobs,
     dialogs: {
       /**
        * TODO: Add to ui-extensions-sdk when open sourcing the RichText widget.
