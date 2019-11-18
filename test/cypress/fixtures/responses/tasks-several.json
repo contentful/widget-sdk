@@ -11,7 +11,7 @@
           "id": "userID"
         }
       },
-      "status": "open",
+      "status": "active",
       "sys": {
         "id": "taskId1",
         "type": "Task",
@@ -103,7 +103,7 @@
           "id": "userID"
         }
       },
-      "status": "open",
+      "status": "active",
       "sys": {
         "id": "taskId3",
         "type": "Task",

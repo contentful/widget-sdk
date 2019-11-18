@@ -29,6 +29,8 @@ export function transformTask(task) {
   delete task.sys.commentType;
   delete task.sys.reference;
 
+  task.status = task.status === 'open' ? 'active' : task.status;
+
   return task;
 }
 

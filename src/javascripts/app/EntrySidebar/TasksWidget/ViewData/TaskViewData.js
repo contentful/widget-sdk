@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { memoize } from 'lodash';
-import { isOpenTask } from '../util';
+import { TaskStatus } from 'data/CMA/TasksRepo';
 import {
   UserSelectorViewData,
   createSpaceUserSelectorViewData,
@@ -42,7 +42,7 @@ const DRAFT_TASK = {
   },
   body: '',
   assignedTo: null,
-  status: 'open'
+  status: TaskStatus.ACTIVE
 };
 
 /**
@@ -132,7 +132,7 @@ function createTaskViewData(task, usersFetchingStatus) {
     creator,
     assignee,
     body: task.body,
-    isDone: task.status === 'resolved',
+    isDone: task.status === TaskStatus.RESOLVED,
     isDraft: id === DRAFT_TASK_KEY,
     isInEditMode: false,
     canEdit: false,
@@ -171,5 +171,5 @@ function getPendingTasksMessage(tasks) {
 }
 
 function getPendingTasksCount(tasks) {
-  return tasks.filter(isOpenTask).length;
+  return tasks.filter(({ status }) => status === TaskStatus.ACTIVE).length;
 }

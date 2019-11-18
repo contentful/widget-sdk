@@ -24,7 +24,7 @@ export enum States {
 }
 
 export enum TaskStates {
-  OPEN = 'open',
+  ACTIVE = 'active',
   RESOLVED = 'resolved',
 }
 
@@ -110,7 +110,7 @@ export function createTask({ body, assigneeId }) {
         id: assigneeId,
       }
     },
-    status: 'open'
+    status: TaskStates.ACTIVE
   };
   const interactionRequestInfo = {
     provider: PROVIDER,
@@ -193,21 +193,28 @@ function updateTask(taskId: string, alias: string, change: string) {
       willSucceed() {
         const { sys: newTaskSysDefinition } = severalTasksDefinition.items.find((task: any) =>
           task.sys.id.getValue() === taskId)
+
         cy.addInteraction({
           ...interactionRequestInfo,
           state: States.SEVERAL,
           willRespondWith: {
             status: 200,
             body: {
+              ...updatedTask,
               sys: {
                 ...newTaskSysDefinition,
                 version: newTaskSysDefinition.version + 1
               },
-              ...updatedTask
             }
           }
         }).as(alias);
-
+        console.log({
+          hello: "hello!",
+          sys: {
+            ...newTaskSysDefinition,
+            version: newTaskSysDefinition.version + 1
+          }
+        })
         return `@${alias}`;
       },
       // TODO: Add a test actually using this or remove.
@@ -228,5 +235,5 @@ function updateTask(taskId: string, alias: string, change: string) {
 }
 
 export const updateTaskBodyAndAssignee = updateTask('taskId1', 'changeTaskId1BodyAndReassignUser', 'change body and assignee');
-export const resolveTask = updateTask('taskId1', 'resolveTaskId1', 'set status to "done"');
-export const reopenTask = updateTask('taskId2', 'reopenTaskId2', 'set "done" task back to "open"');
+export const resolveTask = updateTask('taskId1', 'resolveTaskId1', `set status to "${TaskStates.RESOLVED}"`);
+export const reopenTask = updateTask('taskId2', 'reopenTaskId2', `set "${TaskStates.RESOLVED}" task back to "${TaskStates.ACTIVE}"`);

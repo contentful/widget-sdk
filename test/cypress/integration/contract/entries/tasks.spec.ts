@@ -119,7 +119,7 @@ describe('Tasks entry editor sidebar', () => {
     });
 
     describe('updating a task', () => {
-      it('changes task body and assignee without error', () => {
+      it.only('changes task body and assignee without error', () => {
         const taskUpdate: TaskUpdate = {
           body: 'Updated task body!',
           assigneeId: users.items[1].sys.id
@@ -164,7 +164,7 @@ describe('Tasks entry editor sidebar', () => {
 
       it('reopens tasks without error', () => {
         const taskUpdate: TaskUpdate = {
-          status: TaskStates.OPEN
+          status: TaskStates.ACTIVE
         }
         const interaction = reopenTask(taskUpdate).willSucceed();
 

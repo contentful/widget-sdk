@@ -5,6 +5,11 @@ const alphaHeader = getAlphaHeader(COMMENTS_API);
 
 const path = (entryId, taskId) => ['entries', entryId, 'tasks', ...(taskId ? [taskId] : [])];
 
+export const TaskStatus = {
+  ACTIVE: 'active',
+  RESOLVED: 'resolved'
+};
+
 /**
  * Creates a new task on a specific entry.
  *
@@ -15,7 +20,8 @@ const path = (entryId, taskId) => ['entries', entryId, 'tasks', ...(taskId ? [ta
  * @returns {Promise<API.Task>}
  */
 export async function create(endpoint, entryId, task, isPrePreview) {
-  const { body, assignedTo, status } = task;
+  const { body, assignedTo, status: uiStatus } = task;
+  const status = isPrePreview && uiStatus === TaskStatus.ACTIVE ? 'open' : uiStatus;
   const data = isPrePreview ? { body, assignment: { assignedTo, status } } : task;
   return endpoint(
     {
@@ -72,7 +78,7 @@ export async function remove(endpoint, entryId, taskId) {
  */
 export async function update(endpoint, entryId, task, isPrePreview) {
   const { sys, body, assignedTo, status: uiStatus } = task;
-  const status = isPrePreview && uiStatus === 'active' ? 'open' : uiStatus;
+  const status = isPrePreview && uiStatus === TaskStatus.ACTIVE ? 'open' : uiStatus;
   const assignment = { assignedTo, status };
   const data = isPrePreview ? { body, assignment } : { body, ...assignment };
   const headers = {

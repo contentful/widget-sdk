@@ -8,10 +8,11 @@ import * as FeatureFlagKey from 'featureFlags';
 import { createTaskListViewData } from './ViewData/TaskViewData';
 import { createTasksStoreForEntry } from './TasksStore';
 import { createTasksStoreInteractor } from './TasksInteractor';
+import { TaskStatus } from 'data/CMA/TasksRepo';
 import createTaskPermissionChecker, {
   createProhibitive as createProhibitiveTaskPermissionChecker
 } from './TaskPermissionChecker';
-import { isOpenTask, onStoreFetchingStatusChange, onPromiseFetchingStatusChange } from './util';
+import { onStoreFetchingStatusChange, onPromiseFetchingStatusChange } from './util';
 import TaskList from './View/TaskList';
 import { trackIsTasksAlphaEligible } from './analytics';
 import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
@@ -89,7 +90,7 @@ export class TasksWidgetContainer extends Component {
   handleTasksFetchingUpdate = ({ data: tasks }) => {
     const { emitter } = this.props;
     if (tasks) {
-      const openTasksCount = tasks.filter(isOpenTask).length;
+      const openTasksCount = tasks.filter(({ status }) => status === TaskStatus.ACTIVE).length;
       emitter.emit(SidebarEventTypes.SET_PUBLICATION_BLOCKING, {
         openTasks: openTasksCount > 0 ? buildPublicationBlockingWarning(openTasksCount) : false
       });
