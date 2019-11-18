@@ -1,10 +1,12 @@
 import _ from 'lodash';
 import * as ChangeSpaceService from 'services/ChangeSpaceService';
-import * as Enforcements from 'access_control/Enforcements';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
 import LocalesListRoute from 'app/settings/locales/routes/LocalesListRoute';
 import LocalesNewRoute from 'app/settings/locales/routes/LocalesNewRoute';
 import LocalesEditRoute from 'app/settings/locales/routes/LocalesEditRoute';
+
+import createResourceService from 'services/ResourceService';
+import { generateMessage } from 'utils/ResourceUtils';
 
 export default {
   name: 'locales',
@@ -15,9 +17,26 @@ export default {
       name: 'list',
       url: '',
       component: LocalesListRoute,
+      resolve: {
+        localeResource: [
+          '$stateParams',
+          async $stateParams => {
+            /*
+              The locales page already fetches the resource as part of its initial requests. We should remove
+              this functionality from here and just keep it in the actual view.
+             */
+            const { spaceId } = $stateParams;
+
+            const resources = createResourceService(spaceId);
+
+            return resources.get('locale');
+          }
+        ]
+      },
       mapInjectedToProps: [
         'spaceContext',
-        spaceContext => ({
+        'localeResource',
+        (spaceContext, localeResource) => ({
           showUpgradeSpaceDialog: ({ onSubmit }) => {
             ChangeSpaceService.showDialog({
               organizationId: spaceContext.organization.sys.id,
@@ -28,7 +47,15 @@ export default {
             });
           },
           getComputeLocalesUsageForOrganization: () => {
-            return Enforcements.computeUsageForOrganization(spaceContext.organization, 'locale');
+            /*
+              The expectation of this function is a bit strange as it returns either a string or null, as it is the
+              result of some legacy code. This should be refactored to be more clear in its intention.
+             */
+            if (generateMessage(localeResource).error) {
+              return generateMessage(localeResource).error;
+            } else {
+              return null;
+            }
           }
         })
       ]

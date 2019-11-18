@@ -147,7 +147,6 @@ export const getSectionVisibility = () => sectionVisibility;
  */
 export const canEditFieldLocale = policyChecker.canEditFieldLocale;
 
-export const getUserQuota = wrapGKMethod('getUserQuota');
 export const canModifyRoles = wrapGKMethod('canModifyRoles');
 export const canModifyUsers = wrapGKMethod('canModifyUsers');
 export const canCreateOrganization = wrapGKMethod('canCreateOrganization');

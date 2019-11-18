@@ -1,7 +1,7 @@
 import { uncapitalize } from 'utils/StringUtils';
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import { go } from 'states/Navigator';
-import { get, merge, findKey, forEach } from 'lodash';
+import { get, forEach } from 'lodash';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { supportUrl } from 'Config';
 import * as Analytics from 'analytics/Analytics';
@@ -130,24 +130,6 @@ export function determineEnforcement(space, reasons, entityType) {
       params: { orgId: organization.sys.id }
     });
   }
-}
-
-export function computeUsageForOrganization(organization, filter) {
-  if (!organization) return;
-
-  if (filter) filter = uncapitalize(filter);
-  const usage = merge(organization.usage.permanent, organization.usage.period);
-  const limits = merge(
-    organization.subscriptionPlan.limits.permanent,
-    organization.subscriptionPlan.limits.period
-  );
-
-  const metricKey = findKey(
-    usage,
-    (value, name) => (!filter || filter === name) && value >= limits[name]
-  );
-
-  return metricKey ? getMetricMessage(metricKey) : undefined;
 }
 
 function getMetricMessage(metricKey) {
