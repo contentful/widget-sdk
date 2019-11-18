@@ -55,18 +55,6 @@ export default function register() {
     };
   });
 
-  registerDirective('cfMarkdownHeadingAction', () => ({
-    restrict: 'E',
-
-    scope: {
-      actions: '=',
-      isDisabled: '=',
-      mode: '@'
-    },
-
-    template: JST['cf_markdown_heading_action']()
-  }));
-
   registerDirective('cfMarkdownInsertMediaAction', [
     () => ({
       restrict: 'E',

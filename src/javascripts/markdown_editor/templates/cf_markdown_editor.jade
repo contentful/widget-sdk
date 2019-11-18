@@ -17,7 +17,10 @@ div(ng-if="hasCrashed")
 
   .markdown-toolbar
     .markdown-actions
-      cf-markdown-heading-action(actions="actions" is-disabled="!canEdit()")
+      react-component(
+        name="markdown_editor/components/HeadingContextMenu"
+        props="{actions: actions, isDisabled: !canEdit()}"
+      )
 
       cf-markdown-action(actions="actions" name="bold"   is-disabled="!canEdit()")
       cf-markdown-action(actions="actions" name="italic" is-disabled="!canEdit()")
