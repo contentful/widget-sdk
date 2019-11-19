@@ -63,7 +63,6 @@ export const angularInitRun = [
       import('app/widgets/shared/cfEditorCharacterInfoDirective'),
       import('app/widgets/slug/cfSlugEditorDirective'),
       import('components/CreateEntryButton/buttonDirective'),
-      import('services/activationEmailResender'),
       import('components/client/activationEmailResendController'),
       import('components/client/dialogsInitController'),
       import('components/field_dialog/cfValidationDateSelectDirective'),

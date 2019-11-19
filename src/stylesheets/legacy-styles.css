@@ -4969,21 +4969,6 @@ pre,
   .persistent-notification__icon svg > path {
     fill: #fff;
   }
-  .activation-email-resend-dialog {
-    max-width: 42em;
-  }
-  .activation-email-resend-dialog__intro {
-    font-weight: bold;
-  }
-  .activation-email-resend-dialog__resend-btn:disabled {
-    background-color: transparent;
-    color: #8091a5;
-    cursor: default;
-  }
-  .activation-email-resend-dialog__error {
-    margin-bottom: 0 !important;
-    color: #f05751;
-  }
   .user-space-invitation-dialog {
     width: 66vw;
     max-width: 720px;

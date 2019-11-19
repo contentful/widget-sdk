@@ -165,8 +165,6 @@ function determineDependencies(p) {
         const { callee, arguments: args } = node;
 
         // Ignore all non-string calls to these functions.
-        //
-        // E.g. allow `require('myModule.es6')` and reject `require(module)`
         if (!args[0] || args[0].type !== 'StringLiteral') {
           return;
         }

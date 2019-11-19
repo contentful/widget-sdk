@@ -12,7 +12,7 @@ module.exports = function findGetModule({ src, ast }) {
         enter(path) {
           if (path.node.type === 'ImportDeclaration') {
             const { source } = path.node;
-            if (source && source.value && source.value === 'NgRegistry.es6') {
+            if (source && source.value && source.value === 'NgRegistry') {
               (path.node.specifiers || []).forEach(item => {
                 if (item.type === 'ImportSpecifier') {
                   usedModules.push(item.imported.name);

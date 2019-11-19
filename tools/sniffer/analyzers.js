@@ -32,9 +32,7 @@ module.exports = function(node, src) {
       _.flatMap(fns, fn => {
         return fn(fnParams);
       })
-    )
-      // remove .es6 from all module names
-      .map(name => name.replace('.es6', ''));
+    );
 
     return modules;
   }

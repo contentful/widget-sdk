@@ -1,17 +1,19 @@
 import { registerFactory } from 'NgRegistry';
 import _ from 'lodash';
 import moment from 'moment';
+import {
+  openActivationEmailResendDialog,
+  openConfirmationEmailSentDialog
+} from './ActivationEmailResendDialog';
+import { resendActivationEmail } from './activationEmailResender';
 
 import { getStore } from 'TheStore';
 import * as TokenStore from 'services/TokenStore';
 
 export default function register() {
   registerFactory('activationEmailResendController', [
-    '$q',
     '$timeout',
-    'modalDialog', // { resend: resendActivationEmail }
-    'activationEmailResender',
-    ($q, $timeout, modalDialog, { resend: resendActivationEmail }) => {
+    $timeout => {
       const HOUR_IN_MS = 1000 * 60 * 60;
       const HOURS_BEFORE_REOPEN_DIALOG = 24;
       const store = getStore().forKey('lastActivationEmailResendReminderTimestamp');
@@ -38,54 +40,22 @@ export default function register() {
         }
       }
 
-      function showDialog(email) {
-        const dialog = modalDialog.open({
-          title: 'Please confirm your email address',
-          template: 'activation_email_resend_dialog',
-          persistOnNavigation: true,
-          confirmLabel: 'OK, I got it',
-          cancelLabel: false,
-          scopeData: {
-            isSending: false,
-            wasUnableToSend: false,
-            resendEmail: resendEmail
+      async function showDialog(email) {
+        const result = await openActivationEmailResendDialog({
+          doResendEmail: () => {
+            return resendActivationEmailWithDelay(email, 1300);
           }
         });
-        return dialog;
-
-        function resendEmail() {
-          dialog.scope.isSending = true;
-          dialog.scope.wasUnableToSend = false;
-          resendActivationEmailWithDelay(email, 1300).then(
-            () => {
-              showResentEmailConfirmation(email);
-              dialog.confirm();
-            },
-            () => {
-              dialog.scope.isSending = false;
-              dialog.scope.wasUnableToSend = true;
-            }
-          );
+        if (result) {
+          await openConfirmationEmailSentDialog({ email });
         }
-      }
-
-      function showResentEmailConfirmation(email) {
-        return modalDialog.open({
-          title: 'It’s on its way!',
-          messageTemplate: 'activation_email_resend_confirmation',
-          cancelLabel: false,
-          disableTopCloseButton: true,
-          scopeData: {
-            email: email
-          }
-        });
       }
 
       function resendActivationEmailWithDelay(email, delay) {
         const delayed = $timeout(_.noop, delay);
         return resendActivationEmail(email).then(
           () => delayed,
-          () => delayed.then(() => $q.reject())
+          () => delayed.then(() => Promise.reject())
         );
       }
 

@@ -11,7 +11,7 @@ describe('analyze', () => {
     const modules = analyze(
       node,
       `
-        import { getModule, getModules, registerController, registerValue } from 'NgRegistry.es6';
+        import { getModule, getModules, registerController, registerValue } from 'NgRegistry';
         const $state = getModule('$state');
         const $timeout = getModule('$timeout');
         const SpaceMembershipRepository = getModule('access_control/SpaceMembershipRepository');
@@ -25,7 +25,7 @@ describe('analyze', () => {
           '$scope',
           'spaceContext',
           'access_control/AccessChecker',
-          'services/TokenStore.es6',
+          'services/TokenStore',
           () => {}
         ]);
 
