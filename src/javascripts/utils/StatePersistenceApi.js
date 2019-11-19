@@ -1,8 +1,7 @@
 import { createUsersEndpoint } from 'data/EndpointFactory';
+import { STATE_PERSISTENCE, getAlphaHeader } from 'alphaHeaders.js';
 
-const alphaHeaders = {
-  'x-contentful-enable-alpha-feature': 'state-persistence'
-};
+const alphaHeader = getAlphaHeader(STATE_PERSISTENCE);
 
 export async function fetchUserState(key) {
   const usersEndpoint = createUsersEndpoint();
@@ -11,7 +10,7 @@ export async function fetchUserState(key) {
       method: 'GET',
       path: ['states', key]
     },
-    alphaHeaders
+    alphaHeader
   );
 }
 
@@ -24,6 +23,6 @@ export async function updateUserState(key, { version, ...data }) {
       data,
       version
     },
-    alphaHeaders
+    alphaHeader
   );
 }
