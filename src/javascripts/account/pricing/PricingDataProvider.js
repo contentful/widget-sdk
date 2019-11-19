@@ -1,9 +1,7 @@
 import { get, uniqueId, uniq, reject } from 'lodash';
 import { getAllSpaces, getUsersByIds } from 'access_control/OrganizationMembershipRepository';
-
-const alphaHeader = {
-  'x-contentful-enable-alpha-feature': 'subscriptions-api'
-};
+import { SUBSCRIPTIONS_API, getAlphaHeader } from 'alphaHeaders.js';
+const alphaHeader = getAlphaHeader(SUBSCRIPTIONS_API);
 
 export const customerTypes = {
   selfService: ['Self-service'],
