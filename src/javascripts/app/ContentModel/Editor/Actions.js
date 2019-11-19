@@ -14,6 +14,7 @@ import ContentTypeForbiddenRemoval from './Dialogs/ContenTypeForbiddenRemoval';
 import DeleteContentTypeDialog from './Dialogs/DeleteContentTypeDialog';
 import { openDuplicateContentTypeDialog } from './Dialogs';
 import { getContentPreview } from 'services/contentPreview';
+import { createCommand } from 'utils/command/command';
 
 /**
  * @description
@@ -34,7 +35,6 @@ export default function create($scope, contentTypeIds) {
   const spaceContext = getModule('spaceContext');
   const $q = getModule('$q');
   const $state = getModule('$state');
-  const Command = getModule('command');
 
   const controller = {};
 
@@ -43,7 +43,7 @@ export default function create($scope, contentTypeIds) {
    * @name ContentTypeActionsController#delete
    * @type {Command}
    */
-  controller.delete = Command.create(startDeleteFlow, {
+  controller.delete = createCommand(startDeleteFlow, {
     available: function() {
       const deletableState =
         !$scope.context.isNew &&
@@ -179,7 +179,7 @@ export default function create($scope, contentTypeIds) {
    * @name ContentTypeActionsController#scope#cancel
    * @type {Command}
    */
-  controller.cancel = Command.create(
+  controller.cancel = createCommand(
     () =>
       // X.detail.fields -> X.list
       $state.go('^.^.list'),
@@ -195,7 +195,7 @@ export default function create($scope, contentTypeIds) {
    * @name ContentTypeActionsController#save
    * @type {Command}
    */
-  controller.save = Command.create(() => save(true), {
+  controller.save = createCommand(() => save(true), {
     disabled: function() {
       const dirty =
         $scope.context.dirty ||
@@ -311,7 +311,7 @@ export default function create($scope, contentTypeIds) {
    * @name ContentTypeActionsController#duplicate
    * @type {Command}
    */
-  controller.duplicate = Command.create(
+  controller.duplicate = createCommand(
     async () => {
       const duplicatedContentType = await openDuplicateContentTypeDialog(
         $scope.contentType,

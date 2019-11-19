@@ -4,6 +4,7 @@ import { Notification } from 'app/entity_editor/Notifications';
 
 import * as accessChecker from 'access_control/AccessChecker';
 import * as Analytics from 'analytics/Analytics';
+import { createCommand } from 'utils/command/command';
 
 export default function register() {
   registerController('EntryActionsController', [
@@ -13,16 +14,14 @@ export default function register() {
     'fields$',
     'entityInfo',
     'spaceContext',
-    // Command
-    'command',
-    function($scope, $state, notify, fields$, entityInfo, spaceContext, Command) {
+    function($scope, $state, notify, fields$, entityInfo, spaceContext) {
       const controller = this;
       let currentFields;
       K.onValueScope($scope, fields$, fields => {
         currentFields = fields;
       });
 
-      controller.toggleDisabledFields = Command.create(
+      controller.toggleDisabledFields = createCommand(
         () => {
           const show = !$scope.preferences.showDisabledFields;
           $scope.preferences.showDisabledFields = show;
@@ -48,7 +47,7 @@ export default function register() {
         }
       };
 
-      controller.add = Command.create(
+      controller.add = createCommand(
         () => {
           const contentType = getContentType(entityInfo);
           Analytics.track('entry_editor:created_with_same_ct', {
@@ -70,7 +69,7 @@ export default function register() {
         }
       );
 
-      controller.duplicate = Command.create(() => {
+      controller.duplicate = createCommand(() => {
         const contentType = getContentType(entityInfo);
         return spaceContext.space
           .createEntry(contentType.id, {

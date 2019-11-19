@@ -48,10 +48,11 @@ const angular = node => {
     '$interval',
     'modalDialog',
     'logger',
-    'command',
     'spaceContext',
     'cf-context-menu-trigger',
-    'cf-context-menu'
+    'cf-context-menu',
+    'ui-command',
+    'ui-command-state'
   ];
   const intersection = _.intersectionWith(modules, attributes, _.isEqual);
   return intersection.length > 0 ? intersection : false;
@@ -123,6 +124,7 @@ const needsRefactoring = node => {
     'ui/Framework/Store',
     'utils/ngCompat/window',
     'cf-component-bridge',
+    'utils/command/command',
     'enzyme',
     'sinon'
   ];

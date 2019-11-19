@@ -6,6 +6,7 @@ import * as versionPicker from 'app/snapshots/VersionPicker';
 import * as trackVersioning from 'analytics/events/versioning';
 import TheLocaleStore from 'services/localeStore';
 import * as Entries from 'data/entries';
+import { createCommand } from 'utils/command/command';
 
 import * as Permissions from 'access_control/EntityPermissions';
 
@@ -33,8 +34,7 @@ export default function register() {
     '$state',
     '$stateParams',
     'spaceContext',
-    'command',
-    ($scope, $q, $state, $stateParams, spaceContext, Command) => {
+    ($scope, $q, $state, $stateParams, spaceContext) => {
       $scope.versionPicker = versionPicker.create();
       $scope.snapshotCount = $stateParams.snapshotCount;
 
@@ -71,7 +71,7 @@ export default function register() {
 
       $scope.goToSnapshot = goToSnapshot;
       $scope.close = close;
-      $scope.save = Command.create(_.partial(save, true), {
+      $scope.save = createCommand(_.partial(save, true), {
         disabled: function() {
           return !$scope.context.dirty;
         }

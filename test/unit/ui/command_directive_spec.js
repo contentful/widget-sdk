@@ -3,8 +3,9 @@ import { $initialize, $inject, $compile, $apply } from 'test/utils/ng';
 
 describe('uiCommand directive element', () => {
   beforeEach(async function() {
+    const commandModule = await this.system.import('utils/command/command');
+    this.createCommand = commandModule.createCommand;
     await $initialize(this.system);
-    this.createCommand = $inject('command').create;
   });
 
   it('sets the "button" role if no role given', function() {

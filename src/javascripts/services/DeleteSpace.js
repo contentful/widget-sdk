@@ -7,12 +7,12 @@ import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { openModal as openCommittedSpaceWarningDialog } from 'components/shared/space-wizard/CommittedSpaceWarningModal';
 import { getModule } from 'NgRegistry';
 import APIClient from 'data/APIClient';
+import { createCommand } from 'utils/command/command';
 import { isEnterprisePlan, isFreeSpacePlan } from 'account/pricing/PricingDataProvider';
 
 export function openDeleteSpaceDialog({ space, plan, onSuccess }) {
   const $rootScope = getModule('$rootScope');
   const modalDialog = getModule('modalDialog');
-  const Command = getModule('command');
 
   if (plan && isEnterprisePlan(plan) && !isFreeSpacePlan(plan)) {
     return openCommittedSpaceWarningDialog();
@@ -22,7 +22,7 @@ export function openDeleteSpaceDialog({ space, plan, onSuccess }) {
   const scope = extend($rootScope.$new(), {
     spaceName,
     input: { spaceName: '' },
-    remove: Command.create(
+    remove: createCommand(
       () =>
         remove(space)
           .then(() => {

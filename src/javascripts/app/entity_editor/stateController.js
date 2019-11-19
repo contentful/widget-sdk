@@ -14,6 +14,7 @@ import StateChangeConfirmationDialog from 'app/entity_editor/Components/StateCha
 import { showUnpublishedReferencesWarning } from 'app/entity_editor/UnpublishedReferencesWarning';
 import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 import * as Analytics from 'analytics/Analytics';
+import { createCommand } from 'utils/command/command';
 
 export default function register() {
   registerController('entityEditor/StateController', [
@@ -21,9 +22,8 @@ export default function register() {
     'notify',
     'validator',
     'otDoc',
-    'command',
     'spaceContext',
-    function($scope, notify, validator, otDoc, Command, spaceContext) {
+    function($scope, notify, validator, otDoc, spaceContext) {
       const controller = this;
       const permissions = otDoc.permissions;
       const reverter = otDoc.reverter;
@@ -36,9 +36,9 @@ export default function register() {
         controller.inProgress = inProgress;
       });
 
-      const noop = Command.create(() => {});
+      const noop = createCommand(() => {});
 
-      const archive = Command.create(
+      const archive = createCommand(
         () => applyActionWithConfirmation(Action.Archive()),
         {
           disabled: checkDisallowed(Action.Archive()),
@@ -51,7 +51,7 @@ export default function register() {
         }
       );
 
-      const unarchive = Command.create(
+      const unarchive = createCommand(
         () => applyAction(Action.Unarchive()),
         {
           disabled: checkDisallowed(Action.Unarchive()),
@@ -64,7 +64,7 @@ export default function register() {
         }
       );
 
-      const unpublish = Command.create(
+      const unpublish = createCommand(
         () => applyActionWithConfirmation(Action.Unpublish()),
         {
           disabled: checkDisallowed(Action.Unpublish()),
@@ -77,7 +77,7 @@ export default function register() {
         }
       );
 
-      const publishChanges = Command.create(
+      const publishChanges = createCommand(
         publishEntity,
         {
           disabled: checkDisallowed(Action.Publish()),
@@ -89,7 +89,7 @@ export default function register() {
         }
       );
 
-      const publish = Command.create(
+      const publish = createCommand(
         publishEntity,
         {
           disabled: checkDisallowed(Action.Publish()),
@@ -211,7 +211,7 @@ export default function register() {
           .catch(() => {});
       }
 
-      controller.delete = Command.create(
+      controller.delete = createCommand(
         () =>
           applyActionWithConfirmation(Action.Delete()).then(() => {
             goToPreviousSlideOrExit('delete');
@@ -230,7 +230,7 @@ export default function register() {
         }
       );
 
-      controller.revertToPrevious = Command.create(
+      controller.revertToPrevious = createCommand(
         () => {
           reverter
             .revert()

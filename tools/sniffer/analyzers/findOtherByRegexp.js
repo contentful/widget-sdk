@@ -21,5 +21,13 @@ module.exports = function findOtherByRegexp({ src }) {
     usages.push('cf-component-bridge');
   }
 
+  if (findByRegexp(src, /\b(ui-command)\b/)) {
+    usages.push('ui-command');
+  }
+
+  if (findByRegexp(src, /\b(ui-command-state)\b/)) {
+    usages.push('ui-command-state');
+  }
+
   return usages;
 };

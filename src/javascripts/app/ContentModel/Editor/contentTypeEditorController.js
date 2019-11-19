@@ -4,15 +4,12 @@ import validation from '@contentful/validation';
 import * as Analytics from 'analytics/Analytics';
 
 import { syncControls } from 'widgets/EditorInterfaceTransformer';
-import {
-  openDisallowDialog,
-  openOmitDialog,
-  openSaveDialog
-} from './FieldsTab/FieldTabDialogs';
+import { openDisallowDialog, openOmitDialog, openSaveDialog } from './FieldsTab/FieldTabDialogs';
 import { openCreateContentTypeDialog, openEditContentTypeDialog } from './Dialogs';
 import getContentTypePreview from './PreviewTab/getContentTypePreview';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
+import { createCommand } from 'utils/command/command';
 
 import createActions from 'app/ContentModel/Editor/Actions';
 import * as accessChecker from 'access_control/AccessChecker';
@@ -37,9 +34,8 @@ export default function register() {
     '$scope',
     '$state',
     'modalDialog',
-    'command',
     'openFieldDialog',
-    function ContentTypeEditorController($scope, $state, modalDialog, Command, openFieldDialog) {
+    function ContentTypeEditorController($scope, $state, modalDialog, openFieldDialog) {
       const controller = this;
 
       $scope.context.dirty = false;
@@ -185,7 +181,7 @@ export default function register() {
         $scope.$applyAsync();
       }
 
-      const showMetadataDialog = Command.create(
+      const showMetadataDialog = createCommand(
         () => {
           openEditContentTypeDialog($scope.contentType).then(result => {
             if (result) {
@@ -206,7 +202,7 @@ export default function register() {
         }
       );
 
-      const showNewFieldDialog = Command.create(
+      const showNewFieldDialog = createCommand(
         () => {
           modalDialog
             .open({

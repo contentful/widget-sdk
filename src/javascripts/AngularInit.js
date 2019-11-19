@@ -38,7 +38,7 @@ export const angularInitRun = [
       import('services/modalDialogService'),
       import('app/ContentModel/Editor/apiNameController'),
       import('app/ContentModel/Editor/cfApiNameShadowDirective'),
-      import('ui/command'),
+      import('utils/command/commandDirective'),
       import('components/field_dialog/fieldDialog'),
       import('app/ContentModel/Editor/contentTypeEditorController'),
       import('app/asset_editor/cfAssetEditorDirective'),
