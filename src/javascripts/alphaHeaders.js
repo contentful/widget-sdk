@@ -8,6 +8,7 @@ export const COMMENTS_API = 'comments-api'; // Apr 30, 2019
 export const ENVIRONMENT_ALIASING = 'environment-aliasing'; // Jul 25, 2019
 export const SCHEDULED_JOBS = 'scheduled-jobs'; // Jun 06, 2019
 export const PENDING_ORG_MEMBERSHIP = 'pending-org-membership'; // Sep 12, 2019
+export const ENTRY_VALIDATION = 'entry-validation'; // Sep 17, 2019
 export const TASKS_DASHBOARD = 'tasks-dashboard'; // Oct 23, 2019
 export const MFA_API = 'mfa-api'; // Oct 23, 2019
 
