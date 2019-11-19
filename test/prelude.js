@@ -143,17 +143,25 @@
   };
 
   /**
-   * Register a module with SystemJS
-   *
-   * If the module ID ends in 'spec' we also register this as a test module that
-   * we will load eagerly later.
+   * The registration method for SystemJS. Original window.SystemJS.register is overridden above.
    */
   function register(id, deps, run) {
+    // Add the registration to the `testRegistry` window variable, so that it can
+    // be re-registered in the isolated SystemJS
     window.testRegistry.push([id, deps, run]);
+
+    // Actually register in SystemJS
     registerInSystemJS(id, deps, run);
 
-    registerDirectoryAlias(id);
+    registerDirectoryAliases(id);
 
+    // Register the file with a .js file ending, but only if the registration does not
+    // end in .js, to prevent infinite loop
+    if (!id.endsWith('.js')) {
+      registerJsFileEndingAlias(id);
+    }
+
+    // Add these to a separate array, so that they can be imported separately above in Karma.start
     if (id.startsWith('test/unit') || id.startsWith('test/integration')) {
       testModules.push(id);
     }
@@ -170,20 +178,27 @@
     });
   }
 
+  // Register an alias for a given `moduleId`
+  function registerAlias(moduleId, alias) {
+    SystemJS.register(alias, [moduleId], $export => ({
+      setters: [$export]
+    }));
+  }
+
   /**
    * If module ID matches 'a/b/index.js' then register both 'a/b/' and 'a/b'.
    */
-  function registerDirectoryAlias(moduleId) {
+  function registerDirectoryAliases(moduleId) {
     const path = moduleId.split('/');
     const last = path.pop();
     if (last === 'index') {
-      SystemJS.register(path.join('/'), [moduleId], $export => ({
-        setters: [$export]
-      }));
-      SystemJS.register(`${path.join('/')}/`, [moduleId], $export => ({
-        setters: [$export]
-      }));
+      registerAlias(moduleId, path.join('/'));
+      registerAlias(moduleId, `${path.join('/')}/`);
     }
+  }
+
+  function registerJsFileEndingAlias(moduleId) {
+    registerAlias(moduleId, `${moduleId}.js`);
   }
 })();
 
