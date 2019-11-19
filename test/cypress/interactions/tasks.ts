@@ -2,7 +2,7 @@ import { omit } from 'lodash'
 import {
   defaultSpaceId,
   defaultEntryId,
-  defaultHeader as commonDefaultHeader
+  defaultHeader
 } from '../util/requests';
 import { RequestOptions } from '@pact-foundation/pact-web';
 const emptyWithTotal = require('../fixtures/responses/empty.json');
@@ -40,11 +40,6 @@ export interface TaskUpdate {
 }
 
 const providerState = (state: States): string => `tasks-v2/${state}`
-
-const defaultHeader = {
-  ...commonDefaultHeader,
-  'x-contentful-enable-alpha-feature': 'comments-api'
-}
 
 const getEntryTasksRequest: RequestOptions = {
   method: 'GET',
