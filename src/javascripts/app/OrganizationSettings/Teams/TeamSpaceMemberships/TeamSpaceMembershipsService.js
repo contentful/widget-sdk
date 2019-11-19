@@ -1,9 +1,10 @@
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
 import { fetchAllWithIncludes } from 'data/CMA/FetchAll';
 import getOrgId from 'redux/selectors/getOrgId';
+import { TEAMS_API, getAlphaHeader } from 'alphaHeaders.js';
 
 const BATCH_LIMIT = 100;
-const HEADERS = { 'x-contentful-enable-alpha-feature': 'teams-api' };
+const HEADERS = getAlphaHeader(TEAMS_API);
 
 export default function createTeamMembershipsService(state) {
   const orgId = getOrgId(state);

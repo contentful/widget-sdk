@@ -2,8 +2,9 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { fetchAll } from 'data/CMA/FetchAll';
 import getOrgId from 'redux/selectors/getOrgId';
 import { getCurrentTeam } from 'redux/selectors/teams';
+import { TEAMS_API, getAlphaHeader } from 'alphaHeaders.js';
 
-const ALPHA_HEADER = { 'x-contentful-enable-alpha-feature': 'teams-api' };
+const alphaHeader = getAlphaHeader(TEAMS_API);
 const BATCH_LIMIT = 100;
 
 export default function createTeamMembershipService(state) {
@@ -18,7 +19,7 @@ export default function createTeamMembershipService(state) {
   };
 
   function getAll() {
-    return fetchAll(endpoint, ['team_memberships'], BATCH_LIMIT, {}, ALPHA_HEADER);
+    return fetchAll(endpoint, ['team_memberships'], BATCH_LIMIT, {}, alphaHeader);
   }
 
   function create(organizationMembershipId, admin = false) {
@@ -28,7 +29,7 @@ export default function createTeamMembershipService(state) {
         path: ['teams', teamId, 'team_memberships'],
         data: { organizationMembershipId, admin }
       },
-      ALPHA_HEADER
+      alphaHeader
     );
   }
 
@@ -38,7 +39,7 @@ export default function createTeamMembershipService(state) {
         method: 'DELETE',
         path: ['teams', teamId, 'team_memberships', teamMembershipId]
       },
-      ALPHA_HEADER
+      alphaHeader
     );
   }
 }

@@ -2,8 +2,9 @@ import { get } from 'lodash';
 
 import { fetchAllWithIncludes } from 'data/CMA/FetchAll';
 import ResolveLinks from 'data/LinkResolver';
+import { TEAMS_API, getAlphaHeader } from 'alphaHeaders.js';
 
-const ALPHA_HEADER = { 'x-contentful-enable-alpha-feature': 'teams-api' };
+const alphaHeader = getAlphaHeader(TEAMS_API);
 const BATCH_LIMIT = 100;
 
 /**
@@ -11,7 +12,7 @@ const BATCH_LIMIT = 100;
  * @param {endpoint} endpoint organization endpoint
  */
 export async function getAllTeams(endpoint) {
-  return (await fetchAllWithIncludes(endpoint, ['teams'], BATCH_LIMIT, {}, ALPHA_HEADER)).items;
+  return (await fetchAllWithIncludes(endpoint, ['teams'], BATCH_LIMIT, {}, alphaHeader)).items;
 }
 
 export async function getAllTeamsSpaceMemberships(orgEndpoint) {
@@ -21,7 +22,7 @@ export async function getAllTeamsSpaceMemberships(orgEndpoint) {
     ['team_space_memberships'],
     BATCH_LIMIT,
     { include: includePaths.join(',') },
-    ALPHA_HEADER
+    alphaHeader
   );
   return ResolveLinks({ paths: includePaths, items, includes });
 }
@@ -33,7 +34,7 @@ export async function getTeamsSpaceMembershipsOfSpace(spaceEndpoint) {
     ['team_space_memberships'],
     BATCH_LIMIT,
     { include: includePaths.join(',') },
-    ALPHA_HEADER
+    alphaHeader
   );
   return ResolveLinks({ paths: includePaths, items, includes });
 }
@@ -44,7 +45,7 @@ export async function getAllTeamsMemberships(orgEndpoint) {
     ['team_memberships'],
     BATCH_LIMIT,
     {},
-    ALPHA_HEADER
+    alphaHeader
   );
   return items;
 }
@@ -57,7 +58,7 @@ export async function updateTeamSpaceMembership(spaceEndpoint, membership, admin
       data: { admin, roles },
       version: get(membership, 'sys.version')
     },
-    { ...ALPHA_HEADER, 'x-contentful-team': get(membership, 'sys.team.sys.id') }
+    { ...alphaHeader, 'x-contentful-team': get(membership, 'sys.team.sys.id') }
   );
 }
 
@@ -68,7 +69,7 @@ export async function deleteTeamSpaceMembership(spaceEndpoint, membership) {
       path: ['team_space_memberships', get(membership, 'sys.id')],
       version: get(membership, 'sys.version')
     },
-    { ...ALPHA_HEADER, 'x-contentful-team': get(membership, 'sys.team.sys.id') }
+    { ...alphaHeader, 'x-contentful-team': get(membership, 'sys.team.sys.id') }
   );
 }
 
@@ -89,7 +90,7 @@ export async function createTeamSpaceMembership(spaceEndpoint, teamId, { admin, 
     },
     {
       'x-contentful-team': teamId,
-      ...ALPHA_HEADER
+      ...alphaHeader
     }
   );
 }
@@ -101,6 +102,6 @@ export function createTeamMembership(endpoint, organizationMembershipId, teamId)
       path: ['teams', teamId, 'team_memberships'],
       data: { organizationMembershipId, admin: false }
     },
-    ALPHA_HEADER
+    alphaHeader
   );
 }

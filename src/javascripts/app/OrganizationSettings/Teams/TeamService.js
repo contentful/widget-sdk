@@ -1,8 +1,9 @@
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { fetchAll } from 'data/CMA/FetchAll';
 import getOrgId from 'redux/selectors/getOrgId';
+import { TEAMS_API, getAlphaHeader } from 'alphaHeaders.js';
 
-const ALPHA_HEADER = { 'x-contentful-enable-alpha-feature': 'teams-api' };
+const alphaHeader = getAlphaHeader(TEAMS_API);
 const BATCH_LIMIT = 100;
 
 export default function createTeamService(state) {
@@ -23,12 +24,12 @@ export default function createTeamService(state) {
         method: 'GET',
         path: ['teams', id]
       },
-      ALPHA_HEADER
+      alphaHeader
     );
   }
 
   function getAll() {
-    return fetchAll(endpoint, ['teams'], BATCH_LIMIT, {}, ALPHA_HEADER);
+    return fetchAll(endpoint, ['teams'], BATCH_LIMIT, {}, alphaHeader);
   }
 
   function create({ name, description }) {
@@ -38,7 +39,7 @@ export default function createTeamService(state) {
         path: ['teams'],
         data: { name, description }
       },
-      ALPHA_HEADER
+      alphaHeader
     );
   }
 
@@ -50,7 +51,7 @@ export default function createTeamService(state) {
         data: { name, description },
         version: sys.version
       },
-      ALPHA_HEADER
+      alphaHeader
     );
   }
 
@@ -60,7 +61,7 @@ export default function createTeamService(state) {
         method: 'DELETE',
         path: ['teams', teamId]
       },
-      ALPHA_HEADER
+      alphaHeader
     );
   }
 }
