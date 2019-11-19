@@ -10,6 +10,11 @@ import {
 
 const HeadingContextMenu = ({ actions, isDisabled = false, isZenMode = false }) => {
   const [isOpen, setOpen] = useState(false);
+  const handleMenuClick = action => {
+    action();
+    setOpen(false);
+  };
+
   if (!actions) {
     return null;
   }
@@ -31,9 +36,9 @@ const HeadingContextMenu = ({ actions, isDisabled = false, isZenMode = false }) 
         </Tooltip>
       }>
       <DropdownList>
-        <DropdownListItem onClick={actions.h1}>Heading 1</DropdownListItem>
-        <DropdownListItem onClick={actions.h2}>Heading 2</DropdownListItem>
-        <DropdownListItem onClick={actions.h3}>Heading 3</DropdownListItem>
+        <DropdownListItem onClick={() => handleMenuClick(actions.h1)}>Heading 1</DropdownListItem>
+        <DropdownListItem onClick={() => handleMenuClick(actions.h2)}>Heading 2</DropdownListItem>
+        <DropdownListItem onClick={() => handleMenuClick(actions.h3)}>Heading 3</DropdownListItem>
       </DropdownList>
     </Dropdown>
   );
