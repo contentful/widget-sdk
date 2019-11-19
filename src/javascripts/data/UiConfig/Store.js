@@ -4,6 +4,7 @@ import { update, concat } from 'utils/Collections';
 import { deepFreeze } from 'utils/Freeze';
 import * as logger from 'services/logger';
 import * as Telemetry from 'i13n/Telemetry';
+import { USER_UI_CONFIG, getAlphaHeader } from 'alphaHeaders.js';
 
 const SHARED_VIEWS = 'shared';
 const PRIVATE_VIEWS = 'private';
@@ -11,7 +12,7 @@ const PRIVATE_VIEWS = 'private';
 const ENTRY_VIEWS_KEY = 'entryListViews';
 const ASSET_VIEWS_KEY = 'assetListViews';
 
-const ALPHA_HEADER = { 'x-contentful-enable-alpha-feature': 'user_ui_config' };
+const ALPHA_HEADER = getAlphaHeader(USER_UI_CONFIG);
 
 /**
  * This module exports a factory for UI config stores (shared and private).
