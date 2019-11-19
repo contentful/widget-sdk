@@ -1,6 +1,6 @@
-const headers = {
-  'x-contentful-enable-alpha-feature': 'usage-insights'
-};
+import { USAGE_INSIGHTS, getAlphaHeader } from 'alphaHeaders.js';
+
+const headers = getAlphaHeader(USAGE_INSIGHTS);
 
 /**
  * Gets the usage periods
