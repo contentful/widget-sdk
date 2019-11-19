@@ -1,6 +1,4 @@
 import { get } from 'lodash';
-import { Notification } from '@contentful/forma-36-react-components';
-import ReloadNotification from 'app/common/ReloadNotification';
 import * as Analytics from 'analytics/Analytics';
 import { getWebhookRepo } from 'app/settings/webhooks/services/WebhookRepoInstance';
 
@@ -21,7 +19,7 @@ const PATH_TO_ERROR_MSG = {
   http_basic_password: HTTP_BASIC_ERROR_MSG
 };
 
-export async function save(webhook, templateId = null, templateIdReferrer = null) {
+export async function save(webhook, templateId, templateIdReferrer) {
   const webhookRepo = getWebhookRepo();
 
   if (!webhookRepo.hasValidBodyTransformation(webhook)) {
@@ -31,7 +29,6 @@ export async function save(webhook, templateId = null, templateIdReferrer = null
   try {
     const saved = await webhookRepo.save(webhook);
     trackSave(saved, templateId, templateIdReferrer);
-    Notification.success(`Webhook "${saved.name}" saved successfully.`);
     return saved;
   } catch (err) {
     throw new Error(getSaveApiErrorMessage(err));
@@ -48,20 +45,8 @@ function getSaveApiErrorMessage(err) {
   }
 }
 
-export async function remove(webhook) {
-  const webhookRepo = getWebhookRepo();
-  try {
-    await webhookRepo.remove(webhook);
-    Notification.success(`Webhook "${webhook.name}" deleted successfully.`);
-    return { removed: true };
-  } catch (err) {
-    if (err instanceof Error) {
-      ReloadNotification.basicErrorHandler();
-      throw err;
-    } else {
-      return { cancelled: true };
-    }
-  }
+export function remove(webhook) {
+  return getWebhookRepo().remove(webhook);
 }
 
 function trackSave(webhook, templateId = null, templateIdReferrer = null) {
