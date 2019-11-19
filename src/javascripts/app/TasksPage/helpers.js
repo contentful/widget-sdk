@@ -1,5 +1,8 @@
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { getModule } from 'NgRegistry';
+import { COMMENTS_API, TASKS_DASHBOARD, getAlphaHeader } from 'alphaHeaders.js';
+
+const alphaHeader = getAlphaHeader(COMMENTS_API, TASKS_DASHBOARD);
 
 async function getOpenAssignedTasks(spaceId, userId) {
   const { items } = await createSpaceEndpoint(spaceId)(
@@ -8,7 +11,7 @@ async function getOpenAssignedTasks(spaceId, userId) {
       path: ['tasks'],
       query: { 'assignedTo.sys.id': userId }
     },
-    { 'x-contentful-enable-alpha-feature': 'comments-api,tasks-dashboard' }
+    alphaHeader
   );
   return items;
 }
