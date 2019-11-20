@@ -89,7 +89,7 @@ function integrations() {
       api_key: hex(32)
     }),
     google: strictObject({
-      maps_api_key: alnumExact(39)
+      maps_api_key: googleExact(39)
     }),
     fonts_dot_com: strictObject({
       project_id: { type: 'string', format: 'uuid' }
@@ -113,6 +113,13 @@ function strictObject(props, optional) {
     additionalProperties: false,
     required: Object.keys(props),
     properties: Object.assign(props, optional)
+  };
+}
+
+function googleExact(length) {
+  return {
+    type: 'string',
+    pattern: `^[a-zA-Z0-9-]{${length}}$`
   };
 }
 
