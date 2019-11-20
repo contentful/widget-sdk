@@ -18,18 +18,17 @@ import { getModule } from 'NgRegistry';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge';
 import * as logger from 'services/logger';
 import { getVariation } from 'LaunchDarkly';
-import { JOBS, ENTRY_COMMENTS } from 'featureFlags';
+import { ENTRY_COMMENTS } from 'featureFlags';
 import TheLocaleStore from 'services/localeStore';
 import { buildFieldsApi } from 'app/entity_editor/dataFields';
 import setupNoShareJsCmaFakeRequestsExperiment from './NoShareJsCmaFakeRequestsExperiment';
-import { createSpaceEndpoint } from 'data/EndpointFactory';
-import * as JobsService from 'app/jobs/DataManagement/JobsService';
 
 import * as Navigator from 'states/Navigator';
 import { trackIsCommentsAlphaEligible } from '../EntrySidebar/CommentsPanel/analytics';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
 import { getAllForEntry } from 'data/CMA/CommentsRepo';
 import initSidebarTogglesProps from 'app/entity_editor/entityEditorSidebarToggles';
+import { initJobStore } from 'app/jobs/DataManagement/JobsStoreNg';
 
 /**
  * @ngdoc type
@@ -188,7 +187,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
     }
   });
 
-  initJobs($scope, spaceContext);
+  initJobStore($scope, spaceContext);
 
   setupNoShareJsCmaFakeRequestsExperiment({ $scope, spaceContext, entityInfo });
 
@@ -207,44 +206,6 @@ export default async function create($scope, editorData, preferences, trackLoadE
       WidgetLocations.LOCATION_ENTRY_EDITOR
     )
   };
-}
-
-async function initJobs($scope, spaceContext) {
-  $scope.pendingJobs = [];
-  $scope.jobsStore = {
-    getPendingJobs() {
-      return $scope.pendingJobs;
-    }
-  };
-
-  const isEnabled = await getVariation(JOBS, {
-    organizationId: spaceContext.getData('organization.sys.id'),
-    spaceId: spaceContext.space.data.sys.id
-  });
-
-  if (isEnabled) {
-    $scope.pendingJobs = await getPendingJobs(spaceContext);
-  }
-}
-
-async function getPendingJobs(spaceContext) {
-  try {
-    const spaceEndpoint = createSpaceEndpoint(
-      spaceContext.space.data.sys.id,
-      spaceContext.space.environment.sys.id
-    );
-    const jobsCollection = await JobsService.getJobs(spaceEndpoint, {
-      order: 'sys.scheduledAt',
-      'sys.status': 'pending'
-    });
-
-    return jobsCollection.items;
-  } catch (err) {
-    logger.logError('Failed to fetch pending jobs for entry editor', {
-      err
-    });
-    return [];
-  }
 }
 
 function initComments($scope, endpoint, entityId) {
