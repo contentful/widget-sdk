@@ -37,23 +37,19 @@ jest.mock('app/TasksPage/helpers', () => ({
   getOpenAssignedTasksAndEntries: jest.fn()
 }));
 
-beforeEach(() => {
-  wrapper = render(<AccountDropdown />);
-  getOpenAssignedTasksAndEntries.mockResolvedValue([[], []]);
-  Analytics.track.mockClear();
-  Analytics.disable.mockClear();
-  Authentication.logout.mockClear();
-  getUser.mockClear();
-});
-
-afterEach(() => {
-  cleanup();
-  jest.clearAllMocks();
-});
-
 describe('AccountDropdown', () => {
   beforeEach(() => {
+    getOpenAssignedTasksAndEntries.mockResolvedValue([[], []]);
+    Analytics.track.mockClear();
+    Analytics.disable.mockClear();
+    Authentication.logout.mockClear();
+    getUser.mockClear();
     wrapper = render(<AccountDropdown />);
+  });
+
+  afterEach(() => {
+    cleanup();
+    jest.clearAllMocks();
   });
 
   it('renders the account dropdown toggle', () => {

@@ -123,6 +123,10 @@ export default class AccountDropdown extends Component {
     const spaceContext = getModule('spaceContext');
     const currentUser = await getUser();
 
+    this.setState({
+      currentUser
+    });
+
     if (spaceContext.space && currentUser) {
       let pendingTasksCount;
       let shouldShowPendingTasks;
@@ -145,7 +149,7 @@ export default class AccountDropdown extends Component {
       Object.assign(updates, { pendingTasksCount, shouldShowPendingTasks });
     }
 
-    this.setState({ currentUser, ...updates });
+    this.setState({ ...updates });
   };
 
   handleToggle = () => {
