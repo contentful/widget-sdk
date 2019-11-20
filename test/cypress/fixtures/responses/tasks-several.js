@@ -1,12 +1,12 @@
 import { Matchers } from '@pact-foundation/pact-web';
 import { RESOURCE_ID_REGEXP } from '../../../../src/javascripts/data/utils';
 import severalTasks from './tasks-several.json';
+// TODO: Remove severalTasksDeprecated once server side is updated
+import severalTasksDeprecated from './tasks-several-deprecated.json';
 
-export default severalTasks;
-
-export const definition = {
-  ...severalTasks,
-  items: severalTasks.items.map(task => ({
+const definition = tasks => ({
+  ...tasks,
+  items: tasks.items.map(task => ({
     ...task,
     sys: {
       ...task.sys,
@@ -18,8 +18,13 @@ export const definition = {
       updatedAt: Matchers.iso8601DateTimeWithMillis(task.sys.updatedAt)
     }
   }))
-};
+});
 
-export function getTaskDefinitionById(taskId) {
-  return definition.items.find(taskDefinition => taskDefinition.sys.id.getValue() === taskId);
+export const severalTasksDefinition = (deprecated = false) =>
+  definition(deprecated ? severalTasksDeprecated : severalTasks);
+// TODO: Remove deprecated param once server side is updated
+export function getTaskDefinitionById(taskId, deprecated = false) {
+  return severalTasksDefinition(deprecated).items.find(
+    taskDefinition => taskDefinition.sys.id.getValue() === taskId
+  );
 }

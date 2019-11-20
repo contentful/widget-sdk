@@ -1,7 +1,5 @@
 import * as K from 'utils/kefir';
 import { getAllForEntry, create, remove, update } from 'data/CMA/TasksRepo';
-import { getTasksFromResponse, transformTask } from 'app/TasksPage/helpers';
-
 // TODO: Introduce Store specific errors rather than passing client errors.
 
 /**
@@ -19,9 +17,7 @@ export function createTasksStoreForEntry(endpoint, entryId) {
   const items$ = tasksBus.property;
   const getItems = () => K.getValue(items$);
 
-  let isPrePreview = false;
-
-  initialFetch().then(result => (isPrePreview = result));
+  initialFetch();
 
   return {
     items$,
@@ -29,11 +25,10 @@ export function createTasksStoreForEntry(endpoint, entryId) {
       let newTask;
       const { sys: _sys, ...data } = task;
       try {
-        newTask = await create(endpoint, entryId, data, isPrePreview);
+        newTask = await create(endpoint, entryId, data);
       } catch (error) {
         throw error;
       }
-      newTask = isPrePreview ? transformTask(newTask) : newTask;
       tasksBus.set([...getItems(), newTask]);
       return newTask;
     },
@@ -48,11 +43,10 @@ export function createTasksStoreForEntry(endpoint, entryId) {
     update: async task => {
       let updatedTask;
       try {
-        updatedTask = await update(endpoint, entryId, task, isPrePreview);
+        updatedTask = await update(endpoint, entryId, task);
       } catch (error) {
         throw error;
       }
-      updatedTask = isPrePreview ? transformTask(updatedTask) : updatedTask;
       tasksBus.set(
         getItems().map(task => (task.sys.id === updatedTask.sys.id ? updatedTask : task))
       );
@@ -61,16 +55,10 @@ export function createTasksStoreForEntry(endpoint, entryId) {
   };
 
   async function initialFetch() {
-    let data;
-    let tasks;
     try {
-      data = await getAllForEntry(endpoint, entryId);
-      tasks = getTasksFromResponse(data);
+      tasksBus.set(await getAllForEntry(endpoint, entryId));
     } catch (error) {
       tasksBus.error(error);
-      return false;
     }
-    tasksBus.set(tasks);
-    return data.isPrePreview;
   }
 }
