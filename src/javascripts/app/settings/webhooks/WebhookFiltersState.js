@@ -69,20 +69,27 @@ export function denormalizeValue(constraint, value) {
 export function transformFiltersToList(filters) {
   if (!Array.isArray(filters)) return [DEFAULT_FILTER];
 
-  return filters.map(filter => {
-    const constraintIndex = matchConstraintType(filter);
-    const constraint = CONSTRAINT_TYPES[constraintIndex];
+  return filters
+    .map(filter => {
+      const constraintIndex = matchConstraintType(filter);
+      const constraint = CONSTRAINT_TYPES[constraintIndex];
 
-    const content = constraint.negated ? filter.not[constraint.name] : filter[constraint.name];
-    const path = content[0].doc;
-    const value = denormalizeValue(constraint, content[1]);
+      // Skip invalid constraints persisted. They will be dropped when resaving.
+      if (!constraint) {
+        return null;
+      }
 
-    return {
-      constraint: constraintIndex,
-      path,
-      value
-    };
-  });
+      const content = constraint.negated ? filter.not[constraint.name] : filter[constraint.name];
+      const path = content[0].doc;
+      const value = denormalizeValue(constraint, content[1]);
+
+      return {
+        constraint: constraintIndex,
+        path,
+        value
+      };
+    })
+    .filter(x => x);
 }
 
 export function transformListToFilters(list) {

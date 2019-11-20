@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import { Button, Notification, Tabs, Tab, TabPanel } from '@contentful/forma-36-react-components';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 import Icon from 'ui/Components/Icon';
 import WebhookForm from './WebhookForm';
 import WebhookSidebar from './WebhookSidebar';
@@ -12,6 +14,11 @@ import WebhookActivityLog from './WebhookActivityLog';
 import * as Navigator from 'states/Navigator';
 
 const TABS = { SETTINGS: 1, LOG: 2 };
+
+const style = {
+  actionButton: css({ marginLeft: tokens.spacingM }),
+  tabs: css({ marginBottom: tokens.spacingM })
+};
 
 class WebhookEditor extends React.Component {
   static propTypes = {
@@ -70,46 +77,58 @@ class WebhookEditor extends React.Component {
     return Navigator.go({ path: '^.list' });
   }
 
-  save = () => {
+  save = async () => {
     const { webhook, fresh } = this.state;
 
     this.setState({ busy: true });
 
-    return WebhookEditorActions.save(webhook, null).then(
-      saved => (fresh ? this.navigateToSaved(saved) : this.onSave(saved)),
-      err => {
-        Notification.error(err.message);
-        this.setState({ busy: false });
-        return Promise.reject(err);
+    try {
+      const saved = await WebhookEditorActions.save(webhook);
+
+      if (fresh) {
+        this.navigateToSaved(saved);
+      } else {
+        this.onSave(saved);
       }
-    );
+
+      Notification.success(`Webhook "${saved.name}" saved successfully.`);
+    } catch (err) {
+      Notification.error(err.message);
+    }
+
+    this.setState({ busy: false });
   };
 
-  remove = () => {
+  remove = async () => {
     const { webhook } = this.state;
 
-    const notBusy = () => this.setState({ busy: false });
     this.setState({ busy: true });
 
-    return WebhookEditorActions.remove(webhook).then(
-      ({ removed }) => (removed ? this.navigateToList(true) : notBusy()),
-      () => notBusy()
-    );
+    try {
+      await WebhookEditorActions.remove(webhook);
+      this.navigateToList(true);
+      Notification.success(`Webhook "${webhook.name}" deleted successfully.`);
+    } catch (err) {
+      Notification.error('Failed to delete the webhook. Try again.');
+    }
+
+    this.setState({ busy: false });
   };
 
-  refreshLog = () => {
+  refreshLog = async () => {
     if (typeof this.state.refreshLog === 'function') {
       this.setState({ busy: true });
       // `this.state.refreshLog()` always resolves when HTTP communication is done.
       // `WebhookActivityLog` handles failures internally.
-      this.state.refreshLog().then(() => this.setState({ busy: false }));
+      await this.state.refreshLog();
+      this.setState({ busy: false });
     }
   };
 
   renderTabs() {
     const { tab } = this.state;
     return (
-      <Tabs role="tablist" className="f36-margin-bottom--m">
+      <Tabs role="tablist" className={style.tabs}>
         <Tab
           id="webhook_settings"
           testId="webhook-settings-tab"
@@ -144,7 +163,7 @@ class WebhookEditor extends React.Component {
               <>
                 {tab === TABS.SETTINGS && !fresh && (
                   <Button
-                    className="f36-margin-left--m"
+                    className={style.actionButton}
                     testId="webhook-remove"
                     buttonType="muted"
                     onClick={() => {
@@ -156,7 +175,7 @@ class WebhookEditor extends React.Component {
 
                 {tab === TABS.SETTINGS && (
                   <Button
-                    className="f36-margin-left--m"
+                    className={style.actionButton}
                     testId="webhook-save"
                     buttonType="positive"
                     disabled={!dirty}
@@ -168,7 +187,7 @@ class WebhookEditor extends React.Component {
 
                 {tab === TABS.LOG && (
                   <Button
-                    className="f36-margin-left--m"
+                    className={style.actionButton}
                     testId="webhook-refresh-log"
                     buttonType="muted"
                     loading={busy}
