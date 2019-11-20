@@ -31,14 +31,7 @@ export function transformTask(task) {
   return task;
 }
 
-export function transformTaskArray(tasks) {
-  // const { items, ...rest } = tasks
-  // return {
-  //   ...rest,
-  //   items: items.map(transformTask)
-  // }
-  return tasks.items.map(transformTask);
-}
+export const transformTaskArray = tasks => tasks.items.map(transformTask);
 
 /**
  * Creates a new task on a specific entry.

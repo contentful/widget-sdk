@@ -114,8 +114,9 @@ describe('Tasks entry editor sidebar', () => {
       it('renders list of tasks', () => {
         getTasks().should('have.length', 3);
 
-        severalTasksDefinition(deprecated).items.forEach(({ status }, i: number) => {
-          expectTask(getTasks().eq(i), { isResolved: status === TaskStates.RESOLVED });
+        severalTasksDefinition(deprecated).items.forEach(({ status, assignment }, i: number) => {
+          const st = deprecated ? assignment.status : status
+          expectTask(getTasks().eq(i), { isResolved: st === TaskStates.RESOLVED });
         })
       });
 
