@@ -75,6 +75,12 @@ function registerLibrary(system, [name, dep]) {
   });
 }
 
+function registerAlias(isolatedSystem, moduleId, alias) {
+  isolatedSystem.register(alias, [moduleId], $export => ({
+    setters: [$export]
+  }));
+}
+
 function registerInIsolatedSystem(isolatedSystem, item) {
   const moduleId = item[0];
 
@@ -82,9 +88,14 @@ function registerInIsolatedSystem(isolatedSystem, item) {
 
   const path = moduleId.split('/');
   const last = path.pop();
+
+  // Register {path}.js alias
+  if (!last.endsWith('.js')) {
+    registerAlias(isolatedSystem, moduleId, `${moduleId}.js`);
+  }
+
   if (last === 'index') {
-    isolatedSystem.register(path.join('/'), [moduleId], $export => ({
-      setters: [$export]
-    }));
+    registerAlias(isolatedSystem, moduleId, path.join('/'));
+    registerAlias(isolatedSystem, moduleId, `${path.join('/')}/`);
   }
 }
