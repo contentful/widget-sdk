@@ -4,8 +4,13 @@ import PropTypes from 'prop-types';
 import { caseof } from 'sum-types';
 import tokens from '@contentful/forma-36-tokens';
 
+import * as accessChecker from 'access_control/AccessChecker';
+import * as TokenStore from 'services/TokenStore';
+
 import Logo from 'svg/logo-label';
+import * as K from 'utils/kefir';
 import Hamburger from 'svg/hamburger';
+import { navState$, NavStates } from 'navigation/NavState';
 
 import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel';
 
@@ -17,55 +22,43 @@ const oneLineTruncate = {
   textOverflow: 'ellipsis'
 };
 
-export default class Trigger extends React.Component {
+export default class SidepanelTrigger extends React.Component {
   static propTypes = {
-    onClick: PropTypes.func.isRequired,
-    spaceContext: PropTypes.object.isRequired
+    onClick: PropTypes.func.isRequired
   };
 
-  state = {
-    loading: true
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      navState: null,
+      showOrganization: false
+    };
+  }
 
-  async UNSAFE_componentWillMount() {
-    const [{ navState$, NavStates }, accessChecker, TokenStore] = await Promise.all([
-      import('navigation/NavState'),
-      import('access_control/AccessChecker'),
-      import('services/TokenStore')
-    ]);
-
-    this.offNavState = navState$.onValue(navState => {
+  componentDidMount() {
+    this.unsubscribeNavState = K.onValue(navState$, navState => {
       this.setState({ navState });
     });
 
-    this.offOrganizations = TokenStore.organizations$.onValue(organizations => {
+    this.unsubscribeOrgs = K.onValue(TokenStore.organizations$, organizations => {
       this.setState({ showOrganization: organizations.length > 1 });
-    });
-
-    this.setState({
-      navState$,
-      NavStates,
-      accessChecker,
-      loading: false
     });
   }
 
   componentWillUnmount() {
-    this.offNavState();
-    this.offOrganizations();
+    if (this.unsubscribeNavState) {
+      this.unsubscribeNavState();
+    }
+    if (this.unsubscribeOrgs) {
+      this.unsubscribeOrgs();
+    }
   }
 
   render() {
-    const { onClick } = this.props;
-
-    if (this.state.loading) {
-      return <></>;
-    }
-
     return (
       <div
         className="app-top-bar__sidepanel-trigger"
-        onClick={onClick}
+        onClick={this.props.onClick}
         data-ui-tour-step="sidepanel-trigger"
         data-test-id="sidepanel-trigger">
         <Logo />
@@ -84,7 +77,7 @@ export default class Trigger extends React.Component {
             flexShrink: '1',
             overflow: 'hidden'
           })}>
-          {renderContent(this.state)}
+          {this.state.navState && renderContent(this.state)}
         </div>
         <div
           className={css({
@@ -97,7 +90,7 @@ export default class Trigger extends React.Component {
   }
 }
 
-function renderContent({ NavStates, accessChecker, navState, showOrganization }) {
+function renderContent({ navState, showOrganization }) {
   return caseof(navState, [
     [
       NavStates.Space,

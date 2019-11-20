@@ -10,6 +10,7 @@ import userInvitationDetailState from './UserInvitations/UserInvitationDetail/Us
 import ssoRoutingState from './SSO/SSOSetupRoutingState';
 import gatekeeperStates from './OrganizationSettingsGatekeeperStates';
 import OrganizationNavBar from 'navigation/OrganizationNavBar';
+import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
 
 const usersAndInvitationsState = base({
   name: 'users',
@@ -30,8 +31,8 @@ export default [
   iframeStateWrapper({
     name: 'new_organization',
     url: '/organizations/new',
-    title: 'Create new organization',
-    navComponent: () => null
+    navComponent: EmptyNavigationBar,
+    title: 'Create new organization'
   }),
   base({
     name: 'organizations',

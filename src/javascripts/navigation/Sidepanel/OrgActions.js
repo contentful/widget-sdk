@@ -3,20 +3,14 @@ import PropTypes from 'prop-types';
 import SettingsIcon from 'svg/settings';
 import TeamsIcon from 'svg/nav-organization-teams';
 
-export default function OrgActions({
-  gotoOrgSettings,
-  viewingOrgSettings,
-  showOrgSettingsAsTeams
-}) {
+export default function OrgActions({ gotoOrgSettings, showOrgSettingsAsTeams }) {
   return (
     <div className="nav-sidepanel__org-actions" data-test-id="sidepanel-org-actions">
       <div className="nav-sidepanel__org-actions-separator-container">
         <div className="nav-sidepanel__org-actions-separator" />
       </div>
       <div
-        className={`nav-sidepanel__org-actions-goto-settings ${
-          viewingOrgSettings ? 'nav-sidepanel__org-actions-goto-settings--is-active' : ''
-        }`}
+        className={`nav-sidepanel__org-actions-goto-settings`}
         onClick={gotoOrgSettings}
         data-test-id="sidepanel-org-actions-settings">
         <div className="nav-sidepanel__org-title">
@@ -41,6 +35,5 @@ export default function OrgActions({
 
 OrgActions.propTypes = {
   gotoOrgSettings: PropTypes.func.isRequired,
-  viewingOrgSettings: PropTypes.bool,
   showOrgSettingsAsTeams: PropTypes.bool.isRequired
 };

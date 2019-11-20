@@ -79,7 +79,8 @@ export default function register() {
 
         if (state.navComponent) {
           views['nav-bar@'] = {
-            template: '<react-component component="component" props="props" style="width: 100%" />',
+            template:
+              '<react-component component="component" props="props" style="width: 100%" class="app-top-bar" />',
             controller: makeReactNavigationController(state.navComponent)
           };
         }

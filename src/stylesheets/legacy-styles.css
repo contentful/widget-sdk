@@ -5221,10 +5221,12 @@ pre,
     padding: 0 15px;
     line-height: 1.5;
     width: 280px;
+    min-width: 280px;
   }
   @media (max-width: 1279px) {
     .app-top-bar__sidepanel-trigger {
       width: 260px;
+      min-width: 260px;
     }
   }
   .app-top-bar__action {

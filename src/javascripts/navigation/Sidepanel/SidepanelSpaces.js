@@ -165,9 +165,9 @@ export default function SidepanelSpaces(props) {
 }
 
 SidepanelSpaces.propTypes = {
-  canCreateSpaceInCurrOrg: PropTypes.bool,
+  canCreateSpaceInCurrOrg: PropTypes.bool.isRequired,
   showCreateSpaceModal: PropTypes.func.isRequired,
   spacesByOrg: PropTypes.object.isRequired,
-  currOrg: PropTypes.object,
-  goToSpace: PropTypes.func
+  currOrg: PropTypes.object.isRequired,
+  goToSpace: PropTypes.func.isRequired
 };

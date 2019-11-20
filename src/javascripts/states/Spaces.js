@@ -18,6 +18,7 @@ import settings from './settings';
 import jobs from 'app/jobs/routes';
 import tasks from 'app/TasksPage/routes';
 import pageExtensions from 'app/pageExtensions/routes';
+import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
 
 const store = getStore();
 
@@ -39,7 +40,7 @@ const newSpace = {
 const hibernation = {
   name: 'hibernation',
   url: '/hibernation',
-  navComponent: () => null,
+  navComponent: EmptyNavigationBar,
   template: JST.cf_space_hibernation_advice()
 };
 

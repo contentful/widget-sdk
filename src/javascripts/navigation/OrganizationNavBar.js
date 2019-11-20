@@ -5,6 +5,7 @@ import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
 import { SSO_SELF_CONFIG_FLAG } from 'featureFlags';
 import { getOrgFeature } from '../data/CMA/ProductCatalog';
+import SidepanelContainer from './Sidepanel/SidepanelContainer';
 import createLegacyFeatureService from 'services/LegacyFeatureService';
 
 import { getVariation } from 'LaunchDarkly';
@@ -181,11 +182,16 @@ export default class OrganizationNavigationBar extends React.Component {
 
   render() {
     return (
-      <NavBar
-        showQuickNavigation={false}
-        showModernStackOnboardingRelaunch={false}
-        listItems={this.state.items}
-      />
+      <>
+        <SidepanelContainer />
+        <div className="app-top-bar__outer-wrapper">
+          <NavBar
+            showQuickNavigation={false}
+            showModernStackOnboardingRelaunch={false}
+            listItems={this.state.items}
+          />
+        </div>
+      </>
     );
   }
 }

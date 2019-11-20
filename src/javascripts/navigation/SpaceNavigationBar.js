@@ -7,6 +7,7 @@ import { ENVIRONMENTS_FLAG, TEAMS_IN_SPACES } from 'featureFlags';
 import NavBar from './NavBar/NavBar';
 import { getVariation } from 'LaunchDarkly';
 import { getSpaceNavigationItems } from './SpaceNavigationBarItems';
+import SidepanelContainer from './Sidepanel/SidepanelContainer';
 
 // We don't want to display the following sections within the context of
 // a sandbox space environment.
@@ -88,7 +89,16 @@ export default class SpaceNavigationBar extends React.Component {
 
   render() {
     return (
-      <NavBar listItems={this.state.items} showQuickNavigation showModernStackOnboardingRelaunch />
+      <>
+        <SidepanelContainer />
+        <div className="app-top-bar__outer-wrapper">
+          <NavBar
+            listItems={this.state.items}
+            showQuickNavigation
+            showModernStackOnboardingRelaunch
+          />
+        </div>
+      </>
     );
   }
 }
