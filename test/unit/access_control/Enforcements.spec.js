@@ -115,23 +115,4 @@ describe('access_control/Enforcements', () => {
       });
     });
   });
-
-  describe('computes metrics usage', () => {
-    it('for no exceeded usage metric returns no message', () => {
-      expect(enforcements.computeUsageForOrganization(spaceMock.organization)).toBeUndefined();
-    });
-
-    it('for exceeded usage metric returns message', () => {
-      spaceMock.organization.usage.period.assetBandwidth = 5;
-      expect(enforcements.computeUsageForOrganization(spaceMock.organization)).toMatch('Bandwidth');
-    });
-
-    it('for exceeded usage metric with filter returns message', () => {
-      spaceMock.organization.usage.permanent.entry = 5;
-      spaceMock.organization.usage.permanent.user = 5;
-      expect(enforcements.computeUsageForOrganization(spaceMock.organization, 'user')).toMatch(
-        'Users'
-      );
-    });
-  });
 });

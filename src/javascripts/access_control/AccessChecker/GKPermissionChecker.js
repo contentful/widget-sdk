@@ -5,14 +5,7 @@ import { get } from 'lodash';
 import createLegacyFeatureService from 'services/LegacyFeatureService';
 
 export function create({ space, organization }) {
-  const userQuota = {
-    // TODO get from limits/usage endpoint
-    limit: get(organization, 'subscriptionPlan.limits.permanent.organizationMembership', -1),
-    used: get(organization, 'usage.permanent.organizationMembership', 1)
-  };
-
   return {
-    getUserQuota: () => userQuota,
     /**
      * @name accessChecker#canModifyUsers
      * @returns {boolean}

@@ -1,14 +1,10 @@
-import { getSpace, getOrganization } from 'services/TokenStore';
-import {
-  canCreate,
-  canCreateResources,
-  generateMessage,
-  isLegacyOrganization,
-  getLegacyLimit,
-  getLegacyUsage
-} from 'utils/ResourceUtils';
+import { canCreate, canCreateResources, generateMessage } from 'utils/ResourceUtils';
 import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/EndpointFactory';
 import { snakeCase, camelCase } from 'lodash';
+
+const alphaHeader = {
+  'x-contentful-enable-alpha-feature': 'subscriptions-api'
+};
 
 export default function createResourceService(id, type = 'space', envId) {
   const endpoint = createEndpoint(id, type, envId);
@@ -36,30 +32,20 @@ export default function createResourceService(id, type = 'space', envId) {
       throw new Error('resourceType not supplied to ResourceService.get');
     }
 
-    const organization = await getTokenOrganization(id, type);
-    const legacy = isLegacyOrganization(organization);
+    const apiResourceType = snakeCase(resourceType);
+    let path = ['resources', apiResourceType];
 
-    if (legacy) {
-      const limit = getLegacyLimit(resourceType, organization);
-      const usage = getLegacyUsage(resourceType, organization);
+    if (environmentId) path = ['environments', environmentId, 'resources', apiResourceType];
 
-      return createResourceFromTokenData(resourceType, limit, usage);
-    } else {
-      const apiResourceType = snakeCase(resourceType);
-      let path = ['resources', apiResourceType];
-
-      if (environmentId) path = ['environments', environmentId, 'resources', apiResourceType];
-
-      return endpoint(
-        {
-          method: 'GET',
-          path
-        },
-        {
-          'x-contentful-enable-alpha-feature': 'subscriptions-api'
-        }
-      );
-    }
+    return endpoint(
+      {
+        method: 'GET',
+        path
+      },
+      {
+        ...alphaHeader
+      }
+    );
   }
 
   async function getAll(environmentId) {
@@ -72,7 +58,7 @@ export default function createResourceService(id, type = 'space', envId) {
         path
       },
       {
-        'x-contentful-enable-alpha-feature': 'subscriptions-api'
+        ...alphaHeader
       }
     );
     return raw.items;
@@ -89,27 +75,4 @@ function createEndpoint(id, type, envId) {
   }
 
   return createSpaceEndpoint(id);
-}
-
-function createResourceFromTokenData(resourceType, limit, usage) {
-  return {
-    usage,
-    limits: {
-      included: limit,
-      maximum: limit
-    },
-    sys: {
-      id: resourceType,
-      type: 'SpaceResource'
-    }
-  };
-}
-
-async function getTokenOrganization(id, type) {
-  if (type === 'space') {
-    const space = await getSpace(id);
-    return space.organization;
-  } else if (type === 'organization') {
-    return getOrganization(id);
-  }
 }

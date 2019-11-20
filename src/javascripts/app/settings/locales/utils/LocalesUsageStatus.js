@@ -1,3 +1,5 @@
+import { getResourceLimits } from 'utils/ResourceUtils';
+
 const LocalesUsageStatus = {
   NO_MULTIPLE_LOCALES: 'NO_MULTIPLE_LOCALES',
   ONE_LOCALE_USED: 'ONE_LOCALE_USED',
@@ -11,7 +13,7 @@ export function getLocalesUsageStatus({ canCreateMultipleLocales, locales, local
   if (!canCreateMultipleLocales) {
     return LocalesUsageStatus.NO_MULTIPLE_LOCALES;
   }
-  const reachedLimit = localeResource.usage >= localeResource.limits.maximum;
+  const reachedLimit = localeResource.usage >= getResourceLimits(localeResource).maximum;
   if (!reachedLimit && len <= 1) {
     return LocalesUsageStatus.ONE_LOCALE_USED;
   } else if (!reachedLimit && len > 1) {

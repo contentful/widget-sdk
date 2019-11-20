@@ -1,4 +1,4 @@
-import { assign, get } from 'lodash';
+import { get } from 'lodash';
 import _ from 'lodash';
 
 export const resourceHumanNameMap = {
@@ -106,35 +106,6 @@ export function isLegacyOrganization(organization) {
   }
 
   return true;
-}
-
-/**
- * Get resource limits data from token data for organization.
- * This is used for legacy organizations instead or resource API.
- *
- * @param {Object} organization
- * @param {string} resourceType
- */
-export function getLegacyLimit(resourceType, organization) {
-  const allLimits = assign(
-    {},
-    organization.subscriptionPlan.limits.permanent,
-    organization.subscriptionPlan.limits.period
-  );
-
-  return allLimits[resourceType];
-}
-/**
- * Get resource usage data from token data for organization.
- * This is used for legacy organizations instead or resource API.
- *
- * @param {Object} organization
- * @param {string} resourceType
- */
-export function getLegacyUsage(resourceType, organization) {
-  const allUsages = assign({}, organization.usage.permanent, organization.usage.period);
-
-  return allUsages[resourceType];
 }
 
 export function resourceIncludedLimitReached(resource) {
