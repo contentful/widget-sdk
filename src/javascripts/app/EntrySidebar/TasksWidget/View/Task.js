@@ -100,7 +100,7 @@ export default class Task extends React.Component {
 
   canSave() {
     const { body, assigneeKey } = this.getChangedValue();
-    return this.hasChanges() && !!body && !!assigneeKey;
+    return this.hasChanges() && !!body && !!assigneeKey && !this.state.isUpdating;
   }
 
   handleBodyUpdate = event => {
@@ -111,8 +111,10 @@ export default class Task extends React.Component {
     this.addChange({ assigneeKey: event.target.value });
   };
 
-  handleSubmit = () => {
-    this.props.onSave(this.getChangedValue());
+  handleSubmit = async () => {
+    this.setState({ isUpdating: true });
+    await this.props.onSave(this.getChangedValue());
+    this.setState({ isUpdating: false });
   };
 
   handleCancelEdit = event => {
@@ -179,6 +181,10 @@ export default class Task extends React.Component {
     const { isDone, canUpdateStatus } = this.props.viewData;
 
     const checkbox = (
+      // TODO: I don't know why we're not using a Forma <Checkbox />
+      // element here. In the meantime though the linter is yelling at
+      // me so here's this eslint workaround.
+      // eslint-disable-next-line rulesdir/restrict-non-f36-components
       <input
         type="checkbox"
         data-test-id="status-checkbox"
@@ -258,7 +264,7 @@ export default class Task extends React.Component {
           labelText={bodyLabel}
           textarea
           value={body}
-          onChange={event => this.handleBodyUpdate(event)}
+          onChange={this.handleBodyUpdate}
           textInputProps={{ rows: 4, autoFocus: true, maxLength: characterLimit }}
           validationMessage={validationMessage}
         />
@@ -268,12 +274,12 @@ export default class Task extends React.Component {
             testId="save-task"
             buttonType={ctaContext}
             className={styles.editSubmit}
-            onClick={() => this.handleSubmit()}
+            onClick={this.handleSubmit}
             disabled={!this.canSave()}
             size="small">
             {ctaLabel}
           </Button>
-          <Button buttonType="muted" onClick={event => this.handleCancelEdit(event)} size="small">
+          <Button buttonType="muted" onClick={this.handleCancelEdit} size="small">
             Cancel
           </Button>
         </div>
