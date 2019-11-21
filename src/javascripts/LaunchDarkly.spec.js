@@ -11,6 +11,10 @@ jest.mock('ldclient-js', () => ({
   initialize: jest.fn()
 }));
 
+jest.mock('data/CMA/ProductCatalog', () => ({
+  getOrgFeature: jest.fn().mockResolvedValue(true)
+}));
+
 jest.mock('data/User', () => ({
   getOrgRole: jest.fn().mockReturnValue('org role'),
   getUserAgeInDays: jest.fn().mockReturnValue(7),
@@ -47,6 +51,7 @@ const organization = {
   name: 'Awesome Org',
   role: 'owner',
   pricingVersion: 'pricing_version_2',
+  hasSsoEnabled: true,
   sys: {
     id: 'abcd_org',
     createdAt: orgCreationDate.toISOString()
@@ -256,6 +261,8 @@ describe('LaunchDarkly', () => {
           currentOrgPlanIsEnterprise: false,
           currentOrgHasSpace: false,
           currentOrgHasPaymentMethod: false,
+          currentOrgHasSsoEnabled: true,
+          currentOrgHasSsoSelfConfigFeature: true,
           currentUserOrgRole: 'org role',
           currentUserHasAtleastOneSpace: false,
           currentUserIsCurrentOrgCreator: false,
@@ -311,6 +318,8 @@ describe('LaunchDarkly', () => {
           currentOrgPlanIsEnterprise: false,
           currentOrgHasSpace: false,
           currentOrgHasPaymentMethod: false,
+          currentOrgHasSsoEnabled: true,
+          currentOrgHasSsoSelfConfigFeature: true,
           currentUserOrgRole: 'org role',
           currentUserHasAtleastOneSpace: false,
           currentUserIsCurrentOrgCreator: false,
