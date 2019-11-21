@@ -1,12 +1,13 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import { queryFirst100UsersInDefaultSpace } from '../../../interactions/users';
 import {
+  NewTask,
   TaskUpdate,
   TaskStates,
-  PROVIDER as TASKS_PROVIDER,
-  getAllCommentsForDefaultEntry,
+  provider,
+  getAllTasksForDefaultEntry,
   createTask,
-  updateTaskTitleAndAssignee,
+  updateTaskBodyAndAssignee,
   resolveTask,
   reopenTask
 } from '../../../interactions/tasks';
@@ -23,14 +24,15 @@ import {
 import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 
 const users = require('../../../fixtures/responses/users.json');
-import severalTasks from '../../../fixtures/responses/tasks-several.js';
+import { severalTasksDefinition } from '../../../fixtures/responses/tasks-several.js';
 
 describe('Tasks entry editor sidebar', () => {
   before(() =>
     cy.startFakeServers({
       consumer: 'user_interface',
       providers: [
-        TASKS_PROVIDER,
+        provider(true),
+        provider(false),
         'entries',
         'users',
         'microbackend',
@@ -71,200 +73,208 @@ describe('Tasks entry editor sidebar', () => {
     ];
   }
 
-  context('tasks service error', () => {
-    beforeEach(() => {
-      const interaction = getAllCommentsForDefaultEntry.willFailWithAnInternalServerError();
+  for (const isLegacy of [true, false]) {
+    context(isLegacy ? 'using the legacy API' : 'using the new API', () => {
+      context('tasks service error', () => {
+        beforeEach(() => {
+          const interaction = getAllTasksForDefaultEntry.willFailWithAnInternalServerError(isLegacy);
 
-      visitEntry();
+          visitEntry();
 
-      cy.wait(interaction);
-    });
+          cy.wait(interaction);
+        });
 
-    it('renders "Tasks" sidebar section with an error', () => {
-      getTaskListError().should('be.visible');
-    });
-  });
+        it('renders "Tasks" sidebar section with an error', () => {
+          getTaskListError().should('be.visible');
+        });
+      });
 
-  context('no tasks on the entry', () => {
-    beforeEach(() => {
-      const interaction = getAllCommentsForDefaultEntry.willReturnNone();
+      context('no tasks on the entry', () => {
+        beforeEach(() => {
+          const interaction = getAllTasksForDefaultEntry.willReturnNone(isLegacy);
 
-      visitEntry();
+          visitEntry();
 
-      cy.wait(interaction);
-    });
+          cy.wait(interaction);
+        });
 
-    it('renders "Tasks" sidebar section', () => {
-      getTasksSidebarSection().should('be.visible');
-      getTaskListError().should('have.length', 0);
-    });
-  });
+        it('renders "Tasks" sidebar section', () => {
+          getTasksSidebarSection().should('be.visible');
+          getTaskListError().should('have.length', 0);
+        });
+      });
 
-  context('several tasks on the entry', () => {
-    beforeEach(() => {
-      const interaction = getAllCommentsForDefaultEntry.willReturnSeveral();
+      context('several tasks on the entry', () => {
+        beforeEach(() => {
+          const interaction = getAllTasksForDefaultEntry.willReturnSeveral(isLegacy);
 
-      visitEntry();
+          visitEntry();
 
-      cy.wait(interaction);
-    });
+          cy.wait(interaction);
+        });
 
-    it('renders list of tasks', () => {
-      getTasks().should('have.length', 3);
+        it('renders list of tasks', () => {
+          getTasks().should('have.length', 3);
 
-      severalTasks.items.forEach(({ assignment: { status } }, i: number) => {
-        expectTask(getTasks().eq(i), { isResolved: status === 'resolved' });
-      })
-    });
+          severalTasksDefinition(isLegacy).items.forEach(({ status, assignment }, i: number) => {
+            const st = isLegacy ? assignment.status : status
+            expectTask(getTasks().eq(i), { isResolved: st === TaskStates.RESOLVED });
+          })
+        });
 
-    describe('updating a task', () => {
-      it('changes task title and assignee without error', () => {
-        const taskUpdate: TaskUpdate = {
-          title: 'Updated task body!',
-          assigneeId: users.items[1].sys.id
+        describe('updating a task', () => {
+          it('changes task body and assignee without error', () => {
+            const taskUpdate: TaskUpdate = {
+              body: 'Updated task body!',
+              assigneeId: users.items[1].sys.id
+            }
+            const interaction = updateTaskBodyAndAssignee(taskUpdate, isLegacy).willSucceed();
+
+            updateTaskAndSave(getTasks().first(), taskUpdate);
+
+            cy.wait(interaction);
+          });
+
+          it('resolves tasks without error', () => {
+            const taskUpdate: TaskUpdate = {
+              status: TaskStates.RESOLVED
+            }
+            const interaction = resolveTask(taskUpdate, isLegacy).willSucceed();
+
+            const task = () => getTasks().first();
+            expectTask(task(), { isResolved: false });
+            getTaskCheckbox(task()).check();
+
+            cy.wait(interaction);
+
+            expectTask(task(), { isResolved: true });
+          });
+
+          it('restricts editing resolved tasks', () => {
+            const taskUpdate: TaskUpdate = {
+              status: TaskStates.RESOLVED
+            }
+            const interaction = resolveTask(taskUpdate, isLegacy).willSucceed();
+
+            const task = () => getTasks().first();
+            expectTask(task(), { isResolved: false });
+            getTaskCheckbox(task()).check();
+
+            cy.wait(interaction);
+
+            getEditTaskKebabMenuItem(task())
+              .should('have.length', 0);
+          });
+
+          it('reopens tasks without error', () => {
+            const taskUpdate: TaskUpdate = {
+              status: TaskStates.ACTIVE
+            }
+            const interaction = reopenTask(taskUpdate, isLegacy).willSucceed();
+
+            const task = () => getTasks().eq(1);
+            expectTask(task(), { isResolved: true });
+            getTaskCheckbox(task()).uncheck();
+
+            cy.wait(interaction);
+
+            expectTask(task(), { isResolved: false });
+          });
+
+          function getEditTaskKebabMenuItem(task: Cypress.Chainable): Cypress.Chainable {
+            task.click();
+
+            getTaskKebabMenu(task)
+              .should('be.enabled')
+              .click();
+
+            return getTaskKebabMenuItems(task)
+              .get('[data-test-id="edit-task"]');
+          }
+
+          function updateTaskAndSave(task: Cypress.Chainable, { body, assigneeId }: TaskUpdate) {
+            getEditTaskKebabMenuItem(task).click();
+            if (body) {
+              getTaskBodyTextarea(task)
+                .should('have.text', severalTasksDefinition(isLegacy).items[0].body)
+                .clear()
+                .type(body);
+            }
+            if (assigneeId) {
+              selectTaskAssignee(assigneeId);
+            }
+            saveUpdatedTask();
+          }
+        });
+      });
+
+      describe('creating a new task', () => {
+        const newTaskData: NewTask = {
+          body: 'Great new task!',
+          assigneeId: 'userID'
+        };
+
+        let getAllTasksInteraction: string
+        beforeEach(() => {
+          getAllTasksInteraction = getAllTasksForDefaultEntry.willReturnNone(isLegacy);
+        });
+
+        context('task creation error', () => {
+          beforeEach(() => {
+            visitEntry();
+
+            cy.wait(getAllTasksInteraction);
+          });
+
+          it('creates task on API and adds it to task list', () => {
+            const interaction = createTask(newTaskData).willFailWithAnInternalServerError(isLegacy);
+
+            createNewTaskAndSave(newTaskData);
+
+            cy.wait(interaction);
+
+            getTasks().should('have.length', 0);
+            getDraftTask().should('have.length', 1);
+            // Can't use 'be.visible' because of element partly covered in sidebar.
+            getDraftTaskError().should('not.have.css', 'display', 'none');
+          });
+        });
+
+        context('task creation successful', () => {
+          beforeEach(() => {
+            visitEntry();
+
+            cy.wait(getAllTasksInteraction);
+          });
+
+          it('creates task on API and adds it to task list', () => {
+            const interaction = createTask(newTaskData).willSucceed(isLegacy);
+
+            createNewTaskAndSave(newTaskData);
+
+            cy.wait(interaction);
+
+            getDraftTask().should('have.length', 0);
+            getTasks().should('have.length', 1);
+          });
+        });
+
+        function createNewTaskAndSave({ body, assigneeId }) {
+          getCreateTaskAction()
+            .should('be.enabled')
+            .click();
+          getDraftTask()
+            .should('have.length', 1)
+            .should('be.visible');
+          getDraftTaskInput()
+            .type(body)
+            .should('have.value', body);
+          getDraftAssigneeSelector().select(assigneeId);
+          getDraftTaskSaveAction().click();
         }
-        const interaction = updateTaskTitleAndAssignee(taskUpdate).willSucceed();
-
-        updateTaskAndSave(getTasks().first(), taskUpdate);
-
-        cy.wait(interaction);
-      });
-
-      it('resolves tasks without error', () => {
-        const taskUpdate: TaskUpdate = {
-          status: TaskStates.RESOLVED
-        }
-        const interaction = resolveTask(taskUpdate).willSucceed();
-
-        const task = () => getTasks().first();
-        expectTask(task(), { isResolved: false });
-        getTaskCheckbox(task()).check();
-
-        cy.wait(interaction);
-
-        expectTask(task(), { isResolved: true });
-      });
-
-      it('restricts editing resolved tasks', () => {
-        const taskUpdate: TaskUpdate = {
-          status: TaskStates.RESOLVED
-        }
-        const interaction = resolveTask(taskUpdate).willSucceed();
-
-        const task = () => getTasks().first();
-        expectTask(task(), { isResolved: false });
-        getTaskCheckbox(task()).check();
-
-        cy.wait(interaction);
-
-        getEditTaskKebabMenuItem(task())
-          .should('have.length', 0);
-      });
-
-      it('reopens tasks without error', () => {
-        const taskUpdate: TaskUpdate = {
-          status: TaskStates.OPEN
-        }
-        const interaction = reopenTask(taskUpdate).willSucceed();
-
-        const task = () => getTasks().eq(1);
-        expectTask(task(), { isResolved: true});
-        getTaskCheckbox(task()).uncheck();
-
-        cy.wait(interaction);
-
-        expectTask(task(), { isResolved: false });
-      });
-
-      function getEditTaskKebabMenuItem(task: Cypress.Chainable): Cypress.Chainable {
-        task.click();
-
-        getTaskKebabMenu(task)
-          .should('be.enabled')
-          .click();
-
-        return getTaskKebabMenuItems(task)
-          .get('[data-test-id="edit-task"]');
-      }
-
-      function updateTaskAndSave(task: Cypress.Chainable, { title, assigneeId }: TaskUpdate) {
-        getEditTaskKebabMenuItem(task).click();
-        if (title) {
-          getTaskBodyTextarea(task)
-            .should('have.text', severalTasks.items[0].body)
-            .clear()
-            .type(title);
-        }
-        if (assigneeId) {
-          selectTaskAssignee(assigneeId);
-        }
-        saveUpdatedTask();
-      }
-    });
-  });
-
-  describe('creating a new task', () => {
-    const newTaskData = { title: 'Great new task!', assigneeId: 'userID' };
-
-    let getAllCommentsInteraction: string
-    beforeEach(() => {
-      getAllCommentsInteraction = getAllCommentsForDefaultEntry.willReturnNone();
-    });
-
-    context('task creation error', () => {
-      beforeEach(() => {
-        visitEntry();
-
-        cy.wait(getAllCommentsInteraction);
-      });
-
-      it('creates task on API and adds it to task list', () => {
-        const interaction = createTask(newTaskData).willFailWithAnInternalServerError();
-
-        createNewTaskAndSave(newTaskData);
-
-        cy.wait(interaction);
-
-        getTasks().should('have.length', 0);
-        getDraftTask().should('have.length', 1);
-        // Can't use 'be.visible' because of element partly covered in sidebar.
-        getDraftTaskError().should('not.have.css', 'display', 'none');
       });
     });
-
-    context('task creation successful', () => {
-      beforeEach(() => {
-        visitEntry();
-
-        cy.wait(getAllCommentsInteraction);
-      });
-
-      it('creates task on API and adds it to task list', () => {
-        const interaction = createTask(newTaskData).willSucceed();
-
-        createNewTaskAndSave(newTaskData);
-
-        cy.wait(interaction);
-
-        getDraftTask().should('have.length', 0);
-        getTasks().should('have.length', 1);
-      });
-    });
-
-    function createNewTaskAndSave({ title, assigneeId }) {
-      getCreateTaskAction()
-        .should('be.enabled')
-        .click();
-      getDraftTask()
-        .should('have.length', 1)
-        .should('be.visible');
-      getDraftTaskInput()
-        .type(title)
-        .should('have.value', title);
-      getDraftAssigneeSelector().select(assigneeId);
-      getDraftTaskSaveAction().click();
-    }
-  });
+  }
 });
 
 const getTasksSidebarSection = () => cy.getByTestId('sidebar-tasks-widget');

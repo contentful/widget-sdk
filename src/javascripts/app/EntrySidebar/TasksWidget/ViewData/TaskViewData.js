@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { memoize } from 'lodash';
-import { isOpenTask } from '../util';
+import { TaskStatus } from 'data/CMA/TasksRepo';
 import {
   UserSelectorViewData,
   createSpaceUserSelectorViewData,
@@ -41,10 +41,8 @@ const DRAFT_TASK = {
     createdAt: null
   },
   body: '',
-  assignment: {
-    assignedTo: null,
-    status: 'open'
-  }
+  assignedTo: null,
+  status: TaskStatus.ACTIVE
 };
 
 /**
@@ -120,8 +118,8 @@ export function createLoadingStateTasksViewData() {
  */
 function createTaskViewData(task, usersFetchingStatus) {
   const { id } = task.sys;
-  const assignee = task.assignment.assignedTo
-    ? createUserViewDataFromLinkAndFetcher(task.assignment.assignedTo, usersFetchingStatus)
+  const assignee = task.assignedTo
+    ? createUserViewDataFromLinkAndFetcher(task.assignedTo, usersFetchingStatus)
     : null;
   const creator = task.sys.createdBy
     ? createUserViewDataFromLinkAndFetcher(task.sys.createdBy, usersFetchingStatus)
@@ -134,7 +132,7 @@ function createTaskViewData(task, usersFetchingStatus) {
     creator,
     assignee,
     body: task.body,
-    isDone: task.assignment.status === 'resolved',
+    isDone: task.status === TaskStatus.RESOLVED,
     isDraft: id === DRAFT_TASK_KEY,
     isInEditMode: false,
     canEdit: false,
@@ -173,5 +171,5 @@ function getPendingTasksMessage(tasks) {
 }
 
 function getPendingTasksCount(tasks) {
-  return tasks.filter(isOpenTask).length;
+  return tasks.filter(({ status }) => status === TaskStatus.ACTIVE).length;
 }

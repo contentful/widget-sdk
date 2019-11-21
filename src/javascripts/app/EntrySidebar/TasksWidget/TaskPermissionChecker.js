@@ -34,11 +34,7 @@ export default function create(currentUser, isSpaceAdmin) {
   }
 
   function isTaskAssignee(task) {
-    return (
-      !!task.assignment &&
-      !!task.assignment.assignedTo &&
-      getUserId(task.assignment.assignedTo) === currentUserId
-    );
+    return !!task.assignedTo && getUserId(task.assignedTo) === currentUserId;
   }
 
   function getUserId(user) {

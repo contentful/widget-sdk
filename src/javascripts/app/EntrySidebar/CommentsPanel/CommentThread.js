@@ -39,9 +39,7 @@ const styles = {
 
 export default function CommentThread({ endpoint, thread, onRemoved, onNewReply }) {
   const [comment, ...replies] = thread;
-  const {
-    sys: { reference: entry }
-  } = comment;
+  const entry = comment.sys.reference || comment.sys.parentEntity;
   const ref = useRef();
   const [replyingMode, setReplyingMode] = useState(false);
   const [hasPendingReply, setHasPendingReply] = useState(false);

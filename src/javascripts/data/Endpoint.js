@@ -67,7 +67,7 @@ export function createSpaceEndpoint(baseUrl, spaceId, auth, envId) {
 
   function maybePrefixWithEnv(path) {
     if (envId && shouldUseEnvEndpoint(path)) {
-      return ['environments', envId].concat(path);
+      return ['environments', envId, ...path];
     } else {
       return path;
     }
@@ -161,8 +161,6 @@ export function createAppDefinitionsEndpoint(baseUrl, auth) {
  * @param {string|function} baseUrl  can be a string - will be used as is
  *                                   can be a function of path to full URL
  * @param {object} auth
- * @param {function(): Promise<string>} auth.getToken
- * @param {function(): Promise<string>} auth.refreshToken
  * @returns {function(): Promise<Object>}
  */
 export function create(baseUrl, auth) {

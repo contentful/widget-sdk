@@ -66,9 +66,8 @@ export default function Comment({ endpoint, comment, onRemoved, className, hasRe
   } = comment;
   const creationDate = moment(createdAt, moment.ISO_8601);
   const handleRemove = async () => {
-    const {
-      sys: { reference: entry, id: commentId }
-    } = comment;
+    const commentId = comment.sys.id;
+    const entry = comment.sys.reference || comment.sys.parentEntity;
     try {
       await removeComment(endpoint, entry.sys.id, commentId);
       onRemoved(comment);

@@ -8,94 +8,113 @@ import { RequestOptions } from '@pact-foundation/pact-web';
 const emptyWithTotal = require('../fixtures/responses/empty.json');
 const serverError = require('../fixtures/responses/server-error.json');
 import {
-  definition as severalTasksDefinition,
-  getTaskDefinitionById as getSeveralTasksTaskDefinitionById
+  severalTasksDefinition,
+  getTaskDefinitionById
 } from '../fixtures/responses/tasks-several.js';
 
-// Tasks doesn't currently support "total" like most other collection endpoints.
-const empty = omit(emptyWithTotal, 'total')
+const empty = {
+  // Tasks doesn't currently support "total" like most other collection endpoints.
+  ...omit(emptyWithTotal, 'total')
+}
 
-export enum States {
-  NONE = 'tasks/none',
-  SEVERAL = 'tasks/several',
-  INTERNAL_SERVER_ERROR = 'tasks/internal-server-error'
+enum States {
+  NONE = 'none',
+  SEVERAL = 'several',
+  INTERNAL_SERVER_ERROR = 'internal-server-error'
 }
 
 export enum TaskStates {
-  OPEN = 'open',
+  ACTIVE = 'active',
   RESOLVED = 'resolved',
 }
 
-export type TaskUpdate = {
-  title?: string,
-  assigneeId?: string,
+export interface NewTask {
+  body: string
+  assigneeId: string
+}
+
+export interface TaskUpdate {
+  body?: string
+  assigneeId?: string
   status?: TaskStates
 }
 
-export const PROVIDER = 'tasks';
+export const provider = (deprecated: boolean) => deprecated ? 'tasks' : 'tasks-v2';
+const providerState = (state: States, deprecated: boolean): string => `${provider(deprecated)}/${state}`
 
-const GET_TASK_LIST = `a request to get all entry tasks for entry "${defaultEntryId}"`
+const GET_TASK_LIST = (deprecated: boolean): string => `${deprecated ? '[legacy api] ' : ''}a request to get all entry tasks for entry "${defaultEntryId}"`
 
 const defaultHeader = {
   ...commonDefaultHeader,
   'x-contentful-enable-alpha-feature': 'comments-api'
 }
 
-const getEntryCommentsAndTasksRequest: RequestOptions = {
+const getEntryTasksRequest: RequestOptions = {
   method: 'GET',
   path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}/tasks`,
   headers: defaultHeader
 };
 
-export const getAllCommentsForDefaultEntry = {
-  willReturnNone() {
+export const getAllTasksForDefaultEntry = {
+  willReturnNone(deprecated: boolean) {
     cy.addInteraction({
-      provider: PROVIDER,
-      state: States.NONE,
-      uponReceiving: GET_TASK_LIST,
-      withRequest: getEntryCommentsAndTasksRequest,
+      provider: provider(deprecated),
+      state: providerState(States.NONE, deprecated),
+      uponReceiving: GET_TASK_LIST(deprecated),
+      withRequest: getEntryTasksRequest,
       willRespondWith: {
         status: 200,
         body: empty
       }
-    }).as('getAllCommentsForDefaultEntry');
+    }).as('getAllTasksForDefaultEntry');
 
-    return '@getAllCommentsForDefaultEntry';
+    return '@getAllTasksForDefaultEntry';
   },
-  willReturnSeveral() {
+  willReturnSeveral(deprecated: boolean) {
     cy.addInteraction({
-      provider: PROVIDER,
-      state: States.SEVERAL,
-      uponReceiving: GET_TASK_LIST,
-      withRequest: getEntryCommentsAndTasksRequest,
+      provider: provider(deprecated),
+      state: providerState(States.SEVERAL, deprecated),
+      uponReceiving: GET_TASK_LIST(deprecated),
+      withRequest: getEntryTasksRequest,
       willRespondWith: {
         status: 200,
-        body: severalTasksDefinition
+        body: severalTasksDefinition(deprecated)
       }
-    }).as('getAllCommentsForDefaultEntry');
+    }).as('getAllTasksForDefaultEntry');
 
-    return '@getAllCommentsForDefaultEntry';
+    return '@getAllTasksForDefaultEntry';
   },
-  willFailWithAnInternalServerError() {
+  willFailWithAnInternalServerError(deprecated: boolean) {
     cy.addInteraction({
-      provider: PROVIDER,
-      state: States.INTERNAL_SERVER_ERROR,
-      uponReceiving: GET_TASK_LIST,
-      withRequest: getEntryCommentsAndTasksRequest,
+      provider: provider(deprecated),
+      state: providerState(States.INTERNAL_SERVER_ERROR, deprecated),
+      uponReceiving: GET_TASK_LIST(deprecated),
+      withRequest: getEntryTasksRequest,
       willRespondWith: {
         status: 500,
         body: serverError
       }
-    }).as('getAllCommentsForDefaultEntry');
+    }).as('getAllTasksForDefaultEntry');
 
-    return '@getAllCommentsForDefaultEntry';
+    return '@getAllTasksForDefaultEntry';
   }
 }
 
-export function createTask({ title, assigneeId }) {
+export function createTask({ body, assigneeId }) {
   const alias = `createTask-for-${assigneeId}`;
   const newTask = {
-    body: title,
+    body,
+    assignedTo: {
+      sys: {
+        type: 'Link',
+        linkType: 'User',
+        id: assigneeId,
+      }
+    },
+    status: TaskStates.ACTIVE
+  };
+  const newTaskDeprecated = {
+    body,
     assignment: {
       assignedTo: {
         sys: {
@@ -107,9 +126,9 @@ export function createTask({ title, assigneeId }) {
       status: 'open'
     }
   };
-  const interactionRequestInfo = {
-    provider: PROVIDER,
-    uponReceiving: `a request to create a new task for user "${assigneeId}" on entry "${defaultEntryId}"`,
+  const interactionRequestInfo = (deprecated: boolean) => ({
+    provider: provider(deprecated),
+    uponReceiving: `${deprecated ? '[legacy api] ' : ''}a request to create a new task for user "${assigneeId}" on entry "${defaultEntryId}"`,
     withRequest: {
       method: 'POST',
       path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}/tasks`,
@@ -117,30 +136,33 @@ export function createTask({ title, assigneeId }) {
         ...defaultHeader,
         'Content-Type': 'application/vnd.contentful.management.v1+json'
       },
-      body: newTask
+      body: {
+        ...newTaskDeprecated,
+        ...newTask
+      }
     } as RequestOptions
-  };
+  });
   return {
-    willSucceed() {
-      const newTaskSys = severalTasksDefinition.items[0].sys;
+    willSucceed(deprecated: boolean) {
+      const newTaskSys = severalTasksDefinition(deprecated).items[0].sys;
       cy.addInteraction({
-        ...interactionRequestInfo,
-        state: States.NONE,
+        ...interactionRequestInfo(deprecated),
+        state: providerState(States.NONE, deprecated),
         willRespondWith: {
           status: 201,
           body: {
             sys: newTaskSys,
-            ...newTask,
+            ...(deprecated ? newTaskDeprecated : newTask),
           }
         }
       }).as(alias);
 
       return `@${alias}`;
     },
-    willFailWithAnInternalServerError() {
+    willFailWithAnInternalServerError(deprecated: boolean) {
       cy.addInteraction({
-        ...interactionRequestInfo,
-        state: States.INTERNAL_SERVER_ERROR,
+        ...interactionRequestInfo(deprecated),
+        state: providerState(States.INTERNAL_SERVER_ERROR, deprecated),
         willRespondWith: {
           status: 500,
           body: serverError
@@ -152,28 +174,41 @@ export function createTask({ title, assigneeId }) {
   }
 }
 
-function updateTask(taskId: string, alias: string, change: string) {
-  const taskDefinition = getSeveralTasksTaskDefinitionById(taskId);
-
-  return function (update: TaskUpdate, ) {
-    const { title, assigneeId, status } = update;
+function updateTask(taskId: string, change: string) {
+  const alias = `update-task-${taskId}`
+  return function (update: TaskUpdate, deprecated: boolean) {
+    const taskDefinition = getTaskDefinitionById(taskId, false);
+    const deprecatedTaskDefinition = getTaskDefinitionById(taskId, true);
+    const { body, assigneeId, status } = update;
     const updatedTask = {
-      body: title || taskDefinition.body,
+      body: body || taskDefinition.body,
+      assignedTo: {
+        sys: {
+          type: 'Link',
+          linkType: 'User',
+          id: assigneeId || taskDefinition.assignedTo.sys.id,
+        }
+      },
+      status: status || taskDefinition.status,
+    };
+
+    const updatedTaskDeprecated = {
+      body: body || deprecatedTaskDefinition.body,
       assignment: {
         assignedTo: {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: assigneeId || taskDefinition.assignment.assignedTo.sys.id,
+            id: assigneeId || deprecatedTaskDefinition.assignment.assignedTo.sys.id,
           }
         },
-        status: status || taskDefinition.assignment.status
+        status: status === TaskStates.ACTIVE ? 'open' : (status || deprecatedTaskDefinition.assignment.status)
       }
     };
 
     const interactionRequestInfo = {
-      provider: PROVIDER,
-      uponReceiving: `a request for task "${taskId}" to ${change}`,
+      provider: provider(deprecated),
+      uponReceiving: `${deprecated ? '[legacy api] ' : ''}a request for task "${taskId}" to ${change}`,
       withRequest: {
         method: 'PUT',
         path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}/tasks/${taskId}`,
@@ -182,36 +217,40 @@ function updateTask(taskId: string, alias: string, change: string) {
           'Content-Type': 'application/vnd.contentful.management.v1+json',
           'X-Contentful-Version': '1'
         },
-        body: updatedTask
+        body: {
+          ...updatedTaskDeprecated,
+          ...updatedTask
+        }
       } as RequestOptions
     };
 
     return {
       willSucceed() {
-        const { sys: newTaskSysDefinition } = severalTasksDefinition.items.find((task: any) =>
+        const { sys: newTaskSysDefinition } = severalTasksDefinition(deprecated).items.find((task: any) =>
           task.sys.id.getValue() === taskId)
+
         cy.addInteraction({
           ...interactionRequestInfo,
-          state: States.SEVERAL,
+          state: providerState(States.SEVERAL, deprecated),
           willRespondWith: {
             status: 200,
             body: {
+              ...(deprecated ? updatedTaskDeprecated : updatedTask),
               sys: {
                 ...newTaskSysDefinition,
                 version: newTaskSysDefinition.version + 1
               },
-              ...updatedTask
             }
           }
         }).as(alias);
-
+        
         return `@${alias}`;
       },
       // TODO: Add a test actually using this or remove.
       willFailWithAnInternalServerError() {
         cy.addInteraction({
           ...interactionRequestInfo,
-          state: States.INTERNAL_SERVER_ERROR,
+          state: providerState(States.INTERNAL_SERVER_ERROR, deprecated),
           willRespondWith: {
             status: 500,
             body: serverError
@@ -224,6 +263,6 @@ function updateTask(taskId: string, alias: string, change: string) {
   }
 }
 
-export const updateTaskTitleAndAssignee = updateTask('taskId1', 'changeTaskId1TitleAndReassignUser', 'change title and assignee');
-export const resolveTask = updateTask('taskId1', 'resolveTaskId1', 'set status to "done"');
-export const reopenTask = updateTask('taskId2', 'reopenTaskId2', 'set "done" task back to "open"');
+export const updateTaskBodyAndAssignee = updateTask('taskId1', 'change body and assignee');
+export const resolveTask = updateTask('taskId1', `set status to "${TaskStates.RESOLVED}"`);
+export const reopenTask = updateTask('taskId2', `set "${TaskStates.RESOLVED}" task back to "${TaskStates.ACTIVE}"`);

@@ -1,6 +1,5 @@
 import * as K from 'utils/kefir';
 import { getAllForEntry, create, remove, update } from 'data/CMA/TasksRepo';
-
 // TODO: Introduce Store specific errors rather than passing client errors.
 
 /**
@@ -56,14 +55,10 @@ export function createTasksStoreForEntry(endpoint, entryId) {
   };
 
   async function initialFetch() {
-    let tasks;
     try {
-      const { items } = await getAllForEntry(endpoint, entryId);
-      tasks = items;
+      tasksBus.set(await getAllForEntry(endpoint, entryId));
     } catch (error) {
       tasksBus.error(error);
-      return;
     }
-    tasksBus.set(tasks);
   }
 }

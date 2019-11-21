@@ -2,16 +2,6 @@ import * as K from 'utils/kefir';
 import { isEqual } from 'lodash';
 
 /**
- * Returns whether the given task is open or not.
- *
- * @param {API.Task} task
- * @returns {boolean}
- */
-export function isOpenTask(task) {
-  return task.assignment.status === 'open';
-}
-
-/**
  * Starts observing a given store (like e.g. TasksStore) and invokes the given
  * `onChange` with updated loading stages.
  *

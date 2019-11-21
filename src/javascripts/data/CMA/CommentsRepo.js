@@ -51,7 +51,7 @@ export async function getAllForEntry(endpoint, entryId) {
     alphaHeader
   );
   // TODO: Remove filter once we removed tasks from `/comments` endpoint.
-  result.items = result.items.filter(item => !item.assignment);
+  result.items = result.items.filter(item => !item.assignedTo);
   return result;
 }
 
