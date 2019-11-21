@@ -52,7 +52,7 @@ Array [
       "src": "http://localhost:1234",
       "sys": Object {
         "id": "1VchawWvbIClHuMIyxwR5m",
-        "type": "ExtensionDefinition",
+        "type": "AppDefinition",
       },
     },
     "author": Object {

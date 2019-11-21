@@ -1,4 +1,4 @@
-import { countBy, get, identity } from 'lodash';
+import { get, identity } from 'lodash';
 import resolveResponse from 'contentful-resolve-response';
 
 const DEV_APP_PREFIX = 'dev-app';
@@ -67,9 +67,9 @@ export default function createAppsRepo(appDefinitionLoader, spaceEndpoint) {
     const definitionIds = marketplaceApps
       .map(app => get(app, ['fields', 'extensionDefinitionId'], null))
       .filter(identity);
-    const [appDefinitionMap, extensionMap] = await Promise.all([
+    const [appDefinitionMap, installationMap] = await Promise.all([
       appDefinitionLoader.getByIds(definitionIds),
-      getExtensionsForExtensionDefinitions(definitionIds)
+      getAppDefinitionToInstallationMap()
     ]);
 
     return (
@@ -97,7 +97,7 @@ export default function createAppsRepo(appDefinitionLoader, spaceEndpoint) {
             flagId: get(app, ['fields', 'productCatalogFlag', 'fields', 'flagId']),
             icon: get(app, ['fields', 'icon', 'fields', 'file', 'url'], ''),
             id: get(app, ['fields', 'slug'], ''),
-            installed: !!extensionMap[definitionId],
+            installed: !!installationMap[definitionId],
             links: get(app, ['fields', 'links'], []).map(link => link.fields),
             permissions: `__${title} app__ ${permissionsText}`,
             permissionsExplanation: get(app, ['fields', 'permissionsExplanation']),
@@ -119,8 +119,7 @@ export default function createAppsRepo(appDefinitionLoader, spaceEndpoint) {
       return [];
     }
 
-    const appDefinitionIds = appDefinitions.map(def => def.sys.id);
-    const extensionMap = await getExtensionsForExtensionDefinitions(appDefinitionIds);
+    const installationMap = await getAppDefinitionToInstallationMap();
 
     return appDefinitions.map(def => {
       return {
@@ -129,7 +128,7 @@ export default function createAppsRepo(appDefinitionLoader, spaceEndpoint) {
           id: [DEV_APP_PREFIX, DEV_APP_SEPARATOR, def.sys.id].join('')
         },
         extensionDefinition: def,
-        extension: extensionMap[def.sys.id]
+        extension: installationMap[def.sys.id]
       };
     });
   }
@@ -155,22 +154,18 @@ export default function createAppsRepo(appDefinitionLoader, spaceEndpoint) {
     });
   }
 
-  async function getExtensionsForExtensionDefinitions(extensionDefinitionIds) {
+  async function getAppDefinitionToInstallationMap() {
     const { items } = await spaceEndpoint({
       method: 'GET',
-      path: ['extensions'],
-      query: { 'extensionDefinition.sys.id[in]': extensionDefinitionIds.join(',') }
+      path: ['app_installations']
     });
 
-    const extensionCountsByDefinition = countBy(items, e => e.extensionDefinition.sys.id);
-    const uniquelyUsedDefinitions = Object.keys(extensionCountsByDefinition).filter(
-      definitionId => {
-        return extensionCountsByDefinition[definitionId] === 1;
-      }
+    return items.reduce(
+      (acc, installation) => ({
+        ...acc,
+        [installation.sys.appDefinition.sys.id]: installation
+      }),
+      {}
     );
-
-    return items
-      .filter(ext => uniquelyUsedDefinitions.includes(ext.extensionDefinition.sys.id))
-      .reduce((acc, ext) => ({ ...acc, [ext.extensionDefinition.sys.id]: ext }), {});
   }
 }

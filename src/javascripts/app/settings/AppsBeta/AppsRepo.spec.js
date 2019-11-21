@@ -55,20 +55,23 @@ describe('AppsRepo', () => {
       expect(result).toMatchSnapshot();
     });
   });
+
   describe('getMarketplaceApps', () => {
     const originalFetch = global.window.fetch;
-    const netlifyExtension = {
-      sys: { type: 'Extension', id: 'netlify-extension-id' },
-      extensionDefinition: {
-        sys: {
-          type: 'Link',
-          linkType: 'ExtensionDefinition',
-          id: NETLIFY_EXTENSION_DEFINITION_ID
+    const netlifyInstallation = {
+      sys: {
+        type: 'AppInstallation',
+        appDefinition: {
+          sys: {
+            type: 'Link',
+            linkType: 'AppDefinition',
+            id: NETLIFY_EXTENSION_DEFINITION_ID
+          }
         }
       }
     };
     const netlifyDefinition = {
-      sys: { type: 'ExtensionDefinition', id: NETLIFY_EXTENSION_DEFINITION_ID },
+      sys: { type: 'AppDefinition', id: NETLIFY_EXTENSION_DEFINITION_ID },
       name: 'Netlify',
       locations: ['app', 'entry-sidebar'],
       src: 'http://localhost:1234'
@@ -79,7 +82,7 @@ describe('AppsRepo', () => {
       })
     };
     const spaceEndpoint = jest.fn(() => {
-      return Promise.resolve({ items: [netlifyExtension] });
+      return Promise.resolve({ items: [netlifyInstallation] });
     });
     const repo = createAppsRepo(loader, spaceEndpoint);
 
@@ -143,17 +146,19 @@ describe('AppsRepo', () => {
   describe('getDevApps', () => {
     it('returns fake dev apps for all extension definitions in the current org', async () => {
       const definitions = [
-        { sys: { type: 'ExtensionDefinition', id: 'org-def-1' } },
-        { sys: { type: 'ExtensionDefinition', id: 'org-def-2' } }
+        { sys: { type: 'AppDefinition', id: 'org-def-1' } },
+        { sys: { type: 'AppDefinition', id: 'org-def-2' } }
       ];
 
-      const extension = {
-        sys: { type: 'Extension', id: 'ext-for-def-2' },
-        extensionDefinition: {
-          sys: {
-            type: 'Link',
-            linkType: 'ExtensionDefinition',
-            id: 'org-def-2'
+      const installation = {
+        sys: {
+          type: 'AppInstallation',
+          appDefinition: {
+            sys: {
+              type: 'Link',
+              linkType: 'AppDefinition',
+              id: 'org-def-2'
+            }
           }
         }
       };
@@ -162,7 +167,7 @@ describe('AppsRepo', () => {
         getAllForCurrentOrganization: jest.fn(() => Promise.resolve(definitions))
       };
 
-      const spaceEndpoint = jest.fn(() => Promise.resolve({ items: [extension] }));
+      const spaceEndpoint = jest.fn(() => Promise.resolve({ items: [installation] }));
 
       const repo = createAppsRepo(loader, spaceEndpoint);
       const result = await repo.getDevApps();
@@ -171,10 +176,7 @@ describe('AppsRepo', () => {
       expect(spaceEndpoint).toBeCalledTimes(1);
       expect(spaceEndpoint).toBeCalledWith({
         method: 'GET',
-        path: ['extensions'],
-        query: {
-          'extensionDefinition.sys.id[in]': 'org-def-1,org-def-2'
-        }
+        path: ['app_installations']
       });
 
       expect(result).toEqual([
@@ -185,7 +187,7 @@ describe('AppsRepo', () => {
         {
           sys: { type: 'DevApp', id: 'dev-app_org-def-2' },
           extensionDefinition: definitions[1],
-          extension
+          extension: installation
         }
       ]);
     });
