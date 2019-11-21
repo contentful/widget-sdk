@@ -34,6 +34,7 @@ exports[`SpaceRoleEditor renders the component 1`] = `
   <Dropdown
     className="emotion-0"
     getContainerRef={[Function]}
+    isAutoalignmentEnabled={true}
     isOpen={false}
     onClose={[Function]}
     position="bottom-left"
@@ -219,6 +220,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
   <Dropdown
     className="emotion-5"
     getContainerRef={[Function]}
+    isAutoalignmentEnabled={true}
     isOpen={true}
     onClose={[Function]}
     position="bottom-left"
@@ -396,6 +398,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
           </div>
         }
         getRef={[Function]}
+        isAutoalignmentEnabled={true}
         onClose={[Function]}
         openSubmenu={[Function]}
         position="bottom-left"
