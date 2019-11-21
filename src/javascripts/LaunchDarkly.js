@@ -13,12 +13,7 @@ import {
 import * as config from 'Config';
 import * as logger from 'services/logger';
 import { isFlagOverridden, getFlagOverride } from 'debug/EnforceFlags';
-import {
-  getOrganization,
-  getSpace,
-  getUser,
-  getSpacesByOrganization
-} from 'services/TokenStore';
+import { getOrganization, getSpace, getUser, getSpacesByOrganization } from 'services/TokenStore';
 import isLegacyEnterprise from 'data/isLegacyEnterprise';
 
 let client;
@@ -98,6 +93,7 @@ async function ldUser(user, org, space) {
       currentOrgPlanIsEnterprise: isLegacyEnterprise(org),
       currentOrgHasSpace: Boolean(_.get(spacesByOrg, [organizationId, 'length'], 0)),
       currentOrgHasPaymentMethod: Boolean(org.isBillable),
+      currentOrgCreationDate: new Date(org.sys.createdAt).getTime(),
 
       currentUserOrgRole: getOrgRole(user, organizationId),
       currentUserHasAtleastOneSpace: hasAnOrgWithSpaces(spacesByOrg),

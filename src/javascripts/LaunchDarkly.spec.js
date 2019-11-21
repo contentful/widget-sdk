@@ -41,12 +41,15 @@ jest.mock('debug/EnforceFlags', () => ({
   getFlagOverride: jest.fn()
 }));
 
+const orgCreationDate = new Date(2018, 12, 25);
+
 const organization = {
   name: 'Awesome Org',
   role: 'owner',
   pricingVersion: 'pricing_version_2',
   sys: {
-    id: 'abcd_org'
+    id: 'abcd_org',
+    createdAt: orgCreationDate.toISOString()
   }
 };
 
@@ -247,7 +250,7 @@ describe('LaunchDarkly', () => {
           currentUserOwnsAtleastOneOrg: true,
           currentUserAge: 7,
           currentUserCreationDate: 1234567890,
-
+          currentOrgCreationDate: orgCreationDate.getTime(),
           currentOrgId: 'abcd_org',
           currentOrgPricingVersion: 'pricing_version_2',
           currentOrgPlanIsEnterprise: false,
@@ -302,6 +305,7 @@ describe('LaunchDarkly', () => {
           currentUserAge: 7,
           currentUserCreationDate: 1234567890,
 
+          currentOrgCreationDate: orgCreationDate.getTime(),
           currentOrgId: 'abcd_org',
           currentOrgPricingVersion: 'pricing_version_2',
           currentOrgPlanIsEnterprise: false,
