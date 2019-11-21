@@ -151,7 +151,7 @@ export default class AppRoute extends Component {
     }),
     repo: PropTypes.shape({
       getAppDefinitionForApp: PropTypes.func.isRequired,
-      getExtensionForExtensionDefinition: PropTypes.func.isRequired,
+      getAppInstallation: PropTypes.func.isRequired,
       getMarketplaceApps: PropTypes.func.isRequired
     }).isRequired,
     bridge: PropTypes.object.isRequired,
@@ -202,7 +202,7 @@ export default class AppRoute extends Component {
     try {
       return {
         ...result,
-        extension: await repo.getExtensionForExtensionDefinition(appDefinition.sys.id)
+        extension: await repo.getAppInstallation(appDefinition.sys.id)
       };
     } catch (err) {
       // If there are 2 or more extensions for the same definition

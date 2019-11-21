@@ -245,73 +245,50 @@ describe('AppsRepo', () => {
     });
   });
 
-  describe('getExtensionForExtensionDefinition', () => {
+  describe('getAppInstallation', () => {
     const definition = {
       sys: {
-        type: 'ExtensionDefinition',
-        id: 'my-def'
+        type: 'AppDefinition',
+        id: 'my-app-def'
       }
     };
 
-    const makeExtension = extensionId => {
-      return {
-        sys: { type: 'Extension', id: extensionId || 'my-ext' },
-        extensionDefinition: {
+    const installation = {
+      sys: {
+        type: 'AppInstallation',
+        appDefinition: {
           sys: {
             type: 'Link',
             linkType: definition.sys.type,
             id: definition.sys.id
           }
         }
-      };
+      }
     };
 
-    it('returns extension it there is exactly one extension for definition provided', async () => {
-      const spaceEndpoint = jest.fn(() => {
-        return Promise.resolve({ items: [makeExtension()] });
-      });
+    it('returns installation if present', async () => {
+      const spaceEndpoint = jest.fn(() => Promise.resolve(installation));
 
       const repo = createAppsRepo(jest.fn(), spaceEndpoint);
-      const extension = await repo.getExtensionForExtensionDefinition(definition.sys.id);
+      const res = await repo.getAppInstallation(definition.sys.id);
 
-      expect(extension.sys.id).toBe('my-ext');
+      expect(res.sys.appDefinition.sys.id).toBe('my-app-def');
       expect(spaceEndpoint).toBeCalledTimes(1);
       expect(spaceEndpoint).toBeCalledWith({
         method: 'GET',
-        path: ['extensions'],
-        query: {
-          'extensionDefinition.sys.id[in]': 'my-def'
-        }
+        path: ['app_installations', definition.sys.id]
       });
     });
 
-    it('fails if there are no extensions for a definition', async () => {
-      const spaceEndpoint = jest.fn(() => {
-        return Promise.resolve({ items: [] });
-      });
-
+    it('fails if API call fails', async () => {
+      const spaceEndpoint = jest.fn(() => Promise.reject(new Error('api error')));
       const repo = createAppsRepo(jest.fn(), spaceEndpoint);
-      expect.assertions(2);
-      try {
-        await repo.getExtensionForExtensionDefinition(definition.sys.id);
-      } catch (err) {
-        expect(err.message).toMatch(/exactly one Extension/);
-        expect(err.extensionCount).toBe(0);
-      }
-    });
 
-    it('fails if there are multiple extensions for a definition', async () => {
-      const spaceEndpoint = jest.fn(() => {
-        return Promise.resolve({ items: [makeExtension('e1'), makeExtension('e2')] });
-      });
-
-      const repo = createAppsRepo(jest.fn(), spaceEndpoint);
-      expect.assertions(2);
+      expect.assertions(1);
       try {
-        await repo.getExtensionForExtensionDefinition(definition.sys.id);
+        await repo.getAppInstallation(definition.sys.id);
       } catch (err) {
-        expect(err.message).toMatch(/exactly one Extension/);
-        expect(err.extensionCount).toBe(2);
+        expect(err.message).toBe('api error');
       }
     });
   });

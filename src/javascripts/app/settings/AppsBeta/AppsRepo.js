@@ -31,7 +31,7 @@ export default function createAppsRepo(appDefinitionLoader, spaceEndpoint) {
     getDefinitionIdsOfApps,
     getDevApps,
     getAppDefinitionForApp,
-    getExtensionForExtensionDefinition,
+    getAppInstallation,
     isDevApp
   };
 
@@ -148,22 +148,11 @@ export default function createAppsRepo(appDefinitionLoader, spaceEndpoint) {
     return appDefinitionLoader.getById(definitionId);
   }
 
-  async function getExtensionForExtensionDefinition(extensionDefinitionId) {
-    const { items } = await spaceEndpoint({
+  function getAppInstallation(appDefinitionId) {
+    return spaceEndpoint({
       method: 'GET',
-      path: ['extensions'],
-      query: { 'extensionDefinition.sys.id[in]': extensionDefinitionId }
+      path: ['app_installations', appDefinitionId]
     });
-
-    if (items.length === 1) {
-      return items[0];
-    } else {
-      const err = new Error(
-        `Expected exactly one Extension to be based on ExtensionDefinition ${extensionDefinitionId}.`
-      );
-      err.extensionCount = items.length;
-      throw err;
-    }
   }
 
   async function getExtensionsForExtensionDefinitions(extensionDefinitionIds) {
