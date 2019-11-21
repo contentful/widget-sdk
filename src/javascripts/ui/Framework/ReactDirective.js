@@ -80,6 +80,7 @@ import * as accountAccountViewEs6 from 'account/AccountView';
 import * as appEntityEditorBulkEditorTitleEs6 from 'app/entity_editor/bulk_editor/BulkEditorTitle';
 import * as embedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
 import * as HeadingContextMenu from 'markdown_editor/components/HeadingContextMenu';
+import * as InsertMediaComponent from 'markdown_editor/components/InsertMediaComponent';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -346,7 +347,8 @@ function getModule(name) {
     'account/AccountView': accountAccountViewEs6,
     'app/entity_editor/bulk_editor/BulkEditorTitle': appEntityEditorBulkEditorTitleEs6,
     'components/forms/embedly_preview/EmbedlyPreview': embedlyPreview,
-    'markdown_editor/components/HeadingContextMenu': HeadingContextMenu
+    'markdown_editor/components/HeadingContextMenu': HeadingContextMenu,
+    'app/markdown_editor/components/InsertMediaComponent': InsertMediaComponent
   };
 
   return get(allowedModules, name, null);

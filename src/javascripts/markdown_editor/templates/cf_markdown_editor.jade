@@ -10,9 +10,9 @@ div(ng-if="hasCrashed")
 
 .markdown(ng-show="isReady && !hasCrashed")
   .markdown-tabs
-    a(href ng-click="setMode('preview')" ng-class="{'inactive': !inMode('preview')}")
+    a(href ng-click="setMode('preview')" ng-class="{'inactive': !inMode('preview')}" data-test-id="markdown-tab-preview")
       | Preview
-    a(href ng-click="setMode('md')" ng-show="!isDisabled" ng-class="{'inactive': !inMode('md')}")
+    a(href ng-click="setMode('md')" ng-show="!isDisabled" ng-class="{'inactive': !inMode('md')}" data-test-id="markdown-tab-md")
       | Editor
 
   .markdown-toolbar
@@ -42,7 +42,11 @@ div(ng-if="hasCrashed")
         ng-disabled="isDisabled")
           i.fa.fa-arrows-alt
 
-      cf-markdown-insert-media-action(actions="actions" is-disabled="!canEdit()")
+      .markdown-toolbar-insert-media
+        react-component(
+          name="app/markdown_editor/components/InsertMediaComponent"
+          props="{actions: actions}"
+        )
 
     .markdown-minor-actions(ng-show="minorActionsShown")
       cf-markdown-action(actions="actions" name="strike"        is-disabled="!canEdit()")

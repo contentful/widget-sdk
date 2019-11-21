@@ -1,7 +1,4 @@
 import { registerDirective } from 'NgRegistry';
-import insertMediaActionTemplate from 'markdown_editor/templates/InsertMediaAction';
-
-import * as accessChecker from 'access_control/AccessChecker';
 
 export default function register() {
   registerDirective('cfMarkdownAction', () => {
@@ -55,21 +52,15 @@ export default function register() {
     };
   });
 
-  registerDirective('cfMarkdownInsertMediaAction', [
-    () => ({
-      restrict: 'E',
+  registerDirective('cfMarkdownHeadingAction', () => ({
+    restrict: 'E',
 
-      scope: {
-        actions: '=',
-        isDisabled: '=',
-        mode: '@'
-      },
+    scope: {
+      actions: '=',
+      isDisabled: '=',
+      mode: '@'
+    },
 
-      template: insertMediaActionTemplate,
-
-      link: function(scope) {
-        scope.canUploadMultipleAssets = accessChecker.canUploadMultipleAssets;
-      }
-    })
-  ]);
+    template: JST['cf_markdown_heading_action']()
+  }));
 }
