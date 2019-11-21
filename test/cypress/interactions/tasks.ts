@@ -17,10 +17,10 @@ const empty = {
   ...omit(emptyWithTotal, 'total')
 }
 
-export enum States {
-  NONE = 'tasks/none',
-  SEVERAL = 'tasks/several',
-  INTERNAL_SERVER_ERROR = 'tasks/internal-server-error'
+enum States {
+  NONE = 'none',
+  SEVERAL = 'several',
+  INTERNAL_SERVER_ERROR = 'internal-server-error'
 }
 
 export enum TaskStates {
@@ -39,9 +39,10 @@ export interface TaskUpdate {
   status?: TaskStates
 }
 
-export const PROVIDER = 'tasks';
+export const provider = (deprecated: boolean) => deprecated ? 'tasks' : 'tasks-v2';
+const providerState = (state: States, deprecated: boolean): string => `${provider(deprecated)}/${state}`
 
-const GET_TASK_LIST = (deprecated: boolean = false): string => `${deprecated ? '[legacy api] ' : ''}a request to get all entry tasks for entry "${defaultEntryId}"`
+const GET_TASK_LIST = (deprecated: boolean): string => `${deprecated ? '[legacy api] ' : ''}a request to get all entry tasks for entry "${defaultEntryId}"`
 
 const defaultHeader = {
   ...commonDefaultHeader,
@@ -55,11 +56,11 @@ const getEntryTasksRequest: RequestOptions = {
 };
 
 export const getAllTasksForDefaultEntry = {
-  willReturnNone() {
+  willReturnNone(deprecated: boolean) {
     cy.addInteraction({
-      provider: PROVIDER,
-      state: States.NONE,
-      uponReceiving: GET_TASK_LIST(),
+      provider: provider(deprecated),
+      state: providerState(States.NONE, deprecated),
+      uponReceiving: GET_TASK_LIST(deprecated),
       withRequest: getEntryTasksRequest,
       willRespondWith: {
         status: 200,
@@ -69,10 +70,10 @@ export const getAllTasksForDefaultEntry = {
 
     return '@getAllTasksForDefaultEntry';
   },
-  willReturnSeveral(deprecated) {
+  willReturnSeveral(deprecated: boolean) {
     cy.addInteraction({
-      provider: PROVIDER,
-      state: States.SEVERAL,
+      provider: provider(deprecated),
+      state: providerState(States.SEVERAL, deprecated),
       uponReceiving: GET_TASK_LIST(deprecated),
       withRequest: getEntryTasksRequest,
       willRespondWith: {
@@ -83,11 +84,11 @@ export const getAllTasksForDefaultEntry = {
 
     return '@getAllTasksForDefaultEntry';
   },
-  willFailWithAnInternalServerError() {
+  willFailWithAnInternalServerError(deprecated: boolean) {
     cy.addInteraction({
-      provider: PROVIDER,
-      state: States.INTERNAL_SERVER_ERROR,
-      uponReceiving: GET_TASK_LIST(),
+      provider: provider(deprecated),
+      state: providerState(States.INTERNAL_SERVER_ERROR, deprecated),
+      uponReceiving: GET_TASK_LIST(deprecated),
       withRequest: getEntryTasksRequest,
       willRespondWith: {
         status: 500,
@@ -126,7 +127,7 @@ export function createTask({ body, assigneeId }) {
     }
   };
   const interactionRequestInfo = (deprecated: boolean) => ({
-    provider: PROVIDER,
+    provider: provider(deprecated),
     uponReceiving: `${deprecated ? '[legacy api] ' : ''}a request to create a new task for user "${assigneeId}" on entry "${defaultEntryId}"`,
     withRequest: {
       method: 'POST',
@@ -146,7 +147,7 @@ export function createTask({ body, assigneeId }) {
       const newTaskSys = severalTasksDefinition(deprecated).items[0].sys;
       cy.addInteraction({
         ...interactionRequestInfo(deprecated),
-        state: States.NONE,
+        state: providerState(States.NONE, deprecated),
         willRespondWith: {
           status: 201,
           body: {
@@ -158,10 +159,10 @@ export function createTask({ body, assigneeId }) {
 
       return `@${alias}`;
     },
-    willFailWithAnInternalServerError() {
+    willFailWithAnInternalServerError(deprecated: boolean) {
       cy.addInteraction({
-        ...interactionRequestInfo(false),
-        state: States.INTERNAL_SERVER_ERROR,
+        ...interactionRequestInfo(deprecated),
+        state: providerState(States.INTERNAL_SERVER_ERROR, deprecated),
         willRespondWith: {
           status: 500,
           body: serverError
@@ -173,7 +174,8 @@ export function createTask({ body, assigneeId }) {
   }
 }
 
-function updateTask(taskId: string, alias: string, change: string) {
+function updateTask(taskId: string, change: string) {
+  const alias = `update-task-${taskId}`
   return function (update: TaskUpdate, deprecated: boolean) {
     const taskDefinition = getTaskDefinitionById(taskId, false);
     const deprecatedTaskDefinition = getTaskDefinitionById(taskId, true);
@@ -205,7 +207,7 @@ function updateTask(taskId: string, alias: string, change: string) {
     };
 
     const interactionRequestInfo = {
-      provider: PROVIDER,
+      provider: provider(deprecated),
       uponReceiving: `${deprecated ? '[legacy api] ' : ''}a request for task "${taskId}" to ${change}`,
       withRequest: {
         method: 'PUT',
@@ -229,7 +231,7 @@ function updateTask(taskId: string, alias: string, change: string) {
 
         cy.addInteraction({
           ...interactionRequestInfo,
-          state: States.SEVERAL,
+          state: providerState(States.SEVERAL, deprecated),
           willRespondWith: {
             status: 200,
             body: {
@@ -241,20 +243,14 @@ function updateTask(taskId: string, alias: string, change: string) {
             }
           }
         }).as(alias);
-        console.log({
-          hello: "hello!",
-          sys: {
-            ...newTaskSysDefinition,
-            version: newTaskSysDefinition.version + 1
-          }
-        })
+        
         return `@${alias}`;
       },
       // TODO: Add a test actually using this or remove.
       willFailWithAnInternalServerError() {
         cy.addInteraction({
           ...interactionRequestInfo,
-          state: States.INTERNAL_SERVER_ERROR,
+          state: providerState(States.INTERNAL_SERVER_ERROR, deprecated),
           willRespondWith: {
             status: 500,
             body: serverError
@@ -267,6 +263,6 @@ function updateTask(taskId: string, alias: string, change: string) {
   }
 }
 
-export const updateTaskBodyAndAssignee = updateTask('taskId1', 'changeTaskId1BodyAndReassignUser', 'change body and assignee');
-export const resolveTask = updateTask('taskId1', 'resolveTaskId1', `set status to "${TaskStates.RESOLVED}"`);
-export const reopenTask = updateTask('taskId2', 'reopenTaskId2', `set "${TaskStates.RESOLVED}" task back to "${TaskStates.ACTIVE}"`);
+export const updateTaskBodyAndAssignee = updateTask('taskId1', 'change body and assignee');
+export const resolveTask = updateTask('taskId1', `set status to "${TaskStates.RESOLVED}"`);
+export const reopenTask = updateTask('taskId2', `set "${TaskStates.RESOLVED}" task back to "${TaskStates.ACTIVE}"`);
