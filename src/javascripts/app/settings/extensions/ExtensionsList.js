@@ -28,7 +28,7 @@ import EmptyStateContainer, {
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import EmptyStateIllustration from 'svg/connected-forms-illustration';
 import { websiteUrl } from 'Config';
-import { getExtensionLoader } from 'app/settings/webhooks/services/ExtensionLoader';
+import { getExtensionLoader } from 'widgets/ExtensionLoaderInstance';
 
 import ExtensionsActions from './ExtensionsActions';
 

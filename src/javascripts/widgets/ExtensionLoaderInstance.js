@@ -1,6 +1,6 @@
 import { getModule } from 'NgRegistry';
-import { createExtensionLoader } from 'widgets/ExtensionLoader';
-import { getAppDefinitionLoader } from './AppDefinitionLoaderInstance';
+import { createExtensionLoader } from './ExtensionLoader';
+import { getAppDefinitionLoader } from 'app/settings/AppsBeta/AppDefinitionLoaderInstance';
 
 const perSpaceCache = {};
 

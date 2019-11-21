@@ -10,7 +10,7 @@ import trackExtensionRender from '../TrackExtensionRender';
 import { LOCATION_DIALOG } from '../WidgetLocations';
 import * as WidgetStore from '../WidgetStore';
 import * as entitySelector from 'search/EntitySelector/entitySelector';
-import { getExtensionLoader } from 'app/settings/webhooks/services/ExtensionLoader';
+import { getExtensionLoader } from 'widgets/ExtensionLoaderInstance';
 
 import createDialogExtensionBridge from './createDialogExtensionBridge';
 

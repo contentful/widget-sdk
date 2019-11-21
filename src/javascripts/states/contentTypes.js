@@ -3,8 +3,8 @@ import * as WidgetStore from 'widgets/WidgetStore';
 import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer';
 import * as AdvancedExtensibilityFeature from 'app/settings/extensions/services/AdvancedExtensibilityFeature';
 import createAppsRepo from 'app/settings/AppsBeta/AppsRepo';
-import { getAppDefinitionLoader } from 'app/settings/webhooks/services/AppDefinitionLoaderInstance';
-import { getExtensionLoader } from 'app/settings/webhooks/services/ExtensionLoader';
+import { getAppDefinitionLoader } from 'app/settings/AppsBeta/AppDefinitionLoaderInstance';
+import { getExtensionLoader } from 'widgets/ExtensionLoaderInstance';
 
 const list = base({
   name: 'list',
