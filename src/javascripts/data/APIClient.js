@@ -1,4 +1,7 @@
 import { get } from 'lodash';
+import { ENTRY_VALIDATION, getAlphaHeader } from 'alphaHeaders.js';
+
+const entryValidationAlphaHeader = getAlphaHeader(ENTRY_VALIDATION);
 
 /**
  * @description
@@ -201,8 +204,8 @@ APIClient.prototype.validateEntry = function(data, version) {
     },
     {
       'x-contentful-validate-only': 'true',
-      'x-contentful-enable-alpha-feature': 'entry-validation',
-      'x-contentful-skip-transformation': 'true'
+      'x-contentful-skip-transformation': 'true',
+      ...entryValidationAlphaHeader
     }
   );
 };

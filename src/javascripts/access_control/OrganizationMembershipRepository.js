@@ -1,14 +1,11 @@
 import { fetchAll, fetchAllWithIncludes } from 'data/CMA/FetchAll';
 import { uniq, identity, chunk, flatten } from 'lodash';
+import { ORG_USER_MANAGEMENT_API, PENDING_ORG_MEMBERSHIP, getAlphaHeader } from 'alphaHeaders.js';
 
 const BATCH_LIMIT = 100;
 const USER_IDS_BATCH_LIMIT = 44;
-const USER_MANAGEMENT_ALPHA_HEADER = {
-  'x-contentful-enable-alpha-feature': 'organization-user-management-api'
-};
-const INVITATION_ALPHA_HEADER = {
-  'x-contentful-enable-alpha-feature': 'pending-org-membership'
-};
+const USER_MANAGEMENT_ALPHA_HEADER = getAlphaHeader(ORG_USER_MANAGEMENT_API);
+const INVITATION_ALPHA_HEADER = getAlphaHeader(PENDING_ORG_MEMBERSHIP);
 
 /**
  * Get all organization memberships (not users) in the organization

@@ -1,7 +1,6 @@
 import { createUsersEndpoint } from 'data/EndpointFactory';
-const totpAlphaHeader = {
-  'X-Contentful-Enable-Alpha-Feature': 'mfa-api'
-};
+import { MFA_API, getAlphaHeader } from 'alphaHeaders.js';
+const totpAlphaHeader = getAlphaHeader(MFA_API);
 
 export async function fetchUserData() {
   const usersEndpoint = createUsersEndpoint();

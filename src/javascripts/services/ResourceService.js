@@ -1,10 +1,9 @@
 import { canCreate, canCreateResources, generateMessage } from 'utils/ResourceUtils';
 import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/EndpointFactory';
 import { snakeCase, camelCase } from 'lodash';
+import { SUBSCRIPTIONS_API, getAlphaHeader } from 'alphaHeaders.js';
 
-const alphaHeader = {
-  'x-contentful-enable-alpha-feature': 'subscriptions-api'
-};
+const alphaHeader = getAlphaHeader(SUBSCRIPTIONS_API);
 
 export default function createResourceService(id, type = 'space', envId) {
   const endpoint = createEndpoint(id, type, envId);
@@ -42,9 +41,7 @@ export default function createResourceService(id, type = 'space', envId) {
         method: 'GET',
         path
       },
-      {
-        ...alphaHeader
-      }
+      alphaHeader
     );
   }
 
@@ -57,9 +54,7 @@ export default function createResourceService(id, type = 'space', envId) {
         method: 'GET',
         path
       },
-      {
-        ...alphaHeader
-      }
+      alphaHeader
     );
     return raw.items;
   }

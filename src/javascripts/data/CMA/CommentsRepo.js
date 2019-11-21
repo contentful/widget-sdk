@@ -1,6 +1,6 @@
-const alphaHeader = {
-  'x-contentful-enable-alpha-feature': 'comments-api'
-};
+import { COMMENTS_API, getAlphaHeader } from 'alphaHeaders.js';
+
+const alphaHeader = getAlphaHeader(COMMENTS_API);
 
 const path = (entryId, commentId) => [
   'entries',

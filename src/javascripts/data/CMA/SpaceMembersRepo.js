@@ -1,8 +1,7 @@
 import { fetchAll } from './FetchAll';
+import { TEAMS_API, getAlphaHeader } from 'alphaHeaders.js';
 
-const headers = {
-  'x-contentful-enable-alpha-feature': 'teams-api'
-};
+const alphaHeader = getAlphaHeader(TEAMS_API);
 
 export default function create(endpoint) {
   return {
@@ -12,12 +11,12 @@ export default function create(endpoint) {
           method: 'GET',
           path: ['space_members']
         },
-        headers
+        alphaHeader
       );
     },
 
     getAll() {
-      return fetchAll(endpoint, ['space_members'], 100, {}, headers);
+      return fetchAll(endpoint, ['space_members'], 100, {}, alphaHeader);
     }
   };
 }

@@ -1,7 +1,8 @@
 import _ from 'lodash';
+import { ENVIRONMENT_ALIASING, getAlphaHeader } from 'alphaHeaders.js';
 
+const alphaHeader = getAlphaHeader(ENVIRONMENT_ALIASING);
 const ALIASES_LIMIT = 101;
-const alphaHeader = { 'X-Contentful-Enable-Alpha-Feature': 'environment-aliasing' };
 
 /**
  * Create a repository to manage space aliases through the CMA.
@@ -23,9 +24,7 @@ export function create(spaceEndpoint) {
         path: ['environment_aliases'],
         query: { limit: ALIASES_LIMIT }
       },
-      {
-        'X-Contentful-Enable-Alpha-Feature': 'environment-aliasing'
-      }
+      alphaHeader
     )
       .then(response => response.items)
       .catch(error => {
@@ -45,9 +44,7 @@ export function create(spaceEndpoint) {
         method: 'GET',
         path: ['environment_aliases', id]
       },
-      {
-        'X-Contentful-Enable-Alpha-Feature': 'environment-aliasing'
-      }
+      alphaHeader
     ).catch(error => {
       if (error.code === 'FeatureNotEnabled') {
         return null;

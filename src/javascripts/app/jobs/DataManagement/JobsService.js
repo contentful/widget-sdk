@@ -1,6 +1,6 @@
-const ALPHA_HEADER = {
-  'x-contentful-enable-alpha-feature': 'scheduled-jobs'
-};
+import { SCHEDULED_JOBS, getAlphaHeader } from 'alphaHeaders.js';
+
+const ALPHA_HEADER = getAlphaHeader(SCHEDULED_JOBS);
 
 export function createJob(endpoint, jobDto) {
   return endpoint(
