@@ -34,7 +34,8 @@ export function createTasksStoreForEntry(endpoint, entryId) {
     },
     remove: async taskId => {
       try {
-        await remove(endpoint, entryId, taskId);
+        const task = getItems().find(task => task.sys.id === taskId);
+        await remove(endpoint, entryId, task);
       } catch (error) {
         throw error;
       }

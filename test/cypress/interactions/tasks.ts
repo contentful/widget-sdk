@@ -263,6 +263,38 @@ function updateTask(taskId: string, change: string) {
   }
 }
 
+export function deleteTask(deprecated: boolean) {
+  const taskId = 'taskId1'
+  const alias = `delete-task-${taskId}`
+
+  const interactionRequestInfo = {
+    provider: provider(deprecated),
+    uponReceiving: `${deprecated ? '[legacy api] ' : ''}a request to delete task "${taskId}"`,
+    withRequest: {
+      method: 'DELETE',
+      path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}/tasks/${taskId}`,
+      headers: {
+        ...defaultHeader,
+        'X-Contentful-Version': '1'
+      }
+    } as RequestOptions
+  };
+
+  return {
+    willSucceed() {
+      cy.addInteraction({
+        ...interactionRequestInfo,
+        state: providerState(States.SEVERAL, deprecated),
+        willRespondWith: {
+          status: 204
+        }
+      }).as(alias);
+      
+      return `@${alias}`;
+    }
+  }
+}
+
 export const updateTaskBodyAndAssignee = updateTask('taskId1', 'change body and assignee');
 export const resolveTask = updateTask('taskId1', `set status to "${TaskStates.RESOLVED}"`);
 export const reopenTask = updateTask('taskId2', `set "${TaskStates.RESOLVED}" task back to "${TaskStates.ACTIVE}"`);
