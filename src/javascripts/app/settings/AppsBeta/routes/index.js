@@ -65,6 +65,8 @@ export default {
             getSpaceFeature
           );
 
+          const extensionLoader = getExtensionLoader();
+
           return {
             goBackToList: () => $state.go('^.list'),
             productCatalog,
@@ -73,7 +75,7 @@ export default {
             bridge,
             appHookBus,
             cma: spaceContext.cma,
-            extensionLoader: getExtensionLoader()
+            evictWidget: id => extensionLoader.evictExtension(id)
           };
         }
       ]

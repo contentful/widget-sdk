@@ -158,17 +158,10 @@ export default class AppRoute extends Component {
     appHookBus: PropTypes.shape({
       on: PropTypes.func.isRequired,
       emit: PropTypes.func.isRequired,
-      setExtension: PropTypes.func.isRequired
+      setInstallation: PropTypes.func.isRequired
     }).isRequired,
-    cma: PropTypes.shape({
-      getExtension: PropTypes.func.isRequired,
-      createExtension: PropTypes.func.isRequired,
-      updateExtension: PropTypes.func.isRequired,
-      deleteExtension: PropTypes.func.isRequired
-    }).isRequired,
-    extensionLoader: PropTypes.shape({
-      evictExtension: PropTypes.func.isRequired
-    })
+    cma: PropTypes.object.isRequired,
+    evictWidget: PropTypes.func.isRequired
   };
 
   state = {
@@ -197,25 +190,15 @@ export default class AppRoute extends Component {
 
   checkAppStatus = async (appDefinition = this.state.appDefinition) => {
     const { repo, appId } = this.props;
-    const result = { appId, extensionDefinition: appDefinition };
+    const result = { appId, appDefinition };
 
     try {
       return {
         ...result,
-        extension: await repo.getAppInstallation(appDefinition.sys.id)
+        // Can throw 404 if the app is not installed yet:
+        appInstallation: await repo.getAppInstallation(appDefinition.sys.id)
       };
     } catch (err) {
-      // If there are 2 or more extensions for the same definition
-      // we cannot reliably tell which one is managed by the App.
-      // For the time being we just ask the customer to contact us.
-      // I think this is very unlikely to ever happen (requires manual
-      // API entity modification).
-      if (err.extensionCount > 1) {
-        Telemetry.count('apps.non-unique-app-extension');
-        Notification.error('The app has crashed. Please contact support.');
-        this.props.goBackToList();
-      }
-
       return result;
     }
   };
@@ -229,12 +212,12 @@ export default class AppRoute extends Component {
     ]);
     const app = marketplaceApps.find(app => app.id === appId);
 
-    const [{ extension }, appEnabled] = await Promise.all([
+    const [{ appInstallation }, appEnabled] = await Promise.all([
       this.checkAppStatus(appDefinition),
       productCatalog.isAppEnabled(app)
     ]);
 
-    appHookBus.setExtension(extension);
+    appHookBus.setInstallation(appInstallation);
     appHookBus.on(APP_EVENTS_IN.CONFIGURED, this.onAppConfigured);
     appHookBus.on(APP_EVENTS_IN.MISCONFIGURED, this.onAppMisconfigured);
     appHookBus.on(APP_EVENTS_IN.MARKED_AS_READY, this.onAppMarkedAsReady);
@@ -245,7 +228,7 @@ export default class AppRoute extends Component {
       {
         ready: true,
         appEnabled,
-        isInstalled: !!extension,
+        isInstalled: !!appInstallation,
         appDefinition,
         title: get(app, ['title'], appDefinition.name),
         appIcon: get(app, ['icon'], ''),
@@ -271,16 +254,16 @@ export default class AppRoute extends Component {
   };
 
   onAppConfigured = async ({ installationRequestId, config }) => {
-    const { cma, extensionLoader, appHookBus, appId } = this.props;
+    const { cma, evictWidget, appHookBus, appId } = this.props;
 
     try {
-      await installOrUpdate(cma, extensionLoader, this.checkAppStatus, config);
+      await installOrUpdate(cma, evictWidget, this.checkAppStatus, config);
 
       // Verify if installation was completed.
-      const { extension } = await this.checkAppStatus();
-      if (!extension) {
-        // For whatever reason Extension entity wasn't created.
-        throw new Error('Extension does not exist.');
+      const { appInstallation } = await this.checkAppStatus();
+      if (!appInstallation) {
+        // For whatever reason AppInstallation entity wasn't created.
+        throw new Error('AppInstallation does not exist.');
       }
 
       if (this.state.busyWith === BUSY_STATE_UPDATE) {
@@ -293,7 +276,7 @@ export default class AppRoute extends Component {
 
       this.setState({ isInstalled: true, busyWith: false });
 
-      appHookBus.setExtension(extension);
+      appHookBus.setInstallation(appInstallation);
       appHookBus.emit(APP_EVENTS_OUT.SUCCEEDED, { installationRequestId });
     } catch (err) {
       if (this.state.busyWith === BUSY_STATE_UPDATE) {
@@ -304,17 +287,17 @@ export default class AppRoute extends Component {
         AppLifecycleTracking.installationFailed(appId);
       }
 
-      const { extension } = await this.checkAppStatus();
-      this.setState({ isInstalled: !!extension, busyWith: false });
+      const { appInstallation } = await this.checkAppStatus();
+      this.setState({ isInstalled: !!appInstallation, busyWith: false });
 
-      appHookBus.setExtension(extension);
+      appHookBus.setInstallation(appInstallation);
       appHookBus.emit(APP_EVENTS_OUT.FAILED, { installationRequestId });
     }
   };
 
   onAppMisconfigured = async () => {
-    const { extension } = await this.checkAppStatus();
-    this.setState({ isInstalled: !!extension, busyWith: false });
+    const { appInstallation } = await this.checkAppStatus();
+    this.setState({ isInstalled: !!appInstallation, busyWith: false });
   };
 
   onAppMarkedAsReady = () => {
@@ -353,21 +336,21 @@ export default class AppRoute extends Component {
   };
 
   uninstallApp = async reasons => {
-    const { cma, extensionLoader, appId } = this.props;
+    const { cma, evictWidget, appId } = this.props;
 
     this.setState({ busyWith: BUSY_STATE_UNINSTALLATION });
 
-    // Unset extension immediately so its parameters are not exposed
+    // Unset installation immediately so its parameters are not exposed
     // via the SDK as soon as the proces was initiated.
-    this.props.appHookBus.setExtension(null);
+    this.props.appHookBus.setInstallation(null);
 
     try {
-      await uninstall(cma, extensionLoader, this.checkAppStatus);
+      await uninstall(cma, evictWidget, this.checkAppStatus);
 
       // Verify if uninstallation was completed.
-      const { extension } = await this.checkAppStatus();
-      if (extension) {
-        throw new Error('Extension still exists.');
+      const { appInstallation } = await this.checkAppStatus();
+      if (appInstallation) {
+        throw new Error('AppInstallation still exists.');
       }
 
       Notification.success('The app was uninstalled successfully.');
@@ -475,10 +458,11 @@ export default class AppRoute extends Component {
     const { appDefinition, appLoaded } = this.state;
 
     // Artifical widget descriptor for rendering `src`
-    // of `ExtensionDefinition` entity without corresponding
-    // `Extension` being present in a space-env.
+    // of `AppDefinition` (no widget ID).
     const descriptor = {
       id: '__undefined-in-app-location__',
+      // We rely on `extensionDefinitionId` property for tracking.
+      // TODO: rename to `appDefinitionId` and bump the schema.
       extensionDefinitionId: appDefinition.sys.id,
       src: appDefinition.src
     };
