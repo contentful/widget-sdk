@@ -2,7 +2,7 @@ import PageExtensionRoute from './PageExtensionRoute';
 import createPageExtensionBridge from 'widgets/bridges/createPageExtensionBridge';
 import * as Navigator from 'states/Navigator';
 import * as SlideInNavigator from 'navigation/SlideInNavigator/index';
-import { getExtensionLoader } from 'app/settings/webhooks/services/ExtensionLoader';
+import { getExtensionLoader } from 'widgets/ExtensionLoaderInstance';
 
 export default {
   name: 'pageExtensions',

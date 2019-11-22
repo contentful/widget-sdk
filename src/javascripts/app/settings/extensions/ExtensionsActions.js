@@ -12,7 +12,7 @@ import GitHubInstallerModal from './dialogs/GitHubInstallerModal';
 import { toInternalFieldType } from 'widgets/FieldTypes';
 import getExtensionParameterIds from './getExtensionParameterIds';
 import * as Analytics from 'analytics/Analytics';
-import { getExtensionLoader } from 'app/settings/webhooks/services/ExtensionLoader';
+import { getExtensionLoader } from 'widgets/ExtensionLoaderInstance';
 import { getModule } from 'NgRegistry';
 
 const SDK_URL = 'https://unpkg.com/contentful-ui-extensions-sdk@3';

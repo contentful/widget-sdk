@@ -2,8 +2,8 @@ import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
 import ExtensionsListRoute from './ExtensionsListRoute';
 import ExtensionEditorRoute from './ExtensionEditorRoute';
 import createAppsRepo from 'app/settings/AppsBeta/AppsRepo';
-import { getAppDefinitionLoader } from 'app/settings/webhooks/services/AppDefinitionLoaderInstance';
-import { getExtensionLoader } from 'app/settings/webhooks/services/ExtensionLoader';
+import { getAppDefinitionLoader } from 'app/settings/AppsBeta/AppDefinitionLoaderInstance';
+import { getExtensionLoader } from 'widgets/ExtensionLoaderInstance';
 
 export default {
   name: 'extensions',

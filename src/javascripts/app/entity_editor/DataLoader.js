@@ -12,7 +12,7 @@ import * as WidgetStore from 'widgets/WidgetStore';
 import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer';
 import * as AdvancedExtensibilityFeature from 'app/settings/extensions/services/AdvancedExtensibilityFeature';
 import { getWidgetTrackingContexts } from 'widgets/WidgetTracking';
-import { getExtensionLoader } from 'app/settings/webhooks/services/ExtensionLoader';
+import { getExtensionLoader } from 'widgets/ExtensionLoaderInstance';
 import TheLocaleStore from 'services/localeStore';
 
 /**

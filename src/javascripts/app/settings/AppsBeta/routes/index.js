@@ -7,8 +7,8 @@ import * as Navigator from 'states/Navigator';
 import * as SlideInNavigator from 'navigation/SlideInNavigator/index';
 import createAppsRepo from '../AppsRepo';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
-import { getAppDefinitionLoader } from 'app/settings/webhooks/services/AppDefinitionLoaderInstance';
-import { getExtensionLoader } from 'app/settings/webhooks/services/ExtensionLoader';
+import { getAppDefinitionLoader } from 'app/settings/AppsBeta/AppDefinitionLoaderInstance';
+import { getExtensionLoader } from 'widgets/ExtensionLoaderInstance';
 
 export default {
   name: 'apps',
