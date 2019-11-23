@@ -123,7 +123,10 @@ class UsersList extends React.Component {
   loadInitialData = async () => {
     this.setState({ loading: true });
 
-    await this.loadInvitationsCount();
+    if (!this.props.hasPendingOrgMembershipsEnabled) {
+      await this.loadInvitationsCount();
+    }
+
     await this.fetch(true);
 
     this.setState({ loading: false });
@@ -139,7 +142,7 @@ class UsersList extends React.Component {
   };
 
   fetch = async (updateCount = false) => {
-    const { filters, searchTerm, orgId } = this.props;
+    const { filters, searchTerm, orgId, hasPendingOrgMembershipsEnabled } = this.props;
     const { pagination } = this.state;
     const filterQuery = formatQuery(filters.map(item => item.filter));
     const includePaths = ['sys.user'];
@@ -148,9 +151,12 @@ class UsersList extends React.Component {
       query: searchTerm,
       include: includePaths,
       skip: pagination.skip,
-      limit: pagination.limit,
-      [membershipExistsParam]: true
+      limit: pagination.limit
     };
+
+    // in the legacy invitation flow we filter out users without name.
+    // this won't be needed once pending org memberships are fully rolled out
+    if (!hasPendingOrgMembershipsEnabled) query[membershipExistsParam] = true;
 
     this.setState({ loading: true });
 
