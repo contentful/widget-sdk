@@ -87,7 +87,8 @@ class UsersList extends React.Component {
     searchTerm: PropTypes.string.isRequired,
     updateSearchTerm: PropTypes.func.isRequired,
     hasSsoEnabled: PropTypes.bool,
-    hasTeamsFeature: PropTypes.bool
+    hasTeamsFeature: PropTypes.bool,
+    hasPendingOrgMembershipsEnabled: PropTypes.bool
   };
 
   state = {
@@ -253,7 +254,7 @@ class UsersList extends React.Component {
       numberOrgMemberships,
       initialLoad
     } = this.state;
-    const { searchTerm, spaces, spaceRoles, filters } = this.props;
+    const { searchTerm, spaces, spaceRoles, filters, hasPendingOrgMembershipsEnabled } = this.props;
 
     return (
       <Workbench testId="organization-users-page">
@@ -271,18 +272,20 @@ class UsersList extends React.Component {
                 value={searchTerm}
               />
               <div className={styles.ctaWrapper}>
-                <div className={styles.numberOrgMemberships}>
-                  <div>{`${pluralize(
-                    'users',
-                    numberOrgMemberships,
-                    true
-                  )} in your organization`}</div>
-                  {invitedUsersCount != null && invitedUsersCount > 0 && (
-                    <TextLink href={this.getLinkToInvitationsList()}>
-                      {invitedUsersCount} invited users
-                    </TextLink>
-                  )}
-                </div>
+                {!hasPendingOrgMembershipsEnabled && (
+                  <div className={styles.numberOrgMemberships}>
+                    <div>{`${pluralize(
+                      'users',
+                      numberOrgMemberships,
+                      true
+                    )} in your organization`}</div>
+                    {invitedUsersCount != null && invitedUsersCount > 0 && (
+                      <TextLink href={this.getLinkToInvitationsList()}>
+                        {invitedUsersCount} invited users
+                      </TextLink>
+                    )}
+                  </div>
+                )}
                 <Button href={this.getLinkToInvitation()}>Invite users</Button>
               </div>
             </div>
