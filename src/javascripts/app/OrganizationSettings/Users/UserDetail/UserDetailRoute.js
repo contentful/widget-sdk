@@ -13,6 +13,7 @@ import {
 import { getAllSpaces, getAllRoles } from 'access_control/OrganizationMembershipRepository';
 import ResolveLinks from 'data/LinkResolver';
 import DocumentTitle from 'components/shared/DocumentTitle';
+import { getUserName } from 'utils/UserUtils';
 
 const UserDetailFetcher = createFetcherComponent(async ({ orgId, userId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
@@ -82,7 +83,7 @@ export default class UserDetailRoute extends React.Component {
 
             return (
               <React.Fragment>
-                <DocumentTitle title={[`${user.firstName} ${user.lastName}`, 'Users']} />
+                <DocumentTitle title={[getUserName(user), 'Users']} />
                 <UserDetail {...data} orgId={orgId} />
               </React.Fragment>
             );
