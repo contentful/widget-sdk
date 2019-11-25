@@ -13,13 +13,9 @@ import {
 import * as config from 'Config';
 import * as logger from 'services/logger';
 import { isFlagOverridden, getFlagOverride } from 'debug/EnforceFlags';
-import {
-  getOrganization,
-  getSpace,
-  getUser,
-  getSpacesByOrganization
-} from 'services/TokenStore';
+import { getOrganization, getSpace, getUser, getSpacesByOrganization } from 'services/TokenStore';
 import isLegacyEnterprise from 'data/isLegacyEnterprise';
+import { getOrgFeature } from 'data/CMA/ProductCatalog';
 
 let client;
 let cache = {};
@@ -91,6 +87,17 @@ async function ldUser(user, org, space) {
     } = org;
     const spacesByOrg = getSpacesByOrganization();
 
+    // Currently this is the best way to find out if an org is v2 commited (enterprise)
+    // The request is likely to be cached by dataloader
+    // By default all committed orgs on pricing v2 have this feature enabled in the product catalog
+    // but because the Product Catalog enables overrides, THIS IS NOT 100% RELIABLE for
+    // determining if the org is V2 committed
+    const currentOrgHasSsoSelfConfigFeature = await getOrgFeature(
+      organizationId,
+      'self_configure_sso',
+      false
+    );
+
     customData = _.assign({}, customData, {
       currentOrgId: organizationId,
       currentOrgSubscriptionStatus: _.get(org, 'subscription.status', null),
@@ -98,7 +105,9 @@ async function ldUser(user, org, space) {
       currentOrgPlanIsEnterprise: isLegacyEnterprise(org),
       currentOrgHasSpace: Boolean(_.get(spacesByOrg, [organizationId, 'length'], 0)),
       currentOrgHasPaymentMethod: Boolean(org.isBillable),
-
+      currentOrgCreationDate: new Date(org.sys.createdAt).getTime(),
+      currentOrgHasSsoSelfConfigFeature,
+      currentOrgHasSsoEnabled: _.get(org, 'hasSsoEnabled', false),
       currentUserOrgRole: getOrgRole(user, organizationId),
       currentUserHasAtleastOneSpace: hasAnOrgWithSpaces(spacesByOrg),
       currentUserIsCurrentOrgCreator: isUserOrgCreator(user, org),
