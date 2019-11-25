@@ -18,7 +18,6 @@ import { get } from 'lodash';
 import AdminOnly from 'app/common/AdminOnly';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import * as Telemetry from 'i13n/Telemetry';
 import EmptyStateContainer, {
   defaultSVGStyle
 } from 'components/EmptyStateContainer/EmptyStateContainer';
@@ -128,15 +127,15 @@ const styles = {
   })
 };
 
-function isAppAlreadyAuthorized(repo, appId) {
-  if (repo.isDevApp(appId)) {
+function isAppAlreadyAuthorized(app = {}) {
+  if (app.isDevApp) {
     return true;
   }
 
   try {
     const perms = JSON.parse(sessionStorage.get('appPermissions'));
 
-    return perms[appId] || false;
+    return perms[app.id] || false;
   } catch (e) {
     return false;
   }
@@ -145,14 +144,12 @@ function isAppAlreadyAuthorized(repo, appId) {
 export default class AppRoute extends Component {
   static propTypes = {
     goBackToList: PropTypes.func.isRequired,
-    appId: PropTypes.string.isRequired,
+    app: PropTypes.object,
     productCatalog: PropTypes.shape({
       isAppEnabled: PropTypes.func.isRequired
     }),
     repo: PropTypes.shape({
-      getAppDefinitionForApp: PropTypes.func.isRequired,
-      getAppInstallation: PropTypes.func.isRequired,
-      getMarketplaceApps: PropTypes.func.isRequired
+      getAppInstallation: PropTypes.func.isRequired
     }).isRequired,
     bridge: PropTypes.object.isRequired,
     appHookBus: PropTypes.shape({
@@ -169,7 +166,9 @@ export default class AppRoute extends Component {
     appLoaded: false,
     showStillLoadingText: false,
     loadingError: false,
-    acceptedPermissions: isAppAlreadyAuthorized(this.props.repo, this.props.appId)
+    title: get(this.props.app, ['title'], get(this.props.app, ['appDefinition', 'name'])),
+    appIcon: get(this.props.app, ['icon'], ''),
+    acceptedPermissions: isAppAlreadyAuthorized(this.props.app)
   };
 
   // There are no parameters in the app location
@@ -182,35 +181,26 @@ export default class AppRoute extends Component {
     try {
       await this.initialize();
     } catch (err) {
-      Telemetry.count('apps.app-loading-failed');
       Notification.error('Failed to load the app.');
       this.props.goBackToList();
     }
   }
 
   checkAppStatus = async (appDefinition = this.state.appDefinition) => {
-    const { repo, appId } = this.props;
-    const result = { appId, appDefinition };
-
     try {
       return {
-        ...result,
+        appDefinition,
         // Can throw 404 if the app is not installed yet:
-        appInstallation: await repo.getAppInstallation(appDefinition.sys.id)
+        appInstallation: await this.props.repo.getAppInstallation(appDefinition.sys.id)
       };
     } catch (err) {
-      return result;
+      return { appDefinition };
     }
   };
 
   initialize = async () => {
-    const { appHookBus, appId, repo, productCatalog } = this.props;
-
-    const [appDefinition, marketplaceApps] = await Promise.all([
-      repo.getAppDefinitionForApp(appId),
-      repo.getMarketplaceApps()
-    ]);
-    const app = marketplaceApps.find(app => app.id === appId);
+    const { appHookBus, app, productCatalog } = this.props;
+    const { appDefinition } = app;
 
     const [{ appInstallation }, appEnabled] = await Promise.all([
       this.checkAppStatus(appDefinition),
@@ -222,7 +212,7 @@ export default class AppRoute extends Component {
     appHookBus.on(APP_EVENTS_IN.MISCONFIGURED, this.onAppMisconfigured);
     appHookBus.on(APP_EVENTS_IN.MARKED_AS_READY, this.onAppMarkedAsReady);
 
-    AppLifecycleTracking.configurationOpened(appId);
+    AppLifecycleTracking.configurationOpened(app.id);
 
     this.setState(
       {
@@ -230,8 +220,6 @@ export default class AppRoute extends Component {
         appEnabled,
         isInstalled: !!appInstallation,
         appDefinition,
-        title: get(app, ['title'], appDefinition.name),
-        appIcon: get(app, ['icon'], ''),
         permissions: get(app, ['permissionsExplanation'], ''),
         actionList: get(app, ['actionList'], [])
       },
@@ -254,7 +242,7 @@ export default class AppRoute extends Component {
   };
 
   onAppConfigured = async ({ installationRequestId, config }) => {
-    const { cma, evictWidget, appHookBus, appId } = this.props;
+    const { cma, evictWidget, appHookBus, app } = this.props;
 
     try {
       await installOrUpdate(cma, evictWidget, this.checkAppStatus, config);
@@ -268,10 +256,10 @@ export default class AppRoute extends Component {
 
       if (this.state.busyWith === BUSY_STATE_UPDATE) {
         Notification.success('App configuration was updated successfully.');
-        AppLifecycleTracking.configurationUpdated(appId);
+        AppLifecycleTracking.configurationUpdated(app.id);
       } else {
         Notification.success('The app was installed successfully.');
-        AppLifecycleTracking.installed(appId);
+        AppLifecycleTracking.installed(app.id);
       }
 
       this.setState({ isInstalled: true, busyWith: false });
@@ -281,10 +269,10 @@ export default class AppRoute extends Component {
     } catch (err) {
       if (this.state.busyWith === BUSY_STATE_UPDATE) {
         Notification.error('Failed to update app configuration.');
-        AppLifecycleTracking.configurationUpdateFailed(appId);
+        AppLifecycleTracking.configurationUpdateFailed(app.id);
       } else {
         Notification.error('Failed to install the app.');
-        AppLifecycleTracking.installationFailed(appId);
+        AppLifecycleTracking.installationFailed(app.id);
       }
 
       const { appInstallation } = await this.checkAppStatus();
@@ -313,9 +301,9 @@ export default class AppRoute extends Component {
   };
 
   uninstall = () => {
-    const { appId } = this.props;
+    const { app } = this.props;
 
-    AppLifecycleTracking.uninstallationInitiated(appId);
+    AppLifecycleTracking.uninstallationInitiated(app.id);
 
     return ModalLauncher.open(({ isShown, onClose }) => (
       <UninstallModal
@@ -328,7 +316,7 @@ export default class AppRoute extends Component {
           this.uninstallApp(reasons);
         }}
         onClose={() => {
-          AppLifecycleTracking.uninstallationCancelled(appId);
+          AppLifecycleTracking.uninstallationCancelled(app.id);
           onClose(true);
         }}
       />
@@ -336,7 +324,7 @@ export default class AppRoute extends Component {
   };
 
   uninstallApp = async reasons => {
-    const { cma, evictWidget, appId } = this.props;
+    const { cma, evictWidget, app } = this.props;
 
     this.setState({ busyWith: BUSY_STATE_UNINSTALLATION });
 
@@ -354,10 +342,10 @@ export default class AppRoute extends Component {
       }
 
       Notification.success('The app was uninstalled successfully.');
-      AppLifecycleTracking.uninstalled(appId, reasons);
+      AppLifecycleTracking.uninstalled(app.id, reasons);
     } catch (err) {
       Notification.error('Failed to fully uninstall the app.');
-      AppLifecycleTracking.uninstallationFailed(appId);
+      AppLifecycleTracking.uninstallationFailed(app.id);
     }
 
     this.props.goBackToList();
@@ -499,7 +487,7 @@ export default class AppRoute extends Component {
 
     return (
       <Workbench>
-        <Workbench.Header title="" onBack={this.props.goBackToList} />
+        <Workbench.Header title={this.renderTitle()} onBack={this.props.goBackToList} />
         {loadingContent}
       </Workbench>
     );

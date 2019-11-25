@@ -24,7 +24,7 @@ describe('WidgetStore', () => {
     };
 
     appsRepoMock = {
-      getAppWidgets: jest.fn()
+      getApps: jest.fn()
     };
   });
 
@@ -41,7 +41,7 @@ describe('WidgetStore', () => {
   describe('#getForContentTypeManagement()', () => {
     it('returns an object of all widget namespaces', async () => {
       loaderMock.getAllExtensionsForListing.mockImplementationOnce(() => []);
-      appsRepoMock.getAppWidgets.mockImplementationOnce(() => ({}));
+      appsRepoMock.getApps.mockImplementationOnce(() => Promise.resolve([]));
 
       const widgets = await WidgetStore.getForContentTypeManagement(loaderMock, appsRepoMock);
 
@@ -101,12 +101,14 @@ describe('WidgetStore', () => {
         }
       ]);
 
-      appsRepoMock.getAppWidgets.mockImplementationOnce(() => [
-        {
-          extensionDefinitionId: 'app-definition-id',
-          id: 'app-id'
-        }
-      ]);
+      appsRepoMock.getApps.mockImplementationOnce(() =>
+        Promise.resolve([
+          {
+            appDefinition: { sys: { id: 'app-definition-id' } },
+            id: 'app-id'
+          }
+        ])
+      );
 
       const widgets = await WidgetStore.getForContentTypeManagement(loaderMock, appsRepoMock);
       const [extension, srcdocExtension, definitionExtension, appExtension] = widgets[
@@ -114,7 +116,7 @@ describe('WidgetStore', () => {
       ];
 
       expect(loaderMock.getAllExtensionsForListing).toHaveBeenCalledTimes(1);
-      expect(appsRepoMock.getAppWidgets).toHaveBeenCalledTimes(1);
+      expect(appsRepoMock.getApps).toHaveBeenCalledTimes(1);
 
       expect(extension.id).toEqual('my-extension');
       expect(extension.extensionDefinitionId).toBeUndefined();

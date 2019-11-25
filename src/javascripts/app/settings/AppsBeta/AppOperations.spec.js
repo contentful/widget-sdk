@@ -12,22 +12,17 @@ jest.mock('data/CMA/ProductCatalog', () => ({ getCurrentSpaceFeature: () => true
 describe('AppOperations', () => {
   describe('installOrUpdate', () => {
     it('validates target state', async () => {
-      const cma = {};
-      const evictWidget = jest.fn();
-      const checkAppStatus = jest.fn();
-      const invalidTargetState = {
-        EditorInterface: {
-          CT1: {
-            sidebar: { position: 'BOOM' }
-          }
-        }
-      };
-
       expect.assertions(1);
 
       try {
-        await AppOperations.installOrUpdate(cma, evictWidget, checkAppStatus, {
-          targetState: invalidTargetState
+        await AppOperations.installOrUpdate({}, () => {}, () => {}, {
+          targetState: {
+            EditorInterface: {
+              CT1: {
+                sidebar: { position: 'BOOM' }
+              }
+            }
+          }
         });
       } catch (err) {
         expect(err.message).toMatch(/Invalid target sidebar/);
@@ -65,10 +60,7 @@ describe('AppOperations', () => {
       };
       const evictWidget = jest.fn();
       const checkAppStatus = jest.fn(() => {
-        return Promise.resolve({
-          appId: 'test',
-          appDefinition: { sys: { id: 'def-id' } }
-        });
+        return Promise.resolve({ appDefinition: { sys: { id: 'def-id' } } });
       });
 
       expect.assertions(3);
@@ -129,6 +121,9 @@ describe('AppOperations', () => {
           { fieldId: 'xxx', widgetNamespace: NAMESPACE_EXTENSION, widgetId: 'some-widget-id' }
         ]
       });
+
+      expect(evictWidget).toBeCalledTimes(1);
+      expect(evictWidget).toBeCalledWith('some-widget-id');
     });
   });
 
@@ -183,6 +178,9 @@ describe('AppOperations', () => {
         ],
         sidebar: [{ widgetNamespace: NAMESPACE_BUILTIN_SIDEBAR, widgetId: 'publication-widget' }]
       });
+
+      expect(evictWidget).toBeCalledTimes(1);
+      expect(evictWidget).toBeCalledWith(widgetId);
     });
 
     it('deletes the installation', async () => {

@@ -1,8 +1,6 @@
 import React from 'react';
 import { render, wait, cleanup } from '@testing-library/react';
 import AppsListPage from './AppsListPage';
-import appsListingMock from './mockData/appsListingMock.json';
-import devAppsMock from './mockData/devAppsMock.json';
 import repoAppsMock from './mockData/repoAppsMock.json';
 import * as spaceContextMocked from 'ng/spaceContext';
 
@@ -32,17 +30,10 @@ describe('AppsListPage', () => {
   afterEach(cleanup);
 
   it('should match snapshot for loading state', async () => {
-    const mockRepo = {
-      getApps: jest.fn(),
-      getMarketplaceApps: jest.fn(),
-      getDevApps: jest.fn(),
-      isDevApp: jest.fn()
-    };
-
     const { container } = render(
       <AppsListPage
         goToContent={() => {}}
-        repo={mockRepo}
+        repo={{ getApps: jest.fn() }}
         organizationId={orgId}
         spaceId={spaceId}
         userId={userId}
@@ -52,12 +43,10 @@ describe('AppsListPage', () => {
 
     expect(container).toMatchSnapshot();
   });
+
   it('should match snapshot of apps loaded state', async () => {
     const mockRepo = {
-      getApps: jest.fn(() => Promise.resolve(repoAppsMock)),
-      getMarketplaceApps: jest.fn(() => Promise.resolve(appsListingMock)),
-      getDevApps: jest.fn(() => Promise.resolve(devAppsMock)),
-      isDevApp: jest.fn()
+      getApps: jest.fn(() => Promise.resolve(repoAppsMock))
     };
 
     const { container } = render(

@@ -10,16 +10,22 @@ export function getBuiltinsOnly() {
 }
 
 export async function getForContentTypeManagement(extensionLoader, appsRepo) {
-  const [extensions, marketplaceApps] = await Promise.all([
+  const [extensions, apps] = await Promise.all([
     extensionLoader.getAllExtensionsForListing(),
-    appsRepo.getAppWidgets()
+    appsRepo.getApps().catch(() => []) // Don't crash if apps are not available.
   ]);
+
+  const appWidgets = apps.reduce(
+    (acc, app) => ({
+      ...acc,
+      [app.appDefinition.sys.id]: { id: app.id, icon: app.icon }
+    }),
+    {}
+  );
 
   return {
     [NAMESPACE_BUILTIN]: createBuiltinWidgetList(),
-    [NAMESPACE_EXTENSION]: extensions.map(extension =>
-      buildExtensionWidget(extension, marketplaceApps)
-    )
+    [NAMESPACE_EXTENSION]: extensions.map(extension => buildExtensionWidget(extension, appWidgets))
   };
 }
 
@@ -66,7 +72,10 @@ export async function getForSingleExtension(extensionLoader, extensionId) {
   return extension ? buildExtensionWidget(extension) : null;
 }
 
-function buildExtensionWidget({ sys, extension, extensionDefinition, parameters }, apps = []) {
+function buildExtensionWidget(
+  { sys, extension, extensionDefinition, parameters },
+  appWidgets = {}
+) {
   const { src, srcdoc } = extension;
 
   // We identify srcdoc-backed extensions by taking a look
@@ -75,8 +84,9 @@ function buildExtensionWidget({ sys, extension, extensionDefinition, parameters 
   // If we know that srcdoc is used but we don't have its value
   // (due to `stripSrcdoc`) we indicate it by `true`
   const base = typeof sys.srcdocSha256 === 'string' ? { srcdoc: srcdoc || true } : { src };
+
   const extensionDefinitionId = get(extensionDefinition, ['sys', 'id']);
-  const app = apps.find(app => app.extensionDefinitionId === extensionDefinitionId);
+  const app = appWidgets[extensionDefinitionId];
 
   return {
     ...base,

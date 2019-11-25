@@ -21,7 +21,6 @@ import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import Icon from 'ui/Components/Icon';
 import AdminOnly from 'app/common/AdminOnly';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import * as Telemetry from 'i13n/Telemetry';
 import ModalLauncher from 'app/common/ModalLauncher';
 import FeedbackDialog from 'app/common/FeedbackDialog';
 
@@ -30,7 +29,7 @@ import { websiteUrl } from 'Config';
 import AppListItem from './AppListItem';
 import AppDetailsModal from './AppDetailsModal';
 import createMicroBackendsClient from 'MicroBackendsClient';
-import { getProductCatalogFlagForApp, hasAllowedAppFeatureFlag } from './AppProductCatalog';
+import { getProductCatalogFlagForApp } from './AppProductCatalog';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
 import StateLink from 'app/common/StateLink';
 import createAppsClient from '../apps/AppsClient';
@@ -237,28 +236,11 @@ const AppsListPageLoading = () => {
   );
 };
 
-const prepareApp = featureFlags => app => ({
-  ...app,
-  enabled: getProductCatalogFlagForApp(app, featureFlags),
-  visible: hasAllowedAppFeatureFlag(app)
-});
-
-const prepareDevApp = app => ({
-  id: app.sys.id,
-  title: app.extensionDefinition.name,
-  installed: !!app.extension,
-  isDevApp: true,
-  visiable: true,
-  enabled: true
-});
-
 export default class AppsListPage extends React.Component {
   static propTypes = {
     goToContent: PropTypes.func.isRequired,
     repo: PropTypes.shape({
-      getDevApps: PropTypes.func.isRequired,
-      getMarketplaceApps: PropTypes.func.isRequired,
-      isDevApp: PropTypes.func.isRequired
+      getApps: PropTypes.func.isRequired
     }).isRequired,
     organizationId: PropTypes.string.isRequired,
     spaceId: PropTypes.string.isRequired,
@@ -275,9 +257,8 @@ export default class AppsListPage extends React.Component {
 
   async componentDidMount() {
     try {
-      const [marketplaceApps, devApps, hasAlphaApps] = await Promise.all([
-        this.props.repo.getMarketplaceApps(),
-        this.props.repo.getDevApps(),
+      const [apps, hasAlphaApps] = await Promise.all([
+        this.props.repo.getApps(),
         // Recover with not showing link to apps alpha
         // This enables us to delete the micro backend without effect after beta release.
         createAppsClient(this.props.spaceId)
@@ -285,21 +266,15 @@ export default class AppsListPage extends React.Component {
           .catch(() => false)
       ]);
 
-      const productCatalogFlags = await this.props.productCatalog.loadProductCatalogFlags(
-        marketplaceApps
-      );
-
+      const productCatalogFlags = await this.props.productCatalog.loadProductCatalogFlags(apps);
       const appsFeatureDisabled = await this.props.productCatalog.isAppsFeatureDisabled();
 
-      const preparedApps = marketplaceApps
-        .map(prepareApp(productCatalogFlags))
-        .filter(app => app.visible);
-      const preparedDevApps = devApps.map(prepareDevApp);
+      const preparedApps = apps.map(app => ({
+        ...app,
+        enabled: getProductCatalogFlagForApp(app, productCatalogFlags)
+      }));
 
-      const [installedApps, availableApps] = partition(
-        [...preparedApps, ...preparedDevApps],
-        app => app.installed
-      );
+      const [installedApps, availableApps] = partition(preparedApps, app => app.installed);
 
       this.setState(
         {
@@ -307,7 +282,6 @@ export default class AppsListPage extends React.Component {
           availableApps,
           hasAlphaApps,
           installedApps,
-          marketplaceApps,
           appsFeatureDisabled
         },
         () => {
@@ -315,7 +289,6 @@ export default class AppsListPage extends React.Component {
         }
       );
     } catch (err) {
-      Telemetry.count('apps.list-loading-failed');
       Notification.error('Failed to load apps.');
     }
   }
