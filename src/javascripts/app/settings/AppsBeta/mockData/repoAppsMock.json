@@ -508,7 +508,7 @@
     "id": "dev-app_2JLOqo4SqgMXY2uVWzCSYW",
     "title": "Daily Animal",
     "installed": true,
-    "isDevApp": true
+    "isPrivateApp": true
   },
   {
     "appDefinition": {
@@ -552,6 +552,6 @@
     "id": "dev-app_6QvINyJGdwLe0XjxnKnzrF",
     "title": "Test",
     "installed": true,
-    "isDevApp": true
+    "isPrivateApp": true
   }
 ]

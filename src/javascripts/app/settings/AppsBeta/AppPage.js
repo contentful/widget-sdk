@@ -128,7 +128,7 @@ const styles = {
 };
 
 function isAppAlreadyAuthorized(app = {}) {
-  if (app.isDevApp) {
+  if (app.isPrivateApp) {
     return true;
   }
 

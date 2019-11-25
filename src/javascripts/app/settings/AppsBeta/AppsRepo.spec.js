@@ -25,7 +25,7 @@ describe('AppsRepo', () => {
       src: 'http://localhost:1234'
     };
     const privateDefinition = {
-      sys: { type: 'AppDefinition', id: 'private-app-definition-id' },
+      sys: { type: 'AppDefinition', id: 'app-definition-id' },
       name: 'My app',
       locations: ['app', 'entry-field'],
       src: 'http://localhost:666'
@@ -62,10 +62,10 @@ describe('AppsRepo', () => {
       expect(result).toEqual([
         {
           appDefinition: privateDefinition,
-          id: 'dev-app_private-app-definition-id',
+          id: 'private_app-definition-id',
           title: 'My app',
           installed: false,
-          isDevApp: true
+          isPrivateApp: true
         }
       ]);
     });
@@ -90,10 +90,10 @@ describe('AppsRepo', () => {
       expect(result).toEqual([
         {
           appDefinition: privateDefinition,
-          id: 'dev-app_private-app-definition-id',
+          id: 'private_app-definition-id',
           title: 'My app',
           installed: false,
-          isDevApp: true
+          isPrivateApp: true
         }
       ]);
     });

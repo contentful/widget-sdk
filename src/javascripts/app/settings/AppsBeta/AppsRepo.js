@@ -3,8 +3,8 @@ import resolveResponse from 'contentful-resolve-response';
 
 import { hasAllowedAppFeatureFlag } from './AppProductCatalog';
 
-const DEV_APP_PREFIX = 'dev-app';
-const DEV_APP_SEPARATOR = '_';
+const PRIVATE_APP_PREFIX = 'private';
+
 const APP_MARKETPLACE_SPACE_ID = 'lpjm8d10rkpy';
 const APP_MARKETPLACE_TOKEN = 'XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk';
 const APPS_LISTING_ENTRY_ID = '2fPbSMx3baxlwZoCyXC7F1';
@@ -45,12 +45,12 @@ export default function createAppsRepo(appDefinitionLoader, spaceEndpoint) {
   async function getApps() {
     const installationMap = await getAppDefinitionToInstallationMap();
 
-    const [marketplaceApps, devApps] = await Promise.all([
+    const [marketplaceApps, privateApps] = await Promise.all([
       getMarketplaceApps(installationMap),
-      getDevApps(installationMap)
+      getPrivateApps(installationMap)
     ]);
 
-    return [...marketplaceApps, ...devApps].filter(hasAllowedAppFeatureFlag);
+    return [...marketplaceApps, ...privateApps].filter(hasAllowedAppFeatureFlag);
   }
 
   async function getMarketplaceApps(installationMap) {
@@ -99,16 +99,16 @@ export default function createAppsRepo(appDefinitionLoader, spaceEndpoint) {
     );
   }
 
-  async function getDevApps(installationMap) {
+  async function getPrivateApps(installationMap) {
     const appDefinitions = await appDefinitionLoader.getAllForCurrentOrganization();
 
     return appDefinitions.map(def => {
       return {
         appDefinition: def,
-        id: [DEV_APP_PREFIX, DEV_APP_SEPARATOR, def.sys.id].join(''),
+        id: [PRIVATE_APP_PREFIX, def.sys.id].join('_'),
         title: def.name,
         installed: !!installationMap[def.sys.id],
-        isDevApp: true
+        isPrivateApp: true
       };
     });
   }
