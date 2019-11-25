@@ -1,28 +1,9 @@
 import { get, identity } from 'lodash';
-import resolveResponse from 'contentful-resolve-response';
 
+import { fetchMarketplaceApps } from './MarketplaceClient';
 import { hasAllowedAppFeatureFlag } from './AppProductCatalog';
 
 const PRIVATE_APP_PREFIX = 'private';
-
-const APP_MARKETPLACE_SPACE_ID = 'lpjm8d10rkpy';
-const APP_MARKETPLACE_TOKEN = 'XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk';
-const APPS_LISTING_ENTRY_ID = '2fPbSMx3baxlwZoCyXC7F1';
-
-const SPACE_ENDPOINT = `https://cdn.contentful.com/spaces/${APP_MARKETPLACE_SPACE_ID}`;
-const APP_LISTING_ENDPOINT = `${SPACE_ENDPOINT}/entries?include=10&sys.id[in]=${APPS_LISTING_ENTRY_ID}`;
-const FETCH_CONFIG = {
-  headers: {
-    Authorization: `Bearer ${APP_MARKETPLACE_TOKEN}`
-  }
-};
-
-async function fetchMarketplaceApps() {
-  const res = await window.fetch(APP_LISTING_ENDPOINT, FETCH_CONFIG);
-  const data = res.ok ? await res.json() : {};
-  const [marketplaceApps] = resolveResponse(data);
-  return get(marketplaceApps, ['fields', 'apps'], []);
-}
 
 export default function createAppsRepo(appDefinitionLoader, spaceEndpoint) {
   return {
