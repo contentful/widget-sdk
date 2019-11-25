@@ -262,7 +262,7 @@ export default function register() {
           [State.Archived(), _.constant('archived')],
           [State.Draft(), _.constant('draft')],
           [State.Published(), _.constant('published')],
-          [State.Changed(), _.constant('pending changes')],
+          [State.Changed(), _.constant('changed')],
           [State.Deleted(), _.constant('deleted')]
         ]);
       }
