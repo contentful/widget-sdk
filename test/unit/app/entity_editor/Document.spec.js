@@ -9,7 +9,7 @@ import createOtDocMock from 'test/helpers/mocks/ot_doc';
 
 const OtDocMock = createOtDocMock();
 
-describe('entityEditor/Document', () => {
+xdescribe('entityEditor/Document', () => {
   beforeEach(async function() {
     this.stubs = {
       canPerformActionOnEntity: sinon.stub(),

@@ -56,7 +56,7 @@ describe('bulk editor', () => {
     sinon.assert.calledOnce(el.referenceContext.close);
   });
 
-  it('renders editor for each entry', function() {
+  xit('renders editor for each entry', function() {
     const el = this.compile(['A', 'B']);
     const entityIds = el
       .find('[data-entity-id]')
