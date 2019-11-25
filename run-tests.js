@@ -38,6 +38,7 @@ if (singleRun) {
     const specs = process.argv.slice(3); // 0 -> node, 1 -> run-tests.js, 2 -> --once
 
     config.set({
+      retryLimit: 3,
       reporters: ['dots', 'junit'],
       junitReporter: {
         outputDir: process.env.JUNIT_REPORT_PATH,
