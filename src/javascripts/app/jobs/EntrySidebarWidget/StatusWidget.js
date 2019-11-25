@@ -81,7 +81,7 @@ export default class StatusWidget extends React.PureComponent {
       <DropdownListItem
         className={styles.scheduleListItem}
         testId="schedule-publication"
-        isDisabled={!!this.props.publicationBlockedReason}
+        isDisabled={!!this.props.publicationBlockedReason || this.props.status === 'archived'}
         onClick={() => {
           this.props.onScheduledPublishClick();
           this.setState({ isOpenDropdown: false });
