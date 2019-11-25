@@ -2,24 +2,22 @@ import React from 'react';
 import { Notification } from '@contentful/forma-36-react-components';
 import { getCurrentStateName } from 'states/Navigator';
 import { defaults, isObject, get, mapValues } from 'lodash';
-import { fileNameToTitle, truncate } from 'utils/StringUtils';
+import { fileNameToTitle } from 'utils/StringUtils';
 import { trackMarkdownEditorAction } from 'analytics/MarkdownEditorActions';
 import { track } from 'analytics/Analytics';
 import * as entitySelector from 'search/EntitySelector/entitySelector';
 import * as BulkAssetsCreator from 'services/BulkAssetsCreator';
 import * as AssetUrlService from 'services/AssetUrlService';
 import LinkOrganizer from './linkOrganizer';
-import { getModule } from 'NgRegistry';
 import * as ModalLauncher from 'app/common/ModalLauncher';
 import InsertLinkModal from './components/InsertLinkModal';
 import FormatingHelpModal from './components/FormatingHelpModal';
 import InsertCharacterModal from './components/InsertCharacterModal';
 import EmbedExternalContentModal from './components/EmbedExternalContentModal';
 import InsertTableModal from './components/InsertTableModal';
+import ConfirmInsertAssetModal from './components/ConfirmInsertAssetModal';
 
 export function create(editor, locale, defaultLocaleCode, { zen }) {
-  const modalDialog = getModule('modalDialog');
-
   const {
     fallbackCode,
     internal_code: localeCode,
@@ -114,7 +112,7 @@ export function create(editor, locale, defaultLocaleCode, { zen }) {
       });
   }
 
-  function _insertAssetLinks(assets) {
+  async function _insertAssetLinks(assets) {
     // check whether do we have some assets, which don't have
     // a version in this field's locale
     const otherLocales = assets.filter(asset => {
@@ -130,37 +128,31 @@ export function create(editor, locale, defaultLocaleCode, { zen }) {
     // if there have values from fallback/default locales, we need to
     // provide user a warning so we show him modal
     if (otherLocales.length > 0) {
-      const text = linksWithMeta
+      const fallbackAssets = linksWithMeta
         // we don't want to warn about normally localized files
         .filter(({ isLocalized }) => !isLocalized)
         .map(({ title, isFallback, asset }) => {
-          const localeText = isFallback
-            ? `fallback locale (${fallbackCode})`
-            : `default locale (${defaultLocaleCode})`;
-          // we return an object instead of a line to avoid embedding HTML
+          const code = isFallback ? fallbackCode : defaultLocaleCode;
           return {
-            start: 'Link asset “',
-            linkTitle: truncate(title, 30),
-            end: `” in ${localeText}`,
-            // will go to the assets editor
-            link: `^.^.assets.detail({ assetId: "${asset.sys.id}" })`
+            title,
+            thumbnailUrl: asset.fields.file[code].url,
+            thumbnailAltText: title,
+            description: isFallback ? `Fallback locale (${code})` : `Default locale (${code})`,
+            asset: asset
           };
         });
-
-      return modalDialog
-        .open({
-          template: 'markdown_insert_link_confirmation',
-          scopeData: {
-            number: otherLocales.length,
-            text,
-            // which locale we are trying to use
-            locale: translationLocaleCode
-          }
-        })
-        .promise.then(() => {
-          editor.insert(links);
-        })
-        .catch(() => {});
+      const result = await ModalLauncher.open(({ isShown, onClose }) => (
+        <ConfirmInsertAssetModal
+          isShown={isShown}
+          onClose={onClose}
+          assets={fallbackAssets}
+          locale={translationLocaleCode}
+        />
+      ));
+      if (result) {
+        editor.insert(links);
+      }
+      return Promise.resolve();
     } else {
       editor.insert(links);
       return Promise.resolve();
