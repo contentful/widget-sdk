@@ -170,7 +170,7 @@ export default class Task extends React.Component {
               Edit task
             </DropdownListItem>
           )}
-          <DropdownListItem onClick={event => this.handleDeleteClick(event)}>
+          <DropdownListItem testId="delete-task" onClick={event => this.handleDeleteClick(event)}>
             Delete task
           </DropdownListItem>
         </DropdownList>

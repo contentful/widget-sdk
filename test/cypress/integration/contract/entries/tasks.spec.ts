@@ -9,7 +9,8 @@ import {
   createTask,
   updateTaskBodyAndAssignee,
   resolveTask,
-  reopenTask
+  reopenTask,
+  deleteTask
 } from '../../../interactions/tasks';
 
 import {
@@ -120,6 +121,32 @@ describe('Tasks entry editor sidebar', () => {
             const st = isLegacy ? assignment.status : status
             expectTask(getTasks().eq(i), { isResolved: st === TaskStates.RESOLVED });
           })
+        });
+
+        describe('deleting a task', () => {
+          it('deletes without error', () => {
+            const interaction = deleteTask(isLegacy).willSucceed();
+  
+            deleteTaskUsingKebabMenu(getTasks().first());
+  
+            cy.wait(interaction);
+          });
+  
+          function getDeleteTaskKebabMenuItem(task: Cypress.Chainable): Cypress.Chainable {
+            task.click();
+  
+            getTaskKebabMenu(task)
+              .should('be.enabled')
+              .click();
+  
+            return getTaskKebabMenuItems(task)
+              .get('[data-test-id="delete-task"]').debug();
+          }
+
+          function deleteTaskUsingKebabMenu(task) {
+            getDeleteTaskKebabMenuItem(task).click();
+            cy.getByTestId('cf-ui-modal-confirm-confirm-button').click();
+          }
         });
 
         describe('updating a task', () => {
@@ -298,7 +325,7 @@ const getSelectElement = (chainable: Cypress.Chainable) =>
 const getDraftTaskSaveAction = () => getDraftTask().getByTestId('save-task');
 const getDraftTaskError = () => getDraftTask().queryByTestId('cf-ui-validation-message');
 const getTaskKebabMenu = (task: Cypress.Chainable) => task.getByTestId('cf-ui-icon-button');
-const getTaskKebabMenuItems = (task: Cypress.Chainable) => task.getByTestId('cf-ui-dropdown-list-item')
+const getTaskKebabMenuItems = (task: Cypress.Chainable) => task.getByTestId('cf-ui-dropdown-list')
 const getTaskBodyTextarea = (task: Cypress.Chainable) => task.getByTestId('cf-ui-textarea')
 const selectTaskAssignee = (assigneeId: string) => getSelectElement(cy).select(assigneeId);
 const saveUpdatedTask = () => cy.getByTestId('save-task').click();

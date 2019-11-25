@@ -83,16 +83,21 @@ export const getAllForEntry = async (endpoint, entryId) =>
  *
  * @param {SpaceEndpoint} endpoint
  * @param {String} entryId
- * @param {String} taskId
+ * @param {API.Task} task
  */
-export const remove = (endpoint, entryId, taskId) =>
-  endpoint(
+export const remove = (endpoint, entryId, task) => {
+  const headers = {
+    'X-Contentful-Version': task.sys.version,
+    ...alphaHeader
+  };
+  return endpoint(
     {
       method: 'DELETE',
-      path: path(entryId, taskId)
+      path: path(entryId, task.sys.id)
     },
-    alphaHeader
+    headers
   );
+};
 
 /**
  * Updates a task.
