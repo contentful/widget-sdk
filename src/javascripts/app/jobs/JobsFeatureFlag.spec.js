@@ -2,11 +2,11 @@ import React from 'react';
 import { render, cleanup } from '@testing-library/react';
 import { trackAlphaEligibilityToIntercom } from './Analytics/JobsAnalytics';
 
-import BooleanFeatureFlag from 'utils/LaunchDarkly/BooleanFeatureFlag';
+import BooleanSpaceFeature from 'utils/ProductCatalog/BooleanSpaceFeature';
 
 import JobsFeatureFlag from './JobsFeatureFlag';
 
-jest.mock('utils/LaunchDarkly/BooleanFeatureFlag', () => jest.fn().mockReturnValue(null));
+jest.mock('utils/ProductCatalog/BooleanSpaceFeature', () => jest.fn().mockReturnValue(null));
 jest.mock('./Analytics/JobsAnalytics');
 describe('<JobsFeatureFlag />', () => {
   afterEach(() => {
@@ -40,5 +40,5 @@ describe('<JobsFeatureFlag />', () => {
   });
 });
 function mockBooleanFeatureFlag(currentVariation) {
-  BooleanFeatureFlag.mockImplementation(({ children }) => children({ currentVariation }));
+  BooleanSpaceFeature.mockImplementation(({ children }) => children({ currentVariation }));
 }

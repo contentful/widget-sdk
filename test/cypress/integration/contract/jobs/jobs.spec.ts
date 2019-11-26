@@ -14,12 +14,13 @@ import {
 import { queryForDefaultEntryWithoutEnvironment } from '../../../interactions/entries';
 import { queryForDefaultUserDetails } from '../../../interactions/users';
 import { FeatureFlag } from '../../../util/featureFlag';
+import { queryForScheduledPublishingInDefaultSpace } from '../../../interactions/product_catalog_features';
 
 describe('Jobs page', () => {
   before(() =>
-    cy.startFakeServer({
+    cy.startFakeServers({
       consumer: 'user_interface',
-      provider: 'jobs',
+      providers: ['jobs', 'product_catalog_features'],
       cors: true,
       pactfileWriteMode: 'merge',
       dir: Cypress.env('pactDir'),
@@ -36,11 +37,13 @@ describe('Jobs page', () => {
     beforeEach(() => {
       const interactions = defaultRequestsMock();
       const slowInteraction = queryPendingJobsForDefaultSpace.willFindNone();
+      const productCatalogInteraction = queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled();
 
       cy.visit(`/spaces/${defaultSpaceId}/jobs`);
 
       cy.wait(interactions);
       cy.wait(slowInteraction, { timeout: 10000 });
+      cy.wait(productCatalogInteraction);
     });
     it('renders illustration and heading for Scheduled tab empty state', () => {
       cy.getByTestId('cf-ui-tab-panel')
@@ -86,6 +89,7 @@ describe('Jobs page', () => {
         dir: Cypress.env('pactDir'),
         spec: 2
       });
+      const productCatalogInteraction = queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled();
       const interactions = defaultRequestsMock({
         publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
       });
@@ -100,6 +104,7 @@ describe('Jobs page', () => {
       cy.wait(slowInteractions, {
         timeout: 10000
       });
+      cy.wait(productCatalogInteraction);
     });
     it('renders list of scheduled jobs', () => {
       cy.getByTestId('scheduled-jobs-date-group')
@@ -132,10 +137,12 @@ describe('Jobs page', () => {
     beforeEach(() => {
       const interactions = defaultRequestsMock();
       const slowInteraction = queryPendingJobsForDefaultSpace.willFailWithAnInternalServerError();
+      const productCatalogInteraction = queryForScheduledPublishingInDefaultSpace.willFindFeatureEnabled();
 
       cy.visit(`/spaces/${defaultSpaceId}/jobs`);
       cy.wait(interactions);
       cy.wait(slowInteraction, { timeout: 10000 });
+      cy.wait(productCatalogInteraction);
     });
     it('renders illustration and heading for error state', () => {
       cy.getByTestId('cf-ui-tab-panel')

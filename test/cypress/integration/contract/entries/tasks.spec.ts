@@ -20,8 +20,8 @@ import {
 import { getDefaultEntry, getFirst7SnapshotsOfDefaultEntry } from '../../../interactions/entries';
 import {
   PROVIDER as PRODUCT_CATALOG_PROVIDER,
-  queryForTasksAndAppsInDefaultSpace,
-} from '../../../interactions/product_catalog_features'
+  queryForScheduledPublishingOnEntryPage
+} from '../../../interactions/product_catalog_features';
 import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 
 const users = require('../../../fixtures/responses/users.json');
@@ -63,14 +63,14 @@ describe('Tasks entry editor sidebar', () => {
     cy.route('**/channel/**', []).as('shareJS');
 
     return [
-      queryForTasksAndAppsInDefaultSpace.willFindBothOfThem(),
+      queryForScheduledPublishingOnEntryPage.willFindFeatureEnabled(),
       ...defaultRequestsMock({
         publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
       }),
       queryFirst100UsersInDefaultSpace.willFindSeveral(),
       getDefaultEntry.willReturnIt(),
       getFirst7SnapshotsOfDefaultEntry.willReturnNone(),
-      getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
+      getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar()
     ];
   }
 
@@ -78,7 +78,9 @@ describe('Tasks entry editor sidebar', () => {
     context(isLegacy ? 'using the legacy API' : 'using the new API', () => {
       context('tasks service error', () => {
         beforeEach(() => {
-          const interaction = getAllTasksForDefaultEntry.willFailWithAnInternalServerError(isLegacy);
+          const interaction = getAllTasksForDefaultEntry.willFailWithAnInternalServerError(
+            isLegacy
+          );
 
           visitEntry();
 
@@ -118,29 +120,30 @@ describe('Tasks entry editor sidebar', () => {
           getTasks().should('have.length', 3);
 
           severalTasksDefinition(isLegacy).items.forEach(({ status, assignment }, i: number) => {
-            const st = isLegacy ? assignment.status : status
+            const st = isLegacy ? assignment.status : status;
             expectTask(getTasks().eq(i), { isResolved: st === TaskStates.RESOLVED });
-          })
+          });
         });
 
         describe('deleting a task', () => {
           it('deletes without error', () => {
             const interaction = deleteTask(isLegacy).willSucceed();
-  
+
             deleteTaskUsingKebabMenu(getTasks().first());
-  
+
             cy.wait(interaction);
           });
-  
+
           function getDeleteTaskKebabMenuItem(task: Cypress.Chainable): Cypress.Chainable {
             task.click();
-  
+
             getTaskKebabMenu(task)
               .should('be.enabled')
               .click();
-  
+
             return getTaskKebabMenuItems(task)
-              .get('[data-test-id="delete-task"]').debug();
+              .get('[data-test-id="delete-task"]')
+              .debug();
           }
 
           function deleteTaskUsingKebabMenu(task) {
@@ -154,7 +157,7 @@ describe('Tasks entry editor sidebar', () => {
             const taskUpdate: TaskUpdate = {
               body: 'Updated task body!',
               assigneeId: users.items[1].sys.id
-            }
+            };
             const interaction = updateTaskBodyAndAssignee(taskUpdate, isLegacy).willSucceed();
 
             updateTaskAndSave(getTasks().first(), taskUpdate);
@@ -165,7 +168,7 @@ describe('Tasks entry editor sidebar', () => {
           it('resolves tasks without error', () => {
             const taskUpdate: TaskUpdate = {
               status: TaskStates.RESOLVED
-            }
+            };
             const interaction = resolveTask(taskUpdate, isLegacy).willSucceed();
 
             const task = () => getTasks().first();
@@ -180,7 +183,7 @@ describe('Tasks entry editor sidebar', () => {
           it('restricts editing resolved tasks', () => {
             const taskUpdate: TaskUpdate = {
               status: TaskStates.RESOLVED
-            }
+            };
             const interaction = resolveTask(taskUpdate, isLegacy).willSucceed();
 
             const task = () => getTasks().first();
@@ -189,14 +192,13 @@ describe('Tasks entry editor sidebar', () => {
 
             cy.wait(interaction);
 
-            getEditTaskKebabMenuItem(task())
-              .should('have.length', 0);
+            getEditTaskKebabMenuItem(task()).should('have.length', 0);
           });
 
           it('reopens tasks without error', () => {
             const taskUpdate: TaskUpdate = {
               status: TaskStates.ACTIVE
-            }
+            };
             const interaction = reopenTask(taskUpdate, isLegacy).willSucceed();
 
             const task = () => getTasks().eq(1);
@@ -215,8 +217,7 @@ describe('Tasks entry editor sidebar', () => {
               .should('be.enabled')
               .click();
 
-            return getTaskKebabMenuItems(task)
-              .get('[data-test-id="edit-task"]');
+            return getTaskKebabMenuItems(task).get('[data-test-id="edit-task"]');
           }
 
           function updateTaskAndSave(task: Cypress.Chainable, { body, assigneeId }: TaskUpdate) {
@@ -241,7 +242,7 @@ describe('Tasks entry editor sidebar', () => {
           assigneeId: 'userID'
         };
 
-        let getAllTasksInteraction: string
+        let getAllTasksInteraction: string;
         beforeEach(() => {
           getAllTasksInteraction = getAllTasksForDefaultEntry.willReturnNone(isLegacy);
         });
@@ -319,14 +320,12 @@ const expectTask = (task: Cypress.Chainable, { isResolved }) =>
     .should('be.enabled')
     .should(isResolved ? 'have.attr' : 'not.have.attr', 'checked');
 const getSelectElement = (chainable: Cypress.Chainable) =>
-  chainable
-    .getByTestId('task-assignee-select')
-    .getByTestId('cf-ui-select');
+  chainable.getByTestId('task-assignee-select').getByTestId('cf-ui-select');
 const getDraftTaskSaveAction = () => getDraftTask().getByTestId('save-task');
 const getDraftTaskError = () => getDraftTask().queryByTestId('cf-ui-validation-message');
 const getTaskKebabMenu = (task: Cypress.Chainable) => task.getByTestId('cf-ui-icon-button');
-const getTaskKebabMenuItems = (task: Cypress.Chainable) => task.getByTestId('cf-ui-dropdown-list')
-const getTaskBodyTextarea = (task: Cypress.Chainable) => task.getByTestId('cf-ui-textarea')
+const getTaskKebabMenuItems = (task: Cypress.Chainable) => task.getByTestId('cf-ui-dropdown-list');
+const getTaskBodyTextarea = (task: Cypress.Chainable) => task.getByTestId('cf-ui-textarea');
 const selectTaskAssignee = (assigneeId: string) => getSelectElement(cy).select(assigneeId);
 const saveUpdatedTask = () => cy.getByTestId('save-task').click();
 const getTaskCheckbox = (task: Cypress.Chainable) => task.find('[data-test-id="status-checkbox"]');

@@ -11,7 +11,15 @@ import {
   getFirst7SnapshotsOfDefaultEntry,
   createAnEntryInDefaultSpace
 } from '../../../interactions/entries';
-import { queryPendingJobsForDefaultSpace } from '../../../interactions/jobs';
+import {
+  queryPendingJobsForDefaultSpace,
+  queryAllScheduledJobsForDefaultEntry
+} from '../../../interactions/jobs';
+import {
+  queryForScheduledPublishingOnEntryListPage,
+  queryForEnvironmentUsageAndAppsInDefaultSpace,
+  queryForTasksInDefaultSpace
+} from '../../../interactions/product_catalog_features';
 
 const empty = require('../../../fixtures/responses/empty.json');
 const severalEntriesResponse = require('../../../fixtures/responses/entries-several.json');
@@ -31,7 +39,7 @@ describe('Entries list page', () => {
     // TODO: Move this to a before block
     cy.startFakeServers({
       consumer: 'user_interface',
-      providers: ['entries', 'users', 'jobs'],
+      providers: ['entries', 'users', 'jobs', 'product_catalog_features'],
       cors: true,
       pactfileWriteMode: 'merge',
       dir: Cypress.env('pactDir'),
@@ -69,8 +77,10 @@ describe('Entries list page', () => {
         '@queryNonArchivedEntries',
         ...defaultRequestsMock({}),
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
-        queryPendingJobsForDefaultSpace.willFindSeveral()
-      ]
+        queryPendingJobsForDefaultSpace.willFindSeveral(),
+        queryForScheduledPublishingOnEntryListPage.willFindFeatureEnabled(),
+        queryForEnvironmentUsageAndAppsInDefaultSpace.willFindSeveral()
+      ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
       cy.wait(interactions);
@@ -114,8 +124,10 @@ describe('Entries list page', () => {
           publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
         }),
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
-        queryPendingJobsForDefaultSpace.willFindSeveral()
-      ]
+        queryPendingJobsForDefaultSpace.willFindSeveral(),
+        queryForScheduledPublishingOnEntryListPage.willFindFeatureEnabled(),
+        queryForEnvironmentUsageAndAppsInDefaultSpace.willFindSeveral()
+      ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
 
@@ -135,7 +147,9 @@ describe('Entries list page', () => {
         getDefaultEntry.willReturnIt(),
         queryLinksToDefaultEntry.willReturnNone(),
         getFirst7SnapshotsOfDefaultEntry.willReturnNone(),
-        getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar()
+        getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
+        queryAllScheduledJobsForDefaultEntry.willFindOnePendingJob(),
+        queryForTasksInDefaultSpace.willFindTasksEnabled()
       ];
 
       cy.getByTestId('create-entry').click();
@@ -165,8 +179,10 @@ describe('Entries list page', () => {
         '@queryNonArchivedEntries',
         ...defaultRequestsMock({}),
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
-        queryPendingJobsForDefaultSpace.willFindSeveral()
-      ]
+        queryPendingJobsForDefaultSpace.willFindSeveral(),
+        queryForScheduledPublishingOnEntryListPage.willFindFeatureEnabled(),
+        queryForEnvironmentUsageAndAppsInDefaultSpace.willFindSeveral()
+      ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);
 
@@ -208,7 +224,9 @@ describe('Entries list page', () => {
         ...defaultRequestsMock({}),
         '@queryNonArchivedEntries',
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
-        queryPendingJobsForDefaultSpace.willFindSeveral()
+        queryPendingJobsForDefaultSpace.willFindSeveral(),
+        queryForScheduledPublishingOnEntryListPage.willFindFeatureEnabled(),
+        queryForEnvironmentUsageAndAppsInDefaultSpace.willFindSeveral()
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries`);

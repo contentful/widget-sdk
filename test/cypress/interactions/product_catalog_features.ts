@@ -1,8 +1,4 @@
-import {
-  defaultHeader,
-  defaultOrgId,
-  defaultSpaceId
-} from '../util/requests';
+import { defaultHeader, defaultOrgId, defaultSpaceId } from '../util/requests';
 import { RequestOptions, Query } from '@pact-foundation/pact';
 
 const productCatalogOrg = require('../fixtures/responses/product-catalog-org.json');
@@ -35,7 +31,7 @@ export const getAllProductCatalogFeaturesForDefaultOrg = {
 
     return '@getAllProductCatalogFeaturesForDefaultOrg';
   }
-}
+};
 
 function productCatalogFeaturesForDefaultSpaceRequest(query?: Query): RequestOptions {
   return {
@@ -43,7 +39,7 @@ function productCatalogFeaturesForDefaultSpaceRequest(query?: Query): RequestOpt
     path: `/spaces/${defaultSpaceId}/product_catalog_features`,
     headers: defaultHeader,
     query
-  }
+  };
 }
 
 export const getAllCatalogFeaturesForDefaultSpace = {
@@ -59,9 +55,9 @@ export const getAllCatalogFeaturesForDefaultSpace = {
       }
     }).as('getAllCatalogFeaturesForDefaultSpace');
 
-    return '@getAllCatalogFeaturesForDefaultSpace'
+    return '@getAllCatalogFeaturesForDefaultSpace';
   }
-}
+};
 
 export const queryForTasksAndAppsInDefaultSpace = {
   willFindBothOfThem() {
@@ -78,9 +74,83 @@ export const queryForTasksAndAppsInDefaultSpace = {
       }
     }).as('queryForTasksAndAppsInDefaultSpace');
 
-    return '@queryForTasksAndAppsInDefaultSpace'
+    return '@queryForTasksAndAppsInDefaultSpace';
   }
-}
+};
+
+export const queryForTasksInDefaultSpace = {
+  willFindTasksEnabled() {
+    cy.addInteraction({
+      provider: PROVIDER,
+      state: States.SPACE_WITH_SEVERAL_FEATURES,
+      uponReceiving: `a query for the "tasks" features for space "${defaultSpaceId}"`,
+      withRequest: productCatalogFeaturesForDefaultSpaceRequest('sys.featureId[]=tasks'),
+      willRespondWith: {
+        status: 200,
+        body: productCatalogTasksAndApps
+      }
+    }).as('queryForTasksInDefaultSpace');
+
+    return '@queryForTasksInDefaultSpace';
+  }
+};
+
+export const queryForScheduledPublishingInDefaultSpace = {
+  willFindFeatureEnabled() {
+    cy.addInteraction({
+      provider: PROVIDER,
+      state: States.SPACE_WITH_SEVERAL_FEATURES,
+      uponReceiving: `a query for "scheduled_publishing" feature for space "${defaultSpaceId}"`,
+      withRequest: productCatalogFeaturesForDefaultSpaceRequest(
+        'sys.featureId[]=scheduled_publishing&sys.featureId[]=basic_apps'
+      ),
+      willRespondWith: {
+        status: 200,
+        body: productCatalogSpace
+      }
+    }).as('queryForScheduledPublishingInDefaultSpace');
+
+    return '@queryForScheduledPublishingInDefaultSpace';
+  }
+};
+
+export const queryForScheduledPublishingOnEntryPage = {
+  willFindFeatureEnabled() {
+    cy.addInteraction({
+      provider: PROVIDER,
+      state: States.SPACE_WITH_SEVERAL_FEATURES,
+      uponReceiving: `a query for "scheduled_publishing" on the entry page`,
+      withRequest: productCatalogFeaturesForDefaultSpaceRequest(
+        'sys.featureId[]=scheduled_publishing&sys.featureId[]=basic_apps&sys.featureId[]=tasks'
+      ),
+      willRespondWith: {
+        status: 200,
+        body: productCatalogSpace
+      }
+    }).as('queryForScheduledPublishingOnEntryPage');
+
+    return '@queryForScheduledPublishingOnEntryPage';
+  }
+};
+
+export const queryForScheduledPublishingOnEntryListPage = {
+  willFindFeatureEnabled() {
+    cy.addInteraction({
+      provider: PROVIDER,
+      state: States.SPACE_WITH_SEVERAL_FEATURES,
+      uponReceiving: `a query for "scheduled_publishing" on the entry list page`,
+      withRequest: productCatalogFeaturesForDefaultSpaceRequest(
+        'sys.featureId[]=scheduled_publishing'
+      ),
+      willRespondWith: {
+        status: 200,
+        body: productCatalogSpace
+      }
+    }).as('queryForScheduledPublishingOnEntryListPage');
+
+    return '@queryForScheduledPublishingOnEntryListPage';
+  }
+};
 
 export const queryForEnvironmentAliasingAndAppsInDefaultSpace = {
   willFindNone() {
@@ -96,6 +166,24 @@ export const queryForEnvironmentAliasingAndAppsInDefaultSpace = {
       }
     }).as('queryForEnvironmentAliasingAndAppsInDefaultSpace');
 
-    return '@queryForEnvironmentAliasingAndAppsInDefaultSpace'
+    return '@queryForEnvironmentAliasingAndAppsInDefaultSpace';
   }
-}
+};
+
+export const queryForEnvironmentUsageAndAppsInDefaultSpace = {
+  willFindSeveral() {
+    cy.addInteraction({
+      provider: PROVIDER,
+      state: States.SPACE_WITH_SEVERAL_FEATURES,
+      uponReceiving: `a query for the "environment_usage" and "basic_apps" features for space "${defaultSpaceId}"`,
+      withRequest: productCatalogFeaturesForDefaultSpaceRequest(
+        'sys.featureId[]=environment_usage_enforcements&sys.featureId[]=basic_apps'
+      ),
+      willRespondWith: {
+        status: 200
+      }
+    }).as('queryForEnvironmentUsageAndAppsInDefaultSpace');
+
+    return '@queryForEnvironmentUsageAndAppsInDefaultSpace';
+  }
+};

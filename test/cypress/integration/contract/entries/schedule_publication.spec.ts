@@ -18,6 +18,7 @@ import {
   queryPendingJobsForDefaultSpace
 } from '../../../interactions/jobs';
 import { FeatureFlag } from '../../../util/featureFlag';
+import { queryForScheduledPublishingOnEntryPage } from '../../../interactions/product_catalog_features';
 
 describe('Schedule Publication', () => {
   let interactions: string[];
@@ -134,7 +135,7 @@ function basicServerSetUp(): string[] {
   // TODO: move this to a before block
   cy.startFakeServers({
     consumer: 'user_interface',
-    providers: ['jobs', 'entries', 'users'],
+    providers: ['jobs', 'entries', 'users', 'product_catalog_features'],
     cors: true,
     pactfileWriteMode: 'merge',
     dir: Cypress.env('pactDir'),
@@ -153,6 +154,7 @@ function basicServerSetUp(): string[] {
     queryLinksToDefaultEntry.willReturnNone(),
     getFirst7SnapshotsOfDefaultEntry.willReturnNone(),
     getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
-    queryPendingJobsForDefaultSpace.willFindNone()
+    queryPendingJobsForDefaultSpace.willFindNone(),
+    queryForScheduledPublishingOnEntryPage.willFindFeatureEnabled()
   ];
 }

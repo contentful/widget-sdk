@@ -1,15 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getVariation } from 'LaunchDarkly';
-import BooleanFeatureFlag from 'utils/LaunchDarkly/BooleanFeatureFlag';
+import BooleanSpaceFeature from 'utils/ProductCatalog/BooleanSpaceFeature';
 import * as FeatureFlagKey from 'featureFlags';
+import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { trackAlphaEligibilityToIntercom } from './Analytics/JobsAnalytics';
 
-export function getJobsFeatureVariation({ organizationId, spaceId }) {
-  return getVariation(FeatureFlagKey.JOBS, {
-    organizationId,
-    spaceId
-  });
+export function getJobsFeatureVariation({ spaceId }) {
+  return getSpaceFeature(spaceId, FeatureFlagKey.SCHEDULED_PUBLISHING);
 }
 
 /**
@@ -18,14 +15,14 @@ export function getJobsFeatureVariation({ organizationId, spaceId }) {
  */
 export default function JobsFeatureFlag({ children }) {
   return (
-    <BooleanFeatureFlag featureFlagKey={FeatureFlagKey.JOBS}>
+    <BooleanSpaceFeature spaceFeatureKey={FeatureFlagKey.SCHEDULED_PUBLISHING}>
       {({ currentVariation }) => {
         if (currentVariation) {
           trackAlphaEligibilityToIntercom();
         }
         return children({ currentVariation });
       }}
-    </BooleanFeatureFlag>
+    </BooleanSpaceFeature>
   );
 }
 
