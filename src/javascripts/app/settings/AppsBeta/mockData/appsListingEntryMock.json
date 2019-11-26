@@ -18,7 +18,7 @@
         "id": "2fPbSMx3baxlwZoCyXC7F1",
         "type": "Entry",
         "createdAt": "2019-10-02T14:57:50.083Z",
-        "updatedAt": "2019-10-07T13:03:08.718Z",
+        "updatedAt": "2019-11-19T09:13:42.093Z",
         "environment": {
           "sys": {
             "id": "master",
@@ -26,7 +26,7 @@
             "linkType": "Environment"
           }
         },
-        "revision": 10,
+        "revision": 27,
         "contentType": {
           "sys": {
             "type": "Link",
@@ -65,6 +65,20 @@
               "type": "Link",
               "linkType": "Entry",
               "id": "1IOh4r7oQ9IsWomUj2df76"
+            }
+          },
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "6odf1TUrIXzZ7e5HaKTwJv"
+            }
+          },
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "7xslj4dVQa3HqMZWNm80RA"
             }
           },
           {
@@ -127,7 +141,7 @@
           "id": "1IOh4r7oQ9IsWomUj2df76",
           "type": "Entry",
           "createdAt": "2019-08-09T11:32:44.920Z",
-          "updatedAt": "2019-09-09T10:31:12.440Z",
+          "updatedAt": "2019-11-26T10:02:50.560Z",
           "environment": {
             "sys": {
               "id": "master",
@@ -135,7 +149,7 @@
               "linkType": "Environment"
             }
           },
-          "revision": 24,
+          "revision": 25,
           "contentType": {
             "sys": {
               "type": "Link",
@@ -149,6 +163,7 @@
           "title": "Bynder",
           "slug": "bynder",
           "extensionDefinitionId": "5KySdUzG7OWuCE2V3fgtIa",
+          "appDefinitionId": "5KySdUzG7OWuCE2V3fgtIa",
           "productCatalogFlag": {
             "sys": {
               "type": "Link",
@@ -253,7 +268,7 @@
           "id": "1NIoC98vO7Py7mDPeIg1p4",
           "type": "Entry",
           "createdAt": "2019-10-02T11:25:44.273Z",
-          "updatedAt": "2019-10-04T09:27:31.931Z",
+          "updatedAt": "2019-11-26T10:02:24.545Z",
           "environment": {
             "sys": {
               "id": "master",
@@ -261,7 +276,7 @@
               "linkType": "Environment"
             }
           },
-          "revision": 2,
+          "revision": 3,
           "contentType": {
             "sys": {
               "type": "Link",
@@ -275,6 +290,7 @@
           "title": "Image Focal Point",
           "slug": "image-focal-point",
           "extensionDefinitionId": "342Q2DqCjmsdN5BJCEPkrJ",
+          "appDefinitionId": "342Q2DqCjmsdN5BJCEPkrJ",
           "productCatalogFlag": {
             "sys": {
               "type": "Link",
@@ -350,6 +366,41 @@
               "id": "lpjm8d10rkpy"
             }
           },
+          "id": "1UgQp5gEHx36H6G3AzEwm4",
+          "type": "Entry",
+          "createdAt": "2019-11-13T20:27:35.263Z",
+          "updatedAt": "2019-11-13T20:27:48.729Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "appLink"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Dropbox website",
+          "url": "https://www.dropbox.com"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
           "id": "2IMJj30UZvFBpa6QVVAT39",
           "type": "Entry",
           "createdAt": "2019-09-26T09:21:34.081Z",
@@ -381,8 +432,85 @@
               "id": "4DxiiBjixHZVjc69WpJX95"
             }
           },
-          "organizationId": "5EJGHo8tYJcjnEhYWDxivp",
           "websiteUrl": "https://www.contentful.com"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "2MG8CrPswTXY9NboO9BuR0",
+          "type": "Entry",
+          "createdAt": "2019-11-13T19:20:59.646Z",
+          "updatedAt": "2019-11-13T19:20:59.646Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "developer"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "name": "Frontify",
+          "slug": "frontify",
+          "icon": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "2m7X00RL2l0Rpd9KinrD8x"
+            }
+          },
+          "websiteUrl": "https://www.frontify.com/"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "2YueIS3C5HaeQKrw9hFhGQ",
+          "type": "Entry",
+          "createdAt": "2019-11-13T19:22:39.553Z",
+          "updatedAt": "2019-11-13T19:22:39.553Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "appLink"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Frontify website",
+          "url": "https://www.frontify.com/"
         }
       },
       {
@@ -397,7 +525,7 @@
           "id": "2t7RmuPtaiBrZBMF03OG6F",
           "type": "Entry",
           "createdAt": "2019-08-09T11:12:43.847Z",
-          "updatedAt": "2019-09-12T08:13:55.215Z",
+          "updatedAt": "2019-11-26T10:02:22.092Z",
           "environment": {
             "sys": {
               "id": "master",
@@ -405,7 +533,7 @@
               "linkType": "Environment"
             }
           },
-          "revision": 82,
+          "revision": 85,
           "contentType": {
             "sys": {
               "type": "Link",
@@ -419,6 +547,7 @@
           "title": "Optimizely",
           "slug": "optimizely",
           "extensionDefinitionId": "i43PggcHag2PCrGjYTiIX",
+          "appDefinitionId": "i43PggcHag2PCrGjYTiIX",
           "productCatalogFlag": {
             "sys": {
               "type": "Link",
@@ -479,7 +608,7 @@
               }
             }
           ],
-          "description": "### About the Optimizely app\n\n⭐️This app is available to customers on an enterprise plan.⭐️\n\nThe Optimizely app is a new and simple way to run experiments inside Contentful. It connects your content in Contentful with experiments in Optimizely. Marketers can run more experiments and obtain better insights faster.\n\n---\n\n### Features:\n\n- Run A/B tests or multivariate tests  on structured content (copy, components, layouts and pages)\n- Allow marketers to be more independent from developers\n- Enable marketers to act on results and make a winning variation the new default\n- Reduce the amount of manual work needed to set up experiments\n\n---\n\n### Installation:\n\nInstalling this app will:\n\n- Create a new content type called \"Variation Container\" \n- Create \"Variation Container\" entries\n- Read your projects, experiments and variations from Optimizely\n\n---\n\n### Requirements:\n\n- A website powered by Contentful\n- An __Optimizely Full Stack__ plan with access to the REST API\n- A small proxy that combines data from Contentful and Optimizely [(view docs)](https://www.contentful.com/developers/docs/extensibility/apps/optimizely/)\n- A content type with a reference field\n\n---\n\n### Screenshots:\n\n![Optimizely editor](//images.ctfassets.net/lpjm8d10rkpy/6BKTGsRNAzlQgllHDclqYe/ad9bad07083d102d1deff54a6a62e57f/optimizely-editor.png)",
+          "description": "### About the Optimizely app\n\n⭐️This app is available to customers on an enterprise plan.⭐️\n\nThe Optimizely app is a new and simple way to run experiments inside Contentful. It connects your content in Contentful with experiments in Optimizely. Marketers can run more experiments and obtain better insights faster.\n\n---\n\n### Features:\n\n- Run A/B tests or multivariate tests  on structured content (copy, components, layouts and pages)\n- Allow marketers to be more independent from developers\n- Enable marketers to act on results and make a winning variation the new default\n- Reduce the amount of manual work needed to set up experiments\n\n---\n\n### Installation:\n\nInstalling this app will:\n\n- Create a new content type called \"Variation Container\" \n- Create \"Variation Container\" entries\n- Read your projects, experiments and variations from Optimizely\n\n---\n\n### Requirements:\n\n- A __Contentful enterprise plan__ with a space\n- An __Optimizely Full Stack__ plan with access to the REST API\n- A small proxy that combines data from Contentful and Optimizely [(view docs)](https://www.contentful.com/developers/docs/extensibility/apps/optimizely/)\n- A content type with a reference field\n\n---\n\n### Screenshots:\n\n![Optimizely editor](//images.ctfassets.net/lpjm8d10rkpy/6BKTGsRNAzlQgllHDclqYe/ad9bad07083d102d1deff54a6a62e57f/optimizely-editor.png)",
           "tagLine": "Enable experimentation of structured content with Optimizely",
           "uninstallMessages": [
             {
@@ -532,6 +661,41 @@
         "fields": {
           "title": "Cloudinary website",
           "url": "https://cloudinary.com"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "3O2Wqx3M0bizVWLcxZi5lt",
+          "type": "Entry",
+          "createdAt": "2019-11-13T22:10:56.786Z",
+          "updatedAt": "2019-11-13T22:10:56.786Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "appLink"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Dropbox app documentation",
+          "url": "https://www.contentful.com/developers/docs/extensibility/apps/dropbox/"
         }
       },
       {
@@ -651,7 +815,7 @@
           "id": "4G5XR4RY5wufPETJcBloQW",
           "type": "Entry",
           "createdAt": "2019-08-09T11:28:16.630Z",
-          "updatedAt": "2019-09-30T12:29:36.929Z",
+          "updatedAt": "2019-11-26T10:02:39.727Z",
           "environment": {
             "sys": {
               "id": "master",
@@ -659,7 +823,7 @@
               "linkType": "Environment"
             }
           },
-          "revision": 25,
+          "revision": 26,
           "contentType": {
             "sys": {
               "type": "Link",
@@ -673,6 +837,7 @@
           "title": "Cloudinary",
           "slug": "cloudinary",
           "extensionDefinitionId": "zjcnWgBknf9zB7IM9HZjE",
+          "appDefinitionId": "zjcnWgBknf9zB7IM9HZjE",
           "productCatalogFlag": {
             "sys": {
               "type": "Link",
@@ -854,7 +1019,7 @@
           "id": "5ZSCLEfnoPdTF3agzaGGRb",
           "type": "Entry",
           "createdAt": "2019-08-09T11:39:29.930Z",
-          "updatedAt": "2019-09-04T13:24:58.378Z",
+          "updatedAt": "2019-11-26T10:01:54.021Z",
           "environment": {
             "sys": {
               "id": "master",
@@ -862,7 +1027,7 @@
               "linkType": "Environment"
             }
           },
-          "revision": 41,
+          "revision": 43,
           "contentType": {
             "sys": {
               "type": "Link",
@@ -876,6 +1041,7 @@
           "title": "Netlify",
           "slug": "netlify",
           "extensionDefinitionId": "1VchawWvbIClHuMIyxwR5m",
+          "appDefinitionId": "1VchawWvbIClHuMIyxwR5m",
           "productCatalogFlag": {
             "sys": {
               "type": "Link",
@@ -1141,6 +1307,98 @@
               "id": "lpjm8d10rkpy"
             }
           },
+          "id": "6odf1TUrIXzZ7e5HaKTwJv",
+          "type": "Entry",
+          "createdAt": "2019-11-13T21:01:06.312Z",
+          "updatedAt": "2019-11-26T10:00:38.922Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 4,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "app"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Dropbox",
+          "slug": "dropbox",
+          "extensionDefinitionId": "6YdAwxoPHopeTeuwh43UJu",
+          "appDefinitionId": "6YdAwxoPHopeTeuwh43UJu",
+          "productCatalogFlag": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "70TgnulvTrc1P8KDb65kjn"
+            }
+          },
+          "icon": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "7KdyOX9FlBz0SX5QyaLFaF"
+            }
+          },
+          "developer": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "jN06evDcSVRSRoiXmXDf6"
+            }
+          },
+          "categories": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "qYTN9WyCKNTJrX7kpL2eO"
+              }
+            }
+          ],
+          "links": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "1UgQp5gEHx36H6G3AzEwm4"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "3O2Wqx3M0bizVWLcxZi5lt"
+              }
+            }
+          ],
+          "description": "### About the Dropbox app \n\nAfter you’ve installed the Dropbox app, you can easily reference assets stored in your Dropbox account directly inside the Contentful web app.\nSimply click __Select or upload a file on Dropbox__ and select the assets you want to be referenced from your entry.\n\n---\n\n### Features:\n- Directly link your assets in Dropbox from your Contentful entries\n- Browse your Dropbox account\n- Preview selected assets in Contentful\n- Standard JSON based asset reference format\n\n---\n\n### Requirements:\n\nTo use this app, you will need:\n\n- An account with [Dropbox](https://www.dropbox.com)\n- A content type with a field of type JSON object to hold the references to Dropbox assets\n\n\n---\n\n### Screenshots:\n\n![Dropbox screenshot](//images.ctfassets.net/lpjm8d10rkpy/5uQPU1n35hheQmxg7CeMfx/95355daf5e17e7384e45ca37923722e3/Screen_Shot_2019-11-13_at_15.04.34.png?w=1000)",
+          "tagLine": "Reference assets from your Dropbox account",
+          "permissions": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "6ewjUhTBPGwQGoY6pguFTA"
+            }
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
           "id": "6sEFitPSgteJDAg37d3EA6",
           "type": "Entry",
           "createdAt": "2019-08-09T11:07:00.821Z",
@@ -1350,6 +1608,133 @@
               "id": "lpjm8d10rkpy"
             }
           },
+          "id": "7g1mXfC0sRhgGlirs6o5C6",
+          "type": "Entry",
+          "createdAt": "2019-11-13T19:23:07.582Z",
+          "updatedAt": "2019-11-13T19:23:07.582Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "appLink"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Documentation and support",
+          "url": "https://help.frontify.com/en/articles/3490559-frontify-integration-for-contentful"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "7xslj4dVQa3HqMZWNm80RA",
+          "type": "Entry",
+          "createdAt": "2019-11-13T20:06:47.106Z",
+          "updatedAt": "2019-11-26T10:00:27.433Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 4,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "app"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Frontify",
+          "slug": "frontify",
+          "extensionDefinitionId": "5wHGALSJtz7y2EQOLfGhKH",
+          "appDefinitionId": "5wHGALSJtz7y2EQOLfGhKH",
+          "productCatalogFlag": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "70TgnulvTrc1P8KDb65kjn"
+            }
+          },
+          "icon": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "2m7X00RL2l0Rpd9KinrD8x"
+            }
+          },
+          "developer": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "2MG8CrPswTXY9NboO9BuR0"
+            }
+          },
+          "categories": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "qYTN9WyCKNTJrX7kpL2eO"
+              }
+            }
+          ],
+          "links": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "2YueIS3C5HaeQKrw9hFhGQ"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "7g1mXfC0sRhgGlirs6o5C6"
+              }
+            }
+          ],
+          "description": "### About the Frontify app:\n\nWith the Frontify app, you can simplify your workflow by accessing your brand assets from within the Contentful web app.\nSimply click Select files from Frontify to select the assets you want to reference from your entry.\n\n### Features:\n\n* Directly link your assets on Frontify from your Contentful entries\n* Browse your assets on Frontify\n* Preview selected assets in Contentful\n* Standard JSON based asset reference format\n\n### Requirements:\n\nTo use this app, you will need:\n* An existing [Frontify](https://www.frontify.com/) enterprise account\n* The URL of your Frontify account\n* A content type with a field of type JSON object to hold the references to Frontify\n\n### Screenshots:\n\n![contentful-frontify](//images.ctfassets.net/lpjm8d10rkpy/5onQHIH2JzKegzYZs2bWME/6f80663fdd4b801f5f3185798741e898/contentful-frontify.png?w=1000)",
+          "tagLine": "Reference assets from Frontify collections",
+          "permissions": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "6ewjUhTBPGwQGoY6pguFTA"
+            }
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
           "id": "QQmTXecNm8eu91TZr5Bc6",
           "type": "Entry",
           "createdAt": "2019-09-02T15:05:26.362Z",
@@ -1423,7 +1808,7 @@
           "id": "jN06evDcSVRSRoiXmXDf6",
           "type": "Entry",
           "createdAt": "2019-08-09T10:32:29.626Z",
-          "updatedAt": "2019-08-09T11:49:08.398Z",
+          "updatedAt": "2019-11-13T20:08:50.277Z",
           "environment": {
             "sys": {
               "id": "master",
@@ -1431,7 +1816,7 @@
               "linkType": "Environment"
             }
           },
-          "revision": 2,
+          "revision": 3,
           "contentType": {
             "sys": {
               "type": "Link",
@@ -1451,7 +1836,6 @@
               "id": "4DxiiBjixHZVjc69WpJX95"
             }
           },
-          "organizationId": "5EJGHo8tYJcjnEhYWDxivp",
           "websiteUrl": "https://www.contentful.com"
         }
       },
@@ -1529,6 +1913,45 @@
               }
             },
             "fileName": "logomark.svg",
+            "contentType": "image/svg+xml"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "2m7X00RL2l0Rpd9KinrD8x",
+          "type": "Asset",
+          "createdAt": "2019-11-13T19:20:11.320Z",
+          "updatedAt": "2019-11-13T19:20:11.320Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Frontify logo",
+          "file": {
+            "url": "//images.ctfassets.net/lpjm8d10rkpy/2m7X00RL2l0Rpd9KinrD8x/826779b516c780ff19492ac1d7251d97/logo.svg",
+            "details": {
+              "size": 1312,
+              "image": {
+                "width": 138,
+                "height": 152
+              }
+            },
+            "fileName": "logo.svg",
             "contentType": "image/svg+xml"
           }
         }
@@ -1688,6 +2111,45 @@
               }
             },
             "fileName": "optimizely-logo.svg",
+            "contentType": "image/svg+xml"
+          }
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "7KdyOX9FlBz0SX5QyaLFaF",
+          "type": "Asset",
+          "createdAt": "2019-11-13T20:25:17.979Z",
+          "updatedAt": "2019-11-13T20:25:17.979Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Dropbox logo",
+          "file": {
+            "url": "//images.ctfassets.net/lpjm8d10rkpy/7KdyOX9FlBz0SX5QyaLFaF/6ee4f786204d6f80b096fb73584dbcf7/logo.svg",
+            "details": {
+              "size": 434,
+              "image": {
+                "width": 235,
+                "height": 200
+              }
+            },
+            "fileName": "logo.svg",
             "contentType": "image/svg+xml"
           }
         }

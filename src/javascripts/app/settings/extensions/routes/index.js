@@ -1,8 +1,6 @@
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
 import ExtensionsListRoute from './ExtensionsListRoute';
 import ExtensionEditorRoute from './ExtensionEditorRoute';
-import createAppsRepo from 'app/settings/AppsBeta/AppsRepo';
-import { getAppDefinitionLoader } from 'app/settings/AppsBeta/AppDefinitionLoaderInstance';
 import { getExtensionLoader } from 'widgets/ExtensionLoaderInstance';
 
 export default {
@@ -21,13 +19,11 @@ export default {
       component: ExtensionsListRoute,
       mapInjectedToProps: [
         '$stateParams',
-        'spaceContext',
-        ($stateParams, spaceContext) => {
+        $stateParams => {
           return {
             extensionUrl: decodeURI($stateParams.extensionUrl || ''),
             extensionUrlReferrer: $stateParams.referrer || null,
-            extensionLoader: getExtensionLoader(),
-            appsRepo: createAppsRepo(getAppDefinitionLoader(), spaceContext.endpoint)
+            extensionLoader: getExtensionLoader()
           };
         }
       ]

@@ -3,25 +3,11 @@ import { get, identity } from 'lodash';
 import { fetchMarketplaceApps } from './MarketplaceClient';
 import { hasAllowedAppFeatureFlag } from './AppProductCatalog';
 
-const PRIVATE_APP_PREFIX = 'private';
-
 export default function createAppsRepo(appDefinitionLoader, spaceEndpoint) {
   return {
     getApps,
-    getAppInstallation,
-    // TODO: this is only used to pick apps out of /extensions
-    // listing. Once we remove `extensionDefinition`-based extensions
-    // from the listing we can drop this frontend filter.
-    getDefinitionIdsOfApps
+    getAppInstallation
   };
-
-  async function getDefinitionIdsOfApps() {
-    const apps = await getApps();
-
-    return apps
-      .map(app => get(app, ['appDefinition', 'sys', 'id']))
-      .filter(id => typeof id === 'string' && id.length > 0);
-  }
 
   async function getApps() {
     const installationMap = await getAppDefinitionToInstallationMap();
@@ -38,7 +24,7 @@ export default function createAppsRepo(appDefinitionLoader, spaceEndpoint) {
     const marketplaceApps = await fetchMarketplaceApps();
 
     const definitionIds = marketplaceApps
-      .map(app => get(app, ['fields', 'extensionDefinitionId'], null))
+      .map(app => get(app, ['fields', 'appDefinitionId'], null))
       .filter(identity);
 
     const appDefinitionMap = await appDefinitionLoader.getByIds(definitionIds);
@@ -46,12 +32,13 @@ export default function createAppsRepo(appDefinitionLoader, spaceEndpoint) {
     return (
       marketplaceApps
         .map(app => {
-          const definitionId = get(app, ['fields', 'extensionDefinitionId']);
+          const definitionId = get(app, ['fields', 'appDefinitionId']);
           const title = get(app, ['fields', 'title'], '');
           const permissionsText = get(app, ['fields', 'permissions', 'fields', 'text'], '');
           const actionList = get(app, ['fields', 'uninstallMessages'], []).map(
             ({ fields }) => fields
           );
+
           return {
             actionList,
             author: {
@@ -86,7 +73,7 @@ export default function createAppsRepo(appDefinitionLoader, spaceEndpoint) {
     return appDefinitions.map(def => {
       return {
         appDefinition: def,
-        id: [PRIVATE_APP_PREFIX, def.sys.id].join('_'),
+        id: `private_${def.sys.id}`,
         title: def.name,
         installed: !!installationMap[def.sys.id],
         isPrivateApp: true
