@@ -22,12 +22,30 @@ div(ng-if="hasCrashed")
         props="{actions: actions, isDisabled: !canEdit()}"
       )
 
-      cf-markdown-action(actions="actions" name="bold"   is-disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="italic" is-disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="quote"  is-disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="ul"     is-disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="ol"     is-disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="link"   is-disabled="!canEdit()")
+      react-component(
+        name="markdown_editor/components/ActionComponent"
+        props="{actions: actions, name: 'bold', isZenMode: false, isDisabled: !canEdit()}"
+      )
+      react-component(
+        name="markdown_editor/components/ActionComponent"
+        props="{actions: actions, name: 'italic', isZenMode: false, isDisabled: !canEdit()}"
+      )
+      react-component(
+        name="markdown_editor/components/ActionComponent"
+        props="{actions: actions, name: 'quote', isZenMode: false, isDisabled: !canEdit()}"
+      )
+      react-component(
+        name="markdown_editor/components/ActionComponent"
+        props="{actions: actions, name: 'ul', isZenMode: false, isDisabled: !canEdit()}"
+      )
+      react-component(
+        name="markdown_editor/components/ActionComponent"
+        props="{actions: actions, name: 'ol', isZenMode: false, isDisabled: !canEdit()}"
+      )
+      react-component(
+        name="markdown_editor/components/ActionComponent"
+        props="{actions: actions, name: 'link', isZenMode: false, isDisabled: !canEdit()}"
+      )
 
       button.toolbar-button.markdown-more-actions.fa.fa-ellipsis-h(
         ng-click="toggleMinorActions()"
@@ -49,17 +67,50 @@ div(ng-if="hasCrashed")
         )
 
     .markdown-minor-actions(ng-show="minorActionsShown")
-      cf-markdown-action(actions="actions" name="strike"        is-disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="code"          is-disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="hr"            is-disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="indent"        is-disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="dedent"        is-disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="embed"         is-disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="table"         is-disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="special"       is-disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="organizeLinks" is-disabled="!canEdit()")
-      cf-markdown-action(actions="actions" name="undo"          is-disabled="!canEdit() || !history.hasUndo()")
-      cf-markdown-action(actions="actions" name="redo"          is-disabled="!canEdit() || !history.hasRedo()")
+      react-component(
+        name="markdown_editor/components/ActionComponent"
+        props="{actions: actions, name: 'strike', isZenMode: false, isDisabled: !canEdit()}"
+      )
+      react-component(
+        name="markdown_editor/components/ActionComponent"
+        props="{actions: actions, name: 'code', isZenMode: false, isDisabled: !canEdit()}"
+      )
+      react-component(
+        name="markdown_editor/components/ActionComponent"
+        props="{actions: actions, name: 'hr', isZenMode: false, isDisabled: !canEdit()}"
+      )
+      react-component(
+        name="markdown_editor/components/ActionComponent"
+        props="{actions: actions, name: 'indent', isZenMode: false, isDisabled: !canEdit()}"
+      )
+      react-component(
+        name="markdown_editor/components/ActionComponent"
+        props="{actions: actions, name: 'dedent', isZenMode: false, isDisabled: !canEdit()}"
+      )
+      react-component(
+        name="markdown_editor/components/ActionComponent"
+        props="{actions: actions, name: 'embed', isZenMode: false, isDisabled: !canEdit()}"
+      )
+      react-component(
+        name="markdown_editor/components/ActionComponent"
+        props="{actions: actions, name: 'table', isZenMode: false, isDisabled: !canEdit()}"
+      )
+      react-component(
+        name="markdown_editor/components/ActionComponent"
+        props="{actions: actions, name: 'special', isZenMode: false, isDisabled: !canEdit()}"
+      )
+      react-component(
+        name="markdown_editor/components/ActionComponent"
+        props="{actions: actions, name: 'organizeLinks', isZenMode: false, isDisabled: !canEdit()}"
+      )
+      react-component(
+        name="markdown_editor/components/ActionComponent"
+        props="{actions: actions, name: 'undo', isZenMode: false, isDisabled: !canEdit() || !history.hasUndo()}"
+      )
+      react-component(
+        name="markdown_editor/components/ActionComponent"
+        props="{actions: actions, name: 'redo', isZenMode: false, isDisabled: !canEdit() || !history.hasRedo()}"
+      )
 
   .markdown-areas
     .markdown-editing-area(

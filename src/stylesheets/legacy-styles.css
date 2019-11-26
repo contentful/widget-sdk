@@ -7942,6 +7942,10 @@ pre,
     border: 1px solid #c3cfd5;
     background: #e5ebed;
   }
+  .markdown-more-actions{
+    margin: -10px 0;
+    box-sizing: border-box;
+  }
   .markdown-more-actions:not(:disabled):hover,
   .markdown-side-action:not(:disabled):hover,
   .markdown-more-actions.active,

@@ -81,6 +81,7 @@ import * as appEntityEditorBulkEditorTitleEs6 from 'app/entity_editor/bulk_edito
 import * as embedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
 import * as HeadingContextMenu from 'markdown_editor/components/HeadingContextMenu';
 import * as InsertMediaComponent from 'markdown_editor/components/InsertMediaComponent';
+import * as ActionComponent from 'markdown_editor/components/ActionComponent';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -348,7 +349,8 @@ function getModule(name) {
     'app/entity_editor/bulk_editor/BulkEditorTitle': appEntityEditorBulkEditorTitleEs6,
     'components/forms/embedly_preview/EmbedlyPreview': embedlyPreview,
     'markdown_editor/components/HeadingContextMenu': HeadingContextMenu,
-    'app/markdown_editor/components/InsertMediaComponent': InsertMediaComponent
+    'app/markdown_editor/components/InsertMediaComponent': InsertMediaComponent,
+    'markdown_editor/components/ActionComponent': ActionComponent
   };
 
   return get(allowedModules, name, null);

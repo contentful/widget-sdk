@@ -7,23 +7,74 @@
       name="markdown_editor/components/HeadingContextMenu"
       props="{actions: actions, isZenMode: true}"
     )
-    cf-markdown-action(actions="actions" name="bold"          mode="zen")
-    cf-markdown-action(actions="actions" name="italic"        mode="zen")
-    cf-markdown-action(actions="actions" name="quote"         mode="zen")
-    cf-markdown-action(actions="actions" name="ul"            mode="zen")
-    cf-markdown-action(actions="actions" name="ol"            mode="zen")
-    cf-markdown-action(actions="actions" name="link"          mode="zen")
-    cf-markdown-action(actions="actions" name="strike"        mode="zen")
-    cf-markdown-action(actions="actions" name="code"          mode="zen")
-    cf-markdown-action(actions="actions" name="hr"            mode="zen")
-    cf-markdown-action(actions="actions" name="indent"        mode="zen")
-    cf-markdown-action(actions="actions" name="dedent"        mode="zen")
-    cf-markdown-action(actions="actions" name="embed"         mode="zen")
-    cf-markdown-action(actions="actions" name="table"         mode="zen")
-    cf-markdown-action(actions="actions" name="special"       mode="zen")
-    cf-markdown-action(actions="actions" name="organizeLinks" mode="zen")
-    cf-markdown-action(actions="actions" name="undo"          mode="zen" is-disabled="!history.hasUndo()")
-    cf-markdown-action(actions="actions" name="redo"          mode="zen" is-disabled="!history.hasRedo()")
+    react-component(
+      name="markdown_editor/components/ActionComponent"
+      props="{actions: actions, name: 'bold', isZenMode: true, isDisabled: false}"
+    )
+    react-component(
+      name="markdown_editor/components/ActionComponent"
+      props="{actions: actions, name: 'italic', isZenMode: true, isDisabled: false}"
+    )
+    react-component(
+      name="markdown_editor/components/ActionComponent"
+      props="{actions: actions, name: 'quote', isZenMode: true, isDisabled: false}"
+    )
+    react-component(
+      name="markdown_editor/components/ActionComponent"
+      props="{actions: actions, name: 'ul', isZenMode: true, isDisabled: false}"
+    )
+    react-component(
+      name="markdown_editor/components/ActionComponent"
+      props="{actions: actions, name: 'ol', isZenMode: true, isDisabled: false}"
+    )
+    react-component(
+      name="markdown_editor/components/ActionComponent"
+      props="{actions: actions, name: 'link', isZenMode: true, isDisabled: false}"
+    )
+    react-component(
+      name="markdown_editor/components/ActionComponent"
+      props="{actions: actions, name: 'strike', isZenMode: true, isDisabled: false}"
+    )
+    react-component(
+      name="markdown_editor/components/ActionComponent"
+      props="{actions: actions, name: 'code', isZenMode: true, isDisabled: false}"
+    )
+    react-component(
+      name="markdown_editor/components/ActionComponent"
+      props="{actions: actions, name: 'hr', isZenMode: true, isDisabled: false}"
+    )
+    react-component(
+      name="markdown_editor/components/ActionComponent"
+      props="{actions: actions, name: 'indent', isZenMode: true, isDisabled: false}"
+    )
+    react-component(
+      name="markdown_editor/components/ActionComponent"
+      props="{actions: actions, name: 'dedent', isZenMode: true, isDisabled: false}"
+    )
+    react-component(
+      name="markdown_editor/components/ActionComponent"
+      props="{actions: actions, name: 'embed', isZenMode: true, isDisabled: false}"
+    )
+    react-component(
+      name="markdown_editor/components/ActionComponent"
+      props="{actions: actions, name: 'table', isZenMode: true, isDisabled: false}"
+    )
+    react-component(
+      name="markdown_editor/components/ActionComponent"
+      props="{actions: actions, name: 'special', isZenMode: true, isDisabled: false}"
+    )
+    react-component(
+      name="markdown_editor/components/ActionComponent"
+      props="{actions: actions, name: 'organizeLinks', isZenMode: true, isDisabled: false}"
+    )
+    react-component(
+      name="markdown_editor/components/ActionComponent"
+      props="{actions: actions, name: 'undo', isZenMode: true, isDisabled: !history.hasUndo()}"
+    )
+    react-component(
+      name="markdown_editor/components/ActionComponent"
+      props="{actions: actions, name: 'redo', isZenMode: true, isDisabled: !history.hasRedo()}"
+    )
 
     button.toolbar-button.markdown-side-action.active(
       ng-click="zenApi.toggle()")

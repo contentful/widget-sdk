@@ -106,7 +106,6 @@ export const angularInitRun = [
       import('forms/errors'),
       import('forms/validation'),
       import('forms'),
-      import('markdown_editor/cfMarkdownActionDirective'),
       import('markdown_editor/cfMarkdownEditorDirective'),
       import('markdown_editor/cfZenmodeDirective'),
       import('markdown_editor/markdownPreviewDirective'),
