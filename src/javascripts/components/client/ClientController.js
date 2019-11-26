@@ -2,6 +2,7 @@ import { registerController, appReady } from 'NgRegistry';
 import { onValueScope } from 'utils/kefir';
 import { pick, isObject } from 'lodash';
 import authorization from 'services/authorization';
+import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 
 import { ENVIRONMENT_USAGE_ENFORCEMENT } from 'featureFlags';
 
@@ -26,6 +27,8 @@ export default function register() {
 
       // TODO remove this eventually. All components should access it as a service
       $scope.spaceContext = spaceContext;
+      $scope.EntityFieldValueSpaceContext = EntityFieldValueSpaceContext;
+      // end TODO
 
       $scope.preferences = {
         showDisabledFields: false

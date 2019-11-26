@@ -1,6 +1,6 @@
 import { getModule } from 'NgRegistry';
 import _ from 'lodash';
-
+import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import TheLocaleStore from 'services/localeStore';
 import { transformHostname } from 'services/AssetUrlService';
 
@@ -28,7 +28,10 @@ export function newForLocale(localeCode) {
      * @param {string} locale
      * @return {string|null}
      */
-    entityTitle: spaceContextDelegator('entityTitle'),
+    entityTitle: async function(data) {
+      const entity = await dataToEntity(data);
+      return EntityFieldValueSpaceContext.entityTitle(entity, internalLocaleCode);
+    },
     /**
      * Returns a string representing the entity's description.
      * Asset: Description field.
@@ -41,7 +44,10 @@ export function newForLocale(localeCode) {
      * @param {string} locale
      * @return {string}
      */
-    entityDescription: spaceContextDelegator('entityDescription'),
+    entityDescription: async function(data) {
+      const entity = await dataToEntity(data);
+      return EntityFieldValueSpaceContext.entityDescription(entity, internalLocaleCode);
+    },
     /**
      * Returns an object representing the main file associated with the entity.
      * Asset: The asset's file if it has one or `null`.
@@ -53,26 +59,13 @@ export function newForLocale(localeCode) {
      * @return {object|null}
      */
     entityFile: entity => entityFile(entity, localeCode),
-    entryImage: spaceContextDelegator('entryImage'),
+    entryImage: async function(data) {
+      const entity = await dataToEntity(data);
+      return EntityFieldValueSpaceContext.entryImage(entity, internalLocaleCode);
+    },
     assetFile: asset => assetFile(asset, localeCode),
     assetFileUrl: assetFileUrl
   };
-
-  /**
-   * Create a function that delegates to given space context method
-   * with the given locale code.
-   *
-   * The argument of the returned function is external entity data.
-   * This data is transformed into an entity for the space context
-   * method to work.
-   */
-  function spaceContextDelegator(methodName) {
-    const spaceContext = getModule('spaceContext');
-    return async function(data) {
-      const entity = await dataToEntity(data);
-      return spaceContext[methodName](entity, internalLocaleCode);
-    };
-  }
 }
 
 /**
@@ -130,10 +123,9 @@ function entityFile(entity, localeCode) {
 }
 
 async function assetFile(data, localeCode) {
-  const spaceContext = getModule('spaceContext');
   const internalLocaleCode = toInternalLocaleCode(localeCode);
   const entity = await dataToEntity(data);
-  return spaceContext.getFieldValue(entity, 'file', internalLocaleCode);
+  return EntityFieldValueSpaceContext.getFieldValue(entity, 'file', internalLocaleCode);
 }
 
 function assetFileUrl(file) {

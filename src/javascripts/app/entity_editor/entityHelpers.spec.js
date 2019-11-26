@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { newForLocale } from './entityHelpers';
 import * as spaceContextMocked from 'ng/spaceContext';
+import * as EntityFieldValueSpaceContextMocked from 'classes/EntityFieldValueSpaceContext';
 
 const mockRewrittenUrl = 'http://rewritten.url/file.txt';
 
@@ -8,6 +9,12 @@ const mockInternalLocale = {
   'en-US': 'en-US',
   de: 'de-internal'
 };
+
+jest.mock('classes/EntityFieldValueSpaceContext', () => ({
+  entityTitle: jest.fn(),
+  entityDescription: jest.fn(),
+  entryImage: jest.fn()
+}));
 
 jest.mock('services/AssetUrlService', () => {
   return {
@@ -30,9 +37,9 @@ describe('EntityHelpers', () => {
 
   beforeEach(async function() {
     helpers = newForLocale('en-US');
-    spaceContextMocked.entityTitle.mockClear();
-    spaceContextMocked.entityDescription.mockClear();
-    spaceContextMocked.entryImage.mockClear();
+    EntityFieldValueSpaceContextMocked.entityTitle.mockClear();
+    EntityFieldValueSpaceContextMocked.entityDescription.mockClear();
+    EntityFieldValueSpaceContextMocked.entryImage.mockClear();
     spaceContextMocked.publishedCTs.get.mockClear();
   });
 
@@ -76,7 +83,7 @@ describe('EntityHelpers', () => {
         spaceContextMocked.publishedCTs.get.mockReturnValue({ data: contentType });
       });
 
-      it(`converts data to entry and calls spaceContext.${spaceContextMethodName}()`, async function() {
+      it(`converts data to entry and calls EntityFieldValueSpaceContext.${spaceContextMethodName}()`, async function() {
         const transformedFields = {
           fieldA: fields.fieldA,
           fieldBRealId: { 'en-US': 'valEN', 'de-internal': 'valDE' }
@@ -84,9 +91,11 @@ describe('EntityHelpers', () => {
 
         await helpers[methodName](entry);
 
-        expect(spaceContextMocked[spaceContextMethodName]).toHaveBeenCalledTimes(1);
+        expect(EntityFieldValueSpaceContextMocked[spaceContextMethodName]).toHaveBeenCalledTimes(1);
 
-        const [entity, locale] = spaceContextMocked[spaceContextMethodName].mock.calls[0];
+        const [entity, locale] = EntityFieldValueSpaceContextMocked[
+          spaceContextMethodName
+        ].mock.calls[0];
 
         expect(entity.data.fields).toEqual(transformedFields);
         expect(entity.getType()).toBe('Entry');
@@ -94,12 +103,12 @@ describe('EntityHelpers', () => {
         expect(locale).toBe('en-US');
       });
 
-      it(`passes internal locale to spaceContext`, async function() {
+      it(`passes internal locale to EntityFieldValueSpaceContext`, async function() {
         const helpers = newForLocale('de');
         await helpers[methodName]({
           sys: { type: 'Entry' }
         });
-        const locale = spaceContextMocked[spaceContextMethodName].mock.calls[0][1];
+        const locale = EntityFieldValueSpaceContextMocked[spaceContextMethodName].mock.calls[0][1];
         expect(locale).toBe('de-internal');
       });
     });
@@ -108,14 +117,16 @@ describe('EntityHelpers', () => {
   function itConvertsToAssetAndCallsMethod(methodName, spaceContextMethodName) {
     spaceContextMethodName = spaceContextMethodName || methodName;
 
-    it(`#${methodName}() converts data to asset and calls spaceContext.${spaceContextMethodName}()`, async function() {
+    it(`#${methodName}() converts data to asset and calls EntityFieldValueSpaceContext.${spaceContextMethodName}()`, async function() {
       await helpers[methodName]({
         sys: { type: 'Asset' }
       });
 
-      expect(spaceContextMocked[spaceContextMethodName]).toHaveBeenCalledTimes(1);
+      expect(EntityFieldValueSpaceContextMocked[spaceContextMethodName]).toHaveBeenCalledTimes(1);
 
-      const [asset, locale] = spaceContextMocked[spaceContextMethodName].mock.calls[0];
+      const [asset, locale] = EntityFieldValueSpaceContextMocked[
+        spaceContextMethodName
+      ].mock.calls[0];
 
       expect(asset.getType()).toBe('Asset');
       expect(locale).toBe('en-US');

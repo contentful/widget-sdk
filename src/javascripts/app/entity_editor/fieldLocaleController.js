@@ -4,6 +4,7 @@ import * as K from 'utils/kefir';
 import * as Navigator from 'states/Navigator';
 import createFieldLocaleDoc from 'app/entity_editor/FieldLocaleDocument';
 import DocumentStatusCode from 'data/document/statusCode';
+import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 
 export default function register() {
   /**
@@ -134,7 +135,7 @@ export default function register() {
             const conflict = find(conflicts, c => c.sys.id === entry.data.sys.id);
 
             conflict.data = conflict.data || {};
-            conflict.data.entryTitle = spaceContext.entryTitle(entry);
+            conflict.data.entryTitle = EntityFieldValueSpaceContext.entryTitle(entry);
             conflict.data.ref = Navigator.makeEntityRef(entry.data);
           });
         });

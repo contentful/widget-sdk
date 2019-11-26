@@ -41,9 +41,12 @@ describe('Entry Editor Controller', function() {
       default: () => {}
     });
 
-    const createEntryController = (await this.system.import(
-      'app/entity_editor/EntryController'
-    )).default;
+    this.system.set('classes/EntityFieldValueSpaceContext', {
+      entryTitle: entry => _.get(entry, 'data.fields.title')
+    });
+
+    const createEntryController = (await this.system.import('app/entity_editor/EntryController'))
+      .default;
 
     await $initialize(this.system);
 
@@ -89,7 +92,6 @@ describe('Entry Editor Controller', function() {
     };
 
     this.spaceContext = $inject('mocks/spaceContext').init();
-    this.spaceContext.entryTitle = entry => _.get(entry, 'data.fields.title');
 
     userBus.set(this.user);
     this.scope = this.createController();

@@ -2,10 +2,6 @@ export const user = {
   email: 'someone-from@contenful.com'
 };
 
-export const entityTitle = jest.fn();
-export const entityDescription = jest.fn();
-export const entryImage = jest.fn();
-
 export const users = {
   get: jest.fn().mockResolvedValue({})
 };

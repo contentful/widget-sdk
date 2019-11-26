@@ -27,6 +27,12 @@ describe('entity editor field integration', () => {
       default: createLocaleStoreMock()
     });
 
+    this.system.set('classes/EntityFieldValueSpaceContext', {
+      entryTitle: entry => {
+        return `TITLE ${entry.data.sys.id}`;
+      }
+    });
+
     await $initialize(this.system);
     await $removeDirectives(this.system, ['cfWidgetApi', 'cfWidgetRenderer', 'tooltip']);
 
@@ -44,9 +50,6 @@ describe('entity editor field integration', () => {
 
     const $q = $inject('$q');
     const spaceContext = $inject('spaceContext');
-    spaceContext.entryTitle = entry => {
-      return `TITLE ${entry.data.sys.id}`;
-    };
 
     spaceContext.space = {
       getEntries(query) {

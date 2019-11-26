@@ -33,11 +33,16 @@ describe('Entry List Controller', () => {
   beforeEach(async function() {
     this.stubs = {
       apiErrorHandler: sinon.stub(),
-      getQuery: sinon.stub().resolves({})
+      getQuery: sinon.stub().resolves({}),
+      entryTitle: sinon.stub()
     };
 
     this.system.set('analytics/Analytics', {
       track: sinon.stub()
+    });
+
+    this.system.set('classes/EntityFieldValueSpaceContext', {
+      entryTitle: this.stubs.entryTitle
     });
 
     this.system.set('app/common/ReloadNotification', {
@@ -450,14 +455,14 @@ describe('Entry List Controller', () => {
     it('should not change string shorter then 130 simbols', function() {
       $apply();
       const title = 'Title';
-      scope.spaceContext.entryTitle.returns(title);
+      this.stubs.entryTitle.returns(title);
       expect(scope.entryTitle(title)).toBe(title);
     });
     it('should not change string with 130 simbols', function() {
       $apply();
       const title =
         'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penat';
-      scope.spaceContext.entryTitle.returns(title);
+      this.stubs.entryTitle.returns(title);
       expect(scope.entryTitle(title)).toBe(title);
     });
     it('should cut string longer then 130 simbols', function() {
@@ -466,7 +471,7 @@ describe('Entry List Controller', () => {
         'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta.';
       const truncatedTitle =
         'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa qu…';
-      scope.spaceContext.entryTitle.returns(title);
+      this.stubs.entryTitle.returns(title);
       expect(scope.entryTitle(title)).toBe(truncatedTitle);
     });
   });
