@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import * as DatePicker from 'ui/datepicker';
+import { createPikaday } from '@contentful/field-editor-date';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
@@ -36,7 +36,7 @@ export default class Date extends React.Component {
   componentDidMount() {
     const onChange = this.props.onChange;
     if (this.inputRef) {
-      const datePicker = DatePicker.create({
+      const datePicker = createPikaday({
         field: this.inputRef,
         container: this.inputRef.parentElement,
         yearRange: [

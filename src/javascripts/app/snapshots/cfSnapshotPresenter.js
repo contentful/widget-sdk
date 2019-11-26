@@ -5,7 +5,7 @@ import * as K from 'utils/kefir';
 
 import createSnapshotExtensionBridge from 'widgets/bridges/createSnapshotExtensionBridge';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
-import { userInputFromDatetime } from 'app/widgets/datetime/data';
+import { userInputFromDatetime } from './dateUtils';
 import * as EntityResolver from 'data/CMA/EntityResolver';
 import generatePreview from 'markdown_editor/PreviewGenerator';
 import { isRtlLocale } from 'utils/locales';

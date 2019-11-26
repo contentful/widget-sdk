@@ -22,6 +22,7 @@ import { NumberEditor } from '@contentful/field-editor-number';
 import { UrlEditor } from '@contentful/field-editor-url';
 import { JsonEditor } from '@contentful/field-editor-json';
 import { LocationEditor } from '@contentful/field-editor-location';
+import { DateEditor } from '@contentful/field-editor-date';
 
 const CfLinkEditor = linkEditorWithCfWebApp(LinkEditor);
 const CfSingleLinkEditor = linkEditorWithCfWebApp(SingleLinkEditor);
@@ -154,8 +155,9 @@ export function create() {
   registerWidget('datePicker', {
     fieldTypes: ['Date'],
     name: 'Date picker',
-    template: '<cf-entry-datetime-editor />',
-    notFocusable: true,
+    renderFieldEditor: ({ widgetApi }) => (
+      <DateEditor field={widgetApi.field} parameters={widgetApi.parameters} />
+    ),
     parameters: [
       {
         id: 'format',

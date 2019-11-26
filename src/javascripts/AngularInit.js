@@ -54,7 +54,6 @@ export const angularInitRun = [
       import('app/snapshots/cfSnapshotSelector'),
       import('app/snapshots/snapshotComparator'),
       import('app/widgets/cfFileEditorDirective'),
-      import('app/widgets/datetime/cfEntryDatetimeEditorDirective'),
       import('app/widgets/link/entityLinkDirectives'),
       import('app/widgets/shared/cfEditorCharacterInfoDirective'),
       import('app/widgets/slug/cfSlugEditorDirective'),

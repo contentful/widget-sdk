@@ -2,8 +2,7 @@ import { registerDirective } from 'NgRegistry';
 import _ from 'lodash';
 import moment from 'moment';
 import templateDef from 'components/forms/datetime_editor/cf_datetime_editor';
-import zoneOffsets from 'zoneOffsets';
-import * as Datepicker from 'ui/datepicker';
+import { zoneOffsets, createPikaday } from '@contentful/field-editor-date';
 
 export default function register() {
   registerDirective('cfDatetimeEditor', [
@@ -57,7 +56,7 @@ export default function register() {
             scope.setFromISO(ngModelCtrl.$modelValue);
           };
 
-          const datepicker = Datepicker.create({
+          const datepicker = createPikaday({
             field: elm.find('.date').get(0),
             format: DATE_FORMAT_INTERNAL,
             firstDay: 1,
