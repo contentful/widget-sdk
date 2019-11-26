@@ -12,22 +12,14 @@ import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import DocumentTitle from 'components/shared/DocumentTitle';
 
 // Takes API Extension entity and prepares it for the view.
-const prepareExtension = definitionsThatAreApps => ({
-  sys,
-  extension,
-  extensionDefinition,
-  parameters
-}) => {
+const prepareExtension = ({ sys, extension, parameters }) => {
   const fieldTypes = (extension.fieldTypes || []).map(toInternalFieldType);
-  const appDefinitionId = get(extensionDefinition, ['sys', 'id']);
 
   return {
     id: sys.id,
     name: extension.name,
     fieldTypes: fieldTypes.length > 0 ? fieldTypes.join(', ') : 'none',
     hosting: typeof sys.srcdocSha256 === 'string' ? 'Contentful' : 'self-hosted',
-    isBasedOnDefinition: !!appDefinitionId,
-    isApp: appDefinitionId && definitionsThatAreApps.includes(appDefinitionId),
     parameterCounts: {
       instanceDefinitions: get(extension, ['parameters', 'instance', 'length']),
       installationDefinitions: get(extension, ['parameters', 'installation', 'length']),
@@ -36,15 +28,16 @@ const prepareExtension = definitionsThatAreApps => ({
   };
 };
 
-const ExtensionsFetcher = createFetcherComponent(async ({ extensionLoader, appsRepo }) => {
-  const [extensions, definitionsThatAreApps] = await Promise.all([
-    extensionLoader.getAllExtensionsForListing(),
-    appsRepo.getDefinitionIdsOfApps()
-  ]);
+const ExtensionsFetcher = createFetcherComponent(async ({ extensionLoader }) => {
+  const extensions = await extensionLoader.getAllExtensionsForListing();
 
-  return (extensions || [])
-    .map(prepareExtension(definitionsThatAreApps))
-    .filter(extension => !extension.isApp);
+  return (
+    (extensions || [])
+      // TODO: API shouldn't return `extensionDefinition`-based Extensions.
+      // Once done we should drop the filter.
+      .filter(e => e.extension && !e.extensionDefinition)
+      .map(prepareExtension)
+  );
 });
 
 class ExtensionsListRoute extends React.Component {
@@ -53,10 +46,7 @@ class ExtensionsListRoute extends React.Component {
     extensionUrlReferrer: PropTypes.string,
     extensionLoader: PropTypes.shape({
       getAllExtensionsForListing: PropTypes.func.isRequired
-    }).isRequired,
-    appsRepo: PropTypes.shape({
-      getDefinitionIdsOfApps: PropTypes.func.isRequired
-    })
+    }).isRequired
   };
 
   render() {
@@ -68,9 +58,7 @@ class ExtensionsListRoute extends React.Component {
     }
 
     return (
-      <ExtensionsFetcher
-        extensionLoader={this.props.extensionLoader}
-        appsRepo={this.props.appsRepo}>
+      <ExtensionsFetcher extensionLoader={this.props.extensionLoader}>
         {({ isLoading, isError, data, fetch }) => {
           if (isLoading) {
             return <ExtensionListShell />;

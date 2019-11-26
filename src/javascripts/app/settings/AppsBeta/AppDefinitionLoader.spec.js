@@ -6,8 +6,8 @@ describe('AppDefinitionLoader', () => {
       const definitionsEndpoint = jest.fn(() => {
         return Promise.resolve({
           items: [
-            { sys: { type: 'ExtensionDefinition', id: 'def1' } },
-            { sys: { type: 'ExtensionDefinition', id: 'def2' } }
+            { sys: { type: 'AppDefinition', id: 'def1' } },
+            { sys: { type: 'AppDefinition', id: 'def2' } }
           ]
         });
       });
@@ -28,21 +28,21 @@ describe('AppDefinitionLoader', () => {
       });
 
       expect(orgEndpoint).not.toBeCalled();
-      expect(result).toEqual({ sys: { type: 'ExtensionDefinition', id: 'def2' } });
+      expect(result).toEqual({ sys: { type: 'AppDefinition', id: 'def2' } });
     });
 
     it('falls back to the organization endpoint', async () => {
       const definitionsEndpoint = jest.fn(() => {
         return Promise.resolve({
-          items: [{ sys: { type: 'ExtensionDefinition', id: 'def1' } }]
+          items: [{ sys: { type: 'AppDefinition', id: 'def1' } }]
         });
       });
 
       const orgEndpoint = jest.fn(() => {
         return Promise.resolve({
           items: [
-            { sys: { type: 'ExtensionDefinition', id: 'def2' } },
-            { sys: { type: 'ExtensionDefinition', id: 'def3' } }
+            { sys: { type: 'AppDefinition', id: 'def2' } },
+            { sys: { type: 'AppDefinition', id: 'def3' } }
           ]
         });
       });
@@ -69,7 +69,7 @@ describe('AppDefinitionLoader', () => {
         }
       });
 
-      expect(result).toEqual({ sys: { type: 'ExtensionDefinition', id: 'def2' } });
+      expect(result).toEqual({ sys: { type: 'AppDefinition', id: 'def2' } });
     });
 
     it('throws if definition was not found in both endpoint reposnses', async () => {
@@ -77,7 +77,7 @@ describe('AppDefinitionLoader', () => {
 
       const orgEndpoint = jest.fn(() => {
         return Promise.resolve({
-          items: [{ sys: { type: 'ExtensionDefinition', id: 'def1' } }]
+          items: [{ sys: { type: 'AppDefinition', id: 'def1' } }]
         });
       });
 
@@ -99,8 +99,8 @@ describe('AppDefinitionLoader', () => {
       const definitionsEndpoint = jest.fn(() => {
         return Promise.resolve({
           items: [
-            { sys: { type: 'ExtensionDefinition', id: 'def1' } },
-            { sys: { type: 'ExtensionDefinition', id: 'def2' } }
+            { sys: { type: 'AppDefinition', id: 'def1' } },
+            { sys: { type: 'AppDefinition', id: 'def2' } }
           ]
         });
       });
@@ -123,21 +123,21 @@ describe('AppDefinitionLoader', () => {
       expect(orgEndpoint).not.toBeCalled();
 
       expect(result).toEqual({
-        def1: { sys: { type: 'ExtensionDefinition', id: 'def1' } },
-        def2: { sys: { type: 'ExtensionDefinition', id: 'def2' } }
+        def1: { sys: { type: 'AppDefinition', id: 'def1' } },
+        def2: { sys: { type: 'AppDefinition', id: 'def2' } }
       });
     });
 
     it('falls back to organization endpoint and provides null of not found', async () => {
       const definitionsEndpoint = jest.fn(() => {
         return Promise.resolve({
-          items: [{ sys: { type: 'ExtensionDefinition', id: 'def1' } }]
+          items: [{ sys: { type: 'AppDefinition', id: 'def1' } }]
         });
       });
 
       const orgEndpoint = jest.fn(() => {
         return Promise.resolve({
-          items: [{ sys: { type: 'ExtensionDefinition', id: 'def2' } }]
+          items: [{ sys: { type: 'AppDefinition', id: 'def2' } }]
         });
       });
 
@@ -164,8 +164,8 @@ describe('AppDefinitionLoader', () => {
       });
 
       expect(result).toEqual({
-        def1: { sys: { type: 'ExtensionDefinition', id: 'def1' } },
-        def2: { sys: { type: 'ExtensionDefinition', id: 'def2' } },
+        def1: { sys: { type: 'AppDefinition', id: 'def1' } },
+        def2: { sys: { type: 'AppDefinition', id: 'def2' } },
         def3: null
       });
     });

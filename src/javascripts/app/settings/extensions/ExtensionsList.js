@@ -215,13 +215,9 @@ export class ExtensionsList extends React.Component {
     const body = extensions.map(extension => (
       <TableRow key={extension.id}>
         <TableCell>
-          {extension.isBasedOnDefinition ? (
-            extension.name
-          ) : (
-            <StateLink to="^.detail" params={{ extensionId: extension.id }}>
-              {extension.name}
-            </StateLink>
-          )}
+          <StateLink to="^.detail" params={{ extensionId: extension.id }}>
+            {extension.name}
+          </StateLink>
         </TableCell>
         <TableCell>{extension.hosting}</TableCell>
         <TableCell>{extension.fieldTypes}</TableCell>
@@ -233,27 +229,23 @@ export class ExtensionsList extends React.Component {
           {`${extension.parameterCounts.installationValues || 0} value(s)`}
         </TableCell>
         <TableCell className="x--small-cell">
-          {extension.isBasedOnDefinition ? (
-            <div>Use the API to manage definition based extensions</div>
-          ) : (
+          <div>
             <div>
-              <div>
-                <StateLink to="^.detail" params={{ extensionId: extension.id }}>
-                  {({ getHref }) => (
-                    <TextLink href={getHref()} linkType="primary">
-                      Edit
-                    </TextLink>
-                  )}
-                </StateLink>
-              </div>
-              <div>
-                <DeleteButton
-                  extension={extension}
-                  onClick={() => deleteExtension(extension.id, refresh)}
-                />
-              </div>
+              <StateLink to="^.detail" params={{ extensionId: extension.id }}>
+                {({ getHref }) => (
+                  <TextLink href={getHref()} linkType="primary">
+                    Edit
+                  </TextLink>
+                )}
+              </StateLink>
             </div>
-          )}
+            <div>
+              <DeleteButton
+                extension={extension}
+                onClick={() => deleteExtension(extension.id, refresh)}
+              />
+            </div>
+          </div>
         </TableCell>
       </TableRow>
     ));
