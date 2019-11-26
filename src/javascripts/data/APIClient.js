@@ -171,6 +171,14 @@ APIClient.prototype.updateAsset = function(data) {
   return this._updateResource('assets', data);
 };
 
+APIClient.prototype.updateAppInstallation = function(appDefinitionId, parameters = {}) {
+  return this._request({
+    method: 'PUT',
+    path: ['app_installations', appDefinitionId],
+    data: { parameters }
+  });
+};
+
 APIClient.prototype._setResourceFlag = function(name, data, flag, version) {
   const id = getId(data);
   version = version || getVersion(data);
@@ -321,6 +329,10 @@ APIClient.prototype.updateExtension = function(data) {
 
 APIClient.prototype.deleteExtension = function(id) {
   return this._deleteResource('extensions', id);
+};
+
+APIClient.prototype.deleteAppInstallation = function(appDefinitionId) {
+  return this._deleteResource('app_installations', appDefinitionId);
 };
 
 APIClient.prototype._request = function(req, headers) {

@@ -34,7 +34,7 @@ export const APP_EVENTS_IN = {
 export function makeAppHookBus() {
   const bus = mitt();
 
-  let extension = null;
+  let installation = null;
 
   return {
     on: (eventName, handler) => {
@@ -43,15 +43,15 @@ export function makeAppHookBus() {
     emit: (eventName, data) => {
       bus.emit(eventName, data);
     },
-    setExtension: value => {
+    setInstallation: value => {
       if (isObject(value)) {
         const { parameters } = value;
-        extension = value;
-        extension.parameters = isObject(parameters) ? parameters : {};
+        installation = value;
+        installation.parameters = isObject(parameters) ? parameters : {};
       } else {
-        extension = null;
+        installation = null;
       }
     },
-    getExtension: () => extension
+    getInstallation: () => installation
   };
 }

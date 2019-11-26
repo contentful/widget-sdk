@@ -63,7 +63,7 @@ export default class AppListItem extends Component {
       tagLine: PropTypes.string,
       icon: PropTypes.string,
       installed: PropTypes.bool.isRequired,
-      isDevApp: PropTypes.bool,
+      isPrivateApp: PropTypes.bool,
       enabled: PropTypes.bool.isRequired
     }),
     openDetailModal: PropTypes.func.isRequired
@@ -72,7 +72,7 @@ export default class AppListItem extends Component {
   determineOnClick = (onClick, openDetailsFunc) => {
     const { app } = this.props;
 
-    const continueDirectlyToAppPage = app.installed || app.isDevApp;
+    const continueDirectlyToAppPage = app.installed || app.isPrivateApp;
 
     return continueDirectlyToAppPage ? onClick : openDetailsFunc;
   };
@@ -101,7 +101,7 @@ export default class AppListItem extends Component {
                     {app.title}
                     {app.tagLine && <div className={styles.tagLine}>{app.tagLine}</div>}
                   </div>
-                  {app.isDevApp && <Tag className={styles.tag}>Private</Tag>}
+                  {app.isPrivateApp && <Tag className={styles.tag}>Private</Tag>}
                 </div>
               )}
             </StateLink>
@@ -117,7 +117,7 @@ export default class AppListItem extends Component {
               )}
             </StateLink>
           )}
-          {!app.isDevApp && (
+          {!app.isPrivateApp && (
             <TextLink onClick={openDetailsFunc} linkType="primary">
               {app.enabled ? 'About' : 'Enterprise feature'}
             </TextLink>

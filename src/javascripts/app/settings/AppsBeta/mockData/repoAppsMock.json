@@ -1,13 +1,26 @@
 [
   {
-    "sys": {
-      "type": "App",
-      "id": "netlify"
+    "actionList": [
+      {
+        "negative": true,
+        "info": "Build widget will be removed from sidebars of all content types"
+      },
+      {
+        "negative": false,
+        "info": "This will not modify your Netlify sites. You may want to remove unneeded deploy notifications and build hooks from your Netlify site."
+      }
+    ],
+    "author": {
+      "name": "Contentful",
+      "url": "https://www.contentful.com",
+      "icon": "//images.ctfassets.net/lpjm8d10rkpy/4DxiiBjixHZVjc69WpJX95/4708b0bdc8e713faf69a667f8266d190/472182"
     },
-    "extensionDefinition": {
+    "categories": ["Featured", "Website Hosting"],
+    "description": "### About the app\n\nThe Netlify App gives content editors control over static site builds and makes the process more transparent.\n\n---\n\n### This app provides the following functionality:\n\n- triggers Netlify builds with a simple click in the sidebar\n- displays build status so editors don't preview outdated sites\n- brings Netlify functionality into the Contentful web app\n- makes it possible to configure on a per-content-type level\n\n---\n\n### To use this app, you need:\n\n- a static site based on a service such as Gatsby, Middleman or Hugo\n- your site configured to load content from Contentful and its code pushed to a remote repository, such as GitHub or Gitlab\n- a Netlify setup where the site is connected to the remote repository and enabled for continuous deployment\n\n---\n\n### Screenshots\n\n![Netlify config](//images.ctfassets.net/lpjm8d10rkpy/4Rf8yoGPw4AQwdMboiVwhF/a0a9a8b8e73a5ace1fdf78adebc24a49/apps-netlify-site-setup.b4a24a69c0.png)\n\n![Netlify sidebar](//images.ctfassets.net/lpjm8d10rkpy/RrSqXTcdlpfkPt7sJzkEb/57172d0fd3eaa36a5ab90e7d183ed171/apps-netlify-sidebar.0ffd73e12b.png) ",
+    "appDefinition": {
       "sys": {
         "id": "1VchawWvbIClHuMIyxwR5m",
-        "type": "ExtensionDefinition",
+        "type": "AppDefinition",
         "organization": {
           "sys": {
             "type": "Link",
@@ -16,7 +29,7 @@
           }
         },
         "createdAt": "2019-07-24T09:09:45.574Z",
-        "updatedAt": "2019-08-01T14:41:20.716Z",
+        "updatedAt": "2019-09-06T07:35:54.281Z",
         "createdBy": {
           "sys": {
             "type": "Link",
@@ -28,116 +41,51 @@
           "sys": {
             "type": "Link",
             "linkType": "User",
-            "id": "46JHc8ru6cDDm0CtthS0Kw"
+            "id": "29B6zorz8plUCN1auThiVH"
           }
         }
       },
-      "name": "Netlify build and preview",
+      "name": "Netlify",
       "src": "https://netlify-build-1.contentfulexts.com/extension.html",
       "public": true,
       "locations": ["app", "entry-sidebar"]
     },
-    "extension": {
-      "sys": {
-        "id": "netlify-app-owpoHwFZXAPWpyOy",
-        "type": "Extension",
-        "space": {
-          "sys": {
-            "id": "bxgvwg0h5uxs",
-            "type": "Link",
-            "linkType": "Space"
-          }
-        },
-        "version": 1,
-        "createdAt": "2019-08-21T11:21:39.416Z",
-        "createdBy": {
-          "sys": {
-            "id": "2jvc3kU4n7OIABiFMTaGyB",
-            "type": "Link",
-            "linkType": "User"
-          }
-        },
-        "updatedAt": "2019-08-21T11:21:39.416Z",
-        "updatedBy": {
-          "sys": {
-            "id": "2jvc3kU4n7OIABiFMTaGyB",
-            "type": "Link",
-            "linkType": "User"
-          }
-        },
-        "environment": {
-          "sys": {
-            "id": "master",
-            "type": "Link",
-            "linkType": "Environment"
-          }
-        }
+    "flagId": "basic_apps",
+    "icon": "//images.ctfassets.net/lpjm8d10rkpy/2dYQ3x6VMNZJgDXYmMzLBx/b338ad4b50cd0ff31e7157671b801b4d/logomark.svg",
+    "id": "netlify",
+    "installed": true,
+    "links": [
+      {
+        "title": "Netlify Docs",
+        "url": "https://www.netlify.com/docs/"
       },
-      "parameters": {
-        "names": "thirsty",
-        "siteIds": "06fe192d-3ddb-4169-9db7-7c1093017a8c",
-        "siteUrls": "https://thirsty-einstein-8908d6.netlify.com",
-        "siteNames": "thirsty-einstein-8908d6",
-        "buildHookIds": "5d5d2942f6b077dd3cb66e44",
-        "notificationHookIds": "5d5d2942d271c00be9a27f6d,5d5d29422ea5fc0f3136bd2a,5d5d2942379672e846227b98"
-      },
-      "extensionDefinition": {
-        "sys": {
-          "id": "1VchawWvbIClHuMIyxwR5m",
-          "type": "Link",
-          "linkType": "ExtensionDefinition"
-        }
+      {
+        "title": "Documentation for the Netlify app",
+        "url": "https://www.contentful.com/developers/docs/extensibility/apps/netlify/"
       }
-    }
+    ],
+    "permissions": "__Netlify app__ is asking for permissions to access this Contentful environment.\n\nThe app will be able to manage this environment and any content in it.\n\nYou can revoke access at any time by uninstalling the app.",
+    "tagLine": "Easily build and preview Netlify sites directly from Contentful ",
+    "title": "Netlify"
   },
   {
-    "sys": {
-      "type": "App",
-      "id": "gatsby"
+    "actionList": [
+      {
+        "negative": true,
+        "info": "This will not remove the variation container content type or any created entries. Please remove them manually if they are no longer needed."
+      }
+    ],
+    "author": {
+      "name": "Contentful",
+      "url": "https://www.contentful.com",
+      "icon": "//images.ctfassets.net/lpjm8d10rkpy/4DxiiBjixHZVjc69WpJX95/4708b0bdc8e713faf69a667f8266d190/472182"
     },
-    "extensionDefinition": {
-      "sys": {
-        "id": "35f8xJFaJpOUFAKepAWiUj",
-        "type": "ExtensionDefinition",
-        "organization": {
-          "sys": {
-            "type": "Link",
-            "linkType": "Organization",
-            "id": "5EJGHo8tYJcjnEhYWDxivp"
-          }
-        },
-        "createdAt": "2019-07-24T12:36:16.933Z",
-        "updatedAt": "2019-08-02T12:26:52.709Z",
-        "createdBy": {
-          "sys": {
-            "type": "Link",
-            "linkType": "User",
-            "id": "46JHc8ru6cDDm0CtthS0Kw"
-          }
-        },
-        "updatedBy": {
-          "sys": {
-            "type": "Link",
-            "linkType": "User",
-            "id": "46JHc8ru6cDDm0CtthS0Kw"
-          }
-        }
-      },
-      "name": "Gatsby preview",
-      "src": "https://gatsby-preview-1.contentfulexts.com/extension.html",
-      "public": true,
-      "locations": ["app", "entry-sidebar"]
-    }
-  },
-  {
-    "sys": {
-      "type": "App",
-      "id": "optimizely"
-    },
-    "extensionDefinition": {
+    "categories": ["Featured", "Experimentation and Personalization"],
+    "description": "### About the Optimizely app\n\n⭐️This app is available to customers on an enterprise plan.⭐️\n\nThe Optimizely app is a new and simple way to run experiments inside Contentful. It connects your content in Contentful with experiments in Optimizely. Marketers can run more experiments and obtain better insights faster.\n\n---\n\n### Features:\n\n- Run A/B tests or multivariate tests  on structured content (copy, components, layouts and pages)\n- Allow marketers to be more independent from developers\n- Enable marketers to act on results and make a winning variation the new default\n- Reduce the amount of manual work needed to set up experiments\n\n---\n\n### Installation:\n\nInstalling this app will:\n\n- Create a new content type called \"Variation Container\" \n- Create \"Variation Container\" entries\n- Read your projects, experiments and variations from Optimizely\n\n---\n\n### Requirements:\n\n- A __Contentful enterprise plan__ with a space\n- An __Optimizely Full Stack__ plan with access to the REST API\n- A small proxy that combines data from Contentful and Optimizely [(view docs)](https://www.contentful.com/developers/docs/extensibility/apps/optimizely/)\n- A content type with a reference field\n\n---\n\n### Screenshots:\n\n![Optimizely editor](//images.ctfassets.net/lpjm8d10rkpy/6BKTGsRNAzlQgllHDclqYe/ad9bad07083d102d1deff54a6a62e57f/optimizely-editor.png)",
+    "appDefinition": {
       "sys": {
         "id": "i43PggcHag2PCrGjYTiIX",
-        "type": "ExtensionDefinition",
+        "type": "AppDefinition",
         "organization": {
           "sys": {
             "type": "Link",
@@ -146,7 +94,7 @@
           }
         },
         "createdAt": "2019-07-24T12:38:34.885Z",
-        "updatedAt": "2019-08-02T13:55:42.195Z",
+        "updatedAt": "2019-09-06T07:38:24.632Z",
         "createdBy": {
           "sys": {
             "type": "Link",
@@ -158,25 +106,50 @@
           "sys": {
             "type": "Link",
             "linkType": "User",
-            "id": "46JHc8ru6cDDm0CtthS0Kw"
+            "id": "29B6zorz8plUCN1auThiVH"
           }
         }
       },
-      "name": "Optimizely experimentation",
+      "name": "Optimizely",
       "src": "https://optimizely-1.contentfulexts.com/extension.html",
       "public": true,
       "locations": ["app", "entry-editor", "entry-sidebar"]
-    }
+    },
+    "flagId": "optimizely_app",
+    "icon": "//images.ctfassets.net/lpjm8d10rkpy/4X7O4Q0pIgQZNcONoQrQlp/9262ad9a935fa92e9cacd9207ae0a401/optimizely-logo.svg",
+    "id": "optimizely",
+    "installed": false,
+    "links": [
+      {
+        "title": "Documentation",
+        "url": "https://www.contentful.com/developers/docs/extensibility/apps/optimizely/"
+      },
+      {
+        "title": "Optimizely privacy policy",
+        "url": "https://www.optimizely.com/privacy/"
+      },
+      {
+        "title": "Get support",
+        "url": "https://www.contentful.com/support/"
+      }
+    ],
+    "permissions": "__Optimizely app__ is asking for permissions to access this Contentful environment.\n\nThe app will be able to manage this environment and any content in it.\n\nYou can revoke access at any time by uninstalling the app.",
+    "tagLine": "Enable experimentation of structured content with Optimizely",
+    "title": "Optimizely"
   },
   {
-    "sys": {
-      "type": "App",
-      "id": "cloudinary"
+    "actionList": [],
+    "author": {
+      "name": "Michel Bitter and Contentful",
+      "url": "https://www.contentful.com",
+      "icon": "//images.ctfassets.net/lpjm8d10rkpy/4DxiiBjixHZVjc69WpJX95/4708b0bdc8e713faf69a667f8266d190/472182"
     },
-    "extensionDefinition": {
+    "categories": ["Digital Asset Management"],
+    "description": "### About the Cloudinary app \n\nAfter you’ve installed the Cloudinary app, you can easily reference assets hosted on Cloudinary directly inside the Contentful web app.\n\nThe app is a widget that allows editors to select media from their Cloudinary account. Simply click __Select or upload a file on Cloudinary__ and select the assets you want to be referenced from your entry.\n\n---\n\n### Features:\n- Directly link your assets on Cloudinary from your Contentful entries\n- Browse your collection on Cloudinary\n- Preview selected assets in Contentful\n- Standard JSON based asset reference format\n\n---\n\n### Requirements:\n\nTo use this app, you will need:\n\n- An account with [Cloudinary](https://cloudinary.com)\n- The __cloud name__ of your Cloudinary account\n- The __API key__ of your Cloudinary account\n- A content type with a field of type Object to hold the references to Cloudinary\n\nYou can find both cloud name and API key on your [Cloudinary dashboard](https://cloudinary.com/console).\n\n\n---\n\n### Screenshots:\n\n![Cloudinary dialog](//images.ctfassets.net/lpjm8d10rkpy/4QAxpe5mbLZWkTAWucplJ4/1155818e1422f30fac24a51aab302670/apps-cloudinary-dialog.png)",
+    "appDefinition": {
       "sys": {
         "id": "zjcnWgBknf9zB7IM9HZjE",
-        "type": "ExtensionDefinition",
+        "type": "AppDefinition",
         "organization": {
           "sys": {
             "type": "Link",
@@ -185,7 +158,7 @@
           }
         },
         "createdAt": "2019-07-24T12:40:36.439Z",
-        "updatedAt": "2019-07-30T17:13:39.053Z",
+        "updatedAt": "2019-09-06T07:34:38.202Z",
         "createdBy": {
           "sys": {
             "type": "Link",
@@ -197,11 +170,11 @@
           "sys": {
             "type": "Link",
             "linkType": "User",
-            "id": "46JHc8ru6cDDm0CtthS0Kw"
+            "id": "29B6zorz8plUCN1auThiVH"
           }
         }
       },
-      "name": "Cloudinary assets",
+      "name": "Cloudinary",
       "src": "https://cloudinary-assets-1.contentfulexts.com/extension.html",
       "public": true,
       "locations": ["app", "entry-field"],
@@ -211,65 +184,41 @@
         }
       ]
     },
-    "extension": {
-      "sys": {
-        "id": "cloudinary-app-eDCiHa2DMfpjoNFH",
-        "type": "Extension",
-        "space": {
-          "sys": {
-            "id": "bxgvwg0h5uxs",
-            "type": "Link",
-            "linkType": "Space"
-          }
-        },
-        "version": 1,
-        "createdAt": "2019-08-23T07:00:54.416Z",
-        "createdBy": {
-          "sys": {
-            "id": "29B6zorz8plUCN1auThiVH",
-            "type": "Link",
-            "linkType": "User"
-          }
-        },
-        "updatedAt": "2019-08-23T07:00:54.416Z",
-        "updatedBy": {
-          "sys": {
-            "id": "29B6zorz8plUCN1auThiVH",
-            "type": "Link",
-            "linkType": "User"
-          }
-        },
-        "environment": {
-          "sys": {
-            "id": "master",
-            "type": "Link",
-            "linkType": "Environment"
-          }
-        }
+    "flagId": "basic_apps",
+    "icon": "//images.ctfassets.net/lpjm8d10rkpy/3ZH89y9VHHd53v4OQ3BG0V/cc62043a88cd5fb80719687f299e7351/cloudinary_icon_for_white_bg.svg",
+    "id": "cloudinary",
+    "installed": false,
+    "links": [
+      {
+        "title": "Cloudinary website",
+        "url": "https://cloudinary.com"
       },
-      "parameters": {
-        "apiKey": "sadfdsaf",
-        "maxFiles": 10,
-        "cloudName": "sadfsadfdsaf"
+      {
+        "title": "Documentation for the Cloudinary App",
+        "url": "https://www.contentful.com/developers/docs/extensibility/apps/cloudinary/"
       },
-      "extensionDefinition": {
-        "sys": {
-          "id": "zjcnWgBknf9zB7IM9HZjE",
-          "type": "Link",
-          "linkType": "ExtensionDefinition"
-        }
+      {
+        "title": "Michel Bitter's Github profile",
+        "url": "https://github.com/michelbitter"
       }
-    }
+    ],
+    "permissions": "__Cloudinary app__ is asking for permissions to access this Contentful environment.\n\nThe app will be able to manage this environment and any content in it.\n\nYou can revoke access at any time by uninstalling the app.",
+    "tagLine": "Reference assets from Cloudinary's digital asset management systems",
+    "title": "Cloudinary"
   },
   {
-    "sys": {
-      "type": "App",
-      "id": "bynder"
+    "actionList": [],
+    "author": {
+      "name": "Contentful",
+      "url": "https://www.contentful.com",
+      "icon": "//images.ctfassets.net/lpjm8d10rkpy/4DxiiBjixHZVjc69WpJX95/4708b0bdc8e713faf69a667f8266d190/472182"
     },
-    "extensionDefinition": {
+    "categories": ["Digital Asset Management"],
+    "description": "### About the Bynder app \n\nAfter you’ve installed the Bynder app, you can easily reference assets hosted on Bynder directly inside the Contentful web app.\n\nThe app is a widget that allows editors to select media from their Bynder account. Simply click __Select or upload a file on Bynder__ and select the assets you want to be referenced from your entry.\n\n---\n\n### Features:\n- Directly link your assets on Bynder from your Contentful entries\n- Browse your collection on Bynder\n- Preview selected assets in Contentful\n- Standard JSON based asset reference format\n\n---\n\n### Requirements:\n\nTo use this app, you will need:\n\n- An account with [Bynder](https://www.bynder.com)\n- The URL of your Bynder account\n- A content type with a field of type JSON object to hold the references to Bynder\n\n\n---\n\n### Screenshots:\n![apps-bynder-dialog](//images.ctfassets.net/lpjm8d10rkpy/36TMeTeEpwqraMSTldDeVH/3ed9980af3eb5318d5631c3c6ef3e5f3/apps-bynder-dialog.png)",
+    "appDefinition": {
       "sys": {
         "id": "5KySdUzG7OWuCE2V3fgtIa",
-        "type": "ExtensionDefinition",
+        "type": "AppDefinition",
         "organization": {
           "sys": {
             "type": "Link",
@@ -278,7 +227,72 @@
           }
         },
         "createdAt": "2019-07-24T12:42:27.828Z",
-        "updatedAt": "2019-08-01T14:38:17.868Z",
+        "updatedAt": "2019-09-06T07:36:43.893Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "46JHc8ru6cDDm0CtthS0Kw"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "29B6zorz8plUCN1auThiVH"
+          }
+        }
+      },
+      "name": "Bynder",
+      "src": "https://bynder-assets-1.contentfulexts.com/extension.html",
+      "public": true,
+      "locations": ["app", "entry-field"],
+      "fieldTypes": [
+        {
+          "type": "Object"
+        }
+      ]
+    },
+    "flagId": "basic_apps",
+    "icon": "//images.ctfassets.net/lpjm8d10rkpy/3vNJZRjthatucy2mBJMy1u/0e5d501207427780021e7580cc384761/bynder.5e9e457b9d.svg",
+    "id": "bynder",
+    "installed": true,
+    "links": [
+      {
+        "title": "Bynder website",
+        "url": "https://www.bynder.com"
+      },
+      {
+        "title": "Documentation for the Bynder App",
+        "url": "https://www.contentful.com/developers/docs/extensibility/apps/bynder/"
+      }
+    ],
+    "permissions": "__Bynder app__ is asking for permissions to access this Contentful environment.\n\nThe app will be able to manage this environment and any content in it.\n\nYou can revoke access at any time by uninstalling the app.",
+    "tagLine": "Reference assets from Bynder's digital asset management systems",
+    "title": "Bynder"
+  },
+  {
+    "actionList": [],
+    "author": {
+      "name": "Contentful",
+      "url": "https://www.contentful.com",
+      "icon": "//images.ctfassets.net/lpjm8d10rkpy/4DxiiBjixHZVjc69WpJX95/4708b0bdc8e713faf69a667f8266d190/472182"
+    },
+    "categories": ["Digital Asset Management"],
+    "description": "### About the Dropbox app \n\nAfter you’ve installed the Dropbox app, you can easily reference assets stored in your Dropbox account directly inside the Contentful web app.\nSimply click __Select or upload a file on Dropbox__ and select the assets you want to be referenced from your entry.\n\n---\n\n### Features:\n- Directly link your assets in Dropbox from your Contentful entries\n- Browse your Dropbox account\n- Preview selected assets in Contentful\n- Standard JSON based asset reference format\n\n---\n\n### Requirements:\n\nTo use this app, you will need:\n\n- An account with [Dropbox](https://www.dropbox.com)\n- A content type with a field of type JSON object to hold the references to Dropbox assets\n\n\n---\n\n### Screenshots:\n\n![Dropbox screenshot](//images.ctfassets.net/lpjm8d10rkpy/5uQPU1n35hheQmxg7CeMfx/95355daf5e17e7384e45ca37923722e3/Screen_Shot_2019-11-13_at_15.04.34.png?w=1000)",
+    "appDefinition": {
+      "sys": {
+        "id": "6YdAwxoPHopeTeuwh43UJu",
+        "type": "AppDefinition",
+        "organization": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Organization",
+            "id": "5EJGHo8tYJcjnEhYWDxivp"
+          }
+        },
+        "createdAt": "2019-11-13T15:12:53.401Z",
+        "updatedAt": "2019-11-13T15:12:53.401Z",
         "createdBy": {
           "sys": {
             "type": "Link",
@@ -294,8 +308,8 @@
           }
         }
       },
-      "name": "Bynder assets",
-      "src": "https://bynder-assets-1.contentfulexts.com/extension.html",
+      "name": "Dropbox",
+      "src": "https://ctf-exts-dropbox-assets-1.netlify.com/extension.html",
       "public": true,
       "locations": ["app", "entry-field"],
       "fieldTypes": [
@@ -303,6 +317,241 @@
           "type": "Object"
         }
       ]
-    }
+    },
+    "flagId": "basic_apps",
+    "icon": "//images.ctfassets.net/lpjm8d10rkpy/7KdyOX9FlBz0SX5QyaLFaF/6ee4f786204d6f80b096fb73584dbcf7/logo.svg",
+    "id": "dropbox",
+    "installed": true,
+    "links": [
+      {
+        "title": "Dropbox website",
+        "url": "https://www.dropbox.com"
+      },
+      {
+        "title": "Dropbox app documentation",
+        "url": "https://www.contentful.com/developers/docs/extensibility/apps/dropbox/"
+      }
+    ],
+    "permissions": "__Dropbox app__ is asking for permissions to access this Contentful environment.\n\nThe app will be able to manage this environment and any content in it.\n\nYou can revoke access at any time by uninstalling the app.",
+    "tagLine": "Reference assets from your Dropbox account",
+    "title": "Dropbox"
+  },
+  {
+    "actionList": [],
+    "author": {
+      "name": "Frontify",
+      "url": "https://www.frontify.com/",
+      "icon": "//images.ctfassets.net/lpjm8d10rkpy/2m7X00RL2l0Rpd9KinrD8x/826779b516c780ff19492ac1d7251d97/logo.svg"
+    },
+    "categories": ["Digital Asset Management"],
+    "description": "### About the Frontify app:\n\nWith the Frontify app, you can simplify your workflow by accessing your brand assets from within the Contentful web app.\nSimply click Select files from Frontify to select the assets you want to reference from your entry.\n\n### Features:\n\n* Directly link your assets on Frontify from your Contentful entries\n* Browse your assets on Frontify\n* Preview selected assets in Contentful\n* Standard JSON based asset reference format\n\n### Requirements:\n\nTo use this app, you will need:\n* An existing [Frontify](https://www.frontify.com/) enterprise account\n* The URL of your Frontify account\n* A content type with a field of type JSON object to hold the references to Frontify\n\n### Screenshots:\n\n![contentful-frontify](//images.ctfassets.net/lpjm8d10rkpy/5onQHIH2JzKegzYZs2bWME/6f80663fdd4b801f5f3185798741e898/contentful-frontify.png?w=1000)",
+    "appDefinition": {
+      "sys": {
+        "id": "5wHGALSJtz7y2EQOLfGhKH",
+        "type": "AppDefinition",
+        "organization": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Organization",
+            "id": "5EJGHo8tYJcjnEhYWDxivp"
+          }
+        },
+        "createdAt": "2019-11-13T15:14:21.970Z",
+        "updatedAt": "2019-11-13T15:14:21.970Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "46JHc8ru6cDDm0CtthS0Kw"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "46JHc8ru6cDDm0CtthS0Kw"
+          }
+        }
+      },
+      "name": "Frontify",
+      "src": "https://ctf-exts-frontify-assets-1.netlify.com/extension.html",
+      "public": true,
+      "locations": ["app", "entry-field"],
+      "fieldTypes": [
+        {
+          "type": "Object"
+        }
+      ]
+    },
+    "flagId": "basic_apps",
+    "icon": "//images.ctfassets.net/lpjm8d10rkpy/2m7X00RL2l0Rpd9KinrD8x/826779b516c780ff19492ac1d7251d97/logo.svg",
+    "id": "frontify",
+    "installed": false,
+    "links": [
+      {
+        "title": "Frontify website",
+        "url": "https://www.frontify.com/"
+      },
+      {
+        "title": "Documentation and support",
+        "url": "https://help.frontify.com/en/articles/3490559-frontify-integration-for-contentful"
+      }
+    ],
+    "permissions": "__Frontify app__ is asking for permissions to access this Contentful environment.\n\nThe app will be able to manage this environment and any content in it.\n\nYou can revoke access at any time by uninstalling the app.",
+    "tagLine": "Reference assets from Frontify collections",
+    "title": "Frontify"
+  },
+  {
+    "actionList": [
+      {
+        "negative": true,
+        "info": "If you want the content type we created during installation removed, you will have to delete it manually"
+      },
+      {
+        "negative": false,
+        "info": "This will remove the Image Focal Point widget from the entry editor"
+      }
+    ],
+    "author": {
+      "name": "Contentful",
+      "url": "https://www.contentful.com",
+      "icon": "//images.ctfassets.net/lpjm8d10rkpy/4DxiiBjixHZVjc69WpJX95/4708b0bdc8e713faf69a667f8266d190/472182"
+    },
+    "categories": ["Digital Asset Management"],
+    "description": "### About the Image Focal Point app \n\nThe Image Focal Point app allows you to set a focal point for an image, which you can use to achieve better cropping amongst different devices and screen sizes.\n\nDuring the installation the app sets up a content type you can use for your images with focal point data and provides you with a widget to set the focal point.\n\n---\n\n### Screenshots:\n![apps-image-focal-point-dialog](//images.ctfassets.net/lpjm8d10rkpy/2TuSk1vWvUU0SJ8O5Qsz9a/51ce3e4c6b1d8fab44171ebd22efbdfa/Optimized-apps-image-focal-point-cover.png)",
+    "appDefinition": {
+      "sys": {
+        "id": "342Q2DqCjmsdN5BJCEPkrJ",
+        "type": "AppDefinition",
+        "organization": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Organization",
+            "id": "5EJGHo8tYJcjnEhYWDxivp"
+          }
+        },
+        "createdAt": "2019-10-01T09:21:49.757Z",
+        "updatedAt": "2019-10-02T09:00:10.854Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2MzbkIYbpZL19Dtc16UoJy"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "2MzbkIYbpZL19Dtc16UoJy"
+          }
+        }
+      },
+      "name": "Image Focal Point",
+      "src": "https://image-focal-point-0.contentfulexts.com/extension.html",
+      "public": true,
+      "locations": ["app", "dialog", "entry-field"],
+      "fieldTypes": [
+        {
+          "type": "Object"
+        }
+      ]
+    },
+    "flagId": "basic_apps",
+    "icon": "//images.ctfassets.net/lpjm8d10rkpy/7v1wryVbq6dooI1OqbkIpg/32e947099d5253c56fa344fc7aadfbff/app-logo.svg",
+    "id": "image-focal-point",
+    "installed": false,
+    "links": [
+      {
+        "title": "Documentation for the Image Focal Point App",
+        "url": "https://www.contentful.com/developers/docs/extensibility/apps/image-focal-point/"
+      }
+    ],
+    "permissions": "__Image Focal Point app__ is asking for permissions to access this Contentful environment.\n\nThe app will be able to manage this environment and any content in it.\n\nYou can revoke access at any time by uninstalling the app.",
+    "tagLine": "Set a focal point on your images to achieve better cropping amongst different screen sizes",
+    "title": "Image Focal Point"
+  },
+  {
+    "appDefinition": {
+      "sys": {
+        "id": "2JLOqo4SqgMXY2uVWzCSYW",
+        "type": "AppDefinition",
+        "organization": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Organization",
+            "id": "5pjgDE2Tuv80WD74KfNyWb"
+          }
+        },
+        "createdAt": "2019-11-12T20:16:47.577Z",
+        "updatedAt": "2019-11-12T20:16:47.577Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "46JHc8ru6cDDm0CtthS0Kw"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "46JHc8ru6cDDm0CtthS0Kw"
+          }
+        }
+      },
+      "name": "Daily Animal",
+      "src": "https://contentful-daily-animal.glitch.me",
+      "public": false,
+      "locations": ["app", "entry-sidebar"]
+    },
+    "id": "dev-app_2JLOqo4SqgMXY2uVWzCSYW",
+    "title": "Daily Animal",
+    "installed": true,
+    "isPrivateApp": true
+  },
+  {
+    "appDefinition": {
+      "sys": {
+        "id": "6QvINyJGdwLe0XjxnKnzrF",
+        "type": "AppDefinition",
+        "organization": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Organization",
+            "id": "5pjgDE2Tuv80WD74KfNyWb"
+          }
+        },
+        "createdAt": "2019-11-12T19:13:40.215Z",
+        "updatedAt": "2019-11-13T20:33:49.129Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "46JHc8ru6cDDm0CtthS0Kw"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "46JHc8ru6cDDm0CtthS0Kw"
+          }
+        }
+      },
+      "name": "Test",
+      "src": "http://localhost:1234",
+      "public": false,
+      "locations": ["app", "entry-field"],
+      "fieldTypes": [
+        {
+          "type": "Object"
+        }
+      ]
+    },
+    "id": "dev-app_6QvINyJGdwLe0XjxnKnzrF",
+    "title": "Test",
+    "installed": true,
+    "isPrivateApp": true
   }
 ]

@@ -1,13 +1,15 @@
 import { makeAppHookBus } from './AppHookBus';
 
 describe('AppHookBus', () => {
-  const extension = {
-    sys: { type: 'Extension', id: 'ext' },
-    extensionDefinition: {
-      sys: {
-        type: 'Link',
-        linkType: 'extensionDefinition',
-        id: 'def'
+  const installation = {
+    sys: {
+      type: 'AppInstallation',
+      appDefinition: {
+        sys: {
+          type: 'Link',
+          linkType: 'AppDefinition',
+          id: 'def'
+        }
       }
     },
     parameters: { test: true }
@@ -34,41 +36,41 @@ describe('AppHookBus', () => {
     expect(ySpy).toBeCalledWith('whyyy?');
   });
 
-  it('has no extension by default', () => {
+  it('has no installation by default', () => {
     const bus = makeAppHookBus();
 
-    expect(bus.getExtension()).toBeNull();
+    expect(bus.getInstallation()).toBeNull();
   });
 
-  it('allows to set extension', () => {
+  it('allows to set installation', () => {
     const bus = makeAppHookBus();
 
-    bus.setExtension(extension);
+    bus.setInstallation(installation);
 
-    expect(bus.getExtension()).toEqual(extension);
+    expect(bus.getInstallation()).toEqual(installation);
   });
 
   it('defaults for empty parameters', () => {
     const bus = makeAppHookBus();
 
-    const noParams = { ...extension };
+    const noParams = { ...installation };
     delete noParams.parameters;
 
-    bus.setExtension(noParams);
+    bus.setInstallation(noParams);
 
-    expect(bus.getExtension()).toEqual({
+    expect(bus.getInstallation()).toEqual({
       ...noParams,
       parameters: {}
     });
   });
 
-  it('allows to unset extension', () => {
+  it('allows to unset installation', () => {
     const bus = makeAppHookBus();
 
-    bus.setExtension(extension);
-    expect(bus.getExtension()).toEqual(extension);
+    bus.setInstallation(installation);
+    expect(bus.getInstallation()).toEqual(installation);
 
-    bus.setExtension(null);
-    expect(bus.getExtension()).toBeNull();
+    bus.setInstallation(null);
+    expect(bus.getInstallation()).toBeNull();
   });
 });

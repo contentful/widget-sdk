@@ -1,70 +1,44 @@
 import { get } from 'lodash';
 
-import * as Random from 'utils/Random';
-
 import validateTargetState from './validateTargetState';
 import {
   transformEditorInterfacesToTargetState,
   removeAllEditorInterfaceReferences
 } from './AppEditorInterfaces';
 
-function updateExtensionParameters(extension, parameters) {
-  return { ...extension, parameters };
-}
-
-function makeNewAppExtension(appId, extensionDefinition, parameters) {
-  return {
-    sys: { id: `${appId}-app-${Random.id()}` },
-    extensionDefinition: {
-      sys: {
-        type: 'Link',
-        linkType: 'ExtensionDefinition',
-        id: extensionDefinition.sys.id
-      }
-    },
-    parameters
-  };
-}
-
 export async function installOrUpdate(
   cma,
-  extensionLoader,
+  evictWidget,
   checkAppStatus,
   { parameters, targetState } = {}
 ) {
   validateTargetState(targetState);
 
-  const extension = await createOrUpdateExtension(cma, checkAppStatus, parameters);
-
-  extensionLoader.evictExtension(extension.sys.id);
+  const { appDefinition } = await checkAppStatus();
+  const appInstallation = await cma.updateAppInstallation(appDefinition.sys.id, parameters);
+  const { widgetId } = appInstallation.sys;
 
   await transformEditorInterfacesToTargetState(
     cma,
     get(targetState, ['EditorInterface'], {}),
-    extension.sys.id
+    widgetId
   );
-}
 
-async function createOrUpdateExtension(cma, checkAppStatus, parameters) {
-  const { appId, extension, extensionDefinition } = await checkAppStatus();
-
-  return extension
-    ? await cma.updateExtension(updateExtensionParameters(extension, parameters))
-    : await cma.createExtension(makeNewAppExtension(appId, extensionDefinition, parameters));
+  evictWidget(widgetId);
 }
 
 // Best effort uninstallation.
-export async function uninstall(cma, extensionLoader, checkAppStatus) {
-  const { extension } = await checkAppStatus();
+export async function uninstall(cma, evictWidget, checkAppStatus) {
+  const { appInstallation, appDefinition } = await checkAppStatus();
 
-  if (extension) {
-    const extensionId = extension.sys.id;
+  if (appInstallation) {
+    const { widgetId } = appInstallation.sys;
 
-    // Rewrite all EditorInterfaces refering the Extension.
-    await removeAllEditorInterfaceReferences(cma, extensionId);
+    // Rewrite all EditorInterfaces refering the app widget.
+    await removeAllEditorInterfaceReferences(cma, widgetId);
 
-    // Remove the Extension itself.
-    await cma.deleteExtension(extensionId);
-    extensionLoader.evictExtension(extensionId);
+    // Remove the AppInstallation itself.
+    await cma.deleteAppInstallation(appDefinition.sys.id);
+    evictWidget(widgetId);
   }
 }

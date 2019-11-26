@@ -1,36 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AppsRepo getAppWidgets should return an object of apps when the endpoint returns good data 1`] = `
-Array [
-  Object {
-    "extensionDefinitionId": "1VchawWvbIClHuMIyxwR5m",
-    "icon": "//images.ctfassets.net/lpjm8d10rkpy/2dYQ3x6VMNZJgDXYmMzLBx/b338ad4b50cd0ff31e7157671b801b4d/logomark.svg",
-    "id": "netlify",
-  },
-  Object {
-    "extensionDefinitionId": "i43PggcHag2PCrGjYTiIX",
-    "icon": "//images.ctfassets.net/lpjm8d10rkpy/4X7O4Q0pIgQZNcONoQrQlp/9262ad9a935fa92e9cacd9207ae0a401/optimizely-logo.svg",
-    "id": "optimizely",
-  },
-  Object {
-    "extensionDefinitionId": "zjcnWgBknf9zB7IM9HZjE",
-    "icon": "//images.ctfassets.net/lpjm8d10rkpy/3ZH89y9VHHd53v4OQ3BG0V/cc62043a88cd5fb80719687f299e7351/cloudinary_icon_for_white_bg.svg",
-    "id": "cloudinary",
-  },
-  Object {
-    "extensionDefinitionId": "5KySdUzG7OWuCE2V3fgtIa",
-    "icon": "//images.ctfassets.net/lpjm8d10rkpy/3vNJZRjthatucy2mBJMy1u/0e5d501207427780021e7580cc384761/bynder.5e9e457b9d.svg",
-    "id": "bynder",
-  },
-  Object {
-    "extensionDefinitionId": "342Q2DqCjmsdN5BJCEPkrJ",
-    "icon": "//images.ctfassets.net/lpjm8d10rkpy/7v1wryVbq6dooI1OqbkIpg/32e947099d5253c56fa344fc7aadfbff/app-logo.svg",
-    "id": "image-focal-point",
-  },
-]
-`;
-
-exports[`AppsRepo getMarketplaceApps should return an object of apps when the endpoint returns good data 1`] = `
+exports[`AppsRepo getApps should return an array of apps when the marketplace endpoint returns good data 1`] = `
 Array [
   Object {
     "actionList": Array [
@@ -52,7 +22,7 @@ Array [
       "src": "http://localhost:1234",
       "sys": Object {
         "id": "1VchawWvbIClHuMIyxwR5m",
-        "type": "ExtensionDefinition",
+        "type": "AppDefinition",
       },
     },
     "author": Object {
@@ -92,7 +62,6 @@ The Netlify App gives content editors control over static site builds and makes 
 ![Netlify config](//images.ctfassets.net/lpjm8d10rkpy/4Rf8yoGPw4AQwdMboiVwhF/a0a9a8b8e73a5ace1fdf78adebc24a49/apps-netlify-site-setup.b4a24a69c0.png)
 
 ![Netlify sidebar](//images.ctfassets.net/lpjm8d10rkpy/RrSqXTcdlpfkPt7sJzkEb/57172d0fd3eaa36a5ab90e7d183ed171/apps-netlify-sidebar.0ffd73e12b.png) ",
-    "extensionDefinitionId": "1VchawWvbIClHuMIyxwR5m",
     "flagId": "basic_apps",
     "icon": "//images.ctfassets.net/lpjm8d10rkpy/2dYQ3x6VMNZJgDXYmMzLBx/b338ad4b50cd0ff31e7157671b801b4d/logomark.svg",
     "id": "netlify",
@@ -115,6 +84,24 @@ You can revoke access at any time by uninstalling the app.",
     "permissionsExplanation": undefined,
     "tagLine": "Easily build and preview Netlify sites directly from Contentful ",
     "title": "Netlify",
+  },
+  Object {
+    "appDefinition": Object {
+      "locations": Array [
+        "app",
+        "entry-field",
+      ],
+      "name": "My app",
+      "src": "http://localhost:666",
+      "sys": Object {
+        "id": "app-definition-id",
+        "type": "AppDefinition",
+      },
+    },
+    "id": "private_app-definition-id",
+    "installed": false,
+    "isPrivateApp": true,
+    "title": "My app",
   },
 ]
 `;

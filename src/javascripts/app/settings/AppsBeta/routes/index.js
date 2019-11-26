@@ -45,12 +45,26 @@ export default {
       name: 'detail',
       url: '/:appId',
       component: AppPage,
+      resolve: {
+        repo: [
+          'spaceContext',
+          ({ endpoint }) => createAppsRepo(getAppDefinitionLoader(), endpoint)
+        ],
+        app: [
+          '$stateParams',
+          'repo',
+          async ({ appId }, repo) => {
+            const apps = await repo.getApps();
+            return apps.find(app => app.id === appId);
+          }
+        ]
+      },
       mapInjectedToProps: [
-        '$stateParams',
         'spaceContext',
         '$state',
-        ({ appId }, spaceContext, $state) => {
-          const repo = createAppsRepo(getAppDefinitionLoader(), spaceContext.endpoint);
+        'repo',
+        'app',
+        (spaceContext, $state, repo, app) => {
           const appHookBus = makeAppHookBus();
 
           const bridge = createAppExtensionBridge({
@@ -65,15 +79,17 @@ export default {
             getSpaceFeature
           );
 
+          const extensionLoader = getExtensionLoader();
+
           return {
             goBackToList: () => $state.go('^.list'),
             productCatalog,
-            appId,
+            app,
             repo,
             bridge,
             appHookBus,
             cma: spaceContext.cma,
-            extensionLoader: getExtensionLoader()
+            evictWidget: id => extensionLoader.evictExtension(id)
           };
         }
       ]

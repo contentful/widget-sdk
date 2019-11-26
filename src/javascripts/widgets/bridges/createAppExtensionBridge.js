@@ -58,15 +58,15 @@ export default function createAppExtensionBridge(dependencies) {
     api.registerHandler('callSpaceMethod', makeExtensionSpaceMethodsHandlers(dependencies));
 
     api.registerHandler('callAppMethod', methodName => {
-      const extension = appHookBus.getExtension();
-      const isInstalled = isObject(extension);
+      const installation = appHookBus.getInstallation();
+      const isInstalled = isObject(installation);
 
       if (methodName === 'isInstalled') {
         return isInstalled;
       } else if (methodName === 'getParameters' && isInstalled) {
-        return extension.parameters;
+        return installation.parameters;
       } else if (methodName === 'getCurrentState' && isInstalled) {
-        return getCurrentAppState(spaceContext.cma, extension.sys.id);
+        return getCurrentAppState(spaceContext.cma, installation.sys.widgetId);
       } else if (methodName === 'setReady') {
         return appHookBus.emit(APP_EVENTS_IN.MARKED_AS_READY);
       } else {
