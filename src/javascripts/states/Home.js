@@ -69,6 +69,12 @@ export default makeState({
         const user = getValue(user$) || {};
         const currentOrgMembership = getCurrentOrg(user);
 
+        if (!currentOrgMembership) {
+          // If the user doesn't have any org membership, redirect to the account settings
+          go({ path: ['account', 'profile', 'user'] });
+          return;
+        }
+
         $scope.orgOwnerOrAdmin =
           currentOrgMembership &&
           (currentOrgMembership.role === 'owner' || currentOrgMembership.role === 'admin');
