@@ -44,11 +44,10 @@ const sidebarConfiguration = {
 const widgetResolvers = {
   widgets: [
     'spaceContext',
-    spaceContext => {
-      return WidgetStore.getForContentTypeManagement(
-        spaceContext.cma,
-        createAppsRepo(getAppDefinitionLoader(), spaceContext.endpoint)
-      );
+    ({ cma }) => {
+      const appsRepo = createAppsRepo(cma, getAppDefinitionLoader());
+
+      return WidgetStore.getForContentTypeManagement(cma, appsRepo);
     }
   ],
   editorInterface: [

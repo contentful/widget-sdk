@@ -144,20 +144,19 @@ function isAppAlreadyAuthorized(app = {}) {
 export default class AppRoute extends Component {
   static propTypes = {
     goBackToList: PropTypes.func.isRequired,
-    app: PropTypes.object,
+    app: PropTypes.object.isRequired,
     productCatalog: PropTypes.shape({
       isAppEnabled: PropTypes.func.isRequired
     }),
-    repo: PropTypes.shape({
-      getAppInstallation: PropTypes.func.isRequired
-    }).isRequired,
     bridge: PropTypes.object.isRequired,
     appHookBus: PropTypes.shape({
       on: PropTypes.func.isRequired,
       emit: PropTypes.func.isRequired,
       setInstallation: PropTypes.func.isRequired
     }).isRequired,
-    cma: PropTypes.object.isRequired,
+    cma: PropTypes.shape({
+      getAppInstallation: PropTypes.func.isRequired
+    }).isRequired,
     evictWidget: PropTypes.func.isRequired
   };
 
@@ -191,7 +190,7 @@ export default class AppRoute extends Component {
       return {
         appDefinition,
         // Can throw 404 if the app is not installed yet:
-        appInstallation: await this.props.repo.getAppInstallation(appDefinition.sys.id)
+        appInstallation: await this.props.cma.getAppInstallation(appDefinition.sys.id)
       };
     } catch (err) {
       return { appDefinition };

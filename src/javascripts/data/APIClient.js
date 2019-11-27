@@ -311,8 +311,8 @@ APIClient.prototype.renameSpace = function(newName, version) {
   });
 };
 
-APIClient.prototype.getExtensions = function() {
-  return this._getResources('extensions');
+APIClient.prototype.getExtensions = function(query) {
+  return this._getResources('extensions', query);
 };
 
 // Fetches all Extension entities in an environment to be
@@ -328,8 +328,16 @@ APIClient.prototype.getExtensionsForListing = function() {
   });
 };
 
+APIClient.prototype.getAppInstallations = function() {
+  return this._getResource('app_installations');
+};
+
 APIClient.prototype.getExtension = function(id) {
   return this._getResource('extensions', id);
+};
+
+APIClient.prototype.getAppInstallation = function(appDefinitionId) {
+  return this._getResource('app_installations', appDefinitionId);
 };
 
 APIClient.prototype.createExtension = function(data) {

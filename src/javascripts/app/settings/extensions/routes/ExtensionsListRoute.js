@@ -31,13 +31,8 @@ const prepareExtension = ({ sys, extension, parameters }) => {
 const ExtensionsFetcher = createFetcherComponent(async ({ cma }) => {
   const { items } = await cma.getExtensionsForListing();
 
-  return (
-    (items || [])
-      // TODO: API shouldn't return `extensionDefinition`-based Extensions.
-      // Once done we should drop the filter.
-      .filter(e => e.extension && !e.extensionDefinition)
-      .map(prepareExtension)
-  );
+  // TODO: filter on the API side.
+  return (items || []).filter(e => !!e.extension).map(prepareExtension);
 });
 
 class ExtensionsListRoute extends React.Component {

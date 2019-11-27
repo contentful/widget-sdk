@@ -30,7 +30,7 @@ export default {
         (spaceContext, $state, $stateParams) => {
           return {
             goToContent: () => $state.go('^.^.entries.list'),
-            repo: createAppsRepo(getAppDefinitionLoader(), spaceContext.endpoint),
+            repo: createAppsRepo(spaceContext.cma, getAppDefinitionLoader()),
             productCatalog: new AppProductCatalog(spaceContext.space.data.sys.id, getSpaceFeature),
             organizationId: spaceContext.organization.sys.id,
             spaceId: spaceContext.space.data.sys.id,
@@ -46,25 +46,19 @@ export default {
       url: '/:appId',
       component: AppPage,
       resolve: {
-        repo: [
-          'spaceContext',
-          ({ endpoint }) => createAppsRepo(getAppDefinitionLoader(), endpoint)
-        ],
         app: [
+          'spaceContext',
           '$stateParams',
-          'repo',
-          async ({ appId }, repo) => {
-            const apps = await repo.getApps();
-            return apps.find(app => app.id === appId);
+          ({ cma }, { appId }) => {
+            return createAppsRepo(cma, getAppDefinitionLoader()).getApp(appId);
           }
         ]
       },
       mapInjectedToProps: [
         'spaceContext',
         '$state',
-        'repo',
         'app',
-        (spaceContext, $state, repo, app) => {
+        (spaceContext, $state, app) => {
           const appHookBus = makeAppHookBus();
 
           const bridge = createAppExtensionBridge({
@@ -85,7 +79,6 @@ export default {
             goBackToList: () => $state.go('^.list'),
             productCatalog,
             app,
-            repo,
             bridge,
             appHookBus,
             cma: spaceContext.cma,

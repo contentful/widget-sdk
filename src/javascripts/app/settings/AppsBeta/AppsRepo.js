@@ -3,11 +3,22 @@ import { get, identity } from 'lodash';
 import { fetchMarketplaceApps } from './MarketplaceClient';
 import { hasAllowedAppFeatureFlag } from './AppProductCatalog';
 
-export default function createAppsRepo(appDefinitionLoader, spaceEndpoint) {
+export default function createAppsRepo(cma, appDefinitionLoader) {
   return {
-    getApps,
-    getAppInstallation
+    getApp,
+    getApps
   };
+
+  async function getApp(id) {
+    const apps = await getApps();
+    const app = apps.find(app => app.id === id);
+
+    if (app) {
+      return app;
+    } else {
+      throw new Error(`Could not find an app with ID "${id}".`);
+    }
+  }
 
   async function getApps() {
     const installationMap = await getAppDefinitionToInstallationMap();
@@ -81,18 +92,8 @@ export default function createAppsRepo(appDefinitionLoader, spaceEndpoint) {
     });
   }
 
-  function getAppInstallation(appDefinitionId) {
-    return spaceEndpoint({
-      method: 'GET',
-      path: ['app_installations', appDefinitionId]
-    });
-  }
-
   async function getAppDefinitionToInstallationMap() {
-    const { items } = await spaceEndpoint({
-      method: 'GET',
-      path: ['app_installations']
-    });
+    const { items } = await cma.getAppInstallations();
 
     return items.reduce(
       (acc, installation) => ({
