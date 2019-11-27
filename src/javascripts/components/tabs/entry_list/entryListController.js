@@ -12,7 +12,6 @@ import createSavedViewsSidebar from 'app/ContentList/SavedViewsSidebar';
 import * as Analytics from 'analytics/Analytics';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as entityCreator from 'components/app_container/entityCreator';
-import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 
 export default function register() {
   /**
@@ -240,7 +239,7 @@ export default function register() {
       }
 
       $scope.displayFieldForFilteredContentType = () =>
-        EntityFieldValueSpaceContext.displayFieldForType(getCurrentContentTypeId());
+        spaceContext.displayFieldForType(getCurrentContentTypeId());
 
       function getCurrentContentTypeId() {
         return getViewItem('contentTypeId');
@@ -312,7 +311,7 @@ export default function register() {
       // The solution is to separate `entryTitle()` and similar
       // functions from the space context.
       $scope.entryTitle = entry => {
-        let entryTitle = EntityFieldValueSpaceContext.entryTitle(entry);
+        let entryTitle = spaceContext.entryTitle(entry);
         const length = 130;
         if (entryTitle.length > length) {
           entryTitle = truncate(entryTitle, length);

@@ -14,7 +14,6 @@ import TheLocaleStore from 'services/localeStore';
 import setupNoShareJsCmaFakeRequestsExperiment from './NoShareJsCmaFakeRequestsExperiment';
 import initSidebarTogglesProps from 'app/entity_editor/entityEditorSidebarToggles';
 import { getModule } from 'NgRegistry';
-import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 
 /**
  * @param {Object} $scope
@@ -64,7 +63,7 @@ export default async function create($scope, editorData, preferences) {
   });
 
   K.onValueScope($scope, $scope.otDoc.valuePropertyAt([]), data => {
-    const title = EntityFieldValueSpaceContext.assetTitle({
+    const title = spaceContext.assetTitle({
       getContentTypeId: () => {},
       data
     });

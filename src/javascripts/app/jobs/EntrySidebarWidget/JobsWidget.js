@@ -5,7 +5,6 @@ import moment from 'moment';
 import { css } from 'emotion';
 import ErrorHandler from 'components/shared/ErrorHandlerComponent';
 import CommandPropType from 'app/entity_editor/CommandPropType';
-import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 
 import {
   SkeletonContainer,
@@ -25,6 +24,8 @@ import { useAsyncFn } from 'app/common/hooks/useAsync';
 import usePrevious from 'app/common/hooks/usePrevious';
 
 import * as logger from 'services/logger';
+
+import { getModule } from 'NgRegistry';
 
 import JobsTimeline from './JobsTimeline';
 
@@ -108,11 +109,12 @@ export default function JobsWidget({
   validator,
   publicationBlockedReason
 }) {
+  const spaceContext = getModule('spaceContext');
   const [jobs, setJobs] = useState([]);
   const [isDialogShown, setIsDialogShown] = useState(false);
   const [isCreatingJob, setIsCreatingJob] = useState(false);
   const publishedAt = getPublishedAt(entity);
-  const entryTitle = EntityFieldValueSpaceContext.entryTitle({
+  const entryTitle = spaceContext.entryTitle({
     getContentTypeId: () => entity.sys.contentType.sys.id,
     data: entity
   });

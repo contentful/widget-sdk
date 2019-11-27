@@ -137,7 +137,7 @@ header.workbench-header
                     cf-thumbnail(file="file" size="30" ng-if="file")
               +td.x--large-cell(aria-label="cell-name"
                 ui-sref="{{linkToAsset}}")
-                | {{ EntityFieldValueSpaceContext.assetTitle(asset) || '&nbsp;' }}
+                | {{ spaceContext.assetTitle(asset) || '&nbsp;' }}
               +td.x--medium-cell(aria-label="cell-dimensions"
                 ui-sref="{{linkToAsset}}")
                 span(ng-bind-html="getAssetDimensions(asset)")

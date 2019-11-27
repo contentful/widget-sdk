@@ -15,7 +15,6 @@ import initDocErrorHandler from 'app/entity_editor/DocumentErrorHandler';
 import * as Validator from 'app/entity_editor/Validator';
 import { buildFieldsApi } from 'app/entity_editor/dataFields';
 import { initJobStore } from 'app/jobs/DataManagement/JobsStoreNg';
-import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 
 export default function register() {
   /**
@@ -238,7 +237,7 @@ export default function register() {
       });
 
       K.onValueScope($scope, $scope.otDoc.valuePropertyAt([]), data => {
-        const title = EntityFieldValueSpaceContext.entryTitle({
+        const title = spaceContext.entryTitle({
           getContentTypeId: _.constant($scope.entityInfo.contentTypeId),
           data: data
         });

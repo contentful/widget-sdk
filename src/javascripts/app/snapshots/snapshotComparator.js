@@ -7,7 +7,6 @@ import * as trackVersioning from 'analytics/events/versioning';
 import TheLocaleStore from 'services/localeStore';
 import * as Entries from 'data/entries';
 import { createCommand } from 'utils/command/command';
-import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 
 import * as Permissions from 'access_control/EntityPermissions';
 
@@ -40,7 +39,7 @@ export default function register() {
       $scope.snapshotCount = $stateParams.snapshotCount;
 
       $scope.context.ready = true;
-      $scope.context.title = EntityFieldValueSpaceContext.entryTitle($scope.entry);
+      $scope.context.title = spaceContext.entryTitle($scope.entry);
       $scope.context.requestLeaveConfirmation = trackVersioning.trackableConfirmator(save);
 
       $scope.localesForField = $scope.widgets.reduce((acc, { field }) => {

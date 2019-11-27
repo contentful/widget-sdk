@@ -7,7 +7,6 @@ import { createSelection } from 'classes/Selection';
 import * as entityStatus from 'app/entity_editor/EntityStatus';
 import * as ResourceUtils from 'utils/ResourceUtils';
 import { getBlankAssetView as getBlankView } from 'data/UiConfig/Blanks';
-import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 
 import TheLocaleStore from 'services/localeStore';
 import createSavedViewsSidebar from 'app/ContentList/SavedViewsSidebar';
@@ -209,7 +208,7 @@ export default function register() {
 
       // Get the default asset file for the default locale
       function getAssetFile(asset) {
-        return EntityFieldValueSpaceContext.getFieldValue(asset, 'file');
+        return spaceContext.getFieldValue(asset, 'file');
       }
     }
   ]);

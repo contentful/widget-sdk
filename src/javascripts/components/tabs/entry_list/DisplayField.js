@@ -5,9 +5,11 @@ import cn from 'classnames';
 import moment from 'moment';
 
 import AngularComponent from 'ui/Framework/AngularComponent';
-import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
+
 import RelativeDateTime from 'components/shared/RelativeDateTime';
 import UserNameFormatter from 'components/shared/UserNameFormatter/FetchAndFormatUserName';
+
+import { getModule } from 'NgRegistry';
 
 import { css } from 'emotion';
 
@@ -42,7 +44,9 @@ const displayType = field => {
 };
 
 const dataForField = (entry, field) => {
-  return EntityFieldValueSpaceContext.getFieldValue(entry, field.id);
+  const spaceContext = getModule('spaceContext');
+
+  return spaceContext.getFieldValue(entry, field.id);
 };
 
 function filterVisibleItems(items, entryCache, assetCache) {
@@ -65,26 +69,34 @@ function filterVisibleItems(items, entryCache, assetCache) {
  * If the link points to a missing entry, return "missing".
  */
 const dataForEntry = (entryLink, entryCache) => {
+  const spaceContext = getModule('spaceContext');
+
   const entry = entryCache.get(entryLink.sys.id);
   if (entry) {
-    return EntityFieldValueSpaceContext.entryTitle(entry);
+    return spaceContext.entryTitle(entry);
   } else {
     return 'missing';
   }
 };
 
 const dataForAsset = (assetLink, assetCache) => {
+  const spaceContext = getModule('spaceContext');
+
   const asset = assetCache.get(assetLink.sys.id);
-  return EntityFieldValueSpaceContext.getFieldValue(asset, 'file');
+  return spaceContext.getFieldValue(asset, 'file');
 };
 
 const dataForLinkedEntry = (entry, field, entryCache) => {
-  const entryLinkField = EntityFieldValueSpaceContext.getFieldValue(entry, field.id);
+  const spaceContext = getModule('spaceContext');
+
+  const entryLinkField = spaceContext.getFieldValue(entry, field.id);
   return entryLinkField ? dataForEntry(entryLinkField, entryCache) : '';
 };
 
 const dataForLinkedAsset = (entry, field, assetCache) => {
-  const assetLinkField = EntityFieldValueSpaceContext.getFieldValue(entry, field.id);
+  const spaceContext = getModule('spaceContext');
+
+  const assetLinkField = spaceContext.getFieldValue(entry, field.id);
   return assetLinkField ? dataForAsset(assetLinkField, assetCache) : '';
 };
 

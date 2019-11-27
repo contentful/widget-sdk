@@ -20,11 +20,10 @@ const commandTemplate = {
 };
 
 jest.mock('../DataManagement/JobsService');
-jest.mock('classes/EntityFieldValueSpaceContext', () => ({ entryTitle: () => 'Test' }));
+jest.mock('ng/spaceContext', () => ({ entryTitle: () => 'Test' }));
 jest.mock('app/entity_editor/UnpublishedReferencesWarning', () => ({
   showUnpublishedReferencesWarning: () => Promise.resolve(true)
 }));
-
 describe('<JobsWidget />', () => {
   beforeEach(() => {
     jest.spyOn(Notification, 'success').mockImplementation(() => {});
