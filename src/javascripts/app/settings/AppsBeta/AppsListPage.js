@@ -67,22 +67,7 @@ const openDetailModal = app => {
   AppLifecycleTracking.detailsOpened(app.id);
 
   ModalLauncher.open(({ isShown, onClose }) => (
-    <AppDetailsModal
-      isShown={isShown}
-      onClose={onClose}
-      app={{
-        installed: app.installed,
-        appId: app.id,
-        appName: app.title,
-        author: app.author,
-        links: app.links,
-        icon: app.icon,
-        categories: app.categories,
-        description: app.description,
-        permissions: app.permissions,
-        enabled: app.enabled
-      }}
-    />
+    <AppDetailsModal isShown={isShown} onClose={onClose} app={app} />
   ));
 };
 
@@ -250,7 +235,7 @@ export default class AppsListPage extends React.Component {
         enabled: getProductCatalogFlagForApp(app, productCatalogFlags)
       }));
 
-      const [installedApps, availableApps] = partition(preparedApps, app => app.installed);
+      const [installedApps, availableApps] = partition(preparedApps, app => !!app.appInstallation);
 
       this.setState(
         {

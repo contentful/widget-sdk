@@ -50,8 +50,7 @@ export const getEnvironmentId = jest.fn();
 
 export const extensionLoader = {
   evictExtension: jest.fn(),
-  getExtensionsById: jest.fn(),
-  getAllExtensionsForListing: jest.fn()
+  getExtensionsById: jest.fn()
 };
 
 export const space = {

@@ -9,23 +9,18 @@ export function getBuiltinsOnly() {
   };
 }
 
-export async function getForContentTypeManagement(extensionLoader, appsRepo) {
-  const [extensions, apps] = await Promise.all([
-    extensionLoader.getAllExtensionsForListing(),
+export async function getForContentTypeManagement(cma, appsRepo) {
+  const [{ items: extensions }, apps] = await Promise.all([
+    cma.getExtensionsForListing(),
     appsRepo.getApps().catch(() => []) // Don't crash if apps are not available.
   ]);
 
-  const appWidgets = apps.reduce(
-    (acc, app) => ({
-      ...acc,
-      [app.appDefinition.sys.id]: { id: app.id, icon: app.icon }
-    }),
-    {}
-  );
+  const extensionWidgets = extensions.filter(e => !!e.extension).map(buildExtensionWidget);
+  const appWidgets = apps.filter(app => !!app.appInstallation).map(buildAppWidget);
 
   return {
     [NAMESPACE_BUILTIN]: createBuiltinWidgetList(),
-    [NAMESPACE_EXTENSION]: extensions.map(extension => buildExtensionWidget(extension, appWidgets))
+    [NAMESPACE_EXTENSION]: extensionWidgets.concat(appWidgets)
   };
 }
 
@@ -62,7 +57,7 @@ export async function getForEditor(extensionLoader, editorInterface = {}) {
 
   return {
     [NAMESPACE_BUILTIN]: createBuiltinWidgetList(),
-    [NAMESPACE_EXTENSION]: extensions.map(extension => buildExtensionWidget(extension))
+    [NAMESPACE_EXTENSION]: extensions.map(buildExtensionWidget)
   };
 }
 
@@ -72,37 +67,46 @@ export async function getForSingleExtension(extensionLoader, extensionId) {
   return extension ? buildExtensionWidget(extension) : null;
 }
 
-function buildExtensionWidget(
-  { sys, extension, extensionDefinition, parameters },
-  appWidgets = {}
-) {
-  const { src, srcdoc } = extension;
-
+function buildExtensionWidget({ sys, extension, parameters }) {
   // We identify srcdoc-backed extensions by taking a look
   // at `sys.srcdocSha256`. It'll be present if the Extension
   // uses `srcdoc` even if `stripSrcdoc` QS paramter was used.
   // If we know that srcdoc is used but we don't have its value
   // (due to `stripSrcdoc`) we indicate it by `true`
-  const base = typeof sys.srcdocSha256 === 'string' ? { srcdoc: srcdoc || true } : { src };
-
-  const extensionDefinitionId = get(extensionDefinition, ['sys', 'id']);
-  const app = appWidgets[extensionDefinitionId];
+  const { src, srcdoc } = extension;
+  const hosting = typeof sys.srcdocSha256 === 'string' ? { srcdoc: srcdoc || true } : { src };
 
   return {
-    ...base,
+    ...hosting,
     id: sys.id,
-    extensionDefinitionId,
     name: extension.name,
     fieldTypes: (extension.fieldTypes || []).map(toInternalFieldType),
-    isApp: !!app,
-    appId: get(app, ['id']),
-    appIconUrl: get(app, ['icon']),
+    isApp: false,
     sidebar: extension.sidebar,
     locations: extension.locations,
     parameters: get(extension, ['parameters', 'instance'], []),
     installationParameters: {
       definitions: get(extension, ['parameters', 'installation'], []),
       values: parameters || {}
+    }
+  };
+}
+
+function buildAppWidget({ id, title, icon, appDefinition, appInstallation }) {
+  return {
+    src: appDefinition.src,
+    id: appInstallation.sys.widgetId,
+    appDefinitionId: appDefinition.sys.id,
+    name: title,
+    fieldTypes: (appDefinition.fieldTypes || []).map(toInternalFieldType),
+    isApp: true,
+    appId: id,
+    appIconUrl: icon,
+    locations: appDefinition.locations,
+    parameters: [],
+    installationParameters: {
+      definitions: [],
+      values: appInstallation.parameters
     }
   };
 }

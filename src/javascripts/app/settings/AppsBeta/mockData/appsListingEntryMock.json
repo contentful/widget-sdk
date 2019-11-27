@@ -162,7 +162,6 @@
         "fields": {
           "title": "Bynder",
           "slug": "bynder",
-          "extensionDefinitionId": "5KySdUzG7OWuCE2V3fgtIa",
           "appDefinitionId": "5KySdUzG7OWuCE2V3fgtIa",
           "productCatalogFlag": {
             "sys": {
@@ -289,7 +288,6 @@
         "fields": {
           "title": "Image Focal Point",
           "slug": "image-focal-point",
-          "extensionDefinitionId": "342Q2DqCjmsdN5BJCEPkrJ",
           "appDefinitionId": "342Q2DqCjmsdN5BJCEPkrJ",
           "productCatalogFlag": {
             "sys": {
@@ -546,7 +544,6 @@
         "fields": {
           "title": "Optimizely",
           "slug": "optimizely",
-          "extensionDefinitionId": "i43PggcHag2PCrGjYTiIX",
           "appDefinitionId": "i43PggcHag2PCrGjYTiIX",
           "productCatalogFlag": {
             "sys": {
@@ -836,7 +833,6 @@
         "fields": {
           "title": "Cloudinary",
           "slug": "cloudinary",
-          "extensionDefinitionId": "zjcnWgBknf9zB7IM9HZjE",
           "appDefinitionId": "zjcnWgBknf9zB7IM9HZjE",
           "productCatalogFlag": {
             "sys": {
@@ -1040,7 +1036,6 @@
         "fields": {
           "title": "Netlify",
           "slug": "netlify",
-          "extensionDefinitionId": "1VchawWvbIClHuMIyxwR5m",
           "appDefinitionId": "1VchawWvbIClHuMIyxwR5m",
           "productCatalogFlag": {
             "sys": {
@@ -1331,7 +1326,6 @@
         "fields": {
           "title": "Dropbox",
           "slug": "dropbox",
-          "extensionDefinitionId": "6YdAwxoPHopeTeuwh43UJu",
           "appDefinitionId": "6YdAwxoPHopeTeuwh43UJu",
           "productCatalogFlag": {
             "sys": {
@@ -1667,7 +1661,6 @@
         "fields": {
           "title": "Frontify",
           "slug": "frontify",
-          "extensionDefinitionId": "5wHGALSJtz7y2EQOLfGhKH",
           "appDefinitionId": "5wHGALSJtz7y2EQOLfGhKH",
           "productCatalogFlag": {
             "sys": {

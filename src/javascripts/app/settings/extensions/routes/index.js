@@ -19,11 +19,12 @@ export default {
       component: ExtensionsListRoute,
       mapInjectedToProps: [
         '$stateParams',
-        $stateParams => {
+        'spaceContext',
+        ($stateParams, spaceContext) => {
           return {
             extensionUrl: decodeURI($stateParams.extensionUrl || ''),
             extensionUrlReferrer: $stateParams.referrer || null,
-            extensionLoader: getExtensionLoader()
+            cma: spaceContext.cma
           };
         }
       ]

@@ -54,7 +54,7 @@ export default function createAppsRepo(appDefinitionLoader, spaceEndpoint) {
             flagId: get(app, ['fields', 'productCatalogFlag', 'fields', 'flagId']),
             icon: get(app, ['fields', 'icon', 'fields', 'file', 'url'], ''),
             id: get(app, ['fields', 'slug'], ''),
-            installed: !!installationMap[definitionId],
+            appInstallation: installationMap[definitionId],
             links: get(app, ['fields', 'links'], []).map(link => link.fields),
             permissions: `__${title} app__ ${permissionsText}`,
             permissionsExplanation: get(app, ['fields', 'permissionsExplanation']),
@@ -75,7 +75,7 @@ export default function createAppsRepo(appDefinitionLoader, spaceEndpoint) {
         appDefinition: def,
         id: `private_${def.sys.id}`,
         title: def.name,
-        installed: !!installationMap[def.sys.id],
+        appInstallation: installationMap[def.sys.id],
         isPrivateApp: true
       };
     });

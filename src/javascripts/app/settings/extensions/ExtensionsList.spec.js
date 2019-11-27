@@ -8,9 +8,10 @@ describe('app/settings/extensions/Extensions', () => {
     $stateMocked.go.mockClear();
   });
 
+  const cma = { deleteExtension: () => {} };
   const refresh = () => Promise.resolve({});
   const mount = (extensions = []) => {
-    return Enzyme.mount(<ExtensionsList extensions={extensions} refresh={refresh} />);
+    return Enzyme.mount(<ExtensionsList cma={cma} extensions={extensions} refresh={refresh} />);
   };
 
   const extensions = [

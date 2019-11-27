@@ -8,7 +8,8 @@ export default addUserOrgSpace((_, data) => {
       field_id: data.fieldId,
       locale_code: data.localeCode,
       extension_id: data.extensionId,
-      extension_definition_id: data.extensionDefinitionId
+      // TODO: rename property in v2 of the schema.
+      extension_definition_id: data.appDefinitionId || null
     }
   };
 });

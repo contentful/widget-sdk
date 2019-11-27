@@ -315,6 +315,19 @@ APIClient.prototype.getExtensions = function() {
   return this._getResources('extensions');
 };
 
+// Fetches all Extension entities in an environment to be
+// used for listing purposes.
+//
+// Note they don't include srcdoc property so they cannot
+// be used for rendering and (for the same reason) cannot
+// be cached.
+APIClient.prototype.getExtensionsForListing = function() {
+  return this._getResources('extensions', {
+    stripSrcdoc: 'true', // Yes, this needs to be a string (it's a value in QS).
+    limit: 1000 // No srcdoc due to `stripSrcdoc`. We can safely fetch 1000.
+  });
+};
+
 APIClient.prototype.getExtension = function(id) {
   return this._getResource('extensions', id);
 };

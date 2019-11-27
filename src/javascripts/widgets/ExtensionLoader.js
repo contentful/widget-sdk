@@ -84,32 +84,10 @@ export function createExtensionLoader(appDefinitionLoader, spaceEndpoint) {
     return result.filter(identity);
   };
 
-  // Removes extension from the cache.
-  // Use when an extension is modified or removed.
-  const evictExtension = id => extensionLoader.clear(id);
-
-  // Fetches all Extension entities in an environment to be
-  // used in listing views.
-  //
-  // Note they don't include srcdoc property so they cannot
-  // be used for rendering and (for the same reason) cannot
-  // be cached.
-  const getAllExtensionsForListing = async () => {
-    const { items } = await spaceEndpoint({
-      method: 'GET',
-      path: ['extensions'],
-      query: {
-        stripSrcdoc: 'true', // Yes this needs to be a string (it's a value in QS).
-        limit: 1000 // No srcdoc due to `stripSrcdoc`. We can safely fetch 1000.
-      }
-    });
-
-    return resolveExtensionDefinitions(items || []);
-  };
-
   return {
-    evictExtension,
     getExtensionsById,
-    getAllExtensionsForListing
+    // Removes extension from the cache.
+    // Use when an extension is modified or removed.
+    evictExtension: id => extensionLoader.clear(id)
   };
 }

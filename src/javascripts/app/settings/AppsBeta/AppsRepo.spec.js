@@ -64,7 +64,6 @@ describe('AppsRepo', () => {
           appDefinition: privateDefinition,
           id: 'private_app-definition-id',
           title: 'My app',
-          installed: false,
           isPrivateApp: true
         }
       ]);
@@ -92,7 +91,6 @@ describe('AppsRepo', () => {
           appDefinition: privateDefinition,
           id: 'private_app-definition-id',
           title: 'My app',
-          installed: false,
           isPrivateApp: true
         }
       ]);

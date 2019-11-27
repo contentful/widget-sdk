@@ -22,7 +22,6 @@ import Icon from 'ui/Components/Icon';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 import StateLink from 'app/common/StateLink';
-import ExtensionsSidebar, { DocsLink } from './ExtensionsSidebar';
 import EmptyStateContainer, {
   defaultSVGStyle
 } from 'components/EmptyStateContainer/EmptyStateContainer';
@@ -30,10 +29,9 @@ import EmptyStateIllustration from 'svg/connected-forms-illustration';
 import { websiteUrl } from 'Config';
 import { getExtensionLoader } from 'widgets/ExtensionLoaderInstance';
 
+import ExtensionsSidebar, { DocsLink } from './ExtensionsSidebar';
 import ExtensionsActions from './ExtensionsActions';
-
 import { openGitHubInstaller } from './ExtensionsActions';
-import { getModule } from 'NgRegistry';
 
 const styles = {
   deleteDropdown: css({
@@ -48,22 +46,15 @@ const styles = {
   svgContainer: css({ width: '280px' })
 };
 
-function deleteExtension(id, refresh) {
-  const spaceContext = getModule('spaceContext');
-
-  return spaceContext.cma
-    .deleteExtension(id)
-    .then(refresh)
-    .then(
-      () => {
-        Notification.success('Your extension was successfully deleted.');
-        getExtensionLoader().evictExtension(id);
-      },
-      err => {
-        Notification.error('There was an error while deleting your extension.');
-        return Promise.reject(err);
-      }
-    );
+async function deleteExtension(id, cma, refresh) {
+  try {
+    await cma.deleteExtension(id);
+    getExtensionLoader().evictExtension(id);
+    await refresh();
+    Notification.success('Your extension was successfully deleted.');
+  } catch (err) {
+    Notification.error('There was an error while deleting your extension.');
+  }
 }
 
 function DeleteButton(props) {
@@ -194,6 +185,9 @@ export class ExtensionsList extends React.Component {
         parameterCounts: PropTypes.object.isRequired
       })
     ).isRequired,
+    cma: PropTypes.shape({
+      deleteExtension: PropTypes.func.isRequired
+    }).isRequired,
     refresh: PropTypes.func.isRequired,
     extensionUrl: PropTypes.string,
     extensionUrlReferrer: PropTypes.string
@@ -206,7 +200,7 @@ export class ExtensionsList extends React.Component {
   }
 
   renderList() {
-    const { extensions, refresh } = this.props;
+    const { extensions, cma, refresh } = this.props;
 
     if (extensions.length === 0) {
       return <EmptyState />;
@@ -242,7 +236,7 @@ export class ExtensionsList extends React.Component {
             <div>
               <DeleteButton
                 extension={extension}
-                onClick={() => deleteExtension(extension.id, refresh)}
+                onClick={() => deleteExtension(extension.id, cma, refresh)}
               />
             </div>
           </div>

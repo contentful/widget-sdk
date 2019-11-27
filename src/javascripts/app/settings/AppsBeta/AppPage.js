@@ -309,7 +309,7 @@ export default class AppRoute extends Component {
       <UninstallModal
         key={Date.now()}
         isShown={isShown}
-        appName={this.state.title}
+        title={this.state.title}
         actionList={this.state.actionList}
         onConfirm={reasons => {
           onClose(true);
@@ -449,9 +449,7 @@ export default class AppRoute extends Component {
     // of `AppDefinition` (no widget ID).
     const descriptor = {
       id: '__undefined-in-app-location__',
-      // We rely on `extensionDefinitionId` property for tracking.
-      // TODO: rename to `appDefinitionId` and bump the schema.
-      extensionDefinitionId: appDefinition.sys.id,
+      appDefinitionId: appDefinition.sys.id,
       src: appDefinition.src
     };
 
@@ -540,7 +538,7 @@ export default class AppRoute extends Component {
               onAuthorize={this.onAuthorize}
               onCancel={this.props.goBackToList}
               icon={appIcon}
-              appName={title}
+              title={title}
               permissions={permissions}
             />
           </Workbench.Content>

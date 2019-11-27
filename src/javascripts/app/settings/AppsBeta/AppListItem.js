@@ -62,7 +62,7 @@ export default class AppListItem extends Component {
       title: PropTypes.string.isRequired,
       tagLine: PropTypes.string,
       icon: PropTypes.string,
-      installed: PropTypes.bool.isRequired,
+      appInstallation: PropTypes.object,
       isPrivateApp: PropTypes.bool,
       enabled: PropTypes.bool.isRequired
     }),
@@ -72,7 +72,7 @@ export default class AppListItem extends Component {
   determineOnClick = (onClick, openDetailsFunc) => {
     const { app } = this.props;
 
-    const continueDirectlyToAppPage = app.installed || app.isPrivateApp;
+    const continueDirectlyToAppPage = !!app.appInstallation || app.isPrivateApp;
 
     return continueDirectlyToAppPage ? onClick : openDetailsFunc;
   };
@@ -108,7 +108,7 @@ export default class AppListItem extends Component {
           </Heading>
         </div>
         <div className={styles.actions}>
-          {app.installed && (
+          {!!app.appInstallation && (
             <StateLink to="^.detail" params={{ appId: app.id }}>
               {({ onClick }) => (
                 <TextLink onClick={onClick} linkType="primary">

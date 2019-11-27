@@ -53,7 +53,57 @@
     "flagId": "basic_apps",
     "icon": "//images.ctfassets.net/lpjm8d10rkpy/2dYQ3x6VMNZJgDXYmMzLBx/b338ad4b50cd0ff31e7157671b801b4d/logomark.svg",
     "id": "netlify",
-    "installed": true,
+    "appInstallation": {
+      "sys": {
+        "type": "AppInstallation",
+        "widgetId": "netlify-app-PvLLvz6HWYaPDK0b",
+        "createdBy": {
+          "sys": {
+            "id": "46JHc8ru6cDDm0CtthS0Kw",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "id": "46JHc8ru6cDDm0CtthS0Kw",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "createdAt": "2019-09-05T08:12:35.709Z",
+        "updatedAt": "2019-10-25T11:46:14.054Z",
+        "appDefinition": {
+          "sys": {
+            "type": "Link",
+            "linkType": "AppDefinition",
+            "id": "1VchawWvbIClHuMIyxwR5m"
+          }
+        },
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "06na28zx9oxr"
+          }
+        },
+        "environment": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Environment",
+            "id": "master"
+          }
+        }
+      },
+      "parameters": {
+        "names": "test",
+        "siteIds": "b616f46d-33a4-4dc2-9c9a-2fd64efcf8d1",
+        "siteUrls": "https://www.contentful.toys",
+        "siteNames": "ctf-toys",
+        "buildHookIds": "5db2e0852b3888c48731019b",
+        "notificationHookIds": "5db2e08533632bcc85b48a74,5db2e085641c4ebc57d34efa,5db2e08533632b9e02b48a8c"
+      }
+    },
     "links": [
       {
         "title": "Netlify Docs",
@@ -118,7 +168,6 @@
     "flagId": "optimizely_app",
     "icon": "//images.ctfassets.net/lpjm8d10rkpy/4X7O4Q0pIgQZNcONoQrQlp/9262ad9a935fa92e9cacd9207ae0a401/optimizely-logo.svg",
     "id": "optimizely",
-    "installed": false,
     "links": [
       {
         "title": "Documentation",
@@ -187,7 +236,6 @@
     "flagId": "basic_apps",
     "icon": "//images.ctfassets.net/lpjm8d10rkpy/3ZH89y9VHHd53v4OQ3BG0V/cc62043a88cd5fb80719687f299e7351/cloudinary_icon_for_white_bg.svg",
     "id": "cloudinary",
-    "installed": false,
     "links": [
       {
         "title": "Cloudinary website",
@@ -256,7 +304,52 @@
     "flagId": "basic_apps",
     "icon": "//images.ctfassets.net/lpjm8d10rkpy/3vNJZRjthatucy2mBJMy1u/0e5d501207427780021e7580cc384761/bynder.5e9e457b9d.svg",
     "id": "bynder",
-    "installed": true,
+    "appInstallation": {
+      "sys": {
+        "type": "AppInstallation",
+        "widgetId": "rEIYfqYc2mO4AjO0mzg0s",
+        "createdBy": {
+          "sys": {
+            "id": "46JHc8ru6cDDm0CtthS0Kw",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "id": "46JHc8ru6cDDm0CtthS0Kw",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "createdAt": "2019-11-22T15:43:06.371Z",
+        "updatedAt": "2019-11-22T15:47:22.636Z",
+        "appDefinition": {
+          "sys": {
+            "type": "Link",
+            "linkType": "AppDefinition",
+            "id": "5KySdUzG7OWuCE2V3fgtIa"
+          }
+        },
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "06na28zx9oxr"
+          }
+        },
+        "environment": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Environment",
+            "id": "master"
+          }
+        }
+      },
+      "parameters": {
+        "bynderURL": "https://test.getbynder.com"
+      }
+    },
     "links": [
       {
         "title": "Bynder website",
@@ -321,7 +414,50 @@
     "flagId": "basic_apps",
     "icon": "//images.ctfassets.net/lpjm8d10rkpy/7KdyOX9FlBz0SX5QyaLFaF/6ee4f786204d6f80b096fb73584dbcf7/logo.svg",
     "id": "dropbox",
-    "installed": true,
+    "appInstallation": {
+      "sys": {
+        "type": "AppInstallation",
+        "widgetId": "43y3qiWIg4cm5yzf36jXA5",
+        "createdBy": {
+          "sys": {
+            "id": "46JHc8ru6cDDm0CtthS0Kw",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "id": "46JHc8ru6cDDm0CtthS0Kw",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "createdAt": "2019-11-26T12:26:49.771Z",
+        "updatedAt": "2019-11-26T12:26:49.771Z",
+        "appDefinition": {
+          "sys": {
+            "type": "Link",
+            "linkType": "AppDefinition",
+            "id": "6YdAwxoPHopeTeuwh43UJu"
+          }
+        },
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "06na28zx9oxr"
+          }
+        },
+        "environment": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Environment",
+            "id": "master"
+          }
+        }
+      },
+      "parameters": {}
+    },
     "links": [
       {
         "title": "Dropbox website",
@@ -386,7 +522,6 @@
     "flagId": "basic_apps",
     "icon": "//images.ctfassets.net/lpjm8d10rkpy/2m7X00RL2l0Rpd9KinrD8x/826779b516c780ff19492ac1d7251d97/logo.svg",
     "id": "frontify",
-    "installed": false,
     "links": [
       {
         "title": "Frontify website",
@@ -460,7 +595,6 @@
     "flagId": "basic_apps",
     "icon": "//images.ctfassets.net/lpjm8d10rkpy/7v1wryVbq6dooI1OqbkIpg/32e947099d5253c56fa344fc7aadfbff/app-logo.svg",
     "id": "image-focal-point",
-    "installed": false,
     "links": [
       {
         "title": "Documentation for the Image Focal Point App",
@@ -505,9 +639,54 @@
       "public": false,
       "locations": ["app", "entry-sidebar"]
     },
-    "id": "dev-app_2JLOqo4SqgMXY2uVWzCSYW",
+    "id": "private_2JLOqo4SqgMXY2uVWzCSYW",
     "title": "Daily Animal",
-    "installed": true,
+    "appInstallation": {
+      "sys": {
+        "type": "AppInstallation",
+        "widgetId": "dev-app_2JLOqo4SqgMXY2uVWzCSYW-app-Z7dpxJeY7ChXnP8f",
+        "createdBy": {
+          "sys": {
+            "id": "46JHc8ru6cDDm0CtthS0Kw",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "id": "46JHc8ru6cDDm0CtthS0Kw",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "createdAt": "2019-11-12T20:19:10.193Z",
+        "updatedAt": "2019-11-12T20:19:10.193Z",
+        "appDefinition": {
+          "sys": {
+            "type": "Link",
+            "linkType": "AppDefinition",
+            "id": "2JLOqo4SqgMXY2uVWzCSYW"
+          }
+        },
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "06na28zx9oxr"
+          }
+        },
+        "environment": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Environment",
+            "id": "master"
+          }
+        }
+      },
+      "parameters": {
+        "animal": "dog"
+      }
+    },
     "isPrivateApp": true
   },
   {
@@ -549,9 +728,52 @@
         }
       ]
     },
-    "id": "dev-app_6QvINyJGdwLe0XjxnKnzrF",
+    "id": "private_6QvINyJGdwLe0XjxnKnzrF",
     "title": "Test",
-    "installed": true,
+    "appInstallation": {
+      "sys": {
+        "type": "AppInstallation",
+        "widgetId": "dev-app_6QvINyJGdwLe0XjxnKnzrF-app-AkI6AMwEBMzP4AEf",
+        "createdBy": {
+          "sys": {
+            "id": "46JHc8ru6cDDm0CtthS0Kw",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "id": "46JHc8ru6cDDm0CtthS0Kw",
+            "type": "Link",
+            "linkType": "User"
+          }
+        },
+        "createdAt": "2019-11-13T20:28:48.244Z",
+        "updatedAt": "2019-11-13T20:28:48.244Z",
+        "appDefinition": {
+          "sys": {
+            "type": "Link",
+            "linkType": "AppDefinition",
+            "id": "6QvINyJGdwLe0XjxnKnzrF"
+          }
+        },
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "06na28zx9oxr"
+          }
+        },
+        "environment": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Environment",
+            "id": "master"
+          }
+        }
+      },
+      "parameters": {}
+    },
     "isPrivateApp": true
   }
 ]

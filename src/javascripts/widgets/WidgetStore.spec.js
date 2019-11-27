@@ -13,19 +13,14 @@ jest.mock('./BuiltinWidgets', () => ({
 }));
 
 describe('WidgetStore', () => {
+  let cmaMock;
   let loaderMock;
   let appsRepoMock;
 
   beforeEach(() => {
-    loaderMock = {
-      evictExtension: jest.fn(),
-      getExtensionsById: jest.fn(),
-      getAllExtensionsForListing: jest.fn()
-    };
-
-    appsRepoMock = {
-      getApps: jest.fn()
-    };
+    cmaMock = { getExtensionsForListing: jest.fn() };
+    loaderMock = { getExtensionsById: jest.fn() };
+    appsRepoMock = { getApps: jest.fn() };
   });
 
   describe('#getBuiltinsOnly()', () => {
@@ -40,12 +35,12 @@ describe('WidgetStore', () => {
 
   describe('#getForContentTypeManagement()', () => {
     it('returns an object of all widget namespaces', async () => {
-      loaderMock.getAllExtensionsForListing.mockImplementationOnce(() => []);
+      cmaMock.getExtensionsForListing.mockResolvedValueOnce({ items: [] });
       appsRepoMock.getApps.mockImplementationOnce(() => Promise.resolve([]));
 
-      const widgets = await WidgetStore.getForContentTypeManagement(loaderMock, appsRepoMock);
+      const widgets = await WidgetStore.getForContentTypeManagement(cmaMock, appsRepoMock);
 
-      expect(loaderMock.getAllExtensionsForListing).toHaveBeenCalledWith();
+      expect(cmaMock.getExtensionsForListing).toHaveBeenCalledTimes(1);
       expect(widgets[NAMESPACE_EXTENSION]).toEqual([]);
       expect(widgets[NAMESPACE_BUILTIN].map(w => w.id)).toEqual(
         createBuiltinWidgetList().map(b => b.id)
@@ -68,80 +63,80 @@ describe('WidgetStore', () => {
         parameters: { test: true }
       };
 
-      loaderMock.getAllExtensionsForListing.mockImplementationOnce(() => [
-        entity,
-        {
-          ...entity,
-          sys: { id: 'srcdoc-extension', srcdocSha256: 'somecodesha' },
-          extension: omit(entity.extension, ['src'])
-        },
-        {
-          ...entity,
-          sys: { id: 'definition-extension' },
-          extension: { ...entity.extension },
-          extensionDefinition: {
-            sys: {
-              type: 'Link',
-              linkType: 'ExtensionDefinition',
-              id: 'definition-id'
-            }
+      cmaMock.getExtensionsForListing.mockResolvedValueOnce({
+        items: [
+          entity,
+          {
+            ...entity,
+            sys: { id: 'srcdoc-extension', srcdocSha256: 'somecodesha' },
+            extension: omit(entity.extension, ['src'])
           }
+        ]
+      });
+
+      appsRepoMock.getApps.mockResolvedValueOnce([
+        {
+          id: 'app-not-installed',
+          title: 'Not installed app',
+          appDefinition: { id: 'some-app-id' }
         },
         {
-          ...entity,
-          sys: { id: 'app-extension' },
-          extension: { ...entity.extension },
-          extensionDefinition: {
-            sys: {
-              type: 'Link',
-              linkType: 'ExtensionDefinition',
-              id: 'app-definition-id'
-            }
+          id: 'app-id',
+          title: 'Test App',
+          appDefinition: {
+            sys: { id: 'app-definition-id' },
+            src: 'http://localhost:1234',
+            name: 'Test Definition Name',
+            fieldTypes: [{ type: 'Array', items: { type: 'Link', linkType: 'Entry' } }],
+            locations: ['APP']
+          },
+          appInstallation: {
+            sys: { widgetId: 'some-app-widget' },
+            parameters: { test: true }
           }
         }
       ]);
 
-      appsRepoMock.getApps.mockImplementationOnce(() =>
-        Promise.resolve([
-          {
-            appDefinition: { sys: { id: 'app-definition-id' } },
-            id: 'app-id'
-          }
-        ])
-      );
+      const widgets = await WidgetStore.getForContentTypeManagement(cmaMock, appsRepoMock);
+      const namespaceWidgets = widgets[NAMESPACE_EXTENSION];
 
-      const widgets = await WidgetStore.getForContentTypeManagement(loaderMock, appsRepoMock);
-      const [extension, srcdocExtension, definitionExtension, appExtension] = widgets[
-        NAMESPACE_EXTENSION
-      ];
+      expect(namespaceWidgets).toHaveLength(3);
 
-      expect(loaderMock.getAllExtensionsForListing).toHaveBeenCalledTimes(1);
+      const [srcWidget, srcdocWidget, appWidget] = namespaceWidgets;
+
+      expect(cmaMock.getExtensionsForListing).toHaveBeenCalledTimes(1);
       expect(appsRepoMock.getApps).toHaveBeenCalledTimes(1);
 
-      expect(extension.id).toEqual('my-extension');
-      expect(extension.extensionDefinitionId).toBeUndefined();
-      expect(extension.name).toEqual('NAME');
-      expect(extension.src).toEqual('SRC');
-      expect(extension.sidebar).toEqual(true);
-      expect(extension.fieldTypes).toEqual(['Assets']);
-      expect(extension.parameters).toEqual([{ id: 'x' }]);
-      expect(extension.installationParameters).toEqual({
+      expect(srcWidget.id).toEqual('my-extension');
+      expect(srcWidget.isApp).toBe(false);
+      expect(srcWidget.appId).toBeUndefined();
+      expect(srcWidget.appDefinitionId).toBeUndefined();
+      expect(srcWidget.name).toEqual('NAME');
+      expect(srcWidget.src).toEqual('SRC');
+      expect(srcWidget.sidebar).toEqual(true);
+      expect(srcWidget.fieldTypes).toEqual(['Assets']);
+      expect(srcWidget.parameters).toEqual([{ id: 'x' }]);
+      expect(srcWidget.installationParameters).toEqual({
         definitions: [{ id: 'test' }],
         values: { test: true }
       });
 
-      expect(srcdocExtension.id).toEqual('srcdoc-extension');
-      expect(srcdocExtension.extensionDefinitionId).toBeUndefined();
-      expect(srcdocExtension.src).toBeUndefined();
-      expect(srcdocExtension.srcdoc).toEqual(true);
+      expect(srcdocWidget.id).toEqual('srcdoc-extension');
+      expect(srcdocWidget.isApp).toBe(false);
+      expect(srcdocWidget.appId).toBeUndefined();
+      expect(srcdocWidget.appDefinitionId).toBeUndefined();
+      expect(srcdocWidget.src).toBeUndefined();
+      expect(srcdocWidget.srcdoc).toEqual(true);
 
-      expect(definitionExtension.id).toEqual('definition-extension');
-      expect(definitionExtension.extensionDefinitionId).toEqual('definition-id');
-      expect(definitionExtension.isApp).toEqual(false);
-
-      expect(appExtension.id).toEqual('app-extension');
-      expect(appExtension.isApp).toEqual(true);
-      expect(appExtension.appId).toEqual('app-id');
+      expect(appWidget.id).toEqual('some-app-widget');
+      expect(appWidget.isApp).toEqual(true);
+      expect(appWidget.appId).toEqual('app-id');
+      expect(appWidget.appDefinitionId).toEqual('app-definition-id');
+      expect(appWidget.name).toEqual('Test App');
+      expect(appWidget.src).toEqual('http://localhost:1234');
+      expect(appWidget.fieldTypes).toEqual(['Entries']);
+      expect(appWidget.locations).toEqual(['APP']);
+      expect(appWidget.installationParameters.values).toEqual({ test: true });
     });
   });
 
