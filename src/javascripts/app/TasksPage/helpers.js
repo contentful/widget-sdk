@@ -1,8 +1,8 @@
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { getModule } from 'NgRegistry';
-import { COMMENTS_API, TASKS_DASHBOARD, getAlphaHeader } from 'alphaHeaders.js';
+import { TASKS_DASHBOARD, getAlphaHeader } from 'alphaHeaders.js';
 
-const alphaHeader = getAlphaHeader(COMMENTS_API, TASKS_DASHBOARD);
+const alphaHeader = getAlphaHeader(TASKS_DASHBOARD);
 
 export async function getOpenAssignedTasksAndEntries(spaceId, envId, userId) {
   const spaceContext = getModule('spaceContext');

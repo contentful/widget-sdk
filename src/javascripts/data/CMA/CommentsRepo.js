@@ -20,9 +20,6 @@ const path = (entryId, commentId) => [
  * @returns {Promise<API.Comment>}
  */
 export async function create(endpoint, entryId, { body, parentCommentId = null }) {
-  const headers = parentCommentId
-    ? { 'x-contentful-parent-id': parentCommentId, ...alphaHeader }
-    : alphaHeader;
   return endpoint(
     {
       method: 'POST',
@@ -31,7 +28,10 @@ export async function create(endpoint, entryId, { body, parentCommentId = null }
         body
       }
     },
-    headers
+    {
+      ...alphaHeader,
+      ...(parentCommentId && { 'x-contentful-parent-id': parentCommentId })
+    }
   );
 }
 
@@ -51,8 +51,10 @@ export async function getAllForEntry(endpoint, entryId) {
     alphaHeader
   );
   // TODO: Remove filter once we removed tasks from `/comments` endpoint.
-  result.items = result.items.filter(item => !item.assignedTo);
-  return result;
+  return {
+    ...result,
+    items: result.items.filter(item => !item.assignedTo)
+  };
 }
 
 /**
@@ -81,10 +83,6 @@ export async function remove(endpoint, entryId, commentId) {
  * @returns {Promise<Comment>}
  */
 export async function update(endpoint, entryId, comment) {
-  const headers = {
-    'X-Contentful-Version': comment.sys.version,
-    ...alphaHeader
-  };
   return endpoint(
     {
       method: 'PUT',
@@ -93,6 +91,9 @@ export async function update(endpoint, entryId, comment) {
         body: comment.body
       }
     },
-    headers
+    {
+      ...alphaHeader,
+      'X-Contentful-Version': comment.sys.version
+    }
   );
 }
