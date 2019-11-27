@@ -16,6 +16,8 @@ import SecuritySection from './SecuritySection';
 
 import ErrorState from 'app/common/ErrorState';
 import LoadingState from 'app/common/LoadingState';
+import { getOrganizations } from 'services/TokenStore';
+import { OrgMembershipsSection } from './OrgMembershipsSection';
 
 const styles = {
   content: css({
@@ -33,16 +35,18 @@ const styles = {
 
 export default function IndexPage({ title, onReady }) {
   const [user, setUser] = useState({});
+  const [hasOrgMemberships, setHasOrgMemberships] = useState(false);
   const [mfaEnabled, setMFAEnabled] = useState(false);
 
   const { isLoading, error } = useAsync(
     useCallback(async () => {
       const [user, variation] = await Promise.all([fetchUserData(), getVariation(TWO_FA_FLAG)]);
-
+      const orgs = await getOrganizations();
       // We fetch the user here and set it above so that children
       // components can update the user without needing to fetch
       setUser(user);
       setMFAEnabled(variation);
+      setHasOrgMemberships(orgs.length > 0);
     }, [])
   );
   useEffect(onReady, [onReady]);
@@ -62,6 +66,11 @@ export default function IndexPage({ title, onReady }) {
               <Card testId="account-details-section-card" className={styles.section}>
                 <AccountDetails user={user} onChangePassword={setUser} onEdit={setUser} />
               </Card>
+              {!hasOrgMemberships && (
+                <Card testId="org-memberships-section-card" className={styles.section}>
+                  <OrgMembershipsSection />
+                </Card>
+              )}
               {!user.ssoLoginOnly && mfaEnabled && (
                 <Card testId="security-section-card" className={styles.section}>
                   <SecuritySection
