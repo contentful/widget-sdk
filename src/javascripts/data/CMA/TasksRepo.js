@@ -10,29 +10,6 @@ export const TaskStatus = {
   RESOLVED: 'resolved'
 };
 
-export function transformTask(task) {
-  if (task.assignment) {
-    Object.assign(task, task.assignment);
-    delete task.assignment;
-  }
-
-  if (task.sys.commentType) {
-    delete task.sys.commentType;
-  }
-  if (task.sys.reference) {
-    Object.assign(task.sys, { parentEntity: task.sys.reference });
-    delete task.sys.reference;
-  }
-
-  if (task.status === 'open') {
-    task.status = TaskStatus.ACTIVE;
-  }
-
-  return task;
-}
-
-export const transformTaskArray = tasks => tasks.items.map(transformTask);
-
 /**
  * Creates a new task on a specific entry.
  *
@@ -42,22 +19,13 @@ export const transformTaskArray = tasks => tasks.items.map(transformTask);
  * @returns {Promise<API.Task>}
  */
 export const create = async (endpoint, entryId, task) =>
-  transformTask(
-    await endpoint(
-      {
-        method: 'POST',
-        path: path(entryId),
-        data: {
-          ...task,
-          // Add assignment: will be ignored by new API but required by the deprecated one
-          assignment: {
-            assignedTo: task.assignedTo,
-            status: task.status === TaskStatus.ACTIVE ? 'open' : task.status
-          }
-        }
-      },
-      alphaHeader
-    )
+  endpoint(
+    {
+      method: 'POST',
+      path: path(entryId),
+      data: task
+    },
+    alphaHeader
   );
 
 /**
@@ -67,16 +35,16 @@ export const create = async (endpoint, entryId, task) =>
  * @param {String} entryId
  * @returns {Promise<API.Task>}
  */
-export const getAllForEntry = async (endpoint, entryId) =>
-  transformTaskArray(
-    await endpoint(
-      {
-        method: 'GET',
-        path: path(entryId)
-      },
-      alphaHeader
-    )
+export const getAllForEntry = async (endpoint, entryId) => {
+  const result = await endpoint(
+    {
+      method: 'GET',
+      path: path(entryId)
+    },
+    alphaHeader
   );
+  return result.items;
+};
 
 /**
  * Deletes a task.
@@ -113,21 +81,12 @@ export async function update(endpoint, entryId, task) {
     'X-Contentful-Version': sys.version,
     ...alphaHeader
   };
-  return transformTask(
-    await endpoint(
-      {
-        method: 'PUT',
-        path: path(entryId, sys.id),
-        data: {
-          ...taskDetails,
-          // Add assignment: will be ignored by new API but required by the deprecated one
-          assignment: {
-            assignedTo: task.assignedTo,
-            status: task.status === TaskStatus.ACTIVE ? 'open' : task.status
-          }
-        }
-      },
-      headers
-    )
+  return endpoint(
+    {
+      method: 'PUT',
+      path: path(entryId, sys.id),
+      data: taskDetails
+    },
+    headers
   );
 }
