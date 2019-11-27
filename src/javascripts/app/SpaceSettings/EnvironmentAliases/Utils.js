@@ -22,3 +22,11 @@ export async function handleChangeEnvironment(spaceId, alias, aliasedEnvironment
   } = await get({ id: alias.sys.id });
   return update({ id, version, aliasedEnvironment });
 }
+
+// content specific pages
+export const isAContentSpecificPage = () =>
+  ['/content_types', '/entries', '/assets'].some(path => window.location.pathname.includes(path));
+
+// environment aware pages
+export const isAnEnvironmentAwarePage = () =>
+  ['/locales', '/extensions', '/usage'].some(path => window.location.pathname.includes(path));

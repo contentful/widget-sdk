@@ -204,3 +204,6 @@ yet).
 | environment_aliases | opt_in_abort_step_2                   | -
 | environment_aliases | change_environment_open               | -
 | environment_aliases | change_environment_abort              | -
+| environment_aliases | notification_environment_alias_changed| <code>update: obj<br />newTarget: string<br />oldTarget: string<br />aliasId: string</code>
+| environment_aliases | notification_switch_to_alias          | -
+| environment_aliases | notification_continue_on_environment  | -

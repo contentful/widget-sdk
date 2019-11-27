@@ -12,3 +12,13 @@ export default {
     removeItem: jest.fn()
   }
 };
+
+export const setWindowLocationProperties = values => {
+  global.window = Object.create(window);
+  Object.defineProperty(window, 'location', {
+    value: {
+      ...values
+    },
+    writable: true
+  });
+};

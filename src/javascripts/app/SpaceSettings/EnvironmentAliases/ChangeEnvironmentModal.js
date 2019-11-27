@@ -12,7 +12,6 @@ import {
   DropdownListItem,
   Modal,
   Dropdown,
-  Notification,
   Paragraph,
   Note
 } from '@contentful/forma-36-react-components';
@@ -27,6 +26,7 @@ import {
 } from 'analytics/events/EnvironmentAliases';
 import { CodeFragment } from 'ui/Content';
 import AnimateHeight from 'react-animate-height';
+import { triggerAliasChangedToast } from 'app/SpaceSettings/EnvironmentAliases/NotificationsService';
 
 const changeEnvironmentModalStyles = {
   dropdown: css({
@@ -84,36 +84,34 @@ export default function ChangeEnvironmentModal({
   spaceId,
   setModalOpen,
   alias,
-  targetEnv: { aliases, id, payload },
+  targetEnv: { aliases, id: oldTarget, payload },
   environments
 }) {
   const initialAliasedEnvironment = 'Select environment';
   const [dropDownOpen, setDropDownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [aliasedEnvironment, setAliasedEnvironment] = useState(initialAliasedEnvironment);
+  const [newTarget, setNewTarget] = useState(initialAliasedEnvironment);
 
-  useEffect(() => setAliasedEnvironment(initialAliasedEnvironment), [id]);
+  useEffect(() => setNewTarget(initialAliasedEnvironment), [oldTarget]);
 
   const select = aliasedEnvironment => {
-    setAliasedEnvironment(aliasedEnvironment);
+    setNewTarget(aliasedEnvironment);
     setDropDownOpen(false);
   };
 
   const changeEnvironment = async () => {
     setLoading(true);
     try {
-      await handleChangeEnvironment(spaceId, alias, aliasedEnvironment);
+      await triggerAliasChangedToast(handleChangeEnvironment, {
+        spaceId,
+        alias,
+        oldTarget,
+        newTarget
+      });
       changeEnvironmentConfirm();
       setModalOpen(false);
-      setTimeout(() => window.location.reload(), 1000);
-      Notification.success(
-        `Your "${alias.sys.id}" alias is now pointing towards the environment "${aliasedEnvironment}"`
-      );
     } catch (err) {
       logger.logError('Aliases - changeEnvironment exception', err);
-      Notification.error(
-        `There was an error pointing your "${alias.sys.id}" alias towards the environment "${aliasedEnvironment}"`
-      );
     } finally {
       setLoading(false);
     }
@@ -124,7 +122,7 @@ export default function ChangeEnvironmentModal({
       title={`Change target environment of the ${alias.sys.id} alias`}
       onClose={() => {
         changeEnvironmentAbort();
-        setAliasedEnvironment(initialAliasedEnvironment);
+        setNewTarget(initialAliasedEnvironment);
         setModalOpen(false);
       }}
       shouldCloseOnOverlayClick={false}
@@ -143,7 +141,7 @@ export default function ChangeEnvironmentModal({
                   environmentId={alias.sys.id}
                   isMaster
                   isSelected
-                  aliasId={id}
+                  aliasId={oldTarget}
                   showAliasedTo={false}
                   hasCopy={false}></EnvironmentDetails>
               </div>
@@ -154,7 +152,7 @@ export default function ChangeEnvironmentModal({
                     <TableCell>
                       <EnvironmentDetails
                         testId="changeenvironmentmodal.current-environment"
-                        environmentId={id}
+                        environmentId={oldTarget}
                         createdAt={payload.sys.createdAt}
                         isMaster={aliases.includes('master')}
                         hasCopy={false}></EnvironmentDetails>
@@ -175,7 +173,7 @@ export default function ChangeEnvironmentModal({
                     buttonType="muted"
                     indicateDropdown
                     onClick={() => setDropDownOpen(!dropDownOpen)}>
-                    {aliasedEnvironment}
+                    {newTarget}
                   </Button>
                 }>
                 <DropdownList
@@ -188,7 +186,7 @@ export default function ChangeEnvironmentModal({
                       <DropdownListItem
                         testId={`changeenvironmentmodal.select-${id}`}
                         key={id}
-                        isActive={aliasedEnvironment === id}
+                        isActive={newTarget === id}
                         onClick={() => select(id)}>
                         <EnvironmentDetails
                           hasCopy={false}
@@ -199,15 +197,15 @@ export default function ChangeEnvironmentModal({
                 </DropdownList>
               </Dropdown>
             </Card>
-            <AnimateHeight height={aliasedEnvironment !== initialAliasedEnvironment ? 'auto' : 0}>
+            <AnimateHeight height={newTarget !== initialAliasedEnvironment ? 'auto' : 0}>
               <Note
                 title={`The target environment of the ${alias.sys.id} alias will be changed from`}>
                 <Paragraph className={changeEnvironmentModalStyles.changeNotice}>
-                  <CodeFragment>{id}</CodeFragment>
+                  <CodeFragment>{oldTarget}</CodeFragment>
                   <span>
                     <em> to </em>
                   </span>
-                  <CodeFragment>{aliasedEnvironment}</CodeFragment>
+                  <CodeFragment>{newTarget}</CodeFragment>
                 </Paragraph>
               </Note>
             </AnimateHeight>
@@ -218,7 +216,7 @@ export default function ChangeEnvironmentModal({
               onClick={changeEnvironment}
               buttonType="negative"
               loading={loading}
-              disabled={aliasedEnvironment === initialAliasedEnvironment}>
+              disabled={newTarget === initialAliasedEnvironment}>
               Confirm changes
             </Button>
             <Button

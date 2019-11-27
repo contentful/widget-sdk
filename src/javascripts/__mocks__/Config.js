@@ -24,3 +24,5 @@ export const services = {
 };
 
 export const env = 'jest';
+
+export const pusher = {};

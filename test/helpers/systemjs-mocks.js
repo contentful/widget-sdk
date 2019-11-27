@@ -19,6 +19,7 @@ async function stubConfig(system) {
     env: 'unittest',
     launchDarkly: { envId: 'launch-darkly-test-id' },
     snowplow: {},
+    pusher: {},
     services: {
       filestack: {},
       google: {},
@@ -68,6 +69,13 @@ async function stubShareJsLibClient(system) {
   });
 }
 
+async function stubPubSubSubscriber(system) {
+  await system.set('services/PubSubService', {
+    createPubSubClientForSpace: sinon.stub().resolves({ on: sinon.stub(), off: sinon.stub() }),
+    ENVIRONMENT_ALIAS_CHANGED_EVENT: 'ENVIRONMENT_ALIAS_CHANGED_EVENT'
+  });
+}
+
 async function stubFilestack(system) {
   await system.set('services/Filestack', {
     makeDropPane: sinon.stub(),
@@ -111,6 +119,7 @@ beforeEach(async function() {
   await stubClientStorage(this.system);
   await stubLaunchDarklyUtil(this.system);
   await stubShareJsLibClient(this.system);
+  await stubPubSubSubscriber(this.system);
   await stubFilestack(this.system);
   await stubConfig(this.system);
 });

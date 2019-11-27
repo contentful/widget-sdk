@@ -98,52 +98,71 @@ export default class SpaceWithEnvironments extends React.Component {
 
   state = { loading: false, environments: undefined };
 
+  componentDidMount() {
+    if (this.isOpened()) this.refreshEnvironmentsList();
+  }
+
   isOpened = () => {
     const { openedSpaceId, space } = this.props;
     return openedSpaceId === space.sys.id;
   };
 
   toggleEnvironmentList = async () => {
-    const spaceContext = getModule('spaceContext');
-
     if (this.isOpened()) {
       this.props.setOpenedSpaceId(null);
       return;
     }
+    this.refreshEnvironmentsList();
+  };
 
+  refreshEnvironmentsList = async () => {
+    const spaceContext = getModule('spaceContext');
     this.setState({ loading: true });
 
-    const endpoint = createSpaceEndpoint(this.props.space.sys.id);
+    const {
+      space: {
+        sys: { id: spaceId }
+      },
+      setOpenedSpaceId,
+      goToSpace
+    } = this.props;
+
+    const endpoint = createSpaceEndpoint(spaceId);
     const repo = SpaceEnvironmentRepo.create(endpoint);
     let allEnvs;
 
-    try {
-      const { environments } = await repo.getAll();
-      allEnvs = environments;
-    } catch (_e) {
-      this.setState({ loading: false });
-      return;
+    if (spaceContext.environments && spaceContext.getId() === spaceId) {
+      // try to use environments from spacecontext
+      allEnvs = spaceContext.environments;
+    } else {
+      try {
+        const { environments } = await repo.getAll();
+        allEnvs = environments;
+      } catch (_e) {
+        this.setState({ loading: false });
+        return;
+      }
     }
 
     const envs = allEnvs.filter(env => env.sys.status.sys.id === 'ready');
 
-    const goToSpace = (envId, isMasterEnv, isAliased) => {
-      this.props.setOpenedSpaceId(null);
-      this.props.goToSpace(this.props.space.sys.id, envId, isMasterEnv, isAliased);
+    const goToSpaceReset = (envId, isMasterEnv, isAliased) => {
+      setOpenedSpaceId(null);
+      goToSpace(spaceId, envId, isMasterEnv, isAliased);
     };
 
     this.setState({ loading: false });
     if (envs.length === 0 || (envs.length === 1 && spaceContext.isMasterEnvironment(envs[0]))) {
-      goToSpace();
+      goToSpaceReset();
     } else if (envs.length === 1) {
-      goToSpace(
+      goToSpaceReset(
         envs[0].sys.id,
         spaceContext.isMasterEnvironment(envs[0]),
         spaceContext.getAliasesIds(envs[0]).length > 0
       );
     } else {
       this.setState({ environments: envs }, () => {
-        this.props.setOpenedSpaceId(this.props.space.sys.id);
+        setOpenedSpaceId(spaceId);
       });
     }
   };

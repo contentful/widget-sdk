@@ -47,6 +47,68 @@ export function go(state) {
 
 /**
  * @ngdoc method
+ * @name state/Navigator#reload:
+ * @description
+ * Reload the current page
+ * @returns {Promise<void>}
+ */
+export function reload() {
+  const $state = getModule('$state');
+  return $state.reload();
+}
+
+/**
+ * @ngdoc method
+ * @name state/Navigator#reloadWithEnvironment:
+ * @description
+ * Reload the current page, inserting environment if route should be scoped
+ * @param {string}
+ * @returns {Promise<void>}
+ */
+export async function reloadWithEnvironment(environmentId) {
+  const $state = getModule('$state');
+  const $rootScope = getModule('$rootScope');
+  const { current, params } = $state;
+  const { name } = current;
+
+  const reloadTo = async (path, params) => {
+    await $state.go(path, params, { reload: true, inherit: false });
+    $rootScope.$broadcast('$locationChangeSuccess');
+    $rootScope.$broadcast('$stateChangeSuccess', { name: path });
+  };
+
+  if (name.includes('spaces.detail')) {
+    let path = name;
+    try {
+      if (environmentId && !name.includes('.environment')) {
+        // add environment param and path
+        const newPath = name.split('.');
+        newPath.splice(2, 0, 'environment');
+        path = newPath.join('.');
+        params.environmentId = environmentId;
+      } else if (!environmentId && name.includes('.environment')) {
+        // remove environment param and path
+        path = name.replace('.environment', '');
+        delete params.environmentId;
+      }
+      delete params.addToContext;
+      await reloadTo(path, params);
+      return;
+    } catch (error) {
+      // fallback on list view
+      const fallback = path.replace(/\.(detail|detail\.fields)$/, '.list');
+      await reloadTo(fallback, {
+        spaceId: params.spaceId,
+        environmentId: params.environmentId
+      });
+      return error;
+    }
+  }
+  await reload();
+}
+
+/**
+ * @ngdoc method
  * @name state/Navigator#href:
  * @description
  * Like `$state.href()` but accepts a full state reference

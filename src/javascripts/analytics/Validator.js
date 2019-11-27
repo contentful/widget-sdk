@@ -126,7 +126,10 @@ export const validEvents = {
     'opt_in_abort_step_1',
     'opt_in_abort_step_2',
     'change_environment_open',
-    'change_environment_abort'
+    'change_environment_abort',
+    'notification_environment_alias_changed',
+    'notification_switch_to_alias',
+    'notification_continue_on_environment'
   ],
   ui_webhook_editor: ['save'],
   usage: ['period_selected'],

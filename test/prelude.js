@@ -90,6 +90,7 @@
           env: 'unittest',
           launchDarkly: { envId: 'launch-darkly-test-id' },
           snowplow: {},
+          pusher: {},
           services: {
             filestack: {},
             google: {},

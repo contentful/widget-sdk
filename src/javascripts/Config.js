@@ -127,6 +127,11 @@ export const appUrl = `https://app.${domain}`;
 export const snowplow = settings.snowplow;
 
 /**
+ * Pusher service settings
+ */
+export const pusher = settings.pusher;
+
+/**
  * Launch Darkly config object
  */
 export const launchDarkly = settings.launchDarkly;

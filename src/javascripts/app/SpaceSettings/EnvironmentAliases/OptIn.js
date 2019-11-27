@@ -24,6 +24,7 @@ import { handleOptIn, STEPS } from './Utils';
 import { aliasStyles } from './SharedStyles';
 import { optInAbortStep, optInComplete } from 'analytics/events/EnvironmentAliases';
 import moment from 'moment';
+import * as Navigator from 'states/Navigator';
 
 const aliasOptInStyles = {
   buttons: css({
@@ -81,7 +82,7 @@ export default function OptIn({ step, setStep, spaceId, testId }) {
 
   const onOptInComplete = async () => {
     optInComplete();
-    setTimeout(() => window.location.reload());
+    setTimeout(() => Navigator.reload());
   };
 
   const onReset = () => {

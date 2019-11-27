@@ -95,6 +95,9 @@ registerEnvironmentAliasesEvent('environment_aliases:opt_in_abort_step_1');
 registerEnvironmentAliasesEvent('environment_aliases:opt_in_abort_step_2');
 registerEnvironmentAliasesEvent('environment_aliases:change_environment_open');
 registerEnvironmentAliasesEvent('environment_aliases:change_environment_abort');
+registerEnvironmentAliasesEvent('environment_aliases:notification_environment_alias_changed');
+registerEnvironmentAliasesEvent('environment_aliases:notification_switch_to_alias');
+registerEnvironmentAliasesEvent('environment_aliases:notification_continue_on_environment');
 
 registerGenericEvent('usage:period_selected');
 

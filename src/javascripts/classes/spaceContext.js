@@ -283,6 +283,18 @@ export default function register() {
         },
 
         /**
+
+        /**
+         * @name spaceContext#hasOptedIntoAliases
+         * @description
+         * Checks if the space is opted in to the environment alias feature
+         * @returns boolean
+         */
+        hasOptedIntoAliases: function(environments = _.get(this, ['environments'], [])) {
+          return environments.some(({ sys: { aliases = [] } }) => aliases.length > 0);
+        },
+
+        /**
          * @ngdoc method
          * @name spaceContext#getData
          * @param {string} path
@@ -596,9 +608,7 @@ export default function register() {
               environmentId: spaceContext.getEnvironmentId(),
               isMasterEnvironment: spaceContext.isMasterEnvironment(spaceContext.space.environment),
               aliasId: aliases[0], // for now we assume that there is only alias ('master')
-              optedIn: spaceContext.environments.some(
-                ({ sys: { aliases = [] } }) => aliases.length > 0
-              )
+              optedIn: spaceContext.hasOptedIntoAliases()
             };
           });
       }

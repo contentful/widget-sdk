@@ -44,3 +44,15 @@ export function changeEnvironmentAbort(data) {
 export function changeEnvironmentConfirm(data) {
   return Intercom.trackEvent('environment_aliases-change', data);
 }
+
+export function notificationEnvironmentAliasChanged(data) {
+  track('notification_environment_alias_changed', data);
+}
+
+export function notificationSwitchToAlias(data) {
+  track('notification_switch_to_alias', data);
+}
+
+export function notificationContinueOnEnvironment(data) {
+  track('notification_continue_on_environment', data);
+}

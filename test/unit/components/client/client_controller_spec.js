@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import * as K from 'test/utils/kefir';
-import { $initialize, $inject, $apply } from 'test/utils/ng';
+import { $initialize, $inject, $apply, $applyAsync } from 'test/utils/ng';
 
 describe('Client Controller', () => {
   let scope;
@@ -27,6 +27,9 @@ describe('Client Controller', () => {
       }
     };
 
+    this.pubSubOn = sinon.stub();
+    this.pubSubOff = sinon.stub();
+
     this.stubs = {
       refresh: sinon.stub().resolves(),
       user$: K.createMockProperty(),
@@ -34,7 +37,8 @@ describe('Client Controller', () => {
       enable: sinon.stub(),
       disable: sinon.stub(),
       track: sinon.stub(),
-      intercomDisable: sinon.stub()
+      intercomDisable: sinon.stub(),
+      createPubSubClientForSpace: sinon.stub().returns({ on: this.pubSubOn, off: this.pubSubOn })
     };
 
     this.system.set('analytics/Analytics', {
@@ -76,6 +80,17 @@ describe('Client Controller', () => {
 
     this.system.set('services/authorization', {
       default: this.authorizationStubs
+    });
+
+    this.ENVIRONMENT_ALIAS_CHANGED_EVENT = 'ENVIRONMENT_ALIAS_CHANGED_EVENT';
+
+    this.system.set('services/PubSubService', {
+      createPubSubClientForSpace: this.stubs.createPubSubClientForSpace,
+      ENVIRONMENT_ALIAS_CHANGED_EVENT: this.ENVIRONMENT_ALIAS_CHANGED_EVENT
+    });
+
+    this.system.set('app/SpaceSettings/EnvironmentAliases/NotificationsService', {
+      default: sinon.stub().returns(sinon.stub())
     });
 
     await $initialize(this.system);
@@ -222,6 +237,38 @@ describe('Client Controller', () => {
         sinon.assert.called(this.stubs.intercomDisable);
         sinon.assert.called(this.logger.disable);
       });
+    });
+  });
+
+  describe('pubsub subscription', () => {
+    beforeEach(function() {
+      this.token = { sys: {} };
+      this.environmentId = 'Environment ID';
+      this.spaceId = 'Space ID';
+      this.spaceContext = $inject('spaceContext');
+      this.spaceContext.hasOptedIntoAliases = () => true;
+      this.spaceContext.getId = () => this.spaceId;
+      this.spaceContext.space = null;
+      this.spaceContext.getEnvironmentId = () => this.environmentId;
+      this.spaceContext.isMasterEnvironment = () => true;
+    });
+
+    it('does not subscribe if not opted in and spaceId', async function() {
+      this.spaceContext.hasOptedIntoAliases = () => false;
+      $apply();
+      sinon.assert.notCalled(this.stubs.createPubSubClientForSpace);
+    });
+
+    it('does not subscribe if opted in and no spaceId', async function() {
+      this.spaceContext.getId = () => null;
+      $apply();
+      sinon.assert.notCalled(this.stubs.createPubSubClientForSpace);
+    });
+
+    it('subscribes if opted in and spaceId', async function() {
+      await $applyAsync();
+      sinon.assert.calledWith(this.stubs.createPubSubClientForSpace, this.spaceId);
+      sinon.assert.calledWith(this.pubSubOn, this.ENVIRONMENT_ALIAS_CHANGED_EVENT, sinon.match.any);
     });
   });
 });

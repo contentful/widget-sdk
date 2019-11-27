@@ -100,6 +100,11 @@ function integrations() {
       app_id: { type: 'string' },
       buffer_size: { type: 'number' }
     }),
+    pusher: strictObject({
+      cluster: { type: 'string' },
+      endpoint: { type: 'string' },
+      appKey: { type: 'string' }
+    }),
     getstream_io: strictObject({
       api_key: { type: 'string' },
       app_id: { type: 'string' }

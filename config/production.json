@@ -54,5 +54,10 @@
   "getstream_io": {
     "api_key": "qp5baq8rq72f",
     "app_id": "49481"
+  },
+  "pusher": {
+    "cluster": "mt1",
+    "endpoint": "/pubsub/auth",
+    "appKey": "28f9d913c6b554d2c054"
   }
 }

@@ -46,6 +46,7 @@ export const contentPreview = {
 export const getData = jest.fn();
 export const getId = jest.fn();
 export const getSpace = jest.fn();
+export const hasOptedIntoAliases = jest.fn();
 
 export const endpoint = jest.fn();
 

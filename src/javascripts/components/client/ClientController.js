@@ -4,6 +4,11 @@ import { pick, isObject } from 'lodash';
 import authorization from 'services/authorization';
 
 import { ENVIRONMENT_USAGE_ENFORCEMENT } from 'featureFlags';
+import {
+  createPubSubClientForSpace,
+  ENVIRONMENT_ALIAS_CHANGED_EVENT
+} from 'services/PubSubService';
+import initEnvAliasChangeHandler from 'app/SpaceSettings/EnvironmentAliases/NotificationsService';
 
 export default function register() {
   registerController('ClientController', [
@@ -23,6 +28,8 @@ export default function register() {
       let Analytics;
       let TokenStore;
       let refreshNavState;
+      let pubsubClient;
+      let pubsubSubscribed;
 
       // TODO remove this eventually. All components should access it as a service
       $scope.spaceContext = spaceContext;
@@ -104,9 +111,9 @@ export default function register() {
         }
 
         let newEnforcement = {};
+        const spaceId = spaceContext.getId();
 
         if (shouldCheckUsageForCurrentLocation()) {
-          const spaceId = spaceContext.getId();
           const allowNewUsageCheck = await getSpaceFeature(
             spaceId,
             ENVIRONMENT_USAGE_ENFORCEMENT,
@@ -126,6 +133,24 @@ export default function register() {
           spaceContext.isMasterEnvironment(),
           newEnforcement
         );
+
+        if (pubsubClient && pubsubSubscribed) {
+          // when switching spaces or accessing org settings
+          // the previous spaceId listeners have to be removed
+          pubsubClient.off(ENVIRONMENT_ALIAS_CHANGED_EVENT);
+          pubsubSubscribed = false;
+        }
+
+        const hasOptedIntoAliases = spaceContext.hasOptedIntoAliases();
+        if (!pubsubSubscribed && spaceId && hasOptedIntoAliases) {
+          // listen for backend events
+          pubsubSubscribed = true;
+          pubsubClient = await createPubSubClientForSpace(spaceId);
+          const environmentAliasChangedHandler = initEnvAliasChangeHandler(
+            spaceContext.getEnvironmentId()
+          );
+          pubsubClient.on(ENVIRONMENT_ALIAS_CHANGED_EVENT, environmentAliasChangedHandler);
+        }
 
         refreshNavState();
       }
