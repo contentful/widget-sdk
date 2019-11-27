@@ -10774,6 +10774,21 @@ pre,
     max-height: 100%;
     overflow: hidden;
   }
+  .nav-sidepanel__spaces-header {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-negative: 0;
+        flex-shrink: 0;
+    -ms-flex-pack: justify;
+    -webkit-box-pack: justify;
+            justify-content: space-between;
+    padding: 20px 20px 0;
+  }
+  .nav-sidepanel__spaces-header-heading {
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
   .nav-sidepanel__space-list {
     overflow-y: auto;
     color: #536171;
