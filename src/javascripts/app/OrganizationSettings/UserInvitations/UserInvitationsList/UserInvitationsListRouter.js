@@ -9,9 +9,23 @@ import { getMemberships } from 'access_control/OrganizationMembershipRepository'
 import UserInvitationsList from './UserInvitationsList';
 import { membershipExistsParam } from '../UserInvitationUtils';
 import DocumentTitle from 'components/shared/DocumentTitle';
+import { getVariation } from 'LaunchDarkly';
+import { PENDING_ORG_MEMBERSHIPS } from 'featureFlags';
+import { go } from 'states/Navigator';
 
-const InvitationListFetcher = createFetcherComponent(({ orgId }) => {
+const InvitationListFetcher = createFetcherComponent(async ({ orgId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
+
+  const hasPendingMembershipsEnabled = getVariation(PENDING_ORG_MEMBERSHIPS, {
+    organizationId: orgId
+  });
+
+  if (hasPendingMembershipsEnabled) {
+    // Redirect to the user list if the org has the pending memberships feature.
+    // This component will be removed once the feature reached general availability.
+    go({ path: ['account', 'organizations', 'users', 'list'] });
+    return [0];
+  }
 
   return Promise.all([
     getMemberships(endpoint, { limit: 0, [membershipExistsParam]: true }).then(({ total }) => total)

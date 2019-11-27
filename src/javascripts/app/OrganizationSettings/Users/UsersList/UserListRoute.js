@@ -10,6 +10,8 @@ import { getAllTeams } from 'access_control/TeamRepository';
 import { getOrganization } from 'services/TokenStore';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import DocumentTitle from 'components/shared/DocumentTitle';
+import { getVariation } from 'LaunchDarkly';
+import { PENDING_ORG_MEMBERSHIPS } from 'featureFlags';
 
 const UserListFetcher = createFetcherComponent(({ orgId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
@@ -25,7 +27,8 @@ const UserListFetcher = createFetcherComponent(({ orgId }) => {
     getAllRoles(endpoint),
     safeGetTeams(),
     getOrganization(orgId),
-    getOrgFeature(orgId, 'teams', false)
+    getOrgFeature(orgId, 'teams', false),
+    getVariation(PENDING_ORG_MEMBERSHIPS, { organizationId: orgId })
   ];
 
   return Promise.all(promises);
@@ -55,7 +58,14 @@ export default class UserListRoute extends React.Component {
               return <StateRedirect to="spaces.detail.entries.list" />;
             }
 
-            const [spaces, roles, teams, org, hasTeamsFeature] = data;
+            const [
+              spaces,
+              roles,
+              teams,
+              org,
+              hasTeamsFeature,
+              hasPendingOrgMembershipsEnabled
+            ] = data;
 
             return (
               <React.Fragment>
@@ -67,6 +77,7 @@ export default class UserListRoute extends React.Component {
                   teams={teams}
                   hasSsoEnabled={org.hasSsoEnabled}
                   hasTeamsFeature={hasTeamsFeature}
+                  hasPendingOrgMembershipsEnabled={hasPendingOrgMembershipsEnabled}
                 />
               </React.Fragment>
             );

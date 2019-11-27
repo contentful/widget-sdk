@@ -14,7 +14,9 @@ import { getVariation } from 'LaunchDarkly';
 export function useAddToOrg(orgId, hasSsoEnabled, onProgress = () => {}) {
   const fn = async (emails, role, spaceMemberships = [], teams = [], suppressInvitation) => {
     const orgEndpoint = createOrganizationEndpoint(orgId);
-    const shouldUseNewInvitation = await getVariation(PENDING_ORG_MEMBERSHIPS);
+    const shouldUseNewInvitation = await getVariation(PENDING_ORG_MEMBERSHIPS, {
+      organizationId: orgId
+    });
 
     // use the new invitation flow using pending org memberships
     // this new process will also cover SSO
