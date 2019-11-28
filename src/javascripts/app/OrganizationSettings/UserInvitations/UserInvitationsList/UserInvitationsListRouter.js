@@ -16,7 +16,7 @@ import { go } from 'states/Navigator';
 const InvitationListFetcher = createFetcherComponent(async ({ orgId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
 
-  const hasPendingMembershipsEnabled = getVariation(PENDING_ORG_MEMBERSHIPS, {
+  const hasPendingMembershipsEnabled = await getVariation(PENDING_ORG_MEMBERSHIPS, {
     organizationId: orgId
   });
 
