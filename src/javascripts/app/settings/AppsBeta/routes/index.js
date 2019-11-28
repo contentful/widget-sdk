@@ -7,7 +7,7 @@ import * as Navigator from 'states/Navigator';
 import * as SlideInNavigator from 'navigation/SlideInNavigator/index';
 import { getAppsRepo } from '../AppsRepoInstance';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
-import { getExtensionLoader } from 'widgets/ExtensionLoaderInstance';
+import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 
 export default {
   name: 'apps',
@@ -45,7 +45,9 @@ export default {
       url: '/:appId',
       component: AppPage,
       resolve: {
-        app: ['$stateParams', ({ appId }) => getAppsRepo().getApp(appId)]
+        // Define dependency on spaceContext so we load the app
+        // only when the space is initialized.
+        app: ['$stateParams', 'spaceContext', ({ appId }) => getAppsRepo().getApp(appId)]
       },
       mapInjectedToProps: [
         'spaceContext',
@@ -73,7 +75,7 @@ export default {
             bridge,
             appHookBus,
             cma: spaceContext.cma,
-            evictWidget: id => getExtensionLoader().evictExtension(id)
+            evictWidget: id => getCustomWidgetLoader().evict(id)
           };
         }
       ]

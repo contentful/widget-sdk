@@ -201,7 +201,7 @@ describe('data/APIClient', () => {
 
       assertRequestResponse('DATA', {
         method: 'GET',
-        url: '//api.test.local/spaces/SPACE/extensions'
+        url: '//api.test.local/spaces/SPACE/proxied_extensions'
       })(result);
     });
 
@@ -210,7 +210,7 @@ describe('data/APIClient', () => {
 
       assertRequestResponse('DATA', {
         method: 'GET',
-        url: '//api.test.local/spaces/SPACE/extensions/ID'
+        url: '//api.test.local/spaces/SPACE/proxied_extensions/ID'
       })(result);
     });
 

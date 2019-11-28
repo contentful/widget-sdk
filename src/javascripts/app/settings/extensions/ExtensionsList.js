@@ -27,7 +27,7 @@ import EmptyStateContainer, {
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import EmptyStateIllustration from 'svg/connected-forms-illustration';
 import { websiteUrl } from 'Config';
-import { getExtensionLoader } from 'widgets/ExtensionLoaderInstance';
+import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 
 import ExtensionsSidebar, { DocsLink } from './ExtensionsSidebar';
 import ExtensionsActions from './ExtensionsActions';
@@ -49,7 +49,7 @@ const styles = {
 async function deleteExtension(id, cma, refresh) {
   try {
     await cma.deleteExtension(id);
-    getExtensionLoader().evictExtension(id);
+    getCustomWidgetLoader().evict(id);
     await refresh();
     Notification.success('Your extension was successfully deleted.');
   } catch (err) {

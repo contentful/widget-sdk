@@ -31,7 +31,8 @@ const prepareExtension = ({ sys, extension, parameters }) => {
 const ExtensionsFetcher = createFetcherComponent(async ({ cma }) => {
   const { items } = await cma.getExtensionsForListing();
 
-  // TODO: filter on the API side.
+  // TODO: filter should be removed when we move `/extensions`
+  // to extensibility-api (it happens on the API side there).
   return (items || []).filter(e => !!e.extension).map(prepareExtension);
 });
 
@@ -41,7 +42,7 @@ class ExtensionsListRoute extends React.Component {
     extensionUrlReferrer: PropTypes.string,
     cma: PropTypes.shape({
       getExtensionsForListing: PropTypes.func.isRequired
-    })
+    }).isRequired
   };
 
   render() {

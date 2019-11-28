@@ -12,20 +12,21 @@ import {
 } from '@contentful/forma-36-react-components';
 import Placeholder from 'app/common/Placeholder';
 import BinocularsIllustration from 'svg/binoculars-illustration';
-import * as WidgetStore from 'widgets/WidgetStore';
 
 const PageExtensionFetcher = createFetcherComponent(
-  async ({ extensionId, orgId, extensionLoader }) => {
-    const [isEnabled, descriptor] = await Promise.all([
+  async ({ extensionId, orgId, customWidgetLoader }) => {
+    const [isEnabled, widgets] = await Promise.all([
       advancedExtensibilityFeature.isEnabled(orgId),
-      WidgetStore.getForSingleExtension(extensionLoader, extensionId)
+      customWidgetLoader.getByIds([extensionId])
     ]);
 
     if (!isEnabled) {
       throw new Error('advanced extensibility not enabled');
     }
+
+    const [descriptor] = widgets;
     if (!descriptor) {
-      throw new Error('no extension found ');
+      throw new Error('no widget found ');
     }
 
     return descriptor;
@@ -57,7 +58,7 @@ export default function PageExtensionRoute(props) {
     <PageExtensionFetcher
       extensionId={props.extensionId}
       orgId={props.orgId}
-      extensionLoader={props.extensionLoader}>
+      customWidgetLoader={props.customWidgetLoader}>
       {({ isLoading, isError, data }) => {
         if (isLoading) {
           return (
@@ -84,6 +85,6 @@ PageExtensionRoute.propTypes = {
   extensionId: PropTypes.string.isRequired,
   orgId: PropTypes.string.isRequired,
   path: PropTypes.string.isRequired,
-  extensionLoader: PropTypes.object.isRequired,
+  customWidgetLoader: PropTypes.object.isRequired,
   bridge: PropTypes.object.isRequired
 };

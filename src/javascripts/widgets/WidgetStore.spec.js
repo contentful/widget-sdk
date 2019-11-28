@@ -1,4 +1,4 @@
-import { omit } from 'lodash';
+import { cloneDeep } from 'lodash';
 
 import * as WidgetStore from './WidgetStore';
 import { create as createBuiltinWidgetList } from './BuiltinWidgets';
@@ -12,15 +12,19 @@ jest.mock('./BuiltinWidgets', () => ({
   create: () => []
 }));
 
-describe('WidgetStore', () => {
-  let cmaMock;
-  let loaderMock;
-  let appsRepoMock;
+jest.mock('./CustomWidgetLoaderInstance', () => ({
+  getCustomWidgetLoader: jest.fn()
+}));
 
+describe('WidgetStore', () => {
+  let loaderMock;
   beforeEach(() => {
-    cmaMock = { getExtensionsForListing: jest.fn() };
-    loaderMock = { getExtensionsById: jest.fn() };
-    appsRepoMock = { getApps: jest.fn() };
+    loaderMock = {
+      getByIds: jest.fn(),
+      getUncachedForListing: jest.fn()
+    };
+    const mock = jest.requireMock('./CustomWidgetLoaderInstance');
+    mock.getCustomWidgetLoader.mockReturnValue(loaderMock);
   });
 
   describe('#getBuiltinsOnly()', () => {
@@ -35,152 +39,61 @@ describe('WidgetStore', () => {
 
   describe('#getForContentTypeManagement()', () => {
     it('returns an object of all widget namespaces', async () => {
-      cmaMock.getExtensionsForListing.mockResolvedValueOnce({ items: [] });
-      appsRepoMock.getApps.mockImplementationOnce(() => Promise.resolve([]));
+      loaderMock.getUncachedForListing.mockResolvedValueOnce([]);
 
-      const widgets = await WidgetStore.getForContentTypeManagement(cmaMock, appsRepoMock);
+      const widgets = await WidgetStore.getForContentTypeManagement();
 
-      expect(cmaMock.getExtensionsForListing).toHaveBeenCalledTimes(1);
+      expect(loaderMock.getUncachedForListing).toHaveBeenCalledTimes(1);
       expect(widgets[NAMESPACE_EXTENSION]).toEqual([]);
       expect(widgets[NAMESPACE_BUILTIN].map(w => w.id)).toEqual(
         createBuiltinWidgetList().map(b => b.id)
       );
     });
 
-    it('includes processed extensions from API', async () => {
-      const entity = {
-        sys: { id: 'my-extension' },
-        extension: {
-          name: 'NAME',
-          src: 'SRC',
-          sidebar: true,
-          fieldTypes: [{ type: 'Array', items: { type: 'Link', linkType: 'Asset' } }],
-          parameters: {
-            instance: [{ id: 'x' }],
-            installation: [{ id: 'test' }]
-          }
-        },
-        parameters: { test: true }
-      };
+    it('includes extensions and apps', async () => {
+      const widgets = [
+        { src: 'http://localhost:1234', name: 'test', fieldTypes: ['Asset'] },
+        { src: 'https://myapp.com', name: 'Test App', isApp: true, fieldTypes: ['Text'] }
+      ];
 
-      cmaMock.getExtensionsForListing.mockResolvedValueOnce({
-        items: [
-          entity,
-          {
-            ...entity,
-            sys: { id: 'srcdoc-extension', srcdocSha256: 'somecodesha' },
-            extension: omit(entity.extension, ['src'])
-          }
-        ]
-      });
+      loaderMock.getUncachedForListing = jest.fn().mockResolvedValueOnce(widgets);
 
-      appsRepoMock.getApps.mockResolvedValueOnce([
-        {
-          id: 'app-not-installed',
-          title: 'Not installed app',
-          appDefinition: { id: 'some-app-id' }
-        },
-        {
-          id: 'app-id',
-          title: 'Test App',
-          appDefinition: {
-            sys: { id: 'app-definition-id' },
-            src: 'http://localhost:1234',
-            name: 'Test Definition Name',
-            fieldTypes: [{ type: 'Array', items: { type: 'Link', linkType: 'Entry' } }],
-            locations: ['APP']
-          },
-          appInstallation: {
-            sys: { widgetId: 'some-app-widget' },
-            parameters: { test: true }
-          }
-        }
-      ]);
+      const result = await WidgetStore.getForContentTypeManagement();
+      const namespaceWidgets = result[NAMESPACE_EXTENSION];
 
-      const widgets = await WidgetStore.getForContentTypeManagement(cmaMock, appsRepoMock);
-      const namespaceWidgets = widgets[NAMESPACE_EXTENSION];
-
-      expect(namespaceWidgets).toHaveLength(3);
-
-      const [srcWidget, srcdocWidget, appWidget] = namespaceWidgets;
-
-      expect(cmaMock.getExtensionsForListing).toHaveBeenCalledTimes(1);
-      expect(appsRepoMock.getApps).toHaveBeenCalledTimes(1);
-
-      expect(srcWidget.id).toEqual('my-extension');
-      expect(srcWidget.isApp).toBe(false);
-      expect(srcWidget.appId).toBeUndefined();
-      expect(srcWidget.appDefinitionId).toBeUndefined();
-      expect(srcWidget.name).toEqual('NAME');
-      expect(srcWidget.src).toEqual('SRC');
-      expect(srcWidget.sidebar).toEqual(true);
-      expect(srcWidget.fieldTypes).toEqual(['Assets']);
-      expect(srcWidget.parameters).toEqual([{ id: 'x' }]);
-      expect(srcWidget.installationParameters).toEqual({
-        definitions: [{ id: 'test' }],
-        values: { test: true }
-      });
-
-      expect(srcdocWidget.id).toEqual('srcdoc-extension');
-      expect(srcdocWidget.isApp).toBe(false);
-      expect(srcdocWidget.appId).toBeUndefined();
-      expect(srcdocWidget.appDefinitionId).toBeUndefined();
-      expect(srcdocWidget.src).toBeUndefined();
-      expect(srcdocWidget.srcdoc).toEqual(true);
-
-      expect(appWidget.id).toEqual('some-app-widget');
-      expect(appWidget.isApp).toEqual(true);
-      expect(appWidget.appId).toEqual('app-id');
-      expect(appWidget.appDefinitionId).toEqual('app-definition-id');
-      expect(appWidget.name).toEqual('Test App');
-      expect(appWidget.src).toEqual('http://localhost:1234');
-      expect(appWidget.fieldTypes).toEqual(['Entries']);
-      expect(appWidget.locations).toEqual(['APP']);
-      expect(appWidget.installationParameters.values).toEqual({ test: true });
+      expect(namespaceWidgets).toEqual(cloneDeep(widgets));
     });
   });
 
   describe('#getForEditor()', () => {
     it('handles lack of editor interface', async () => {
-      loaderMock.getExtensionsById.mockImplementationOnce(() => []);
+      loaderMock.getByIds.mockImplementationOnce(() => []);
 
-      const widgets = await WidgetStore.getForEditor(loaderMock);
+      const widgets = await WidgetStore.getForEditor();
 
-      expect(loaderMock.getExtensionsById).toHaveBeenCalledWith([]);
+      expect(loaderMock.getByIds).toHaveBeenCalledWith([]);
       expect(widgets[NAMESPACE_EXTENSION]).toEqual([]);
     });
 
     it('does not load extensions when only builtins are used', async () => {
-      loaderMock.getExtensionsById.mockImplementationOnce(() => []);
+      loaderMock.getByIds.mockImplementationOnce(() => []);
 
-      const widgets = await WidgetStore.getForEditor(loaderMock, {
+      const widgets = await WidgetStore.getForEditor({
         controls: [{ widgetId: 'singleLine', widgetNamespace: NAMESPACE_BUILTIN }],
         sidebar: [{ widgetId: 'publish-widget', widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN }]
       });
 
-      expect(loaderMock.getExtensionsById).toHaveBeenCalledWith([]);
+      expect(loaderMock.getByIds).toHaveBeenCalledWith([]);
       expect(widgets[NAMESPACE_EXTENSION]).toEqual([]);
     });
 
     it('loads extensions if needed', async () => {
-      loaderMock.getExtensionsById.mockImplementationOnce(() => [
-        {
-          sys: { id: 'my-extension' },
-          extension: {
-            name: 'NAME',
-            src: 'SRC',
-            sidebar: true,
-            fieldTypes: [{ type: 'Array', items: { type: 'Link', linkType: 'Asset' } }],
-            parameters: {
-              instance: [{ id: 'x' }],
-              installation: [{ id: 'test' }]
-            }
-          },
-          parameters: { test: true }
-        }
+      loaderMock.getByIds.mockImplementationOnce(() => [
+        { id: 'sidebar-extension' },
+        { id: 'extension-for-sure' }
       ]);
 
-      await WidgetStore.getForEditor(loaderMock, {
+      const widgets = await WidgetStore.getForEditor({
         controls: [
           { widgetId: 'singleLine', widgetNamespace: NAMESPACE_BUILTIN },
           { widgetId: 'singleLine' },
@@ -193,11 +106,15 @@ describe('WidgetStore', () => {
         ]
       });
 
-      expect(loaderMock.getExtensionsById).toHaveBeenCalledWith([
+      expect(loaderMock.getByIds).toHaveBeenCalledWith([
         'singleLine',
         'maybe-extension',
         'extension-for-sure',
         'sidebar-extension'
+      ]);
+      expect(widgets[NAMESPACE_EXTENSION].map(w => w.id)).toEqual([
+        'sidebar-extension',
+        'extension-for-sure'
       ]);
     });
   });
