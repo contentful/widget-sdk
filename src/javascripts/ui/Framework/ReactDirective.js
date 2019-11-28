@@ -349,7 +349,7 @@ function getModule(name) {
     'app/entity_editor/bulk_editor/BulkEditorTitle': appEntityEditorBulkEditorTitleEs6,
     'components/forms/embedly_preview/EmbedlyPreview': embedlyPreview,
     'markdown_editor/components/HeadingContextMenu': HeadingContextMenu,
-    'app/markdown_editor/components/InsertMediaComponent': InsertMediaComponent,
+    'markdown_editor/components/InsertMediaComponent': InsertMediaComponent,
     'markdown_editor/components/ActionComponent': ActionComponent
   };
 

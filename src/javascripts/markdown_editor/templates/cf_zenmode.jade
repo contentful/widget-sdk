@@ -80,7 +80,11 @@
       ng-click="zenApi.toggle()")
       i.fa.fa-arrows-alt
 
-    cf-markdown-insert-media-action(actions="actions")
+    .markdown-toolbar-insert-media
+      react-component(
+        name="markdown_editor/components/InsertMediaComponent"
+        props="{actions: actions}"
+      )
 
   button.zenmode-drawer__hide.fa.fa-angle-double-right(
     aria-label="Hide Preview"
