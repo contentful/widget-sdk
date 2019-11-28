@@ -39,6 +39,7 @@ const queryEntries = async query => {
 
   const { items, total } = await spaceContext.cma.getEntries({
     query,
+    'sys.archivedAt[exists]': 'false', // Ensures we only get non-archived entities
     order: '-sys.updatedAt',
     limit: RESULTS_LIMIT
   });
@@ -71,6 +72,7 @@ const queryAssets = async query => {
 
   const { items, total } = await spaceContext.cma.getAssets({
     query,
+    'sys.archivedAt[exists]': 'false', // Ensures we only get non-archived entitie
     order: '-sys.updatedAt',
     limit: RESULTS_LIMIT
   });
