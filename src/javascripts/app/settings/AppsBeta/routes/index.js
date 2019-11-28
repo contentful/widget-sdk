@@ -5,9 +5,8 @@ import { makeAppHookBus } from '../AppHookBus';
 import createAppExtensionBridge from 'widgets/bridges/createAppExtensionBridge';
 import * as Navigator from 'states/Navigator';
 import * as SlideInNavigator from 'navigation/SlideInNavigator/index';
-import createAppsRepo from '../AppsRepo';
+import { getAppsRepo } from '../AppsRepoInstance';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
-import { getAppDefinitionLoader } from 'app/settings/AppsBeta/AppDefinitionLoaderInstance';
 import { getExtensionLoader } from 'widgets/ExtensionLoaderInstance';
 
 export default {
@@ -30,7 +29,7 @@ export default {
         (spaceContext, $state, $stateParams) => {
           return {
             goToContent: () => $state.go('^.^.entries.list'),
-            repo: createAppsRepo(spaceContext.cma, getAppDefinitionLoader()),
+            repo: getAppsRepo(),
             productCatalog: new AppProductCatalog(spaceContext.space.data.sys.id, getSpaceFeature),
             organizationId: spaceContext.organization.sys.id,
             spaceId: spaceContext.space.data.sys.id,
@@ -46,13 +45,7 @@ export default {
       url: '/:appId',
       component: AppPage,
       resolve: {
-        app: [
-          'spaceContext',
-          '$stateParams',
-          ({ cma }, { appId }) => {
-            return createAppsRepo(cma, getAppDefinitionLoader()).getApp(appId);
-          }
-        ]
+        app: ['$stateParams', ({ appId }) => getAppsRepo().getApp(appId)]
       },
       mapInjectedToProps: [
         'spaceContext',
@@ -73,8 +66,6 @@ export default {
             getSpaceFeature
           );
 
-          const extensionLoader = getExtensionLoader();
-
           return {
             goBackToList: () => $state.go('^.list'),
             productCatalog,
@@ -82,7 +73,7 @@ export default {
             bridge,
             appHookBus,
             cma: spaceContext.cma,
-            evictWidget: id => extensionLoader.evictExtension(id)
+            evictWidget: id => getExtensionLoader().evictExtension(id)
           };
         }
       ]

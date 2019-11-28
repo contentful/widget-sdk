@@ -2,8 +2,7 @@ import base from 'states/Base';
 import * as WidgetStore from 'widgets/WidgetStore';
 import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer';
 import * as AdvancedExtensibilityFeature from 'app/settings/extensions/services/AdvancedExtensibilityFeature';
-import createAppsRepo from 'app/settings/AppsBeta/AppsRepo';
-import { getAppDefinitionLoader } from 'app/settings/AppsBeta/AppDefinitionLoaderInstance';
+import { getAppsRepo } from 'app/settings/AppsBeta/AppsRepoInstance';
 
 const list = base({
   name: 'list',
@@ -44,11 +43,7 @@ const sidebarConfiguration = {
 const widgetResolvers = {
   widgets: [
     'spaceContext',
-    ({ cma }) => {
-      const appsRepo = createAppsRepo(cma, getAppDefinitionLoader());
-
-      return WidgetStore.getForContentTypeManagement(cma, appsRepo);
-    }
+    ({ cma }) => WidgetStore.getForContentTypeManagement(cma, getAppsRepo())
   ],
   editorInterface: [
     'spaceContext',

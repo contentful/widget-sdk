@@ -1,9 +1,10 @@
 import { getModule } from 'NgRegistry';
 import { get, set } from 'lodash';
 import { createExtensionLoader } from './ExtensionLoader';
-import createAppsRepo from 'app/settings/AppsBeta/AppsRepo';
-import { getAppDefinitionLoader } from 'app/settings/AppsBeta/AppDefinitionLoaderInstance';
+import { getAppsRepo } from 'app/settings/AppsBeta/AppsRepoInstance';
 
+// Extension is an environment-level entity:
+// we cache loaders per space-environment.
 const perSpaceEnvCache = {};
 
 export function getExtensionLoader() {
@@ -14,8 +15,7 @@ export function getExtensionLoader() {
   let loader = get(perSpaceEnvCache, [spaceId, environmentId]);
 
   if (!loader) {
-    const appsRepo = createAppsRepo(spaceContext.cma, getAppDefinitionLoader());
-    loader = createExtensionLoader(spaceContext.cma, appsRepo);
+    loader = createExtensionLoader(spaceContext.cma, getAppsRepo());
     set(perSpaceEnvCache, [spaceId, environmentId], loader);
   }
 

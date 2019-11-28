@@ -1,24 +1,25 @@
-import get from 'lodash/get';
 import { getModule } from 'NgRegistry';
 import * as Auth from 'Authentication';
 import * as Config from 'Config';
 import createAppDefinitionLoader from 'app/settings/AppsBeta/AppDefinitionLoader';
 import { createOrganizationEndpoint, createAppDefinitionsEndpoint } from 'data/Endpoint';
 
-const perSpaceCache = {};
+// AppDefinition is an organization-scoped entity:
+// we cache loaders per organization.
+const perOrgCache = {};
 
 export function getAppDefinitionLoader() {
   const spaceContext = getModule('spaceContext');
-  const spaceId = spaceContext.getId();
-  const space = spaceContext.getSpace();
-  const orgId = get(space, ['data', 'organization', 'sys', 'id']);
+  const orgId = spaceContext.getData(['organization', 'sys', 'id']);
   const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
 
-  if (!perSpaceCache[spaceId]) {
-    const appDefinitionsEndpoint = createAppDefinitionsEndpoint(Config.apiUrl(), Auth);
+  let loader = perOrgCache[orgId];
 
-    perSpaceCache[spaceId] = createAppDefinitionLoader(appDefinitionsEndpoint, orgEndpoint);
+  if (!loader) {
+    const appDefinitionsEndpoint = createAppDefinitionsEndpoint(Config.apiUrl(), Auth);
+    loader = createAppDefinitionLoader(appDefinitionsEndpoint, orgEndpoint);
+    perOrgCache[orgId] = loader;
   }
 
-  return perSpaceCache[spaceId];
+  return loader;
 }
