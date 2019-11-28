@@ -12,16 +12,16 @@ jest.mock('services/OrganizationRoles', () => ({
   isOwnerOrAdmin: jest.fn()
 }));
 
-spaceContextMocked.getData.mockReturnValue({
-  sys: { id: 'my-org-id' }
-});
-
 describe('AccountUtils', () => {
+  beforeEach(() => {
+    spaceContextMocked.getData.mockReturnValue({
+      sys: { id: 'my-org-id' }
+    });
+    go.mockReset();
+  });
+
   afterAll(() => {
     spaceContextMocked.getData.mockReset();
-  });
-  beforeEach(() => {
-    go.mockReset();
   });
 
   const setAdmin = isAdmin => {

@@ -29,6 +29,7 @@ import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
 import { getAllForEntry } from 'data/CMA/CommentsRepo';
 import initSidebarTogglesProps from 'app/entity_editor/entityEditorSidebarToggles';
 import { initJobStore } from 'app/jobs/DataManagement/JobsStoreNg';
+import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 
 /**
  * @ngdoc type
@@ -123,7 +124,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
 
   // TODO Move this into a separate function
   K.onValueScope($scope, doc.valuePropertyAt([]), data => {
-    const title = spaceContext.entryTitle({
+    const title = EntityFieldValueSpaceContext.entryTitle({
       getContentTypeId: constant(entityInfo.contentTypeId),
       data
     });
