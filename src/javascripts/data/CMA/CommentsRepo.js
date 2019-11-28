@@ -62,15 +62,18 @@ export async function getAllForEntry(endpoint, entryId) {
  *
  * @param {SpaceEndpoint} endpoint
  * @param {String} entryId
- * @param {Stirng} commentId
+ * @param {API.Comment} comment
  */
-export async function remove(endpoint, entryId, commentId) {
+export async function remove(endpoint, entryId, comment) {
   return endpoint(
     {
       method: 'DELETE',
-      path: path(entryId, commentId)
+      path: path(entryId, comment.sys.id)
     },
-    alphaHeader
+    {
+      ...alphaHeader,
+      'X-Contentful-Version': comment.sys.version
+    }
   );
 }
 
