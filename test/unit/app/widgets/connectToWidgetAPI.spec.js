@@ -5,7 +5,7 @@ import { mount } from 'enzyme';
 
 import { $initialize, $inject } from 'test/utils/ng';
 
-describe('connectToWidgetAPI', () => {
+xdescribe('connectToWidgetAPI', () => {
   beforeEach(async function() {
     this.system.set('search/EntitySelector/Config', {});
     this.system.set('navigation/SlideInNavigator', {
