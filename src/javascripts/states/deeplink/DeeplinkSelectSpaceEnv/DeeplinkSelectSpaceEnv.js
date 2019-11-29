@@ -72,7 +72,7 @@ export default function DeeplinkSelectSpaceEnv(props) {
     <div className={styles.root}>
       <div className={styles.card}>
         {id && isWebhookLink(link) && <WebhookLinkHeader templateId={id} />}
-        {id && isAppLink(link) && <AppLinkHeader appId={id} />}
+        {id && isAppLink(link) && <AppLinkHeader appId={id} apps={props.marketplaceApps} />}
         {url && isExtensionLink(link) && isUrlSafe(url) && <ExtensionLinkHeader url={url} />}
         <Heading className={styles.title}>
           {getCardTitle({
@@ -164,6 +164,7 @@ export default function DeeplinkSelectSpaceEnv(props) {
 DeeplinkSelectSpaceEnv.propTypes = {
   href: PropTypes.string.isRequired,
   searchParams: PropTypes.object.isRequired,
+  marketplaceApps: PropTypes.object.isRequired,
   onContinue: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
   selectSpace: PropTypes.bool.isRequired,

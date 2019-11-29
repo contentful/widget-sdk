@@ -3,6 +3,7 @@ import accountState from './account';
 import spacesState from 'states/Spaces';
 import homeState from 'states/Home';
 import DeeplinkPage from 'states/deeplink/DeeplinkPage';
+import { getMarketplaceApps } from 'states/deeplink/utils';
 import userInvitationState from 'states/UserInvitationState';
 import { getQueryString, getLocationHref } from 'utils/location';
 
@@ -27,11 +28,17 @@ const deeplinkState = {
   name: 'deeplink',
   url: '/deeplink',
   component: DeeplinkPage,
+  resolve: {
+    searchParams: [() => getQueryString()],
+    marketplaceApps: ['searchParams', ({ link }) => (link === 'apps' ? getMarketplaceApps() : {})]
+  },
   mapInjectedToProps: [
-    // in states/config, mapInjectedToProps is expected to be an array
-    () => ({
+    'searchParams',
+    'marketplaceApps',
+    (searchParams, marketplaceApps) => ({
       href: getLocationHref(),
-      searchParams: getQueryString()
+      searchParams,
+      marketplaceApps
     })
   ]
 };

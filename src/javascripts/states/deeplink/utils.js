@@ -1,3 +1,4 @@
+import { get } from 'lodash';
 import { getSpaces, getOrganizations, getOrganization, user$ } from 'services/TokenStore';
 import { getStore } from 'TheStore';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
@@ -9,6 +10,7 @@ import {
   getStoragePrefix
 } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
 import { getSpaceAutoCreatedKey } from 'components/shared/auto_create_new_space/getSpaceAutoCreatedKey';
+import { fetchMarketplaceApps } from 'app/settings/AppsBeta/MarketplaceClient';
 
 function getUser() {
   // user$ is a property which starts with `null`
@@ -88,6 +90,26 @@ export async function getAllEnviroments(spaceId) {
   const { environments } = await spaceEnvRepo.getAll();
 
   return environments;
+}
+
+export async function getMarketplaceApps() {
+  const apps = await fetchMarketplaceApps();
+
+  return apps.reduce((acc, appEntry) => {
+    const id = get(appEntry, ['fields', 'slug']);
+
+    return {
+      ...acc,
+      ...(id
+        ? {
+            [id]: {
+              title: get(appEntry, ['fields', 'title'], ''),
+              icon: get(appEntry, ['fields', 'icon', 'fields', 'file', 'url'], '')
+            }
+          }
+        : {})
+    };
+  }, {});
 }
 
 /**

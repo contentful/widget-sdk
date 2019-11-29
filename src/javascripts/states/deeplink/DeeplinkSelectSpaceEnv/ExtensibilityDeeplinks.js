@@ -26,6 +26,9 @@ const styles = {
     marginBottom: tokens.spacingL
   }),
   appIcon: css({
+    width: '45px',
+    height: '45px',
+    verticalAlign: 'middle',
     marginLeft: tokens.spacingXs,
     marginRight: tokens.spacingXs
   }),
@@ -127,19 +130,25 @@ WebhookLinkHeader.propTypes = {
   templateId: PropTypes.string.isRequired
 };
 
-export function AppLinkHeader({ appId }) {
+export function AppLinkHeader({ appId, apps }) {
+  const app = apps[appId];
   return (
     <>
-      <InstallHeader>Install app to Contentful</InstallHeader>
+      <InstallHeader>Install {app ? app.title : 'app'} to Contentful</InstallHeader>
       <InstallLogos>
-        <AppIcon appId={appId} className={styles.appIcon} />
+        {app ? (
+          <img src={app.icon} className={styles.appIcon} />
+        ) : (
+          <AppIcon appId="generic" className={styles.appIcon} />
+        )}
       </InstallLogos>
     </>
   );
 }
 
 AppLinkHeader.propTypes = {
-  appId: PropTypes.string.isRequired
+  appId: PropTypes.string.isRequired,
+  apps: PropTypes.object.isRequired
 };
 
 export function ExtensionLinkHeader({ url }) {
