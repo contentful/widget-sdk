@@ -68,7 +68,6 @@ export default function createAppsRepo(cma, appDefinitionLoader) {
             appInstallation: installationMap[definitionId],
             links: get(app, ['fields', 'links'], []).map(link => link.fields),
             permissions: `__${title} app__ ${permissionsText}`,
-            permissionsExplanation: get(app, ['fields', 'permissionsExplanation']),
             tagLine: get(app, ['fields', 'tagLine'], ''),
             title
           };

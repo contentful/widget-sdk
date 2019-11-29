@@ -219,7 +219,7 @@ export default class AppRoute extends Component {
         appEnabled,
         isInstalled: !!appInstallation,
         appDefinition,
-        permissions: get(app, ['permissionsExplanation'], ''),
+        permissions: get(app, ['permissions'], ''),
         actionList: get(app, ['actionList'], [])
       },
       this.afterInitialize
