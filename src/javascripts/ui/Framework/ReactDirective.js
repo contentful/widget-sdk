@@ -58,7 +58,7 @@ import * as componentsSharedUserNameFormatterFetchAndFormatUserNameEs6 from 'com
 import * as uiComponentsPaginatorEs6 from 'ui/Components/Paginator';
 import * as componentsTabsNoSearchResultsAdviceEs6 from 'components/tabs/NoSearchResultsAdvice';
 import * as componentsTabsAssetListAssetsEmptyStateEs6 from 'components/tabs/asset_list/AssetsEmptyState';
-import * as appJobsJobsPageLinkEs6 from 'app/jobs/JobsPageLink';
+import * as appScheduledActionsPageLinkEs6 from 'app/ScheduledActions/ScheduledActionsPageLink';
 import * as componentsTabsEntryListEntryListEs6 from 'components/tabs/entry_list/EntryList';
 import * as componentsTabsEntryListEmptyStatesIndexEs6 from 'components/tabs/entry_list/EmptyStates';
 import * as componentsSharedQuickNavigationQuickNavWithFeatureFlagEs6 from 'components/shared/QuickNavigation/QuickNavWithFeatureFlag';
@@ -327,7 +327,7 @@ function getModule(name) {
     'ui/Components/Paginator': uiComponentsPaginatorEs6,
     'components/tabs/NoSearchResultsAdvice': componentsTabsNoSearchResultsAdviceEs6,
     'components/tabs/asset_list/AssetsEmptyState': componentsTabsAssetListAssetsEmptyStateEs6,
-    'app/jobs/JobsPageLink': appJobsJobsPageLinkEs6,
+    'app/ScheduledActions/ScheduledActionsPageLink': appScheduledActionsPageLinkEs6,
     'components/tabs/entry_list/EntryList': componentsTabsEntryListEntryListEs6,
     'components/tabs/entry_list/EmptyStates': componentsTabsEntryListEmptyStatesIndexEs6,
     'components/shared/QuickNavigation/QuickNavWithFeatureFlag': componentsSharedQuickNavigationQuickNavWithFeatureFlagEs6,

@@ -14,7 +14,7 @@ import setupNoShareJsCmaFakeRequestsExperiment from 'app/entity_editor/NoShareJs
 import initDocErrorHandler from 'app/entity_editor/DocumentErrorHandler';
 import * as Validator from 'app/entity_editor/Validator';
 import { buildFieldsApi } from 'app/entity_editor/dataFields';
-import { initJobStore } from 'app/jobs/DataManagement/JobsStoreNg';
+import { initJobStore } from 'app/ScheduledActions/DataManagement/ScheduledActionsStoreNg';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 
 export default function register() {
