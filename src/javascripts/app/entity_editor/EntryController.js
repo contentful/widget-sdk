@@ -28,7 +28,7 @@ import { trackIsCommentsAlphaEligible } from '../EntrySidebar/CommentsPanel/anal
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
 import { getAllForEntry } from 'data/CMA/CommentsRepo';
 import initSidebarTogglesProps from 'app/entity_editor/entityEditorSidebarToggles';
-import { initJobStore } from 'app/jobs/DataManagement/JobsStoreNg';
+import { initJobStore } from 'app/ScheduledActions/DataManagement/ScheduledActionsStoreNg';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 
 /**

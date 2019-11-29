@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import SidebarEventTypes from '../SidebarEventTypes';
 import SidebarWidgetTypes from '../SidebarWidgetTypes';
 import PublicationWidget from './PublicationWidget';
-import { JobsWidget } from 'app/jobs';
-import JobsFeatureFlag from 'app/jobs/JobsFeatureFlag';
+import { ScheduledActionsWidget } from 'app/ScheduledActions';
+import ScheduledActionsFeatureFlag from 'app/ScheduledActions/ScheduledActionsFeatureFlag';
 
 export default class PublicationWidgetContainer extends Component {
   static propTypes = {
@@ -84,7 +84,7 @@ export default class PublicationWidgetContainer extends Component {
     const publicationBlockedReason = values(publicationBlockedReasons)[0];
 
     return (
-      <JobsFeatureFlag>
+      <ScheduledActionsFeatureFlag>
         {({ currentVariation }) => {
           const isJobsFeatureEnabled = currentVariation;
           const isAssetOrDeletedEntry = !entity || entity.sys.type !== 'Entry';
@@ -99,7 +99,7 @@ export default class PublicationWidgetContainer extends Component {
               publicationBlockedReason={publicationBlockedReason}
             />
           ) : (
-            <JobsWidget
+            <ScheduledActionsWidget
               spaceId={spaceId}
               environmentId={environmentId}
               isMasterEnvironment={isMasterEnvironment}
@@ -116,7 +116,7 @@ export default class PublicationWidgetContainer extends Component {
             />
           );
         }}
-      </JobsFeatureFlag>
+      </ScheduledActionsFeatureFlag>
     );
   }
 }

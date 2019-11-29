@@ -11,7 +11,7 @@ import createSearchInput from 'app/ContentList/Search';
 import * as Tracking from 'analytics/events/SearchAndViews';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as ListQuery from 'search/listQuery';
-import * as JobsService from 'app/jobs/DataManagement/JobsService';
+import * as ScheduledActionsService from 'app/ScheduledActions/DataManagement/ScheduledActionsService';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 
 export default function register() {
@@ -31,7 +31,7 @@ export default function register() {
         spaceContext.space.data.sys.id,
         spaceContext.space.environment.sys.id
       );
-      JobsService.getJobs(spaceEndpoint, {
+      ScheduledActionsService.getJobs(spaceEndpoint, {
         order: 'sys.scheduledAt',
         'sys.status': 'pending'
       }).then(({ items = [] }) => ($scope.jobs = items));
