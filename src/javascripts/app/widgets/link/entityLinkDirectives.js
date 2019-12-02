@@ -1,3 +1,5 @@
+import React from 'react';
+import { Tooltip } from '@contentful/forma-36-react-components';
 import { registerDirective, registerController } from 'NgRegistry';
 import _ from 'lodash';
 import { caseofEq } from 'sum-types';
@@ -62,7 +64,24 @@ export default function register() {
       // user to be rendered:
       user: '<'
     },
-    template: userLinkTemplateDef()
+    template: userLinkTemplateDef(),
+    controller: [
+      '$scope',
+      $scope => {
+        $scope.component = () => {
+          const userIsActivated = $scope.user.activated;
+          const content = userIsActivated
+            ? 'This user hasn’t confirmed their email address yet. Therefore  we can’t guarantee the identity of the user'
+            : 'This user hasn’t accepted the invitation to your organization yet.';
+
+          return (
+            <Tooltip content={content} place="bottom">
+              {userIsActivated ? 'not confirmed' : 'hasn’t accepted invitation'}
+            </Tooltip>
+          );
+        };
+      }
+    ]
   }));
 
   registerController('EntityLinkController', [

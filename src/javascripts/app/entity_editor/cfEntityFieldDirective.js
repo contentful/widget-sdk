@@ -1,8 +1,20 @@
+import React from 'react';
+import { Icon, Tooltip } from '@contentful/forma-36-react-components';
 import { registerDirective } from 'NgRegistry';
 import _ from 'lodash';
 import * as K from 'utils/kefir';
+import { css } from 'emotion';
 
 import * as localesUtils from 'utils/locales';
+
+const styles = {
+  lockComponentContainer: css({
+    whiteSpace: 'nowrap'
+  }),
+  lockIcon: css({
+    marginBottom: '-3px'
+  })
+};
 
 export default function register() {
   /**
@@ -53,6 +65,16 @@ export default function register() {
                 $scope.editorContext.hasInitialFocus && $scope.$first && widget.isFocusable
             };
             $scope.data = templateData;
+
+            // eslint-disable-next-line
+            $scope.lockComponent = ({ text, tooltipContent }) => (
+              <Tooltip content={tooltipContent} place="left">
+                <div className={styles.lockComponentContainer}>
+                  <Icon icon="Lock" color="muted" className={styles.lockIcon} />
+                  <span>{text}</span>
+                </div>
+              </Tooltip>
+            );
 
             /**
              * @ngdoc method

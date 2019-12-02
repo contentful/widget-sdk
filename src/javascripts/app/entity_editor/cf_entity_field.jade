@@ -1,18 +1,20 @@
 mixin field-permission-info
   div.entity-editor__no-permission-info(
     data-test-id="field-locale-permissions"
-    ng-show="fieldLocale.access.denied"
-    tooltip="You don't have a permission to edit this field. To change your permission setting contact your space administrator."
-    tooltip-placement="left")
-    cf-icon(name="lock")
-    | This field is locked
+    ng-show="fieldLocale.access.denied")
+    react-component(
+      component="lockComponent"
+      props="{ tooltipContent: 'You don’t have a permission to edit this field. To change your permission setting contact your space administrator.', text: 'This field is locked' }"
+    )
+
   div.entity-editor__no-permission-info(
     data-test-id="field-locale-disabled"
-    ng-show="fieldLocale.access.editing_disabled"
-    tooltip="Editing of this field is disabled. To change your content model contact your space administrator."
-    tooltip-placement="left")
-      cf-icon(name="lock")
-      | This field is disabled
+    ng-show="fieldLocale.access.editing_disabled")
+    react-component(
+      component="lockComponent"
+      props="{ tooltipContent: 'Editing of this field is disabled. To change your content model contact your space administrator.', text: 'This field is disabled' }"
+    )
+
   div.entity-editor__no-permission-info(
     data-test-id="field-locale-occupied"
     ng-show="fieldLocale.access.occupied")

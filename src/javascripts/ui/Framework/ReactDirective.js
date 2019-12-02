@@ -236,6 +236,7 @@ export default function register() {
       link: ($scope, $element, attrs) => {
         const container = $element[0];
         let ReactComponent;
+
         if (attrs.name) {
           ReactComponent = getReactComponent(attrs.name, logger);
         } else if (attrs.component) {

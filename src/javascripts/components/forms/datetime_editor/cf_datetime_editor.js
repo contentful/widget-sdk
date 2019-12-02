@@ -6,17 +6,17 @@ export default function template() {
     renderDateControl(),
     renderTimeSection(),
     renderValidationIcon({
-      ngShow: 'dateInvalid',
+      ngIf: 'dateInvalid',
       tooltip: 'You must provide a valid date'
     }),
     renderValidationIcon({
-      ngShow: 'timeInvalid',
+      ngIf: 'timeInvalid',
       tooltip: 'Time must be of format {{maxTime}}.999'
     })
   ]);
 }
 
-function renderValidationIcon({ ngShow, tooltip }) {
+function renderValidationIcon({ ngIf, tooltip }) {
   const style = {
     position: 'relative',
     top: '3px',
@@ -24,11 +24,12 @@ function renderValidationIcon({ ngShow, tooltip }) {
     color: tokens.colorRedLight
   };
 
-  return h('i.fa.fa-exclamation-triangle', {
-    ngShow,
-    tooltip,
-    tooltipPlacement: 'right',
-    style
+  // This component lives in `cfValidationDateSelectDirective`
+  return h('react-component', {
+    ngIf: `${ngIf} && validationIconComponent`,
+    style,
+    component: 'validationIconComponent',
+    props: `{ content: "${tooltip}" }`
   });
 }
 
@@ -71,8 +72,7 @@ function renderTimeSection() {
         ngHide: '!localTime || !hasTimezone',
         ngDisabled: '!enabled',
         ngModel: 'tzOffset',
-        ngOptions: "offset as ('UTC'+offset) for offset in timezones",
-        tooltip: 'Timezone'
+        ngOptions: "offset as ('UTC'+offset) for offset in timezones"
       },
       [h('option', { value: '' }, ['(None)'])]
     )

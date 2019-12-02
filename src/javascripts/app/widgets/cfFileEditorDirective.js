@@ -1,11 +1,21 @@
+import React from 'react';
 import { registerDirective } from 'NgRegistry';
 import _ from 'lodash';
-import { Notification } from '@contentful/forma-36-react-components';
+import { Notification, Tooltip, Button, Icon } from '@contentful/forma-36-react-components';
 import * as stringUtils from 'utils/StringUtils';
 import mimetype from '@contentful/mimetype';
 import * as Filestack from 'services/Filestack';
 
+import { css } from 'emotion';
+
 import * as ImageOperations from 'app/widgets/ImageOperations';
+import * as AssetUrlService from 'services/AssetUrlService';
+
+const styles = {
+  buttonIcon: css({
+    marginTop: '8px'
+  })
+};
 
 export default function register() {
   registerDirective('cfFileEditor', [
@@ -23,6 +33,74 @@ export default function register() {
         link: function(scope, elem, _attrs, widgetApi) {
           const field = widgetApi.field;
           const deleteFile = (scope.deleteFile = setFile.bind(null, null));
+
+          scope.components = {
+            downloadButton: () => {
+              const href = AssetUrlService.transformHostname(scope.file.url);
+              return (
+                <Tooltip content="Download file">
+                  <Button buttonType="muted" href={href}>
+                    <Icon icon="Download" color="secondary" className={styles.buttonIcon} />
+                  </Button>
+                </Tooltip>
+              );
+            },
+
+            fileInformation: () => {
+              return (
+                <Tooltip content="Show file information">
+                  <Button
+                    buttonType="muted"
+                    onClick={() => {
+                      scope.showMeta = !scope.showMeta;
+                      scope.$applyAsync();
+                    }}>
+                    <Icon icon="InfoCircle" color="secondary" className={styles.buttonIcon} />
+                  </Button>
+                </Tooltip>
+              );
+            },
+
+            rotateImage: () => {
+              return (
+                <Tooltip content="Rotate or mirror image">
+                  <Button buttonType="muted">
+                    <i className="fa fa-undo" />
+                  </Button>
+                </Tooltip>
+              );
+            },
+
+            resizeImage: () => {
+              return (
+                <Tooltip content="Resize image">
+                  <Button buttonType="muted">
+                    <i className="fa fa-compress" />
+                  </Button>
+                </Tooltip>
+              );
+            },
+
+            cropImage: () => {
+              return (
+                <Tooltip content="Crop image">
+                  <Button buttonType="muted">
+                    <i className="fa fa-crop" />
+                  </Button>
+                </Tooltip>
+              );
+            },
+
+            deleteImage: () => {
+              return (
+                <Tooltip content="Delete file">
+                  <Button buttonType="muted" onClick={() => deleteFile()}>
+                    <i className="fa fa-trash" />
+                  </Button>
+                </Tooltip>
+              );
+            }
+          };
 
           const dropPaneMountPoint = elem[0].querySelectorAll('.__filestack-drop-pane-mount')[0];
           if (dropPaneMountPoint) {

@@ -47,12 +47,13 @@ div(ng-if="hasCrashed")
         props="{actions: actions, name: 'link', isZenMode: false, isDisabled: !canEdit()}"
       )
 
-      button.toolbar-button.markdown-more-actions.fa.fa-ellipsis-h(
-        ng-click="toggleMinorActions()"
-        tabindex="-1"
-        tooltip="More actions…"
-        ng-class="{'active': minorActionsShown}"
-        ng-disabled="!canEdit()")
+      // $scope.tooltipComponent won't be available immediately, so we have to wait until it
+      // is before initially rendering it
+      react-component(
+        ng-if="tooltipComponent"
+        component="tooltipComponent"
+        props="{isDisabled: !canEdit(), isActive: minorActionsShown}"
+      )
 
       button.toolbar-button.markdown-side-action(
         ng-click="zenApi.toggle()"

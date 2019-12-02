@@ -29,44 +29,45 @@
     | You don't have a permission to edit this field.
 
   .file-buttons
-    a.btn-secondary-action(type="button"
-      aria-label="Download file" tooltip="Download file"
-      href="{{file.url | assetUrl}}" target="_blank" rel="noopener noreferrer"
-      ng-show="file && !!file.url")
-      i.fa.fa-download
+    react-component(
+      ng-if="file && !!file.url"
+      component="components.downloadButton"
+    )
 
-    button.btn-secondary-action(type="button"
-      aria-label="Show file information" tooltip="Show file information"
-      ng-click="showMeta = !showMeta"
-      ng-show="file")
-      i.fa.fa-info-circle
+    react-component(
+      ng-if="file"
+      component="components.fileInformation"
+    )
 
-    button.btn-secondary-action(type="button"
-      aria-label="Rotate or mirror image" tooltip="Rotate or mirror image"
+    react-component(
       cf-context-menu-trigger
-      ng-show="canEditFile()")
-      i.fa.fa-undo
+      component="components.rotateImage"
+      ng-if="canEditFile()"
+    )
+
     .context-menu(cf-context-menu)
       div(role="menuitem" ng-click="rotateOrMirror('90cw')") Rotate 90° clockwise
       div(role="menuitem" ng-click="rotateOrMirror('90ccw')") Rotate 90° counterclockwise
       div(role="menuitem" ng-click="rotateOrMirror('flip')") Mirror vertically
       div(role="menuitem" ng-click="rotateOrMirror('flop')") Mirror horizontally
 
-    button.btn-secondary-action(type="button"
-      aria-label="Resize image" tooltip="Resize image"
+    react-component(
       cf-context-menu-trigger
-      ng-show="canEditFile()")
-      i.fa.fa-compress
+      component="components.resizeImage"
+      ng-if="canEditFile()"
+    )
+
     .context-menu(cf-context-menu)
       div(role="menuitem" ng-click="resize('width')") Select width
       div(role="menuitem" ng-click="resize('height')") Select height
       div(role="menuitem" ng-click="resize('scale')") Scale
 
-    button.btn-secondary-action(type="button"
-      aria-label="Crop image" tooltip="Crop image"
+    react-component(
       cf-context-menu-trigger
-      ng-show="canEditFile()")
-      i.fa.fa-crop
+      component="components.cropImage"
+      ng-if="canEditFile()"
+    )
+
     .context-menu(cf-context-menu)
       div(role="menuitem" ng-click="crop(null)") No aspect ratio
       div(role="menuitem" ng-click="crop('original')") Original aspect ratio
@@ -77,11 +78,10 @@
       div(role="menuitem" ng-click="crop(16/9)") 16:9
       div(role="menuitem" ng-click="crop('custom')") Custom aspect ratio
 
-    button.btn-secondary-action(type="button"
-      aria-label="Delete file" tooltip="Delete file"
-      ng-click="deleteFile()"
-      ng-show="fieldLocale.access.editable && file && (file.url || isUnprocessedFile(file))")
-      i.fa.fa-trash
+    react-component(
+      ng-if="fieldLocale.access.editable && file && (file.url || isUnprocessedFile(file))"
+      component="components.deleteImage"
+    )
 
   .file-selector(ng-show="!file && fieldLocale.access.editable")
     .__filestack-drop-pane-mount
