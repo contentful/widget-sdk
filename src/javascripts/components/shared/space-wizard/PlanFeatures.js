@@ -1,7 +1,5 @@
-/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import {
   getTooltip,
   SpaceResourceTypes,
@@ -9,7 +7,7 @@ import {
 } from 'components/shared/space-wizard/WizardUtils';
 import pluralize from 'pluralize';
 import { toLocaleString } from 'utils/NumberUtils';
-import Tooltip from 'ui/Components/Tooltip';
+import { Tooltip } from '@contentful/forma-36-react-components';
 
 export default function PlanFeatures({ resources, roleSet }) {
   return (
@@ -24,7 +22,7 @@ export default function PlanFeatures({ resources, roleSet }) {
           <li key={type}>
             {toLocaleString(number) + ' '}
             {tooltip && (
-              <Tooltip style={{ display: 'inline' }} tooltip={tooltip}>
+              <Tooltip content={tooltip}>
                 <em className="x--underline">{pluralize(type, number)}</em>
               </Tooltip>
             )}
