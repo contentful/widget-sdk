@@ -104,35 +104,4 @@ export default function register() {
       }
     ]
   }));
-
-  /*
-   * @ngdoc directive
-   * @name cfInlineLoader
-   * @description
-   * This directive inserts an inline loader.
-   *
-   * The `is-shown` attribute accepts a property from the parent scope. The loader
-   * is toggled based on this property.
-   *
-   * @usage[jade]
-   * .search
-   *   input(type="text")
-   *   cf-inline-loader(is-shown="isSearching")
-   */
-  registerDirective('cfInlineLoader', () => ({
-    restrict: 'E',
-    scope: {
-      isShown: '='
-    },
-    template: h(
-      '.loader.loader--inline',
-      {
-        ngShow: 'isShown',
-        role: 'progressbar',
-        ariaBusy: '{{isShown}}',
-        ariaLabel: 'loader-inline'
-      },
-      [h('.loader__spinner--inline')]
-    )
-  }));
 }

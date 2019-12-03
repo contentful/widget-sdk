@@ -5,57 +5,6 @@ export default function register() {
   /**
    * @ngdoc directive
    * @module cf.forms
-   * @name cfFieldErrorFor
-   * @usage[jade]
-   * form
-   *   input(name="myfield")
-   *   span(cf-field-error-for="myfield")
-   *
-   * @description
-   * Show the first error message for the given field.
-   *
-   * Uses the `FieldErrorController` to provide the error messages. The
-   * element is hidden when there are no messages.
-   *
-   * @param {string} fieldName
-   * The name of the form field we want to show errors for
-   */
-  registerDirective('cfFieldErrorFor', () => ({
-    scope: {
-      fieldName: '@cfFieldErrorFor'
-    },
-
-    require: '^form',
-    template: '{{errors.messages[0]}}',
-    controllerAs: 'errors',
-    controller: 'FieldErrorController',
-
-    link: function(scope, elem, _attrs, form) {
-      scope.errors.link(form, scope.fieldName);
-      scope.$watch('errors.exist && !errors.hide', hasErrors => {
-        elem.toggleClass('ng-hide', !hasErrors);
-      });
-    }
-  }));
-
-  registerDirective('cfFieldInvalidClass', () => ({
-    restrict: 'A',
-    scope: true,
-    require: '^form',
-    controllerAs: 'errors',
-    controller: 'FieldErrorController',
-
-    link: function(scope, elem, attrs, form) {
-      scope.errors.link(form, attrs.cfFieldInvalidClass);
-      scope.$watch('errors.exist && !errors.hide', hasErrors => {
-        elem.toggleClass('x--invalid', hasErrors);
-      });
-    }
-  }));
-
-  /**
-   * @ngdoc directive
-   * @module cf.forms
    * @name cfFieldErrorsFor
    * @usage[jade]
    * form

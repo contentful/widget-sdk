@@ -114,14 +114,4 @@ describe('cfLoaders', () => {
       expect(scope.isShown).toBe(false);
     });
   });
-
-  describe('cfInlineLoader', () => {
-    beforeEach(function() {
-      this.compileLoader = this.compile('cf-inline-loader');
-    });
-
-    it('binds `isShown` to scope', function() {
-      this.assertIsShownBinding('isSearching', 'INITVAL');
-    });
-  });
 });
