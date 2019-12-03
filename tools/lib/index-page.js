@@ -89,8 +89,7 @@ function indexPage(uiVersion, config, resolve, entryScripts) {
       [
         h('.client', [
           h('cf-app-container.app-container', {
-            ngIf: 'user && appReady',
-            cfRolesForWalkMe: ''
+            ngIf: 'user && appReady'
           }),
           h('div', { ngIf: '!user || !appReady' }, [appLoader()])
         ])

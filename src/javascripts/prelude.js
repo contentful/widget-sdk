@@ -291,6 +291,7 @@ angular
       const { init: initExtentionActivationTracking } = await import(
         'widgets/ExtensionActivationTracking'
       );
+      const { init: initRolesForWalkMe } = await import('app/RolesForWalkMe');
 
       const { init: initDialogs } = $injector.get('dialogsInitController');
       const { setup: setupStateChangeHandlers } = $injector.get('navigation/stateChangeHandlers');
@@ -309,6 +310,7 @@ angular
       initAutoCreateNewSpace();
       initContextMenuHandler();
       initExtentionActivationTracking();
+      initRolesForWalkMe();
 
       initDialogs();
       setupStateChangeHandlers();

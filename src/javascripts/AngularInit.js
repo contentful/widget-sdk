@@ -65,7 +65,6 @@ export const angularInitRun = [
       import('components/field_dialog/validationLinkTypeController'),
       import('components/forms/datetime_editor/cfDatetimeEditorDirective'),
       import('components/forms/field_alert/cfFieldAlertDirective'),
-      import('components/roles/cfRolesForWalkMe'),
       import('components/shared/cfImgLoadEvent'),
       import('components/shared/cfSelectionDirective'),
       import('components/shared/create_new_space/createNewSpaceDirective'),
