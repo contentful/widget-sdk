@@ -11,8 +11,6 @@ import {
   Button,
   TextInput,
   Notification,
-  Modal,
-  Checkbox,
   Paragraph
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
@@ -39,10 +37,6 @@ const aliasOptInStyles = {
       justifyContent: 'center'
     }
   }),
-  disclaimerCheckbox: css({
-    alignSelf: 'beginning',
-    paddingTop: tokens.spacingM
-  }),
   backDrop: css({
     position: 'absolute',
     left: 0,
@@ -63,8 +57,6 @@ const aliasOptInStyles = {
 export default function OptIn({ step, setStep, spaceId, testId }) {
   const [newEnvironmentId, setNewEnvironmentId] = useState('');
   const [loading, setLoading] = useState(false);
-  const [disclaimerModalOpen, setDisclaimerModalOpen] = useState(false);
-  const [disclaimerConfirmed, setDisclaimerConfirmed] = useState(false);
 
   const optIn = async () => {
     setLoading(true);
@@ -178,29 +170,11 @@ export default function OptIn({ step, setStep, spaceId, testId }) {
                               This helps you to keep track of the environment used in production –
                               similar to versioning code releases.
                             </Paragraph>
-                            <div className={aliasOptInStyles.disclaimerCheckbox}>
-                              <Checkbox
-                                testId="checkbox.disclaimer"
-                                labelText="alphaDisclaimer"
-                                name="alphaDisclaimer"
-                                checked={disclaimerConfirmed}
-                                onChange={({ target }) => setDisclaimerConfirmed(target.checked)}
-                                id="alphaDisclaimer"
-                              />
-                              <span>I agree to the </span>
-                              <TextLink onClick={() => setDisclaimerModalOpen(true)}>
-                                alpha feature notice
-                              </TextLink>
-                            </div>
                             <div className={aliasOptInStyles.buttons}>
                               <Button
                                 testId="button.to-third-step"
                                 loading={loading}
-                                disabled={
-                                  !newEnvironmentId ||
-                                  !disclaimerConfirmed ||
-                                  newEnvironmentId === 'master'
-                                }
+                                disabled={!newEnvironmentId || newEnvironmentId === 'master'}
                                 buttonType="positive"
                                 onClick={optIn}>
                                 Rename Environment
@@ -226,43 +200,6 @@ export default function OptIn({ step, setStep, spaceId, testId }) {
         </Table>
       </Card>
       <div className={aliasOptInStyles.backDrop}></div>
-      <Modal
-        title="Alpha feature notice"
-        intent="primary"
-        size="medium"
-        confirmLabel="I understand"
-        isShown={disclaimerModalOpen}
-        onClose={() => {
-          setDisclaimerModalOpen(false);
-          // track abort?
-        }}>
-        {({ title, onClose }) => (
-          <Fragment>
-            <Modal.Header title={title} onClose={onClose} />
-            <Modal.Content>
-              <Paragraph className={aliasOptInStyles.paragraph}>
-                Setting up the master environment alias for a space can’t be reverted. It’s not
-                recommended to use environment aliases in your production spaces during the Alpha
-                phase.
-              </Paragraph>
-              <Paragraph>
-                We are continuing to improve the feature and would love to hear your feedback.
-              </Paragraph>
-            </Modal.Content>
-            <Modal.Controls>
-              <Button
-                buttonType="primary"
-                onClick={() => {
-                  setDisclaimerConfirmed(true);
-                  setDisclaimerModalOpen(false);
-                  // track confirm?
-                }}>
-                I understand
-              </Button>
-            </Modal.Controls>
-          </Fragment>
-        )}
-      </Modal>
     </Fragment>
   );
 }
