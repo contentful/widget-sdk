@@ -1,15 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
+import { getModule } from 'NgRegistry';
 
 import FormSection from 'components/forms/FormSection';
 import WebhookSegmentation from './WebhookSegmentation';
 import { transformTopicsToMap, transformMapToTopics } from './WebhookSegmentationState';
-import WebhookFilters from './WebhookFilters';
-import { transformFiltersToList, transformListToFilters } from './WebhookFiltersState';
 import WebhookHeaders from './WebhookHeaders';
 import WebhookBasicAuth from './WebhookBasicAuth';
 import WebhookBodyTransformation from './WebhookBodyTransformation';
+import { Paragraph } from '@contentful/forma-36-react-components';
+import WebhookFilters from './WebhookFilters';
+import { transformFiltersToList, transformListToFilters } from './WebhookFiltersState';
+import { WILDCARD } from './WebhookSegmentationState';
+import WebhookOtherEventsSection from './WebhookOtherEventsSection';
 
 const METHODS = ['POST', 'GET', 'PUT', 'PATCH', 'DELETE'];
 
@@ -29,6 +33,10 @@ export default class WebhookForm extends React.Component {
     onChange: PropTypes.func.isRequired
   };
 
+  hasEnvironmentAliases() {
+    return getModule('spaceContext').hasOptedIntoAliases();
+  }
+
   updatedTransformation(change) {
     const { transformation } = this.props.webhook;
     const cur = transformation || {};
@@ -39,6 +47,8 @@ export default class WebhookForm extends React.Component {
     const { webhook } = this.props;
     const contentType = get(webhook, ['transformation', 'contentType'], CONTENT_TYPES[0]);
     const includeContentLength = get(webhook, ['transformation', 'includeContentLength'], false);
+    const values = transformTopicsToMap(webhook.topics);
+    const isWildcarded = values === WILDCARD;
 
     return (
       <div className="webhook-editor__settings f36-padding-top--s">
@@ -87,13 +97,20 @@ export default class WebhookForm extends React.Component {
 
         <FormSection title="Triggers" collapsible={true}>
           <WebhookSegmentation
-            values={transformTopicsToMap(webhook.topics)}
+            webhook={webhook}
+            values={values}
             onChange={map => this.props.onChange({ topics: transformMapToTopics(map) })}
           />
           <WebhookFilters
             filters={transformFiltersToList(webhook.filters)}
             onChange={list => this.props.onChange({ filters: transformListToFilters(list) })}
           />
+          {this.hasEnvironmentAliases() && !isWildcarded && (
+            <WebhookOtherEventsSection
+              values={values}
+              onChange={map => this.props.onChange({ topics: transformMapToTopics(map) })}
+            />
+          )}
         </FormSection>
 
         <FormSection title="Headers" collapsible={true}>
@@ -121,16 +138,16 @@ export default class WebhookForm extends React.Component {
                 </option>
               ))}
             </select>
-            <p className="entity-editor__field-hint">
+            <Paragraph className="entity-editor__field-hint">
               Select one of allowed MIME types to be used as the value of the{' '}
               <code>Content-Type</code> header. Any custom <code>Content-Type</code> header will be
               ignored.
-            </p>
+            </Paragraph>
             {contentType.startsWith(FORM_URLENCODED_CONTENT_TYPE) && (
-              <p className="entity-editor__field-hint">
+              <Paragraph className="entity-editor__field-hint">
                 For your current selection JSON payload will be automatically converted to URL
                 encoded form data.
-              </p>
+              </Paragraph>
             )}
           </div>
           <div className="cfnext-form__field">
@@ -148,10 +165,10 @@ export default class WebhookForm extends React.Component {
               />{' '}
               Automatically compute the value of the <code>Content-Length</code> header
             </label>
-            <p className="entity-editor__field-hint">
+            <Paragraph className="entity-editor__field-hint">
               If this option is selected, the byte size of the final request body will be computed
               and used as the value of the <code>Content-Length</code> header.
-            </p>
+            </Paragraph>
           </div>
         </FormSection>
 

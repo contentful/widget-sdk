@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
-
+import { Paragraph } from '@contentful/forma-36-react-components';
 import {
   ACTIONS,
   ENTITY_TYPES,
@@ -8,7 +8,9 @@ import {
   TYPE_LABELS,
   isActionChecked,
   isActionDisabled,
-  changeAction
+  changeAction,
+  shouldHideEntity,
+  shouldHideAction
 } from './WebhookSegmentationState';
 
 export default class WebhookSegmentationTable extends React.Component {
@@ -27,6 +29,8 @@ export default class WebhookSegmentationTable extends React.Component {
         </td>
       );
     }
+
+    if (shouldHideAction(action)) return;
 
     const { values, onChange } = this.props;
 
@@ -57,23 +61,29 @@ export default class WebhookSegmentationTable extends React.Component {
 
   render() {
     return (
-      <table className="webhook-editor__segmentation-table">
-        <thead>
-          <tr>
-            <th className="x--empty-cell" />
-            {ACTIONS.map(a => ACTION_LABELS[a]).map(a => (
-              <th key={a}>{a}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {ENTITY_TYPES.map(entityType => this.renderRow(entityType))}
-          <tr>
-            <td className="x--empty-cell" />
-            {ACTIONS.map(action => this.renderCheckbox('*', action))}
-          </tr>
-        </tbody>
-      </table>
+      <Fragment>
+        <br />
+        <Paragraph>Content Events</Paragraph>
+        <table className="webhook-editor__segmentation-table">
+          <thead>
+            <tr>
+              <th className="x--empty-cell" />
+              {ACTIONS.map(a => ACTION_LABELS[a]).map(
+                a => !shouldHideAction(a) && <th key={a}>{a}</th>
+              )}
+            </tr>
+          </thead>
+          <tbody>
+            {ENTITY_TYPES.map(
+              entityType => !shouldHideEntity(entityType) && this.renderRow(entityType)
+            )}
+            <tr>
+              <td className="x--empty-cell" />
+              {ACTIONS.map(action => this.renderCheckbox('*', action))}
+            </tr>
+          </tbody>
+        </table>
+      </Fragment>
     );
   }
 }
