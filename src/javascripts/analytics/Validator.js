@@ -136,17 +136,6 @@ export const validEvents = {
   usage: ['period_selected'],
   text_editor: ['action'],
   apps: ['lifecycle_event', 'uninstallation_reason'],
-  netlify: [
-    'connected',
-    'installed',
-    'updated',
-    'uninstalled',
-    'build_triggered',
-    'preview_opened'
-  ],
-  algolia: ['installed', 'updated', 'uninstalled'],
-  aiImageManagement: ['installed', 'uninstalled'],
-  approval: ['installed', 'uninstalled'],
   sso: ['start_setup', 'connection_test_result', 'contact_support', 'enable'],
   quick_navigation: ['opened_by_shortcut'],
   ie11_deprecation_notice: ['shown'],

@@ -3,7 +3,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { Card, Heading, Icon, Button } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import PropTypes from 'prop-types';
-import AppIcon from '../apps/_common/AppIcon';
+import AppIcon from './AppIcon';
 import AppMarkdown from './AppMarkdown';
 
 const styles = {

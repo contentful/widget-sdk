@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import SidebarContentPreview from './SidebarContentPreview';
-import { getSpaceNetlifyConfig } from 'app/settings/apps/netlify/NetlifyAppConfig';
 import * as Analytics from 'analytics/Analytics';
 import { getModule } from 'NgRegistry';
 import TheLocaleStore from 'services/localeStore';
@@ -112,14 +111,6 @@ export class SidebarContentPreviewContainer extends Component {
       },
       ...eventOptions
     });
-
-    const netlifyConfig = await getSpaceNetlifyConfig().get();
-    const sites = get(netlifyConfig, ['sites'], []);
-    const sitesArray = Array.isArray(sites) ? sites : [];
-
-    if (sitesArray.find(s => s.contentPreviewId === selectedContentPreview.envId)) {
-      Analytics.track('netlify:preview_opened');
-    }
   };
 
   onChangeContentPreview = preview => {
