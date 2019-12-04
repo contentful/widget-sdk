@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { Paragraph } from '@contentful/forma-36-react-components';
+import { Paragraph, Checkbox } from '@contentful/forma-36-react-components';
 import {
   ACTIONS,
   ENTITY_TYPES,
@@ -23,14 +23,14 @@ export default class WebhookSegmentationTable extends React.Component {
     const key = `${entityType}.${action}`;
 
     if (isActionDisabled(entityType, action)) {
+      if (shouldHideAction(action)) return;
+
       return (
         <td key={key} className="x--disabled-cell">
-          <input type="checkbox" disabled />
+          <Checkbox labelText="disabled-cell" disabled />
         </td>
       );
     }
-
-    if (shouldHideAction(action)) return;
 
     const { values, onChange } = this.props;
 
@@ -40,8 +40,8 @@ export default class WebhookSegmentationTable extends React.Component {
         key={key}
         className={entityType === '*' ? 'x--highlighted-cell' : ''}>
         <label>
-          <input
-            type="checkbox"
+          <Checkbox
+            labelText={action === '*' ? ` ${TYPE_LABELS[entityType]}` : ''}
             checked={isActionChecked(values, entityType, action)}
             onChange={e => onChange(changeAction(values, entityType, action, e.target.checked))}
           />
@@ -79,7 +79,7 @@ export default class WebhookSegmentationTable extends React.Component {
             )}
             <tr>
               <td className="x--empty-cell" />
-              {ACTIONS.map(action => this.renderCheckbox('*', action))}
+              {ACTIONS.map(action => !shouldHideAction(action) && this.renderCheckbox('*', action))}
             </tr>
           </tbody>
         </table>

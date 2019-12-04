@@ -19,7 +19,9 @@ export const ACTIONS = [
 const aliasActionIndex = ACTIONS.indexOf('change_target');
 
 export const DISABLED = {
-  ContentType: ['auto_save', 'archive', 'unarchive'],
+  ContentType: ['auto_save', 'archive', 'unarchive', 'change_target'],
+  Asset: ['change_target'],
+  Entry: ['change_target'],
   EnvironmentAlias: ACTIONS.slice(0, aliasActionIndex)
 };
 
@@ -134,9 +136,7 @@ export function areAllActionsChecked(map, entityType) {
 
 // Is all types *matching given action* checked ?
 export function areAllEntityTypesChecked(map, action) {
-  return ENTITY_TYPES.filter(t => !isActionDisabled(t, action) && !shouldHideEntity(t)).every(
-    t => map[t][action]
-  );
+  return ENTITY_TYPES.filter(t => !isActionDisabled(t, action)).every(t => map[t][action]);
 }
 
 // It takes a map, and returns list of topics from given map. Output looks like this;
