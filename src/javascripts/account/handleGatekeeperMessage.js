@@ -1,11 +1,21 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { Notification } from '@contentful/forma-36-react-components';
+import {
+  Notification,
+  Modal,
+  Button,
+  Paragraph,
+  Typography
+} from '@contentful/forma-36-react-components';
 import { getModule } from 'NgRegistry';
 import * as Authentication from 'Authentication';
 import * as TokenStore from 'services/TokenStore';
 import * as Analytics from 'analytics/Analytics';
 import * as UrlSyncHelper from 'account/UrlSyncHelper';
 import * as createSpace from 'services/CreateSpace';
+import * as ModalLauncher from 'app/common/ModalLauncher';
+import { go } from 'states/Navigator';
 
 export default function handleGatekeeperMessage(data) {
   const $rootScope = getModule('$rootScope');
@@ -57,24 +67,46 @@ function makeMessageMatcher(data) {
   };
 }
 
-function showErrorModal(data) {
-  const $state = getModule('$state');
-  const modalDialog = getModule('modalDialog');
+function ErrorModal({ isShown, onClose, title, message }) {
+  return (
+    <Modal
+      title={title}
+      isShown={isShown}
+      onClose={onClose}
+      shouldCloseOnOverlayClick={false}
+      shouldCloseOnEscapePress={false}>
+      <Typography>
+        <Paragraph>{message}</Paragraph>
+      </Typography>
+      <Button onClick={onClose} buttonType="muted">
+        Okay, got it
+      </Button>
+    </Modal>
+  );
+}
 
+ErrorModal.propTypes = {
+  isShown: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
+  message: PropTypes.string.isRequired
+};
+
+function showErrorModal(data) {
   const defaultTitle = 'Something went wrong';
   const defaultMessage =
     'An error has occurred. We have been automatically notified and will investigate. If it re-occurs, please contact support.';
 
-  modalDialog
-    .open({
-      title: _.unescape(data.heading) || defaultTitle,
-      message: _.unescape(data.body) || defaultMessage,
-      ignoreEsc: true,
-      backgroundClose: false
-    })
-    .promise.then(() => {
-      $state.go('home');
-    });
+  const modalKey = Date.now();
+  ModalLauncher.open(({ isShown, onClose }) => (
+    <ErrorModal
+      title={_.unescape(data.heading) || defaultTitle}
+      message={_.unescape(data.body) || defaultMessage}
+      isShown={isShown}
+      onClose={onClose}
+      key={modalKey}
+    />
+  )).then(() => go({ path: 'home' }));
 }
 
 function showNotification(data) {

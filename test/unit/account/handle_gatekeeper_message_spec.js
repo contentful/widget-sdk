@@ -13,7 +13,6 @@ describe('Gatekeeper Message Handler', () => {
       $state: {},
       updateWebappUrl: sinon.stub(),
       $location_url: sinon.spy(),
-      modalDialog_open: sinon.stub().returns({ promise: Promise.resolve() }),
       redirectToLogin: sinon.spy(),
       cancelUser: sinon.spy()
     };
@@ -55,9 +54,6 @@ describe('Gatekeeper Message Handler', () => {
       $provide.constant('$state', this.stubs.$state);
       $provide.constant('$location', {
         url: this.stubs.$location_url
-      });
-      $provide.constant('modalDialog', {
-        open: this.stubs.modalDialog_open
       });
     });
   });
@@ -134,32 +130,6 @@ describe('Gatekeeper Message Handler', () => {
     describe('handles gk errors', () => {
       beforeEach(function() {
         this.stubs.$state.go = sinon.stub();
-
-        this.expectModal = function(title, message) {
-          sinon.assert.calledOnce(
-            this.stubs.modalDialog_open.withArgs({
-              title: title,
-              message: message,
-              ignoreEsc: true,
-              backgroundClose: false
-            })
-          );
-        };
-      });
-
-      it('shows gk message in modal', function() {
-        this.handle({ type: 'error', status: 500, heading: 'oopsie', body: 'error happened' });
-        this.expectModal('oopsie', 'error happened');
-      });
-
-      it('unescapes gk message', function() {
-        this.handle({
-          type: 'error',
-          status: 404,
-          heading: 'Page does&#39;t exist',
-          body: 'Server says: &quot;404&quot;'
-        });
-        this.expectModal("Page does't exist", 'Server says: "404"');
       });
 
       it('redirects to login', function() {
