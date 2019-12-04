@@ -19,7 +19,8 @@ import {
 import { getDefaultEntry, getFirst7SnapshotsOfDefaultEntry } from '../../../interactions/entries';
 import {
   PROVIDER as PRODUCT_CATALOG_PROVIDER,
-  queryForScheduledPublishingOnEntryPage
+  queryForScheduledPublishingOnEntryPage,
+  queryForTasksAndAppsInDefaultSpace
 } from '../../../interactions/product_catalog_features';
 import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 
@@ -74,11 +75,14 @@ describe('Tasks entry editor sidebar', () => {
 
   context('tasks service error', () => {
     beforeEach(() => {
-      const interaction = getAllTasksForDefaultEntry.willFailWithAnInternalServerError();
+      const interactions = [
+        queryForTasksAndAppsInDefaultSpace.willFindBothEnabled(),
+        getAllTasksForDefaultEntry.willFailWithAnInternalServerError()
+      ]
 
       visitEntry();
 
-      cy.wait(interaction);
+      cy.wait(interactions);
     });
 
     it('renders "Tasks" sidebar section with an error', () => {
@@ -88,11 +92,14 @@ describe('Tasks entry editor sidebar', () => {
 
   context('no tasks on the entry', () => {
     beforeEach(() => {
-      const interaction = getAllTasksForDefaultEntry.willReturnNone();
+      const interactions = [
+        queryForTasksAndAppsInDefaultSpace.willFindBothEnabled(),
+        getAllTasksForDefaultEntry.willReturnNone()
+      ]
 
       visitEntry();
 
-      cy.wait(interaction);
+      cy.wait(interactions);
     });
 
     it('renders "Tasks" sidebar section', () => {
@@ -103,11 +110,14 @@ describe('Tasks entry editor sidebar', () => {
 
   context('several tasks on the entry', () => {
     beforeEach(() => {
-      const interaction = getAllTasksForDefaultEntry.willReturnSeveral();
+      const interactions = [
+        queryForTasksAndAppsInDefaultSpace.willFindBothEnabled(),
+        getAllTasksForDefaultEntry.willReturnSeveral()
+      ]
 
       visitEntry();
 
-      cy.wait(interaction);
+      cy.wait(interactions);
     });
 
     it('renders list of tasks', () => {
@@ -236,16 +246,19 @@ describe('Tasks entry editor sidebar', () => {
       assigneeId: 'userID'
     };
 
-    let getAllTasksInteraction: string
+    let interactions: string[]
     beforeEach(() => {
-      getAllTasksInteraction = getAllTasksForDefaultEntry.willReturnNone();
+      interactions = [
+        queryForTasksAndAppsInDefaultSpace.willFindBothEnabled(),
+        getAllTasksForDefaultEntry.willReturnNone()
+      ]
     });
 
     context('task creation error', () => {
       beforeEach(() => {
         visitEntry();
 
-        cy.wait(getAllTasksInteraction);
+        cy.wait(interactions);
       });
 
       it('creates task on API and adds it to task list', () => {
@@ -266,7 +279,7 @@ describe('Tasks entry editor sidebar', () => {
       beforeEach(() => {
         visitEntry();
 
-        cy.wait(getAllTasksInteraction);
+        cy.wait(interactions);
       });
 
       it('creates task on API and adds it to task list', () => {
