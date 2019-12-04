@@ -103,6 +103,7 @@ export const validEvents = {
   // TODO: These should be merged with the reference_editor_action
   // schema.
   reference_editor: ['create_entry', 'edit_entry'],
+  account_dropdown: ['pending_tasks_fetched'],
   markdown_editor: ['action'],
   reference_editor_action: ['create', 'edit', 'delete', 'link'],
   incoming_links: [
