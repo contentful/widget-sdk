@@ -65,7 +65,7 @@ export default class AppListItem extends Component {
       appInstallation: PropTypes.object,
       isPrivateApp: PropTypes.bool,
       enabled: PropTypes.bool.isRequired
-    }),
+    }).isRequired,
     openDetailModal: PropTypes.func.isRequired
   };
 

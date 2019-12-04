@@ -84,7 +84,7 @@ export function createCustomWidgetLoader(cma, appsRepo) {
   // returns a list of widgets. If there is no widget for an ID,
   // it is omitted in the result set.
   //
-  // While this method is used, a cache is build up. Once cached
+  // While this method is used, a cache is built up. Once cached
   // widgets will be used until the current space/environment
   // changes or `evict` is called.
   //
@@ -109,41 +109,20 @@ export function createCustomWidgetLoader(cma, appsRepo) {
   // Widgets fetched can be used for listing/management
   // only (`srcdoc` not included in extension widgets),
   // not for rendering of `<iframe>`s.
-  function getUncachedForListing() {
-    const widgets = {};
+  async function getUncachedForListing() {
+    const appsPromise = appsRepo
+      .getApps()
+      .then(apps => (apps || []).filter(app => !!app.appInstallation).map(buildAppWidget))
+      .catch(() => []);
 
-    return new Promise(resolve => {
-      // We want to fire both HTTP calls at the same time
-      // and do them in parallel but allow them to fail and
-      // be handled separately. For this reason we're not
-      // using `Promise.all()`.
-      const done = result => {
-        Object.assign(widgets, result);
-        if (Array.isArray(widgets.extension) && Array.isArray(widgets.app)) {
-          // List apps before extensions!
-          resolve(widgets.app.concat(widgets.extension));
-        }
-      };
+    const extensionsPromise = cma
+      .getExtensionsForListing()
+      // TODO: drop the filter once we fully migrate to the new `/extensions` endpoint.
+      .then(({ items }) => (items || []).filter(e => !!e.extension).map(buildExtensionWidget))
+      .catch(() => []);
 
-      cma
-        .getExtensionsForListing()
-        .then(({ items }) =>
-          done({
-            // TODO: filter should be removed when we move `/extensions`
-            // to extensibility-api (it happens on the API side there).
-            extension: (items || []).filter(e => !!e.extension).map(buildExtensionWidget)
-          })
-        )
-        .catch(() => done({ extension: [] }));
+    const [appWidgets, extensionWidgets] = await Promise.all([appsPromise, extensionsPromise]);
 
-      appsRepo
-        .getApps()
-        .then(apps =>
-          done({
-            app: (apps || []).filter(app => !!app.appInstallation).map(buildAppWidget)
-          })
-        )
-        .catch(() => done({ app: [] }));
-    });
+    return appWidgets.concat(extensionWidgets);
   }
 }

@@ -7,7 +7,7 @@ import { toInternalFieldType } from './FieldTypes';
 export function buildExtensionWidget({ sys, extension, parameters }) {
   // We identify srcdoc-backed extensions by taking a look
   // at `sys.srcdocSha256`. It'll be present if the Extension
-  // uses `srcdoc` even if `stripSrcdoc` QS paramter was used.
+  // uses `srcdoc` even if `stripSrcdoc` QS parameter was used.
   // If we know that srcdoc is used but we don't have its value
   // (due to `stripSrcdoc`) we indicate it by `true`
   const { src, srcdoc } = extension;
