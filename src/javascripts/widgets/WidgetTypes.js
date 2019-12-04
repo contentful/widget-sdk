@@ -2,8 +2,6 @@ import { get } from 'lodash';
 
 import { toInternalFieldType } from './FieldTypes';
 
-// TODO: test this module.
-
 export function buildExtensionWidget({ sys, extension, parameters }) {
   // We identify srcdoc-backed extensions by taking a look
   // at `sys.srcdocSha256`. It'll be present if the Extension
@@ -19,8 +17,7 @@ export function buildExtensionWidget({ sys, extension, parameters }) {
     name: extension.name,
     fieldTypes: (extension.fieldTypes || []).map(toInternalFieldType),
     isApp: false,
-    sidebar: extension.sidebar,
-    locations: extension.locations,
+    sidebar: !!extension.sidebar,
     parameters: get(extension, ['parameters', 'instance'], []),
     installationParameters: {
       definitions: get(extension, ['parameters', 'installation'], []),
@@ -39,11 +36,12 @@ export function buildAppWidget({ id, title, icon, appDefinition, appInstallation
     isApp: true,
     appId: id,
     appIconUrl: icon,
+    sidebar: false,
     locations: appDefinition.locations,
     parameters: [],
     installationParameters: {
       definitions: [],
-      values: appInstallation.parameters
+      values: appInstallation.parameters || {}
     }
   };
 }

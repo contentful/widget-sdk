@@ -2,8 +2,6 @@ import DataLoader from 'dataloader';
 import { get, identity } from 'lodash';
 import { buildExtensionWidget, buildAppWidget } from './WidgetTypes';
 
-// TODO: test this module.
-
 export function createCustomWidgetLoader(cma, appsRepo) {
   const loader = new DataLoader(loadByIds);
 
