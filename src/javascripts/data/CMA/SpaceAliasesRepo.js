@@ -1,7 +1,5 @@
 import _ from 'lodash';
-import { ENVIRONMENT_ALIASING, getAlphaHeader } from 'alphaHeaders.js';
 
-const alphaHeader = getAlphaHeader(ENVIRONMENT_ALIASING);
 const ALIASES_LIMIT = 101;
 
 /**
@@ -18,14 +16,11 @@ export function create(spaceEndpoint) {
    * Returns a list of all environment aliases for the given space
    */
   function getAll() {
-    return spaceEndpoint(
-      {
-        method: 'GET',
-        path: ['environment_aliases'],
-        query: { limit: ALIASES_LIMIT }
-      },
-      alphaHeader
-    )
+    return spaceEndpoint({
+      method: 'GET',
+      path: ['environment_aliases'],
+      query: { limit: ALIASES_LIMIT }
+    })
       .then(response => response.items)
       .catch(error => {
         if (error.code === 'FeatureNotEnabled') {
@@ -39,13 +34,10 @@ export function create(spaceEndpoint) {
    * Returns the selected environment alias if it exists for the given space
    */
   function get({ id }) {
-    return spaceEndpoint(
-      {
-        method: 'GET',
-        path: ['environment_aliases', id]
-      },
-      alphaHeader
-    ).catch(error => {
+    return spaceEndpoint({
+      method: 'GET',
+      path: ['environment_aliases', id]
+    }).catch(error => {
       if (error.code === 'FeatureNotEnabled') {
         return null;
       }
@@ -72,7 +64,6 @@ export function create(spaceEndpoint) {
         }
       },
       {
-        ...alphaHeader,
         'X-Contentful-Version': version
       }
     );
@@ -81,15 +72,12 @@ export function create(spaceEndpoint) {
    * Opt in to the environment alias feature
    */
   function optIn({ newEnvironmentId }) {
-    return spaceEndpoint(
-      {
-        method: 'PUT',
-        path: ['optin', 'environment-aliases'],
-        data: {
-          newEnvironmentId
-        }
-      },
-      alphaHeader
-    );
+    return spaceEndpoint({
+      method: 'PUT',
+      path: ['optin', 'environment-aliases'],
+      data: {
+        newEnvironmentId
+      }
+    });
   }
 }

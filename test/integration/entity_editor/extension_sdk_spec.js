@@ -12,7 +12,7 @@ import { it } from 'test/utils/dsl';
 // All the testing should be done here:
 // https://github.com/contentful/ui-extensions-sdk/tree/master/test
 
-describe('Extension SDK', () => {
+xdescribe('Extension SDK', () => {
   beforeEach(async function() {
     this.openStub = sinon.stub().resolves(null);
 

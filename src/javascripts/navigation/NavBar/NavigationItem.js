@@ -23,6 +23,17 @@ Label.propTypes = {
   hasTooptip: PropTypes.bool.isRequired
 };
 
+function getNavigationProps(item) {
+  return {
+    path: item.sref,
+    params: item.srefParams || {},
+    options: {
+      inherit: true,
+      ...(item.srefOptions || {})
+    }
+  };
+}
+
 export default function NavigationItem(props) {
   const { item } = props;
 
@@ -31,14 +42,7 @@ export default function NavigationItem(props) {
       return;
     }
 
-    Navigator.go({
-      path: item.sref,
-      params: item.srefParams || {},
-      options: {
-        inherit: true,
-        ...(item.srefOptions || {})
-      }
-    });
+    Navigator.go(getNavigationProps(item));
   };
 
   return (
@@ -50,6 +54,7 @@ export default function NavigationItem(props) {
       }}>
       <a
         data-view-type={item.dataViewType}
+        href={Navigator.href(getNavigationProps(item))}
         className={cn('nav-bar__link', {
           'is-disabled': item.disabled,
           'is-active': item.disabled
@@ -58,6 +63,9 @@ export default function NavigationItem(props) {
         })}
         role="button"
         onClick={e => {
+          if (e.ctrlKey || e.metaKey) {
+            return;
+          }
           e.preventDefault();
           onClick();
         }}

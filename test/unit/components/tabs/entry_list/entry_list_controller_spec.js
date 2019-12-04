@@ -72,7 +72,7 @@ describe('Entry List Controller', () => {
       createSpaceEndpoint: sinon.stub().returns('/spaces/test/')
     });
 
-    this.system.set('app/jobs/DataManagement/JobsService', {
+    this.system.set('app/ScheduledActions/DataManagement/ScheduledActionsService', {
       getJobs: sinon.stub().resolves([])
     });
 

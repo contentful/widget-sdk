@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import { $initialize, $inject, $compile, $apply } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
 
-describe('cfFileEditor Directive', () => {
+xdescribe('cfFileEditor Directive', () => {
   beforeEach(async function() {
     this.stubs = {
       pick: sinon.stub().resolves({ fileName: 'x.jpg' }),

@@ -35,6 +35,17 @@ const styles = {
   })
 };
 
+function getNavigationProps(item) {
+  return {
+    path: item.sref,
+    params: item.srefParams || {},
+    options: {
+      inherit: true,
+      ...(item.srefOptions || {})
+    }
+  };
+}
+
 export default function NavigationDropdown(props) {
   const { item } = props;
   const [isOpen, setIsOpen] = useState(false);
@@ -97,16 +108,13 @@ export default function NavigationDropdown(props) {
               <DropdownListItem
                 data-view-type={subitem.dataViewType}
                 key={subitem.title}
+                href={Navigator.href(getNavigationProps(subitem))}
                 isActive={Navigator.includes({ path: subitem.rootSref || subitem.sref })}
-                onClick={() => {
-                  Navigator.go({
-                    path: subitem.sref,
-                    params: item.srefParams || {},
-                    options: {
-                      inherit: true,
-                      ...(item.srefOptions || {})
-                    }
-                  });
+                onClick={e => {
+                  if (e.ctrlKey || e.metaKey) {
+                    return;
+                  }
+                  Navigator.go(getNavigationProps(subitem));
                   onClose();
                 }}>
                 {subitem.title}

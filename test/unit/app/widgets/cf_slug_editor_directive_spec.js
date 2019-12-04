@@ -2,7 +2,7 @@ import _ from 'lodash';
 import sinon from 'sinon';
 import { $initialize, $inject, $compile, $apply } from 'test/utils/ng';
 
-describe('SlugEditor directive', () => {
+xdescribe('SlugEditor directive', () => {
   beforeEach(async function() {
     this.locales = [
       { code: 'default-LOCALE', optional: false, fallbackCode: null },

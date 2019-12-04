@@ -33,8 +33,6 @@ describe('OptIn', () => {
     fireEvent.change(getByTestId('input'), { target: { value: 'master' } });
     expect(btn).toBeDisabled();
     fireEvent.change(getByTestId('input'), { target: { value: 'new environmentid' } });
-    expect(btn).toBeDisabled();
-    fireEvent.click(getByTestId('checkbox.disclaimer'));
     btn.click();
     await wait(() => expect(setStep).toHaveBeenLastCalledWith(STEPS.THIRD_CHANGE_ENV));
   });

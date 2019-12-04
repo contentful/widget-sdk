@@ -4,7 +4,7 @@ import { cloneDeep } from 'lodash';
 // We check the reference with `===` in the component using this module.
 export const WILDCARD = { isDoubleAsteriskWildcard: true };
 
-export const ENTITY_TYPES = ['ContentType', 'Entry', 'Asset'];
+export const ENTITY_TYPES = ['ContentType', 'Entry', 'Asset', 'EnvironmentAlias'];
 export const ACTIONS = [
   'create',
   'save',
@@ -13,9 +13,18 @@ export const ACTIONS = [
   'unarchive',
   'publish',
   'unpublish',
-  'delete'
+  'delete',
+  'change_target'
 ];
-export const DISABLED = { ContentType: ['auto_save', 'archive', 'unarchive'] };
+const aliasActionIndex = ACTIONS.indexOf('change_target');
+
+export const DISABLED = {
+  ContentType: ['auto_save', 'archive', 'unarchive'],
+  EnvironmentAlias: ACTIONS.slice(0, aliasActionIndex)
+};
+
+export const HIDDEN_ENTITY_TYPES = ['EnvironmentAlias'];
+export const HIDDEN_ACTIONS = ['change_target', 'Change Target'];
 
 export const TYPE_LABELS = {
   ContentType: 'Content type',
@@ -31,8 +40,19 @@ export const ACTION_LABELS = {
   unarchive: 'Unarchive',
   publish: 'Publish',
   unpublish: 'Unpublish',
-  delete: 'Delete'
+  delete: 'Delete',
+  change_target: 'Change Target'
 };
+
+// for non content entity types, don't create a table row
+export function shouldHideEntity(type) {
+  return HIDDEN_ENTITY_TYPES.includes(type);
+}
+
+// for non content entity type actions, don't create a table column
+export function shouldHideAction(action) {
+  return HIDDEN_ACTIONS.includes(action);
+}
 
 // A map is the representation of topics as a nested object:
 // {
@@ -114,7 +134,9 @@ export function areAllActionsChecked(map, entityType) {
 
 // Is all types *matching given action* checked ?
 export function areAllEntityTypesChecked(map, action) {
-  return ENTITY_TYPES.filter(t => !isActionDisabled(t, action)).every(t => map[t][action]);
+  return ENTITY_TYPES.filter(t => !isActionDisabled(t, action) && !shouldHideEntity(t)).every(
+    t => map[t][action]
+  );
 }
 
 // It takes a map, and returns list of topics from given map. Output looks like this;

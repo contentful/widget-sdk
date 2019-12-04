@@ -6,7 +6,6 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Tag,
   TextLink,
   Card,
   Button,
@@ -27,11 +26,6 @@ import ExternalTextLink from 'app/common/ExternalTextLink';
 import { optInStep, optInStart, changeEnvironmentOpen } from 'analytics/events/EnvironmentAliases';
 
 const aliasHeaderStyles = {
-  alphaTag: css({
-    fontSize: tokens.fontSizeS,
-    color: tokens.colorBlueLight,
-    marginLeft: 'auto'
-  }),
   header: css({
     fontSize: tokens.fontSizeS,
     textTransform: 'uppercase',
@@ -52,7 +46,6 @@ function EnvironmentAliasHeader() {
   return (
     <DisplayText className={aliasHeaderStyles.header} element="h2">
       <span>Environment Aliases</span>
-      <Tag className={aliasHeaderStyles.alphaTag}>ALPHA</Tag>
     </DisplayText>
   );
 }
@@ -218,9 +211,6 @@ export default function EnvironmentAliases(props) {
     return (
       <Card className={aliasesStyles.card} testId={testId}>
         <div className={aliasesStyles.leftColumn}>
-          <div>
-            <Tag className={aliasesStyles.tag}>ALPHA</Tag>
-          </div>
           <Heading className={aliasesStyles.header} element="h2">
             Introducing environment aliases
           </Heading>

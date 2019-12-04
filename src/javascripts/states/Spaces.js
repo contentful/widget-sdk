@@ -14,7 +14,7 @@ import assets from './assets';
 import home from './spaceHome';
 import stackOnboarding from './stackOnboarding';
 import settings from './settings';
-import jobs from 'app/jobs/routes';
+import scheduledActions from 'app/ScheduledActions/routes';
 import tasks from 'app/TasksPage/routes';
 import pageExtensions from 'app/pageExtensions/routes';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
@@ -86,7 +86,7 @@ const spaceEnvironment = {
     // conceptually. However, we want to prevent users going to space
     // settings and switching to the master environment in the process.
     settings,
-    jobs,
+    scheduledActions,
     tasks,
     pageExtensions
   ]
@@ -141,7 +141,7 @@ const spaceDetail = {
     spaceEnvironment,
     stackOnboarding,
     apps,
-    jobs,
+    scheduledActions,
     tasks,
     pageExtensions
   ]
