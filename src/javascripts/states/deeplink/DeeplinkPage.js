@@ -142,6 +142,7 @@ export default function DeeplinkPage(props) {
             {...deeplinkOptions}
             href={props.href}
             searchParams={props.searchParams}
+            marketplaceApps={props.marketplaceApps}
             onContinue={({ spaceId, environmentId }) => {
               updateRedirectLink({ spaceId, environmentId });
             }}
@@ -157,5 +158,6 @@ export default function DeeplinkPage(props) {
 
 DeeplinkPage.propTypes = {
   href: PropTypes.string.isRequired,
-  searchParams: PropTypes.object.isRequired
+  searchParams: PropTypes.object.isRequired,
+  marketplaceApps: PropTypes.object.isRequired
 };

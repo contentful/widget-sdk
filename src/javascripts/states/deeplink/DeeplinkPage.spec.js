@@ -42,6 +42,7 @@ describe('deeplink/DeeplinkPage', () => {
           param1: '1',
           param2: '2'
         }}
+        marketplaceApps={{}}
       />
     );
 
@@ -101,6 +102,7 @@ describe('deeplink/DeeplinkPage', () => {
           link: 'some-link',
           spaceId: 'deeplink-space-id'
         }}
+        marketplaceApps={{}}
       />
     );
 

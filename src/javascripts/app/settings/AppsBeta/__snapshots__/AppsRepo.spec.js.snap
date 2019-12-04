@@ -92,7 +92,6 @@ The Netlify App gives content editors control over static site builds and makes 
 The app will be able to manage this environment and any content in it.
 
 You can revoke access at any time by uninstalling the app.",
-    "permissionsExplanation": undefined,
     "tagLine": "Easily build and preview Netlify sites directly from Contentful ",
     "title": "Netlify",
   },
