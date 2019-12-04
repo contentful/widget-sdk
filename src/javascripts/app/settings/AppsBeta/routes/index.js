@@ -5,10 +5,9 @@ import { makeAppHookBus } from '../AppHookBus';
 import createAppExtensionBridge from 'widgets/bridges/createAppExtensionBridge';
 import * as Navigator from 'states/Navigator';
 import * as SlideInNavigator from 'navigation/SlideInNavigator/index';
-import createAppsRepo from '../AppsRepo';
+import { getAppsRepo } from '../AppsRepoInstance';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
-import { getAppDefinitionLoader } from 'app/settings/AppsBeta/AppDefinitionLoaderInstance';
-import { getExtensionLoader } from 'widgets/ExtensionLoaderInstance';
+import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 
 export default {
   name: 'apps',
@@ -30,7 +29,7 @@ export default {
         (spaceContext, $state, $stateParams) => {
           return {
             goToContent: () => $state.go('^.^.entries.list'),
-            repo: createAppsRepo(getAppDefinitionLoader(), spaceContext.endpoint),
+            repo: getAppsRepo(),
             productCatalog: new AppProductCatalog(spaceContext.space.data.sys.id, getSpaceFeature),
             organizationId: spaceContext.organization.sys.id,
             spaceId: spaceContext.space.data.sys.id,
@@ -46,25 +45,15 @@ export default {
       url: '/:appId',
       component: AppPage,
       resolve: {
-        repo: [
-          'spaceContext',
-          ({ endpoint }) => createAppsRepo(getAppDefinitionLoader(), endpoint)
-        ],
-        app: [
-          '$stateParams',
-          'repo',
-          async ({ appId }, repo) => {
-            const apps = await repo.getApps();
-            return apps.find(app => app.id === appId);
-          }
-        ]
+        // Define dependency on spaceContext so we load the app
+        // only when the space is initialized.
+        app: ['$stateParams', 'spaceContext', ({ appId }) => getAppsRepo().getApp(appId)]
       },
       mapInjectedToProps: [
         'spaceContext',
         '$state',
-        'repo',
         'app',
-        (spaceContext, $state, repo, app) => {
+        (spaceContext, $state, app) => {
           const appHookBus = makeAppHookBus();
 
           const bridge = createAppExtensionBridge({
@@ -79,17 +68,14 @@ export default {
             getSpaceFeature
           );
 
-          const extensionLoader = getExtensionLoader();
-
           return {
             goBackToList: () => $state.go('^.list'),
             productCatalog,
             app,
-            repo,
             bridge,
             appHookBus,
             cma: spaceContext.cma,
-            evictWidget: id => extensionLoader.evictExtension(id)
+            evictWidget: id => getCustomWidgetLoader().evict(id)
           };
         }
       ]

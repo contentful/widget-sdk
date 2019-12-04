@@ -3,11 +3,22 @@ import { get, identity } from 'lodash';
 import { fetchMarketplaceApps } from './MarketplaceClient';
 import { hasAllowedAppFeatureFlag } from './AppProductCatalog';
 
-export default function createAppsRepo(appDefinitionLoader, spaceEndpoint) {
+export default function createAppsRepo(cma, appDefinitionLoader) {
   return {
-    getApps,
-    getAppInstallation
+    getApp,
+    getApps
   };
+
+  async function getApp(id) {
+    const apps = await getApps();
+    const app = apps.find(app => app.id === id);
+
+    if (app) {
+      return app;
+    } else {
+      throw new Error(`Could not find an app with ID "${id}".`);
+    }
+  }
 
   async function getApps() {
     const installationMap = await getAppDefinitionToInstallationMap();
@@ -54,7 +65,7 @@ export default function createAppsRepo(appDefinitionLoader, spaceEndpoint) {
             flagId: get(app, ['fields', 'productCatalogFlag', 'fields', 'flagId']),
             icon: get(app, ['fields', 'icon', 'fields', 'file', 'url'], ''),
             id: get(app, ['fields', 'slug'], ''),
-            installed: !!installationMap[definitionId],
+            appInstallation: installationMap[definitionId],
             links: get(app, ['fields', 'links'], []).map(link => link.fields),
             permissions: `__${title} app__ ${permissionsText}`,
             permissionsExplanation: get(app, ['fields', 'permissionsExplanation']),
@@ -75,24 +86,14 @@ export default function createAppsRepo(appDefinitionLoader, spaceEndpoint) {
         appDefinition: def,
         id: `private_${def.sys.id}`,
         title: def.name,
-        installed: !!installationMap[def.sys.id],
+        appInstallation: installationMap[def.sys.id],
         isPrivateApp: true
       };
     });
   }
 
-  function getAppInstallation(appDefinitionId) {
-    return spaceEndpoint({
-      method: 'GET',
-      path: ['app_installations', appDefinitionId]
-    });
-  }
-
   async function getAppDefinitionToInstallationMap() {
-    const { items } = await spaceEndpoint({
-      method: 'GET',
-      path: ['app_installations']
-    });
+    const { items } = await cma.getAppInstallations();
 
     return items.reduce(
       (acc, installation) => ({

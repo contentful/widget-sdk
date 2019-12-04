@@ -15,7 +15,7 @@ export default addUserOrgSpace((_, segmentData) => {
         data: pick(segmentData, [
           'location',
           'extension_id',
-          'extension_definition_id',
+          'extension_definition_id', // TODO: rename property in v2 of the schema.
           'extension_name',
           'src',
           'installation_params',

@@ -47,13 +47,13 @@ const styles = {
 };
 
 export default function AppPermissions(props) {
-  const { appName, permissions, icon } = props;
+  const { title, permissions, icon } = props;
 
   return (
     <div className={styles.container}>
       <Card padding="large">
         <Heading element="h1" className={styles.heading}>
-          Install {appName}
+          Install {title}
         </Heading>
 
         <div className={styles.logos}>
@@ -93,7 +93,7 @@ AppPermissions.defaultProps = {
 AppPermissions.propTypes = {
   onCancel: PropTypes.func.isRequired,
   onAuthorize: PropTypes.func.isRequired,
-  appName: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
   permissions: PropTypes.string.isRequired,
   icon: PropTypes.string.isRequired
 };

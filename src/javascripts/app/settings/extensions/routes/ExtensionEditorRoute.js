@@ -17,8 +17,12 @@ export class ExtensionEditorRoute extends React.Component {
     registerSaveAction: PropTypes.func.isRequired,
     setDirty: PropTypes.func.isRequired,
     goToList: PropTypes.func.isRequired,
-    cma: PropTypes.shape({ getExtension: PropTypes.func.isRequired }).isRequired,
-    extensionLoader: PropTypes.shape({ evictExtension: PropTypes.func.isRequired }).isRequired
+    cma: PropTypes.shape({
+      getExtension: PropTypes.func.isRequired
+    }).isRequired,
+    customWidgetLoader: PropTypes.shape({
+      evict: PropTypes.func.isRequired
+    }).isRequired
   };
 
   render() {
@@ -44,7 +48,7 @@ export class ExtensionEditorRoute extends React.Component {
                 setDirty={this.props.setDirty}
                 goToList={this.props.goToList}
                 cma={this.props.cma}
-                extensionLoader={this.props.extensionLoader}
+                customWidgetLoader={this.props.customWidgetLoader}
               />
             </React.Fragment>
           );

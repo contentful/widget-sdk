@@ -5,7 +5,8 @@ export default addUserOrgSpace((_, data) => {
     data: {
       extension_id: data.extensionId,
       location: data.location,
-      extension_definition_id: data.extensionDefinitionId || null
+      // TODO: rename property in v2 of the schema.
+      extension_definition_id: data.appDefinitionId || null
     }
   };
 });

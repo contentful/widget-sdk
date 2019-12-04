@@ -66,7 +66,6 @@ export default class ExtensionAPI {
 
     return {
       extension: descriptor.id,
-      extensionDefinition: descriptor.extensionDefinitionId,
       space: spaceId,
       environment: environmentId,
       contentType: get(contentTypeData, ['sys', 'id']),
@@ -163,7 +162,7 @@ export default class ExtensionAPI {
           fieldId,
           localeCode,
           extensionId: this.descriptor.id,
-          extensionDefinitionId: this.descriptor.extensionDefinitionId || null
+          appDefinitionId: this.descriptor.appDefinitionId || null
         });
       }
     }

@@ -12,7 +12,6 @@ import * as WidgetStore from 'widgets/WidgetStore';
 import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer';
 import * as AdvancedExtensibilityFeature from 'app/settings/extensions/services/AdvancedExtensibilityFeature';
 import { getWidgetTrackingContexts } from 'widgets/WidgetTracking';
-import { getExtensionLoader } from 'widgets/ExtensionLoaderInstance';
 import TheLocaleStore from 'services/localeStore';
 
 /**
@@ -180,9 +179,7 @@ function makeEntryLoader(spaceContext) {
     getEditorInterface: memoize(contentTypeId => {
       return spaceContext.cma.getEditorInterface(contentTypeId);
     }),
-    getWidgets(editorInterface) {
-      return WidgetStore.getForEditor(getExtensionLoader(), editorInterface);
-    },
+    getWidgets: ei => WidgetStore.getForEditor(ei),
     hasAdvancedExtensibility() {
       return AdvancedExtensibilityFeature.isEnabled(spaceContext.organization.sys.id);
     },

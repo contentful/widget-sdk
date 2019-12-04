@@ -8,10 +8,6 @@ jest.mock('services/localeStore', () => ({
   getDefaultLocale: () => ({ code: 'pl' })
 }));
 
-jest.mock('widgets/WidgetStore', () => ({
-  getForSingleExtension: jest.fn()
-}));
-
 describe('createPageExtensionBridge', () => {
   const makeBridge = () => {
     const stubs = {

@@ -20,13 +20,13 @@ function onBlur() {
 
   // If the iframe is rendering an Extension then
   // it has some data attached in data-* attributes.
-  const { extensionId, location, extensionDefinitionId } = iframe.dataset;
+  const { extensionId, location, appDefinitionId } = iframe.dataset;
 
   if (extensionId) {
     Analytics.track('extension:activate', {
       extensionId,
       location,
-      extensionDefinitionId
+      appDefinitionId
     });
   }
 }

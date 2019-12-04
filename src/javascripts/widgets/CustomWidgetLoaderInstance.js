@@ -1,11 +1,13 @@
 import { getModule } from 'NgRegistry';
 import { get, set } from 'lodash';
-import { createExtensionLoader } from './ExtensionLoader';
-import { getAppDefinitionLoader } from 'app/settings/AppsBeta/AppDefinitionLoaderInstance';
+import { createCustomWidgetLoader } from './CustomWidgetLoader';
+import { getAppsRepo } from 'app/settings/AppsBeta/AppsRepoInstance';
 
+// Both Extension and AppInstallation are environment-level
+// entities: we cache loaders per space-environment.
 const perSpaceEnvCache = {};
 
-export function getExtensionLoader() {
+export function getCustomWidgetLoader() {
   const spaceContext = getModule('spaceContext');
   const spaceId = spaceContext.getId();
   const environmentId = spaceContext.getEnvironmentId();
@@ -13,7 +15,7 @@ export function getExtensionLoader() {
   let loader = get(perSpaceEnvCache, [spaceId, environmentId]);
 
   if (!loader) {
-    loader = createExtensionLoader(getAppDefinitionLoader(), spaceContext.endpoint);
+    loader = createCustomWidgetLoader(spaceContext.cma, getAppsRepo());
     set(perSpaceEnvCache, [spaceId, environmentId], loader);
   }
 

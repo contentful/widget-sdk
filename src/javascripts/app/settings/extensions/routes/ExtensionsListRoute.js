@@ -28,24 +28,20 @@ const prepareExtension = ({ sys, extension, parameters }) => {
   };
 };
 
-const ExtensionsFetcher = createFetcherComponent(async ({ extensionLoader }) => {
-  const extensions = await extensionLoader.getAllExtensionsForListing();
+const ExtensionsFetcher = createFetcherComponent(async ({ cma }) => {
+  const { items } = await cma.getExtensionsForListing();
 
-  return (
-    (extensions || [])
-      // TODO: API shouldn't return `extensionDefinition`-based Extensions.
-      // Once done we should drop the filter.
-      .filter(e => e.extension && !e.extensionDefinition)
-      .map(prepareExtension)
-  );
+  // TODO: filter should be removed when we move `/extensions`
+  // to extensibility-api (it happens on the API side there).
+  return (items || []).filter(e => !!e.extension).map(prepareExtension);
 });
 
 class ExtensionsListRoute extends React.Component {
   static propTypes = {
     extensionUrl: PropTypes.string,
     extensionUrlReferrer: PropTypes.string,
-    extensionLoader: PropTypes.shape({
-      getAllExtensionsForListing: PropTypes.func.isRequired
+    cma: PropTypes.shape({
+      getExtensionsForListing: PropTypes.func.isRequired
     }).isRequired
   };
 
@@ -58,7 +54,7 @@ class ExtensionsListRoute extends React.Component {
     }
 
     return (
-      <ExtensionsFetcher extensionLoader={this.props.extensionLoader}>
+      <ExtensionsFetcher cma={this.props.cma}>
         {({ isLoading, isError, data, fetch }) => {
           if (isLoading) {
             return <ExtensionListShell />;
@@ -73,6 +69,7 @@ class ExtensionsListRoute extends React.Component {
                 extensionUrl={this.props.extensionUrl}
                 extensionUrlReferrer={this.props.extensionUrlReferrer}
                 extensions={data}
+                cma={this.props.cma}
                 refresh={fetch}
               />
             </React.Fragment>

@@ -144,20 +144,19 @@ function isAppAlreadyAuthorized(app = {}) {
 export default class AppRoute extends Component {
   static propTypes = {
     goBackToList: PropTypes.func.isRequired,
-    app: PropTypes.object,
+    app: PropTypes.object.isRequired,
     productCatalog: PropTypes.shape({
       isAppEnabled: PropTypes.func.isRequired
     }),
-    repo: PropTypes.shape({
-      getAppInstallation: PropTypes.func.isRequired
-    }).isRequired,
     bridge: PropTypes.object.isRequired,
     appHookBus: PropTypes.shape({
       on: PropTypes.func.isRequired,
       emit: PropTypes.func.isRequired,
       setInstallation: PropTypes.func.isRequired
     }).isRequired,
-    cma: PropTypes.object.isRequired,
+    cma: PropTypes.shape({
+      getAppInstallation: PropTypes.func.isRequired
+    }).isRequired,
     evictWidget: PropTypes.func.isRequired
   };
 
@@ -191,7 +190,7 @@ export default class AppRoute extends Component {
       return {
         appDefinition,
         // Can throw 404 if the app is not installed yet:
-        appInstallation: await this.props.repo.getAppInstallation(appDefinition.sys.id)
+        appInstallation: await this.props.cma.getAppInstallation(appDefinition.sys.id)
       };
     } catch (err) {
       return { appDefinition };
@@ -309,7 +308,7 @@ export default class AppRoute extends Component {
       <UninstallModal
         key={Date.now()}
         isShown={isShown}
-        appName={this.state.title}
+        title={this.state.title}
         actionList={this.state.actionList}
         onConfirm={reasons => {
           onClose(true);
@@ -449,9 +448,7 @@ export default class AppRoute extends Component {
     // of `AppDefinition` (no widget ID).
     const descriptor = {
       id: '__undefined-in-app-location__',
-      // We rely on `extensionDefinitionId` property for tracking.
-      // TODO: rename to `appDefinitionId` and bump the schema.
-      extensionDefinitionId: appDefinition.sys.id,
+      appDefinitionId: appDefinition.sys.id,
       src: appDefinition.src
     };
 
@@ -540,7 +537,7 @@ export default class AppRoute extends Component {
               onAuthorize={this.onAuthorize}
               onCancel={this.props.goBackToList}
               icon={appIcon}
-              appName={title}
+              title={title}
               permissions={permissions}
             />
           </Workbench.Content>

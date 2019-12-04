@@ -8,9 +8,8 @@ import * as Dialogs from '../ExtensionDialogs';
 import { applyDefaultValues } from '../WidgetParametersUtils';
 import trackExtensionRender from '../TrackExtensionRender';
 import { LOCATION_DIALOG } from '../WidgetLocations';
-import * as WidgetStore from '../WidgetStore';
 import * as entitySelector from 'search/EntitySelector/entitySelector';
-import { getExtensionLoader } from 'widgets/ExtensionLoaderInstance';
+import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 
 import createDialogExtensionBridge from './createDialogExtensionBridge';
 
@@ -45,8 +44,7 @@ export default function makeExtensionDialogsHandlers(dependencies) {
       throw new Error('No Extension ID provided.');
     }
 
-    const descriptor = await WidgetStore.getForSingleExtension(getExtensionLoader(), options.id);
-
+    const [descriptor] = await getCustomWidgetLoader().getByIds([options.id]);
     if (!descriptor) {
       throw new Error(`No Extension with ID "${options.id}" found.`);
     }

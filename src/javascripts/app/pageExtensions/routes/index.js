@@ -2,7 +2,7 @@ import PageExtensionRoute from './PageExtensionRoute';
 import createPageExtensionBridge from 'widgets/bridges/createPageExtensionBridge';
 import * as Navigator from 'states/Navigator';
 import * as SlideInNavigator from 'navigation/SlideInNavigator/index';
-import { getExtensionLoader } from 'widgets/ExtensionLoaderInstance';
+import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 
 export default {
   name: 'pageExtensions',
@@ -16,7 +16,7 @@ export default {
       return {
         extensionId,
         orgId: spaceContext.organization.sys.id,
-        extensionLoader: getExtensionLoader(),
+        customWidgetLoader: getCustomWidgetLoader(),
         bridge: createPageExtensionBridge(
           {
             spaceContext,

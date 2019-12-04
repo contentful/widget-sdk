@@ -40,10 +40,6 @@ jest.mock('TheStore/index', () => ({
   getStore: jest.fn()
 }));
 
-jest.mock('widgets/WidgetStore', () => ({
-  getForSingleExtension: jest.fn()
-}));
-
 jest.mock('components/app_container/entityCreator', () => ({
   newEntry: jest.fn(() => ({ sys: { type: 'Entry', id: 'some-entry-id' } }))
 }));

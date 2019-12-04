@@ -311,12 +311,45 @@ APIClient.prototype.renameSpace = function(newName, version) {
   });
 };
 
-APIClient.prototype.getExtensions = function() {
-  return this._getResources('extensions');
+APIClient.prototype.getExtensions = async function(query) {
+  // Call `/proxied_extensions` but fall back to `/extensions`.
+  try {
+    const res = await this._getResources('proxied_extensions', query);
+    return res;
+  } catch (err) {
+    return this._getResources('extensions', query);
+  }
 };
 
-APIClient.prototype.getExtension = function(id) {
-  return this._getResource('extensions', id);
+// Fetches all Extension entities in an environment to be
+// used for listing purposes.
+//
+// Note they don't include srcdoc property so they cannot
+// be used for rendering and (for the same reason) cannot
+// be cached.
+APIClient.prototype.getExtensionsForListing = function() {
+  return this.getExtensions({
+    stripSrcdoc: 'true', // Yes, this needs to be a string (it's a value in QS).
+    limit: 1000 // No srcdoc due to `stripSrcdoc`. We can safely fetch 1000.
+  });
+};
+
+APIClient.prototype.getAppInstallations = function() {
+  return this._getResource('app_installations');
+};
+
+APIClient.prototype.getExtension = async function(id) {
+  // Call `/proxied_extensions` but fall back to `/extensions`.
+  try {
+    const res = await this._getResource('proxied_extensions', id);
+    return res;
+  } catch (err) {
+    return this._getResource('extensions', id);
+  }
+};
+
+APIClient.prototype.getAppInstallation = function(appDefinitionId) {
+  return this._getResource('app_installations', appDefinitionId);
 };
 
 APIClient.prototype.createExtension = function(data) {

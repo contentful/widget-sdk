@@ -1,7 +1,7 @@
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
 import ExtensionsListRoute from './ExtensionsListRoute';
 import ExtensionEditorRoute from './ExtensionEditorRoute';
-import { getExtensionLoader } from 'widgets/ExtensionLoaderInstance';
+import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 
 export default {
   name: 'extensions',
@@ -19,11 +19,12 @@ export default {
       component: ExtensionsListRoute,
       mapInjectedToProps: [
         '$stateParams',
-        $stateParams => {
+        'spaceContext',
+        ($stateParams, spaceContext) => {
           return {
             extensionUrl: decodeURI($stateParams.extensionUrl || ''),
             extensionUrlReferrer: $stateParams.referrer || null,
-            extensionLoader: getExtensionLoader()
+            cma: spaceContext.cma
           };
         }
       ]
@@ -52,7 +53,7 @@ export default {
             goToList: () => {
               $state.go('^.list');
             },
-            extensionLoader: getExtensionLoader()
+            customWidgetLoader: getCustomWidgetLoader()
           };
         }
       ]

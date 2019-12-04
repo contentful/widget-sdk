@@ -1,7 +1,9 @@
-import { get, uniq, identity } from 'lodash';
+import { uniq, identity } from 'lodash';
 import { create as createBuiltinWidgetList } from './BuiltinWidgets';
-import { toInternalFieldType } from './FieldTypes';
 import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from './WidgetNamespaces';
+import { getCustomWidgetLoader } from './CustomWidgetLoaderInstance';
+
+// TODO: rename this module to "WidgetProvider".
 
 export function getBuiltinsOnly() {
   return {
@@ -9,27 +11,16 @@ export function getBuiltinsOnly() {
   };
 }
 
-export async function getForContentTypeManagement(extensionLoader, appsRepo) {
-  const [extensions, apps] = await Promise.all([
-    extensionLoader.getAllExtensionsForListing(),
-    appsRepo.getApps().catch(() => []) // Don't crash if apps are not available.
-  ]);
-
-  const appWidgets = apps.reduce(
-    (acc, app) => ({
-      ...acc,
-      [app.appDefinition.sys.id]: { id: app.id, icon: app.icon }
-    }),
-    {}
-  );
+export async function getForContentTypeManagement() {
+  const customWidgetLoader = getCustomWidgetLoader();
 
   return {
     [NAMESPACE_BUILTIN]: createBuiltinWidgetList(),
-    [NAMESPACE_EXTENSION]: extensions.map(extension => buildExtensionWidget(extension, appWidgets))
+    [NAMESPACE_EXTENSION]: await customWidgetLoader.getUncachedForListing()
   };
 }
 
-export async function getForEditor(extensionLoader, editorInterface = {}) {
+export async function getForEditor(editorInterface = {}) {
   const editorExtensionIds = (editorInterface.controls || [])
     .filter(control => {
       // Due to backwards compatibility `widgetNamespace` is not
@@ -58,51 +49,11 @@ export async function getForEditor(extensionLoader, editorInterface = {}) {
     extensionIds.push(editorInterface.editor.widgetId);
   }
 
-  const extensions = await extensionLoader.getExtensionsById(uniq(extensionIds));
+  const customWidgetLoader = getCustomWidgetLoader();
+  const extensionWidgets = await customWidgetLoader.getByIds(uniq(extensionIds));
 
   return {
     [NAMESPACE_BUILTIN]: createBuiltinWidgetList(),
-    [NAMESPACE_EXTENSION]: extensions.map(extension => buildExtensionWidget(extension))
-  };
-}
-
-export async function getForSingleExtension(extensionLoader, extensionId) {
-  const [extension] = await extensionLoader.getExtensionsById([extensionId]);
-
-  return extension ? buildExtensionWidget(extension) : null;
-}
-
-function buildExtensionWidget(
-  { sys, extension, extensionDefinition, parameters },
-  appWidgets = {}
-) {
-  const { src, srcdoc } = extension;
-
-  // We identify srcdoc-backed extensions by taking a look
-  // at `sys.srcdocSha256`. It'll be present if the Extension
-  // uses `srcdoc` even if `stripSrcdoc` QS paramter was used.
-  // If we know that srcdoc is used but we don't have its value
-  // (due to `stripSrcdoc`) we indicate it by `true`
-  const base = typeof sys.srcdocSha256 === 'string' ? { srcdoc: srcdoc || true } : { src };
-
-  const extensionDefinitionId = get(extensionDefinition, ['sys', 'id']);
-  const app = appWidgets[extensionDefinitionId];
-
-  return {
-    ...base,
-    id: sys.id,
-    extensionDefinitionId,
-    name: extension.name,
-    fieldTypes: (extension.fieldTypes || []).map(toInternalFieldType),
-    isApp: !!app,
-    appId: get(app, ['id']),
-    appIconUrl: get(app, ['icon']),
-    sidebar: extension.sidebar,
-    locations: extension.locations,
-    parameters: get(extension, ['parameters', 'instance'], []),
-    installationParameters: {
-      definitions: get(extension, ['parameters', 'installation'], []),
-      values: parameters || {}
-    }
+    [NAMESPACE_EXTENSION]: extensionWidgets
   };
 }

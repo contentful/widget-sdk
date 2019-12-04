@@ -25,6 +25,18 @@ Array [
         "type": "AppDefinition",
       },
     },
+    "appInstallation": Object {
+      "sys": Object {
+        "appDefinition": Object {
+          "sys": Object {
+            "id": "1VchawWvbIClHuMIyxwR5m",
+            "linkType": "AppDefinition",
+            "type": "Link",
+          },
+        },
+        "type": "AppInstallation",
+      },
+    },
     "author": Object {
       "icon": "//images.ctfassets.net/lpjm8d10rkpy/4DxiiBjixHZVjc69WpJX95/4708b0bdc8e713faf69a667f8266d190/472182",
       "name": "Contentful",
@@ -65,7 +77,6 @@ The Netlify App gives content editors control over static site builds and makes 
     "flagId": "basic_apps",
     "icon": "//images.ctfassets.net/lpjm8d10rkpy/2dYQ3x6VMNZJgDXYmMzLBx/b338ad4b50cd0ff31e7157671b801b4d/logomark.svg",
     "id": "netlify",
-    "installed": true,
     "links": Array [
       Object {
         "title": "Netlify Docs",
@@ -98,8 +109,8 @@ You can revoke access at any time by uninstalling the app.",
         "type": "AppDefinition",
       },
     },
+    "appInstallation": undefined,
     "id": "private_app-definition-id",
-    "installed": false,
     "isPrivateApp": true,
     "title": "My app",
   },

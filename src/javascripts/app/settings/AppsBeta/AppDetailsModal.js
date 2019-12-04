@@ -67,7 +67,9 @@ const styles = {
 };
 
 const AppPropType = PropTypes.shape({
-  appId: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  appInstallation: PropTypes.object,
   links: PropTypes.arrayOf(
     PropTypes.shape({
       title: PropTypes.string.isRequired,
@@ -102,7 +104,7 @@ function AppHeader(props) {
             fontSize: tokens.fontSize2Xl,
             fontWeight: tokens.fontWeightMedium
           })}>
-          {app.appName}
+          {app.title}
         </Heading>
         <div>
           App • Developed by{' '}
@@ -131,18 +133,18 @@ function saveAcceptAuthorize(appId) {
 
 function AppPermissionScreen({ app, onInstall, onCancel, onClose }) {
   useEffect(() => {
-    AppLifecycleTracking.permissionsOpened(app.appId);
-  }, [app.appId]);
+    AppLifecycleTracking.permissionsOpened(app.id);
+  }, [app.id]);
 
   const onAuthorize = () => {
-    AppLifecycleTracking.permissionsAccepted(app.appId);
-    saveAcceptAuthorize(app.appId);
+    AppLifecycleTracking.permissionsAccepted(app.id);
+    saveAcceptAuthorize(app.id);
     onClose(true);
     onInstall();
   };
 
   const onCancelTracked = () => {
-    AppLifecycleTracking.permissionsDismissed(app.appId);
+    AppLifecycleTracking.permissionsDismissed(app.id);
     onCancel();
   };
 
@@ -152,7 +154,7 @@ function AppPermissionScreen({ app, onInstall, onCancel, onClose }) {
         onAuthorize={onAuthorize}
         onCancel={() => onCancelTracked()}
         icon={app.icon}
-        appName={app.appName}
+        title={app.title}
         permissions={app.permissions}
       />
     </div>
@@ -180,7 +182,7 @@ export function AppDetails(props) {
 
   if (showPermissions) {
     return (
-      <StateLink to="^.detail" params={{ appId: app.appId }}>
+      <StateLink to="^.detail" params={{ appId: app.id }}>
         {({ onClick }) => (
           <AppPermissionScreen
             app={app}
@@ -193,6 +195,8 @@ export function AppDetails(props) {
     );
   }
 
+  const installed = !!app.appInstallation;
+
   return (
     <div className={cx(styles.root)}>
       <div className={styles.mainColumn}>
@@ -200,14 +204,14 @@ export function AppDetails(props) {
         <AppMarkdown source={app.description} />
       </div>
       <div className={styles.sidebarColumn}>
-        {app.enabled || app.installed ? (
-          <StateLink to="^.detail" params={{ appId: app.appId }}>
+        {app.enabled || installed ? (
+          <StateLink to="^.detail" params={{ appId: app.id }}>
             {({ onClick }) => (
               <Button
-                onClick={determineOnClick(app.installed, onClick, onClose, setShowPermissions)}
+                onClick={determineOnClick(installed, onClick, onClose, setShowPermissions)}
                 isFullWidth
                 buttonType="primary">
-                {app.installed ? 'Configure' : 'Install'}
+                {installed ? 'Configure' : 'Install'}
               </Button>
             )}
           </StateLink>
@@ -217,7 +221,7 @@ export function AppDetails(props) {
           </Button>
         )}
         <div className={styles.sidebarSpacing} />
-        {!app.enabled && !app.installed && (
+        {!app.enabled && !installed && (
           <>
             <Paragraph>This app is available to customers on a committed, annual plan.</Paragraph>
             <Paragraph

@@ -74,8 +74,8 @@ class ExtensionEditor extends React.Component {
     cma: PropTypes.shape({
       updateExtension: PropTypes.func.isRequired
     }).isRequired,
-    extensionLoader: PropTypes.shape({
-      evictExtension: PropTypes.func.isRequired
+    customWidgetLoader: PropTypes.shape({
+      evict: PropTypes.func.isRequired
     }).isRequired
   };
 
@@ -148,7 +148,7 @@ class ExtensionEditor extends React.Component {
 
             Notification.success('Your extension was updated successfully.');
 
-            this.props.extensionLoader.evictExtension(sys.id);
+            this.props.customWidgetLoader.evict(sys.id);
           }
         );
       })

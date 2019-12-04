@@ -27,9 +27,8 @@ describe('ExtensionsListRoute', () => {
 
   it('should render Forbidden page when no access', () => {
     AccessCheckerMocked.getSectionVisibility.mockImplementation(() => ({ extensions: false }));
-    const getAllExtensionsForListing = jest.fn();
     const wrapper = Enzyme.mount(
-      <ExtensionsListRoute extensionLoader={{ getAllExtensionsForListing }} />
+      <ExtensionsListRoute cma={{ getExtensionsForListing: () => {} }} />
     );
     expect(wrapper.find(ForbiddenPage)).toExist();
   });
@@ -37,16 +36,16 @@ describe('ExtensionsListRoute', () => {
   it('should show ExtensionsForbiddenPage if no access and reaches page via deeplink extensionUrl', () => {
     AccessCheckerMocked.getSectionVisibility.mockImplementation(() => ({ extensions: false }));
     expect.assertions(4);
-    const getAllExtensionsForListing = jest.fn();
+    const getExtensionsForListing = jest.fn();
     const wrapper = Enzyme.mount(
       <ExtensionsListRoute
-        extensionLoader={{ getAllExtensionsForListing }}
+        cma={{ getExtensionsForListing }}
         extensionUrl="https://github.com/contentful/extensions/blob/master/samples/build-netlify/extension.json"
       />
     );
 
     expect($stateMocked.go).not.toHaveBeenCalled();
-    expect(getAllExtensionsForListing).not.toHaveBeenCalled();
+    expect(getExtensionsForListing).not.toHaveBeenCalled();
     expect(wrapper.find(selectors.forbiddenPage)).toExist();
 
     expect(
@@ -62,13 +61,11 @@ describe('ExtensionsListRoute', () => {
   it('should fetch extensions if access and  reaches page', () => {
     AccessCheckerMocked.getSectionVisibility.mockImplementation(() => ({ extensions: true }));
     expect.assertions(3);
-    const getAllExtensionsForListing = jest.fn();
-    const wrapper = Enzyme.mount(
-      <ExtensionsListRoute extensionLoader={{ getAllExtensionsForListing }} />
-    );
+    const getExtensionsForListing = jest.fn();
+    const wrapper = Enzyme.mount(<ExtensionsListRoute cma={{ getExtensionsForListing }} />);
 
     expect($stateMocked.go).not.toHaveBeenCalled();
-    expect(getAllExtensionsForListing).toHaveBeenCalledTimes(1);
+    expect(getExtensionsForListing).toHaveBeenCalledTimes(1);
     expect(wrapper.find(selectors.forbiddenPage)).not.toExist();
   });
 });

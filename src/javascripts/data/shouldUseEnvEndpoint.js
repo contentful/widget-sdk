@@ -14,7 +14,8 @@ const PREFIXES = [
   'resources',
   'jobs',
   'editor_interfaces',
-  'app_installations'
+  'app_installations',
+  'proxied_extensions'
 ];
 
 // Given a path return `true` if the environment endpoint
