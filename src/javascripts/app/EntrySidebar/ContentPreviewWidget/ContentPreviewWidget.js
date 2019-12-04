@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import SidebarEventTypes from '../SidebarEventTypes';
 import SidebarWidgetTypes from '../SidebarWidgetTypes';
-import NetlifyBuildButton from 'app/settings/apps/netlify/BuildButton';
 import SidebarContentPreviewContainer from './SidebarContentPreviewContainer';
 import EntrySidebarWidget from '../EntrySidebarWidget';
 
@@ -35,12 +34,7 @@ export default class ContentPreviewWidget extends Component {
   render() {
     return (
       <EntrySidebarWidget title="Preview">
-        {this.state.isInitialized && (
-          <React.Fragment>
-            <NetlifyBuildButton {...this.state.data} />
-            <SidebarContentPreviewContainer {...this.state.data} />
-          </React.Fragment>
-        )}
+        {this.state.isInitialized && <SidebarContentPreviewContainer {...this.state.data} />}
       </EntrySidebarWidget>
     );
   }

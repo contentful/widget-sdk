@@ -31,8 +31,6 @@ import AppDetailsModal from './AppDetailsModal';
 import createMicroBackendsClient from 'MicroBackendsClient';
 import { getProductCatalogFlagForApp } from './AppProductCatalog';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
-import StateLink from 'app/common/StateLink';
-import createAppsClient from '../apps/AppsClient';
 
 const styles = {
   intro: css({
@@ -179,19 +177,6 @@ const AppsListShell = props => (
           apps.
         </Note>
       )}
-      {props.hasAlphaApps ? (
-        <Note noteType="warning" className={styles.intro}>
-          Apps alpha is being phased out.{' '}
-          <StateLink to="^.^.appsAlpha.list">View apps alpha</StateLink>.<br /> Read the{' '}
-          <TextLink
-            href={websiteUrl('/developers/docs/extensibility/apps/migrating-from-alpha-to-beta')}
-            target="_blank"
-            rel="noopener noreferrer">
-            migration guide
-          </TextLink>{' '}
-          to learn how to migrate your currently installed alpha apps.
-        </Note>
-      ) : null}
       <Card padding="large" className={styles.appListCard}>
         {props.appsFeatureDisabled && (
           <div className={styles.overlay} data-test-id="disabled-beta-apps" />
@@ -208,8 +193,7 @@ const AppsListShell = props => (
 );
 
 AppsListShell.propTypes = {
-  appsFeatureDisabled: PropTypes.bool,
-  hasAlphaApps: PropTypes.bool
+  appsFeatureDisabled: PropTypes.bool
 };
 
 const ItemSkeleton = props => (
@@ -257,15 +241,7 @@ export default class AppsListPage extends React.Component {
 
   async componentDidMount() {
     try {
-      const [apps, hasAlphaApps] = await Promise.all([
-        this.props.repo.getApps(),
-        // Recover with not showing link to apps alpha
-        // This enables us to delete the micro backend without effect after beta release.
-        createAppsClient(this.props.spaceId)
-          .hasAlphaApps()
-          .catch(() => false)
-      ]);
-
+      const apps = await this.props.repo.getApps();
       const productCatalogFlags = await this.props.productCatalog.loadProductCatalogFlags(apps);
       const appsFeatureDisabled = await this.props.productCatalog.isAppsFeatureDisabled();
 
@@ -280,7 +256,6 @@ export default class AppsListPage extends React.Component {
         {
           ready: true,
           availableApps,
-          hasAlphaApps,
           installedApps,
           appsFeatureDisabled
         },
@@ -317,14 +292,13 @@ export default class AppsListPage extends React.Component {
 
   renderList() {
     const { organizationId, spaceId, userId } = this.props;
-    const { installedApps, availableApps, appsFeatureDisabled, hasAlphaApps } = this.state;
+    const { installedApps, availableApps, appsFeatureDisabled } = this.state;
 
     return (
       <AppsListShell
         organizationId={organizationId}
         spaceId={spaceId}
         userId={userId}
-        hasAlphaApps={hasAlphaApps}
         appsFeatureDisabled={appsFeatureDisabled}>
         {installedApps.length > 0 && (
           <>
