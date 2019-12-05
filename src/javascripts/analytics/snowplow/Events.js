@@ -101,20 +101,6 @@ registerEnvironmentAliasesEvent('environment_aliases:notification_continue_on_en
 
 registerGenericEvent('usage:period_selected');
 
-registerGenericEvent('netlify:connected');
-registerGenericEvent('netlify:installed');
-registerGenericEvent('netlify:updated');
-registerGenericEvent('netlify:uninstalled');
-registerGenericEvent('netlify:build_triggered');
-registerGenericEvent('netlify:preview_opened');
-registerGenericEvent('algolia:installed');
-registerGenericEvent('algolia:updated');
-registerGenericEvent('algolia:uninstalled');
-registerGenericEvent('aiImageManagement:installed');
-registerGenericEvent('aiImageManagement:uninstalled');
-registerGenericEvent('approval:installed');
-registerGenericEvent('approval:uninstalled');
-
 registerGenericEvent('quick_navigation:opened_by_shortcut');
 
 registerGenericEvent('ie11_deprecation_notice:shown');
