@@ -5,14 +5,14 @@ export default function register() {
   /**
    * @ngdoc directive
    * @module cf.forms
-   * @name cfFieldErrorsFor
+   * @name cfFieldErrorFor
    * @usage[jade]
    * form
    *   input(name="myfield")
-   *   ul(cf-field-errors-for="myfield")
+   *   span(cf-field-error-for="myfield")
    *
    * @description
-   * Show all the error messages for the given field in `<li>` tags.
+   * Show the first error message for the given field.
    *
    * Uses the `FieldErrorController` to provide the error messages. The
    * element is hidden when there are no messages.
@@ -20,13 +20,13 @@ export default function register() {
    * @param {string} fieldName
    * The name of the form field we want to show errors for
    */
-  registerDirective('cfFieldErrorsFor', () => ({
+  registerDirective('cfFieldErrorFor', () => ({
     scope: {
-      fieldName: '@cfFieldErrorsFor'
+      fieldName: '@cfFieldErrorFor'
     },
 
     require: '^form',
-    template: '<li ng-repeat="m in errors.messages">{{m}}</li>',
+    template: '{{errors.messages[0]}}',
     controllerAs: 'errors',
     controller: 'FieldErrorController',
 
