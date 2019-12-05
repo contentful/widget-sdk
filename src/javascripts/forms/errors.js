@@ -38,57 +38,6 @@ export default function register() {
     }
   }));
 
-  registerDirective('cfFieldInvalidClass', () => ({
-    restrict: 'A',
-    scope: true,
-    require: '^form',
-    controllerAs: 'errors',
-    controller: 'FieldErrorController',
-
-    link: function(scope, elem, attrs, form) {
-      scope.errors.link(form, attrs.cfFieldInvalidClass);
-      scope.$watch('errors.exist && !errors.hide', hasErrors => {
-        elem.toggleClass('x--invalid', hasErrors);
-      });
-    }
-  }));
-
-  /**
-   * @ngdoc directive
-   * @module cf.forms
-   * @name cfFieldErrorsFor
-   * @usage[jade]
-   * form
-   *   input(name="myfield")
-   *   ul(cf-field-errors-for="myfield")
-   *
-   * @description
-   * Show all the error messages for the given field in `<li>` tags.
-   *
-   * Uses the `FieldErrorController` to provide the error messages. The
-   * element is hidden when there are no messages.
-   *
-   * @param {string} fieldName
-   * The name of the form field we want to show errors for
-   */
-  registerDirective('cfFieldErrorsFor', () => ({
-    scope: {
-      fieldName: '@cfFieldErrorsFor'
-    },
-
-    require: '^form',
-    template: '<li ng-repeat="m in errors.messages">{{m}}</li>',
-    controllerAs: 'errors',
-    controller: 'FieldErrorController',
-
-    link: function(scope, elem, _attrs, form) {
-      scope.errors.link(form, scope.fieldName);
-      scope.$watch('errors.exist && !errors.hide', hasErrors => {
-        elem.toggleClass('ng-hide', !hasErrors);
-      });
-    }
-  }));
-
   /**
    * @ngdoc type
    * @module cf.forms
