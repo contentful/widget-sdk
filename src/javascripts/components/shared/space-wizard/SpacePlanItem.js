@@ -3,13 +3,24 @@ import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { kebabCase } from 'lodash';
-import tokens from '@contentful/forma-36-tokens';
 
-import HelpIcon from 'ui/Components/HelpIcon';
-import Tooltip from 'ui/Components/Tooltip';
-import Icon from 'ui/Components/Icon';
+import tokens from '@contentful/forma-36-tokens';
 import PlanFeatures from 'components/shared/space-wizard/PlanFeatures';
 import { formatPrice, unavailabilityTooltipNode } from './WizardUtils';
+
+import { Tooltip, Icon } from '@contentful/forma-36-react-components';
+import { css } from 'emotion';
+
+const styles = {
+  planChevron: css({
+    position: 'absolute',
+    right: '19px',
+    bottom: '22px'
+  }),
+  helpIcon: css({
+    fill: tokens.colorElementDarkest
+  })
+};
 
 class SpacePlanItem extends React.Component {
   static displayName = 'SpacePlanItem';
@@ -64,11 +75,12 @@ class SpacePlanItem extends React.Component {
           )}
           {plan.isFree && freeSpacesLimit && (
             <Fragment>
-              {` - ${freeSpacesUsage}/${freeSpacesLimit} used`}
-              <HelpIcon tooltipWidth={400}>
-                You can have up to {freeSpacesLimit} free spaces for your organization. If you
-                delete a free space, another one can be created.
-              </HelpIcon>
+              {` - ${freeSpacesUsage}/${freeSpacesLimit} used `}
+              <Tooltip
+                content={`You can have up to ${freeSpacesLimit} free spaces for your organization. If you
+                delete a free space, another one can be created.`}>
+                <Icon icon="HelpCircle" className={styles.helpIcon} />
+              </Tooltip>
             </Fragment>
           )}
         </div>
@@ -76,20 +88,16 @@ class SpacePlanItem extends React.Component {
         <PlanFeatures resources={plan.includedResources} roleSet={plan.roleSet} />
 
         {isPayingOrg && plan.disabled && !isCurrentPlan && (
-          <Tooltip
-            style={{
-              position: 'absolute',
-              right: '19px',
-              bottom: '25px',
-              color: tokens.colorElementDarkest
-            }}
-            width={800}
-            tooltip={unavailabilityTooltip}>
-            <Icon name="question-mark" />
-          </Tooltip>
+          <div className={styles.planChevron}>
+            <Tooltip content={unavailabilityTooltip}>
+              <Icon icon="HelpCircle" className={styles.helpIcon} />
+            </Tooltip>
+          </div>
         )}
         {(!isPayingOrg || !plan.disabled) && (
-          <Icon className="space-plans-list__item__chevron" name="dd-arrow-down" />
+          <div className={styles.planChevron}>
+            <Icon icon="ChevronRight" color="muted" />
+          </div>
         )}
       </div>
     );

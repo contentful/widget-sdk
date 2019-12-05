@@ -1,16 +1,16 @@
 /**
  * @description This is a webpack configuration to process _most_ of the JS files.
- * For example, `templates.js` is created by gulp, as well as all styles.
+ * For example, `templates.js` is created by gulp.
  *
- * Because of the way our tests are set up – we can import es6 files directly, using
- * `import` syntax, and if imported file uses non-js loader, karma will fail.
+ * Because of the way our legacy Karma tests are setup, using SystemJS, we can
+ * currently only import JS and JSON files, but the rest must be processed in
+ * another way, either via Gulp (like Jade templates), or by using a loader
+ * and writing a new loader for SystemJS. In theory it would work, but dragons
+ * are there.
  *
  * Hence, styles and templates (written using Jade/Pug) use gulp for processing.
  * However, you can still use custom loader, just avoid requiring non-js files
  * in generic files (otherwise some tests can file).
- *
- * Right now we don't use imports/exports feature of webpack, we just concatenating
- * everything, and use SystemJS to register ES6 dependencies.
  */
 
 const webpack = require('webpack');
@@ -33,13 +33,12 @@ module.exports = () => {
   const isTest = currentEnv === 'test';
 
   const appEntry = {
-    // Main app bundle, with vendor files such as bcsocker and jquery-shim
+    // Main app bundle, with vendor files such as bcsocket and jquery-shim
     'app.js': [
       './vendor/jquery-shim.js',
 
       // Custom jQuery UI build: see the file for version and contents
       './vendor/jquery-ui/jquery-ui.js',
-      './node_modules/bootstrap/js/tooltip.js',
       './vendor/bcsocket-shim.js',
       './src/javascripts/prelude.js'
     ]
@@ -76,9 +75,6 @@ module.exports = () => {
     },
     module: {
       rules: [
-        // this rule is only for ES6 files, we need to use SystemJS plugin to register them
-        // and resolve "imported" files correctly (they are transpiled to use Angular DI, so
-        // these are not real `import/export`).
         {
           test: /\.js$/,
           use: {

@@ -1,3 +1,4 @@
+import React from 'react';
 import { registerDirective } from 'NgRegistry';
 import _ from 'lodash';
 import throttle from 'lodash/throttle';
@@ -10,6 +11,14 @@ import { isRtlLocale } from 'utils/locales';
 import makePreview from 'markdown_editor/PreviewGenerator';
 import * as actions from 'markdown_editor/markdown_actions';
 import * as MarkdownEditor from 'markdown_editor/markdown_editor';
+import { Button, Tooltip, Icon } from '@contentful/forma-36-react-components';
+import { css } from 'emotion';
+
+const styles = {
+  buttonIcon: css({
+    marginTop: '8px'
+  })
+};
 
 export default function register() {
   registerDirective('cfMarkdownEditor', [
@@ -32,6 +41,23 @@ export default function register() {
           let currentMode = 'md';
           let editor = null;
           let childEditor = null;
+
+          // eslint-disable-next-line
+          scope.tooltipComponent = ({ isDisabled, isActive }) => (
+            <Tooltip content="More actions…">
+              <Button
+                disabled={isDisabled}
+                onClick={() => {
+                  toggleMinorActions();
+                  scope.$applyAsync();
+                }}
+                isActive={isActive}
+                buttonType="naked"
+                size="small">
+                <Icon icon="MoreHorizontal" color="secondary" className={styles.buttonIcon} />
+              </Button>
+            </Tooltip>
+          );
 
           // @todo find a better way of hiding header in Zen Mode
           const editorHeader = el

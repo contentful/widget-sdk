@@ -4,7 +4,7 @@ import moment from 'moment';
 import { css } from 'emotion';
 import { joinAnd } from 'utils/StringUtils';
 import tokens from '@contentful/forma-36-tokens';
-import { TableRow, TableCell } from '@contentful/forma-36-react-components';
+import { TableRow, TableCell, Tooltip } from '@contentful/forma-36-react-components';
 
 import { get } from 'lodash';
 
@@ -14,18 +14,31 @@ import { getEnabledFeatures } from 'utils/SubscriptionUtils';
 import { getUserName } from 'utils/UserUtils';
 
 import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
-import HelpIcon from 'ui/Components/HelpIcon';
-import Tooltip from 'ui/Components/Tooltip';
 import Price from 'ui/Components/Price';
 import ContextMenu from 'ui/Components/ContextMenu';
+import QuestionMarkIcon from 'svg/QuestionMarkIcon';
 
 const styles = {
   dotsRow: css({
     textAlign: 'right',
     verticalAlign: 'middle'
   }),
-  tooltip: css({ fontSize: '12px' }),
-  tooltipSpan: css({ color: tokens.colorOrangeLight })
+  spaceName: css({
+    display: 'inline-block',
+    marginRight: '5px'
+  }),
+  star: css({
+    color: tokens.colorOrangeLight,
+    fontSize: '12px',
+    cursor: 'default'
+  }),
+  helpIcon: css({
+    display: 'inline',
+    position: 'relative',
+    bottom: '0.125em',
+    paddingLeft: '0.3em',
+    cursor: 'help'
+  })
 };
 
 function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }) {
@@ -90,21 +103,24 @@ function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }
   return (
     <TableRow className={className} key={key}>
       <TableCell>
-        <strong>{get(space, 'name', '-')}</strong>
+        <span className={styles.spaceName}>
+          <strong>{get(space, 'name', '-')}</strong>
+        </span>
         {plan.committed && (
-          <Tooltip
-            tooltip="This space is part of your Enterprise deal with Contentful"
-            className={`help-icon ${styles.tooltip}`}>
-            <span className={styles.tooltipSpan}>★</span>
+          <Tooltip content="This space is part of your Enterprise deal with Contentful">
+            <span className={styles.star}>★</span>
           </Tooltip>
         )}
       </TableCell>
       <TableCell>
         <strong>{plan.name}</strong>
         {hasAnyFeatures && (
-          <HelpIcon>
-            This space includes {joinAnd(enabledFeatures.map(({ name }) => name))}
-          </HelpIcon>
+          <div className={styles.helpIcon}>
+            <Tooltip
+              content={`This space includes ${joinAnd(enabledFeatures.map(({ name }) => name))}`}>
+              <QuestionMarkIcon color={tokens.colorTextLight} />
+            </Tooltip>
+          </div>
         )}
         <br />
         {!isEnterprisePlan(basePlan) && <Price value={plan.price} unit="month" />}

@@ -1,3 +1,5 @@
+import React from 'react';
+import { Tooltip } from '@contentful/forma-36-react-components';
 import { registerDirective } from 'NgRegistry';
 
 export default function register() {
@@ -27,6 +29,15 @@ export default function register() {
             $scope.$parent.$emit('ngModel:commit', { value: date, ngModel: {} });
           }
         });
+
+        // eslint-disable-next-line
+        $scope.validationIconComponent = ({ content }) => {
+          return (
+            <Tooltip content={content} place="right">
+              <i className="fa fa-exclamation-triangle" />
+            </Tooltip>
+          );
+        };
 
         $scope.$on('ngModel:commit', e => e.stopPropagation());
         $scope.$on('ngModel:update', e => e.stopPropagation());
