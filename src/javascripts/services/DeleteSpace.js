@@ -1,43 +1,95 @@
-import { h } from 'utils/legacy-html-hyperscript';
-import { extend } from 'lodash';
-import { Notification } from '@contentful/forma-36-react-components';
-import ReloadNotification from 'app/common/ReloadNotification';
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import {
+  Notification,
+  Modal,
+  Paragraph,
+  Typography,
+  TextInput,
+  Button
+} from '@contentful/forma-36-react-components';
 import * as TokenStore from 'services/TokenStore';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { openModal as openCommittedSpaceWarningDialog } from 'components/shared/space-wizard/CommittedSpaceWarningModal';
-import { getModule } from 'NgRegistry';
 import APIClient from 'data/APIClient';
-import { createCommand } from 'utils/command/command';
 import { isEnterprisePlan, isFreeSpacePlan } from 'account/pricing/PricingDataProvider';
+import * as ModalLauncher from 'app/common/ModalLauncher';
 
-export function openDeleteSpaceDialog({ space, plan, onSuccess }) {
-  const $rootScope = getModule('$rootScope');
-  const modalDialog = getModule('modalDialog');
+export const DeleteSpaceModal = ({ isShown, onClose, spaceName }) => {
+  const [spaceNameConfirmation, setSpaceNameConfirmation] = useState('');
+  return (
+    <Modal
+      title="Remove space"
+      isShown={isShown}
+      onClose={() => onClose(false)}
+      shouldCloseOnOverlayClick>
+      {({ title }) => (
+        <>
+          <Modal.Header title={title} onClose={() => onClose(false)} />
+          <Modal.Content>
+            <Typography>
+              <Paragraph>
+                You are about to remove space <b>{spaceName}</b>.
+              </Paragraph>
+              <Paragraph>
+                All space contents and the space itself will be removed. This operation cannot be
+                undone.
+              </Paragraph>
+              <Paragraph>To confirm, type the name of the space in the field below:</Paragraph>
+              <TextInput
+                value={spaceNameConfirmation}
+                onChange={({ target: { value } }) => setSpaceNameConfirmation(value)}
+                testId="space-name-confirmation-field"
+              />
+            </Typography>
+          </Modal.Content>
+          <Modal.Controls>
+            <Button
+              testId="delete-space-confirm-button"
+              onClick={() => onClose(true)}
+              buttonType="negative"
+              disabled={!(spaceNameConfirmation === spaceName)}>
+              Remove
+            </Button>
+            <Button
+              testId="delete-space-cancel-button"
+              onClick={() => onClose(false)}
+              buttonType="muted">
+              Cancel
+            </Button>
+          </Modal.Controls>
+        </>
+      )}
+    </Modal>
+  );
+};
 
+DeleteSpaceModal.propTypes = {
+  isShown: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  spaceName: PropTypes.string.isRequired
+};
+
+export async function openDeleteSpaceDialog({ space, plan, onSuccess }) {
   if (plan && isEnterprisePlan(plan) && !isFreeSpacePlan(plan)) {
     return openCommittedSpaceWarningDialog();
   }
 
-  const spaceName = space.name;
-  const scope = extend($rootScope.$new(), {
-    spaceName,
-    input: { spaceName: '' },
-    remove: createCommand(
-      () =>
-        remove(space)
-          .then(() => {
-            scope.dialog.confirm();
-          })
-          .then(onSuccess),
-      { disabled: () => scope.input.spaceName !== spaceName.trim() }
-    )
-  });
+  const spaceName = space.name.trim();
+  const modalKey = Date.now();
 
-  return modalDialog.open({
-    template: removalConfirmation(),
-    noNewScope: true,
-    scope
-  });
+  const result = await ModalLauncher.open(({ isShown, onClose }) => (
+    <DeleteSpaceModal key={modalKey} isShown={isShown} onClose={onClose} spaceName={spaceName} />
+  ));
+
+  if (result) {
+    try {
+      await remove(space);
+      onSuccess();
+    } catch {
+      Notification.error(`Failed to delete ${space.name}.`);
+    }
+  }
 }
 
 function remove(space) {
@@ -49,33 +101,5 @@ function remove(space) {
     .then(TokenStore.refresh)
     .then(() => {
       Notification.success(`Space ${space.name} deleted successfully.`);
-    })
-    .catch(ReloadNotification.basicErrorHandler);
-}
-
-function removalConfirmation() {
-  const modalDialog = getModule('modalDialog');
-
-  const content = [
-    h('p', [
-      'You are about to remove space ',
-      h('span.modal-dialog__highlight', { ngBind: 'spaceName' }),
-      '.'
-    ]),
-    h('p', [
-      h('strong', [
-        `All space contents and the space itself will be removed.
-         This operation cannot be undone.`
-      ])
-    ]),
-    h('p', ['To confirm, type the name of the space in the field below:']),
-    h('input.cfnext-form__input--full-size', { ngModel: 'input.spaceName' })
-  ];
-
-  const controls = [
-    h('button.btn-caution', { uiCommand: 'remove' }, ['Remove']),
-    h('button.btn-secondary-action', { ngClick: 'dialog.cancel()' }, ['Don’t remove'])
-  ];
-
-  return modalDialog.richtextLayout('Remove space', content, controls);
+    });
 }
