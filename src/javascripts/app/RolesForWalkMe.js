@@ -9,11 +9,11 @@ const ROLE_NAMES_ATTR = 'data-space-role-names';
 let lastVariation = null;
 
 const setAttrOnAppContainer = (attr, value) => {
-  document.getElementByTagName('cf-app-container').setAttribute(attr, value);
+  document.querySelector('cf-app-container').setAttribute(attr, value);
 };
 
 const removeAttrOnAppContainer = attr => {
-  document.getElementByTagName('cf-app-container').removeAttribute(attr);
+  document.querySelector('cf-app-container').removeAttribute(attr);
 };
 
 export const init = () => {
