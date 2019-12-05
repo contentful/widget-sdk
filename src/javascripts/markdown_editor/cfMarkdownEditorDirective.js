@@ -44,7 +44,7 @@ export default function register() {
 
           // eslint-disable-next-line
           scope.tooltipComponent = ({ isDisabled, isActive }) => (
-            <Tooltip content="'More actions…">
+            <Tooltip content="More actions…">
               <Button
                 disabled={isDisabled}
                 onClick={() => {
