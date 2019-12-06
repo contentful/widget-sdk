@@ -51,7 +51,6 @@ div(ng-if="hasCrashed")
       // is before initially rendering it
       react-component(
         ng-if="tooltipComponent"
-        data-test-id="markdown-more-actions"
         component="tooltipComponent"
         props="{isDisabled: !canEdit(), isActive: minorActionsShown}"
       )

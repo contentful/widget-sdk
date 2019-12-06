@@ -47,6 +47,7 @@ export default function register() {
             <Tooltip content="More actions…">
               <Button
                 disabled={isDisabled}
+                testId='markdown-more-actions'
                 onClick={() => {
                   toggleMinorActions();
                   scope.$applyAsync();
