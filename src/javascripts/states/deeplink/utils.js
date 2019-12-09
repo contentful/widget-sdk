@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import { getSpaces, getOrganizations, getOrganization, user$ } from 'services/TokenStore';
-import { getStore } from 'TheStore';
+import { getStore } from 'browserStorage';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getValue, onValue } from 'utils/kefir';
 import { createSpaceEndpoint } from 'data/EndpointFactory';

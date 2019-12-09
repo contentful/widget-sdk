@@ -1,7 +1,7 @@
 import React from 'react';
 import WithLink from 'components/shared/stack-onboarding/components/WithLink';
 
-import { getStore } from 'TheStore';
+import { getStore } from 'browserStorage';
 import { getSpaceAutoCreatedKey } from 'components/shared/auto_create_new_space/getSpaceAutoCreatedKey';
 import { getCurrentVariation } from 'utils/LaunchDarkly';
 import {

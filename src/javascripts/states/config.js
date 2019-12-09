@@ -1,6 +1,5 @@
 import { registerProvider } from 'NgRegistry';
 import { difference } from 'lodash';
-import * as accessChecker from 'access_control/AccessChecker';
 
 // This is a wrapper for Angular UI Router.
 // It takes our internal state definitions and processes
@@ -116,7 +115,11 @@ export default function register() {
           '$stateParams',
           '$rootScope',
           function($scope, $stateParams, $rootScope) {
+            let accessChecker;
+
             $scope.component = component;
+
+            import('access_control/AccessChecker').then(i => accessChecker = i);
 
             // force nav component rerender on every navigation change
             const unsubscribe = $rootScope.$on('$stateChangeSuccess', () => {
@@ -126,7 +129,7 @@ export default function register() {
             // temporary fix to rerender when this changes
             // todo: change this once if sure that all accessChecker data is avalable at the time of initial render (suevalov)
             $scope.$watch(
-              () => accessChecker.can('manage', 'Environments'),
+              () => accessChecker && accessChecker.can('manage', 'Environments'),
               () => {
                 $scope.props.navVersion = $scope.props.navVersion + 1;
               }

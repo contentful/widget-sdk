@@ -1,4 +1,4 @@
-import createClientStorageWrapper from 'TheStore/ClientStorageWrapper';
+import createClientStorageWrapper from './ClientStorageWrapper';
 
 export default function createClientStorage(storageType) {
   const storage = createClientStorageWrapper(storageType);

@@ -1,8 +1,8 @@
 import $window from 'utils/ngCompat/window';
-import * as storeUtils from 'TheStore/Utils';
-import { getStore } from 'TheStore';
-import ClientStorageWrapper from 'TheStore/ClientStorageWrapper';
-import ClientStorage from 'TheStore/ClientStorage';
+import * as storeUtils from './utils';
+import { getStore } from './index';
+import ClientStorageWrapper from './ClientStorageWrapper';
+import ClientStorage from './ClientStorage';
 
 jest.mock('utils/ngCompat/window', () => ({
   addEventListener: jest.fn(),

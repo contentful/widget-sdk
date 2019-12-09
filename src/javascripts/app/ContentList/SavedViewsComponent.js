@@ -10,7 +10,7 @@ import { makeBlankFolder } from 'data/UiConfig/Blanks';
 
 import openRoleSelector from './RoleSelector';
 
-import { getStore } from 'TheStore';
+import { getStore } from 'browserStorage';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as random from 'utils/Random';
 

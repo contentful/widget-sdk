@@ -1,7 +1,7 @@
 'use strict';
 import _ from 'lodash';
 import createLocaleStore from 'services/createLocaleStore';
-import { getStore } from 'TheStore';
+import { getStore } from 'browserStorage';
 
 export default function createLocaleStoreMock() {
   const localeStoreMock = createLocaleStore(getStore);

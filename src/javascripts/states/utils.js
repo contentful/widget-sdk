@@ -2,7 +2,7 @@ import { get, find } from 'lodash';
 
 import { getCurrentVariation } from 'utils/LaunchDarkly';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
-import { getStore } from 'TheStore';
+import { getStore } from 'browserStorage';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as TokenStore from 'services/TokenStore';
 

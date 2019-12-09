@@ -16,7 +16,7 @@ describe('Authentication', () => {
     };
 
     this.system.set('utils/ngCompat/window', { default: this.window });
-    const { getStore } = await this.system.import('TheStore');
+    const { getStore } = await this.system.import('browserStorage');
     this.Auth = await this.system.import('Authentication');
 
     await $initialize(this.system, $provide => {

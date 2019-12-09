@@ -12,11 +12,10 @@ jest.mock('services/localeStore', () => ({
 }));
 
 jest.mock(
-  'TheStore',
+  'browserStorage',
   () => ({
     getStore: jest.fn()
-  }),
-  { virtual: true }
+  })
 );
 
 jest.mock('states/Navigator', () => ({

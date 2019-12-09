@@ -1,15 +1,11 @@
 import { registerController, appReady } from 'NgRegistry';
 import { onValueScope } from 'utils/kefir';
 import { pick, isObject } from 'lodash';
-import authorization from 'services/authorization';
-import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
+
+// Do not add imports here, or else it may affect Karma tests. You need to import
+// everything using the async method below. See `initialize`.
 
 import { ENVIRONMENT_USAGE_ENFORCEMENT } from 'featureFlags';
-import {
-  createPubSubClientForSpace,
-  ENVIRONMENT_ALIAS_CHANGED_EVENT
-} from 'services/PubSubService';
-import initEnvAliasChangeHandler from 'app/SpaceSettings/EnvironmentAliases/NotificationsService';
 
 export default function register() {
   registerController('ClientController', [
@@ -31,10 +27,14 @@ export default function register() {
       let refreshNavState;
       let pubsubClient;
       let pubsubSubscribed;
+      let authorization;
+      let EntityFieldValueSpaceContext;
+      let createPubSubClientForSpace;
+      let ENVIRONMENT_ALIAS_CHANGED_EVENT;
+      let initEnvAliasChangeHandler;
 
       // TODO remove this eventually. All components should access it as a service
       $scope.spaceContext = spaceContext;
-      $scope.EntityFieldValueSpaceContext = EntityFieldValueSpaceContext;
       // end TODO
 
       $scope.preferences = {
@@ -198,7 +198,11 @@ export default function register() {
           NavState,
           CreateSpace,
           Analytics,
-          TokenStore
+          TokenStore,
+          { default: authorization },
+          EntityFieldValueSpaceContext,
+          { createPubSubClientForSpace, ENVIRONMENT_ALIAS_CHANGED_EVENT },
+          { default: initEnvAliasChangeHandler }
         ] = await Promise.all([
           import('analytics/isAnalyticsAllowed'),
           import('services/logger'),
@@ -209,12 +213,17 @@ export default function register() {
           import('navigation/NavState'),
           import('services/CreateSpace'),
           import('analytics/Analytics'),
-          import('services/TokenStore')
+          import('services/TokenStore'),
+          import('services/authorization'),
+          import('classes/EntityFieldValueSpaceContext'),
+          import('services/PubSubService'),
+          import('app/SpaceSettings/EnvironmentAliases/NotificationsService')
         ]);
 
         refreshNavState = NavState.makeStateRefresher($state, spaceContext);
 
         $scope.showCreateSpaceDialog = CreateSpace.showDialog;
+        $scope.EntityFieldValueSpaceContext = EntityFieldValueSpaceContext;
       }
     }
   ]);

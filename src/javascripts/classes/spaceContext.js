@@ -3,7 +3,6 @@ import _ from 'lodash';
 import { create as createViewMigrator } from 'saved-views-migrator';
 import * as K from 'utils/kefir';
 import { deepFreeze, deepFreezeClone } from 'utils/Freeze';
-import client from 'services/client';
 import { purgeContentPreviewCache } from 'services/contentPreview';
 import { purgeApiKeyRepoCache } from 'app/settings/api/services/ApiKeyRepoInstance';
 const MASTER_ENVIRONMENT_ID = 'master';
@@ -44,6 +43,7 @@ export default function register() {
       let TokenStore;
       let Auth;
       let Config;
+      let client;
 
       const spaceContext = {
         async init() {
@@ -67,7 +67,8 @@ export default function register() {
             EnforcementsService,
             TokenStore,
             Auth,
-            Config
+            Config,
+            { default: client }
           ] = await Promise.all([
             import('data/sharejs/Connection'),
             import('data/shouldUseEnvEndpoint'),
@@ -87,7 +88,8 @@ export default function register() {
             import('services/EnforcementsService'),
             import('services/TokenStore'),
             import('Authentication'),
-            import('Config')
+            import('Config'),
+            import('services/client')
           ]);
         },
 

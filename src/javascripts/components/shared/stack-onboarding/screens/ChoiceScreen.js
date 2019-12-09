@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import FullScreen from 'components/shared/stack-onboarding/components/FullScreen';
 import Button from '../components/Button';
-import { getStore } from 'TheStore';
+import { getStore } from 'browserStorage';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
 import { updateUserInSegment } from 'analytics/Analytics';
 

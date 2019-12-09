@@ -28,13 +28,13 @@ import UnknownErrorMessage from 'components/shared/UnknownErrorMessage';
 import UninstallModal from './UninstallModal';
 import AppPermissions from './AppPermissions';
 import ModalLauncher from 'app/common/ModalLauncher';
-import ClientStorage from 'TheStore/ClientStorage';
+import { getStore } from 'browserStorage';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
 
 import { websiteUrl } from 'Config';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 
-const sessionStorage = ClientStorage('session');
+const sessionStorage = getStore('session');
 
 const BUSY_STATE_INSTALLATION = 'installation';
 const BUSY_STATE_UPDATE = 'update';

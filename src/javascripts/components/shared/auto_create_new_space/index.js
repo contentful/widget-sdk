@@ -1,4 +1,4 @@
-import { getStore } from 'TheStore';
+import { getStore } from 'browserStorage';
 import { combine, getValue } from 'utils/kefir';
 import { getCurrentVariation } from 'utils/LaunchDarkly';
 import { user$, spacesByOrganization$ as spacesByOrg$ } from 'services/TokenStore';

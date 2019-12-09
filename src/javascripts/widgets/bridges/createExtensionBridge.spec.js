@@ -36,7 +36,7 @@ jest.mock('data/Endpoint', () => ({
   createAppDefinitionsEndpoint: () => () => {}
 }));
 
-jest.mock('TheStore/index', () => ({
+jest.mock('browserStorage', () => ({
   getStore: jest.fn()
 }));
 

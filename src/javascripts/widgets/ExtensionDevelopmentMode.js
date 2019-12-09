@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Note, TextLink } from '@contentful/forma-36-react-components';
-import { getStore } from 'TheStore';
+import { getStore } from 'browserStorage';
 
 const sessionStore = getStore('session');
 const FLAG_KEY = 'extensions-development-mode';

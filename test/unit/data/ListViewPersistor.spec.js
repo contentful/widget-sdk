@@ -16,7 +16,7 @@ describe('ListViewPersistor', () => {
       getQueryString: getQueryStringStub
     });
     const ListViewPersistor = (await this.system.import('data/ListViewPersistor')).default;
-    store = (await this.system.import('TheStore')).getStore();
+    store = (await this.system.import('browserStorage')).getStore();
 
     await $initialize(this.system);
 
