@@ -2,15 +2,16 @@ import React from 'react';
 import { render, wait, cleanup } from '@testing-library/react';
 import AppsListPage from './AppsListPage';
 import repoAppsMock from './mockData/repoAppsMock.json';
-import * as spaceContextMocked from 'ng/spaceContext';
-
-spaceContextMocked.getData.mockReturnValue(true);
 
 jest.mock('./AppMarkdown', () => () => null, { virtual: true });
 
 jest.mock('MicroBackendsClient', () => {
   return () => {};
 });
+
+jest.mock('access_control/AccessChecker', () => ({
+  getSectionVisibility: () => ({ apps: true })
+}));
 
 describe('AppsListPage', () => {
   const orgId = '123';
