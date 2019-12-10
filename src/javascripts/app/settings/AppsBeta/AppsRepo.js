@@ -1,4 +1,4 @@
-import { get, identity } from 'lodash';
+import { omit } from 'lodash';
 
 import { fetchMarketplaceApps } from './MarketplaceClient';
 import { hasAllowedAppFeatureFlag } from './AppProductCatalog';
@@ -33,48 +33,28 @@ export default function createAppsRepo(cma, appDefinitionLoader) {
 
   async function getMarketplaceApps(installationMap) {
     const marketplaceApps = await fetchMarketplaceApps();
-
-    const definitionIds = marketplaceApps
-      .map(app => get(app, ['fields', 'appDefinitionId'], null))
-      .filter(identity);
-
+    const definitionIds = marketplaceApps.map(app => app.definitionId);
     const appDefinitionMap = await appDefinitionLoader.getByIds(definitionIds);
 
-    return (
-      marketplaceApps
-        .map(app => {
-          const definitionId = get(app, ['fields', 'appDefinitionId']);
-          const title = get(app, ['fields', 'title'], '');
-          const permissionsText = get(app, ['fields', 'permissions', 'fields', 'text'], '');
-          const actionList = get(app, ['fields', 'uninstallMessages'], []).map(
-            ({ fields }) => fields
-          );
+    return marketplaceApps.reduce((acc, app) => {
+      const { definitionId } = app;
+      const appDefinition = appDefinitionMap[definitionId];
 
-          return {
-            actionList,
-            author: {
-              name: get(app, ['fields', 'developer', 'fields', 'name']),
-              url: get(app, ['fields', 'developer', 'fields', 'websiteUrl']),
-              icon: get(app, ['fields', 'developer', 'fields', 'icon', 'fields', 'file', 'url'])
-            },
-            categories: get(app, ['fields', 'categories'], [])
-              .map(category => get(category, ['fields', 'name'], null))
-              .filter(identity),
-            description: get(app, ['fields', 'description'], ''),
-            appDefinition: appDefinitionMap[definitionId],
-            flagId: get(app, ['fields', 'productCatalogFlag', 'fields', 'flagId']),
-            icon: get(app, ['fields', 'icon', 'fields', 'file', 'url'], ''),
-            id: get(app, ['fields', 'slug'], ''),
-            appInstallation: installationMap[definitionId],
-            links: get(app, ['fields', 'links'], []).map(link => link.fields),
-            permissions: `__${title} app__ ${permissionsText}`,
-            tagLine: get(app, ['fields', 'tagLine'], ''),
-            title
-          };
-        })
-        // Filter out - possibly forgotten - broken references in the Apps Listing entry
-        .filter(app => !!app.appDefinition)
-    );
+      // Referred definition, for whatever reason, is missing. Skip the app.
+      if (!appDefinition) {
+        return acc;
+      }
+
+      return [
+        ...acc,
+        // Enrich marketplace data with definition and installation entities.
+        {
+          ...omit(app, ['definitionId']),
+          appDefinition,
+          appInstallation: installationMap[definitionId]
+        }
+      ];
+    }, []);
   }
 
   async function getPrivateApps(installationMap) {
