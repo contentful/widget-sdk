@@ -6,7 +6,8 @@ import { hasAllowedAppFeatureFlag } from './AppProductCatalog';
 export default function createAppsRepo(cma, appDefinitionLoader) {
   return {
     getApp,
-    getApps
+    getApps,
+    getOnlyInstalledApps
   };
 
   async function getApp(id) {
@@ -21,54 +22,81 @@ export default function createAppsRepo(cma, appDefinitionLoader) {
   }
 
   async function getApps() {
-    const installationMap = await getAppDefinitionToInstallationMap();
-
-    const [marketplaceApps, privateApps] = await Promise.all([
-      getMarketplaceApps(installationMap),
-      getPrivateApps(installationMap)
+    const [installationMap, marketplaceApps, orgDefinitions] = await Promise.all([
+      getAppDefinitionToInstallationMap(),
+      fetchMarketplaceApps(),
+      appDefinitionLoader.getAllForCurrentOrganization()
     ]);
 
-    return [...marketplaceApps, ...privateApps].filter(hasAllowedAppFeatureFlag);
+    return [
+      ...(await getMarketplaceApps(installationMap, marketplaceApps)),
+      ...getPrivateApps(installationMap, orgDefinitions)
+    ].filter(hasAllowedAppFeatureFlag);
   }
 
-  async function getMarketplaceApps(installationMap) {
-    const marketplaceApps = await fetchMarketplaceApps();
+  async function getMarketplaceApps(installationMap, marketplaceApps) {
     const definitionIds = marketplaceApps.map(app => app.definitionId);
     const appDefinitionMap = await appDefinitionLoader.getByIds(definitionIds);
 
     return marketplaceApps.reduce((acc, app) => {
       const { definitionId } = app;
       const appDefinition = appDefinitionMap[definitionId];
+      const appInstallation = installationMap[definitionId];
 
       // Referred definition, for whatever reason, is missing. Skip the app.
       if (!appDefinition) {
         return acc;
       }
 
-      return [
-        ...acc,
-        // Enrich marketplace data with definition and installation entities.
-        {
-          ...omit(app, ['definitionId']),
-          appDefinition,
-          appInstallation: installationMap[definitionId]
-        }
-      ];
+      return [...acc, makeMarketplaceAppObject(app, appDefinition, appInstallation)];
     }, []);
   }
 
-  async function getPrivateApps(installationMap) {
-    const appDefinitions = await appDefinitionLoader.getAllForCurrentOrganization();
-
-    return appDefinitions.map(def => {
-      return {
-        appDefinition: def,
-        id: `private_${def.sys.id}`,
-        title: def.name,
-        appInstallation: installationMap[def.sys.id],
-        isPrivateApp: true
-      };
+  function getPrivateApps(installationMap, orgDefinitions) {
+    return orgDefinitions.map(def => {
+      return makePrivateAppObject(def, installationMap[def.sys.id]);
     });
+  }
+
+  async function getOnlyInstalledApps() {
+    const [installationsResponse, marketplaceApps] = await Promise.all([
+      cma.getAppInstallations(),
+      fetchMarketplaceApps()
+    ]);
+
+    return installationsResponse.items.map(appInstallation => {
+      const definitionId = appInstallation.sys.appDefinition.sys.id;
+      const appDefinition = installationsResponse.includes.AppDefinition.find(def => {
+        return def.sys.id === definitionId;
+      });
+      const marketplaceApp = marketplaceApps.find(app => {
+        return app.definitionId === definitionId;
+      });
+
+      if (marketplaceApp) {
+        return makeMarketplaceAppObject(marketplaceApp, appDefinition, appInstallation);
+      } else {
+        return makePrivateAppObject(appDefinition, appInstallation);
+      }
+    });
+  }
+
+  function makeMarketplaceAppObject(marketplaceApp, appDefinition, appInstallation) {
+    return {
+      ...omit(marketplaceApp, ['definitionId']),
+      appDefinition,
+      appInstallation
+    };
+  }
+
+  function makePrivateAppObject(appDefinition, appInstallation) {
+    return {
+      id: `private_${appDefinition.sys.id}`,
+      title: appDefinition.name,
+      appDefinition,
+      appInstallation,
+      isPrivateApp: true
+    };
   }
 
   async function getAppDefinitionToInstallationMap() {

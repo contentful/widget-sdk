@@ -100,8 +100,9 @@ describe('CustomWidgetLoader', () => {
           })
         )
       };
+      const appsRepo = { getOnlyInstalledApps: jest.fn(() => Promise.resolve([])) };
 
-      const loader = createCustomWidgetLoader(cma);
+      const loader = createCustomWidgetLoader(cma, appsRepo);
 
       const [widget1, widget2] = await loader.getByIds(['ext1', 'ext2', 'non-existent']);
 
@@ -128,30 +129,30 @@ describe('CustomWidgetLoader', () => {
 
     it('gets and caches widgets for apps', async () => {
       const cma = { getExtensions: jest.fn(() => Promise.resolve({ items: [] })) };
-      const appsRepo = { getApps: jest.fn(() => Promise.resolve([app])) };
+      const appsRepo = { getOnlyInstalledApps: jest.fn(() => Promise.resolve([app])) };
 
       const loader = createCustomWidgetLoader(cma, appsRepo);
 
       const [appWidget] = await loader.getByIds(['non-existent', 'iamapp']);
 
       expect(cma.getExtensions).toBeCalledWith({ 'sys.id[in]': 'non-existent,iamapp' });
-      expect(appsRepo.getApps).toBeCalledTimes(1);
+      expect(appsRepo.getOnlyInstalledApps).toBeCalledTimes(1);
       expect(appWidget).toEqual(expectedAppWidget);
       expect(await loader.getByIds(['iamapp'])).toEqual([appWidget]);
       expect(cma.getExtensions).toBeCalledTimes(1);
-      expect(appsRepo.getApps).toBeCalledTimes(1);
+      expect(appsRepo.getOnlyInstalledApps).toBeCalledTimes(1);
     });
 
     it('recovers from CMA/repo failures', async () => {
       const cma = { getExtensions: jest.fn(() => Promise.reject(new Error())) };
-      const appsRepo = { getApps: jest.fn(() => Promise.reject(new Error())) };
+      const appsRepo = { getOnlyInstalledApps: jest.fn(() => Promise.reject(new Error())) };
 
       const loader = createCustomWidgetLoader(cma, appsRepo);
 
       const widgets = await loader.getByIds(['some', 'ids', 'come', 'inhere']);
 
       expect(cma.getExtensions).toBeCalledWith({ 'sys.id[in]': 'some,ids,come,inhere' });
-      expect(appsRepo.getApps).toBeCalledTimes(1);
+      expect(appsRepo.getOnlyInstalledApps).toBeCalledTimes(1);
       expect(widgets).toEqual([]);
     });
   });
@@ -171,11 +172,10 @@ describe('CustomWidgetLoader', () => {
     });
 
     it('clears a cache for an ID', async () => {
-      const cma = {
-        getExtensions: jest.fn(() => Promise.resolve({ items: [uie] }))
-      };
+      const cma = { getExtensions: jest.fn(() => Promise.resolve({ items: [uie] })) };
+      const appsRepo = { getOnlyInstalledApps: jest.fn(() => Promise.resolve([])) };
 
-      const loader = createCustomWidgetLoader(cma);
+      const loader = createCustomWidgetLoader(cma, appsRepo);
 
       await loader.getByIds(['ext1']);
       const [widget1] = await loader.getByIds(['ext1']);
@@ -194,32 +194,32 @@ describe('CustomWidgetLoader', () => {
   describe('#getUncachedForListing()', () => {
     it('gets an uncached list of all widgets for listing', async () => {
       const cma = { getExtensionsForListing: jest.fn(() => Promise.resolve({ items: [uie] })) };
-      const appsRepo = { getApps: jest.fn(() => Promise.resolve([app])) };
+      const appsRepo = { getOnlyInstalledApps: jest.fn(() => Promise.resolve([app])) };
 
       const loader = createCustomWidgetLoader(cma, appsRepo);
 
       const forListing = await loader.getUncachedForListing();
 
       expect(cma.getExtensionsForListing).toBeCalledTimes(1);
-      expect(appsRepo.getApps).toBeCalledTimes(1);
+      expect(appsRepo.getOnlyInstalledApps).toBeCalledTimes(1);
       expect(forListing).toEqual([expectedAppWidget, expectedUieWidget]);
 
       await loader.getUncachedForListing();
 
       expect(cma.getExtensionsForListing).toBeCalledTimes(2);
-      expect(appsRepo.getApps).toBeCalledTimes(2);
+      expect(appsRepo.getOnlyInstalledApps).toBeCalledTimes(2);
     });
 
     it('recovers from CMA/repo failures', async () => {
       const cma = { getExtensionsForListing: jest.fn(() => Promise.reject(new Error())) };
-      const appsRepo = { getApps: jest.fn(() => Promise.reject(new Error())) };
+      const appsRepo = { getOnlyInstalledApps: jest.fn(() => Promise.reject(new Error())) };
 
       const loader = createCustomWidgetLoader(cma, appsRepo);
 
       const widgets = await loader.getUncachedForListing();
 
       expect(cma.getExtensionsForListing).toBeCalledTimes(1);
-      expect(appsRepo.getApps).toBeCalledTimes(1);
+      expect(appsRepo.getOnlyInstalledApps).toBeCalledTimes(1);
       expect(widgets).toEqual([]);
     });
   });

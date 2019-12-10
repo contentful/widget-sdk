@@ -17,59 +17,30 @@ export function createCustomWidgetLoader(cma, appsRepo) {
       return [];
     }
 
-    let extensions;
-    try {
-      const { items } = await cma.getExtensions({ 'sys.id[in]': ids.join(',') });
+    const [extensionsResponse, apps] = await Promise.all([
+      // If widgets cannot be fetched, we prefer to present the
+      // "widget missing" message in the entry editor rather than
+      // crashing the whole Web App or disallowing editing.
+      cma.getExtensions({ 'sys.id[in]': ids.join(',') }).catch(() => ({ items: [] })),
+      appsRepo.getOnlyInstalledApps().catch(() => [])
+    ]);
 
-      // TODO: filter should be removed when we move `/extensions`
-      // to extensibility-api (it happens on the API side there).
-      extensions = items.filter(e => !!e.extension);
-    } catch (err) {
-      // If extensions cannot be fetched, we prefer to show
-      // "extension missing" message in entry editor rather
-      // than crashing the whole Web App or disallowing editing.
-      extensions = [];
-    }
+    // TODO: filter should be removed when we move `/extensions`
+    // to extensibility-api (it happens on the API side there).
+    const extensions = extensionsResponse.items.filter(e => !!e.extension);
 
-    const loadedExtensions = ids.map(id => {
+    return ids.map(id => {
       const extension = extensions.find(extension => {
         return get(extension, ['sys', 'id']) === id;
       });
 
-      return extension ? buildExtensionWidget(extension) : null;
-    });
-
-    // If all requested IDs were loaded from the /extensions
-    // endpoint. If so, return results.
-    const loadedAll = loadedExtensions.every(identity);
-    if (loadedAll) {
-      return loadedExtensions;
-    }
-
-    // If not, we fetch apps and convert them to artifical
-    // extensions for rendering (with `buildAppExtension`).
-    //
-    // In the future we could fetch from both /extensions
-    // and /app_installations in parallel but getting apps
-    // takes longer than extensions and right now most of people
-    // don't use apps so we do it serially not to penalize
-    // them. Once apps are used more often we need to optimize
-    // AppInstallation fetching (AppDefinition should be in
-    // `includes` so we do only 1 HTTP request) and fire
-    // these calls in parallel.
-    let apps;
-    try {
-      apps = await appsRepo.getApps();
-    } catch (err) {
-      // Extension logic for recovery applies.
-      apps = [];
-    }
-
-    return ids.map((id, i) => {
-      if (loadedExtensions[i]) {
-        return loadedExtensions[i];
+      if (extension) {
+        return buildExtensionWidget(extension);
       }
 
+      // TODO: we use "extension" namespace in EditorInterface and fall
+      // back to apps if an extension is not found. We should introduce
+      // a new namespace specifically for apps.
       const app = apps.find(app => {
         return get(app, ['appInstallation', 'sys', 'widgetId']) === id;
       });
@@ -104,13 +75,14 @@ export function createCustomWidgetLoader(cma, appsRepo) {
   // Gets a list of all available widgets.
   // The list is not cached (HTTP is done every time).
   //
-  // Widgets fetched can be used for listing/management
-  // only (`srcdoc` not included in extension widgets),
-  // not for rendering of `<iframe>`s.
+  // Widgets can be used ONLY for listing in places
+  // like Field appearance or sidebar settings.
+  // `srcdoc` is not included in extension widgets so they
+  // cannot be rendered in `<iframe>`s.
   async function getUncachedForListing() {
     const appsPromise = appsRepo
-      .getApps()
-      .then(apps => (apps || []).filter(app => !!app.appInstallation).map(buildAppWidget))
+      .getOnlyInstalledApps()
+      .then(apps => apps.map(buildAppWidget))
       .catch(() => []);
 
     const extensionsPromise = cma
