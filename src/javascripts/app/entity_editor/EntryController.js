@@ -22,6 +22,7 @@ import { ENTRY_COMMENTS } from 'featureFlags';
 import TheLocaleStore from 'services/localeStore';
 import { buildFieldsApi } from 'app/entity_editor/dataFields';
 import setupNoShareJsCmaFakeRequestsExperiment from './NoShareJsCmaFakeRequestsExperiment';
+import * as Analytics from 'analytics/Analytics';
 
 import * as Navigator from 'states/Navigator';
 import { trackIsCommentsAlphaEligible } from '../EntrySidebar/CommentsPanel/analytics';
@@ -71,6 +72,10 @@ export default async function create($scope, editorData, preferences, trackLoadE
 
   const editorContext = ($scope.editorContext = {});
   const entityInfo = (editorContext.entityInfo = editorData.entityInfo);
+  const contentType = {
+    id: entityInfo.contentTypeId,
+    type: spaceContext.publishedCTs.get(entityInfo.contentTypeId)
+  };
 
   const notify = makeNotify('Entry', () => '“' + $scope.title + '”');
 
@@ -112,13 +117,45 @@ export default async function create($scope, editorData, preferences, trackLoadE
     otDoc: $scope.otDoc
   });
 
-  $scope.actions = $controller('EntryActionsController', {
-    $scope,
-    notify,
-    fields$: doc.valuePropertyAt(['fields']),
-    entityInfo,
-    preferences
-  });
+  $scope.entryActions = {
+    onAdd: () => {
+      Analytics.track('entry_editor:created_with_same_ct', {
+        contentTypeId: contentType.id,
+        entryId: entityInfo.id
+      });
+
+      return spaceContext.space.createEntry(contentType.id, {}).then(entry => {
+        Analytics.track('entry:create', {
+          eventOrigin: 'entry-editor',
+          contentType: contentType.type.data,
+          response: entry.data
+        });
+        return entry;
+      });
+    },
+    onDuplicate: () =>
+      spaceContext.space
+        .createEntry(contentType.id, {
+          fields: K.getValue(doc.valuePropertyAt(['fields']))
+        })
+        .then(entry => {
+          Analytics.track('entry:create', {
+            eventOrigin: 'entry-editor__duplicate',
+            contentType: contentType.type.data,
+            response: entry.data
+          });
+          return entry;
+        }),
+
+    onShowDisabledFields: () => {
+      const show = (preferences.showDisabledFields = !preferences.showDisabledFields);
+      Analytics.track('entry_editor:disabled_fields_visibility_toggled', {
+        entryId: entityInfo.id,
+        show: show
+      });
+      return show;
+    }
+  };
 
   editorContext.focus = Focus.create();
 

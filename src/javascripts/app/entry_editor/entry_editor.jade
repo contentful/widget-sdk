@@ -12,25 +12,6 @@ react-component(
         props="{title, localeName: localeData.focusedLocale.name, isSingleLocaleModeOn: localeData.isSingleLocaleModeOn, contentTypeName: editorData.contentType.data.name }"
       )
       .workbench-header__actions
-        button.btn-secondary-action(
-          cf-context-menu-trigger
-          data-test-id="entity-actions-menu-trigger")
-          cf-icon.btn-dropdown-icon(name="dd-arrow-down")
-          | Actions
-        .context-menu(
-          cf-context-menu
-          data-test-id="entity-actions-menu")
-          div(role="menuitem" ui-command="actions.add")
-            | Create new <em>{{ command.name() | truncate:14 }}</em>
-          div(role="menuitem" ui-command="actions.duplicate")
-            | Duplicate
-          div(role="menuitem"
-            data-test-id="trigger-delete-modal"
-            ui-command="state.delete")
-            | Delete
-          hr
-          div(role="menuitem" ui-command="actions.toggleDisabledFields")
-            | {{command.label()}}
         react-component(
           name="app/entity_editor/EntityAuxToggle"
           props="sidebarToggleProps.auxToggle"
@@ -39,6 +20,10 @@ react-component(
           ng-if="shouldDisplayCommentsToggle"
           name="app/entity_editor/EntityCommentsToggle"
           props="sidebarToggleProps.commentsToggle"
+        )
+        react-component(
+          name="app/entity_editor/EntryTitlebar/EntrySecondaryActions"
+          props="{entityInfo: editorData.entityInfo, entryActions, onDelete: state.delete}"
         )
 
     .workbench-main

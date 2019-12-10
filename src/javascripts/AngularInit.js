@@ -46,7 +46,6 @@ export const angularInitRun = [
       import('app/entity_editor/stateController'),
       import('app/entry_editor/cfEntryEditorDirective'),
       import('app/entry_editor/cfWidgetApiDirective'),
-      import('app/entry_editor/entryActionsController'),
       import('app/entry_editor/formWidgetsController'),
       import('app/snapshots/cfSnapshotPresenter'),
       import('app/snapshots/cfSnapshotSelector'),

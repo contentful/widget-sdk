@@ -53,7 +53,6 @@ describe('Entry Editor Controller', function() {
     await $removeControllers(this.system, [
       'entityEditor/StateController',
       'entityEditor/StatusNotificationsController',
-      'EntryActionsController',
       'FormWidgetsController'
     ]);
 
