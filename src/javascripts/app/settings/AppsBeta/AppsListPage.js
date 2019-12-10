@@ -19,12 +19,13 @@ import {
 
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import Icon from 'ui/Components/Icon';
-import AdminOnly from 'app/common/AdminOnly';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import ModalLauncher from 'app/common/ModalLauncher';
 import FeedbackDialog from 'app/common/FeedbackDialog';
+import StateRedirect from 'app/common/StateRedirect';
 
 import { websiteUrl } from 'Config';
+import { getSectionVisibility } from 'access_control/AccessChecker';
 
 import AppListItem from './AppListItem';
 import AppDetailsModal from './AppDetailsModal';
@@ -267,11 +268,15 @@ export default class AppsListPage extends React.Component {
   }
 
   render() {
+    if (!getSectionVisibility()['apps']) {
+      return <StateRedirect to="spaces.detail.entries.list" />;
+    }
+
     return (
-      <AdminOnly>
+      <>
         <DocumentTitle title="Apps" />
         {this.state.ready ? this.renderList() : <AppsListPageLoading />}
-      </AdminOnly>
+      </>
     );
   }
 

@@ -15,7 +15,7 @@ import {
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import { get } from 'lodash';
 
-import AdminOnly from 'app/common/AdminOnly';
+import StateRedirect from 'app/common/StateRedirect';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import EmptyStateContainer, {
@@ -32,6 +32,7 @@ import ClientStorage from 'TheStore/ClientStorage';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
 
 import { websiteUrl } from 'Config';
+import { getSectionVisibility } from 'access_control/AccessChecker';
 
 const sessionStorage = ClientStorage('session');
 
@@ -508,6 +509,10 @@ export default class AppRoute extends Component {
   };
 
   render() {
+    if (!getSectionVisibility()['apps']) {
+      return <StateRedirect to="spaces.detail.entries.list" />;
+    }
+
     const {
       ready,
       appLoaded,
@@ -546,7 +551,7 @@ export default class AppRoute extends Component {
     }
 
     return (
-      <AdminOnly>
+      <>
         <DocumentTitle title={this.state.title} />
         {this.renderBusyOverlay()}
         <Workbench>
@@ -561,7 +566,7 @@ export default class AppRoute extends Component {
           {!appLoaded && !loadingError && this.renderLoading(true)}
           {!loadingError && this.renderContent()}
         </Workbench>
-      </AdminOnly>
+      </>
     );
   }
 }
