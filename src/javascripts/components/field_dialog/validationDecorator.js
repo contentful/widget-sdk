@@ -77,11 +77,19 @@ const validationHelpText = {
 const validatedNodeTypes = {
   [INLINES.ENTRY_HYPERLINK]: {
     description: 'Link to entry',
-    validations: ['linkContentType']
+    validations: ['linkContentType', 'size']
   },
   [BLOCKS.EMBEDDED_ENTRY]: {
     description: 'Embedded block entry',
     validations: ['linkContentType', 'size']
+  },
+  [BLOCKS.EMBEDDED_ASSET]: {
+    description: 'Embedded asset',
+    validations: ['size']
+  },
+  [INLINES.ASSET_HYPERLINK]: {
+    description: 'Link to asset',
+    validations: ['size']
   },
   [INLINES.EMBEDDED_ENTRY]: {
     description: 'Embedded inline entry',
