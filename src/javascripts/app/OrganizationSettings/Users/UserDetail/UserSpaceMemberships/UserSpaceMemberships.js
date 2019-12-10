@@ -25,7 +25,7 @@ import {
   Button,
   Notification
 } from '@contentful/forma-36-react-components';
-import { getUserName } from 'app/OrganizationSettings/Users/UserUtils';
+import { getUserName, getFirstNameOrEmail } from 'app/OrganizationSettings/Users/UserUtils';
 import moment from 'moment';
 import { getMembershipRoles } from 'access_control/utils';
 
@@ -81,7 +81,9 @@ class UserSpaceMemberships extends React.Component {
     this.hideSpaceMembershipEditor();
 
     Notification.success(`
-      ${user.firstName} has been successfully added to the space ${newMembership.sys.space.name}
+      ${getFirstNameOrEmail(user)} has been successfully added to the space ${
+      newMembership.sys.space.name
+    }
     `);
   };
 
@@ -100,7 +102,7 @@ class UserSpaceMemberships extends React.Component {
         onCancel={() => onClose(false)}>
         <React.Fragment>
           <p>
-            You are about to remove {user.firstName} {user.lastName} from the space {space.name}.
+            You are about to remove {getFirstNameOrEmail(user)} from the space {space.name}.
           </p>
           <p>
             After removal this user will not be able to access this space in any way. Do you want to
@@ -129,7 +131,7 @@ class UserSpaceMemberships extends React.Component {
     });
 
     Notification.success(`
-      ${user.firstName} is no longer part of the space ${space.name}
+      ${getFirstNameOrEmail(user)} is no longer part of the space ${space.name}
     `);
   };
 
@@ -147,7 +149,7 @@ class UserSpaceMemberships extends React.Component {
     });
 
     Notification.success(`
-      ${user.firstName} is now ${joinWithAnd(roleNames)} in the space ${space.name}
+      ${getFirstNameOrEmail(user)} is now ${joinWithAnd(roleNames)} in the space ${space.name}
     `);
   };
 
@@ -169,7 +171,7 @@ class UserSpaceMemberships extends React.Component {
     if (spaces.length === 0) {
       return 'There are no spaces available. Please create a space first';
     } else if (availableSpaces.length === 0) {
-      return `${user.firstName ? user.firstName : user.email} is already a member of all spaces`;
+      return `${getFirstNameOrEmail(user)} is already a member of all spaces`;
     }
 
     return null;

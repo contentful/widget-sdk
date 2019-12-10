@@ -27,3 +27,7 @@ export function getUserName(user) {
     return <UnknownUser id={id} />;
   }
 }
+
+export function getFirstNameOrEmail(user) {
+  return user.firstName ? user.firstName : user.email;
+}
