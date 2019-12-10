@@ -28,6 +28,7 @@ export function getUserName(user) {
   }
 }
 
-export function getFirstNameOrEmail(user) {
-  return user.firstName ? user.firstName : user.email;
+export function getFullNameOrEmail(user) {
+  const { firstName, lastName, email } = user;
+  return firstName ? `${firstName} ${lastName}` : email;
 }

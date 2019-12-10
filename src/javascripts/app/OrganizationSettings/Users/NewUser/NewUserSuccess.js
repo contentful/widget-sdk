@@ -56,7 +56,7 @@ export default function NewUserSuccess({ failures = [], successes = [], onRestar
             successes.length
           )} been invited to your organization.`}>
           <TextLink href={invitationsUrl} linkType="positive">
-            View all invitations
+            Manage users
           </TextLink>
         </Note>
       )}
