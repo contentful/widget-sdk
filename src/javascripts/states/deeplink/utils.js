@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import { getSpaces, getOrganizations, getOrganization, user$ } from 'services/TokenStore';
 import { getStore } from 'browserStorage';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
@@ -95,21 +94,7 @@ export async function getAllEnviroments(spaceId) {
 export async function getMarketplaceApps() {
   const apps = await fetchMarketplaceApps();
 
-  return apps.reduce((acc, appEntry) => {
-    const id = get(appEntry, ['fields', 'slug']);
-
-    return {
-      ...acc,
-      ...(id
-        ? {
-            [id]: {
-              title: get(appEntry, ['fields', 'title'], ''),
-              icon: get(appEntry, ['fields', 'icon', 'fields', 'file', 'url'], '')
-            }
-          }
-        : {})
-    };
-  }, {});
+  return apps.reduce((acc, app) => ({ ...acc, [app.id]: app }), {});
 }
 
 /**

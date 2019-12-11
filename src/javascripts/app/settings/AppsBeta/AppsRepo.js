@@ -1,4 +1,4 @@
-import { get, identity } from 'lodash';
+import { omit } from 'lodash';
 
 import { fetchMarketplaceApps } from './MarketplaceClient';
 import { hasAllowedAppFeatureFlag } from './AppProductCatalog';
@@ -6,7 +6,8 @@ import { hasAllowedAppFeatureFlag } from './AppProductCatalog';
 export default function createAppsRepo(cma, appDefinitionLoader) {
   return {
     getApp,
-    getApps
+    getApps,
+    getOnlyInstalledApps
   };
 
   async function getApp(id) {
@@ -21,74 +22,81 @@ export default function createAppsRepo(cma, appDefinitionLoader) {
   }
 
   async function getApps() {
-    const installationMap = await getAppDefinitionToInstallationMap();
-
-    const [marketplaceApps, privateApps] = await Promise.all([
-      getMarketplaceApps(installationMap),
-      getPrivateApps(installationMap)
+    const [installationMap, marketplaceApps, orgDefinitions] = await Promise.all([
+      getAppDefinitionToInstallationMap(),
+      fetchMarketplaceApps(),
+      appDefinitionLoader.getAllForCurrentOrganization()
     ]);
 
-    return [...marketplaceApps, ...privateApps].filter(hasAllowedAppFeatureFlag);
+    return [
+      ...(await getMarketplaceApps(installationMap, marketplaceApps)),
+      ...getPrivateApps(installationMap, orgDefinitions)
+    ].filter(hasAllowedAppFeatureFlag);
   }
 
-  async function getMarketplaceApps(installationMap) {
-    const marketplaceApps = await fetchMarketplaceApps();
-
-    const definitionIds = marketplaceApps
-      .map(app => get(app, ['fields', 'appDefinitionId'], null))
-      .filter(identity);
-
+  async function getMarketplaceApps(installationMap, marketplaceApps) {
+    const definitionIds = marketplaceApps.map(app => app.definitionId);
     const appDefinitionMap = await appDefinitionLoader.getByIds(definitionIds);
 
-    return (
-      marketplaceApps
-        .map(app => {
-          const definitionId = get(app, ['fields', 'appDefinitionId']);
-          const title = get(app, ['fields', 'title'], '');
-          const permissionsText = get(app, ['fields', 'permissions', 'fields', 'text'], '');
-          const actionList = get(app, ['fields', 'uninstallMessages'], []).map(
-            ({ fields }) => fields
-          );
+    return marketplaceApps.reduce((acc, app) => {
+      const { definitionId } = app;
+      const appDefinition = appDefinitionMap[definitionId];
+      const appInstallation = installationMap[definitionId];
 
-          return {
-            actionList,
-            author: {
-              name: get(app, ['fields', 'developer', 'fields', 'name']),
-              url: get(app, ['fields', 'developer', 'fields', 'websiteUrl']),
-              icon: get(app, ['fields', 'developer', 'fields', 'icon', 'fields', 'file', 'url'])
-            },
-            categories: get(app, ['fields', 'categories'], [])
-              .map(category => get(category, ['fields', 'name'], null))
-              .filter(identity),
-            description: get(app, ['fields', 'description'], ''),
-            appDefinition: appDefinitionMap[definitionId],
-            flagId: get(app, ['fields', 'productCatalogFlag', 'fields', 'flagId']),
-            icon: get(app, ['fields', 'icon', 'fields', 'file', 'url'], ''),
-            id: get(app, ['fields', 'slug'], ''),
-            appInstallation: installationMap[definitionId],
-            links: get(app, ['fields', 'links'], []).map(link => link.fields),
-            permissions: `__${title} app__ ${permissionsText}`,
-            tagLine: get(app, ['fields', 'tagLine'], ''),
-            title
-          };
-        })
-        // Filter out - possibly forgotten - broken references in the Apps Listing entry
-        .filter(app => !!app.appDefinition)
-    );
+      // Referred definition, for whatever reason, is missing. Skip the app.
+      if (!appDefinition) {
+        return acc;
+      }
+
+      return [...acc, makeMarketplaceAppObject(app, appDefinition, appInstallation)];
+    }, []);
   }
 
-  async function getPrivateApps(installationMap) {
-    const appDefinitions = await appDefinitionLoader.getAllForCurrentOrganization();
-
-    return appDefinitions.map(def => {
-      return {
-        appDefinition: def,
-        id: `private_${def.sys.id}`,
-        title: def.name,
-        appInstallation: installationMap[def.sys.id],
-        isPrivateApp: true
-      };
+  function getPrivateApps(installationMap, orgDefinitions) {
+    return orgDefinitions.map(def => {
+      return makePrivateAppObject(def, installationMap[def.sys.id]);
     });
+  }
+
+  async function getOnlyInstalledApps() {
+    const [installationsResponse, marketplaceApps] = await Promise.all([
+      cma.getAppInstallations(),
+      fetchMarketplaceApps()
+    ]);
+
+    return installationsResponse.items.map(appInstallation => {
+      const definitionId = appInstallation.sys.appDefinition.sys.id;
+      const appDefinition = installationsResponse.includes.AppDefinition.find(def => {
+        return def.sys.id === definitionId;
+      });
+      const marketplaceApp = marketplaceApps.find(app => {
+        return app.definitionId === definitionId;
+      });
+
+      if (marketplaceApp) {
+        return makeMarketplaceAppObject(marketplaceApp, appDefinition, appInstallation);
+      } else {
+        return makePrivateAppObject(appDefinition, appInstallation);
+      }
+    });
+  }
+
+  function makeMarketplaceAppObject(marketplaceApp, appDefinition, appInstallation) {
+    return {
+      ...omit(marketplaceApp, ['definitionId']),
+      appDefinition,
+      appInstallation
+    };
+  }
+
+  function makePrivateAppObject(appDefinition, appInstallation) {
+    return {
+      id: `private_${appDefinition.sys.id}`,
+      title: appDefinition.name,
+      appDefinition,
+      appInstallation,
+      isPrivateApp: true
+    };
   }
 
   async function getAppDefinitionToInstallationMap() {
