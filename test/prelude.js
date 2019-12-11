@@ -44,6 +44,7 @@
 
     for (const filename of Object.keys(Karma.files)) {
       const prefixes = ['/base/src', '/base/test'];
+      const ignoredExtensions = ['.json', '.html'];
 
       if (!prefixes.find(prefix => filename.startsWith(prefix))) {
         continue;
@@ -57,7 +58,13 @@
         recordName = filename.split('/base/')[1];
       }
 
-      const ignoredFiles = ['test/system-config', 'test/prelude', 'libs/locales_list'];
+      // We add
+      if (ignoredExtensions.find(ext => filename.endsWith(ext))) {
+        updateSystemMap(recordName, `${window.location.origin}${filename}`);
+        continue;
+      }
+
+      const ignoredFiles = ['test/system-config', 'test/prelude'];
       recordName = recordName.split('.js')[0];
 
       if (ignoredFiles.find(name => recordName === name)) {
@@ -107,6 +114,14 @@
         };
       });
 
+      const origInject = window.inject;
+
+      window.inject = function(...args) {
+        // debugger;
+
+        origInject(...args);
+      };
+
       await SystemJS.import('angular-mocks');
       const { configure } = await SystemJS.import('enzyme');
       const { default: Adapter } = await SystemJS.import('enzyme-adapter-react-16');
@@ -142,6 +157,14 @@
       });
     }
   };
+
+  function updateSystemMap(key, value) {
+    const config = SystemJS.getConfig();
+
+    config.map[key] = value;
+
+    SystemJS.config(config);
+  }
 
   /**
    * The registration method for SystemJS. Original window.SystemJS.register is overridden above.

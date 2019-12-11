@@ -1,0 +1,15 @@
+<div class="modal-background">
+  <div class="modal-dialog">
+    <header class="modal-dialog__header">
+      <h1>{{dialog.title}}</h1>
+      <button class="modal-dialog__close" ng-show="!dialog.disableTopCloseButton" ng-click="dialog.cancel()"></button>
+    </header>
+    <div class="modal-dialog__content">
+      <p class="modal-dialog__richtext" bind-html-compile="dialog.message"></p>
+    </div>
+    <div class="modal-dialog__controls">
+      <button class="btn-primary-action" ng-click="dialog.confirm()">{{dialog.confirmLabel}}</button>
+      <button class="btn-secondary-action" ng-click="dialog.cancel()" ng-show="dialog.cancelLabel">{{dialog.cancelLabel}}</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,47 @@
+
+<div class="cf-zenmode">
+  <div class="zenmode-toolbar">
+    <div class="zenmode-logo app-top-bar__logo-element">
+      <cf-icon name="logo-label"></cf-icon>
+    </div>
+    <react-component name="markdown_editor/components/HeadingContextMenu" props="{actions: actions, isZenMode: true}"></react-component>
+    <react-component name="markdown_editor/components/ActionComponent" props="{actions: actions, name: 'bold', isZenMode: true, isDisabled: false}"></react-component>
+    <react-component name="markdown_editor/components/ActionComponent" props="{actions: actions, name: 'italic', isZenMode: true, isDisabled: false}"></react-component>
+    <react-component name="markdown_editor/components/ActionComponent" props="{actions: actions, name: 'quote', isZenMode: true, isDisabled: false}"></react-component>
+    <react-component name="markdown_editor/components/ActionComponent" props="{actions: actions, name: 'ul', isZenMode: true, isDisabled: false}"></react-component>
+    <react-component name="markdown_editor/components/ActionComponent" props="{actions: actions, name: 'ol', isZenMode: true, isDisabled: false}"></react-component>
+    <react-component name="markdown_editor/components/ActionComponent" props="{actions: actions, name: 'link', isZenMode: true, isDisabled: false}"></react-component>
+    <react-component name="markdown_editor/components/ActionComponent" props="{actions: actions, name: 'strike', isZenMode: true, isDisabled: false}"></react-component>
+    <react-component name="markdown_editor/components/ActionComponent" props="{actions: actions, name: 'code', isZenMode: true, isDisabled: false}"></react-component>
+    <react-component name="markdown_editor/components/ActionComponent" props="{actions: actions, name: 'hr', isZenMode: true, isDisabled: false}"></react-component>
+    <react-component name="markdown_editor/components/ActionComponent" props="{actions: actions, name: 'indent', isZenMode: true, isDisabled: false}"></react-component>
+    <react-component name="markdown_editor/components/ActionComponent" props="{actions: actions, name: 'dedent', isZenMode: true, isDisabled: false}"></react-component>
+    <react-component name="markdown_editor/components/ActionComponent" props="{actions: actions, name: 'embed', isZenMode: true, isDisabled: false}"></react-component>
+    <react-component name="markdown_editor/components/ActionComponent" props="{actions: actions, name: 'table', isZenMode: true, isDisabled: false}"></react-component>
+    <react-component name="markdown_editor/components/ActionComponent" props="{actions: actions, name: 'special', isZenMode: true, isDisabled: false}"></react-component>
+    <react-component name="markdown_editor/components/ActionComponent" props="{actions: actions, name: 'organizeLinks', isZenMode: true, isDisabled: false}"></react-component>
+    <react-component name="markdown_editor/components/ActionComponent" props="{actions: actions, name: 'undo', isZenMode: true, isDisabled: !history.hasUndo()}"></react-component>
+    <react-component name="markdown_editor/components/ActionComponent" props="{actions: actions, name: 'redo', isZenMode: true, isDisabled: !history.hasRedo()}"></react-component>
+    <button class="toolbar-button markdown-side-action active" ng-click="zenApi.toggle()"><i class="fa fa-arrows-alt"></i></button>
+    <div class="markdown-toolbar-insert-media">
+      <react-component name="markdown_editor/components/InsertMediaComponent" props="{actions: actions}"></react-component>
+    </div>
+  </div>
+  <button class="zenmode-drawer__hide fa fa-angle-double-right" aria-label="Hide Preview" ng-click="showPreview(false)" ng-show="isPreviewActive"></button>
+  <button class="zenmode-drawer__show fa fa-angle-double-left" aria-label="Show Preview" ng-click="showPreview(true)" ng-show="!isPreviewActive"></button>
+  <div class="zenmode-editor markdown-editing-area">
+    <textarea></textarea>
+  </div>
+  <div class="zenmode-preview">
+    <div class="markdown-preview">
+      <cf-markdown-preview preview="preview"></cf-markdown-preview>
+    </div>
+  </div>
+  <div class="zenmode-footer">
+    <div class="zenmode-help">
+      <cf-icon name="markdown"></cf-icon>Use Markdown syntax to format your text.&nbsp;<a href ng-click="actions.openHelp()">Help</a>
+    </div>
+    <cf-markdown-stats class="zenmode-info" preview="preview"></cf-markdown-stats>
+    <cf-markdown-requirements class="zenmode-reqs" ng-if="preview.field.validations" preview="preview"></cf-markdown-requirements>
+  </div>
+</div>

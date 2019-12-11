@@ -12,6 +12,8 @@ import validationDecorator from 'components/field_dialog/validationDecorator';
 import fieldErrorMessageBuilder from 'services/errorMessageBuilder/fieldErrorMessageBuilder';
 import TheLocaleStore from 'services/localeStore';
 
+import fieldDialogTemplate from './field_dialog.html';
+
 // TODO: This dialog should be completely rewritten!
 
 // This dialog operates on a flat list of widgets. It should operate on
@@ -46,7 +48,7 @@ export default function register() {
         });
         return modalDialog.open({
           scope: scope,
-          template: 'field_dialog'
+          template: fieldDialogTemplate
         }).promise;
       };
     }

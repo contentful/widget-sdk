@@ -1,0 +1,149 @@
+<react-component name="@contentful/forma-36-react-components/CheckboxField" props="buildValidationCheckboxProps(validation)" />
+<div class="validation-controls" ng-switch="validation.type" ng-if="validation.enabled &amp;&amp; (validation.type !== 'unique')" ng-form="validationForm" cf-validate="validation" cf-validate-form cf-validate-on="commit">
+  <div ng-switch-when="size">
+    <div class="validation-controls__view-select">
+      <select class="cfnext-select-box" aria-label="Select condition" ng-model="validation.currentView" cf-no-form ng-options="v.name as v.label for v in validation.views">
+      </select>
+    </div><span ng-switch="validation.currentView"><span ng-switch-when="min">
+        <input class="cfnext-form__input" type="number" placeholder="Min" aria-label="Minimum size" ng-model="validation.settings.min"></span><span ng-switch-when="max">
+        <input class="cfnext-form__input" type="number" placeholder="Max" aria-label="Maximum size" ng-model="validation.settings.max"></span><span ng-switch-when="min-max">
+        <input class="cfnext-form__input" type="number" placeholder="Min" aria-label="Minimum size" ng-model="validation.settings.min"><span class="validation-controls__input-separator">and</span>
+        <input class="cfnext-form__input" type="number" placeholder="Max" aria-label="Maximum size" ng-model="validation.settings.max"></span></span>
+    <cf-error-list class="form-inline-error" cf-error-messages="$form.errorMessages" aria-label="Errors"></cf-error-list>
+    <div class="cfnext-form__field validation-controls__error-message-field">
+      <label>Custom error message</label>
+      <input class="cfnext-form__input--full-size" type="text" aria-label="Custom error message" ng-model="validation.message">
+    </div>
+  </div>
+  <div ng-switch-when="range">
+    <div class="validation-controls__view-select">
+      <select class="cfnext-select-box" aria-label="Select condition" ng-model="validation.currentView" cf-no-form ng-options="v.name as v.label for v in validation.views">
+      </select>
+    </div><span ng-switch="validation.currentView"><span ng-switch-when="min">
+        <input class="form-control" type="number" placeholder="Min" aria-label="Minimum value" ng-model="validation.settings.min"></span><span ng-switch-when="max">
+        <input class="form-control" type="number" placeholder="Max" aria-label="Maximum value" ng-model="validation.settings.max"></span><span ng-switch-when="min-max">
+        <input class="form-control" type="number" placeholder="Min" aria-label="Minimum value" ng-model="validation.settings.min"><span class="validation-controls__input-separator">and</span>
+        <input class="form-control" type="number" placeholder="Max" aria-label="Maximum value" ng-model="validation.settings.max"></span></span>
+    <cf-error-list class="form-inline-error" cf-error-messages="$form.errorMessages" aria-label="Errors"></cf-error-list>
+    <div class="cfnext-form__field validation-controls__error-message-field">
+      <label>Custom error message</label>
+      <input class="cfnext-form__input--full-size" type="text" aria-label="Custom error message" ng-model="validation.message">
+    </div>
+  </div>
+  <div ng-switch-when="dateRange">
+    <cf-validation-date-select aria-label="Later than" data="validation.settings.min"></cf-validation-date-select>
+    <cf-validation-date-select aria-label="Earlier than" data="validation.settings.max"></cf-validation-date-select>
+    <cf-error-list class="form-inline-error" cf-error-messages="$form.errorMessages" aria-label="Errors"></cf-error-list>
+    <div class="cfnext-form__field validation-controls__error-message-field">
+      <label>Custom error message</label>
+      <input class="cfnext-form__input--full-size" type="text" aria-label="Custom error message" ng-model="validation.message">
+    </div>
+  </div>
+  <div ng-switch-when="regexp">
+    <div class="validation-controls__view-select">
+      <select class="cfnext-select-box" aria-label="Select condition" ng-model="validation.currentView" cf-no-form ng-options="v.name as v.label for v in validation.views" ng-change="validator.runLater()">
+      </select>
+    </div>
+    <input class="form-control validation-controls__re-pattern" type="text" placeholder="foo|bar[baz]" aria-label="Regular Expression pattern" ng-model="validation.settings.pattern" ng-change="setMatchingView()" cf-null-empty-input>
+    <label><span class="validation-controls__re-flags-label">Flags</span>
+      <input class="form-control validation-controls__re-flags" type="text" aria-label="Regular Expression flags" ng-model="validation.settings.flags" ng-change="setMatchingView()">
+    </label>
+    <cf-error-list class="form-inline-error" cf-error-messages="$form.errorMessages" aria-label="Errors"></cf-error-list>
+    <div class="cfnext-form__field validation-controls__error-message-field">
+      <label>Custom error message</label>
+      <input class="cfnext-form__input--full-size" type="text" aria-label="Custom error message" ng-model="validation.message">
+    </div>
+  </div>
+  <div ng-switch-when="prohibitRegexp">
+    <input class="form-control validation-controls__re-pattern" type="text" placeholder="foo|bar[baz]" aria-label="Regular Expression pattern" ng-model="validation.settings.pattern" ng-change="setMatchingView()" cf-null-empty-input>
+    <label><span class="validation-controls__re-flags-label">Flags</span>
+      <input class="form-control validation-controls__re-flags" type="text" aria-label="Regular Expression flags" ng-model="validation.settings.flags" ng-change="setMatchingView()">
+    </label>
+    <cf-error-list class="form-inline-error" cf-error-messages="$form.errorMessages" aria-label="Errors"></cf-error-list>
+    <div class="cfnext-form__field validation-controls__error-message-field">
+      <label>Custom error message</label>
+      <input class="cfnext-form__input--full-size" type="text" aria-label="Custom error message" ng-model="validation.message">
+    </div>
+  </div>
+  <div ng-switch-when="in">
+    <react-component name="components/field_dialog/ValidationValues" props="{ fieldType: field.type, showPredefinedValueWidgetHint: showPredefinedValueWidgetHint, items: validation.settings, message: validation.message, updateItems: updateValidationSettingsValue, updateMessage: updateValidationMessageValue }"></react-component>
+  </div>
+  <div ng-switch-when="linkContentType">
+    <ul class="validation-controls__option-list" aria-label="Available Content Types" ng-controller="ValidationLinkTypeController" ng-class="{'long-list': contentTypes.length &gt; 10}">
+      <li ng-repeat="ct in contentTypes">
+        <label>
+          <input type="checkbox" ng-model="ct.selected" ng-change="update()">{{ct.name}}
+        </label>
+      </li>
+    </ul>
+    <cf-error-list class="form-inline-error" cf-error-messages="$form.errorMessages" aria-label="Errors"></cf-error-list>
+    <div class="cfnext-form__field validation-controls__error-message-field">
+      <label>Custom error message</label>
+      <input class="cfnext-form__input--full-size" type="text" aria-label="Custom error message" ng-model="validation.message">
+    </div>
+  </div>
+  <div ng-switch-when="linkMimetypeGroup">
+    <ul class="validation-controls__option-list" aria-label="Available Asset Types" ng-controller="ValidationAssetTypesController as assetTypes">
+      <li ng-repeat="at in assetTypes.types">
+        <label>
+          <input type="checkbox" ng-model="at.selected" ng-change="assetTypes.update()">{{at.label}}
+        </label>
+      </li>
+    </ul>
+    <cf-error-list class="form-inline-error" cf-error-messages="$form.errorMessages" aria-label="Errors"></cf-error-list>
+    <div class="cfnext-form__field validation-controls__error-message-field">
+      <label>Custom error message</label>
+      <input class="cfnext-form__input--full-size" type="text" aria-label="Custom error message" ng-model="validation.message">
+    </div>
+  </div>
+  <div ng-switch-when="assetFileSize">
+    <div class="validation-controls__view-select">
+      <select class="cfnext-select-box" aria-label="Select condition" ng-model="validation.currentView" cf-no-form ng-options="v.name as v.label for v in validation.views">
+      </select>
+    </div><span ng-switch="validation.currentView"><span ng-switch-when="min"><span ng-controller="DataSizeScaleController as scale" data-model="validation.settings.min">
+          <input class="form-control" type="number" placeholder="Min" aria-label="Minimum size" ng-model="value"><span class="validation-controls__unit-select">
+            <select class="cfnext-select-box" aria-label="Select size unit" ng-model="unitFactor" ng-options="u.factor as u.label for u in scale.units">
+            </select></span></span></span><span ng-switch-when="max"><span ng-controller="DataSizeScaleController as scale" data-model="validation.settings.max">
+          <input class="form-control" type="number" placeholder="Max" aria-label="Maximum size" ng-model="value"><span class="validation-controls__unit-select">
+            <select class="cfnext-select-box" aria-label="Select size unit" ng-model="unitFactor" ng-options="u.factor as u.label for u in scale.units">
+            </select></span></span></span><span ng-switch-when="min-max"><span ng-controller="DataSizeScaleController as scale" data-model="validation.settings.min">
+          <input class="form-control" type="number" placeholder="Min" aria-label="Minimum size" ng-model="value"><span class="validation-controls__unit-select">
+            <select class="cfnext-select-box" aria-label="Select size unit" ng-model="unitFactor" ng-options="u.factor as u.label for u in scale.units">
+            </select></span></span><span class="validation-controls__input-separator">and</span><span ng-controller="DataSizeScaleController as scale" data-model="validation.settings.max">
+          <input class="form-control" type="number" placeholder="Max" aria-label="Maximum size" ng-model="value"><span class="validation-controls__unit-select">
+            <select class="cfnext-select-box" aria-label="Select size unit" ng-model="unitFactor" ng-options="u.factor as u.label for u in scale.units">
+            </select></span></span></span></span>
+    <cf-error-list class="form-inline-error" cf-error-messages="$form.errorMessages" aria-label="Errors"></cf-error-list>
+    <div class="cfnext-form__field validation-controls__error-message-field">
+      <label>Custom error message</label>
+      <input class="cfnext-form__input--full-size" type="text" aria-label="Custom error message" ng-model="validation.message">
+    </div>
+  </div>
+  <div ng-switch-when="assetImageDimensions">
+    <div class="validation-controls__setting" ng-repeat="(dimension, label) in {width: 'Width', height: 'Height'}">
+      <div ng-controller="ImageDimensionsValidationController as dimensions">
+        <label class="validation-controls__setting-toggle">
+          <input aria-label="Enable image {{dimension}} validation" type="checkbox" ng-model="enabled" ng-change="dimensions.update()" cf-no-form>{{label}}
+        </label>
+        <div class="validation-controls__view-select" ng-disabled="!enabled">
+          <select class="cfnext-select-box" aria-label="Select image {{dimension}} condition" ng-model="condition" ng-disabled="!enabled">
+            <option value="min">At least</option>
+            <option value="max">At most</option>
+            <option value="min-max">Between</option>
+            <option value="exact">Exactly</option>
+          </select>
+        </div><span ng-switch="condition"><span ng-switch-when="min"><span class="form-control form-control--with-unit">
+              <input type="number" aria-label="Minimum image {{dimension}}" ng-model="bounds.min" ng-disabled="!enabled" ng-change="dimensions.update()"><span class="form-control__unit">px</span></span></span><span ng-switch-when="max"><span class="form-control form-control--with-unit">
+              <input type="number" aria-label="Maximum image {{dimension}}" ng-model="bounds.max" ng-disabled="!enabled" ng-change="dimensions.update()"><span class="form-control__unit">px</span></span></span><span ng-switch-when="min-max"><span class="form-control form-control--with-unit">
+              <input type="number" aria-label="Minimum image {{dimension}}" ng-model="bounds.min" ng-disabled="!enabled" ng-change="dimensions.update()"><span class="form-control__unit">px</span></span><span class="validation-controls__input-separator">and</span><span class="form-control form-control--with-unit">
+              <input type="number" aria-label="Maximum image {{dimension}}" ng-model="bounds.max" ng-disabled="!enabled" ng-change="dimensions.update()"><span class="form-control__unit">px</span></span></span><span ng-switch-when="exact"><span class="form-control form-control--with-unit">
+              <input type="number" aria-label="Exact image {{dimension}}" ng-model="bounds.exact" ng-disabled="!enabled" ng-change="dimensions.update()"><span class="form-control__unit">px</span></span></span></span>
+      </div>
+    </div>
+    <cf-error-list class="form-inline-error" cf-error-messages="$form.errorMessages" aria-label="Errors"></cf-error-list>
+    <div class="cfnext-form__field validation-controls__error-message-field">
+      <label>Custom error message</label>
+      <input class="cfnext-form__input--full-size" type="text" aria-label="Custom error message" ng-model="validation.message">
+    </div>
+  </div>
+</div>

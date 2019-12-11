@@ -1,0 +1,30 @@
+
+<div class="div" ng-if="loading" ng-class="loading-box--full-screen" style="height: 5rem">
+  <div class="loading-box__spinner"></div>
+  <div class="loading-box__message">Loading entry</div>
+</div>
+<div ng-if="data.hasEditor">
+  <div class="bulk-editor-entry__header" ng-class="!data.expanded &amp;&amp; 'x--collapsed'">
+    <div data-test-id="entity-saving" style="display: none" role="progressbar" aria-busy="{{data.isSaving}}"></div>
+    <div class="bulk-editor-entry__header-main" ng-click="actions.toggleExpansion()">
+      <react-component name="app/entity_editor/bulk_editor/BulkEditorTitle" props="{title, isCollapsed: !data.expanded, contentTypeName: entityInfo.contentType.name}"></react-component>
+    </div>
+    <button class="btn-link bulk-editor-entry__actions" cf-context-menu-trigger ng-show="data.expanded">Actions
+      <cf-icon class="btn-dropdown-icon" name="dd-arrow-down"></cf-icon>
+    </button>
+    <div class="context-menu x--arrow-right" cf-context-menu="bottom-right" role="menu"><a role="menuitem" cf-sref="data.stateRef" target="_blank" rel="noopener noreferrer" ng-click="actions.openInEntryEditor()">Edit entry in new tab</a>
+      <div role="menuitem" ng-click="actions.unlink()">Unlink entry</div>
+    </div>
+    <button class="bulk-editor-entry__status" aria-busy="{{state.inProgress}}" cf-context-menu-trigger data-state="{{state.current}}">{{ state.currentLabel }}
+      <cf-icon class="btn-dropdown-icon" ng-if="!state.inProgress" name="dd-arrow-down" style="margin-left: 0.1em"></cf-icon>
+    </button>
+    <div class="context-menu x--arrow-right" role="menu" data-test-id="change-state-menu" cf-context-menu="bottom-right">
+      <div ng-repeat="command in state.allActions">
+        <div role="menuitem" ui-command="command" data-target-state="{{command.targetStateId}}">{{ command.label }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="bulk-editor-entry__fields cf-workbench-content cf-workbench-content-type__text" ng-if="data.expanded">
+    <cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>
+  </div>
+</div>

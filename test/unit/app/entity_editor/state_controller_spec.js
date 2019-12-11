@@ -3,7 +3,7 @@ import flushPromises from 'test/utils/flushPromises';
 import createLocaleStoreMock from 'test/utils/createLocaleStoreMock';
 import sinon from 'sinon';
 import { $initialize, $inject, $apply } from 'test/utils/ng';
-import { beforeEach, it } from 'test/utils/dsl';
+import { it } from 'test/utils/dsl';
 
 describe('entityEditor/StateController', () => {
   beforeEach(async function() {
@@ -49,9 +49,7 @@ describe('entityEditor/StateController', () => {
     });
 
     this.analytics = await this.system.import('analytics/Analytics');
-    this.Notification = (await this.system.import(
-      'app/entity_editor/Notifications'
-    )).Notification;
+    this.Notification = (await this.system.import('app/entity_editor/Notifications')).Notification;
 
     await $initialize(this.system);
 

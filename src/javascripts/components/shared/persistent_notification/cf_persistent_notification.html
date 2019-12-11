@@ -1,0 +1,7 @@
+
+<div class="persistent-notification" ng-if="persistentNotification &amp;&amp; (message || actionMessage)">
+  <cf-icon class="persistent-notification__icon" ng-if="icon" name="{{icon}}"></cf-icon>
+  <div class="persistent-notification__message" ng-show="message" ng-bind-html="message" data-test-id="message"></div>
+  <div class="persistent-notification__link" ng-if="link"><a href="{{link.href}}">{{link.text}}</a></div>
+  <button class="persistent-notification__action btn-action" ng-show="actionMessage" ng-click="action()">{{actionMessage}}</button>
+</div>

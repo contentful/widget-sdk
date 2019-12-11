@@ -1,0 +1,32 @@
+
+<div class="snapshot-comparator__presenter" ng-class="{ 'x--dir-rtl': methods.shouldDisplayRtl(locale.code) }">
+  <div ng-if="hasValue &amp;&amp; extensionProps"><react-component name="widgets/ExtensionIFrameRenderer" props="extensionProps" /></div>
+  <div ng-if="hasValue &amp;&amp; !extensionProps" ng-switch="type">
+    <div class="x--directed" ng-switch-when="Symbol">{{ value }}</div>
+    <div ng-switch-when="Integer">{{ value }}</div>
+    <div ng-switch-when="Number">{{ value }}</div>
+    <div class="x--directed" ng-switch-when="Text">
+      <cf-snapshot-presenter-markdown></cf-snapshot-presenter-markdown>
+    </div>
+    <div class="x--directed" ng-switch-when="RichText"><react-component name="app/widgets/rich_text/ReadOnlyRichTextEditor" props="{value, entry: entity}"" /></div>
+    <div ng-switch-when="Boolean"><span ng-if="value === true">{{ widget.settings.trueLabel || 'Yes' }}</span><span ng-if="value === false">{{ widget.settings.falseLabel || 'No' }}</span></div>
+    <div ng-switch-when="Date">
+      <cf-snapshot-presenter-date></cf-snapshot-presenter-date>
+    </div>
+    <div class="x--directed" ng-switch-when="Array&lt;Symbol&gt;">
+      <ul class="symbol-array-preview">
+        <li ng-repeat="item in value track by $index">{{ item }}</li>
+      </ul>
+    </div>
+    <div ng-switch-when="Location">
+      <p><strong>Longitude:</strong> {{ value.lon }}</p>
+      <p><strong>Latitude:</strong> {{ value.lat }}</p>
+    </div>
+    <div ng-switch-when="Reference">
+      <cf-snapshot-presenter-link></cf-snapshot-presenter-link>
+    </div>
+    <div ng-switch-default>
+      <pre>{{ value | json }}</pre>
+    </div>
+  </div>
+</div>

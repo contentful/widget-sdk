@@ -3,7 +3,8 @@ import { times, merge, cloneDeep } from 'lodash';
 import createContentPreview from 'services/contentPreview/createContentPreview';
 import { contentPreviewToInternal } from 'services/contentPreview/contentPreviewToInternal';
 import { getStore } from 'browserStorage';
-import { beforeEach, it } from 'test/utils/dsl';
+import { it } from 'test/utils/dsl';
+import { $waitFor } from 'test/utils/ng';
 
 describe('contentPreview', () => {
   beforeEach(function() {
@@ -148,7 +149,7 @@ describe('contentPreview', () => {
   describe('#create', () => {
     beforeEach(async function() {
       const internal = contentPreviewToInternal(makeEnv('foo'), [makeCt('ct-1')]);
-      this.env = await this.contentPreview.create(internal);
+      this.env = await $waitFor(this.contentPreview.create(internal));
     });
 
     it('returns environment object', function() {
@@ -198,16 +199,17 @@ describe('contentPreview', () => {
     beforeEach(async function() {
       this.space.put.resolves(makeEnv('foo'));
 
-      const env = await this.contentPreview.create(
-        contentPreviewToInternal(makeEnv('bar'), [makeCt('ct-1')])
+      const env = await $waitFor(
+        this.contentPreview.create(contentPreviewToInternal(makeEnv('bar'), [makeCt('ct-1')]))
       );
+
       this.id = env.sys.id;
 
       const payload = contentPreviewToInternal(makeEnv('foo'), [makeCt('ct-1'), makeCt('ct-2')]);
 
-      await this.contentPreview.update(merge(payload, { version: 0 }));
+      await $waitFor(this.contentPreview.update(merge(payload, { version: 0 })));
 
-      this.env = await this.contentPreview.update(merge(payload, { version: 1 }));
+      this.env = await $waitFor(this.contentPreview.update(merge(payload, { version: 1 })));
     });
 
     it('returns environment object', function() {
@@ -239,10 +241,10 @@ describe('contentPreview', () => {
       this.space.delete.resolves();
 
       const internal = contentPreviewToInternal(makeEnv('foo'), [makeCt('ct-1')]);
-      const env = await this.contentPreview.create(internal);
+      const env = await $waitFor(this.contentPreview.create(internal));
       this.id = env.sys.id;
 
-      await this.contentPreview.remove(internal);
+      await $waitFor(this.contentPreview.remove(internal));
     });
 
     it('calls correct endpoint', function() {

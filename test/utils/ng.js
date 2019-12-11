@@ -98,6 +98,7 @@ export const $flush = function() {
 
 export const $initialize = async function(system, mock = () => {}) {
   const { angularInitRun } = await system.import('AngularInit');
+
   delete angular.module('contentful/init')._runBlocks[0];
   angular.module('contentful/init').run(angularInitRun);
 
@@ -134,6 +135,14 @@ export const $waitForControllerLoaded = async function($scope) {
   $apply();
 
   return $waitForControllerLoaded($scope);
+};
+
+// Waits for a promise by calling apply, until the promise resolves
+export const $waitFor = promise => {
+  const timer = setInterval($apply, 10);
+  promise.finally(() => clearInterval(timer));
+
+  return promise;
 };
 
 /**

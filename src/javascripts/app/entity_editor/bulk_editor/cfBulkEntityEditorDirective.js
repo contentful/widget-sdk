@@ -17,6 +17,8 @@ import { buildFieldsApi } from 'app/entity_editor/dataFields';
 import { initJobStore } from 'app/ScheduledActions/DataManagement/ScheduledActionsStoreNg';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 
+import bulkEntityEditorTemplate from './bulk_entity_editor.html';
+
 export default function register() {
   /**
    * @ngdoc directive
@@ -60,7 +62,7 @@ export default function register() {
           bulkEditorContext: '<',
           localeData: '<'
         },
-        template: JST.bulk_entity_editor(),
+        template: bulkEntityEditorTemplate,
         link: function($scope, $el) {
           $scope.$el = $el;
           $scope.el = $el.get(0);

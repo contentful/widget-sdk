@@ -1,11 +1,12 @@
 import { registerDirective } from 'NgRegistry';
 import _ from 'lodash';
+import analyticsConsoleTemplate from './analytics_console.html';
 
 export default function register() {
   registerDirective('cfAnalyticsConsole', [
     '$timeout',
     $timeout => ({
-      template: JST.analytics_console(),
+      template: analyticsConsoleTemplate,
       link: function(scope, $el) {
         const containerEl = $el.find('.analytics-console__content').get(0);
 

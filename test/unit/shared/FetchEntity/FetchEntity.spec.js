@@ -3,7 +3,7 @@ import flushPromises from 'test/utils/flushPromises';
 import React from 'react';
 import { mount } from 'enzyme';
 import { $initialize } from 'test/utils/ng';
-import { beforeEach, it } from 'test/utils/dsl';
+import { it } from 'test/utils/dsl';
 
 const sandbox = sinon.sandbox.create();
 

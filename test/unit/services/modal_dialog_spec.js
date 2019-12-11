@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import _ from 'lodash';
 import $ from 'jquery';
 import { $initialize, $inject, $wait } from 'test/utils/ng';
-import { beforeEach, it } from 'test/utils/dsl';
+import { it } from 'test/utils/dsl';
 
 describe('Modal dialog service', () => {
   let modalDialog, scope;

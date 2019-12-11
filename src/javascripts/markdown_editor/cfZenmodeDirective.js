@@ -7,6 +7,8 @@ import TheLocaleStore from 'services/localeStore';
 import * as actions from 'markdown_editor/markdown_actions';
 import * as MarkdownEditor from 'markdown_editor/markdown_editor';
 
+import zenmodeTemplate from './templates/cf_zenmode.html';
+
 export default function register() {
   registerDirective('cfZenmode', [
     'modalDialog',
@@ -18,7 +20,7 @@ export default function register() {
 
       return {
         restrict: 'E',
-        template: JST['cf_zenmode'](),
+        template: zenmodeTemplate,
         scope: {
           zenApi: '=',
           preview: '=',

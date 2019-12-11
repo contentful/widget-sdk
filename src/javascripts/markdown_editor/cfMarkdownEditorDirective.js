@@ -14,6 +14,8 @@ import * as MarkdownEditor from 'markdown_editor/markdown_editor';
 import { Button, Tooltip, Icon } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 
+import markdownEditorTemplate from './templates/cf_markdown_editor.html';
+
 const styles = {
   buttonIcon: css({
     marginTop: '8px'
@@ -31,7 +33,7 @@ export default function register() {
 
       return {
         restrict: 'E',
-        template: JST['cf_markdown_editor'](),
+        template: markdownEditorTemplate,
         scope: {},
         require: '^cfWidgetApi',
         link: function(scope, el, _attrs, api) {
@@ -47,7 +49,7 @@ export default function register() {
             <Tooltip content="More actions…">
               <Button
                 disabled={isDisabled}
-                testId='markdown-more-actions'
+                testId="markdown-more-actions"
                 onClick={() => {
                   toggleMinorActions();
                   scope.$applyAsync();

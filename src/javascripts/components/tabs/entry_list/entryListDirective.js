@@ -1,6 +1,7 @@
 import { registerDirective } from 'NgRegistry';
 import _ from 'lodash';
 import * as K from 'utils/kefir';
+import entryListTemplate from './entry_list.html';
 
 export default function register() {
   registerDirective('cfEntryList', [
@@ -14,7 +15,7 @@ export default function register() {
       };
 
       return {
-        template: JST.entry_list(),
+        template: entryListTemplate,
         restrict: 'A',
         controller: 'EntryListController',
         link: function(scope, elem) {

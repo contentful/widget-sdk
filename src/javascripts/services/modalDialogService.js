@@ -7,6 +7,7 @@ import { h } from 'utils/legacy-html-hyperscript';
 import keycodes from 'utils/keycodes';
 import * as logger from 'services/logger';
 import window from 'utils/ngCompat/window';
+import modalDialogTemplate from './modal_dialog.html';
 
 export default function register() {
   /**
@@ -57,7 +58,7 @@ export default function register() {
 
         this.params = _.extend(
           {
-            template: 'modal_dialog',
+            template: modalDialogTemplate,
             confirmLabel: 'OK',
             cancelLabel: 'Cancel',
             attachTo: '.client',
@@ -99,10 +100,10 @@ export default function register() {
           const scope = this.scope;
 
           if (this.params.messageTemplate) {
-            this.params.message = getTemplate(this.params.messageTemplate);
+            this.params.message = this.params.messageTemplate;
           }
 
-          this.domElement = $(getTemplate(this.params.template));
+          this.domElement = $(this.params.template);
 
           scope.dialog = _.extend(this, this.params);
 
@@ -245,11 +246,6 @@ export default function register() {
             dialog.cancel();
           }
         });
-      }
-
-      function getTemplate(nameOrTemplate) {
-        const jstTemplate = JST[nameOrTemplate];
-        return jstTemplate ? jstTemplate() : nameOrTemplate;
       }
 
       /**

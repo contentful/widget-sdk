@@ -1,5 +1,6 @@
 import { registerDirective } from 'NgRegistry';
 import _ from 'lodash';
+import editorCharacterInfoTemplate from './cf_editor_character_info.html';
 
 export default function register() {
   registerDirective('cfEditorCharacterInfo', () => {
@@ -14,7 +15,7 @@ export default function register() {
         wordCount: '='
       },
       restrict: 'E',
-      template: JST.cf_editor_character_info(),
+      template: editorCharacterInfoTemplate,
       link: function($scope) {
         $scope.$watch('constraints', constraints => {
           $scope.constraintsType = constraintsType(constraints);

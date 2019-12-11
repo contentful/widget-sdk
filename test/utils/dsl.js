@@ -6,24 +6,6 @@ const jasmineDsl = window.jasmine.getEnv();
 export const it = createCoroutineTestFactory(jasmineDsl.it);
 export const fit = createCoroutineTestFactory(jasmineDsl.fit);
 export const xit = createCoroutineTestFactory(jasmineDsl.xit);
-export const beforeEach = createHookFactory(jasmineDsl.beforeEach);
-export const afterEach = createHookFactory(jasmineDsl.afterEach);
-
-function createHookFactory(defineHook) {
-  return runner => {
-    defineHook(function(done) {
-      Promise.resolve()
-        .then(() => {
-          const result = runner.call(this);
-
-          if (isThenable(result)) {
-            return runPromise(result, $apply);
-          }
-        })
-        .then(done, done.fail);
-    });
-  };
-}
 
 function isThenable(obj) {
   return obj && typeof obj.then === 'function' && typeof obj.catch === 'function';

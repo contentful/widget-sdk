@@ -6,6 +6,7 @@ import * as K from 'utils/kefir';
 import createInputUpdater from 'ui/inputUpdater';
 import { slugify } from 'services/slug';
 import TheLocaleStore from 'services/localeStore';
+import slugEditorTemplate from './cf_slug_editor.html';
 
 export default function register() {
   /**
@@ -36,7 +37,7 @@ export default function register() {
       restrict: 'E',
       scope: {},
       require: '^cfWidgetApi',
-      template: JST['cf_slug_editor'](),
+      template: slugEditorTemplate,
       link: (scope, $el, _attrs, widgetApi) => {
         const { field, entry, space, locales, contentType } = widgetApi;
 

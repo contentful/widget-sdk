@@ -6,6 +6,7 @@ import * as K from 'utils/kefir';
 import { css } from 'emotion';
 
 import * as localesUtils from 'utils/locales';
+import entityFieldTemplate from './cf_entity_field.html';
 
 const styles = {
   lockComponentContainer: css({
@@ -44,7 +45,7 @@ export default function register() {
 
       return {
         restrict: 'E',
-        template: JST.cf_entity_field(),
+        template: entityFieldTemplate,
         controllerAs: 'fieldController',
         controller: [
           '$scope',

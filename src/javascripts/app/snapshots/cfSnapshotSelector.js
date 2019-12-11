@@ -6,10 +6,11 @@ import * as K from 'utils/kefir';
 import Paginator from 'classes/Paginator';
 import * as snapshotStatus from 'app/snapshots/helpers/SnapshotStatus';
 import * as snapshotDecorator from 'app/snapshots/helpers/SnapshotDecorator';
+import snapshotSelectorTemplate from './cf_snapshot_selector.html';
 
 export default function register() {
   registerDirective('cfSnapshotSelector', () => ({
-    template: JST.cf_snapshot_selector(),
+    template: snapshotSelectorTemplate,
     restrict: 'E',
     controller: 'SnapshotSelectorController',
 

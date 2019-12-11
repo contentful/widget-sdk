@@ -11,6 +11,8 @@ import * as DataLoader from 'app/entity_editor/DataLoader';
 import * as Tracking from 'app/entity_editor/bulk_editor/Tracking';
 import * as entitySelector from 'search/EntitySelector/entitySelector';
 
+import bulkEditorTemplate from './bulk_editor.html';
+
 export default function register() {
   registerDirective('cfBulkEditor', [
     'spaceContext',
@@ -20,7 +22,7 @@ export default function register() {
           referenceContext: '='
         },
         restrict: 'E',
-        template: JST.bulk_editor(),
+        template: bulkEditorTemplate,
         link
       };
 

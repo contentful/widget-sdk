@@ -1,5 +1,6 @@
 import base from 'states/Base';
 import createEntityPageController from 'app/entity_editor/EntityPageController';
+import entityPageTemplate from 'app/entity_editor/entity_page.html';
 
 const list = base({
   name: 'list',
@@ -12,7 +13,7 @@ const detail = {
   name: 'detail',
   url: '/:assetId?previousEntries',
   params: { addToContext: true },
-  template: JST.entity_page(),
+  template: entityPageTemplate,
   controller: ['$scope', '$state', createEntityPageController]
 };
 
