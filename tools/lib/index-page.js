@@ -1,9 +1,8 @@
 const { h, doctype } = require('./hyperscript');
 const { create: createResolver } = require('./manifest-resolver');
 
-const DEV_ENTRY_SCRIPTS = ['templates.js', 'app.js'];
-
-const DEFAULT_ENTRY_SCRIPTS = ['application.min.js'];
+const DEV_ENTRY_SCRIPT = 'app.js';
+const PROD_ENTRY_SCRIPT = 'application.min.js';
 
 /**
  * @usage
@@ -30,7 +29,7 @@ const DEFAULT_ENTRY_SCRIPTS = ['application.min.js'];
  */
 module.exports.render = function render(uiVersion, config, manifest) {
   const resolve = createResolver(manifest, '/app');
-  return renderPage(uiVersion, config, resolve, DEFAULT_ENTRY_SCRIPTS);
+  return renderPage(uiVersion, config, resolve, PROD_ENTRY_SCRIPT);
 };
 
 /**
@@ -49,14 +48,14 @@ module.exports.render = function render(uiVersion, config, manifest) {
  */
 module.exports.renderDev = function renderDev(config) {
   const resolve = path => `/app/${path}`;
-  return renderPage(null, config, resolve, DEV_ENTRY_SCRIPTS);
+  return renderPage(null, config, resolve, DEV_ENTRY_SCRIPT);
 };
 
 function renderPage(...args) {
   return doctype + indexPage(...args);
 }
 
-function indexPage(uiVersion, config, resolve, entryScripts) {
+function indexPage(uiVersion, config, resolve, entryScript) {
   return h('html', [
     h('head', [
       h('meta', { charset: 'UTF-8' }),
@@ -92,8 +91,9 @@ function indexPage(uiVersion, config, resolve, entryScripts) {
             ngIf: 'user && appReady'
           }),
           h('div', { ngIf: '!user || !appReady' }, [appLoader()])
-        ])
-      ].concat(entryScripts.map(src => scriptTag(resolve(src))))
+        ]),
+        scriptTag(resolve(entryScript))
+      ]
     )
   ]);
 }
