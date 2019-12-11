@@ -27,3 +27,8 @@ export function getUserName(user) {
     return <UnknownUser id={id} />;
   }
 }
+
+export function getFullNameOrEmail(user) {
+  const { firstName, lastName, email } = user;
+  return firstName ? `${firstName} ${lastName}` : email;
+}

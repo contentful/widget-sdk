@@ -56,7 +56,7 @@ export default function NewUserSuccess({ failures = [], successes = [], onRestar
             successes.length
           )} been invited to your organization.`}>
           <TextLink href={invitationsUrl} linkType="positive">
-            View all invitations
+            Manage users
           </TextLink>
         </Note>
       )}
@@ -70,7 +70,7 @@ export default function NewUserSuccess({ failures = [], successes = [], onRestar
             title={`${pluralize('users', failures.length, true)} couldn't be invited.`}>
             {failures.length > 1
               ? `They were either existing users or have already been invited.`
-              : `They were either an existing user of have already been invited.`}
+              : `They were either an existing user or have already been invited.`}
           </Note>
           <Textarea
             className={failedEmailsStyle}
