@@ -1,4 +1,4 @@
-import { getStore } from 'TheStore';
+import { getStore } from 'browserStorage';
 import { getFirstAccessibleSref } from 'access_control/SectionAccess';
 import * as Analytics from 'analytics/Analytics';
 import * as accessChecker from 'access_control/AccessChecker';

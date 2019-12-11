@@ -31,7 +31,7 @@ describe('activationEmailResendController', () => {
       resendActivationEmail: sinon.stub().resolves()
     });
 
-    const { getStore } = await this.system.import('TheStore');
+    const { getStore } = await this.system.import('browserStorage');
     moment = (await this.system.import('moment')).default;
 
     await $initialize(this.system);

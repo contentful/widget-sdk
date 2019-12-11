@@ -13,12 +13,12 @@ import {
 } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink';
 import AppPermissions from './AppPermissions';
-import ClientStorage from 'TheStore/ClientStorage';
+import { getStore } from 'browserStorage';
 import { websiteUrl } from 'Config';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
 import AppMarkdown from './AppMarkdown';
 
-const sessionStorage = ClientStorage('session');
+const sessionStorage = getStore('session');
 sessionStorage.set('appPermissions', JSON.stringify({}));
 
 const styles = {

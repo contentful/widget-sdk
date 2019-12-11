@@ -1,6 +1,6 @@
 import { find } from 'lodash';
 import makeState from 'states/Base';
-import { getStore } from 'TheStore';
+import { getStore } from 'browserStorage';
 import template from 'app/home/HomeTemplate';
 import { go } from 'states/Navigator';
 import { getSpaces, user$ } from 'services/TokenStore';

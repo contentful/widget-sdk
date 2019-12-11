@@ -30,7 +30,7 @@ import {
 } from 'account/NewOrganizationMembershipTemplate';
 import createResourceService from 'services/ResourceService';
 import { getResourceLimits } from 'utils/ResourceUtils';
-import { getStore } from 'TheStore';
+import { getStore } from 'browserStorage';
 
 // Start: For Next Steps for a TEA space (a space created using the example space template)
 import { track, updateUserInSegment } from 'analytics/Analytics';

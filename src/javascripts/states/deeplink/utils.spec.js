@@ -1,8 +1,8 @@
 import { getOrg, getSpaceInfo, getOnboardingSpaceId } from './utils';
-import TheStore from 'TheStore';
+import { getStore } from 'browserStorage';
 import * as TokenStore from 'services/TokenStore';
 
-jest.mock('TheStore', () => ({ getStore: jest.fn() }));
+jest.mock('browserStorage', () => ({ getStore: jest.fn() }));
 
 jest.mock(
   'services/TokenStore',
@@ -40,7 +40,7 @@ describe('states/deeplink/utils', () => {
     it('returns orgId from the store', async function() {
       const returnedOrg = { sys: { id: 'some_org_id' }, pricing: 'old' };
 
-      TheStore.getStore.mockImplementation(() => ({
+      getStore.mockImplementation(() => ({
         get: jest.fn().mockReturnValue(returnedOrg.sys.id)
       }));
       TokenStore.getOrganizations.mockResolvedValue([returnedOrg]);
@@ -52,7 +52,7 @@ describe('states/deeplink/utils', () => {
     it('returns org from the selected space', async function() {
       const spaceOrg = { sys: { id: 'some_new_org_id' } };
 
-      TheStore.getStore.mockImplementation(() => ({
+      getStore.mockImplementation(() => ({
         get: jest.fn().mockReturnValue('some_org_id')
       }));
       TokenStore.getOrganizations.mockResolvedValue([]);
@@ -70,7 +70,7 @@ describe('states/deeplink/utils', () => {
     it('checks value in the store', async function() {
       const getFn = jest.fn().mockReturnValue('some_id');
 
-      TheStore.getStore.mockImplementation(() => ({
+      getStore.mockImplementation(() => ({
         get: getFn
       }));
 
@@ -84,7 +84,7 @@ describe('states/deeplink/utils', () => {
     });
 
     it('returns a new spaceId if we have invalid in the store', async function() {
-      TheStore.getStore.mockImplementation(() => ({
+      getStore.mockImplementation(() => ({
         get: jest.fn().mockReturnValue('some_id')
       }));
 
@@ -94,7 +94,7 @@ describe('states/deeplink/utils', () => {
       expect(spaceId).toBe('new_id');
     });
     it('throws an error if there are no spaces', async function() {
-      TheStore.getStore.mockImplementation(() => ({
+      getStore.mockImplementation(() => ({
         get: jest.fn().mockReturnValue('some_id')
       }));
       TokenStore.getSpaces.mockResolvedValue([]);
@@ -113,7 +113,7 @@ describe('states/deeplink/utils', () => {
   describe('#getOnboardingSpaceId', () => {
     it('takes spaceId from local storage', async function() {
       const storeGetFn = jest.fn().mockReturnValue('some_id');
-      TheStore.getStore.mockImplementation(() => ({
+      getStore.mockImplementation(() => ({
         set: jest.fn(),
         get: storeGetFn
       }));
@@ -125,7 +125,7 @@ describe('states/deeplink/utils', () => {
     });
     it('looks for spaces with modern stack onboarding name if no value in local storage', async function() {
       const storeSetFn = jest.fn();
-      TheStore.getStore.mockImplementation(() => ({
+      getStore.mockImplementation(() => ({
         set: storeSetFn,
         get: jest.fn().mockReturnValue(undefined)
       }));
@@ -141,7 +141,7 @@ describe('states/deeplink/utils', () => {
       expect(storeSetFn).toHaveBeenCalledWith('ctfl:user_id:spaceAutoCreated', true);
     });
     it('returns undefined if there is no space from local storage and no space with name', async function() {
-      TheStore.getStore.mockImplementation(() => ({
+      getStore.mockImplementation(() => ({
         set: jest.fn(),
         get: jest.fn().mockReturnValue('some_id')
       }));

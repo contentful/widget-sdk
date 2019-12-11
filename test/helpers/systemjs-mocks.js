@@ -56,7 +56,7 @@ async function stubClientStorage(system) {
     }
   };
 
-  await system.set('TheStore/ClientStorageWrapper', mocked);
+  await system.set('browserStorage/ClientStorageWrapper', mocked);
 }
 
 async function stubShareJsLibClient(system) {

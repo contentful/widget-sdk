@@ -7,7 +7,7 @@ import {
 } from './ActivationEmailResendDialog';
 import { resendActivationEmail } from './activationEmailResender';
 
-import { getStore } from 'TheStore';
+import { getStore } from 'browserStorage';
 import * as TokenStore from 'services/TokenStore';
 
 export default function register() {

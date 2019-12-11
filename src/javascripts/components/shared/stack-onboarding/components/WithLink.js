@@ -4,7 +4,7 @@ import {
   track,
   getStoragePrefix
 } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
-import { getStore } from 'TheStore';
+import { getStore } from 'browserStorage';
 import { updateUserInSegment } from 'analytics/Analytics';
 import { getModule } from 'NgRegistry';
 

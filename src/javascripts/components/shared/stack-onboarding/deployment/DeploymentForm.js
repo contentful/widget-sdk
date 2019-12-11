@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Button from 'components/shared/stack-onboarding/components/Button';
 import Input from 'components/shared/stack-onboarding/components/Input';
 import Form from 'components/shared/stack-onboarding/components/Form';
-import { getStore } from 'TheStore';
+import { getStore } from 'browserStorage';
 
 import {
   getStoragePrefix,

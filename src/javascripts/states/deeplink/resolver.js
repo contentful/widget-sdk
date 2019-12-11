@@ -2,7 +2,7 @@ import { getSpaceInfo, getOrg, checkOrgAccess, getOnboardingSpaceId } from './ut
 import * as accessChecker from 'access_control/AccessChecker';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
-import { getStore } from 'TheStore';
+import { getStore } from 'browserStorage';
 import { getModule } from 'NgRegistry';
 import * as logger from 'services/logger';
 import { getApiKeyRepo } from 'app/settings/api/services/ApiKeyRepoInstance';
