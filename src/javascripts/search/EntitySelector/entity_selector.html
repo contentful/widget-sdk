@@ -1,34 +1,125 @@
-
 <div class="entity-selector" ng-controller="EntitySelectorController">
   <div class="entity-selector__input-label">
     <p ng-if="labels.input">{{ labels.input }}</p>
     <should></should>
-    <p class="entity-selector__mode-switcher" ng-if="config.withCreate"><react-component name="search/EntitySelector/CreateEntity" props="createEntityProps"></react-component></p>
-    <p class="entity-selector__mode-switcher" ng-if="config.multiple"><a href ng-click="view.mode = SELECTED" ng-if="view.mode === AVAILABLE">Show {{ labels.selected }} ({{ selected.length }})</a><a href ng-click="view.mode = AVAILABLE" ng-if="view.mode === SELECTED">Hide {{ labels.selected }} ({{ selected.length }})</a></p>
+    <p class="entity-selector__mode-switcher" ng-if="config.withCreate">
+      <react-component
+        name="search/EntitySelector/CreateEntity"
+        props="createEntityProps"
+      ></react-component>
+    </p>
+    <p class="entity-selector__mode-switcher" ng-if="config.multiple">
+      <a href ng-click="view.mode = SELECTED" ng-if="view.mode === AVAILABLE"
+        >Show {{ labels.selected }} ({{ selected.length }})</a
+      ><a href ng-click="view.mode = AVAILABLE" ng-if="view.mode === SELECTED"
+        >Hide {{ labels.selected }} ({{ selected.length }})</a
+      >
+    </p>
   </div>
   <div class="entity-selector__search" ng-if="supportsAdvancedSearch">
     <cf-component-bridge component="search"></cf-component-bridge>
   </div>
   <div class="entity-selector__search" ng-if="!supportsAdvancedSearch">
-    <input class="cfnext-form__input--full-size" ng-model="view.searchText" placeholder="{{ getSearchPlaceholder() }}">
+    <input
+      class="cfnext-form__input--full-size"
+      ng-model="view.searchText"
+      placeholder="{{ getSearchPlaceholder() }}"
+    />
   </div>
-  <div class="entity-selector__item-list endless-container" ng-if="view.mode === AVAILABLE" ng-style="{height: listHeight}" ng-class="{'entity-selector__thumbnails': config.entityType === 'Asset', 'entity-selector__item-list--empty': !items.length}" cf-endless-container at-bottom="loadMore()" num-elements="paginator.getPage()">
-    <div class="entity-selector__item-list-placeholder" ng-if="!isLoading &amp;&amp; items.length &lt; 1">{{ labels.empty }} found.<span ng-if="!isLoading &amp;&amp; items.length &lt; 1 &amp;&amp; config.withCreate"><react-component name="search/EntitySelector/CreateEntity" props="createEntityInlineProps"/></span><span ng-if="!supportsAdvancedSearch &amp;&amp; view.searchText.length &gt; 0"> for <strong>{{ view.searchText }}</strong></span></div>
-    <div class="entity-selector__item" data-test-id="entity-selector-item" ng-repeat="entity in items track by entity.sys.id" ng-class="{'x--selected': selectedIds[entity.sys.id],'entity-selector__last-item': $last &amp;&amp; paginator.atLast()}">
-      <cf-entity-link ng-if="config.entityType === 'Entry'" ng-click="toggleSelection(entity, $event)" entity="entity" content-type="getContentType(entity)" entity-helpers="helpers" config="{showDetails: true}"></cf-entity-link>
-      <cf-asset-card ng-if="config.entityType === 'Asset'" ng-click="toggleSelection(entity, $event)" entity="entity" entity-helpers="helpers" config="{asThumb: true, disableTooltip: true}"></cf-asset-card>
-      <cf-user-link ng-if="config.entityType === 'User'" ng-click="toggleSelection(entity, $event)" user="entity"></cf-user-link>
+  <div
+    class="entity-selector__item-list endless-container"
+    ng-if="view.mode === AVAILABLE"
+    ng-style="{height: listHeight}"
+    ng-class="{'entity-selector__thumbnails': config.entityType === 'Asset', 'entity-selector__item-list--empty': !items.length}"
+    cf-endless-container
+    at-bottom="loadMore()"
+    num-elements="paginator.getPage()"
+  >
+    <div
+      class="entity-selector__item-list-placeholder"
+      ng-if="!isLoading &amp;&amp; items.length &lt; 1"
+    >
+      {{ labels.empty }} found.<span
+        ng-if="!isLoading &amp;&amp; items.length &lt; 1 &amp;&amp; config.withCreate"
+        ><react-component
+          name="search/EntitySelector/CreateEntity"
+          props="createEntityInlineProps"/></span
+      ><span ng-if="!supportsAdvancedSearch &amp;&amp; view.searchText.length &gt; 0">
+        for <strong>{{ view.searchText }}</strong></span
+      >
+    </div>
+    <div
+      class="entity-selector__item"
+      data-test-id="entity-selector-item"
+      ng-repeat="entity in items track by entity.sys.id"
+      ng-class="{'x--selected': selectedIds[entity.sys.id],'entity-selector__last-item': $last &amp;&amp; paginator.atLast()}"
+    >
+      <cf-entity-link
+        ng-if="config.entityType === 'Entry'"
+        ng-click="toggleSelection(entity, $event)"
+        entity="entity"
+        content-type="getContentType(entity)"
+        entity-helpers="helpers"
+        config="{showDetails: true}"
+      ></cf-entity-link>
+      <cf-asset-card
+        ng-if="config.entityType === 'Asset'"
+        ng-click="toggleSelection(entity, $event)"
+        entity="entity"
+        entity-helpers="helpers"
+        config="{asThumb: true, disableTooltip: true}"
+      ></cf-asset-card>
+      <cf-user-link
+        ng-if="config.entityType === 'User'"
+        ng-click="toggleSelection(entity, $event)"
+        user="entity"
+      ></cf-user-link>
     </div>
     <div class="loading" ng-if="isLoadingMore"></div>
   </div>
-  <div class="entity-selector__item-list" ng-if="view.mode === SELECTED" ng-style="{height: listHeight}" ng-class="{'entity-selector__thumbnails': config.linksAsset &amp;&amp; selected.length &gt; 0}">
-    <div class="entity-selector__item-list-placeholder" ng-if="selected.length &lt; 1">{{ labels.empty }} selected yet</div>
-    <div class="entity-selector__item x--selected" ng-repeat="entity in selected track by entity.sys.id">
-      <cf-entity-link ng-if="config.entityType === 'Entry'" ng-click="toggleSelection(entity, $event)" entity="entity" content-type="getContentType(entity)" entity-helpers="helpers" config="{showDetails: true}"></cf-entity-link>
-      <cf-asset-card ng-if="config.entityType === 'Asset'" ng-click="toggleSelection(entity, $event)" entity="entity" entity-helpers="helpers" config="{asThumb: true, disableTooltip: true}"></cf-asset-card>
-      <cf-user-link ng-if="config.entityType === 'User'" ng-click="toggleSelection(entity, $event)" user="entity"></cf-user-link>
+  <div
+    class="entity-selector__item-list"
+    ng-if="view.mode === SELECTED"
+    ng-style="{height: listHeight}"
+    ng-class="{'entity-selector__thumbnails': config.linksAsset &amp;&amp; selected.length &gt; 0}"
+  >
+    <div class="entity-selector__item-list-placeholder" ng-if="selected.length &lt; 1">
+      {{ labels.empty }} selected yet
+    </div>
+    <div
+      class="entity-selector__item x--selected"
+      ng-repeat="entity in selected track by entity.sys.id"
+    >
+      <cf-entity-link
+        ng-if="config.entityType === 'Entry'"
+        ng-click="toggleSelection(entity, $event)"
+        entity="entity"
+        content-type="getContentType(entity)"
+        entity-helpers="helpers"
+        config="{showDetails: true}"
+      ></cf-entity-link>
+      <cf-asset-card
+        ng-if="config.entityType === 'Asset'"
+        ng-click="toggleSelection(entity, $event)"
+        entity="entity"
+        entity-helpers="helpers"
+        config="{asThumb: true, disableTooltip: true}"
+      ></cf-asset-card>
+      <cf-user-link
+        ng-if="config.entityType === 'User'"
+        ng-click="toggleSelection(entity, $event)"
+        user="entity"
+      ></cf-user-link>
     </div>
   </div>
-  <div class="entity-selector__note note-box note-box--info" ng-if="labels.info" ng-bind="labels.info"></div>
-  <div class="entity-selector__note" ng-if="labels.infoHtml" bind-html-compile="labels.infoHtml"></div>
+  <div
+    class="entity-selector__note note-box note-box--info"
+    ng-if="labels.info"
+    ng-bind="labels.info"
+  ></div>
+  <div
+    class="entity-selector__note"
+    ng-if="labels.infoHtml"
+    bind-html-compile="labels.infoHtml"
+  ></div>
 </div>

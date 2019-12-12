@@ -1,6 +1,15 @@
-
 <div class="field-editor__character-info">
   <div ng-if="hasWordCount">{{ wordCount }} words,&nbsp;</div>
-  <div ng-class="{'colors__red': charCountStatus === 'exceeded', 'colors__orange': charCountStatus === 'approaching'}">{{ charCount }} characters</div>
-  <div class="u-flex-pull-right" ng-switch="constraintsType"><span ng-switch-when="min"> Requires at least {{ constraints.min }} characters</span><span ng-switch-when="max"> Requires less than {{ constraints.max }} characters</span><span ng-switch-when="min-max"> Requires between {{ constraints.min }} and {{ constraints.max }} characters</span></div>
+  <div
+    ng-class="{'colors__red': charCountStatus === 'exceeded', 'colors__orange': charCountStatus === 'approaching'}"
+  >
+    {{ charCount }} characters
+  </div>
+  <div class="u-flex-pull-right" ng-switch="constraintsType">
+    <span ng-switch-when="min"> Requires at least {{ constraints.min }} characters</span
+    ><span ng-switch-when="max"> Requires less than {{ constraints.max }} characters</span
+    ><span ng-switch-when="min-max">
+      Requires between {{ constraints.min }} and {{ constraints.max }} characters</span
+    >
+  </div>
 </div>

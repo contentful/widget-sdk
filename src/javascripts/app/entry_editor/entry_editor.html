@@ -1,27 +1,52 @@
-
-<react-component name="components/shared/DocumentTitle" props="{title: [title, 'Content']}"></react-component>
+<react-component
+  name="components/shared/DocumentTitle"
+  props="{title: [title, 'Content']}"
+></react-component>
 <div class="entry-editor">
   <div class="workbench">
     <header class="workbench-header">
       <react-component name="app/entity_editor/Components/BackNav"></react-component>
       <cf-icon class="workbench-header__icon" name="page-content" scale="0.75"></cf-icon>
-      <react-component name="components/shared/WorkbenchTitle" props="{title, localeName: localeData.focusedLocale.name, isSingleLocaleModeOn: localeData.isSingleLocaleModeOn, contentTypeName: editorData.contentType.data.name }"></react-component>
+      <react-component
+        name="components/shared/WorkbenchTitle"
+        props="{title, localeName: localeData.focusedLocale.name, isSingleLocaleModeOn: localeData.isSingleLocaleModeOn, contentTypeName: editorData.contentType.data.name }"
+      ></react-component>
       <div class="workbench-header__actions">
-        <react-component name="app/entity_editor/EntryTitlebar/EntrySecondaryActions" props="{entityInfo: editorData.entityInfo, entryActions, onDelete: state.delete}"></react-component>
+        <react-component
+          name="app/entity_editor/EntryTitlebar/EntrySecondaryActions"
+          props="{entityInfo: editorData.entityInfo, entryActions, onDelete: state.delete}"
+        ></react-component>
       </div>
     </header>
     <div class="workbench-main">
       <div class="workbench-main__content sticky-parent">
-        <react-component name="app/entity_editor/StatusNotification" props="statusNotificationProps"></react-component>
-        <react-component ng-if="editorData.editorExtension" name="app/entry_editor/CustomEditorExtensionRenderer" props="customExtensionProps"></react-component>
-        <div class="entity-editor-form cf-workbench-content cf-workbench-content-type__text" ng-if="!editorData.editorExtension">
+        <react-component
+          name="app/entity_editor/StatusNotification"
+          props="statusNotificationProps"
+        ></react-component>
+        <react-component
+          ng-if="editorData.editorExtension"
+          name="app/entry_editor/CustomEditorExtensionRenderer"
+          props="customExtensionProps"
+        ></react-component>
+        <div
+          class="entity-editor-form cf-workbench-content cf-workbench-content-type__text"
+          ng-if="!editorData.editorExtension"
+        >
           <cf-error-list class="form-box-error" cf-error-path="['fields']"></cf-error-list>
           <cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>
-          <react-component name="components/tabs/NoLocalizedFieldsAdvice" ng-if="shouldDisplayNoLocalizedFieldsAdvice" props="noLocalizedFieldsAdviceProps"></react-component>
+          <react-component
+            name="components/tabs/NoLocalizedFieldsAdvice"
+            ng-if="shouldDisplayNoLocalizedFieldsAdvice"
+            props="noLocalizedFieldsAdviceProps"
+          ></react-component>
         </div>
       </div>
       <div class="workbench-main__sidebar">
-        <react-component name="app/EntrySidebar/EntrySidebar" props="{entrySidebarProps, sidebarToggleProps}"></react-component>
+        <react-component
+          name="app/EntrySidebar/EntrySidebar"
+          props="{entrySidebarProps, sidebarToggleProps}"
+        ></react-component>
       </div>
     </div>
   </div>

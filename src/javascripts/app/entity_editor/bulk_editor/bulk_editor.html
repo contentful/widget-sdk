@@ -1,36 +1,70 @@
-
 <div class="workbench sticky-parent">
   <header class="workbench-header">
-    <react-component name="app/entity_editor/Components/BackNav" props="{onClose: newCloseWithReason('arrow_back')}"></react-component>
-    <h1 class="workbench-header__title">Entries linked in <em>{{ referenceContext.field.name }}</em> ({{ data.linkCount }})</h1>
+    <react-component
+      name="app/entity_editor/Components/BackNav"
+      props="{onClose: newCloseWithReason('arrow_back')}"
+    ></react-component>
+    <h1 class="workbench-header__title">
+      Entries linked in <em>{{ referenceContext.field.name }}</em> ({{ data.linkCount }})
+    </h1>
     <div class="workbench-header__actions">
-      <button class="btn-secondary-action" ng-click="newCloseWithReason('bulk_editor_close')()">Close</button>
+      <button class="btn-secondary-action" ng-click="newCloseWithReason('bulk_editor_close')()">
+        Close
+      </button>
     </div>
   </header>
   <div class="workbench-main">
     <div class="workbench-main__content" ng-show="!data.loaded" style="padding-top: 0">
-      <cf-loader ng-if="entityContexts.length &gt; 0" is-shown="true" loader-msg="Loading entries…"></cf-loader>
+      <cf-loader
+        ng-if="entityContexts.length &gt; 0"
+        is-shown="true"
+        loader-msg="Loading entries…"
+      ></cf-loader>
       <div class="empty-state" ng-if="entityContexts.length === 0">
         <div class="empty-state__description">There are no entries linked yet.</div>
       </div>
     </div>
     <div class="workbench-main__content" ng-show="data.loaded" style="padding-top: 0">
       <!-- Safari and Edge need a relative container for dropdowns to work:-->
-      <div style="position: relative" ng-repeat="ctx in entityContexts track by ctx.key" data-entity-id="{{ctx.id}}">
-        <cf-bulk-entity-editor entity-context="ctx" bulk-editor-context="editorContext" locale-data="localeData"></cf-bulk-entity-editor>
+      <div
+        style="position: relative"
+        ng-repeat="ctx in entityContexts track by ctx.key"
+        data-entity-id="{{ctx.id}}"
+      >
+        <cf-bulk-entity-editor
+          entity-context="ctx"
+          bulk-editor-context="editorContext"
+          locale-data="localeData"
+        ></cf-bulk-entity-editor>
       </div>
     </div>
     <div class="workbench-main__sidebar">
       <div class="entity-sidebar">
         <h2 class="entity-sidebar__heading">Entries</h2>
-        <div class="entity-sidebar__help-text" ng-if="data.linkCount &gt; 1">There are {{ data.linkCount }} linked entries in <em>{{ referenceContext.field.name }}</em>.</div>
-        <div class="entity-sidebar__help-text" ng-if="data.linkCount == 1">There is 1 linked entry in <em>{{ referenceContext.field.name }}</em>.</div>
-        <div class="entity-sidebar__help-text">
-          <cf-create-entry-button content-types="actions.allowedCTs" on-select="actions.addNewEntry" style="link" text="Create new entry and link"></cf-create-entry-button>
+        <div class="entity-sidebar__help-text" ng-if="data.linkCount &gt; 1">
+          There are {{ data.linkCount }} linked entries in
+          <em>{{ referenceContext.field.name }}</em>.
+        </div>
+        <div class="entity-sidebar__help-text" ng-if="data.linkCount == 1">
+          There is 1 linked entry in <em>{{ referenceContext.field.name }}</em>.
         </div>
         <div class="entity-sidebar__help-text">
-          <button class="btn-link" data-test-id="add-existing-entry" ng-click="actions.addExistingEntries()" type="button">
-            <cf-icon class="btn-link__icon" name="link"></cf-icon><span>Link an existing entry</span>
+          <cf-create-entry-button
+            content-types="actions.allowedCTs"
+            on-select="actions.addNewEntry"
+            style="link"
+            text="Create new entry and link"
+          ></cf-create-entry-button>
+        </div>
+        <div class="entity-sidebar__help-text">
+          <button
+            class="btn-link"
+            data-test-id="add-existing-entry"
+            ng-click="actions.addExistingEntries()"
+            type="button"
+          >
+            <cf-icon class="btn-link__icon" name="link"></cf-icon
+            ><span>Link an existing entry</span>
           </button>
         </div>
       </div>

@@ -1,42 +1,89 @@
-
 <div class="modal-background">
-  <div class="modal-dialog field-dialog" ng-form="fieldForm" cf-ui-tab="cf-ui-tab" ng-controller="FieldDialogController as fieldController">
+  <div
+    class="modal-dialog field-dialog"
+    ng-form="fieldForm"
+    cf-ui-tab="cf-ui-tab"
+    ng-controller="FieldDialogController as fieldController"
+  >
     <header class="modal-dialog__header field-dialog__header">
       <react-component name="ui/Components/Icon" props="{name: iconId}"></react-component>
-      <h1><span class="field-dialog__field-name">{{decoratedField.displayName}}</span><span class="field-dialog__field-type">{{fieldTypeLabel}}</span></h1>
+      <h1>
+        <span class="field-dialog__field-name">{{decoratedField.displayName}}</span
+        ><span class="field-dialog__field-type">{{fieldTypeLabel}}</span>
+      </h1>
       <ul class="field-dialog__tab-list" role="tablist">
-        <li ui-tab="settings" ng-attr-aria-invalid="{{tab.invalid}}">Settings<i class="fa fa-exclamation-circle field-dialog__tab-invalid"></i></li>
-        <li ui-tab="validations" ng-attr-aria-invalid="{{tab.invalid}}">Validations<i class="fa fa-exclamation-circle field-dialog__tab-invalid"></i></li>
-        <li ui-tab="appearance" ng-attr-aria-invalid="{{tab.invalid}}">Appearance<i class="fa fa-exclamation-circle field-dialog__tab-invalid"></i></li>
+        <li ui-tab="settings" ng-attr-aria-invalid="{{tab.invalid}}">
+          Settings<i class="fa fa-exclamation-circle field-dialog__tab-invalid"></i>
+        </li>
+        <li ui-tab="validations" ng-attr-aria-invalid="{{tab.invalid}}">
+          Validations<i class="fa fa-exclamation-circle field-dialog__tab-invalid"></i>
+        </li>
+        <li ui-tab="appearance" ng-attr-aria-invalid="{{tab.invalid}}">
+          Appearance<i class="fa fa-exclamation-circle field-dialog__tab-invalid"></i>
+        </li>
       </ul>
     </header>
     <div class="modal-dialog__content field-dialog__content">
       <div ui-tabpanel="settings">
-        <react-component name="components/field_dialog/components/FieldDialogSettingsComponent" props="fieldSettingsProps"></react-component>
+        <react-component
+          name="components/field_dialog/components/FieldDialogSettingsComponent"
+          props="fieldSettingsProps"
+        ></react-component>
       </div>
-      <div ui-tabpanel="validations" ng-form="fieldValidationsForm" ng-controller="FieldDialogValidationsController">
+      <div
+        ui-tabpanel="validations"
+        ng-form="fieldValidationsForm"
+        ng-controller="FieldDialogValidationsController"
+      >
         <h3 ng-if="nodeValidationsEnabled" style="margin: 0 0 18px">General validations</h3>
         <ul class="validation-settings validation-settings__rich-text" role="listbox">
-          <li aria-label="This field is required" role="option" data-validation-type="required"><react-component name="@contentful/forma-36-react-components/CheckboxField" props="buildRequiredCheckboxProps()" /></li>
-          <li ng-repeat="validation in validations" aria-label="{{validation.name}}" role="option" data-validation-type="{{validation.type}}{{field.type === 'Array' &amp;&amp; !validation.onItems ?  '.listElement' : ''}}">
+          <li aria-label="This field is required" role="option" data-validation-type="required">
+            <react-component
+              name="@contentful/forma-36-react-components/CheckboxField"
+              props="buildRequiredCheckboxProps()"
+            />
+          </li>
+          <li
+            ng-repeat="validation in validations"
+            aria-label="{{validation.name}}"
+            role="option"
+            data-validation-type="{{validation.type}}{{field.type === 'Array' &amp;&amp; !validation.onItems ?  '.listElement' : ''}}"
+          >
             <cf-validation-setting class="u-bce"></cf-validation-setting>
           </li>
         </ul>
         <div ng-if="nodeValidationsEnabled" ng-repeat="nodeValidation in nodeValidations">
-          <h3 ng-if="nodeValidationsEnabled" style="margin: 0 0 18px">{{nodeValidation.description}}</h3>
+          <h3 ng-if="nodeValidationsEnabled" style="margin: 0 0 18px">
+            {{nodeValidation.description}}
+          </h3>
           <ul class="validation-settings validation-settings__rich-text" role="listbox">
-            <li ng-repeat="validation in nodeValidation.validations" aria-label="{{validation.name}}" role="option" data-validation-type="{{validation.type}}{{field.type === 'Array' &amp;&amp; !validation.onItems ?  '.listElement' : ''}}">
+            <li
+              ng-repeat="validation in nodeValidation.validations"
+              aria-label="{{validation.name}}"
+              role="option"
+              data-validation-type="{{validation.type}}{{field.type === 'Array' &amp;&amp; !validation.onItems ?  '.listElement' : ''}}"
+            >
               <cf-validation-setting class="u-bce"></cf-validation-setting>
             </li>
           </ul>
         </div>
       </div>
       <div ui-tabpanel="appearance" ng-controller="FieldDialogAppearanceController">
-        <react-component name="components/field_dialog/appearance/FieldDialogAppearanceTab" props="appearanceTabProps"></react-component>
+        <react-component
+          name="components/field_dialog/appearance/FieldDialogAppearanceTab"
+          props="appearanceTabProps"
+        ></react-component>
       </div>
     </div>
     <div class="modal-dialog__controls">
-      <button class="btn-primary-action" type="button" ng-click="dialog.save()" ng-disabled="!fieldForm.$valid || !formIsValid">Save</button>
+      <button
+        class="btn-primary-action"
+        type="button"
+        ng-click="dialog.save()"
+        ng-disabled="!fieldForm.$valid || !formIsValid"
+      >
+        Save
+      </button>
       <button class="btn-secondary-action" type="button" ng-click="dialog.cancel()">Cancel</button>
     </div>
   </div>

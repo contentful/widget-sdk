@@ -1,37 +1,106 @@
-
 <div class="workbench">
-  <div class="workbench-layer animate" ng-class="getLayerClasses($index)" ng-style="{ left: 170 / slideStates.length * $index + 'px' }" ng-repeat="slideState in slideStates track by slideState.key" data-test-id="slide-in-{{ $index === 0 ? 'base' : 'layer' }}">
-    <div class="workbench-layer__editor-container" watchers-toggler="!isTopLayer($index) &amp;&amp; loaded" ng-mouseenter="initPeeking($index)">
-      <div ng-if="!slideState.viewProps &amp;&amp; slideState.slide.type === 'BulkEditor'" style="height: 100%">
-        <cf-loader ng-if="!slideState.loadingError" is-shown="true" loader-msg="Loading entry…"></cf-loader>
+  <div
+    class="workbench-layer animate"
+    ng-class="getLayerClasses($index)"
+    ng-style="{ left: 170 / slideStates.length * $index + 'px' }"
+    ng-repeat="slideState in slideStates track by slideState.key"
+    data-test-id="slide-in-{{ $index === 0 ? 'base' : 'layer' }}"
+  >
+    <div
+      class="workbench-layer__editor-container"
+      watchers-toggler="!isTopLayer($index) &amp;&amp; loaded"
+      ng-mouseenter="initPeeking($index)"
+    >
+      <div
+        ng-if="!slideState.viewProps &amp;&amp; slideState.slide.type === 'BulkEditor'"
+        style="height: 100%"
+      >
+        <cf-loader
+          ng-if="!slideState.loadingError"
+          is-shown="true"
+          loader-msg="Loading entry…"
+        ></cf-loader>
         <div class="empty-state" ng-if="slideState.loadingError">
-          <div class="empty-state__title" ng-if="slideState.loadingError.statusCode === 404">Entry missing or inaccessible</div>
-          <div class="empty-state__title" ng-if="slideState.loadingError.statusCode !== 404">Error loading entry with id&#32;<code>{{slideState.slide.path[0]}}</code></div>
-          <div class="empty-state__description" ng-if="slideState.loadingError.statusCode !== 404">{{ slideState.loadingError.body.message }}</div>
+          <div class="empty-state__title" ng-if="slideState.loadingError.statusCode === 404">
+            Entry missing or inaccessible
+          </div>
+          <div class="empty-state__title" ng-if="slideState.loadingError.statusCode !== 404">
+            Error loading entry with id&#32;<code>{{slideState.slide.path[0]}}</code>
+          </div>
+          <div class="empty-state__description" ng-if="slideState.loadingError.statusCode !== 404">
+            {{ slideState.loadingError.body.message }}
+          </div>
         </div>
       </div>
-      <div ng-if="!slideState.viewProps &amp;&amp; slideState.slide.type === 'Entry'" style="height: 100%">
-        <cf-loader ng-if="!slideState.loadingError" is-shown="true" loader-msg="Loading entry…"></cf-loader>
+      <div
+        ng-if="!slideState.viewProps &amp;&amp; slideState.slide.type === 'Entry'"
+        style="height: 100%"
+      >
+        <cf-loader
+          ng-if="!slideState.loadingError"
+          is-shown="true"
+          loader-msg="Loading entry…"
+        ></cf-loader>
         <div class="empty-state" ng-if="slideState.loadingError">
-          <div class="empty-state__title" ng-if="slideState.loadingError.statusCode === 404">Entry missing or inaccessible</div>
-          <div class="empty-state__title" ng-if="slideState.loadingError.statusCode !== 404">Error loading entry with id&#32;<code>{{slideState.slide.id}}</code></div>
-          <div class="empty-state__description" ng-if="slideState.loadingError.statusCode !== 404">{{ slideState.loadingError.body.message }}</div>
+          <div class="empty-state__title" ng-if="slideState.loadingError.statusCode === 404">
+            Entry missing or inaccessible
+          </div>
+          <div class="empty-state__title" ng-if="slideState.loadingError.statusCode !== 404">
+            Error loading entry with id&#32;<code>{{slideState.slide.id}}</code>
+          </div>
+          <div class="empty-state__description" ng-if="slideState.loadingError.statusCode !== 404">
+            {{ slideState.loadingError.body.message }}
+          </div>
         </div>
       </div>
-      <div ng-if="!slideState.viewProps &amp;&amp; slideState.slide.type === 'Asset'" style="height: 100%">
-        <cf-loader ng-if="!slideState.loadingError" is-shown="true" loader-msg="Loading asset…"></cf-loader>
+      <div
+        ng-if="!slideState.viewProps &amp;&amp; slideState.slide.type === 'Asset'"
+        style="height: 100%"
+      >
+        <cf-loader
+          ng-if="!slideState.loadingError"
+          is-shown="true"
+          loader-msg="Loading asset…"
+        ></cf-loader>
         <div class="empty-state" ng-if="slideState.loadingError">
-          <div class="empty-state__title" ng-if="slideState.loadingError.statusCode === 404">Asset missing or inaccessible</div>
-          <div class="empty-state__title" ng-if="slideState.loadingError.statusCode !== 404">Error loading asset with id&#32;<code>{{slideState.slide.id}}</code></div>
-          <div class="empty-state__description" ng-if="slideState.loadingError.statusCode !== 404">{{ slideState.loadingError.body.message }}</div>
+          <div class="empty-state__title" ng-if="slideState.loadingError.statusCode === 404">
+            Asset missing or inaccessible
+          </div>
+          <div class="empty-state__title" ng-if="slideState.loadingError.statusCode !== 404">
+            Error loading asset with id&#32;<code>{{slideState.slide.id}}</code>
+          </div>
+          <div class="empty-state__description" ng-if="slideState.loadingError.statusCode !== 404">
+            {{ slideState.loadingError.body.message }}
+          </div>
         </div>
       </div>
       <div ng-if="slideState.viewProps">
-        <cf-bulk-editor ng-if="slideState.slide.type === 'BulkEditor'" data-test-id="bulk-editor-container" reference-context="slideState.viewProps.referenceContext"></cf-bulk-editor>
-        <cf-entry-editor ng-if="slideState.slide.type === 'Entry'" slide-index="$index" editor-data="slideState.viewProps.editorData" preferences="slideState.viewProps.preferences" track-load-event="slideState.viewProps.trackLoadEvent"></cf-entry-editor>
-        <cf-asset-editor ng-if="slideState.slide.type === 'Asset'" editor-data="slideState.viewProps.editorData" preferences="slideState.viewProps.preferences"></cf-asset-editor>
+        <cf-bulk-editor
+          ng-if="slideState.slide.type === 'BulkEditor'"
+          data-test-id="bulk-editor-container"
+          reference-context="slideState.viewProps.referenceContext"
+        ></cf-bulk-editor>
+        <cf-entry-editor
+          ng-if="slideState.slide.type === 'Entry'"
+          slide-index="$index"
+          editor-data="slideState.viewProps.editorData"
+          preferences="slideState.viewProps.preferences"
+          track-load-event="slideState.viewProps.trackLoadEvent"
+        ></cf-entry-editor>
+        <cf-asset-editor
+          ng-if="slideState.slide.type === 'Asset'"
+          editor-data="slideState.viewProps.editorData"
+          preferences="slideState.viewProps.preferences"
+        ></cf-asset-editor>
       </div>
-      <div class="workbench-layer__overlay" ng-style="{opacity: (-$index / slideStates.length) + 0.8}" ng-if="!isTopLayer($index)" ng-click="close(slideState.slide)" ng-mouseenter="peekIn($index)" ng-mouseleave="peekOut()"></div>
+      <div
+        class="workbench-layer__overlay"
+        ng-style="{opacity: (-$index / slideStates.length) + 0.8}"
+        ng-if="!isTopLayer($index)"
+        ng-click="close(slideState.slide)"
+        ng-mouseenter="peekIn($index)"
+        ng-mouseleave="peekOut()"
+      ></div>
     </div>
   </div>
 </div>

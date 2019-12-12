@@ -1,26 +1,50 @@
-
 <react-component name="components/shared/DocumentTitle" props="{title: 'Media'}"></react-component>
 <header class="workbench-header">
   <div class="workbench-header__left">
     <cf-icon class="workbench-header__icon" name="page-media" scale="0.75"></cf-icon>
-    <h1 class="workbench-header__title">Media
-      <react-component name="components/shared/knowledge_base_icon/KnowledgeBase" props="{target: 'asset', className: 'workbench-header__kb-link'}"></react-component>
+    <h1 class="workbench-header__title">
+      Media
+      <react-component
+        name="components/shared/knowledge_base_icon/KnowledgeBase"
+        props="{target: 'asset', className: 'workbench-header__kb-link'}"
+      ></react-component>
     </h1>
   </div>
   <div class="workbench-header__search">
-    <cf-component-bridge style="flex: 1; z-index: 1" component="search"></cf-component-bridge><a class="text-link" style="margin-left: 15px" ng-if="savedViewsState === 'ready'" ng-click="savedViewsSidebar.api.saveCurrentView()">Save as view</a>
+    <cf-component-bridge style="flex: 1; z-index: 1" component="search"></cf-component-bridge
+    ><a
+      class="text-link"
+      style="margin-left: 15px"
+      ng-if="savedViewsState === 'ready'"
+      ng-click="savedViewsSidebar.api.saveCurrentView()"
+      >Save as view</a
+    >
   </div>
-  <div class="workbench-header__actions" ng-show="!showNoAssetsAdvice() &amp;&amp; !shouldHide('create', 'asset')">
-    <react-component name="components/tabs/asset_list/AddAssetButton" props="{ canUploadMultipleAssets: canUploadMultipleAssets, createMultipleAssets: createMultipleAssets, newAsset: newAsset, testId: 'add-asset-menu-trigger', disabled: shouldDisable('create', 'asset') }"></react-component>
+  <div
+    class="workbench-header__actions"
+    ng-show="!showNoAssetsAdvice() &amp;&amp; !shouldHide('create', 'asset')"
+  >
+    <react-component
+      name="components/tabs/asset_list/AddAssetButton"
+      props="{ canUploadMultipleAssets: canUploadMultipleAssets, createMultipleAssets: createMultipleAssets, newAsset: newAsset, testId: 'add-asset-menu-trigger', disabled: shouldDisable('create', 'asset') }"
+    ></react-component>
   </div>
 </header>
 <div class="workbench-main" ng-hide="showNoAssetsAdvice()">
   <div class="workbench-main__left-sidebar" style="max-height: 100vh; overflow-y: hidden">
-    <div class="saved-views-wrapper" ng-if="savedViewsState === 'loading'" style="padding: 4rem 1rem; text-align: center">Loading&nbsp;
+    <div
+      class="saved-views-wrapper"
+      ng-if="savedViewsState === 'loading'"
+      style="padding: 4rem 1rem; text-align: center"
+    >
+      Loading&nbsp;
       <react-component name="@contentful/forma-36-react-components/Spinner"></react-component>
     </div>
     <div class="saved-views-wrapper" ng-if="savedViewsState === 'error'" style="padding: 0.5rem">
-      <react-component name="@contentful/forma-36-react-components/Note" props="{noteType: 'warning', title: 'Failed to load views', children: 'Please refresh the page.'}"></react-component>
+      <react-component
+        name="@contentful/forma-36-react-components/Note"
+        props="{noteType: 'warning', title: 'Failed to load views', children: 'Please refresh the page.'}"
+      ></react-component>
     </div>
     <div class="saved-views-sidebar-wrapper" ng-if="savedViewsState === 'ready'">
       <cf-component-store-bridge component="savedViewsSidebar"></cf-component-store-bridge>
@@ -28,9 +52,17 @@
   </div>
   <div class="workbench-main__right-content">
     <div class="search-results__count" ng-show="paginator.getTotal() &gt; 0">
-      <react-component name="components/tabs/PluralizeEntityMessage" props="{entityType: 'asset', count: paginator.getTotal(), restOfTheMsg: 'found'}"></react-component>
+      <react-component
+        name="components/tabs/PluralizeEntityMessage"
+        props="{entityType: 'asset', count: paginator.getTotal(), restOfTheMsg: 'found'}"
+      ></react-component>
     </div>
-    <react-component ng-if="!isLegacyOrganization &amp;&amp; paginator.getTotal() &gt; 0" name="components/RecordsResourceUsage" props="usageProps" watch-depth="reference"></react-component>
+    <react-component
+      ng-if="!isLegacyOrganization &amp;&amp; paginator.getTotal() &gt; 0"
+      name="components/RecordsResourceUsage"
+      props="usageProps"
+      watch-depth="reference"
+    ></react-component>
     <div class="table" ng-show="assets.length &amp;&amp; !isEmpty">
       <div class="table__head">
         <table>
@@ -39,7 +71,13 @@
               <th class="th__checkbox-cell x--image-cell" aria-label="cell-preview">
                 <div>
                   <label ng-click="$event.stopPropagation()">
-                    <input type="checkbox" cf-selection="assets" ng-click="selection.toggleList(assets, $event)" ng-show="assets.length &gt; 0" tabindex="-1">
+                    <input
+                      type="checkbox"
+                      cf-selection="assets"
+                      ng-click="selection.toggleList(assets, $event)"
+                      ng-show="assets.length &gt; 0"
+                      tabindex="-1"
+                    />
                   </label>
                   <div>Preview</div>
                 </div>
@@ -57,48 +95,156 @@
       <div class="table__bulk-actions" ng-hide="selection.isEmpty()">
         <div class="workbench-actions" ng-controller="AssetListActionsController">
           <div class="workbench-actions__label">
-            <react-component name="components/tabs/PluralizeEntityMessage" props="{entityType: 'asset', count: selection.size(), restOfTheMsg: 'selected:'}"></react-component>
-          </div><span ng-show="!showArchive() &amp;&amp; !showUnarchive() &amp;&amp; !showDelete() &amp;&amp; !showPublish() &amp;&amp; !showUnpublish()">No actions possible</span><span class="text-link--neutral-emphasis-mid" type="button" ng-click="archiveSelected()" ng-show="showArchive()" aria-label="archive">Archive</span><span class="text-link--neutral-emphasis-mid" type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()" aria-label="unarchive">Unarchive</span><span class="text-link--destructive" type="button" ng-show="showDelete()" cf-context-menu-trigger data-test-id="delete-asset" aria-label="delete">Delete</span>
+            <react-component
+              name="components/tabs/PluralizeEntityMessage"
+              props="{entityType: 'asset', count: selection.size(), restOfTheMsg: 'selected:'}"
+            ></react-component>
+          </div>
+          <span
+            ng-show="!showArchive() &amp;&amp; !showUnarchive() &amp;&amp; !showDelete() &amp;&amp; !showPublish() &amp;&amp; !showUnpublish()"
+            >No actions possible</span
+          ><span
+            class="text-link--neutral-emphasis-mid"
+            type="button"
+            ng-click="archiveSelected()"
+            ng-show="showArchive()"
+            aria-label="archive"
+            >Archive</span
+          ><span
+            class="text-link--neutral-emphasis-mid"
+            type="button"
+            ng-click="unarchiveSelected()"
+            ng-show="showUnarchive()"
+            aria-label="unarchive"
+            >Unarchive</span
+          ><span
+            class="text-link--destructive"
+            type="button"
+            ng-show="showDelete()"
+            cf-context-menu-trigger
+            data-test-id="delete-asset"
+            aria-label="delete"
+            >Delete</span
+          >
           <div class="delete-confirm" cf-context-menu="bottom">
-            <p>You are about to delete 
-              <react-component name="components/tabs/PluralizeEntityMessage" props="{entityType: 'asset', count: selection.size()}"></react-component>
+            <p>
+              You are about to delete
+              <react-component
+                name="components/tabs/PluralizeEntityMessage"
+                props="{entityType: 'asset', count: selection.size()}"
+              ></react-component>
             </p>
             <button class="btn-caution" type="button" ng-click="deleteSelected()">Delete</button>
             <button class="btn-secondary-action" type="button">Don't Delete</button>
-          </div><span class="text-link--constructive" type="submit" ng-click="publishSelected()" ng-show="showPublish()" aria-label="publish">{{publishButtonName()}}</span><span class="text-link--neutral-emphasis-mid" type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()" aria-label="unpublish">Unpublish</span>
+          </div>
+          <span
+            class="text-link--constructive"
+            type="submit"
+            ng-click="publishSelected()"
+            ng-show="showPublish()"
+            aria-label="publish"
+            >{{publishButtonName()}}</span
+          ><span
+            class="text-link--neutral-emphasis-mid"
+            type="button"
+            ng-click="unpublishSelected()"
+            ng-show="showUnpublish()"
+            aria-label="unpublish"
+            >Unpublish</span
+          >
         </div>
       </div>
       <div class="table__body" data-test-id="assets-table">
         <table>
           <tbody>
-            <tr ng-repeat="asset in assets track by asset.getId()" ng-init="file=getAssetFile(asset);linkToAsset='^.detail({ assetId: asset.getId() })'" ui-sref="{{linkToAsset}}" ng-class="{'x--highlight': selection.isSelected(asset)}" data-test-id="asset-table-row">
-              <td class="td__checkbox-cell x--image-cell" style="cursor: pointer" aria-label="cell-preview">
+            <tr
+              ng-repeat="asset in assets track by asset.getId()"
+              ng-init="file=getAssetFile(asset);linkToAsset='^.detail({ assetId: asset.getId() })'"
+              ui-sref="{{linkToAsset}}"
+              ng-class="{'x--highlight': selection.isSelected(asset)}"
+              data-test-id="asset-table-row"
+            >
+              <td
+                class="td__checkbox-cell x--image-cell"
+                style="cursor: pointer"
+                aria-label="cell-preview"
+              >
                 <div>
                   <label ng-click="$event.stopPropagation()">
-                    <input type="checkbox" cf-selection="asset" tabindex="-1" ng-click="selection.toggle(asset, $event)">
-                  </label><a ui-sref="{{linkToAsset}}" ng-click="$event.stopPropagation();">
-                    <cf-thumbnail file="file" size="30" ng-if="file"></cf-thumbnail></a>
+                    <input
+                      type="checkbox"
+                      cf-selection="asset"
+                      tabindex="-1"
+                      ng-click="selection.toggle(asset, $event)"
+                    /> </label
+                  ><a ui-sref="{{linkToAsset}}" ng-click="$event.stopPropagation();">
+                    <cf-thumbnail file="file" size="30" ng-if="file"></cf-thumbnail
+                  ></a>
                 </div>
               </td>
-              <td class="x--large-cell" style="cursor: pointer" aria-label="cell-name"><a ui-sref="{{linkToAsset}}" ng-click="$event.stopPropagation();">{{ EntityFieldValueSpaceContext.assetTitle(asset) || '&nbsp;' }}</a></td>
-              <td class="x--medium-cell" style="cursor: pointer" aria-label="cell-dimensions"><a ui-sref="{{linkToAsset}}" ng-click="$event.stopPropagation();"><span ng-bind-html="getAssetDimensions(asset)"></span></a></td>
-              <td style="cursor: pointer" aria-label="cell-type"><a ui-sref="{{linkToAsset}}" ng-click="$event.stopPropagation();"><span>{{file|fileType}}</span><span class="extension">{{file|fileExtension}}</span></a></td>
-              <td style="cursor: pointer" aria-label="cell-updated"><a ui-sref="{{linkToAsset}}" ng-click="$event.stopPropagation();">
-                  <react-component ng-if="asset.getUpdatedAt()" name="components/shared/RelativeDateTime" props="{value: asset.getUpdatedAt()}"></react-component></a></td>
-              <td class="x--small-cell" style="cursor: pointer" aria-label="cell-author"><a ui-sref="{{linkToAsset}}" ng-click="$event.stopPropagation();"><span>
-                    <react-component name="components/shared/UserNameFormatter/FetchAndFormatUserName" props="{userId: asset.getUpdatedBy().sys.id}"></react-component></span></a></td>
-              <td class="x--small-cell" style="cursor: pointer" aria-label="cell-status"><a ui-sref="{{linkToAsset}}" ng-click="$event.stopPropagation();"><react-component name="@contentful/forma-36-react-components/Tag" props="entityStatus.getProps(asset)"></react-component></a></td>
+              <td class="x--large-cell" style="cursor: pointer" aria-label="cell-name">
+                <a ui-sref="{{linkToAsset}}" ng-click="$event.stopPropagation();"
+                  >{{ EntityFieldValueSpaceContext.assetTitle(asset) || '&nbsp;' }}</a
+                >
+              </td>
+              <td class="x--medium-cell" style="cursor: pointer" aria-label="cell-dimensions">
+                <a ui-sref="{{linkToAsset}}" ng-click="$event.stopPropagation();"
+                  ><span ng-bind-html="getAssetDimensions(asset)"></span
+                ></a>
+              </td>
+              <td style="cursor: pointer" aria-label="cell-type">
+                <a ui-sref="{{linkToAsset}}" ng-click="$event.stopPropagation();"
+                  ><span>{{file|fileType}}</span
+                  ><span class="extension">{{file|fileExtension}}</span></a
+                >
+              </td>
+              <td style="cursor: pointer" aria-label="cell-updated">
+                <a ui-sref="{{linkToAsset}}" ng-click="$event.stopPropagation();">
+                  <react-component
+                    ng-if="asset.getUpdatedAt()"
+                    name="components/shared/RelativeDateTime"
+                    props="{value: asset.getUpdatedAt()}"
+                  ></react-component
+                ></a>
+              </td>
+              <td class="x--small-cell" style="cursor: pointer" aria-label="cell-author">
+                <a ui-sref="{{linkToAsset}}" ng-click="$event.stopPropagation();"
+                  ><span>
+                    <react-component
+                      name="components/shared/UserNameFormatter/FetchAndFormatUserName"
+                      props="{userId: asset.getUpdatedBy().sys.id}"
+                    ></react-component></span
+                ></a>
+              </td>
+              <td class="x--small-cell" style="cursor: pointer" aria-label="cell-status">
+                <a ui-sref="{{linkToAsset}}" ng-click="$event.stopPropagation();"
+                  ><react-component
+                    name="@contentful/forma-36-react-components/Tag"
+                    props="entityStatus.getProps(asset)"
+                  ></react-component
+                ></a>
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
     <div class="f36-margin-top--s">
-      <react-component ng-show="paginator.getPageCount()" name="ui/Components/Paginator" props="paginatorProps"></react-component>
+      <react-component
+        ng-show="paginator.getPageCount()"
+        name="ui/Components/Paginator"
+        props="paginatorProps"
+      ></react-component>
     </div>
-    <react-component name="components/tabs/NoSearchResultsAdvice" ng-show="hasNoSearchResults()"></react-component>
+    <react-component
+      name="components/tabs/NoSearchResultsAdvice"
+      ng-show="hasNoSearchResults()"
+    ></react-component>
   </div>
 </div>
 <div class="workbench-main x--content" ng-show="showNoAssetsAdvice()">
-  <react-component name="components/tabs/asset_list/AssetsEmptyState" props="{ canUploadMultipleAssets: canUploadMultipleAssets, createMultipleAssets: createMultipleAssets, newAsset: newAsset }"></react-component>
+  <react-component
+    name="components/tabs/asset_list/AssetsEmptyState"
+    props="{ canUploadMultipleAssets: canUploadMultipleAssets, createMultipleAssets: createMultipleAssets, newAsset: newAsset }"
+  ></react-component>
 </div>

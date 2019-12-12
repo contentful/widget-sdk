@@ -4,7 +4,7 @@ const all = () => true;
 
 const js = node => node.extension === '.js';
 
-const jade = node => node.extension === '.jade';
+const jade = node => node.extension === '.html';
 
 const test = node => js(node) && node.path.indexOf('spec.js') !== -1;
 

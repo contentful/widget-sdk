@@ -1,6 +1,20 @@
-
 <div class="entry-editor__input-group">
-  <input type="text" aria-invalid="{{hasErrors || state === 'duplicate'}}" ng-disabled="isDisabled" ng-keydown="handleKeyDown($event)">
-  <div class="entry-editor__input-spinner" ng-show="state === 'checking' &amp;&amp; !hasUniqueValidationError"></div>
+  <input
+    type="text"
+    aria-invalid="{{hasErrors || state === 'duplicate'}}"
+    ng-disabled="isDisabled"
+    ng-keydown="handleKeyDown($event)"
+  />
+  <div
+    class="entry-editor__input-spinner"
+    ng-show="state === 'checking' &amp;&amp; !hasUniqueValidationError"
+  ></div>
 </div>
-<div class="cfnext-form__field-error" role="status" data-status-code="entry.slug.duplicate" ng-show="state === 'duplicate' &amp;&amp; !hasUniqueValidationError">This slug has already been published in another entry</div>
+<div
+  class="cfnext-form__field-error"
+  role="status"
+  data-status-code="entry.slug.duplicate"
+  ng-show="state === 'duplicate' &amp;&amp; !hasUniqueValidationError"
+>
+  This slug has already been published in another entry
+</div>

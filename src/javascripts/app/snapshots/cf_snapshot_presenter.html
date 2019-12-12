@@ -1,6 +1,10 @@
-
-<div class="snapshot-comparator__presenter" ng-class="{ 'x--dir-rtl': methods.shouldDisplayRtl(locale.code) }">
-  <div ng-if="hasValue &amp;&amp; extensionProps"><react-component name="widgets/ExtensionIFrameRenderer" props="extensionProps" /></div>
+<div
+  class="snapshot-comparator__presenter"
+  ng-class="{ 'x--dir-rtl': methods.shouldDisplayRtl(locale.code) }"
+>
+  <div ng-if="hasValue &amp;&amp; extensionProps">
+    <react-component name="widgets/ExtensionIFrameRenderer" props="extensionProps" />
+  </div>
   <div ng-if="hasValue &amp;&amp; !extensionProps" ng-switch="type">
     <div class="x--directed" ng-switch-when="Symbol">{{ value }}</div>
     <div ng-switch-when="Integer">{{ value }}</div>
@@ -8,8 +12,14 @@
     <div class="x--directed" ng-switch-when="Text">
       <cf-snapshot-presenter-markdown></cf-snapshot-presenter-markdown>
     </div>
-    <div class="x--directed" ng-switch-when="RichText"><react-component name="app/widgets/rich_text/ReadOnlyRichTextEditor" props="{value, entry: entity}"" /></div>
-    <div ng-switch-when="Boolean"><span ng-if="value === true">{{ widget.settings.trueLabel || 'Yes' }}</span><span ng-if="value === false">{{ widget.settings.falseLabel || 'No' }}</span></div>
+    <div class="x--directed" ng-switch-when="RichText">
+      <react-component name="app/widgets/rich_text/ReadOnlyRichTextEditor" props="{value, entry:
+      entity}"" />
+    </div>
+    <div ng-switch-when="Boolean">
+      <span ng-if="value === true">{{ widget.settings.trueLabel || 'Yes' }}</span
+      ><span ng-if="value === false">{{ widget.settings.falseLabel || 'No' }}</span>
+    </div>
     <div ng-switch-when="Date">
       <cf-snapshot-presenter-date></cf-snapshot-presenter-date>
     </div>

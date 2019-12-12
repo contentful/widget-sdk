@@ -1,27 +1,55 @@
-
-<react-component name="components/shared/DocumentTitle" props="{title: 'Content'}"></react-component>
+<react-component
+  name="components/shared/DocumentTitle"
+  props="{title: 'Content'}"
+></react-component>
 <header class="workbench-header">
   <div class="workbench-header__left">
     <cf-icon class="workbench-header__icon" name="page-content" scale="0.75"></cf-icon>
-    <h1 class="workbench-header__title">Content
-      <react-component name="components/shared/knowledge_base_icon/KnowledgeBase" props="{target: 'entry', className: 'workbench-header__kb-link'}"></react-component>
+    <h1 class="workbench-header__title">
+      Content
+      <react-component
+        name="components/shared/knowledge_base_icon/KnowledgeBase"
+        props="{target: 'entry', className: 'workbench-header__kb-link'}"
+      ></react-component>
     </h1>
   </div>
   <div class="workbench-header__search">
-    <cf-component-bridge style="flex:1; z-index: 1" component="search"></cf-component-bridge><a class="text-link" style="margin-left: 15px" ng-if="savedViewsState === 'ready'" ng-click="savedViewsSidebar.api.saveCurrentView()">Save as view</a>
+    <cf-component-bridge style="flex:1; z-index: 1" component="search"></cf-component-bridge
+    ><a
+      class="text-link"
+      style="margin-left: 15px"
+      ng-if="savedViewsState === 'ready'"
+      ng-click="savedViewsSidebar.api.saveCurrentView()"
+      >Save as view</a
+    >
   </div>
   <div class="workbench-header__actions" ng-if="!showNoEntriesAdvice()">
-    <cf-create-entry-button content-types="accessibleCts" suggested-content-type-id="context.view.contentTypeId" on-select="newEntry"></cf-create-entry-button>
+    <cf-create-entry-button
+      content-types="accessibleCts"
+      suggested-content-type-id="context.view.contentTypeId"
+      on-select="newEntry"
+    ></cf-create-entry-button>
   </div>
 </header>
 <div class="workbench-main" ng-hide="showNoEntriesAdvice()">
   <div class="workbench-main__left-sidebar" style="max-height: 100vh; overflow-y: hidden">
-    <react-component name="app/ScheduledActions/ScheduledActionsPageLink" props="{isMasterEnvironment: isMasterEnvironment}"></react-component>
-    <div class="saved-views-wrapper" ng-if="savedViewsState === 'loading'" style="padding: 4rem 1rem; text-align: center">Loading&nbsp;
+    <react-component
+      name="app/ScheduledActions/ScheduledActionsPageLink"
+      props="{isMasterEnvironment: isMasterEnvironment}"
+    ></react-component>
+    <div
+      class="saved-views-wrapper"
+      ng-if="savedViewsState === 'loading'"
+      style="padding: 4rem 1rem; text-align: center"
+    >
+      Loading&nbsp;
       <react-component name="@contentful/forma-36-react-components/Spinner"></react-component>
     </div>
     <div class="saved-views-wrapper" ng-if="savedViewsState === 'error'" style="padding: 0.5rem">
-      <react-component name="@contentful/forma-36-react-components/Note" props="{noteType: 'warning', title: 'Failed to load views', children: 'Please refresh the page.'}"></react-component>
+      <react-component
+        name="@contentful/forma-36-react-components/Note"
+        props="{noteType: 'warning', title: 'Failed to load views', children: 'Please refresh the page.'}"
+      ></react-component>
     </div>
     <div class="saved-views-sidebar-wrapper" ng-if="savedViewsState === 'ready'">
       <cf-component-store-bridge component="savedViewsSidebar"></cf-component-store-bridge>
@@ -29,16 +57,39 @@
   </div>
   <div class="workbench-main__right-content">
     <div class="search-results__count" ng-show="hasPage()">
-      <react-component name="components/tabs/PluralizeEntityMessage" props="{entityType: 'entry', count: paginator.getTotal(), restOfTheMsg: 'found'}"></react-component>
+      <react-component
+        name="components/tabs/PluralizeEntityMessage"
+        props="{entityType: 'entry', count: paginator.getTotal(), restOfTheMsg: 'found'}"
+      ></react-component>
     </div>
-    <react-component ng-if="!isLegacyOrganization &amp;&amp; hasPage()" name="components/RecordsResourceUsage" props="usageProps" watch-depth="reference"></react-component>
-    <react-component ng-if="hasPage()" name="components/tabs/entry_list/EntryList" props="entryProps" watch-depth="reference"></react-component>
+    <react-component
+      ng-if="!isLegacyOrganization &amp;&amp; hasPage()"
+      name="components/RecordsResourceUsage"
+      props="usageProps"
+      watch-depth="reference"
+    ></react-component>
+    <react-component
+      ng-if="hasPage()"
+      name="components/tabs/entry_list/EntryList"
+      props="entryProps"
+      watch-depth="reference"
+    ></react-component>
     <div class="f36-margin-top--s f36-margin-bottom--s">
-      <react-component ng-show="paginator.getPageCount() &amp;&amp; hasPage()" name="ui/Components/Paginator" props="paginatorProps"></react-component>
+      <react-component
+        ng-show="paginator.getPageCount() &amp;&amp; hasPage()"
+        name="ui/Components/Paginator"
+        props="paginatorProps"
+      ></react-component>
     </div>
-    <react-component name="components/tabs/NoSearchResultsAdvice" ng-show="hasNoSearchResults()"></react-component>
+    <react-component
+      name="components/tabs/NoSearchResultsAdvice"
+      ng-show="hasNoSearchResults()"
+    ></react-component>
   </div>
 </div>
 <div class="workbench-main x--content" ng-show="showNoEntriesAdvice()">
-  <react-component name="components/tabs/entry_list/EmptyStates" props="{hasContentType: hasContentType, contentTypes: accessibleCts, suggestedContentTypeId: context.view.contentTypeId, onCreate: newEntry}"></react-component>
+  <react-component
+    name="components/tabs/entry_list/EmptyStates"
+    props="{hasContentType: hasContentType, contentTypes: accessibleCts, suggestedContentTypeId: context.view.contentTypeId, onCreate: newEntry}"
+  ></react-component>
 </div>

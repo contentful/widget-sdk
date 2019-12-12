@@ -279,6 +279,10 @@
     "*.yml": [
       "prettier --write",
       "git add"
+    ],
+    "*.html": [
+      "prettier --write",
+      "git add"
     ]
   },
   "repository": {

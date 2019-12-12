@@ -1,13 +1,14 @@
-
 <div class="file-info">
   <div class="file-preview" ng-show="file &amp;&amp; !!file.url">
     <cf-thumbnail file="file" height="250"></cf-thumbnail>
   </div>
   <div class="file-progress loading-box--stretched" ng-show="imageIsLoading">
-    <div class="loading-box__spinner"></div>Loading…
+    <div class="loading-box__spinner"></div>
+    Loading…
   </div>
   <div class="file-progress loading-box--stretched" ng-show="isUnprocessedFile(file)">
-    <div class="loading-box__spinner"></div>Processing…
+    <div class="loading-box__spinner"></div>
+    Processing…
   </div>
   <div class="file-metadata" ng-show="showMeta">
     <table>
@@ -24,29 +25,46 @@
         <td title="{{file.details.size}} Bytes">{{file.details.size | fileSize}}</td>
       </tr>
       <tr ng-show="file.details.image">
-        <th>Width<br>Height</th>
-        <td>{{file.details.image.width}}&thinsp;px<br>{{file.details.image.height}}&thinsp;px</td>
+        <th>Width<br />Height</th>
+        <td>{{file.details.image.width}}&thinsp;px<br />{{file.details.image.height}}&thinsp;px</td>
       </tr>
     </table>
   </div>
-  <div class="no-file" ng-show="!file &amp;&amp; fieldLocale.access.denied">You don't have a permission to edit this field.</div>
+  <div class="no-file" ng-show="!file &amp;&amp; fieldLocale.access.denied">
+    You don't have a permission to edit this field.
+  </div>
   <div class="file-buttons">
-    <react-component ng-if="file &amp;&amp; !!file.url" component="components.downloadButton"></react-component>
+    <react-component
+      ng-if="file &amp;&amp; !!file.url"
+      component="components.downloadButton"
+    ></react-component>
     <react-component ng-if="file" component="components.fileInformation"></react-component>
-    <react-component cf-context-menu-trigger component="components.rotateImage" ng-if="canEditFile()"></react-component>
+    <react-component
+      cf-context-menu-trigger
+      component="components.rotateImage"
+      ng-if="canEditFile()"
+    ></react-component>
     <div class="context-menu" cf-context-menu>
       <div role="menuitem" ng-click="rotateOrMirror('90cw')">Rotate 90° clockwise</div>
       <div role="menuitem" ng-click="rotateOrMirror('90ccw')">Rotate 90° counterclockwise</div>
       <div role="menuitem" ng-click="rotateOrMirror('flip')">Mirror vertically</div>
       <div role="menuitem" ng-click="rotateOrMirror('flop')">Mirror horizontally</div>
     </div>
-    <react-component cf-context-menu-trigger component="components.resizeImage" ng-if="canEditFile()"></react-component>
+    <react-component
+      cf-context-menu-trigger
+      component="components.resizeImage"
+      ng-if="canEditFile()"
+    ></react-component>
     <div class="context-menu" cf-context-menu>
       <div role="menuitem" ng-click="resize('width')">Select width</div>
       <div role="menuitem" ng-click="resize('height')">Select height</div>
       <div role="menuitem" ng-click="resize('scale')">Scale</div>
     </div>
-    <react-component cf-context-menu-trigger component="components.cropImage" ng-if="canEditFile()"></react-component>
+    <react-component
+      cf-context-menu-trigger
+      component="components.cropImage"
+      ng-if="canEditFile()"
+    ></react-component>
     <div class="context-menu" cf-context-menu>
       <div role="menuitem" ng-click="crop(null)">No aspect ratio</div>
       <div role="menuitem" ng-click="crop('original')">Original aspect ratio</div>
@@ -57,12 +75,17 @@
       <div role="menuitem" ng-click="crop(16/9)">16:9</div>
       <div role="menuitem" ng-click="crop('custom')">Custom aspect ratio</div>
     </div>
-    <react-component ng-if="fieldLocale.access.editable &amp;&amp; file &amp;&amp; (file.url || isUnprocessedFile(file))" component="components.deleteImage"></react-component>
+    <react-component
+      ng-if="fieldLocale.access.editable &amp;&amp; file &amp;&amp; (file.url || isUnprocessedFile(file))"
+      component="components.deleteImage"
+    ></react-component>
   </div>
   <div class="file-selector" ng-show="!file &amp;&amp; fieldLocale.access.editable">
     <div class="__filestack-drop-pane-mount"></div>
     <div class="file-selector-btn-wrapper">
-      <button class="btn-secondary-action" type="button" ng-click="selectFile()">Or open file selector</button>
+      <button class="btn-secondary-action" type="button" ng-click="selectFile()">
+        Or open file selector
+      </button>
     </div>
   </div>
 </div>
