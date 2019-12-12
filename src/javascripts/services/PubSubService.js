@@ -4,6 +4,7 @@ import { getToken } from 'Authentication';
 import * as logger from 'services/logger';
 
 export const ENVIRONMENT_ALIAS_CHANGED_EVENT = 'environment-alias-changed';
+export const ENVIRONMENT_CREATION_COMPLETE_EVENT = 'environment-creation-complete';
 
 // make sure the client is initialized only once
 const client = (async () => {

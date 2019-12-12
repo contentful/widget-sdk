@@ -68,7 +68,8 @@ export default function register() {
             TokenStore,
             Auth,
             Config,
-            { default: client }
+            { default: client },
+            { createPubSubClientForSpace }
           ] = await Promise.all([
             import('data/sharejs/Connection'),
             import('data/shouldUseEnvEndpoint'),
@@ -89,7 +90,8 @@ export default function register() {
             import('services/TokenStore'),
             import('Authentication'),
             import('Config'),
-            import('services/client')
+            import('services/client'),
+            import('services/PubSubService')
           ]);
         },
 
@@ -130,7 +132,7 @@ export default function register() {
          * @param {string?} uriEnvOrAliasId environment id based on the uri
          * @returns {Promise<self>}
          */
-        resetWithSpace: function(spaceData, uriEnvOrAliasId) {
+        resetWithSpace: async function(spaceData, uriEnvOrAliasId) {
           const self = this;
           accessChecker.setSpace(spaceData);
 
@@ -152,6 +154,7 @@ export default function register() {
           self.users = createUserCache(self.endpoint);
           self.localeRepo = createLocaleRepo(self.endpoint);
           self.organization = deepFreezeClone(self.getData('organization'));
+          self.pubsubClient = await createPubSubClientForSpace(spaceId);
 
           // TODO: publicly accessible docConnection is
           // used only in a process of creating space out

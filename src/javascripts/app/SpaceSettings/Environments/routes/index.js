@@ -1,6 +1,7 @@
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import EnvironmentsRoute from './EnvironmentsRoute';
+import { ENVIRONMENT_CREATION_COMPLETE_EVENT } from 'services/PubSubService';
 
 export default {
   name: 'environments',
@@ -16,6 +17,10 @@ export default {
       const organizationId = organization.sys.id;
       const isMasterEnvironment = spaceContext.isMasterEnvironment;
       const getAliasesIds = spaceContext.getAliasesIds;
+
+      spaceContext.pubsubClient.on(ENVIRONMENT_CREATION_COMPLETE_EVENT, data => {
+        console.log('Complete', data);
+      });
 
       return {
         spaceId,
