@@ -6,7 +6,6 @@ import {
   getAllContentTypesInDefaultSpace,
   getFirst1000ContentTypesInDefaultSpaceOrderedByName
 } from '../../../interactions/content_types';
-import { getAllExtensionsInDefaultSpace } from '../../../interactions/extensions';
 const severalContentTypes = require('../../../fixtures/responses/content-types-several.json');
 
 describe('Content types list page', () => {
@@ -37,17 +36,7 @@ describe('Content types list page', () => {
     });
 
     it('redirects correctly by "Add content type" button', () => {
-      // TODO: move this to a before block
-      cy.startFakeServer({
-        consumer: 'user_interface',
-        provider: 'extensions',
-        cors: true,
-        pactfileWriteMode: 'merge',
-        dir: Cypress.env('pactDir'),
-        spec: 2
-      });
       const interactions = [
-        getAllExtensionsInDefaultSpace.willReturnNone(),
         getAllContentTypesInDefaultSpace.willReturnNone()
       ];
 

@@ -8,27 +8,14 @@ import {
   publishDefaultContentType,
   saveDefaultContentTypeEditorInterface
 } from '../../../interactions/content_types';
-import { getAllExtensionsInDefaultSpace } from '../../../interactions/extensions';
 import { defaultContentTypeId, defaultSpaceId } from '../../../util/requests';
 
 describe('Sidebar configuration', () => {
-  before(() =>
-    cy.startFakeServer({
-      consumer: 'user_interface',
-      provider: 'extensions',
-      cors: true,
-      pactfileWriteMode: 'merge',
-      dir: Cypress.env('pactDir'),
-      spec: 2
-    })
-  );
-
   beforeEach(() => {
     cy.resetAllFakeServers();
 
     const interactions = [
       ...defaultRequestsMock(),
-      getAllExtensionsInDefaultSpace.willReturnNone(),
       getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
       getAllContentTypesInDefaultSpace.willReturnOne(),
       getDefaultContentType.willReturnIt(),

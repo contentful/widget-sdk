@@ -17,17 +17,13 @@ export function createCustomWidgetLoader(cma, appsRepo) {
       return [];
     }
 
-    const [extensionsResponse, apps] = await Promise.all([
+    const [{ items: extensions }, apps] = await Promise.all([
       // If widgets cannot be fetched, we prefer to present the
       // "widget missing" message in the entry editor rather than
       // crashing the whole Web App or disallowing editing.
       cma.getExtensions({ 'sys.id[in]': ids.join(',') }).catch(() => ({ items: [] })),
       appsRepo.getOnlyInstalledApps().catch(() => [])
     ]);
-
-    // TODO: filter should be removed when we move `/extensions`
-    // to extensibility-api (it happens on the API side there).
-    const extensions = extensionsResponse.items.filter(e => !!e.extension);
 
     return ids.map(id => {
       const extension = extensions.find(extension => {
@@ -87,8 +83,7 @@ export function createCustomWidgetLoader(cma, appsRepo) {
 
     const extensionsPromise = cma
       .getExtensionsForListing()
-      // TODO: drop the filter once we fully migrate to the new `/extensions` endpoint.
-      .then(({ items }) => (items || []).filter(e => !!e.extension).map(buildExtensionWidget))
+      .then(({ items }) => items.map(buildExtensionWidget))
       .catch(() => []);
 
     const [appWidgets, extensionWidgets] = await Promise.all([appsPromise, extensionsPromise]);
