@@ -6,28 +6,17 @@ import {
   getDefaultContentType,
   getPublishedVersionOfDefaultContentType
 } from '../../../interactions/content_types';
-import { getAllExtensionsInDefaultSpace } from '../../../interactions/extensions';
 import { defaultContentTypeId } from '../../../util/requests';
 
 describe('Content type page', () => {
   before(() => {
     cy.resetAllFakeServers();
-
-    cy.startFakeServer({
-      consumer: 'user_interface',
-      provider: 'extensions',
-      cors: true,
-      pactfileWriteMode: 'merge',
-      dir: Cypress.env('pactDir'),
-      spec: 2
-    });
   });
 
   context('content type with one field', () => {
     beforeEach(() => {
       const interactions = [
         ...defaultRequestsMock(),
-        getAllExtensionsInDefaultSpace.willReturnNone(),
         getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
         getAllContentTypesInDefaultSpace.willReturnOne(),
         getDefaultContentType.willReturnIt(),
