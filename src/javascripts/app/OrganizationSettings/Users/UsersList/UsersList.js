@@ -1,22 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { startCase, debounce, flow } from 'lodash';
+import { startCase, debounce } from 'lodash';
 import { css } from 'emotion';
 import { isEqual } from 'lodash/fp';
 import pluralize from 'pluralize';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import {
+  Button,
+  Notification,
+  Spinner,
   Table,
-  TableRow,
-  TableHead,
   TableBody,
   TableCell,
-  Button,
+  TableHead,
+  TableRow,
   TextInput,
-  Spinner,
-  Notification,
-  TextLink
+  TextLink,
+  Tooltip
 } from '@contentful/forma-36-react-components';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
@@ -38,7 +39,7 @@ import {
   membershipExistsParam
 } from 'app/OrganizationSettings/UserInvitations/UserInvitationUtils';
 
-import { getLastActivityDate } from '../UserUtils';
+import { getLastActivityDate, get2FAStatus } from '../UserUtils';
 import { generateFilterDefinitions } from './FilterDefinitions';
 import {
   Filter as FilterPropType,
@@ -88,7 +89,8 @@ class UsersList extends React.Component {
     updateSearchTerm: PropTypes.func.isRequired,
     hasSsoEnabled: PropTypes.bool,
     hasTeamsFeature: PropTypes.bool,
-    hasPendingOrgMembershipsEnabled: PropTypes.bool
+    hasPendingOrgMembershipsEnabled: PropTypes.bool,
+    has2FAStatusEnabled: PropTypes.bool
   };
 
   state = {
@@ -260,7 +262,14 @@ class UsersList extends React.Component {
       numberOrgMemberships,
       initialLoad
     } = this.state;
-    const { searchTerm, spaces, spaceRoles, filters, hasPendingOrgMembershipsEnabled } = this.props;
+    const {
+      searchTerm,
+      spaces,
+      spaceRoles,
+      filters,
+      hasPendingOrgMembershipsEnabled,
+      has2FAStatusEnabled
+    } = this.props;
 
     return (
       <Workbench testId="organization-users-page">
@@ -319,7 +328,13 @@ class UsersList extends React.Component {
                     <TableRow>
                       <TableCell width="50">User</TableCell>
                       <TableCell width="200">Organization role</TableCell>
-                      <TableCell colSpan="2">Last active</TableCell>
+                      <TableCell>Last active</TableCell>
+                      {has2FAStatusEnabled && (
+                        <TableCell>
+                          <Tooltip content="Two-factor authentication status">2FA status</Tooltip>
+                        </TableCell>
+                      )}
+                      <TableCell></TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -337,6 +352,7 @@ class UsersList extends React.Component {
                         </TableCell>
                         <TableCell>{startCase(membership.role)}</TableCell>
                         <TableCell>{getLastActivityDate(membership)}</TableCell>
+                        {has2FAStatusEnabled && <TableCell>{get2FAStatus(membership)}</TableCell>}
                         <TableCell align="right">
                           <div className="membership-list__item__menu">
                             <Button
@@ -380,28 +396,26 @@ class UsersList extends React.Component {
   }
 }
 
-export default flow(
-  connect(
-    (state, { spaceRoles, spaces, teams, hasSsoEnabled, hasTeamsFeature }) => {
-      const filterValues = getFilters(state);
-      const filterDefinitions = generateFilterDefinitions({
-        spaceRoles,
-        spaces,
-        teams,
-        hasSsoEnabled,
-        hasTeamsFeature,
-        filterValues
-      });
+export default connect(
+  (state, { spaceRoles, spaces, teams, hasSsoEnabled, hasTeamsFeature }) => {
+    const filterValues = getFilters(state);
+    const filterDefinitions = generateFilterDefinitions({
+      spaceRoles,
+      spaces,
+      teams,
+      hasSsoEnabled,
+      hasTeamsFeature,
+      filterValues
+    });
 
-      return {
-        filters: filterDefinitions,
-        searchTerm: getSearchTerm(state),
-        orgId: getOrgId(state)
-      };
-    },
-    dispatch => ({
-      updateSearchTerm: newSearchTerm =>
-        dispatch({ type: 'UPDATE_SEARCH_TERM', payload: { newSearchTerm } })
-    })
-  )
+    return {
+      filters: filterDefinitions,
+      searchTerm: getSearchTerm(state),
+      orgId: getOrgId(state)
+    };
+  },
+  dispatch => ({
+    updateSearchTerm: newSearchTerm =>
+      dispatch({ type: 'UPDATE_SEARCH_TERM', payload: { newSearchTerm } })
+  })
 )(UsersList);

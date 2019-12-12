@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { getLastActivityDate, getFullNameOrEmail } from './UserUtils';
+import { getLastActivityDate, getFullNameOrEmail, get2FAStatus } from './UserUtils';
 
 describe('UserUtils', () => {
   function createMembership(amount, unit) {
@@ -50,6 +50,23 @@ describe('UserUtils', () => {
     });
     it('should get the email when name is not available', () => {
       expect(getFullNameOrEmail(unnamed)).toBe('jane.doe@company.com');
+    });
+  });
+
+  describe('get2FAStatus', () => {
+    it('should return an empty string when sys.user.2faEnabled is undefined', () => {
+      const membership = { sys: { user: {} } };
+      expect(get2FAStatus(membership)).toBe('');
+    });
+
+    it('should return an empty string when sys.user.2faEnabled is falsy', () => {
+      const membership = { sys: { user: { '2faEnabled': false } } };
+      expect(get2FAStatus(membership)).toBe('');
+    });
+
+    it('should return string Enabled when sys.user.2faEnabled is true', () => {
+      const membership = { sys: { user: { '2faEnabled': true } } };
+      expect(get2FAStatus(membership)).toBe('Enabled');
     });
   });
 });

@@ -1,6 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 import UnknownUser from './UserDetail/UnknownUser';
+import { get } from 'lodash';
 
 /**
  * Return a relative time since the last activity of an
@@ -31,4 +32,8 @@ export function getUserName(user) {
 export function getFullNameOrEmail(user) {
   const { firstName, lastName, email } = user;
   return firstName ? `${firstName} ${lastName}` : email;
+}
+
+export function get2FAStatus(membership) {
+  return get(membership, 'sys.user.2faEnabled', '') ? 'Enabled' : '';
 }
