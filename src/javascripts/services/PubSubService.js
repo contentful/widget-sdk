@@ -28,5 +28,23 @@ const client = (async () => {
 export async function createPubSubClientForSpace(spaceId) {
   const spaceClient = (await client).forSpace(spaceId);
   spaceClient.onError(logger.logError);
-  return spaceClient;
+
+  /*
+    The original spaceClient causes an error when passed to JSON.stringify
+    Since we pass the client via the Angular spaceContext, Angular invokes that behind the scenes for the digest cycle.
+    That causes it to error.
+
+    In order to fix this, we wrap the client in an object that serializes cleanly.
+    This can all be removed once there is a state management solution that is not based on Angular.
+  */
+  const serializableClient = {
+    on(...args) {
+      return spaceClient.on(...args);
+    },
+    off(...args) {
+      return spaceClient.off(...args);
+    }
+  };
+
+  return serializableClient;
 }

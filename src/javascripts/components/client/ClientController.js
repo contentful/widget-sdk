@@ -25,11 +25,9 @@ export default function register() {
       let Analytics;
       let TokenStore;
       let refreshNavState;
-      let pubsubClient;
       let pubsubSubscribed;
       let authorization;
       let EntityFieldValueSpaceContext;
-      let createPubSubClientForSpace;
       let ENVIRONMENT_ALIAS_CHANGED_EVENT;
       let initEnvAliasChangeHandler;
 

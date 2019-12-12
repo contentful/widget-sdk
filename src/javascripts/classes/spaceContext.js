@@ -35,6 +35,7 @@ export default function register() {
       let createLocaleRepo;
       let createUiConfigStore;
       let createSpaceEndpoint;
+      let createPubSubClientForSpace;
       let PublishedCTRepo;
       let MembershipRepo;
       let accessChecker;
@@ -154,7 +155,6 @@ export default function register() {
           self.users = createUserCache(self.endpoint);
           self.localeRepo = createLocaleRepo(self.endpoint);
           self.organization = deepFreezeClone(self.getData('organization'));
-          self.pubsubClient = await createPubSubClientForSpace(spaceId);
 
           // TODO: publicly accessible docConnection is
           // used only in a process of creating space out
@@ -205,7 +205,10 @@ export default function register() {
                 self.publishedCTs,
                 createViewMigrator(ctMap)
               );
-            })
+            }),
+            (async () => {
+              self.pubsubClient = await createPubSubClientForSpace(spaceId);
+            })()
           ]).then(() => {
             Telemetry.record('space_context_http_time', Date.now() - start);
             // TODO: remove this after we have store with combined reducers on top level
