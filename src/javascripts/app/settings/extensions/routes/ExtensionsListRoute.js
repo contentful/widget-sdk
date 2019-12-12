@@ -29,11 +29,9 @@ const prepareExtension = ({ sys, extension, parameters }) => {
 };
 
 const ExtensionsFetcher = createFetcherComponent(async ({ cma }) => {
-  const { items } = await cma.getExtensionsForListing();
+  const { items: extensions } = await cma.getExtensionsForListing();
 
-  // TODO: filter should be removed when we move `/extensions`
-  // to extensibility-api (it happens on the API side there).
-  return (items || []).filter(e => !!e.extension).map(prepareExtension);
+  return extensions.map(prepareExtension);
 });
 
 class ExtensionsListRoute extends React.Component {
