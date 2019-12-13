@@ -1,4 +1,3 @@
-import { runTask } from 'utils/Concurrent';
 import { $apply } from 'test/utils/ng';
 import _ from 'lodash';
 
@@ -16,9 +15,6 @@ function createHookFactory(defineHook) {
       Promise.resolve()
         .then(() => {
           const result = runner.call(this);
-          if (isGenerator(result)) {
-            return runGenerator(result, $apply);
-          }
 
           if (isThenable(result)) {
             return runPromise(result, $apply);
@@ -48,9 +44,6 @@ function createCoroutineTestFactory(testFactory) {
         })
         .then(params => {
           const result = runner.call(this, params);
-          if (isGenerator(result)) {
-            return runGenerator(result, $apply);
-          }
 
           // allow async/await/returning promise
           if (isThenable(result)) {
@@ -60,10 +53,6 @@ function createCoroutineTestFactory(testFactory) {
         .then(done, done.fail);
     });
   };
-}
-
-function isGenerator(g) {
-  return g && typeof g.next === 'function' && typeof g.throw === 'function';
 }
 
 // We need to guard against mocking of timing functions
@@ -84,64 +73,4 @@ function runPromise(promise, $apply) {
   promise.finally(() => clearInterval(runApply));
 
   return promise;
-}
-
-/**
- * Run a generator yielding promises as a task. In addition,
- * continiously call `$apply()` so that handlers of Angular promises
- * are called.
- *
- * The reason behind this is that if we attach a revole or reject
- * handler to an Angular promise that is already settled the handlers
- * will not be called until the next digest cycle. During testing we
- * must trigger digest cycles explicitly by calling `$apply`.
- */
-function runGenerator(gen, $apply) {
-  return runTask(function*() {
-    const runApply = setInterval($apply, 10);
-    try {
-      yield* liftToNativePromise(gen);
-    } catch (e) {
-      clearInterval(runApply);
-      throw e;
-    }
-    clearInterval(runApply);
-  });
-}
-
-/**
- * Takes a generator that yields $q and native Promises and returns a
- * generator that only yields native Promises.
- *
- * We need this to be able to call `this.$apply()` after yielding a $q
- * promise
- *
- *    it('calls $apply', function* () {
- *      yield $q.resolve();
- *      this.$apply();
- *    })
- *
- * If we do not lift $q Promises the statement `this.$apply()` will be
- * called from the `then` handler of the promise and thus in an Angular
- * digest loop. Calling `$apply()` in a digest loop throws an
- * exception.
- */
-function* liftToNativePromise(gen) {
-  let input, error, didThrow;
-  while (true) {
-    const result = didThrow ? gen.throw(error) : gen.next(input);
-    if (result.done) {
-      return result.value;
-    } else {
-      try {
-        input = yield Promise.resolve(result.value);
-        error = null;
-        didThrow = false;
-      } catch (e) {
-        error = e;
-        input = null;
-        didThrow = true;
-      }
-    }
-  }
 }

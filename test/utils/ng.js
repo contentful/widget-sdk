@@ -179,7 +179,10 @@ function get$q() {
   const $q = $inject('$q');
 
   if (!$q) {
-    throw new Error('$q called in non-Angular context');
+    // eslint-disable-next-line
+    console.warn('$q called in non-Angular context. A promise is leaky.');
+
+    return Promise;
   }
 
   return $q;

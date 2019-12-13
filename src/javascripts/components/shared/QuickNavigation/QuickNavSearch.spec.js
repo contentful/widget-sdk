@@ -11,25 +11,18 @@ jest.mock('services/localeStore', () => ({
   toInternalCode: () => 'en-US'
 }));
 
-jest.mock(
-  'browserStorage',
-  () => ({
-    getStore: jest.fn()
-  })
-);
+jest.mock('browserStorage', () => ({
+  getStore: jest.fn()
+}));
 
 jest.mock('states/Navigator', () => ({
   href: jest.fn(),
   getCurrentStateName: jest.fn()
 }));
 
-jest.mock(
-  'app/entity_editor/entityHelpers',
-  () => ({
-    newForLocale: () => ({ entityTitle: () => 'title' })
-  }),
-  { virtual: true }
-);
+jest.mock('app/entity_editor/entityHelpers', () => ({
+  newForLocale: () => ({ entityTitle: () => 'title' })
+}));
 
 jest.mock(
   'ng/spaceContext',

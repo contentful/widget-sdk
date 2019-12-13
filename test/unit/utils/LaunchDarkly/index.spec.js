@@ -162,29 +162,29 @@ xdescribe('LaunchDarkly', () => {
   });
 
   describe('#getCurrentVariation', () => {
-    it('should return a promise which resolves with variation after LD initializes', function*() {
+    it('should return a promise which resolves with variation after LD initializes', async function() {
       this.client.variation.withArgs('FLAG').returns('true');
       const variationPromise = this.ld.getCurrentVariation('FLAG');
 
       this.client._emit('ready');
-      expect(yield variationPromise).toEqual(true);
+      expect(await variationPromise).toEqual(true);
     });
 
-    it('should return a promise which resolves with variation after LD context changes', function*() {
+    it('should return a promise which resolves with variation after LD context changes', async function() {
       this.client.variation.withArgs('FLAG').returns('"potato"');
       const variationPromise = this.ld.getCurrentVariation('FLAG');
 
       this.setUserDataStream(this.user, this.org, {}, { sys: { id: 'space-id-999' } });
       this.client.identify.callArg(2); // invoke the callback passed to client.identify
-      expect(yield variationPromise).toEqual('potato');
+      expect(await variationPromise).toEqual('potato');
     });
 
-    it('should return a promise which resolves with undefined and log error for non-existing test/feature flag', function*() {
+    it('should return a promise which resolves with undefined and log error for non-existing test/feature flag', async function() {
       this.client.variation.callsFake((_flag, defaultValue) => defaultValue);
       const variationPromise = this.ld.getCurrentVariation('FLAG');
 
       this.client._emit('ready');
-      const variation = yield variationPromise;
+      const variation = await variationPromise;
       sinon.assert.calledOnce(this.logger.logError.withArgs('Invalid flag FLAG'));
       expect(variation).toBeUndefined();
     });
@@ -209,9 +209,9 @@ xdescribe('LaunchDarkly', () => {
       });
     });
 
-    it('should attach a handler for flag variations and changes', function*() {
+    it('should attach a handler for flag variations and changes', async function() {
       this.client.variation.returns('true');
-      yield this.ready();
+      await this.ready();
       expect(this.$scope.flagValue).toBe(true);
 
       const diff = { a: 10 };
@@ -223,8 +223,8 @@ xdescribe('LaunchDarkly', () => {
       expect(this.$scope.flagChange).toBe(diff);
     });
 
-    it('should track variation changes by default', function*() {
-      yield this.ready();
+    it('should track variation changes by default', async function() {
+      await this.ready();
 
       const diff = { a: true, b: 'test' };
       this.shallowObjectDiff.default.returns(diff);
@@ -234,26 +234,26 @@ xdescribe('LaunchDarkly', () => {
       expect(this.$scope.flagChange).toBe(diff);
     });
 
-    it('should remove change handler when scope is destroyed', function*() {
-      yield this.ready();
+    it('should remove change handler when scope is destroyed', async function() {
+      await this.ready();
       const changeHandler = this.client.on.args[1][1];
       this.$scope.$destroy();
       expect(this.client.off.args[0][1]).toBe(changeHandler);
     });
 
-    it('should not filter undefined as the variation', function*() {
+    it('should not filter undefined as the variation', async function() {
       const spy = sinon.spy();
       this.ld.onFeatureFlag(this.$scope, 'feature-flag', spy);
       this.client.variation.returns(undefined);
-      yield this.ready();
+      await this.ready();
 
       sinon.assert.calledOnce(spy);
       sinon.assert.calledWith(spy, undefined);
     });
 
-    it('should not attach a change handler until LD is initialized with current context', function*() {
+    it('should not attach a change handler until LD is initialized with current context', async function() {
       sinon.assert.callCount(this.client.on.withArgs('change:FLAG'), 0);
-      yield this.ready();
+      await this.ready();
       sinon.assert.callCount(this.client.on.withArgs('change:FLAG'), 1);
     });
 

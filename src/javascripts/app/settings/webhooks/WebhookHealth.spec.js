@@ -15,21 +15,15 @@ const mockWebhookRepo = {
   }
 };
 
-jest.mock(
-  'app/settings/webhooks/services/WebhookRepoInstance',
-  () => ({
-    getWebhookRepo: () => mockWebhookRepo
-  }),
-  { virtual: true }
-);
+jest.mock('app/settings/webhooks/services/WebhookRepoInstance', () => ({
+  getWebhookRepo: () => mockWebhookRepo
+}));
 
 describe('WebhookHealth', () => {
-  beforeEach(() => {
-    mockWebhookRepo.logs.getCall.mockReset();
-    mockWebhookRepo.logs.getHealth.mockReset();
+  afterEach(() => {
+    cleanup();
+    jest.resetAllMocks();
   });
-
-  afterEach(cleanup);
 
   const stubAndMount = (calls = {}) => {
     mockWebhookRepo.logs.getHealth.mockResolvedValue({ calls });

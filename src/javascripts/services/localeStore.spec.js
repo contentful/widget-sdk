@@ -31,8 +31,8 @@ describe('services/localeStore', () => {
   });
 
   describe('refreshes locales', () => {
-    beforeEach(function*() {
-      yield theLocaleStore.init(makeRepo(makeTestLocales()));
+    beforeEach(async () => {
+      await theLocaleStore.init(makeRepo(makeTestLocales()));
     });
 
     it('gets all locales', function() {
@@ -48,10 +48,10 @@ describe('services/localeStore', () => {
       expect(theLocaleStore.getDefaultLocale()).toEqual(makeTestLocales()[0]);
     });
 
-    it('falls back to the first locale if no `default` flag is set', function*() {
+    it('falls back to the first locale if no `default` flag is set', async () => {
       const locales = makeTestLocales();
       delete locales[0].default;
-      yield theLocaleStore.init(makeRepo(locales));
+      await theLocaleStore.init(makeRepo(locales));
       expect(theLocaleStore.getDefaultLocale()).toEqual(locales[0]);
     });
 

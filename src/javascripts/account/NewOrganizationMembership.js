@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import { assign } from 'utils/Collections';
 import { getOrganization } from 'services/TokenStore';
 import { getCurrentStateName } from 'states/Navigator';
-import { runTask } from 'utils/Concurrent';
 import { ADMIN_ROLE_ID } from 'access_control/constants';
 import { createOrganizationEndpoint as createEndpoint } from 'data/EndpointFactory';
 import {
@@ -53,7 +52,7 @@ const InProgress = makeCtor('inProgress');
 const Success = makeCtor('success');
 const Failure = makeCtor('failure');
 
-export default function($scope) {
+export default async function($scope) {
   let state = {
     spaces: [],
     emails: [],
@@ -91,33 +90,49 @@ export default function($scope) {
     progress$.offError(onProgressError);
   });
 
-  runTask(function*() {
-    const organization = yield getOrganization(orgId);
-    const canAccess = isOwnerOrAdmin(organization);
+  let organization;
+  try {
+    organization = await getOrganization(orgId);
+  } catch {
+    return;
+  }
 
-    if (!canAccess) {
-      denyAccess();
-      return;
-    }
+  const canAccess = isOwnerOrAdmin(organization);
 
-    // 1st step - get org and user info and render page without the spaces grid
-    const metadata = yield* getOrgInfo();
-    state = assign(state, { metadata, organization, isOwner: isOwner(organization) });
+  if (!canAccess) {
+    denyAccess();
+    return;
+  }
 
-    rerender();
+  // 1st step - get org and user info and render page without the spaces grid
+  let metadata;
+  try {
+    metadata = await getOrgInfo();
+  } catch {
+    return;
+  }
 
-    // 2nd step - load all space roles
-    const orgRoles = yield* getAllSpacesWithRoles();
-    state = assign(state, {
-      spaces: orgRoles,
-      status: Idle()
-    });
-    rerender();
+  state = assign(state, { metadata, organization, isOwner: isOwner(organization) });
+
+  rerender();
+
+  // 2nd step - load all space roles
+  let orgRoles;
+  try {
+    orgRoles = await getAllSpacesWithRoles();
+  } catch {
+    return;
+  }
+
+  state = assign(state, {
+    spaces: orgRoles,
+    status: Idle()
   });
+  rerender();
 
-  function* getAllSpacesWithRoles() {
+  async function getAllSpacesWithRoles() {
     const sortByName = (role, previous) => role.name.localeCompare(previous.name);
-    const allRoles = yield getAllRoles(orgEndpoint);
+    const allRoles = await getAllRoles(orgEndpoint);
     // get a map of roles by spaceId
     const rolesBySpace = allRoles.reduce((acc, role) => {
       const spaceId = role.sys.space.sys.id;
@@ -131,7 +146,7 @@ export default function($scope) {
       });
       return acc;
     }, {});
-    const allSpaces = yield getAllSpaces(orgEndpoint);
+    const allSpaces = await getAllSpaces(orgEndpoint);
 
     return allSpaces
       .map(space => ({
@@ -184,7 +199,7 @@ export default function($scope) {
    * If the org invitation succeeds (or if it fails with 422 (taken), automatically
    * proceeds to invite the user to all selected spaces with respective roles
    */
-  function submitInvitations(evt) {
+  async function submitInvitations(evt) {
     evt.preventDefault();
 
     let status;
@@ -208,69 +223,68 @@ export default function($scope) {
     const { hasSsoEnabled } = organization;
 
     if (isInputValid) {
-      runTask(function*() {
-        // If the org is SSO enabled, we create the org membership directly rather than
-        // inviting the user
-        const invitationMetadata = {
-          emails,
-          orgRole,
-          spaceMemberships,
-          suppressInvitation,
-          orgId
-        };
+      // If the org is SSO enabled, we create the org membership directly rather than
+      // inviting the user
+      const invitationMetadata = {
+        emails,
+        orgRole,
+        spaceMemberships,
+        suppressInvitation,
+        orgId
+      };
 
-        let invitationCreationHandler;
+      let invitationCreationHandler;
 
-        if (hasSsoEnabled) {
-          invitationCreationHandler = createOrgMemberships;
-        } else {
-          invitationCreationHandler = sendInvites;
-        }
+      if (hasSsoEnabled) {
+        invitationCreationHandler = createOrgMemberships;
+      } else {
+        invitationCreationHandler = sendInvites;
+      }
 
-        // Warn the user if they are going to close the tab until the invitations
-        // are all created
-        const closeTabWarning = evt => {
-          evt.preventDefault();
-          evt.returnValue = '';
-        };
-        window.addEventListener('beforeunload', closeTabWarning);
+      // Warn the user if they are going to close the tab until the invitations
+      // are all created
+      const closeTabWarning = evt => {
+        evt.preventDefault();
+        evt.returnValue = '';
+      };
 
-        yield invitationCreationHandler(invitationMetadata);
+      window.addEventListener('beforeunload', closeTabWarning);
 
-        window.removeEventListener('beforeunload', closeTabWarning);
+      await invitationCreationHandler(invitationMetadata);
 
-        const organization = yield* getOrgInfo(orgId);
+      window.removeEventListener('beforeunload', closeTabWarning);
 
-        // Start: For Next Steps for a TEA space (a space created using the example space template)
-        const inviteTrackingKey = `ctfl:${orgId}:progressTEA:inviteDevTracking`;
+      const organization = await getOrgInfo(orgId);
 
-        const pendingInvitesForTEA = store.get(inviteTrackingKey);
+      // Start: For Next Steps for a TEA space (a space created using the example space template)
+      const inviteTrackingKey = `ctfl:${orgId}:progressTEA:inviteDevTracking`;
 
-        if (isObject(pendingInvitesForTEA)) {
-          track('element:click', {
-            elementId: 'invite_users',
-            groupId: GROUP_ID,
-            fromState: getCurrentStateName(),
-            spaceId: pendingInvitesForTEA.spaceId,
-            organizationId: orgId
-          });
+      const pendingInvitesForTEA = store.get(inviteTrackingKey);
 
-          // track in intercom
-          updateUserInSegment({
-            teaOnboardingInvitedUsers: true
-          });
-
-          store.remove(inviteTrackingKey);
-        }
-        // End: For Next Steps for a TEA space (a space created using the example space template)
-
-        state = assign(state, {
-          status: failedOrgInvitations.length ? Failure() : Success(),
-          organization
+      if (isObject(pendingInvitesForTEA)) {
+        track('element:click', {
+          elementId: 'invite_users',
+          groupId: GROUP_ID,
+          fromState: getCurrentStateName(),
+          spaceId: pendingInvitesForTEA.spaceId,
+          organizationId: orgId
         });
 
-        rerender();
+        // track in intercom
+        updateUserInSegment({
+          teaOnboardingInvitedUsers: true
+        });
+
+        store.remove(inviteTrackingKey);
+      }
+      // End: For Next Steps for a TEA space (a space created using the example space template)
+
+      state = assign(state, {
+        status: failedOrgInvitations.length ? Failure() : Success(),
+        organization
       });
+
+      rerender();
 
       status = InProgress();
     } else {
@@ -389,21 +403,21 @@ export default function($scope) {
    * This is a workaround for the token 15min cache that won't let
    * us get an updated number after an invitation request.
    */
-  function* getOrgInfo() {
-    const org = yield getOrganization(orgId);
+  async function getOrgInfo() {
+    const org = await getOrganization(orgId);
 
     const resourceService = createResourceService(orgId, 'organization');
-    const orgMembershipResource = yield resourceService.get('organization_membership');
+    const orgMembershipResource = await resourceService.get('organization_membership');
     const membershipLimit = getResourceLimits(orgMembershipResource).maximum;
 
     // We cannot rely on usage data from organization (token) since the cache
     // is not invalidated on user creation.
     // We should use resources API later when it's available for org memberships.
-    const users = yield getUsers(orgEndpoint, { limit: 0 });
+    const users = await getUsers(orgEndpoint, { limit: 0 });
 
     // This also isn't perfect, because it does not encapsulate pending organization
     // memberships, but it would only affect older, non-paying customers.
-    const pendingInvitations = yield getInvitations(orgEndpoint, { limit: 0 });
+    const pendingInvitations = await getInvitations(orgEndpoint, { limit: 0 });
     const invitationLimit = membershipLimit;
     const invitationUsage = users.total + pendingInvitations.total;
 

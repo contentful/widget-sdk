@@ -22,7 +22,7 @@ describe('utils/Concurrent', () => {
   });
 
   describe('.createSlot()', () => {
-    it('only resolves current promise', function*() {
+    it('only resolves current promise', async function() {
       const onResult = sinon.spy();
       const put = C.createSlot(onResult);
 
@@ -37,7 +37,7 @@ describe('utils/Concurrent', () => {
       sinon.assert.calledOnceWith(onResult, C.Success('VAL B'));
     });
 
-    it('only rejects current promise', function*() {
+    it('only rejects current promise', async function() {
       const onResult = sinon.spy();
       const put = C.createSlot(onResult);
 
@@ -55,7 +55,7 @@ describe('utils/Concurrent', () => {
   });
 
   describe('.createQueue()', () => {
-    it('works', function*() {
+    it('works', async function() {
       const calls = [];
       const q = C$q.createQueue();
 
@@ -77,7 +77,7 @@ describe('utils/Concurrent', () => {
       expect(calls).toEqual(['a']);
 
       a.deferred.resolve('resultA');
-      const resultA = yield waitA;
+      const resultA = await waitA;
       expect(resultA).toBe('resultA');
 
       expect(calls).toEqual(['a', 'b']);
@@ -85,26 +85,24 @@ describe('utils/Concurrent', () => {
       expect(calls).toEqual(['a', 'b']);
 
       b.deferred.resolve('resultB');
-      const resultB = yield waitB;
+      const resultB = await waitB;
       expect(resultB).toBe('resultB');
 
       expect(calls).toEqual(['a', 'b', 'c']);
       c.deferred.resolve('resultC');
-      const resultC = yield waitC;
+      const resultC = await waitC;
       expect(resultC).toBe('resultC');
     });
   });
 
   describe('.createExclusiveTask()', () => {
-    it('does not run multiple tasks concurrently', function*() {
+    it('does not run multiple tasks concurrently', async function() {
       let callCount = 0;
       const taskDone = C.createMVar();
-      const task = C.createExclusiveTask(
-        C.wrapTask(function*() {
-          callCount++;
-          yield taskDone.read();
-        })
-      );
+      const task = C.createExclusiveTask(async function() {
+        callCount++;
+        await taskDone.read();
+      });
 
       expect(callCount).toBe(0);
       task.call();
@@ -113,7 +111,7 @@ describe('utils/Concurrent', () => {
       expect(callCount).toBe(1);
 
       taskDone.put();
-      yield task.call();
+      await task.call();
 
       taskDone.empty();
       expect(callCount).toBe(1);
@@ -122,16 +120,14 @@ describe('utils/Concurrent', () => {
       expect(callCount).toBe(2);
     });
 
-    it('resets the task on errors', function*() {
+    it('resets the task on errors', async function() {
       let callCount = 0;
       const taskDone = C.createMVar();
-      const task = C.createExclusiveTask(
-        C.wrapTask(function*() {
-          callCount++;
-          yield taskDone.read();
-          throw new Error();
-        })
-      );
+      const task = C.createExclusiveTask(async function() {
+        callCount++;
+        await taskDone.read();
+        throw new Error();
+      });
 
       expect(callCount).toBe(0);
       const result = task.call().catch(() => null);
@@ -139,7 +135,7 @@ describe('utils/Concurrent', () => {
       expect(callCount).toBe(1);
 
       taskDone.put();
-      yield result;
+      await result;
 
       taskDone.empty();
       expect(callCount).toBe(1);
@@ -148,13 +144,11 @@ describe('utils/Concurrent', () => {
       expect(callCount).toBe(2);
     });
 
-    it('returns the functions results', function*() {
+    it('returns the functions results', async function() {
       const taskDone = C.createMVar();
-      const task = C.createExclusiveTask(
-        C.wrapTask(function*() {
-          return yield taskDone.read();
-        })
-      );
+      const task = C.createExclusiveTask(async function() {
+        return await taskDone.read();
+      });
 
       const r1 = task.call();
       const r2 = task.call();
@@ -162,7 +156,7 @@ describe('utils/Concurrent', () => {
 
       const value = {};
       taskDone.put(value);
-      const results = yield Promise.all([r1, r2]);
+      const results = await Promise.all([r1, r2]);
       expect(results[0]).toBe(value);
       expect(results[1]).toBe(value);
     });

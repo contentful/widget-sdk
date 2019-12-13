@@ -566,17 +566,17 @@ describe('Access Checker', () => {
         expect(await ac.canModifyRoles()).toBe(true);
       });
 
-      it('should handle a null or undefined feature', function*() {
+      it('should handle a null or undefined feature', async function() {
         OrganizationRoles.setUser({ organizationMemberships: [] });
         changeSpace({ hasFeature: false, isSpaceAdmin: true }); // User is space admin
 
         // Set the feature to null
         feature = null;
-        expect(yield ac.canModifyRoles()).toBe(false);
+        expect(await ac.canModifyRoles()).toBe(false);
 
         // Set the feature to undefined
         feature = undefined;
-        expect(yield ac.canModifyRoles()).toBe(false);
+        expect(await ac.canModifyRoles()).toBe(false);
       });
 
       it('returns true when has feature, is not admin of space but is admin or owner of organization', () => {

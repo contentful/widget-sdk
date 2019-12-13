@@ -1,4 +1,3 @@
-import { runTask } from 'utils/Concurrent';
 import { getCurrentStateName } from 'states/Navigator';
 import { getCreator } from 'services/SpaceTemplateCreator';
 import { track, updateUserInSegment } from 'analytics/Analytics';
@@ -47,7 +46,8 @@ export default function(org, templateName, modalTemplate = autoCreateSpaceTempla
   const startingMoment = Date.now();
 
   const scope = $rootScope.$new();
-  return runTask(function*() {
+
+  const create = async function() {
     let dialog = null;
 
     // TODO: Remove after feature-ps-11-2017-project-status
@@ -73,13 +73,13 @@ export default function(org, templateName, modalTemplate = autoCreateSpaceTempla
 
     scope.isCreatingSpace = true;
     dialog = openDialog(scope, templateName, modalTemplate);
-    const template = yield* loadTemplate(templateName);
+    const template = await loadTemplate(templateName);
     let newSpace;
 
     try {
-      newSpace = yield* createSpace(org, template.name);
-      yield* applyTemplate(spaceContext, template);
-      yield spaceContext.publishedCTs.refresh();
+      newSpace = await createSpace(org, template.name);
+      await applyTemplate(spaceContext, template);
+      await spaceContext.publishedCTs.refresh();
       $rootScope.$broadcast('spaceTemplateCreated');
       // TODO: Handle error when space creation fails
       // Right now, we just show the green check marking
@@ -103,15 +103,17 @@ export default function(org, templateName, modalTemplate = autoCreateSpaceTempla
     }
 
     return newSpace;
-  });
+  };
+
+  return create();
 }
 
 /**
  * Create a new space in the given org, reload the token and go to the
  * space home.
  */
-function* createSpace(org, templateName) {
-  const newSpace = yield client.createSpace(
+async function createSpace(org, templateName) {
+  const newSpace = await client.createSpace(
     {
       name: 'The example project',
       defaultLocale: DEFAULT_LOCALE
@@ -119,8 +121,8 @@ function* createSpace(org, templateName) {
     org.sys.id
   );
 
-  yield TokenStore.refresh();
-  yield gotoState({
+  await TokenStore.refresh();
+  await gotoState({
     path: ['spaces', 'detail'],
     params: {
       spaceId: newSpace.sys.id
@@ -138,7 +140,7 @@ function* createSpace(org, templateName) {
  * Load the space contents for the template info and add it to the
  * current space.
  */
-function* applyTemplate(spaceContext, templateInfo) {
+async function applyTemplate(spaceContext, templateInfo) {
   const templateCreator = getCreator(
     spaceContext,
     {
@@ -158,7 +160,7 @@ function* applyTemplate(spaceContext, templateInfo) {
     DEFAULT_LOCALE
   );
 
-  const loadedTemplate = yield getTemplate(templateInfo);
+  const loadedTemplate = await getTemplate(templateInfo);
 
   const { contentCreated, spaceSetup } = templateCreator.create(loadedTemplate);
 
@@ -169,7 +171,7 @@ function* applyTemplate(spaceContext, templateInfo) {
   // $q errors
   spaceSetup.catch(() => {});
 
-  yield contentCreated;
+  await contentCreated;
 }
 
 /**
@@ -177,8 +179,8 @@ function* applyTemplate(spaceContext, templateInfo) {
  *
  * Throws an error if no template with this name is found.
  */
-function* loadTemplate(name) {
-  const templates = yield getTemplatesList();
+async function loadTemplate(name) {
+  const templates = await getTemplatesList();
   const template = find(templates, t => t.fields.name.toLowerCase() === name.toLowerCase());
 
   if (!template) {

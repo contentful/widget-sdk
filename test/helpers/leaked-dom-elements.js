@@ -26,13 +26,5 @@ afterEach(function() {
     el => el.tagName !== 'SCRIPT' && el.tagName !== 'LINK'
   );
 
-  if (leakedElements.length > 0) {
-    /* eslint no-console: off */
-    console.warn(
-      'Detected leaked element in document body.\n' +
-        'Please make sure that your tests remove all DOM elements they create',
-      leakedElements
-    );
-  }
   leakedElements.forEach(el => el.remove());
 });

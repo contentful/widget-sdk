@@ -149,8 +149,8 @@ describe('spaceContext', () => {
       expect(this.spaceContext.users).toBe(this.userCache);
     });
 
-    it('updates publishedCTs repo from refreshed CT list', function*() {
-      yield this.result;
+    it('updates publishedCTs repo from refreshed CT list', async function() {
+      await this.result;
       expect(this.spaceContext.publishedCTs.getAllBare().map(ct => ct.sys.id)).toEqual(['A', 'B']);
     });
 
@@ -227,7 +227,7 @@ describe('spaceContext', () => {
       expect(this.spaceContext.aliases).toEqual([]);
     });
 
-    it('sets `environmentMeta` property if environments are enabled', function*() {
+    it('sets `environmentMeta` property if environments are enabled', async function() {
       const master = {
         name: 'master',
         sys: {
@@ -242,7 +242,7 @@ describe('spaceContext', () => {
       };
       const environments = { master, staging };
       Object.assign(this.mockSpaceEndpoint.stores.environments, environments);
-      yield this.result;
+      await this.result;
       expect(this.space.environmentMeta).toEqual({
         environmentId: 'master',
         optedIn: false,
@@ -262,7 +262,7 @@ describe('spaceContext', () => {
       });
     });
 
-    it('sets alias details in `environmentMeta` property if aliases are enabled', function*() {
+    it('sets alias details in `environmentMeta` property if aliases are enabled', async function() {
       this.ProductCatalog.getSpaceFeature.resolves(true);
       const master = {
         name: 'master',
@@ -278,7 +278,7 @@ describe('spaceContext', () => {
       };
       const environments = { master, staging };
       Object.assign(this.mockSpaceEndpoint.stores.environments, environments);
-      yield this.result;
+      await this.result;
       expect(this.space.environmentMeta).toEqual({
         environmentId: 'master',
         optedIn: false,

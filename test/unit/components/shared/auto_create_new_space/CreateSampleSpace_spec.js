@@ -87,9 +87,9 @@ describe('CreateSampleSpace service', () => {
         }
       };
     };
-    this.assertRejection = function*(fn, errorMsg) {
+    this.assertRejection = async function(fn, errorMsg) {
       fn(new Error(errorMsg));
-      const error = yield this.createSampleSpace(this.getOrg(), 'product catalogue').catch(e => e);
+      const error = await this.createSampleSpace(this.getOrg(), 'product catalogue').catch(e => e);
       expect(error.message).toBe(errorMsg);
     };
   });
@@ -98,8 +98,8 @@ describe('CreateSampleSpace service', () => {
     it('should throw when org is falsy', function() {
       expect(_ => this.createSampleSpace()).toThrow(new Error('Required param org not provided'));
     });
-    it('should create a new space and load the chosen template', function*() {
-      yield this.createSampleSpace(this.getOrg(), 'custom template');
+    it('should create a new space and load the chosen template', async function() {
+      await this.createSampleSpace(this.getOrg(), 'custom template');
 
       const modalScope = this.modalDialog.open.args[0][0].scope;
 
@@ -130,44 +130,44 @@ describe('CreateSampleSpace service', () => {
       sinon.assert.calledWithExactly(this.$rootScope.$broadcast, 'spaceTemplateCreated');
       expect(modalScope.isCreatingSpace).toBe(false);
     });
-    it('should reject if the template does not exist', function*() {
-      const error = yield this.createSampleSpace(this.getOrg(), 'non existing template').catch(
+    it('should reject if the template does not exist', async function() {
+      const error = await this.createSampleSpace(this.getOrg(), 'non existing template').catch(
         e => e
       );
       expect(error.message).toBe('Template named non existing template not found');
     });
-    it('should reject if space creation fails', function*() {
-      yield* this.assertRejection(
+    it('should reject if space creation fails', async function() {
+      await this.assertRejection(
         err => this.client.createSpace.rejects(err),
         'create space failed'
       );
     });
-    it('should reject if token refresh fails', function*() {
-      yield* this.assertRejection(
+    it('should reject if token refresh fails', async function() {
+      await this.assertRejection(
         err => this.tokenStore.refresh.rejects(err),
         'token refresh failed'
       );
     });
-    it('should reject if state navigation fails', function*() {
-      yield* this.assertRejection(err => this.go.rejects(err), 'navigation failed');
+    it('should reject if state navigation fails', async function() {
+      await this.assertRejection(err => this.go.rejects(err), 'navigation failed');
     });
-    it('should reject if getTemplate fails', function*() {
-      yield* this.assertRejection(
+    it('should reject if getTemplate fails', async function() {
+      await this.assertRejection(
         err => this.spaceTemplateLoader.getTemplate.rejects(err),
         'getting template failed'
       );
     });
-    it('should reject if template loader create fails', function*() {
+    it('should reject if template loader create fails', async function() {
       this.templateLoader.create = () => ({
         contentCreated: Promise.reject(new Error('Error during creation')),
         spaceSetup: Promise.reject(new Error('something wrong happened'))
       });
 
-      const error = yield this.createSampleSpace(this.getOrg(), 'product catalogue').catch(e => e);
+      const error = await this.createSampleSpace(this.getOrg(), 'product catalogue').catch(e => e);
       expect(error.message).toBe('Error during creation');
     });
-    it('should reject if refresh of published CTs fails', function*() {
-      yield* this.assertRejection(
+    it('should reject if refresh of published CTs fails', async function() {
+      await this.assertRejection(
         err => this.spaceContext.publishedCTs.refresh.rejects(err),
         'refreshing published cts failed'
       );
