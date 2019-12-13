@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import * as K from 'utils/kefir';
-import { createMVar, runTask, createExclusiveTask } from 'utils/Concurrent';
+import { createMVar, createExclusiveTask } from 'utils/Concurrent';
 import { getStore } from 'browserStorage';
 import * as Config from 'Config';
 import postForm from 'data/Request/PostForm';
@@ -112,6 +112,9 @@ export const refreshToken = createExclusiveTask(() => {
 export function init() {
   const $location = getModule('$location');
 
+  localStore.remove(LOGOUT_KEY);
+  localStore.externalChanges(LOGOUT_KEY).onValue(logout);
+
   // We need to get token from location hash when running the app on localhost.
   // See https://github.com/contentful/user_interface#using-staging-and-production-apis
   if (Config.env === 'development') {
@@ -131,9 +134,6 @@ export function init() {
   } else {
     updateToken(previousToken);
   }
-
-  localStore.remove(LOGOUT_KEY);
-  localStore.externalChanges(LOGOUT_KEY).onValue(logout);
 }
 
 function refreshAndRedirect() {
@@ -159,17 +159,17 @@ function refreshAndRedirect() {
  *
  * @returns {Promise<void>}
  */
-export function logout() {
-  return runTask(function*() {
-    const token = yield tokenMVar.take();
-    tokenStore.remove();
-    localStore.set(LOGOUT_KEY, true);
-    try {
-      yield revokeToken(token);
-    } finally {
-      setLocation(Config.authUrl('logout'));
-    }
-  });
+export async function logout() {
+  const token = await tokenMVar.take();
+
+  tokenStore.remove();
+  localStore.set(LOGOUT_KEY, true);
+
+  try {
+    await revokeToken(token);
+  } finally {
+    setLocation(Config.authUrl('logout'));
+  }
 }
 
 /**

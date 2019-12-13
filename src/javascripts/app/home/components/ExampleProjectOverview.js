@@ -10,7 +10,6 @@ import {
   Spinner
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { runTask } from 'utils/Concurrent';
 import { getModule } from 'NgRegistry';
 import { go } from 'states/Navigator';
 import { env } from 'Config';
@@ -52,32 +51,32 @@ const ExampleProjectOverview = ({ cdaToken, cpaToken }) => {
   //   return entityCreator.newEntry('lessonCopy');
   // };
 
-  const modifyEntry = () => {
+  const modifyEntry = async () => {
     setLoading(true);
     trackClickCTA('create_an_entry_button');
-    return runTask(function*() {
-      // get all lesson entries
-      const courses = yield spaceContext.cma.getEntries({
-        content_type: 'course'
-      });
-      // find a lesson where we want edit
-      const helloCourse = findCourse(courses.items);
 
-      if (helloCourse) {
-        go({
-          path: ['spaces', 'detail', 'entries', 'detail'],
-          params: {
-            entryId: helloCourse.sys.id
-          }
-        });
-      } else {
-        go({
-          path: ['spaces', 'detail', 'entries', 'list']
-        });
-      }
-    }).then(() => {
-      setLoading(false);
+    // get all lesson entries
+    const courses = await spaceContext.cma.getEntries({
+      content_type: 'course'
     });
+
+    // find a lesson where we want edit
+    const helloCourse = findCourse(courses.items);
+
+    if (helloCourse) {
+      go({
+        path: ['spaces', 'detail', 'entries', 'detail'],
+        params: {
+          entryId: helloCourse.sys.id
+        }
+      });
+    } else {
+      go({
+        path: ['spaces', 'detail', 'entries', 'list']
+      });
+    }
+
+    setLoading(false);
   };
 
   const getPreviewUrl = () => {

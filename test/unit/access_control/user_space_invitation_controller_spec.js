@@ -85,26 +85,26 @@ describe('UserSpaceInvitationController', () => {
       expect(this.scope.invitationsScheduled).toEqual(2);
     });
 
-    it('calls memberships.invite() once for every user and sets counter correctly', function*() {
+    it('calls memberships.invite() once for every user and sets counter correctly', async function() {
       this.selectUserRole('foo', 'admin');
       this.selectUserRole('bar', 'admin');
-      yield this.sendInvites();
+      await this.sendInvites();
       sinon.assert.callCount(this.spaceContext.memberships.invite, 2);
       expect(this.scope.invitationsDone).toEqual(2);
     });
 
-    it('closes dialog when all invitations were successful', function*() {
+    it('closes dialog when all invitations were successful', async function() {
       this.selectUserRole('foo', 'admin');
       this.selectUserRole('bar', 'admin');
-      yield this.sendInvites();
+      await this.sendInvites();
       sinon.assert.calledOnce(this.scope.dialog.confirm);
     });
 
-    it('sets failed invitations flag and resets counters when some invitations were not successful', function*() {
+    it('sets failed invitations flag and resets counters when some invitations were not successful', async function() {
       this.selectUserRole('foo', 'admin');
       this.selectUserRole('bar', 'admin');
       this.spaceContext.memberships.invite.rejects();
-      yield this.sendInvites();
+      await this.sendInvites();
       sinon.assert.notCalled(this.scope.dialog.confirm);
       expect(this.scope.hasFailedInvitations).toEqual(true);
       expect(this.scope.invitationsScheduled).toEqual(0);

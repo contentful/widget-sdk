@@ -16,7 +16,6 @@ import {
   isContentOnboardingSpace
 } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
 import { getModule } from 'NgRegistry';
-import { runTask } from 'utils/Concurrent';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import * as K from 'utils/kefir';
 import * as accessChecker from 'access_control/AccessChecker';
@@ -49,24 +48,26 @@ const fetchData = (setLoading, setState, isSpaceAdmin) => async () => {
   }
 
   if (isTEA) {
-    runTask(function*() {
-      let key;
-      try {
-        [key] = yield getApiKeyRepo().getAll();
-      } catch (e) {
-        logger.logError('Space Home', e);
-      }
-      // there might be no keys - it was not created yet, or user explicitly removed them
-      if (key) {
-        const keyWithPreview = yield getApiKeyRepo().get(key.sys.id);
-        setState({
-          hasTeamsEnabled,
-          cdaToken: key.accessToken,
-          cpaToken: keyWithPreview.preview_api_key.accessToken
-        });
-      }
-      setLoading(false);
-    });
+    let key;
+    try {
+      [key] = await getApiKeyRepo().getAll();
+    } catch (e) {
+      logger.logError('Space Home', e);
+    }
+
+    // there might be no keys - it was not created yet, or user explicitly removed them
+    if (key) {
+      const keyWithPreview = await getApiKeyRepo().get(key.sys.id);
+
+      setState({
+        hasTeamsEnabled,
+        cdaToken: key.accessToken,
+        cpaToken: keyWithPreview.preview_api_key.accessToken
+      });
+    }
+
+    setLoading(false);
+
     return;
   } else {
     if (isDevOnboardingSpace(get(spaceContext, 'space'))) {

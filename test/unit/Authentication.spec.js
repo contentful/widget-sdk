@@ -3,6 +3,16 @@ import sinon from 'sinon';
 import { $initialize, $inject, $apply } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
 
+const waitForLocationChange = async ($window, initialValue) => {
+  if ($window.location === initialValue) {
+    await new Promise(resolve => setTimeout(resolve, 10));
+
+    return waitForLocationChange($window, initialValue);
+  }
+
+  return true;
+};
+
 describe('Authentication', () => {
   beforeEach(async function() {
     this.$http = sinon.stub();
@@ -11,6 +21,7 @@ describe('Authentication', () => {
       addEventListener: sinon.stub(),
       removeEventListener: sinon.stub()
     };
+
     this.$location = {
       url: sinon.stub()
     };
@@ -57,27 +68,27 @@ describe('Authentication', () => {
       );
     });
 
-    it('emits token on token$', function*() {
+    it('emits token on token$', async function() {
       const tokenRef = K.getRef(this.Auth.token$);
       expect(tokenRef.value).toBe('STORED_TOKEN');
-      yield this.Auth.refreshToken();
+      await this.Auth.refreshToken();
       expect(tokenRef.value).toBe('NEW TOKEN');
     });
 
-    it('stores the new token in local storage', function*() {
-      yield this.Auth.refreshToken();
+    it('stores the new token in local storage', async function() {
+      await this.Auth.refreshToken();
       expect(this.store.get()).toBe('NEW TOKEN');
     });
 
-    it('returns new token', function*() {
-      const token = yield this.Auth.refreshToken();
+    it('returns new token', async function() {
+      const token = await this.Auth.refreshToken();
       expect(token).toBe('NEW TOKEN');
     });
 
-    it('updates getToken() promise', function*() {
-      expect(yield this.Auth.getToken()).toBe('STORED_TOKEN');
-      yield this.Auth.refreshToken();
-      expect(yield this.Auth.getToken()).toBe('NEW TOKEN');
+    it('updates getToken() promise', async function() {
+      expect(await this.Auth.getToken()).toBe('STORED_TOKEN');
+      await this.Auth.refreshToken();
+      expect(await this.Auth.getToken()).toBe('NEW TOKEN');
     });
 
     it('does not issue a second request when one is in progress', function() {
@@ -95,27 +106,28 @@ describe('Authentication', () => {
   });
 
   describe('#init()', () => {
-    it('obtains token from local storage', function*() {
+    it('obtains token from local storage', async function() {
       this.store.set('STORED_TOKEN');
       this.Auth.init();
       expect(K.getValue(this.Auth.token$)).toBe('STORED_TOKEN');
-      expect(yield this.Auth.getToken()).toBe('STORED_TOKEN');
+      expect(await this.Auth.getToken()).toBe('STORED_TOKEN');
     });
 
-    it('sends authentication request without stored token', function*() {
+    it('sends authentication request without stored token', async function() {
       this.store.remove();
       this.$http.resolves({ data: { access_token: 'NEW TOKEN' } });
       this.Auth.init();
-      expect(yield this.Auth.getToken()).toBe('NEW TOKEN');
+      expect(await this.Auth.getToken()).toBe('NEW TOKEN');
       expect(K.getValue(this.Auth.token$)).toBe('NEW TOKEN');
     });
 
     it('triggers logout if user logged out from another tab', async function() {
+      this.window.addEventListener.yields({ key: 'loggedOut', newValue: true });
       this.store.set('STORED_TOKEN');
-      this.Auth.init();
-      this.window.addEventListener.withArgs('storage').yield({ key: 'loggedOut', newValue: true });
 
-      await this.$http();
+      this.Auth.init();
+
+      await waitForLocationChange(this.window, '');
 
       expect(this.window.location).toEqual('//be.test.com/logout');
     });
@@ -125,7 +137,7 @@ describe('Authentication', () => {
         this.$location.url.returns('/?login=1');
       });
 
-      it('revokes and deletes existing token', function*() {
+      it('revokes and deletes existing token', async function() {
         this.store.set('STORED_TOKEN');
         this.Auth.init();
         expect(this.store.get()).toBe(null);
@@ -144,7 +156,7 @@ describe('Authentication', () => {
         );
       });
 
-      it('gets a new token', function*() {
+      it('gets a new token', async function() {
         this.store.set('STORED_TOKEN');
         this.Auth.init();
         sinon.assert.calledWith(
@@ -172,14 +184,14 @@ describe('Authentication', () => {
       this.Auth.init();
     });
 
-    it('deletes the token from local storage', function*() {
+    it('deletes the token from local storage', async function() {
       expect(this.store.get()).toBe('STORED_TOKEN');
-      yield this.Auth.logout();
+      await this.Auth.logout();
       expect(this.store.get()).toBe(null);
     });
 
-    it('revokes the token', function*() {
-      yield this.Auth.logout();
+    it('revokes the token', async function() {
+      await this.Auth.logout();
       $apply();
       sinon.assert.calledWith(
         this.$http,
@@ -196,14 +208,14 @@ describe('Authentication', () => {
       );
     });
 
-    it('redirects to the logout page', function*() {
-      yield this.Auth.logout();
+    it('redirects to the logout page', async function() {
+      await this.Auth.logout();
       expect(this.window.location).toEqual('//be.test.com/logout');
     });
 
-    it('redirects to the logout page if revokation fails', function*() {
+    it('redirects to the logout page if revokation fails', async function() {
       this.$http.rejects();
-      yield this.Auth.logout().catch(() => {});
+      await this.Auth.logout().catch(() => {});
       expect(this.window.location).toEqual('//be.test.com/logout');
     });
   });

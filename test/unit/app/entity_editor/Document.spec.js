@@ -499,28 +499,28 @@ xdescribe('entityEditor/Document', () => {
   });
 
   describe('#reverter', () => {
-    it('has changes if changes are made', function*() {
+    it('has changes if changes are made', async function() {
       this.connectAndOpen();
       expect(this.doc.reverter.hasChanges()).toBe(false);
-      yield this.doc.setValueAt(['fields', 'foo'], 'bar');
+      await this.doc.setValueAt(['fields', 'foo'], 'bar');
       expect(this.doc.reverter.hasChanges()).toBe(true);
     });
 
-    it('reverts field changes', function*() {
+    it('reverts field changes', async function() {
       const path = ['fields', 'a', 'en'];
       this.connectAndOpen();
-      yield this.doc.setValueAt(path, 'NEW');
+      await this.doc.setValueAt(path, 'NEW');
       expect(this.doc.getValueAt(path)).toBe('NEW');
-      yield this.doc.reverter.revert();
+      await this.doc.reverter.revert();
       expect(this.doc.getValueAt(path)).toBe('INITIAL');
     });
 
-    it('does not have changes after reverting', function*() {
+    it('does not have changes after reverting', async function() {
       this.connectAndOpen();
       expect(this.doc.reverter.hasChanges()).toBe(false);
-      yield this.doc.setValueAt(['fields', 'foo'], 'bar');
+      await this.doc.setValueAt(['fields', 'foo'], 'bar');
       expect(this.doc.reverter.hasChanges()).toBe(true);
-      yield this.doc.reverter.revert();
+      await this.doc.reverter.revert();
       expect(this.doc.reverter.hasChanges()).toBe(false);
     });
   });

@@ -1,5 +1,4 @@
 import * as Analytics from 'analytics/Analytics';
-import { runTask } from 'utils/Concurrent';
 import * as _ from 'lodash';
 import qs from 'qs';
 import {
@@ -61,7 +60,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
    *
    * We are trying to proceed with all requests, and then, in the end, in case
    * any errors happened, we reject the whole promise. However, we will still
-   * create an example space with everything what is possible.
+   * create an example space with everything that is possible.
    */
   function create(rawTemplate) {
     const allPromises = [];
@@ -72,7 +71,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
     // 3. editor interfaces (appearance - e.g. slug editor or url editor)
     const template = enrichTemplate(templateInfo, rawTemplate);
 
-    const contentCreated = runTask(function*() {
+    const startCreatingContent = async function() {
       const filteredLocales = template.space.locales.filter(
         locale => locale.code !== selectedLocaleCode
       );
@@ -86,13 +85,13 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
         })
       );
 
-      const createdContentTypes = yield Promise.all(template.contentTypes.map(createContentType));
+      const createdContentTypes = await Promise.all(template.contentTypes.map(createContentType));
       // we can create API key as soon as space is created
       // and it is okay to do it in the background
       const apiKeyPromise = Promise.all(template.apiKeys.map(createApiKey));
       // we can proceed without publishing interfaces, creating is enough
       // publishing can be finished in the background
-      const publishedCTs = yield publishContentTypes(createdContentTypes);
+      const publishedCTs = await publishContentTypes(createdContentTypes);
 
       if (template.editorInterfaces) {
         const editorInterfacesPromise = Promise.all(
@@ -123,8 +122,10 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
       // it will complicate logic (and possibly time) for processing images, since we need
       // to increment version of asset, therefore we can't parallelize it.
       // all example spaces contain assets only for default locale
+
+      // eslint-disable-next-line
       const assets = useSelectedLocales(template.assets, [selectedLocaleCode], selectedLocaleCode);
-      const createdAssets = yield Promise.all(assets.map(createAsset));
+      const createdAssets = await Promise.all(assets.map(createAsset));
 
       // we can process and publish assets in the background,
       // we still can link them inside entries
@@ -132,7 +133,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
       const publishAssetsPromise = processAssetsPromise.then(publishAssets);
 
       // we need to wait for locales before creating entries
-      const createdLocales = yield localesPromise;
+      const createdLocales = await localesPromise;
       // some locales might fail during creation, we need to filter them out
       const successfullyCreatedLocales = createdLocales.filter(Boolean);
       const successfullyCreatedLocaleCodes = successfullyCreatedLocales.map(locale => locale.code);
@@ -151,14 +152,15 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
           });
       }
 
+      // eslint-disable-next-line
       const entries = useSelectedLocales(template.entries, contentLocales, selectedLocaleCode);
-      const createdEntries = yield Promise.all(entries.map(createEntry));
+      const createdEntries = await Promise.all(entries.map(createEntry));
 
-      const publishedEntries = yield publishEntries(createdEntries);
+      const publishedEntries = await publishEntries(createdEntries);
 
       const createContentPreviewPromise = Promise.all([apiKeyPromise, publishedEntries]).then(() =>
         templateInfo.spaceId === TEA_SPACE_ID
-          ? runTask(createTEAContentPreview, template.contentTypes)
+          ? createTEAContentPreview(template.contentTypes)
           : createContentPreview(template.contentTypes)
       );
 
@@ -177,7 +179,9 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
           );
         throw new Error(errorMessage);
       }
-    });
+    };
+
+    const contentCreated = startCreatingContent();
 
     // in case you want to want to wait for the whole process
     const spaceSetup = Promise.all(allPromises.concat(contentCreated));
@@ -439,7 +443,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
    * in its content, so it has advanced mapping for preview, to redirect user to exact pages,
    * where he can see the content (change in the webapp -> see the changes in the TEA preview)
    */
-  function* createTEAContentPreview(contentTypes) {
+  async function createTEAContentPreview(contentTypes) {
     const spaceId = spaceContext.space.getId();
 
     // Mapping for specific content types. Some CTs has no "preview",
@@ -454,7 +458,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
       layoutHighlightedCourse: mainPageConfig
     };
 
-    const [keys, contentPreviews] = yield Promise.all([
+    const [keys, contentPreviews] = await Promise.all([
       getApiKeyRepo().getAll(),
       getContentPreview().getAll()
     ]);
@@ -465,7 +469,7 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
 
       // we need to have Preview key as well, so the user can switch to preview API
       // in order to do that, we need to make another cal
-      const resolvedKey = yield getApiKeyRepo().get(key.sys.id);
+      const resolvedKey = await getApiKeyRepo().get(key.sys.id);
 
       const {
         accessToken: cdaToken,
@@ -473,10 +477,10 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
       } = resolvedKey;
 
       // we want to wait until the main content preview is created
-      yield createContentPreview(TEA_MAIN_CONTENT_PREVIEW, { cdaToken, cpaToken });
+      await createContentPreview(TEA_MAIN_CONTENT_PREVIEW, { cdaToken, cpaToken });
 
       // we set up all other content previews
-      yield Promise.all(
+      await Promise.all(
         TEA_CONTENT_PREVIEWS.map(params => createContentPreview(params, { cdaToken, cpaToken }))
       );
     }

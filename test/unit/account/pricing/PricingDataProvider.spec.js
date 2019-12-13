@@ -69,8 +69,8 @@ describe('account/pricing/PricingDataProvider', () => {
       };
     });
 
-    it('parses response data and sets spaces and users', function*() {
-      const plans = yield this.getPlansWithSpaces();
+    it('parses response data and sets spaces and users', async function() {
+      const plans = await this.getPlansWithSpaces();
 
       expect(plans.items.length).toBe(5);
       this.expectSpacePlan(plans.items[0], 'plan1', 'space1', 'user1@foo.com');
@@ -86,8 +86,8 @@ describe('account/pricing/PricingDataProvider', () => {
       expect(this.getAllSpaces.callCount).toBe(1);
     });
 
-    it('gets unique user ids by id', function*() {
-      yield this.getPlansWithSpaces();
+    it('gets unique user ids by id', async function() {
+      await this.getPlansWithSpaces();
 
       sinon.assert.calledWith(this.getUsersByIds, this.endpoint, [
         'user1',
