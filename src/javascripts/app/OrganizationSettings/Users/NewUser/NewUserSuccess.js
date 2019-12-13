@@ -105,19 +105,19 @@ NewUserSuccess.propTypes = {
 };
 
 function NewUserFailures({ failures = [] }) {
-  const { rateLimited, alreadyIn } = failures.reduce(
+  const { planLimitHit, alreadyIn } = failures.reduce(
     (result, failure) => {
       const { error, email } = failure;
-      const { rateLimited, alreadyIn } = result;
+      const { planLimitHit, alreadyIn } = result;
 
       if (isForbidden(error)) {
-        rateLimited.push(email);
+        planLimitHit.push(email);
       } else {
         alreadyIn.push(email);
       }
       return result;
     },
-    { rateLimited: [], alreadyIn: [] }
+    { planLimitHit: [], alreadyIn: [] }
   );
 
   return (
@@ -128,10 +128,10 @@ function NewUserFailures({ failures = [] }) {
           <Textarea disabled className={failedEmailsStyle} value={alreadyIn.join('\n')} />
         </div>
       )}
-      {rateLimited.length > 0 && (
-        <div data-test-id="new-user.done.failed.rateLimited">
+      {planLimitHit.length > 0 && (
+        <div data-test-id="new-user.done.failed.planLimitHit">
           <Paragraph>{`Users that weren’t invited because you reached the limit`}</Paragraph>
-          <Textarea disabled className={failedEmailsStyle} value={rateLimited.join('\n')} />
+          <Textarea disabled className={failedEmailsStyle} value={planLimitHit.join('\n')} />
           <Note
             className={noteStyle}
             noteType="negative"

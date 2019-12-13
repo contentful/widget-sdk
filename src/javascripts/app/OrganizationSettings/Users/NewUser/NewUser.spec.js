@@ -327,7 +327,7 @@ describe('NewUser', () => {
         invite.mockRejectedValueOnce(forbiddenError);
         await submitForm(wrapper, ['john.doe@enterprise.com'], 'Owner');
         await wait(() => wrapper.getByTestId('new-user.done'));
-        const rateLimitErrorMessage = wrapper.getByTestId('new-user.done.failed.rateLimited');
+        const rateLimitErrorMessage = wrapper.getByTestId('new-user.done.failed.planLimitHit');
         const alreadyInErrorMessage = wrapper.queryByTestId('new-user.done.failed.alreadyIn');
         expect(rateLimitErrorMessage).toBeVisible();
         expect(alreadyInErrorMessage).toBeNull();
@@ -337,7 +337,7 @@ describe('NewUser', () => {
         invite.mockRejectedValueOnce(unprocessableError);
         await submitForm(wrapper, ['john.doe@enterprise.com'], 'Owner');
         await wait(() => wrapper.getByTestId('new-user.done'));
-        const rateLimitErrorMessage = wrapper.queryByTestId('new-user.done.failed.rateLimited');
+        const rateLimitErrorMessage = wrapper.queryByTestId('new-user.done.failed.planLimitHit');
         const alreadyInErrorMessage = wrapper.getByTestId('new-user.done.failed.alreadyIn');
         expect(alreadyInErrorMessage).toBeVisible();
         expect(rateLimitErrorMessage).toBeNull();
@@ -355,7 +355,7 @@ describe('NewUser', () => {
         );
         await wait(() => wrapper.getByTestId('new-user.done'));
         const successState = wrapper.getByTestId('new-user.done.success');
-        const rateLimitErrorMessage = wrapper.getByTestId('new-user.done.failed.rateLimited');
+        const rateLimitErrorMessage = wrapper.getByTestId('new-user.done.failed.planLimitHit');
         const alreadyInErrorMessage = wrapper.getByTestId('new-user.done.failed.alreadyIn');
         expect(alreadyInErrorMessage).toBeVisible();
         expect(rateLimitErrorMessage).toBeVisible();
