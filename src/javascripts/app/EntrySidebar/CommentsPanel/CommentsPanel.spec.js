@@ -153,7 +153,10 @@ describe('CommentsPanel', () => {
   // For instance, the only way for a user to create a comment is by using the form
   describe('comment added', () => {
     const addComment = container => {
-      const comment = { body: 'foobar8', sys: { id: '8', createdBy: mockAuthor } };
+      const comment = {
+        body: 'foobar8',
+        sys: { id: '8', createdBy: mockAuthor, parentEntity: { sys: { id: 'test' } } }
+      };
       const form = within(container).getByTestId('comments.form');
       const textarea = within(form).getByTestId('comments.form.textarea');
       fireEvent.focus(textarea); // focus to show buttons
@@ -188,12 +191,7 @@ describe('CommentsPanel', () => {
 
   describe('comment deleted', () => {
     const deleteComment = (container, getByTestId) => {
-      const menu = within(container).getAllByTestId('comment.menu')[0];
-      const menuButton = within(menu).getByTestId('cf-ui-icon-button');
-      fireEvent.click(menuButton);
-
-      const remove = getByTestId('comment.menu.remove');
-      const removeButton = within(remove).getByTestId('cf-ui-dropdown-list-item-button');
+      const removeButton = within(container).getAllByTestId('comment.menu.remove')[0];
       fireEvent.click(removeButton);
 
       removeComment.mockResolvedValue();

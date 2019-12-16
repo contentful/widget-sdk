@@ -81,25 +81,25 @@ describe('Comment', () => {
   it('renders the menu if the comment has no replies and the author if the current user', () => {
     setAsCommentAuthor(true);
     const { getByTestId } = mount(withAuthor);
-    expect(getByTestId('comment.menu')).toBeVisible();
+    expect(getByTestId('comment.menu.remove')).toBeVisible();
   });
 
   it('renders the menu if the user is space admin', () => {
     setAdmin(true);
     const { getByTestId } = mount(withUnknownAuthor);
-    expect(getByTestId('comment.menu')).toBeVisible();
+    expect(getByTestId('comment.menu.remove')).toBeVisible();
   });
 
   it('does not render the menu if the current user is not the author', () => {
     setAsCommentAuthor(false);
     const { queryByTestId } = mount(withAuthor);
-    expect(queryByTestId('comment.menu')).toBeNull();
+    expect(queryByTestId('comment.menu.remove')).toBeNull();
   });
 
   it('does not render the menu if the comment has replies', () => {
     setAdmin(true);
     setAsCommentAuthor(true);
     const { queryByTestId } = mount(withAuthor, true);
-    expect(queryByTestId('comment.menu')).toBeNull();
+    expect(queryByTestId('comment.menu.remove')).toBeNull();
   });
 });

@@ -62,6 +62,8 @@ exports[`SpaceRoleEditor renders the component 1`] = `
       position="bottom-left"
     >
       <Button
+        aria-expanded={false}
+        aria-haspopup="menu"
         buttonType="naked"
         className="select-button"
         disabled={false}
@@ -73,6 +75,8 @@ exports[`SpaceRoleEditor renders the component 1`] = `
         type="button"
       >
         <button
+          aria-expanded={false}
+          aria-haspopup="menu"
           className="Button__Button___1ZfFj a11y__focus-border--default___60AXp select-button Button__Button--naked___mB6LS"
           data-test-id="space-role-editor.button"
           disabled={false}
@@ -248,6 +252,8 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
       position="bottom-left"
     >
       <Button
+        aria-expanded={true}
+        aria-haspopup="menu"
         buttonType="naked"
         className="select-button"
         disabled={false}
@@ -259,6 +265,8 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
         type="button"
       >
         <button
+          aria-expanded={true}
+          aria-haspopup="menu"
           className="Button__Button___1ZfFj a11y__focus-border--default___60AXp select-button Button__Button--naked___mB6LS"
           data-test-id="space-role-editor.button"
           disabled={false}
@@ -364,6 +372,8 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
             position="bottom-left"
           >
             <button
+              aria-expanded="true"
+              aria-haspopup="menu"
               class="Button__Button___1ZfFj a11y__focus-border--default___60AXp select-button Button__Button--naked___mB6LS"
               data-test-id="space-role-editor.button"
               type="button"
@@ -446,11 +456,13 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                     <ul
                       class="DropdownList__DropdownList___2EMLM"
                       data-test-id="space-role-editor.options"
+                      role="menu"
                       style="max-height: auto; overflow-y: visible;"
                     >
                       <li
                         class="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
                         data-test-id="space-role-editor.admin-option"
+                        role="menuitem"
                       >
                         <button
                           aria-disabled="false"
@@ -489,11 +501,13 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                     <ul
                       class="DropdownList__DropdownList___2EMLM DropdownList__DropdownList--border-top___ojlyY"
                       data-test-id="cf-ui-dropdown-list"
+                      role="menu"
                       style="max-height: auto; overflow-y: visible;"
                     >
                       <li
                         class="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem--title___CyVKB"
                         data-test-id="cf-ui-dropdown-list-item"
+                        role="menuitem"
                       >
                         <span>
                           other roles
@@ -502,6 +516,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                       <li
                         class="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
                         data-test-id="space-role-editor.role-option"
+                        role="menuitem"
                       >
                         <button
                           aria-disabled="false"
@@ -534,6 +549,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                       <li
                         class="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
                         data-test-id="space-role-editor.role-option"
+                        role="menuitem"
                       >
                         <button
                           aria-disabled="false"
@@ -604,6 +620,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                     <ul
                       className="DropdownList__DropdownList___2EMLM"
                       data-test-id="space-role-editor.options"
+                      role="menu"
                       style={
                         Object {
                           "maxHeight": "auto",
@@ -621,6 +638,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                         <li
                           className="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
                           data-test-id="space-role-editor.admin-option"
+                          role="menuitem"
                         >
                           <button
                             aria-disabled={false}
@@ -700,6 +718,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                     <ul
                       className="DropdownList__DropdownList___2EMLM DropdownList__DropdownList--border-top___ojlyY"
                       data-test-id="cf-ui-dropdown-list"
+                      role="menu"
                       style={
                         Object {
                           "maxHeight": "auto",
@@ -716,6 +735,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                         <li
                           className="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem--title___CyVKB"
                           data-test-id="cf-ui-dropdown-list-item"
+                          role="menuitem"
                         >
                           <span>
                             other roles
@@ -733,6 +753,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                         <li
                           className="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
                           data-test-id="space-role-editor.role-option"
+                          role="menuitem"
                         >
                           <button
                             aria-disabled={false}
@@ -809,6 +830,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
                         <li
                           className="DropdownListItem__DropdownListItem___LOUnP DropdownListItem__DropdownListItem__submenu-toggle___1SVw1"
                           data-test-id="space-role-editor.role-option"
+                          role="menuitem"
                         >
                           <button
                             aria-disabled={false}

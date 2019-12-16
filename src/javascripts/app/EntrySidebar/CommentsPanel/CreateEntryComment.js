@@ -26,10 +26,9 @@ export default function CreateEntryComment({
   entryId,
   parentCommentId,
   onNewComment,
-  onActive,
-  onInactive
+  textareaRef
 }) {
-  const [active, setActive] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [isSubmitted, setIsSubmited] = useState(false);
   const [body, setBody] = useState('');
   const [{ data, isLoading, error }, createComment, resetCreatorState] = useCommentCreator(
@@ -52,18 +51,15 @@ export default function CreateEntryComment({
     } = evt;
     setBody(value);
     if (value) {
-      onActive && onActive();
-    } else {
-      onInactive && onInactive();
+      setIsExpanded(true);
     }
   };
 
   const handleCancel = () => {
     setBody('');
-    setActive(false);
     // get rid of any error message from the creation call
     resetCreatorState();
-    onInactive && onInactive();
+    setIsExpanded(false);
   };
 
   const handleKeyPress = evt => {
@@ -74,11 +70,18 @@ export default function CreateEntryComment({
 
   if (isSubmitted && data) {
     setBody('');
-    setActive(false);
     setIsSubmited(false);
     onNewComment(data);
-    onInactive && onInactive();
+    setIsExpanded(false);
   }
+
+  const handleFocus = () => {
+    setIsExpanded(true);
+  };
+
+  const handleBlur = () => {
+    !body && setIsExpanded(false);
+  };
 
   return (
     <>
@@ -86,24 +89,27 @@ export default function CreateEntryComment({
         className={styles.textField}
         value={body}
         onChange={handleChange}
-        onFocus={() => setActive(true)}
-        rows={active ? 4 : 1}
+        rows={isExpanded ? 4 : 1}
         onKeyDown={handleKeyPress}
         disabled={isLoading}
         testId="comments.form.textarea"
         placeholder={placeholder}
         maxLength={512}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        textareaRef={textareaRef}
       />
-      {active && error && (
+      {isExpanded && error && (
         <ValidationMessage className={styles.validationMessage}>{error.message}</ValidationMessage>
       )}
-      {active && (
+      {isExpanded && (
         <div className={styles.replyActions}>
           <Button
             size="small"
             loading={isLoading}
             onClick={() => handleSubmit()}
             buttonType="primary"
+            disabled={!body.length}
             testId="comments.form.submit"
             className={css({ marginRight: tokens.spacingS })}>
             {sendButtonLabel}
@@ -111,7 +117,7 @@ export default function CreateEntryComment({
           <Button
             size="small"
             buttonType="muted"
-            onClick={handleCancel}
+            onClick={event => handleCancel(event)}
             testId="comments.form.cancel">
             Cancel
           </Button>
@@ -125,7 +131,6 @@ CreateEntryComment.propTypes = {
   endpoint: PropTypes.func.isRequired,
   entryId: PropTypes.string.isRequired,
   onNewComment: PropTypes.func.isRequired,
-  onActive: PropTypes.func,
-  onInactive: PropTypes.func,
-  parentCommentId: PropTypes.string
+  parentCommentId: PropTypes.string,
+  textareaRef: PropTypes.any
 };

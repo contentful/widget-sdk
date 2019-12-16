@@ -3,14 +3,12 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import { css, cx } from 'emotion';
 import {
-  CardActions,
-  DropdownList,
-  DropdownListItem,
   Heading,
   Tooltip,
   Notification,
   ModalConfirm,
-  Paragraph
+  Paragraph,
+  IconButton
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { remove as removeComment } from 'data/CMA/CommentsRepo';
@@ -38,6 +36,10 @@ export const styles = {
     borderRadius: '100%',
     marginRight: tokens.spacingS
   }),
+  avatarSmall: css({
+    width: 18,
+    height: 18
+  }),
   meta: css({
     display: 'flex',
     justifyContent: 'space-between',
@@ -54,13 +56,16 @@ export const styles = {
   commentBody: css({
     wordBreak: 'break-word',
     whiteSpace: 'pre-wrap'
+  }),
+  commentBodyIndented: css({
+    marginLeft: `calc(${tokens.spacingS} + 18px)` // For aligning comment body with avatar
   })
 };
 
 // TODO: Make this a dumb component like <Task /> neither triggering any CMA requests
 //  directly, nor receiving an entire CMA `Comment` object.
 
-export default function Comment({ endpoint, comment, onRemoved, className, hasReplies }) {
+export default function Comment({ endpoint, comment, onRemoved, className, hasReplies, isReply }) {
   const {
     sys: { createdBy, createdAt }
   } = comment;
@@ -78,7 +83,11 @@ export default function Comment({ endpoint, comment, onRemoved, className, hasRe
   return (
     <div className={cx([styles.comment, className])} data-test-id="comment">
       <header className={styles.header}>
-        <img className={styles.avatar} src={createdBy.avatarUrl} data-test-id="comment.avatar" />
+        <img
+          className={cx(styles.avatar, isReply && styles.avatarSmall)}
+          src={createdBy.avatarUrl}
+          data-test-id="comment.avatar"
+        />
         <div className={styles.meta}>
           <Heading element="h4" className={styles.userName} data-test-id="comment.user">
             {renderUserName(createdBy)}
@@ -93,7 +102,9 @@ export default function Comment({ endpoint, comment, onRemoved, className, hasRe
         </div>
         <CommentActions comment={comment} onRemove={handleRemove} hasReplies={hasReplies} />
       </header>
-      <div className={styles.commentBody} data-test-id="comment.body">
+      <div
+        className={cx(styles.commentBody, isReply && styles.commentBodyIndented)}
+        data-test-id="comment.body">
         {comment.body}
       </div>
     </div>
@@ -107,12 +118,13 @@ Comment.propTypes = {
   className: PropTypes.string,
   // Only used to check if the comment can be removed.
   // Get rid of this once thread deletion is supported by the API
-  hasReplies: PropTypes.bool
+  hasReplies: PropTypes.bool,
+  isReply: PropTypes.bool
 };
 
 function renderUserName(user) {
   return user.firstName ? (
-    <>{`${user.firstName} ${user.lastName}`}</>
+    <React.Fragment>{`${user.firstName} ${user.lastName}`}</React.Fragment>
   ) : (
     <Tooltip content="The author of this comment is no longer a member of this organization">
       {'(Deactivated user)'}
@@ -126,14 +138,16 @@ function CommentActions({ comment, onRemove, hasReplies }) {
   if (hasReplies || !canRemoveComment(comment)) return null;
 
   return (
-    <>
-      <CardActions onClick={e => e.stopPropagation()} data-test-id="comment.menu">
-        <DropdownList>
-          <DropdownListItem onClick={() => setShowRemovalDialog(true)} testId="comment.menu.remove">
-            Remove
-          </DropdownListItem>
-        </DropdownList>
-      </CardActions>
+    <React.Fragment>
+      <IconButton
+        iconProps={{
+          icon: 'Delete'
+        }}
+        buttonType="muted"
+        testId="comment.menu.remove"
+        label="Delete comment"
+        onClick={() => setShowRemovalDialog(true)}
+      />
       <RemovalConfirmationDialog
         isShown={showRemovalDialog}
         onConfirm={() => {
@@ -143,7 +157,7 @@ function CommentActions({ comment, onRemove, hasReplies }) {
         onCancel={() => setShowRemovalDialog(false)}
         data-test-id="comment.removal-confirmation"
       />
-    </>
+    </React.Fragment>
   );
 }
 CommentActions.propTypes = {

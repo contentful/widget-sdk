@@ -1,28 +1,26 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
+import pluralize from 'pluralize';
 
-import { Card } from '@contentful/forma-36-react-components';
+import { Card, TextLink } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import * as types from './CommentPropTypes';
 import Comment from './Comment';
 import CreateEntryComment from './CreateEntryComment';
-import useClickOutside from 'app/common/hooks/useClickOutside';
 
 const styles = {
   root: css({
     padding: tokens.spacingS,
-    marginBottom: tokens.spacingS,
-    '&:hover': {
-      borderColor: tokens.colorBlueBase,
-      cursor: 'pointer'
-    }
+    marginBottom: tokens.spacingS
   }),
   footer: css({
     marginTop: tokens.spacingM
   }),
-  thread: css({}),
+  thread: css({
+    marginTop: tokens.spacingM
+  }),
   showCommentsButton: css({
     margin: `${tokens.spacingM} 0`
   }),
@@ -40,23 +38,16 @@ const styles = {
 export default function CommentThread({ endpoint, thread, onRemoved, onNewReply }) {
   const [comment, ...replies] = thread;
   const entry = comment.sys.reference || comment.sys.parentEntity;
-  const ref = useRef();
-  const [replyingMode, setReplyingMode] = useState(false);
-  const [hasPendingReply, setHasPendingReply] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const textareaRef = useRef();
 
-  useClickOutside(ref, replyingMode, () => {
-    // dismiss reply mode if reply field is empty
-    if (!hasPendingReply) {
-      setReplyingMode(false);
-    }
+  useEffect(() => {
+    isExpanded && !replies.length && textareaRef.current.focus();
   });
 
   return (
-    <div ref={ref}>
-      <Card
-        className={styles.root}
-        onClick={() => setReplyingMode(true)}
-        data-test-id="comments.thread">
+    <div>
+      <Card className={styles.root} data-test-id="comments.thread">
         <Comment
           endpoint={endpoint}
           comment={comment}
@@ -64,31 +55,37 @@ export default function CommentThread({ endpoint, thread, onRemoved, onNewReply 
           hasReplies={!!replies.length}
         />
 
-        {replies.length ? (
-          <div className={styles.thread}>
-            {replies.map(reply => (
-              <Comment
-                className={styles.reply}
-                key={reply.sys.id}
-                endpoint={endpoint}
-                comment={reply}
-                onRemoved={onRemoved}
-              />
-            ))}
-          </div>
-        ) : null}
+        <TextLink icon="ChatBubble" onClick={() => setIsExpanded(!isExpanded)}>
+          {replies.length ? pluralize('reply', replies.length, true) : 'Reply'}
+        </TextLink>
 
-        {replyingMode && (
-          <footer className={styles.replyActions}>
-            <CreateEntryComment
-              endpoint={endpoint}
-              entryId={entry.sys.id}
-              parentCommentId={comment.sys.id}
-              onNewComment={onNewReply}
-              onActive={() => setHasPendingReply(true)}
-              onInactive={() => setHasPendingReply(false)}
-            />
-          </footer>
+        {isExpanded && (
+          <div>
+            {replies.length ? (
+              <div className={styles.thread}>
+                {replies.map(reply => (
+                  <Comment
+                    className={styles.reply}
+                    key={reply.sys.id}
+                    endpoint={endpoint}
+                    comment={reply}
+                    onRemoved={onRemoved}
+                    isReply
+                  />
+                ))}
+              </div>
+            ) : null}
+
+            <footer className={styles.replyActions}>
+              <CreateEntryComment
+                endpoint={endpoint}
+                entryId={entry.sys.id}
+                parentCommentId={comment.sys.id}
+                onNewComment={onNewReply}
+                textareaRef={textareaRef}
+              />
+            </footer>
+          </div>
         )}
       </Card>
     </div>
