@@ -1,5 +1,8 @@
+/* eslint-disable rulesdir/restrict-inline-styles */
+
 import React from 'react';
 
+import isNumber from 'lodash/isNumber';
 import { Modal } from '@contentful/forma-36-react-components';
 import ModalLauncher from 'app/common/ModalLauncher';
 
@@ -63,6 +66,8 @@ export default function makeExtensionDialogsHandlers(dependencies) {
 
     trackExtensionRender(LOCATION_DIALOG, descriptor);
 
+    const dialogKey = Date.now().toString();
+
     return ModalLauncher.open(({ isShown, onClose }) => {
       // We're passing `openDialog` (function above) down
       // to the bridge so it doesn't circularly imports
@@ -70,23 +75,30 @@ export default function makeExtensionDialogsHandlers(dependencies) {
       // (INCEPTION HORN).
       const bridge = createDialogExtensionBridge(dependencies, openDialog, onClose);
 
+      const onCloseHandler = () => onClose();
+
+      const size = isNumber(options.width) ? `${options.width}px` : options.width;
+
       return (
         <Modal
-          key={`${Date.now()}`}
+          key={dialogKey}
           shouldCloseOnOverlayClick={options.shouldCloseOnOverlayClick || false}
           shouldCloseOnEscapePress={options.shouldCloseOnEscapePress || false}
+          allowHeightOverflow={options.allowHeightOverflow || false}
           position={options.position || 'center'}
           isShown={isShown}
-          onClose={onClose}
-          size={`${options.width || 700}px`}>
+          onClose={onCloseHandler}
+          size={size || '700px'}>
           {() => (
             <>
-              {options.title && <Modal.Header title={options.title} onClose={() => onClose()} />}
-              <ExtensionIFrameRenderer
-                bridge={bridge}
-                descriptor={descriptor}
-                parameters={parameters}
-              />
+              {options.title && <Modal.Header title={options.title} onClose={onCloseHandler} />}
+              <div style={{ minHeight: options.minHeight || 'auto' }}>
+                <ExtensionIFrameRenderer
+                  bridge={bridge}
+                  descriptor={descriptor}
+                  parameters={parameters}
+                />
+              </div>
             </>
           )}
         </Modal>
