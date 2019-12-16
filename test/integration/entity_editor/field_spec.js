@@ -4,6 +4,7 @@ import * as DOM from 'test/utils/dom';
 import { forEach, clone } from 'lodash';
 import createLocaleStoreMock from 'test/utils/createLocaleStoreMock';
 import { $initialize, $inject, $compile, $apply, $removeDirectives } from 'test/utils/ng';
+import { it } from 'test/utils/dsl';
 
 /**
  * Tests the integration of the 'cfEntityField' directive with
@@ -17,12 +18,8 @@ import { $initialize, $inject, $compile, $apply, $removeDirectives } from 'test/
  *
  * TODO Use DOM helpers
  */
-describe('entity editor field integration', () => {
+describe('entity editor field integration', function() {
   beforeEach(async function() {
-    // module('contentful/test', $provide => {
-    //   $provide.constant('cfWidgetApiDirective', () => {});
-    //   $provide.constant('cfWidgetRendererDirective', () => {});
-    // });
     this.system.set('services/localeStore', {
       default: createLocaleStoreMock()
     });
@@ -34,7 +31,7 @@ describe('entity editor field integration', () => {
     });
 
     await $initialize(this.system);
-    await $removeDirectives(this.system, ['cfWidgetApi', 'cfWidgetRenderer', 'tooltip']);
+    await $removeDirectives(this.system, ['cfWidgetApi', 'cfWidgetRenderer']);
 
     this.createDocument = $inject('mocks/entityEditor/Document').create;
 
@@ -100,7 +97,7 @@ describe('entity editor field integration', () => {
     };
   });
 
-  describe('labels', () => {
+  describe('labels', function() {
     it('shows field name for single-locale', function() {
       this.localeData.privateLocales = [{ code: 'en', internal_code: 'en-internal' }];
       const el = this.compile();
@@ -142,7 +139,7 @@ describe('entity editor field integration', () => {
     });
   });
 
-  describe('editing permissions', () => {
+  describe('editing permissions', function() {
     it('shows message if user does not have editing permissions', function() {
       this.otDoc = this.createDocument();
       this.otDoc.permissions.canEditFieldLocale = (_field, locale) => locale === 'en';
@@ -162,12 +159,12 @@ describe('entity editor field integration', () => {
     }
   });
 
-  describe('hint', () => {
+  describe('hint', function() {
     it('shows custom widget settings help text', function() {
       this.widget.settings.helpText = 'HELP TEXT';
       const hint = this.compile().find('[data-test-id=field-hint]');
       expect(hint.length).toBe(1);
-      expect(hint.text()).toEqual('HELP TEXT');
+      expect(hint.text().trim()).toEqual('HELP TEXT');
     });
   });
 
@@ -404,7 +401,7 @@ describe('entity editor field integration', () => {
     });
   });
 
-  describe('focus', () => {
+  describe('focus', function() {
     it('is set when widget activates this field', function() {
       const el = this.compile();
 
