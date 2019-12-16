@@ -31,6 +31,7 @@ import { getAllForEntry } from 'data/CMA/CommentsRepo';
 import initSidebarTogglesProps from 'app/entity_editor/entityEditorSidebarToggles';
 import { initJobStore } from 'app/ScheduledActions/DataManagement/ScheduledActionsStoreNg';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
+import { appendDuplicateIndexToEntryTitle } from './entityHelpers';
 
 /**
  * @ngdoc type
@@ -133,10 +134,14 @@ export default async function create($scope, editorData, preferences, trackLoadE
         return entry;
       });
     },
-    onDuplicate: () =>
-      spaceContext.space
+    onDuplicate: () => {
+      const currentFields = K.getValue(doc.valuePropertyAt(['fields']));
+      return spaceContext.space
         .createEntry(contentType.id, {
-          fields: K.getValue(doc.valuePropertyAt(['fields']))
+          fields: appendDuplicateIndexToEntryTitle(
+            currentFields,
+            contentType.type.data.displayField
+          )
         })
         .then(entry => {
           Analytics.track('entry:create', {
@@ -145,8 +150,8 @@ export default async function create($scope, editorData, preferences, trackLoadE
             response: entry.data
           });
           return entry;
-        }),
-
+        });
+    },
     onShowDisabledFields: () => {
       const show = (preferences.showDisabledFields = !preferences.showDisabledFields);
       Analytics.track('entry_editor:disabled_fields_visibility_toggled', {

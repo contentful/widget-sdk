@@ -1,6 +1,7 @@
 import { getModule } from 'NgRegistry';
 import _ from 'lodash';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
+import * as logger from 'services/logger';
 import TheLocaleStore from 'services/localeStore';
 import { transformHostname } from 'services/AssetUrlService';
 
@@ -133,5 +134,45 @@ function assetFileUrl(file) {
     return Promise.resolve(transformHostname(file.url));
   } else {
     return Promise.reject();
+  }
+}
+
+/**
+ * Ensures that the entryTitle value will be different from it's original
+ * It adds (1) to the end or, if one is already there, increments the integer in the brackets
+ * Ignores negative integers in the brackets.
+ *
+ * Applies to values of each available locale
+ *
+ * @param {object} fields - entry fields that the user has added
+ * @param {string} entryTitleId - the id (displayField) of the entry title field
+ * @returns {object}
+ */
+export function appendDuplicateIndexToEntryTitle(fields, entryTitleId) {
+  try {
+    const fieldsCopy = _.cloneDeep(fields) || {};
+    const localizedEntryTitles = fieldsCopy[entryTitleId];
+    if (localizedEntryTitles) {
+      for (const [locale, entryTitleValue] of Object.entries(localizedEntryTitles)) {
+        if (entryTitleValue) {
+          const wrappedNumberRegexp = /\s\(\d\)$/; // finds numbers wrapped into round paranthesis, padded with a space, like (1)
+          const trimmedEntryTitleValue = entryTitleValue.trim();
+          const match = trimmedEntryTitleValue.match(wrappedNumberRegexp);
+          if (match && match.length) {
+            const copyId = parseInt(match[0].match(/\d/), 10);
+            localizedEntryTitles[locale] = trimmedEntryTitleValue.replace(
+              wrappedNumberRegexp,
+              ` (${copyId + 1})`
+            );
+          } else {
+            localizedEntryTitles[locale] += ' (1)';
+          }
+        }
+      }
+    }
+    return fieldsCopy;
+  } catch (error) {
+    logger.logError(error);
+    return fields;
   }
 }

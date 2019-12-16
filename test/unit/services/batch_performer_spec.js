@@ -7,6 +7,8 @@ describe('Batch performer service', () => {
   const ENTITY_API = ['publish', 'unpublish', 'archive', 'unarchive', 'delete'];
   const API = ENTITY_API.concat(['duplicate']);
 
+  let createBatchPerformer;
+
   beforeEach(async function() {
     this.analytics = {
       track: sinon.stub()
@@ -16,7 +18,7 @@ describe('Batch performer service', () => {
 
     await $initialize(this.system);
 
-    this.create = $inject('batchPerformer').create;
+    createBatchPerformer = $inject('batchPerformer').create;
   });
 
   describe('performing batch entry operations', () => {
@@ -36,7 +38,9 @@ describe('Batch performer service', () => {
         const retried = cc();
         const calls = [cc(), retried, cc(), retried];
         this.actionStubs = calls;
-        $inject('spaceContext').space = { createEntry: ce };
+        const spaceContext = $inject('spaceContext');
+        spaceContext.space = { createEntry: ce };
+        spaceContext.publishedCTs.get = sinon.stub().returns({ data: { displayField: 123 } });
 
         function cc() {
           return sinon.stub().resolves({});
@@ -47,6 +51,127 @@ describe('Batch performer service', () => {
       });
 
       testSharedBehavior('duplicate');
+    });
+  });
+
+  describe('batch duplicate', () => {
+    const displayField = 123;
+    let spaceContext;
+
+    beforeEach(() => {
+      spaceContext = $inject('spaceContext');
+      spaceContext.publishedCTs.get = sinon.stub().returns({ data: { displayField } });
+    });
+
+    it('should add the index to the entry title of the duplicated entries', async function() {
+      spaceContext.space = {
+        createEntry: (_id, { fields }) =>
+          new Promise((resolve, reject) => {
+            try {
+              expect(fields[displayField]).toEqual({
+                'en-US': 'Hello! (1)',
+                de: 'Hallo! (1)'
+              });
+              resolve();
+            } catch (error) {
+              reject(error);
+            }
+          })
+      };
+
+      const makeEntityWrapper = () =>
+        makeEntity({
+          fields: {
+            [displayField]: {
+              'en-US': 'Hello!',
+              de: 'Hallo!'
+            }
+          }
+        });
+
+      const makeEntry = () => ({
+        ...makeEntityWrapper(),
+        getSys: _.constant({
+          type: 'Entry',
+          contentType: { sys: { id: 'ctid' } }
+        })
+      });
+
+      const performer = preparePerformer('Entry', makeEntry).call(this);
+
+      performer.duplicate();
+    });
+
+    it('should increment the index of the entry title of the duplicated entries', async function() {
+      spaceContext.space = {
+        createEntry: (_id, { fields }) =>
+          new Promise((resolve, reject) => {
+            try {
+              expect(fields[displayField]).toEqual({
+                'en-US': 'Hello! (2)',
+                de: null
+              });
+              resolve();
+            } catch (error) {
+              reject(error);
+            }
+          })
+      };
+
+      const makeEntityWrapper = () =>
+        makeEntity({
+          fields: {
+            [displayField]: {
+              'en-US': 'Hello! (1)',
+              de: null
+            }
+          }
+        });
+
+      const makeEntry = () => ({
+        ...makeEntityWrapper(),
+        getSys: _.constant({
+          type: 'Entry',
+          contentType: { sys: { id: 'ctid' } }
+        })
+      });
+
+      const performer = preparePerformer('Entry', makeEntry).call(this);
+
+      performer.duplicate();
+    });
+
+    it('should not break down if the entry title is not defined', async function() {
+      spaceContext.space = {
+        createEntry: (_id, { fields }) =>
+          new Promise((resolve, reject) => {
+            try {
+              expect(fields[displayField]).toEqual(null);
+              resolve();
+            } catch (error) {
+              reject(error);
+            }
+          })
+      };
+
+      const makeEntityWrapper = () =>
+        makeEntity({
+          fields: {
+            [displayField]: null
+          }
+        });
+
+      const makeEntry = () => ({
+        ...makeEntityWrapper(),
+        getSys: _.constant({
+          type: 'Entry',
+          contentType: { sys: { id: 'ctid' } }
+        })
+      });
+
+      const performer = preparePerformer('Entry', makeEntry).call(this);
+
+      performer.duplicate();
     });
   });
 
@@ -65,12 +190,13 @@ describe('Batch performer service', () => {
   function preparePerformer(entityType, makeFn) {
     return function() {
       this.entities = [makeFn(), makeFn(), makeFn()];
-      this.performer = this.create({
+      this.performer = createBatchPerformer({
         entityType: (this.entityType = entityType),
-        getSelected: _.constant(this.entities),
+        getSelected: () => this.entities,
         onComplete: (this.onComplete = sinon.spy()),
         onDelete: (this.onDelete = sinon.spy())
       });
+      return this.performer;
     };
   }
 
@@ -79,8 +205,8 @@ describe('Batch performer service', () => {
     return _.extend(makeEntity(), { getSys: _.constant(sys) });
   }
 
-  function makeEntity() {
-    const entity = {};
+  function makeEntity(data) {
+    const entity = { data };
     entity.getVersion = sinon.stub().returns(123);
     entity.setDeleted = sinon.spy();
     return _.transform(

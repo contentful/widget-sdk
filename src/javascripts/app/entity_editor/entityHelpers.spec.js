@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { newForLocale } from './entityHelpers';
+import { newForLocale, appendDuplicateIndexToEntryTitle } from './entityHelpers';
 import * as spaceContextMocked from 'ng/spaceContext';
 import * as EntityFieldValueSpaceContextMocked from 'classes/EntityFieldValueSpaceContext';
 
@@ -132,4 +132,68 @@ describe('EntityHelpers', () => {
       expect(locale).toBe('en-US');
     });
   }
+
+  describe('appendDuplicateIndexToEntryTitle', function() {
+    it('should add (1) to the end of the entryTitle', () => {
+      const entryTitleId = 123;
+      const fields = {
+        [entryTitleId]: {
+          'en-US': 'Hey!',
+          de: 'Ahoi!'
+        }
+      };
+      expect(appendDuplicateIndexToEntryTitle(fields, entryTitleId)).toEqual({
+        [entryTitleId]: {
+          'en-US': 'Hey! (1)',
+          de: 'Ahoi! (1)'
+        }
+      });
+    });
+
+    it('should increment the given index if present', () => {
+      const entryTitleId = 123;
+      const fields = {
+        [entryTitleId]: {
+          'en-US': 'Hey! (1)',
+          de: 'Ahoi! (1)'
+        }
+      };
+      expect(appendDuplicateIndexToEntryTitle(fields, entryTitleId)).toEqual({
+        [entryTitleId]: {
+          'en-US': 'Hey! (2)',
+          de: 'Ahoi! (2)'
+        }
+      });
+    });
+
+    it('should not throw if entry title is not defined', () => {
+      const entryTitleId = 123;
+      const fields = {
+        [entryTitleId]: null
+      };
+      expect(() => {
+        expect(appendDuplicateIndexToEntryTitle(fields, entryTitleId)).toEqual({
+          [entryTitleId]: null
+        });
+      }).not.toThrow();
+    });
+
+    it('should not break if one of the locale values is undefined / null', () => {
+      const entryTitleId = 123;
+      const fields = {
+        [entryTitleId]: {
+          'en-US': 'Hey! (1)',
+          de: null
+        }
+      };
+      expect(() => {
+        expect(appendDuplicateIndexToEntryTitle(fields, entryTitleId)).toEqual({
+          [entryTitleId]: {
+            'en-US': 'Hey! (2)',
+            de: null
+          }
+        });
+      }).not.toThrow();
+    });
+  });
 });

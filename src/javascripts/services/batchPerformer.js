@@ -4,6 +4,8 @@ import { Notification } from '@contentful/forma-36-react-components';
 
 import * as Analytics from 'analytics/Analytics';
 
+import { appendDuplicateIndexToEntryTitle } from '../app/entity_editor/entityHelpers';
+
 export default function register() {
   registerFactory('batchPerformer', [
     '$q',
@@ -86,8 +88,12 @@ export default function register() {
           const sys = entity.getSys();
           if (sys.type === 'Entry') {
             const ctId = _.get(sys, 'contentType.sys.id');
+            const contentType = spaceContext.publishedCTs.get(ctId);
+            const entryTitleId = _.get(contentType, 'data.displayField');
             const data = _.omit(entity.data, 'sys');
-            return spaceContext.space.createEntry(ctId, data);
+            return spaceContext.space.createEntry(ctId, {
+              fields: appendDuplicateIndexToEntryTitle(data.fields, entryTitleId)
+            });
           } else {
             return $q.reject(new Error('Only entries can be duplicated'));
           }
