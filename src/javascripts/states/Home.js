@@ -5,6 +5,7 @@ import template from 'app/home/HomeTemplate';
 import { go } from 'states/Navigator';
 import { getSpaces, user$ } from 'services/TokenStore';
 import { getValue } from 'utils/kefir';
+import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
 
 const store = getStore();
 
@@ -35,6 +36,7 @@ export default makeState({
   name: 'home',
   url: '/',
   template: template(),
+  navComponent: EmptyNavigationBar,
   loadingText: 'Loading…',
   resolve: {
     space: function() {
