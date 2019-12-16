@@ -18,7 +18,10 @@ import {
   queryPendingJobsForDefaultSpace
 } from '../../../interactions/jobs';
 import { FeatureFlag } from '../../../util/featureFlag';
-import { queryForScheduledPublishingOnEntryPage } from '../../../interactions/product_catalog_features';
+import {
+  queryForTasksAndAppsInDefaultSpace,
+  queryForScheduledPublishingOnEntryPage
+} from '../../../interactions/product_catalog_features'
 
 describe('Schedule Publication', () => {
   let interactions: string[];
@@ -104,7 +107,7 @@ describe('Schedule Publication', () => {
     });
   });
   describe('error states', () => {
-    it('renders error note is the last job is failed', () => {
+    it('renders error note if the last job is failed', () => {
       interactions.push(queryAllScheduledJobsForDefaultEntry.willFindOneFailedJob());
 
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
@@ -155,6 +158,7 @@ function basicServerSetUp(): string[] {
     getFirst7SnapshotsOfDefaultEntry.willReturnNone(),
     getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
     queryPendingJobsForDefaultSpace.willFindNone(),
+    queryForTasksAndAppsInDefaultSpace.willFindBothEnabled(),
     queryForScheduledPublishingOnEntryPage.willFindFeatureEnabled()
   ];
 }
