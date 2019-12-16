@@ -35,5 +35,5 @@ export function getFullNameOrEmail(user) {
 }
 
 export function get2FAStatus(membership) {
-  return get(membership, 'sys.user.2faEnabled', '') ? 'Enabled' : '';
+  return get(membership, 'sys.user.2faEnabled', false) ? 'Enabled' : '';
 }
