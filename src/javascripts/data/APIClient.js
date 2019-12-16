@@ -312,7 +312,7 @@ APIClient.prototype.renameSpace = function(newName, version) {
 };
 
 APIClient.prototype.getExtensions = function(query) {
-  return this._getResources('proxied_extensions', query);
+  return this._getResources('extensions', query);
 };
 
 // Fetches all Extension entities in an environment to be
@@ -333,7 +333,7 @@ APIClient.prototype.getAppInstallations = function() {
 };
 
 APIClient.prototype.getExtension = async function(id) {
-  return this._getResource('proxied_extensions', id);
+  return this._getResource('extensions', id);
 };
 
 APIClient.prototype.getAppInstallation = function(appDefinitionId) {
@@ -341,15 +341,15 @@ APIClient.prototype.getAppInstallation = function(appDefinitionId) {
 };
 
 APIClient.prototype.createExtension = function(data) {
-  return this._createResource('proxied_extensions', data);
+  return this._createResource('extensions', data);
 };
 
 APIClient.prototype.updateExtension = function(data) {
-  return this._updateResource('proxied_extensions', data);
+  return this._updateResource('extensions', data);
 };
 
 APIClient.prototype.deleteExtension = function(id) {
-  return this._deleteResource('proxied_extensions', id);
+  return this._deleteResource('extensions', id);
 };
 
 APIClient.prototype.deleteAppInstallation = function(appDefinitionId) {

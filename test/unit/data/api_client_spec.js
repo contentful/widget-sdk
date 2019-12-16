@@ -201,7 +201,7 @@ describe('data/APIClient', () => {
 
       assertRequestResponse('DATA', {
         method: 'GET',
-        url: '//api.test.local/spaces/SPACE/proxied_extensions'
+        url: '//api.test.local/spaces/SPACE/extensions'
       })(result);
     });
 
@@ -210,7 +210,7 @@ describe('data/APIClient', () => {
 
       assertRequestResponse('DATA', {
         method: 'GET',
-        url: '//api.test.local/spaces/SPACE/proxied_extensions/ID'
+        url: '//api.test.local/spaces/SPACE/extensions/ID'
       })(result);
     });
 
@@ -219,7 +219,7 @@ describe('data/APIClient', () => {
 
       assertRequestResponse('DATA', {
         method: 'POST',
-        url: '//api.test.local/spaces/SPACE/proxied_extensions'
+        url: '//api.test.local/spaces/SPACE/extensions'
       })(result);
     });
 
@@ -228,7 +228,7 @@ describe('data/APIClient', () => {
 
       assertRequestResponse('DATA', {
         method: 'PUT',
-        url: '//api.test.local/spaces/SPACE/proxied_extensions/ID',
+        url: '//api.test.local/spaces/SPACE/extensions/ID',
         headers: {
           'Content-Type': 'application/vnd.contentful.management.v1+json',
           'X-Contentful-Version': 2,
@@ -242,7 +242,7 @@ describe('data/APIClient', () => {
 
       assertRequestResponse(undefined, {
         method: 'DELETE',
-        url: '//api.test.local/spaces/SPACE/proxied_extensions/ID'
+        url: '//api.test.local/spaces/SPACE/extensions/ID'
       })(result);
     });
   });
