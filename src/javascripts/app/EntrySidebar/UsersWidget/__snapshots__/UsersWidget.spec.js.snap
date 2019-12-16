@@ -1,7 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`EntrySidebar/UsersWidget it should render Collaborators component if users list is not empty 1`] = `
+.emotion-0 {
+  margin-bottom: 1rem;
+}
+
 <EntrySidebarWidget
+  className="emotion-0"
   testId="cf-entity-sidebar"
   title="Users"
 >
@@ -59,14 +64,24 @@ exports[`EntrySidebar/UsersWidget it should show "No other users online" if user
   letter-spacing: 1px;
 }
 
+.emotion-3 {
+  margin-bottom: 1rem;
+}
+
+.emotion-2 {
+  color: #8091a5;
+}
+
 <UsersWidget
   users={Array []}
 >
   <EntrySidebarWidget
+    className="emotion-3"
     testId="cf-entity-sidebar"
     title="Users"
   >
     <div
+      className="emotion-3"
       data-test-id="cf-entity-sidebar"
     >
       <header
@@ -79,7 +94,7 @@ exports[`EntrySidebar/UsersWidget it should show "No other users online" if user
         </h2>
       </header>
       <div
-        className="entity-sidebar__no-users"
+        className="emotion-2"
       >
         No other users online
       </div>

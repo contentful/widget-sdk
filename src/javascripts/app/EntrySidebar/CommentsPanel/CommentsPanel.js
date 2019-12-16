@@ -14,39 +14,27 @@ import { fromFlatToThreads, isReply, isReplyToComment } from './utils';
 
 export const styles = {
   root: css({
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    padding: '0',
-    overflowY: 'auto',
-    overflowX: 'hidden',
-    color: tokens.colorTextMid,
-    background: tokens.colorElementLightest,
-    borderLeft: `1px solid ${tokens.colorElementDarkest}`,
-    transition: 'transform .3s cubic-bezier(.38,.54,.5,.99)',
     display: 'flex',
     flexDirection: 'column',
+    height: '100%',
+    color: tokens.colorTextMid,
+    background: tokens.colorElementLightest,
+    transition: 'transform .3s cubic-bezier(.38,.54,.5,.99)',
     zIndex: 1
-  }),
-  hidden: css({
-    transform: 'translateX(100%)'
-  }),
-  visible: css({
-    transform: 'translateX(-1px)'
   }),
   commentList: css({
     overflow: 'auto',
-    padding: tokens.spacingS,
-    flexGrow: 1
+    flexGrow: 1,
+    margin: `-${tokens.spacingM}`,
+    padding: tokens.spacingM
   }),
   commentListLoading: css({
     overflow: 'hidden'
   }),
   commentForm: css({
     borderTop: `1px solid ${tokens.colorElementLight}`,
-    padding: tokens.spacingS
+    padding: `${tokens.spacingS} 0`,
+    marginTop: tokens.spacingM
   }),
   errorState: css({
     display: 'flex',
@@ -150,9 +138,7 @@ CommentsPanelContent.propTypes = {
 
 export default function CommentsPanel({ isVisible, ...props }) {
   return (
-    <div
-      className={`${styles.root} ${isVisible ? styles.visible : styles.hidden}`}
-      data-test-id="comments">
+    <div className={`${styles.root}`} data-test-id="comments">
       {isVisible && <CommentsPanelContent {...props} />}
     </div>
   );

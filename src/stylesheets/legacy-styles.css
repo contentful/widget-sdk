@@ -2935,7 +2935,6 @@ pre,
     overflow-y: auto;
     overflow-x: hidden;
     position: relative;
-    padding-top: 1.285714285714286em;
     z-index: 0;
     -ms-flex: 0 0 22.5rem;
     -webkit-box-flex: 0;
@@ -8902,12 +8901,6 @@ pre,
     vertical-align: top;
   }
   .entity-sidebar__info-panel {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    padding: 1.285714285714286em 1.6rem;
     overflow-y: auto;
     overflow-x: hidden;
     z-index: 1;
@@ -8915,24 +8908,12 @@ pre,
     transition: -webkit-transform 0.3s cubic-bezier(0.38, 0.54, 0.5, 0.99);
     transition: transform 0.3s cubic-bezier(0.38, 0.54, 0.5, 0.99);
     transition: transform 0.3s cubic-bezier(0.38, 0.54, 0.5, 0.99), -webkit-transform 0.3s cubic-bezier(0.38, 0.54, 0.5, 0.99);
-    -webkit-transform: translateX(100%);
-    transform: translateX(100%);
-    border-left: 1px solid #b4c3ca;
   }
   .entity-sidebar__info-panel.x--show {
     -webkit-transform: translateX(-1px);
     transform: translateX(-1px);
   }
-  .entity-sidebar {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    padding: 1.285714285714286em 1.6rem;
-    overflow-y: auto;
-    overflow-x: hidden;
-  }
+  
   .entity-sidebar__heading {
     font-size: 0.75rem;
     font-weight: 500;
@@ -9087,9 +9068,6 @@ pre,
   }
   .entity-sidebar__preview__platform {
     word-break: break-all;
-  }
-  .entity-sidebar__no-users {
-    color: #8091a5;
   }
   .entity-sidebar__widget {
     margin-top: 2.571428571428572em;

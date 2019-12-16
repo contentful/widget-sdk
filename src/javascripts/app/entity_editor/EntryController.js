@@ -220,6 +220,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
     spaceId
   }).then(isEnabled => {
     if (isEnabled) {
+      $scope.sidebarToggleProps.commentsToggle.isEnabled = isEnabled;
       trackIsCommentsAlphaEligible();
       initComments($scope, spaceContext.endpoint, entityInfo.id);
     }

@@ -13,15 +13,6 @@ react-component(
       )
       .workbench-header__actions
         react-component(
-          name="app/entity_editor/EntityAuxToggle"
-          props="sidebarToggleProps.auxToggle"
-        )
-        react-component(
-          ng-if="shouldDisplayCommentsToggle"
-          name="app/entity_editor/EntityCommentsToggle"
-          props="sidebarToggleProps.commentsToggle"
-        )
-        react-component(
           name="app/entity_editor/EntryTitlebar/EntrySecondaryActions"
           props="{entityInfo: editorData.entityInfo, entryActions, onDelete: state.delete}"
         )
@@ -43,4 +34,4 @@ react-component(
             props="noLocalizedFieldsAdviceProps")
 
       .workbench-main__sidebar
-        react-component(name="app/EntrySidebar/EntrySidebar" props="entrySidebarProps")
+        react-component(name="app/EntrySidebar/EntrySidebar" props="{entrySidebarProps, sidebarToggleProps}")

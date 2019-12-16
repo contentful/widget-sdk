@@ -21,7 +21,7 @@ describe('CommentsPanelContainer', () => {
   const render = () => {
     emitter = mitt();
     off = jest.spyOn(emitter, 'off');
-    return shallow(<CommentsPanelContainer emitter={emitter} />);
+    return shallow(<CommentsPanelContainer emitter={emitter} isVisible />);
   };
 
   beforeEach(() => {

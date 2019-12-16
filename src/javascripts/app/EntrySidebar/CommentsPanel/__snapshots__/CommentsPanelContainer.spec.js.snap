@@ -4,6 +4,7 @@ exports[`CommentsPanelContainer initializes the sidebar 1`] = `
 <CommentsPanel
   endpoint={[Function]}
   entryId="my-entry"
+  isVisible={true}
   onCommentsCountUpdate={[Function]}
 />
 `;
@@ -12,7 +13,7 @@ exports[`CommentsPanelContainer makes panel hidden 1`] = `
 <CommentsPanel
   endpoint={[Function]}
   entryId="my-entry"
-  isVisible={false}
+  isVisible={true}
   onCommentsCountUpdate={[Function]}
 />
 `;

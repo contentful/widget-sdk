@@ -13,7 +13,8 @@ import CommentsPanel from './CommentsPanel';
  */
 export default class CommentsPanelContainer extends React.Component {
   static propTypes = {
-    emitter: PropTypes.object.isRequired
+    emitter: PropTypes.object.isRequired,
+    isVisible: PropTypes.bool.isRequired
   };
 
   state = {
@@ -25,9 +26,6 @@ export default class CommentsPanelContainer extends React.Component {
     emitter.emit(SidebarEventTypes.WIDGET_REGISTERED, SidebarWidgetTypes.COMMENTS_PANEL);
     emitter.on(SidebarEventTypes.INIT_COMMENTS_PANEL, ({ endpoint, entryId }) => {
       this.setState({ initialized: true, endpoint, entryId });
-    });
-    emitter.on(SidebarEventTypes.UPDATED_COMMENTS_PANEL, ({ isVisible }) => {
-      this.setState({ isVisible });
     });
   }
 
@@ -48,7 +46,11 @@ export default class CommentsPanelContainer extends React.Component {
     const { initialized, ...panelProps } = this.state;
     return (
       initialized && (
-        <CommentsPanel {...panelProps} onCommentsCountUpdate={this.onCommentsCountUpdate} />
+        <CommentsPanel
+          {...panelProps}
+          isVisible={this.props.isVisible}
+          onCommentsCountUpdate={this.onCommentsCountUpdate}
+        />
       )
     );
   }

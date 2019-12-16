@@ -74,11 +74,6 @@ describe('CommentsPanel', () => {
       isVisible: false
     };
 
-    it('should not be visible', () => {
-      const { getByTestId } = build(props);
-      expect(getByTestId('comments')).toHaveStyle('transform: translateX(100%)');
-    });
-
     it('does not fetch any comments', () => {
       build(props);
       expect(useCommentsFetcher).not.toHaveBeenCalled();
@@ -87,11 +82,6 @@ describe('CommentsPanel', () => {
 
   describe('with `isVisible: true`', () => {
     beforeEach(setLoading);
-
-    it('should be made visible', () => {
-      const { getByTestId } = build();
-      expect(getByTestId('comments')).toHaveStyle('transform: translateX(-1px)');
-    });
 
     it('fetches all comments of entry `props.entryId` via `props.endpoint`', () => {
       build();

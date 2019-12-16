@@ -2,13 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import EntrySidebarWidget from './EntrySidebarWidget';
 import { isArray } from 'lodash';
-import { css } from 'emotion';
+import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { Note } from '@contentful/forma-36-react-components';
-import {
-  AssetConfiguration,
-  EntryConfiguration
-} from 'app/EntrySidebar/Configuration/defaults';
+import { Note, Tabs, Tab, TabPanel } from '@contentful/forma-36-react-components';
+import { AssetConfiguration, EntryConfiguration } from 'app/EntrySidebar/Configuration/defaults';
 import { NAMESPACE_SIDEBAR_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 
 import PublicationWidgetContainer from './PublicationWidget/PublicationWidgetContainer';
@@ -24,10 +21,40 @@ import EntryInfoPanelContainer from './EntryInfoPanel/EntryInfoPanelContainer';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer';
 import CommentsPanelContainer from './CommentsPanel/CommentsPanelContainer';
 
-const noteClassName = css({
-  marginBottom: tokens.spacingL,
-  marginTop: tokens.spacingL
-});
+const styles = {
+  activity: css({
+    marginTop: `-${tokens.spacingL}`
+  }),
+  tabWrapper: css({
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%'
+  }),
+  panelWrapper: css({
+    height: '100%',
+    overflowY: 'scroll',
+    overflowX: 'hidden'
+  }),
+  tabs: css({
+    display: 'flex',
+    justifyContent: 'center'
+  }),
+  noteClassName: css({
+    marginBottom: tokens.spacingL,
+    marginTop: tokens.spacingL
+  }),
+  tab: css({
+    textAlign: 'center'
+  }),
+  tabPanel: css({
+    display: 'none',
+    height: '100%',
+    padding: tokens.spacingM
+  }),
+  isVisible: css({
+    display: 'block'
+  })
+};
 
 const ComponentsMap = {
   [SidebarWidgetTypes.PUBLICATION]: PublicationWidgetContainer,
@@ -41,41 +68,92 @@ const ComponentsMap = {
 
 export default class EntrySidebar extends Component {
   static propTypes = {
-    isMasterEnvironment: PropTypes.bool.isRequired,
-    isEntry: PropTypes.bool.isRequired,
-    emitter: PropTypes.object.isRequired,
+    entrySidebarProps: PropTypes.shape({
+      isMasterEnvironment: PropTypes.bool.isRequired,
+      isEntry: PropTypes.bool.isRequired,
+      emitter: PropTypes.object.isRequired,
 
-    sidebar: PropTypes.arrayOf(
-      PropTypes.shape({
-        widgetId: PropTypes.string.isRequired,
-        widgetNamespace: PropTypes.string.isRequired,
-        disabled: PropTypes.bool
+      sidebar: PropTypes.arrayOf(
+        PropTypes.shape({
+          widgetId: PropTypes.string.isRequired,
+          widgetNamespace: PropTypes.string.isRequired,
+          disabled: PropTypes.bool
+        })
+      ),
+      sidebarExtensions: PropTypes.arrayOf(
+        PropTypes.shape({
+          widgetId: PropTypes.string.isRequired,
+          widgetNamespace: PropTypes.string.isRequired,
+          descriptor: PropTypes.object,
+          problem: PropTypes.string
+        })
+      ),
+      sidebarExtensionsBridge: PropTypes.object.isRequired,
+      legacySidebarExtensions: PropTypes.arrayOf(
+        PropTypes.shape({
+          bridge: PropTypes.object.isRequired,
+          widget: PropTypes.object.isRequired
+        })
+      ),
+      localeData: PropTypes.object.isRequired
+    }),
+    sidebarToggleProps: PropTypes.shape({
+      commentsToggle: PropTypes.shape({
+        onClick: PropTypes.func.isRequired,
+        isEnabled: PropTypes.boolean,
+        commentsCount: PropTypes.number
       })
-    ),
-    sidebarExtensions: PropTypes.arrayOf(
-      PropTypes.shape({
-        widgetId: PropTypes.string.isRequired,
-        widgetNamespace: PropTypes.string.isRequired,
-        descriptor: PropTypes.object,
-        problem: PropTypes.string
-      })
-    ),
-    sidebarExtensionsBridge: PropTypes.object.isRequired,
-    legacySidebarExtensions: PropTypes.arrayOf(
-      PropTypes.shape({
-        bridge: PropTypes.object.isRequired,
-        widget: PropTypes.object.isRequired
-      })
-    ),
-    localeData: PropTypes.object.isRequired
+    })
+  };
+
+  createTabs = () => ({
+    activity: {
+      isEnabled: true,
+      title: 'General',
+      onClick: id => {
+        this.setState({ selectedTab: id });
+      }
+    },
+    comments: {
+      isEnabled: this.props.sidebarToggleProps.commentsToggle.isEnabled,
+      title: (
+        <div>
+          <span>
+            {this.props.sidebarToggleProps.commentsToggle.commentsCount
+              ? this.props.sidebarToggleProps.commentsToggle.commentsCount === 1
+                ? '1 comment'
+                : `${this.props.sidebarToggleProps.commentsToggle.commentsCount} comments`
+              : 'Comments'}
+          </span>
+        </div>
+      ),
+      onClick: id => {
+        this.props.sidebarToggleProps.commentsToggle.onClick();
+        this.setState({ selectedTab: id });
+      }
+    },
+    info: {
+      isEnabled: true,
+      title: 'Info',
+      onClick: id => {
+        this.setState({ selectedTab: id });
+      }
+    }
+  });
+
+  state = {
+    selectedTab: Object.keys(this.createTabs())[0]
   };
 
   renderBuiltinWidget = sidebarItem => {
-    const { emitter, localeData, sidebarExtensionsBridge: bridge } = this.props;
+    const { emitter, localeData, sidebarExtensionsBridge: bridge } = this.props.entrySidebarProps;
     const { widgetId, widgetNamespace } = sidebarItem;
     const defaultProps = { emitter, bridge };
 
-    if (widgetId === SidebarWidgetTypes.VERSIONS && !this.props.isMasterEnvironment) {
+    if (
+      widgetId === SidebarWidgetTypes.VERSIONS &&
+      !this.props.entrySidebarProps.isMasterEnvironment
+    ) {
       return null;
     }
 
@@ -92,12 +170,12 @@ export default class EntrySidebar extends Component {
   };
 
   renderExtensionWidget = item => {
-    item = this.props.sidebarExtensions.find(w => w.widgetId === item.widgetId);
+    item = this.props.entrySidebarProps.sidebarExtensions.find(w => w.widgetId === item.widgetId);
 
     if (item.problem) {
       return (
         <EntrySidebarWidget title="Missing extension">
-          <Note noteType="warning" className={noteClassName}>
+          <Note noteType="warning" className={styles.noteClassName}>
             <code>{item.name || item.widgetId}</code> is saved in configuration, but not installed
             in this environment.
           </Note>
@@ -110,7 +188,7 @@ export default class EntrySidebar extends Component {
         title={item.descriptor.name}
         key={`${item.widgetNamespace},${item.widgetId}`}>
         <ExtensionIFrameRenderer
-          bridge={this.props.sidebarExtensionsBridge}
+          bridge={this.props.entrySidebarProps.sidebarExtensionsBridge}
           descriptor={item.descriptor}
           parameters={item.parameters}
         />
@@ -143,25 +221,66 @@ export default class EntrySidebar extends Component {
   };
 
   getSidebarConfiguration = () => {
-    if (!this.props.isEntry) {
+    if (!this.props.entrySidebarProps.isEntry) {
       return AssetConfiguration;
     }
-    if (!isArray(this.props.sidebar)) {
+    if (!isArray(this.props.entrySidebarProps.sidebar)) {
       return EntryConfiguration;
     }
-    return this.props.sidebar.filter(widget => widget.disabled !== true);
+    return this.props.entrySidebarProps.sidebar.filter(widget => widget.disabled !== true);
   };
 
   render() {
     const sidebarItems = this.getSidebarConfiguration();
-    const legacyExtensions = this.props.legacySidebarExtensions || [];
+    const legacyExtensions = this.props.entrySidebarProps.legacySidebarExtensions || [];
+    const tabs = this.createTabs();
     return (
       <React.Fragment>
-        <CommentsPanelContainer emitter={this.props.emitter} />
-        <EntryInfoPanelContainer emitter={this.props.emitter} />
-        <div className="entity-sidebar entity-editor-sidebar" data-test-id="entry-editor-sidebar">
-          {this.renderWidgets(sidebarItems)}
-          {this.renderLegacyExtensions(legacyExtensions)}
+        <div className={styles.tabWrapper}>
+          <Tabs className={styles.tabs} withDivider>
+            {Object.keys(tabs).map(
+              key =>
+                tabs[key].isEnabled && (
+                  <Tab
+                    id={key}
+                    selected={this.state.selectedTab === key}
+                    key={key}
+                    className={styles.tab}
+                    onSelect={tabs[key].onClick}>
+                    {tabs[key].title}
+                  </Tab>
+                )
+            )}
+          </Tabs>
+          <div className={cx('entity-sidebar', styles.panelWrapper)}>
+            <TabPanel
+              id="comments"
+              className={cx(styles.tabPanel, {
+                [styles.isVisible]: this.state.selectedTab === 'comments'
+              })}>
+              <CommentsPanelContainer
+                emitter={this.props.entrySidebarProps.emitter}
+                isVisible={this.state.selectedTab === 'comments'}
+              />
+            </TabPanel>
+            <TabPanel
+              id="info"
+              className={cx(styles.tabPanel, {
+                [styles.isVisible]: this.state.selectedTab === 'info'
+              })}>
+              <EntryInfoPanelContainer emitter={this.props.entrySidebarProps.emitter} />
+            </TabPanel>
+            <TabPanel
+              id="activity"
+              className={cx(styles.tabPanel, {
+                [styles.isVisible]: this.state.selectedTab === 'activity'
+              })}>
+              <div className={styles.activity} data-test-id="entry-editor-sidebar">
+                {this.renderWidgets(sidebarItems)}
+                {this.renderLegacyExtensions(legacyExtensions)}
+              </div>
+            </TabPanel>
+          </div>
         </div>
       </React.Fragment>
     );

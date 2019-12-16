@@ -32,14 +32,12 @@ import * as appSpaceSettingsUsageSpaceUsageEs6 from 'app/SpaceSettings/Usage/Spa
 import * as componentsSharedDocumentTitleEs6 from 'components/shared/DocumentTitle';
 import * as componentsSharedWorkbenchTitleEs6 from 'components/shared/WorkbenchTitle';
 import * as appEntityEditorComponentsBackNavIndexEs6 from 'app/entity_editor/Components/BackNav';
-import * as appEntityEditorEntityAuxToggleEs6 from 'app/entity_editor/EntityAuxToggle';
 import * as appEntityEditorEntrySecondaryActions from 'app/entry_editor/EntryTitlebar/EntrySecondaryActions/EntrySecondaryActions';
 import * as appEntityEditorStatusNotificationEs6 from 'app/entity_editor/StatusNotification';
 import * as appEntrySidebarEntrySidebarEs6 from 'app/EntrySidebar/EntrySidebar';
 import * as widgetsWidgetRenderWarningEs6 from 'widgets/WidgetRenderWarning';
 import * as widgetsExtensionIFrameRendererEs6 from 'widgets/ExtensionIFrameRenderer';
 import * as appEntityEditorCollaboratorsIndexEs6 from 'app/entity_editor/Collaborators';
-import * as appEntityEditorEntityCommentsToggleEs6 from 'app/entity_editor/EntityCommentsToggle';
 import * as appEntryEditorCustomEditorExtensionRendererEs6 from 'app/entry_editor/CustomEditorExtensionRenderer';
 import * as componentsTabsNoLocalizedFieldsAdviceIndexEs6 from 'components/tabs/NoLocalizedFieldsAdvice';
 import * as appHomeSpaceHomePageEs6 from 'app/home/SpaceHomePage';
@@ -303,14 +301,12 @@ function getModule(name) {
     'components/shared/DocumentTitle': componentsSharedDocumentTitleEs6,
     'components/shared/WorkbenchTitle': componentsSharedWorkbenchTitleEs6,
     'app/entity_editor/Components/BackNav': appEntityEditorComponentsBackNavIndexEs6,
-    'app/entity_editor/EntityAuxToggle': appEntityEditorEntityAuxToggleEs6,
     'app/entity_editor/EntryTitlebar/EntrySecondaryActions': appEntityEditorEntrySecondaryActions,
     'app/entity_editor/StatusNotification': appEntityEditorStatusNotificationEs6,
     'app/EntrySidebar/EntrySidebar': appEntrySidebarEntrySidebarEs6,
     'widgets/WidgetRenderWarning': widgetsWidgetRenderWarningEs6,
     'widgets/ExtensionIFrameRenderer': widgetsExtensionIFrameRendererEs6,
     'app/entity_editor/Collaborators': appEntityEditorCollaboratorsIndexEs6,
-    'app/entity_editor/EntityCommentsToggle': appEntityEditorEntityCommentsToggleEs6,
     'app/entry_editor/CustomEditorExtensionRenderer': appEntryEditorCustomEditorExtensionRendererEs6,
     'components/tabs/NoLocalizedFieldsAdvice': componentsTabsNoLocalizedFieldsAdviceIndexEs6,
     'app/home/SpaceHomePage': appHomeSpaceHomePageEs6,
