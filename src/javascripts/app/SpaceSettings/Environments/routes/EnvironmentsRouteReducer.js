@@ -57,7 +57,8 @@ export const useEnvironmentsRouteState = props => {
     canUpgradeSpace: props.canUpgradeSpace,
     isLegacyOrganization: props.isLegacyOrganization,
     organizationId: props.organizationId,
-    spaceId: props.spaceId
+    spaceId: props.spaceId,
+    pubsubClient: props.pubsubClient
   };
 
   const [state, dispatch] = useReducer(createEnvReducer, initialState);
@@ -125,6 +126,27 @@ export const useEnvironmentsRouteState = props => {
     dispatch({ type: SET_IS_LOADING, value: false });
   };
 
+  const RefetchEnvironments = async () => {
+    const { isLegacyOrganization } = props;
+
+    const { environments, aliases } = await resourceEndpoint.getAll();
+
+    const items = environments.map(makeEnvironmentModel);
+
+    const resource = isLegacyOrganization
+      ? { usage: items.length && items.length - 1 } // exclude master for consistency with v2 api
+      : await resourceService.get('environment');
+
+    dispatch({
+      type: SET_ENVIRONMENTS,
+      resource,
+      items,
+      canCreateEnv: isLegacyOrganization || canCreate(resource),
+      hasOptedInEnv: !!aliases,
+      allSpaceAliases: aliases
+    });
+  };
+
   const OpenCreateDialog = async () => {
     const { currentEnvironmentId } = props;
     const { items, canSelectSource } = state;
@@ -171,6 +193,7 @@ export const useEnvironmentsRouteState = props => {
   const actions = {
     FetchPermissions,
     FetchEnvironments,
+    RefetchEnvironments,
     OpenCreateDialog,
     OpenDeleteDialog,
     OpenUpgradeSpaceDialog

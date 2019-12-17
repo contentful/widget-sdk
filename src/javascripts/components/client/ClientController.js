@@ -25,11 +25,9 @@ export default function register() {
       let Analytics;
       let TokenStore;
       let refreshNavState;
-      let pubsubClient;
       let pubsubSubscribed;
       let authorization;
       let EntityFieldValueSpaceContext;
-      let createPubSubClientForSpace;
       let ENVIRONMENT_ALIAS_CHANGED_EVENT;
       let initEnvAliasChangeHandler;
 
@@ -137,6 +135,8 @@ export default function register() {
           newEnforcement
         );
 
+        const pubsubClient = spaceContext.pubsubClient;
+
         if (pubsubClient && pubsubSubscribed) {
           // when switching spaces or accessing org settings
           // the previous spaceId listeners have to be removed
@@ -144,11 +144,9 @@ export default function register() {
           pubsubSubscribed = false;
         }
 
-        const hasOptedIntoAliases = spaceContext.hasOptedIntoAliases();
-        if (!pubsubSubscribed && spaceId && hasOptedIntoAliases) {
+        if (pubsubClient && !pubsubSubscribed && spaceId) {
           // listen for backend events
           pubsubSubscribed = true;
-          pubsubClient = await createPubSubClientForSpace(spaceId);
           const environmentAliasChangedHandler = initEnvAliasChangeHandler(
             spaceContext.getEnvironmentId()
           );
@@ -201,7 +199,7 @@ export default function register() {
           TokenStore,
           { default: authorization },
           EntityFieldValueSpaceContext,
-          { createPubSubClientForSpace, ENVIRONMENT_ALIAS_CHANGED_EVENT },
+          { ENVIRONMENT_ALIAS_CHANGED_EVENT },
           { default: initEnvAliasChangeHandler }
         ] = await Promise.all([
           import('analytics/isAnalyticsAllowed'),

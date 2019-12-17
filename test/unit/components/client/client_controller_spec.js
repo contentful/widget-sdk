@@ -38,7 +38,7 @@ describe('Client Controller', () => {
       disable: sinon.stub(),
       track: sinon.stub(),
       intercomDisable: sinon.stub(),
-      createPubSubClientForSpace: sinon.stub().returns({ on: this.pubSubOn, off: this.pubSubOn })
+      pubsubClient: { on: this.pubSubOn, off: this.pubSubOn }
     };
 
     this.system.set('analytics/Analytics', {
@@ -251,23 +251,17 @@ describe('Client Controller', () => {
       this.spaceContext.space = null;
       this.spaceContext.getEnvironmentId = () => this.environmentId;
       this.spaceContext.isMasterEnvironment = () => true;
+      this.spaceContext.pubsubClient = this.stubs.pubsubClient;
     });
 
-    it('does not subscribe if not opted in and spaceId', async function() {
-      this.spaceContext.hasOptedIntoAliases = () => false;
-      $apply();
-      sinon.assert.notCalled(this.stubs.createPubSubClientForSpace);
-    });
-
-    it('does not subscribe if opted in and no spaceId', async function() {
+    it('does not subscribe if no spaceId', async function() {
       this.spaceContext.getId = () => null;
       $apply();
-      sinon.assert.notCalled(this.stubs.createPubSubClientForSpace);
+      sinon.assert.notCalled(this.pubSubOn);
     });
 
-    it('subscribes if opted in and spaceId', async function() {
+    it('subscribes if spaceId', async function() {
       await $applyAsync();
-      sinon.assert.calledWith(this.stubs.createPubSubClientForSpace, this.spaceId);
       sinon.assert.calledWith(this.pubSubOn, this.ENVIRONMENT_ALIAS_CHANGED_EVENT, sinon.match.any);
     });
   });

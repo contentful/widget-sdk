@@ -71,6 +71,13 @@ describe('spaceContext', () => {
       }
     });
 
+    this.system.set('services/PubSubService', {
+      createPubSubClientForSpace: sinon.stub().returns({
+        on: sinon.stub(),
+        off: sinon.stub()
+      })
+    });
+
     this.LD = await this.system.import('utils/LaunchDarkly');
     this.LD._setFlag('feature-dv-11-2017-environments', true);
 

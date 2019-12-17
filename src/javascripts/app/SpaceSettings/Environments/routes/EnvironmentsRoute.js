@@ -35,11 +35,15 @@ import EnvironmentAliases from 'app/SpaceSettings/EnvironmentAliases/Environment
 import EnvironmentDetails from 'app/common/EnvironmentDetails';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { useEnvironmentsRouteState } from './EnvironmentsRouteReducer';
+import { ENVIRONMENT_CREATION_COMPLETE_EVENT } from 'services/PubSubService';
 
 export default function EnvironmentsRoute(props) {
-  const [state, { FetchPermissions, FetchEnvironments, ...actions }] = useEnvironmentsRouteState(
-    props
-  );
+  const [
+    state,
+    { FetchPermissions, FetchEnvironments, RefetchEnvironments, ...actions }
+  ] = useEnvironmentsRouteState(props);
+
+  const { aliasesEnabled, canManageAliases, hasOptedInEnv, pubsubClient } = state;
 
   useEffect(() => {
     (async () => {
@@ -49,7 +53,17 @@ export default function EnvironmentsRoute(props) {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   // top: effect forced to happen only once
 
-  const { aliasesEnabled, canManageAliases, hasOptedInEnv } = state;
+  useEffect(() => {
+    const handler = () => {
+      RefetchEnvironments();
+    };
+
+    pubsubClient.on(ENVIRONMENT_CREATION_COMPLETE_EVENT, handler);
+
+    return () => {
+      pubsubClient.off(ENVIRONMENT_CREATION_COMPLETE_EVENT, handler);
+    };
+  });
 
   return (
     <Fragment>
@@ -93,7 +107,8 @@ EnvironmentsRoute.propTypes = {
   organizationId: PropTypes.string.isRequired,
   currentEnvironmentId: PropTypes.string.isRequired,
   canUpgradeSpace: PropTypes.bool.isRequired,
-  isLegacyOrganization: PropTypes.bool.isRequired
+  isLegacyOrganization: PropTypes.bool.isRequired,
+  pubsubClient: PropTypes.object.isRequired
 };
 
 const environmentListStyles = {

@@ -10,7 +10,7 @@ export default {
     'spaceContext',
     '$state',
     (spaceContext, $state) => {
-      const { organization, endpoint, space } = spaceContext;
+      const { organization, endpoint, space, pubsubClient } = spaceContext;
       const spaceId = spaceContext.getId();
       const currentEnvironmentId = spaceContext.getEnvironmentId();
       const organizationId = organization.sys.id;
@@ -22,6 +22,7 @@ export default {
         currentEnvironmentId,
         organizationId,
         isMasterEnvironment,
+        pubsubClient,
         canUpgradeSpace: isOwnerOrAdmin(organization),
         isLegacyOrganization: isLegacyOrganization(organization),
         endpoint,

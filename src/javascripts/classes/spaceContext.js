@@ -35,6 +35,7 @@ export default function register() {
       let createLocaleRepo;
       let createUiConfigStore;
       let createSpaceEndpoint;
+      let createPubSubClientForSpace;
       let PublishedCTRepo;
       let MembershipRepo;
       let accessChecker;
@@ -68,7 +69,8 @@ export default function register() {
             TokenStore,
             Auth,
             Config,
-            { default: client }
+            { default: client },
+            { createPubSubClientForSpace }
           ] = await Promise.all([
             import('data/sharejs/Connection'),
             import('data/shouldUseEnvEndpoint'),
@@ -89,7 +91,8 @@ export default function register() {
             import('services/TokenStore'),
             import('Authentication'),
             import('Config'),
-            import('services/client')
+            import('services/client'),
+            import('services/PubSubService')
           ]);
         },
 
@@ -130,7 +133,7 @@ export default function register() {
          * @param {string?} uriEnvOrAliasId environment id based on the uri
          * @returns {Promise<self>}
          */
-        resetWithSpace: function(spaceData, uriEnvOrAliasId) {
+        resetWithSpace: async function(spaceData, uriEnvOrAliasId) {
           const self = this;
           accessChecker.setSpace(spaceData);
 
@@ -202,7 +205,10 @@ export default function register() {
                 self.publishedCTs,
                 createViewMigrator(ctMap)
               );
-            })
+            }),
+            (async () => {
+              self.pubsubClient = await createPubSubClientForSpace(spaceId);
+            })()
           ]).then(() => {
             Telemetry.record('space_context_http_time', Date.now() - start);
             // TODO: remove this after we have store with combined reducers on top level
