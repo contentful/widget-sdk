@@ -5,7 +5,6 @@ import React from 'react';
 import isNumber from 'lodash/isNumber';
 import { Modal } from '@contentful/forma-36-react-components';
 import ModalLauncher from 'app/common/ModalLauncher';
-
 import ExtensionIFrameRenderer from '../ExtensionIFrameRenderer';
 import * as Dialogs from '../ExtensionDialogs';
 import { applyDefaultValues } from '../WidgetParametersUtils';
@@ -25,7 +24,7 @@ const SIMPLE_DIALOG_TYPE_TO_OPENER = {
 export default function makeExtensionDialogsHandlers(dependencies) {
   return openDialog;
 
-  async function openDialog(type, options) {
+  async function openDialog(type, options = {}) {
     if (Object.keys(SIMPLE_DIALOG_TYPE_TO_OPENER).includes(type)) {
       const open = SIMPLE_DIALOG_TYPE_TO_OPENER[type];
       return open(options);

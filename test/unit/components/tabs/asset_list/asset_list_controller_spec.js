@@ -393,10 +393,6 @@ describe('Asset List Controller', () => {
     it('asset is created', () => {
       sinon.assert.calledTwice(spaceContext.space.createAsset);
     });
-
-    it('process is triggered', () => {
-      sinon.assert.calledTwice(stubs.process);
-    });
   });
 
   describe('#showNoAssetsAdvice', () => {

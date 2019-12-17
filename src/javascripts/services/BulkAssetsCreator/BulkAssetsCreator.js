@@ -4,6 +4,7 @@ import { Notification } from '@contentful/forma-36-react-components';
 import * as stringUtils from 'utils/StringUtils';
 import { getModule } from 'NgRegistry';
 import * as logger from 'services/logger';
+import delay from 'delay';
 
 /**
  * Opens file selector to select files which will then be uploaded as assets.
@@ -30,30 +31,27 @@ export function open(localeCode) {
   });
 
   function createAssetsForFiles(files) {
-    const $q = getModule('$q');
-
     if (files.length === 0) {
-      return $q.resolve([]);
+      return Promise.resolve([]);
     }
-    return $q.all(files.map(createAssetForFile)).then(
+    return Promise.all(files.map(createAssetForFile)).then(
       assets => {
         assets = assets.filter(identity);
         Notification.success('Assets uploaded. Processing…');
-        return $q
-          .all(assets.map(processAssetForFile))
+        return Promise.all(assets.map(processAssetForFile))
           .then(() => {
             Notification.success('Assets processed. Updating…');
             return assets;
           })
           .catch(error => {
             Notification.error('Some assets failed to process');
-            return $q.reject(error);
+            return Promise.reject(error);
           });
       },
       error => {
         logger.logServerWarn('Some assets failed to upload', { error });
         Notification.error('Some assets failed to upload');
-        return $q.reject(error);
+        return Promise.reject(error);
       }
     );
   }
@@ -89,19 +87,16 @@ export function open(localeCode) {
  * @returns {Promise<Object{publishedAssets, unpublishableAssets}>}
  */
 export function tryToPublishProcessingAssets(assets) {
-  const $q = getModule('$q');
-  const $timeout = getModule('$timeout');
-
   const publishedAssets = [];
   const unpublishableAssets = [];
 
   if (!assets.length) {
-    return $q.resolve({ publishedAssets, unpublishableAssets });
+    return Promise.resolve({ publishedAssets, unpublishableAssets });
   }
 
   let triesLeft = 5;
 
-  return $timeout(1000)
+  return delay(1000)
     .then(() => {
       return nextTry(assets, triesLeft);
     })
@@ -112,7 +107,7 @@ export function tryToPublishProcessingAssets(assets) {
 
   function nextTry(assets) {
     if (assets.length) {
-      return $timeout(1000).then(() => {
+      return delay(1000).then(() => {
         triesLeft = triesLeft - 1;
         return tryLast(assets);
       });
@@ -122,8 +117,6 @@ export function tryToPublishProcessingAssets(assets) {
   // Assume last given asset's processing started last and will be done last.
   // Once the last given asset can be published, try to publish all other assets.
   function tryLast(assets) {
-    const $q = getModule('$q');
-
     if (triesLeft > 0) {
       const lastAsset = assets[assets.length - 1];
       const otherAssets = assets.slice(0, -1);
@@ -131,33 +124,31 @@ export function tryToPublishProcessingAssets(assets) {
         .then(() => tryAll(otherAssets).catch(unprocessedAssets => nextTry(unprocessedAssets)))
         .catch(() => nextTry(assets));
     } else {
-      return tryAll(assets).catch(() => $q.resolve());
+      return tryAll(assets).catch(() => Promise.resolve());
     }
   }
 
   function tryAll(assets) {
-    const $q = getModule('$q');
-
     const rejectedAssets = [];
-    return $q
-      .all(
-        assets.map(asset => {
-          return tryToPublish(asset).catch(() => rejectedAssets.push(asset));
-        })
-      )
-      .then(() => {
-        if (rejectedAssets.length) {
-          return $q.reject(rejectedAssets); // Try again!
-        }
-      });
+    return Promise.all(
+      assets.map(asset => {
+        return tryToPublish(asset).catch(() => rejectedAssets.push(asset));
+      })
+    ).then(() => {
+      if (rejectedAssets.length) {
+        return Promise.reject(rejectedAssets); // Try again!
+      }
+    });
   }
 
   function tryToPublish(asset) {
     return publishUnprocessedAsset(asset).then(
-      () => publishedAssets.push(asset),
+      () => {
+        return publishedAssets.push(asset);
+      },
       error => {
         if (triesLeft && error.status === 409) {
-          return $q.reject(asset); // Try again!
+          return Promise.reject(asset); // Try again!
         } else {
           unpublishableAssets.push(asset);
         }

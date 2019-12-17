@@ -6,7 +6,7 @@ import { fileNameToTitle } from 'utils/StringUtils';
 import { trackMarkdownEditorAction } from 'analytics/MarkdownEditorActions';
 import { track } from 'analytics/Analytics';
 import * as entitySelector from 'search/EntitySelector/entitySelector';
-import * as BulkAssetsCreator from 'services/BulkAssetsCreator';
+import { openBulkAssetsCreatorAndProcess } from 'services/BulkAssetsCreator/openBulkAssetsCreatorAndProcess';
 import * as AssetUrlService from 'services/AssetUrlService';
 import LinkOrganizer from './linkOrganizer';
 import * as ModalLauncher from 'app/common/ModalLauncher';
@@ -80,28 +80,10 @@ export function create(editor, locale, defaultLocaleCode, { zen }) {
     const cursor = wrapper.getCursor();
     wrapper.disable();
 
-    BulkAssetsCreator.open(localeCode)
-      .then(assetObjects => {
-        return BulkAssetsCreator.tryToPublishProcessingAssets(assetObjects).then(result => {
-          const { publishedAssets, unpublishableAssets } = result;
-          if (publishedAssets.length && !unpublishableAssets.length) {
-            Notification.success(
-              (publishedAssets.length === 1
-                ? 'The asset was'
-                : `All ${publishedAssets.length} assets were`) + ' just published'
-            );
-          } else if (unpublishableAssets.length) {
-            Notification.error(
-              `Failed to publish ${
-                unpublishableAssets.length === 1
-                  ? 'the asset'
-                  : `${unpublishableAssets.length} assets`
-              }`
-            );
-          }
-          wrapper.setCursor(cursor);
-          _insertAssetLinks(publishedAssets.map(({ data }) => data));
-        });
+    openBulkAssetsCreatorAndProcess(localeCode)
+      .then(({ publishedAssets }) => {
+        wrapper.setCursor(cursor);
+        _insertAssetLinks(publishedAssets);
       })
       .catch(() => {
         wrapper.setCursor(cursor);

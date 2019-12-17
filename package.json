@@ -50,6 +50,7 @@
     "color": "^2.0.1",
     "contentful-resolve-response": "^1.1.4",
     "dataloader": "^1.4.0",
+    "delay": "^4.3.0",
     "detect-browser": "^3.0.1",
     "downshift": "^1.31.16",
     "echarts": "^4.2.1",
