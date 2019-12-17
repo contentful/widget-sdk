@@ -8,8 +8,8 @@ import { LOCATION_APP } from '../WidgetLocations';
 import * as Random from 'utils/Random';
 import TheLocaleStore from 'services/localeStore';
 
-import { APP_EVENTS_IN, APP_EVENTS_OUT } from 'app/settings/AppsBeta/AppHookBus';
-import getCurrentAppState from 'app/settings/AppsBeta/AppCurrentState';
+import { APP_EVENTS_IN, APP_EVENTS_OUT } from 'app/Apps/AppHookBus';
+import getCurrentAppState from 'app/Apps/AppCurrentState';
 
 const STAGE_PRE_INSTALL = 'preInstall';
 const STAGE_POST_INSTALL = 'postInstall';

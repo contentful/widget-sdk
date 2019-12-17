@@ -1,7 +1,7 @@
 import { getModule } from 'NgRegistry';
 import { get, set } from 'lodash';
-import createAppsRepo from 'app/settings/AppsBeta/AppsRepo';
-import { getAppDefinitionLoader } from 'app/settings/AppsBeta/AppDefinitionLoaderInstance';
+import createAppsRepo from 'app/Apps/AppsRepo';
+import { getAppDefinitionLoader } from 'app/Apps/AppDefinitionLoaderInstance';
 
 // AppInstallation is an environment-scoped entity:
 // we cache loaders per space-environment.

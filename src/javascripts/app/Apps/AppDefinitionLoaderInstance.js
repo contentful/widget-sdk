@@ -1,7 +1,7 @@
 import { getModule } from 'NgRegistry';
 import * as Auth from 'Authentication';
 import * as Config from 'Config';
-import createAppDefinitionLoader from 'app/settings/AppsBeta/AppDefinitionLoader';
+import createAppDefinitionLoader from 'app/Apps/AppDefinitionLoader';
 import { createOrganizationEndpoint, createAppDefinitionsEndpoint } from 'data/Endpoint';
 
 // AppDefinition is an organization-scoped entity:
