@@ -13,13 +13,9 @@ import {
 } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink';
 import AppPermissions from './AppPermissions';
-import { getStore } from 'browserStorage';
 import { websiteUrl } from 'Config';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
 import AppMarkdown from './AppMarkdown';
-
-const sessionStorage = getStore('session');
-sessionStorage.set('appPermissions', JSON.stringify({}));
 
 const styles = {
   root: css({
@@ -121,16 +117,6 @@ AppHeader.propTypes = {
   app: AppPropType.isRequired
 };
 
-function saveAcceptAuthorize(appId) {
-  try {
-    const perms = JSON.parse(sessionStorage.get('appPermissions')) || {};
-    perms[appId] = true;
-    sessionStorage.set('appPermissions', JSON.stringify(perms));
-  } catch (e) {
-    sessionStorage.set('appPermissions', JSON.stringify({ [appId]: true }));
-  }
-}
-
 function AppPermissionScreen({ app, onInstall, onCancel, onClose }) {
   useEffect(() => {
     AppLifecycleTracking.permissionsOpened(app.id);
@@ -138,7 +124,6 @@ function AppPermissionScreen({ app, onInstall, onCancel, onClose }) {
 
   const onAuthorize = () => {
     AppLifecycleTracking.permissionsAccepted(app.id);
-    saveAcceptAuthorize(app.id);
     onClose(true);
     onInstall();
   };
@@ -182,7 +167,7 @@ export function AppDetails(props) {
 
   if (showPermissions) {
     return (
-      <StateLink to="^.detail" params={{ appId: app.id }}>
+      <StateLink to="^.detail" params={{ appId: app.id, acceptedPermissions: true }}>
         {({ onClick }) => (
           <AppPermissionScreen
             app={app}

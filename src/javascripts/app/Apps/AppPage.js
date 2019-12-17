@@ -26,15 +26,11 @@ import { installOrUpdate, uninstall } from './AppOperations';
 import { APP_EVENTS_IN, APP_EVENTS_OUT } from './AppHookBus';
 import UnknownErrorMessage from 'components/shared/UnknownErrorMessage';
 import UninstallModal from './UninstallModal';
-import AppPermissions from './AppPermissions';
 import ModalLauncher from 'app/common/ModalLauncher';
-import { getStore } from 'browserStorage';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
 
 import { websiteUrl } from 'Config';
 import { getSectionVisibility } from 'access_control/AccessChecker';
-
-const sessionStorage = getStore('session');
 
 const BUSY_STATE_INSTALLATION = 'installation';
 const BUSY_STATE_UPDATE = 'update';
@@ -110,13 +106,6 @@ const styles = {
     marginRight: tokens.spacingXs,
     verticalAlign: 'middle'
   }),
-  appPermissions: css({
-    display: 'flex',
-    justifyContent: 'center',
-    width: '100%',
-    height: '100%',
-    paddingTop: '100px'
-  }),
   icon: css({
     width: '45px',
     height: '45px',
@@ -127,20 +116,6 @@ const styles = {
     marginTop: '-80px'
   })
 };
-
-function isAppAlreadyAuthorized(app = {}) {
-  if (app.isPrivateApp) {
-    return true;
-  }
-
-  try {
-    const perms = JSON.parse(sessionStorage.get('appPermissions'));
-
-    return perms[app.id] || false;
-  } catch (e) {
-    return false;
-  }
-}
 
 export default class AppRoute extends Component {
   static propTypes = {
@@ -167,8 +142,7 @@ export default class AppRoute extends Component {
     showStillLoadingText: false,
     loadingError: false,
     title: get(this.props.app, ['title'], get(this.props.app, ['appDefinition', 'name'])),
-    appIcon: get(this.props.app, ['icon'], ''),
-    acceptedPermissions: isAppAlreadyAuthorized(this.props.app)
+    appIcon: get(this.props.app, ['icon'], '')
   };
 
   // There are no parameters in the app location
@@ -220,7 +194,6 @@ export default class AppRoute extends Component {
         appEnabled,
         isInstalled: !!appInstallation,
         appDefinition,
-        permissions: get(app, ['permissions'], ''),
         actionList: get(app, ['actionList'], [])
       },
       this.afterInitialize
@@ -491,10 +464,6 @@ export default class AppRoute extends Component {
     );
   }
 
-  onAuthorize = () => {
-    this.setState({ acceptedPermissions: true });
-  };
-
   renderLoadingError = () => {
     const { title } = this.state;
 
@@ -513,17 +482,7 @@ export default class AppRoute extends Component {
       return <StateRedirect to="spaces.detail.entries.list" />;
     }
 
-    const {
-      ready,
-      appLoaded,
-      loadingError,
-      isInstalled,
-      acceptedPermissions,
-      appIcon,
-      title,
-      permissions,
-      appEnabled
-    } = this.state;
+    const { ready, appLoaded, loadingError, isInstalled, appEnabled } = this.state;
 
     if (!ready) {
       return this.renderLoading();
@@ -531,23 +490,6 @@ export default class AppRoute extends Component {
 
     if (!appEnabled && !isInstalled) {
       return this.renderAccessDenied();
-    }
-
-    if (!isInstalled && !acceptedPermissions) {
-      return (
-        <Workbench>
-          <Workbench.Header title={this.renderTitle()} onBack={this.props.goBackToList} />
-          <Workbench.Content type="text">
-            <AppPermissions
-              onAuthorize={this.onAuthorize}
-              onCancel={this.props.goBackToList}
-              icon={appIcon}
-              title={title}
-              permissions={permissions}
-            />
-          </Workbench.Content>
-        </Workbench>
-      );
     }
 
     return (
