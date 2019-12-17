@@ -43,12 +43,48 @@ export default {
     {
       name: 'detail',
       url: '/:appId',
+      params: {
+        acceptedPermissions: null
+      },
       component: AppPage,
       resolve: {
         // Define dependency on spaceContext so we load the app
         // only when the space is initialized.
         app: ['$stateParams', 'spaceContext', ({ appId }) => getAppsRepo().getApp(appId)]
       },
+      onEnter: [
+        '$state',
+        '$stateParams',
+        'spaceContext',
+        'app',
+        ($state, $stateParams, spaceContext, app) => {
+          // No need to consent for private apps.
+          if (app.isPrivateApp) {
+            // Allow to continue page rendering.
+            return;
+          }
+
+          // If an app is not installed and permissions were not accepted
+          // we display the app dialog so consent can be given.
+          if (!app.appInstallation && !$stateParams.acceptedPermissions) {
+            // When executing `onEnter` after a page refresh
+            // the current state won't be initialized. For this reason
+            // we need to compute params and an absolute path manually.
+            const params = {
+              spaceId: spaceContext.getId(),
+              appId: app.id // Passing this param will open the app dialog.
+            };
+
+            let absoluteListPath = 'spaces.detail.apps.list';
+            if (!spaceContext.isMasterEnvironment()) {
+              params.environmentId = spaceContext.getEnvironmentId();
+              absoluteListPath = 'spaces.detail.environment.apps.list';
+            }
+
+            $state.go(absoluteListPath, params);
+          }
+        }
+      ],
       mapInjectedToProps: [
         'spaceContext',
         '$state',
