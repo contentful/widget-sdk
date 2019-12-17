@@ -70,7 +70,8 @@ export default function EntrySecondaryActions({ entityInfo, entryActions, onDele
   };
 
   const handleShowDisabled = () => {
-    setAreDisabledFieldsVisible(entryActions.onShowDisabledFields());
+    const show = entryActions.onShowDisabledFields();
+    setAreDisabledFieldsVisible(show);
     setOpen(false);
   };
 
@@ -116,7 +117,7 @@ export default function EntrySecondaryActions({ entityInfo, entryActions, onDele
           <DropdownListItem
             onClick={handleShowDisabled}
             testId="cf-ui-button-action-show-disabled-fields">
-            {areDisabledFieldsVisible ? `Show disabled fields` : `Hide disabled fields`}
+            {areDisabledFieldsVisible ? `Hide disabled fields` : `Show disabled fields`}
           </DropdownListItem>
         </DropdownList>
       </Dropdown>
