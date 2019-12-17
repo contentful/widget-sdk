@@ -204,7 +204,7 @@ export default class AppRoute extends Component {
 
     const [{ appInstallation }, appEnabled] = await Promise.all([
       this.checkAppStatus(appDefinition),
-      productCatalog.isAppEnabled(app)
+      productCatalog.isAppEnabled(appDefinition)
     ]);
 
     appHookBus.setInstallation(appInstallation);

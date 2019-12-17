@@ -163,13 +163,6 @@
           "title": "Bynder",
           "slug": "bynder",
           "appDefinitionId": "5KySdUzG7OWuCE2V3fgtIa",
-          "productCatalogFlag": {
-            "sys": {
-              "type": "Link",
-              "linkType": "Entry",
-              "id": "70TgnulvTrc1P8KDb65kjn"
-            }
-          },
           "icon": {
             "sys": {
               "type": "Link",
@@ -289,13 +282,6 @@
           "title": "Image Focal Point",
           "slug": "image-focal-point",
           "appDefinitionId": "342Q2DqCjmsdN5BJCEPkrJ",
-          "productCatalogFlag": {
-            "sys": {
-              "type": "Link",
-              "linkType": "Entry",
-              "id": "70TgnulvTrc1P8KDb65kjn"
-            }
-          },
           "icon": {
             "sys": {
               "type": "Link",
@@ -545,13 +531,6 @@
           "title": "Optimizely",
           "slug": "optimizely",
           "appDefinitionId": "i43PggcHag2PCrGjYTiIX",
-          "productCatalogFlag": {
-            "sys": {
-              "type": "Link",
-              "linkType": "Entry",
-              "id": "7HOYzLzHcE0qEpjNv1QtKG"
-            }
-          },
           "icon": {
             "sys": {
               "type": "Link",
@@ -834,13 +813,6 @@
           "title": "Cloudinary",
           "slug": "cloudinary",
           "appDefinitionId": "zjcnWgBknf9zB7IM9HZjE",
-          "productCatalogFlag": {
-            "sys": {
-              "type": "Link",
-              "linkType": "Entry",
-              "id": "70TgnulvTrc1P8KDb65kjn"
-            }
-          },
           "icon": {
             "sys": {
               "type": "Link",
@@ -1037,13 +1009,6 @@
           "title": "Netlify",
           "slug": "netlify",
           "appDefinitionId": "1VchawWvbIClHuMIyxwR5m",
-          "productCatalogFlag": {
-            "sys": {
-              "type": "Link",
-              "linkType": "Entry",
-              "id": "70TgnulvTrc1P8KDb65kjn"
-            }
-          },
           "icon": {
             "sys": {
               "type": "Link",
@@ -1327,13 +1292,6 @@
           "title": "Dropbox",
           "slug": "dropbox",
           "appDefinitionId": "6YdAwxoPHopeTeuwh43UJu",
-          "productCatalogFlag": {
-            "sys": {
-              "type": "Link",
-              "linkType": "Entry",
-              "id": "70TgnulvTrc1P8KDb65kjn"
-            }
-          },
           "icon": {
             "sys": {
               "type": "Link",
@@ -1464,40 +1422,6 @@
               "id": "lpjm8d10rkpy"
             }
           },
-          "id": "70TgnulvTrc1P8KDb65kjn",
-          "type": "Entry",
-          "createdAt": "2019-08-22T07:30:32.700Z",
-          "updatedAt": "2019-08-22T09:05:40.579Z",
-          "environment": {
-            "sys": {
-              "id": "master",
-              "type": "Link",
-              "linkType": "Environment"
-            }
-          },
-          "revision": 3,
-          "contentType": {
-            "sys": {
-              "type": "Link",
-              "linkType": "ContentType",
-              "id": "appProductCatalogFlag"
-            }
-          },
-          "locale": "en-US"
-        },
-        "fields": {
-          "flagId": "basic_apps"
-        }
-      },
-      {
-        "sys": {
-          "space": {
-            "sys": {
-              "type": "Link",
-              "linkType": "Space",
-              "id": "lpjm8d10rkpy"
-            }
-          },
           "id": "730R5aewoZKRiarsuUC3xk",
           "type": "Entry",
           "createdAt": "2019-09-04T08:00:52.853Z",
@@ -1522,40 +1446,6 @@
         "fields": {
           "negative": true,
           "info": "Build widget will be removed from sidebars of all content types"
-        }
-      },
-      {
-        "sys": {
-          "space": {
-            "sys": {
-              "type": "Link",
-              "linkType": "Space",
-              "id": "lpjm8d10rkpy"
-            }
-          },
-          "id": "7HOYzLzHcE0qEpjNv1QtKG",
-          "type": "Entry",
-          "createdAt": "2019-08-20T14:38:05.580Z",
-          "updatedAt": "2019-08-22T09:06:18.705Z",
-          "environment": {
-            "sys": {
-              "id": "master",
-              "type": "Link",
-              "linkType": "Environment"
-            }
-          },
-          "revision": 2,
-          "contentType": {
-            "sys": {
-              "type": "Link",
-              "linkType": "ContentType",
-              "id": "appProductCatalogFlag"
-            }
-          },
-          "locale": "en-US"
-        },
-        "fields": {
-          "flagId": "optimizely_app"
         }
       },
       {
@@ -1662,13 +1552,6 @@
           "title": "Frontify",
           "slug": "frontify",
           "appDefinitionId": "5wHGALSJtz7y2EQOLfGhKH",
-          "productCatalogFlag": {
-            "sys": {
-              "type": "Link",
-              "linkType": "Entry",
-              "id": "70TgnulvTrc1P8KDb65kjn"
-            }
-          },
           "icon": {
             "sys": {
               "type": "Link",

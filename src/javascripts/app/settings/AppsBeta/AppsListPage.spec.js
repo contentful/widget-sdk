@@ -17,16 +17,7 @@ describe('AppsListPage', () => {
   const orgId = '123';
   const spaceId = '456';
   const userId = '000';
-  const mockProductCatalog = {
-    loadProductCatalogFlags: jest.fn(() =>
-      Promise.resolve({
-        basic_apps: true,
-        optimizely_app: true
-      })
-    ),
-    isAppsFeatureDisabled: () => Promise.resolve(false),
-    isAppEnabled: () => true
-  };
+  const mockProductCatalog = { isAppEnabled: () => true };
 
   afterEach(cleanup);
 
