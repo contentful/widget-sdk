@@ -304,5 +304,67 @@ describe('Entry Editor Controller', function() {
         }.bind(this)
       ).not.toThrow();
     });
+
+    it('should not increment a zero index after the duplication', async function() {
+      this.sandbox.stub(stubs, 'getDefaultEntryFields').returns({
+        [entryTitleId]: {
+          'en-US': 'Hey, Sunshine! (0)',
+          de: 'Hallo, Sonnenlicht! (0)'
+        },
+        [notEntryTitleId]: {
+          'en-US': 'this is a text in english',
+          de: 'das ist ein text in Deutsch'
+        }
+      });
+
+      await configureForTest.call(this);
+
+      const entryFields = stubs.getDefaultEntryFields();
+
+      expect(
+        async function() {
+          const entry = await this.scope.entryActions.onDuplicate();
+
+          for (const [locale, localizedValue] of Object.entries(entry.fields[entryTitleId])) {
+            expect(localizedValue).toBe(`${entryFields[entryTitleId][locale]} (1)`);
+          }
+
+          for (const [locale, localizedValue] of Object.entries(entry.fields[notEntryTitleId])) {
+            expect(localizedValue).toBe(entryFields[notEntryTitleId][locale]);
+          }
+        }.bind(this)
+      ).not.toThrow();
+    });
+
+    it('should increment multi-digit indexes after the duplication', async function() {
+      this.sandbox.stub(stubs, 'getDefaultEntryFields').returns({
+        [entryTitleId]: {
+          'en-US': 'Hey, Sunshine! (10)',
+          de: 'Hallo, Sonnenlicht! (10)'
+        },
+        [notEntryTitleId]: {
+          'en-US': 'this is a text in english',
+          de: 'das ist ein text in Deutsch'
+        }
+      });
+
+      await configureForTest.call(this);
+
+      const entryFields = stubs.getDefaultEntryFields();
+
+      expect(
+        async function() {
+          const entry = await this.scope.entryActions.onDuplicate();
+
+          for (const [locale, localizedValue] of Object.entries(entry.fields[entryTitleId])) {
+            expect(localizedValue).toBe(entryFields[entryTitleId][locale].replace('(10)', '(11)'));
+          }
+
+          for (const [locale, localizedValue] of Object.entries(entry.fields[notEntryTitleId])) {
+            expect(localizedValue).toBe(entryFields[notEntryTitleId][locale]);
+          }
+        }.bind(this)
+      ).not.toThrow();
+    });
   });
 });

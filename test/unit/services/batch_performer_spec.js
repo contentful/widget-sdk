@@ -173,6 +173,84 @@ describe('Batch performer service', () => {
 
       performer.duplicate();
     });
+
+    it('should increment the index of the entry title of the duplicated entries', async function() {
+      spaceContext.space = {
+        createEntry: (_id, { fields }) =>
+          new Promise((resolve, reject) => {
+            try {
+              expect(fields[displayField]).toEqual({
+                'en-US': 'Hello! (0) (1)',
+                de: 'Hallo! (0) (1)'
+              });
+              resolve();
+            } catch (error) {
+              reject(error);
+            }
+          })
+      };
+
+      const makeEntityWrapper = () =>
+        makeEntity({
+          fields: {
+            [displayField]: {
+              'en-US': 'Hello! (0)',
+              de: 'Hallo! (0)'
+            }
+          }
+        });
+
+      const makeEntry = () => ({
+        ...makeEntityWrapper(),
+        getSys: _.constant({
+          type: 'Entry',
+          contentType: { sys: { id: 'ctid' } }
+        })
+      });
+
+      const performer = preparePerformer('Entry', makeEntry).call(this);
+
+      performer.duplicate();
+    });
+
+    it('should increment the multi-digit index of the entry title of the duplicated entries', async function() {
+      spaceContext.space = {
+        createEntry: (_id, { fields }) =>
+          new Promise((resolve, reject) => {
+            try {
+              expect(fields[displayField]).toEqual({
+                'en-US': 'Hello! (11)',
+                de: 'Hallo! (11)'
+              });
+              resolve();
+            } catch (error) {
+              reject(error);
+            }
+          })
+      };
+
+      const makeEntityWrapper = () =>
+        makeEntity({
+          fields: {
+            [displayField]: {
+              'en-US': 'Hello! (10)',
+              de: 'Hallo! (10)'
+            }
+          }
+        });
+
+      const makeEntry = () => ({
+        ...makeEntityWrapper(),
+        getSys: _.constant({
+          type: 'Entry',
+          contentType: { sys: { id: 'ctid' } }
+        })
+      });
+
+      const performer = preparePerformer('Entry', makeEntry).call(this);
+
+      performer.duplicate();
+    });
   });
 
   describe('performing batch asset operations', () => {

@@ -195,5 +195,41 @@ describe('EntityHelpers', () => {
         });
       }).not.toThrow();
     });
+
+    it('should not increment a zero index', () => {
+      const entryTitleId = 123;
+      const fields = {
+        [entryTitleId]: {
+          'en-US': 'Hey! (0)',
+          de: 'Ahoi! (0)'
+        }
+      };
+      expect(() => {
+        expect(appendDuplicateIndexToEntryTitle(fields, entryTitleId)).toEqual({
+          [entryTitleId]: {
+            'en-US': 'Hey! (0) (1)',
+            de: 'Ahoi! (0) (1)'
+          }
+        });
+      }).not.toThrow();
+    });
+
+    it('should increment a multi-digit index', () => {
+      const entryTitleId = 123;
+      const fields = {
+        [entryTitleId]: {
+          'en-US': 'Hey! (10)',
+          de: 'Ahoi! (10)'
+        }
+      };
+      expect(() => {
+        expect(appendDuplicateIndexToEntryTitle(fields, entryTitleId)).toEqual({
+          [entryTitleId]: {
+            'en-US': 'Hey! (11)',
+            de: 'Ahoi! (11)'
+          }
+        });
+      }).not.toThrow();
+    });
   });
 });
