@@ -49,7 +49,6 @@ function createAppObject(entry) {
       .map(category => get(category, ['fields', 'name'], null))
       .filter(identity),
     description: get(entry, ['fields', 'description'], ''),
-    flagId: get(entry, ['fields', 'productCatalogFlag', 'fields', 'flagId']),
     icon: get(entry, ['fields', 'icon', 'fields', 'file', 'url'], ''),
     links: get(entry, ['fields', 'links'], []).map(link => link.fields),
     permissions: `__${title} app__ ${permissionsText}`,

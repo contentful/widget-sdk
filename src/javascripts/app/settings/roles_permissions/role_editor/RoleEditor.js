@@ -522,7 +522,7 @@ class RoleEditor extends React.Component {
                 type="checkbox"
                 labelIsLight
                 labelText="Can modify space settings."
-                helpText="This permission allows users to modify locales, webhooks,
+                helpText="This permission allows users to modify locales, webhooks, apps,
               the space name, and logo image. It does not grant permission to modify the roles or access of a user or team to this space. This
               permission does not allow users to delete the space."
               />

@@ -30,7 +30,6 @@ import { getSectionVisibility } from 'access_control/AccessChecker';
 import AppListItem from './AppListItem';
 import AppDetailsModal from './AppDetailsModal';
 import createMicroBackendsClient from 'MicroBackendsClient';
-import { getProductCatalogFlagForApp } from './AppProductCatalog';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
 
 const styles = {
@@ -216,8 +215,7 @@ export default class AppsListPage extends React.Component {
     spaceId: PropTypes.string.isRequired,
     userId: PropTypes.string.isRequired,
     productCatalog: PropTypes.shape({
-      loadProductCatalogFlags: PropTypes.func.isRequired,
-      isAppsFeatureDisabled: PropTypes.func.isRequired
+      isAppEnabled: PropTypes.func.isRequired
     }).isRequired,
     deeplinkAppId: PropTypes.string,
     deeplinkReferrer: PropTypes.string
@@ -226,15 +224,19 @@ export default class AppsListPage extends React.Component {
   state = { ready: false };
 
   async componentDidMount() {
-    try {
-      const apps = await this.props.repo.getApps();
-      const productCatalogFlags = await this.props.productCatalog.loadProductCatalogFlags(apps);
-      const appsFeatureDisabled = await this.props.productCatalog.isAppsFeatureDisabled();
+    const { repo, productCatalog } = this.props;
 
-      const preparedApps = apps.map(app => ({
-        ...app,
-        enabled: getProductCatalogFlagForApp(app, productCatalogFlags)
-      }));
+    try {
+      const apps = await repo.getApps();
+
+      const preparedApps = await Promise.all(
+        apps.map(async app => ({
+          ...app,
+          enabled: await productCatalog.isAppEnabled(app.appDefinition)
+        }))
+      );
+
+      const appsFeatureDisabled = preparedApps.every(app => !app.enabled);
 
       const [installedApps, availableApps] = partition(preparedApps, app => !!app.appInstallation);
 

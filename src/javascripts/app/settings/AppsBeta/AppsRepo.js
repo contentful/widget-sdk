@@ -1,7 +1,6 @@
 import { omit } from 'lodash';
 
 import { fetchMarketplaceApps } from './MarketplaceClient';
-import { hasAllowedAppFeatureFlag } from './AppProductCatalog';
 
 export default function createAppsRepo(cma, appDefinitionLoader) {
   return {
@@ -31,7 +30,7 @@ export default function createAppsRepo(cma, appDefinitionLoader) {
     return [
       ...(await getMarketplaceApps(installationMap, marketplaceApps)),
       ...getPrivateApps(installationMap, orgDefinitions)
-    ].filter(hasAllowedAppFeatureFlag);
+    ];
   }
 
   async function getMarketplaceApps(installationMap, marketplaceApps) {

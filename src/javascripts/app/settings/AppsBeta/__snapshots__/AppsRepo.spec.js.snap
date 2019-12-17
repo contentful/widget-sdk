@@ -74,7 +74,6 @@ The Netlify App gives content editors control over static site builds and makes 
 ![Netlify config](//images.ctfassets.net/lpjm8d10rkpy/4Rf8yoGPw4AQwdMboiVwhF/a0a9a8b8e73a5ace1fdf78adebc24a49/apps-netlify-site-setup.b4a24a69c0.png)
 
 ![Netlify sidebar](//images.ctfassets.net/lpjm8d10rkpy/RrSqXTcdlpfkPt7sJzkEb/57172d0fd3eaa36a5ab90e7d183ed171/apps-netlify-sidebar.0ffd73e12b.png) ",
-    "flagId": "basic_apps",
     "icon": "//images.ctfassets.net/lpjm8d10rkpy/2dYQ3x6VMNZJgDXYmMzLBx/b338ad4b50cd0ff31e7157671b801b4d/logomark.svg",
     "id": "netlify",
     "links": Array [
