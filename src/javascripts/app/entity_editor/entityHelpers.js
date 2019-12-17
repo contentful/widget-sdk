@@ -155,11 +155,11 @@ export function appendDuplicateIndexToEntryTitle(fields, entryTitleId) {
     if (localizedEntryTitles) {
       for (const [locale, entryTitleValue] of Object.entries(localizedEntryTitles)) {
         if (entryTitleValue) {
-          const wrappedNumberRegexp = /\s\(\d\)$/; // finds numbers wrapped into round paranthesis, padded with a space, like (1)
+          const wrappedNumberRegexp = /\s\([1-9]\d{0,}\)$/; // finds numbers wrapped into round paranthesis, padded with a space, like (1)
           const trimmedEntryTitleValue = entryTitleValue.trim();
           const match = trimmedEntryTitleValue.match(wrappedNumberRegexp);
           if (match && match.length) {
-            const copyId = parseInt(match[0].match(/\d/), 10);
+            const copyId = parseInt(match[0].match(/[1-9]\d{0,}/), 10);
             localizedEntryTitles[locale] = trimmedEntryTitleValue.replace(
               wrappedNumberRegexp,
               ` (${copyId + 1})`
