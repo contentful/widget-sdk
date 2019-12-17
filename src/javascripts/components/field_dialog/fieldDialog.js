@@ -70,6 +70,8 @@ export default function register() {
 
       const contentTypeData = $scope.contentType.data;
 
+      $scope.formIsValid = true;
+
       $scope.decoratedField = fieldDecorator.decorate($scope.field, contentTypeData);
 
       $scope.validations = validationDecorator.decorateFieldValidations($scope.field);
@@ -103,12 +105,14 @@ export default function register() {
       $scope.buildRequiredCheckboxProps = () => ({
         id: 'field-validations--required',
         labelText: 'Required field',
-        checked: $scope.decoratedField.required,
+        checked: $scope.decoratedField && $scope.decoratedField.required,
         helpText: "You won't be able to publish an entry if this field is empty",
         className: 'validation-checkboxfield',
         onChange: e => {
-          $scope.decoratedField.required = e.target.checked;
-          $scope.$digest();
+          if ($scope.decoratedField) {
+            $scope.decoratedField.required = e.target.checked;
+            $scope.$digest();
+          }
         }
       });
 
@@ -230,6 +234,26 @@ export default function register() {
           return null;
         }
       }
+      const locales = map(TheLocaleStore.getPrivateLocales(), 'name');
+
+      const updateFieldSettings = updatedSettings => {
+        $scope.decoratedField = updatedSettings;
+      };
+
+      const updateValidation = valid => {
+        $scope.formIsValid = valid;
+      };
+
+      $scope.fieldSettingsProps = {
+        decoratedField: $scope.decoratedField,
+        contentTypeData: contentTypeData,
+        locales: locales,
+        updateFieldSettings: updateFieldSettings,
+        updateValidation: updateValidation,
+        fieldTypeLabel: $scope.fieldTypeLabel,
+        richTextOptions: $scope.richTextOptions,
+        onRichTextOptionsChange: $scope.onRichTextOptionsChange
+      };
     }
   ]);
 
@@ -255,9 +279,11 @@ export default function register() {
             : undefined,
         labelIsLight: true,
         onChange: e => {
-          $scope.field.isTitle = e.target.checked;
-          fieldDecorator.update($scope.decoratedField, $scope.field, $scope.contentType);
-          $scope.$digest();
+          if ($scope.field) {
+            $scope.field.isTitle = e.target.checked;
+            fieldDecorator.update($scope.decoratedField, $scope.field, $scope.contentType);
+            $scope.$digest();
+          }
         }
       });
 

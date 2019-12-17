@@ -222,7 +222,8 @@ function validationDecorator(field) {
 
     const name = getValidationLabel(field, type);
     const views = validationViews.get(type);
-    const currentView = views && views[0].name;
+    const firstView = _.first(views);
+    const currentView = firstView && firstView.name;
     const helpText = getValidationHelpText(field, type);
 
     return {
@@ -256,7 +257,8 @@ function nodeValidationDecorator(node) {
 
     const name = getValidationStringForType(nodeValidationLabels, node, type);
     const views = validationViews.get(type);
-    const currentView = views && views[0].name;
+    const firstView = _.first(views);
+    const currentView = firstView && firstView.name;
     const helpText = getValidationStringForType(nodeValidationHelpText, node, type);
 
     return {

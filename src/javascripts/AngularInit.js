@@ -32,7 +32,6 @@ export const angularInitRun = [
       import('analytics/analyticsConsoleDirective'),
       import('app/ContentModel/Editor/addFieldDialogController'),
       import('services/modalDialogService'),
-      import('app/ContentModel/Editor/apiNameController'),
       import('utils/command/commandDirective'),
       import('components/field_dialog/fieldDialog'),
       import('app/ContentModel/Editor/contentTypeEditorController'),

@@ -31,7 +31,10 @@
     div.modal-dialog__content.field-dialog__content
 
       div(ui-tabpanel="settings")
-        include ./field_dialog_settings.jade
+        react-component(
+          name="components/field_dialog/components/FieldDialogSettingsComponent"
+          props="fieldSettingsProps"
+        )
 
       div(ui-tabpanel="validations"
         ng-form="fieldValidationsForm"
@@ -73,7 +76,7 @@
     .modal-dialog__controls
       button.btn-primary-action(
         type="button" ng-click="dialog.save()"
-        ng-disabled="!fieldForm.$valid")
+        ng-disabled="!fieldForm.$valid || !formIsValid")
         | Save
       button.btn-secondary-action(
         type="button" ng-click="dialog.cancel()")

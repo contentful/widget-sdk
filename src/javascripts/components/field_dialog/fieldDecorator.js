@@ -42,7 +42,7 @@ function extract(decoratedField) {
 function update(decoratedField, field, contentType) {
   extend(field, extract(decoratedField));
 
-  const isTitle = decoratedField.isTitle;
+  const isTitle = decoratedField && decoratedField.isTitle;
   if (isTitle) {
     contentType.displayField = field.id;
   } else if (contentType.displayField === field.id && !isTitle) {
@@ -79,9 +79,9 @@ function isTitleType(fieldType) {
 }
 
 function getDisplayFieldName(field) {
-  if (isEmpty(field.name)) {
+  if (field && isEmpty(field.name)) {
     return isEmpty(field.id) ? 'Untitled field' : 'ID: ' + field.id;
   } else {
-    return field.name;
+    return field && field.name;
   }
 }
