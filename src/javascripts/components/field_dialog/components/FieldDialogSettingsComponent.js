@@ -146,7 +146,12 @@ const FieldDialogSettingsComponent = ({
               {decoratedField.canBeTitle && (
                 <CheckboxField
                   labelText="This field represents the Entry title"
-                  onChange={() => update({ ...field, isTitle: !field.isTitle })}
+                  onChange={() =>
+                    update({
+                      updatedField: { ...field, isTitle: !field.isTitle },
+                      validation: formValidation
+                    })
+                  }
                   checked={field.isTitle}
                   id="field-dialog--is-title"
                   labelIsLight
@@ -155,7 +160,12 @@ const FieldDialogSettingsComponent = ({
               {decoratedField.canBeLocalized && (
                 <CheckboxField
                   labelText="Enable localization of this field"
-                  onChange={() => update({ ...field, localized: !field.localized })}
+                  onChange={() =>
+                    update({
+                      updatedField: { ...field, localized: !field.localized },
+                      validation: formValidation
+                    })
+                  }
                   checked={field.localized}
                   helpText={`All the content can be translated to ${joinAndTruncate(
                     locales,
