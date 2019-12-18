@@ -1,7 +1,4 @@
-import { cloneDeep } from 'lodash';
-
 import * as WidgetStore from './WidgetStore';
-import { create as createBuiltinWidgetList } from './BuiltinWidgets';
 import {
   NAMESPACE_BUILTIN,
   NAMESPACE_EXTENSION,
@@ -25,34 +22,6 @@ describe('WidgetStore', () => {
     };
     const mock = jest.requireMock('./CustomWidgetLoaderInstance');
     mock.getCustomWidgetLoader.mockReturnValue(loaderMock);
-  });
-
-  describe('#getForContentTypeManagement()', () => {
-    it('returns an object of all widget namespaces', async () => {
-      loaderMock.getUncachedForListing.mockResolvedValueOnce([]);
-
-      const widgets = await WidgetStore.getForContentTypeManagement();
-
-      expect(loaderMock.getUncachedForListing).toHaveBeenCalledTimes(1);
-      expect(widgets[NAMESPACE_EXTENSION]).toEqual([]);
-      expect(widgets[NAMESPACE_BUILTIN].map(w => w.id)).toEqual(
-        createBuiltinWidgetList().map(b => b.id)
-      );
-    });
-
-    it('includes extensions and apps', async () => {
-      const widgets = [
-        { src: 'http://localhost:1234', name: 'test', fieldTypes: ['Asset'] },
-        { src: 'https://myapp.com', name: 'Test App', isApp: true, fieldTypes: ['Text'] }
-      ];
-
-      loaderMock.getUncachedForListing = jest.fn().mockResolvedValueOnce(widgets);
-
-      const result = await WidgetStore.getForContentTypeManagement();
-      const namespaceWidgets = result[NAMESPACE_EXTENSION];
-
-      expect(namespaceWidgets).toEqual(cloneDeep(widgets));
-    });
   });
 
   describe('#getForEditor()', () => {

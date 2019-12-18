@@ -5,15 +5,6 @@ import { getCustomWidgetLoader } from './CustomWidgetLoaderInstance';
 
 // TODO: rename this module to "WidgetProvider".
 
-export async function getForContentTypeManagement() {
-  const customWidgetLoader = getCustomWidgetLoader();
-
-  return {
-    [NAMESPACE_BUILTIN]: createBuiltinWidgetList(),
-    [NAMESPACE_EXTENSION]: await customWidgetLoader.getUncachedForListing()
-  };
-}
-
 export async function getForEditor(editorInterface = {}) {
   const editorExtensionIds = (editorInterface.controls || [])
     .filter(control => {

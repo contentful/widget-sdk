@@ -11,6 +11,7 @@ import fieldDecorator from 'components/field_dialog/fieldDecorator';
 import validationDecorator from 'components/field_dialog/validationDecorator';
 import fieldErrorMessageBuilder from 'services/errorMessageBuilder/fieldErrorMessageBuilder';
 import TheLocaleStore from 'services/localeStore';
+import { create as createBuiltinWidgetList } from 'widgets/BuiltinWidgets';
 
 // TODO: This dialog should be completely rewritten!
 
@@ -143,17 +144,21 @@ export default function register() {
         });
       }
 
+      const builtinWidgets = createBuiltinWidgetList().map(widget => ({
+        ...widget,
+        id: makeId(NAMESPACE_BUILTIN, widget.id)
+      }));
+      const customWidgets = $scope.customWidgets.map(widget => ({
+        ...widget,
+        id: makeId(NAMESPACE_EXTENSION, widget.id)
+      }));
+
       const fieldType = toInternalFieldType($scope.field);
+      const availableWidgets = [...builtinWidgets, ...customWidgets].filter(widget => {
+        return widget.fieldTypes.includes(fieldType);
+      });
 
-      $scope.availableWidgets = [NAMESPACE_BUILTIN, NAMESPACE_EXTENSION]
-        .reduce((acc, namespace) => {
-          const namespaceWidgets = $scope.widgets[namespace].map(widget => {
-            return { ...widget, id: makeId(namespace, widget.id) };
-          });
-          return acc.concat(namespaceWidgets);
-        }, [])
-        .filter(widget => widget.fieldTypes.includes(fieldType));
-
+      $scope.availableWidgets = availableWidgets;
       $scope.fieldTypeLabel = fieldFactory.getLabel($scope.field);
       $scope.iconId = fieldFactory.getIconId($scope.field) + '-small';
 
@@ -171,8 +176,8 @@ export default function register() {
           validationDecorator.addEnabledRichTextOptions($scope.field, $scope.richTextOptions);
         }
 
-        const namespaceWidgets = get($scope.widgets, [$scope.widgetSettings.namespace], []);
-        const selectedWidget = namespaceWidgets.find(w => w.id === $scope.widgetSettings.id);
+        const selectedWidgetId = makeId($scope.widgetSettings.namespace, $scope.widgetSettings.id);
+        const selectedWidget = availableWidgets.find(w => w.id === selectedWidgetId);
 
         let values = $scope.widgetSettings.params;
         let definitions = get(selectedWidget, ['parameters']) || [];
@@ -181,7 +186,7 @@ export default function register() {
         definitions = WidgetParametersUtils.filterDefinitions(
           definitions,
           values,
-          makeId($scope.widgetSettings.namespace, $scope.widgetSettings.id)
+          selectedWidgetId
         );
         values = WidgetParametersUtils.filterValues(definitions, values);
 

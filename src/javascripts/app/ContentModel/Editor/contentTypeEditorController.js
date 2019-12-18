@@ -7,7 +7,6 @@ import { syncControls } from 'widgets/EditorInterfaceTransformer';
 import { openDisallowDialog, openOmitDialog, openSaveDialog } from './FieldsTab/FieldTabDialogs';
 import { openCreateContentTypeDialog, openEditContentTypeDialog } from './Dialogs';
 import getContentTypePreview from './PreviewTab/getContentTypePreview';
-import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
 import { createCommand } from 'utils/command/command';
 
@@ -335,7 +334,7 @@ export default function register() {
         canEdit: accessChecker.can('update', 'ContentType'),
         sidebarConfiguration: $scope.editorInterface.sidebar,
         editorConfiguration: $scope.editorInterface.editor,
-        extensions: $scope.widgets[NAMESPACE_EXTENSION] || [],
+        extensions: $scope.customWidgets,
         actions: {
           showMetadataDialog,
           showNewFieldDialog,
