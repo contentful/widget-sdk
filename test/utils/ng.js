@@ -1,15 +1,35 @@
 import _ from 'lodash';
 import { awaitInitReady } from 'NgRegistry';
 
+function raw$inject(serviceName) {
+  let ngModule;
+
+  inject($injector => {
+    ngModule = $injector.get(serviceName);
+  });
+
+  return ngModule;
+}
+
 export const $inject = function(serviceName) {
+  /*
+    This checks to see if the `$injector` has been instantiated
+    on the `this` context (in `angular-mocks`, it is known as `$currentSpec`)
+    and if not, warn that something is being requested before running
+    `$initialize`.
+
+    This warning brings visibility into potential Angular injections that
+    occur before calling `$initialize`, which calls `module('contentful/test, ...)`,
+    as this may cause issues for `angular-mocks`.
+   */
+  if (!window.$$currentSpec || !window.$$currentSpec.$injector) {
+    const e = new Error(`Injecting ${serviceName} before $initialize`);
+    // eslint-disable-next-line
+    console.warn(e);
+  }
+
   try {
-    let module;
-
-    inject($injector => {
-      module = $injector.get(serviceName);
-    });
-
-    return module;
+    return raw$inject(serviceName);
   } catch (e) {
     // eslint-disable-next-line
     console.error(`Couldn't inject ${serviceName}`);
@@ -104,7 +124,7 @@ export const $initialize = async function(system, mock = () => {}) {
 
   module('contentful/test', mock);
 
-  $inject('$location');
+  raw$inject('$location');
 
   return awaitInitReady();
 };

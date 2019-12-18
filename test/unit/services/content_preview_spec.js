@@ -4,10 +4,10 @@ import createContentPreview from 'services/contentPreview/createContentPreview';
 import { contentPreviewToInternal } from 'services/contentPreview/contentPreviewToInternal';
 import { getStore } from 'browserStorage';
 import { it } from 'test/utils/dsl';
-import { $waitFor } from 'test/utils/ng';
+import { $waitFor, $initialize } from 'test/utils/ng';
 
 describe('contentPreview', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     this.space = {
       data: {
         sys: { id: 'space01' }
@@ -33,6 +33,8 @@ describe('contentPreview', () => {
       space: this.space,
       cma: { getEntries: this.getEntriesStub }
     });
+
+    await $initialize(this.system);
   });
 
   function makeEnv(id) {

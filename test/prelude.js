@@ -131,6 +131,7 @@
       await SystemJS.import('test/helpers/setup-isolated-system');
       await SystemJS.import('test/utils/dsl');
 
+      await SystemJS.import('test/helpers/$current-spec');
       await SystemJS.import('test/helpers/leaked-dom-elements');
       await SystemJS.import('test/helpers/sinon');
       await SystemJS.import('test/helpers/jasmine-matchers');

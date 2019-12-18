@@ -5,14 +5,14 @@ import { default as CreateEntryButton, Style } from 'components/CreateEntryButto
 
 import { mount } from 'enzyme';
 import { it } from 'test/utils/dsl';
-import { $apply } from 'test/utils/ng';
+import { $apply, $initialize } from 'test/utils/ng';
 
 const CONTENT_TYPE_1 = { name: 'name-1', sys: { id: 'ID_1' } };
 const CONTENT_TYPE_2 = { name: 'name-2', sys: { id: 'ID_2' } };
 const CONTENT_TYPE_3 = { name: 'name-3', sys: { id: 'ID_3' } };
 
 describe('CreateEntryButton', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     const findByTestId = id => this.wrapper.find(`[data-test-id="${id}"]`);
     // TODO: Remove `.at(0)` which is necessary because of odd component library DOM.
     this.findCta = () => findByTestId('cta').at(0);
@@ -29,6 +29,8 @@ describe('CreateEntryButton', () => {
         dropdownIcon: this.findDropdownIcon()
       };
     };
+
+    await $initialize(this.system);
   });
 
   describe('with multiple content types', function() {

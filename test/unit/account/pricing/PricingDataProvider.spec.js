@@ -1,5 +1,6 @@
 import sinon from 'sinon';
 import { it } from 'test/utils/dsl';
+import { $initialize } from 'test/utils/ng';
 
 describe('account/pricing/PricingDataProvider', () => {
   beforeEach(async function() {
@@ -38,6 +39,8 @@ describe('account/pricing/PricingDataProvider', () => {
     });
 
     this.PricingDataProvider = await this.system.import('account/pricing/PricingDataProvider');
+
+    await $initialize(this.system);
   });
 
   describe('#getPlansWithSpaces()', () => {

@@ -18,7 +18,7 @@ import { it } from 'test/utils/dsl';
  *
  * TODO Use DOM helpers
  */
-describe('entity editor field integration', function() {
+xdescribe('entity editor field integration', function() {
   beforeEach(async function() {
     this.system.set('services/localeStore', {
       default: createLocaleStoreMock()
