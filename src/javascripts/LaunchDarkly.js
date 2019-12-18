@@ -132,7 +132,7 @@ async function ldUser(user, org, space) {
 
 /**
  * @usage[js]
- * import { getVariation } from 'utils/LaunchDarkly'
+ * import { getVariation } from 'LaunchDarkly'
  *
  * const variation = await getVariation('my-test-or-feature-flag', { organizationId: '1234' })
  *
