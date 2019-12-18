@@ -36,7 +36,6 @@ const LockedField = ({
           onChange={({ target: { value } }) => setValue(value)}
           textInputProps={{
             disabled: disabled,
-            width: 'large',
             type: 'text'
           }}
           validationMessage={validationMessage}

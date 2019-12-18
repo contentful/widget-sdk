@@ -118,7 +118,6 @@ const FieldDialogSettingsComponent = ({
             name="content-type-field-name"
             id="content-type-field-name"
             textInputProps={{
-              width: 'large',
               type: 'text'
             }}
             validationMessage={formValidation.name}
