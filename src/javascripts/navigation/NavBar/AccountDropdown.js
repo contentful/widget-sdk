@@ -125,10 +125,14 @@ export default class AccountDropdown extends Component {
 
   componentDidMount = async () => {
     const spaceContext = getModule('spaceContext');
-    const [currentUser, shouldShowPendingTasks] = await Promise.all([
-      getUser(),
-      canDisplayTasksDashboard(spaceContext)
-    ]);
+    const shouldShowPendingTasksPromise = canDisplayTasksDashboard(spaceContext);
+
+    const currentUser = await getUser();
+    this.setState({
+      currentUser
+    });
+
+    const shouldShowPendingTasks = await shouldShowPendingTasksPromise;
 
     if (currentUser && shouldShowPendingTasks) {
       const [tasks, entries] = await getOpenAssignedTasksAndEntries(
@@ -142,9 +146,7 @@ export default class AccountDropdown extends Component {
         numVisiblePendingTasks: pendingTasksCount,
         hasInaccessibleTasks: tasks.length > pendingTasksCount
       });
-      this.setState({ currentUser, pendingTasksCount, shouldShowPendingTasks: true });
-    } else {
-      this.setState({ currentUser });
+      this.setState({ pendingTasksCount, shouldShowPendingTasks: true });
     }
   };
 
