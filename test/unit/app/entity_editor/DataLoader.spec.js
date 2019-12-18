@@ -60,12 +60,6 @@ describe('app/entity_editor/DataLoader', () => {
       },
       organization: {
         sys: { id: 'orgid' }
-      },
-      extensionLoader: {
-        cacheExtension: sinon.stub(),
-        evictExtension: sinon.stub(),
-        getAllExtensions: sinon.stub().returns(Promise.resolve([])),
-        getExtensionsById: sinon.stub().returns(Promise.resolve([]))
       }
     };
 
@@ -212,7 +206,10 @@ describe('app/entity_editor/DataLoader', () => {
             field: sinon.match.has('id')
           })
         ],
-        { builtin: sinon.match.array }
+        {
+          builtin: sinon.match.array,
+          extension: []
+        }
       );
     });
 
