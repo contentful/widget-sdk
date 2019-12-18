@@ -27,16 +27,6 @@ describe('WidgetStore', () => {
     mock.getCustomWidgetLoader.mockReturnValue(loaderMock);
   });
 
-  describe('#getBuiltinsOnly()', () => {
-    it('returns only builtins', () => {
-      const widgets = WidgetStore.getBuiltinsOnly();
-      expect(widgets[NAMESPACE_EXTENSION]).toBeUndefined();
-      expect(widgets[NAMESPACE_BUILTIN].map(w => w.id)).toEqual(
-        createBuiltinWidgetList().map(b => b.id)
-      );
-    });
-  });
-
   describe('#getForContentTypeManagement()', () => {
     it('returns an object of all widget namespaces', async () => {
       loaderMock.getUncachedForListing.mockResolvedValueOnce([]);

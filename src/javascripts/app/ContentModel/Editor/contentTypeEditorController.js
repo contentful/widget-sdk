@@ -266,8 +266,7 @@ export default function register() {
       function syncEditorInterface() {
         $scope.editorInterface.controls = syncControls(
           $scope.contentType.data,
-          $scope.editorInterface.controls,
-          $scope.widgets
+          $scope.editorInterface.controls
         );
       }
 

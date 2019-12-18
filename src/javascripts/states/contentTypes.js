@@ -49,11 +49,10 @@ const widgetResolvers = {
   editorInterface: [
     'spaceContext',
     'contentType',
-    'widgets',
-    async (spaceContext, contentType, widgets) => {
+    async (spaceContext, contentType) => {
       const ct = contentType.data;
       const ei = await spaceContext.cma.getEditorInterface(ct.sys.id);
-      return EditorInterfaceTransformer.fromAPI(ct, ei, widgets);
+      return EditorInterfaceTransformer.fromAPI(ct, ei);
     }
   ],
   hasAdvancedExtensibility: [

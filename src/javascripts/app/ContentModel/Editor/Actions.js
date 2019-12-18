@@ -246,18 +246,13 @@ export default function create($scope, contentTypeIds) {
           localEditorInterface.sys = remoteEditorInterface.sys;
 
           return spaceContext.cma.updateEditorInterface(
-            EditorInterfaceTransformer.toAPI(
-              $scope.publishedContentType.data,
-              localEditorInterface,
-              $scope.widgets
-            )
+            EditorInterfaceTransformer.toAPI($scope.publishedContentType.data, localEditorInterface)
           );
         })
         .then(editorInterface => {
           $scope.editorInterface = EditorInterfaceTransformer.fromAPI(
             $scope.publishedContentType.data,
-            editorInterface,
-            $scope.widgets
+            editorInterface
           );
         })
         .catch(trackEnforcedButtonClick)
@@ -366,7 +361,7 @@ export default function create($scope, contentTypeIds) {
       .then(contentType => spaceContext.publishedCTs.publish(contentType))
       .then(published => {
         return spaceContext.cma.updateEditorInterface(
-          EditorInterfaceTransformer.toAPI(published.data, editorInterfaceDuplicate, $scope.widgets)
+          EditorInterfaceTransformer.toAPI(published.data, editorInterfaceDuplicate)
         );
       })
       .then(

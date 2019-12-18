@@ -1,6 +1,8 @@
 import { fromAPI, toAPI } from './EditorInterfaceTransformer';
 import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from './WidgetNamespaces';
 
+jest.mock('./BuiltinWidgets', () => ({ create: jest.fn(() => []) }));
+
 describe('EditorInterfaceTransformer', () => {
   describe('#fromAPI()', () => {
     it('adds a default control if missing', () => {
@@ -53,35 +55,39 @@ describe('EditorInterfaceTransformer', () => {
       ]);
     });
 
-    it('keeps provided namespace', () => {
-      const ct = { fields: [{ apiName: 'test' }] };
+    it('resets the control if provided an invalid namespace', () => {
+      const ct = { fields: [{ apiName: 'test', type: 'Symbol' }] };
       const ei = { controls: [{ fieldId: 'test', widgetId: 'foo', widgetNamespace: 'bar' }] };
 
       const { controls } = fromAPI(ct, ei);
-      expect(controls[0].widgetNamespace).toEqual('bar');
+      expect(controls[0].widgetNamespace).toEqual(NAMESPACE_BUILTIN);
+      expect(controls[0].widgetId).toEqual('singleLine');
     });
 
-    it('provides a valid namespace for extensions', () => {
+    it('provides the builtin namespace if missing', () => {
       const ct = { fields: [{ apiName: 'test' }] };
       const ei = { controls: [{ fieldId: 'test', widgetId: 'foo' }] };
-      const widgets = {
-        extension: [{ id: 'foo' }],
-        builtin: [{ id: 'foo' }]
-      };
 
-      const { controls } = fromAPI(ct, ei, widgets);
+      const BuiltinWidgets = jest.requireMock('./BuiltinWidgets');
+      BuiltinWidgets.create.mockReturnValue([{ id: 'foo' }]);
 
-      expect(controls[0].widgetNamespace).toEqual(NAMESPACE_EXTENSION);
-    });
-
-    it('provides a valid namespace for builtin widgets', () => {
-      const ct = { fields: [{ apiName: 'test' }] };
-      const ei = { controls: [{ fieldId: 'test', widgetId: 'foo' }] };
-      const widgets = { extension: [], builtin: [{ id: 'foo' }] };
-
-      const { controls } = fromAPI(ct, ei, widgets);
+      const { controls } = fromAPI(ct, ei);
 
       expect(controls[0].widgetNamespace).toEqual(NAMESPACE_BUILTIN);
+      expect(controls[0].widgetId).toEqual('foo');
+    });
+
+    it('provides the extension namespace if missing', () => {
+      const ct = { fields: [{ apiName: 'test' }] };
+      const ei = { controls: [{ fieldId: 'test', widgetId: 'foo' }] };
+
+      const BuiltinWidgets = jest.requireMock('./BuiltinWidgets');
+      BuiltinWidgets.create.mockReturnValue([{ id: 'bar' }]);
+
+      const { controls } = fromAPI(ct, ei);
+
+      expect(controls[0].widgetNamespace).toEqual(NAMESPACE_EXTENSION);
+      expect(controls[0].widgetId).toEqual('foo');
     });
 
     it('restores field order', function() {
@@ -138,7 +144,7 @@ describe('EditorInterfaceTransformer', () => {
       const control = {
         fieldId: 'test',
         widgetId: 'helloWorld',
-        widgetNamespace: 'test',
+        widgetNamespace: NAMESPACE_BUILTIN,
         settings: { test: true },
         field: { id: 'test' },
         unknown: 'test',
@@ -154,7 +160,7 @@ describe('EditorInterfaceTransformer', () => {
         {
           fieldId: 'test',
           widgetId: 'helloWorld',
-          widgetNamespace: 'test',
+          widgetNamespace: NAMESPACE_BUILTIN,
           settings: { test: true }
         }
       ]);
@@ -164,7 +170,7 @@ describe('EditorInterfaceTransformer', () => {
       const control = {
         fieldId: 'test',
         widgetId: 'helloWorld',
-        widgetNamespace: 'test',
+        widgetNamespace: NAMESPACE_BUILTIN,
         settings: {}
       };
       const ct = { fields: [{ apiName: 'test' }] };
@@ -173,7 +179,7 @@ describe('EditorInterfaceTransformer', () => {
       const { controls } = toAPI(ct, ei);
 
       expect(controls).toEqual([
-        { fieldId: 'test', widgetId: 'helloWorld', widgetNamespace: 'test' }
+        { fieldId: 'test', widgetId: 'helloWorld', widgetNamespace: NAMESPACE_BUILTIN }
       ]);
     });
 

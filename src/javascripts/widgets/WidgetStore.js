@@ -5,12 +5,6 @@ import { getCustomWidgetLoader } from './CustomWidgetLoaderInstance';
 
 // TODO: rename this module to "WidgetProvider".
 
-export function getBuiltinsOnly() {
-  return {
-    [NAMESPACE_BUILTIN]: createBuiltinWidgetList()
-  };
-}
-
 export async function getForContentTypeManagement() {
   const customWidgetLoader = getCustomWidgetLoader();
 
