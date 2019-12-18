@@ -1,12 +1,14 @@
 import checkDependencies from './checkDependencies';
 import * as entityCreator from 'components/app_container/entityCreator';
+import * as Navigator from 'states/Navigator';
+import get from 'lodash/get';
+import * as SlideInNavigatorWithPromise from 'navigation/SlideInNavigator/withPromise';
+import * as SlideInNavigator from 'navigation/SlideInNavigator';
 
 export default function makeExtensionNavigationHandlers(dependencies, handlerOptions = {}) {
-  const { spaceContext, Navigator, SlideInNavigator } = checkDependencies(
-    'ExtensionNavigationHandlers',
-    dependencies,
-    ['spaceContext', 'Navigator', 'SlideInNavigator']
-  );
+  const { spaceContext } = checkDependencies('ExtensionNavigationHandlers', dependencies, [
+    'spaceContext'
+  ]);
 
   return async function navigate(options) {
     if (!['Entry', 'Asset'].includes(options.entityType)) {
@@ -17,16 +19,24 @@ export default function makeExtensionNavigationHandlers(dependencies, handlerOpt
       throw new Error('Cannot open the slide-in editor from the current location.');
     }
 
-    const entity = await makeEntity(options);
+    let entity = await makeEntity(options);
 
     try {
-      await navigateToEntity(entity, options.slideIn);
+      const slideIn = options.slideIn || false;
+      if (slideIn) {
+        if (get(slideIn, ['waitForClose'], false) === true) {
+          await SlideInNavigatorWithPromise.goToSlideInEntityWithPromise(entity.sys);
+          entity = await getEntity(options);
+        } else {
+          await SlideInNavigator.goToSlideInEntity(entity.sys);
+        }
+      } else {
+        await Navigator.go(Navigator.makeEntityRef(entity));
+      }
     } catch (err) {
       throw new Error('Failed to navigate to the entity.');
     }
 
-    // In the future we could grow the API, for example by
-    // adding a method to listen to close events of the slide-in editor.
     return { navigated: true, entity };
   };
 
@@ -59,15 +69,6 @@ export default function makeExtensionNavigationHandlers(dependencies, handlerOpt
     }
 
     throw new Error('Could not determine how to create the requested entity.');
-  }
-
-  async function navigateToEntity(entity, slideIn = false) {
-    if (slideIn) {
-      // This method is sync but the URL change is an async side-effect.
-      SlideInNavigator.goToSlideInEntity(entity.sys);
-    } else {
-      await Navigator.go(Navigator.makeEntityRef(entity));
-    }
   }
 
   function getEntity(options) {

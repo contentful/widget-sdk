@@ -1,13 +1,13 @@
 import checkDependencies from './checkDependencies';
+import * as Navigator from 'states/Navigator';
 
 export default function makePageExtensionHandlers(
   dependencies,
   currentExtensionId,
   isOnPageExtensionPage = false
 ) {
-  const { spaceContext, Navigator } = checkDependencies('PageExtensionHandlers', dependencies, [
-    'spaceContext',
-    'Navigator'
+  const { spaceContext } = checkDependencies('PageExtensionHandlers', dependencies, [
+    'spaceContext'
   ]);
 
   return async function navigate(options = {}) {

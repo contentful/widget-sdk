@@ -8,6 +8,10 @@ jest.mock('services/localeStore', () => ({
   getDefaultLocale: () => ({ code: 'pl' })
 }));
 
+jest.mock('states/Navigator', () => ({
+  go: jest.fn()
+}));
+
 describe('createPageExtensionBridge', () => {
   const makeBridge = () => {
     const stubs = {
@@ -23,12 +27,8 @@ describe('createPageExtensionBridge', () => {
           cma: { updateEntry: stubs.updateEntry, getEntry: stubs.getEntry },
           space: { data: { spaceMember: 'MEMBER ', spaceMembership: 'MEMBERSHIP ' } }
         },
-        Navigator: {
-          go: jest.fn()
-        },
         entitySelector: {},
-        entityCreator: {},
-        SlideInNavigator: {}
+        entityCreator: {}
       },
       'test-id'
     );

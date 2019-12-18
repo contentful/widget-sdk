@@ -3,6 +3,9 @@ import { createBus } from 'utils/kefir';
 import { LOCATION_ENTRY_FIELD } from '../WidgetLocations';
 import * as entityCreator from 'components/app_container/entityCreator';
 import * as entitySelector from 'search/EntitySelector/entitySelector';
+import * as Navigator from 'states/Navigator';
+import * as SlideInNavigator from 'navigation/SlideInNavigator';
+import * as SlideInNavigatorWithPromise from 'navigation/SlideInNavigator/withPromise';
 
 function createMockProperty(initial) {
   const bus = createBus();
@@ -44,6 +47,19 @@ jest.mock('components/app_container/entityCreator', () => ({
   newEntry: jest.fn(() => ({ sys: { type: 'Entry', id: 'some-entry-id' } }))
 }));
 
+jest.mock('states/Navigator', () => ({
+  go: jest.fn(() => Promise.resolve()),
+  makeEntityRef: jest.fn(() => 'ENTITY REF')
+}));
+
+jest.mock('navigation/SlideInNavigator', () => ({
+  goToSlideInEntity: jest.fn()
+}));
+
+jest.mock('navigation/SlideInNavigator/withPromise', () => ({
+  goToSlideInEntityWithPromise: jest.fn()
+}));
+
 jest.mock('search/EntitySelector/entitySelector', () => ({
   openFromExtension: jest.fn(() => Promise.resolve('DIALOG RESULT'))
 }));
@@ -61,9 +77,6 @@ describe('createExtensionBridge', () => {
       updateEntry: jest.fn(() => Promise.resolve('Entry updated')),
       setInvalid: jest.fn(),
       setActive: jest.fn(),
-      goToSlideInEntity: jest.fn(),
-      navigatorGo: jest.fn(() => Promise.resolve()),
-      makeEntityRef: jest.fn(() => 'ENTITY REF'),
       getEntry: jest.fn(),
       $watch: jest.fn()
     };
@@ -103,11 +116,6 @@ describe('createExtensionBridge', () => {
         isMasterEnvironment: () => false,
         cma: { updateEntry: stubs.updateEntry, getEntry: stubs.getEntry },
         space: { data: { spaceMember: 'MEMBER ', spaceMembership: 'MEMBERSHIP ' } }
-      },
-      SlideInNavigator: { goToSlideInEntity: stubs.goToSlideInEntity },
-      Navigator: {
-        go: stubs.navigatorGo,
-        makeEntityRef: stubs.makeEntityRef
       }
     });
 
@@ -338,14 +346,26 @@ describe('createExtensionBridge', () => {
     const openResult = await navigate({ id: 'xyz', entityType: 'Entry', slideIn: true });
     expect(openResult).toEqual({ navigated: true, entity: returnedEntry });
     expect(stubs.getEntry).toHaveBeenCalledWith('xyz');
-    expect(stubs.goToSlideInEntity).toBeCalledTimes(1);
-    expect(stubs.goToSlideInEntity).toBeCalledWith(returnedEntry.sys);
+    expect(SlideInNavigator.goToSlideInEntity).toBeCalledTimes(1);
+    expect(SlideInNavigator.goToSlideInEntity).toBeCalledWith(returnedEntry.sys);
+
+    const openResultOnClose = await navigate({
+      id: 'xyz',
+      entityType: 'Entry',
+      slideIn: { waitForClose: true }
+    });
+    expect(openResultOnClose).toEqual({ navigated: true, entity: returnedEntry });
+    expect(stubs.getEntry).toHaveBeenCalledWith('xyz');
+    expect(SlideInNavigatorWithPromise.goToSlideInEntityWithPromise).toBeCalledTimes(1);
+    expect(SlideInNavigatorWithPromise.goToSlideInEntityWithPromise).toBeCalledWith(
+      returnedEntry.sys
+    );
 
     const createResult = await navigate({ entityType: 'Entry', contentTypeId: 'ctid' });
     expect(createResult).toEqual({ navigated: true });
     expect(entityCreator.newEntry).toBeCalledTimes(1);
     expect(entityCreator.newEntry).toBeCalledWith('ctid');
-    expect(stubs.navigatorGo).toBeCalledWith('ENTITY REF');
+    expect(Navigator.go).toBeCalledWith('ENTITY REF');
   });
 
   it('handles invalid navigator calls', async () => {

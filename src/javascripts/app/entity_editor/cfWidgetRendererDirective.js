@@ -6,9 +6,8 @@ import $ from 'jquery';
 import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
 import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';
-import * as SlideInNavigator from 'navigation/SlideInNavigator';
+
 import createNewWidgetApi from 'app/widgets/NewWidgetApi/createNewWidgetApi';
-import * as Navigator from 'states/Navigator';
 import * as LoadEventTracker from 'app/entity_editor/LoadEventTracker';
 
 export default function register() {
@@ -70,9 +69,7 @@ export default function register() {
           if (problem) {
             scope.props = { message: problem };
             trackLinksRendered();
-            renderTemplate(
-              `<react-component name="widgets/WidgetRenderWarning" props="props" />`
-            );
+            renderTemplate(`<react-component name="widgets/WidgetRenderWarning" props="props" />`);
           } else if (widgetNamespace === NAMESPACE_EXTENSION) {
             trackLinksRendered();
             renderExtension();
@@ -113,9 +110,7 @@ export default function register() {
               bridge: createExtensionBridge({
                 $rootScope,
                 $scope: scope,
-                spaceContext,
-                Navigator,
-                SlideInNavigator
+                spaceContext
               })
             };
 

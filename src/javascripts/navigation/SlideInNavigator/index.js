@@ -2,8 +2,11 @@ import { findIndex, get, isEqual, uniqWith } from 'lodash';
 import { track } from 'analytics/Analytics';
 import slideHelper from './slideHelper';
 import { getModule } from 'NgRegistry';
+import mitt from 'mitt';
 
 const SLIDES_BELOW_QS = 'previousEntries';
+
+export const slideInStackEmitter = mitt();
 
 /**
  * Serializes a given slide as a string.
@@ -46,10 +49,14 @@ export function goToSlideInEntity(slide) {
   const slidesBelowQS = reducedSlides.map(slideHelper.toString).join(',');
   $state.go(...slideHelper.toStateGoArgs(slide, { [SLIDES_BELOW_QS]: slidesBelowQS }));
 
-  return {
+  const result = {
     currentSlideLevel: currentSlides.length - 1,
     targetSlideLevel: firstTargetSlideIndex
   };
+
+  slideInStackEmitter.emit('changed', result);
+
+  return result;
 }
 
 /**
