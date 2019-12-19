@@ -3,6 +3,8 @@
 import { range } from 'lodash';
 import React from 'react';
 import * as Config from 'Config';
+import { NAMESPACE_BUILTIN } from './WidgetNamespaces';
+
 import { default as RichTextEditor } from 'app/widgets/rich_text';
 import LinkEditor, {
   SingleLinkEditor,
@@ -43,7 +45,7 @@ export function create() {
     const hasHelpText = !!widgetParameters.find(({ id }) => id === HELP_TEXT_PARAMETER.id);
     const parameters = (hasHelpText ? [] : [HELP_TEXT_PARAMETER]).concat(widgetParameters);
 
-    Object.assign(widgetDescriptor, { id, parameters });
+    Object.assign(widgetDescriptor, { id, namespace: NAMESPACE_BUILTIN, parameters });
     widgets.push(widgetDescriptor);
   };
 

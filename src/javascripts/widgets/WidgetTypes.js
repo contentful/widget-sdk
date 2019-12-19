@@ -1,5 +1,6 @@
 import { get } from 'lodash';
 
+import { NAMESPACE_EXTENSION } from './WidgetNamespaces';
 import { toInternalFieldType } from './FieldTypes';
 
 export function buildExtensionWidget({ sys, extension, parameters }) {
@@ -14,6 +15,7 @@ export function buildExtensionWidget({ sys, extension, parameters }) {
   return {
     ...hosting,
     id: sys.id,
+    namespace: NAMESPACE_EXTENSION,
     name: extension.name,
     fieldTypes: (extension.fieldTypes || []).map(toInternalFieldType),
     isApp: false,
@@ -30,6 +32,7 @@ export function buildAppWidget({ id, title, icon, appDefinition, appInstallation
   return {
     src: appDefinition.src,
     id: appInstallation.sys.widgetId,
+    namespace: NAMESPACE_EXTENSION, // TODO: should be NAMESPACE_APP
     appDefinitionId: appDefinition.sys.id,
     name: title,
     fieldTypes: (appDefinition.fieldTypes || []).map(toInternalFieldType),
