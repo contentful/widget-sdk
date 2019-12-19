@@ -3,19 +3,16 @@ const { build, buildTestDeps } = require('../js');
 const clean = require('../clean');
 const { bundleAppJs, bundleTestJs } = require('./js');
 const { buildMinifiedChunks, buildNonMinifiedChunks } = require('./chunks');
-const buildStyles = require('./styles');
+// const buildStyles = require('./styles');
 
 const buildTest = gulp.series(
   clean,
-  gulp.parallel(
-    gulp.series(buildTestDeps, gulp.parallel(bundleTestJs, buildNonMinifiedChunks)),
-    buildStyles
-  )
+  gulp.series(buildTestDeps, gulp.parallel(bundleTestJs, buildNonMinifiedChunks))
 );
 
 const buildApp = gulp.series(
   clean,
-  gulp.parallel(gulp.series(build, gulp.parallel(bundleAppJs, buildMinifiedChunks)), buildStyles)
+  gulp.series(build, gulp.parallel(bundleAppJs, buildMinifiedChunks))
 );
 
 module.exports = {

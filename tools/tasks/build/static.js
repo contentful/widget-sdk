@@ -6,7 +6,7 @@ const { changeBase, writeFile } = require('../helpers');
 const copyStatic = require('../copy');
 
 function processStatic() {
-  const files = glob.sync('public/app/**/*.!(js|css)');
+  const files = glob.sync('public/app/**/*.!(js)');
 
   return gulp
     .src(files, { base: 'public' })

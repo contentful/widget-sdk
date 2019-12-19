@@ -17,6 +17,7 @@ const webpack = require('webpack');
 const P = require('path');
 const { createBabelOptions } = require('./app-babel-options');
 const WebpackRequireFrom = require('webpack-require-from');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 /**
  * @description webpack's configuration factory
@@ -51,7 +52,24 @@ module.exports = () => {
   };
 
   return {
-    entry: Object.assign({}, !isTest ? appEntry : {}, isTest ? testDepEntry : {}),
+    entry: Object.assign(
+      {
+        styles: [
+          './src/stylesheets/font-awesome/font-awesome.css',
+
+          // Not sure if we need this
+          './src/stylesheets/html5reset-1.6.1.css',
+          './node_modules/codemirror/lib/codemirror.css',
+          // Add angular styles since we are disabling inline-styles in ngCsp
+          './node_modules/angular/angular-csp.css',
+          './node_modules/@contentful/forma-36-react-components/dist/styles.css',
+          './node_modules/@contentful/forma-36-fcss/dist/styles.css',
+          './src/stylesheets/legacy-styles.css'
+        ]
+      },
+      !isTest ? appEntry : {},
+      isTest ? testDepEntry : {}
+    ),
     output: {
       filename: '[name]',
       path: P.resolve(__dirname, '..', 'public', 'app'),
@@ -94,12 +112,28 @@ module.exports = () => {
               }
             }
           ]
+        },
+        {
+          test: /\.css$/,
+          use: [
+            MiniCssExtractPlugin.loader,
+            {
+              loader: 'css-loader',
+              options: {
+                sourceMap: true
+              }
+            }
+          ]
         }
       ]
     },
     plugins: [
       new WebpackRequireFrom({
         methodName: 'WebpackRequireFrom_getChunkURL'
+      }),
+      new MiniCssExtractPlugin({
+        filename: '[name].css',
+        chunkFilename: '[id].css'
       })
     ].concat(
       // moment.js by default bundles all locales, we want to remove them
