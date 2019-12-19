@@ -1,7 +1,7 @@
 import base from 'states/Base';
-import * as WidgetStore from 'widgets/WidgetStore';
 import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer';
 import * as AdvancedExtensibilityFeature from 'app/settings/extensions/services/AdvancedExtensibilityFeature';
+import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 
 const list = base({
   name: 'list',
@@ -40,20 +40,19 @@ const sidebarConfiguration = {
 };
 
 const widgetResolvers = {
-  widgets: [
-    // Define dependency on spaceContext so we get widgets
+  customWidgets: [
+    // Define dependency on spaceContext so we get custom widgets
     // only when the space is initialized.
     'spaceContext',
-    () => WidgetStore.getForContentTypeManagement()
+    () => getCustomWidgetLoader().getUncachedForListing()
   ],
   editorInterface: [
     'spaceContext',
     'contentType',
-    'widgets',
-    async (spaceContext, contentType, widgets) => {
+    async (spaceContext, contentType) => {
       const ct = contentType.data;
       const ei = await spaceContext.cma.getEditorInterface(ct.sys.id);
-      return EditorInterfaceTransformer.fromAPI(ct, ei, widgets);
+      return EditorInterfaceTransformer.fromAPI(ct, ei);
     }
   ],
   hasAdvancedExtensibility: [
@@ -135,7 +134,7 @@ function editorBase(options, isNew) {
     controller: [
       '$scope',
       'contentType',
-      'widgets',
+      'customWidgets',
       'editorInterface',
       'publishedContentType',
       'contentTypeIds',
@@ -143,7 +142,7 @@ function editorBase(options, isNew) {
       (
         $scope,
         contentType,
-        widgets,
+        customWidgets,
         editorInterface,
         publishedContentType,
         contentTypeIds,
@@ -151,7 +150,7 @@ function editorBase(options, isNew) {
       ) => {
         $scope.context.isNew = isNew;
         $scope.contentType = contentType;
-        $scope.widgets = widgets;
+        $scope.customWidgets = customWidgets;
         $scope.editorInterface = editorInterface;
         $scope.publishedContentType = publishedContentType;
         $scope.contentTypeIds = contentTypeIds;

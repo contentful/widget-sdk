@@ -10,7 +10,7 @@ import { NAMESPACE_BUILTIN } from './WidgetNamespaces';
  * an array of field type names. The migration will only take place for
  * fields whose type is included in that list.
  */
-const DEFAULT_MIGRATIONS = [
+export const WIDGET_MIGRATIONS = [
   {
     from: 'youtubeEditor',
     to: 'urlEditor',
@@ -48,7 +48,7 @@ const DEFAULT_MIGRATIONS = [
   }
 ];
 
-export default function migrateControl(control, migrations = DEFAULT_MIGRATIONS) {
+export function migrateControl(control, migrations = WIDGET_MIGRATIONS) {
   const { field, widgetNamespace, widgetId } = control;
 
   // All migrations are applicable to builtins only.

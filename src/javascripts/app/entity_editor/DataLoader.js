@@ -14,6 +14,17 @@ import * as AdvancedExtensibilityFeature from 'app/settings/extensions/services/
 import { getWidgetTrackingContexts } from 'widgets/WidgetTracking';
 import TheLocaleStore from 'services/localeStore';
 
+const assetEditorInterface = EditorInterfaceTransformer.fromAPI(
+  assetContentType.data,
+  // "description" is a Symbol but for historical reasons
+  // we're using the multiline editor to render it, hence
+  // the override here.
+  {
+    sys: { type: 'EditorInterface' },
+    controls: [{ fieldId: 'description', widgetId: 'multipleLine' }]
+  }
+);
+
 /**
  * @ngdoc service
  * @name app/entity_editor/DataLoader
@@ -122,12 +133,11 @@ async function loadEditorData(loader, id) {
     loader.hasAdvancedExtensibility()
   ]);
 
-  const widgets = await loader.getWidgets(editorInterface);
+  const widgets = await WidgetStore.getForEditor(editorInterface);
 
   const { controls, sidebar, editor } = EditorInterfaceTransformer.fromAPI(
     contentType.data,
-    editorInterface,
-    widgets
+    editorInterface
   );
 
   // There's nothing that prevents users to configure a custom
@@ -179,7 +189,6 @@ function makeEntryLoader(spaceContext) {
     getEditorInterface: memoize(contentTypeId => {
       return spaceContext.cma.getEditorInterface(contentTypeId);
     }),
-    getWidgets: ei => WidgetStore.getForEditor(ei),
     hasAdvancedExtensibility() {
       return AdvancedExtensibilityFeature.isEnabled(spaceContext.organization.sys.id);
     },
@@ -188,28 +197,16 @@ function makeEntryLoader(spaceContext) {
 }
 
 function makeAssetLoader(spaceContext) {
-  const widgets = WidgetStore.getBuiltinsOnly();
-
   return {
     getEntity: id => fetchEntity(spaceContext, 'Asset', id),
-    getContentType: () => assetContentType,
-    getEditorInterface: () => {
-      // TODO: we compute the editor interface for the Asset Editor.
-      // If we would have an endpoint with this data
-      // (/spaces/:sid/environments/:eid/asset_content_type/editor_interface)
-      // we could potentially enable UI Extensions for assets.
-      return EditorInterfaceTransformer.fromAPI(
-        assetContentType.data,
-        {
-          sys: { type: 'EditorInterface' },
-          controls: [{ fieldId: 'description', widgetId: 'multipleLine' }]
-        },
-        widgets
-      );
-    },
-    getWidgets: () => widgets,
     hasAdvancedExtensibility: () => false,
-    getOpenDoc: makeDocOpener(spaceContext)
+    getOpenDoc: makeDocOpener(spaceContext),
+    // TODO: we return precomputed CT and EI for the Asset Editor.
+    // If we would have an endpoint with this data
+    // (/spaces/:sid/environments/:eid/asset_content_type(/editor_interface))
+    // we could potentially enable UI Extensions for assets.
+    getContentType: () => assetContentType,
+    getEditorInterface: () => assetEditorInterface
   };
 }
 

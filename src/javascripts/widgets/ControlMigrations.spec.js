@@ -1,4 +1,4 @@
-import migrateControl from './ControlMigrations';
+import { migrateControl } from './ControlMigrations';
 import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from './WidgetNamespaces';
 
 describe('ControlMigrations', () => {
