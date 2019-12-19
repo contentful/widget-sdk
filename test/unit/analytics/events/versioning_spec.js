@@ -1,6 +1,7 @@
 import { cloneDeep } from 'lodash';
 import sinon from 'sinon';
 import { it } from 'test/utils/dsl';
+import { $initialize } from 'test/utils/ng';
 
 describe('Tracking versioning', () => {
   const data = {
@@ -31,6 +32,7 @@ describe('Tracking versioning', () => {
     });
 
     this.track = await this.system.import('analytics/events/versioning');
+    await $initialize(this.system);
     this.track.setData(data.entry, data.snapshot);
 
     this.getTrackingData = () => {

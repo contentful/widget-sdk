@@ -1,13 +1,14 @@
 import { registerDirective } from 'NgRegistry';
 import mimetype from '@contentful/mimetype';
 import validationViews from 'services/validationViews';
+import validationSettingsTemplate from './cf_validation_settings.html';
 
 export default function register() {
   registerDirective('cfValidationSetting', [
     () => ({
       scope: true,
       restrict: 'E',
-      template: JST['cf_validation_settings'](),
+      template: validationSettingsTemplate,
       controller: [
         '$scope',
         $scope => {

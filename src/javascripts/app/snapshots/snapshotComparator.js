@@ -10,6 +10,7 @@ import { createCommand } from 'utils/command/command';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 
 import * as Permissions from 'access_control/EntityPermissions';
+import snapshotComparatorTemplate from './snapshot_comparator.html';
 
 export default function register() {
   /**
@@ -24,7 +25,7 @@ export default function register() {
    * version of an entry at the end of the process.
    */
   registerDirective('cfSnapshotComparator', () => ({
-    template: JST.snapshot_comparator(),
+    template: snapshotComparatorTemplate,
     restrict: 'E',
     controller: 'SnapshotComparatorController'
   }));

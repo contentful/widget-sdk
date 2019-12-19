@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import sinon from 'sinon';
 import { $initialize, $inject } from 'test/utils/ng';
-import { beforeEach, it } from 'test/utils/dsl';
+import { it } from 'test/utils/dsl';
 
 describe('UserSpaceInvitationController', () => {
   beforeEach(async function() {
@@ -12,6 +12,8 @@ describe('UserSpaceInvitationController', () => {
     await this.system.set('analytics/Analytics', {
       track: this.stubs.track
     });
+
+    // debugger;
 
     await $initialize(this.system);
 

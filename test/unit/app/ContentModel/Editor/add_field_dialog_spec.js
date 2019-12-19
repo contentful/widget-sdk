@@ -1,6 +1,7 @@
 import { setCheckbox } from 'test/utils/dom';
 import sinon from 'sinon';
 import { $compile, $initialize, $apply, $q } from 'test/utils/ng';
+import addFieldDialogTemplate from 'app/ContentModel/Editor/add_field_dialog.html';
 
 // TODO Rewrite this with the new actor based test DSL.
 describe('AddFieldDialogController', () => {
@@ -15,7 +16,7 @@ describe('AddFieldDialogController', () => {
 
     this.dialog.confirm = sinon.stub().returns(this.dialog);
 
-    this.el = $compile(JST.add_field_dialog(), {
+    this.el = $compile(addFieldDialogTemplate, {
       dialog: this.dialog,
       contentType: contentType
     });

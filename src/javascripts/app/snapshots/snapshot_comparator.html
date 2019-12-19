@@ -1,0 +1,124 @@
+<header class="workbench-header">
+  <react-component
+    name="app/entity_editor/Components/BackNav"
+    props="{ onClose: close }"
+  ></react-component>
+  <cf-icon class="workbench-header__icon" name="page-content" scale="0.75"></cf-icon>
+  <h1 class="workbench-header__title">{{ context.title | truncate:50 }}</h1>
+  <div class="workbench-header__actions">
+    <button class="btn-primary-action" type="button" ui-command="save">Apply changes</button>
+    <button class="btn-secondary-action" role="button" type="button" ng-click="close()">
+      Close
+    </button>
+  </div>
+</header>
+<div class="snapshot-comparator__header">
+  <div class="snapshot-comparator__header-cell">
+    <button
+      class="btn-link snapshot-comparator__version"
+      aria-label="show-snapshot-list-btn"
+      ng-click="toggleSnapshotSelector()"
+    >
+      <react-component
+        name="components/shared/RelativeDateTime"
+        props="{value: snapshot.sys.createdAt}"
+      ></react-component>
+      <cf-icon class="btn-dropdown-icon" name="dd-arrow-down"></cf-icon>
+    </button>
+    <button
+      class="btn-link"
+      ng-show="versionPicker.getDifferenceCount() &gt; 0"
+      ng-click="versionPicker.restoreAll()"
+    >
+      Select all fields from this version
+    </button>
+  </div>
+  <div class="snapshot-comparator__header-cell">
+    <div class="snapshot-comparator__version">Current version</div>
+    <label ng-show="versionPicker.getDifferenceCount() &gt; 0">
+      <input type="checkbox" ng-model="showOnlyDifferences" /><span
+        >Show only differences ({{ versionPicker.getDifferenceCount() }})</span
+      >
+    </label>
+  </div>
+</div>
+<cf-snapshot-selector ng-show="isShowingSnapshotSelector()"></cf-snapshot-selector>
+<div class="workbench-main x--content-full-size">
+  <div
+    class="snapshot-comparator__field"
+    ng-repeat="widget in widgets track by widget.field.id"
+    ng-init="locales = localesForField[widget.field.id]"
+    data-field-api-name="{{widget.field.apiName}}"
+  >
+    <div
+      class="snapshot-comparator__field-locale"
+      ng-repeat="locale in locales track by locale.internal_code"
+      ng-controller="SnapshotComparisonController"
+    >
+      <div
+        class="snapshot-comparator__cell"
+        ng-if="showOnlyDifferences ? isDifferent : true"
+        ng-init="version='snapshot'"
+        document-property="snapshotDoc"
+      >
+        <div class="snapshot-comparator__cell__radio">
+          <input type="radio" ng-model="selected" value="snapshot" />
+        </div>
+        <div class="snapshot-comparator__cell__presenter">
+          <div class="snapshot-comparator__field-title">
+            <div>
+              {{ widget.field.name }}<span ng-if="locales.length &gt; 1"
+                >&#32;&ndash; {{locale.name}}</span
+              >
+            </div>
+            <div class="entity-editor__no-permission-info" ng-if="isDisabled">
+              <cf-icon name="lock"></cf-icon>This field is disabled
+            </div>
+          </div>
+          <cf-snapshot-presenter></cf-snapshot-presenter>
+          <div
+            class="snapshot-comparator__overlay-different"
+            ng-if="canRestore"
+            ng-class="{'x--selected': selected === 'snapshot'}"
+            ng-click="select('snapshot')"
+          >
+            <span>Field will be restored to this version</span>
+          </div>
+          <div class="snapshot-comparator__overlay-identical" ng-if="!canRestore"></div>
+        </div>
+      </div>
+      <div
+        class="snapshot-comparator__cell"
+        ng-if="showOnlyDifferences ? isDifferent : true"
+        ng-init="version=''"
+        document-property=""
+      >
+        <div class="snapshot-comparator__cell__radio">
+          <input type="radio" ng-model="selected" value="current" />
+        </div>
+        <div class="snapshot-comparator__cell__presenter">
+          <div class="snapshot-comparator__field-title">
+            <div>
+              {{ widget.field.name }}<span ng-if="locales.length &gt; 1"
+                >&#32;&ndash; {{locale.name}}</span
+              >
+            </div>
+            <div class="entity-editor__no-permission-info" ng-if="isDisabled">
+              <cf-icon name="lock"></cf-icon>This field is disabled
+            </div>
+          </div>
+          <cf-snapshot-presenter></cf-snapshot-presenter>
+          <div
+            class="snapshot-comparator__overlay-different"
+            ng-if="canRestore"
+            ng-class="{'x--selected': selected === 'current'}"
+            ng-click="select('current')"
+          >
+            <span>Field will be restored to this version</span>
+          </div>
+          <div class="snapshot-comparator__overlay-identical" ng-if="!canRestore"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

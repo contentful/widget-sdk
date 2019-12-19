@@ -6,7 +6,6 @@ const gulp = require('gulp');
 const all = require('./tools/tasks/all');
 const serve = require('./tools/tasks/serve');
 const prepareTests = require('./tools/tasks/prepare-tests');
-const { processJadeTemplates } = require('./tools/tasks/templates');
 const { buildTest, buildApp } = require('./tools/tasks/build/build');
 
 // Gulp does not produce stack traces when logging errors.
@@ -23,4 +22,3 @@ module.exports['build-test'] = buildTest;
 module.exports['prepare-tests'] = prepareTests;
 module.exports.all = all;
 module.exports.serve = serve;
-module.exports.templates = processJadeTemplates;

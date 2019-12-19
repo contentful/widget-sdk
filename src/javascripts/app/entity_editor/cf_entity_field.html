@@ -1,0 +1,105 @@
+<div
+  class="entity-editor__field-group"
+  ng-show="widget.isVisible"
+  data-test-id="entity-field-controls"
+  data-field-id="{{data.field.id}}"
+  data-field-api-name="{{data.field.apiName}}"
+  data-field-type="{{data.field.type}}"
+  data-field-items-type="{{data.field.items.type}}"
+  aria-current="{{data.fieldHasFocus}}"
+  aria-invalid="{{data.fieldHasErrors}}"
+>
+  <div
+    class="entity-editor__field-locale"
+    ng-repeat="locale in fieldLocales | orderBy: ['-default', 'name'] track by locale.internal_code"
+    ng-controller="FieldLocaleController as fieldLocale"
+    data-locale="{{locale.code}}"
+  >
+    <div class="entity-editor__field-heading">
+      <label data-test-id="field-locale-label"
+        >{{ data.field.name }}<span ng-if="fieldLocale.isRequired">&#32;(required)</span
+        ><span ng-if="fieldLocales.length &gt; 1">&#32;&ndash; {{locale.name}}</span></label
+      >
+      <div
+        class="entity-editor__no-permission-info"
+        data-test-id="field-locale-permissions"
+        ng-show="fieldLocale.access.denied"
+      >
+        <react-component
+          component="lockComponent"
+          props="{ tooltipContent: 'You don’t have a permission to edit this field. To change your permission setting contact your space administrator.', text: 'This field is locked' }"
+        ></react-component>
+      </div>
+      <div
+        class="entity-editor__no-permission-info"
+        data-test-id="field-locale-disabled"
+        ng-show="fieldLocale.access.editing_disabled"
+      >
+        <react-component
+          component="lockComponent"
+          props="{ tooltipContent: 'Editing of this field is disabled. To change your content model contact your space administrator.', text: 'This field is disabled' }"
+        ></react-component>
+      </div>
+      <div
+        class="entity-editor__no-permission-info"
+        data-test-id="field-locale-occupied"
+        ng-show="fieldLocale.access.occupied"
+      >
+        <!-- We do not want a tooltip for this case for now.-->
+        <cf-icon name="lock"></cf-icon>This field is being edited by another user
+      </div>
+    </div>
+    <react-component
+      ng-if="data.field.type === 'RichText'"
+      name="components/shared/IE11DeprecationBanner"
+      props="{featureName: 'Rich text', ie11Only: true, noteType: 'warning', className: 'entity-editor__ie11-support-message f36-margin-bottom--m f36-margin-top--xs'}"
+    ></react-component>
+    <div class="entity-editor__control-group">
+      <cf-widget-renderer
+        class="entity-editor__control"
+        ng-class="{ 'x--dir-rtl': methods.shouldDisplayRtl(locale.code) }"
+        cf-focus-ot-input="data.hasInitialFocus"
+        cf-widget-api
+      ></cf-widget-renderer>
+      <react-component
+        name="app/entity_editor/Collaborators"
+        props="{users: fieldLocale.collaborators, className: 'entity-editor__field-collaborators'}"
+      ></react-component>
+    </div>
+    <ul class="cfnext-form__field-errors" ng-if="fieldLocale.errors">
+      <li
+        ng-repeat="error in fieldLocale.errors"
+        role="status"
+        aria-roledescription="field-locale-schema"
+        data-error-code="entry.schema.{{error.name}}"
+      >
+        {{ error.message }}
+        <ul
+          class="cfnext-form__field-errors"
+          ng-if="error.name === 'unique'"
+          data-test-id="uniqueness-conflicts-list"
+        >
+          <li
+            class="entity-editor__control-error"
+            ng-repeat="conflict in error.conflicting track by conflict.sys.id"
+          >
+            <div class="cfnext-form__field-error" ng-if="!conflict.data.ref">
+              Loading title for conflicting entry…
+            </div>
+            <a
+              class="cfnext-form__field-error"
+              ng-if="conflict.data.ref"
+              target="_blank"
+              rel="noopener noreferrer"
+              cf-sref="conflict.data.ref"
+              >{{ conflict.data.entryTitle }}<i class="fa fa-external-link"></i
+            ></a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="entity-editor__field-hint" role="note" data-test-id="field-hint">
+    {{data.helpText}}
+  </div>
+</div>

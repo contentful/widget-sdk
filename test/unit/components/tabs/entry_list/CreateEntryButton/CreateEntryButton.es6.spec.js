@@ -4,14 +4,15 @@ import sinon from 'sinon';
 import { default as CreateEntryButton, Style } from 'components/CreateEntryButton';
 
 import { mount } from 'enzyme';
-import { beforeEach, it } from 'test/utils/dsl';
+import { it } from 'test/utils/dsl';
+import { $apply, $initialize } from 'test/utils/ng';
 
 const CONTENT_TYPE_1 = { name: 'name-1', sys: { id: 'ID_1' } };
 const CONTENT_TYPE_2 = { name: 'name-2', sys: { id: 'ID_2' } };
 const CONTENT_TYPE_3 = { name: 'name-3', sys: { id: 'ID_3' } };
 
 describe('CreateEntryButton', () => {
-  beforeEach(function() {
+  beforeEach(async function() {
     const findByTestId = id => this.wrapper.find(`[data-test-id="${id}"]`);
     // TODO: Remove `.at(0)` which is necessary because of odd component library DOM.
     this.findCta = () => findByTestId('cta').at(0);
@@ -28,6 +29,8 @@ describe('CreateEntryButton', () => {
         dropdownIcon: this.findDropdownIcon()
       };
     };
+
+    await $initialize(this.system);
   });
 
   describe('with multiple content types', function() {
@@ -163,7 +166,7 @@ describe('CreateEntryButton', () => {
 
       describe('with `onSelect` returning a promise', function() {
         beforeEach(function() {
-          this.onSelect.returns(Promise.resolve());
+          this.onSelect.resolves();
           this.setup();
           this.findCta().simulate('click');
         });
@@ -176,6 +179,7 @@ describe('CreateEntryButton', () => {
 
         describe('after resolving promise', function() {
           beforeEach(async function() {
+            $apply();
             this.wrapper.update();
           });
 

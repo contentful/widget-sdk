@@ -11,6 +11,8 @@ import generatePreview from 'markdown_editor/PreviewGenerator';
 import { isRtlLocale } from 'utils/locales';
 import * as EntityHelpers from 'app/entity_editor/entityHelpers';
 
+import snapshotPresenterTemplate from './cf_snapshot_presenter.html';
+
 export default function register() {
   /**
    * @ngdoc directive
@@ -27,7 +29,7 @@ export default function register() {
     spaceContext => {
       return {
         restrict: 'E',
-        template: JST.cf_snapshot_presenter(),
+        template: snapshotPresenterTemplate,
         controller: [
           '$scope',
           $scope => {

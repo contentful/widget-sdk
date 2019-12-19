@@ -1,5 +1,4 @@
 import { toArray } from 'lodash';
-import { $inject } from 'test/utils/ng';
 
 beforeEach(function() {
   this._angularElements = [];
@@ -12,12 +11,18 @@ afterEach(function() {
   });
   delete this._angularElements;
 
+  let $rootElement;
+  let $rootScope;
+
+  inject($injector => {
+    $rootElement = $injector.get('$rootElement');
+    $rootScope = $injector.get('$rootScope');
+  });
+
   // Destroy root element
-  const $rootElement = $inject('$rootElement');
   $rootElement.remove();
 
   // Destroy all scopes
-  const $rootScope = $inject('$rootScope');
   $rootScope.$destroy();
 
   // Warn if there is still an element

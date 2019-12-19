@@ -2,6 +2,8 @@ import { getModule } from 'NgRegistry';
 import _ from 'lodash';
 import * as entitySelectorConfig from 'search/EntitySelector/Config';
 
+import entitySelectorDialogTemplate from './entity_selector_dialog.html';
+
 const {
   getLabels,
   newConfigFromField,
@@ -55,7 +57,7 @@ export function open(options) {
   };
   const dialog = modalDialog.open({
     attachTo: 'body',
-    template: 'entity_selector_dialog',
+    template: entitySelectorDialogTemplate,
     backgroundClose: true,
     ignoreEsc: false,
     noNewScope: true,

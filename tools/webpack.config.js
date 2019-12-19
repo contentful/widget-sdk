@@ -83,6 +83,17 @@ module.exports = () => {
               compact: isProd
             })
           }
+        },
+        {
+          test: /\.html$/,
+          use: [
+            {
+              loader: 'html-loader',
+              options: {
+                minimize: true
+              }
+            }
+          ]
         }
       ]
     },

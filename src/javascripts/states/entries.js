@@ -4,6 +4,7 @@ import { loadEntry as loadEditorData } from 'app/entity_editor/DataLoader';
 import createEntityPageController from 'app/entity_editor/EntityPageController';
 import * as trackVersioning from 'analytics/events/versioning';
 import * as Entries from 'data/entries';
+import entityPageTemplate from 'app/entity_editor/entity_page.html';
 
 const list = base({
   name: 'list',
@@ -140,7 +141,7 @@ function detail(withSnapshots) {
     url: '/:entryId?previousEntries&bulkEditor',
     children: withSnapshots ? [compare] : [],
     params: { addToContext: true },
-    template: JST.entity_page(),
+    template: entityPageTemplate,
     controller: ['$scope', '$state', createEntityPageController]
   });
 }

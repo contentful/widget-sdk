@@ -3,7 +3,7 @@ import createSpaceEndpoint from 'test/utils/createSpaceEndpointMock';
 import sinon from 'sinon';
 import $ from 'jquery';
 import { $initialize, $wait } from 'test/utils/ng';
-import { beforeEach, it } from 'test/utils/dsl';
+import { it } from 'test/utils/dsl';
 
 describe('app/RoleSelector', () => {
   beforeEach(async function() {
@@ -27,9 +27,7 @@ describe('app/RoleSelector', () => {
     ComponentLibrary.Notification.success = sinon.stub();
     this.Notification = ComponentLibrary.Notification;
 
-    const { default: openRoleSelector } = await this.system.import(
-      'app/ContentList/RoleSelector'
-    );
+    const { default: openRoleSelector } = await this.system.import('app/ContentList/RoleSelector');
 
     await $initialize(this.system);
 

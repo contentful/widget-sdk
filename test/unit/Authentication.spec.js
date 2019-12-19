@@ -13,7 +13,7 @@ const waitForLocationChange = async ($window, initialValue) => {
   return true;
 };
 
-describe('Authentication', () => {
+describe('Authentication', function() {
   beforeEach(async function() {
     this.$http = sinon.stub();
     this.window = {
@@ -43,7 +43,7 @@ describe('Authentication', () => {
     this.localStore = getStore('local');
   });
 
-  describe('#refreshToken()', () => {
+  describe('#refreshToken()', function() {
     beforeEach(function() {
       this.store.set('STORED_TOKEN');
       this.Auth.init();
@@ -105,7 +105,7 @@ describe('Authentication', () => {
     });
   });
 
-  describe('#init()', () => {
+  describe('#init()', function() {
     it('obtains token from local storage', async function() {
       this.store.set('STORED_TOKEN');
       this.Auth.init();
@@ -132,7 +132,7 @@ describe('Authentication', () => {
       expect(this.window.location).toEqual('//be.test.com/logout');
     });
 
-    describe('on login from gatekeeper', () => {
+    describe('on login from gatekeeper', function() {
       beforeEach(function() {
         this.$location.url.returns('/?login=1');
       });
@@ -178,7 +178,7 @@ describe('Authentication', () => {
     });
   });
 
-  describe('#logout()', () => {
+  describe('#logout()', function() {
     beforeEach(function() {
       this.store.set('STORED_TOKEN');
       this.Auth.init();
@@ -215,7 +215,7 @@ describe('Authentication', () => {
 
     it('redirects to the logout page if revokation fails', async function() {
       this.$http.rejects();
-      await this.Auth.logout().catch(() => {});
+      await this.Auth.logout().catch(function() {});
       expect(this.window.location).toEqual('//be.test.com/logout');
     });
   });

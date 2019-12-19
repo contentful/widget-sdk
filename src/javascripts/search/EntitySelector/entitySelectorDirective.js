@@ -1,4 +1,5 @@
 import { registerDirective } from 'NgRegistry';
+import entitySelectorTemplate from './entity_selector.html';
 
 export default function register() {
   /**
@@ -8,7 +9,7 @@ export default function register() {
    * Allows to search and select entities (entries, assets, users).
    */
   registerDirective('cfEntitySelector', () => ({
-    template: JST.entity_selector(),
+    template: entitySelectorTemplate,
     restrict: 'E',
     scope: {
       config: '=',

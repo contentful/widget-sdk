@@ -1,6 +1,7 @@
 import React from 'react';
 import { Tooltip } from '@contentful/forma-36-react-components';
 import { registerDirective } from 'NgRegistry';
+import validationDateSelectTemplate from './cf_validation_date_select.html';
 
 export default function register() {
   /**
@@ -9,7 +10,7 @@ export default function register() {
   registerDirective('cfValidationDateSelect', () => ({
     restrict: 'E',
     require: ['^cfValidate', '^form'],
-    template: JST['cf_validation_date_select'](),
+    template: validationDateSelectTemplate,
     scope: true,
     controllerAs: 'dateSelect',
     controller: [

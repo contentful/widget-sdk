@@ -1,6 +1,7 @@
 import { registerDirective } from 'NgRegistry';
 
 import createEditorController from 'app/entity_editor/EntryController';
+import entryEditorTemplate from './entry_editor.html';
 
 export default function register() {
   registerDirective('cfEntryEditor', [
@@ -13,7 +14,7 @@ export default function register() {
         trackLoadEvent: '<'
       },
 
-      template: JST.entry_editor(),
+      template: entryEditorTemplate,
 
       controller: [
         '$scope',

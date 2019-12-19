@@ -13,7 +13,6 @@ env:
   jasmine: false
 globals:
   angular: false
-  JST: false
 
   jasmine: false
   inject: false

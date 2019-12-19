@@ -11,8 +11,14 @@ const filesNeededToRunTests = [
   'test/prelude.js',
   'src/javascripts/**/*.js',
   {
-    pattern: 'src/javascripts/libs/locales_list.json',
-    watched: false,
+    pattern: 'src/javascripts/**/*.json',
+    watched: true,
+    served: true,
+    included: false
+  },
+  {
+    pattern: 'src/javascripts/**/*.html',
+    watched: true,
     served: true,
     included: false
   },

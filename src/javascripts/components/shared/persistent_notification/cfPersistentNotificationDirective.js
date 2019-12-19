@@ -1,5 +1,6 @@
 import { registerDirective } from 'NgRegistry';
 import _ from 'lodash';
+import persistentNotificationTemplate from './cf_persistent_notification.html';
 
 export default function register() {
   registerDirective('cfPersistentNotification', [
@@ -8,7 +9,7 @@ export default function register() {
     ($sce, $timeout) => {
       return {
         restrict: 'E',
-        template: JST.cf_persistent_notification(),
+        template: persistentNotificationTemplate,
         link
       };
 

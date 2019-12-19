@@ -25,7 +25,7 @@ export default function register() {
         '(?::([0-5][\\d])(?:\\.(\\d{3}))?)?'; // seconds + milliseconds :XX.YYY
 
       // WARNING!
-      // This directive is also used in "cf_validation_date_select.jade"!
+      // This directive is also used in "cf_validation_date_select.html"!
       // Please keep it in mind when rewriting to use widgetApi
       return {
         restrict: 'A',

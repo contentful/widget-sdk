@@ -1,6 +1,0 @@
-mixin td
-  - var uiSref = attributes['ui-sref']
-  - delete attributes['ui-sref']
-  td(style="cursor: pointer")&attributes(attributes)
-    a(ui-sref=uiSref ng-click="$event.stopPropagation();")
-      block

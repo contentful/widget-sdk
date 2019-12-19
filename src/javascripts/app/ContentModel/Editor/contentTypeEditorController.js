@@ -14,6 +14,8 @@ import { createCommand } from 'utils/command/command';
 import createActions from 'app/ContentModel/Editor/Actions';
 import * as accessChecker from 'access_control/AccessChecker';
 
+import addFieldDialogTemplate from 'app/ContentModel/Editor/add_field_dialog.html';
+
 export default function register() {
   registerDirective('cfContentTypeEditor', [
     () => ({
@@ -206,7 +208,7 @@ export default function register() {
         () => {
           modalDialog
             .open({
-              template: 'add_field_dialog',
+              template: addFieldDialogTemplate,
               scope: $scope
             })
             .promise.then(addField);

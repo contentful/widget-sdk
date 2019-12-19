@@ -2,6 +2,7 @@ import sinon from 'sinon';
 import createMockSpaceEndpoint from 'test/utils/createSpaceEndpointMock';
 import { set } from 'lodash';
 import { it } from 'test/utils/dsl';
+import { $initialize } from 'test/utils/ng';
 
 describe('Legacy Feature Service', () => {
   beforeEach(async function() {
@@ -72,6 +73,8 @@ describe('Legacy Feature Service', () => {
     this.createLegacyFeatureService = (await this.system.import(
       'services/LegacyFeatureService'
     )).default;
+
+    await $initialize(this.system);
   });
 
   it('should use the space endpoint by default during instantiation', function() {

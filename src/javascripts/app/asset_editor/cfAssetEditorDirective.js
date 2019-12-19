@@ -1,6 +1,7 @@
 import { registerDirective } from 'NgRegistry';
 
 import createEditorController from 'app/entity_editor/AssetController';
+import assetEditorTemplate from './asset_editor.html';
 
 export default function register() {
   registerDirective('cfAssetEditor', [
@@ -12,7 +13,7 @@ export default function register() {
         preferences: '<'
       },
 
-      template: JST.asset_editor(),
+      template: assetEditorTemplate,
 
       controller: [
         '$scope',

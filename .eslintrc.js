@@ -33,8 +33,7 @@ module.exports = {
     ArrayBuffer: false,
     Uint8Array: false,
     window: true,
-    document: true,
-    JST: false
+    document: true
   },
   parser: 'babel-eslint',
   rules: {

@@ -196,6 +196,7 @@
     "gulp-sourcemaps": "^2.6.5",
     "gulp-uglify": "^3.0.2",
     "gulp-util": "^3.0.1",
+    "html-loader": "^0.5.5",
     "htmlparser2": "^4.0.0",
     "husky": "^2.7.0",
     "jade": "^1.11.0",
@@ -276,6 +277,10 @@
       "git add"
     ],
     "*.yml": [
+      "prettier --write",
+      "git add"
+    ],
+    "*.html": [
       "prettier --write",
       "git add"
     ]

@@ -19,15 +19,16 @@ import tasks from 'app/TasksPage/routes';
 import pageExtensions from 'app/pageExtensions/routes';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
 
-const store = getStore();
+import createSpaceAdviceTemplate from 'components/app_container/cf_create_space_advice.html';
+import spaceHibernationAdviceTemplate from 'components/app_container/cf_space_hibernation_advice.html';
+import noSectionAvailableTemplate from 'components/app_container/cf_no_section_available.html';
 
-// TODO convert JST templates to hyperscript
-/* global JST */
+const store = getStore();
 
 const newSpace = {
   name: 'new',
   url: '_new',
-  template: JST.cf_create_space_advice(),
+  template: createSpaceAdviceTemplate,
   controller: [
     '$scope',
     $scope => {
@@ -40,7 +41,7 @@ const hibernation = {
   name: 'hibernation',
   url: '/hibernation',
   navComponent: EmptyNavigationBar,
-  template: JST.cf_space_hibernation_advice()
+  template: spaceHibernationAdviceTemplate
 };
 
 const resolveSpaceData = [
@@ -112,7 +113,7 @@ const spaceDetail = {
       Analytics.trackContextChange(spaceData, organizationData);
     }
   ],
-  template: JST.cf_no_section_available(),
+  template: noSectionAvailableTemplate,
   controller: [
     '$scope',
     '$state',

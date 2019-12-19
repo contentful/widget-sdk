@@ -11,6 +11,8 @@ import { css } from 'emotion';
 import * as ImageOperations from 'app/widgets/ImageOperations';
 import * as AssetUrlService from 'services/AssetUrlService';
 
+import fileEditorTemplate from './cf_file_editor.html';
+
 const styles = {
   buttonIcon: css({
     marginTop: '8px'
@@ -29,7 +31,7 @@ export default function register() {
       return {
         restrict: 'E',
         require: '^cfWidgetApi',
-        template: JST.cf_file_editor(),
+        template: fileEditorTemplate,
         link: function(scope, elem, _attrs, widgetApi) {
           const field = widgetApi.field;
           const deleteFile = (scope.deleteFile = setFile.bind(null, null));

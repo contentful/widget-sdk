@@ -18,7 +18,7 @@ function bundleAppJs() {
   const prodBundleSteeam = generateBundleFromFiles({
     bundlePath: 'app/application.min.js',
     manifestPath: 'build/app-manifest.json',
-    files: ['public/app/templates.js', 'public/app/app.js']
+    files: ['public/app/app.js']
   });
 
   return prodBundleSteeam;
@@ -31,7 +31,7 @@ function bundleAppJs() {
 function bundleTestJs() {
   // The "test" application, bundled with test dependencies
   const testBundleStream = generateBundleFromFiles({
-    files: ['public/app/templates.js', 'public/app/dependencies.js'],
+    files: ['public/app/dependencies.js'],
     isTestBuild: true
   });
 

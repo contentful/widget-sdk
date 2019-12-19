@@ -1,0 +1,23 @@
+<div class="advice">
+  <div class="cfnext-advice">
+    <i class="fa fa-folder advice__icon advice__icon--giant"></i>
+    <header class="advice__title">Welcome to Contentful!</header>
+    <p class="advice__description" ng-show="!canCreateSpace()">
+      It seems like you're not part of a space yet! No problem, contact your account's owner or
+      admin so they can add you to one.
+    </p>
+    <p class="advice__description" ng-show="canCreateSpace()">Why don't you create a space?</p>
+    <button
+      class="advice__action"
+      type="button"
+      ng-show="canCreateSpace()"
+      ng-click="showCreateSpaceDialog()"
+    >
+      Create space
+    </button>
+    <react-component
+      name="components/shared/knowledge_base_icon/KnowledgeBase"
+      props="{target: 'space', text: 'Visit the Knowledge Base Pages'}"
+    ></react-component>
+  </div>
+</div>

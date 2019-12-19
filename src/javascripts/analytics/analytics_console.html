@@ -1,0 +1,123 @@
+<div
+  class="analytics-console"
+  style="position: fixed; width: 400px; border: 2px solid #000; right: 20px; bottom: 20px; background: #fff"
+  ng-show="isVisible"
+>
+  <button ng-click="isVisible = false" title="Close console">🗙</button>
+  <button ng-click="isCollapsed = !isCollapsed" title="{{ isCollapsed ? 'Maximize' : 'Minimize' }}">
+    {{ isCollapsed ? '🗖' : '🗕' }}
+  </button>
+  <button ng-click="toggleSessionData()" ng-if="!isCollapsed">
+    {{ showSessionData ? 'Mode: Session data' : 'Mode: Events' }}
+  </button>
+  <button
+    class="icon"
+    ng-click="clearEvents()"
+    title="Clear listed events so far"
+    ng-show="!isCollapsed &amp;&amp; !showSessionData"
+  >
+    🗑
+  </button>
+  <button ng-click="toggleSnowplowDebugInfo()" ng-if="!isCollapsed &amp;&amp; !showSessionData">
+    {{ showingSnowplowDebugInfo ? '☒ snowplow only' : '☐ snowplow only'}}
+  </button>
+  <button ng-click="showData = !showData" ng-show="!isCollapsed &amp;&amp; !showSessionData">
+    {{ showData ? '☒ show data' : '☐ show data' }}
+  </button>
+  <div
+    class="analytics-console__content"
+    style="height: 450px; overflow-y: scroll; padding: 0 15px; margin: 5px 0;"
+    ng-show="!isCollapsed"
+  >
+    <div
+      class="analytics-console__info"
+      style="border-top: 1px dotted gray; margin-top: -1px; padding: 15px 5px;; font-style: italic; text-align: center;"
+      ng-if="!showSessionData &amp;&amp; clearedEventsIndex &gt; -1"
+    >
+      {{ clearedEventsIndex+1 }} previous events&#32;<a
+        ng-click="unclearEvents()"
+        href=""
+        style="font-style: normal"
+        >[restore]</a
+      >
+    </div>
+    <div
+      class="analytics-console__info"
+      style="border-top: 1px dotted gray; margin-top: -1px; padding: 15px 5px;; font-style: italic; text-align: center;"
+      ng-if="relevantEventsCount - filteredEvents.length"
+    >
+      {{ relevantEventsCount - filteredEvents.length }} events hidden by search&#32;<a
+        ng-click="clearSearch()"
+        href=""
+        style="font-style: normal"
+        >[clear search]</a
+      >
+    </div>
+    <div
+      class="analytics-console__events"
+      ng-show="!showSessionData &amp;&amp; !showingSnowplowDebugInfo"
+    >
+      <div
+        class="analytics-console__event"
+        style="border-top: 1px dotted gray; margin-top: -1px; padding: 15px 5px;"
+        ng-repeat="event in filteredEvents track by event.index"
+      >
+        <div>
+          #{{ event.index+1 }} - {{ event.time }} <strong>{{ event.name }}</strong
+          ><span ng-show="!event.isValid" style="color: red"> invalid name</span>
+        </div>
+        <pre
+          ng-if="showData"
+          style="font-size: 0.9em; white-space: pre-wrap; word-wrap: break-word"
+        >
+{{ (event.data || 'no data') | json }}</pre
+        >
+      </div>
+    </div>
+    <div
+      class="analytics-console__events"
+      ng-show="!showSessionData &amp;&amp; showingSnowplowDebugInfo"
+    >
+      <div
+        class="analytics-console__event"
+        style="border-top: 1px dotted gray; margin-top: -1px; padding: 15px 5px;"
+        ng-repeat="event in filteredEvents track by event.index"
+      >
+        <div>
+          #{{ event.index+1 }} - {{ event.time }}
+          <strong>{{ event.snowplow.name }}, v{{ event.snowplow.version }}</strong>
+        </div>
+        <pre
+          ng-if="showData"
+          style="font-size: 0.9em; white-space: pre-wrap; word-wrap: break-word"
+        >
+{{ (event.snowplow.data || 'no data') | json }}</pre
+        >
+        <pre
+          style="font-size: 0.9em; white-space: pre-wrap; word-wrap: break-word"
+          ng-if="showData &amp;&amp; event.snowplow.context"
+        >
+context: {{ event.snowplow.context | json }}</pre
+        >
+      </div>
+    </div>
+    <div class="analytics-console__session-data" ng-show="showSessionData">
+      <pre style="font-size: 0.9em; white-space: pre-wrap; word-wrap: break-word">
+{{ (sessionData || 'no data') | json }}</pre
+      >
+    </div>
+  </div>
+  <div
+    class="analytics-console__filter"
+    ng-show="!showSessionData"
+    style="display: flex; align-items: baseline; padding: 5px; border-top: 1px solid black"
+  >
+    <div>Filter:</div>
+    <input
+      type="text"
+      ng-model="filterText"
+      style="border: none; border-bottom: 1px solid gray; margin: 0 5px"
+    />
+    <div ng-if="filterText">&#32;({{ filteredEvents.length }} matches)</div>
+  </div>
+</div>
