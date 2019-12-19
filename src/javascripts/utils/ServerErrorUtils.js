@@ -6,3 +6,7 @@ export function isTaken(error) {
 
   return status === 422 && errors.some(e => e.name === 'taken');
 }
+
+export function isForbidden(error) {
+  return error.statusCode === 403;
+}

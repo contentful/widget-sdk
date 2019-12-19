@@ -305,13 +305,62 @@ describe('NewUser', () => {
       });
     });
 
-    it('shows a success message', async () => {
-      const wrapper = build();
-      await submitForm(wrapper, ['john.doe@enterprise.com'], 'Owner');
-      await wait(() => wrapper.getByTestId('new-user.done'));
-      const successState = wrapper.getByTestId('new-user.done.success');
-      expect(successState).toBeVisible();
-      expect(invite).toHaveBeenCalledTimes(1);
+    describe('result state', () => {
+      const forbiddenError = new Error('Forbidden');
+      const unprocessableError = new Error('Unprocessable');
+      forbiddenError.statusCode = 403;
+      unprocessableError.statusCode = 422;
+
+      let wrapper;
+
+      beforeEach(() => (wrapper = build()));
+
+      it('shows a success message', async () => {
+        await submitForm(wrapper, ['john.doe@enterprise.com'], 'Owner');
+        await wait(() => wrapper.getByTestId('new-user.done'));
+        const successState = wrapper.getByTestId('new-user.done.success');
+        expect(successState).toBeVisible();
+        expect(invite).toHaveBeenCalledTimes(1);
+      });
+
+      it('shows a plan limit failure message', async () => {
+        invite.mockRejectedValueOnce(forbiddenError);
+        await submitForm(wrapper, ['john.doe@enterprise.com'], 'Owner');
+        await wait(() => wrapper.getByTestId('new-user.done'));
+        const planLimitErrorMessage = wrapper.getByTestId('new-user.done.failed.planLimitHit');
+        const alreadyInErrorMessage = wrapper.queryByTestId('new-user.done.failed.alreadyIn');
+        expect(planLimitErrorMessage).toBeVisible();
+        expect(alreadyInErrorMessage).toBeNull();
+      });
+
+      it('shows an already invited failure message', async () => {
+        invite.mockRejectedValueOnce(unprocessableError);
+        await submitForm(wrapper, ['john.doe@enterprise.com'], 'Owner');
+        await wait(() => wrapper.getByTestId('new-user.done'));
+        const planLimitErrorMessage = wrapper.queryByTestId('new-user.done.failed.planLimitHit');
+        const alreadyInErrorMessage = wrapper.getByTestId('new-user.done.failed.alreadyIn');
+        expect(alreadyInErrorMessage).toBeVisible();
+        expect(planLimitErrorMessage).toBeNull();
+      });
+
+      it('shows messages for mixed results', async () => {
+        invite
+          .mockRejectedValueOnce(unprocessableError)
+          .mockResolvedValueOnce({})
+          .mockRejectedValueOnce(forbiddenError);
+        await submitForm(
+          wrapper,
+          ['john.doe@enterprise.com', 'jane.doe@enterprise.com', 'jack.doe@enterprise.com'],
+          'Owner'
+        );
+        await wait(() => wrapper.getByTestId('new-user.done'));
+        const successState = wrapper.getByTestId('new-user.done.success');
+        const planLimitErrorMessage = wrapper.getByTestId('new-user.done.failed.planLimitHit');
+        const alreadyInErrorMessage = wrapper.getByTestId('new-user.done.failed.alreadyIn');
+        expect(alreadyInErrorMessage).toBeVisible();
+        expect(planLimitErrorMessage).toBeVisible();
+        expect(successState).toBeVisible();
+      });
     });
   });
 });
