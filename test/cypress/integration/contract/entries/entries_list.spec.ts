@@ -16,8 +16,9 @@ import {
   queryAllScheduledJobsForDefaultEntry
 } from '../../../interactions/jobs';
 import {
+  queryForScheduledPublishingOnEntryListPage,
   queryForEnvironmentUsageAndAppsInDefaultSpace,
-  queryForTasksAndScheduledPublishingInDefaultSpace
+  queryForTasksInDefaultSpace
 } from '../../../interactions/product_catalog_features';
 
 const empty = require('../../../fixtures/responses/empty.json');
@@ -77,7 +78,7 @@ describe('Entries list page', () => {
         ...defaultRequestsMock({}),
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
         queryPendingJobsForDefaultSpace.willFindSeveral(),
-        queryForTasksAndScheduledPublishingInDefaultSpace.willFindBothEnabled(),
+        queryForScheduledPublishingOnEntryListPage.willFindFeatureEnabled(),
         queryForEnvironmentUsageAndAppsInDefaultSpace.willFindSeveral()
       ];
 
@@ -124,7 +125,7 @@ describe('Entries list page', () => {
         }),
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
         queryPendingJobsForDefaultSpace.willFindSeveral(),
-        queryForTasksAndScheduledPublishingInDefaultSpace.willFindBothEnabled(),
+        queryForScheduledPublishingOnEntryListPage.willFindFeatureEnabled(),
         queryForEnvironmentUsageAndAppsInDefaultSpace.willFindSeveral()
       ];
 
@@ -140,7 +141,6 @@ describe('Entries list page', () => {
         .find('button')
         .should('be.enabled');
     });
-
     it('redirects to the entry page after click on create button', () => {
       const interactions = [
         createAnEntryInDefaultSpace.willSucceed(),
@@ -149,6 +149,7 @@ describe('Entries list page', () => {
         getFirst7SnapshotsOfDefaultEntry.willReturnNone(),
         getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
         queryAllScheduledJobsForDefaultEntry.willFindOnePendingJob(),
+        queryForTasksInDefaultSpace.willFindTasksEnabled()
       ];
 
       cy.getByTestId('create-entry').click();
@@ -179,7 +180,7 @@ describe('Entries list page', () => {
         ...defaultRequestsMock({}),
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
         queryPendingJobsForDefaultSpace.willFindSeveral(),
-        queryForTasksAndScheduledPublishingInDefaultSpace.willFindBothEnabled(),
+        queryForScheduledPublishingOnEntryListPage.willFindFeatureEnabled(),
         queryForEnvironmentUsageAndAppsInDefaultSpace.willFindSeveral()
       ];
 
@@ -224,7 +225,7 @@ describe('Entries list page', () => {
         '@queryNonArchivedEntries',
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
         queryPendingJobsForDefaultSpace.willFindSeveral(),
-        queryForTasksAndScheduledPublishingInDefaultSpace.willFindBothEnabled(),
+        queryForScheduledPublishingOnEntryListPage.willFindFeatureEnabled(),
         queryForEnvironmentUsageAndAppsInDefaultSpace.willFindSeveral()
       ];
 
