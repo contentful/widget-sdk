@@ -8,8 +8,6 @@ import * as Config from 'Config';
 import { getUser } from 'services/TokenStore';
 import { getCurrentStateName, href } from 'states/Navigator';
 import { getOpenAssignedTasksAndEntries } from 'app/TasksPage/helpers';
-import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
-import * as FeatureFlagKey from 'featureFlags';
 import { getModule } from 'NgRegistry';
 
 import {
@@ -112,9 +110,6 @@ const getPendingTasksCount = (tasks, entries) => {
   return taskCount;
 };
 
-const canDisplayTasksDashboard = async spaceContext =>
-  spaceContext.space ? getCurrentSpaceFeature(FeatureFlagKey.CONTENT_WORKFLOW_TASKS, false) : false;
-
 export default class AccountDropdown extends Component {
   state = {
     isOpen: false,
@@ -124,30 +119,38 @@ export default class AccountDropdown extends Component {
   };
 
   componentDidMount = async () => {
+    const updates = {};
     const spaceContext = getModule('spaceContext');
-    const shouldShowPendingTasksPromise = canDisplayTasksDashboard(spaceContext);
-
     const currentUser = await getUser();
+
     this.setState({
       currentUser
     });
 
-    const shouldShowPendingTasks = await shouldShowPendingTasksPromise;
-
-    if (currentUser && shouldShowPendingTasks) {
-      const [tasks, entries] = await getOpenAssignedTasksAndEntries(
-        spaceContext.space.getId(),
-        spaceContext.getEnvironmentId(),
-        currentUser.sys.id
-      );
-      const pendingTasksCount = getPendingTasksCount(tasks, entries);
-      Analytics.track('account_dropdown:pending_tasks_fetched', {
-        numPendingTasks: tasks.length,
-        numVisiblePendingTasks: pendingTasksCount,
-        hasInaccessibleTasks: tasks.length > pendingTasksCount
-      });
-      this.setState({ pendingTasksCount, shouldShowPendingTasks: true });
+    if (spaceContext.space && currentUser) {
+      let pendingTasksCount;
+      let shouldShowPendingTasks;
+      try {
+        const [tasks, entries] = await getOpenAssignedTasksAndEntries(
+          spaceContext.space.getId(),
+          spaceContext.getEnvironmentId(),
+          currentUser.sys.id
+        );
+        pendingTasksCount = getPendingTasksCount(tasks, entries);
+        shouldShowPendingTasks = true;
+        Analytics.track('account_dropdown:pending_tasks_fetched', {
+          numPendingTasks: tasks.length,
+          numVisiblePendingTasks: pendingTasksCount,
+          hasInaccessibleTasks: tasks.length > pendingTasksCount
+        });
+      } catch (e) {
+        pendingTasksCount = 0;
+        shouldShowPendingTasks = false;
+      }
+      Object.assign(updates, { pendingTasksCount, shouldShowPendingTasks });
     }
+
+    this.setState({ ...updates });
   };
 
   handleToggle = () => {

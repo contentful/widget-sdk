@@ -3,7 +3,6 @@ import { RequestOptions, Query } from '@pact-foundation/pact';
 
 const productCatalogOrg = require('../fixtures/responses/product-catalog-org.json');
 const productCatalogSpace = require('../fixtures/responses/product-catalog-space.json');
-const productCatalogTasksAndScheduledPublishing = require('../fixtures/responses/product-catalog-tasks-and-scheduled-publishing.json');
 const productCatalogTasksAndApps = require('../fixtures/responses/product-catalog-tasks-and-apps.json');
 
 enum States {
@@ -61,7 +60,7 @@ export const getAllCatalogFeaturesForDefaultSpace = {
 };
 
 export const queryForTasksAndAppsInDefaultSpace = {
-  willFindBothEnabled() {
+  willFindBothOfThem() {
     cy.addInteraction({
       provider: PROVIDER,
       state: States.SPACE_WITH_SEVERAL_FEATURES,
@@ -79,22 +78,20 @@ export const queryForTasksAndAppsInDefaultSpace = {
   }
 };
 
-export const queryForTasksAndScheduledPublishingInDefaultSpace = {
-  willFindBothEnabled() {
+export const queryForTasksInDefaultSpace = {
+  willFindTasksEnabled() {
     cy.addInteraction({
       provider: PROVIDER,
       state: States.SPACE_WITH_SEVERAL_FEATURES,
-      uponReceiving: `a query for the "tasks" and "scheduled_publishing" features for space "${defaultSpaceId}"`,
-      withRequest: productCatalogFeaturesForDefaultSpaceRequest(
-        'sys.featureId[]=tasks&sys.featureId[]=scheduled_publishing'
-      ),
+      uponReceiving: `a query for the "tasks" features for space "${defaultSpaceId}"`,
+      withRequest: productCatalogFeaturesForDefaultSpaceRequest('sys.featureId[]=tasks'),
       willRespondWith: {
         status: 200,
-        body: productCatalogTasksAndScheduledPublishing
+        body: productCatalogTasksAndApps
       }
-    }).as('queryForTasksAndScheduledPublishingInDefaultSpace');
+    }).as('queryForTasksInDefaultSpace');
 
-    return '@queryForTasksAndScheduledPublishingInDefaultSpace';
+    return '@queryForTasksInDefaultSpace';
   }
 };
 
@@ -105,7 +102,7 @@ export const queryForScheduledPublishingInDefaultSpace = {
       state: States.SPACE_WITH_SEVERAL_FEATURES,
       uponReceiving: `a query for "scheduled_publishing" feature for space "${defaultSpaceId}"`,
       withRequest: productCatalogFeaturesForDefaultSpaceRequest(
-        'sys.featureId[]=tasks&sys.featureId[]=basic_apps&sys.featureId[]=scheduled_publishing'
+        'sys.featureId[]=scheduled_publishing&sys.featureId[]=basic_apps'
       ),
       willRespondWith: {
         status: 200,
@@ -124,7 +121,7 @@ export const queryForScheduledPublishingOnEntryPage = {
       state: States.SPACE_WITH_SEVERAL_FEATURES,
       uponReceiving: `a query for "scheduled_publishing" on the entry page`,
       withRequest: productCatalogFeaturesForDefaultSpaceRequest(
-        'sys.featureId[]=scheduled_publishing'
+        'sys.featureId[]=scheduled_publishing&sys.featureId[]=basic_apps&sys.featureId[]=tasks'
       ),
       willRespondWith: {
         status: 200,
@@ -133,6 +130,25 @@ export const queryForScheduledPublishingOnEntryPage = {
     }).as('queryForScheduledPublishingOnEntryPage');
 
     return '@queryForScheduledPublishingOnEntryPage';
+  }
+};
+
+export const queryForScheduledPublishingOnEntryListPage = {
+  willFindFeatureEnabled() {
+    cy.addInteraction({
+      provider: PROVIDER,
+      state: States.SPACE_WITH_SEVERAL_FEATURES,
+      uponReceiving: `a query for "scheduled_publishing" on the entry list page`,
+      withRequest: productCatalogFeaturesForDefaultSpaceRequest(
+        'sys.featureId[]=scheduled_publishing'
+      ),
+      willRespondWith: {
+        status: 200,
+        body: productCatalogSpace
+      }
+    }).as('queryForScheduledPublishingOnEntryListPage');
+
+    return '@queryForScheduledPublishingOnEntryListPage';
   }
 };
 
