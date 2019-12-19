@@ -323,13 +323,13 @@ describe('NewUser', () => {
         expect(invite).toHaveBeenCalledTimes(1);
       });
 
-      it('shows a rate limit failure message', async () => {
+      it('shows a plan limit failure message', async () => {
         invite.mockRejectedValueOnce(forbiddenError);
         await submitForm(wrapper, ['john.doe@enterprise.com'], 'Owner');
         await wait(() => wrapper.getByTestId('new-user.done'));
-        const rateLimitErrorMessage = wrapper.getByTestId('new-user.done.failed.planLimitHit');
+        const planLimitErrorMessage = wrapper.getByTestId('new-user.done.failed.planLimitHit');
         const alreadyInErrorMessage = wrapper.queryByTestId('new-user.done.failed.alreadyIn');
-        expect(rateLimitErrorMessage).toBeVisible();
+        expect(planLimitErrorMessage).toBeVisible();
         expect(alreadyInErrorMessage).toBeNull();
       });
 
@@ -337,10 +337,10 @@ describe('NewUser', () => {
         invite.mockRejectedValueOnce(unprocessableError);
         await submitForm(wrapper, ['john.doe@enterprise.com'], 'Owner');
         await wait(() => wrapper.getByTestId('new-user.done'));
-        const rateLimitErrorMessage = wrapper.queryByTestId('new-user.done.failed.planLimitHit');
+        const planLimitErrorMessage = wrapper.queryByTestId('new-user.done.failed.planLimitHit');
         const alreadyInErrorMessage = wrapper.getByTestId('new-user.done.failed.alreadyIn');
         expect(alreadyInErrorMessage).toBeVisible();
-        expect(rateLimitErrorMessage).toBeNull();
+        expect(planLimitErrorMessage).toBeNull();
       });
 
       it('shows messages for mixed results', async () => {
@@ -355,10 +355,10 @@ describe('NewUser', () => {
         );
         await wait(() => wrapper.getByTestId('new-user.done'));
         const successState = wrapper.getByTestId('new-user.done.success');
-        const rateLimitErrorMessage = wrapper.getByTestId('new-user.done.failed.planLimitHit');
+        const planLimitErrorMessage = wrapper.getByTestId('new-user.done.failed.planLimitHit');
         const alreadyInErrorMessage = wrapper.getByTestId('new-user.done.failed.alreadyIn');
         expect(alreadyInErrorMessage).toBeVisible();
-        expect(rateLimitErrorMessage).toBeVisible();
+        expect(planLimitErrorMessage).toBeVisible();
         expect(successState).toBeVisible();
       });
     });
