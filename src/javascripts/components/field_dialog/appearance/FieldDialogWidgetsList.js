@@ -3,14 +3,19 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import FieldDialogWidgetItem from './FieldDialogWidgetItem';
-import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 
 export default class FieldDialogWidgetsList extends Component {
   static propTypes = {
     widgets: PropTypes.array.isRequired,
     onSelect: PropTypes.func.isRequired,
-    selectedWidgetId: PropTypes.string.isRequired,
-    defaultWidgetId: PropTypes.string.isRequired,
+    selectedWidget: PropTypes.shape({
+      namespace: PropTypes.string.isRequired,
+      id: PropTypes.string.isRequired
+    }).isRequired,
+    defaultWidget: PropTypes.shape({
+      namespace: PropTypes.string.isRequired,
+      id: PropTypes.string.isRequired
+    }).isRequired,
     isAdmin: PropTypes.bool.isRequired
   };
 
@@ -19,29 +24,26 @@ export default class FieldDialogWidgetsList extends Component {
   };
 
   render() {
+    const { widgets, selectedWidget, defaultWidget } = this.props;
+
     return (
       <div className="cfnext-form__field">
         <label>Choose how this field should be displayed</label>
         <ul className="field-dialog__widget-list">
-          {this.props.widgets.map((widget, index) => {
-            const [namespace] = widget.id.split(',');
+          {widgets.map((widget, index) => {
+            const isSameWidget = w => widget.namespace === w.namespace && widget.id === w.id;
+
             return (
               <FieldDialogWidgetItem
-                key={widget.id}
-                isCustom={namespace === NAMESPACE_EXTENSION}
-                isAdmin={this.props.isAdmin}
-                isSelected={widget.id === this.props.selectedWidgetId}
-                isDefault={this.props.defaultWidgetId === widget.id}
-                onClick={() => {
-                  this.props.onSelect(widget.id);
-                }}
-                id={widget.id}
+                key={[widget.namespace, widget.id].join(',')}
                 index={index}
-                name={widget.name}
-                icon={widget.icon}
-                isApp={widget.isApp}
-                appIconUrl={widget.appIconUrl}
-                appId={widget.appId}
+                widget={widget}
+                isAdmin={this.props.isAdmin}
+                isSelected={isSameWidget(selectedWidget)}
+                isDefault={isSameWidget(defaultWidget)}
+                onClick={() => {
+                  this.props.onSelect(widget);
+                }}
               />
             );
           })}

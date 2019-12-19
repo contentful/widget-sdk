@@ -206,7 +206,7 @@ export function create() {
   registerWidget('richTextEditor', {
     fieldTypes: ['RichText'],
     name: 'RichText',
-    icon: 'json',
+    icon: 'wysiwig',
     buildTemplate: ({ widgetApi, loadEvents }) => {
       // TODO: Just provide `widgetApi` via `WidgetApiContext`
       //  directly in `cfWidgetRendererDirective` and merge

@@ -3,7 +3,7 @@ import {
   NAMESPACE_BUILTIN,
   NAMESPACE_EXTENSION,
   NAMESPACE_SIDEBAR_BUILTIN
-} from './widgetNamespaces';
+} from './WidgetNamespaces';
 
 const app = {
   appDefinition: {

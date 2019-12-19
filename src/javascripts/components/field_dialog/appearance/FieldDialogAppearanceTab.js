@@ -32,20 +32,26 @@ export default class FieldDialogAppearanceTab extends React.Component {
   static propTypes = {
     isAdmin: PropTypes.bool.isRequired,
     availableWidgets: PropTypes.array.isRequired,
-    defaultWidgetId: PropTypes.string.isRequired,
-    selectedWidgetId: PropTypes.string.isRequired,
-    widgetParams: PropTypes.object.isRequired,
+    defaultWidget: PropTypes.shape({
+      namespace: PropTypes.string.isRequired,
+      id: PropTypes.string.isRequired
+    }).isRequired,
+    widgetSettings: PropTypes.shape({
+      namespace: PropTypes.string.isRequired,
+      id: PropTypes.string.isRequired,
+      params: PropTypes.object
+    }).isRequired,
     onSelect: PropTypes.func.isRequired,
     onParametersUpdate: PropTypes.func.isRequired,
     hasCustomEditor: PropTypes.bool
   };
 
-  getFormProps = widget => {
-    let definitions = widget.parameters;
-    const params = this.props.widgetParams;
+  getFormProps = selectedWidget => {
+    let definitions = selectedWidget.parameters;
+    const params = this.props.widgetSettings.params;
 
     const values = WidgetParametersUtils.applyDefaultValues(definitions, params);
-    definitions = WidgetParametersUtils.filterDefinitions(definitions, values, widget.id);
+    definitions = WidgetParametersUtils.filterDefinitions(definitions, values, selectedWidget);
     definitions = WidgetParametersUtils.unifyEnumOptions(definitions);
 
     return {
@@ -62,9 +68,18 @@ export default class FieldDialogAppearanceTab extends React.Component {
   };
 
   render() {
-    const { availableWidgets, defaultWidgetId, isAdmin, hasCustomEditor } = this.props;
+    const {
+      availableWidgets,
+      widgetSettings,
+      defaultWidget,
+      isAdmin,
+      hasCustomEditor
+    } = this.props;
     const widgetsCount = availableWidgets.length;
-    const widget = availableWidgets.find(widget => widget.id === this.props.selectedWidgetId);
+    const selectedWidget = availableWidgets.find(widget => {
+      return widget.namespace === widgetSettings.namespace && widget.id === widgetSettings.id;
+    });
+
     return (
       <div>
         {hasCustomEditor && (
@@ -85,15 +100,15 @@ export default class FieldDialogAppearanceTab extends React.Component {
               <FieldDialogWidgetsList
                 widgets={availableWidgets}
                 onSelect={this.props.onSelect}
-                selectedWidgetId={this.props.selectedWidgetId}
-                defaultWidgetId={defaultWidgetId}
+                selectedWidget={selectedWidget}
+                defaultWidget={defaultWidget}
                 isAdmin={isAdmin}
               />
               <div
                 className={classNames('modal-dialog__slice', {
                   'field-dialog__widget-options': availableWidgets.length > 1
                 })}>
-                {widget && <WidgetParametersForm key={widget.id} {...this.getFormProps(widget)} />}
+                {selectedWidget && <WidgetParametersForm {...this.getFormProps(selectedWidget)} />}
               </div>
             </React.Fragment>
           )}

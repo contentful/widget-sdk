@@ -4,8 +4,8 @@ import { NAMESPACE_BUILTIN } from './WidgetNamespaces';
 // Built-in date picker conditionally renderes one of its parameters.
 // We could buit a generic dependency mechanism but for now we just
 // filter manually the only known scenario.
-export function filterDefinitions(definitions, values, combinedWidgetId) {
-  if (combinedWidgetId === `${NAMESPACE_BUILTIN},datePicker`) {
+export function filterDefinitions(definitions, values, widget) {
+  if (widget.namespace === NAMESPACE_BUILTIN && widget.id === 'datePicker') {
     return definitions.filter(definition => {
       // Always display all parameters but `ampm`. Show `ampm` only
       // if `format` includes time.
