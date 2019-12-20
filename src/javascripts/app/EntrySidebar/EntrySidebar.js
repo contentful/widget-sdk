@@ -106,6 +106,8 @@ export default class EntrySidebar extends Component {
     })
   };
 
+  entitySidebarRef = React.createRef();
+
   createTabs = () => ({
     activity: {
       isEnabled: true,
@@ -144,6 +146,12 @@ export default class EntrySidebar extends Component {
   state = {
     selectedTab: Object.keys(this.createTabs())[0]
   };
+
+  componentDidUpdate(_, prevState) {
+    if (prevState.selectedTab !== this.state.selectedTab) {
+      this.entitySidebarRef.current.scrollTo(0, 0);
+    }
+  }
 
   renderBuiltinWidget = sidebarItem => {
     const { emitter, localeData, sidebarExtensionsBridge: bridge } = this.props.entrySidebarProps;
@@ -252,7 +260,7 @@ export default class EntrySidebar extends Component {
                 )
             )}
           </Tabs>
-          <div className={cx('entity-sidebar', styles.panelWrapper)}>
+          <div className={cx('entity-sidebar', styles.panelWrapper)} ref={this.entitySidebarRef}>
             <TabPanel
               id="comments"
               className={cx(styles.tabPanel, {
