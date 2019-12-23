@@ -8,7 +8,7 @@ import { css } from 'emotion';
 import { Spinner } from '@contentful/forma-36-react-components';
 
 import Keys from './Keys';
-import FilterIcon from 'svg/filter';
+import FilterIcon from 'svg/filter.svg';
 import tokens from '@contentful/forma-36-tokens';
 
 import FilterPill from './FilterPill';

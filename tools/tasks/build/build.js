@@ -3,7 +3,6 @@ const { build, buildTestDeps } = require('../js');
 const clean = require('../clean');
 const { bundleAppJs, bundleTestJs } = require('./js');
 const { buildMinifiedChunks, buildNonMinifiedChunks } = require('./chunks');
-// const buildStyles = require('./styles');
 
 const buildTest = gulp.series(
   clean,

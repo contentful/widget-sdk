@@ -14,7 +14,7 @@ import {
   Paragraph
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import EnvironmentIcon from 'svg/environment';
+import EnvironmentIcon from 'svg/environment.svg';
 import * as logger from 'services/logger';
 import EnvironmentDetails from 'app/common/EnvironmentDetails';
 import StaticDropdown from './StaticDropdown';

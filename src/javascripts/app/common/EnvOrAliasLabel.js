@@ -1,8 +1,8 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 
-import EnvironmentIcon from 'svg/environment';
-import AliasIcon from 'svg/alias';
+import EnvironmentIcon from 'svg/environment.svg';
+import AliasIcon from 'svg/alias.svg';
 import tokens from '@contentful/forma-36-tokens';
 import { Icon } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';

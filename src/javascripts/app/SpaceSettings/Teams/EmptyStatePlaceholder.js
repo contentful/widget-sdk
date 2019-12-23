@@ -4,7 +4,7 @@ import { Heading, Paragraph } from '@contentful/forma-36-react-components';
 import EmptyStateContainer, {
   defaultSVGStyle
 } from 'components/EmptyStateContainer/EmptyStateContainer';
-import Illustration from 'svg/add-team-to-space-illustration';
+import Illustration from 'svg/add-team-to-space-illustration.svg';
 
 export default () => (
   <EmptyStateContainer data-test-id="no-teams-in-space-placeholder">

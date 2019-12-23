@@ -1,9 +1,9 @@
 import React from 'react';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import DocumentationIll from 'svg/space-home-documentation-ill';
-import CommunityIll from 'svg/community-space-home-Ill';
-import CaseStudyIll from 'svg/case-study-space-home-ill';
+import DocumentationIll from 'svg/space-home-documentation-ill.svg';
+import CommunityIll from 'svg/community-space-home-Ill.svg';
+import CaseStudyIll from 'svg/case-study-space-home-ill.svg';
 import { Subheading, Paragraph, TextLink, Typography } from '@contentful/forma-36-react-components';
 import { trackClickCTA } from '../tracking';
 

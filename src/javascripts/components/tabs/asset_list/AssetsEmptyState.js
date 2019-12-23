@@ -5,7 +5,7 @@ import EmptyStateContainer, {
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import { Heading, Paragraph } from '@contentful/forma-36-react-components';
 import AddAssetButton from './AddAssetButton';
-import MediaEmptyStateIllustration from 'svg/media-empty-state';
+import MediaEmptyStateIllustration from 'svg/media-empty-state.svg';
 
 const AssetsEmptyState = ({ canUploadMultipleAssets, createMultipleAssets, newAsset }) => {
   return (

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import ContentfulLogoLight from 'svg/ContentfulLogoLight';
-import GenericAppIcon from 'svg/page-apps';
+import ContentfulLogoLight from 'svg/ContentfulLogoLight.svg';
+import GenericAppIcon from 'svg/page-apps.svg';
 
 const SIZES = {
   xsmall: 20,

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import TeamsEmptyStateImage from 'svg/add-team-illustration';
+import TeamsEmptyStateImage from 'svg/add-team-illustration.svg';
 import { Heading, Paragraph, Button } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import TeamDialog from './TeamDialog';

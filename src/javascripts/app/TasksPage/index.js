@@ -18,7 +18,7 @@ import tokens from '@contentful/forma-36-tokens';
 import EmptyStateContainer, {
   defaultSVGStyle
 } from 'components/EmptyStateContainer/EmptyStateContainer';
-import FolderIllustration from 'svg/folder-illustration';
+import FolderIllustration from 'svg/folder-illustration.svg';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
 import { getEntryTitle } from 'classes/EntityFieldValueHelpers';
 import { getOpenAssignedTasksAndEntries } from './helpers';

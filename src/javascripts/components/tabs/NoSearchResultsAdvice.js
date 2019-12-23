@@ -2,7 +2,7 @@ import React from 'react';
 import { css } from 'emotion';
 import { Heading, Paragraph, TextLink } from '@contentful/forma-36-react-components';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
-import BinocularsIllustration from 'svg/binoculars-illustration';
+import BinocularsIllustration from 'svg/binoculars-illustration.svg';
 import { websiteUrl } from 'Config';
 
 const styles = { svgContainer: css({ width: '30vw' }) };

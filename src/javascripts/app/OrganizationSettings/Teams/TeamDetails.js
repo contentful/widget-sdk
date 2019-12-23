@@ -23,7 +23,7 @@ import getMembershipsOfCurrentTeamToDisplay from 'redux/selectors/teamMembership
 import getOrgId from 'redux/selectors/getOrgId';
 import Placeholder from 'app/common/Placeholder';
 import ellipsisStyle from 'ellipsisStyle';
-import TeamsEmptyStateImage from 'svg/add-user-illustration';
+import TeamsEmptyStateImage from 'svg/add-user-illustration.svg';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import ROUTES from 'redux/routes';
 

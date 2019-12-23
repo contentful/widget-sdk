@@ -5,7 +5,7 @@ import tokens from '@contentful/forma-36-tokens';
 import Keys from './Keys';
 import PropTypes from 'prop-types';
 import { truncate } from 'utils/StringUtils';
-import InfoIcon from 'svg/info';
+import InfoIcon from 'svg/info.svg';
 
 // Suggestions
 // -----------

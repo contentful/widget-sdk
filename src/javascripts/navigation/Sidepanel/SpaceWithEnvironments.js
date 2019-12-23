@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import AnimateHeight from 'react-animate-height';
-import FolderIcon from 'svg/folder';
+import FolderIcon from 'svg/folder.svg';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo';
 import { getModule } from 'NgRegistry';

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styles from '../styles';
 import CTACardComponent from './CTACardComponent';
-import AddUserIllustration from 'svg/add-user-blank';
+import AddUserIllustration from 'svg/add-user-blank.svg';
 import { trackClickCTA } from '../tracking';
 
 const AddCoworkerCTA = ({ hasTeamsEnabled, spaceId, orgId }) => {

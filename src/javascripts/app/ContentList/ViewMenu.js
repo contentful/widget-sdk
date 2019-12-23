@@ -7,7 +7,7 @@ import tokens from '@contentful/forma-36-tokens';
 
 import ViewFolder from './ViewFolder';
 import { openInputDialog } from 'app/InputDialogComponent';
-import AddFolderIcon from 'svg/add-folder';
+import AddFolderIcon from 'svg/add-folder.svg';
 
 const styles = {
   'view-menu-wrapper': css({

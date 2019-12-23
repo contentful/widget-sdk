@@ -6,7 +6,7 @@ import StateLink from 'app/common/StateLink';
 import { CodeFragment } from 'ui/Content';
 import { find } from 'lodash';
 import { filter, concat } from 'utils/Collections';
-import InfoIcon from 'svg/info';
+import InfoIcon from 'svg/info.svg';
 import { CheckboxField, SectionHeading } from '@contentful/forma-36-react-components';
 import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel';
 import { getModule } from 'NgRegistry';

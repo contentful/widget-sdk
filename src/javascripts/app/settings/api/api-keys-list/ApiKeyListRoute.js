@@ -22,7 +22,7 @@ import * as Navigator from 'states/Navigator';
 import EmptyStateContainer, {
   defaultSVGStyle
 } from 'components/EmptyStateContainer/EmptyStateContainer';
-import ApiKeysEmptyIllustration from 'svg/api-keys-empty-illustation';
+import ApiKeysEmptyIllustration from 'svg/api-keys-empty-illustation.svg';
 
 const styles = {
   actions: css({

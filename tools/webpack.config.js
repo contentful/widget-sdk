@@ -74,7 +74,7 @@ module.exports = () => {
       filename: '[name]',
       path: P.resolve(__dirname, '..', 'public', 'app'),
       publicPath: '/app/',
-      chunkFilename: 'chunk_[name]-[chunkhash].js'
+      chunkFilename: 'chunk_[name]-[contenthash].js'
     },
     mode: isProd ? 'production' : 'development',
     resolve: {
@@ -124,16 +124,50 @@ module.exports = () => {
               }
             }
           ]
+        },
+        {
+          test: /.(png|jpe?g|gif|eot|ttf|woff|otf|svg)$/i,
+          issuer: {
+            test: /\.css$/
+          },
+          use: [
+            {
+              loader: 'file-loader',
+              options: {
+                name: '[name]-[contenthash].[ext]'
+              }
+            }
+          ]
+        },
+        {
+          test: /.svg$/,
+          issuer: {
+            test: /\.js$/
+          },
+          use: [
+            {
+              loader: '@svgr/webpack'
+            }
+          ]
         }
       ]
     },
     plugins: [
       new WebpackRequireFrom({
-        methodName: 'WebpackRequireFrom_getChunkURL'
+        methodName: 'WebpackRequireFrom_getChunkURL',
+
+        // We suppress errors here since we have non-JS entrypoints
+        suppressErrors: true
       }),
       new MiniCssExtractPlugin({
         filename: '[name].css',
         chunkFilename: '[id].css'
+      }),
+      new webpack.ProgressPlugin({
+        entries: true,
+        modules: true,
+        modulesCount: 100,
+        profile: true
       })
     ].concat(
       // moment.js by default bundles all locales, we want to remove them
@@ -156,7 +190,7 @@ module.exports = () => {
     // Development:
     // We are using `cheap-module-source-map` as this allows us to see
     // errors and stack traces with Karma rather than just "Script error".
-    devtool: isDev ? 'cheap-module-source-map' : 'inline-source-map',
+    devtool: isDev ? 'cheap-module-source-map' : 'source-map',
     optimization: {
       minimize: false,
       chunkIds: isDev ? 'named' : false,

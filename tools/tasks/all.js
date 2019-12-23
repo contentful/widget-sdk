@@ -1,3 +1,1 @@
-const copyStatic = require('./copy');
-
-module.exports = copyStatic;
+module.exports = function() {};

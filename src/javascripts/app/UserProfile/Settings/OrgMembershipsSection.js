@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography, Paragraph, Heading, Button } from '@contentful/forma-36-react-components';
-import EmptyStateAdminIllustration from 'svg/folder-illustration';
+import EmptyStateAdminIllustration from 'svg/folder-illustration.svg';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import { css } from 'emotion';
 

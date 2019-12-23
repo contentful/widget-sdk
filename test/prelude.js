@@ -58,28 +58,53 @@
         recordName = filename.split('/base/')[1];
       }
 
-      // We add
+      // Add these to the SystemJS map, so that they can be imported as they would be in Webpack
       if (ignoredExtensions.find(ext => filename.endsWith(ext))) {
         updateSystemMap(recordName, `${window.location.origin}${filename}`);
         continue;
       }
 
-      const ignoredFiles = ['test/system-config', 'test/prelude'];
-      recordName = recordName.split('.js')[0];
+      /*
+        Since ignored files are excluded by this point and registered in the SystemJS map above,
+        we can assume that any files that get to this point, with a .js extension or not, are able
+        to be "fetched" and evaulated.
+
+        This means that any file that is not JS (like SVG) must be preprocessed by Babel (in karma.conf.js)
+        or else this will break.
+       */
+      const ignoredFiles = ['test/system-config.js', 'test/prelude.js'];
 
       if (ignoredFiles.find(name => recordName === name)) {
         continue;
       }
 
-      const normalizedRecordName = SystemJS.normalizeSync(recordName);
+      const recordNameWithoutExt = recordName
+        .split('.')
+        .slice(0, -1)
+        .join('.');
+      const ext = recordName.split('.').slice(-1)[0];
+
+      const normalizedRecordName = SystemJS.normalizeSync(recordNameWithoutExt);
 
       if (!SystemJS[Object.getOwnPropertySymbols(SystemJS)[0]].records[normalizedRecordName]) {
+        /*
+          Due to the number of src and test files we're loading in Karma (which puts all JS files
+          into script tags by default) Chrome has issues loading all at once and errs after loading
+          a certain number of files. Below fetches those missing files and evaulates them, then
+          registers the alias for that extension.
+         */
         fetchPromises.push(
           window
             .fetch(filename)
             .then(resp => resp.text())
             .then(eval)
+            .then(() => {
+              registerFileWithExtAlias(recordNameWithoutExt, ext);
+            })
         );
+      } else {
+        // The file was loaded successfully, so only register the alias
+        registerFileWithExtAlias(recordNameWithoutExt, ext);
       }
     }
 
@@ -180,12 +205,6 @@
 
     registerDirectoryAliases(id);
 
-    // Register the file with a .js file ending, but only if the registration does not
-    // end in .js, to prevent infinite loop
-    if (!id.endsWith('.js')) {
-      registerJsFileEndingAlias(id);
-    }
-
     // Add these to a separate array, so that they can be imported separately above in Karma.start
     if (id.startsWith('test/unit') || id.startsWith('test/integration')) {
       testModules.push(id);
@@ -222,8 +241,8 @@
     }
   }
 
-  function registerJsFileEndingAlias(moduleId) {
-    registerAlias(moduleId, `${moduleId}.js`);
+  function registerFileWithExtAlias(moduleId, ext) {
+    registerAlias(moduleId, `${moduleId}.${ext}`);
   }
 })();
 

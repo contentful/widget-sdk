@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from '../styles';
 import CTACardComponent from './CTACardComponent';
-import ConnectWithExtensionIllustration from 'svg/connected-shapes';
+import ConnectWithExtensionIllustration from 'svg/connected-shapes.svg';
 import { trackClickCTA } from '../tracking';
 
 const ExtensionsCTA = () => {

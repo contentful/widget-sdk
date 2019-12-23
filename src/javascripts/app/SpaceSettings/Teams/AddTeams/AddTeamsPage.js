@@ -22,7 +22,7 @@ import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { createTeamSpaceMembership } from 'access_control/TeamRepository';
 import { go } from 'states/Navigator';
 import { createImmerReducer } from 'redux/utils/createImmerReducer';
-import EmptyStateTeams from 'svg/empty-state-teams';
+import EmptyStateTeams from 'svg/empty-state-teams.svg';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import StateLink from 'app/common/StateLink';
 import { track } from 'analytics/Analytics';

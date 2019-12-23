@@ -63,7 +63,6 @@ function indexPage(uiVersion, config, resolve, entryScript) {
       configMetaTag(uiVersion, config),
       h('title', ['Contentful']),
       stylesheet(resolve('styles.css')),
-      stylesheet(resolve('main.css')),
       iconLink('shortcut icon', resolve('images/favicons/favicon32x32.png')),
       iconLink('apple-touch-icon', resolve('images/favicons/apple_icon57x57.png')),
       iconLink('apple-touch-icon', resolve('images/favicons/apple_icon72x72.png')),
