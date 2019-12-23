@@ -153,7 +153,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
         });
     },
     onShowDisabledFields: () => {
-      const show = (preferences.showDisabledFields = !preferences.showDisabledFields);
+      const show = ($scope.preferences.showDisabledFields = !$scope.preferences.showDisabledFields);
       Analytics.track('entry_editor:disabled_fields_visibility_toggled', {
         entryId: entityInfo.id,
         show: show
