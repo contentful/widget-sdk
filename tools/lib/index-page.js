@@ -1,9 +1,6 @@
 const { h, doctype } = require('./hyperscript');
 const { create: createResolver } = require('./manifest-resolver');
 
-const DEV_ENTRY_SCRIPT = 'app.js';
-const PROD_ENTRY_SCRIPT = 'application.min.js';
-
 /**
  * @usage
  * var htmlString = render(version, config, manifest)
@@ -29,7 +26,7 @@ const PROD_ENTRY_SCRIPT = 'application.min.js';
  */
 module.exports.render = function render(uiVersion, config, manifest) {
   const resolve = createResolver(manifest, '/app');
-  return renderPage(uiVersion, config, resolve, PROD_ENTRY_SCRIPT);
+  return renderPage(uiVersion, config, resolve);
 };
 
 /**
@@ -48,14 +45,14 @@ module.exports.render = function render(uiVersion, config, manifest) {
  */
 module.exports.renderDev = function renderDev(config) {
   const resolve = path => `/app/${path}`;
-  return renderPage(null, config, resolve, DEV_ENTRY_SCRIPT);
+  return renderPage(null, config, resolve);
 };
 
 function renderPage(...args) {
   return doctype + indexPage(...args);
 }
 
-function indexPage(uiVersion, config, resolve, entryScript) {
+function indexPage(uiVersion, config, resolve) {
   return h('html', [
     h('head', [
       h('meta', { charset: 'UTF-8' }),
@@ -63,10 +60,10 @@ function indexPage(uiVersion, config, resolve, entryScript) {
       configMetaTag(uiVersion, config),
       h('title', ['Contentful']),
       stylesheet(resolve('styles.css')),
-      iconLink('shortcut icon', resolve('images/favicons/favicon32x32.png')),
-      iconLink('apple-touch-icon', resolve('images/favicons/apple_icon57x57.png')),
-      iconLink('apple-touch-icon', resolve('images/favicons/apple_icon72x72.png')),
-      iconLink('apple-touch-icon', resolve('images/favicons/apple_icon114x114.png'))
+      iconLink('shortcut icon', resolve('favicons/favicon32x32.png')),
+      iconLink('apple-touch-icon', resolve('favicons/apple_icon57x57.png')),
+      iconLink('apple-touch-icon', resolve('favicons/apple_icon72x72.png')),
+      iconLink('apple-touch-icon', resolve('favicons/apple_icon114x114.png'))
     ]),
     // We inline this style so it is immediately available no page
     // load. Otherwise the loader animation from below will not work.
@@ -91,7 +88,7 @@ function indexPage(uiVersion, config, resolve, entryScript) {
           }),
           h('div', { ngIf: '!user || !appReady' }, [appLoader()])
         ]),
-        scriptTag(resolve(entryScript))
+        scriptTag(resolve('app.js'))
       ]
     )
   ]);

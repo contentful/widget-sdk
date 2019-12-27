@@ -14,7 +14,7 @@
  */
 
 const webpack = require('webpack');
-const P = require('path');
+const path = require('path');
 const { createBabelOptions } = require('./app-babel-options');
 const WebpackRequireFrom = require('webpack-require-from');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -32,6 +32,8 @@ module.exports = () => {
   const isDev = /^(dev|development)$/.test(currentEnv) || !currentEnv;
   const isProd = currentEnv === 'production';
   const isTest = currentEnv === 'test';
+
+  const projectRoot = path.resolve(__dirname, '..');
 
   const appEntry = {
     // Main app bundle, with vendor files such as bcsocket and jquery-shim
@@ -72,17 +74,16 @@ module.exports = () => {
     ),
     output: {
       filename: '[name]',
-      path: P.resolve(__dirname, '..', 'public', 'app'),
+      path: path.resolve(projectRoot, 'public', 'app'),
       publicPath: '/app/',
-      chunkFilename: 'chunk_[name]-[contenthash].js'
+      chunkFilename: isDev ? 'chunk-[name].js' : 'chunk-[contenthash].js'
     },
     mode: isProd ? 'production' : 'development',
     resolve: {
       modules: ['node_modules', 'src/javascripts'],
       alias: {
-        'saved-views-migrator': P.resolve(
-          __dirname,
-          '..',
+        'saved-views-migrator': path.resolve(
+          projectRoot,
           'src',
           'javascripts',
           'libs',
@@ -94,6 +95,7 @@ module.exports = () => {
     module: {
       rules: [
         {
+          // All JS files
           test: /\.js$/,
           use: {
             loader: 'babel-loader',
@@ -103,6 +105,7 @@ module.exports = () => {
           }
         },
         {
+          // All HTML files
           test: /\.html$/,
           use: [
             {
@@ -114,6 +117,10 @@ module.exports = () => {
           ]
         },
         {
+          // All CSS files
+          //
+          // Creates a single file from the entrypoint above and
+          // outputs to public/app
           test: /\.css$/,
           use: [
             MiniCssExtractPlugin.loader,
@@ -125,6 +132,9 @@ module.exports = () => {
             }
           ]
         },
+        // All image files from any CSS file.
+        //
+        // These image files are put into build/app directly
         {
           test: /.(png|jpe?g|gif|eot|ttf|woff|otf|svg)$/i,
           issuer: {
@@ -134,12 +144,16 @@ module.exports = () => {
             {
               loader: 'file-loader',
               options: {
-                name: '[name]-[contenthash].[ext]'
+                name: '[name]-[contenthash].[ext]',
+                outputPath: path.resolve(projectRoot, 'build', 'app')
               }
             }
           ]
         },
         {
+          // All SVGs used in the app
+          //
+          // These SVGs are turned into a React component automatically
           test: /.svg$/,
           issuer: {
             test: /\.js$/
@@ -162,19 +176,26 @@ module.exports = () => {
       new MiniCssExtractPlugin({
         filename: '[name].css',
         chunkFilename: '[id].css'
-      }),
-      new webpack.ProgressPlugin({
-        entries: true,
-        modules: true,
-        modulesCount: 100,
-        profile: true
       })
-    ].concat(
-      // moment.js by default bundles all locales, we want to remove them
-      // https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
-      // or just google `moment webpack locales`
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
-    ),
+    ]
+      .concat(
+        // moment.js by default bundles all locales, we want to remove them
+        // https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
+        // or google `moment webpack locales`
+        new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+      )
+      .concat(
+        isDev
+          ? [
+              new webpack.ProgressPlugin({
+                entries: true,
+                modules: true,
+                modulesCount: 1500,
+                profile: true
+              })
+            ]
+          : []
+      ),
     // Production:
     // We are using `inline-source-map` instead of `source-map` because
     // the latter fails to produce source maps for some files.
@@ -192,7 +213,6 @@ module.exports = () => {
     // errors and stack traces with Karma rather than just "Script error".
     devtool: isDev ? 'cheap-module-source-map' : 'source-map',
     optimization: {
-      minimize: false,
       chunkIds: isDev ? 'named' : false,
       splitChunks: {
         // TODO: Make this a bit cleaner

@@ -6,11 +6,7 @@ const U = require('./utils');
 const { render: renderIndexPage } = require('./index-page');
 const { validate: validateConfig } = require('./config-validator');
 
-const MANIFEST_PATHS = [
-  'build/static-manifest.json',
-  'build/styles-manifest.json',
-  'build/app-manifest.json'
-];
+const MANIFEST_PATHS = ['build/public-manifest.json', 'build/src-manifest.json'];
 
 module.exports.MANIFEST_PATHS = MANIFEST_PATHS;
 
