@@ -10,11 +10,14 @@ const styles = {
     marginBottom: tokens.spacingXs
   }),
   current: css({
-    color: tokens.colorTextLight
+    color: tokens.colorTextLight,
+    alignItems: 'center',
+    display: 'flex'
   }),
   status: css({
     display: 'flex',
-    marginLeft: 'auto'
+    marginLeft: 'auto',
+    alignItems: 'center'
   }),
   icon: css({
     marginRight: tokens.spacing2Xs,
