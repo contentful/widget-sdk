@@ -18,6 +18,8 @@ const path = require('path');
 const { createBabelOptions } = require('./app-babel-options');
 const WebpackRequireFrom = require('webpack-require-from');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const TerserJSPlugin = require('terser-webpack-plugin');
 
 /**
  * @description webpack's configuration factory
@@ -76,7 +78,7 @@ module.exports = () => {
       filename: '[name]',
       path: path.resolve(projectRoot, 'public', 'app'),
       publicPath: '/app/',
-      chunkFilename: isDev ? 'chunk-[name].js' : 'chunk-[contenthash].js'
+      chunkFilename: isDev ? 'chunk_[name].js' : 'chunk_[name]-[contenthash].js'
     },
     mode: isProd ? 'production' : 'development',
     resolve: {
@@ -111,7 +113,7 @@ module.exports = () => {
             {
               loader: 'html-loader',
               options: {
-                minimize: true
+                minimize: isProd
               }
             }
           ]
@@ -127,7 +129,7 @@ module.exports = () => {
             {
               loader: 'css-loader',
               options: {
-                sourceMap: true
+                sourceMap: isDev
               }
             }
           ]
@@ -145,7 +147,9 @@ module.exports = () => {
               loader: 'file-loader',
               options: {
                 name: '[name]-[contenthash].[ext]',
-                outputPath: path.resolve(projectRoot, 'build', 'app')
+                outputPath: function(url) {
+                  return `assets/${url}`;
+                }
               }
             }
           ]
@@ -196,23 +200,12 @@ module.exports = () => {
             ]
           : []
       ),
-    // Production:
-    // We are using `inline-source-map` instead of `source-map` because
-    // the latter fails to produce source maps for some files.
-    //
-    // For production, we process the webpack output with the `build/js`
-    // gulp task which concats files and merges source maps. Without
-    // inline source maps this tasks fails to generate proper source maps
-    //
-    // Note that the bundle size for production is unaffected by using
-    // inline source maps since the gulp task extracts and removes the
-    // inline comments and creates a separate source map file.
-    //
-    // Development:
-    // We are using `cheap-module-source-map` as this allows us to see
-    // errors and stack traces with Karma rather than just "Script error".
-    devtool: isDev ? 'cheap-module-source-map' : 'source-map',
+
+    // For development, we're using `cheap-module-source-map` as this allows
+    // us to see errors and stack traces with Karma rather than just "Script error".
+    devtool: isDev ? 'cheap-module-source-map' : false,
     optimization: {
+      minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})],
       chunkIds: isDev ? 'named' : false,
       splitChunks: {
         // TODO: Make this a bit cleaner

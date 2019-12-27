@@ -24,6 +24,16 @@ console.error = (warning, ...args) => {
     return;
   }
 
+  // SVG specific warnings. These don't happen in reality because we use a loader for Webpack,
+  // but in Jest we don't use that loader and so we get these warnings from React.
+  if (/is using incorrect casing/.test(warning) && /.*\.svg/.test(args[0])) {
+    return;
+  }
+
+  if (/is unrecognized in this browser/.test(warning) && /.*\.svg/.test(args[0])) {
+    return;
+  }
+
   error.apply(console, [warning, ...args]);
   if (/(Invalid prop|Failed prop type)/gi.test(warning)) {
     throw new Error(warning);

@@ -12,7 +12,7 @@ exports[`NoLocalizedFieldsAdvice matches snapshot 1`] = `
     data-test-id="no-localized-fields-advice"
   >
     <Component>
-      <_default />
+      <translations-icon.svg />
     </Component>
     <Component>
       There are no fields to translate

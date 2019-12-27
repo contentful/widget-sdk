@@ -60,10 +60,10 @@ function indexPage(uiVersion, config, resolve) {
       configMetaTag(uiVersion, config),
       h('title', ['Contentful']),
       stylesheet(resolve('styles.css')),
-      iconLink('shortcut icon', resolve('favicons/favicon32x32.png')),
-      iconLink('apple-touch-icon', resolve('favicons/apple_icon57x57.png')),
-      iconLink('apple-touch-icon', resolve('favicons/apple_icon72x72.png')),
-      iconLink('apple-touch-icon', resolve('favicons/apple_icon114x114.png'))
+      iconLink('shortcut icon', resolve('assets/favicon32x32.png')),
+      iconLink('apple-touch-icon', resolve('assets/apple_icon57x57.png')),
+      iconLink('apple-touch-icon', resolve('assets/apple_icon72x72.png')),
+      iconLink('apple-touch-icon', resolve('assets/apple_icon114x114.png'))
     ]),
     // We inline this style so it is immediately available no page
     // load. Otherwise the loader animation from below will not work.
