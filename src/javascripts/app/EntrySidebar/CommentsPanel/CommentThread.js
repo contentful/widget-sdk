@@ -45,6 +45,15 @@ export default function CommentThread({ endpoint, thread, onRemoved, onNewReply 
     isExpanded && !replies.length && textareaRef.current.focus();
   });
 
+  const handleKeyDown = event => {
+    const ENTER = 13;
+    const SPACE = 32;
+
+    if (event.keyCode === ENTER || event.keyCode === SPACE) {
+      setIsExpanded(!isExpanded);
+    }
+  };
+
   return (
     <div>
       <Card className={styles.root} data-test-id="comments.thread">
@@ -55,7 +64,10 @@ export default function CommentThread({ endpoint, thread, onRemoved, onNewReply 
           hasReplies={!!replies.length}
         />
 
-        <TextLink icon="ChatBubble" onClick={() => setIsExpanded(!isExpanded)}>
+        <TextLink
+          icon="ChatBubble"
+          onMouseDown={() => setIsExpanded(!isExpanded)}
+          onKeyDown={handleKeyDown}>
           {replies.length ? pluralize('reply', replies.length, true) : 'Reply'}
         </TextLink>
 
@@ -83,6 +95,7 @@ export default function CommentThread({ endpoint, thread, onRemoved, onNewReply 
                 parentCommentId={comment.sys.id}
                 onNewComment={onNewReply}
                 textareaRef={textareaRef}
+                onBlur={replies.length ? null : () => setIsExpanded(false)}
               />
             </footer>
           </div>

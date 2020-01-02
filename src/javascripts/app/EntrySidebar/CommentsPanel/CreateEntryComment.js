@@ -26,7 +26,8 @@ export default function CreateEntryComment({
   entryId,
   parentCommentId,
   onNewComment,
-  textareaRef
+  textareaRef,
+  onBlur
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSubmitted, setIsSubmited] = useState(false);
@@ -80,7 +81,8 @@ export default function CreateEntryComment({
   };
 
   const handleBlur = () => {
-    !body && setIsExpanded(false);
+    if (body) return;
+    onBlur ? onBlur() : setIsExpanded(false);
   };
 
   return (
@@ -132,5 +134,6 @@ CreateEntryComment.propTypes = {
   entryId: PropTypes.string.isRequired,
   onNewComment: PropTypes.func.isRequired,
   parentCommentId: PropTypes.string,
-  textareaRef: PropTypes.any
+  textareaRef: PropTypes.any,
+  onBlur: PropTypes.func
 };
