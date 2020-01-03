@@ -1,0 +1,36 @@
+{
+  "total": 2,
+  "sys": { "type": "Array" },
+  "items": [
+    {
+      "sys": {
+        "type": "Feature",
+        "id": "fuuami4adicz-tasks",
+        "feature_id": "tasks",
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "fuuami4adicz"
+          }
+        }
+      },
+      "enabled": true
+    },
+    {
+      "sys": {
+        "type": "Feature",
+        "id": "fuuami4adicz-scheduled_publishing",
+        "feature_id": "scheduled_publishing",
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "fuuami4adicz"
+          }
+        }
+      },
+      "enabled": true
+    }
+  ]
+}
