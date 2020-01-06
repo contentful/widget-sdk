@@ -201,12 +201,12 @@ module.exports = () => {
           : []
       ),
 
-    // For development, we're using `cheap-module-source-map` as this allows
+    // For development and testing, we're using `cheap-module-source-map` as this allows
     // us to see errors and stack traces with Karma rather than just "Script error".
-    devtool: isDev ? 'cheap-module-source-map' : false,
+    devtool: isTest || isDev ? 'cheap-module-source-map' : false,
     optimization: {
       minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})],
-      chunkIds: isDev ? 'named' : false,
+      chunkIds: isTest || isDev ? 'named' : false,
       splitChunks: {
         // TODO: Make this a bit cleaner
         cacheGroups: !isTest
