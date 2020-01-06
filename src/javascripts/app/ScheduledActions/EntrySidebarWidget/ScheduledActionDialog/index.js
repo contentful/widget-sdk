@@ -8,10 +8,10 @@ import {
   Modal,
   FieldGroup,
   Form,
-  SelectField,
-  Option,
   Note,
-  Notification
+  Notification,
+  RadioButtonField,
+  FormLabel
 } from '@contentful/forma-36-react-components';
 import * as EndpointFactory from 'data/EndpointFactory';
 import APIClient from 'data/APIClient';
@@ -33,6 +33,9 @@ const styles = {
   }),
   form: css({
     marginBottom: `-${tokens.spacingM}`
+  }),
+  noMarginBottom: css({
+    marginBottom: 0
   })
 };
 
@@ -186,15 +189,24 @@ function JobDialog({
               />
             )}
             <Form spacing="condensed" className={styles.form}>
+              <FormLabel className={styles.noMarginBottom} htmlFor="actions">
+                Action
+              </FormLabel>
               <FieldGroup row>
-                <SelectField
-                  labelText="Action"
-                  onChange={e => setAction(e.target.value)}
-                  name="action"
-                  id="action">
-                  <Option value={ScheduledAction.Publish}>Publish</Option>
-                  <Option value={ScheduledAction.Unpublish}>Unpublish</Option>
-                </SelectField>
+                <RadioButtonField
+                  id="action-publish"
+                  labelText="Publish"
+                  onClick={() => setAction(ScheduledAction.Publish)}
+                  checked={action === ScheduledAction.Publish}
+                  labelIsLight={action !== ScheduledAction.Publish}
+                />
+                <RadioButtonField
+                  id="action-unpublish"
+                  labelText="Unpublish"
+                  onClick={() => setAction(ScheduledAction.Unpublish)}
+                  checked={action === ScheduledAction.Unpublish}
+                  labelIsLight={action !== ScheduledAction.Unpublish}
+                />
               </FieldGroup>
               <FieldGroup row>
                 <DatePicker
