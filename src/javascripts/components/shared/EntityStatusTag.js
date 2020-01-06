@@ -9,10 +9,15 @@ const tagTypeMap = {
   changed: 'primary'
 };
 
-export function EntityStatusTag({ statusLabel }) {
-  return <Tag tagType={tagTypeMap[statusLabel]}>{statusLabel}</Tag>;
+export function EntityStatusTag({ className, statusLabel }) {
+  return (
+    <Tag className={className} tagType={tagTypeMap[statusLabel]}>
+      {statusLabel}
+    </Tag>
+  );
 }
 
 EntityStatusTag.propTypes = {
+  className: PropTypes.string,
   statusLabel: PropTypes.string.isRequired
 };

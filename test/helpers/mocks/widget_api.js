@@ -96,6 +96,9 @@ angular
           },
           state: {
             goToEditor: sinon.stub().resolves()
+          },
+          jobs: {
+            getPendingJobs: sinon.stub().returns([])
           }
         };
 

@@ -1,12 +1,15 @@
 import React from 'react';
 import { Tooltip, TextLink } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import { truncate } from 'utils/StringUtils';
 import { INLINES } from '@contentful/rich-text-types';
 import { default as FetchEntity, RequestStatus } from 'app/widgets/shared/FetchEntity';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';
 import { isIE, isEdge } from 'utils/browser';
 import { EntityStatusTag } from 'components/shared/EntityStatusTag';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 
 const { HYPERLINK, ENTRY_HYPERLINK, ASSET_HYPERLINK } = INLINES;
 
@@ -14,6 +17,19 @@ const ICON_MAP = {
   [HYPERLINK]: 'ExternalLink',
   [ENTRY_HYPERLINK]: 'Entry',
   [ASSET_HYPERLINK]: 'Asset'
+};
+
+const styles = {
+  richTextEntityTooltipContentContentType: css({
+    color: tokens.colorTextLightest,
+    marginRight: tokens.spacingXs,
+    '&:after': {
+      content: ''
+    }
+  }),
+  richTextEntityTooltipContentTitle: css({
+    marginRight: tokens.spacingXs
+  })
 };
 
 export default class Hyperlink extends React.Component {
@@ -24,7 +40,8 @@ export default class Hyperlink extends React.Component {
     editor: PropTypes.object,
     createHyperlinkDialog: PropTypes.func,
     onClick: PropTypes.func,
-    onEntityFetchComplete: PropTypes.func
+    onEntityFetchComplete: PropTypes.func,
+    getTooltipData: PropTypes.func
   };
 
   render() {
@@ -70,12 +87,20 @@ export default class Hyperlink extends React.Component {
   }
 
   renderEntityTooltipContent = (contentTypeName, title, entityStatus) => {
+    const { getTooltipData } = this.props;
+    let additionalContent = null;
+    if (getTooltipData) {
+      additionalContent = getTooltipData('Entry');
+    }
     return (
-      <div className="rich-text__entity-tooltip-content">
-        <span className="rich-text__entity-tooltip-content__content-type">{contentTypeName}</span>
-        <span className="rich-text__entity-tooltip-content__title">{title}</span>
-        <EntityStatusTag statusLabel={entityStatus} />
-      </div>
+      <>
+        <div>
+          <span className={styles.richTextEntityTooltipContentContentType}>{contentTypeName}</span>
+          <span className={styles.richTextEntityTooltipContentTitle}>{title}</span>
+          <EntityStatusTag statusLabel={entityStatus} />
+        </div>
+        {additionalContent || null}
+      </>
     );
   };
 

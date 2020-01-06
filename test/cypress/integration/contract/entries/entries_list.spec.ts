@@ -4,7 +4,7 @@ import {
   getEditorInterfaceForDefaultContentType
 } from '../../../interactions/content_types';
 import { defaultRequestsMock } from '../../../util/factories';
-import { defaultSpaceId, getEntries } from '../../../util/requests';
+import { defaultSpaceId, getEntries, defaultJobId } from '../../../util/requests';
 import {
   getDefaultEntry,
   queryLinksToDefaultEntry,
@@ -191,6 +191,16 @@ describe('Entries list page', () => {
     it('renders entries page correctly', () => {
       cy.getByTestId('entry-list').should('be.visible');
       cy.getAllByTestId('entry-row').should('have.length', severalEntriesResponse.total);
+    });
+
+    it('renders the tooltip for the scheduled the entry', () => {
+      cy.getByTestId('schedule-icon').trigger('mouseover');
+      cy.getByTestId(defaultJobId)
+        .should('be.visible')
+        .and('have.attr', 'role', 'tooltip');
+      cy.getByTestId(defaultJobId)
+        .find('p[data-test-id="cf-ui-paragraph"]')
+        .should('have.text', '+ 2 more');
     });
   });
 

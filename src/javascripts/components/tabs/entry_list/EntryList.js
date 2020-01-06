@@ -6,6 +6,7 @@ import cn from 'classnames';
 import { range } from 'lodash';
 
 import {
+  Icon,
   Table,
   TableHead,
   TableRow,
@@ -22,7 +23,6 @@ import {
 } from '@contentful/forma-36-react-components';
 
 import tokens from '@contentful/forma-36-tokens';
-import { Icon } from '@contentful/forma-36-react-components';
 
 import isHotkey from 'is-hotkey';
 import StateLink from 'app/common/StateLink';
@@ -32,6 +32,7 @@ import DisplayField from './DisplayField';
 import SecretiveLink from 'components/shared/SecretiveLink';
 
 import { EntityStatusTag } from 'components/shared/EntityStatusTag';
+import ScheduleTooltip from 'app/ScheduledActions/EntrySidebarWidget/ScheduledActionsTimeline/ScheduleTooltip';
 
 import { isEdge } from 'utils/browser';
 const isEdgeBrowser = isEdge();
@@ -51,13 +52,30 @@ const styles = {
   table: css({
     tableLayout: 'fixed'
   }),
-
   tableCell: css({}),
   marginRightXS: css({
-    marginRight: tokens.spacing2Xs
+    marginRight: tokens.spacingXs
+  }),
+  marginRightS: css({
+    marginRight: tokens.spacingS
+  }),
+  marginLeftXS: css({
+    marginLeft: tokens.spacingXs
+  }),
+  marginLeftXXS: css({
+    marginLeft: tokens.spacing2Xs
   }),
   marginBottomXXS: css({
     marginBottom: '0.25rem'
+  }),
+  paddingLeftS: css({
+    paddingLeft: tokens.spacingS
+  }),
+  paddingTopM: css({
+    paddingTop: tokens.spacingM
+  }),
+  paddingBottomM: css({
+    paddingBottom: tokens.spacingM
   }),
   fullWidth: css({
     width: '100%'
@@ -82,6 +100,12 @@ const styles = {
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap'
   }),
+  tableHead: css({
+    zIndex: tokens.zIndexWorkbenchHeader
+  }),
+  cursorPointer: css({
+    cursor: 'pointer'
+  }),
   /*
     We want to make area around checkbox clickable
   */
@@ -98,7 +122,6 @@ const styles = {
   largeCell: css({
     width: '21%'
   }),
-
   /*
     We use visibility:hidden to preserve column width during search, sorting, or pagination.
   */
@@ -150,7 +173,7 @@ function SortableTableCell({
         {isSortable && isActiveSort && (
           <IconButton
             tabIndex="-1"
-            className="f36-margin-left--xs"
+            className={styles.marginLeftXS}
             buttonType="muted"
             iconProps={{
               icon: direction === 'ascending' ? 'ArrowDown' : 'ArrowUp'
@@ -259,12 +282,12 @@ export class BulkActionsRow extends React.Component {
         )}
         {!pendingMessage && (
           <TableCell colSpan={colSpan} className={styles.bulkActionsRow}>
-            <span className="f36-margin-right--s" data-test-id="label">
+            <span className={styles.marginRightS} data-test-id="label">
               {pluralize('entry', selection.size(), true)} selected:
             </span>
             {actions.showDuplicate && actions.showDuplicate() && (
               <TextLink
-                className="f36-margin-right--s"
+                className={styles.marginRightS}
                 linkType="secondary"
                 testId="duplicate"
                 onClick={() => this.fireAction('duplicate')}>
@@ -275,7 +298,7 @@ export class BulkActionsRow extends React.Component {
             {actions.showDelete && actions.showDelete() && (
               <React.Fragment>
                 <TextLink
-                  className="f36-margin-right--s"
+                  className={styles.marginRightS}
                   linkType="negative"
                   onClick={() => this.setConfirmVisibility(true)}
                   testId="delete">
@@ -295,7 +318,7 @@ export class BulkActionsRow extends React.Component {
             )}
             {actions.showArchive && actions.showArchive() && (
               <TextLink
-                className="f36-margin-right--s"
+                className={styles.marginRightS}
                 linkType="secondary"
                 testId="archive"
                 onClick={() => this.fireAction('archive')}>
@@ -304,7 +327,7 @@ export class BulkActionsRow extends React.Component {
             )}
             {actions.showUnarchive && actions.showUnarchive() && (
               <TextLink
-                className="f36-margin-right--s"
+                className={styles.marginRightS}
                 linkType="secondary"
                 testId="unarchive"
                 onClick={() => this.fireAction('unarchive')}>
@@ -313,7 +336,7 @@ export class BulkActionsRow extends React.Component {
             )}
             {actions.showUnpublish && actions.showUnpublish() && (
               <TextLink
-                className="f36-margin-right--s"
+                className={styles.marginRightS}
                 linkType="secondary"
                 testId="unpublish"
                 onClick={() => this.fireAction('unpublish')}>
@@ -322,7 +345,7 @@ export class BulkActionsRow extends React.Component {
             )}
             {actions.showPublish && actions.showPublish() && (
               <TextLink
-                className="f36-margin-right--s"
+                className={styles.marginRightS}
                 linkType="positive"
                 testId="publish"
                 onClick={() => this.fireAction('publish')}>
@@ -335,6 +358,42 @@ export class BulkActionsRow extends React.Component {
     );
   }
 }
+
+const StatusCell = ({ href, jobs, entry }) => {
+  const filter = job => job.sys.entity.sys.id === entry.data.sys.id;
+  const hasJobForEntry = jobs.find(job => job.sys.entity.sys.id === entry.data.sys.id);
+  return (
+    <SecretiveLink href={href}>
+      <ScheduleTooltip jobs={jobs} filter={filter}>
+        <Icon icon="Clock" size="small" color="muted" testId="schedule-icon" />
+      </ScheduleTooltip>
+      <EntityStatusTag
+        className={hasJobForEntry ? styles.marginLeftXXS : null}
+        statusLabel={EntityState.stateName(EntityState.getState(entry.data.sys))}
+      />
+    </SecretiveLink>
+  );
+};
+
+StatusCell.propTypes = {
+  href: PropTypes.string.isRequired,
+  jobs: PropTypes.arrayOf(
+    PropTypes.shape({
+      action: PropTypes.string.isRequired,
+      scheduledAt: PropTypes.string.isRequired,
+      sys: PropTypes.shape({
+        id: PropTypes.string.isRequired
+      }).isRequired
+    })
+  ),
+  entry: PropTypes.shape({
+    data: PropTypes.shape({
+      sys: PropTypes.shape({
+        id: PropTypes.string.isRequired
+      }).isRequired
+    }).isRequired
+  }).isRequired
+};
 
 export default function EntryList({
   context,
@@ -367,7 +426,7 @@ export default function EntryList({
     <Checkbox
       id="select-all"
       name="select-all"
-      className={cn('f36-margin-right--xs', styles.marginBottomXXS)}
+      className={cn(styles.marginRightS, styles.marginBottomXXS)}
       onChange={e => {
         selection.toggleList(entries, e);
       }}
@@ -384,7 +443,7 @@ export default function EntryList({
 
   return (
     <Table className={styles.table} testId="entry-list" aria-label="Content Search Results">
-      <TableHead offsetTop={isEdgeBrowser ? '0px' : '-20px'} isSticky>
+      <TableHead offsetTop={isEdgeBrowser ? '0px' : '-20px'} isSticky className={styles.tableHead}>
         <TableRow testId="column-names">
           <SortableTableCell
             className={styles.largeCell}
@@ -399,7 +458,7 @@ export default function EntryList({
             }}
             direction={context.view.order.direction}
             testId="name">
-            <label htmlFor="select-all" className="f36-padding-left--s">
+            <label htmlFor="select-all" className={styles.paddingLeftS}>
               {selectAll}
               Name
             </label>
@@ -480,7 +539,7 @@ export default function EntryList({
                       e.preventDefault();
                     }
                   }}
-                  className={cn('ctf-ui-cursor--pointer', {
+                  className={cn(styles.cursorPointer, {
                     [styles.highlight]: selection.isSelected(entry),
                     [styles.visibilityHidden]: context.isSearching
                   })}
@@ -489,9 +548,14 @@ export default function EntryList({
                     testId="name"
                     className={cn(styles.tableCell, styles.nameCell, styles.largeCell)}>
                     <span className={styles.flexCenter}>
-                      <label className="f36-padding-left--s f36-padding-top--m f36-padding-bottom--m">
+                      <label
+                        className={cn(
+                          styles.paddingLeftS,
+                          styles.paddingTopM,
+                          styles.paddingBottomM
+                        )}>
                         <Checkbox
-                          className={cn('f36-margin-right--xs', styles.marginBottomXXS)}
+                          className={cn(styles.marginRightS, styles.marginBottomXXS)}
                           checked={selection.isSelected(entry)}
                           onChange={e => {
                             selection.toggle(entry, e);
@@ -501,7 +565,8 @@ export default function EntryList({
                       </label>
                       <SecretiveLink
                         className={cn(
-                          'f36-padding-top--m f36-padding-bottom--m',
+                          styles.paddingTopM,
+                          styles.paddingBottomM,
                           styles.textOverflow
                         )}
                         href={getHref()}>
@@ -534,19 +599,7 @@ export default function EntryList({
                     </TableCell>
                   ))}
                   <TableCell testId="status" className={styles.mediumCell}>
-                    <SecretiveLink href={getHref()}>
-                      {jobs.find(job => job.sys.entity.sys.id === entry.data.sys.id) && (
-                        <Icon
-                          icon="Clock"
-                          size="small"
-                          className={cn(styles.marginRightXS)}
-                          color="muted"
-                        />
-                      )}
-                      <EntityStatusTag
-                        statusLabel={EntityState.stateName(EntityState.getState(entry.data.sys))}
-                      />
-                    </SecretiveLink>
+                    <StatusCell href={getHref()} jobs={jobs} entry={entry} />
                   </TableCell>
                 </TableRow>
               );

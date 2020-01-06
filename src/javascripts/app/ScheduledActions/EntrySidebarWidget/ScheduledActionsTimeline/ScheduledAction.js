@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
-import moment from 'moment';
 
 import {
   Tag,
@@ -14,22 +13,8 @@ import {
 } from '@contentful/forma-36-react-components';
 import { scheduleStyles as styles } from './styles';
 import CancellationModal from './CancellationModal';
+import FormattedTime from './FormattedTime';
 import ScheduledActionAction from 'app/ScheduledActions/ScheduledActionAction';
-
-const FormattedTime = ({ time, size }) =>
-  moment
-    .utc(time)
-    .local()
-    .format(size === 'default' ? 'ddd, MMM Do, YYYY - h:mm A' : 'MMM Do, YYYY - h:mm A');
-
-FormattedTime.propTypes = {
-  time: PropTypes.string.isRequired,
-  size: PropTypes.oneOf(['default', 'small'])
-};
-
-FormattedTime.defaultProps = {
-  size: 'default'
-};
 
 const tagTypeForAction = {
   [ScheduledActionAction.Publish]: 'positive',
