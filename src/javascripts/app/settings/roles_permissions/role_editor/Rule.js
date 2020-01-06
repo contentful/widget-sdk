@@ -90,7 +90,7 @@ class Rule extends React.Component {
     const { entity, searchEntities, onUpdateAttribute } = this.props;
     const entityName = getEntityName(entity);
 
-    searchEntities(entityName[0]).then(entity => {
+    return searchEntities(entityName[0]).then(entity => {
       if (entity) {
         if (entityName[0] === 'Entry') {
           onUpdateAttribute('contentType')({
