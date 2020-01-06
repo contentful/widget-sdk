@@ -10,7 +10,7 @@ import * as Dialogs from '../ExtensionDialogs';
 import { applyDefaultValues } from '../WidgetParametersUtils';
 import trackExtensionRender from '../TrackExtensionRender';
 import { LOCATION_DIALOG } from '../WidgetLocations';
-import { NAMESPACE_EXTENSION } from '../WidgetNamespaces';
+import { NAMESPACE_EXTENSION, NAMESPACE_APP } from '../WidgetNamespaces';
 import * as entitySelector from 'search/EntitySelector/entitySelector';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 
@@ -35,22 +35,22 @@ export default function makeExtensionDialogsHandlers(dependencies) {
       return entitySelector.openFromExtension(options);
     }
 
-    if (type === 'extension') {
-      return openExtensionDialog(options);
+    if ([NAMESPACE_EXTENSION, NAMESPACE_APP].includes(type)) {
+      return openCustomDialog(type, options);
     }
 
     throw new Error('Unknown dialog type.');
   }
 
-  async function openExtensionDialog(options) {
+  async function openCustomDialog(namespace, options) {
     if (!options.id) {
-      throw new Error('No Extension ID provided.');
+      throw new Error('No ID provided.');
     }
 
-    const key = [NAMESPACE_EXTENSION, options.id];
+    const key = [namespace, options.id];
     const [descriptor] = await getCustomWidgetLoader().getByKeys([key]);
     if (!descriptor) {
-      throw new Error(`No Extension with ID "${options.id}" found.`);
+      throw new Error(`No widget with ID "${options.id}" found in "${namespace}" namespace.`);
     }
 
     const parameters = {
