@@ -62,7 +62,7 @@ function determineNamespace({ widgetNamespace, widgetId }) {
 // internal representation as described in `syncControls`.
 export function fromAPI(ct, ei) {
   return {
-    sys: ei.sys,
+    sys: makeSys(ct, ei),
     controls: syncControls(ct, ei.controls),
     sidebar: ei.sidebar,
     editor: ei.editor
@@ -73,10 +73,25 @@ export function fromAPI(ct, ei) {
 // prepares it to be stored in the API.
 export function toAPI(ct, ei) {
   return {
-    sys: ei.sys,
+    sys: makeSys(ct, ei),
     controls: syncControls(ct, ei.controls).map(c => prepareAPIControl(c)),
     sidebar: ei.sidebar,
     editor: ei.editor
+  };
+}
+
+// Ensures `sys.type` and valid `sys.contentType`.
+function makeSys(ct, ei = {}) {
+  return {
+    ...(ei.sys || {}),
+    type: 'EditorInterface',
+    contentType: {
+      sys: {
+        id: ct.sys.id,
+        type: 'Link',
+        linkType: 'ContentType'
+      }
+    }
   };
 }
 

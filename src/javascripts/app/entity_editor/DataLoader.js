@@ -2,27 +2,26 @@ import { get, find, isPlainObject, cloneDeep, memoize } from 'lodash';
 import { caseof as caseofEq } from 'sum-types/caseof-eq';
 import { deepFreeze } from 'utils/Freeze';
 import createPrefetchCache from 'data/CMA/EntityPrefetchCache';
+import { assetContentType } from 'libs/legacy_client/client';
+import * as AdvancedExtensibilityFeature from 'app/settings/extensions/services/AdvancedExtensibilityFeature';
+import TheLocaleStore from 'services/localeStore';
+
+import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer';
+import { create as createBuiltinWidgetList } from 'widgets/BuiltinWidgets';
+import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
+import { getWidgetTrackingContexts } from 'widgets/WidgetTracking';
 import {
   buildRenderables,
   buildSidebarRenderables,
   buildEditorRenderable
 } from 'widgets/WidgetRenderable';
-import { assetContentType } from 'libs/legacy_client/client';
-import * as WidgetStore from 'widgets/WidgetStore';
-import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer';
-import * as AdvancedExtensibilityFeature from 'app/settings/extensions/services/AdvancedExtensibilityFeature';
-import { getWidgetTrackingContexts } from 'widgets/WidgetTracking';
-import TheLocaleStore from 'services/localeStore';
 
 const assetEditorInterface = EditorInterfaceTransformer.fromAPI(
   assetContentType.data,
   // "description" is a Symbol but for historical reasons
   // we're using the multiline editor to render it, hence
   // the override here.
-  {
-    sys: { type: 'EditorInterface' },
-    controls: [{ fieldId: 'description', widgetId: 'multipleLine' }]
-  }
+  { controls: [{ fieldId: 'description', widgetId: 'multipleLine' }] }
 );
 
 /**
@@ -127,18 +126,15 @@ async function loadEditorData(loader, id) {
   const entity = await loader.getEntity(id);
   const contentTypeId = get(entity, ['data', 'sys', 'contentType', 'sys', 'id']);
 
-  const [contentType, editorInterface, hasAdvancedExtensibility] = await Promise.all([
+  const [contentType, apiEditorInterface, hasAdvancedExtensibility] = await Promise.all([
     loader.getContentType(contentTypeId),
     loader.getEditorInterface(contentTypeId),
     loader.hasAdvancedExtensibility()
   ]);
 
-  const widgets = await WidgetStore.getForEditor(editorInterface);
+  const editorInterface = EditorInterfaceTransformer.fromAPI(contentType.data, apiEditorInterface);
 
-  const { controls, sidebar, editor } = EditorInterfaceTransformer.fromAPI(
-    contentType.data,
-    editorInterface
-  );
+  const { controls, sidebar, editor } = editorInterface;
 
   // There's nothing that prevents users to configure a custom
   // sidebar with the API. The feature check only happens here.
@@ -146,6 +142,11 @@ async function loadEditorData(loader, id) {
   // have so they see the default one.
   const sidebarConfig = hasAdvancedExtensibility ? sidebar : undefined;
   const editorConfig = hasAdvancedExtensibility ? editor : undefined;
+
+  const widgets = [
+    ...createBuiltinWidgetList(),
+    ...(await getCustomWidgetLoader().getForEditor(editorInterface))
+  ];
 
   const fieldControls = buildRenderables(controls, widgets);
   const sidebarExtensions = buildSidebarRenderables(sidebarConfig || [], widgets);

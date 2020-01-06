@@ -1,12 +1,14 @@
 import DataLoader from 'dataloader';
-import { get, identity } from 'lodash';
+import { uniq, get, identity } from 'lodash';
 import { buildExtensionWidget, buildAppWidget } from './WidgetTypes';
+import { NAMESPACE_EXTENSION } from './WidgetNamespaces';
 
 export function createCustomWidgetLoader(cma, appsRepo) {
   const loader = new DataLoader(loadByIds);
 
   return {
     getByIds,
+    getForEditor,
     evict,
     getUncachedForListing
   };
@@ -60,6 +62,22 @@ export function createCustomWidgetLoader(cma, appsRepo) {
     const widgets = await loader.loadMany(ids);
 
     return widgets.filter(identity);
+  }
+
+  // Given an instance of EditorInterface entity produced by
+  // `EditorInterfaceTransformer` extracts all used custom
+  // widget IDs and calls `getByIds` with them.
+  function getForEditor(editorInterface) {
+    const controls = get(editorInterface, ['controls'], []);
+    const sidebar = get(editorInterface, ['sidebar'], []);
+    const editor = get(editorInterface, ['editor'], {});
+
+    const customWidgetIds = [...controls, ...sidebar, editor]
+      .filter(widget => widget.widgetNamespace === NAMESPACE_EXTENSION)
+      .map(widget => widget.widgetId)
+      .filter(widgetId => typeof widgetId === 'string' && widgetId.length > 0);
+
+    return getByIds(uniq(customWidgetIds));
   }
 
   // Removes a widget from the cache.

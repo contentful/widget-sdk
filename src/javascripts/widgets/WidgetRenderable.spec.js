@@ -12,7 +12,7 @@ describe('WidgetRenderables', () => {
     it('filters widgets without field', () => {
       const renderables = buildRenderables(
         [{ widgetId: 'HAS_FIELD', field: {} }, { widgetId: 'NO_FIELD' }],
-        {}
+        []
       );
       expect(renderables.form).toHaveLength(1);
       expect(renderables.form[0].widgetId).toBe('HAS_FIELD');
@@ -21,9 +21,15 @@ describe('WidgetRenderables', () => {
     it('adds sidebar widges to sidebar collection', () => {
       const renderables = buildRenderables(
         [{ widgetId: 'SIDEBAR', widgetNamespace: NAMESPACE_EXTENSION, field: { type: 'Symbol' } }],
-        {
-          extension: [{ id: 'SIDEBAR', fieldTypes: ['Symbol'], sidebar: true, parameters: [] }]
-        }
+        [
+          {
+            id: 'SIDEBAR',
+            namespace: NAMESPACE_EXTENSION,
+            fieldTypes: ['Symbol'],
+            sidebar: true,
+            parameters: []
+          }
+        ]
       );
       expect(renderables.form).toHaveLength(0);
       expect(renderables.sidebar).toHaveLength(1);
@@ -33,7 +39,7 @@ describe('WidgetRenderables', () => {
     it('sets problem warning flag if widget does not exist', () => {
       const renderables = buildRenderables(
         [{ widgetId: 'foo', widgetNamespace: 'bar', field: { type: 'Symbol' } }],
-        {}
+        []
       );
       expect(renderables.form[0].problem).toBe('missing');
     });
@@ -41,9 +47,7 @@ describe('WidgetRenderables', () => {
     it('sets problem warning flag if widget is incompatible', () => {
       const renderables = buildRenderables(
         [{ widgetId: 'foo', widgetNamespace: NAMESPACE_BUILTIN, field: { type: 'Symbol' } }],
-        {
-          builtin: [{ id: 'foo', fieldTypes: ['Boolean'] }]
-        }
+        [{ id: 'foo', namespace: NAMESPACE_BUILTIN, fieldTypes: ['Boolean'] }]
       );
       expect(renderables.form[0].problem).toBe('incompatible');
     });
@@ -51,11 +55,15 @@ describe('WidgetRenderables', () => {
     it('adds widget’s template property', () => {
       const renderables = buildRenderables(
         [{ widgetId: 'SIDEBAR', widgetNamespace: NAMESPACE_EXTENSION, field: { type: 'Symbol' } }],
-        {
-          extension: [
-            { id: 'SIDEBAR', fieldTypes: ['Symbol'], template: 'TEMPLATE', parameters: [] }
-          ]
-        }
+        [
+          {
+            id: 'SIDEBAR',
+            namespace: NAMESPACE_EXTENSION,
+            fieldTypes: ['Symbol'],
+            template: 'TEMPLATE',
+            parameters: []
+          }
+        ]
       );
       expect(renderables.form[0].template).toEqual('TEMPLATE');
     });
@@ -71,7 +79,14 @@ describe('WidgetRenderables', () => {
             settings: params
           }
         ],
-        { extension: [{ id: 'foo', fieldTypes: ['Symbol'], parameters: [{ id: 'param' }] }] }
+        [
+          {
+            id: 'foo',
+            namespace: NAMESPACE_EXTENSION,
+            fieldTypes: ['Symbol'],
+            parameters: [{ id: 'param' }]
+          }
+        ]
       );
       expect(renderables.form[0].settings).toEqual(params);
     });
@@ -79,15 +94,14 @@ describe('WidgetRenderables', () => {
     it('adds default parameters if there are no parameters', () => {
       const renderables = buildRenderables(
         [{ widgetId: 'foo', widgetNamespace: NAMESPACE_EXTENSION, field: { type: 'Symbol' } }],
-        {
-          extension: [
-            {
-              id: 'foo',
-              fieldTypes: ['Symbol'],
-              parameters: [{ id: 'bar', default: 'lol' }, { id: 'baz' }]
-            }
-          ]
-        }
+        [
+          {
+            id: 'foo',
+            namespace: NAMESPACE_EXTENSION,
+            fieldTypes: ['Symbol'],
+            parameters: [{ id: 'bar', default: 'lol' }, { id: 'baz' }]
+          }
+        ]
       );
       expect(renderables.form[0].settings).toEqual({ bar: 'lol' });
     });
@@ -95,11 +109,14 @@ describe('WidgetRenderables', () => {
     it('adds default parameters data does not contain an object', () => {
       const renderables = buildRenderables(
         [{ widgetId: 'foo', widgetNamespace: NAMESPACE_EXTENSION, field: { type: 'Symbol' } }],
-        {
-          extension: [
-            { id: 'foo', fieldTypes: ['Symbol'], parameters: [{ id: 'foo', default: 'bar' }] }
-          ]
-        }
+        [
+          {
+            id: 'foo',
+            namespace: NAMESPACE_EXTENSION,
+            fieldTypes: ['Symbol'],
+            parameters: [{ id: 'foo', default: 'bar' }]
+          }
+        ]
       );
       expect(renderables.form[0].settings).toEqual({ foo: 'bar' });
     });
@@ -114,15 +131,14 @@ describe('WidgetRenderables', () => {
             settings: { x: true }
           }
         ],
-        {
-          extension: [
-            {
-              id: 'foo',
-              fieldTypes: ['Symbol'],
-              parameters: [{ id: 'x', default: 'DEF_X' }, { id: 'y', default: 'DEF_Y' }]
-            }
-          ]
-        }
+        [
+          {
+            id: 'foo',
+            namespace: NAMESPACE_EXTENSION,
+            fieldTypes: ['Symbol'],
+            parameters: [{ id: 'x', default: 'DEF_X' }, { id: 'y', default: 'DEF_Y' }]
+          }
+        ]
       );
       expect(renderables.form[0].settings).toEqual({
         x: true,
@@ -140,19 +156,18 @@ describe('WidgetRenderables', () => {
             settings: { x: true }
           }
         ],
-        {
-          extension: [
-            {
-              id: 'foo',
-              fieldTypes: ['Symbol'],
-              parameters: [{ id: 'x' }],
-              installationParameters: {
-                definitions: [{ id: 'y', default: 'test' }, { id: 'z' }],
-                values: { z: true }
-              }
+        [
+          {
+            id: 'foo',
+            namespace: NAMESPACE_EXTENSION,
+            fieldTypes: ['Symbol'],
+            parameters: [{ id: 'x' }],
+            installationParameters: {
+              definitions: [{ id: 'y', default: 'test' }, { id: 'z' }],
+              values: { z: true }
             }
-          ]
-        }
+          }
+        ]
       );
       expect(renderables.form[0].settings).toEqual({ x: true });
       expect(renderables.form[0].parameters.instance).toEqual({ x: true });
@@ -162,13 +177,18 @@ describe('WidgetRenderables', () => {
 
   it('looks up the widget in the right namespace', () => {
     const renderables = buildRenderables(
-      [{ widgetId: 'foo', widgetNamespace: 'bar', field: { type: 'Boolean' } }],
-      {
-        bar: [{ id: 'foo', fieldTypes: 'Boolean', template: 'FOO-FROM-BAR' }],
-        baz: [{ id: 'foo' }]
-      }
+      [{ widgetId: 'foo', widgetNamespace: NAMESPACE_EXTENSION, field: { type: 'Boolean' } }],
+      [
+        {
+          id: 'foo',
+          namespace: NAMESPACE_EXTENSION,
+          fieldTypes: 'Boolean',
+          template: 'FOO-FROM-EXT'
+        },
+        { id: 'foo', namespace: NAMESPACE_BUILTIN }
+      ]
     );
 
-    expect(renderables.form[0].template).toBe('FOO-FROM-BAR');
+    expect(renderables.form[0].template).toBe('FOO-FROM-EXT');
   });
 });

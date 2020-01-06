@@ -89,10 +89,7 @@ describe('app/entity_editor/DataLoader', () => {
       const ei = { controls: [] };
       this.spaceContext.cma.getEditorInterface.resolves(ei);
       await this.loadEntry('EID');
-      sinon.assert.calledWith(this.stubs.buildRenderables, [], {
-        builtin: sinon.match.array,
-        extension: []
-      });
+      sinon.assert.calledWith(this.stubs.buildRenderables, [], sinon.match.array);
     });
 
     it('adds the entry’s field controls to the context', async function() {
@@ -206,10 +203,7 @@ describe('app/entity_editor/DataLoader', () => {
             field: sinon.match.has('id')
           })
         ],
-        {
-          builtin: sinon.match.array,
-          extension: []
-        }
+        sinon.match.array
       );
     });
 

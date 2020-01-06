@@ -7,6 +7,7 @@ describe('EditorInterfaceTransformer', () => {
   describe('#fromAPI()', () => {
     it('adds a default control if missing', () => {
       const ct = {
+        sys: { id: 'CT' },
         fields: [{ apiName: 'AAA', type: 'Symbol' }, { apiName: 'MISSING', type: 'Boolean' }]
       };
       const ei = { controls: [{ fieldId: 'AAA' }] };
@@ -30,7 +31,7 @@ describe('EditorInterfaceTransformer', () => {
     });
 
     it('removes controls for missing fields', () => {
-      const ct = { fields: [{ apiName: 'AAA' }] };
+      const ct = { sys: { id: 'CT' }, fields: [{ apiName: 'AAA' }] };
       const ei = { controls: [{ fieldId: 'MISSING' }, { fieldId: 'AAA' }] };
 
       const { controls } = fromAPI(ct, ei);
@@ -40,7 +41,7 @@ describe('EditorInterfaceTransformer', () => {
     });
 
     it('migrates deprecated widgets', () => {
-      const ct = { fields: [{ apiName: 'AAA' }] };
+      const ct = { sys: { id: 'CT' }, fields: [{ apiName: 'AAA' }] };
       const ei = { controls: [{ fieldId: 'AAA', widgetId: 'kalturaEditor' }] };
 
       const { controls } = fromAPI(ct, ei);
@@ -56,7 +57,7 @@ describe('EditorInterfaceTransformer', () => {
     });
 
     it('resets the control if provided an invalid namespace', () => {
-      const ct = { fields: [{ apiName: 'test', type: 'Symbol' }] };
+      const ct = { sys: { id: 'CT' }, fields: [{ apiName: 'test', type: 'Symbol' }] };
       const ei = { controls: [{ fieldId: 'test', widgetId: 'foo', widgetNamespace: 'bar' }] };
 
       const { controls } = fromAPI(ct, ei);
@@ -65,7 +66,7 @@ describe('EditorInterfaceTransformer', () => {
     });
 
     it('provides the builtin namespace if missing', () => {
-      const ct = { fields: [{ apiName: 'test' }] };
+      const ct = { sys: { id: 'CT' }, fields: [{ apiName: 'test' }] };
       const ei = { controls: [{ fieldId: 'test', widgetId: 'foo' }] };
 
       const BuiltinWidgets = jest.requireMock('./BuiltinWidgets');
@@ -78,7 +79,7 @@ describe('EditorInterfaceTransformer', () => {
     });
 
     it('provides the extension namespace if missing', () => {
-      const ct = { fields: [{ apiName: 'test' }] };
+      const ct = { sys: { id: 'CT' }, fields: [{ apiName: 'test' }] };
       const ei = { controls: [{ fieldId: 'test', widgetId: 'foo' }] };
 
       const BuiltinWidgets = jest.requireMock('./BuiltinWidgets');
@@ -91,7 +92,7 @@ describe('EditorInterfaceTransformer', () => {
     });
 
     it('restores field order', function() {
-      const ct = { fields: [{ apiName: 'one' }, { apiName: 'two' }] };
+      const ct = { sys: { id: 'CT' }, fields: [{ apiName: 'one' }, { apiName: 'two' }] };
       const ei = { controls: [{ fieldId: 'two' }, { fieldId: 'one' }] };
 
       const { controls } = fromAPI(ct, ei);
@@ -99,18 +100,23 @@ describe('EditorInterfaceTransformer', () => {
       expect(controls.map(c => c.fieldId)).toEqual(['one', 'two']);
     });
 
-    it('keeps the sys property', () => {
-      const ct = { fields: [] };
-      const ei = { sys: { type: 'EditorInterface', id: 'eid' }, controls: [] };
+    it('keeps existing sys properties and provides type and CT link', () => {
+      const ct = { sys: { id: 'CT' }, fields: [] };
+      const ei = { sys: { updatedAt: 'some-time' }, controls: [] };
 
       const { sys } = fromAPI(ct, ei);
 
-      expect(sys).toEqual({ type: 'EditorInterface', id: 'eid' });
+      expect(sys).toEqual({
+        updatedAt: 'some-time',
+        type: 'EditorInterface',
+        contentType: { sys: { type: 'Link', linkType: 'ContentType', id: 'CT' } }
+      });
     });
 
     describe('field mapping', () => {
       it('prefers the apiName over the field ID', () => {
         const ct = {
+          sys: { id: 'CT' },
           fields: [{ id: 'id2', apiName: 'apiName' }, { id: 'apiName', apiName: 'field2' }]
         };
 
@@ -124,6 +130,7 @@ describe('EditorInterfaceTransformer', () => {
 
       it('falls back to the field ID', () => {
         const ct = {
+          sys: { id: 'CT' },
           fields: [{ id: 'id1' }, { id: 'id2', apiName: 'apiName2' }]
         };
 
@@ -151,7 +158,7 @@ describe('EditorInterfaceTransformer', () => {
         oneMore: 666
       };
 
-      const ct = { fields: [{ apiName: 'test' }] };
+      const ct = { sys: { id: 'CT' }, fields: [{ apiName: 'test' }] };
       const ei = { controls: [control] };
 
       const { controls } = toAPI(ct, ei);
@@ -173,7 +180,7 @@ describe('EditorInterfaceTransformer', () => {
         widgetNamespace: NAMESPACE_BUILTIN,
         settings: {}
       };
-      const ct = { fields: [{ apiName: 'test' }] };
+      const ct = { sys: { id: 'CT' }, fields: [{ apiName: 'test' }] };
       const ei = { controls: [control] };
 
       const { controls } = toAPI(ct, ei);
@@ -184,7 +191,7 @@ describe('EditorInterfaceTransformer', () => {
     });
 
     it('restores field order', function() {
-      const ct = { fields: [{ apiName: 'one' }, { apiName: 'two' }] };
+      const ct = { sys: { id: 'CT' }, fields: [{ apiName: 'one' }, { apiName: 'two' }] };
       const ei = { controls: [{ fieldId: 'two' }, { fieldId: 'one' }] };
 
       const { controls } = toAPI(ct, ei);
@@ -192,13 +199,17 @@ describe('EditorInterfaceTransformer', () => {
       expect(controls.map(c => c.fieldId)).toEqual(['one', 'two']);
     });
 
-    it('keeps the sys property', () => {
-      const ct = { fields: [] };
-      const ei = { sys: { type: 'EditorInterface', id: 'eid' }, controls: [] };
+    it('keeps existing sys properties and provides type and CT link', () => {
+      const ct = { sys: { id: 'CT' }, fields: [] };
+      const ei = { sys: { updatedAt: 'some-time' }, controls: [] };
 
       const { sys } = toAPI(ct, ei);
 
-      expect(sys).toEqual({ type: 'EditorInterface', id: 'eid' });
+      expect(sys).toEqual({
+        updatedAt: 'some-time',
+        type: 'EditorInterface',
+        contentType: { sys: { type: 'Link', linkType: 'ContentType', id: 'CT' } }
+      });
     });
   });
 });

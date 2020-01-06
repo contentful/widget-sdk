@@ -7,38 +7,38 @@ describe('WidgetParametersUtils', () => {
 
     it('filters out time mode parameter if is date only', () => {
       const values = { format: 'dateonly' };
-      const filtered = Utils.filterDefinitions(
-        definitions,
-        values,
-        `${NAMESPACE_BUILTIN},datePicker`
-      );
+      const filtered = Utils.filterDefinitions(definitions, values, {
+        namespace: NAMESPACE_BUILTIN,
+        id: 'datePicker'
+      });
       expect(filtered).toHaveLength(1);
       expect(filtered[0].id).toBe('format');
     });
 
     it('retains time mode parameter if format includes time', () => {
       const values = { format: 'time' };
-      const filtered = Utils.filterDefinitions(
-        definitions,
-        values,
-        `${NAMESPACE_BUILTIN},datePicker`
-      );
+      const filtered = Utils.filterDefinitions(definitions, values, {
+        namespace: NAMESPACE_BUILTIN,
+        id: 'datePicker'
+      });
       expect(filtered).toHaveLength(2);
     });
 
     it('retains time mode parameter if is not builtin date picker', () => {
       const values = { format: 'dateonly' };
-      const filtered = Utils.filterDefinitions(
-        definitions,
-        values,
-        `${NAMESPACE_EXTENSION},datePicker`
-      );
+      const filtered = Utils.filterDefinitions(definitions, values, {
+        namespace: NAMESPACE_EXTENSION,
+        id: 'datePicker'
+      });
       expect(filtered).toHaveLength(2);
     });
 
     it('does not touch widgets different than date picker', () => {
       const values = { format: 'dateonly' };
-      const filtered = Utils.filterDefinitions(definitions, values, `${NAMESPACE_BUILTIN},test`);
+      const filtered = Utils.filterDefinitions(definitions, values, {
+        namespace: NAMESPACE_BUILTIN,
+        id: 'test'
+      });
       expect(filtered).toHaveLength(2);
     });
   });

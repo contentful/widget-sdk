@@ -1,5 +1,5 @@
 import { registerFactory, registerController } from 'NgRegistry';
-import { extend, find, cloneDeep, get, isEmpty, map, includes, intersection } from 'lodash';
+import { extend, find, cloneDeep, get, isEmpty, map, intersection } from 'lodash';
 import { joinAndTruncate } from 'utils/StringUtils';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils';
 import { toInternalFieldType } from 'widgets/FieldTypes';
@@ -16,13 +16,6 @@ import { create as createBuiltinWidgetList } from 'widgets/BuiltinWidgets';
 import fieldDialogTemplate from './field_dialog.html';
 
 // TODO: This dialog should be completely rewritten!
-
-// This dialog operates on a flat list of widgets. It should operate on
-// two separate lists (for builtin and extension widgets) and selection should
-// be done with a pair of (namespace, id).
-// For the time being we create combined IDs by joining namespace and widget
-// ID with comma which is an invalid char in both namespace and widget ID.
-const makeId = (namespace, id) => [namespace, id].join(',');
 
 export default function register() {
   /**
@@ -99,11 +92,10 @@ export default function register() {
         params: cloneDeep($scope.widget.settings || {})
       };
 
-      $scope.$watch(
-        () => makeId($scope.widgetSettings.namespace, $scope.widgetSettings.id),
-        reposition
-      );
+      // Reposition the dialog when the active tab changes.
       $scope.$watch(() => $scope.tabController.getActiveTabName(), reposition);
+      // Reposition the dialog when the selected widget changes.
+      $scope.$watchGroup(['widgetSettings.namespace', 'widgetSettings.id'], reposition);
 
       $scope.buildRequiredCheckboxProps = () => ({
         id: 'field-validations--required',
@@ -146,19 +138,10 @@ export default function register() {
         });
       }
 
-      const builtinWidgets = createBuiltinWidgetList().map(widget => ({
-        ...widget,
-        id: makeId(NAMESPACE_BUILTIN, widget.id)
-      }));
-      const customWidgets = $scope.customWidgets.map(widget => ({
-        ...widget,
-        id: makeId(NAMESPACE_EXTENSION, widget.id)
-      }));
-
       const fieldType = toInternalFieldType($scope.field);
-      const availableWidgets = [...builtinWidgets, ...customWidgets].filter(widget => {
-        return widget.fieldTypes.includes(fieldType);
-      });
+      const availableWidgets = [...createBuiltinWidgetList(), ...$scope.customWidgets].filter(
+        widget => widget.fieldTypes.includes(fieldType)
+      );
 
       $scope.availableWidgets = availableWidgets;
       $scope.fieldTypeLabel = fieldFactory.getLabel($scope.field);
@@ -178,18 +161,16 @@ export default function register() {
           validationDecorator.addEnabledRichTextOptions($scope.field, $scope.richTextOptions);
         }
 
-        const selectedWidgetId = makeId($scope.widgetSettings.namespace, $scope.widgetSettings.id);
-        const selectedWidget = availableWidgets.find(w => w.id === selectedWidgetId);
+        const selectedWidget = availableWidgets.find(widget => {
+          const { namespace, id } = $scope.widgetSettings;
+          return widget.namespace === namespace && widget.id === id;
+        });
 
         let values = $scope.widgetSettings.params;
         let definitions = get(selectedWidget, ['parameters']) || [];
 
         values = WidgetParametersUtils.applyDefaultValues(definitions, values);
-        definitions = WidgetParametersUtils.filterDefinitions(
-          definitions,
-          values,
-          selectedWidgetId
-        );
+        definitions = WidgetParametersUtils.filterDefinitions(definitions, values, selectedWidget);
         values = WidgetParametersUtils.filterValues(definitions, values);
 
         const missing = WidgetParametersUtils.markMissingValues(definitions, values);
@@ -343,20 +324,23 @@ export default function register() {
        * @name FieldDialogValidationsController#showPredefinedValueWidgetHint
        * @type {boolean}
        */
-      $scope.$watchGroup(['widgetSettings.id', 'availableWidgets'], values => {
-        const name = values[0];
-        const available = values[1];
-        const properWidgets = ['radio', 'dropdown', 'checkbox'];
+      $scope.$watchGroup(
+        ['widgetSettings.namespace', 'widgetSettings.id', 'availableWidgets'],
+        ([namespace, id, available]) => {
+          const isBuiltin = namespace === NAMESPACE_BUILTIN;
+          const predefinedValueWidgetIds = ['radio', 'dropdown', 'checkbox'];
+          const validWidgetSelected = isBuiltin && predefinedValueWidgetIds.includes(id);
 
-        const isBuiltin = $scope.widgetSettings.namespace === NAMESPACE_BUILTIN;
-        const isProper = isBuiltin && includes(properWidgets, name);
-        const availableIds = map(available, 'id')
-          .map(id => id.split(','))
-          .filter(([namespace]) => namespace === NAMESPACE_BUILTIN)
-          .map(([_, id]) => id);
-        const properAvailable = intersection(availableIds, properWidgets).length > 0;
-        $scope.showPredefinedValueWidgetHint = !isProper && properAvailable;
-      });
+          const availableWidgetIds = (available || [])
+            .filter(({ namespace }) => namespace === NAMESPACE_BUILTIN)
+            .map(({ id }) => id);
+
+          const validWidgetAvailable =
+            intersection(availableWidgetIds, predefinedValueWidgetIds).length > 0;
+
+          $scope.showPredefinedValueWidgetHint = !validWidgetSelected && validWidgetAvailable;
+        }
+      );
 
       if ($scope.field.type === 'RichText') {
         $scope.nodeValidationsEnabled = true;
@@ -391,16 +375,18 @@ export default function register() {
         $scope.contentType.data.displayField
       );
 
+      const defaultWidget = $scope.availableWidgets.find(w => {
+        return w.namespace === NAMESPACE_BUILTIN && w.id === defaultWidgetId;
+      });
+
       function updateProps() {
         $scope.appearanceTabProps = {
           hasCustomEditor,
-          availableWidgets: $scope.availableWidgets || [],
-          selectedWidgetId: makeId($scope.widgetSettings.namespace, $scope.widgetSettings.id),
-          widgetParams: $scope.widgetSettings.params,
-          defaultWidgetId: makeId(NAMESPACE_BUILTIN, defaultWidgetId),
+          availableWidgets: $scope.availableWidgets,
+          widgetSettings: $scope.widgetSettings,
+          defaultWidget,
           isAdmin,
-          onSelect: combinedId => {
-            const [namespace, id] = combinedId.split(',');
+          onSelect: ({ namespace, id }) => {
             $scope.widgetSettings.namespace = namespace;
             $scope.widgetSettings.id = id;
             updateProps();

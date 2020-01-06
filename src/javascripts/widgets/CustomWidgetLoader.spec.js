@@ -1,4 +1,9 @@
 import { createCustomWidgetLoader } from './CustomWidgetLoader';
+import {
+  NAMESPACE_BUILTIN,
+  NAMESPACE_EXTENSION,
+  NAMESPACE_SIDEBAR_BUILTIN
+} from './WidgetNamespaces';
 
 const app = {
   appDefinition: {
@@ -35,6 +40,7 @@ const app = {
 const expectedAppWidget = {
   fieldTypes: [],
   id: 'iamapp',
+  namespace: NAMESPACE_EXTENSION,
   src: 'https://someapp.com',
   isApp: true,
   appId: 'someappid',
@@ -61,6 +67,7 @@ const uie = {
 
 const expectedUieWidget = {
   id: 'ext2',
+  namespace: NAMESPACE_EXTENSION,
   isApp: false,
   name: 'Second',
   srcdoc: '<!DOCTYPE html>',
@@ -110,6 +117,7 @@ describe('CustomWidgetLoader', () => {
       expect([widget1, widget2]).toEqual([
         {
           id: 'ext1',
+          namespace: NAMESPACE_EXTENSION,
           name: 'Hello',
           src: 'http://hello.com',
           fieldTypes: ['Symbol'],
@@ -154,6 +162,75 @@ describe('CustomWidgetLoader', () => {
       expect(cma.getExtensions).toBeCalledWith({ 'sys.id[in]': 'some,ids,come,inhere' });
       expect(appsRepo.getOnlyInstalledApps).toBeCalledTimes(1);
       expect(widgets).toEqual([]);
+    });
+  });
+
+  describe('#getForEditor()', () => {
+    it('handles lack of editor interface', async () => {
+      const cma = { getExtensions: jest.fn(() => Promise.resolve({ items: [] })) };
+      const appsRepo = { getOnlyInstalledApps: jest.fn(() => Promise.resolve([])) };
+
+      const loader = createCustomWidgetLoader(cma, appsRepo);
+
+      const widgets = await loader.getForEditor();
+
+      expect(cma.getExtensions).not.toHaveBeenCalled();
+      expect(appsRepo.getOnlyInstalledApps).not.toHaveBeenCalled();
+      expect(widgets).toEqual([]);
+    });
+
+    it('does not load custom widgets when only builtins are used', async () => {
+      const cma = { getExtensions: jest.fn(() => Promise.resolve({ items: [] })) };
+      const appsRepo = { getOnlyInstalledApps: jest.fn(() => Promise.resolve([])) };
+
+      const loader = createCustomWidgetLoader(cma, appsRepo);
+
+      const widgets = await loader.getForEditor({
+        controls: [{ widgetId: 'singleLine', widgetNamespace: NAMESPACE_BUILTIN }],
+        sidebar: [{ widgetId: 'publish-widget', widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN }]
+      });
+
+      expect(cma.getExtensions).not.toHaveBeenCalled();
+      expect(appsRepo.getOnlyInstalledApps).not.toHaveBeenCalled();
+      expect(widgets).toEqual([]);
+    });
+
+    it('loads custom widgets if needed', async () => {
+      const cma = {
+        getExtensions: jest.fn(() =>
+          Promise.resolve({
+            items: [
+              { sys: { id: 'extension1', type: 'Extension' }, extension: { src: 'x' } },
+              { sys: { id: 'sidebar-extension', type: 'Extension' }, extension: { src: 'y' } }
+            ]
+          })
+        )
+      };
+      const appsRepo = { getOnlyInstalledApps: jest.fn(() => Promise.resolve([app])) };
+
+      const loader = createCustomWidgetLoader(cma, appsRepo);
+
+      const widgets = await loader.getForEditor({
+        controls: [
+          { widgetId: 'singleLine', widgetNamespace: NAMESPACE_BUILTIN },
+          { widgetId: 'extension1', widgetNamespace: NAMESPACE_EXTENSION },
+          { widgetId: 'jsonEditor', widgetNamespace: NAMESPACE_BUILTIN },
+          { widgetId: 'iamapp', widgetNamespace: NAMESPACE_EXTENSION }
+        ],
+        sidebar: [
+          { widgetId: 'publish-widget', widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN },
+          { widgetId: 'sidebar-extension', widgetNamespace: NAMESPACE_EXTENSION }
+        ]
+      });
+
+      expect(cma.getExtensions).toHaveBeenCalledTimes(1);
+      expect(cma.getExtensions).toHaveBeenCalledWith({
+        'sys.id[in]': 'extension1,iamapp,sidebar-extension'
+      });
+      expect(appsRepo.getOnlyInstalledApps).toHaveBeenCalledTimes(1);
+
+      const expectedWidgetIds = ['extension1', 'iamapp', 'sidebar-extension'];
+      expect(widgets.map(w => w.id).sort()).toEqual(expectedWidgetIds.sort());
     });
   });
 

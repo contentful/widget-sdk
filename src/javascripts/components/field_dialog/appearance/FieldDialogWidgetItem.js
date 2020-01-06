@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import Icon from 'ui/Components/Icon';
 import StateLink from 'app/common/StateLink';
 import { css } from 'emotion';
+import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 
 const styles = {
   appIcon: css({
@@ -22,45 +23,29 @@ const styles = {
 
 export default class FieldDialogWidgetItem extends Component {
   static propTypes = {
-    isCustom: PropTypes.bool.isRequired,
+    onClick: PropTypes.func.isRequired,
+    index: PropTypes.number,
     isSelected: PropTypes.bool.isRequired,
     isDefault: PropTypes.bool.isRequired,
     isAdmin: PropTypes.bool.isRequired,
-    isApp: PropTypes.bool,
-    appId: PropTypes.string,
-    name: PropTypes.string.isRequired,
-    appIconUrl: PropTypes.string,
-    icon: PropTypes.string,
-    id: PropTypes.string.isRequired,
-    onClick: PropTypes.func.isRequired,
-    index: PropTypes.number
+    widget: PropTypes.object.isRequired
   };
 
   renderIcon() {
-    const { isApp, icon, appIconUrl } = this.props;
+    const { isApp, icon, appIconUrl } = this.props.widget;
 
     if (isApp && appIconUrl) {
       return <img className={styles.appIcon} src={appIconUrl} />;
-    } else if (icon) {
-      return <Icon className="field-dialog__widget-icon" name={`${icon}-widget`} />;
     }
 
-    return null;
+    return (
+      <Icon className="field-dialog__widget-icon" name={icon ? `${icon}-widget` : 'page-apps'} />
+    );
   }
 
   render() {
-    const {
-      name,
-      isDefault,
-      isCustom,
-      id,
-      isSelected,
-      onClick,
-      index,
-      isAdmin,
-      isApp,
-      appId
-    } = this.props;
+    const { index, isAdmin, isDefault, isSelected, onClick, widget } = this.props;
+    const isCustom = widget.namespace === NAMESPACE_EXTENSION;
 
     return (
       <li
@@ -70,25 +55,25 @@ export default class FieldDialogWidgetItem extends Component {
         })}
         data-current-widget-index={index}
         onClick={onClick}
-        title={name}>
-        {isCustom && !isApp && (
+        title={widget.name}>
+        {isCustom && !widget.isApp && (
           <div className="field-dialog__widget-item-header">
             <span>UI Extension</span>
             {isAdmin && (
               <StateLink
                 to="^.^.^.settings.extensions.detail"
-                params={{ extensionId: id }}
+                params={{ extensionId: widget.id }}
                 target="_blank">
                 <Icon name="edit" scale="0.9" />
               </StateLink>
             )}
           </div>
         )}
-        {isApp && (
+        {isCustom && widget.isApp && (
           <div className="field-dialog__widget-item-header">
             <span>App</span>
             {isAdmin && (
-              <StateLink to="^.^.^.apps.detail" params={{ appId }} target="_blank">
+              <StateLink to="^.^.^.apps.detail" params={{ appId: widget.appId }} target="_blank">
                 <Icon name="edit" scale="0.9" />
               </StateLink>
             )}
@@ -96,7 +81,7 @@ export default class FieldDialogWidgetItem extends Component {
         )}
         <div className="field-dialog__widget-item-content">
           {this.renderIcon()}
-          <p className={styles.widgetTitle}>{name}</p>
+          <p className={styles.widgetTitle}>{widget.name}</p>
           {isDefault && <div className="field-dialog__widget-default">(default)</div>}
           {isSelected && (
             <div className="field-dialog__checkmark">

@@ -29,8 +29,9 @@ function buildOneRenderable(control, widgets) {
     field: cloneDeep(control.field)
   };
 
-  const namespaceWidgets = widgets[control.widgetNamespace] || [];
-  const descriptor = namespaceWidgets.find(w => w.id === control.widgetId);
+  const descriptor = widgets.find(w => {
+    return w.namespace === control.widgetNamespace && w.id === control.widgetId;
+  });
 
   if (descriptor) {
     Object.assign(renderable, { descriptor });
@@ -73,8 +74,9 @@ function convertToRenderable(item, widgets) {
     widgetNamespace: item.widgetNamespace
   };
 
-  const namespaceWidgets = widgets[NAMESPACE_EXTENSION] || [];
-  const descriptor = namespaceWidgets.find(w => w.id === item.widgetId);
+  const descriptor = widgets.find(w => {
+    return w.namespace === item.widgetNamespace && w.id === item.widgetId;
+  });
 
   if (descriptor) {
     Object.assign(renderable, { descriptor });
