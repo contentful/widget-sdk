@@ -1,3 +1,4 @@
+import { get } from 'lodash';
 import AppsListPage from '../AppsListPage';
 import AppPage from '../AppPage';
 import { AppProductCatalog } from '../AppProductCatalog';
@@ -8,6 +9,7 @@ import * as SlideInNavigator from 'navigation/SlideInNavigator/index';
 import { getAppsRepo } from '../AppsRepoInstance';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
+import { NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 
 export default {
   name: 'apps',
@@ -111,7 +113,16 @@ export default {
             bridge,
             appHookBus,
             cma: spaceContext.cma,
-            evictWidget: id => getCustomWidgetLoader().evict(id)
+            evictWidget: appInstallation => {
+              const loader = getCustomWidgetLoader();
+              const sys = get(appInstallation, ['sys']);
+
+              // TODO: we evict both legacy "apps as extensions"
+              // and regular "apps from the app namespace".
+              // When we migrate data we should only evict the latter.
+              loader.evict([NAMESPACE_EXTENSION, get(sys, ['widgetId'])]);
+              loader.evict([NAMESPACE_APP, get(sys, ['appDefinition', 'sys', 'id'])]);
+            }
           };
         }
       ]

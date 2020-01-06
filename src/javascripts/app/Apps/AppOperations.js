@@ -24,7 +24,7 @@ export async function installOrUpdate(
     widgetId
   );
 
-  evictWidget(widgetId);
+  evictWidget(appInstallation);
 }
 
 // Best effort uninstallation.
@@ -39,6 +39,6 @@ export async function uninstall(cma, evictWidget, checkAppStatus) {
 
     // Remove the AppInstallation itself.
     await cma.deleteAppInstallation(appDefinition.sys.id);
-    evictWidget(widgetId);
+    evictWidget(appInstallation);
   }
 }
