@@ -52,7 +52,7 @@ describe('ExtensionAPI', () => {
         locales: {
           available: [
             { code: 'LOCALE', internal_code: 'LOCALE-internal', name: 'lang1', default: true },
-            { code: 'L2', internal_code: 'L2-internal', name: 'lang2' }
+            { code: 'L2', internal_code: 'L2-internal', name: 'lang2', fallbackCode: 'LOCALE' }
           ],
           default: { code: 'LOCALE', internal_code: 'LOCALE-internal', default: true }
         },
@@ -147,6 +147,10 @@ describe('ExtensionAPI', () => {
             names: {
               LOCALE: 'lang1',
               L2: 'lang2'
+            },
+            fallbacks: {
+              LOCALE: undefined,
+              L2: 'LOCALE'
             }
           },
           parameters: expect.any(Object),

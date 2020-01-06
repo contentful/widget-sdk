@@ -138,6 +138,9 @@ export default class ExtensionAPI {
       locales: {
         available: locales.available.map(locale => locale.code),
         default: locales.default.code,
+        fallbacks: locales.available.reduce((acc, locale) => {
+          return { ...acc, [locale.code]: locale.fallbackCode || undefined };
+        }, {}),
         names: locales.available.reduce((acc, locale) => {
           return { ...acc, [locale.code]: locale.name };
         }, {})
