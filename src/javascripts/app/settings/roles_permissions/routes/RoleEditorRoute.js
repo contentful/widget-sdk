@@ -12,45 +12,52 @@ import * as ResourceUtils from 'utils/ResourceUtils';
 import RoleEditor from '../role_editor/RoleEditor';
 import DocumentTitle from 'components/shared/DocumentTitle';
 
-const RoleEditorFetcher = createFetcherComponent(async ({ spaceId, getContentTypes, isNew }) => {
-  const [
-    contentTypes,
-    hasEnvironmentAliasesEnabled,
-    hasCustomRolesFeature,
-    resource
-  ] = await Promise.all([
-    getContentTypes(),
-    getSpaceFeature(spaceId, ENVIRONMENT_ALIASING),
-    accessChecker.canModifyRoles(),
-    createResourceService(spaceId).get('role')
-  ]);
-
-  if (!hasCustomRolesFeature) {
-    return {
+const RoleEditorFetcher = createFetcherComponent(
+  async ({ spaceId, getContentTypes, getEntities, isNew }) => {
+    const [
       contentTypes,
       hasEnvironmentAliasesEnabled,
-      hasCustomRolesFeature: false,
-      canModifyRoles: false
-    };
-  }
+      hasCustomRolesFeature,
+      resource,
+      entities
+    ] = await Promise.all([
+      getContentTypes(),
+      getSpaceFeature(spaceId, ENVIRONMENT_ALIASING),
+      accessChecker.canModifyRoles(),
+      createResourceService(spaceId).get('role'),
+      getEntities()
+    ]);
 
-  if (isNew && !ResourceUtils.canCreate(resource)) {
-    Notification.error('Your organization has reached the limit for custom roles.');
+    if (!hasCustomRolesFeature) {
+      return {
+        contentTypes,
+        entities,
+        hasEnvironmentAliasesEnabled,
+        hasCustomRolesFeature: false,
+        canModifyRoles: false
+      };
+    }
+
+    if (isNew && !ResourceUtils.canCreate(resource)) {
+      Notification.error('Your organization has reached the limit for custom roles.');
+      return {
+        contentTypes,
+        entities,
+        hasEnvironmentAliasesEnabled,
+        hasCustomRolesFeature: true,
+        canModifyRoles: false
+      };
+    }
+
     return {
       contentTypes,
+      entities,
       hasEnvironmentAliasesEnabled,
       hasCustomRolesFeature: true,
-      canModifyRoles: false
+      canModifyRoles: true
     };
   }
-
-  return {
-    contentTypes,
-    hasEnvironmentAliasesEnabled,
-    hasCustomRolesFeature: true,
-    canModifyRoles: true
-  };
-});
+);
 
 export default function RoleEditorRoute(props) {
   return (
@@ -59,6 +66,7 @@ export default function RoleEditorRoute(props) {
       <RoleEditorFetcher
         spaceId={props.spaceId}
         getContentTypes={props.getContentTypes}
+        getEntities={props.getEntities}
         isNew={props.isNew}>
         {({ isLoading, isError, data }) => {
           if (isLoading) {
@@ -77,9 +85,14 @@ export default function RoleEditorRoute(props) {
   );
 }
 
+RoleEditorRoute.defaultProps = {
+  getEntities: () => ({ Entry: {}, Asset: {} })
+};
+
 RoleEditorRoute.propTypes = {
   spaceId: PropTypes.string.isRequired,
   isLegacyOrganization: PropTypes.bool.isRequired,
   getContentTypes: PropTypes.func.isRequired,
+  getEntities: PropTypes.func.isRequired,
   isNew: PropTypes.bool.isRequired
 };

@@ -106,16 +106,16 @@ function createRule(policy) {
   // 3. find matching entity ID
   const idConstraint = findIdConstraint(rest);
   if (idConstraint.value) {
-    rule.contentType = PolicyBuilderConfig.NO_CTS;
     rule.entityId = idConstraint.value;
+    rule.scope = 'entityId';
     rest.splice(idConstraint.index, 1);
   }
 
   // 4. find scope
-  const scopeConstraint = findScopeConstraint(rest);
-  if (scopeConstraint.value) {
-    rule.scope = _.isString(scopeConstraint.value) ? 'user' : 'any';
-    rest.splice(scopeConstraint.index, 1);
+  const userConstraint = findUserConstraint(rest);
+  if (userConstraint.value) {
+    rule.scope = _.isString(userConstraint.value) ? 'user' : 'any';
+    rest.splice(userConstraint.index, 1);
   }
 
   // 5. find path
@@ -140,6 +140,20 @@ function findEntityConstraint(cs) {
   );
 }
 
+function findAssetConstraint(cs) {
+  return searchResult(
+    cs,
+    _.findIndex(cs, c => docEq(c, 'sys.type') && _.includes(['Asset'], c.equals[1]))
+  );
+}
+
+function findEntryConstraint(cs) {
+  return searchResult(
+    cs,
+    _.findIndex(cs, c => docEq(c, 'sys.type') && _.includes(['Entry'], c.equals[1]))
+  );
+}
+
 function findContentTypeConstraint(cs) {
   return searchResult(
     cs,
@@ -151,7 +165,7 @@ function findIdConstraint(cs) {
   return searchResult(cs, _.findIndex(cs, c => docEq(c, 'sys.id') && _.isString(c.equals[1])));
 }
 
-function findScopeConstraint(cs) {
+function findUserConstraint(cs) {
   return searchResult(
     cs,
     _.findIndex(cs, c => docEq(c, 'sys.createdBy.sys.id') && _.isString(c.equals[1]))
@@ -191,6 +205,24 @@ function localePathSegment(segment) {
 
 function pathSegment(segment, allValue) {
   return segment === PolicyBuilderConfig.PATH_WILDCARD ? allValue : segment;
+}
+
+export function findEntryIds(external) {
+  return external
+    .filter(policy => findEntryConstraint(extractConstraints(policy)).index !== -1)
+    .map(extractConstraints)
+    .reduce((acc, val) => acc.concat(val), [])
+    .filter(constraint => constraint.equals && constraint.equals[0].doc === 'sys.id')
+    .map(constraint => constraint.equals[1]);
+}
+
+export function findAssetIds(external) {
+  return external
+    .filter(policy => findAssetConstraint(extractConstraints(policy)).index !== -1)
+    .map(extractConstraints)
+    .reduce((acc, val) => acc.concat(val), [])
+    .filter(constraint => constraint.equals && constraint.equals[0].doc === 'sys.id')
+    .map(constraint => constraint.equals[1]);
 }
 
 export function toInternal(external) {

@@ -17,9 +17,9 @@ const contentTypesToOptions = contentTypes =>
 
 const getEntityName = entity => {
   if (entity === 'entry') {
-    return ['entry', 'Entries'];
+    return ['Entry', 'Entries'];
   } else {
-    return ['asset', 'Assets'];
+    return ['Asset', 'Assets'];
   }
 };
 
@@ -46,6 +46,7 @@ class Rule extends React.Component {
       contentType: PropTypes.string,
       action: PropTypes.string,
       scope: PropTypes.string,
+      entityId: PropTypes.string,
       field: PropTypes.string,
       locale: PropTypes.string
     }),
@@ -53,7 +54,9 @@ class Rule extends React.Component {
     onRemove: PropTypes.func.isRequired,
     onUpdateAttribute: PropTypes.func.isRequired,
     privateLocales: PropTypes.array.isRequired,
-    contentTypes: PropTypes.array.isRequired
+    contentTypes: PropTypes.array.isRequired,
+    searchEntities: PropTypes.func.isRequired,
+    getEntityTitle: PropTypes.func.isRequired
   };
 
   state = {};
@@ -61,6 +64,7 @@ class Rule extends React.Component {
   constructor(props) {
     super(props);
     this.contentTypes = contentTypesToOptions(props.contentTypes);
+    this.state.entities = {};
   }
 
   static getDerivedStateFromProps(props) {
@@ -82,8 +86,47 @@ class Rule extends React.Component {
     };
   }
 
+  searchEntitiesAndUpdate = () => {
+    const { entity, searchEntities, onUpdateAttribute } = this.props;
+    const entityName = getEntityName(entity);
+
+    searchEntities(entityName[0]).then(entity => {
+      if (entity) {
+        if (entityName[0] === 'Entry') {
+          onUpdateAttribute('contentType')({
+            target: { value: entity.sys.contentType.sys.id }
+          });
+        }
+        onUpdateAttribute('entityId')({ target: { value: entity.sys.id } });
+        return entity.sys.id;
+      }
+      return null;
+    });
+  };
+
+  updateScope = event => {
+    const { rule, onUpdateAttribute } = this.props;
+    if (event.target.value === 'entityId' && !rule.entityId) {
+      return this.searchEntitiesAndUpdate().then(entityId => {
+        if (entityId) {
+          return onUpdateAttribute('scope')({ target: { value: 'entityId' } });
+        }
+        return null;
+      });
+    }
+    return onUpdateAttribute('scope')(event);
+  };
+
   render() {
-    const { isDisabled, entity, onRemove, onUpdateAttribute, rule, privateLocales } = this.props;
+    const {
+      isDisabled,
+      entity,
+      onRemove,
+      onUpdateAttribute,
+      rule,
+      privateLocales,
+      getEntityTitle
+    } = this.props;
     const entityName = getEntityName(entity);
 
     return (
@@ -109,17 +152,23 @@ class Rule extends React.Component {
           testId="scope"
           isDisabled={rule.action === 'create' || isDisabled}
           value={rule.scope}
-          onChange={onUpdateAttribute('scope')}>
-          <Option value="any">{`Any ${entityName[0]}`}</Option>
+          onChange={this.updateScope}>
+          <Option value="any">{`Any ${entityName[0].toLowerCase()}`}</Option>
           <Option value="user">{`${entityName[1]} created by user`}</Option>
+          <Option value="entityId">{`A specific ${entityName[0].toLowerCase()}`}</Option>
         </Select>
+        {rule.scope === 'entityId' && (
+          <Button onClick={this.searchEntitiesAndUpdate} className={styles.select}>
+            {getEntityTitle(rule.entityId, rule.contentType)}
+          </Button>
+        )}
         {entity === 'entry' && (
           <React.Fragment>
             <Select
               className={styles.select}
               width="medium"
               testId="contentType"
-              isDisabled={isDisabled}
+              isDisabled={rule.scope === 'entityId' || isDisabled}
               value={rule.contentType}
               onChange={onUpdateAttribute('contentType')}>
               {this.contentTypes.map(({ id, name }) => (

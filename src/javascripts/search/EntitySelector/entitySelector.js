@@ -125,3 +125,12 @@ export function openFromExtension(options) {
         err ? Promise.reject(err) : null
     );
 }
+
+/**
+ * @param {string}   options.entityType    "Entry" or "Asset"
+ */
+export function openFromRolesAndPermissions(entityType) {
+  return newConfigFromExtension({ entityType, multiple: false })
+    .then(open)
+    .then(selected => selected[0]);
+}

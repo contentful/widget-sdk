@@ -14,7 +14,8 @@ function translatePolicies(internal) {
   return _(prepare(internal))
     .map(addBase)
     .map(addEntityTypeConstraint)
-    .map(addScopeConstraint)
+    .map(addEntityIdConstraint)
+    .map(addUserConstraint)
     .map(addContentTypeConstraint)
     .map(addPathConstraint)
     .map('result')
@@ -53,13 +54,25 @@ function addBase(pair) {
   return pair;
 }
 
+function addEntityIdConstraint(pair) {
+  if (pair.source.entityId) {
+    if (pair.source.scope === 'entityId') {
+      pushConstraint(pair, eq('sys.id', pair.source.entityId));
+    } else {
+      pair.source.entityId = null;
+    }
+  }
+
+  return pair;
+}
+
 function addEntityTypeConstraint(pair) {
   const entityName = capitalize(pair.source.entity);
   pushConstraint(pair, eq('sys.type', entityName));
   return pair;
 }
 
-function addScopeConstraint(pair) {
+function addUserConstraint(pair) {
   if (pair.source.scope !== 'user') {
     return pair;
   }

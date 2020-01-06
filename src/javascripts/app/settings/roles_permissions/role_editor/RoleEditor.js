@@ -40,6 +40,7 @@ import RoleEditorSidebar from './RoleEditorSidebar';
 import RoleEditorActions from './RoleEditorActions';
 import { createRoleRemover } from 'access_control/RoleRemover';
 import DocumentTitle from 'components/shared/DocumentTitle';
+import * as entitySelector from 'search/EntitySelector/entitySelector';
 
 const PermissionPropType = PropTypes.shape({
   manage: PropTypes.bool,
@@ -65,6 +66,7 @@ class RoleEditor extends React.Component {
       policies: PropTypes.array,
       sys: PropTypes.shape()
     }).isRequired,
+    entities: PropTypes.object.isRequired,
     baseRole: PropTypes.shape(),
     autofixed: PropTypes.bool,
     contentTypes: PropTypes.array.isRequired,
@@ -98,6 +100,10 @@ class RoleEditor extends React.Component {
     }
 
     this.state = {
+      entityCache: {
+        Entry: {},
+        Asset: {}
+      },
       saving: false,
       dirty: isDuplicate,
       internal
@@ -112,6 +118,40 @@ class RoleEditor extends React.Component {
   setDirty = dirty => {
     this.setState({ dirty });
     this.props.setDirty(dirty);
+  };
+
+  searchEntities = entityType => {
+    const { entityCache } = this.state;
+    return entitySelector.openFromRolesAndPermissions(entityType).then(entity => {
+      if (entity) {
+        entityCache[entityType][entity.sys.id] = entity;
+        this.setState({ entityCache });
+      }
+      return entity;
+    });
+  };
+
+  getEntityTitle = (entityId, contentTypeId) => {
+    const { contentTypes, entities } = this.props;
+    const { entityCache } = this.state;
+    const entityType = contentTypeId ? 'Entry' : 'Asset';
+
+    // entities have different formats if they are fetched via the DataLoader or the entitySelector
+    const entity = entities[entityType][entityId]
+      ? entities[entityType][entityId].entity.data
+      : entityCache[entityType][entityId];
+
+    if (!entity) return entityId;
+
+    const { internal_code: defaultLocale } = TheLocaleStore.getDefaultLocale();
+    if (contentTypeId) {
+      const { displayField, fields } = contentTypes.find(type => type.sys.id === contentTypeId);
+      const { apiName, id } = fields.find(({ id }) => id === displayField);
+      return entity.fields[apiName]
+        ? entity.fields[apiName][defaultLocale]
+        : entity.fields[id][defaultLocale];
+    }
+    return entity.fields.title[defaultLocale];
   };
 
   delete = () => {
@@ -400,6 +440,8 @@ class RoleEditor extends React.Component {
                   isDisabled={!canModifyRoles}
                   privateLocales={TheLocaleStore.getPrivateLocales()}
                   contentTypes={this.props.contentTypes}
+                  searchEntities={this.searchEntities}
+                  getEntityTitle={this.getEntityTitle}
                 />
               </FormSection>
               <FormSection title="Media">
@@ -412,6 +454,8 @@ class RoleEditor extends React.Component {
                   isDisabled={!canModifyRoles}
                   privateLocales={TheLocaleStore.getPrivateLocales()}
                   contentTypes={this.props.contentTypes}
+                  searchEntities={this.searchEntities}
+                  getEntityTitle={this.getEntityTitle}
                 />
               </FormSection>
             </React.Fragment>

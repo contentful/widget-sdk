@@ -4,6 +4,9 @@ import RolesListRoute from './RolesListRoute';
 import * as ResourceUtils from 'utils/ResourceUtils';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { loadEntry, loadAsset } from 'app/entity_editor/DataLoader';
+import * as PolicyBuilder from 'access_control/PolicyBuilder';
+import * as logger from 'services/logger';
 
 const list = {
   name: 'list',
@@ -89,6 +92,35 @@ const detail = {
         role,
         roleRepo: RoleRepository.getInstance(spaceContext.space),
         isLegacyOrganization: ResourceUtils.isLegacyOrganization(spaceContext.organization),
+        getEntities: async () => {
+          const result = {
+            Entry: {},
+            Asset: {}
+          };
+
+          // Trap and ignore errors -
+          // perhaps the entities do not exist or can't be accessed but the rule should still be displayed
+          await Promise.all([
+            ...PolicyBuilder.findEntryIds(role.policies).map(async entityId => {
+              try {
+                const entry = await loadEntry(spaceContext, entityId);
+                result.Entry[entityId] = entry;
+              } catch (_) {
+                logger.logWarn(`Could not find entry ${entityId}`);
+              }
+            }),
+            ...PolicyBuilder.findAssetIds(role.policies).map(async entityId => {
+              try {
+                const asset = await loadAsset(spaceContext, entityId);
+                result.Asset[entityId] = asset;
+              } catch (_) {
+                logger.logWarn(`Could not find asset ${entityId}`);
+              }
+            })
+          ]);
+
+          return result;
+        },
         getContentTypes: async () => {
           await spaceContext.publishedCTs.refresh();
           return spaceContext.publishedCTs.getAllBare();
