@@ -41,6 +41,7 @@ import RoleEditorActions from './RoleEditorActions';
 import { createRoleRemover } from 'access_control/RoleRemover';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import * as entitySelector from 'search/EntitySelector/entitySelector';
+import * as EntityFieldValueHelpers from 'classes/EntityFieldValueHelpers';
 
 const PermissionPropType = PropTypes.shape({
   manage: PropTypes.bool,
@@ -137,21 +138,34 @@ class RoleEditor extends React.Component {
     const entityType = contentTypeId ? 'Entry' : 'Asset';
 
     // entities have different formats if they are fetched via the DataLoader or the entitySelector
-    const entity = entities[entityType][entityId]
+    const data = entities[entityType][entityId]
       ? entities[entityType][entityId].entity.data
       : entityCache[entityType][entityId];
 
-    if (!entity) return entityId;
-
+    if (!data) return entityId;
     const { internal_code: defaultLocale } = TheLocaleStore.getDefaultLocale();
-    if (contentTypeId) {
-      const { displayField, fields } = contentTypes.find(type => type.sys.id === contentTypeId);
-      const { apiName, id } = fields.find(({ id }) => id === displayField);
-      return entity.fields[apiName]
-        ? entity.fields[apiName][defaultLocale]
-        : entity.fields[id][defaultLocale];
+
+    try {
+      if (entityType === 'Entry') {
+        return EntityFieldValueHelpers.getEntryTitle({
+          entry: data,
+          contentType: contentTypes.find(type => type.sys.id === contentTypeId),
+          internalLocaleCode: defaultLocale,
+          defaultInternalLocaleCode: defaultLocale,
+          defaultTitle: 'Untitled'
+        });
+      } else {
+        return EntityFieldValueHelpers.getAssetTitle({
+          asset: data,
+          internalLocaleCode: defaultLocale,
+          defaultInternalLocaleCode: defaultLocale,
+          defaultTitle: 'Untitled'
+        });
+      }
+    } catch (err) {
+      logger.logServerWarn(`Could not find title for ${entityId}`);
+      return entityId;
     }
-    return entity.fields.title[defaultLocale];
   };
 
   delete = () => {
