@@ -19,6 +19,8 @@ import StateLink from 'app/common/StateLink';
 import { toInternalFieldType, toApiFieldType } from 'widgets/FieldTypes';
 import ExtensionForm from './ExtensionForm';
 import * as Analytics from 'analytics/Analytics';
+import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
+import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 
 const styles = {
   actionButton: css({
@@ -73,9 +75,6 @@ class ExtensionEditor extends React.Component {
     goToList: PropTypes.func.isRequired,
     cma: PropTypes.shape({
       updateExtension: PropTypes.func.isRequired
-    }).isRequired,
-    customWidgetLoader: PropTypes.shape({
-      evict: PropTypes.func.isRequired
     }).isRequired
   };
 
@@ -148,7 +147,7 @@ class ExtensionEditor extends React.Component {
 
             Notification.success('Your extension was updated successfully.');
 
-            this.props.customWidgetLoader.evict(sys.id);
+            getCustomWidgetLoader().evict([NAMESPACE_EXTENSION, sys.id]);
           }
         );
       })

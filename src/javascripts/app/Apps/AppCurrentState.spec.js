@@ -60,7 +60,12 @@ describe('getCurrentAppState', () => {
         })
       );
 
-      const state = await getCurrentAppState(cma, EXTENSION_ID);
+      const state = await getCurrentAppState(cma, {
+        sys: {
+          type: 'AppInstallation',
+          widgetId: EXTENSION_ID
+        }
+      });
 
       expect(state).toEqual({
         EditorInterface: {
@@ -108,7 +113,12 @@ describe('getCurrentAppState', () => {
         });
       });
 
-      const state = await getCurrentAppState(cma, EXTENSION_ID);
+      const state = await getCurrentAppState(cma, {
+        sys: {
+          type: 'AppInstallation',
+          widgetId: EXTENSION_ID
+        }
+      });
 
       expect(state).toEqual({
         EditorInterface: {

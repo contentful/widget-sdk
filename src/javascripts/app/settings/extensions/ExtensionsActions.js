@@ -13,6 +13,7 @@ import { toInternalFieldType } from 'widgets/FieldTypes';
 import getExtensionParameterIds from './getExtensionParameterIds';
 import * as Analytics from 'analytics/Analytics';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
+import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 import { getModule } from 'NgRegistry';
 
 const SDK_URL = 'https://unpkg.com/contentful-ui-extensions-sdk@3';
@@ -25,7 +26,7 @@ function install({ extension, type, url }) {
     .createExtension({ extension })
     .then(res => {
       const extensionId = res.sys.id;
-      getCustomWidgetLoader().evict(extensionId);
+      getCustomWidgetLoader().evict([NAMESPACE_EXTENSION, extensionId]);
 
       return $state.go('^.detail', { extensionId });
     })

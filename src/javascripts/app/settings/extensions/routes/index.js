@@ -1,7 +1,6 @@
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
 import ExtensionsListRoute from './ExtensionsListRoute';
 import ExtensionEditorRoute from './ExtensionEditorRoute';
-import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 
 export default {
   name: 'extensions',
@@ -52,8 +51,7 @@ export default {
             cma: spaceContext.cma,
             goToList: () => {
               $state.go('^.list');
-            },
-            customWidgetLoader: getCustomWidgetLoader()
+            }
           };
         }
       ]

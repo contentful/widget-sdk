@@ -1,11 +1,11 @@
-import { isObject, identity, pick, isEqual, cloneDeep } from 'lodash';
+import { get, isObject, identity, pick, isEqual, cloneDeep } from 'lodash';
 
 import * as SidebarDefaults from 'app/EntrySidebar/Configuration/defaults';
 import * as Telemetry from 'i13n/Telemetry';
 
 import { isUnsignedInteger } from './validateTargetState';
 
-import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
+import { NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 
 // Like `Promise.all` but rejecting input promises do not cause
 // the result promise to reject. They are simply omitted.
@@ -27,9 +27,15 @@ export async function getDefaultSidebar() {
   return defaultEntrySidebar.map(item => pick(item, ['widgetNamespace', 'widgetId']));
 }
 
-function isCurrentExtension(widget, extensionId) {
-  const isExtension = widget.widgetNamespace === NAMESPACE_EXTENSION;
-  return isExtension && widget.widgetId === extensionId;
+function isCurrentApp(widget, appInstallation) {
+  if (widget.widgetNamespace === NAMESPACE_EXTENSION) {
+    // TODO: this check won't be needed when we migrate editor interfaces.
+    return widget.widgetId === get(appInstallation, ['sys', 'widgetId']);
+  } else if (widget.widgetNamespace === NAMESPACE_APP) {
+    return widget.widgetId === get(appInstallation, ['sys', 'appDefinition', 'sys', 'id']);
+  } else {
+    return false;
+  }
 }
 
 /**
@@ -48,7 +54,7 @@ function isCurrentExtension(widget, extensionId) {
  *   'some-other-ct-id': { editor: true }
  * }
  */
-export async function transformEditorInterfacesToTargetState(cma, targetState, extensionId) {
+export async function transformEditorInterfacesToTargetState(cma, targetState, appInstallation) {
   const { items: editorInterfaces } = await cma.getEditorInterfaces();
   const defaultSidebar = await getDefaultSidebar();
 
@@ -58,7 +64,7 @@ export async function transformEditorInterfacesToTargetState(cma, targetState, e
         ei,
         defaultSidebar,
         targetState[ei.sys.contentType.sys.id] || {},
-        extensionId
+        appInstallation
       );
     })
     .filter((ei, i) => !isEqual(ei, editorInterfaces[i]))
@@ -67,10 +73,17 @@ export async function transformEditorInterfacesToTargetState(cma, targetState, e
   await promiseAllSafe(updatePromises);
 }
 
-function transformSingleEditorInterfaceToTargetState(ei, defaultSidebar, targetState, extensionId) {
+function transformSingleEditorInterfaceToTargetState(
+  ei,
+  defaultSidebar,
+  targetState,
+  appInstallation
+) {
   // Start by removing all references, only those declared in the target
   // state will be recreated.
-  const result = removeSingleEditorInterfaceReferences(ei, extensionId);
+  const result = removeSingleEditorInterfaceReferences(ei, appInstallation);
+
+  const widgetId = get(appInstallation, ['sys', 'appDefinition', 'sys', 'id']);
 
   // Target state object for controls: `{ fieldId, settings? }`
   if (Array.isArray(targetState.controls)) {
@@ -78,8 +91,8 @@ function transformSingleEditorInterfaceToTargetState(ei, defaultSidebar, targetS
       const idx = (result.controls || []).findIndex(cur => cur.fieldId === control.fieldId);
       result.controls[idx] = {
         fieldId: control.fieldId,
-        widgetNamespace: NAMESPACE_EXTENSION,
-        widgetId: extensionId,
+        widgetNamespace: NAMESPACE_APP,
+        widgetId,
         settings: control.settings
       };
     });
@@ -93,10 +106,7 @@ function transformSingleEditorInterfaceToTargetState(ei, defaultSidebar, targetS
     // If there is no sidebar stored use the default one.
     result.sidebar = Array.isArray(result.sidebar) ? result.sidebar : cloneDeep(defaultSidebar);
 
-    const widget = {
-      widgetNamespace: NAMESPACE_EXTENSION,
-      widgetId: extensionId
-    };
+    const widget = { widgetNamespace: NAMESPACE_APP, widgetId };
 
     if (isObject(targetSidebar.settings)) {
       widget.settings = targetSidebar.settings;
@@ -111,17 +121,14 @@ function transformSingleEditorInterfaceToTargetState(ei, defaultSidebar, targetS
     }
   }
 
-  // If editor target state is set to `true` we just use the Extension.
+  // If editor target state is set to `true` we just use the widget.
   if (targetState.editor === true) {
-    result.editor = {
-      widgetNamespace: NAMESPACE_EXTENSION,
-      widgetId: extensionId
-    };
+    result.editor = { widgetNamespace: NAMESPACE_APP, widgetId };
   } else if (isObject(targetState.editor)) {
     // Target state for editor may also be: `{ settings? }`
     result.editor = {
-      widgetNamespace: NAMESPACE_EXTENSION,
-      widgetId: extensionId,
+      widgetNamespace: NAMESPACE_APP,
+      widgetId,
       settings: targetState.editor.settings
     };
   }
@@ -129,35 +136,35 @@ function transformSingleEditorInterfaceToTargetState(ei, defaultSidebar, targetS
   return result;
 }
 
-export async function removeAllEditorInterfaceReferences(cma, extensionId) {
+export async function removeAllEditorInterfaceReferences(cma, appInstallation) {
   const { items: editorInterfaces } = await cma.getEditorInterfaces();
 
   const updatePromises = editorInterfaces
-    .map(ei => removeSingleEditorInterfaceReferences(ei, extensionId))
+    .map(ei => removeSingleEditorInterfaceReferences(ei, appInstallation))
     .filter((ei, i) => !isEqual(ei, editorInterfaces[i]))
     .map(ei => cma.updateEditorInterface(ei));
 
   await promiseAllSafe(updatePromises);
 }
 
-function removeSingleEditorInterfaceReferences(ei, extensionId) {
+function removeSingleEditorInterfaceReferences(ei, appInstallation) {
   ei = cloneDeep(ei);
   const result = { sys: ei.sys };
 
   if (Array.isArray(ei.controls)) {
-    // If extension is used in `controls`, reset it to the default.
+    // If the app is used in `controls`, reset it to the default.
     result.controls = ei.controls.map(control => {
-      return isCurrentExtension(control, extensionId) ? { fieldId: control.fieldId } : control;
+      return isCurrentApp(control, appInstallation) ? { fieldId: control.fieldId } : control;
     });
   }
 
   if (Array.isArray(ei.sidebar)) {
-    // If extension is used in `sidebar`, remove it from the list.
-    result.sidebar = ei.sidebar.filter(widget => !isCurrentExtension(widget, extensionId));
+    // If the app is used in `sidebar`, remove it from the list.
+    result.sidebar = ei.sidebar.filter(widget => !isCurrentApp(widget, appInstallation));
   }
 
-  // If extension is used as `editor`, unset the reference.
-  if (isObject(ei.editor) && !isCurrentExtension(ei.editor, extensionId)) {
+  // If the app is used as `editor`, unset the reference.
+  if (isObject(ei.editor) && !isCurrentApp(ei.editor, appInstallation)) {
     result.editor = ei.editor;
   }
 

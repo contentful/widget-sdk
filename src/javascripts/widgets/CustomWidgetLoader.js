@@ -1,54 +1,83 @@
 import DataLoader from 'dataloader';
 import { uniq, get, identity } from 'lodash';
 import { buildExtensionWidget, buildAppWidget } from './WidgetTypes';
-import { NAMESPACE_EXTENSION } from './WidgetNamespaces';
+import { NAMESPACE_EXTENSION, NAMESPACE_APP } from './WidgetNamespaces';
+
+const CUSTOM_NAMESPACES = [NAMESPACE_EXTENSION, NAMESPACE_APP];
+
+// A key is a namespace + ID pair, as an array.
+const cacheKeyFn = ([ns, id]) => [ns, id].join(',');
 
 export function createCustomWidgetLoader(cma, appsRepo) {
-  const loader = new DataLoader(loadByIds);
+  const loader = new DataLoader(load, { cacheKeyFn });
 
   return {
-    getByIds,
+    getByKeys,
     getForEditor,
     evict,
     getUncachedForListing
   };
 
   // Fetcher function used by DataLoader.
-  async function loadByIds(ids) {
-    if (!Array.isArray(ids) || ids.length < 1) {
+  // Keys are pairs of `[namespace, id]`, for example:
+  // `[ ['extension', 'test'], ['app', 'some-app'] ]`.
+  async function load(keys) {
+    if (!Array.isArray(keys) || keys.length < 1) {
       return [];
     }
+
+    const extensionIds = keys
+      .filter(([namespace]) => namespace === NAMESPACE_EXTENSION)
+      .map(([, id]) => id);
+    const emptyExtensionsRes = () => Promise.resolve({ items: [] });
+    const fetchExtensions =
+      extensionIds.length > 0
+        ? () => cma.getExtensions({ 'sys.id[in]': extensionIds.join(',') })
+        : emptyExtensionsRes;
 
     const [{ items: extensions }, apps] = await Promise.all([
       // If widgets cannot be fetched, we prefer to present the
       // "widget missing" message in the entry editor rather than
       // crashing the whole Web App or disallowing editing.
-      cma.getExtensions({ 'sys.id[in]': ids.join(',') }).catch(() => ({ items: [] })),
+      fetchExtensions().catch(emptyExtensionsRes),
       appsRepo.getOnlyInstalledApps().catch(() => [])
     ]);
 
-    return ids.map(id => {
-      const extension = extensions.find(extension => {
-        return get(extension, ['sys', 'id']) === id;
-      });
+    return keys.map(([namespace, id]) => {
+      if (namespace === NAMESPACE_APP) {
+        const app = apps.find(app => {
+          return get(app, ['appDefinition', 'sys', 'id']) === id;
+        });
 
-      if (extension) {
-        return buildExtensionWidget(extension);
+        return app ? buildAppWidget(app) : null;
       }
 
-      // TODO: we use "extension" namespace in EditorInterface and fall
-      // back to apps if an extension is not found. We should introduce
-      // a new namespace specifically for apps.
-      const app = apps.find(app => {
-        return get(app, ['appInstallation', 'sys', 'widgetId']) === id;
-      });
+      if (namespace === NAMESPACE_EXTENSION) {
+        const extension = extensions.find(extension => {
+          return get(extension, ['sys', 'id']) === id;
+        });
 
-      return app ? buildAppWidget(app) : null;
+        if (extension) {
+          return buildExtensionWidget(extension);
+        }
+
+        // TODO: We've got some apps that were internally installed
+        // as extensions. Their `sys.widgetId` holds underlying
+        // Extension ID. Once we migrate EditorInterfaces using apps
+        // created in 2019 we can drop the fallback logic below.
+        const app = apps.find(app => {
+          return get(app, ['appInstallation', 'sys', 'widgetId']) === id;
+        });
+
+        return app ? buildAppWidget(app) : null;
+      }
+
+      return null;
     });
   }
 
-  // Given a list of IDs of widgets (either an app or extension)
-  // returns a list of widgets. If there is no widget for an ID,
+  // Given a list of keys of widgets (either an app or extension)
+  // returns a list of widgets. If there is no widget for a key,
   // it is omitted in the result set.
   //
   // While this method is used, a cache is built up. Once cached
@@ -58,32 +87,33 @@ export function createCustomWidgetLoader(cma, appsRepo) {
   // Note this method is intended to be used to load widgets
   // for entity editors where for performance reasons we can live
   // with slightly outdated widgets being rendered.
-  async function getByIds(ids) {
-    const widgets = await loader.loadMany(ids);
+  async function getByKeys(keys) {
+    const uniqKeys = uniq(keys, cacheKeyFn);
+    const widgets = await loader.loadMany(uniqKeys);
 
     return widgets.filter(identity);
   }
 
   // Given an instance of EditorInterface entity produced by
   // `EditorInterfaceTransformer` extracts all used custom
-  // widget IDs and calls `getByIds` with them.
+  // widget keys and calls `getByKeys` with them.
   function getForEditor(editorInterface) {
     const controls = get(editorInterface, ['controls'], []);
     const sidebar = get(editorInterface, ['sidebar'], []);
     const editor = get(editorInterface, ['editor'], {});
 
-    const customWidgetIds = [...controls, ...sidebar, editor]
-      .filter(widget => widget.widgetNamespace === NAMESPACE_EXTENSION)
-      .map(widget => widget.widgetId)
-      .filter(widgetId => typeof widgetId === 'string' && widgetId.length > 0);
+    const customWidgetKeys = [...controls, ...sidebar, editor]
+      .filter(({ widgetNamespace }) => CUSTOM_NAMESPACES.includes(widgetNamespace))
+      .filter(({ widgetId }) => typeof widgetId === 'string' && widgetId.length > 0)
+      .map(({ widgetNamespace, widgetId }) => [widgetNamespace, widgetId]);
 
-    return getByIds(uniq(customWidgetIds));
+    return getByKeys(customWidgetKeys);
   }
 
   // Removes a widget from the cache.
   // Use when an app or extension is modified or removed.
-  function evict(id) {
-    loader.clear(id);
+  function evict(key) {
+    loader.clear(key);
   }
 
   // Gets a list of all available widgets.

@@ -7,10 +7,12 @@ import {
 import {
   NAMESPACE_EXTENSION,
   NAMESPACE_BUILTIN,
-  NAMESPACE_SIDEBAR_BUILTIN
+  NAMESPACE_SIDEBAR_BUILTIN,
+  NAMESPACE_APP
 } from 'widgets/WidgetNamespaces';
 
 const EXTENSION_ID = 'extid';
+const APP_ID = 'appid';
 
 jest.mock('i13n/Telemetry', () => ({ count: () => {} }));
 jest.mock('data/CMA/ProductCatalog', () => ({ getCurrentSpaceFeature: () => true }));
@@ -24,12 +26,22 @@ describe('AppEditorInterfaces', () => {
       updateEditorInterface: jest.fn(() => Promise.resolve())
     };
 
+    const installation = {
+      sys: {
+        type: 'AppInstallation',
+        widgetId: EXTENSION_ID,
+        appDefinition: {
+          sys: { type: 'Link', linkType: 'AppDefinition', id: APP_ID }
+        }
+      }
+    };
+
     transform = targetState => {
-      return transformEditorInterfacesToTargetState(cma, targetState, EXTENSION_ID);
+      return transformEditorInterfacesToTargetState(cma, targetState, installation);
     };
 
     remove = () => {
-      return removeAllEditorInterfaceReferences(cma, EXTENSION_ID);
+      return removeAllEditorInterfaceReferences(cma, installation);
     };
   });
 
@@ -88,17 +100,17 @@ describe('AppEditorInterfaces', () => {
         controls: [
           {
             fieldId: 'test',
-            widgetNamespace: NAMESPACE_EXTENSION,
-            widgetId: EXTENSION_ID,
+            widgetNamespace: NAMESPACE_APP,
+            widgetId: APP_ID,
             settings: { test: true }
           },
-          { fieldId: 'test2', widgetNamespace: NAMESPACE_EXTENSION, widgetId: EXTENSION_ID }
+          { fieldId: 'test2', widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }
         ],
         sidebar: [
           { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'publication-widget' },
           {
-            widgetNamespace: NAMESPACE_EXTENSION,
-            widgetId: EXTENSION_ID,
+            widgetNamespace: NAMESPACE_APP,
+            widgetId: APP_ID,
             settings: { hello: 'world' }
           },
           { widgetNamespace: NAMESPACE_EXTENSION, widgetId: 'some-extension' }
@@ -107,13 +119,10 @@ describe('AppEditorInterfaces', () => {
 
       expect(cma.updateEditorInterface).toBeCalledWith({
         sys: { contentType: { sys: { id: 'CT2' } } },
-        editor: {
-          widgetNamespace: NAMESPACE_EXTENSION,
-          widgetId: EXTENSION_ID
-        },
+        editor: { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
         sidebar: [
           { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'versions-widget' },
-          { widgetNamespace: NAMESPACE_EXTENSION, widgetId: EXTENSION_ID }
+          { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }
         ]
       });
     });
@@ -142,9 +151,7 @@ describe('AppEditorInterfaces', () => {
 
       expect(cma.updateEditorInterface).toBeCalledWith({
         sys: { contentType: { sys: { id: 'CT1' } } },
-        controls: [
-          { fieldId: 'test', widgetNamespace: NAMESPACE_EXTENSION, widgetId: EXTENSION_ID }
-        ]
+        controls: [{ fieldId: 'test', widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }]
       });
     });
 
@@ -193,16 +200,16 @@ describe('AppEditorInterfaces', () => {
         controls: [
           {
             fieldId: 'test',
-            widgetNamespace: NAMESPACE_EXTENSION,
-            widgetId: EXTENSION_ID,
+            widgetNamespace: NAMESPACE_APP,
+            widgetId: APP_ID,
             settings: { test: false, extra: true }
           }
         ],
         sidebar: [
           { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'publication-widget' },
           {
-            widgetNamespace: NAMESPACE_EXTENSION,
-            widgetId: EXTENSION_ID,
+            widgetNamespace: NAMESPACE_APP,
+            widgetId: APP_ID,
             settings: { hello: 'jakub' }
           },
           { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'versions-widget' }
@@ -233,7 +240,7 @@ describe('AppEditorInterfaces', () => {
         sys: { contentType: { sys: { id: 'CT1' } } },
         sidebar: [
           ...defaultSidebar.slice(0, 3),
-          { widgetNamespace: NAMESPACE_EXTENSION, widgetId: EXTENSION_ID },
+          { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
           ...defaultSidebar.slice(3)
         ]
       });
@@ -242,7 +249,7 @@ describe('AppEditorInterfaces', () => {
         sys: { contentType: { sys: { id: 'CT2' } } },
         sidebar: [
           ...defaultSidebar.slice(0, 2),
-          { widgetNamespace: NAMESPACE_EXTENSION, widgetId: EXTENSION_ID },
+          { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
           ...defaultSidebar.slice(2)
         ]
       });
@@ -254,10 +261,7 @@ describe('AppEditorInterfaces', () => {
           items: [
             {
               sys: { contentType: { sys: { id: 'CT1' } } },
-              editor: {
-                widgetNamespace: NAMESPACE_EXTENSION,
-                widgetId: EXTENSION_ID
-              }
+              editor: { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }
             }
           ]
         });

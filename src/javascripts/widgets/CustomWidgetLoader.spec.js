@@ -2,13 +2,14 @@ import { createCustomWidgetLoader } from './CustomWidgetLoader';
 import {
   NAMESPACE_BUILTIN,
   NAMESPACE_EXTENSION,
-  NAMESPACE_SIDEBAR_BUILTIN
+  NAMESPACE_SIDEBAR_BUILTIN,
+  NAMESPACE_APP
 } from './WidgetNamespaces';
 
 const app = {
   appDefinition: {
     sys: {
-      id: 'someappdef',
+      id: 'some-app',
       type: 'AppDefinition'
     },
     name: 'I am app',
@@ -19,12 +20,12 @@ const app = {
   appInstallation: {
     sys: {
       type: 'AppInstallation',
-      widgetId: 'iamapp',
+      widgetId: 'some-widget-id',
       appDefinition: {
         sys: {
           type: 'Link',
           linkType: 'AppDefinition',
-          id: 'someappdef'
+          id: 'some-app'
         }
       }
     },
@@ -39,12 +40,13 @@ const app = {
 
 const expectedAppWidget = {
   fieldTypes: [],
-  id: 'iamapp',
-  namespace: NAMESPACE_EXTENSION,
+  id: 'some-app',
+  appDefinitionId: 'some-app',
+  widgetId: 'some-widget-id',
+  namespace: NAMESPACE_APP,
   src: 'https://someapp.com',
   isApp: true,
   appId: 'someappid',
-  appDefinitionId: 'someappdef',
   appIconUrl: '//images.ctfassets.net/myappicon.svg',
   locations: ['app', 'entry-sidebar'],
   name: 'Some app',
@@ -81,7 +83,7 @@ const expectedUieWidget = {
 };
 
 describe('CustomWidgetLoader', () => {
-  describe('#getByIds()', () => {
+  describe('#getByKeys()', () => {
     it('gets and caches widgets for extensions', async () => {
       const cma = {
         getExtensions: jest.fn(() =>
@@ -111,7 +113,11 @@ describe('CustomWidgetLoader', () => {
 
       const loader = createCustomWidgetLoader(cma, appsRepo);
 
-      const [widget1, widget2] = await loader.getByIds(['ext1', 'ext2', 'non-existent']);
+      const [widget1, widget2] = await loader.getByKeys([
+        [NAMESPACE_EXTENSION, 'ext1'],
+        [NAMESPACE_EXTENSION, 'ext2'],
+        [NAMESPACE_EXTENSION, 'non-existent']
+      ]);
 
       expect(cma.getExtensions).toBeCalledWith({ 'sys.id[in]': 'ext1,ext2,non-existent' });
       expect([widget1, widget2]).toEqual([
@@ -131,23 +137,27 @@ describe('CustomWidgetLoader', () => {
         },
         expectedUieWidget
       ]);
-      expect(await loader.getByIds(['ext1'])).toEqual([widget1]);
+      expect(await loader.getByKeys([[NAMESPACE_EXTENSION, 'ext1']])).toEqual([widget1]);
       expect(cma.getExtensions).toBeCalledTimes(1);
     });
 
     it('gets and caches widgets for apps', async () => {
-      const cma = { getExtensions: jest.fn(() => Promise.resolve({ items: [] })) };
+      const cma = { getExtensions: jest.fn() };
       const appsRepo = { getOnlyInstalledApps: jest.fn(() => Promise.resolve([app])) };
 
       const loader = createCustomWidgetLoader(cma, appsRepo);
 
-      const [appWidget] = await loader.getByIds(['non-existent', 'iamapp']);
+      const [appWidget] = await loader.getByKeys([
+        [NAMESPACE_APP, 'non-existent'],
+        [NAMESPACE_APP, 'some-app']
+      ]);
 
-      expect(cma.getExtensions).toBeCalledWith({ 'sys.id[in]': 'non-existent,iamapp' });
+      expect(cma.getExtensions).not.toBeCalled();
       expect(appsRepo.getOnlyInstalledApps).toBeCalledTimes(1);
       expect(appWidget).toEqual(expectedAppWidget);
-      expect(await loader.getByIds(['iamapp'])).toEqual([appWidget]);
-      expect(cma.getExtensions).toBeCalledTimes(1);
+
+      expect(await loader.getByKeys([[NAMESPACE_APP, 'some-app']])).toEqual([appWidget]);
+      expect(cma.getExtensions).not.toBeCalled();
       expect(appsRepo.getOnlyInstalledApps).toBeCalledTimes(1);
     });
 
@@ -157,7 +167,13 @@ describe('CustomWidgetLoader', () => {
 
       const loader = createCustomWidgetLoader(cma, appsRepo);
 
-      const widgets = await loader.getByIds(['some', 'ids', 'come', 'inhere']);
+      const widgets = await loader.getByKeys([
+        [NAMESPACE_EXTENSION, 'some'],
+        [NAMESPACE_EXTENSION, 'ids'],
+        [NAMESPACE_EXTENSION, 'come'],
+        [NAMESPACE_EXTENSION, 'inhere'],
+        [NAMESPACE_APP, 'someapp']
+      ]);
 
       expect(cma.getExtensions).toBeCalledWith({ 'sys.id[in]': 'some,ids,come,inhere' });
       expect(appsRepo.getOnlyInstalledApps).toBeCalledTimes(1);
@@ -215,7 +231,7 @@ describe('CustomWidgetLoader', () => {
           { widgetId: 'singleLine', widgetNamespace: NAMESPACE_BUILTIN },
           { widgetId: 'extension1', widgetNamespace: NAMESPACE_EXTENSION },
           { widgetId: 'jsonEditor', widgetNamespace: NAMESPACE_BUILTIN },
-          { widgetId: 'iamapp', widgetNamespace: NAMESPACE_EXTENSION }
+          { widgetId: 'some-app', widgetNamespace: NAMESPACE_APP }
         ],
         sidebar: [
           { widgetId: 'publish-widget', widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN },
@@ -225,43 +241,45 @@ describe('CustomWidgetLoader', () => {
 
       expect(cma.getExtensions).toHaveBeenCalledTimes(1);
       expect(cma.getExtensions).toHaveBeenCalledWith({
-        'sys.id[in]': 'extension1,iamapp,sidebar-extension'
+        'sys.id[in]': 'extension1,sidebar-extension'
       });
       expect(appsRepo.getOnlyInstalledApps).toHaveBeenCalledTimes(1);
 
-      const expectedWidgetIds = ['extension1', 'iamapp', 'sidebar-extension'];
+      const expectedWidgetIds = ['extension1', 'some-app', 'sidebar-extension'];
       expect(widgets.map(w => w.id).sort()).toEqual(expectedWidgetIds.sort());
     });
   });
 
   describe('#evict()', () => {
-    it('can be called on not cached or invalid IDs', () => {
+    it('can be called on not cached or invalid keys', () => {
       const loader = createCustomWidgetLoader();
 
       expect.assertions(1);
       try {
-        loader.evict('not-cached');
-        loader.evict('łódź');
+        loader.evict([NAMESPACE_EXTENSION, 'not-cached']);
+        loader.evict([NAMESPACE_APP, 'łódź']);
+        loader.evict(['wtf-namespace', 'hello']);
         expect(true).toBe(true);
       } catch (err) {
         expect(true).toBe(false);
       }
     });
 
-    it('clears a cache for an ID', async () => {
+    it('clears a cache for a key', async () => {
       const cma = { getExtensions: jest.fn(() => Promise.resolve({ items: [uie] })) };
       const appsRepo = { getOnlyInstalledApps: jest.fn(() => Promise.resolve([])) };
 
       const loader = createCustomWidgetLoader(cma, appsRepo);
+      const key = [NAMESPACE_EXTENSION, 'ext1'];
 
-      await loader.getByIds(['ext1']);
-      const [widget1] = await loader.getByIds(['ext1']);
+      await loader.getByKeys([key]);
+      const [widget1] = await loader.getByKeys([key]);
 
       expect(cma.getExtensions).toBeCalledTimes(1);
 
-      loader.evict('ext1');
+      loader.evict(key);
 
-      const [widget2] = await loader.getByIds(['ext1']);
+      const [widget2] = await loader.getByKeys([key]);
 
       expect(widget1).toEqual(widget2);
       expect(cma.getExtensions).toBeCalledTimes(2);

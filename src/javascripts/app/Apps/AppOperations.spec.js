@@ -3,7 +3,8 @@ import * as AppOperations from './AppOperations';
 import {
   NAMESPACE_BUILTIN,
   NAMESPACE_BUILTIN_SIDEBAR,
-  NAMESPACE_EXTENSION
+  NAMESPACE_EXTENSION,
+  NAMESPACE_APP
 } from 'widgets/WidgetNamespaces';
 
 jest.mock('i13n/Telemetry', () => ({ count: () => {} }));
@@ -31,10 +32,10 @@ describe('AppOperations', () => {
 
     it('stores parameters in AppInstallation entity', async () => {
       const cma = {
-        updateAppInstallation: jest.fn(installation => {
+        updateAppInstallation: jest.fn((_, parameters) => {
           return Promise.resolve({
-            ...installation,
-            sys: { ...installation.sys, widgetId: 'some-widget-id' }
+            sys: { widgetId: 'some-widget-id' },
+            parameters
           });
         }),
         getEditorInterfaces: jest.fn(() => Promise.resolve({ items: [] }))
@@ -51,7 +52,10 @@ describe('AppOperations', () => {
       expect(cma.updateAppInstallation).toBeCalledTimes(1);
       expect(cma.updateAppInstallation).toBeCalledWith('def-id', { test: true });
       expect(evictWidget).toBeCalledTimes(1);
-      expect(evictWidget).toBeCalledWith(expect.stringContaining('some-widget-id'));
+      expect(evictWidget).toBeCalledWith({
+        sys: { widgetId: 'some-widget-id' },
+        parameters: { test: true }
+      });
     });
 
     it('fails if AppInstallation cannot be updated', async () => {
@@ -75,13 +79,16 @@ describe('AppOperations', () => {
     });
 
     it('executes the target state plan', async () => {
+      const installation = {
+        sys: {
+          widgetId: 'some-widget-id',
+          appDefinition: {
+            sys: { type: 'Link', linkType: 'AppDefinition', id: 'some-app' }
+          }
+        }
+      };
       const cma = {
-        updateAppInstallation: jest.fn(installation => {
-          return Promise.resolve({
-            ...installation,
-            sys: { ...installation.sys, widgetId: 'some-widget-id' }
-          });
-        }),
+        updateAppInstallation: jest.fn(() => Promise.resolve(installation)),
         getEditorInterfaces: jest.fn(() => {
           return Promise.resolve({
             items: [
@@ -98,7 +105,7 @@ describe('AppOperations', () => {
       };
       const evictWidget = jest.fn();
       const checkAppStatus = jest.fn(() => {
-        return Promise.resolve({ appDefinition: { sys: { id: 'def-id' } } });
+        return Promise.resolve({ appDefinition: { sys: { id: 'some-app' } } });
       });
 
       await AppOperations.installOrUpdate(cma, evictWidget, checkAppStatus, {
@@ -117,13 +124,11 @@ describe('AppOperations', () => {
 
       expect(cma.updateEditorInterface).toBeCalledWith({
         sys: { contentType: { sys: { id: 'CT1' } } },
-        controls: [
-          { fieldId: 'xxx', widgetNamespace: NAMESPACE_EXTENSION, widgetId: 'some-widget-id' }
-        ]
+        controls: [{ fieldId: 'xxx', widgetNamespace: NAMESPACE_APP, widgetId: 'some-app' }]
       });
 
       expect(evictWidget).toBeCalledTimes(1);
-      expect(evictWidget).toBeCalledWith('some-widget-id');
+      expect(evictWidget).toBeCalledWith(installation);
     });
   });
 
@@ -180,7 +185,7 @@ describe('AppOperations', () => {
       });
 
       expect(evictWidget).toBeCalledTimes(1);
-      expect(evictWidget).toBeCalledWith(widgetId);
+      expect(evictWidget).toBeCalledWith({ sys: { widgetId: 'test-widget' } });
     });
 
     it('deletes the installation', async () => {
@@ -202,7 +207,7 @@ describe('AppOperations', () => {
       expect(cma.deleteAppInstallation).toBeCalledWith('def');
 
       expect(evictWidget).toBeCalledTimes(1);
-      expect(evictWidget).toBeCalledWith('some-widget');
+      expect(evictWidget).toBeCalledWith({ sys: { widgetId: 'some-widget' } });
     });
 
     it('fails if an installation cannot be deleted', async () => {

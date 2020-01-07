@@ -12,26 +12,27 @@ import {
 } from '@contentful/forma-36-react-components';
 import Placeholder from 'app/common/Placeholder';
 import BinocularsIllustration from 'svg/binoculars-illustration';
+import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
+import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 
-const PageExtensionFetcher = createFetcherComponent(
-  async ({ extensionId, orgId, customWidgetLoader }) => {
-    const [isEnabled, widgets] = await Promise.all([
-      advancedExtensibilityFeature.isEnabled(orgId),
-      customWidgetLoader.getByIds([extensionId])
-    ]);
+const PageExtensionFetcher = createFetcherComponent(async ({ extensionId, orgId }) => {
+  const key = [NAMESPACE_EXTENSION, extensionId];
+  const [isEnabled, widgets] = await Promise.all([
+    advancedExtensibilityFeature.isEnabled(orgId),
+    getCustomWidgetLoader().getByKeys([key])
+  ]);
 
-    if (!isEnabled) {
-      throw new Error('advanced extensibility not enabled');
-    }
-
-    const [descriptor] = widgets;
-    if (!descriptor) {
-      throw new Error('no widget found ');
-    }
-
-    return descriptor;
+  if (!isEnabled) {
+    throw new Error('advanced extensibility not enabled');
   }
-);
+
+  const [descriptor] = widgets;
+  if (!descriptor) {
+    throw new Error('no widget found ');
+  }
+
+  return descriptor;
+});
 
 const styles = {
   loading: css({ padding: tokens.spacingXl }),
@@ -55,10 +56,7 @@ function ErrorMessage() {
 
 export default function PageExtensionRoute(props) {
   return (
-    <PageExtensionFetcher
-      extensionId={props.extensionId}
-      orgId={props.orgId}
-      customWidgetLoader={props.customWidgetLoader}>
+    <PageExtensionFetcher extensionId={props.extensionId} orgId={props.orgId}>
       {({ isLoading, isError, data }) => {
         if (isLoading) {
           return (
@@ -85,6 +83,5 @@ PageExtensionRoute.propTypes = {
   extensionId: PropTypes.string.isRequired,
   orgId: PropTypes.string.isRequired,
   path: PropTypes.string.isRequired,
-  customWidgetLoader: PropTypes.object.isRequired,
   bridge: PropTypes.object.isRequired
 };
