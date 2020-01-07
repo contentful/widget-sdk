@@ -105,7 +105,7 @@ module.exports = function(config) {
             '@babel/transform-modules-systemjs',
             '@babel/proposal-object-rest-spread',
             '@babel/proposal-class-properties',
-            '@babel/syntax-dynamic-import'
+            '@babel/proposal-dynamic-import'
           ]
         },
         sourceFileName: makeSourceFileName

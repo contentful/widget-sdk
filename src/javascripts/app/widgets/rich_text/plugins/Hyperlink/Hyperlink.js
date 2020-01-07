@@ -24,7 +24,7 @@ const styles = {
     color: tokens.colorTextLightest,
     marginRight: tokens.spacingXs,
     '&:after': {
-      content: ''
+      content: '""'
     }
   }),
   richTextEntityTooltipContentTitle: css({
