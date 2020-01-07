@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Space } from 'app/OrganizationSettings/PropTypes';
-import Autocomplete from './Autocomplete';
+import { Autocomplete } from '@contentful/forma-36-react-components/dist/alpha';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
 import useAsync from 'app/common/hooks/useAsync';
@@ -57,7 +57,8 @@ export default function SpacesAutoComplete({
       width="large"
       disabled={disabled}
       emptyListMessage="There are no spaces to choose from"
-      noMatchesMessage="No spaces found">
+      noMatchesMessage="No spaces found"
+      dropdownProps={{ isFullWidth: true }}>
       {options => options.map(option => <span key={option.sys.id}>{option.name}</span>)}
     </Autocomplete>
   );

@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import moment from 'moment-timezone';
 import _ from 'lodash';
 import { FormLabel } from '@contentful/forma-36-react-components';
+import { Autocomplete } from '@contentful/forma-36-react-components/dist/alpha';
 import styles from './styles';
 import allTimezones from './Timezones';
-import Autocomplete from 'app/common/Autocomplete';
 
 export function TimezonePicker({ validationMessage, onSelect }) {
   const defaultTimezone = allTimezones.find(timezone => timezone.ianaName === moment.tz.guess());
@@ -39,7 +39,8 @@ export function TimezonePicker({ validationMessage, onSelect }) {
           className={styles.dropdown}
           willClearQueryOnClose
           dropdownProps={{
-            dropdownContainerClassName: styles.dropdownContainer
+            dropdownContainerClassName: styles.dropdownContainer,
+            isFullWidth: true
           }}
           items={filteredTimezones.slice(0, 100)}
           onChange={handleSelect}

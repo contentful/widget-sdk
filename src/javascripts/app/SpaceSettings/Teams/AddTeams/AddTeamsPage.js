@@ -10,13 +10,12 @@ import {
   Subheading,
   HelpText
 } from '@contentful/forma-36-react-components';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import { Workbench, Autocomplete } from '@contentful/forma-36-react-components/dist/alpha';
 import _ from 'lodash';
 import * as tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';
 import { css, cx } from 'emotion';
 
-import Autocomplete from 'app/common/Autocomplete';
 import { useAsyncFn } from 'app/common/hooks/useAsync';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { createTeamSpaceMembership } from 'access_control/TeamRepository';
@@ -287,7 +286,8 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
           width="full"
           onChange={team => dispatch({ type: 'ADD_TEAM', payload: team.sys.id })}
           onQueryChange={value => dispatch({ type: 'SEARCH', payload: value })}
-          items={teamsInAutocomplete}>
+          items={teamsInAutocomplete}
+          dropdownProps={{ isFullWidth: true }}>
           {items => items.map(team => <AutocompleteTeam key={team.sys.id} team={team} />)}
         </Autocomplete>
         <HelpText className={styles.selectHelp}>
