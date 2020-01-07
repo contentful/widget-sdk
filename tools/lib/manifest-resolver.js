@@ -6,6 +6,7 @@ module.exports.create = function create(manifest, base) {
     if (urlObj.protocol) {
       return url;
     }
+
     const fingerprinted = manifest[urlObj.pathname.substr(1)];
     if (!fingerprinted) {
       throw new Error(`Could not get fingerprinted path for "${url}"`);

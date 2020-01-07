@@ -14,7 +14,7 @@ import {
   TableCell,
   TableRow
 } from '@contentful/forma-36-react-components';
-import EmptyStateIllustration from 'svg/content-preview-empty-state';
+import EmptyStateIllustration from 'svg/content-preview-empty-state.svg';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 
 const styles = {

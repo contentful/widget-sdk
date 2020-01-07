@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { includes, negate } from 'lodash';
 import { match, isTag } from 'utils/TaggedValues';
-import SuccessIcon from 'svg/checkmark-alt';
+import SuccessIcon from 'svg/checkmark-alt.svg';
 import pluralize from 'pluralize';
 import Icon from 'ui/Components/Icon';
 import StateLink from 'app/common/StateLink';

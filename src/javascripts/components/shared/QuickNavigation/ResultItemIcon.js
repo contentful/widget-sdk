@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import ContentTypesIcon from 'svg/nav-ct';
-import EntriesIcon from 'svg/nav-entries';
-import MediaIcon from 'svg/nav-media';
+import ContentTypesIcon from 'svg/nav-ct.svg';
+import EntriesIcon from 'svg/nav-entries.svg';
+import MediaIcon from 'svg/nav-media.svg';
 
 const iconStyles = css({
   verticalAlign: 'middle',

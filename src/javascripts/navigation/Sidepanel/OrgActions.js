@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import SettingsIcon from 'svg/settings';
-import TeamsIcon from 'svg/nav-organization-teams';
+import SettingsIcon from 'svg/settings.svg';
+import TeamsIcon from 'svg/nav-organization-teams.svg';
 
 export default function OrgActions({ gotoOrgSettings, showOrgSettingsAsTeams }) {
   return (

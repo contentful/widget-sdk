@@ -8,7 +8,7 @@ import * as Config from 'Config';
 import { assign } from 'utils/Collections';
 import { caseofEq } from 'sum-types';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
-import AliasIcon from 'svg/alias';
+import AliasIcon from 'svg/alias.svg';
 import { LinkOpen } from 'ui/Content';
 import {
   Table,
@@ -27,7 +27,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
-import QuestionMarkIcon from 'svg/QuestionMarkIcon';
+import QuestionMarkIcon from 'svg/QuestionMarkIcon.svg';
 import Icon from 'ui/Components/Icon';
 import { Tooltip } from '@contentful/forma-36-react-components';
 import DocumentTitle from 'components/shared/DocumentTitle';

@@ -23,9 +23,10 @@ module.exports = (resolve, rootDir, srcRoots, coverageDirectory) => {
       '^.+\\.module\\.(css|sass|scss)$'
     ],
     moduleNameMapper: {
-      '^.+\\.module\\.(css|sass|scss|styl)$': 'identity-obj-proxy'
+      '^.+\\.module\\.(css|sass|scss|styl|svg)$': 'identity-obj-proxy'
+      // '^.+\\.module\\.svg$': '<rootDir>/__mocks__/svgrMock.js'
     },
-    moduleFileExtensions: ['web.js', 'js', 'json', 'web.jsx', 'jsx', 'node', 'mjs', 'es6.js'],
+    moduleFileExtensions: ['web.js', 'js', 'json', 'web.jsx', 'jsx', 'node', 'mjs'],
     coverageReporters: ['lcov', 'clover'],
     snapshotSerializers: ['jest-emotion'],
     reporters: ['default', 'jest-junit']

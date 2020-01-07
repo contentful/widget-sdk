@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import CloseIcon from 'svg/close';
+import CloseIcon from 'svg/close.svg';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import SidepanelOrgs from './SidepanelOrgs';
 import SidepanelSpaces from './SidepanelSpaces';

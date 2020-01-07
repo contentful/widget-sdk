@@ -1,22 +1,11 @@
 const gulp = require('gulp');
 const { build, buildTestDeps } = require('../js');
 const clean = require('../clean');
-const { bundleAppJs, bundleTestJs } = require('./js');
-const { buildMinifiedChunks, buildNonMinifiedChunks } = require('./chunks');
-const buildStyles = require('./styles');
+const copyStatic = require('./static');
 
-const buildTest = gulp.series(
-  clean,
-  gulp.parallel(
-    gulp.series(buildTestDeps, gulp.parallel(bundleTestJs, buildNonMinifiedChunks)),
-    buildStyles
-  )
-);
+const buildTest = gulp.series(clean, buildTestDeps);
 
-const buildApp = gulp.series(
-  clean,
-  gulp.parallel(gulp.series(build, gulp.parallel(bundleAppJs, buildMinifiedChunks)), buildStyles)
-);
+const buildApp = gulp.series(clean, gulp.series(build, copyStatic));
 
 module.exports = {
   buildTest,

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Advice from 'components/tabs/Advice';
-import TranslationsIcon from 'svg/translations-icon';
+import TranslationsIcon from 'svg/translations-icon.svg';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 

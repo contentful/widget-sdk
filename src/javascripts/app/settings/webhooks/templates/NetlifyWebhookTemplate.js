@@ -1,5 +1,5 @@
 import React from 'react';
-import NetlifyLogo from 'svg/logo-netlify';
+import NetlifyLogo from 'svg/logo-netlify.svg';
 
 export default {
   id: 'netlify-deploy-site',

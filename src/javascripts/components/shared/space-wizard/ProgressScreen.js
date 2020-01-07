@@ -1,11 +1,11 @@
 /* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import PropTypes from 'prop-types';
-import CheckmarkIcon from 'svg/checkmark';
-import ContentTypeIcon from 'svg/page-ct';
-import ContentIcon from 'svg/page-content';
-import MediaIcon from 'svg/page-media';
-import APIsIcon from 'svg/page-apis';
+import CheckmarkIcon from 'svg/checkmark.svg';
+import ContentTypeIcon from 'svg/page-ct.svg';
+import ContentIcon from 'svg/page-content.svg';
+import MediaIcon from 'svg/page-media.svg';
+import APIsIcon from 'svg/page-apis.svg';
 
 const infoItems = [
   {

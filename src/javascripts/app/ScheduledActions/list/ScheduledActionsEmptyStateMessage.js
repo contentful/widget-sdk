@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Heading, Paragraph } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import MediaEmptyStateIllustration from 'svg/media-empty-state';
+import MediaEmptyStateIllustration from 'svg/media-empty-state.svg';
 import { css } from 'emotion';
 
 const styles = {

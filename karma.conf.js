@@ -22,6 +22,12 @@ const filesNeededToRunTests = [
     served: true,
     included: false
   },
+  {
+    pattern: 'src/javascripts/**/*.svg',
+    watched: true,
+    served: true,
+    included: false
+  },
   'test/utils/**/*.js',
   'test/helpers/**/*.js'
 ];
@@ -55,10 +61,7 @@ module.exports = function(config) {
       // set by CSS.
       // We also need this to make sure that transition events are
       // triggered properly.
-      'public/app/vendor.css',
-      'public/app/main.css',
-
-      'public/app/templates.js',
+      'public/app/styles.css',
       'public/app/dependencies.js'
     ].concat(filesNeededToRunTests, ['test/unit/**/*.js', 'test/integration/**/*.js']),
 
@@ -73,7 +76,8 @@ module.exports = function(config) {
       'test/unit/**/*.js': ['babelTest', 'sourcemap'],
       'src/javascripts/**/*.js': ['babelTest', 'sourcemap'],
       'public/app/dependencies.js': ['sourcemap'],
-      'vendor/jquery-shim.js': ['babelTest', 'sourcemap']
+      'vendor/jquery-shim.js': ['babelTest', 'sourcemap'],
+      'src/javascripts/**/*.svg': ['babelTest', 'sourcemap']
     },
 
     customPreprocessors: {
@@ -94,7 +98,8 @@ module.exports = function(config) {
                 useBuiltIns: false
               }
             ],
-            '@babel/react'
+            '@babel/react',
+            '@dr.pogodin/babel-preset-svgr'
           ],
           plugins: [
             '@babel/transform-modules-systemjs',
@@ -138,7 +143,6 @@ module.exports = function(config) {
     autoWatch: true,
 
     browsers: ['ChromeHeadless'],
-
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
     singleRun: false

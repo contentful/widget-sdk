@@ -16,7 +16,7 @@ import { getUserName } from 'utils/UserUtils';
 import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import Price from 'ui/Components/Price';
 import ContextMenu from 'ui/Components/ContextMenu';
-import QuestionMarkIcon from 'svg/QuestionMarkIcon';
+import QuestionMarkIcon from 'svg/QuestionMarkIcon.svg';
 
 const styles = {
   dotsRow: css({

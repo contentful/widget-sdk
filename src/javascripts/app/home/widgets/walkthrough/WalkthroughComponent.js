@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Tooltip from './Tooltip';
 import TooltipContent from './TooltipContent';
-import OrgSliderIllustration from 'svg/org-slider-illustration';
-import ContentTabIllustration from 'svg/content-tab-illustration';
+import OrgSliderIllustration from 'svg/org-slider-illustration.svg';
+import ContentTabIllustration from 'svg/content-tab-illustration.svg';
 
 // this is a workaround for the fact that we can't use `img` tag in js with our current build setup
 const MediaTabIllustration = () => <div className="media-tab-illustration"></div>;

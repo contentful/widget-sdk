@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import FolderIcon from 'svg/folder';
+import FolderIcon from 'svg/folder.svg';
 import SpaceWithEnvironments from './SpaceWithEnvironments';
 import { canAccessSpaceEnvironments } from 'access_control/AccessChecker';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import { Button, Heading, Paragraph } from '@contentful/forma-36-react-components';
-import EmptyStateAdminIllustration from 'svg/folder-illustration';
-import EmptyStatePractitionerIllustration from 'svg/coffee-cup-illustration';
+import EmptyStateAdminIllustration from 'svg/folder-illustration.svg';
+import EmptyStatePractitionerIllustration from 'svg/coffee-cup-illustration.svg';
 
 const styles = { svgContainer: css({ width: '150px' }) };
 

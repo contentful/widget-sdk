@@ -3,7 +3,7 @@ import { Typography, Heading, Paragraph } from '@contentful/forma-36-react-compo
 import EmptyStateContainer, {
   defaultSVGStyle
 } from 'components/EmptyStateContainer/EmptyStateContainer';
-import BrokenPencil from 'svg/broken-pencil';
+import BrokenPencil from 'svg/broken-pencil.svg';
 
 export default function ErrorState() {
   return (

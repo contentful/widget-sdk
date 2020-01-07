@@ -7,9 +7,9 @@ import tokens from '@contentful/forma-36-tokens';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as TokenStore from 'services/TokenStore';
 
-import Logo from 'svg/logo-label';
+import Logo from 'svg/logo-label.svg';
 import * as K from 'utils/kefir';
-import Hamburger from 'svg/hamburger';
+import Hamburger from 'svg/hamburger.svg';
 import { navState$, NavStates } from 'navigation/NavState';
 
 import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel';

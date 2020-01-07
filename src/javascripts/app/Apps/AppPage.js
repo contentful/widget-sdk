@@ -21,7 +21,7 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import EmptyStateContainer, {
   defaultSVGStyle
 } from 'components/EmptyStateContainer/EmptyStateContainer';
-import EmptyStateIllustration from 'svg/connected-forms-illustration';
+import EmptyStateIllustration from 'svg/connected-forms-illustration.svg';
 import { installOrUpdate, uninstall } from './AppOperations';
 import { APP_EVENTS_IN, APP_EVENTS_OUT } from './AppHookBus';
 import UnknownErrorMessage from 'components/shared/UnknownErrorMessage';
