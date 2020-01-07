@@ -1,10 +1,10 @@
 import { cloneDeep } from 'lodash';
 import { migrateControl, WIDGET_MIGRATIONS } from './ControlMigrations';
 import getDefaultWidgetId from './DefaultWidget';
-import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from './WidgetNamespaces';
+import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION, NAMESPACE_APP } from './WidgetNamespaces';
 import { create as createBuiltinWidgetList } from './BuiltinWidgets';
 
-const NAMESPACES = [NAMESPACE_BUILTIN, NAMESPACE_EXTENSION];
+const NAMESPACES = [NAMESPACE_BUILTIN, NAMESPACE_EXTENSION, NAMESPACE_APP];
 
 const isNonEmptyString = s => typeof s === 'string' && s.length > 0;
 

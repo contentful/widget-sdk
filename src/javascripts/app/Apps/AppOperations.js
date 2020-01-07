@@ -16,12 +16,11 @@ export async function installOrUpdate(
 
   const { appDefinition } = await checkAppStatus();
   const appInstallation = await cma.updateAppInstallation(appDefinition.sys.id, parameters);
-  const { widgetId } = appInstallation.sys;
 
   await transformEditorInterfacesToTargetState(
     cma,
     get(targetState, ['EditorInterface'], {}),
-    widgetId
+    appInstallation
   );
 
   evictWidget(appInstallation);
@@ -32,10 +31,8 @@ export async function uninstall(cma, evictWidget, checkAppStatus) {
   const { appInstallation, appDefinition } = await checkAppStatus();
 
   if (appInstallation) {
-    const { widgetId } = appInstallation.sys;
-
     // Rewrite all EditorInterfaces refering the app widget.
-    await removeAllEditorInterfaceReferences(cma, widgetId);
+    await removeAllEditorInterfaceReferences(cma, appInstallation);
 
     // Remove the AppInstallation itself.
     await cma.deleteAppInstallation(appDefinition.sys.id);

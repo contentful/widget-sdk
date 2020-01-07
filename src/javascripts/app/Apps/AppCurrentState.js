@@ -1,13 +1,13 @@
-import { isObject } from 'lodash';
+import { get, isObject } from 'lodash';
 
-import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
+import { NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 
-export default async function getCurrentAppState(cma, extensionId) {
+export default async function getCurrentAppState(cma, appInstallation) {
   const { items: editorInterfaces } = await cma.getEditorInterfaces();
 
   const editorInterfacesState = editorInterfaces
     .map(ei => {
-      return [ei.sys.contentType.sys.id, getSingleEditorInterfaceState(ei, extensionId)];
+      return [ei.sys.contentType.sys.id, getSingleEditorInterfaceState(ei, appInstallation)];
     })
     .filter(([_, state]) => Object.keys(state).length > 0)
     .reduce((acc, [ctId, state]) => ({ ...acc, [ctId]: state }), {});
@@ -17,14 +17,22 @@ export default async function getCurrentAppState(cma, extensionId) {
   };
 }
 
-function getSingleEditorInterfaceState(ei, extensionId) {
+function getSingleEditorInterfaceState(ei, appInstallation) {
   const result = {};
 
-  if (Array.isArray(ei.controls)) {
-    const extensionControls = ei.controls.filter(control => {
-      return control.widgetNamespace === NAMESPACE_EXTENSION && control.widgetId === extensionId;
-    });
+  const isCurrentApp = widget => {
+    if (widget.widgetNamespace === NAMESPACE_EXTENSION) {
+      // TODO: this check won't be needed when we migrate editor interfaces.
+      return widget.widgetId === get(appInstallation, ['sys', 'widgetId']);
+    } else if (widget.widgetNamespace === NAMESPACE_APP) {
+      return widget.widgetId === get(appInstallation, ['sys', 'appDefinition', 'sys', 'id']);
+    } else {
+      return false;
+    }
+  };
 
+  if (Array.isArray(ei.controls)) {
+    const extensionControls = ei.controls.filter(isCurrentApp);
     if (extensionControls.length > 0) {
       result.controls = extensionControls.map(control => {
         const mapped = { fieldId: control.fieldId };
@@ -37,10 +45,7 @@ function getSingleEditorInterfaceState(ei, extensionId) {
   }
 
   if (Array.isArray(ei.sidebar)) {
-    const idx = ei.sidebar.findIndex(widget => {
-      return widget.widgetNamespace === NAMESPACE_EXTENSION && widget.widgetId === extensionId;
-    });
-
+    const idx = ei.sidebar.findIndex(isCurrentApp);
     if (idx > -1) {
       result.sidebar = { position: idx };
       const { settings } = ei.sidebar[idx];
@@ -51,10 +56,8 @@ function getSingleEditorInterfaceState(ei, extensionId) {
   }
 
   const { editor } = ei;
-  if (isObject(editor)) {
-    if (editor.widgetNamespace === NAMESPACE_EXTENSION && editor.widgetId === extensionId) {
-      result.editor = editor.settings ? { settings: editor.settings } : true;
-    }
+  if (isObject(editor) && isCurrentApp(editor)) {
+    result.editor = editor.settings ? { settings: editor.settings } : true;
   }
 
   return result;

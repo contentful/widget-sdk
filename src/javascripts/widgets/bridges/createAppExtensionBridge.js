@@ -66,7 +66,7 @@ export default function createAppExtensionBridge(dependencies) {
       } else if (methodName === 'getParameters' && isInstalled) {
         return installation.parameters;
       } else if (methodName === 'getCurrentState' && isInstalled) {
-        return getCurrentAppState(spaceContext.cma, installation.sys.widgetId);
+        return getCurrentAppState(spaceContext.cma, installation);
       } else if (methodName === 'setReady') {
         return appHookBus.emit(APP_EVENTS_IN.MARKED_AS_READY);
       } else {

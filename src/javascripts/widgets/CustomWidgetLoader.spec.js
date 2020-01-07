@@ -9,7 +9,7 @@ import {
 const app = {
   appDefinition: {
     sys: {
-      id: 'someappdef',
+      id: 'some-app',
       type: 'AppDefinition'
     },
     name: 'I am app',
@@ -20,12 +20,12 @@ const app = {
   appInstallation: {
     sys: {
       type: 'AppInstallation',
-      widgetId: 'iamapp',
+      widgetId: 'some-widget-id',
       appDefinition: {
         sys: {
           type: 'Link',
           linkType: 'AppDefinition',
-          id: 'someappdef'
+          id: 'some-app'
         }
       }
     },
@@ -40,12 +40,13 @@ const app = {
 
 const expectedAppWidget = {
   fieldTypes: [],
-  id: 'iamapp',
-  namespace: NAMESPACE_EXTENSION,
+  id: 'some-app',
+  appDefinitionId: 'some-app',
+  widgetId: 'some-widget-id',
+  namespace: NAMESPACE_APP,
   src: 'https://someapp.com',
   isApp: true,
   appId: 'someappid',
-  appDefinitionId: 'someappdef',
   appIconUrl: '//images.ctfassets.net/myappicon.svg',
   locations: ['app', 'entry-sidebar'],
   name: 'Some app',
@@ -148,14 +149,14 @@ describe('CustomWidgetLoader', () => {
 
       const [appWidget] = await loader.getByKeys([
         [NAMESPACE_APP, 'non-existent'],
-        [NAMESPACE_APP, 'someappdef']
+        [NAMESPACE_APP, 'some-app']
       ]);
 
       expect(cma.getExtensions).not.toBeCalled();
       expect(appsRepo.getOnlyInstalledApps).toBeCalledTimes(1);
       expect(appWidget).toEqual(expectedAppWidget);
 
-      expect(await loader.getByKeys([[NAMESPACE_APP, 'someappdef']])).toEqual([appWidget]);
+      expect(await loader.getByKeys([[NAMESPACE_APP, 'some-app']])).toEqual([appWidget]);
       expect(cma.getExtensions).not.toBeCalled();
       expect(appsRepo.getOnlyInstalledApps).toBeCalledTimes(1);
     });
@@ -230,7 +231,7 @@ describe('CustomWidgetLoader', () => {
           { widgetId: 'singleLine', widgetNamespace: NAMESPACE_BUILTIN },
           { widgetId: 'extension1', widgetNamespace: NAMESPACE_EXTENSION },
           { widgetId: 'jsonEditor', widgetNamespace: NAMESPACE_BUILTIN },
-          { widgetId: 'iamapp', widgetNamespace: NAMESPACE_EXTENSION }
+          { widgetId: 'some-app', widgetNamespace: NAMESPACE_APP }
         ],
         sidebar: [
           { widgetId: 'publish-widget', widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN },
@@ -240,11 +241,11 @@ describe('CustomWidgetLoader', () => {
 
       expect(cma.getExtensions).toHaveBeenCalledTimes(1);
       expect(cma.getExtensions).toHaveBeenCalledWith({
-        'sys.id[in]': 'extension1,iamapp,sidebar-extension'
+        'sys.id[in]': 'extension1,sidebar-extension'
       });
       expect(appsRepo.getOnlyInstalledApps).toHaveBeenCalledTimes(1);
 
-      const expectedWidgetIds = ['extension1', 'iamapp', 'sidebar-extension'];
+      const expectedWidgetIds = ['extension1', 'some-app', 'sidebar-extension'];
       expect(widgets.map(w => w.id).sort()).toEqual(expectedWidgetIds.sort());
     });
   });

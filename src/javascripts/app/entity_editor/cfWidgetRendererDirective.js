@@ -4,7 +4,7 @@ import { noop } from 'lodash';
 import { registerDirective } from 'NgRegistry';
 import $ from 'jquery';
 import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
-import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
+import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';
 
 import createNewWidgetApi from 'app/widgets/NewWidgetApi/createNewWidgetApi';
@@ -70,7 +70,7 @@ export default function register() {
             scope.props = { message: problem };
             trackLinksRendered();
             renderTemplate(`<react-component name="widgets/WidgetRenderWarning" props="props" />`);
-          } else if (widgetNamespace === NAMESPACE_EXTENSION) {
+          } else if ([NAMESPACE_EXTENSION, NAMESPACE_APP].includes(widgetNamespace)) {
             trackLinksRendered();
             renderExtension();
           } else if (widgetNamespace === NAMESPACE_BUILTIN && template) {
