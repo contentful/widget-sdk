@@ -262,6 +262,8 @@ class Icon extends React.Component {
       const width = parseInt(iconElem.getAttribute('width'), 10);
       const height = parseInt(iconElem.getAttribute('height'), 10);
 
+      iconElem.setAttribute('viewBox', `0 0 ${width} ${height}`);
+
       if (width) {
         iconElem.setAttribute('width', `${width * scale}px`);
       }
