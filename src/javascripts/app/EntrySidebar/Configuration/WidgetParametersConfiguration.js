@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import { Heading, Button } from '@contentful/forma-36-react-components';
+import { Typography, Heading, Button } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { closeWidgetConfiguration, updateWidgetSettings } from './SidebarConfigurationReducer';
 import WidgetParametersForm from 'widgets/WidgetParametersForm';
@@ -14,6 +14,9 @@ const styles = {
     backgroundColor: tokens.colorElementLightest,
     border: `1px solid ${tokens.colorElementMid}`,
     padding: tokens.spacingXl
+  }),
+  saveButton: css({
+    marginRight: tokens.spacingM
   })
 };
 
@@ -23,14 +26,16 @@ function WidgetParametersConfiguration({ widget, dispatch }) {
   let definitions = widget.parameters;
 
   const values = WidgetParametersUtils.applyDefaultValues(definitions, formState);
-  definitions = WidgetParametersUtils.filterDefinitions(definitions, values, widget.id);
+  definitions = WidgetParametersUtils.filterDefinitions(definitions, values, widget);
   definitions = WidgetParametersUtils.unifyEnumOptions(definitions);
   const missing = WidgetParametersUtils.markMissingValues(definitions, values);
   const anyIsMissing = Object.values(missing).reduce((prev, acc) => prev || acc, false);
 
   return (
-    <React.Fragment>
-      <Heading className="f36-margin-bottom--s">Configure {widget.name}</Heading>
+    <>
+      <Typography>
+        <Heading>Configure {widget.name}</Heading>
+      </Typography>
       <div className={styles.container}>
         <WidgetParametersForm
           definitions={widget.parameters}
@@ -41,7 +46,7 @@ function WidgetParametersConfiguration({ widget, dispatch }) {
         <div>
           <Button
             disabled={anyIsMissing}
-            className="f36-margin-right--m"
+            className={styles.saveButton}
             onClick={() => {
               dispatch(updateWidgetSettings(widget, values));
               dispatch(closeWidgetConfiguration());
@@ -57,7 +62,7 @@ function WidgetParametersConfiguration({ widget, dispatch }) {
           </Button>
         </div>
       </div>
-    </React.Fragment>
+    </>
   );
 }
 

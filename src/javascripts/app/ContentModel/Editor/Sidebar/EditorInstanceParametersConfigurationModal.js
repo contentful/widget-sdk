@@ -6,6 +6,7 @@ import WidgetParametersForm from 'widgets/WidgetParametersForm';
 import { Modal, Button } from '@contentful/forma-36-react-components';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils';
 import useFormState from 'app/common/hooks/useFormState';
+import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 
 const styles = {
   saveButton: css({
@@ -21,7 +22,10 @@ export default function EditorInstanceParametersConfigurationModal(props) {
   let definitions = extension.parameters;
 
   const values = WidgetParametersUtils.applyDefaultValues(definitions, formState);
-  definitions = WidgetParametersUtils.filterDefinitions(definitions, values, extension.id);
+  definitions = WidgetParametersUtils.filterDefinitions(definitions, values, {
+    namespace: NAMESPACE_EXTENSION,
+    id: extension.id
+  });
   definitions = WidgetParametersUtils.unifyEnumOptions(definitions);
   const missing = WidgetParametersUtils.markMissingValues(definitions, values);
   const anyIsMissing = Object.values(missing).reduce((prev, acc) => prev || acc, false);
@@ -37,7 +41,7 @@ export default function EditorInstanceParametersConfigurationModal(props) {
       <div>
         <Button
           disabled={anyIsMissing}
-          className={styles.marginRight}
+          className={styles.saveButton}
           onClick={() => {
             props.onSave(formState);
           }}>
