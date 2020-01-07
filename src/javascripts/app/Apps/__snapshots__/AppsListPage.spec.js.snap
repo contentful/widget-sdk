@@ -29,7 +29,9 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
           class="icon-component"
           data-icon-name="page-apps"
         >
-          <page-apps.svg />
+          <page-apps.svg
+            viewbox="0 0 NaN NaN"
+          />
         </span>
       </div>
       <div
@@ -400,7 +402,9 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
           class="icon-component"
           data-icon-name="page-apps"
         >
-          <page-apps.svg />
+          <page-apps.svg
+            viewbox="0 0 NaN NaN"
+          />
         </span>
       </div>
       <div
@@ -718,7 +722,9 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
                           class="icon-component emotion-2"
                           data-icon-name="page-apps"
                         >
-                          <page-apps.svg />
+                          <page-apps.svg
+                            viewbox="0 0 NaN NaN"
+                          />
                         </span>
                         <div>
                           Daily Animal
@@ -768,7 +774,9 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
                           class="icon-component emotion-2"
                           data-icon-name="page-apps"
                         >
-                          <page-apps.svg />
+                          <page-apps.svg
+                            viewbox="0 0 NaN NaN"
+                          />
                         </span>
                         <div>
                           Test
