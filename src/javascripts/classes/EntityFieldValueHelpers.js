@@ -71,7 +71,7 @@ export function getEntryTitle({
         // Older content types may return id/apiName, but some entry lookup paths do not fetch raw data
         // In order to still return a title in this case, look for displayField as apiName in content type,
         // ...but still look for displayField as a field in the entry
-        getFieldValue({
+        title = getFieldValue({
           entity: entry,
           internalFieldId: displayFieldInfo.apiName,
           internalLocaleCode,
@@ -85,7 +85,7 @@ export function getEntryTitle({
         defaultInternalLocaleCode
       });
       if (!title) {
-        getFieldValue({
+        title = getFieldValue({
           entity: entry,
           internalFieldId: displayFieldInfo.apiName,
           defaultInternalLocaleCode
