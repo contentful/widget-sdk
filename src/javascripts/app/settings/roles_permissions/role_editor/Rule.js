@@ -6,6 +6,7 @@ import getLocales from 'access_control/getLocales';
 import tokens from '@contentful/forma-36-tokens';
 import { Select, Option, Button } from '@contentful/forma-36-react-components';
 import { PolicyBuilderConfig } from 'access_control/PolicyBuilder';
+import { truncate } from 'utils/StringUtils';
 
 const contentTypesToOptions = contentTypes =>
   [
@@ -159,7 +160,7 @@ class Rule extends React.Component {
         </Select>
         {rule.scope === 'entityId' && (
           <Button onClick={this.searchEntitiesAndUpdate} className={styles.select}>
-            {getEntityTitle(rule.entityId, rule.contentType)}
+            {truncate(getEntityTitle(rule.entityId, rule.contentType), 50)}
           </Button>
         )}
         {entity === 'entry' && (

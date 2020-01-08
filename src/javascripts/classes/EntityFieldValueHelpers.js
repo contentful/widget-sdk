@@ -55,11 +55,11 @@ export function getEntryTitle({
   if (!displayField) {
     return defaultTitle;
   } else {
+    const displayFieldInfo = _.find(contentType.fields, { id: displayField });
+
     // when localization for a field is "turned off",
     // we don't clean up the "old" localized data, so it is still in the response.
     // Therefore, we're checking if displayField is localizable.
-    const displayFieldInfo = _.find(contentType.fields, { id: displayField });
-
     if (displayFieldInfo.localized) {
       title = getFieldValue({
         entity: entry,
@@ -67,12 +67,30 @@ export function getEntryTitle({
         internalLocaleCode,
         defaultInternalLocaleCode
       });
+      if (!title) {
+        // Older content types may return id/apiName, but some entry lookup paths do not fetch raw data
+        // In order to still return a title in this case, look for displayField as apiName in content type,
+        // ...but still look for displayField as a field in the entry
+        getFieldValue({
+          entity: entry,
+          internalFieldId: displayFieldInfo.apiName,
+          internalLocaleCode,
+          defaultInternalLocaleCode
+        });
+      }
     } else {
       title = getFieldValue({
         entity: entry,
         internalFieldId: displayField,
         defaultInternalLocaleCode
       });
+      if (!title) {
+        getFieldValue({
+          entity: entry,
+          internalFieldId: displayFieldInfo.apiName,
+          defaultInternalLocaleCode
+        });
+      }
     }
 
     return titleOrDefault(title, defaultTitle);
