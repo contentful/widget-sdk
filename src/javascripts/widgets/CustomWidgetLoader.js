@@ -45,29 +45,21 @@ export function createCustomWidgetLoader(cma, appsRepo) {
 
     return keys.map(([namespace, id]) => {
       if (namespace === NAMESPACE_APP) {
-        const app = apps.find(app => {
-          return get(app, ['appDefinition', 'sys', 'id']) === id;
-        });
+        const app = apps.find(app => get(app, ['appDefinition', 'sys', 'id']) === id);
 
         return app ? buildAppWidget(app) : null;
       }
 
       if (namespace === NAMESPACE_EXTENSION) {
-        const extension = extensions.find(extension => {
-          return get(extension, ['sys', 'id']) === id;
-        });
+        const ext = extensions.find(ext => get(ext, ['sys', 'id']) === id);
 
-        if (extension) {
-          return buildExtensionWidget(extension);
+        if (ext) {
+          return buildExtensionWidget(ext);
         }
 
-        // TODO: We've got some apps that were internally installed
-        // as extensions. Their `sys.widgetId` holds underlying
-        // Extension ID. Once we migrate EditorInterfaces using apps
-        // created in 2019 we can drop the fallback logic below.
-        const app = apps.find(app => {
-          return get(app, ['appInstallation', 'sys', 'widgetId']) === id;
-        });
+        // TODO: Fallback logic below can be removed when we tackle
+        // removal of `legacyAppExtensionWidgetId`.
+        const app = apps.find(app => get(app, ['appInstallation', 'sys', 'widgetId']) === id);
 
         return app ? buildAppWidget(app) : null;
       }

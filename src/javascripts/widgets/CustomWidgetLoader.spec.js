@@ -42,7 +42,7 @@ const expectedAppWidget = {
   fieldTypes: [],
   id: 'some-app',
   appDefinitionId: 'some-app',
-  widgetId: 'some-widget-id',
+  legacyAppExtensionWidgetId: 'some-widget-id',
   namespace: NAMESPACE_APP,
   src: 'https://someapp.com',
   isApp: true,
