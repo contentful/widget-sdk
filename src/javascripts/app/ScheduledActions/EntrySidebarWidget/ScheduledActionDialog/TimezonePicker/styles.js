@@ -12,15 +12,7 @@ const styles = {
     width: '100%'
   }),
   dropdownContainer: css({
-    width: '340px',
-    zIndex: 1001,
-    '& > div': {
-      width: '100%',
-      button: {
-        width: '100%',
-        textAlign: 'left'
-      }
-    }
+    zIndex: 100
   }),
   inputWrapper: css({
     display: 'flex',
