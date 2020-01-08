@@ -157,6 +157,7 @@ export function create() {
   registerWidget('datePicker', {
     fieldTypes: ['Date'],
     name: 'Date picker',
+    notFocusable: true,
     renderFieldEditor: ({ widgetApi }) => (
       <DateEditor field={widgetApi.field} parameters={widgetApi.parameters} />
     ),
