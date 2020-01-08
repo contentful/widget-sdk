@@ -1,5 +1,5 @@
 import { defaultWidgetsMap } from '../defaults';
-import { difference, isArray } from 'lodash';
+import { difference, identity } from 'lodash';
 import { SidebarType } from '../constants';
 import {
   NAMESPACE_SIDEBAR_BUILTIN,
@@ -45,11 +45,9 @@ export function convertInternalStateToConfiguration(state, initialItems) {
 function convertExtensionToWidgetConfiguration(extension) {
   return {
     widgetId: extension.id,
-    legacyAppWidgetId: extension.widgetId,
-    widgetNamespace: NAMESPACE_EXTENSION,
+    widgetNamespace: extension.namespace,
     name: extension.name,
     parameters: extension.parameters || [],
-    isApp: extension.isApp,
     locations: extension.locations
   };
 }
@@ -68,7 +66,7 @@ function isSidebarExtension(extension) {
  * with additional data needed to render UI
  */
 export function convertConfigirationToInternalState(configuration, extensions, initialItems) {
-  if (!isArray(configuration)) {
+  if (!Array.isArray(configuration)) {
     const availableExtensions = extensions.filter(isSidebarExtension);
 
     return {
@@ -83,54 +81,40 @@ export function convertConfigirationToInternalState(configuration, extensions, i
 
   // mark all items as problem that are not available
   let items = configuration
-    .map(widget => {
-      if (widget.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN) {
-        return defaultWidgetsMap[widget.widgetId]
-          ? {
-              ...widget,
-              name: defaultWidgetsMap[widget.widgetId].name,
-              description: defaultWidgetsMap[widget.widgetId].description
-            }
-          : {
-              ...widget,
-              problem: true
-            };
-      }
-      if ([NAMESPACE_EXTENSION, NAMESPACE_APP].includes(widget.widgetNamespace)) {
-        let found = (extensions = installedExtensions.find(e => e.widgetId === widget.widgetId));
-        if (!found) {
-          found = installedExtensions.find(e => e.legacyAppWidgetId === widget.widgetId);
-        }
+    .map(configItem => {
+      if (configItem.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN) {
+        const found = defaultWidgetsMap[configItem.widgetId];
 
-        if (found) {
-          return {
-            ...widget,
-            name: found.name,
-            parameters: found.parameters || [],
-            isApp: found.isApp
-          };
-        } else {
-          return {
-            ...widget,
-            problem: true
-          };
-        }
+        return found
+          ? { ...configItem, name: found.name, description: found.description }
+          : { ...configItem, problem: true };
       }
+
+      if ([NAMESPACE_EXTENSION, NAMESPACE_APP].includes(configItem.widgetNamespace)) {
+        const found = installedExtensions.find(e => {
+          return (
+            e.widgetNamespace === configItem.widgetNamespace && e.widgetId === configItem.widgetId
+          );
+        });
+
+        return found || { ...configItem, problem: true };
+      }
+
       return null;
     })
-    .filter(widget => widget !== null);
+    .filter(identity);
 
   const availableItems = [];
 
   // add all disabled and missing built-in items to available list
   initialItems.forEach(buildInWidget => {
-    const foundWidget = items.find(widget => {
-      return (
-        widget.widgetId === buildInWidget.widgetId &&
+    const foundWidget = items.find(
+      widget =>
         widget.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN &&
+        widget.widgetId === buildInWidget.widgetId &&
         widget.problem !== true
-      );
-    });
+    );
+
     if (!foundWidget || foundWidget.disabled === true) {
       availableItems.push(buildInWidget);
     }
@@ -138,25 +122,26 @@ export function convertConfigirationToInternalState(configuration, extensions, i
 
   // add all extensions that are not in items to available list
   installedExtensions.forEach(extensionWidget => {
-    const foundWidget = items.find(widget => {
-      return (
-        (widget.widgetId === extensionWidget.widgetId ||
-          widget.widgetId === extensionWidget.legacyAppWidgetId) &&
+    const foundWidget = items.find(
+      widget =>
         [NAMESPACE_EXTENSION, NAMESPACE_APP].includes(widget.widgetNamespace) &&
+        widget.widgetId === extensionWidget.widgetId &&
         widget.problem !== true
-      );
-    });
+    );
 
     if (!foundWidget && isSidebarExtension(extensionWidget)) {
       availableItems.push(extensionWidget);
     }
   });
 
-  // filter out all items that are present in available items list
-  const availableItemsIds = availableItems.map(widget => widget.widgetId);
   items = items
     .filter(widget => widget.disabled !== true)
-    .filter(widget => !availableItemsIds.includes(widget.widgetId));
+    .filter(widget => {
+      // filter out all items that are present in available items list
+      return !availableItems.find(item => {
+        return item.widgetNamespace === widget.widgetNamespace && item.widgetId === widget.widgetId;
+      });
+    });
 
   return {
     sidebarType: SidebarType.custom,

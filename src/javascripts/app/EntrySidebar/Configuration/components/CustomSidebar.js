@@ -39,16 +39,19 @@ function WidgetItem({ widget, onRemoveClick, onConfigureClick, index }) {
         <Paragraph>{widget.description}</Paragraph>
       )}
       {[NAMESPACE_EXTENSION, NAMESPACE_APP].includes(widget.widgetNamespace) && (
-        <React.Fragment>
-          <Paragraph className={styles.widgetType}>
-            {widget.isApp ? 'App' : 'UI Extension'}
-          </Paragraph>
+        <>
+          {widget.widgetNamespace === NAMESPACE_EXTENSION && (
+            <Paragraph className={styles.widgetType}>UI Extension</Paragraph>
+          )}
+          {widget.widgetNamespace === NAMESPACE_APP && (
+            <Paragraph className={styles.widgetType}>App</Paragraph>
+          )}
           {hasParams && (
             <TextLink onClick={onConfigureClick} className={styles.parameterConfigLink}>
               Change instance parameters
             </TextLink>
           )}
-        </React.Fragment>
+        </>
       )}
     </SidebarWidgetItem>
   );

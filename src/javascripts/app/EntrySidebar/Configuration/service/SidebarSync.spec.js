@@ -181,14 +181,9 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
         {
           widgetId: 'netlify-extension',
           widgetNamespace: NAMESPACE_EXTENSION,
-          parameters: [
-            {
-              id: 'netlifyBuildHook',
-              name: 'Netlify build hook',
-              required: true,
-              type: 'Symbol'
-            }
-          ]
+          settings: {
+            netlifyBuildHook: 'http://hook'
+          }
         },
         {
           widgetId: LinksWidget.widgetId,
@@ -207,8 +202,24 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
       const state = convertConfigirationToInternalState(
         configuration,
         [
-          { id: 'netlify-extension', name: 'Netlify Extension' },
-          { id: 'custom-publish-button', name: 'Custom Publish button' }
+          {
+            id: 'netlify-extension',
+            namespace: NAMESPACE_EXTENSION,
+            name: 'Netlify Extension',
+            parameters: [
+              {
+                id: 'netlifyBuildHook',
+                name: 'Netlify build hook',
+                required: true,
+                type: 'Symbol'
+              }
+            ]
+          },
+          {
+            id: 'custom-publish-button',
+            namespace: NAMESPACE_EXTENSION,
+            name: 'Custom Publish button'
+          }
         ],
         EntryConfiguration
       );
@@ -225,7 +236,14 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
             name: 'Netlify Extension',
             widgetId: 'netlify-extension',
             widgetNamespace: NAMESPACE_EXTENSION,
-            parameters: []
+            parameters: [
+              {
+                id: 'netlifyBuildHook',
+                name: 'Netlify build hook',
+                required: true,
+                type: 'Symbol'
+              }
+            ]
           },
           LinksWidget,
           ContentPreviewWidget,

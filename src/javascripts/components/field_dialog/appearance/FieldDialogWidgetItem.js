@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import Icon from 'ui/Components/Icon';
 import StateLink from 'app/common/StateLink';
 import { css } from 'emotion';
-import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
+import { NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 
 const styles = {
   appIcon: css({
@@ -32,9 +32,9 @@ export default class FieldDialogWidgetItem extends Component {
   };
 
   renderIcon() {
-    const { isApp, icon, appIconUrl } = this.props.widget;
+    const { namespace, icon, appIconUrl } = this.props.widget;
 
-    if (isApp && appIconUrl) {
+    if (namespace === NAMESPACE_APP && appIconUrl) {
       return <img className={styles.appIcon} src={appIconUrl} />;
     }
 
@@ -45,18 +45,17 @@ export default class FieldDialogWidgetItem extends Component {
 
   render() {
     const { index, isAdmin, isDefault, isSelected, onClick, widget } = this.props;
-    const isCustom = widget.namespace === NAMESPACE_EXTENSION;
 
     return (
       <li
         className={classNames('field-dialog__widget-item', {
           'is-selected': isSelected,
-          'is-custom': isCustom
+          'is-custom': [NAMESPACE_EXTENSION, NAMESPACE_APP].includes(widget.namespace)
         })}
         data-current-widget-index={index}
         onClick={onClick}
         title={widget.name}>
-        {isCustom && !widget.isApp && (
+        {widget.namespace === NAMESPACE_EXTENSION && (
           <div className="field-dialog__widget-item-header">
             <span>UI Extension</span>
             {isAdmin && (
@@ -69,7 +68,7 @@ export default class FieldDialogWidgetItem extends Component {
             )}
           </div>
         )}
-        {isCustom && widget.isApp && (
+        {widget.namespace === NAMESPACE_APP && (
           <div className="field-dialog__widget-item-header">
             <span>App</span>
             {isAdmin && (

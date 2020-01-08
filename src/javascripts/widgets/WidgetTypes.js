@@ -18,7 +18,6 @@ export function buildExtensionWidget({ sys, extension, parameters }) {
     namespace: NAMESPACE_EXTENSION,
     name: extension.name,
     fieldTypes: (extension.fieldTypes || []).map(toInternalFieldType),
-    isApp: false,
     sidebar: !!extension.sidebar,
     parameters: get(extension, ['parameters', 'instance'], []),
     installationParameters: {
@@ -38,7 +37,6 @@ export function buildAppWidget({ id, title, icon, appDefinition, appInstallation
     namespace: NAMESPACE_APP,
     name: title,
     fieldTypes: (appDefinition.fieldTypes || []).map(toInternalFieldType),
-    isApp: true,
     appId: id,
     appIconUrl: icon,
     sidebar: false,

@@ -34,7 +34,6 @@ export default function AvailableItems(props) {
             index={index}
             widgetNamespace={item.widgetNamespace}
             availabilityStatus={item.availabilityStatus}
-            isApp={item.isApp}
             onClick={() => {
               props.onAddItem(item);
             }}

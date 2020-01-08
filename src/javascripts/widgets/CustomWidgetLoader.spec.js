@@ -45,7 +45,6 @@ const expectedAppWidget = {
   legacyAppExtensionWidgetId: 'some-widget-id',
   namespace: NAMESPACE_APP,
   src: 'https://someapp.com',
-  isApp: true,
   appId: 'someappid',
   appIconUrl: '//images.ctfassets.net/myappicon.svg',
   locations: ['app', 'entry-sidebar'],
@@ -70,7 +69,6 @@ const uie = {
 const expectedUieWidget = {
   id: 'ext2',
   namespace: NAMESPACE_EXTENSION,
-  isApp: false,
   name: 'Second',
   srcdoc: '<!DOCTYPE html>',
   fieldTypes: ['Number'],
@@ -127,7 +125,6 @@ describe('CustomWidgetLoader', () => {
           name: 'Hello',
           src: 'http://hello.com',
           fieldTypes: ['Symbol'],
-          isApp: false,
           installationParameters: {
             definitions: [{ id: 'install', name: 'Installation param', type: 'Symbol' }],
             values: { install: 'test' }
