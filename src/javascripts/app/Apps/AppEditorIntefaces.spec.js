@@ -11,8 +11,16 @@ import {
   NAMESPACE_APP
 } from 'widgets/WidgetNamespaces';
 
-const EXTENSION_ID = 'extid';
 const APP_ID = 'appid';
+
+const installation = {
+  sys: {
+    type: 'AppInstallation',
+    appDefinition: {
+      sys: { type: 'Link', linkType: 'AppDefinition', id: APP_ID }
+    }
+  }
+};
 
 jest.mock('i13n/Telemetry', () => ({ count: () => {} }));
 jest.mock('data/CMA/ProductCatalog', () => ({ getCurrentSpaceFeature: () => true }));
@@ -24,16 +32,6 @@ describe('AppEditorInterfaces', () => {
     cma = {
       getEditorInterfaces: jest.fn(() => Promise.resolve({ items: [] })),
       updateEditorInterface: jest.fn(() => Promise.resolve())
-    };
-
-    const installation = {
-      sys: {
-        type: 'AppInstallation',
-        widgetId: EXTENSION_ID,
-        appDefinition: {
-          sys: { type: 'Link', linkType: 'AppDefinition', id: APP_ID }
-        }
-      }
     };
 
     transform = targetState => {
@@ -164,8 +162,8 @@ describe('AppEditorInterfaces', () => {
               controls: [
                 {
                   fieldId: 'test',
-                  widgetNamespace: NAMESPACE_EXTENSION,
-                  widgetId: EXTENSION_ID,
+                  widgetNamespace: NAMESPACE_APP,
+                  widgetId: APP_ID,
                   settings: { test: true }
                 }
               ],
@@ -173,8 +171,8 @@ describe('AppEditorInterfaces', () => {
                 { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'publication-widget' },
                 { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'versions-widget' },
                 {
-                  widgetNamespace: NAMESPACE_EXTENSION,
-                  widgetId: EXTENSION_ID,
+                  widgetNamespace: NAMESPACE_APP,
+                  widgetId: APP_ID,
                   settings: { hello: 'world' }
                 }
               ]
@@ -281,17 +279,17 @@ describe('AppEditorInterfaces', () => {
             {
               sys: { contentType: { sys: { id: 'CT1' } } },
               editor: {
-                widgetNamespace: NAMESPACE_EXTENSION,
-                widgetId: EXTENSION_ID
+                widgetNamespace: NAMESPACE_APP,
+                widgetId: APP_ID
               },
               sidebar: [
-                { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: EXTENSION_ID },
+                { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: APP_ID },
                 { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'publication-widget' },
-                { widgetNamespace: NAMESPACE_EXTENSION, widgetId: EXTENSION_ID },
+                { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
                 { widgetNamespace: NAMESPACE_EXTENSION, widgetId: 'different-extension' },
                 {
-                  widgetNamespace: NAMESPACE_EXTENSION,
-                  widgetId: EXTENSION_ID,
+                  widgetNamespace: NAMESPACE_APP,
+                  widgetId: APP_ID,
                   settings: { test: true }
                 }
               ]
@@ -300,18 +298,18 @@ describe('AppEditorInterfaces', () => {
               sys: { contentType: { sys: { id: 'CT2' } } },
               controls: [
                 { fieldId: 'title' },
-                { fieldId: 'author', widgetNamespace: NAMESPACE_BUILTIN, widgetId: EXTENSION_ID },
-                { fieldId: 'date', widgetNamespace: NAMESPACE_EXTENSION, widgetId: 'different' },
-                { fieldId: 'lead', widgetNamespace: NAMESPACE_EXTENSION, widgetId: EXTENSION_ID },
+                { fieldId: 'author', widgetNamespace: NAMESPACE_BUILTIN, widgetId: APP_ID },
+                { fieldId: 'date', widgetNamespace: NAMESPACE_APP, widgetId: 'different' },
+                { fieldId: 'lead', widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
                 {
                   fieldId: 'content',
-                  widgetNamespace: NAMESPACE_EXTENSION,
-                  widgetId: EXTENSION_ID,
+                  widgetNamespace: NAMESPACE_APP,
+                  widgetId: APP_ID,
                   settings: { test: true }
                 }
               ],
               editor: {
-                widgetNamespace: NAMESPACE_EXTENSION,
+                widgetNamespace: NAMESPACE_APP,
                 widgetId: 'some-other-editor'
               }
             }
@@ -326,7 +324,7 @@ describe('AppEditorInterfaces', () => {
       expect(cma.updateEditorInterface).toBeCalledWith({
         sys: { contentType: { sys: { id: 'CT1' } } },
         sidebar: [
-          { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: EXTENSION_ID },
+          { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: APP_ID },
           { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'publication-widget' },
           { widgetNamespace: NAMESPACE_EXTENSION, widgetId: 'different-extension' }
         ]
@@ -336,13 +334,13 @@ describe('AppEditorInterfaces', () => {
         sys: { contentType: { sys: { id: 'CT2' } } },
         controls: [
           { fieldId: 'title' },
-          { fieldId: 'author', widgetNamespace: NAMESPACE_BUILTIN, widgetId: EXTENSION_ID },
-          { fieldId: 'date', widgetNamespace: NAMESPACE_EXTENSION, widgetId: 'different' },
+          { fieldId: 'author', widgetNamespace: NAMESPACE_BUILTIN, widgetId: APP_ID },
+          { fieldId: 'date', widgetNamespace: NAMESPACE_APP, widgetId: 'different' },
           { fieldId: 'lead' },
           { fieldId: 'content' }
         ],
         editor: {
-          widgetNamespace: NAMESPACE_EXTENSION,
+          widgetNamespace: NAMESPACE_APP,
           widgetId: 'some-other-editor'
         }
       });
@@ -354,9 +352,7 @@ describe('AppEditorInterfaces', () => {
           items: [
             {
               sys: { contentType: { sys: { id: 'CT1' } } },
-              controls: [
-                { fieldId: 'test', widgetNamespace: NAMESPACE_EXTENSION, widgetId: EXTENSION_ID }
-              ]
+              controls: [{ fieldId: 'test', widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }]
             }
           ]
         })

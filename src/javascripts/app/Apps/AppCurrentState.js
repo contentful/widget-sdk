@@ -1,13 +1,16 @@
 import { get, isObject } from 'lodash';
 
-import { NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/WidgetNamespaces';
+import { NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 
 export default async function getCurrentAppState(cma, appInstallation) {
   const { items: editorInterfaces } = await cma.getEditorInterfaces();
 
+  const widgetId = get(appInstallation, ['sys', 'appDefinition', 'sys', 'id']);
+  const isCurrentApp = w => w.widgetNamespace === NAMESPACE_APP && w.widgetId === widgetId;
+
   const editorInterfacesState = editorInterfaces
     .map(ei => {
-      return [ei.sys.contentType.sys.id, getSingleEditorInterfaceState(ei, appInstallation)];
+      return [ei.sys.contentType.sys.id, getSingleEditorInterfaceState(ei, isCurrentApp)];
     })
     .filter(([_, state]) => Object.keys(state).length > 0)
     .reduce((acc, [ctId, state]) => ({ ...acc, [ctId]: state }), {});
@@ -17,24 +20,13 @@ export default async function getCurrentAppState(cma, appInstallation) {
   };
 }
 
-function getSingleEditorInterfaceState(ei, appInstallation) {
+function getSingleEditorInterfaceState(ei, isCurrentApp) {
   const result = {};
 
-  const isCurrentApp = widget => {
-    if (widget.widgetNamespace === NAMESPACE_EXTENSION) {
-      // TODO: this check won't be needed when we migrate editor interfaces.
-      return widget.widgetId === get(appInstallation, ['sys', 'widgetId']);
-    } else if (widget.widgetNamespace === NAMESPACE_APP) {
-      return widget.widgetId === get(appInstallation, ['sys', 'appDefinition', 'sys', 'id']);
-    } else {
-      return false;
-    }
-  };
-
   if (Array.isArray(ei.controls)) {
-    const extensionControls = ei.controls.filter(isCurrentApp);
-    if (extensionControls.length > 0) {
-      result.controls = extensionControls.map(control => {
+    const appControls = ei.controls.filter(isCurrentApp);
+    if (appControls.length > 0) {
+      result.controls = appControls.map(control => {
         const mapped = { fieldId: control.fieldId };
         if (control.settings) {
           mapped.settings = control.settings;

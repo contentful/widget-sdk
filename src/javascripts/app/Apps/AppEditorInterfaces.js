@@ -5,7 +5,7 @@ import * as Telemetry from 'i13n/Telemetry';
 
 import { isUnsignedInteger } from './validateTargetState';
 
-import { NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/WidgetNamespaces';
+import { NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 
 // Like `Promise.all` but rejecting input promises do not cause
 // the result promise to reject. They are simply omitted.
@@ -28,14 +28,9 @@ export async function getDefaultSidebar() {
 }
 
 function isCurrentApp(widget, appInstallation) {
-  if (widget.widgetNamespace === NAMESPACE_EXTENSION) {
-    // TODO: this check won't be needed when we migrate editor interfaces.
-    return widget.widgetId === get(appInstallation, ['sys', 'widgetId']);
-  } else if (widget.widgetNamespace === NAMESPACE_APP) {
-    return widget.widgetId === get(appInstallation, ['sys', 'appDefinition', 'sys', 'id']);
-  } else {
-    return false;
-  }
+  const widgetId = get(appInstallation, ['sys', 'appDefinition', 'sys', 'id']);
+
+  return widget.widgetNamespace === NAMESPACE_APP && widget.widgetId === widgetId;
 }
 
 /**
