@@ -331,7 +331,9 @@ class UsersList extends React.Component {
                       <TableCell>Last active</TableCell>
                       {has2FAStatusEnabled && (
                         <TableCell>
-                          <Tooltip content="Two-factor authentication status">2FA status</Tooltip>
+                          <Tooltip content="2FA status will not be present for users who are ineligible or haven’t enabled it.">
+                            2FA status
+                          </Tooltip>
                         </TableCell>
                       )}
                       <TableCell></TableCell>
