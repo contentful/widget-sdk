@@ -2,7 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { sortableContainer } from 'react-sortable-hoc';
 import { Subheading, Paragraph, TextLink } from '@contentful/forma-36-react-components';
-import { NAMESPACE_SIDEBAR_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
+import {
+  NAMESPACE_SIDEBAR_BUILTIN,
+  NAMESPACE_EXTENSION,
+  NAMESPACE_APP
+} from 'widgets/WidgetNamespaces';
 import SidebarWidgetItem from './SidebarWidgetItem';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
@@ -34,7 +38,7 @@ function WidgetItem({ widget, onRemoveClick, onConfigureClick, index }) {
       {widget.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN && (
         <Paragraph>{widget.description}</Paragraph>
       )}
-      {widget.widgetNamespace === NAMESPACE_EXTENSION && (
+      {[NAMESPACE_EXTENSION, NAMESPACE_APP].includes(widget.widgetNamespace) && (
         <React.Fragment>
           <Paragraph className={styles.widgetType}>
             {widget.isApp ? 'App' : 'UI Extension'}

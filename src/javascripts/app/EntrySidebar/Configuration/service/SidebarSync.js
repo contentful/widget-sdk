@@ -1,7 +1,11 @@
 import { defaultWidgetsMap } from '../defaults';
 import { difference, isArray } from 'lodash';
 import { SidebarType } from '../constants';
-import { NAMESPACE_SIDEBAR_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
+import {
+  NAMESPACE_SIDEBAR_BUILTIN,
+  NAMESPACE_EXTENSION,
+  NAMESPACE_APP
+} from 'widgets/WidgetNamespaces';
 import { LOCATION_ENTRY_SIDEBAR } from 'widgets/WidgetLocations';
 
 /**
@@ -41,6 +45,7 @@ export function convertInternalStateToConfiguration(state, initialItems) {
 function convertExtensionToWidgetConfiguration(extension) {
   return {
     widgetId: extension.id,
+    legacyAppWidgetId: extension.widgetId,
     widgetNamespace: NAMESPACE_EXTENSION,
     name: extension.name,
     parameters: extension.parameters || [],
@@ -75,12 +80,6 @@ export function convertConfigirationToInternalState(configuration, extensions, i
   }
 
   const installedExtensions = extensions.map(convertExtensionToWidgetConfiguration);
-  const installedExtensionsMap = installedExtensions.reduce((acc, value) => {
-    return {
-      ...acc,
-      [value.widgetId]: value
-    };
-  }, {});
 
   // mark all items as problem that are not available
   let items = configuration
@@ -97,18 +96,25 @@ export function convertConfigirationToInternalState(configuration, extensions, i
               problem: true
             };
       }
-      if (widget.widgetNamespace === NAMESPACE_EXTENSION) {
-        return installedExtensionsMap[widget.widgetId]
-          ? {
-              ...widget,
-              name: installedExtensionsMap[widget.widgetId].name,
-              parameters: installedExtensionsMap[widget.widgetId].parameters || [],
-              isApp: installedExtensionsMap[widget.widgetId].isApp
-            }
-          : {
-              ...widget,
-              problem: true
-            };
+      if ([NAMESPACE_EXTENSION, NAMESPACE_APP].includes(widget.widgetNamespace)) {
+        let found = (extensions = installedExtensions.find(e => e.widgetId === widget.widgetId));
+        if (!found) {
+          found = installedExtensions.find(e => e.legacyAppWidgetId === widget.widgetId);
+        }
+
+        if (found) {
+          return {
+            ...widget,
+            name: found.name,
+            parameters: found.parameters || [],
+            isApp: found.isApp
+          };
+        } else {
+          return {
+            ...widget,
+            problem: true
+          };
+        }
       }
       return null;
     })
@@ -134,8 +140,9 @@ export function convertConfigirationToInternalState(configuration, extensions, i
   installedExtensions.forEach(extensionWidget => {
     const foundWidget = items.find(widget => {
       return (
-        widget.widgetId === extensionWidget.widgetId &&
-        widget.widgetNamespace === NAMESPACE_EXTENSION &&
+        (widget.widgetId === extensionWidget.widgetId ||
+          widget.widgetId === extensionWidget.legacyAppWidgetId) &&
+        [NAMESPACE_EXTENSION, NAMESPACE_APP].includes(widget.widgetNamespace) &&
         widget.problem !== true
       );
     });

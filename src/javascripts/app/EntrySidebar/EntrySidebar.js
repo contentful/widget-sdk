@@ -6,7 +6,11 @@ import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { Note, Tabs, Tab, TabPanel } from '@contentful/forma-36-react-components';
 import { AssetConfiguration, EntryConfiguration } from 'app/EntrySidebar/Configuration/defaults';
-import { NAMESPACE_SIDEBAR_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
+import {
+  NAMESPACE_SIDEBAR_BUILTIN,
+  NAMESPACE_EXTENSION,
+  NAMESPACE_APP
+} from 'widgets/WidgetNamespaces';
 
 import PublicationWidgetContainer from './PublicationWidget/PublicationWidgetContainer';
 
@@ -178,7 +182,9 @@ export default class EntrySidebar extends Component {
   };
 
   renderExtensionWidget = item => {
-    item = this.props.entrySidebarProps.sidebarExtensions.find(w => w.widgetId === item.widgetId);
+    item = this.props.entrySidebarProps.sidebarExtensions.find(w => {
+      return w.widgetNamespace === w.widgetNamespace && w.widgetId === item.widgetId;
+    });
 
     if (item.problem) {
       return (
@@ -209,7 +215,7 @@ export default class EntrySidebar extends Component {
       if (item.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN) {
         return this.renderBuiltinWidget(item);
       }
-      if (item.widgetNamespace === NAMESPACE_EXTENSION) {
+      if ([NAMESPACE_EXTENSION, NAMESPACE_APP].includes(item.widgetNamespace)) {
         return this.renderExtensionWidget(item);
       }
       return null;
