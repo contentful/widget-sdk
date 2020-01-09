@@ -91,8 +91,11 @@ describe('app/settings/locales/LocalesListPricingOne', () => {
       return renderComponent({
         localeResource: {
           usage: 2,
-          limits: {
-            maximum: 2
+          limits: null,
+          parent: {
+            limits: {
+              maximum: 2
+            }
           }
         },
         locales: [{ id: 1 }, { id: 2 }],

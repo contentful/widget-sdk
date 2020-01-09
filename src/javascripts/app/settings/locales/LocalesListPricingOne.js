@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Icon from 'ui/Components/Icon';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import _ from 'lodash';
-import { Button, Notification, Heading } from '@contentful/forma-36-react-components';
+import { Button, Notification, Heading, Paragraph } from '@contentful/forma-36-react-components';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import LocalesTable from './LocalesTable';
 import StateLink from 'app/common/StateLink';
@@ -79,75 +79,75 @@ export const LocalesAdvice = props => {
   if (status === LocalesUsageStatus.MORE_THAN_ONE_LOCALE_USED || !insideMasterEnv) {
     advice = (
       <div>
-        <h1 className="advice__title">
+        <Heading className="advice__title">
           Contentful enables publishing content in multiple languages
-        </h1>
-        <p className="advice__description">
+        </Heading>
+        <Paragraph className="advice__description">
           To enable localization, go to the relevant content type, open field settings, and enable
           translation for each necessary field
-        </p>
-        <p className="advice__description">
+        </Paragraph>
+        <Paragraph className="advice__description">
           After that the content editor will display multiple input fields for each locale
-        </p>
+        </Paragraph>
       </div>
     );
   } else if (status === LocalesUsageStatus.ONE_LOCALE_USED) {
     advice = (
       <div>
-        <h1 className="advice__title">
+        <Heading className="advice__title">
           Contentful enables publishing content in multiple languages
-        </h1>
-        <p className="advice__description">
+        </Heading>
+        <Paragraph className="advice__description">
           To begin translating your content, add a second locale – for example,{' '}
           <strong>
             French (<code>fr-FR</code>)
           </strong>
-        </p>
-        <p className="advice__description">
+        </Paragraph>
+        <Paragraph className="advice__description">
           Note that locale settings apply space-wide: the locales that you create will affect only
           the current space
-        </p>
+        </Paragraph>
       </div>
     );
   } else if (status === LocalesUsageStatus.LOCALES_LIMIT_REACHED) {
     advice = (
       <div>
-        <h1 className="advice__title">You have reached the organization locales limit</h1>
-        <p className="advice__description">
+        <Heading className="advice__title">You have reached the organization locales limit</Heading>
+        <Paragraph className="advice__description">
           Your current subscription plan <strong>({subscriptionPlanName})</strong> enables a maximum
-          of {localeResource.limits.maximum} locales per organization
-        </p>
+          of {localeResource.parent.limits.maximum} locales per organization
+        </Paragraph>
         {canChangeSpace && (
-          <p className="advice__description">
+          <Paragraph className="advice__description">
             Please {upgradeLink} if you need more locales or delete some of the existing ones
-          </p>
+          </Paragraph>
         )}
         {!canChangeSpace && (
-          <p className="advice__description">
+          <Paragraph className="advice__description">
             Please ask your organization owner to upgrade if you need more locales or delete some of
             the existing ones
-          </p>
+          </Paragraph>
         )}
       </div>
     );
   } else if (status === LocalesUsageStatus.NO_MULTIPLE_LOCALES) {
     advice = (
       <div>
-        <h1 className="advice__title">Your plan does not include multiple locales</h1>
-        <p className="advice__description">
+        <Heading className="advice__title">Your plan does not include multiple locales</Heading>
+        <Paragraph className="advice__description">
           Your current subscription plan <strong>({subscriptionPlanName})</strong> does not support
           localizing content
-        </p>
+        </Paragraph>
         {canChangeSpace && (
-          <p className="advice__description">
+          <Paragraph className="advice__description">
             Please {upgradeLink} to a plan that includes locales to benefit from this feature
-          </p>
+          </Paragraph>
         )}
         {!canChangeSpace && (
-          <p className="advice__description">
+          <Paragraph className="advice__description">
             Please ask your organization owner to upgrade to a plan that includes locales to benefit
             from this feature
-          </p>
+          </Paragraph>
         )}
       </div>
     );
