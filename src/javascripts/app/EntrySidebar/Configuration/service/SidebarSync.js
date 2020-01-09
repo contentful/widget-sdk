@@ -1,6 +1,8 @@
+import { pick, difference, identity } from 'lodash';
+
 import { defaultWidgetsMap } from '../defaults';
-import { difference, identity } from 'lodash';
 import { SidebarType } from '../constants';
+
 import {
   NAMESPACE_SIDEBAR_BUILTIN,
   NAMESPACE_EXTENSION,
@@ -9,8 +11,9 @@ import {
 import { LOCATION_ENTRY_SIDEBAR } from 'widgets/WidgetLocations';
 
 /**
- * Converts internal state for configuration reducer
- * to data that can be used in API call for saving configuration
+ * Converts internal state of configuration reducer
+ * to data that can be used in API calls to `/editor_inteface`
+ * for saving configuration.
  */
 export function convertInternalStateToConfiguration(state, initialItems) {
   if (state.sidebarType === SidebarType.default) {
@@ -42,44 +45,40 @@ export function convertInternalStateToConfiguration(state, initialItems) {
   return [...selectedItems, ...missingItems];
 }
 
-function convertExtensionToWidgetConfiguration(extension) {
+function convertToWidgetConfiguration(widget) {
   return {
-    widgetId: extension.id,
-    widgetNamespace: extension.namespace,
-    name: extension.name,
-    parameters: extension.parameters || [],
-    locations: extension.locations
+    widgetId: widget.id,
+    widgetNamespace: widget.namespace,
+    ...pick(widget, ['name', 'locations', 'parameters'])
   };
 }
 
-function isSidebarExtension(extension) {
-  if (!Array.isArray(extension.locations)) {
+function canBeUsedInSidebar(widget) {
+  if (!Array.isArray(widget.locations)) {
     return true;
   }
 
-  return extension.locations.includes(LOCATION_ENTRY_SIDEBAR);
+  return widget.locations.includes(LOCATION_ENTRY_SIDEBAR);
 }
 
 /**
- * Converts saved configuration state and list of available extensions
- * to initial state of configuration reducer, enriches save configuration
- * with additional data needed to render UI
+ * Converts saved configuration state and list of available custom widgets
+ * to initial state of configuration reducer, enriches saved configuration
+ * with additional data needed to render UI.
  */
-export function convertConfigirationToInternalState(configuration, extensions, initialItems) {
+export function convertConfigirationToInternalState(configuration, widgets, initialItems) {
   if (!Array.isArray(configuration)) {
-    const availableExtensions = extensions.filter(isSidebarExtension);
-
     return {
       sidebarType: SidebarType.default,
       items: initialItems,
-      availableItems: availableExtensions.map(convertExtensionToWidgetConfiguration),
+      availableItems: widgets.filter(canBeUsedInSidebar).map(convertToWidgetConfiguration),
       configurableWidget: null
     };
   }
 
-  const installedExtensions = extensions.map(convertExtensionToWidgetConfiguration);
+  widgets = widgets.map(convertToWidgetConfiguration);
 
-  // mark all items as problem that are not available
+  // Mark unavailable widgets with `problem: true`.
   let items = configuration
     .map(configItem => {
       if (configItem.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN) {
@@ -91,11 +90,10 @@ export function convertConfigirationToInternalState(configuration, extensions, i
       }
 
       if ([NAMESPACE_EXTENSION, NAMESPACE_APP].includes(configItem.widgetNamespace)) {
-        const found = installedExtensions.find(e => {
-          return (
+        const found = widgets.find(
+          e =>
             e.widgetNamespace === configItem.widgetNamespace && e.widgetId === configItem.widgetId
-          );
-        });
+        );
 
         return found || { ...configItem, problem: true };
       }
@@ -105,39 +103,35 @@ export function convertConfigirationToInternalState(configuration, extensions, i
     .filter(identity);
 
   const availableItems = [];
+  const validWidgetMatcher = widget => item =>
+    item.widgetNamespace === widget.widgetNamespace &&
+    item.widgetId === widget.widgetId &&
+    item.problem !== true;
 
-  // add all disabled and missing built-in items to available list
+  // Add all disabled and missing built-in widgets to the list
+  // of available items.
   initialItems.forEach(buildInWidget => {
-    const foundWidget = items.find(
-      widget =>
-        widget.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN &&
-        widget.widgetId === buildInWidget.widgetId &&
-        widget.problem !== true
-    );
+    const found = items.find(validWidgetMatcher(buildInWidget));
 
-    if (!foundWidget || foundWidget.disabled === true) {
+    if (!found || found.disabled === true) {
       availableItems.push(buildInWidget);
     }
   });
 
-  // add all extensions that are not in items to available list
-  installedExtensions.forEach(extensionWidget => {
-    const foundWidget = items.find(
-      widget =>
-        [NAMESPACE_EXTENSION, NAMESPACE_APP].includes(widget.widgetNamespace) &&
-        widget.widgetId === extensionWidget.widgetId &&
-        widget.problem !== true
-    );
+  // Add all custom widgets that are not selected to the list
+  // of available items.
+  widgets.forEach(widget => {
+    const found = items.find(validWidgetMatcher(widget));
 
-    if (!foundWidget && isSidebarExtension(extensionWidget)) {
-      availableItems.push(extensionWidget);
+    if (!found && canBeUsedInSidebar(widget)) {
+      availableItems.push(widget);
     }
   });
 
   items = items
     .filter(widget => widget.disabled !== true)
     .filter(widget => {
-      // filter out all items that are present in available items list
+      // Filter out all items that are present in the list of available items.
       return !availableItems.find(item => {
         return item.widgetNamespace === widget.widgetNamespace && item.widgetId === widget.widgetId;
       });

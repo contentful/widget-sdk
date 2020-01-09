@@ -253,8 +253,7 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
           {
             widgetId: 'custom-publish-button',
             widgetNamespace: NAMESPACE_EXTENSION,
-            name: 'Custom Publish button',
-            parameters: []
+            name: 'Custom Publish button'
           }
         ]
       });
