@@ -20,7 +20,7 @@ function watch(done, callbacks) {
   );
 }
 
-async function buildTestDeps(cb) {
+async function buildTestDeps() {
   // Generate the dependencies file first
   await generateTestDependencies();
 
@@ -43,10 +43,9 @@ async function buildTestDeps(cb) {
   }
 
   console.log(stats.toString(config.stats));
-  cb();
 }
 
-async function build(cb) {
+async function build() {
   const config = createWebpackConfig();
 
   const compiler = webpack(config);
@@ -64,8 +63,6 @@ async function build(cb) {
   if (stats.hasWarnings()) {
     console.warn(info.warnings);
   }
-
-  cb();
 }
 
 function handleCompileResults(err, stats, _config, { onSuccess, onError } = {}) {

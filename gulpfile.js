@@ -3,10 +3,7 @@
 require('@babel/polyfill');
 
 const gulp = require('gulp');
-const serve = require('./tools/tasks/serve');
 const clean = require('./tools/tasks/clean');
-const prepareTests = require('./tools/tasks/prepare-tests');
-const { buildTest, buildApp } = require('./tools/tasks/build/build');
 
 // Gulp does not produce stack traces when logging errors.
 // This workaround is not part of the public API and not documented so
@@ -17,8 +14,4 @@ gulp.on('err', e => {
   console.error(e.err.stack);
 });
 
-module.exports['build-app'] = buildApp;
-module.exports['build-test'] = buildTest;
-module.exports['prepare-tests'] = prepareTests;
-module.exports.serve = serve;
 module.exports.clean = clean;

@@ -353,7 +353,7 @@ jobs:
       - run: npm ci
       - run:
           name: Build test artifacts
-          command: NODE_ENV=test node --max_old_space_size=3072 ./node_modules/.bin/gulp build-test
+          command: NODE_ENV=test node --max_old_space_size=3072 ./tools/bin/build-test.js
       - run:
           name: Run Karma tests
           command: |

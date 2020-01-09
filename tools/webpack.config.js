@@ -217,65 +217,6 @@ module.exports = () => {
       new MiniCssExtractPlugin({
         filename: '[name].css',
         chunkFilename: '[id].css'
-      }),
-      new HtmlWebpackPlugin({
-        template: 'index.html',
-        inject: false,
-        /*
-          We generate the template parameters manually below so that
-          we can use the `index.html` in a simple lodash template parser
-          script, that doesn't need to have `htmlWebpackPlugin.`
-
-          This exposes the following keys to index.html:
-
-          appleIcons: the 3 Apple icons
-          favicon: the favicon
-          stylesheet: styles.css
-          js: app.js
-          externalConfig: stringified null uiVersion and the development config
-
-          All above except `externalConfig` are paths to those files (e.g. `/app/styles.css`)
-         */
-        templateParameters: compilation => {
-          const stats = compilation.getStats().toJson({
-            assets: true,
-            all: false,
-            cachedAssets: true
-          });
-
-          const appleIcons = stats.assets
-            .reduce((acc, asset) => {
-              if (asset.name.includes('apple_icon')) {
-                acc.push(asset.name);
-              }
-
-              return acc;
-            }, [])
-            .map(name => `${publicPath}${name}`);
-
-          const favicon = `${publicPath}${
-            stats.assets.find(asset => asset.name.includes('favicon')).name
-          }`;
-          const stylesheet = `${publicPath}${
-            stats.assets.find(asset => asset.name === 'styles.css').name
-          }`;
-          const js = `${publicPath}${stats.assets.find(asset => asset.name === 'app.js').name}`;
-
-          return {
-            appleIcons,
-            favicon,
-            stylesheet,
-            js,
-            externalConfig: JSON.stringify({
-              uiVersion: null,
-              config: JSON.parse(
-                fs
-                  .readFileSync(path.resolve(__dirname, '..', 'config', `${configName}.json`))
-                  .toString()
-              )
-            })
-          };
-        }
       })
     ]
       .concat(
@@ -292,6 +233,69 @@ module.exports = () => {
                 modules: true,
                 modulesCount: 1500,
                 profile: true
+              }),
+              new HtmlWebpackPlugin({
+                template: 'index.html',
+                inject: false,
+                /*
+                  We generate the template parameters manually below so that
+                  we can use the `index.html` in a simple lodash template parser
+                  script, that doesn't need to have `htmlWebpackPlugin.`
+
+                  This exposes the following keys to index.html:
+
+                  appleIcons: the 3 Apple icons
+                  favicon: the favicon
+                  stylesheet: styles.css
+                  js: app.js
+                  externalConfig: stringified null uiVersion and the development config
+
+                  All above except `externalConfig` are paths to those files (e.g. `/app/styles.css`)
+                 */
+                templateParameters: compilation => {
+                  const stats = compilation.getStats().toJson({
+                    assets: true,
+                    all: false,
+                    cachedAssets: true
+                  });
+
+                  const appleIcons = stats.assets
+                    .reduce((acc, asset) => {
+                      if (asset.name.includes('apple_icon')) {
+                        acc.push(asset.name);
+                      }
+
+                      return acc;
+                    }, [])
+                    .map(name => `${publicPath}${name}`);
+
+                  const favicon = `${publicPath}${
+                    stats.assets.find(asset => asset.name.includes('favicon')).name
+                  }`;
+                  const stylesheet = `${publicPath}${
+                    stats.assets.find(asset => asset.name === 'styles.css').name
+                  }`;
+                  const js = `${publicPath}${
+                    stats.assets.find(asset => asset.name === 'app.js').name
+                  }`;
+
+                  return {
+                    appleIcons,
+                    favicon,
+                    stylesheet,
+                    js,
+                    externalConfig: JSON.stringify({
+                      uiVersion: null,
+                      config: JSON.parse(
+                        fs
+                          .readFileSync(
+                            path.resolve(__dirname, '..', 'config', `${configName}.json`)
+                          )
+                          .toString()
+                      )
+                    })
+                  };
+                }
               })
             ]
           : []
