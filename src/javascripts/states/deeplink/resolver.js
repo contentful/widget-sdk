@@ -59,6 +59,9 @@ function resolveParams(link, params) {
       locales: makeSpaceScopedPathResolver({
         spaceScopedPath: ['spaces', 'detail', 'settings', 'locales', 'list']
       }),
+      environments: makeSpaceScopedPathResolver({
+        spaceScopedPath: ['spaces', 'detail', 'settings', 'environments']
+      }),
       'roles-and-permissions': makeSpaceScopedPathResolver({
         spaceScopedPath: ['spaces', 'detail', 'settings', 'roles', 'list']
       }),
