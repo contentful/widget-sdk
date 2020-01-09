@@ -3,7 +3,11 @@ import PropTypes from 'prop-types';
 import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { IconButton, Paragraph, Tag } from '@contentful/forma-36-react-components';
-import { NAMESPACE_SIDEBAR_BUILTIN, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
+import {
+  NAMESPACE_SIDEBAR_BUILTIN,
+  NAMESPACE_EXTENSION,
+  NAMESPACE_APP
+} from 'widgets/WidgetNamespaces';
 
 const styles = {
   item: css({
@@ -45,8 +49,7 @@ export default function AvailableWidget({
   onClick,
   widgetNamespace,
   index,
-  availabilityStatus,
-  isApp
+  availabilityStatus
 }) {
   const renderAvailabilityStatus = () => <Tag>{availabilityStatus}</Tag>;
 
@@ -63,7 +66,8 @@ export default function AvailableWidget({
         </Paragraph>
         <Paragraph>
           {widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN && 'Built-in item'}
-          {widgetNamespace === NAMESPACE_EXTENSION && (isApp ? 'App' : 'UI Extension')}
+          {widgetNamespace === NAMESPACE_EXTENSION && 'UI Extension'}
+          {widgetNamespace === NAMESPACE_APP && 'App'}
         </Paragraph>
       </div>
       <div className={styles.actions}>
@@ -84,6 +88,5 @@ AvailableWidget.propTypes = {
   widgetNamespace: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
   index: PropTypes.number.isRequired,
-  availabilityStatus: PropTypes.oneOf(['alpha', 'beta']),
-  isApp: PropTypes.bool
+  availabilityStatus: PropTypes.oneOf(['alpha', 'beta'])
 };

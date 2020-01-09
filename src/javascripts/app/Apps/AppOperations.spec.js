@@ -3,12 +3,25 @@ import * as AppOperations from './AppOperations';
 import {
   NAMESPACE_BUILTIN,
   NAMESPACE_BUILTIN_SIDEBAR,
-  NAMESPACE_EXTENSION,
   NAMESPACE_APP
 } from 'widgets/WidgetNamespaces';
 
 jest.mock('i13n/Telemetry', () => ({ count: () => {} }));
 jest.mock('data/CMA/ProductCatalog', () => ({ getCurrentSpaceFeature: () => true }));
+
+const APP_ID = 'some-app';
+
+const status = {
+  appDefinition: { sys: { type: 'AppDefinition', id: APP_ID } },
+  appInstallation: {
+    sys: {
+      type: 'AppInstallation',
+      appDefinition: {
+        sys: { type: 'Link', linkType: 'AppDefinition', id: APP_ID }
+      }
+    }
+  }
+};
 
 describe('AppOperations', () => {
   describe('installOrUpdate', () => {
@@ -34,26 +47,24 @@ describe('AppOperations', () => {
       const cma = {
         updateAppInstallation: jest.fn((_, parameters) => {
           return Promise.resolve({
-            sys: { widgetId: 'some-widget-id' },
+            sys: status.appInstallation.sys,
             parameters
           });
         }),
         getEditorInterfaces: jest.fn(() => Promise.resolve({ items: [] }))
       };
       const evictWidget = jest.fn();
-      const checkAppStatus = jest.fn(() => {
-        return Promise.resolve({ appDefinition: { sys: { id: 'def-id' } } });
-      });
+      const checkAppStatus = jest.fn(() => Promise.resolve(status));
 
       await AppOperations.installOrUpdate(cma, evictWidget, checkAppStatus, {
         parameters: { test: true }
       });
 
       expect(cma.updateAppInstallation).toBeCalledTimes(1);
-      expect(cma.updateAppInstallation).toBeCalledWith('def-id', { test: true });
+      expect(cma.updateAppInstallation).toBeCalledWith('some-app', { test: true });
       expect(evictWidget).toBeCalledTimes(1);
       expect(evictWidget).toBeCalledWith({
-        sys: { widgetId: 'some-widget-id' },
+        sys: status.appInstallation.sys,
         parameters: { test: true }
       });
     });
@@ -63,9 +74,7 @@ describe('AppOperations', () => {
         updateAppInstallation: jest.fn(() => Promise.reject('unprocessable'))
       };
       const evictWidget = jest.fn();
-      const checkAppStatus = jest.fn(() => {
-        return Promise.resolve({ appDefinition: { sys: { id: 'def-id' } } });
-      });
+      const checkAppStatus = jest.fn(() => Promise.resolve(status));
 
       expect.assertions(3);
 
@@ -79,16 +88,8 @@ describe('AppOperations', () => {
     });
 
     it('executes the target state plan', async () => {
-      const installation = {
-        sys: {
-          widgetId: 'some-widget-id',
-          appDefinition: {
-            sys: { type: 'Link', linkType: 'AppDefinition', id: 'some-app' }
-          }
-        }
-      };
       const cma = {
-        updateAppInstallation: jest.fn(() => Promise.resolve(installation)),
+        updateAppInstallation: jest.fn(() => Promise.resolve(status.appInstallation)),
         getEditorInterfaces: jest.fn(() => {
           return Promise.resolve({
             items: [
@@ -104,9 +105,7 @@ describe('AppOperations', () => {
         updateEditorInterface: jest.fn(ext => Promise.resolve(ext))
       };
       const evictWidget = jest.fn();
-      const checkAppStatus = jest.fn(() => {
-        return Promise.resolve({ appDefinition: { sys: { id: 'some-app' } } });
-      });
+      const checkAppStatus = jest.fn(() => Promise.resolve(status));
 
       await AppOperations.installOrUpdate(cma, evictWidget, checkAppStatus, {
         targetState: {
@@ -128,13 +127,12 @@ describe('AppOperations', () => {
       });
 
       expect(evictWidget).toBeCalledTimes(1);
-      expect(evictWidget).toBeCalledWith(installation);
+      expect(evictWidget).toBeCalledWith(status.appInstallation);
     });
   });
 
   describe('uninstall', () => {
     it('removes widget references from editor interfaces', async () => {
-      const widgetId = 'test-widget';
       const cma = {
         getEditorInterfaces: jest.fn(() =>
           Promise.resolve({
@@ -142,17 +140,17 @@ describe('AppOperations', () => {
               {
                 sys: { contentType: { sys: { id: 'CT1' } } },
                 controls: [
-                  { fieldId: 'title', widgetNamespace: NAMESPACE_BUILTIN, widgetId },
+                  { fieldId: 'title', widgetNamespace: NAMESPACE_BUILTIN, widgetId: APP_ID },
                   { fieldId: 'content', widgetNamespace: NAMESPACE_BUILTIN, widgetId: 'markdown' },
-                  { fieldId: 'author', widgetNamespace: NAMESPACE_EXTENSION, widgetId }
+                  { fieldId: 'author', widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }
                 ],
                 sidebar: [
                   { widgetNamespace: NAMESPACE_BUILTIN_SIDEBAR, widgetId: 'publication-widget' },
-                  { widgetNamespace: NAMESPACE_EXTENSION, widgetId }
+                  { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }
                 ],
                 editor: {
-                  widgetNamespace: NAMESPACE_EXTENSION,
-                  widgetId
+                  widgetNamespace: NAMESPACE_APP,
+                  widgetId: APP_ID
                 }
               }
             ]
@@ -162,12 +160,7 @@ describe('AppOperations', () => {
         deleteAppInstallation: jest.fn(() => Promise.resolve())
       };
       const evictWidget = jest.fn();
-      const checkAppStatus = jest.fn(() =>
-        Promise.resolve({
-          appDefinition: { sys: { id: 'def' } },
-          appInstallation: { sys: { widgetId } }
-        })
-      );
+      const checkAppStatus = jest.fn(() => Promise.resolve(status));
 
       await AppOperations.uninstall(cma, evictWidget, checkAppStatus);
 
@@ -177,7 +170,7 @@ describe('AppOperations', () => {
       expect(cma.updateEditorInterface).toBeCalledWith({
         sys: { contentType: { sys: { id: 'CT1' } } },
         controls: [
-          { fieldId: 'title', widgetNamespace: NAMESPACE_BUILTIN, widgetId },
+          { fieldId: 'title', widgetNamespace: NAMESPACE_BUILTIN, widgetId: APP_ID },
           { fieldId: 'content', widgetNamespace: NAMESPACE_BUILTIN, widgetId: 'markdown' },
           { fieldId: 'author' }
         ],
@@ -185,7 +178,7 @@ describe('AppOperations', () => {
       });
 
       expect(evictWidget).toBeCalledTimes(1);
-      expect(evictWidget).toBeCalledWith({ sys: { widgetId: 'test-widget' } });
+      expect(evictWidget).toBeCalledWith(status.appInstallation);
     });
 
     it('deletes the installation', async () => {
@@ -194,20 +187,15 @@ describe('AppOperations', () => {
         deleteAppInstallation: jest.fn(() => Promise.resolve())
       };
       const evictWidget = jest.fn();
-      const checkAppStatus = jest.fn(() =>
-        Promise.resolve({
-          appDefinition: { sys: { id: 'def' } },
-          appInstallation: { sys: { widgetId: 'some-widget' } }
-        })
-      );
+      const checkAppStatus = jest.fn(() => Promise.resolve(status));
 
       await AppOperations.uninstall(cma, evictWidget, checkAppStatus);
 
       expect(cma.deleteAppInstallation).toBeCalledTimes(1);
-      expect(cma.deleteAppInstallation).toBeCalledWith('def');
+      expect(cma.deleteAppInstallation).toBeCalledWith('some-app');
 
       expect(evictWidget).toBeCalledTimes(1);
-      expect(evictWidget).toBeCalledWith({ sys: { widgetId: 'some-widget' } });
+      expect(evictWidget).toBeCalledWith(status.appInstallation);
     });
 
     it('fails if an installation cannot be deleted', async () => {
@@ -216,19 +204,14 @@ describe('AppOperations', () => {
         deleteAppInstallation: jest.fn(() => Promise.reject('unauthorized'))
       };
       const evictWidget = jest.fn();
-      const checkAppStatus = jest.fn(() => {
-        return Promise.resolve({
-          appInstallation: { sys: { widgetId: 'some-widget' } },
-          appDefinition: { sys: { id: 'test' } }
-        });
-      });
+      const checkAppStatus = jest.fn(() => Promise.resolve(status));
 
       expect.assertions(3);
 
       try {
         await AppOperations.uninstall(cma, evictWidget, checkAppStatus);
       } catch (err) {
-        expect(cma.deleteAppInstallation).toBeCalledWith('test');
+        expect(cma.deleteAppInstallation).toBeCalledWith('some-app');
         expect(err).toMatch('unauthorized');
         expect(evictWidget).not.toBeCalled();
       }

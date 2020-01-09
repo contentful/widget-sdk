@@ -9,7 +9,7 @@ import * as SlideInNavigator from 'navigation/SlideInNavigator/index';
 import { getAppsRepo } from '../AppsRepoInstance';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
-import { NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/WidgetNamespaces';
+import { NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 
 export default {
   name: 'apps',
@@ -114,14 +114,9 @@ export default {
             appHookBus,
             cma: spaceContext.cma,
             evictWidget: appInstallation => {
-              const loader = getCustomWidgetLoader();
-              const sys = get(appInstallation, ['sys']);
+              const widgetId = get(appInstallation, ['sys', 'appDefinition', 'sys', 'id']);
 
-              // TODO: we evict both legacy "apps as extensions"
-              // and regular "apps from the app namespace".
-              // When we migrate data we should only evict the latter.
-              loader.evict([NAMESPACE_EXTENSION, get(sys, ['widgetId'])]);
-              loader.evict([NAMESPACE_APP, get(sys, ['appDefinition', 'sys', 'id'])]);
+              getCustomWidgetLoader().evict([NAMESPACE_APP, widgetId]);
             }
           };
         }

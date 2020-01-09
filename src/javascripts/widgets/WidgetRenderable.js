@@ -23,27 +23,6 @@ export function buildRenderables(controls, widgets) {
   );
 }
 
-// Converts a proper app widget to regular extension for rendering.
-// TODO: conversion won't be needed when we migrate data.
-function appWidgetToExtensionWidget(widget) {
-  return { ...widget, id: widget.widgetId, namespace: NAMESPACE_EXTENSION };
-}
-
-function findWidget(widgets, namespace, id) {
-  // Try to find directly with EditorInterface data first
-  // (can have namespace of "app").
-  const directlyFound = widgets.find(w => w.namespace === namespace && w.id === id);
-
-  if (directlyFound) {
-    return namespace === NAMESPACE_APP ? appWidgetToExtensionWidget(directlyFound) : directlyFound;
-  }
-
-  // Search in converted widgets ("app" namespace converted to "extension").
-  return widgets
-    .map(appWidgetToExtensionWidget)
-    .find(w => w.namespace === namespace && w.id === id);
-}
-
 function buildOneRenderable(control, widgets) {
   const renderable = {
     fieldId: control.fieldId,
@@ -52,7 +31,10 @@ function buildOneRenderable(control, widgets) {
     field: cloneDeep(control.field)
   };
 
-  const descriptor = findWidget(widgets, control.widgetNamespace, control.widgetId);
+  const descriptor = widgets.find(w => {
+    return w.namespace === control.widgetNamespace && w.id === control.widgetId;
+  });
+
   if (descriptor) {
     Object.assign(renderable, { descriptor });
   } else {
@@ -94,7 +76,10 @@ function convertToRenderable(item, widgets) {
     widgetNamespace: item.widgetNamespace
   };
 
-  const descriptor = findWidget(widgets, item.widgetNamespace, item.widgetId);
+  const descriptor = widgets.find(w => {
+    return w.namespace === item.widgetNamespace && w.id === item.widgetId;
+  });
+
   if (descriptor) {
     Object.assign(renderable, { descriptor });
   } else {

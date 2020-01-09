@@ -18,7 +18,6 @@ export function buildExtensionWidget({ sys, extension, parameters }) {
     namespace: NAMESPACE_EXTENSION,
     name: extension.name,
     fieldTypes: (extension.fieldTypes || []).map(toInternalFieldType),
-    isApp: false,
     sidebar: !!extension.sidebar,
     parameters: get(extension, ['parameters', 'instance'], []),
     installationParameters: {
@@ -33,11 +32,11 @@ export function buildAppWidget({ id, title, icon, appDefinition, appInstallation
     src: appDefinition.src,
     id: appDefinition.sys.id,
     appDefinitionId: appDefinition.sys.id,
-    widgetId: appInstallation.sys.widgetId,
+    // TODO: figure out how to get rid of it. See `ExtensionAPI`.
+    legacyAppExtensionWidgetId: appInstallation.sys.widgetId,
     namespace: NAMESPACE_APP,
     name: title,
     fieldTypes: (appDefinition.fieldTypes || []).map(toInternalFieldType),
-    isApp: true,
     appId: id,
     appIconUrl: icon,
     sidebar: false,
