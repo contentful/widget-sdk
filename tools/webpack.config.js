@@ -15,11 +15,13 @@
 
 const webpack = require('webpack');
 const path = require('path');
+const fs = require('fs');
 const { createBabelOptions } = require('./app-babel-options');
 const WebpackRequireFrom = require('webpack-require-from');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserJSPlugin = require('terser-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 /**
  * @description webpack's configuration factory
@@ -34,8 +36,10 @@ module.exports = () => {
   const isDev = /^(dev|development)$/.test(currentEnv) || !currentEnv;
   const isProd = currentEnv === 'production';
   const isTest = currentEnv === 'test';
-
+  const configName = process.env.UI_CONFIG || 'development';
   const projectRoot = path.resolve(__dirname, '..');
+
+  const publicPath = '/app/';
 
   const appEntry = {
     // Main app bundle, with vendor files such as bcsocket and jquery-shim
@@ -69,6 +73,12 @@ module.exports = () => {
           './node_modules/@contentful/forma-36-react-components/dist/styles.css',
           './node_modules/@contentful/forma-36-fcss/dist/styles.css',
           './src/stylesheets/legacy-styles.css'
+        ],
+        favicons: [
+          './src/images/favicons/favicon32x32.png',
+          './src/images/favicons/apple_icon57x57.png',
+          './src/images/favicons/apple_icon72x72.png',
+          './src/images/favicons/apple_icon114x114.png'
         ]
       },
       !isTest ? appEntry : {},
@@ -77,7 +87,7 @@ module.exports = () => {
     output: {
       filename: '[name]',
       path: path.resolve(projectRoot, 'public', 'app'),
-      publicPath: '/app/',
+      publicPath,
       chunkFilename: isDev ? 'chunk_[name].js' : 'chunk_[name]-[contenthash].js'
     },
     mode: isProd ? 'production' : 'development',
@@ -109,6 +119,9 @@ module.exports = () => {
         {
           // All HTML files
           test: /\.html$/,
+          issuer: {
+            test: /\.js$/
+          },
           use: [
             {
               loader: 'html-loader',
@@ -134,14 +147,38 @@ module.exports = () => {
             }
           ]
         },
-        // All image files from any CSS file.
+        // All image files from any non-JS file that are not favicons, see below.
         //
         // These image files are put into build/app directly
         {
           test: /.(png|jpe?g|gif|eot|ttf|woff|otf|svg)$/i,
           issuer: {
-            test: /\.css$/
+            exclude: /\.js$/
           },
+          use: [
+            {
+              loader: 'file-loader',
+              options: {
+                name: '[name]-[contenthash].[ext]',
+                outputPath: function(url) {
+                  return `assets/${url}`;
+                }
+              }
+            }
+          ]
+        },
+        // This block handles favicons specifically.
+        //
+        // There is a quirk in Webpack that if you give an issuer
+        // block, assets loaded via an entrypoint directly don't get
+        // handled properly. This means that because we load the
+        // favicons above (~L76) in an entrypoint directly, they are
+        // not picked up by the previous loader for PNGs.
+        //
+        // Since the test for this is very granular, it picks only the favicons
+        // up.
+        {
+          test: /favicons\/.*\.png$/i,
           use: [
             {
               loader: 'file-loader',
@@ -180,6 +217,65 @@ module.exports = () => {
       new MiniCssExtractPlugin({
         filename: '[name].css',
         chunkFilename: '[id].css'
+      }),
+      new HtmlWebpackPlugin({
+        template: 'index.html',
+        inject: false,
+        /*
+          We generate the template parameters manually below so that
+          we can use the `index.html` in a simple lodash template parser
+          script, that doesn't need to have `htmlWebpackPlugin.`
+
+          This exposes the following keys to index.html:
+
+          appleIcons: the 3 Apple icons
+          favicon: the favicon
+          stylesheet: styles.css
+          js: app.js
+          externalConfig: stringified null uiVersion and the development config
+
+          All above except `externalConfig` are paths to those files (e.g. `/app/styles.css`)
+         */
+        templateParameters: compilation => {
+          const stats = compilation.getStats().toJson({
+            assets: true,
+            all: false,
+            cachedAssets: true
+          });
+
+          const appleIcons = stats.assets
+            .reduce((acc, asset) => {
+              if (asset.name.includes('apple_icon')) {
+                acc.push(asset.name);
+              }
+
+              return acc;
+            }, [])
+            .map(name => `${publicPath}${name}`);
+
+          const favicon = `${publicPath}${
+            stats.assets.find(asset => asset.name.includes('favicon')).name
+          }`;
+          const stylesheet = `${publicPath}${
+            stats.assets.find(asset => asset.name === 'styles.css').name
+          }`;
+          const js = `${publicPath}${stats.assets.find(asset => asset.name === 'app.js').name}`;
+
+          return {
+            appleIcons,
+            favicon,
+            stylesheet,
+            js,
+            externalConfig: JSON.stringify({
+              uiVersion: null,
+              config: JSON.parse(
+                fs
+                  .readFileSync(path.resolve(__dirname, '..', 'config', `${configName}.json`))
+                  .toString()
+              )
+            })
+          };
+        }
       })
     ]
       .concat(
