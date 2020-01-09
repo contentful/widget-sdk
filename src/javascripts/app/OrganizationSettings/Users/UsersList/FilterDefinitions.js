@@ -15,6 +15,7 @@ import {
 const idMap = {
   sort: ['order'],
   orgRole: ['role'],
+  status: ['status'],
   space: ['sys.spaceMemberships.sys.space.sys.id'],
   ssoLogin: ['sys.sso.lastSignInAt'],
   spaceRole: SPACE_ROLE_FILTER_KEYS,
@@ -28,6 +29,10 @@ const defaultFiltersById = {
   },
   orgRole: {
     key: 'role',
+    value: ''
+  },
+  status: {
+    key: 'status',
     value: ''
   },
   ssoLogin: {
@@ -71,7 +76,6 @@ const defaultFiltersById = {
 const normalizeFilterValues = filterValues => {
   return filterValues.reduce((memo, [key, value]) => {
     const [id] = Object.entries(idMap).find(([_, filterKeys]) => filterKeys.includes(key)) || [];
-
     if (id) {
       set(memo, [id, 'key'], key);
       set(memo, [id, 'value'], value);
@@ -86,6 +90,7 @@ export function generateFilterDefinitions({
   spaces = [],
   teams = [],
   hasSsoEnabled,
+  hasPendingOrgMembershipsEnabled,
   hasTeamsFeature,
   filterValues = {}
 }) {
@@ -114,6 +119,17 @@ export function generateFilterDefinitions({
     options: [
       { label: 'Any', value: '' },
       ...orgRoles.map(({ name, value }) => ({ label: name, value }))
+    ]
+  };
+
+  const status = {
+    id: 'status',
+    label: 'Status',
+    filter: normalized.status,
+    options: [
+      { label: 'Any', value: '' },
+      { label: 'Active', value: 'active' },
+      { label: 'Pending', value: 'pending' }
     ]
   };
 
@@ -164,6 +180,8 @@ export function generateFilterDefinitions({
 
   const definitions = [order, orgRole, space, spaceRole];
   if (hasSsoEnabled) definitions.push(sso);
+  // To be removed after pending memberships great general availability
+  if (hasPendingOrgMembershipsEnabled) definitions.unshift(status);
   if (hasTeamsFeature) definitions.push(team);
 
   return definitions;

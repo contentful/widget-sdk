@@ -399,13 +399,17 @@ class UsersList extends React.Component {
 }
 
 export default connect(
-  (state, { spaceRoles, spaces, teams, hasSsoEnabled, hasTeamsFeature }) => {
+  (
+    state,
+    { spaceRoles, spaces, teams, hasSsoEnabled, hasTeamsFeature, hasPendingOrgMembershipsEnabled }
+  ) => {
     const filterValues = getFilters(state);
     const filterDefinitions = generateFilterDefinitions({
       spaceRoles,
       spaces,
       teams,
       hasSsoEnabled,
+      hasPendingOrgMembershipsEnabled,
       hasTeamsFeature,
       filterValues
     });
