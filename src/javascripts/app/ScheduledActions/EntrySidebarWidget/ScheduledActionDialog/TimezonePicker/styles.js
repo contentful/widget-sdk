@@ -11,9 +11,6 @@ const styles = {
   dropdown: css({
     width: '100%'
   }),
-  dropdownContainer: css({
-    zIndex: 100
-  }),
   inputWrapper: css({
     display: 'flex',
     marginBottom: tokens.spacingXs,

@@ -39,7 +39,6 @@ export function TimezonePicker({ validationMessage, onSelect }) {
           className={styles.dropdown}
           willClearQueryOnClose
           dropdownProps={{
-            dropdownContainerClassName: styles.dropdownContainer,
             isFullWidth: true
           }}
           items={filteredTimezones.slice(0, 100)}
