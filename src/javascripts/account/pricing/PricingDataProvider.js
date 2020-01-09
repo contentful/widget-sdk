@@ -3,9 +3,14 @@ import { getAllSpaces, getUsersByIds } from 'access_control/OrganizationMembersh
 import { SUBSCRIPTIONS_API, getAlphaHeader } from 'alphaHeaders.js';
 const alphaHeader = getAlphaHeader(SUBSCRIPTIONS_API);
 
+const SELF_SERVICE = 'Self-service';
+const ENTERPRISE = 'Enterprise';
+const ENTERPRISE_TRIAL = 'Enterprise Trial';
+const ENTERPRISE_HIGH_DEMAND = 'High Demand Enterprise';
+
 export const customerTypes = {
-  selfService: ['Self-service'],
-  enterprise: ['Enterprise', 'Enterprise Trial']
+  selfService: [SELF_SERVICE],
+  enterprise: [ENTERPRISE, ENTERPRISE_TRIAL, ENTERPRISE_HIGH_DEMAND]
 };
 
 export function isSelfServicePlan(plan) {
@@ -14,6 +19,10 @@ export function isSelfServicePlan(plan) {
 
 export function isEnterprisePlan(plan) {
   return customerTypes.enterprise.includes(plan.customerType);
+}
+
+export function isHighDemandEnterprisePlan(plan) {
+  return plan.customerType === ENTERPRISE_HIGH_DEMAND;
 }
 
 export function isFreeSpacePlan(plan) {
@@ -84,6 +93,7 @@ export async function getPlansWithSpaces(endpoint) {
     !plans.items.find(({ gatekeeperKey }) => space.sys.id === gatekeeperKey);
   const freeSpaces = spaces.filter(isFreeSpace);
   const isEnterprise = baseRatePlan && isEnterprisePlan(baseRatePlan);
+  const isHighDemand = baseRatePlan && isHighDemandEnterprisePlan(baseRatePlan);
 
   const plansWithSpaces = {
     plans,
@@ -97,7 +107,7 @@ export async function getPlansWithSpaces(endpoint) {
       ...freeSpaces.map(space => ({
         sys: { id: uniqueId('free-space-plan-') },
         gatekeeperKey: space.sys.id,
-        name: isEnterprise ? 'Proof of concept' : 'Free',
+        name: getFreeSpacePlanName(isEnterprise, isHighDemand),
         planType: 'free_space',
         space
       }))
@@ -224,4 +234,15 @@ export function getRatePlans(endpoint) {
  */
 export function calculateTotalPrice(subscriptionPlans) {
   return subscriptionPlans.reduce((total, plan) => total + (parseInt(plan.price, 10) || 0), 0);
+}
+
+// Get the name for the free plan name according to customer type,
+// which is set on the base rate plan
+// Free spaces don't generate subscriptions, that's why we can't know for sure
+// which rate plan it's based on.
+// A workaround that would be to return mocked space subscription objects from the API
+function getFreeSpacePlanName(isEnterprise, isHighDemand) {
+  if (isHighDemand) return 'Performance 1x';
+  if (isEnterprise) return 'Proof of concept';
+  return 'Free';
 }
