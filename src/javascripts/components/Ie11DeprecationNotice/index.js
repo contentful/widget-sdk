@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { css } from 'emotion';
-import { Note, IconButton, TextLink } from '@contentful/forma-36-react-components';
+import { Note, TextLink } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import * as Analytics from 'analytics/Analytics';
 import { isIE } from 'utils/browser';
@@ -13,36 +13,20 @@ const styles = {
     right: tokens.spacingXl,
     bottom: tokens.spacingXl,
     width: '330px'
-  }),
-  closeButton: css({
-    position: 'absolute',
-    right: tokens.spacing2Xs,
-    top: tokens.spacing2Xs
   })
 };
 
 function DeprecationNotice() {
-  const [isVisible, setIsVisible] = useState(true);
   return (
-    isVisible && (
-      <Note className={styles.note} noteType="warning">
-        <IconButton
-          className={styles.closeButton}
-          iconProps={{
-            icon: 'Close'
-          }}
-          buttonType="secondary"
-          onClick={() => setIsVisible(false)}
-        />
-        {`Support for your current browser "Internet Explorer 11" will be discontinued as of January 2020. For more information `}
-        <TextLink
-          href="//www.contentful.com/faq/about-contentful/#which-browsers-does-contentful-support"
-          target="_blank">
-          see the FAQ
-        </TextLink>
-        .
-      </Note>
-    )
+    <Note className={styles.note} noteType="warning">
+      {`Support for your current browser "Internet Explorer 11" is discontinued. Please use a different browser. For more information `}
+      <TextLink
+        href="//www.contentful.com/faq/about-contentful/#which-browsers-does-contentful-support"
+        target="_blank">
+        see the FAQ
+      </TextLink>
+      .
+    </Note>
   );
 }
 
