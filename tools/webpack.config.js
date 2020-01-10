@@ -71,10 +71,10 @@ module.exports = () => {
       isTest ? testDepEntry : {}
     ),
     output: {
-      filename: isDev ? '[name].js' : '[name]-[contenthash].js',
+      filename: isProd ? '[name]-[contenthash].js' : '[name].js',
       path: path.resolve(projectRoot, 'public', 'app'),
       publicPath,
-      chunkFilename: isDev ? 'chunk_[name].js' : 'chunk_[name]-[contenthash].js'
+      chunkFilename: isProd ? 'chunk_[name]-[contenthash].js' : 'chunk_[name].js'
     },
     mode: isProd ? 'production' : 'development',
     resolve: {
@@ -201,8 +201,8 @@ module.exports = () => {
         suppressErrors: true
       }),
       new MiniCssExtractPlugin({
-        filename: isDev ? '[name].css' : '[name]-[contenthash].css',
-        chunkFilename: isDev ? '[id].css' : '[id]-[contenthash].css'
+        filename: isProd ? '[name]-[contenthash].css' : '[name].css',
+        chunkFilename: isProd ? '[id]-[contenthash].css' : '[id].css'
       })
     ]
       .concat(

@@ -52,7 +52,7 @@ if (singleRun) {
   }
   runTests();
 } else {
-  buildTestDeps(runTests);
+  buildTestDeps().then(runTests);
 }
 
 function runTests() {
