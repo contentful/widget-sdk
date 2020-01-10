@@ -71,7 +71,7 @@ async function createIndex(env, version) {
 }
 
 /*
- * Creates a file distribution after gulp build-app.
+ * Creates a file distribution after tools/bin/build-app.js.
  *
  * Copies the following files.
  * ~~~

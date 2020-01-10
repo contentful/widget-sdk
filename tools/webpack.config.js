@@ -1,18 +1,3 @@
-/**
- * @description This is a webpack configuration to process _most_ of the JS files.
- * For example, `templates.js` is created by gulp.
- *
- * Because of the way our legacy Karma tests are setup, using SystemJS, we can
- * currently only import JS and JSON files, but the rest must be processed in
- * another way, either via Gulp (like Jade templates), or by using a loader
- * and writing a new loader for SystemJS. In theory it would work, but dragons
- * are there.
- *
- * Hence, styles and templates (written using Jade/Pug) use gulp for processing.
- * However, you can still use custom loader, just avoid requiring non-js files
- * in generic files (otherwise some tests can file).
- */
-
 const webpack = require('webpack');
 const path = require('path');
 const fs = require('fs');
