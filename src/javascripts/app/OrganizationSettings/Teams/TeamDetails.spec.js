@@ -164,6 +164,7 @@ describe('TeamDetails', () => {
         expect(descriptionElement.find('br')).toHaveLength(3);
         expect(wrapper.find('[data-test-id="creation-date"]').text()).toEqual('December 20, 2018');
       });
+
       describe('is member of org', () => {
         beforeEach(() => {
           actions.push({
@@ -403,6 +404,93 @@ describe('TeamDetails', () => {
             it('should render TeamMemberships', () => {
               expect(getWrapperWithTeamMemberTabActive().find(TeamMemberships)).toHaveLength(1);
             });
+          });
+        });
+
+        describe('organization members not added to the team remain', () => {
+          beforeEach(() => {
+            actions.push({
+              type: 'DATASET_LOADING',
+              meta: { fetched: 100 },
+              payload: {
+                datasets: {
+                  [TEAM_MEMBERSHIPS]: [],
+                  [USERS]: [
+                    {
+                      firstName: 'B User',
+                      lastName: 'Lastname 2',
+                      avatarUrl: 'doesntMatter.com/blah',
+                      email: 'userB2@test.com',
+                      sys: { id: 'testUserB2' }
+                    }
+                  ]
+                }
+              }
+            });
+          });
+
+          it('should show add member button', () => {
+            const { wrapper } = renderComponent(actions);
+            const addMemberButton = wrapper.find(Button).filter({ testId: 'add-button' });
+            expect(addMemberButton).toHaveLength(1);
+            expect(addMemberButton.props()).toHaveProperty('disabled', false);
+          });
+        });
+
+        describe('with all organization members added to the team', () => {
+          beforeEach(() => {
+            actions.push({
+              type: 'DATASET_LOADING',
+              meta: { fetched: 100 },
+              payload: {
+                datasets: {
+                  [TEAM_MEMBERSHIPS]: [
+                    {
+                      admin: false,
+                      sys: {
+                        id: 'membershipB2',
+                        user: {
+                          sys: {
+                            type: 'Link',
+                            linkType: USERS,
+                            id: 'testUserB2'
+                          }
+                        },
+                        team: {
+                          sys: {
+                            type: 'Link',
+                            linkType: TEAMS,
+                            id: activeTeamId
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  [USERS]: [
+                    {
+                      firstName: 'B User',
+                      lastName: 'Lastname 2',
+                      avatarUrl: 'doesntMatter.com/blah',
+                      email: 'userB2@test.com',
+                      sys: { id: 'testUserB2' }
+                    }
+                  ]
+                }
+              }
+            });
+          });
+
+          it('should show add member button disabled and with tooltip', () => {
+            const { wrapper } = renderComponent(actions);
+
+            const tooltip = wrapper.find(Tooltip).filter({ testId: 'no-members-left-tooltip' });
+            expect(tooltip).toHaveLength(1);
+            expect(
+              tooltip
+                .find(Button)
+                .filter({ testId: 'add-button' })
+                .props()
+            ).toHaveProperty('disabled', true);
           });
         });
 
