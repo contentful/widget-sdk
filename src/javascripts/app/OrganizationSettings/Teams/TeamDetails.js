@@ -405,9 +405,7 @@ export default connect(
     readOnlyPermission: hasReadOnlyPermission(state),
     emptyTeamMemberships: getMembershipsOfCurrentTeamToDisplay(state).length === 0,
     emptyTeamSpaceMemberships: getTeamSpaceMembershipsOfCurrentTeamToDisplay(state).length === 0,
-    noOrgMembersLeft: getOrgMemberships(state)
-      ? getAvailableOrgMemberships(state).length === 0
-      : false
+    noOrgMembersLeft: getAvailableOrgMemberships(state).length === 0
   }),
   dispatch => ({
     removeTeam: teamId => dispatch({ type: 'REMOVE_TEAM', payload: { teamId } })
