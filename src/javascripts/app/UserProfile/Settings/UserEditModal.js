@@ -103,47 +103,55 @@ const submitForm = async (formData, user, dispatch, onConfirm) => {
     if (_.get(data, ['sys', 'type']) === 'Error') {
       const errorDetails = data.details.errors;
 
+      const pathFieldMapping = {
+        first_name: 'firstName',
+        last_name: 'lastName',
+        current_password: 'currentPassword',
+        email: 'email'
+      };
+
       errorDetails.forEach(({ path, name }) => {
-        const pathFieldMapping = {
-          first_name: 'firstName',
-          last_name: 'lastName',
-          current_password: 'currentPassword',
-          email: 'email'
-        };
-        let message;
+        let message = 'This field is not valid';
+        const fieldName = pathFieldMapping[path];
 
-        switch (path) {
-          case 'first_name': {
-            if (name === 'length') {
-              message = 'The first name you entered is too long';
+        // We are aware of the field
+        if (fieldName) {
+          // We are aware of the field specific error
+          switch (path) {
+            case 'first_name': {
+              if (name === 'length') {
+                message = 'The first name you entered is too long';
+              }
+              break;
             }
-            break;
-          }
-          case 'last_name': {
-            if (name === 'length') {
-              message = 'The last name you entered is too long';
+            case 'last_name': {
+              if (name === 'length') {
+                message = 'The last name you entered is too long';
+              }
+              break;
             }
-            break;
-          }
-          case 'email': {
-            if (name === 'invalid') {
-              message = 'The email you entered is not valid';
+            case 'email': {
+              if (name === 'invalid') {
+                message = 'The email you entered is not valid';
+              } else if (name === 'taken') {
+                message = 'The email you entered is already in use';
+              }
+              break;
             }
-            break;
-          }
-          case 'current_password': {
-            if (name === 'invalid') {
-              message = 'The password you entered is not valid';
+            case 'current_password': {
+              if (name === 'invalid') {
+                message = 'The password you entered is not valid';
+              }
+              break;
             }
-            break;
           }
-        }
 
-        if (message) {
           dispatch({
             type: 'SERVER_VALIDATION_FAILURE',
             payload: { field: pathFieldMapping[path], value: message }
           });
+        } else {
+          Notification.error('Something went wrong. Try again.');
         }
       });
     } else {
