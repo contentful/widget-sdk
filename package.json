@@ -166,6 +166,7 @@
     "babel-plugin-transform-es2015-modules-commonjs": "6.26.2",
     "bluebird": "^3.5.5",
     "browserchannel": "1.2.0",
+    "cache-loader": "^4.1.0",
     "canonical-path": "0.0.2",
     "chalk": "^2.4.2",
     "chokidar": "^1.4.3",
