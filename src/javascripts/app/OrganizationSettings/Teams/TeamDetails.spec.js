@@ -407,7 +407,7 @@ describe('TeamDetails', () => {
           });
         });
 
-        describe('organization members not added to the team remain', () => {
+        describe('when there are available org members to be added', () => {
           beforeEach(() => {
             actions.push({
               type: 'DATASET_LOADING',
@@ -437,7 +437,7 @@ describe('TeamDetails', () => {
           });
         });
 
-        describe('with all organization members added to the team', () => {
+        describe('when there are no org members left to be added', () => {
           beforeEach(() => {
             actions.push({
               type: 'DATASET_LOADING',
