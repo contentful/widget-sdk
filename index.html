@@ -3,14 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="x-ua-compatible" content="ID=edge" />
-    <meta name="external-config" content="<%= externalConfig %>" />
+    <meta name="external-config" content="<%= _.escape(JSON.stringify(externalConfig)) %>" />
 
     <title>Contentful</title>
-    <link href="<%= stylesheet %>" type="text/css" rel="stylesheet" media="all" />
-    <link href="<%= favicon %>" rel="shortcut icon" type="image/png" />
-    <link href="<%= appleIcons[0] %>" rel="apple-touch-icon" type="image/png" />
-    <link href="<%= appleIcons[1] %>" rel="apple-touch-icon" type="image/png" />
-    <link href="<%= appleIcons[2] %>" rel="apple-touch-icon" type="image/png" />
+    <link href="<%= manifest['styles.css'] %>" type="text/css" rel="stylesheet" media="all" />
+    <link href="<%= manifest['assets/favicon32x32.png'] %>" rel="shortcut icon" type="image/png" />
+    <link
+      href="<%= manifest['assets/apple_icon57x57.png'] %>"
+      rel="apple-touch-icon"
+      type="image/png"
+    />
+    <link
+      href="<%= manifest['assets/apple_icon72x72.png'] %>"
+      rel="apple-touch-icon"
+      type="image/png"
+    />
+    <link
+      href="<%= manifest['assets/apple_icon114x114.png'] %>"
+      rel="apple-touch-icon"
+      type="image/png"
+    />
 
     <style type="text/css">
       @keyframes rotate {
@@ -54,7 +66,7 @@
           </div>
         </div>
       </div>
-      <script src="<%= js %>" type="text/javascript"></script>
+      <script src="<%= manifest['app.js'] %>" type="text/javascript"></script>
     </div>
   </body>
 </html>

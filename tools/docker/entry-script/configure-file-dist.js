@@ -90,8 +90,7 @@ async function createFileDist(env, version, branch) {
   console.log(`Creating file distribution for "${env}"`);
 
   // This directory contains all the files needed to run the app.
-  // It is populated by `gulp build-app`.
-  const BUILD_SRC = P.resolve('./build');
+  const BUILD_SRC = P.resolve('./public');
 
   await copy(P.join(BUILD_SRC, 'app'), targetPath(env, 'app'));
 

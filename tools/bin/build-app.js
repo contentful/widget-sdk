@@ -5,23 +5,30 @@ const fs = require('fs');
 const { sync: rimrafSync } = require('rimraf');
 const { build } = require('../webpack-tasks');
 
-const projectRoot = path.resolve(__dirname, '..', '..');
+const publicDir = path.resolve(__dirname, '..', '..', 'public');
+const publicAppDir = path.resolve(publicDir, 'app');
 
-rimrafSync(path.resolve(projectRoot, 'public'));
-rimrafSync(path.resolve(projectRoot, 'build'));
+rimrafSync(publicDir);
 
 build().then(() => {
-  // Remove any files in public/app that do not end with .js or .css
-  //
-  // We do this to simplify things later -- we can simply copy `public` completely -- and
-  // because our Webpack config also processes images and CSS outside of a JS file. This
-  // creates empty output files, which we don't care about and waste space in a prod Docker
-  // build.
-  fs.readdirSync(path.resolve(projectRoot, 'public', 'app'), { withFileTypes: true }).forEach(
-    file => {
-      if (file.isFile() && !file.name.endsWith('.js') && !file.name.endsWith('.css')) {
-        fs.unlinkSync(path.resolve(projectRoot, 'public', 'app', file.name));
-      }
-    }
+  // Previously, the manifest files existed in `build`, not `build/app`. We can't directly
+  // do this in Webpack as the output of the webpack-manifest-plugin is tied to the `output.path`
+  // of the Webpack config, so we mimic that behavior manually here.
+  fs.renameSync(
+    path.resolve(publicAppDir, 'manifest.json'),
+    path.resolve(publicDir, 'manifest.json')
   );
+
+  // In Webpack 4, empty chunks are emitted, meaning that `favicon-[hash].js` and
+  // `styles-[hash].js` are emitted. We manually remove them here.
+  //
+  // In Webpack 5 this is supposedly fixed, so we can safely remove this code
+  // once we upgrade. Fix PR: https://github.com/webpack/webpack/pull/9040
+  const files = fs.readdirSync(publicAppDir, { withFileTypes: true });
+
+  for (const file of files) {
+    if (file.isFile() && /(favicons|styles)-[0-9a-f]*\.js/.test(file.name)) {
+      fs.unlinkSync(path.resolve(publicAppDir, file.name));
+    }
+  }
 });

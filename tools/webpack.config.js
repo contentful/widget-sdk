@@ -22,6 +22,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserJSPlugin = require('terser-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ManifestPlugin = require('webpack-manifest-plugin');
 
 /**
  * @description webpack's configuration factory
@@ -43,7 +44,7 @@ module.exports = () => {
 
   const appEntry = {
     // Main app bundle, with vendor files such as bcsocket and jquery-shim
-    'app.js': [
+    app: [
       './vendor/jquery-shim.js',
 
       // Custom jQuery UI build: see the file for version and contents
@@ -56,7 +57,7 @@ module.exports = () => {
   const testDepEntry = {
     // Dependency file, generated for tests (systemJs does not handle require statements
     // at all, making some dependency handling particularly challenging)
-    'dependencies.js': ['./build/dependencies-pre.js']
+    dependencies: ['./build/dependencies-pre.js']
   };
 
   return {
@@ -85,7 +86,7 @@ module.exports = () => {
       isTest ? testDepEntry : {}
     ),
     output: {
-      filename: '[name]',
+      filename: isDev ? '[name].js' : '[name]-[contenthash].js',
       path: path.resolve(projectRoot, 'public', 'app'),
       publicPath,
       chunkFilename: isDev ? 'chunk_[name].js' : 'chunk_[name]-[contenthash].js'
@@ -153,13 +154,13 @@ module.exports = () => {
         {
           test: /.(png|jpe?g|gif|eot|ttf|woff|otf|svg)$/i,
           issuer: {
-            exclude: /\.js$/
+            test: /\.css$/
           },
           use: [
             {
               loader: 'file-loader',
               options: {
-                name: '[name]-[contenthash].[ext]',
+                name: isProd ? '[name]-[contenthash].[ext]' : '[name].[ext]',
                 outputPath: function(url) {
                   return `assets/${url}`;
                 }
@@ -183,7 +184,7 @@ module.exports = () => {
             {
               loader: 'file-loader',
               options: {
-                name: '[name]-[contenthash].[ext]',
+                name: isProd ? '[name]-[contenthash].[ext]' : '[name].[ext]',
                 outputPath: function(url) {
                   return `assets/${url}`;
                 }
@@ -215,8 +216,8 @@ module.exports = () => {
         suppressErrors: true
       }),
       new MiniCssExtractPlugin({
-        filename: '[name].css',
-        chunkFilename: '[id].css'
+        filename: isDev ? '[name].css' : '[name]-[contenthash].css',
+        chunkFilename: isDev ? '[id].css' : '[id]-[contenthash].css'
       })
     ]
       .concat(
@@ -242,49 +243,41 @@ module.exports = () => {
                   we can use the `index.html` in a simple lodash template parser
                   script, that doesn't need to have `htmlWebpackPlugin.`
 
-                  This exposes the following keys to index.html:
+                  This exposes to the template a manifest object that contains
+                  the manifested assets listed in the array below. This dramatically
+                  simplifies creating the compiled index.html when creating for
+                  preview/staging/prod.
 
-                  appleIcons: the 3 Apple icons
-                  favicon: the favicon
-                  stylesheet: styles.css
-                  js: app.js
-                  externalConfig: stringified null uiVersion and the development config
-
-                  All above except `externalConfig` are paths to those files (e.g. `/app/styles.css`)
+                  This also exposes the externalConfig, with a `null` uiVersion and the
+                  chosen development config.
                  */
                 templateParameters: compilation => {
                   const stats = compilation.getStats().toJson({
                     assets: true,
-                    all: false,
+                    all: true,
                     cachedAssets: true
                   });
 
-                  const appleIcons = stats.assets
-                    .reduce((acc, asset) => {
-                      if (asset.name.includes('apple_icon')) {
-                        acc.push(asset.name);
-                      }
+                  const manifestedAssets = [
+                    'app.js',
+                    'styles.css',
+                    'assets/favicon32x32.png',
+                    'assets/apple_icon57x57.png',
+                    'assets/apple_icon72x72.png',
+                    'assets/apple_icon114x114.png'
+                  ];
 
-                      return acc;
-                    }, [])
-                    .map(name => `${publicPath}${name}`);
+                  const manifest = manifestedAssets.reduce((acc, asset) => {
+                    acc[asset] = `${publicPath}${
+                      stats.assets.find(real => real.name === asset).name
+                    }`;
 
-                  const favicon = `${publicPath}${
-                    stats.assets.find(asset => asset.name.includes('favicon')).name
-                  }`;
-                  const stylesheet = `${publicPath}${
-                    stats.assets.find(asset => asset.name === 'styles.css').name
-                  }`;
-                  const js = `${publicPath}${
-                    stats.assets.find(asset => asset.name === 'app.js').name
-                  }`;
+                    return acc;
+                  }, {});
 
                   return {
-                    appleIcons,
-                    favicon,
-                    stylesheet,
-                    js,
-                    externalConfig: JSON.stringify({
+                    manifest,
+                    externalConfig: {
                       uiVersion: null,
                       config: JSON.parse(
                         fs
@@ -293,12 +286,13 @@ module.exports = () => {
                           )
                           .toString()
                       )
-                    })
+                    }
                   };
                 }
               })
             ]
-          : []
+          : [],
+        isProd ? [new ManifestPlugin()] : []
       ),
 
     // For development and testing, we're using `cheap-module-source-map` as this allows
@@ -314,7 +308,7 @@ module.exports = () => {
               app: {
                 name: 'main',
                 test: (_, chunks) => {
-                  if (chunks[0] && chunks[0].name === 'app.js') {
+                  if (chunks[0] && chunks[0].name === 'app') {
                     return false;
                   }
 

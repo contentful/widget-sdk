@@ -6,9 +6,7 @@ const U = require('./utils');
 const { render: renderIndexPage } = require('./index-page');
 const { validate: validateConfig } = require('./config-validator');
 
-const MANIFEST_PATHS = ['build/public-manifest.json', 'build/src-manifest.json'];
-
-module.exports.MANIFEST_PATHS = MANIFEST_PATHS;
+const MANIFEST_PATH = 'public/manifest.json';
 
 /**
  * @usage
@@ -35,10 +33,7 @@ module.exports.MANIFEST_PATHS = MANIFEST_PATHS;
  */
 
 module.exports = async function configure(revision, configPath, outPath) {
-  const [manifest, config] = await Promise.all([
-    U.readMergeJSON(MANIFEST_PATHS),
-    U.readJSON(configPath)
-  ]);
+  const [manifest, config] = await Promise.all([U.readJSON(MANIFEST_PATH), U.readJSON(configPath)]);
 
   console.log(`Creating compiled index for "${config.environment}" at ${P.relative('', outPath)}`);
 
