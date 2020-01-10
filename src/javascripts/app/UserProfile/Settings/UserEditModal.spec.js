@@ -241,6 +241,95 @@ describe('UserEditModal', () => {
     await wait();
   });
 
+  it('should show a generic validation message in case of a newly introduced field error type', async () => {
+    const err = makeError([
+      {
+        name: 'new-field-error',
+        path: 'email'
+      }
+    ]);
+
+    updateUserData.mockReset().mockRejectedValueOnce(err);
+    const { queryByTestId } = build();
+
+    const emailField = queryByTestId('email-field');
+    const emailInput = emailField.querySelector('input');
+
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.blur(emailInput);
+
+    const passwordField = queryByTestId('current-password-field');
+    const passwordInput = passwordField.querySelector('input');
+
+    fireEvent.change(passwordInput, { target: { value: 'my-current-password' } });
+
+    fireEvent.click(queryByTestId('confirm-account-data-changes'));
+
+    await wait();
+
+    const validationMessage = getValidationMessage(emailField);
+
+    expect(validationMessage).toEqual('This field is not valid');
+  });
+
+  it('should show an error notification in case of a newly introduced field error', async () => {
+    const err = makeError([
+      {
+        name: 'not-important',
+        path: 'new-field'
+      }
+    ]);
+
+    jest.spyOn(Notification, 'error').mockImplementationOnce(() => {});
+    updateUserData.mockReset().mockRejectedValueOnce(err);
+    const { queryByTestId } = build();
+
+    const lastNameField = queryByTestId('last-name-field');
+    const lastNameInput = lastNameField.querySelector('input');
+
+    fireEvent.change(lastNameInput, { target: { value: 'Schmidt' } });
+    fireEvent.blur(lastNameInput);
+
+    fireEvent.click(queryByTestId('confirm-account-data-changes'));
+
+    await wait();
+
+    expect(Notification.error).toHaveBeenCalled();
+
+    Notification.error.mockRestore();
+  });
+
+  it('should show appropriate email validation message when the provided email is already in use', async () => {
+    const err = makeError([
+      {
+        name: 'taken',
+        path: 'email'
+      }
+    ]);
+
+    updateUserData.mockReset().mockRejectedValueOnce(err);
+    const { queryByTestId } = build();
+
+    const emailField = queryByTestId('email-field');
+    const emailInput = emailField.querySelector('input');
+
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.blur(emailInput);
+
+    const passwordField = queryByTestId('current-password-field');
+    const passwordInput = passwordField.querySelector('input');
+
+    fireEvent.change(passwordInput, { target: { value: 'my-current-password' } });
+
+    fireEvent.click(queryByTestId('confirm-account-data-changes'));
+
+    await wait();
+
+    const validationMessage = getValidationMessage(emailField);
+
+    expect(validationMessage).toEqual('The email you entered is already in use');
+  });
+
   it('should warn if the server returns an error with invalid name for the current_password path', async () => {
     const err = makeError([
       {
