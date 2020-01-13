@@ -19,6 +19,8 @@ import { css } from 'emotion';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes';
 import { getTeams, getCurrentTeam, hasReadOnlyPermission } from 'redux/selectors/teams';
 import { getTeamSpaceMembershipsOfCurrentTeamToDisplay } from 'redux/selectors/teamSpaceMemberships';
+import { get } from 'lodash/fp';
+import getOrgMemberships from 'redux/selectors/getOrgMemberships';
 import getMembershipsOfCurrentTeamToDisplay from 'redux/selectors/teamMemberships/getMembershipsOfCurrentTeamToDisplay';
 import getOrgId from 'redux/selectors/getOrgId';
 import Placeholder from 'app/common/Placeholder';
@@ -122,10 +124,10 @@ const styles = {
 class TeamDetails extends React.Component {
   static propTypes = {
     spaceMembershipsEnabled: PropTypes.bool.isRequired,
-
     emptyTeamMemberships: PropTypes.bool.isRequired,
     emptyTeamSpaceMemberships: PropTypes.bool.isRequired,
     readOnlyPermission: PropTypes.bool.isRequired,
+    noOrgMembersLeft: PropTypes.bool.isRequired,
     team: TeamPropType,
     orgId: PropTypes.string.isRequired,
     removeTeam: PropTypes.func.isRequired
@@ -191,6 +193,39 @@ class TeamDetails extends React.Component {
       !showingForm &&
       ((selectedTab === this.tabs.teamMembers && emptyTeamMemberships) ||
         (selectedTab === this.tabs.spaceMemberships && emptyTeamSpaceMemberships))
+    );
+  }
+
+  getAddButton() {
+    const { readOnlyPermission, noOrgMembersLeft } = this.props;
+
+    if (readOnlyPermission) {
+      return (
+        <Tooltip
+          testId="read-only-tooltip"
+          place="left"
+          content="You don't have permission to change this team">
+          <AddButton disabled label={this.state.selectedTab.actionLabel} />
+        </Tooltip>
+      );
+    }
+
+    if (noOrgMembersLeft) {
+      return (
+        <Tooltip
+          testId="no-members-left-tooltip"
+          place="left"
+          content="All organization members are already in this team">
+          <AddButton disabled label={this.state.selectedTab.actionLabel} />
+        </Tooltip>
+      );
+    }
+
+    return (
+      <AddButton
+        onClick={() => this.setState({ showingForm: true })}
+        label={this.state.selectedTab.actionLabel}
+      />
     );
   }
 
@@ -290,21 +325,7 @@ class TeamDetails extends React.Component {
                   {!this.props.spaceMembershipsEnabled && (
                     <Heading element="h2">Team members</Heading>
                   )}
-                  {!showingForm &&
-                    !this.isListEmpty() &&
-                    (readOnlyPermission ? (
-                      <Tooltip
-                        testId="read-only-tooltip"
-                        place="left"
-                        content="You don't have permission to change this team">
-                        <AddButton disabled label={this.state.selectedTab.actionLabel} />
-                      </Tooltip>
-                    ) : (
-                      <AddButton
-                        onClick={() => this.setState({ showingForm: true })}
-                        label={this.state.selectedTab.actionLabel}
-                      />
-                    ))}
+                  {!showingForm && !this.isListEmpty() && this.getAddButton()}
                 </header>
 
                 {Object.entries(this.tabs).map(
@@ -365,13 +386,26 @@ class TeamDetails extends React.Component {
   }
 }
 
+function getAvailableOrgMemberships(state) {
+  const teamMemberships = getMembershipsOfCurrentTeamToDisplay(state);
+  const unavailableOrgMemberships = teamMemberships.map(get('sys.organizationMembership.sys.id'));
+  const orgMemberships = getOrgMemberships(state);
+  if (!orgMemberships) {
+    return [];
+  }
+  return Object.values(orgMemberships).filter(
+    ({ sys: { id } }) => !unavailableOrgMemberships.includes(id)
+  );
+}
+
 export default connect(
   state => ({
     team: getTeams(state)[getCurrentTeam(state)],
     orgId: getOrgId(state),
     readOnlyPermission: hasReadOnlyPermission(state),
     emptyTeamMemberships: getMembershipsOfCurrentTeamToDisplay(state).length === 0,
-    emptyTeamSpaceMemberships: getTeamSpaceMembershipsOfCurrentTeamToDisplay(state).length === 0
+    emptyTeamSpaceMemberships: getTeamSpaceMembershipsOfCurrentTeamToDisplay(state).length === 0,
+    noOrgMembersLeft: getAvailableOrgMemberships(state).length === 0
   }),
   dispatch => ({
     removeTeam: teamId => dispatch({ type: 'REMOVE_TEAM', payload: { teamId } })
