@@ -38,7 +38,9 @@ class TeamMembershipRow extends React.Component {
     return (
       <TableRow className="membership-list__item">
         <TableCell>
-          <TextLink href={this.getLinkToUserByOrganizationMembership(organizationMembership)}>
+          <TextLink
+            testId="user-text-link"
+            href={this.getLinkToUserByOrganizationMembership(organizationMembership)}>
             <UserCard testId="user-card" user={user} />
           </TextLink>
         </TableCell>
