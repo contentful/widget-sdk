@@ -1,8 +1,6 @@
-const path = require('path');
 const gulp = require('gulp');
 const rev = require('gulp-rev');
 
-const streamUtils = require('../../lib/stream-utils');
 const { changeBase, writeFile } = require('../helpers');
 
 function copyChunks() {
@@ -11,22 +9,6 @@ function copyChunks() {
   return gulp
     .src(files, { base: 'public' })
     .pipe(changeBase('build'))
-    .pipe(writeFile());
-}
-
-function createMainCss() {
-  return gulp
-    .src(['public/app/styles.css'])
-    .pipe(
-      streamUtils.map(file => {
-        const base = path.resolve('build');
-        const filePath = path.join(base, 'app', 'main.css');
-
-        file.base = base;
-        file.path = filePath;
-        return file;
-      })
-    )
     .pipe(writeFile());
 }
 
@@ -85,6 +67,5 @@ function copyAssets() {
 module.exports = gulp.parallel(
   processStaticPublic,
   copyChunks,
-  createMainCss,
   gulp.series(moveSrcImages, processSrcImages, copyAssets)
 );
