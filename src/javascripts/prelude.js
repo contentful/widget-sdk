@@ -1,20 +1,5 @@
-/**
- * This file defines the System.register function that is used to
- * register ES6 modules.
- *
- * We also declare all the legacy Angular modules and provide their
- * configuration.
- */
-
 'use strict';
 
-/*
-  This defines the types that are required for sharejs/client
-
-  This used to be built by the gulp task, which processed a superset
-  of these files through Babel and concatenated them. This accomplishes
-  the same thing, but using webpack directly.
- */
 import text from '@contentful/sharejs/lib/types/text';
 import '@contentful/sharejs/lib/types/text-api';
 import json from '@contentful/sharejs/lib/types/json';

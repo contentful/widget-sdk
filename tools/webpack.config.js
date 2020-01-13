@@ -1,25 +1,13 @@
-/**
- * @description This is a webpack configuration to process _most_ of the JS files.
- * For example, `templates.js` is created by gulp.
- *
- * Because of the way our legacy Karma tests are setup, using SystemJS, we can
- * currently only import JS and JSON files, but the rest must be processed in
- * another way, either via Gulp (like Jade templates), or by using a loader
- * and writing a new loader for SystemJS. In theory it would work, but dragons
- * are there.
- *
- * Hence, styles and templates (written using Jade/Pug) use gulp for processing.
- * However, you can still use custom loader, just avoid requiring non-js files
- * in generic files (otherwise some tests can file).
- */
-
 const webpack = require('webpack');
 const path = require('path');
+const fs = require('fs');
 const { createBabelOptions } = require('./app-babel-options');
 const WebpackRequireFrom = require('webpack-require-from');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserJSPlugin = require('terser-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ManifestPlugin = require('webpack-manifest-plugin');
 
 /**
  * @description webpack's configuration factory
@@ -34,12 +22,14 @@ module.exports = () => {
   const isDev = /^(dev|development)$/.test(currentEnv) || !currentEnv;
   const isProd = currentEnv === 'production';
   const isTest = currentEnv === 'test';
-
+  const configName = process.env.UI_CONFIG || 'development';
   const projectRoot = path.resolve(__dirname, '..');
+
+  const publicPath = '/app/';
 
   const appEntry = {
     // Main app bundle, with vendor files such as bcsocket and jquery-shim
-    'app.js': [
+    app: [
       './vendor/jquery-shim.js',
 
       // Custom jQuery UI build: see the file for version and contents
@@ -52,7 +42,7 @@ module.exports = () => {
   const testDepEntry = {
     // Dependency file, generated for tests (systemJs does not handle require statements
     // at all, making some dependency handling particularly challenging)
-    'dependencies.js': ['./build/dependencies-pre.js']
+    dependencies: ['./build/dependencies-pre.js']
   };
 
   return {
@@ -69,16 +59,22 @@ module.exports = () => {
           './node_modules/@contentful/forma-36-react-components/dist/styles.css',
           './node_modules/@contentful/forma-36-fcss/dist/styles.css',
           './src/stylesheets/legacy-styles.css'
+        ],
+        favicons: [
+          './src/images/favicons/favicon32x32.png',
+          './src/images/favicons/apple_icon57x57.png',
+          './src/images/favicons/apple_icon72x72.png',
+          './src/images/favicons/apple_icon114x114.png'
         ]
       },
       !isTest ? appEntry : {},
       isTest ? testDepEntry : {}
     ),
     output: {
-      filename: '[name]',
+      filename: isProd ? '[name]-[contenthash].js' : '[name].js',
       path: path.resolve(projectRoot, 'public', 'app'),
-      publicPath: '/app/',
-      chunkFilename: isDev ? 'chunk_[name].js' : 'chunk_[name]-[contenthash].js'
+      publicPath,
+      chunkFilename: isProd ? 'chunk_[name]-[contenthash].js' : 'chunk_[name].js'
     },
     mode: isProd ? 'production' : 'development',
     resolve: {
@@ -109,6 +105,9 @@ module.exports = () => {
         {
           // All HTML files
           test: /\.html$/,
+          issuer: {
+            test: /\.js$/
+          },
           use: [
             {
               loader: 'html-loader',
@@ -134,7 +133,7 @@ module.exports = () => {
             }
           ]
         },
-        // All image files from any CSS file.
+        // All image files from any non-JS file that are not favicons, see below.
         //
         // These image files are put into build/app directly
         {
@@ -146,7 +145,31 @@ module.exports = () => {
             {
               loader: 'file-loader',
               options: {
-                name: '[name]-[contenthash].[ext]',
+                name: isProd ? '[name]-[contenthash].[ext]' : '[name].[ext]',
+                outputPath: function(url) {
+                  return `assets/${url}`;
+                }
+              }
+            }
+          ]
+        },
+        // This block handles favicons specifically.
+        //
+        // There is a quirk in Webpack that if you give an issuer
+        // block, assets loaded via an entrypoint directly don't get
+        // handled properly. This means that because we load the
+        // favicons above (~L76) in an entrypoint directly, they are
+        // not picked up by the previous loader for PNGs.
+        //
+        // Since the test for this is very granular, it picks only the favicons
+        // up.
+        {
+          test: /favicons\/.*\.png$/i,
+          use: [
+            {
+              loader: 'file-loader',
+              options: {
+                name: isProd ? '[name]-[contenthash].[ext]' : '[name].[ext]',
                 outputPath: function(url) {
                   return `assets/${url}`;
                 }
@@ -178,8 +201,8 @@ module.exports = () => {
         suppressErrors: true
       }),
       new MiniCssExtractPlugin({
-        filename: '[name].css',
-        chunkFilename: '[id].css'
+        filename: isProd ? '[name]-[contenthash].css' : '[name].css',
+        chunkFilename: isProd ? '[id]-[contenthash].css' : '[id].css'
       })
     ]
       .concat(
@@ -196,9 +219,65 @@ module.exports = () => {
                 modules: true,
                 modulesCount: 1500,
                 profile: true
+              }),
+              new HtmlWebpackPlugin({
+                template: 'index.html',
+                inject: false,
+                /*
+                  We generate the template parameters manually below so that
+                  we can use the `index.html` in a simple lodash template parser
+                  script, that doesn't need to have `htmlWebpackPlugin.`
+
+                  This exposes to the template a manifest object that contains
+                  the manifested assets listed in the array below. This dramatically
+                  simplifies creating the compiled index.html when creating for
+                  preview/staging/prod.
+
+                  This also exposes the externalConfig, with a `null` uiVersion and the
+                  chosen development config.
+                 */
+                templateParameters: compilation => {
+                  const stats = compilation.getStats().toJson({
+                    assets: true,
+                    all: true,
+                    cachedAssets: true
+                  });
+
+                  const manifestedAssets = [
+                    'app.js',
+                    'styles.css',
+                    'assets/favicon32x32.png',
+                    'assets/apple_icon57x57.png',
+                    'assets/apple_icon72x72.png',
+                    'assets/apple_icon114x114.png'
+                  ];
+
+                  const manifest = manifestedAssets.reduce((acc, asset) => {
+                    acc[asset] = `${publicPath}${
+                      stats.assets.find(real => real.name === asset).name
+                    }`;
+
+                    return acc;
+                  }, {});
+
+                  return {
+                    manifest,
+                    externalConfig: {
+                      uiVersion: null,
+                      config: JSON.parse(
+                        fs
+                          .readFileSync(
+                            path.resolve(__dirname, '..', 'config', `${configName}.json`)
+                          )
+                          .toString()
+                      )
+                    }
+                  };
+                }
               })
             ]
-          : []
+          : [],
+        isProd ? [new ManifestPlugin()] : []
       ),
 
     // For development and testing, we're using `cheap-module-source-map` as this allows
@@ -214,7 +293,7 @@ module.exports = () => {
               app: {
                 name: 'main',
                 test: (_, chunks) => {
-                  if (chunks[0] && chunks[0].name === 'app.js') {
+                  if (chunks[0] && chunks[0].name === 'app') {
                     return false;
                   }
 

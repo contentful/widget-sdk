@@ -26,7 +26,7 @@ Testing and creating a deployable distribution happens in a docker container
 based on the `contentful/user-interface-ci` image.
 
 The image is built from `Dockerfile-ci` by running `bin/docker-build-ci`. It
-installs all source code dependencies and builds the app using `gulp build`. The
+installs all source code dependencies and builds the app using webpack. The
 image contains all fingerprinted assets in the `/app/build` directory. This
 serves as a base to configure the `index.html` file and create the
 distributions.

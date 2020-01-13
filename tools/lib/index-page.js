@@ -1,5 +1,7 @@
-const { h, doctype } = require('./hyperscript');
-const { create: createResolver } = require('./manifest-resolver');
+const fs = require('fs');
+const path = require('path');
+const _ = require('lodash');
+const { minify } = require('html-minifier');
 
 /**
  * @usage
@@ -25,175 +27,18 @@ const { create: createResolver } = require('./manifest-resolver');
  * @param {function} manifest
  */
 module.exports.render = function render(uiVersion, config, manifest) {
-  const resolve = createResolver(manifest, '/app');
-  return renderPage(uiVersion, config, resolve);
-};
+  const templatePath = path.resolve(__dirname, '..', '..', 'index.html');
+  const template = fs.readFileSync(templatePath).toString();
 
-/**
- * @usage
- * var htmlString = render(config)
- *
- * @description
- * Similar to `render` but prepares an index that is used in development.
- *
- * In particular
- * - No resolution of assets through the manifest is done. The links
- *   are used as-is.
- * - No version and manifest are exposed to the application.
- * - Instead of the '/app/application.min.js' main script multiple
- *   separate scripts are loaded. (See `DEV_ENTRY_SCRIPTS` above).
- */
-module.exports.renderDev = function renderDev(config) {
-  const resolve = path => `/app/${path}`;
-  return renderPage(null, config, resolve);
-};
-
-function renderPage(...args) {
-  return doctype + indexPage(...args);
-}
-
-function indexPage(uiVersion, config, resolve) {
-  return h('html', [
-    h('head', [
-      h('meta', { charset: 'UTF-8' }),
-      h('meta', { httpEquiv: 'x-ua-compatible', content: 'ID=edge' }),
-      configMetaTag(uiVersion, config),
-      h('title', ['Contentful']),
-      stylesheet(resolve('styles.css')),
-      iconLink('shortcut icon', resolve('assets/favicon32x32.png')),
-      iconLink('apple-touch-icon', resolve('assets/apple_icon57x57.png')),
-      iconLink('apple-touch-icon', resolve('assets/apple_icon72x72.png')),
-      iconLink('apple-touch-icon', resolve('assets/apple_icon114x114.png'))
-    ]),
-    // We inline this style so it is immediately available no page
-    // load. Otherwise the loader animation from below will not work.
-    h('style', [
-      `@keyframes rotate {
-        from { transform: rotate(0deg) }
-        to { transform: rotate(360deg) }
-      }`
-    ]),
-    h(
-      'body',
-      {
-        tabindex: '0',
-        ngApp: 'contentful/app',
-        ngCsp: 'no-inline-style;no-unsafe-eval',
-        ngController: 'ClientController'
-      },
-      [
-        h('.client', [
-          h('cf-app-container.app-container', {
-            ngIf: 'user && appReady'
-          }),
-          h('div', { ngIf: '!user || !appReady' }, [appLoader()])
-        ]),
-        scriptTag(resolve('app.js'))
-      ]
-    )
-  ]);
-}
-
-/**
- * Show an animated Contentful log with the text 'Loading Contentful'.
- *
- * The element is positioned absolutely and covers its whole container.
- * The loader is centered within this element.
- */
-function appLoader() {
-  return h(
-    'div',
-    {
-      style: {
-        position: 'absolute',
-        top: '0',
-        right: '0',
-        bottom: '0',
-        left: '0',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center'
-      }
-    },
-    [
-      h(
-        'svg',
-        {
-          width: '60',
-          height: '60',
-          style: {
-            transform: 'rotate(-45deg)'
-          }
-        },
-        [
-          loaderSegment('M10,30 a20,20 0 0,0 20,20', '0', '#e0534e'),
-          loaderSegment('M30,10 a20,20 0 0,0 -20,20', '0.3s', '#faec28'),
-          loaderSegment('M50,30 a20,20 0 0,0 -20,-20', '.15s', '#56aed2')
-        ]
-      ),
-      h(
-        'div',
-        {
-          style: {
-            // Font size should be the same as for the other page loaders
-            // in the app.
-            fontSize: '2em',
-            marginTop: '0.9em',
-            // better horizontal visual balance because of the hanging
-            // ellipsis
-            marginLeft: '28px'
-          }
-        },
-        ['Loading Contentful…']
-      )
-    ]
-  );
-}
-
-/**
- * One arc segment of the Contentful logo.
- */
-function loaderSegment(path, delay, color) {
-  return h('path', {
-    d: path,
-    style: {
-      strokeWidth: '11px',
-      stroke: color,
-      strokeLinecap: 'round',
-      fill: 'transparent',
-      mixBlendMode: 'darken',
-      animation: 'rotate 2s infinite cubic-bezier(0.6, 0.03, 0.15, 1)',
-      transformOrigin: '30px 30px',
-      animationDelay: delay
+  const compiled = _.template(template)({
+    manifest,
+    externalConfig: {
+      uiVersion,
+      config
     }
   });
-}
 
-function configMetaTag(uiVersion, config) {
-  return h('meta', {
-    name: 'external-config',
-    content: JSON.stringify({ uiVersion, config })
+  return minify(compiled, {
+    collapseWhitespace: true
   });
-}
-
-function stylesheet(href) {
-  return h('link', {
-    href: href,
-    media: 'all',
-    rel: 'stylesheet',
-    type: 'text/css'
-  });
-}
-
-function iconLink(rel, href) {
-  return h('link', {
-    href: href,
-    rel: rel,
-    type: 'image/png'
-  });
-}
-
-function scriptTag(src) {
-  return h('script', { src, type: 'text/javascript' });
-}
+};
