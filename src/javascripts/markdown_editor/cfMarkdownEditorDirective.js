@@ -5,6 +5,8 @@ import throttle from 'lodash/throttle';
 import * as K from 'utils/kefir';
 import * as LazyLoader from 'utils/LazyLoader';
 import { detect as detectBrowser } from 'detect-browser';
+import { getVariation } from 'LaunchDarkly';
+import { BREAK_IE11 } from 'featureFlags';
 
 import TheLocaleStore from 'services/localeStore';
 import { trackMarkdownEditorAction } from 'analytics/MarkdownEditorActions';
@@ -30,7 +32,8 @@ const styles = {
 export default function register() {
   registerDirective('cfMarkdownEditor', [
     '$timeout',
-    $timeout => {
+    'spaceContext',
+    ($timeout, spaceContext) => {
       const EDITOR_DIRECTIONS = {
         LTR: 'ltr',
         RTL: 'rtl'
@@ -49,8 +52,16 @@ export default function register() {
           let editor = null;
           let childEditor = null;
 
+          // Markdown editor should't work in IE11
           if (browserIsIE11()) {
-            throw new Error('Markdown editor does not work in IE11');
+            getVariation(BREAK_IE11, {
+              organizationId: spaceContext.getData('organization.sys.id'),
+              spaceId: spaceContext.space.getId()
+            }).then(enabled => {
+              if (enabled) {
+                scope.hasCrashed = true;
+              }
+            });
           }
 
           // eslint-disable-next-line
