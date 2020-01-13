@@ -1,8 +1,12 @@
+import { Notification as Notifier } from '@contentful/forma-36-react-components';
 import { get, identity } from 'lodash';
 import resolveResponse from 'contentful-resolve-response';
 
-const MARKETPLACE_SPACE_TOKEN = 'XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk';
-const MARKETPLACE_SPACE_BASE_URL = `https://cdn.contentful.com/spaces/lpjm8d10rkpy`;
+const MARKETPLACE_SPACE_CDN_TOKEN = 'XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk';
+const MARKETPLACE_SPACE_PREVIEW_BASE_URL = 'https://preview.contentful.com/spaces/lpjm8d10rkpy';
+const MARKETPLACE_SPACE_CDN_BASE_URL = 'https://cdn.contentful.com/spaces/lpjm8d10rkpy';
+
+const { MARKETPLACE_SPACE_TOKEN, MARKETPLACE_SPACE_BASE_URL } = getMarketplaceSpaceUrlAndToken();
 const MARKETPLACE_LISTING_QUERY = '/entries?include=10&sys.id[in]=2fPbSMx3baxlwZoCyXC7F1';
 
 // Cache globally (across all spaces and environments).
@@ -16,9 +20,22 @@ export async function fetchMarketplaceApps() {
     return marketplaceAppsCache;
   }
 
-  const res = await window.fetch(MARKETPLACE_SPACE_BASE_URL + MARKETPLACE_LISTING_QUERY, {
+  let res = await window.fetch(MARKETPLACE_SPACE_BASE_URL + MARKETPLACE_LISTING_QUERY, {
     headers: { Authorization: `Bearer ${MARKETPLACE_SPACE_TOKEN}` }
   });
+
+  const isTryingToFetchMarketplacePreview = MARKETPLACE_SPACE_TOKEN !== MARKETPLACE_SPACE_CDN_TOKEN;
+  if (isTryingToFetchMarketplacePreview) {
+    if (res.ok) {
+      Notifier.success('You are temporarily viewing the apps listing in preview mode.');
+    } else {
+      // If the user was trying to fetch the marketplace listing
+      // from the Preview API with an invalid token, fall back to CDN API.
+      res = await window.fetch(MARKETPLACE_SPACE_CDN_BASE_URL + MARKETPLACE_LISTING_QUERY, {
+        headers: { Authorization: `Bearer ${MARKETPLACE_SPACE_CDN_TOKEN}` }
+      });
+    }
+  }
 
   const [listingEntry] = resolveResponse(res.ok ? await res.json() : {});
 
@@ -55,4 +72,30 @@ function createAppObject(entry) {
     tagLine: get(entry, ['fields', 'tagLine'], ''),
     actionList: get(entry, ['fields', 'uninstallMessages'], []).map(msg => msg.fields)
   };
+}
+
+function getMarketplaceSpaceUrlAndToken() {
+  const previewToken = parsePreviewToken();
+  const isInPreviewMode = !!previewToken;
+
+  return {
+    MARKETPLACE_SPACE_TOKEN: isInPreviewMode ? previewToken : MARKETPLACE_SPACE_CDN_TOKEN,
+    MARKETPLACE_SPACE_BASE_URL: isInPreviewMode
+      ? MARKETPLACE_SPACE_PREVIEW_BASE_URL
+      : MARKETPLACE_SPACE_CDN_BASE_URL
+  };
+}
+
+function parsePreviewToken() {
+  const PREVIEW_TOKEN_PARAM = 'preview_token';
+  const urlParams = new URLSearchParams(window.location.search);
+  const previewToken = urlParams.get(PREVIEW_TOKEN_PARAM);
+  const targetURI = new URL(window.location.href);
+  targetURI.searchParams.delete('preview_token');
+
+  if (previewToken) {
+    window.history.replaceState({}, document.title, targetURI.pathname);
+  }
+
+  return previewToken;
 }
