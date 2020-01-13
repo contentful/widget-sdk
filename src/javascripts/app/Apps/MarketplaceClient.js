@@ -1,6 +1,7 @@
 import { Notification as Notifier } from '@contentful/forma-36-react-components';
-import { get, identity } from 'lodash';
+import { get, omit, identity } from 'lodash';
 import resolveResponse from 'contentful-resolve-response';
+import qs from 'qs';
 
 const MARKETPLACE_SPACE_CDN_TOKEN = 'XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk';
 const MARKETPLACE_SPACE_PREVIEW_BASE_URL = 'https://preview.contentful.com/spaces/lpjm8d10rkpy';
@@ -87,14 +88,13 @@ function getMarketplaceSpaceUrlAndToken() {
 }
 
 function parsePreviewToken() {
-  const PREVIEW_TOKEN_PARAM = 'preview_token';
-  const urlParams = new URLSearchParams(window.location.search);
-  const previewToken = urlParams.get(PREVIEW_TOKEN_PARAM);
-  const targetURI = new URL(window.location.href);
-  targetURI.searchParams.delete('preview_token');
+  const queryString = qs.parse(window.location.search, { ignoreQueryPrefix: true });
+  const previewToken = get(queryString, ['preview_token'], '');
 
   if (previewToken) {
-    window.history.replaceState({}, document.title, targetURI.pathname);
+    const restOfQueryString = qs.stringify(omit(queryString, ['preview_token']));
+    const targetState = `${window.location.pathname}?${restOfQueryString}`;
+    window.history.replaceState({}, document.title, targetState);
   }
 
   return previewToken;
