@@ -4,6 +4,7 @@ import _ from 'lodash';
 import throttle from 'lodash/throttle';
 import * as K from 'utils/kefir';
 import * as LazyLoader from 'utils/LazyLoader';
+import { detect as detectBrowser } from 'detect-browser';
 
 import TheLocaleStore from 'services/localeStore';
 import { trackMarkdownEditorAction } from 'analytics/MarkdownEditorActions';
@@ -15,6 +16,10 @@ import { Button, Tooltip, Icon } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 
 import markdownEditorTemplate from './templates/cf_markdown_editor.html';
+
+function browserIsIE11() {
+  return detectBrowser().name === 'ie';
+}
 
 const styles = {
   buttonIcon: css({
@@ -43,6 +48,10 @@ export default function register() {
           let currentMode = 'md';
           let editor = null;
           let childEditor = null;
+
+          if (browserIsIE11()) {
+            throw new Error('Markdown editor does not work in IE11');
+          }
 
           // eslint-disable-next-line
           scope.tooltipComponent = ({ isDisabled, isActive }) => (
