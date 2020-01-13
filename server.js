@@ -15,7 +15,7 @@ const config = createWebpackConfig();
 async function waitForIndex() {
   try {
     fs.readFileSync(P.resolve(publicDir, 'app', 'index.html'));
-  } catch {
+  } catch (e) {
     await new Promise(resolve => setTimeout(resolve, 10));
 
     return waitForIndex();
