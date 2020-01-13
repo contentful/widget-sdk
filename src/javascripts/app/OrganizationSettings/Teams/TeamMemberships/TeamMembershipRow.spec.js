@@ -91,9 +91,25 @@ describe('TeamMembershipRow', () => {
               sys: { id: 'testUser1' }
             },
             createdAt: '2019-01-25T10:33:15Z',
-            createdBy: { firstName: 'test', lastName: 'User2', sys: { id: 'testUser2' } }
+            createdBy: { firstName: 'test', lastName: 'User2', sys: { id: 'testUser2' } },
+            organizationMembership: {
+              sys: {
+                id: 'testOrgMembership'
+              }
+            }
           }
         };
+      });
+
+      it('should have no link to user details', () => {
+        const { wrapper } = renderComponent(actions, membership);
+        expect(wrapper.find(TextLink).filter({ testId: 'user-text-link' })).toHaveLength(0);
+        expect(
+          wrapper
+            .find(UserCard)
+            .filter({ testId: 'user-card' })
+            .props()
+        ).toHaveProperty('user', membership.sys.user);
       });
 
       it('should have no remove button', () => {

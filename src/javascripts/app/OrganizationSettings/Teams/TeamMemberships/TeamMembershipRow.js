@@ -38,11 +38,15 @@ class TeamMembershipRow extends React.Component {
     return (
       <TableRow className="membership-list__item">
         <TableCell>
-          <TextLink
-            testId="user-text-link"
-            href={this.getLinkToUserByOrganizationMembership(organizationMembership)}>
+          {readOnlyPermission ? (
             <UserCard testId="user-card" user={user} />
-          </TextLink>
+          ) : (
+            <TextLink
+              testId="user-text-link"
+              href={this.getLinkToUserByOrganizationMembership(organizationMembership)}>
+              <UserCard testId="user-card" user={user} />
+            </TextLink>
+          )}
         </TableCell>
         <TableCell testId="created-at-cell">{moment(createdAt).format('MMMM DD, YYYY')}</TableCell>
         {!readOnlyPermission && (
