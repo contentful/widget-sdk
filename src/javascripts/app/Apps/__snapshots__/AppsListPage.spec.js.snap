@@ -129,7 +129,8 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
                     share your feedback
                   </span>
                 </button>
-                 about apps.
+                 
+                about apps.
               </div>
             </div>
           </div>
@@ -502,7 +503,8 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
                     share your feedback
                   </span>
                 </button>
-                 about apps.
+                 
+                about apps.
               </div>
             </div>
           </div>

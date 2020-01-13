@@ -13,10 +13,6 @@ import {
   IconButton
 } from '@contentful/forma-36-react-components';
 import _ from 'lodash';
-import { Provider } from 'react-redux';
-import store from 'redux/store';
-
-import FeedbackButton from 'app/common/FeedbackButton';
 
 const styles = {
   commandPanel: css({
@@ -281,15 +277,6 @@ export class CommandPanel extends React.Component {
         <Instruction>↑ ↓ to navigate</Instruction>
         <Instruction>↵ to confirm</Instruction>
         <Instruction>esc to close</Instruction>
-
-        <Provider store={store}>
-          <FeedbackButton
-            store={store}
-            target="authoring"
-            about="Richtext Commands"
-            label="Send feedback"
-          />
-        </Provider>
       </span>
       {this.props.isUpdating && (
         <span className={styles.loader}>
@@ -315,6 +302,7 @@ export class CommandPanel extends React.Component {
     return (
       <div className={classNames}>
         {this.renderNavigationBar()}
+        {/* eslint-disable-next-line rulesdir/restrict-non-f36-components */}
         <ul className={styles.commandPanelList} data-test-id={testId}>
           {isLoading ? this.renderSkeleton() : this.renderGroups()}
         </ul>

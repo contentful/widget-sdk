@@ -4,18 +4,6 @@ import * as Intercom from 'services/intercom';
 const PREFIX = 'environment_aliases:';
 const track = (e, data) => analyticsTrack(`${PREFIX}${e}`, data);
 
-export function customAliasFeedbackStart(data) {
-  track('custom_alias_feedback_start', data);
-}
-
-export function customAliasFeedbackComplete(data) {
-  track('custom_alias_feedback_complete', data);
-}
-
-export function customAliasFeedbackAbort(data) {
-  track('custom_alias_feedback_abort', data);
-}
-
 export function optInStart(data) {
   track('opt_in_start', data);
 }

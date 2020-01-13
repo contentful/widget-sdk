@@ -1,81 +1,62 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { get } from 'lodash';
-import { TextLink, Button } from '@contentful/forma-36-react-components';
-
+import { Notification, TextLink } from '@contentful/forma-36-react-components';
 import ModalLauncher from 'app/common/ModalLauncher';
-import getOrgId from 'redux/selectors/getOrgId';
-import { getCurrentUser } from 'redux/selectors/users';
-import { getCurrentTeam } from 'redux/selectors/teams';
-
 import FeedbackDialog from './FeedbackDialog';
+import createMicroBackendsClient from 'MicroBackendsClient';
+import { getModule } from 'NgRegistry';
 
-class FeedbackButton extends Component {
+export default class FeedbackButton extends Component {
   static propTypes = {
     about: PropTypes.string.isRequired,
     target: PropTypes.string.isRequired,
-    type: PropTypes.string,
-    label: PropTypes.string,
-
-    onFeedbackConfirmed: PropTypes.func.isRequired,
-    onClick: PropTypes.func,
-    onConfirm: PropTypes.func,
-    onCancel: PropTypes.func,
-    organizationId: PropTypes.string,
-    userId: PropTypes.string,
-    teamId: PropTypes.string
+    label: PropTypes.string
   };
 
   onClick = async () => {
-    const { about, onFeedbackConfirmed, onClick, onConfirm, onCancel } = this.props;
-    if (onClick) onClick(this.state);
+    const { about, target } = this.props;
+
     const { feedback, canBeContacted } = await ModalLauncher.open(({ isShown, onClose }) => (
       <FeedbackDialog
-        key={Date.now()}
+        key={`${Date.now()}`}
         about={about}
         isShown={isShown}
-        onCancel={() => {
-          onClose(false);
-          if (onCancel) onCancel(this.state);
-        }}
+        onCancel={() => onClose(false)}
         onConfirm={onClose}
       />
     ));
 
     if (feedback) {
-      onFeedbackConfirmed(feedback, canBeContacted);
-      if (onConfirm) onConfirm(this.state);
+      this.send({ about, target, feedback, canBeContacted });
+    }
+  };
+
+  send = async ({ about, target, feedback, canBeContacted }) => {
+    const client = createMicroBackendsClient({ backendName: 'feedback' });
+
+    const userData = {};
+    if (canBeContacted) {
+      const spaceContext = getModule('spaceContext');
+      Object.assign(userData, {
+        userId: spaceContext.user.sys.id,
+        orgId: spaceContext.organization.sys.id
+      });
+    }
+
+    const res = await client.call('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ about, target, feedback, ...userData })
+    });
+
+    if (res.ok) {
+      Notification.success('Thank you for your feedback!');
+    } else {
+      Notification.error("We couldn't send your feedback. Please try again.");
     }
   };
 
   render() {
-    const label = this.props.label || 'Give feedback';
-
-    if (this.props.type === 'Button') {
-      return (
-        <Button buttonType="muted" onClick={this.onClick}>
-          {label}
-        </Button>
-      );
-    } else {
-      return <TextLink onClick={this.onClick}>{label}</TextLink>;
-    }
+    return <TextLink onClick={this.onClick}>{this.props.label || 'Give feedback'}</TextLink>;
   }
 }
-
-export default connect(
-  state => ({
-    organizationId: getOrgId(state),
-    userId: get(getCurrentUser(state), 'sys.id'),
-    teamId: getCurrentTeam(state)
-  }),
-  (dispatch, { about, target }) => ({
-    onFeedbackConfirmed: (feedback, canBeContacted) =>
-      dispatch({
-        type: 'SEND_FEEDBACK',
-        payload: { feedback, canBeContacted },
-        meta: { about, target }
-      })
-  })
-)(FeedbackButton);

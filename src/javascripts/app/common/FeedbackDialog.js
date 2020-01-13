@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { set } from 'lodash/fp';
 import {
   ModalConfirm,
   TextField,
@@ -19,14 +18,12 @@ export default class FeedbackDialog extends Component {
   };
 
   state = {
-    accepted: false,
+    canBeContacted: false,
     feedback: ''
   };
 
-  setAccepted = value => () => this.setState(set('accepted', value));
-
   render() {
-    const { accepted, feedback } = this.state;
+    const { canBeContacted, feedback } = this.state;
     const { about, isShown, onConfirm, onCancel } = this.props;
 
     return (
@@ -35,7 +32,7 @@ export default class FeedbackDialog extends Component {
         confirmLabel="Send feedback"
         intent="positive"
         isShown={isShown}
-        onConfirm={() => onConfirm({ canBeContacted: accepted, feedback })}
+        onConfirm={() => onConfirm({ canBeContacted, feedback })}
         isConfirmDisabled={feedback.length < 1}
         onCancel={onCancel}
         allowHeightOverflow>
@@ -59,18 +56,18 @@ export default class FeedbackDialog extends Component {
             <RadioButtonField
               labelText="Make it anonymous"
               helpText="Your contact information won't be included in the feedback"
-              name="decline"
-              checked={!accepted}
-              onChange={this.setAccepted(false)}
-              id="decline"
+              checked={!canBeContacted}
+              onChange={() => this.setState({ canBeContacted: false })}
+              name="anonymous"
+              id="anonymous"
             />
             <RadioButtonField
               labelText="Include my contact information in the feedback"
               helpText="We might reach out with some additional questions"
-              name="accept"
-              checked={accepted}
-              onChange={this.setAccepted(true)}
-              id="accept"
+              checked={canBeContacted}
+              onChange={() => this.setState({ canBeContacted: true })}
+              name="can-be-contacted"
+              id="can-be-contacted"
             />
           </FieldGroup>
         </Form>

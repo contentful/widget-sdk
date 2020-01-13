@@ -21,15 +21,14 @@ import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import Icon from 'ui/Components/Icon';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import ModalLauncher from 'app/common/ModalLauncher';
-import FeedbackDialog from 'app/common/FeedbackDialog';
 import StateRedirect from 'app/common/StateRedirect';
+import FeedbackButton from 'app/common/FeedbackButton';
 
 import { websiteUrl } from 'Config';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 
 import AppListItem from './AppListItem';
 import AppDetailsModal from './AppDetailsModal';
-import createMicroBackendsClient from 'MicroBackendsClient';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
 
 const styles = {
@@ -69,41 +68,6 @@ const openDetailModal = app => {
   ModalLauncher.open(({ isShown, onClose }) => (
     <AppDetailsModal isShown={isShown} onClose={onClose} app={app} />
   ));
-};
-
-const openFeedback = async ({ organizationId, userId }) => {
-  const { feedback, canBeContacted } = await ModalLauncher.open(({ isShown, onClose }) => (
-    <FeedbackDialog
-      key={Date.now()}
-      about="Apps"
-      isShown={isShown}
-      onCancel={() => onClose(false)}
-      onConfirm={onClose}
-    />
-  ));
-
-  if (feedback) {
-    const client = createMicroBackendsClient({ backendName: 'feedback' });
-
-    const res = await client.call('/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        feedback: `Beta apps feedback:\n${feedback}`,
-        about: 'Apps',
-        target: 'extensibility',
-        canBeContacted,
-        // add contact details only if user agreed to be contacted
-        ...(canBeContacted ? { organizationId, userId } : {})
-      })
-    });
-
-    if (res.ok) {
-      Notification.success('Thank you for your feedback!');
-    } else {
-      Notification.error("We couldn't send your feedback. Please try again.");
-    }
-  }
 };
 
 const Header = () => <Heading>Apps</Heading>;
@@ -158,8 +122,8 @@ const AppsListShell = props => (
             rel="noopener noreferrer">
             build an app
           </TextLink>
-          , or <TextLink onClick={() => openFeedback(props)}>share your feedback</TextLink> about
-          apps.
+          , or <FeedbackButton target="extensibility" about="Apps" label="share your feedback" />{' '}
+          about apps.
         </Note>
       )}
       <Card padding="large" className={styles.appListCard}>
