@@ -22,7 +22,6 @@ import Icon from 'ui/Components/Icon';
 import TeamDialog from './TeamDialog';
 import TeamListRow from './TeamListRow';
 import TeamsEmptyState from './TeamsEmptyState';
-import ExperimentalFeatureNote from './ExperimentalFeatureNote';
 
 const styles = {
   section: css({
@@ -104,7 +103,6 @@ class TeamList extends React.Component {
           }
         />
         <Workbench.Content type="default">
-          <ExperimentalFeatureNote />
           <section className={styles.section}>
             {teams.length > 0 && (
               <Table testId="teams-table" className={styles.table}>

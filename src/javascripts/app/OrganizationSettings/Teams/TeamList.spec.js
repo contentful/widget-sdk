@@ -12,7 +12,6 @@ import TeamsEmptyState from './TeamsEmptyState';
 import TeamList from './TeamList';
 import TeamListRow from './TeamListRow';
 import TeamDialog from './TeamDialog';
-import ExperimentalFeatureNote from './ExperimentalFeatureNote';
 
 const renderComponent = actions => {
   const store = createStore(reducer);
@@ -103,11 +102,6 @@ describe('TeamList', () => {
               }
             }
           });
-        });
-
-        it('should render experimental feature note', () => {
-          const { wrapper } = renderComponent(actions);
-          expect(wrapper.find(ExperimentalFeatureNote)).toHaveLength(1);
         });
 
         it('should render teams as rows, sorted by name', () => {

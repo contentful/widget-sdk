@@ -29,7 +29,6 @@ import TeamsEmptyStateImage from 'svg/add-user-illustration.svg';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import ROUTES from 'redux/routes';
 
-import ExperimentalFeatureNote from './ExperimentalFeatureNote';
 import TeamMemberships from './TeamMemberships/TeamMemberships';
 import TeamSpaceMemberships from './TeamSpaceMemberships/TeamSpaceMemberships';
 import TeamDialog from './TeamDialog';
@@ -80,9 +79,6 @@ const DeleteButton = ({ onClick }) => (
 DeleteButton.propTypes = { onClick: PropTypes.func };
 
 const styles = {
-  note: css({
-    marginLeft: tokens.spacingXl
-  }),
   tabs: css({
     display: 'flex',
     justifyContent: 'space-between',
@@ -245,9 +241,6 @@ class TeamDetails extends React.Component {
           title="Teams"
         />
         <Workbench.Content>
-          <div className={styles.note}>
-            <ExperimentalFeatureNote />
-          </div>
           {team && (
             <div className={styles.details} data-test-id="team-details">
               <div className={styles.sidebar}>
