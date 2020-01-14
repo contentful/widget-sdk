@@ -44,6 +44,7 @@ export default function register() {
               buildTemplate,
               renderFieldEditor,
               descriptor,
+              renderWhen,
               parameters
             }
           } = scope;
@@ -66,41 +67,59 @@ export default function register() {
             });
           }
 
-          if (problem) {
-            scope.props = { message: problem };
-            trackLinksRendered();
-            renderTemplate(`<react-component name="widgets/WidgetRenderWarning" props="props" />`);
-          } else if ([NAMESPACE_EXTENSION, NAMESPACE_APP].includes(widgetNamespace)) {
-            trackLinksRendered();
-            renderExtension();
-          } else if (widgetNamespace === NAMESPACE_BUILTIN && template) {
-            handleWidgetLinkRenderEvents();
-            renderTemplate(template);
-          } else if (widgetNamespace === NAMESPACE_BUILTIN && buildTemplate) {
-            if (!widgetApi) {
-              throw new Error('widgetApi is unavailable in this context.');
-            }
-            handleWidgetLinkRenderEvents();
-            const jsxTemplate = buildTemplate({
-              widgetApi,
-              loadEvents: loadEvents || newNoopLoadEvents()
+          if (renderWhen) {
+            renderWhen().then(config => {
+              renderEditorialComponent(config);
             });
-            renderJsxTemplate(
-              <WidgetAPIContext.Provider value={{ widgetApi }}>
-                {jsxTemplate}
-              </WidgetAPIContext.Provider>
-            );
-          } else if (widgetNamespace === NAMESPACE_BUILTIN && renderFieldEditor) {
-            renderJsxTemplate(
-              renderFieldEditor({
-                widgetApi: createNewWidgetApi({
-                  $scope: scope
-                })
-              })
-            );
-            handleWidgetLinkRenderEvents();
           } else {
-            throw new Error('Builtin widget template or a valid UI Extension is required.');
+            renderEditorialComponent({ problem, template, buildTemplate, renderFieldEditor });
+          }
+
+          function renderEditorialComponent({
+            problem,
+            template,
+            buildTemplate,
+            renderFieldEditor
+          }) {
+            if (problem) {
+              scope.props = { message: problem };
+              trackLinksRendered();
+              renderTemplate(
+                `<react-component name="widgets/WidgetRenderWarning" props="props" />`
+              );
+            } else if ([NAMESPACE_EXTENSION, NAMESPACE_APP].includes(widgetNamespace)) {
+              trackLinksRendered();
+              renderExtension();
+            } else if (widgetNamespace === NAMESPACE_BUILTIN && template) {
+              handleWidgetLinkRenderEvents();
+              renderTemplate(template);
+            } else if (widgetNamespace === NAMESPACE_BUILTIN && buildTemplate) {
+              if (!widgetApi) {
+                throw new Error('widgetApi is unavailable in this context.');
+              }
+              handleWidgetLinkRenderEvents();
+              const jsxTemplate = buildTemplate({
+                widgetApi,
+                loadEvents: loadEvents || newNoopLoadEvents()
+              });
+              renderJsxTemplate(
+                <WidgetAPIContext.Provider value={{ widgetApi }}>
+                  {jsxTemplate}
+                </WidgetAPIContext.Provider>
+              );
+            } else if (widgetNamespace === NAMESPACE_BUILTIN && renderFieldEditor) {
+              renderJsxTemplate(
+                renderFieldEditor({
+                  widgetApi: createNewWidgetApi({
+                    $scope: scope,
+                    spaceContext
+                  })
+                })
+              );
+              handleWidgetLinkRenderEvents();
+            } else {
+              throw new Error('Builtin widget template or a valid UI Extension is required.');
+            }
           }
 
           function renderExtension() {

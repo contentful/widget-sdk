@@ -63,6 +63,7 @@ function buildOneRenderable(control, widgets) {
       template: descriptor.template,
       buildTemplate: descriptor.buildTemplate,
       renderFieldEditor: descriptor.renderFieldEditor,
+      renderWhen: descriptor.renderWhen,
       isFocusable: !descriptor.notFocusable,
       isBackground: descriptor.isBackground,
       sidebar: !!descriptor.sidebar

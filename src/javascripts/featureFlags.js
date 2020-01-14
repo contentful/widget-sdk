@@ -16,6 +16,7 @@ export const IE11_DEPRECATION_NOTICE = 'feature-pul-11-2019-ie11-notice';
 export const SHOW_2FA_STATUS_FLAG = 'flag-ogg-2019-12-show-2fa-enabled-org-mem';
 
 export const BREAK_IE11 = 'break-ie-11-experience';
+export const NEW_MARKDOWN_EDITOR = 'new-markdown-editor';
 
 // Gatekeeper Product Catalog Flags
 export const ENVIRONMENT_USAGE_ENFORCEMENT = 'environment_usage_enforcements';

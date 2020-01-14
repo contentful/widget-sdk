@@ -30,6 +30,8 @@ describe('BuiltinWidgets', () => {
           expect(descriptor.buildTemplate).toEqual(expect.any(Function));
         } else if (descriptor.renderFieldEditor) {
           expect(descriptor.renderFieldEditor).toEqual(expect.any(Function));
+        } else if (descriptor.renderWhen) {
+          expect(descriptor.renderWhen).toEqual(expect.any(Function));
         } else {
           throw new Error('expect `template`, `buildTemplate` or `renderFieldEditor`');
         }

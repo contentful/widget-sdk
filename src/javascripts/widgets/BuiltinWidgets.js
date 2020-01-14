@@ -4,6 +4,7 @@ import { range } from 'lodash';
 import React from 'react';
 import * as Config from 'Config';
 import { NAMESPACE_BUILTIN } from './WidgetNamespaces';
+import { getModule } from 'NgRegistry';
 
 import { default as RichTextEditor } from 'app/widgets/rich_text';
 import LinkEditor, {
@@ -25,6 +26,10 @@ import { UrlEditor } from '@contentful/field-editor-url';
 import { JsonEditor } from '@contentful/field-editor-json';
 import { LocationEditor } from '@contentful/field-editor-location';
 import { DateEditor } from '@contentful/field-editor-date';
+import { MarkdownEditor, openMarkdownDialog } from '@contentful/field-editor-markdown';
+import { canUploadMultipleAssets } from 'access_control/AccessChecker';
+import { getVariation } from 'LaunchDarkly';
+import { NEW_MARKDOWN_EDITOR } from 'featureFlags';
 
 const CfLinkEditor = linkEditorWithCfWebApp(LinkEditor);
 const CfSingleLinkEditor = linkEditorWithCfWebApp(SingleLinkEditor);
@@ -89,7 +94,36 @@ export function create() {
     fieldTypes: ['Text'],
     name: 'Markdown',
     icon: 'markdown',
-    template: '<cf-markdown-editor />'
+    renderWhen: () => {
+      const spaceContext = getModule('spaceContext');
+      return getVariation(NEW_MARKDOWN_EDITOR, {
+        organizationId: spaceContext.getData('organization.sys.id'),
+        spaceId: spaceContext.space.getId()
+      }).then(enabled => {
+        if (enabled) {
+          return {
+            renderFieldEditor: ({ widgetApi }) => {
+              const sdk = Object.assign({}, widgetApi);
+              sdk.dialogs.openExtension = openMarkdownDialog(sdk);
+
+              return (
+                <MarkdownEditor
+                  sdk={sdk}
+                  parameters={Object.assign({}, widgetApi.parameters, {
+                    instance: {
+                      canUploadAssets: canUploadMultipleAssets()
+                    }
+                  })}
+                />
+              );
+            }
+          };
+        }
+        return {
+          template: '<cf-markdown-editor />'
+        };
+      });
+    }
   });
 
   registerWidget('dropdown', {
