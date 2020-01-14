@@ -2,7 +2,13 @@ import React from 'react';
 import { createStore } from 'redux';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
-import { Button, TableCell, Table, TableHead } from '@contentful/forma-36-react-components';
+import {
+  Button,
+  TableCell,
+  Table,
+  TableHead,
+  TextLink
+} from '@contentful/forma-36-react-components';
 import reducer from 'redux/reducer';
 import UserCard from '../../Users/UserCard';
 import UnknownUser from '../../Users/UserDetail/UnknownUser';
@@ -85,9 +91,25 @@ describe('TeamMembershipRow', () => {
               sys: { id: 'testUser1' }
             },
             createdAt: '2019-01-25T10:33:15Z',
-            createdBy: { firstName: 'test', lastName: 'User2', sys: { id: 'testUser2' } }
+            createdBy: { firstName: 'test', lastName: 'User2', sys: { id: 'testUser2' } },
+            organizationMembership: {
+              sys: {
+                id: 'testOrgMembership'
+              }
+            }
           }
         };
+      });
+
+      it('should have no link to user details', () => {
+        const { wrapper } = renderComponent(actions, membership);
+        expect(wrapper.find(TextLink).filter({ testId: 'user-text-link' })).toHaveLength(0);
+        expect(
+          wrapper
+            .find(UserCard)
+            .filter({ testId: 'user-card' })
+            .props()
+        ).toHaveProperty('user', membership.sys.user);
       });
 
       it('should have no remove button', () => {
@@ -146,6 +168,38 @@ describe('TeamMembershipRow', () => {
         });
       });
 
+      describe('membership with no organizationMembership', () => {
+        beforeEach(() => {
+          membership = {
+            admin: false,
+            sys: {
+              id: 'membership1',
+              user: {
+                avatarUrl: 'test.com/avatar2',
+                email: 'user1@test.com',
+                sys: { id: 'testUser1' }
+              }
+            }
+          };
+        });
+
+        it('should render membership details with no user link', () => {
+          const { wrapper } = renderComponent(actions, membership);
+          expect(
+            wrapper
+              .find(TextLink)
+              .filter({ testId: 'user-text-link' })
+              .props()
+          ).toHaveProperty('href', '');
+          expect(
+            wrapper
+              .find(UserCard)
+              .filter({ testId: 'user-card' })
+              .props()
+          ).toHaveProperty('user', membership.sys.user);
+        });
+      });
+
       describe('membership with known creator', () => {
         beforeEach(() => {
           membership = {
@@ -158,7 +212,12 @@ describe('TeamMembershipRow', () => {
                 sys: { id: 'testUser1' }
               },
               createdAt: '2019-01-25T10:33:15Z',
-              createdBy: { firstName: 'test', lastName: 'User2', sys: { id: 'testUser2' } }
+              createdBy: { firstName: 'test', lastName: 'User2', sys: { id: 'testUser2' } },
+              organizationMembership: {
+                sys: {
+                  id: 'testOrgMembership'
+                }
+              }
             }
           };
         });
@@ -172,6 +231,12 @@ describe('TeamMembershipRow', () => {
               .filter({ testId: 'created-at-cell' })
               .text()
           ).toEqual('January 25, 2019');
+          expect(
+            wrapper
+              .find(TextLink)
+              .filter({ testId: 'user-text-link' })
+              .props()
+          ).toHaveProperty('href', 'account.organizations.users.detail?userId=testOrgMembership');
           expect(
             wrapper
               .find(UserCard)

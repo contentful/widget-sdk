@@ -2,11 +2,21 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import { css } from 'emotion';
 import UserCard from 'app/OrganizationSettings/Users/UserCard';
 import { getUserName } from 'app/OrganizationSettings/Users/UserUtils';
 import { hasReadOnlyPermission } from 'redux/selectors/teams';
 import { TeamMembership as TeamMembershipPropType } from 'app/OrganizationSettings/PropTypes';
-import { TableCell, TableRow, Button } from '@contentful/forma-36-react-components';
+import { TableCell, TableRow, Button, TextLink } from '@contentful/forma-36-react-components';
+import { href } from 'states/Navigator';
+
+const styles = {
+  userLink: css({
+    ':link': {
+      textDecoration: 'none'
+    }
+  })
+};
 
 class TeamMembershipRow extends React.Component {
   static propTypes = {
@@ -16,16 +26,37 @@ class TeamMembershipRow extends React.Component {
     removeMembership: PropTypes.func.isRequired
   };
 
+  getLinkToUserByOrganizationMembership(membership) {
+    if (!membership) {
+      return '';
+    }
+    return href({
+      path: ['account', 'organizations', 'users', 'detail'],
+      params: {
+        userId: membership.sys.id
+      }
+    });
+  }
+
   render() {
     const { removeMembership, readOnlyPermission } = this.props;
     const {
-      sys: { user, createdAt, createdBy }
+      sys: { organizationMembership, user, createdAt, createdBy }
     } = this.props.membership;
 
     return (
       <TableRow className="membership-list__item">
         <TableCell>
-          <UserCard testId="user-card" user={user} />
+          {readOnlyPermission ? (
+            <UserCard testId="user-card" user={user} />
+          ) : (
+            <TextLink
+              testId="user-text-link"
+              href={this.getLinkToUserByOrganizationMembership(organizationMembership)}
+              className={styles.userLink}>
+              <UserCard testId="user-card" user={user} />
+            </TextLink>
+          )}
         </TableCell>
         <TableCell testId="created-at-cell">{moment(createdAt).format('MMMM DD, YYYY')}</TableCell>
         {!readOnlyPermission && (
