@@ -133,6 +133,9 @@ const styles = {
   */
   bulkActionsRow: css({
     top: '22px !important'
+  }),
+  statusTableHeader: css({
+    zIndex: tokens.zIndexDefault
   })
 };
 
@@ -486,7 +489,7 @@ export default function EntryList({
               </SortableTableCell>
             );
           })}
-          <TableCell testId="status" className={styles.mediumCell}>
+          <TableCell testId="status" className={cn(styles.mediumCell, styles.statusTableHeader)}>
             <span className={cn(styles.flexCenter, styles.justifySpaceBetween)}>
               Status
               <ViewCustomizer

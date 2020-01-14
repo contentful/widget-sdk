@@ -145,7 +145,6 @@ describe('FetchEntity', () => {
         entityTitle: 'TITLE',
         entityDescription: 'DESCRIPTION',
         entityStatus: 'draft',
-        statusIcon: '',
         entityFile: undefined,
         requestStatus: RequestStatus.Pending
       });
@@ -158,7 +157,6 @@ describe('FetchEntity', () => {
         entityTitle: 'TITLE',
         entityDescription: 'DESCRIPTION',
         entityStatus: 'draft',
-        statusIcon: '',
         entityFile: 'FILE',
         requestStatus: RequestStatus.Success
       });

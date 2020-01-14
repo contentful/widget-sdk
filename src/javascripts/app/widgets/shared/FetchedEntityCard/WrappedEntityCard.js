@@ -16,7 +16,7 @@ const styles = {
   })
 };
 
-const IconWrappedIntoScheduledTooltip = memo(({ statusIcon, referencedEntityId }) => {
+const IconWrappedIntoScheduledTooltip = memo(({ referencedEntityId }) => {
   const { widgetAPI } = useContext(WidgetApiContext);
 
   const jobs = widgetAPI.jobs
@@ -26,13 +26,12 @@ const IconWrappedIntoScheduledTooltip = memo(({ statusIcon, referencedEntityId }
 
   return (
     <SheduleTooltip job={jobs[0]} jobsCount={jobs.length}>
-      <Icon icon={statusIcon} className={styles.marginRightXS} size="small" color="muted" />
+      <Icon icon="Clock" className={styles.marginRightXS} size="small" color="muted" />
     </SheduleTooltip>
   );
 });
 
 IconWrappedIntoScheduledTooltip.propTypes = {
-  statusIcon: PropTypes.string.isRequired,
   referencedEntityId: PropTypes.string
 };
 
@@ -55,7 +54,6 @@ export default class WrappedEntityCard extends React.Component {
     entityFile: PropTypes.object,
     entityTitle: PropTypes.string,
     entityStatus: PropTypes.string,
-    statusIcon: PropTypes.string,
     href: PropTypes.string,
     isLoading: PropTypes.bool,
     className: PropTypes.string,
@@ -98,7 +96,6 @@ export default class WrappedEntityCard extends React.Component {
       size,
       selected,
       entityStatus,
-      statusIcon,
       isLoading,
       onClick,
       href,
@@ -120,7 +117,6 @@ export default class WrappedEntityCard extends React.Component {
         status={entityStatus}
         statusIcon={
           <IconWrappedIntoScheduledTooltip
-            statusIcon={statusIcon}
             referencedEntityId={_.get(entity, 'sys.id', undefined)}
           />
         }
