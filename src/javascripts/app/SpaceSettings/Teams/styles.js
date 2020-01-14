@@ -1,6 +1,5 @@
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import ellipsisStyle from 'ellipsisStyle';
 
 export default {
   content: css({
@@ -22,7 +21,8 @@ export default {
     fontWeight: tokens.fontWeightMedium,
     color: tokens.colorTextDark,
     whiteSpace: 'nowrap',
-    ...ellipsisStyle
+    overflowX: 'hidden',
+    textOverflow: 'ellipsis'
   }),
   teamDescriptionCell: css({
     overflow: 'hidden',
@@ -42,8 +42,7 @@ export default {
   }),
   rolesCell: css({
     overflowX: 'hidden',
-    textOverflow: 'ellipsis',
-    lineHeight: '1.2em'
+    textOverflow: 'ellipsis'
   }),
   roleEditorButton: css({
     minWidth: '300px',

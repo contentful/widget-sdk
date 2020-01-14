@@ -1,5 +1,5 @@
 import React from 'react';
-import { cleanup, render, fireEvent, getByTestId } from '@testing-library/react';
+import { cleanup, within, render, fireEvent, getByTestId } from '@testing-library/react';
 import { Table, TableBody } from '@contentful/forma-36-react-components';
 import '@testing-library/jest-dom/extend-expect';
 import { noop } from 'lodash';
@@ -27,8 +27,6 @@ const build = props =>
             teamSpaceMemberships: [],
             spaceMemberships: [],
             availableRoles: [],
-            menuIsOpen: false,
-            setMenuOpen: noop,
             isEditing: false,
             setEditing: noop,
             onUpdateTeamSpaceMembership,
@@ -82,10 +80,10 @@ describe('MembershipRow', () => {
     });
 
     it('should open / close menu', async () => {
-      expect(
-        await build({ menuIsOpen: false }).queryByTestId('change-role')
-      ).not.toBeInTheDocument();
-      expect(await build({ menuIsOpen: true }).queryByTestId('change-role')).toBeInTheDocument();
+      const { queryByTestId, getByTestId } = build();
+      expect(queryByTestId('change-role')).not.toBeInTheDocument();
+      fireEvent.click(within(queryByTestId('row-menu')).queryByTestId('cf-ui-icon-button'));
+      expect(await getByTestId('change-role')).toBeInTheDocument();
     });
 
     it('should enter / exit edit mode', async () => {
@@ -119,7 +117,9 @@ describe('MembershipRow', () => {
     });
 
     it('should delete with confirmation prompt', async () => {
-      const { findByTestId } = build({ menuIsOpen: true });
+      const { findByTestId, queryByTestId } = build();
+
+      fireEvent.click(within(queryByTestId('row-menu')).queryByTestId('cf-ui-icon-button'));
       fireEvent.click(
         getByTestId(await findByTestId('remove-team'), 'cf-ui-dropdown-list-item-button')
       );
@@ -132,6 +132,13 @@ describe('MembershipRow', () => {
     });
 
     it('should delete with admin loss confirmation prompt', async () => {
+      // suppress jsdom console error
+      delete window.location;
+
+      window.location = {
+        replace: jest.fn()
+      };
+
       const lastMembership = {
         admin: true,
         sys: {
@@ -142,12 +149,13 @@ describe('MembershipRow', () => {
           id: 'lastAdminId'
         }
       };
-      const { findByTestId } = build({
-        menuIsOpen: true,
+
+      const { findByTestId, queryByTestId } = build({
         currentUserAdminSpaceMemberships: [lastMembership],
         teamSpaceMembership: lastMembership
       });
 
+      fireEvent.click(within(queryByTestId('row-menu')).queryByTestId('cf-ui-icon-button'));
       fireEvent.click(
         getByTestId(await findByTestId('remove-team'), 'cf-ui-dropdown-list-item-button')
       );

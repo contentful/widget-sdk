@@ -164,7 +164,7 @@ describe('SpaceTeamsPage', () => {
 
       const rows = getAllByTestId('membership-row');
       expect(rows).toHaveLength(2);
-      expect(getAllByTestId('row-menu.action-button')).toHaveLength(2);
+      expect(getAllByTestId('row-menu')).toHaveLength(2);
     });
 
     it('should render cells with team details', () => {
