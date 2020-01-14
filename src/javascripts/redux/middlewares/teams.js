@@ -3,6 +3,8 @@ import { Notification } from '@contentful/forma-36-react-components';
 import createTeamService from 'app/OrganizationSettings/Teams/TeamService';
 import createTeamSpaceMembershipService from 'app/OrganizationSettings/Teams/TeamSpaceMemberships/TeamSpaceMembershipsService';
 import createTeamMembershipService from 'app/OrganizationSettings/Teams/TeamMemberships/TeamMembershipService';
+import pluralize from 'pluralize';
+import { joinWithAnd } from 'utils/StringUtils';
 import { isTaken } from 'utils/ServerErrorUtils';
 import getOrgMemberships from 'redux/selectors/getOrgMemberships';
 import { createSpaceRoleLinks } from 'access_control/utils';
@@ -166,7 +168,17 @@ export default ({ dispatch, getState }) => next => async action => {
             item: newTeamSpaceMembership
           }
         });
-        Notification.success(`Successfully added ${team.name} to the space ${space.name}`);
+
+        const rolesString = newTeamSpaceMembership.admin
+          ? 'Admin role'
+          : `${joinWithAnd(newTeamSpaceMembership.roles.map(role => role.name))} ${pluralize(
+              'role',
+              newTeamSpaceMembership.roles.length
+            )}`;
+
+        Notification.success(
+          `All members of ${team.name} now have ${rolesString} in space ${space.name}`
+        );
       } catch (e) {
         dispatch({
           type: 'SUBMIT_NEW_TEAM_SPACE_MEMBERSHIP_FAILED',
