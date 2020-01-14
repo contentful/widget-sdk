@@ -95,12 +95,15 @@ module.exports = () => {
         {
           // All JS files
           test: /\.js$/,
-          use: {
-            loader: 'babel-loader',
-            options: createBabelOptions({
-              compact: isProd
-            })
-          }
+          use: [
+            'cache-loader',
+            {
+              loader: 'babel-loader',
+              options: createBabelOptions({
+                compact: isProd
+              })
+            }
+          ]
         },
         {
           // All HTML files
