@@ -177,7 +177,7 @@ export default ({ dispatch, getState }) => next => async action => {
             )}`;
 
         Notification.success(
-          `All members of ${team.name} now have ${rolesString} in space ${space.name}`
+          `All members of ${team.name} now have the ${rolesString} in the space ${space.name}`
         );
       } catch (e) {
         dispatch({
