@@ -78,6 +78,7 @@ export default class ExtensionAPI {
 
     return {
       extension: getExtensionId(descriptor),
+      ...(descriptor.namespace === NAMESPACE_APP ? { app: descriptor.id } : {}),
       space: spaceId,
       environment: environmentId,
       contentType: get(contentTypeData, ['sys', 'id']),
