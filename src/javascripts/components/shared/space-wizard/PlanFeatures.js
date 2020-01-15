@@ -11,7 +11,7 @@ import { Tooltip } from '@contentful/forma-36-react-components';
 
 export default function PlanFeatures({ resources, roleSet }) {
   return (
-    <ul className="space-plans-list__item__features">
+    <ul className="space-plans-list__item__features" data-test-id="plan-features">
       {resources.map(({ type, number }) => {
         const tooltip =
           type === SpaceResourceTypes.Roles

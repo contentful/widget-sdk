@@ -29,6 +29,7 @@ class EnterpriseSpaceWizard extends React.Component {
         maximum: PropTypes.number.isRequired
       })
     }),
+    isHighDemand: PropTypes.bool.isRequired,
     setNewSpaceName: PropTypes.func.isRequired,
     setNewSpaceTemplate: PropTypes.func.isRequired,
     createSpace: PropTypes.func.isRequired,
@@ -152,9 +153,10 @@ class EnterpriseSpaceWizard extends React.Component {
 
         {!inProgress && (
           <Dialog.Body>
-            <EnterpriseSpaceWizardInfo />
+            {!this.props.isHighDemand && <EnterpriseSpaceWizardInfo />}
             <EnterpriseSpaceWizardPlan
               resources={resources}
+              name={freeSpaceRatePlan.name}
               roleSet={freeSpaceRatePlan.roleSet}
               reachedLimit={reachedLimit}
               usage={usage}

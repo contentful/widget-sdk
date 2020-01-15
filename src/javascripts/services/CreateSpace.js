@@ -7,7 +7,8 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import {
   getSpaceRatePlans,
   isEnterprisePlan,
-  getBasePlan
+  getBasePlan,
+  isHighDemandEnterprisePlan
 } from 'account/pricing/PricingDataProvider';
 import { openModal as showLoading } from 'components/shared/LoadingModal';
 import { getModule } from 'NgRegistry';
@@ -68,6 +69,7 @@ export async function showDialog(organizationId) {
       const modalProps = {
         freeSpaceRatePlan,
         freeSpaceResource,
+        isHighDemand: isHighDemandEnterprisePlan(basePlan),
         organization: {
           sys: organization.sys,
           name: organization.name
