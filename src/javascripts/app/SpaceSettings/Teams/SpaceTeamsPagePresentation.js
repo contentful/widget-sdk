@@ -41,7 +41,6 @@ const SpaceTeamsPagePresentation = ({
   currentUserAdminSpaceMemberships,
   spaceMemberships
 }) => {
-  const [openMenu, setOpenMenu] = useState(null);
   const [editingRow, setEditingRow] = useState(null);
 
   // close editing mode after pending no more
@@ -100,8 +99,6 @@ const SpaceTeamsPagePresentation = ({
                       key={membershipId}
                       {...{
                         readOnly,
-                        setMenuOpen: open => setOpenMenu(open ? membershipId : null),
-                        menuIsOpen: openMenu === membershipId,
                         setEditing: edit => setEditingRow(edit ? membershipId : null),
                         isEditing: editingRow === membershipId,
                         teamSpaceMembership,

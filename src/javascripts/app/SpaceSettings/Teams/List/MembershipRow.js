@@ -45,8 +45,6 @@ const MembershipRow = ({
   teamSpaceMemberships,
   spaceMemberships,
   availableRoles,
-  menuIsOpen,
-  setMenuOpen,
   isEditing,
   setEditing,
   onRemoveTeamSpaceMembership,
@@ -225,14 +223,7 @@ const MembershipRow = ({
             {getRoleNames({ roles, admin })}
           </TableCell>
           <TableCell>
-            {!readOnly && (
-              <RowMenu
-                isOpen={menuIsOpen}
-                setOpen={setMenuOpen}
-                setEditing={setEditing}
-                onRemove={onRemove}
-              />
-            )}
+            {!readOnly && <RowMenu setEditing={setEditing} onRemove={onRemove} />}
           </TableCell>
         </>
       )}
@@ -245,8 +236,6 @@ MembershipRow.propTypes = {
   teamSpaceMemberships: PropTypes.arrayOf(TeamSpaceMembershipPropType).isRequired,
   spaceMemberships: PropTypes.arrayOf(SpaceMembershipPropType).isRequired,
   availableRoles: PropTypes.arrayOf(SpaceRolePropType).isRequired,
-  menuIsOpen: PropTypes.bool.isRequired,
-  setMenuOpen: PropTypes.func.isRequired,
   isEditing: PropTypes.bool.isRequired,
   setEditing: PropTypes.func.isRequired,
   onUpdateTeamSpaceMembership: PropTypes.func.isRequired,
