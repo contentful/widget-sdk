@@ -1,6 +1,11 @@
 <div class="file-info">
   <div class="file-preview" ng-show="file &amp;&amp; !!file.url">
-    <cf-thumbnail file="file" height="250"></cf-thumbnail>
+    <div class="thumbnail-wrapper">
+      <react-component
+        name="components/Thumbnail/Thumbnail"
+        props="{ file: file, height: '250' }"
+      ></react-component>
+    </div>
   </div>
   <div class="file-progress loading-box--stretched" ng-show="imageIsLoading">
     <div class="loading-box__spinner"></div>

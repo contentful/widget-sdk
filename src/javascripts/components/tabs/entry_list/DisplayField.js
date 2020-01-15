@@ -4,10 +4,10 @@ import _ from 'lodash';
 import cn from 'classnames';
 import moment from 'moment';
 
-import AngularComponent from 'ui/Framework/AngularComponent';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
 import UserNameFormatter from 'components/shared/UserNameFormatter/FetchAndFormatUserName';
+import Thumbnail from 'components/Thumbnail/Thumbnail';
 
 import { css } from 'emotion';
 
@@ -199,9 +199,11 @@ export default function DisplayField({ entry, field, entryCache, assetCache }) {
     case 'Asset':
       result = (
         <div className="file-preview linked-assets">
-          <AngularComponent
-            template={'<cf-thumbnail file="file" size="30" fit="thumb" focus="faces" />'}
-            scope={{ file: dataForLinkedAsset(entry, field, assetCache) }}
+          <Thumbnail
+            file={dataForLinkedAsset(entry, field, assetCache)}
+            size="30"
+            fit="thumb"
+            focus="faces"
           />
         </div>
       );
@@ -231,12 +233,7 @@ export default function DisplayField({ entry, field, entryCache, assetCache }) {
                 return (
                   <li key={index}>
                     <div className="file-preview">
-                      <AngularComponent
-                        template={
-                          '<cf-thumbnail file="file" size="30" fit="thumb" focus="faces" />'
-                        }
-                        scope={{ file: entity }}
-                      />
+                      <Thumbnail file={entity} size="30" fit="thumb" focus="faces" />
                     </div>
                   </li>
                 );

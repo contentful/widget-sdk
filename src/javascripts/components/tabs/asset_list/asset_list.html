@@ -178,8 +178,11 @@
                       ng-click="selection.toggle(asset, $event)"
                     /> </label
                   ><a ui-sref="{{linkToAsset}}" ng-click="$event.stopPropagation();">
-                    <cf-thumbnail file="file" size="30" ng-if="file"></cf-thumbnail
-                  ></a>
+                    <react-component
+                      name="components/Thumbnail/Thumbnail"
+                      props="{ file: file, size: '30' }"
+                    ></react-component>
+                  </a>
                 </div>
               </td>
               <td class="x--large-cell" style="cursor: pointer" aria-label="cell-name">

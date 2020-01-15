@@ -82,6 +82,7 @@ import * as HeadingContextMenu from 'markdown_editor/components/HeadingContextMe
 import * as InsertMediaComponent from 'markdown_editor/components/InsertMediaComponent';
 import * as ActionComponent from 'markdown_editor/components/ActionComponent';
 import * as FieldDialogSettingsComponent from 'components/field_dialog/components/FieldDialogSettingsComponent';
+import * as ThumbnailComponent from 'components/Thumbnail/Thumbnail';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -351,7 +352,8 @@ function getModule(name) {
     'markdown_editor/components/HeadingContextMenu': HeadingContextMenu,
     'markdown_editor/components/InsertMediaComponent': InsertMediaComponent,
     'markdown_editor/components/ActionComponent': ActionComponent,
-    'components/field_dialog/components/FieldDialogSettingsComponent': FieldDialogSettingsComponent
+    'components/field_dialog/components/FieldDialogSettingsComponent': FieldDialogSettingsComponent,
+    'components/Thumbnail/Thumbnail': ThumbnailComponent
   };
 
   return get(allowedModules, name, null);

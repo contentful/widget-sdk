@@ -101,7 +101,12 @@ function entityCard() {
             {
               ngIf: 'image'
             },
-            [h('cf-thumbnail', { file: 'image', size: '70', fit: 'thumb' })]
+            [
+              h('react-component', {
+                name: 'components/Thumbnail/Thumbnail',
+                props: "{ file: image, size: '70', fit: 'thumb'}"
+              })
+            ]
           )
         ])
       ]

@@ -12,8 +12,8 @@ import { getModule } from 'NgRegistry';
  *
  * @example
  * <AngularComponent
- *   template={'<cf-thumbnail file="file" size="30" fit="thumb" focus="faces" />'}
- *   scope={{ file }}
+ *   template={'<cf-angular-directive foo="bar" />'}
+ *   scope={{ bar: "something" }}
  * />
  */
 export default class AngularComponent extends React.Component {
