@@ -4,7 +4,6 @@ import * as K from 'utils/kefir';
 import * as Kefir from 'kefir';
 import React from 'react';
 import { Notification } from '@contentful/forma-36-react-components';
-import ReloadNotification from 'app/common/ReloadNotification';
 
 import getAccessibleCTs from 'data/ContentTypeRepo/accessibleCTs';
 import createSearchInput from 'app/ContentList/Search';
@@ -227,7 +226,9 @@ export default function register() {
             }
             return $q.reject(err);
           })
-          .catch(ReloadNotification.apiErrorHandler);
+          .catch(() => {
+            Notification.error('There was a problem searching Contentful.');
+          });
       }
 
       function handleEntriesResponse(entries) {

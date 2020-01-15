@@ -334,12 +334,16 @@ describe('Entry List Controller', () => {
   });
 
   describe('Api Errors', () => {
-    it('shows reload notification on 500 err', function() {
+    it('shows error notification on 500 err', function() {
       spaceContext.space.getEntries.rejects({ statusCode: 500 });
       scope.context.view = {};
       scope.updateEntries();
       scope.$apply();
-      sinon.assert.called(this.stubs.apiErrorHandler);
+      expect(
+        this.ComponentLibrary.Notification.error.calledWith(
+          'There was a problem searching Contentful.'
+        )
+      ).toBe(true);
     });
 
     it('shows error notification on 400 err', function() {
