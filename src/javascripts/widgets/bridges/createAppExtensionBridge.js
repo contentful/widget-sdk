@@ -50,70 +50,79 @@ export default function createAppExtensionBridge(dependencies) {
     api.registerHandler('openDialog', makeExtensionDialogsHandler(dependencies));
     api.registerHandler('notify', makeExtensionNotificationHandlers(dependencies));
     api.registerHandler('navigateToPageExtension', makePageExtensionHandlers(dependencies));
-
-    // TODO: consider `readOnly: true` for "app" location.
-    // Right now we create all the apps but in the future we want to open
-    // the framework. If we do so, we want to prevent apps from messing with
-    // a space before they are installed.
     api.registerHandler('callSpaceMethod', makeExtensionSpaceMethodsHandlers(dependencies));
 
     api.registerHandler('callAppMethod', methodName => {
       const installation = appHookBus.getInstallation();
       const isInstalled = isObject(installation);
 
-      if (methodName === 'isInstalled') {
+      if (methodName === 'setReady') {
+        return appHookBus.emit(APP_EVENTS_IN.MARKED_AS_READY);
+      } else if (methodName === 'isInstalled') {
         return isInstalled;
       } else if (methodName === 'getParameters' && isInstalled) {
         return installation.parameters;
       } else if (methodName === 'getCurrentState' && isInstalled) {
+        // TODO: delete this method when all apps are migrated to use
+        // `sdk.space.getEditorInterfaces()`
         return getCurrentAppState(spaceContext.cma, installation);
-      } else if (methodName === 'setReady') {
-        return appHookBus.emit(APP_EVENTS_IN.MARKED_AS_READY);
       } else {
         return null;
       }
     });
 
-    const preInstallMessage = () => ({
-      stage: STAGE_PRE_INSTALL,
-      installationRequestId: currentInstallationRequestId
-    });
+    const preInstall = () => {
+      if (currentInstallationRequestId) {
+        // Installation in progress already, ignore.
+        return;
+      }
 
-    const postInstallMessage = ok => ({
-      ok,
-      stage: STAGE_POST_INSTALL,
-      installationRequestId: currentInstallationRequestId
-    });
+      currentInstallationRequestId = Random.id();
 
-    const postInstall = ok => {
-      return ({ installationRequestId }) => {
-        if (installationRequestId === currentInstallationRequestId) {
-          api.send('appHook', [postInstallMessage(ok)]);
-          currentInstallationRequestId = null;
-
-          // This is useful because it will ensure that the user will see
-          // any updates made to content types after they navigate away from the app page.
-          spaceContext.publishedCTs.refresh();
+      api.send('appHook', [
+        {
+          stage: STAGE_PRE_INSTALL,
+          installationRequestId: currentInstallationRequestId
         }
-      };
+      ]);
     };
 
-    appHookBus.on(APP_EVENTS_OUT.STARTED, () => {
-      if (!currentInstallationRequestId) {
-        currentInstallationRequestId = Random.id();
-        api.send('appHook', [preInstallMessage()]);
+    const makePostInstall = err => ({ installationRequestId }) => {
+      if (installationRequestId !== currentInstallationRequestId) {
+        // Message coming from a different installation process, ignore.
+        return;
       }
-    });
 
-    appHookBus.on(APP_EVENTS_OUT.FAILED, postInstall(false));
-    appHookBus.on(APP_EVENTS_OUT.SUCCEEDED, postInstall(true));
+      api.send('appHook', [
+        {
+          stage: STAGE_POST_INSTALL,
+          installationRequestId: currentInstallationRequestId,
+          err: err || null
+        }
+      ]);
+
+      currentInstallationRequestId = null;
+
+      // We cache published content types heavily in the Web App.
+      // Refresh the cache since the app could create/update content types.
+      spaceContext.publishedCTs.refresh();
+    };
+
+    appHookBus.on(APP_EVENTS_OUT.STARTED, preInstall);
+    appHookBus.on(APP_EVENTS_OUT.SUCCEEDED, makePostInstall(null));
+    appHookBus.on(
+      APP_EVENTS_OUT.FAILED,
+      makePostInstall({ message: 'Failed to configure the app' })
+    );
 
     api.registerHandler('appHookResult', ({ installationRequestId, stage, result }) => {
       if (installationRequestId !== currentInstallationRequestId) {
+        // Message coming from a different installation process, ignore.
         return;
       }
 
       if (stage !== STAGE_PRE_INSTALL) {
+        // We only handle results of pre install hooks, abort.
         return;
       }
 
