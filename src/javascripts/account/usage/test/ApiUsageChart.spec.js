@@ -172,7 +172,7 @@ describe('ApiUsageChart', () => {
         renderChart()
           .find(LineChart)
           .prop('options')
-          .tooltip.formatter([{ name: 'test-name', value: '2' }])
+          .tooltip.formatter([{ name: 'test-name', value: '2', color: '#000' }])
       ).toContain('<div class="date">test-name</div>');
     });
   });
