@@ -4,30 +4,45 @@ import * as PricingDataProvider from './PricingDataProvider';
 const mockEnterpriseBasePlan = {
   items: [
     {
+      productPlanType: 'base',
       customerType: 'Enterprise'
+    },
+    {
+      productPlanType: 'free_space',
+      name: 'Proof of concept'
     }
   ]
 };
 const mockHighDemandBasePlan = {
   items: [
     {
+      productPlanType: 'base',
       customerType: 'High Demand Enterprise'
+    },
+    {
+      productPlanType: 'free_space',
+      name: 'Performance 1x'
     }
   ]
 };
 const mockSelfServiceBasePlan = {
   items: [
     {
+      productPlanType: 'base',
       customerType: 'Self-service'
+    },
+    {
+      productPlanType: 'free_space',
+      name: 'Free'
     }
   ]
 };
 const mockSpacePlansData = {
   items: [
-    { sys: { id: 'plan1' }, gatekeeperKey: 'space1', name: 'Yellow' },
-    { sys: { id: 'plan2' }, gatekeeperKey: 'space2', name: 'Blue' },
-    { sys: { id: 'plan3' }, gatekeeperKey: 'space3', name: 'Green' },
-    { sys: { id: 'plan4', name: 'Gray' } }
+    { sys: { id: 'plan1' }, planType: 'space', gatekeeperKey: 'space1', name: 'Yellow' },
+    { sys: { id: 'plan2' }, planType: 'space', gatekeeperKey: 'space2', name: 'Blue' },
+    { sys: { id: 'plan3' }, planType: 'space', gatekeeperKey: 'space3', name: 'Green' },
+    { sys: { id: 'plan4', planType: 'space', name: 'Gray' } }
   ]
 };
 const mockSpacesData = [
@@ -54,12 +69,12 @@ describe('account/pricing/PricingDataProvider', () => {
     beforeEach(function() {
       mockEndpoint
         .mockResolvedValueOnce(mockSelfServiceBasePlan)
-        .mockResolvedValueOnce(mockSpacePlansData);
+        .mockResolvedValueOnce(mockSpacePlansData)
+        .mockResolvedValue(mockSpacesData);
     });
 
     it('parses response data and sets spaces and users', async function() {
       const plans = await PricingDataProvider.getPlansWithSpaces(mockEndpoint);
-
       expect(plans.items).toHaveLength(5);
       expectSpacePlan(plans.items[0], 'plan1', 'space1', 'user1@foo.com');
       expectSpacePlan(plans.items[1], 'plan2', 'space2', null);
@@ -119,9 +134,9 @@ describe('account/pricing/PricingDataProvider', () => {
   });
 
   describe('#isHighDemandEnterprisePlan', () => {
-    it('should return true for customer type "High Demand Enterprise"', function() {
+    it('should return true for customer type "Enterprise High Demand"', function() {
       const plan = {
-        customerType: 'High Demand Enterprise'
+        customerType: 'Enterprise High Demand'
       };
 
       expect(PricingDataProvider.isHighDemandEnterprisePlan(plan)).toBe(true);
