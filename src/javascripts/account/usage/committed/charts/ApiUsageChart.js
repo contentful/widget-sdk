@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import { h } from 'utils/legacy-html-hyperscript';
 import { shorten } from 'utils/NumberUtils';
+import { sortBy } from 'lodash';
 
 import { organizationResourceUsagePropType, periodPropType } from '../propTypes';
 import periodToDates from './periodToDates';
@@ -10,7 +11,11 @@ import EmptyChartPlaceholder from './EmptyChartPlaceholder';
 import LineChart from './LineChart';
 
 const seriesLineSymbol = ['circle', 'diamond', 'triangle'];
-const tooltipIcon = ['chart-symbol-circle', 'chart-symbol-diamond', 'chart-symbol-triangle'];
+const tooltipIcons = [
+  { icon: 'chart-symbol-circle' },
+  { icon: 'chart-symbol-diamond' },
+  { icon: 'chart-symbol-triangle' }
+];
 
 export default class ApiUsageChart extends React.Component {
   static propTypes = {
@@ -24,6 +29,12 @@ export default class ApiUsageChart extends React.Component {
   render() {
     const { usage, colors, period, spaceNames, isLoading } = this.props;
     const { startDate, endDate } = period;
+
+    // Corelate Colors with Tooltip Icons
+    colors.forEach((color, idx) => {
+      tooltipIcons[idx]['iconColor'] = color;
+    });
+
     const options = {
       xAxis: {
         data: periodToDates(period)
@@ -63,11 +74,14 @@ export default class ApiUsageChart extends React.Component {
 
 function renderTooltip(series) {
   const tooltipChildren = [h('.date', [series[0].name])];
+  // Show highest value first
+  const sortSeriesByValue = sortBy(series, 'value').reverse();
 
-  series.forEach(({ value }, index) => {
+  sortSeriesByValue.forEach(({ value, color }) => {
+    const tipIcon = tooltipIcons.filter(item => item.iconColor === color);
     tooltipChildren.push(
       h('.value', [
-        h(`span.icon.${tooltipIcon[index]}`),
+        h(`span.icon.${tipIcon[0]['icon']}`),
         h('span', [value.toLocaleString('en-US')])
       ])
     );
