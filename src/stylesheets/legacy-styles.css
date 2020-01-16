@@ -2554,7 +2554,7 @@ pre,
   }
   .users-search__filter-pill {
     background-color: #d3dce0;
-    margin: 0 10px 0 0 !important;
+    margin: 0 0 10px 10px !important;
   }
   .users-search__filter-pill:hover {
     -webkit-box-shadow: none !important;
@@ -2577,7 +2577,7 @@ pre,
     background-color: #c3cfd5;
     background-image: none;
   }
-  .users-search__filter-pill:last-child {
+  .users-search__filter-pill:first-child {
     margin: 0 !important;
   }
   .users-search__filter-pill-label {
@@ -2585,24 +2585,6 @@ pre,
   }
   .users-search__filter-pill-label:hover {
     cursor: default;
-  }
-  .user-list__filters {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-pack: justify;
-    -webkit-box-pack: justify;
-            justify-content: space-between;
-    margin-bottom: 30px;
-  }
-  .user-list__filters__column {
-    -ms-flex-align: center;
-    -webkit-box-align: center;
-            align-items: center;
-    color: #8091a5;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
   }
   .search__filter-pill--active .search__select-value::after {
     color: #fff !important;

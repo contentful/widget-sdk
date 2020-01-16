@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { keyBy, isNil } from 'lodash';
 import { TextLink } from '@contentful/forma-36-react-components';
 import { updateDependentFilterDefs } from './UserListFiltersHelpers';
+import { css } from 'emotion';
 
 import {
   Filter as FilterPropType,
@@ -12,6 +13,31 @@ import {
   SpaceRole as SpaceRolePropType
 } from 'app/OrganizationSettings/PropTypes';
 import SearchFilter from './SearchFilter';
+
+const styles = {
+  header: css({
+    display: 'flex',
+    justifyContent: 'space-between',
+    color: '#8091a5'
+  }),
+  sort: css({
+    display: 'flex',
+    flexGrow: '1',
+    marginBottom: '30px',
+    minWidth: '165px'
+  }),
+  filters: css({
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-end'
+  }),
+  subheader: css({
+    color: '#8091a5',
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: '10px'
+  })
+};
 
 export class UserListFilters extends React.Component {
   static propTypes = {
@@ -49,20 +75,20 @@ export class UserListFilters extends React.Component {
     const showResetButton = this.hasActiveFilters(Object.values(otherFilters));
 
     return (
-      <section className="user-list__filters">
-        <div className="user-list__filters__column">
-          <SearchFilter key={order.id} {...order} onChange={this.updateFilters} />
+      <section>
+        <section className={styles.header}>
+          <section className={styles.sort}>
+            <SearchFilter key={order.id} {...order} onChange={this.updateFilters} />
+          </section>
+          <section className={styles.filters}>
+            {Object.values(otherFilters).map(filter => (
+              <SearchFilter key={filter.id} {...filter} onChange={this.updateFilters} />
+            ))}
+          </section>
+        </section>
+        <section className={styles.subheader}>
           <span>{`${pluralize('users', queryTotal, true)} found`}</span>
-        </div>
-        <section className="user-list__filters__column">
-          {showResetButton && (
-            <TextLink onClick={onReset} className="user-list__reset-button">
-              Clear filters
-            </TextLink>
-          )}
-          {Object.values(otherFilters).map(filter => (
-            <SearchFilter key={filter.id} {...filter} onChange={this.updateFilters} />
-          ))}
+          {showResetButton && <TextLink onClick={onReset}>Clear filters</TextLink>}
         </section>
       </section>
     );

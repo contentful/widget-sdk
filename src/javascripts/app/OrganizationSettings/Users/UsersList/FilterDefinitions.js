@@ -129,7 +129,7 @@ export function generateFilterDefinitions({
     options: [
       { label: 'Any', value: '' },
       { label: 'Active', value: 'active' },
-      { label: 'Pending', value: 'pending' }
+      { label: 'Invited', value: 'pending' }
     ]
   };
 
@@ -180,7 +180,7 @@ export function generateFilterDefinitions({
 
   const definitions = [order, orgRole, space, spaceRole];
   if (hasSsoEnabled) definitions.push(sso);
-  // To be removed after pending memberships great general availability
+  // To be removed after pending memberships reach general availability
   if (hasPendingOrgMembershipsEnabled) definitions.unshift(status);
   if (hasTeamsFeature) definitions.push(team);
 
