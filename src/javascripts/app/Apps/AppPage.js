@@ -17,6 +17,7 @@ import { get } from 'lodash';
 
 import StateRedirect from 'app/common/StateRedirect';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer';
+import { buildAppDefinitionWidget } from 'widgets/WidgetTypes';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import EmptyStateContainer, {
   defaultSVGStyle
@@ -418,21 +419,13 @@ export default class AppRoute extends Component {
   renderContent() {
     const { appDefinition, appLoaded } = this.state;
 
-    // Artifical widget descriptor for rendering `src`
-    // of `AppDefinition` (no widget ID).
-    const descriptor = {
-      id: '__undefined-in-app-location__',
-      appDefinitionId: appDefinition.sys.id,
-      src: appDefinition.src
-    };
-
     return (
       <Workbench.Content
         type="full"
         className={cx(styles.renderer, { [styles.hideRenderer]: !appLoaded })}>
         <ExtensionIFrameRenderer
           bridge={this.props.bridge}
-          descriptor={descriptor}
+          descriptor={buildAppDefinitionWidget(appDefinition)}
           parameters={this.parameters}
           isFullSize
         />

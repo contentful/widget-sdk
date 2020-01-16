@@ -48,3 +48,15 @@ export function buildAppWidget({ id, title, icon, appDefinition, appInstallation
     }
   };
 }
+
+// Artifical widget descriptor for rendering `src`
+// of `AppDefinition` BEFORE it gets installed in a space-env.
+// Used only on the app configuration page.
+export function buildAppDefinitionWidget(appDefinition) {
+  return {
+    namespace: NAMESPACE_APP,
+    id: appDefinition.sys.id,
+    appDefinitionId: appDefinition.sys.id,
+    src: appDefinition.src
+  };
+}
