@@ -83,6 +83,7 @@ import * as InsertMediaComponent from 'markdown_editor/components/InsertMediaCom
 import * as ActionComponent from 'markdown_editor/components/ActionComponent';
 import * as FieldDialogSettingsComponent from 'components/field_dialog/components/FieldDialogSettingsComponent';
 import * as ThumbnailComponent from 'components/Thumbnail/Thumbnail';
+import * as SizeValidation from 'components/field_dialog/validations/SizeValidation';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -353,7 +354,8 @@ function getModule(name) {
     'markdown_editor/components/InsertMediaComponent': InsertMediaComponent,
     'markdown_editor/components/ActionComponent': ActionComponent,
     'components/field_dialog/components/FieldDialogSettingsComponent': FieldDialogSettingsComponent,
-    'components/Thumbnail/Thumbnail': ThumbnailComponent
+    'components/Thumbnail/Thumbnail': ThumbnailComponent,
+    'components/field_dialog/validations/SizeValidation': SizeValidation
   };
 
   return get(allowedModules, name, null);

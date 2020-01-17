@@ -35,6 +35,12 @@ export default function register() {
             $scope.$applyAsync();
           };
 
+          $scope.updateValidationCurrentView = currentView => {
+            $scope.validation.currentView = currentView;
+            $scope.validator.run();
+            $scope.$applyAsync();
+          };
+
           $scope.updateValidationMessageValue = value => {
             $scope.validation.message = value;
             $scope.validator.run();

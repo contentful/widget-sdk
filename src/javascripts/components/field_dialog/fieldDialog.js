@@ -147,6 +147,10 @@ export default function register() {
       $scope.fieldTypeLabel = fieldFactory.getLabel($scope.field);
       $scope.iconId = fieldFactory.getIconId($scope.field) + '-small';
 
+      $scope.validate = () => {
+        $scope.$broadcast('validate');
+      };
+
       dialog.save = () => {
         $scope.$broadcast('validate');
         if (!isValid()) {
