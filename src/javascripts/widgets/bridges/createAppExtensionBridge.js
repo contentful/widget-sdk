@@ -4,7 +4,7 @@ import makeExtensionNotificationHandlers from './makeExtensionNotificationHandle
 import makePageExtensionHandlers from './makePageExtensionHandlers';
 import makeExtensionDialogsHandler from './makeExtensionDialogsHandlers';
 import checkDependencies from './checkDependencies';
-import { LOCATION_APP } from '../WidgetLocations';
+import { LOCATION_APP_CONFIG } from '../WidgetLocations';
 import * as Random from 'utils/Random';
 import TheLocaleStore from 'services/localeStore';
 
@@ -32,7 +32,7 @@ export default function createAppExtensionBridge(dependencies) {
     return {
       spaceId: spaceContext.getId(),
       environmentId: spaceContext.getEnvironmentId(),
-      location: LOCATION_APP,
+      location: LOCATION_APP_CONFIG,
       spaceMember: spaceContext.space.data.spaceMember,
       spaceMembership: spaceContext.space.data.spaceMembership,
       current: null,
