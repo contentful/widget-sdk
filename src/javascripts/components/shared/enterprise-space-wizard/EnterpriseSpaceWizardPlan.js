@@ -11,13 +11,15 @@ export default class EnterpriseSpaceWizardPlan extends React.Component {
     usage: PropTypes.number.isRequired,
     limit: PropTypes.number.isRequired,
     isDisabled: PropTypes.bool.isRequired,
-    reachedLimit: PropTypes.bool.isRequired
+    reachedLimit: PropTypes.bool.isRequired,
+    name: PropTypes.string.isRequired
   };
 
   render() {
-    const { isDisabled, reachedLimit, usage, limit, resources, roleSet } = this.props;
+    const { isDisabled, reachedLimit, usage, limit, resources, roleSet, name } = this.props;
     return (
       <div
+        data-test-id="space-plans-list.item"
         className={`
           space-plans-list__item
           space-plans-list__item--proof-of-concept
@@ -25,7 +27,7 @@ export default class EnterpriseSpaceWizardPlan extends React.Component {
         `}
         style={{ marginBottom: '30px' }}>
         <div className="space-plans-list__item__heading">
-          <strong data-test-id="space-plan-name">Proof of concept</strong>
+          <strong data-test-id="space-plan-name">{name}</strong>
           <span data-test-id="space-plan-price">
             {' '}
             - {isDisabled ? 'unavailable' : `${usage}/${limit} used`}

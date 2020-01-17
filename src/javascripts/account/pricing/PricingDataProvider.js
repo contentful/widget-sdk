@@ -3,9 +3,14 @@ import { getAllSpaces, getUsersByIds } from 'access_control/OrganizationMembersh
 import { SUBSCRIPTIONS_API, getAlphaHeader } from 'alphaHeaders.js';
 const alphaHeader = getAlphaHeader(SUBSCRIPTIONS_API);
 
+const SELF_SERVICE = 'Self-service';
+const ENTERPRISE = 'Enterprise';
+const ENTERPRISE_TRIAL = 'Enterprise Trial';
+const ENTERPRISE_HIGH_DEMAND = 'Enterprise High Demand';
+
 export const customerTypes = {
-  selfService: ['Self-service'],
-  enterprise: ['Enterprise', 'Enterprise Trial']
+  selfService: [SELF_SERVICE],
+  enterprise: [ENTERPRISE, ENTERPRISE_TRIAL, ENTERPRISE_HIGH_DEMAND]
 };
 
 export function isSelfServicePlan(plan) {
@@ -14,6 +19,10 @@ export function isSelfServicePlan(plan) {
 
 export function isEnterprisePlan(plan) {
   return customerTypes.enterprise.includes(plan.customerType);
+}
+
+export function isHighDemandEnterprisePlan(plan) {
+  return plan.customerType === ENTERPRISE_HIGH_DEMAND;
 }
 
 export function isFreeSpacePlan(plan) {
@@ -70,34 +79,39 @@ export function getBasePlan(endpoint) {
  * @param {boolean} is POC enabled
  * @returns {Promise<object[]>} array of subscription plans w. spaces & users
  */
+
 export async function getPlansWithSpaces(endpoint) {
-  const [baseRatePlan, plans, spaces] = await Promise.all([
-    getBaseRatePlan(endpoint),
+  const [ratePlans, subscriptions, spaces] = await Promise.all([
+    getRatePlans(endpoint),
     getSubscriptionPlans(endpoint),
     getAllSpaces(endpoint)
   ]);
 
+  const freeSpaceRatePlan = ratePlans.find(plan => plan.productPlanType === 'free_space');
+  const spaceSubscriptions = subscriptions.items.filter(
+    subscription => subscription.planType === 'space'
+  );
+
+  const freeSpaces = spaces.filter(space => {
+    // find all spaces that don't have a matching subscription.
+    // gatekeeperKey is the space ID
+    return !spaceSubscriptions.some(({ gatekeeperKey }) => space.sys.id === gatekeeperKey);
+  });
+
   const findSpaceByPlan = plan =>
     plan.gatekeeperKey && spaces.find(({ sys }) => sys.id === plan.gatekeeperKey);
-  // Map spaces to space plans, create 'free plan' objects for spaces w/o plans
-  const isFreeSpace = space =>
-    !plans.items.find(({ gatekeeperKey }) => space.sys.id === gatekeeperKey);
-  const freeSpaces = spaces.filter(isFreeSpace);
-  const isEnterprise = baseRatePlan && isEnterprisePlan(baseRatePlan);
 
   const plansWithSpaces = {
-    plans,
+    plans: subscriptions,
     items: [
-      // Space plans from the endpoint
-      ...plans.items.map(plan => ({
+      ...subscriptions.items.map(plan => ({
         ...plan,
         space: findSpaceByPlan(plan)
       })),
-      // 'Free plan' objects for spaces w/o a space plan
       ...freeSpaces.map(space => ({
         sys: { id: uniqueId('free-space-plan-') },
         gatekeeperKey: space.sys.id,
-        name: isEnterprise ? 'Proof of concept' : 'Free',
+        name: freeSpaceRatePlan.name,
         planType: 'free_space',
         space
       }))
@@ -166,7 +180,7 @@ export function getSingleSpacePlan(endpoint, spaceId) {
   }).then(data => data.items[0]);
 }
 
-export function getBaseRatePlan(endpoint) {
+export function getBaseSubscription(endpoint) {
   const query = {
     plan_type: 'base'
   };
@@ -174,7 +188,7 @@ export function getBaseRatePlan(endpoint) {
   return endpoint(
     {
       method: 'GET',
-      path: ['product_rate_plans'],
+      path: ['plans'],
       query
     },
     alphaHeader

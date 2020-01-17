@@ -24,7 +24,7 @@ export default class EnterpriseSpaceWizardInfo extends React.Component {
 
   render() {
     return (
-      <section style={{ marginBottom: '30px' }}>
+      <section style={{ marginBottom: '30px' }} data-test-id="enterprise-space-wizard.info">
         <p className="enterprise-space-wizard__info" style={{ display: 'inline' }}>
           {`Use a proof of concept space to experiment or start new projects. Talk to us when you decide to launch. `}
         </p>
