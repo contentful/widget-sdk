@@ -9,7 +9,6 @@ import * as Random from 'utils/Random';
 import TheLocaleStore from 'services/localeStore';
 
 import { APP_EVENTS_IN, APP_EVENTS_OUT } from 'app/Apps/AppHookBus';
-import getCurrentAppState from 'app/Apps/AppCurrentState';
 
 const STAGE_PRE_INSTALL = 'preInstall';
 const STAGE_POST_INSTALL = 'postInstall';
@@ -62,10 +61,6 @@ export default function createAppExtensionBridge(dependencies) {
         return isInstalled;
       } else if (methodName === 'getParameters' && isInstalled) {
         return installation.parameters;
-      } else if (methodName === 'getCurrentState' && isInstalled) {
-        // TODO: delete this method when all apps are migrated to use
-        // `sdk.space.getEditorInterfaces()`
-        return getCurrentAppState(spaceContext.cma, installation);
       } else {
         return null;
       }
