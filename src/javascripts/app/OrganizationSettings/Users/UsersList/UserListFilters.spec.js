@@ -51,7 +51,7 @@ describe('UserListFilters', () => {
     expect(component.find(TextLink)).toHaveLength(0);
   });
 
-  it('should show the reset button if there are active vilters', () => {
+  it('should show the reset button if there are active filters', () => {
     component.setProps({ filters: activeFilters });
     expect(component.find(TextLink)).toHaveLength(1);
   });
