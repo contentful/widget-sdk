@@ -12,7 +12,9 @@ import {
   TableBody,
   Heading,
   Paragraph,
-  Note
+  Note,
+  SkeletonContainer,
+  SkeletonBodyText
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import EmptyStateContainer, {
@@ -50,7 +52,8 @@ export default class TasksPage extends Component {
   };
 
   state = {
-    tasks: []
+    tasks: [],
+    isLoading: true
   };
 
   componentDidMount = async () => {
@@ -78,7 +81,7 @@ export default class TasksPage extends Component {
       };
       return [...tasks, newTask];
     }, []);
-    this.setState({ tasks: taskState });
+    this.setState({ tasks: taskState, isLoading: false });
   };
 
   getEntryTitles = entries => {
@@ -157,6 +160,44 @@ export default class TasksPage extends Component {
     </Table>
   );
 
+  renderLoadingState = () => (
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableCell className={styles.taskColumn}>Task</TableCell>
+          <TableCell>Created by</TableCell>
+          <TableCell>Assigned at</TableCell>
+          <TableCell className={styles.entryColumn}>Appears in</TableCell>
+        </TableRow>
+      </TableHead>
+
+      <TableBody>
+        <TableRow>
+          <TableCell className={styles.taskColumn}>
+            <SkeletonContainer svgHeight={18}>
+              <SkeletonBodyText numberOfLines={1} />
+            </SkeletonContainer>
+          </TableCell>
+          <TableCell>
+            <SkeletonContainer svgHeight={18}>
+              <SkeletonBodyText numberOfLines={1} />
+            </SkeletonContainer>
+          </TableCell>
+          <TableCell>
+            <SkeletonContainer svgHeight={18}>
+              <SkeletonBodyText numberOfLines={1} />
+            </SkeletonContainer>
+          </TableCell>
+          <TableCell className={styles.entryColumn}>
+            <SkeletonContainer svgHeight={18}>
+              <SkeletonBodyText numberOfLines={1} />
+            </SkeletonContainer>
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  );
+
   render() {
     return (
       <Workbench>
@@ -168,7 +209,11 @@ export default class TasksPage extends Component {
               tasks are resolved.
             </Note>
           )}
-          {this.state.tasks.length ? this.renderTable() : this.renderEmptyState()}
+          {this.state.isLoading
+            ? this.renderLoadingState()
+            : this.state.tasks.length
+            ? this.renderTable()
+            : this.renderEmptyState()}
         </Workbench.Content>
       </Workbench>
     );
