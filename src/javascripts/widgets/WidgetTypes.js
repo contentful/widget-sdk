@@ -32,8 +32,6 @@ export function buildAppWidget({ id, title, icon, appDefinition, appInstallation
     src: appDefinition.src,
     id: appDefinition.sys.id,
     appDefinitionId: appDefinition.sys.id,
-    // TODO: figure out how to get rid of it. See `ExtensionAPI`.
-    legacyAppExtensionWidgetId: appInstallation.sys.widgetId,
     namespace: NAMESPACE_APP,
     name: title,
     fieldTypes: (appDefinition.fieldTypes || []).map(toInternalFieldType),

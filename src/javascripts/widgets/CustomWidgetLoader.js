@@ -53,15 +53,7 @@ export function createCustomWidgetLoader(cma, appsRepo) {
       if (namespace === NAMESPACE_EXTENSION) {
         const ext = extensions.find(ext => get(ext, ['sys', 'id']) === id);
 
-        if (ext) {
-          return buildExtensionWidget(ext);
-        }
-
-        // TODO: Fallback logic below can be removed when we tackle
-        // removal of `legacyAppExtensionWidgetId`.
-        const app = apps.find(app => get(app, ['appInstallation', 'sys', 'widgetId']) === id);
-
-        return app ? buildAppWidget(app) : null;
+        return ext ? buildExtensionWidget(ext) : null;
       }
 
       return null;
