@@ -31,7 +31,7 @@ export default class FieldDialogWidgetsList extends Component {
         <label>Choose how this field should be displayed</label>
         <ul className="field-dialog__widget-list">
           {widgets.map((widget, index) => {
-            const isSameWidget = w => widget.namespace === w.namespace && widget.id === w.id;
+            const isSameWidget = w => w && (widget.namespace === w.namespace && widget.id === w.id);
 
             return (
               <FieldDialogWidgetItem
