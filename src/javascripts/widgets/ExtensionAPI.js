@@ -2,24 +2,12 @@ import { pick, get, difference } from 'lodash';
 import createIDMap from './IDMap';
 import * as PublicContentType from './PublicContentType';
 import * as Analytics from 'analytics/Analytics';
-import { NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 
 const sharedFieldProps = field => ({
   id: field.apiName || field.id,
   required: !!field.required,
   ...pick(field, ['type', 'validations', 'items'])
 });
-
-// In this function we need a legacy Extension ID for an app.
-// This is the last place where we use it.
-// TODO: figure out how to get rid of it.
-const getExtensionId = descriptor => {
-  if (descriptor.namespace === NAMESPACE_APP) {
-    return descriptor.legacyAppExtensionWidgetId;
-  } else {
-    return descriptor.id;
-  }
-};
 
 const REQUIRED_CONFIG_KEYS = [
   'descriptor',
@@ -77,8 +65,9 @@ export default class ExtensionAPI {
     } = this;
 
     return {
-      extension: getExtensionId(descriptor),
-      ...(descriptor.namespace === NAMESPACE_APP ? { app: descriptor.id } : {}),
+      // Results in `{ app: 'some-app-id' }` or `{ extension: 'some-ext-id' }`.
+      [descriptor.namespace]: descriptor.id,
+
       space: spaceId,
       environment: environmentId,
       contentType: get(contentTypeData, ['sys', 'id']),
@@ -177,7 +166,7 @@ export default class ExtensionAPI {
           entryId: this.entryData.sys.id,
           fieldId,
           localeCode,
-          extensionId: getExtensionId(this.descriptor),
+          extensionId: this.descriptor.id,
           appDefinitionId: this.descriptor.appDefinitionId || null
         });
       }
