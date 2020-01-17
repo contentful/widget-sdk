@@ -11,6 +11,7 @@ import LinkEditor, {
   SingleLinkEditor,
   withCfWebApp as linkEditorWithCfWebApp
 } from 'app/widgets/LinkEditor';
+import { Note } from '@contentful/forma-36-react-components';
 import EmbedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
 import { TagsEditor } from '@contentful/field-editor-tags';
 import { SingleLineEditor } from '@contentful/field-editor-single-line';
@@ -29,7 +30,12 @@ import { DateEditor } from '@contentful/field-editor-date';
 import { MarkdownEditor, openMarkdownDialog } from '@contentful/field-editor-markdown';
 import { canUploadMultipleAssets } from 'access_control/AccessChecker';
 import { getVariation } from 'LaunchDarkly';
-import { NEW_MARKDOWN_EDITOR } from 'featureFlags';
+import { detect as detectBrowser } from 'detect-browser';
+import { NEW_MARKDOWN_EDITOR, BREAK_IE11 } from 'featureFlags';
+
+function browserIsIE11() {
+  return detectBrowser().name === 'ie';
+}
 
 const CfLinkEditor = linkEditorWithCfWebApp(LinkEditor);
 const CfSingleLinkEditor = linkEditorWithCfWebApp(SingleLinkEditor);
@@ -94,35 +100,58 @@ export function create() {
     fieldTypes: ['Text'],
     name: 'Markdown',
     icon: 'markdown',
-    renderWhen: () => {
+    renderWhen: async () => {
       const spaceContext = getModule('spaceContext');
-      return getVariation(NEW_MARKDOWN_EDITOR, {
-        organizationId: spaceContext.getData('organization.sys.id'),
-        spaceId: spaceContext.space.getId()
-      }).then(enabled => {
-        if (enabled) {
-          return {
-            renderFieldEditor: ({ widgetApi }) => {
-              const sdk = Object.assign({}, widgetApi);
-              sdk.dialogs.openExtension = openMarkdownDialog(sdk);
 
+      const organizationId = spaceContext.getData('organization.sys.id');
+      const spaceId = spaceContext.space.getId();
+
+      if (browserIsIE11()) {
+        const isBreakIEIntentionally = await getVariation(BREAK_IE11, {
+          spaceId,
+          organizationId
+        });
+        if (isBreakIEIntentionally) {
+          return {
+            renderFieldEditor: () => {
               return (
-                <MarkdownEditor
-                  sdk={sdk}
-                  parameters={Object.assign({}, widgetApi.parameters, {
-                    instance: {
-                      canUploadAssets: canUploadMultipleAssets()
-                    }
-                  })}
-                />
+                <Note noteType="warning">
+                  {`Markdown editor is not supported in Internet Explorer 11. Please use a different browser.`}
+                </Note>
               );
             }
           };
         }
-        return {
-          template: '<cf-markdown-editor />'
-        };
+      }
+
+      const isNewMarkdownEnabled = await getVariation(NEW_MARKDOWN_EDITOR, {
+        spaceId,
+        organizationId
       });
+
+      if (isNewMarkdownEnabled) {
+        return {
+          renderFieldEditor: ({ widgetApi }) => {
+            const sdk = Object.assign({}, widgetApi);
+            sdk.dialogs.openExtension = openMarkdownDialog(sdk);
+
+            return (
+              <MarkdownEditor
+                sdk={sdk}
+                parameters={Object.assign({}, widgetApi.parameters, {
+                  instance: {
+                    canUploadAssets: canUploadMultipleAssets()
+                  }
+                })}
+              />
+            );
+          }
+        };
+      }
+
+      return {
+        template: '<cf-markdown-editor />'
+      };
     }
   });
 

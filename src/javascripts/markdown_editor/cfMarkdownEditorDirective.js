@@ -4,9 +4,6 @@ import _ from 'lodash';
 import throttle from 'lodash/throttle';
 import * as K from 'utils/kefir';
 import * as LazyLoader from 'utils/LazyLoader';
-import { detect as detectBrowser } from 'detect-browser';
-import { getVariation } from 'LaunchDarkly';
-import { BREAK_IE11 } from 'featureFlags';
 
 import TheLocaleStore from 'services/localeStore';
 import { trackMarkdownEditorAction } from 'analytics/MarkdownEditorActions';
@@ -19,10 +16,6 @@ import { css } from 'emotion';
 
 import markdownEditorTemplate from './templates/cf_markdown_editor.html';
 
-function browserIsIE11() {
-  return detectBrowser().name === 'ie';
-}
-
 const styles = {
   buttonIcon: css({
     marginTop: '8px'
@@ -32,8 +25,7 @@ const styles = {
 export default function register() {
   registerDirective('cfMarkdownEditor', [
     '$timeout',
-    'spaceContext',
-    ($timeout, spaceContext) => {
+    $timeout => {
       const EDITOR_DIRECTIONS = {
         LTR: 'ltr',
         RTL: 'rtl'
@@ -51,18 +43,6 @@ export default function register() {
           let currentMode = 'md';
           let editor = null;
           let childEditor = null;
-
-          // Markdown editor should't work in IE11
-          if (browserIsIE11()) {
-            getVariation(BREAK_IE11, {
-              organizationId: spaceContext.getData('organization.sys.id'),
-              spaceId: spaceContext.space.getId()
-            }).then(enabled => {
-              if (enabled) {
-                scope.hasCrashed = true;
-              }
-            });
-          }
 
           // eslint-disable-next-line
           scope.tooltipComponent = ({ isDisabled, isActive }) => (

@@ -8,25 +8,32 @@ import BooleanFeatureFlag from 'utils/LaunchDarkly/BooleanFeatureFlag';
 import * as FeatureFlagKey from 'featureFlags';
 
 const styles = {
-  note: css({
+  container: css({
     position: 'fixed',
-    right: tokens.spacingXl,
     bottom: tokens.spacingXl,
-    width: '330px'
+    width: '100%',
+    left: 0,
+    right: 0
+  }),
+  note: css({
+    width: '500px',
+    margin: '0 auto'
   })
 };
 
 function DeprecationNotice() {
   return (
-    <Note className={styles.note} noteType="warning">
-      {`Support for your current browser "Internet Explorer 11" is discontinued. Please use a different browser. For more information `}
-      <TextLink
-        href="//www.contentful.com/faq/about-contentful/#which-browsers-does-contentful-support"
-        target="_blank">
-        see the FAQ
-      </TextLink>
-      .
-    </Note>
+    <div className={styles.container}>
+      <Note className={styles.note} noteType="warning">
+        {`Internet Explorer 11 is not supported. Please use a different browser. For more information `}
+        <TextLink
+          href="//www.contentful.com/faq/about-contentful/#which-browsers-does-contentful-support"
+          target="_blank">
+          see the FAQ
+        </TextLink>
+        .
+      </Note>
+    </div>
   );
 }
 
