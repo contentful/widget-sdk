@@ -17,7 +17,7 @@ exports[`ApiUsageChart should render line chart and not throw errors 1`] = `
             3,
           ],
           "itemStyle": Object {
-            "color": "#000",
+            "color": "#3072BE",
           },
           "name": "test space",
           "symbol": "circle",
@@ -30,7 +30,7 @@ exports[`ApiUsageChart should render line chart and not throw errors 1`] = `
             2,
           ],
           "itemStyle": Object {
-            "color": undefined,
+            "color": "#14D997",
           },
           "name": "deleted space",
           "symbol": "diamond",
