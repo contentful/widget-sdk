@@ -17,9 +17,9 @@ import ApiUsageInfo from './ApiUsageInfo';
 import ApiUsageChart from './charts/ApiUsageChart';
 import * as Intercom from 'services/intercom';
 import * as Analytics from 'analytics/Analytics';
+import { seriesStyles } from './charts/chartsUtil';
 
 const apiUsagePropType = arrayPropType(organizationResourceUsagePropType);
-const apiSeriesColors = ['#3072BE', '#14D997', '#CD3F39'];
 
 export default class OrganizationUsagePage extends React.Component {
   static propTypes = {
@@ -91,12 +91,11 @@ export default class OrganizationUsagePage extends React.Component {
               spaceNames={spaceNames}
               isPoC={isPoC}
               usage={usage.items}
-              colors={apiSeriesColors}
+              colors={seriesStyles.map(item => item.color)}
             />
             <ApiUsageChart
               usage={usage.items}
               period={period}
-              colors={apiSeriesColors}
               spaceNames={spaceNames}
               isLoading={isLoading}
             />
