@@ -99,7 +99,6 @@ async function stubLaunchDarklyUtil(system) {
 
     // TODO implement when needed
     onFeatureFlag: sinon.spy(),
-    onABTest: sinon.spy(),
 
     // This does not exist on the actual client it is there for the
     // tests to control the client behavior.

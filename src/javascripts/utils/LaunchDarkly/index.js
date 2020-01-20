@@ -172,8 +172,6 @@ export function onFeatureFlag($scope, flagName, handler) {
   }
 }
 
-export { onFeatureFlag as onABTest };
-
 /**
  * @description
  * Returns a fn which sets the current variation for the

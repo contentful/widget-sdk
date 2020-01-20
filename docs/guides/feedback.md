@@ -15,9 +15,9 @@ Required props are `target`, which is used as key for `TARGET_MAILS`, and `about
 Optional props:
  - type="button" // show button instead of link
  - label="Give feedback" // change label of feedback button
- 
+
 The mail will contain contact information for that user if he agreed to be contacted.
- 
+
 ## Creating custom component
 
 You can create your own component that dispatches the feedback action.

@@ -35,6 +35,7 @@ to a registered Snowplow schema. If so, we transform the data into Snowplow's
 structure and track the event.
 
 ## Tracking in Snowplow
+
 Snowplow requires much more structured data than Segment. Whilst every tracking
 event is simply emitted to Segment as-is when you call `analytics.track`, we only
 send the event to Snowplow if it's on the list `analytics/snowplow/Events.js`.
@@ -65,7 +66,6 @@ preview and staging modes.
 To open the console open browser's dev tools and invoke a function:
 
 `window.cfDebug.analytics()`
-
 
 ## Event name convention
 

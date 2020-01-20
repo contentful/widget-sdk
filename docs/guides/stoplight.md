@@ -24,7 +24,7 @@ which can be configured to redirect requests to endpoints not mocked in
 Stoplight to either https://api.quirely.com or https://api.flinkly.com
 
 - Go to Stoplight and select the Contentful endpoint of your choice. Go to
-API settings -> Prism -> Status. This is where you can configure to which 
+API settings -> Prism -> Status. This is where you can configure to which
 environment - quirely or flinkly - requests should be redirected.
 
 ## Current limitations
@@ -44,4 +44,3 @@ environments and does not affect other developers using Stoplight.
 
 
 [stoplight]: https://stoplight.io/
-[mock-xhr-doc]: ./debug.md

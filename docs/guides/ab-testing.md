@@ -38,47 +38,6 @@ You can then setup your targeting for your test. Please note a few points about 
 3. Targeting rules in a targeting block are effectively `and`-ed together. Targeting blocks are `or`-ed together.
 4. For your flag on `Staging` environment, please make sure you add a rule that serves `false` when `isAutomationTestUser` `is one of` `true` so as to not break our automated test suite
 
-## Implementing a test
-
-Here's a dummy test using `onABTest` method from our LaunchDarkly integration.
-
-```js
-'use strict'
-
-angular.module('contentful')
-
-.directive('myCfDirective', ['require', function(require) {
-  var template = require('myCfDirectiveTemplate').default
-  var LD = require('utils/LaunchDarkly')
-  var track = require('analytics/Analytics');
-  var flagName = 'test-ps-01-2018-alternate-my-cf-directive'
-
-  return {
-    template,
-    restrict: 'E',
-    scope: {},
-    controller: ['$scope', function ($scope) {
-      LD.onABTest($scope, flagName, function (variation, changeInCtx) {
-        track('experiment:start', {
-          experiment: {
-            id: flagName,
-            variation
-          }
-        })
-
-        if (variation) {
-          // show test
-        } else {
-          // show control
-        }
-      })
-    }]
-  }
-}])
-```
-
-You can also use `LD.getCurrentVariation` to grab the variation for a test. It has different runtime semantics and might even be the better choice for your code. Have a look at [the source of our LaunchDarkly integration](../../src/javascripts/utils/LaunchDarkly/index.es6.js) which details the behaviour as well as guarantees provided by each method.
-
 ## Analytics
 
 Three golden rules of A/B testing analytics:

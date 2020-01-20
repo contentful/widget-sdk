@@ -55,14 +55,6 @@ This is a list of all the guides for developing the Contentful web application.
 ## [Interop between React and Angular](./react-angular-interop.md)
 
 - How to use React components in Angular
-- Best practice to use Angular services in React components (Caveat!)
-
-## [Writing ES6](./es6.md)
-
-- How to write ES6 code for Angular
-- How to setup ESlint
-- What features are supported and how to add new ones
-- How the transpilation works
 
 ## [Routing](./routing.md)
 

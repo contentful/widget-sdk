@@ -29,40 +29,6 @@ You can then setup your targeting for your feature flag. Please note a few point
 2. Each targeting rule is effectively an `and` condition. Multiple targeting rules are `or`-ed together
 3. For your flag on `Staging` environment, please make sure you add a rule that serves `false` when `isAutomationTestUser` `is one of` `true` if the integration tests haven't been updated to include your feature.
 
-## Implementing a test
-
-Here's a dummy test using `onABTest` method from our LaunchDarkly integration.
-
-```js
-'use strict'
-
-angular.module('contentful')
-
-.directive('myCfDirective', ['require', function(require) {
-  var template = require('myCfDirectiveTemplate').default
-  var LD = require('utils/LaunchDarkly')
-  var track = require('analytics/Analytics');
-  var flagName = 'feature-dl-05-2018-modern-stack-onboarding'
-
-  return {
-    template,
-    restrict: 'E',
-    scope: {},
-    controller: ['$scope', function ($scope) {
-      LD.onFeatureFlag($scope, flagName, function (variation, changeInCtx) {
-        if (variation) {
-          // show feature
-        } else {
-          // hide feature
-        }
-      })
-    }]
-  }
-}])
-```
-
-You can also use `LD.getCurrentVariation` to grab the variation for a test. It has different runtime semantics and might even be the better choice for your code. Have a look at [the source of our LaunchDarkly integration][ld-integration] which details the behaviour as well as guarantees provided by each method.
-
 ## Targeting rules
 
 The best place to check the attributes available to target users is [in our LD integration][ld-integration] but it will also be maintained in the [FAQ section of our A/B testing guide][a-b-testing-doc-targeting].
