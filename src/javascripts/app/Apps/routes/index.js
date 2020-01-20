@@ -98,7 +98,8 @@ export default {
             spaceContext,
             appHookBus,
             Navigator,
-            SlideInNavigator
+            SlideInNavigator,
+            appDefinition: app.appDefinition
           });
 
           const productCatalog = new AppProductCatalog(
