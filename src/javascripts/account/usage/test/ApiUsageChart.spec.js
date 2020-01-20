@@ -6,6 +6,7 @@ import { shorten } from 'utils/NumberUtils';
 import LineChart from '../committed/charts/LineChart';
 import ApiUsageChart from '../committed/charts/ApiUsageChart';
 import EmptyChartPlaceholder from '../committed/charts/EmptyChartPlaceholder';
+import { seriesAppearance } from '../committed/charts/constants';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
@@ -26,7 +27,7 @@ describe('ApiUsageChart', () => {
   const renderChart = (
     startDate = testStartDate,
     isLoading = false,
-    colors = ['#000'],
+    colors = seriesAppearance.map(item => item.color),
     spaceNames = { space1: 'test space' },
     usage = [
       {
@@ -129,11 +130,11 @@ describe('ApiUsageChart', () => {
   describe('custom colors', () => {
     it('should use colors for given (two) series in order', () => {
       expect(
-        renderChart(undefined, undefined, ['#111', '#222', '#333'])
+        renderChart(undefined, undefined, seriesAppearance.map(item => item.color))
           .find(LineChart)
           .prop('options')
           .series.map(({ itemStyle: { color } }) => color)
-      ).toEqual(['#111', '#222']);
+      ).toEqual(['#3072BE', '#14D997']);
     });
   });
 
@@ -172,7 +173,7 @@ describe('ApiUsageChart', () => {
         renderChart()
           .find(LineChart)
           .prop('options')
-          .tooltip.formatter([{ name: 'test-name', value: '2' }])
+          .tooltip.formatter([{ name: 'test-name', value: '2', color: '#3072BE' }])
       ).toContain('<div class="date">test-name</div>');
     });
   });
