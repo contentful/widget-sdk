@@ -9,7 +9,7 @@ import { organizationResourceUsagePropType, periodPropType } from '../propTypes'
 import periodToDates from './periodToDates';
 import EmptyChartPlaceholder from './EmptyChartPlaceholder';
 import LineChart from './LineChart';
-import { seriesStyles } from './chartsUtil';
+import { seriesAppearance } from './constants';
 
 const ApiUsageChart = ({ usage, period, spaceNames, isLoading }) => {
   const { startDate, endDate } = period;
@@ -30,10 +30,10 @@ const ApiUsageChart = ({ usage, period, spaceNames, isLoading }) => {
     series: usage.map(({ usage, sys: { space: { sys: { id: spaceId } } } }, index) => ({
       name: spaceNames[spaceId] || 'deleted space',
       data: usage,
-      symbol: seriesStyles[index]['symbol'],
+      symbol: seriesAppearance[index]['symbol'],
       symbolSize: 8,
       itemStyle: {
-        color: seriesStyles[index]['color']
+        color: seriesAppearance[index]['color']
       }
     }))
   };
@@ -52,7 +52,6 @@ const ApiUsageChart = ({ usage, period, spaceNames, isLoading }) => {
 
 ApiUsageChart.propTypes = {
   usage: PropTypes.arrayOf(organizationResourceUsagePropType).isRequired,
-  colors: PropTypes.arrayOf(PropTypes.string).isRequired,
   period: periodPropType.isRequired,
   spaceNames: PropTypes.objectOf(PropTypes.string).isRequired,
   isLoading: PropTypes.bool.isRequired
@@ -64,7 +63,7 @@ function renderTooltip(series) {
   const sortSeriesByValue = orderBy(series, 'value', 'desc');
 
   sortSeriesByValue.forEach(({ value, color }) => {
-    const tipIcon = seriesStyles.filter(item => item.color === color);
+    const tipIcon = seriesAppearance.filter(item => item.color === color);
     tooltipChildren.push(
       h('.value', [
         h(`span.icon.${tipIcon[0]['icon']}`),

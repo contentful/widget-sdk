@@ -6,7 +6,7 @@ import { shorten } from 'utils/NumberUtils';
 import LineChart from '../committed/charts/LineChart';
 import ApiUsageChart from '../committed/charts/ApiUsageChart';
 import EmptyChartPlaceholder from '../committed/charts/EmptyChartPlaceholder';
-import { seriesStyles } from '../committed/charts/chartsUtil';
+import { seriesAppearance } from '../committed/charts/constants';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
@@ -27,7 +27,7 @@ describe('ApiUsageChart', () => {
   const renderChart = (
     startDate = testStartDate,
     isLoading = false,
-    colors = seriesStyles.map(item => item.color),
+    colors = seriesAppearance.map(item => item.color),
     spaceNames = { space1: 'test space' },
     usage = [
       {
@@ -130,7 +130,7 @@ describe('ApiUsageChart', () => {
   describe('custom colors', () => {
     it('should use colors for given (two) series in order', () => {
       expect(
-        renderChart(undefined, undefined, seriesStyles.map(item => item.color))
+        renderChart(undefined, undefined, seriesAppearance.map(item => item.color))
           .find(LineChart)
           .prop('options')
           .series.map(({ itemStyle: { color } }) => color)
