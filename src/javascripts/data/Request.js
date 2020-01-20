@@ -1,6 +1,6 @@
 import wrapWithRetry from 'data/Request/Retry';
 import wrapWithAuth from 'data/Request/Auth';
-import { getEndpoint } from 'data/Request/Utils';
+import { getEndpoint, getCurrentState } from 'data/Request/Utils';
 import * as Telemetry from 'i13n/Telemetry';
 import { getModule } from 'NgRegistry';
 
@@ -24,7 +24,8 @@ function wrapWithCounter(request) {
     const [{ url } = {}] = args;
 
     Telemetry.count('cma-req', {
-      endpoint: getEndpoint(url)
+      endpoint: getEndpoint(url),
+      state: getCurrentState()
     });
 
     return request(...args);
