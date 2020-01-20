@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import { h } from 'utils/legacy-html-hyperscript';
 import { shorten } from 'utils/NumberUtils';
-import { sortBy } from 'lodash';
+import { orderBy } from 'lodash';
 
 import { organizationResourceUsagePropType, periodPropType } from '../propTypes';
 import periodToDates from './periodToDates';
@@ -61,7 +61,7 @@ ApiUsageChart.propTypes = {
 function renderTooltip(series) {
   const tooltipChildren = [h('.date', [series[0].name])];
   // Show highest value first
-  const sortSeriesByValue = sortBy(series, 'value').reverse();
+  const sortSeriesByValue = orderBy(series, 'value', 'desc');
 
   sortSeriesByValue.forEach(({ value, color }) => {
     const tipIcon = seriesStyles.filter(item => item.color === color);
