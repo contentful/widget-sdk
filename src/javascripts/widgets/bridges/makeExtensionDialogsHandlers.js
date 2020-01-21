@@ -13,6 +13,7 @@ import { LOCATION_DIALOG } from '../WidgetLocations';
 import { NAMESPACE_EXTENSION, NAMESPACE_APP } from '../WidgetNamespaces';
 import * as entitySelector from 'search/EntitySelector/entitySelector';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
+import { buildAppDefinitionWidget } from 'widgets/WidgetTypes';
 
 import createDialogExtensionBridge from './createDialogExtensionBridge';
 
@@ -42,16 +43,32 @@ export default function makeExtensionDialogsHandlers(dependencies) {
     throw new Error('Unknown dialog type.');
   }
 
+  async function findWidget(namespace, id) {
+    const key = [namespace, id];
+    const [descriptor] = await getCustomWidgetLoader().getByKeys([key]);
+
+    // If a descriptor was found, meaning that an app or an extension
+    // are already installed, just return it.
+    if (descriptor) {
+      return descriptor;
+    }
+
+    // If there is no descriptor but we're in the installation
+    // process, create a descriptor out of AppDefinition.
+    const { appDefinition } = dependencies;
+    if (namespace === NAMESPACE_APP && appDefinition) {
+      return buildAppDefinitionWidget(appDefinition);
+    }
+
+    throw new Error(`No widget with ID "${id}" found in "${namespace}" namespace.`);
+  }
+
   async function openCustomDialog(namespace, options) {
     if (!options.id) {
       throw new Error('No ID provided.');
     }
 
-    const key = [namespace, options.id];
-    const [descriptor] = await getCustomWidgetLoader().getByKeys([key]);
-    if (!descriptor) {
-      throw new Error(`No widget with ID "${options.id}" found in "${namespace}" namespace.`);
-    }
+    const descriptor = await findWidget(namespace, options.id);
 
     const parameters = {
       // No instance parameters for dialogs.

@@ -49,7 +49,8 @@ export function buildAppWidget({ id, title, icon, appDefinition, appInstallation
 
 // Artifical widget descriptor for rendering `src`
 // of `AppDefinition` BEFORE it gets installed in a space-env.
-// Used only on the app configuration page.
+// Used only on the app configuration page for rendering both
+// `LOCATION_APP_CONFIG` and `LOCATION_DIALOG`.
 export function buildAppDefinitionWidget(appDefinition) {
   return {
     namespace: NAMESPACE_APP,
