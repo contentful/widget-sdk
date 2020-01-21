@@ -77,7 +77,6 @@ export default class Hyperlink extends React.Component {
             title={title}
             className="rich-text__hyperlink">
             {children}
-            {/*<Icon icon={icon} className="rich-text__hyperlink-icon" />*/}
           </TextLink>
         ) : (
           <span className="rich-text__hyperlink rich-text__hyperlink--ie-fallback">{children}</span>

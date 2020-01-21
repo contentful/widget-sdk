@@ -84,6 +84,7 @@ import * as ActionComponent from 'markdown_editor/components/ActionComponent';
 import * as FieldDialogSettingsComponent from 'components/field_dialog/components/FieldDialogSettingsComponent';
 import * as ThumbnailComponent from 'components/Thumbnail/Thumbnail';
 import * as SizeValidation from 'components/field_dialog/validations/SizeValidation';
+import * as LinkedEntitiesBadge from 'app/entity_editor/Components/FetchLinksToEntity/LinkedEntitiesBadge';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -355,7 +356,8 @@ function getModule(name) {
     'markdown_editor/components/ActionComponent': ActionComponent,
     'components/field_dialog/components/FieldDialogSettingsComponent': FieldDialogSettingsComponent,
     'components/Thumbnail/Thumbnail': ThumbnailComponent,
-    'components/field_dialog/validations/SizeValidation': SizeValidation
+    'components/field_dialog/validations/SizeValidation': SizeValidation,
+    'app/entity_editor/Components/FetchLinksToEntity/LinkedEntitiesBadge': LinkedEntitiesBadge
   };
 
   return get(allowedModules, name, null);

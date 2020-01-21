@@ -26,11 +26,13 @@ export default (id, type) => {
     return Promise.all(
       items.map(entry => {
         const { id } = entry.sys;
+        const contentType = spaceContext.publishedCTs.get(entry.sys.contentType.sys.id);
         // Remove query params of the current URL. This prevents
         // opening slide-in editor when navigating to incoming links.
         return entityHelpers.entityTitle(entry).then(title => ({
           id,
           title,
+          contentTypeName: contentType.data.name,
           url: href(makeEntityRef(entry))
             .split('?')
             .shift()

@@ -8,6 +8,9 @@ describe('fetchLinks', () => {
     this.spaceContext = {
       cma: {
         getEntries: sinon.stub()
+      },
+      publishedCTs: {
+        get: sinon.stub().returns({ data: { name: 'CT' } })
       }
     };
 
@@ -55,17 +58,19 @@ describe('fetchLinks', () => {
     return async function() {
       const id = 'entity-id';
       const items = [
-        { sys: { id: 'entity-id-0' } },
-        { sys: { id: 'entity-id-1' } },
+        { sys: { id: 'entity-id-0', contentType: { sys: { id: 'ctId' } } } },
+        { sys: { id: 'entity-id-1', contentType: { sys: { id: 'ctId' } } } },
         {
           sys: {
             id: 'entity-id-2',
+            contentType: { sys: { id: 'ctId' } },
             environment: { sys: { id: 'dev' } }
           }
         },
         {
           sys: {
             id: 'entity-id-3',
+            contentType: { sys: { id: 'ctId' } },
             environment: { sys: { id: 'master' } }
           }
         }
@@ -89,21 +94,25 @@ describe('fetchLinks', () => {
       expect(result).toEqual([
         {
           id: 'entity-id-0',
+          contentTypeName: 'CT',
           title: 'title-0',
           url: 'href-0'
         },
         {
           id: 'entity-id-1',
+          contentTypeName: 'CT',
           title: 'title-1',
           url: 'href-1'
         },
         {
           id: 'entity-id-2',
+          contentTypeName: 'CT',
           title: 'title-2',
           url: 'href-2'
         },
         {
           id: 'entity-id-3',
+          contentTypeName: 'CT',
           title: 'title-3',
           url: 'href-3'
         }

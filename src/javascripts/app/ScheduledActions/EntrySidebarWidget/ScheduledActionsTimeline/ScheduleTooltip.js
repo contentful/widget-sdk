@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Tag, Tooltip, Paragraph } from '@contentful/forma-36-react-components';
+import { orderBy } from 'lodash';
 import tokens from '@contentful/forma-36-tokens';
 import FormattedTime from 'app/ScheduledActions/EntrySidebarWidget/ScheduledActionsTimeline/FormattedTime';
 import ScheduledActionActions from 'app/ScheduledActions/ScheduledActionAction';
@@ -83,9 +84,8 @@ ScheduleTooltipContent.propTypes = {
 const ScheduleTooltip = ({ job, jobsCount, jobs, filter, children }) => {
   const scheduledJobs =
     !job && Array.isArray(jobs) && typeof filter === 'function' ? jobs.filter(filter) : [];
-  const sortedScheduledJobs = scheduledJobs.sort(
-    (a, b) => new Date(a.scheduledAt) > new Date(b.scheduledAt)
-  );
+
+  const sortedScheduledJobs = orderBy(scheduledJobs, ['scheduledAt'], ['asc']);
   const nextJob = job || sortedScheduledJobs[0];
   const pendingJobsCount = jobsCount || scheduledJobs.length;
 

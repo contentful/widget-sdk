@@ -52,12 +52,12 @@ const styles = {
   })
 };
 
-export default function BulkEditorTitle({ title, isCollapsed, contentTypeName }) {
+export default function BulkEditorTitle({ title, isCollapsed, entityInfo }) {
   return (
     <div className={styles.wrapper}>
       <Icon className={styles.icon} name="page-content" scale="0.75" />
       <div className={styles.titleWrapper}>
-        <div className={styles.contentType}>{contentTypeName}</div>
+        <div className={styles.contentType}>{entityInfo.contentType.name}</div>
         <Subheading className={styles.heading} testId="cf-bulk-editor-title">
           {title}
         </Subheading>
@@ -69,6 +69,6 @@ export default function BulkEditorTitle({ title, isCollapsed, contentTypeName })
 
 BulkEditorTitle.propTypes = {
   title: PropTypes.string,
-  contentTypeName: PropTypes.string,
+  entityInfo: PropTypes.shape({ contentType: PropTypes.shape({ name: PropTypes.string }) }),
   isCollapsed: PropTypes.bool
 };

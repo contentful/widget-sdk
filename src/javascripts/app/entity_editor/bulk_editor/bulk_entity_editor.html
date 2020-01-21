@@ -13,7 +13,7 @@
     <div class="bulk-editor-entry__header-main" ng-click="actions.toggleExpansion()">
       <react-component
         name="app/entity_editor/bulk_editor/BulkEditorTitle"
-        props="{title, isCollapsed: !data.expanded, contentTypeName: entityInfo.contentType.name}"
+        props="{title, isCollapsed: !data.expanded, entityInfo}"
       ></react-component>
     </div>
     <button
