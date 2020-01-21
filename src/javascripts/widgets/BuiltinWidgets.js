@@ -134,7 +134,12 @@ export function create() {
         return {
           renderFieldEditor: ({ widgetApi }) => {
             const sdk = Object.assign({}, widgetApi);
-            sdk.dialogs.openExtension = openMarkdownDialog(sdk);
+
+            const previewComponents = {
+              embedly: ({ url }) => <EmbedlyPreview previewUrl={url} delay={100} />
+            };
+
+            sdk.dialogs.openExtension = openMarkdownDialog(sdk, previewComponents);
 
             return (
               <MarkdownEditor
@@ -144,6 +149,7 @@ export function create() {
                     canUploadAssets: canUploadMultipleAssets()
                   }
                 })}
+                previewComponents={previewComponents}
               />
             );
           }
