@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { getModule } from 'NgRegistry';
-import { getEndpoint } from './Utils';
+import { getEndpoint, getCurrentState } from './Utils';
 import * as Telemetry from 'i13n/Telemetry';
 
 const CALLS_IN_PERIOD = 7;
@@ -99,7 +99,8 @@ export default function wrapWithRetry(requestFn) {
           const [{ url } = {}] = call.args;
 
           Telemetry.count('cma-rate-limit-exceeded', {
-            endpoint: getEndpoint(url)
+            endpoint: getEndpoint(url),
+            state: getCurrentState()
           });
         } catch (_) {
           // no op

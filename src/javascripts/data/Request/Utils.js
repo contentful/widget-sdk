@@ -1,4 +1,5 @@
 import { chunk } from 'lodash';
+import { getCurrentStateName } from 'states/Navigator';
 
 /**
  * Given an URL, this function returns an abstract endpoint path.
@@ -28,6 +29,26 @@ export function getEndpoint(url) {
       ? segments.slice(2)
       : segments;
   return makeStableName(relevantSegments);
+}
+
+/*
+  Returns the current state name from `angular-ui-router`.
+
+  By default, it uses the state name as provided by `getCurrentStateName`
+  from `states/Navigator`. However, when the app first loads, there is no
+  state name in Angular yet, and so we use the special key `__INITIAL_LOAD__`
+  to denote that the current state (and the current request) occur before
+  we've finally navigated to the first state e.g. spaces.detail.home.
+ */
+
+export function getCurrentState() {
+  const currentState = getCurrentStateName();
+
+  if (currentState === '') {
+    return '__INITIAL_LOAD__';
+  }
+
+  return currentState;
 }
 
 const RELEVANT_ENTITY_PATHS = ['/tasks', '/comments', '/snapshots'];
