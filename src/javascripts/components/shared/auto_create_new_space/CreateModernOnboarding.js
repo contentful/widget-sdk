@@ -1,3 +1,4 @@
+import React from 'react';
 import { getStore } from 'browserStorage';
 import * as Analytics from 'analytics/Analytics';
 import { getCurrentStateName } from 'states/Navigator';
@@ -9,6 +10,9 @@ import { getValue } from 'utils/kefir';
 import { getModule } from 'NgRegistry';
 import * as Entries from 'data/entries';
 import { getApiKeyRepo } from 'app/settings/api/services/ApiKeyRepoInstance';
+import ModalLauncher from 'app/common/ModalLauncher';
+import OnboardingModal from './OnboardingModal';
+import { go } from 'states/Navigator';
 
 const DEFAULT_LOCALE = 'en-US';
 
@@ -121,48 +125,31 @@ export const getDeliveryToken = async () => {
   }
 };
 export const create = ({ onDefaultChoice, org, user, markOnboarding }) => {
-  const $rootScope = getModule('$rootScope');
-  const modalDialog = getModule('modalDialog');
-  const scope = $rootScope.$new();
+  const onContentChoice = ({ closeModal }) => {
+    closeModal();
+    track('content_path_selected');
+    onDefaultChoice();
+  };
+  const onDevChoice = async ({ closeModal }) => {
+    track('dev_path_selected');
 
-  const dialog = modalDialog.open({
-    title: 'Select your path',
-    template: `<react-component name="components/shared/stack-onboarding/screens/ChoiceScreen" props="props"></react-component>`,
-    backgroundClose: false,
-    ignoreEsc: true,
-    // we don't want to close this modal after we create new space
-    // so url will be different
-    persistOnNavigation: true,
-    scope
+    const newSpace = await createSpace({
+      closeModal,
+      org,
+      markOnboarding,
+      markSpace,
+      userId: user.sys.id
+    });
+
+    createDeliveryToken();
+    createManagementToken();
+
+    return newSpace;
+  };
+
+  ModalLauncher.open(() => {
+    return <OnboardingModal onContentChoice={onContentChoice} onDevChoice={onDevChoice} />;
   });
-
-  const closeModal = () => {
-    dialog && dialog.destroy();
-  };
-
-  scope.props = {
-    onDefaultChoice: () => {
-      closeModal();
-      track('content_path_selected');
-      onDefaultChoice();
-    },
-    createSpace: async () => {
-      track('dev_path_selected');
-
-      const newSpace = await createSpace({
-        closeModal,
-        org,
-        markOnboarding,
-        markSpace,
-        userId: user.sys.id
-      });
-
-      createDeliveryToken();
-      createManagementToken();
-
-      return newSpace;
-    }
-  };
 };
 export const getCredentials = () =>
   Promise.all([getDeliveryToken(), getManagementToken()]).then(
@@ -178,7 +165,6 @@ function getMSOnboardingSpaceKey() {
 }
 
 async function createSpace({ closeModal, org, markOnboarding, markSpace, userId }) {
-  const $state = getModule('$state');
   const newSpace = await client.createSpace(
     {
       name: MODERN_STACK_ONBOARDING_SPACE_NAME,
@@ -195,7 +181,10 @@ async function createSpace({ closeModal, org, markOnboarding, markSpace, userId 
   markOnboarding();
 
   await refresh();
-  await $state.go('spaces.detail.onboarding.getStarted', { spaceId: newSpaceId });
+  await go({
+    path: ['spaces', 'detail', 'onboarding', 'getStarted'],
+    params: { spaceId: newSpaceId }
+  });
   // if we need to close modal, we need to do it after redirect
   closeModal && closeModal();
 

@@ -10,8 +10,8 @@ const store = getStore();
 
 export default class ChoiceScreen extends React.Component {
   static propTypes = {
-    onDefaultChoice: PropTypes.func.isRequired,
-    createSpace: PropTypes.func
+    onContentChoice: PropTypes.func.isRequired,
+    onDevChoice: PropTypes.func
   };
 
   state = {
@@ -39,11 +39,11 @@ export default class ChoiceScreen extends React.Component {
     );
   };
 
-  createSpace = async () => {
+  onDevChoice = async () => {
     this.setState({
       isDevPathPending: true
     });
-    const newSpace = await this.props.createSpace();
+    const newSpace = await this.props.onDevChoice();
     store.set(`${getStoragePrefix()}:currentStep`, {
       path: 'spaces.detail.onboarding.getStarted',
       params: {
@@ -60,7 +60,7 @@ export default class ChoiceScreen extends React.Component {
 
   render() {
     const { isDefaultPathPending, isDevPathPending } = this.state;
-    const { onDefaultChoice } = this.props;
+    const { onContentChoice } = this.props;
 
     const isButtonDisabled = isDefaultPathPending || isDevPathPending;
 
@@ -71,7 +71,7 @@ export default class ChoiceScreen extends React.Component {
         onClick: () => {
           this.setChoiceInIntercom('content');
           this.setState({ isDefaultPathPending: true });
-          onDefaultChoice();
+          onContentChoice();
         },
         text: 'Explore content modeling',
         disabled: isButtonDisabled,
@@ -86,7 +86,7 @@ export default class ChoiceScreen extends React.Component {
       button: this.renderButton({
         onClick: () => {
           this.setChoiceInIntercom('developer');
-          this.createSpace();
+          this.onDevChoice();
         },
         text: 'Deploy a website in 3 steps',
         disabled: isButtonDisabled,
