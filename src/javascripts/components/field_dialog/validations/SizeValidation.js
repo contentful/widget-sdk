@@ -23,6 +23,8 @@ const SizeValidation = ({
   const [settings, setSettings] = useState(validation.settings);
   const [fieldTouched, setFieldTouched] = useState(false);
 
+  const nameKeyWord = validation.type === 'range' ? 'value' : 'size';
+
   useEffect(() => {
     updateValidationSettingsValue(settings);
     updateValidationCurrentView(currentView);
@@ -30,7 +32,16 @@ const SizeValidation = ({
     if (fieldTouched) {
       validate();
     }
-  }, [currentView, fieldTouched, message, settings, updateValidationCurrentView, updateValidationMessageValue, updateValidationSettingsValue, validate]);
+  }, [
+    currentView,
+    fieldTouched,
+    message,
+    settings,
+    updateValidationCurrentView,
+    updateValidationMessageValue,
+    updateValidationSettingsValue,
+    validate
+  ]);
 
   const normalizeValue = value => (isEmpty(value) ? null : toNumber(value));
 
@@ -39,7 +50,7 @@ const SizeValidation = ({
       case 'min':
         return (
           <TextInput
-            name="Minimum size"
+            name={`Minimum ${nameKeyWord}`}
             testId="min-size-input"
             className={styles.textInputNumber}
             placeholder="Min"
@@ -55,7 +66,7 @@ const SizeValidation = ({
       case 'max':
         return (
           <TextInput
-            name="Maximum size"
+            name={`Maximum ${nameKeyWord}`}
             testId="max-size-input"
             className={styles.textInputNumber}
             placeholder="Max"
@@ -72,7 +83,7 @@ const SizeValidation = ({
         return (
           <>
             <TextInput
-              name="Minimum size"
+              name={`Minimum ${nameKeyWord}`}
               testId="min-size-input"
               className={styles.textInputNumber}
               placeholder="Min"
@@ -86,7 +97,7 @@ const SizeValidation = ({
             />{' '}
             <div>and</div>
             <TextInput
-              name="Maximum size"
+              name={`Maximum ${nameKeyWord}`}
               testId="max-size-input"
               className={styles.textInputNumber}
               placeholder="Max"

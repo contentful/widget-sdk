@@ -18,67 +18,10 @@
     />
   </div>
   <div ng-switch-when="range">
-    <div class="validation-controls__view-select">
-      <select
-        class="cfnext-select-box"
-        aria-label="Select condition"
-        ng-model="validation.currentView"
-        cf-no-form
-        ng-options="v.name as v.label for v in validation.views"
-      >
-      </select>
-    </div>
-    <span ng-switch="validation.currentView">
-      <span ng-switch-when="min">
-        <input
-          class="form-control"
-          type="number"
-          placeholder="Min"
-          aria-label="Minimum value"
-          ng-model="validation.settings.min"
-        />
-      </span>
-      <span ng-switch-when="max">
-        <input
-          class="form-control"
-          type="number"
-          placeholder="Max"
-          aria-label="Maximum value"
-          ng-model="validation.settings.max"
-        />
-      </span>
-      <span ng-switch-when="min-max">
-        <input
-          class="form-control"
-          type="number"
-          placeholder="Min"
-          aria-label="Minimum value"
-          ng-model="validation.settings.min"
-        />
-        <span class="validation-controls__input-separator">and</span>
-        <input
-          class="form-control"
-          type="number"
-          placeholder="Max"
-          aria-label="Maximum value"
-          ng-model="validation.settings.max"
-        />
-      </span>
-    </span>
-    <cf-error-list
-      class="form-inline-error"
-      cf-error-messages="$form.errorMessages"
-      aria-label="Errors"
-    ></cf-error-list>
-    <div class="cfnext-form__field validation-controls__error-message-field">
-      <label>Custom error message</label>
-      <input
-        class="cfnext-form__input--full-size"
-        type="text"
-        aria-label="Custom error message"
-        ng-model="validation.message"
-      />
-    </div>
+    <react-component
+      name="components/field_dialog/validations/SizeValidation"
+      props="{validation: validation, updateValidationSettingsValue: updateValidationSettingsValue, updateValidationCurrentView: updateValidationCurrentView, updateValidationMessageValue: updateValidationMessageValue, errorMessages: $form.errorMessages, validate: validate}"
+    />
   </div>
   <div ng-switch-when="dateRange">
     <cf-validation-date-select
