@@ -4,6 +4,7 @@ import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
 import { getStore } from 'browserStorage';
 import { getModule } from 'NgRegistry';
+import { getOrganizationSpaces } from 'services/TokenStore';
 import * as logger from 'services/logger';
 import { getApiKeyRepo } from 'app/settings/api/services/ApiKeyRepoInstance';
 
@@ -96,7 +97,8 @@ function resolveParams(link, params) {
         orgScopedPath: ['account', 'organizations', 'edit'],
         pathSuffix: ''
       }),
-      subscription: resolveSubscriptions
+      subscription: resolveSubscriptions,
+      'invitation-accepted': resolveSpaceHome
     };
 
     const resolverFn = mappings[link];
@@ -303,6 +305,20 @@ async function resolveSubscriptions() {
       pathSuffix: ''
     }
   });
+}
+
+async function resolveSpaceHome({ orgId }) {
+  const space = await getOrganizationSpaces(orgId);
+  if (!space) {
+    throw new Error('no spaces found');
+  }
+  const spaceId = space.sys.id;
+  return {
+    path: ['spaces', 'detail', 'home'],
+    params: {
+      spaceId
+    }
+  };
 }
 
 // return result only if user has access to organization settings
