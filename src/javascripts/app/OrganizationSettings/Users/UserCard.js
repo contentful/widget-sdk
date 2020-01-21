@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { User as UserPropType } from 'app/OrganizationSettings/PropTypes';
 
-import { Tag } from '@contentful/forma-36-react-components';
+import { Tag, Heading } from '@contentful/forma-36-react-components';
 
 const CardSizes = {
   SMALL: 'small',
@@ -17,11 +17,25 @@ const CardClassNames = {
 export default class UserCard extends React.Component {
   static propTypes = {
     user: UserPropType.isRequired,
-    size: PropTypes.oneOf(Object.values(CardSizes))
+    size: PropTypes.oneOf(Object.values(CardSizes)),
+    status: PropTypes.string,
+    hasPendingOrgMembershipsEnabled: PropTypes.bool
   };
 
   static defaultProps = {
     size: CardSizes.SMALL
+  };
+
+  showInvitedTag = () => {
+    if (
+      (this.props.hasPendingOrgMembershipsEnabled &&
+        this.props.status &&
+        this.props.status === 'pending') ||
+      !this.props.user.firstName
+    ) {
+      return true;
+    }
+    return false;
   };
 
   render() {
@@ -29,6 +43,7 @@ export default class UserCard extends React.Component {
       user: { firstName, lastName, avatarUrl, email },
       size
     } = this.props;
+
     return (
       <div
         className={`
@@ -37,9 +52,14 @@ export default class UserCard extends React.Component {
       `}>
         <img src={avatarUrl} className="user-card__avatar" />
         <div>
-          <h2 className="user-card__name">
-            {firstName ? `${firstName} ${lastName}` : <Tag tagType="warning">Invited</Tag>}
-          </h2>
+          <Heading element="h2" className="user-card__name" testId="user-name-status">
+            {firstName} {lastName}{' '}
+            {this.showInvitedTag() && (
+              <Tag testId="invited-status" tagType="warning">
+                Invited
+              </Tag>
+            )}
+          </Heading>
           <span className="user-card__email">{email}</span>
         </div>
       </div>
