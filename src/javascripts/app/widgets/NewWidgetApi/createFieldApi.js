@@ -23,25 +23,16 @@ function makeShareJSError(shareJSError, message) {
   return Object.assign(error, { code: ERROR_CODES.EBADUPDATE, data });
 }
 
-/**
- * @param {{ $scope: Object }}
- * @return {FieldAPI}
- */
-export function createFieldApi({ $scope }) {
-  const current = {
-    field: $scope.widget.field,
-    locale: $scope.locale
-  };
-
-  const currentPath = ['fields', current.field.id, current.locale.internal_code];
+export function createInternalFieldApi({ locale, field, $scope }) {
+  const currentPath = ['fields', field.id, locale.internal_code];
 
   return {
-    locale: current.locale.code,
-    id: current.field.apiName || current.field.id,
-    type: current.field.type,
-    required: !!current.field.required,
-    validations: current.field.validations || [],
-    items: current.field.items || [],
+    locale: locale.code,
+    id: field.apiName || field.id,
+    type: field.type,
+    required: !!field.required,
+    validations: field.validations || [],
+    items: field.items || [],
 
     getValue: () => {
       return get($scope.otDoc.getValueAt([]), currentPath);
@@ -61,9 +52,6 @@ export function createFieldApi({ $scope }) {
         throw makeShareJSError(err, ERROR_MESSAGES.MFAILREMOVAL);
       }
     },
-    setInvalid: isInvalid => {
-      $scope.fieldController.setInvalid(current.locale.code, isInvalid);
-    },
     onValueChanged: cb => {
       return K.onValueScope(
         $scope,
@@ -72,6 +60,31 @@ export function createFieldApi({ $scope }) {
           cb(get($scope.otDoc.getValueAt([]), currentPath));
         }
       );
+    },
+    setInvalid: () => {},
+    onIsDisabledChanged: () => {},
+    onSchemaErrorsChanged: () => {}
+  };
+}
+
+/**
+ * @param {{ $scope: Object }}
+ * @return {FieldAPI}
+ */
+export function createFieldApi({ $scope }) {
+  const current = {
+    field: $scope.widget.field,
+    locale: $scope.locale
+  };
+
+  return {
+    ...createInternalFieldApi({
+      locale: current.locale,
+      field: current.field,
+      $scope
+    }),
+    setInvalid: isInvalid => {
+      $scope.fieldController.setInvalid(current.locale.code, isInvalid);
     },
     onIsDisabledChanged: cb => {
       return K.onValueScope($scope, $scope.fieldLocale.access$, access => {

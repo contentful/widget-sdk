@@ -28,6 +28,7 @@ import { JsonEditor } from '@contentful/field-editor-json';
 import { LocationEditor } from '@contentful/field-editor-location';
 import { DateEditor } from '@contentful/field-editor-date';
 import { MarkdownEditor, openMarkdownDialog } from '@contentful/field-editor-markdown';
+import FileEditor from 'app/widgets/FileEditor';
 import { canUploadMultipleAssets } from 'access_control/AccessChecker';
 import { getVariation } from 'LaunchDarkly';
 import { detect as detectBrowser } from 'detect-browser';
@@ -310,7 +311,9 @@ export function create() {
   registerWidget('fileEditor', {
     fieldTypes: ['File'],
     name: 'File',
-    template: '<cf-file-editor class="widget-file-editor" />'
+    renderFieldEditor: ({ widgetApi }) => {
+      return <FileEditor sdk={widgetApi} />;
+    }
   });
 
   registerWidget('entryLinkEditor', {

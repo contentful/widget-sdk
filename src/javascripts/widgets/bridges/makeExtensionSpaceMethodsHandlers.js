@@ -121,7 +121,7 @@ async function createUpload(spaceId, base64Data) {
 }
 
 // Assets are processed asynchronously, so we have to poll the asset endpoint to wait until they're processed.
-async function waitUntilAssetProcessed(cmaClient, assetId, locale) {
+export async function waitUntilAssetProcessed(cmaClient, assetId, locale) {
   const asset = await cmaClient.getAsset(assetId);
   if (get(asset, ['fields', 'file', locale, 'url'])) {
     return asset;

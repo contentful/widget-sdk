@@ -70,6 +70,7 @@ export default async function create($scope, editorData, preferences) {
     });
     $scope.context.title = title;
     $scope.title = truncate(title, 50);
+    editorContext.validator.run();
   });
 
   K.onValueScope($scope, $scope.otDoc.state.isDirty$, isDirty => {

@@ -7675,29 +7675,7 @@ pre,
     z-index: 2;
     text-align: center;
   }
-  .file-info .file-buttons {
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-    left: 10px;
-    opacity: 0;
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-    filter: alpha(opacity=0);
-    -webkit-transition: opacity 0.1s ease-in-out;
-    transition: opacity 0.1s ease-in-out;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-  }
-  .file-info .file-buttons > * {
-    margin-right: 0.5rem;
-  }
-  .file-info:hover .file-buttons {
-    opacity: 1;
-    -ms-filter: none;
-    -webkit-filter: none;
-            filter: none;
-  }
+
   .cf-form-notice {
     margin-bottom: 10px;
   }

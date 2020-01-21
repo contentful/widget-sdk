@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import ModalLauncher from 'app/common/ModalLauncher';
 import {
   ModalConfirm,
@@ -29,6 +29,13 @@ export function openInputDialog(params, initialValue = '') {
 
 export default function InputDialog(props) {
   const [value, setValue] = useState(props.initialValue);
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (inputRef && inputRef.current && inputRef.current.focus) {
+      inputRef.current.focus();
+    }
+  }, [inputRef]);
 
   return (
     <ModalConfirm
@@ -48,6 +55,7 @@ export default function InputDialog(props) {
         <Paragraph>{props.params.message}</Paragraph>
       </Typography>
       <TextInput
+        ref={inputRef}
         maxLength={props.params.maxLength ? props.params.maxLength : 255}
         value={value}
         onChange={e => setValue(e.target.value)}

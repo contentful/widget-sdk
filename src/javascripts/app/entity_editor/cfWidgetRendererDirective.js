@@ -110,6 +110,7 @@ export default function register() {
             } else if (widgetNamespace === NAMESPACE_BUILTIN && renderFieldEditor) {
               renderJsxTemplate(
                 renderFieldEditor({
+                  $scope: scope,
                   widgetApi: createNewWidgetApi({
                     $scope: scope,
                     spaceContext

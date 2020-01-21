@@ -19,15 +19,6 @@ export default function register() {
   registerFilter('isArray', () => _.isArray);
   registerFilter('fileSize', () => fileSizeInByte => fileSize(fileSizeInByte).human('si'));
 
-  registerFilter('mimeGroup', () => file => {
-    if (file) {
-      return mimetype.getGroupName({
-        type: file.contentType,
-        fallbackFileName: file.fileName
-      });
-    }
-  });
-
   registerFilter('fileType', () => file => {
     if (file) {
       return mimetype.getGroupName({

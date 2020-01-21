@@ -3,6 +3,8 @@ import { createFieldApi } from './createFieldApi';
 import { createNavigatorApi } from './createNavigatorApi';
 import { createLocalesApi } from './createLocalesApi';
 import { createDialogsApi } from './createDialogsApi';
+import { createEntryApi } from './createEntryApi';
+import { createSpaceApi } from './createSpaceApi';
 import checkDependencies from 'widgets/bridges/checkDependencies';
 
 const noop = () => {};
@@ -14,10 +16,12 @@ const noop = () => {};
  * @typedef { import("contentful-ui-extensions-sdk").NotifierAPI } NotifierAPI
  * @typedef { import("contentful-ui-extensions-sdk").NavigatorAPI } NavigatorAPI
  * @typedef { import("contentful-ui-extensions-sdk").LocalesAPI } LocalesAPI
+ * @typedef { import("contentful-ui-extensions-sdk").EntryAPI } EntryAPI
+ * @typedef { import("contentful-ui-extensions-sdk").SpaceAPI } SpaceAPI
  */
 
 /**
- * This widgetApi implementation is a one-to-one map with actual `ui-extension-sdk` API, so all components that are using this API
+ * This widgetApi implementation is a partial map with actual `ui-extension-sdk` API, so all components that are using this API
  * can be developed as extensions first and then moved to the webapp without any changes.
  *
  * Eventually it supposed to be the only implementation of `widgetAPI`.
@@ -27,8 +31,11 @@ const noop = () => {};
  * @param {{ $scope: Object, spaceContext: Object }}
  * @returns {{
  *  field: FieldAPI,
+ *  space: SpaceAPI,
  *  locales: LocalesAPI,
  *  window: WindowAPI,
+ *  entry: EntryAPI,
+ *  space: SpaceAPI,
  *  parameters: ParametersAPI,
  *  notifier: NotifierAPI,
  *  navigator: NavigatorAPI
@@ -40,6 +47,8 @@ export default function createNewWidgetApi(dependencies) {
   const { $scope, spaceContext } = dependencies;
 
   const field = createFieldApi({ $scope });
+  const space = createSpaceApi({ spaceContext });
+  const entry = createEntryApi({ $scope });
   const navigator = createNavigatorApi({ spaceContext });
   const locales = createLocalesApi();
   const dialogs = createDialogsApi();
@@ -50,6 +59,8 @@ export default function createNewWidgetApi(dependencies) {
   };
 
   return {
+    entry,
+    space,
     field,
     navigator,
     locales,
