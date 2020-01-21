@@ -56,6 +56,11 @@ export function buildAppDefinitionWidget(appDefinition) {
     namespace: NAMESPACE_APP,
     id: appDefinition.sys.id,
     appDefinitionId: appDefinition.sys.id,
-    src: appDefinition.src
+    src: appDefinition.src,
+    parameters: [],
+    installationParameters: {
+      definitions: [],
+      values: {}
+    }
   };
 }
