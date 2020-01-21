@@ -1,5 +1,6 @@
 import createMicroBackendsClient from 'MicroBackendsClient';
 import { gitRevision as uiVersion } from 'Config';
+import { id as randomId } from 'utils/Random';
 
 // How often measurements should be sent.
 // Please note it means some measurements may be dropped.
@@ -12,12 +13,15 @@ const INTERVAL = 120 * 1000;
 // and only then setup the long-running interval.
 const INITIAL_DELAY = 10 * 1000;
 
-const makeMeasurement = (name, value, tags) => {
+const makeMeasurement = (name, value, tags, { initializedAt, sessionId }) => {
   if (tags) {
     tags.uiVersion = uiVersion;
   } else {
     tags = { uiVersion };
   }
+
+  tags.timeSinceInitialization = Date.now() - initializedAt;
+  tags.uiTelemetrySessionId = sessionId;
 
   return { name, value, tags };
 };
@@ -38,7 +42,7 @@ export function count(name, tags) {
 // object of tags `{ 'tag-name': 'tag-value' }`.
 export function record(name, value, tags) {
   withState(state => {
-    state.measurements = [...state.measurements, makeMeasurement(name, value, tags)];
+    state.measurements = [...state.measurements, makeMeasurement(name, value, tags, state)];
   });
 }
 
@@ -55,8 +59,8 @@ export function countImmediate(name, tags) {
 }
 
 export function recordImmediate(name, value, tags) {
-  withState(() => {
-    const body = JSON.stringify([makeMeasurement(name, value, tags)]);
+  withState(state => {
+    const body = JSON.stringify([makeMeasurement(name, value, tags, state)]);
     callBackend(state.client, body).catch(err => {
       // eslint-disable-next-line no-console
       console.error('Could not send measurement.', body, err);
@@ -68,6 +72,9 @@ export function init() {
   withState(state => {
     if (!state.initialized) {
       state.initialized = true;
+      state.initializedAt = Date.now();
+      state.sessionId = randomId();
+
       setTimeout(() => {
         send(state);
         setInterval(() => send(state), INTERVAL);
