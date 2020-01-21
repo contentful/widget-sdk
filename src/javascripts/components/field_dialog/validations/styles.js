@@ -17,6 +17,10 @@ const styles = {
   }),
   errorMessage: css({
     marginTop: tokens.spacingS
+  }),
+  inlineListItems: css({
+    display: 'inline',
+    marginRight: tokens.spacingXs
   })
 };
 

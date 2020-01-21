@@ -85,6 +85,7 @@ import * as FieldDialogSettingsComponent from 'components/field_dialog/component
 import * as ThumbnailComponent from 'components/Thumbnail/Thumbnail';
 import * as SizeValidation from 'components/field_dialog/validations/SizeValidation';
 import * as LinkedEntitiesBadge from 'app/entity_editor/Components/FetchLinksToEntity/LinkedEntitiesBadge';
+import * as LinkedEntriesValidation from 'components/field_dialog/validations/LinkedEntriesValidation';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -357,7 +358,8 @@ function getModule(name) {
     'components/field_dialog/components/FieldDialogSettingsComponent': FieldDialogSettingsComponent,
     'components/Thumbnail/Thumbnail': ThumbnailComponent,
     'components/field_dialog/validations/SizeValidation': SizeValidation,
-    'app/entity_editor/Components/FetchLinksToEntity/LinkedEntitiesBadge': LinkedEntitiesBadge
+    'app/entity_editor/Components/FetchLinksToEntity/LinkedEntitiesBadge': LinkedEntitiesBadge,
+    'components/field_dialog/validations/LinkedEntriesValidation': LinkedEntriesValidation
   };
 
   return get(allowedModules, name, null);

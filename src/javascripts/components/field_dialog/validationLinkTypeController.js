@@ -15,9 +15,11 @@ export default function register() {
         $scope.contentTypes = cts.map(decorateContentType);
       });
 
-      $scope.update = () => {
-        $scope.validation.settings = getSelectedIDs();
+      $scope.update = contentTypes => {
+        $scope.contentTypes = contentTypes;
+        $scope.validation.settings = getSelectedIDs(contentTypes);
         $scope.validator.run();
+        $scope.$applyAsync();
       };
 
       function decorateContentType(ct) {
@@ -29,8 +31,8 @@ export default function register() {
         };
       }
 
-      function getSelectedIDs() {
-        return _($scope.contentTypes)
+      function getSelectedIDs(contentTypes) {
+        return _(contentTypes)
           .filter('selected')
           .map('id')
           .value();
