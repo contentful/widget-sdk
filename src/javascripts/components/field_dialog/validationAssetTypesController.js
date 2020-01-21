@@ -18,13 +18,19 @@ export default function register() {
         selected: _.includes($scope.validation.settings, name)
       }));
 
+      controller.updateFromReact = types => {
+        $scope.validation.settings = getSelectedGroups(types);
+        $scope.validate();
+        $scope.$applyAsync();
+      };
+
       controller.update = () => {
-        $scope.validation.settings = getSelectedGroups();
+        $scope.validation.settings = getSelectedGroups(controller.types);
         $scope.validate();
       };
 
-      function getSelectedGroups() {
-        return _(controller.types)
+      function getSelectedGroups(types) {
+        return _(types)
           .filter('selected')
           .map('name')
           .value();
