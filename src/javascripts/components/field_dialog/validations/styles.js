@@ -19,8 +19,9 @@ const styles = {
     marginTop: tokens.spacingS
   }),
   inlineListItems: css({
-    display: 'inline',
-    marginRight: tokens.spacingXs
+    display: 'inline-box',
+    marginRight: tokens.spacingXs,
+    marginBottom: tokens.spacingS
   })
 };
 
