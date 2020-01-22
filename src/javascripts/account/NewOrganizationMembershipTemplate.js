@@ -9,27 +9,7 @@ import SuccessIcon from 'svg/checkmark-alt.svg';
 import pluralize from 'pluralize';
 import Icon from 'ui/Components/Icon';
 import StateLink from 'app/common/StateLink';
-
-const orgRoles = [
-  {
-    name: 'Owner',
-    value: 'owner',
-    description:
-      'Organization owners can manage subscriptions, billing and organization memberships.'
-  },
-  {
-    name: 'Admin',
-    value: 'admin',
-    description:
-      'Organization admins cannot manage organization subscriptions nor billing but can manage organization memberships.'
-  },
-  {
-    name: 'Member',
-    value: 'member',
-    description:
-      'Organization members do not have access to any organization information and only have access to assigned spaces.'
-  }
-];
+import { orgRoles } from 'utils/MembershipUtils';
 
 export function Header() {
   return (

@@ -5,6 +5,12 @@ export const orgRoles = [
     description: 'Can only access spaces and teams they are added to'
   },
   {
+    name: 'Developer',
+    value: 'developer',
+    description:
+      'Can access spaces and teams they are added to and manage organizational development entities'
+  },
+  {
     name: 'Admin',
     value: 'admin',
     description: 'Can manage everything except billing and subscription'
