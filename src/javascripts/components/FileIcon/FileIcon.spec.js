@@ -48,4 +48,23 @@ describe('FileIcon', () => {
       />
     `);
   });
+
+  it('passes down className', () => {
+    const output = shallow(
+      <FileIcon
+        file={{
+          contentType: 'image/png'
+        }}
+        className="my-example-class"
+      />
+    );
+
+    expect(output).toMatchInlineSnapshot(`
+      <Illustration
+        className="my-example-class"
+        illustration="Image"
+        testId="cf-ui-illustration"
+      />
+    `);
+  });
 });
