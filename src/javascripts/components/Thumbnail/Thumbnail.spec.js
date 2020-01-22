@@ -87,5 +87,25 @@ describe('Thumbnail', () => {
         />
       `);
     });
+
+    it('with icon=true renders the icon instead of the image', function() {
+      const { container } = render(
+        <Thumbnail
+          file={{
+            url: imageUrl,
+            contentType: 'image/png'
+          }}
+          icon={true}
+        />
+      );
+
+      expect(container).toMatchInlineSnapshot(`
+        <div>
+          <i
+            class="icon fa fa-file-image-o"
+          />
+        </div>
+      `);
+    });
   });
 });
