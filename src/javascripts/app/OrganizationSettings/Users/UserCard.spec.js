@@ -15,14 +15,14 @@ describe('UserCard', () => {
   it('status is undefined, no INVITED tag present', () => {
     const { getByTestId, queryByTestId } = render(<UserCard user={user} />);
     const userNameAndStatus = getByTestId('user-name-status');
-    expect(userNameAndStatus.textContent).toBe('User Test ');
+    expect(userNameAndStatus.textContent).toBe('User Test');
     expect(queryByTestId('invited-status')).toBeNull();
   });
 
   it('status is active, no INVITED tag present', () => {
     const { getByTestId, queryByTestId } = render(<UserCard user={user} status="active" />);
     const userNameAndStatus = getByTestId('user-name-status');
-    expect(userNameAndStatus.textContent).toBe('User Test ');
+    expect(userNameAndStatus.textContent).toBe('User Test');
     expect(queryByTestId('invited-status')).toBeNull();
   });
 
@@ -30,7 +30,7 @@ describe('UserCard', () => {
     const { getByTestId } = render(<UserCard user={user} status="pending" />);
 
     const userNameAndStatus = getByTestId('user-name-status');
-    expect(userNameAndStatus.textContent).toBe('User Test Invited');
+    expect(userNameAndStatus.textContent).toBe('User Test');
     expect(getByTestId('invited-status').textContent).toBe('Invited');
   });
 
@@ -41,7 +41,7 @@ describe('UserCard', () => {
     };
     const { getByTestId } = render(<UserCard user={user} />);
     const userNameAndStatus = getByTestId('user-name-status');
-    expect(userNameAndStatus.textContent).toBe('  Invited');
+    expect(userNameAndStatus.textContent).toBe(' ');
     expect(getByTestId('invited-status').textContent).toBe('Invited');
   });
 });

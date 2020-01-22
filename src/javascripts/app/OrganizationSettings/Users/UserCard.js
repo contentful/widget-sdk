@@ -30,7 +30,7 @@ export default class UserCard extends React.Component {
     status: MembershipStatus.ACTIVE
   };
 
-  showInvitedTag = () => {
+  shouldShowInvitedTag = () => {
     const { status, user } = this.props;
     return status === MembershipStatus.PENDING || !user.firstName;
   };
@@ -49,13 +49,13 @@ export default class UserCard extends React.Component {
       `}>
         <img src={avatarUrl} className="user-card__avatar" />
         <div>
+          {this.shouldShowInvitedTag() && (
+            <Tag testId="invited-status" tagType="warning">
+              Invited
+            </Tag>
+          )}
           <Heading element="h2" className="user-card__name" testId="user-name-status">
-            {firstName} {lastName}{' '}
-            {this.showInvitedTag() && (
-              <Tag testId="invited-status" tagType="warning">
-                Invited
-              </Tag>
-            )}
+            {firstName} {lastName}
           </Heading>
           <span className="user-card__email">{email}</span>
         </div>
