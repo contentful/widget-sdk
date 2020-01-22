@@ -12,14 +12,14 @@ import { createCommand } from 'utils/command/command';
 
 import createActions from 'app/ContentModel/Editor/Actions';
 import * as accessChecker from 'access_control/AccessChecker';
+import ContentTypesPage from 'app/ContentModel/Editor/ContentTypesPage';
 
 import addFieldDialogTemplate from 'app/ContentModel/Editor/add_field_dialog.html';
 
 export default function register() {
   registerDirective('cfContentTypeEditor', [
     () => ({
-      template:
-        '<react-component name="app/ContentModel/Editor/ContentTypesPage" props="componentProps" />',
+      template: '<react-component component="component" props="componentProps" />',
       restrict: 'A',
       controller: 'ContentTypeEditorController',
       controllerAs: 'ctEditorController'
@@ -329,6 +329,7 @@ export default function register() {
         }
       );
 
+      $scope.component = ContentTypesPage;
       $scope.componentProps = {
         isDirty: false,
         isNew: $scope.context.isNew,

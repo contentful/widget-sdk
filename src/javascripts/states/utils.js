@@ -5,6 +5,7 @@ import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { getStore } from 'browserStorage';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as TokenStore from 'services/TokenStore';
+import AccountView from 'account/AccountView';
 
 import Base from './Base';
 import { go } from './Navigator';
@@ -22,8 +23,6 @@ const migratedStates = [
   }
 ];
 
-const iframeTemplate = getReactTemplate('account/AccountView');
-
 /**
  * Define a state for an old GK iframe view
  */
@@ -34,10 +33,10 @@ export function iframeStateWrapper(definition = {}) {
       pathSuffix: ''
     },
     resolve: {
-      useNewView: () => {}
+      useNewView: () => false
     },
-    controller: getController(title),
-    template: iframeTemplate
+    controller: getController(title, AccountView),
+    template: '<react-component component="component" props="props"></react-component>'
   };
 
   return organizationBase(Object.assign(defaults, definition));
@@ -45,16 +44,16 @@ export function iframeStateWrapper(definition = {}) {
 
 /**
  * Define a state for a new style React view
- * @param {string} definition.componentPath Absolute path to the React component
+ * @param {string} definition.component React component
  */
 export function reactStateWrapper(definition = {}) {
-  const { componentPath } = definition;
+  const { component } = definition;
   const defaults = {
-    controller: getController(definition.title),
+    controller: getController(definition.title, component),
     resolve: {
-      useNewView: () => {}
+      useNewView: () => true
     },
-    template: getReactTemplate(componentPath)
+    template: '<react-component component="component" props="props"></react-component>'
   };
 
   return organizationBase(Object.assign(defaults, definition));
@@ -66,35 +65,30 @@ export function reactStateWrapper(definition = {}) {
  * This is used when migrating old iframe views to React
  *
  * @param {string} definition.featureFlag Feature flag key in LaunchDarkly
- * @param {string} definition.componentPath Absolute path to the React component
+ * @param {string} definition.component  React component
  */
 export function conditionalIframeWrapper(definition = {}) {
-  const { title, componentPath, featureFlag } = definition;
+  const { title, component, featureFlag } = definition;
 
   const defaults = {
-    controller: getController(title),
+    controller: getController(title, component),
     resolve: {
       useNewView: () => (featureFlag ? getCurrentVariation(featureFlag) : false)
     },
-    template: `
-      <div>
-        <div ng-if="useNewView === false">${iframeTemplate}</div>
-        <div ng-if="useNewView === true">${getReactTemplate(componentPath)}</div>
-      </div>
-    `
+    template: '<react-component component="component" props="props"></react-component>'
   };
 
   return organizationBase(Object.assign(defaults, definition));
 }
 
-function getController(title = '') {
+function getController(title = '', component) {
   return [
     '$scope',
     '$stateParams',
     'useNewView',
     function($scope, $stateParams, useNewView) {
-      $scope.useNewView = useNewView;
-      $scope.properties = {
+      $scope.component = useNewView === false ? AccountView : component;
+      $scope.props = {
         ...$stateParams,
         title,
         context: $scope.context,
@@ -109,10 +103,6 @@ function getController(title = '') {
       };
     }
   ];
-}
-
-function getReactTemplate(componentPath) {
-  return `<react-component name="${componentPath}" props="properties" />`;
 }
 
 export function organizationBase(definition) {
@@ -165,7 +155,7 @@ export function organizationBase(definition) {
   definition = Object.assign(defaults, definition);
 
   delete definition.featureFlag;
-  delete definition.componentPath;
+  delete definition.component;
   delete definition.title;
 
   return Base(definition);

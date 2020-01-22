@@ -12,31 +12,17 @@ import store from 'redux/store';
 
 import * as accessControlAddUsersToSpaceNoteEs6 from 'access_control/AddUsersToSpaceNote';
 import * as accessControlNoUsersToAddNoteEs6 from 'access_control/NoUsersToAddNote';
-import * as accessControlUsersUserListEs6 from 'access_control/Users/UserList';
 import * as componentsSharedKnowledgeBaseIconKnowledgeBaseEs6 from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import * as uiComponentsContactUsButtonEs6 from 'ui/Components/ContactUsButton';
 import * as appContentListSaveViewDialogComponentEs6 from 'app/ContentList/SaveViewDialogComponent';
 import * as uiComponentsIconEs6 from 'ui/Components/Icon';
 import * as componentsSharedIe11DeprecationBannerEs6 from 'components/shared/IE11DeprecationBanner';
-import * as appContentModelEditorContentTypesPageEs6 from 'app/ContentModel/Editor/ContentTypesPage';
-import * as appOrganizationSettingsSsoSsoSetupEs6 from 'app/OrganizationSettings/SSO/SSOSetup';
-import * as uiPagesSubscriptionOverviewIndexEs6 from 'ui/Pages/SubscriptionOverview';
-import * as appOrganizationSettingsTeamsTeamPageEs6 from 'app/OrganizationSettings/Teams/TeamPage';
-import * as accountUsageOrganizationUsageEs6 from 'account/usage/OrganizationUsage';
-import * as appOrganizationSettingsUserInvitationsUserInvitationDetailUserInvitationDetailRouterEs6 from 'app/OrganizationSettings/UserInvitations/UserInvitationDetail/UserInvitationDetailRouter';
-import * as appOrganizationSettingsUserInvitationsUserInvitationsListUserInvitationsListRouterEs6 from 'app/OrganizationSettings/UserInvitations/UserInvitationsList/UserInvitationsListRouter';
-import * as appOrganizationSettingsUsersNewUserNewUserBridgeEs6 from 'app/OrganizationSettings/Users/NewUser/NewUserBridge';
-import * as appOrganizationSettingsUsersUserDetailUserDetailRouteEs6 from 'app/OrganizationSettings/Users/UserDetail/UserDetailRoute';
-import * as appOrganizationSettingsUsersUsersListUserListRouteEs6 from 'app/OrganizationSettings/Users/UsersList/UserListRoute';
-import * as appSpaceSettingsUsageSpaceUsageEs6 from 'app/SpaceSettings/Usage/SpaceUsage';
 import * as componentsSharedDocumentTitleEs6 from 'components/shared/DocumentTitle';
 import * as componentsSharedWorkbenchTitleEs6 from 'components/shared/WorkbenchTitle';
 import * as appEntityEditorComponentsBackNavIndexEs6 from 'app/entity_editor/Components/BackNav';
 import * as appEntityEditorEntrySecondaryActions from 'app/entry_editor/EntryTitlebar/EntrySecondaryActions/EntrySecondaryActions';
 import * as appEntityEditorStatusNotificationEs6 from 'app/entity_editor/StatusNotification';
 import * as appEntrySidebarEntrySidebarEs6 from 'app/EntrySidebar/EntrySidebar';
-import * as widgetsWidgetRenderWarningEs6 from 'widgets/WidgetRenderWarning';
-import * as widgetsExtensionIFrameRendererEs6 from 'widgets/ExtensionIFrameRenderer';
 import * as appEntityEditorCollaboratorsIndexEs6 from 'app/entity_editor/Collaborators';
 import * as appEntryEditorCustomEditorExtensionRendererEs6 from 'app/entry_editor/CustomEditorExtensionRenderer';
 import * as componentsTabsNoLocalizedFieldsAdviceIndexEs6 from 'components/tabs/NoLocalizedFieldsAdvice';
@@ -47,8 +33,6 @@ import * as componentsSharedRelativeDateTimeIndexEs6 from 'components/shared/Rel
 import * as componentsFieldDialogValidationValuesEs6 from 'components/field_dialog/ValidationValues';
 import * as componentsFieldDialogAppearanceFieldDialogAppearanceTabEs6 from 'components/field_dialog/appearance/FieldDialogAppearanceTab';
 import * as componentsFieldDialogRichTextOptionsEs6 from 'components/field_dialog/RichTextOptions';
-import * as componentsSharedLoadingModalEs6 from 'components/shared/LoadingModal';
-import * as componentsSharedStackOnboardingScreensChoiceScreenEs6 from 'components/shared/stack-onboarding/screens/ChoiceScreen';
 import * as componentsSharedSpaceWizardWizardEs6 from 'components/shared/space-wizard/Wizard';
 import * as componentsTabsAssetListAddAssetButtonEs6 from 'components/tabs/asset_list/AddAssetButton';
 import * as componentsTabsPluralizeEntityMessageEs6 from 'components/tabs/PluralizeEntityMessage';
@@ -64,18 +48,7 @@ import * as componentsSharedQuickNavigationQuickNavWithFeatureFlagEs6 from 'comp
 import * as searchEntitySelectorCreateEntityIndexEs6 from 'search/EntitySelector/CreateEntity';
 import * as componentsSharedEnterpriseSpaceWizardEnterpriseSpaceWizardEs6 from 'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard';
 import * as navigationModernStackOnboardingRelaunchEs6 from 'navigation/modernStackOnboardingRelaunch';
-import * as componentsSharedUserInvitationEs6 from 'components/shared/UserInvitation';
-import * as appUserProfileSettings from 'app/UserProfile/Settings';
-import * as appUserSettingsSpaceMembershipsEs6 from 'app/UserSettings/SpaceMemberships';
-import * as componentsTabsContentTypeListContentTypeListPageEs6 from 'components/tabs/content_type_list/ContentTypeListPage';
-import * as appSpaceSettingsTeamsSpaceTeamsPageEs6 from 'app/SpaceSettings/Teams/SpaceTeamsPage';
-import * as appSpaceSettingsTeamsAddTeamsAddTeamsRouterEs6 from 'app/SpaceSettings/Teams/AddTeams/AddTeamsRouter';
-import * as componentsSharedStackOnboardingScreensGetStartedScreenEs6 from 'components/shared/stack-onboarding/screens/GetStartedScreen';
-import * as componentsSharedStackOnboardingScreensCopyScreenEs6 from 'components/shared/stack-onboarding/screens/CopyScreen';
-import * as componentsSharedStackOnboardingScreensExploreScreenEs6 from 'components/shared/stack-onboarding/screens/ExploreScreen';
-import * as componentsSharedStackOnboardingScreensDeployScreenEs6 from 'components/shared/stack-onboarding/screens/DeployScreen';
 import * as componentsIe11DeprecationNoticeIndexEs6 from 'components/Ie11DeprecationNotice';
-import * as accountAccountViewEs6 from 'account/AccountView';
 import * as appEntityEditorBulkEditorTitleEs6 from 'app/entity_editor/bulk_editor/BulkEditorTitle';
 import * as embedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
 import * as HeadingContextMenu from 'markdown_editor/components/HeadingContextMenu';
@@ -222,7 +195,7 @@ export default function register() {
    * {
    *   template: `
    *     <react-component name="app/home/welcome/Welcome" props="myController.props"></react-component>
-   *     <react-component name="@ui-components-library/TextLink"></react-component>
+   *     <react-component name="@contentful/forma-36-react-components/TextLink"></react-component>
    *   `
    * }
    *
@@ -286,31 +259,17 @@ function getModule(name) {
   const allowedModules = {
     'access_control/AddUsersToSpaceNote': accessControlAddUsersToSpaceNoteEs6,
     'access_control/NoUsersToAddNote': accessControlNoUsersToAddNoteEs6,
-    'access_control/Users/UserList': accessControlUsersUserListEs6,
     'components/shared/knowledge_base_icon/KnowledgeBase': componentsSharedKnowledgeBaseIconKnowledgeBaseEs6,
     'ui/Components/ContactUsButton': uiComponentsContactUsButtonEs6,
     'app/ContentList/SaveViewDialogComponent': appContentListSaveViewDialogComponentEs6,
     'ui/Components/Icon': uiComponentsIconEs6,
     'components/shared/IE11DeprecationBanner': componentsSharedIe11DeprecationBannerEs6,
-    'app/ContentModel/Editor/ContentTypesPage': appContentModelEditorContentTypesPageEs6,
-    'app/OrganizationSettings/SSO/SSOSetup': appOrganizationSettingsSsoSsoSetupEs6,
-    'ui/Pages/SubscriptionOverview': uiPagesSubscriptionOverviewIndexEs6,
-    'app/OrganizationSettings/Teams/TeamPage': appOrganizationSettingsTeamsTeamPageEs6,
-    'account/usage/OrganizationUsage': accountUsageOrganizationUsageEs6,
-    'app/OrganizationSettings/UserInvitations/UserInvitationDetail/UserInvitationDetailRouter': appOrganizationSettingsUserInvitationsUserInvitationDetailUserInvitationDetailRouterEs6,
-    'app/OrganizationSettings/UserInvitations/UserInvitationsList/UserInvitationsListRouter': appOrganizationSettingsUserInvitationsUserInvitationsListUserInvitationsListRouterEs6,
-    'app/OrganizationSettings/Users/NewUser/NewUserBridge': appOrganizationSettingsUsersNewUserNewUserBridgeEs6,
-    'app/OrganizationSettings/Users/UserDetail/UserDetailRoute': appOrganizationSettingsUsersUserDetailUserDetailRouteEs6,
-    'app/OrganizationSettings/Users/UsersList/UserListRoute': appOrganizationSettingsUsersUsersListUserListRouteEs6,
-    'app/SpaceSettings/Usage/SpaceUsage': appSpaceSettingsUsageSpaceUsageEs6,
     'components/shared/DocumentTitle': componentsSharedDocumentTitleEs6,
     'components/shared/WorkbenchTitle': componentsSharedWorkbenchTitleEs6,
     'app/entity_editor/Components/BackNav': appEntityEditorComponentsBackNavIndexEs6,
     'app/entity_editor/EntryTitlebar/EntrySecondaryActions': appEntityEditorEntrySecondaryActions,
     'app/entity_editor/StatusNotification': appEntityEditorStatusNotificationEs6,
     'app/EntrySidebar/EntrySidebar': appEntrySidebarEntrySidebarEs6,
-    'widgets/WidgetRenderWarning': widgetsWidgetRenderWarningEs6,
-    'widgets/ExtensionIFrameRenderer': widgetsExtensionIFrameRendererEs6,
     'app/entity_editor/Collaborators': appEntityEditorCollaboratorsIndexEs6,
     'app/entry_editor/CustomEditorExtensionRenderer': appEntryEditorCustomEditorExtensionRendererEs6,
     'components/tabs/NoLocalizedFieldsAdvice': componentsTabsNoLocalizedFieldsAdviceIndexEs6,
@@ -321,8 +280,6 @@ function getModule(name) {
     'components/field_dialog/ValidationValues': componentsFieldDialogValidationValuesEs6,
     'components/field_dialog/appearance/FieldDialogAppearanceTab': componentsFieldDialogAppearanceFieldDialogAppearanceTabEs6,
     'components/field_dialog/RichTextOptions': componentsFieldDialogRichTextOptionsEs6,
-    'components/shared/LoadingModal': componentsSharedLoadingModalEs6,
-    'components/shared/stack-onboarding/screens/ChoiceScreen': componentsSharedStackOnboardingScreensChoiceScreenEs6,
     'components/shared/space-wizard/Wizard': componentsSharedSpaceWizardWizardEs6,
     'components/tabs/asset_list/AddAssetButton': componentsTabsAssetListAddAssetButtonEs6,
     'components/tabs/PluralizeEntityMessage': componentsTabsPluralizeEntityMessageEs6,
@@ -338,18 +295,7 @@ function getModule(name) {
     'search/EntitySelector/CreateEntity': searchEntitySelectorCreateEntityIndexEs6,
     'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard': componentsSharedEnterpriseSpaceWizardEnterpriseSpaceWizardEs6,
     'navigation/modernStackOnboardingRelaunch': navigationModernStackOnboardingRelaunchEs6,
-    'components/shared/UserInvitation': componentsSharedUserInvitationEs6,
-    'app/UserProfile/Settings': appUserProfileSettings,
-    'app/UserSettings/SpaceMemberships': appUserSettingsSpaceMembershipsEs6,
-    'components/tabs/content_type_list/ContentTypeListPage': componentsTabsContentTypeListContentTypeListPageEs6,
-    'app/SpaceSettings/Teams/SpaceTeamsPage': appSpaceSettingsTeamsSpaceTeamsPageEs6,
-    'app/SpaceSettings/Teams/AddTeams/AddTeamsRouter': appSpaceSettingsTeamsAddTeamsAddTeamsRouterEs6,
-    'components/shared/stack-onboarding/screens/GetStartedScreen': componentsSharedStackOnboardingScreensGetStartedScreenEs6,
-    'components/shared/stack-onboarding/screens/CopyScreen': componentsSharedStackOnboardingScreensCopyScreenEs6,
-    'components/shared/stack-onboarding/screens/ExploreScreen': componentsSharedStackOnboardingScreensExploreScreenEs6,
-    'components/shared/stack-onboarding/screens/DeployScreen': componentsSharedStackOnboardingScreensDeployScreenEs6,
     'components/Ie11DeprecationNotice': componentsIe11DeprecationNoticeIndexEs6,
-    'account/AccountView': accountAccountViewEs6,
     'app/entity_editor/bulk_editor/BulkEditorTitle': appEntityEditorBulkEditorTitleEs6,
     'components/forms/embedly_preview/EmbedlyPreview': embedlyPreview,
     'markdown_editor/components/HeadingContextMenu': HeadingContextMenu,

@@ -4,12 +4,13 @@ import { go } from 'states/Navigator';
 import { Notification } from '@contentful/forma-36-react-components';
 import { getUser } from 'services/TokenStore';
 import _ from 'lodash';
+import UserInvitation from 'components/shared/UserInvitation';
 
 export default makeState({
   name: 'invitations',
   url: '/invitations/:invitationId',
   template:
-    '<react-component name="components/shared/UserInvitation" props="props" watch-depth="reference"></react-component>',
+    '<react-component component="component" props="props" watch-depth="reference"></react-component>',
   loadingText: 'Loading your invitation…',
   resolve: {
     invitationData: [
@@ -53,6 +54,7 @@ export default makeState({
     '$scope',
     (invitationData, user, $scope) => {
       $scope.context.ready = true;
+      $scope.component = UserInvitation;
       $scope.props = {};
 
       const { invitation, error } = invitationData;

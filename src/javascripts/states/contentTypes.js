@@ -1,19 +1,13 @@
-import base from 'states/Base';
 import * as EditorInterfaceTransformer from 'widgets/EditorInterfaceTransformer';
 import * as AdvancedExtensibilityFeature from 'app/settings/extensions/services/AdvancedExtensibilityFeature';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
+import ContentTypeListPage from 'components/tabs/content_type_list/ContentTypeListPage';
 
-const list = base({
+const list = {
   name: 'list',
   url: '',
-  template: '<react-component name="components/tabs/content_type_list/ContentTypeListPage" />',
-  controller: [
-    '$scope',
-    $scope => {
-      $scope.context.ready = true;
-    }
-  ]
-});
+  component: ContentTypeListPage
+};
 
 const fields = {
   name: 'fields',

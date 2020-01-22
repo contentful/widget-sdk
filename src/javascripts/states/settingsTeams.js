@@ -1,17 +1,19 @@
 import { reactStateWrapper } from './utils';
+import SpaceTeamsPage from 'app/SpaceSettings/Teams/SpaceTeamsPage';
+import AddTeamsRouter from 'app/SpaceSettings/Teams/AddTeams/AddTeamsRouter';
 
 const list = reactStateWrapper({
   name: 'list',
   title: 'Space teams',
   loadingText: 'Loading teams…',
   url: '',
-  componentPath: 'app/SpaceSettings/Teams/SpaceTeamsPage'
+  component: SpaceTeamsPage
 });
 
 const add = reactStateWrapper({
   name: 'add',
   url: '/add',
-  componentPath: 'app/SpaceSettings/Teams/AddTeams/AddTeamsRouter'
+  component: AddTeamsRouter
 });
 
 export default {

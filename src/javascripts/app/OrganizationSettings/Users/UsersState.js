@@ -1,10 +1,13 @@
 import { reactStateWrapper } from 'states/utils';
+import NewUserBridge from 'app/OrganizationSettings/Users/NewUser/NewUserBridge';
+import UserDetailRoute from 'app/OrganizationSettings/Users/UserDetail/UserDetailRoute';
+import UserListRoute from 'app/OrganizationSettings/Users/UsersList/UserListRoute';
 
 export const inviteUsersState = reactStateWrapper({
   name: 'new',
   title: 'Invite new users',
   url: '/invite',
-  componentPath: 'app/OrganizationSettings/Users/NewUser/NewUserBridge'
+  component: NewUserBridge
 });
 
 export const userDetailState = reactStateWrapper({
@@ -14,12 +17,12 @@ export const userDetailState = reactStateWrapper({
   },
   title: 'Organization user',
   url: '/organization_memberships/:userId',
-  componentPath: 'app/OrganizationSettings/Users/UserDetail/UserDetailRoute'
+  component: UserDetailRoute
 });
 
 export const usersListState = reactStateWrapper({
   name: 'list',
   title: 'Organization users',
   url: '/organization_memberships',
-  componentPath: 'app/OrganizationSettings/Users/UsersList/UserListRoute'
+  component: UserListRoute
 });

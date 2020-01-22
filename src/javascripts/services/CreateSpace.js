@@ -1,17 +1,35 @@
-import { Notification } from '@contentful/forma-36-react-components';
+import React from 'react';
+import { Notification, Spinner, Modal } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 import { getOrganization } from 'services/TokenStore';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import createResourceService from 'services/ResourceService';
 import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import ModalLauncher from 'app/common/ModalLauncher';
 import {
   getSpaceRatePlans,
   isEnterprisePlan,
   getBasePlan,
   isHighDemandEnterprisePlan
 } from 'account/pricing/PricingDataProvider';
-import { openModal as showLoading } from 'components/shared/LoadingModal';
 import { getModule } from 'NgRegistry';
+
+function Loading() {
+  const spinnerStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%',
+    padding: tokens.spacingL
+  };
+
+  return (
+    <div style={spinnerStyle}>
+      <Spinner size="large" />
+    </div>
+  );
+}
 
 /**
  * Displays the space creation dialog. The dialog type will depend on the
@@ -50,7 +68,17 @@ export async function showDialog(organizationId) {
       scopeData: { organization }
     });
   } else {
-    const loadingModal = showLoading();
+    let closeLoadingModal;
+
+    ModalLauncher.open(({ isShown, onClose }) => {
+      closeLoadingModal = onClose;
+      return (
+        <Modal isShown={isShown} onClose={onClose}>
+          <Loading />
+        </Modal>
+      );
+    });
+
     const orgEndpoint = createOrganizationEndpoint(organizationId);
     const basePlan = await getBasePlan(orgEndpoint);
     // org should create POC if it is Enterprise
@@ -105,6 +133,8 @@ export async function showDialog(organizationId) {
       });
     }
 
-    loadingModal.destroy();
+    if (closeLoadingModal) {
+      closeLoadingModal();
+    }
   }
 }

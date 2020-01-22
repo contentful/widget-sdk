@@ -1,27 +1,31 @@
 import { checkSpace } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
+import GetStartedScreen from 'components/shared/stack-onboarding/screens/GetStartedScreen';
+import CopyScreen from 'components/shared/stack-onboarding/screens/CopyScreen';
+import ExploreScreen from 'components/shared/stack-onboarding/screens/ExploreScreen';
+import DeployScreen from 'components/shared/stack-onboarding/screens/DeployScreen';
 
 const getStarted = {
   name: 'getStarted',
   url: '/get-started',
-  template: `<react-component name="components/shared/stack-onboarding/screens/GetStartedScreen"></react-component>`
+  component: GetStartedScreen
 };
 
 const copyRepo = {
   name: 'copy',
   url: '/copy',
-  template: `<react-component name="components/shared/stack-onboarding/screens/CopyScreen"></react-component>`
+  component: CopyScreen
 };
 
 const explore = {
   name: 'explore',
   url: '/explore',
-  template: `<react-component name="components/shared/stack-onboarding/screens/ExploreScreen"></react-component>`
+  component: ExploreScreen
 };
 
 const deploy = {
   name: 'deploy',
   url: '/deploy',
-  template: `<react-component name="components/shared/stack-onboarding/screens/DeployScreen"></react-component>`
+  component: DeployScreen
 };
 
 export default {

@@ -1,4 +1,5 @@
 import { reactStateWrapper } from './utils';
+import UserList from 'access_control/Users/UserList';
 
 const list = reactStateWrapper({
   name: 'list',
@@ -8,7 +9,7 @@ const list = reactStateWrapper({
   params: {
     jumpToRole: null
   },
-  componentPath: 'access_control/Users/UserList'
+  component: UserList
 });
 
 export default {

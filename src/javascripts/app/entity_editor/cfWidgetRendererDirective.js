@@ -6,6 +6,8 @@ import $ from 'jquery';
 import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
 import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';
+import WidgetRenderWarning from 'widgets/WidgetRenderWarning';
+import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer';
 
 import createNewWidgetApi from 'app/widgets/NewWidgetApi/createNewWidgetApi';
 import * as LoadEventTracker from 'app/entity_editor/LoadEventTracker';
@@ -82,14 +84,21 @@ export default function register() {
             renderFieldEditor
           }) {
             if (problem) {
-              scope.props = { message: problem };
               trackLinksRendered();
-              renderTemplate(
-                `<react-component name="widgets/WidgetRenderWarning" props="props" />`
-              );
+              renderJsxTemplate(<WidgetRenderWarning message={problem}></WidgetRenderWarning>);
             } else if ([NAMESPACE_EXTENSION, NAMESPACE_APP].includes(widgetNamespace)) {
               trackLinksRendered();
-              renderExtension();
+              renderJsxTemplate(
+                <ExtensionIFrameRenderer
+                  descriptor={descriptor}
+                  parameters={parameters}
+                  bridge={createExtensionBridge({
+                    $rootScope,
+                    $scope: scope,
+                    spaceContext
+                  })}
+                />
+              );
             } else if (widgetNamespace === NAMESPACE_BUILTIN && template) {
               handleWidgetLinkRenderEvents();
               renderTemplate(template);
@@ -121,22 +130,6 @@ export default function register() {
             } else {
               throw new Error('Builtin widget template or a valid UI Extension is required.');
             }
-          }
-
-          function renderExtension() {
-            scope.props = {
-              descriptor,
-              parameters,
-              bridge: createExtensionBridge({
-                $rootScope,
-                $scope: scope,
-                spaceContext
-              })
-            };
-
-            renderTemplate(
-              '<react-component name="widgets/ExtensionIFrameRenderer" props="props" />'
-            );
           }
 
           function renderTemplate(template) {

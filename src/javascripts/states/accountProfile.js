@@ -2,6 +2,8 @@ import base from 'states/Base';
 import { iframeStateWrapper, reactStateWrapper } from './utils';
 import { noop } from 'lodash';
 import ProfileNavigationBar from 'navigation/ProfileNavigationBar';
+import Settings from 'app/UserProfile/Settings';
+import SpaceMemberships from 'app/UserSettings/SpaceMemberships';
 
 const user = reactStateWrapper({
   loadingText: 'Loading your account…',
@@ -9,7 +11,7 @@ const user = reactStateWrapper({
   name: 'user',
   title: 'User profile',
   url: '/user',
-  componentPath: 'app/UserProfile/Settings'
+  component: Settings
 });
 
 const spaceMemberships = reactStateWrapper({
@@ -17,7 +19,7 @@ const spaceMemberships = reactStateWrapper({
   title: 'Space memberships',
   loadingText: 'Loading spaces…',
   url: '/space_memberships',
-  componentPath: 'app/UserSettings/SpaceMemberships'
+  component: SpaceMemberships
 });
 
 const organizationMemberships = userBase({

@@ -1,4 +1,5 @@
 import { reactStateWrapper } from 'states/utils';
+import UserInvitationDetailRouter from 'app/OrganizationSettings/UserInvitations/UserInvitationDetail/UserInvitationDetailRouter';
 
 export default reactStateWrapper({
   name: 'invitation',
@@ -6,6 +7,5 @@ export default reactStateWrapper({
   params: {
     invitationId: ''
   },
-  componentPath:
-    'app/OrganizationSettings/UserInvitations/UserInvitationDetail/UserInvitationDetailRouter'
+  component: UserInvitationDetailRouter
 });

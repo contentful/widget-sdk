@@ -1,10 +1,11 @@
 import { reactStateWrapper } from 'states/utils';
+import TeamPage from 'app/OrganizationSettings/Teams/TeamPage';
 
 const teamDetailState = reactStateWrapper({
   name: 'detail',
   title: 'Teams',
   url: '/:teamId',
-  componentPath: 'app/OrganizationSettings/Teams/TeamPage'
+  component: TeamPage
 });
 
 export default reactStateWrapper({
@@ -12,5 +13,5 @@ export default reactStateWrapper({
   children: [teamDetailState],
   title: 'Teams',
   url: '/teams',
-  componentPath: 'app/OrganizationSettings/Teams/TeamPage'
+  component: TeamPage
 });
