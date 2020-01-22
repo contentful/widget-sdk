@@ -84,11 +84,13 @@ export default function FileEditor(props) {
 
     try {
       const uploadUrl = await fn(mode, file);
-      updateFile({
-        upload: uploadUrl,
-        fileName: file.fileName,
-        contentType: file.contentType
-      });
+      if (uploadUrl) {
+        updateFile({
+          upload: uploadUrl,
+          fileName: file.fileName,
+          contentType: file.contentType
+        });
+      }
     } catch (err) {
       if (err) {
         notifyEditError(err);
@@ -106,7 +108,7 @@ export default function FileEditor(props) {
     <>
       <div className="file-info">
         {disabled && <FileEditorLoading />}
-        {(isUnprocessed || isBusy) && <FileEditorLoading message="Processing..." />}
+        {isUnprocessed && <FileEditorLoading message="Processing..." />}
         {file.url && !disabled && !isUnprocessed && <FileEditorPreview file={file} />}
         {showMetaData && <FileEditorMetadata file={file} />}
       </div>
@@ -126,12 +128,15 @@ export default function FileEditor(props) {
           setBusy(true);
           try {
             const updatedFile = await ImageOperations.crop(mode, file);
-            updateFile(updatedFile);
+            if (updateFile) {
+              updateFile(updatedFile);
+            }
           } catch (err) {
             if (err) {
               notifyEditError(err);
             }
           }
+          setBusy(false);
         }}
         onDelete={() => {
           updateFile(null);
