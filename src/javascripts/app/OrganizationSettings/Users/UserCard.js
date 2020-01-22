@@ -1,12 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { User as UserPropType } from 'app/OrganizationSettings/PropTypes';
-
 import { Tag, Heading } from '@contentful/forma-36-react-components';
 
 const CardSizes = {
   SMALL: 'small',
   LARGE: 'large'
+};
+
+const MembershipStatus = {
+  ACTIVE: 'active',
+  PENDING: 'pending'
 };
 
 const CardClassNames = {
@@ -18,24 +22,17 @@ export default class UserCard extends React.Component {
   static propTypes = {
     user: UserPropType.isRequired,
     size: PropTypes.oneOf(Object.values(CardSizes)),
-    status: PropTypes.string,
-    hasPendingOrgMembershipsEnabled: PropTypes.bool
+    status: PropTypes.oneOf(Object.values(MembershipStatus))
   };
 
   static defaultProps = {
-    size: CardSizes.SMALL
+    size: CardSizes.SMALL,
+    status: MembershipStatus.ACTIVE
   };
 
   showInvitedTag = () => {
-    if (
-      (this.props.hasPendingOrgMembershipsEnabled &&
-        this.props.status &&
-        this.props.status === 'pending') ||
-      !this.props.user.firstName
-    ) {
-      return true;
-    }
-    return false;
+    const { status, user } = this.props;
+    return status === MembershipStatus.PENDING || !user.firstName;
   };
 
   render() {
