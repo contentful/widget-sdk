@@ -308,11 +308,16 @@ async function resolveSubscriptions() {
 }
 
 async function resolveSpaceHome({ orgId }) {
-  const space = await getOrganizationSpaces(orgId);
-  if (!space) {
-    throw new Error('no spaces found');
+  const spaces = await getOrganizationSpaces(orgId);
+  if (spaces.length === 0) {
+    return {
+      path: ['home'],
+      params: {
+        orgId
+      }
+    };
   }
-  const spaceId = space.sys.id;
+  const spaceId = spaces[0].sys.id;
   return {
     path: ['spaces', 'detail', 'home'],
     params: {

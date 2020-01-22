@@ -158,14 +158,12 @@ export function getSpace(id) {
  * @param {string} id
  * @returns {Promise<API.Space>}
  * @description
- * This method returns a promise of a single stored space
- * If some calls are in progress, we're waiting until these are done.
- * Promise is rejected if no spaces can be found in the organization with the provided ID.
+ * This method returns a promise of all spaces one has access to,
+ * that are part of the organization with the provided ID.
  */
 export function getOrganizationSpaces(id) {
   return getSpaces().then(spaces => {
-    const orgSpace = find(spaces, { organization: { sys: { id } } });
-    return orgSpace || Promise.reject(new Error('No space found in organization with given ID.'));
+    return spaces.filter(space => space.organization.sys.id === id);
   });
 }
 
