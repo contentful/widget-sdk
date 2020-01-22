@@ -33,6 +33,11 @@ const groupToIconMap = {
  * @returns {string?}
  */
 function getThumbnailUrl(file, options) {
+  // Force a miss on the URL to revert to an icon
+  if (options.icon) {
+    return null;
+  }
+
   const imageUrl = getImageUrl(file);
   if (!imageUrl) {
     return imageUrl;
@@ -93,7 +98,8 @@ function getIconName(file) {
 export default function Thumbnail(props) {
   const options = {
     fit: props.fit,
-    focus: props.focus
+    focus: props.focus,
+    icon: props.icon
   };
 
   const size = parseInt(props.size, 10);
@@ -130,6 +136,8 @@ Thumbnail.propTypes = {
   }),
   fit: PropTypes.any,
   focus: PropTypes.any,
+  // Force the thumbnail to be an icon regardless of content type. Defaults to false
+  icon: PropTypes.bool,
   width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   size: PropTypes.oneOfType([PropTypes.number, PropTypes.string])

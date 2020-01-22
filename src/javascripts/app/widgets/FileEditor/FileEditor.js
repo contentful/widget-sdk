@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { get, find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Notification } from '@contentful/forma-36-react-components';
-import { FileEditorUploader } from './FileEditorUploader';
-import { FileEditorLoading } from './FileEditorLoading';
-import { FileEditorPreview } from './FileEditorPreview';
-import { FileEditorMetadata } from './FileEditorMetadata';
 import { FileEditorActions } from './FileEditorActions';
+import { FileEditorArchived } from './FileEditorArchived';
+import { FileEditorLoading } from './FileEditorLoading';
+import { FileEditorMetadata } from './FileEditorMetadata';
+import { FileEditorPreview } from './FileEditorPreview';
+import { FileEditorUploader } from './FileEditorUploader';
 import * as ImageOperations from './ImageOperations';
 
 function promiseTimeout(ms) {
@@ -42,7 +43,7 @@ function isUnprocessedFile(file) {
 }
 
 export default function FileEditor(props) {
-  const { file, disabled, processAsset, setValue, maybeSetTitle } = props;
+  const { file, disabled, archived, processAsset, setValue, maybeSetTitle } = props;
   const [showMetaData, setShowMetaData] = useState(false);
   const [isBusy, setBusy] = useState(false);
 
@@ -102,6 +103,10 @@ export default function FileEditor(props) {
     return <FileEditorUploader onSuccess={updateFile} disabled={disabled} />;
   }
 
+  if (archived) {
+    return <FileEditorArchived file={file} />;
+  }
+
   return (
     <>
       <div className="file-info">
@@ -150,5 +155,6 @@ FileEditor.propTypes = {
   setValue: PropTypes.func.isRequired,
   processAsset: PropTypes.func.isRequired,
   disabled: PropTypes.bool.isRequired,
+  archived: PropTypes.bool,
   maybeSetTitle: PropTypes.func.isRequired
 };

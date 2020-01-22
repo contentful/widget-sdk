@@ -7675,6 +7675,22 @@ pre,
     z-index: 2;
     text-align: center;
   }
+  .file-archived {
+    border: 1px solid #a6b3ba;
+    padding: 10px;
+    color: #536171;
+    vertical-align: middle;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    align-items: center;
+  }
+  .file-archived .icon {
+    display: inline-block;
+    font-size: 22px;
+    color: #adbac2;
+    margin-right: 10px;
+  }
 
   .cf-form-notice {
     margin-bottom: 10px;
