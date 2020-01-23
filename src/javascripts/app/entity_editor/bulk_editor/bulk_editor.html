@@ -25,7 +25,7 @@
       </div>
     </div>
     <div class="workbench-main__content" ng-show="data.loaded" style="padding-top: 0">
-      <!-- Safari and Edge need a relative container for dropdowns to work:-->
+      <!-- Safari and Edge need a relative container for dropdowns to work: -->
       <div
         style="position: relative"
         ng-repeat="ctx in entityContexts track by ctx.key"
@@ -49,12 +49,10 @@
           There is 1 linked entry in <em>{{ referenceContext.field.name }}</em>.
         </div>
         <div class="entity-sidebar__help-text">
-          <cf-create-entry-button
-            content-types="actions.allowedCTs"
-            on-select="actions.addNewEntry"
-            style="link"
-            text="Create new entry and link"
-          ></cf-create-entry-button>
+          <react-component
+            name="components/CreateEntryButton/CreateEntryLinkButton"
+            props="{contentTypes: actions.allowedCTs, onSelect: actions.addNewEntry, text: 'Create new entry and link', hasPlusIcon: true}"
+          ></react-component>
         </div>
         <div class="entity-sidebar__help-text">
           <button

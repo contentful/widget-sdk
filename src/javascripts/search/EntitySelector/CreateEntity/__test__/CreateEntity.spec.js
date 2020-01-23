@@ -52,7 +52,7 @@ describe('CreateEntity', () => {
     };
     accessChecker.canPerformActionOnEntryOfType.mockReturnValueOnce(true);
     const wrapper = mountComponent(props);
-    expect(wrapper.find('[data-test-id="create-entry"]')).toHaveLength(1);
+    expect(wrapper.find('[data-test-id="create-entry-link-button"]')).toHaveLength(1);
   });
 
   it('renders "create asset" link if entity type is "Asset"', () => {
@@ -75,7 +75,7 @@ describe('CreateEntity', () => {
     };
     const wrapper = mountComponent(props);
 
-    expect(wrapper.find('[data-test-id="create-entry"]')).toHaveLength(0);
+    expect(wrapper.find('[data-test-id="create-entry-link-button"]')).toHaveLength(0);
   });
 
   it('does not render "create asset" link if user has no "CREATE" access on assets', () => {
@@ -102,7 +102,7 @@ describe('CreateEntity', () => {
 
     const wrapper = mountComponent(props);
 
-    wrapper.find('[data-test-id="cta"]').simulate('click');
+    wrapper.find('[data-test-id="create-entry-link-button"]').simulate('click');
 
     await flushPromises();
     wrapper.update();

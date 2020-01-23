@@ -6,10 +6,7 @@ import PropTypes from 'prop-types';
 import Visible from 'components/shared/Visible';
 import { TextLink } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import {
-  default as CreateEntryButton,
-  Style as CreateEntryStyle
-} from 'components/CreateEntryButton';
+import CreateEntryLinkButton from 'components/CreateEntryButton/CreateEntryLinkButton';
 import { TYPES } from './Util';
 
 const TYPE_NAMES = {
@@ -24,6 +21,7 @@ export const labels = {
 
 export const testIds = {
   createAndLink: 'linkEditor.createAndLink',
+  createAndLinkWrapper: 'create-entry-button-menu-trigger',
   linkExisting: 'linkEditor.linkExisting'
 };
 
@@ -69,12 +67,11 @@ export default class LinkingActions extends React.Component {
     return (
       <div className={styles.linkEditor}>
         <Visible if={type === TYPES.ENTRY && canCreateEntity}>
-          <CreateEntryButton
+          <CreateEntryLinkButton
             testId={testIds.createAndLink}
             text={labels.createAndLink(singleCtOrTypeName)}
             contentTypes={contentTypes}
             hasPlusIcon={true}
-            style={CreateEntryStyle.Link}
             onSelect={contentType => onCreateAndLink(contentType)}
           />
         </Visible>

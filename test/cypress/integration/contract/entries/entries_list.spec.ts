@@ -135,7 +135,7 @@ describe('Entries list page', () => {
 
     it('renders entries page correctly', () => {
       cy.getByTestId('no-entries-advice').should('be.visible');
-      cy.getByTestId('create-entry')
+      cy.getByTestId('create-entry-button-menu-trigger')
         .should('be.visible')
         .find('button')
         .should('be.enabled');
@@ -151,7 +151,7 @@ describe('Entries list page', () => {
         queryAllScheduledJobsForDefaultEntry.willFindOnePendingJob(),
       ];
 
-      cy.getByTestId('create-entry').click();
+      cy.getByTestId('create-entry-button-menu-trigger').click();
 
       cy.wait(interactions);
 
@@ -243,7 +243,7 @@ describe('Entries list page', () => {
     });
 
     it('renders a disabled "Add Entry" button', () => {
-      cy.getByTestId('cta').should('be.disabled');
+      cy.getByTestId('create-entry-button').should('be.disabled');
     });
   });
 });

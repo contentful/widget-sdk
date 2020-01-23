@@ -24,11 +24,10 @@
     >
   </div>
   <div class="workbench-header__actions" ng-if="!showNoEntriesAdvice()">
-    <cf-create-entry-button
-      content-types="accessibleCts"
-      suggested-content-type-id="context.view.contentTypeId"
-      on-select="newEntry"
-    ></cf-create-entry-button>
+    <react-component
+      name="components/CreateEntryButton/CreateEntryButton"
+      props="{contentTypes: accessibleCts, suggestedContentTypeId: context.view.contentTypeId, onSelect: newEntry}"
+    ></react-component>
   </div>
 </header>
 <div class="workbench-main" ng-hide="showNoEntriesAdvice()">

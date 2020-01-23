@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { TextLink } from '@contentful/forma-36-react-components';
 import { goToSlideInEntity } from 'navigation/SlideInNavigator';
-import CreateEntryButton, { Style } from 'components/CreateEntryButton';
+import CreateEntryLinkButton from 'components/CreateEntryButton/CreateEntryLinkButton';
 import Visible from 'components/shared/Visible';
 import * as logger from 'services/logger';
 import * as entityCreator from 'components/app_container/entityCreator';
@@ -48,9 +48,7 @@ function CreateEntry(props) {
       : 'Create new entry';
   return (
     allowedContentTypes.length > 0 && (
-      <CreateEntryButton
-        style={Style.Link}
-        disabled={false}
+      <CreateEntryLinkButton
         contentTypes={allowedContentTypes}
         onSelect={contentTypeId => onSelectHandler(contentTypeId, props.onSelect)}
         text={text}

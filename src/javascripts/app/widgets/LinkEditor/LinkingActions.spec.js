@@ -77,8 +77,8 @@ describe('LinkingActions', () => {
           });
 
           it('invokes `onCreateAndLink` when clicked', () => {
-            if (createAndLink.parent().is('CreateEntryButton')) {
-              const simulateClick = createAndLink.parent().props().onSelect;
+            if (createAndLink.parent().is('CreateEntryMenuTrigger')) {
+              const simulateClick = createAndLink.parent().prop('onSelect');
               simulateClick();
             } else {
               createAndLink.simulate('click');
