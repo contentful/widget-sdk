@@ -228,6 +228,8 @@ registerEvent('global:dialog', 'dialog', DialogTransformer);
 registerEvent('jobs:create', 'jobs_create', JobsCreateTransformer);
 registerEvent('jobs:cancel', 'jobs_cancel', JobsCancelTransformer);
 
+registerGenericEvent('telemetry:measurement');
+
 /**
  * Registers an event to be tracked by snowplow.
  * @param {string} event
