@@ -1,5 +1,5 @@
 import { Matchers } from '@pact-foundation/pact-web';
-import { defaultSpaceId, defaultUserId, defaultJobId } from '../../util/requests';
+import { defaultSpaceId, defaultUserId, defaultJobId, defaultEnvironmentId } from '../../util/requests';
 
 export const severalPendingJobsResponse = {
   sys: {
@@ -21,8 +21,8 @@ export const severalCompletedJobsResponse = {
   skip: 0,
   limit: 100,
   items: [
-    job({ sys: { id: Matchers.somethingLike('jobID3'), status: 'done' } }),
-    job({ sys: { id: Matchers.somethingLike('jobID4'), status: 'done' } })
+    job({ sys: { id: Matchers.somethingLike('jobID3'), status: 'succeeded' } }),
+    job({ sys: { id: Matchers.somethingLike('jobID4'), status: 'succeeded' } })
   ]
 };
 export const severalFailedJobsResponse = {
@@ -58,33 +58,54 @@ export const oneFailedJobResponse = {
 export const createJobResponse = job({
   sys: {
     id: Matchers.somethingLike('3A13SXSDwO8c46NrjigFYT'),
-    environment: { sys: { type: 'Link', id: 'master' } },
     space: { sys: { type: 'Link', id: defaultSpaceId } },
-    scheduledBy: { sys: { type: 'Link', id: defaultUserId } }
+    createdBy: { sys: { type: 'Link', id: defaultUserId } }
   }
 });
 
 export function job(jobPayload = { sys: {} }) {
   const sys = {
     id: 'jobID',
-    scheduledBy: {
+    type: 'ScheduledAction',
+    createdAt: Matchers.iso8601DateTimeWithMillis('2119-09-02T13:00:00.000Z'),
+    createdBy: {
       sys: {
-        id: 'userID'
+        id: 'userID',
+        linkType: 'User',
+        type: 'Link'
       }
     },
-    entity: {
+    space: {
       sys: {
-        type: 'Link',
-        linkType: 'Entry',
-        id: 'testEntryId'
+        id: defaultSpaceId,
+        linkType: 'Space',
+        type: 'Link'
       }
     },
-    status: 'pending',
+    status: 'scheduled',
     ...jobPayload.sys
+  };
+  const entity = {
+    sys: {
+      type: 'Link',
+      linkType: 'Entry',
+      id: 'testEntryId'
+    }
+  };
+  const environment = {
+    sys: {
+      type: 'Link',
+      linkType: 'Environment',
+      id: defaultEnvironmentId
+    }
   };
   return {
     sys,
-    scheduledAt: Matchers.iso8601DateTimeWithMillis('2119-09-02T14:00:00.000Z'),
+    entity,
+    environment,
+    scheduledFor: {
+      datetime: Matchers.iso8601DateTimeWithMillis('2119-09-02T14:00:00.000Z')
+    },
     action: 'publish'
   };
 }

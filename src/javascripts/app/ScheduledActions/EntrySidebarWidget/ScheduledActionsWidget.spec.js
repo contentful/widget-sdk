@@ -81,7 +81,8 @@ describe('<ScheduledActionsWidget />', () => {
     expect(getNotCanceledJobsForEntity).toHaveBeenCalledWith(
       expect.any(Function),
 
-      defaultEntryId()
+      defaultEntryId(),
+      defaultDefaultEnvironmentQuert()
     );
 
     await wait();
@@ -101,7 +102,8 @@ describe('<ScheduledActionsWidget />', () => {
 
     expect(getNotCanceledJobsForEntity).toHaveBeenCalledWith(
       expect.any(Function),
-      defaultEntryId()
+      defaultEntryId(),
+      defaultDefaultEnvironmentQuert()
     );
 
     await wait();
@@ -124,7 +126,8 @@ describe('<ScheduledActionsWidget />', () => {
 
     expect(getNotCanceledJobsForEntity).toHaveBeenCalledWith(
       expect.any(Function),
-      defaultEntryId()
+      defaultEntryId(),
+      defaultDefaultEnvironmentQuert()
     );
 
     await wait();
@@ -137,7 +140,9 @@ describe('<ScheduledActionsWidget />', () => {
 
   it('entry is not published', async () => {
     const failedJob = createFailedJob({
-      scheduledAt: '2019-06-21T05:01:00.000Z'
+      scheduledFor: {
+        datetime: '2019-06-21T05:01:00.000Z'
+      }
     });
     getNotCanceledJobsForEntity.mockResolvedValueOnce([failedJob]);
     const unpublishedEntry = { sys: { id: 'entryId' } };
@@ -151,7 +156,9 @@ describe('<ScheduledActionsWidget />', () => {
 
   it('entry is published but publication date is before last failed job', async () => {
     const failedJob = createFailedJob({
-      scheduledAt: '2019-06-21T05:01:00.000Z'
+      scheduledFor: {
+        datetime: '2019-06-21T05:01:00.000Z'
+      }
     });
     getNotCanceledJobsForEntity.mockResolvedValueOnce([failedJob]);
     const publishedEntry = { sys: { id: 'entryId', publishedAt: '2019-06-21T05:00:00.000Z' } };
@@ -275,10 +282,16 @@ function defaultEntryId() {
   return 'entryId';
 }
 
+function defaultDefaultEnvironmentQuert() {
+  return { 'environment.sys.id': 'enviromentId' };
+}
+
 function createJob(job = {}) {
   return {
     action: 'publish',
-    scheduledAt: '2019-06-21T05:01:00.000Z',
+    scheduledFor: {
+      datetime: '2019-06-21T05:01:00.000Z'
+    },
     ...job,
     sys: {
       id: '1',
@@ -290,7 +303,8 @@ function createJob(job = {}) {
 function createPendingJob(job = {}) {
   return createJob({
     ...job,
-    sys: { ...job.sys, entity: { sys: { id: 'id' } }, status: 'pending' }
+    entity: { sys: { id: 'id' } },
+    sys: { ...job.sys, status: 'scheduled' }
   });
 }
 
@@ -299,7 +313,7 @@ function createFailedJob(job = {}) {
 }
 
 function createDoneJob(job = {}) {
-  return createJob({ ...job, sys: { ...job.sys, status: 'done' } });
+  return createJob({ ...job, sys: { ...job.sys, status: 'succeeded' } });
 }
 
 function createEntry(entry = {}) {

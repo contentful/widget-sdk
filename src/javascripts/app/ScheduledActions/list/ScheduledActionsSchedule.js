@@ -47,14 +47,14 @@ const TimeGroup = ({ jobs, entriesData, contentTypesData }) => {
   return (
     <div className={styles.timeGroup}>
       <div className={styles.timeGroupHeader}>
-        <SectionHeading>{moment(jobs[0].scheduledAt).format('hh:mm A')}</SectionHeading>
+        <SectionHeading>{moment(jobs[0].scheduledFor.datetime).format('hh:mm A')}</SectionHeading>
         <Tag tagType={jobs[0].action === ScheduledActionAction.Publish ? 'positive' : 'secondary'}>
           {jobs[0].action}
         </Tag>
       </div>
       <div className={styles.timeGroupListWrapper}>
         <WrappedEntityList
-          entities={jobs.map(job => entriesData[job.sys.entity.sys.id])}
+          entities={jobs.map(job => entriesData[job.entity.sys.id])}
           contentTypes={contentTypesData}
         />
       </div>
@@ -87,18 +87,18 @@ function formatDate(date) {
 
 const DateGroup = ({ jobs, entriesData, contentTypesData }) => {
   const timeGroups = _.chain(jobs)
-    .groupBy(job => `${moment(job.scheduledAt).format('HH:mm')}-${job.action}`)
+    .groupBy(job => `${moment(job.scheduledFor.datetime).format('HH:mm')}-${job.action}`)
     .map(job => job)
     .value();
   return (
     <div className={styles.dateGroup} data-test-id="scheduled-jobs-date-group">
       <SectionHeading className={styles.dateGroupHeader}>
-        {formatDate(jobs[0].scheduledAt)}
+        {formatDate(jobs[0].scheduledFor.datetime)}
       </SectionHeading>
       {timeGroups.map((jobs, index) => (
         <TimeGroup
           jobs={jobs}
-          key={`${jobs[0].scheduledAt}-${index}`}
+          key={`${jobs[0].scheduledFor.datetime}-${index}`}
           entriesData={entriesData}
           contentTypesData={contentTypesData}
         />
@@ -127,7 +127,7 @@ export default class JobsSchedule extends React.Component {
       return null;
     }
 
-    const jobsWithExisitingEntry = jobs.filter(job => entriesData[job.sys.entity.sys.id]);
+    const jobsWithExisitingEntry = jobs.filter(job => entriesData[job.entity.sys.id]);
     const groupedJobs = _.chain(jobsWithExisitingEntry)
       .groupBy(item => moment(item.scheduledAt).format('YYYY.MM.DD'))
       .map(item => item)
@@ -138,7 +138,7 @@ export default class JobsSchedule extends React.Component {
           groupedJobs.map((jobsGroup, index) => (
             <DateGroup
               jobs={jobsGroup}
-              key={`${jobsGroup[0].scheduledAt}-${index}`}
+              key={`${jobsGroup[0].scheduledFor.datetime}-${index}`}
               entriesData={entriesData}
               contentTypesData={contentTypesData}
             />

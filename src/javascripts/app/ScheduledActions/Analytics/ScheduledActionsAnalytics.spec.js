@@ -43,19 +43,21 @@ describe('JobsAnalytics', () => {
   ])('CreateJob with action %i', (jobAction, eventAction) => {
     const jobId = 'job-id';
     const entityId = 'entity-id';
-    const scheduledAt = '2019-07-12T23:37:00.000+05:30';
+    const scheduledFor = {
+      datetime: '2019-07-12T23:37:00.000+05:30'
+    };
 
     const job = {
-      sys: {
-        id: jobId,
-        entity: {
-          sys: {
-            id: entityId
-          }
+      entity: {
+        sys: {
+          id: entityId
         }
       },
+      sys: {
+        id: jobId
+      },
       action: jobAction,
-      scheduledAt
+      scheduledFor
     };
 
     JobsAnalytics.createJob(job);
@@ -64,7 +66,7 @@ describe('JobsAnalytics', () => {
       action: eventAction,
       job_id: jobId,
       entity_id: entityId,
-      scheduled_for: scheduledAt,
+      scheduled_for: scheduledFor.datetime,
       timezone_offset: -120
     });
 

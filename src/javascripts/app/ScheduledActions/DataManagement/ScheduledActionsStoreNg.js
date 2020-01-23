@@ -28,8 +28,9 @@ async function getPendingJobs(spaceContext) {
       spaceContext.space.environment.sys.id
     );
     const jobsCollection = await ScheduledActionsService.getJobs(spaceEndpoint, {
-      order: 'sys.scheduledAt',
-      'sys.status': 'pending'
+      order: 'scheduledFor.datetime',
+      'sys.status': 'scheduled',
+      'environment.sys.id': spaceContext.space.environment.sys.id
     });
 
     return jobsCollection.items;

@@ -56,14 +56,16 @@ describe('Hyperlink', () => {
     const jobs = [
       {
         action: ScheduledActionActions.Publish,
-        scheduledAt: new Date().toISOString(),
-        sys: {
-          id: 'job1',
-          entity: {
-            sys: {
-              id: target.sys.id
-            }
+        scheduledFor: {
+          datetime: new Date().toISOString()
+        },
+        entity: {
+          sys: {
+            id: target.sys.id
           }
+        },
+        sys: {
+          id: 'job1'
         }
       }
     ];
@@ -99,14 +101,16 @@ describe('Hyperlink', () => {
     const jobs = [
       {
         action: ScheduledActionActions.Publish,
-        scheduledAt: new Date().toISOString(),
-        sys: {
-          id: 'job1',
-          entity: {
-            sys: {
-              id: 'non-existent-entry'
-            }
+        scheduledFor: {
+          datetime: new Date().toISOString()
+        },
+        entity: {
+          sys: {
+            id: 'non-existent-entry'
           }
+        },
+        sys: {
+          id: 'job1'
         }
       }
     ];
@@ -178,38 +182,44 @@ describe("Hyperlink's default getScheduledJobsTooltip", () => {
     const jobs = [
       {
         action: ScheduledActionAction.Publish,
-        scheduledAt: new Date(Date.now() * 2).toISOString(),
-        sys: {
-          id: 'job1',
-          entity: {
-            sys: {
-              id: entry.sys.id
-            }
+        scheduledFor: {
+          datetime: new Date(Date.now() * 2).toISOString()
+        },
+        entity: {
+          sys: {
+            id: entry.sys.id
           }
+        },
+        sys: {
+          id: 'job1'
         }
       },
       {
         action: ScheduledActionAction.Unpublish,
-        scheduledAt: new Date(Date.now() * 0.5).toISOString(),
-        sys: {
-          id: 'job2',
-          entity: {
-            sys: {
-              id: entry.sys.id
-            }
+        scheduledFor: {
+          datetime: new Date(Date.now() * 0.5).toISOString()
+        },
+        entity: {
+          sys: {
+            id: entry.sys.id
           }
+        },
+        sys: {
+          id: 'job2'
         }
       },
       {
         action: ScheduledActionAction.Publish,
-        scheduledAt: new Date(Date.now() * 0.1).toISOString(),
-        sys: {
-          id: 'job3',
-          entity: {
-            sys: {
-              id: entry.sys.id
-            }
+        scheduledFor: {
+          datetime: new Date(Date.now() * 0.1).toISOString()
+        },
+        entity: {
+          sys: {
+            id: entry.sys.id
           }
+        },
+        sys: {
+          id: 'job3'
         }
       }
     ];

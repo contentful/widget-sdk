@@ -50,7 +50,11 @@ const JobsFetcher = createFetcherComponent(
   async ({ spaceId, environmentId, contentTypes, query }) => {
     const spaceEndpoint = EndpointFactory.createSpaceEndpoint(spaceId, environmentId);
 
-    const { jobs, entries, users } = await getJobsData(spaceEndpoint, query);
+    const jobsData = await getJobsData(spaceEndpoint, {
+      ...query,
+      'environment.sys.id': environmentId
+    });
+    const { jobs, entries, users } = jobsData;
 
     return Promise.resolve([
       jobs,
@@ -115,8 +119,8 @@ export default class JobsListPage extends Component {
         text: 'Entries that are scheduled to publish will show up here'
       },
       query: {
-        'sys.status': 'pending',
-        order: 'sys.scheduledAt'
+        'sys.status': 'scheduled',
+        order: 'scheduledFor.datetime'
       }
     },
     completedJobs: {
@@ -127,8 +131,8 @@ export default class JobsListPage extends Component {
         text: 'Successfully published entries will show up here'
       },
       query: {
-        'sys.status': 'done',
-        order: '-sys.scheduledAt'
+        'sys.status': 'succeeded',
+        order: '-scheduledFor.datetime'
       }
     },
     erroredJobs: {
@@ -140,7 +144,7 @@ export default class JobsListPage extends Component {
       },
       query: {
         'sys.status': 'failed',
-        order: '-sys.scheduledAt'
+        order: '-scheduledFor.datetime'
       }
     }
   };

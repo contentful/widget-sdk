@@ -1,33 +1,22 @@
-export function create({ spaceId, environmentId, entityId, userId, action, scheduledAt }) {
+export function create({ environmentId, entityId, action, scheduledAt }) {
   return {
-    sys: {
-      space: {
-        sys: {
-          type: 'Link',
-          id: spaceId
-        }
-      },
-      environment: {
-        sys: {
-          type: 'Link',
-          id: environmentId
-        }
-      },
-      entity: {
-        sys: {
-          type: 'Link',
-          linkType: 'Entry',
-          id: entityId
-        }
-      },
-      scheduledBy: {
-        sys: {
-          type: 'Link',
-          id: userId
-        }
+    entity: {
+      sys: {
+        type: 'Link',
+        linkType: 'Entry',
+        id: entityId
       }
     },
-    action,
-    scheduledAt
+    environment: {
+      sys: {
+        type: 'Link',
+        linkType: 'Environment',
+        id: environmentId
+      }
+    },
+    scheduledFor: {
+      datetime: scheduledAt
+    },
+    action
   };
 }

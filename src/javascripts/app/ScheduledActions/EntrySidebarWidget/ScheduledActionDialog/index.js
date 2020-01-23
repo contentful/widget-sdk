@@ -104,7 +104,7 @@ function JobDialog({
         pendingJobs.length > 0 &&
         pendingJobs.find(
           job =>
-            job.scheduledAt ===
+            job.scheduledFor.datetime ===
             moment(formatScheduledAtDate({ date, time, timezone })).toISOString()
         )
       ) {
@@ -136,7 +136,7 @@ function JobDialog({
 
   function getSuggestedDate() {
     return pendingJobs && pendingJobs.length !== 0
-      ? moment(pendingJobs[0].scheduledAt)
+      ? moment(pendingJobs[0].scheduledFor.datetime)
           .add(1, 'hours')
           .startOf('hour')
       : now.add(1, 'hours').startOf('hour');

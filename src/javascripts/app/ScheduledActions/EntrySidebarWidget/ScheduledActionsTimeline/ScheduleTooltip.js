@@ -56,7 +56,7 @@ const ScheduleTooltipContent = ({ job, jobsCount }) => {
 
   return (
     <>
-      <FormattedTime className={styles.time} time={job.scheduledAt} />
+      <FormattedTime className={styles.time} time={job.scheduledFor.datetime} />
       <Tag
         tagType={actionColors[job.action.toLowerCase()]}
         testId="scheduled-publish-trigger"
@@ -73,7 +73,9 @@ const Job = PropTypes.shape({
   sys: PropTypes.shape({
     id: PropTypes.string.isRequired
   }).isRequired,
-  scheduledAt: PropTypes.string.isRequired
+  scheduledFor: PropTypes.shape({
+    datetime: PropTypes.string.isRequired
+  })
 });
 
 ScheduleTooltipContent.propTypes = {
@@ -84,8 +86,7 @@ ScheduleTooltipContent.propTypes = {
 const ScheduleTooltip = ({ job, jobsCount, jobs, filter, children }) => {
   const scheduledJobs =
     !job && Array.isArray(jobs) && typeof filter === 'function' ? jobs.filter(filter) : [];
-
-  const sortedScheduledJobs = orderBy(scheduledJobs, ['scheduledAt'], ['asc']);
+  const sortedScheduledJobs = orderBy(scheduledJobs, ['scheduledFor.datetime'], ['asc']);
   const nextJob = job || sortedScheduledJobs[0];
   const pendingJobsCount = jobsCount || scheduledJobs.length;
 

@@ -1,4 +1,4 @@
-import { defaultSpaceId, defaultEntryId, defaultJobId, defaultHeader } from '../util/requests';
+import { defaultSpaceId, defaultEntryId, defaultJobId, defaultHeader, defaultEnvironmentId } from '../util/requests';
 import { Query, RequestOptions } from '@pact-foundation/pact-web';
 
 const empty = require('../fixtures/responses/empty.json');
@@ -13,20 +13,24 @@ import {
 } from '../fixtures/responses/jobs-several';
 import { createJobRequest } from '../fixtures/requests/jobs';
 const pendingJobsQuery = {
-  order: 'sys.scheduledAt',
-  'sys.status': 'pending'
+  'environment.sys.id': 'master',
+  order: 'scheduledFor.datetime',
+  'sys.status': 'scheduled'
 };
 const completedJobsQuery = {
-  order: '-sys.scheduledAt',
-  'sys.status': 'done'
+  'environment.sys.id': 'master',
+  order: '-scheduledFor.datetime',
+  'sys.status': 'succeeded'
 };
 const failedJobsQuery = {
-  order: '-sys.scheduledAt',
+  'environment.sys.id': 'master',
+  order: '-scheduledFor.datetime',
   'sys.status': 'failed'
 };
 const entryIdQuery = {
-  order: '-sys.scheduledAt',
-  'sys.entity.sys.id': defaultEntryId
+  'entity.sys.id': defaultEntryId,
+  'environment.sys.id': 'master',
+  order: '-scheduledFor.datetime'
 };
 
 enum States {
@@ -41,10 +45,9 @@ enum States {
 function queryJobsForDefaultSpaceRequest(query: Query): RequestOptions {
   return {
     method: 'GET',
-    path: `/spaces/${defaultSpaceId}/environments/master/jobs`,
+    path: `/spaces/${defaultSpaceId}/scheduled_actions`,
     headers: {
-      ...defaultHeader,
-      'x-contentful-enable-alpha-feature': 'scheduled-jobs'
+      ...defaultHeader
     },
     query
   };
@@ -252,11 +255,13 @@ export const cancelDefaultJobInDefaultSpace = {
       uponReceiving: `a request to cancel the job "${defaultJobId}" in space "${defaultSpaceId}"`,
       withRequest: {
         method: 'DELETE',
-        path: `/spaces/${defaultSpaceId}/environments/master/jobs/${defaultJobId}`,
+        path: `/spaces/${defaultSpaceId}/scheduled_actions/${defaultJobId}`,
         headers: {
           ...defaultHeader,
-          'x-contentful-enable-alpha-feature': 'scheduled-jobs'
-        }
+        },
+        query: {
+          'environment.sys.id': defaultEnvironmentId
+        },
       },
       willRespondWith: {
         status: 200
@@ -275,11 +280,14 @@ export const createScheduledPublicationForDefaultSpace = {
       uponReceiving: `a request to create a scheduling publication for space "${defaultSpaceId}"`,
       withRequest: {
         method: 'POST',
-        path: `/spaces/${defaultSpaceId}/environments/master/jobs`,
+        path: `/spaces/${defaultSpaceId}/scheduled_actions`,
         headers: {
           ...defaultHeader,
           'Content-Type': 'application/vnd.contentful.management.v1+json',
           'x-contentful-enable-alpha-feature': 'scheduled-jobs'
+        },
+        query: {
+          'environment.sys.id': defaultEnvironmentId
         },
         body: createJobRequest
       },
@@ -298,11 +306,14 @@ export const createScheduledPublicationForDefaultSpace = {
       uponReceiving: `a request to create a scheduling publication for space "${defaultSpaceId}"`,
       withRequest: {
         method: 'POST',
-        path: `/spaces/${defaultSpaceId}/environments/master/jobs`,
+        path: `/spaces/${defaultSpaceId}/scheduled_actions`,
         headers: {
           ...defaultHeader,
           'Content-Type': 'application/vnd.contentful.management.v1+json',
           'x-contentful-enable-alpha-feature': 'scheduled-jobs'
+        },
+        query: {
+          'environment.sys.id': defaultEnvironmentId
         },
         body: createJobRequest
       },

@@ -55,7 +55,7 @@ function shouldShowErrorNote(lastJob, entity) {
 
   if (entity.sys.publishedAt) {
     const entryPublishedAfterLastFailedJob = moment(entity.sys.publishedAt).isAfter(
-      lastJob.scheduledAt
+      lastJob.scheduledFor.datetime
     );
 
     if (entryPublishedAfterLastFailedJob) {
@@ -71,8 +71,8 @@ function shouldShowSuccessToast(prevLastJob, lastJob, entity) {
   if (entity.sys.publishedAt && prevLastJob && lastJob) {
     if (
       prevLastJob.sys.id === lastJob.sys.id &&
-      prevLastJob.sys.status === 'pending' &&
-      lastJob.sys.status === 'done'
+      prevLastJob.sys.status === 'scheduled' &&
+      lastJob.sys.status === 'succeeded'
     ) {
       return true;
     }
@@ -94,7 +94,6 @@ export default function ScheduledActionsWidget({
   spaceId,
   environmentId,
   isMasterEnvironment,
-  userId,
   entity,
   status,
   primary,
@@ -117,7 +116,8 @@ export default function ScheduledActionsWidget({
     useCallback(async () => {
       const jobCollection = await ScheduledActionsService.getNotCanceledJobsForEntity(
         EndpointFactory.createSpaceEndpoint(spaceId, environmentId),
-        entity.sys.id
+        entity.sys.id,
+        { 'environment.sys.id': environmentId }
       );
       setJobs(jobCollection);
 
@@ -135,19 +135,18 @@ export default function ScheduledActionsWidget({
       const job = await ScheduledActionsService.createJob(
         EndpointFactory.createSpaceEndpoint(spaceId, environmentId),
         createDto({
-          spaceId,
           environmentId,
-          userId,
           entityId: entity.sys.id,
           action: action,
           scheduledAt
-        })
+        }),
+        { 'environment.sys.id': environmentId }
       );
       return job;
     } catch (error) {
       if (400 === error.status) {
         Notification.error(
-          `Unable to schedule ${entryTitle}. There is a limit of 100 scheduled entries pending at any one time.`
+          `Unable to schedule ${entryTitle}. There is a limit of 100 scheduled entries at any one time.`
         );
       } else {
         Notification.error(`${entryTitle} failed to schedule`);
@@ -175,16 +174,17 @@ export default function ScheduledActionsWidget({
   const handleCancel = jobId => {
     ScheduledActionsService.cancelJob(
       EndpointFactory.createSpaceEndpoint(spaceId, environmentId),
-      jobId
+      jobId,
+      { 'environment.sys.id': environmentId }
     ).then(() => {
       const job = jobs.find(j => j.sys.id === jobId);
       trackCancelledJob(job);
       setJobs(jobs.filter(j => j !== job));
-      Notification.success('Schedule cancelled');
+      Notification.success('Schedule canceled');
     });
   };
 
-  const pendingJobs = jobs.filter(job => job.sys.status === 'pending');
+  const pendingJobs = jobs.filter(job => job.sys.status === 'scheduled');
   const hasScheduledActions = pendingJobs.length > 0;
 
   const lastJob = jobs[0];

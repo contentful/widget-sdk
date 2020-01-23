@@ -55,8 +55,8 @@ export function createJob(job, scheduledForTimezone) {
   const payload = {
     action: convertActionToAnalyticsFormat(job.action),
     job_id: job.sys.id,
-    scheduled_for: job.scheduledAt,
-    entity_id: job.sys.entity.sys.id,
+    scheduled_for: job.scheduledFor.datetime,
+    entity_id: job.entity.sys.id,
     scheduled_for_timezone: scheduledForTimezone,
     local_timezone: moment.tz.guess(),
     timezone_offset: new Date().getTimezoneOffset()

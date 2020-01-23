@@ -31,8 +31,9 @@ export default function register() {
         spaceContext.space.environment.sys.id
       );
       ScheduledActionsService.getJobs(spaceEndpoint, {
-        order: 'sys.scheduledAt',
-        'sys.status': 'pending'
+        order: 'scheduledFor.datetime',
+        'sys.status': 'scheduled',
+        'environment.sys.id': spaceContext.space.environment.sys.id
       }).then(({ items = [] }) => ($scope.jobs = items));
 
       // HACK: This makes sure that component bridge renders

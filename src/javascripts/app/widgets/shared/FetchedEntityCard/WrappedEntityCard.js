@@ -21,8 +21,8 @@ const IconWrappedIntoScheduledTooltip = memo(({ referencedEntityId }) => {
 
   const jobs = widgetAPI.jobs
     .getPendingJobs()
-    .filter(job => job.sys.entity.sys.id === referencedEntityId)
-    .sort((a, b) => new Date(a.scheduledAt) > new Date(b.scheduledAt));
+    .filter(job => job.entity.sys.id === referencedEntityId)
+    .sort((a, b) => new Date(a.scheduledFor.datetime) > new Date(b.scheduledFor.datetime));
 
   return (
     <SheduleTooltip job={jobs[0]} jobsCount={jobs.length}>

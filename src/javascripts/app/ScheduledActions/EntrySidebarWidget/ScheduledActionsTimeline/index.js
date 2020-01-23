@@ -110,7 +110,7 @@ const Divider = ({ currentJob, nextJob }) => {
     }
   };
 
-  const formattedDate = formatDate(currentJob.scheduledAt, nextJob.scheduledAt);
+  const formattedDate = formatDate(currentJob.scheduledFor.datetime, nextJob.scheduledFor.datetime);
 
   if (!formattedDate) {
     return null;
@@ -119,7 +119,7 @@ const Divider = ({ currentJob, nextJob }) => {
   return (
     <div className={styles.divider}>
       <span className={styles.dividerDate}>
-        {formatDate(currentJob.scheduledAt, nextJob.scheduledAt)}
+        {formatDate(currentJob.scheduledFor.datetime, nextJob.scheduledFor.datetime)}
       </span>
     </div>
   );
@@ -127,10 +127,14 @@ const Divider = ({ currentJob, nextJob }) => {
 
 Divider.propTypes = {
   currentJob: PropTypes.shape({
-    scheduledAt: PropTypes.string
+    scheduledFor: PropTypes.shape({
+      datetime: PropTypes.string
+    })
   }),
   nextJob: PropTypes.shape({
-    scheduledAt: PropTypes.string
+    scheduledFor: PropTypes.shape({
+      datetime: PropTypes.string
+    })
   })
 };
 
@@ -142,7 +146,7 @@ const JobsTimeline = ({
   showAllScheduleLink,
   size
 }) => {
-  const jobsSortedByScheduledAt = _.sortBy(jobs, 'scheduledAt');
+  const jobsSortedByScheduledFor = _.sortBy(jobs, 'scheduledFor.datetime');
   return (
     <div className={styles.wrapper}>
       <header className="entity-sidebar__header">
@@ -158,19 +162,19 @@ const JobsTimeline = ({
       <div
         className={cn(styles.jobListWrapper, size === 'small' ? styles.jobListWrapperSmall : '')}>
         <List className={cn(styles.jobList, size === 'small' ? styles.jobListSmall : '')}>
-          {jobsSortedByScheduledAt.map((job, index) => (
-            <li key={`${job.action}-${job.scheduledAt}-${index}`}>
+          {jobsSortedByScheduledFor.map((job, index) => (
+            <li key={`${job.action}-${job.scheduledFor.datetime}-${index}`}>
               <Job
                 id={job.sys.id}
                 action={job.action}
-                scheduledAt={job.scheduledAt}
+                scheduledAt={job.scheduledFor.datetime}
                 status={job.status}
                 onCancel={onCancel}
                 isReadOnly={isReadOnly}
                 size={size}
               />
               {size === 'default' && (
-                <Divider currentJob={job} nextJob={jobsSortedByScheduledAt[index + 1]} />
+                <Divider currentJob={job} nextJob={jobsSortedByScheduledFor[index + 1]} />
               )}
             </li>
           ))}

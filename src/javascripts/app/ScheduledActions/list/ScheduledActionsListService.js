@@ -33,11 +33,8 @@ export async function getJobsData(spaceEndpoint, query) {
     };
   }
 
-  const entryIds = jobs
-    .filter(j => j.sys.entity.sys.linkType === 'Entry')
-    .map(j => j.sys.entity.sys.id);
-
-  const userIds = jobs.map(j => j.sys.scheduledBy.sys.id);
+  const entryIds = jobs.filter(j => j.entity.sys.linkType === 'Entry').map(j => j.entity.sys.id);
+  const userIds = jobs.map(j => j.sys.createdBy.sys.id);
 
   const [entriesCollection, usersCollection] = await Promise.all([
     getEntriesWithIds(entryIds),

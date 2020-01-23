@@ -52,16 +52,16 @@ const styles = {
 function StatusTag({ job }) {
   const typeByStatus = {
     failed: 'negative',
-    done: 'positive',
-    pending: 'primary',
-    cancelled: 'secondary'
+    succeeded: 'positive',
+    scheduled: 'primary',
+    canceled: 'secondary'
   };
 
   const getStatusLabel = () => {
     switch (job.sys.status) {
       case 'failed':
         return `${job.action} failed`;
-      case 'done':
+      case 'succeeded':
         return `${job.action}ed`;
       default:
         return job.action;
@@ -71,9 +71,9 @@ function StatusTag({ job }) {
     switch (job.sys.status) {
       case 'failed':
         return <Icon className={styles.statusTagIcon} icon="ErrorCircle" color="negative" />;
-      case 'done':
+      case 'succeeded':
         return <Icon className={styles.statusTagIcon} icon="CheckCircle" color="positive" />;
-      case 'cancelled':
+      case 'canceled':
         return <Icon className={styles.statusTagIcon} icon="CheckCircle" color="secondary" />;
       default:
         return null;
@@ -230,9 +230,9 @@ export default class ScheduledActionsTable extends Component {
           </TableHead>
           <TableBody>
             {jobs.map(job => {
-              const user = usersData[job.sys.scheduledBy.sys.id];
+              const user = usersData[job.sys.createdBy.sys.id];
 
-              const entry = entriesData[job.sys.entity.sys.id];
+              const entry = entriesData[job.entity.sys.id];
 
               if (entry) {
                 const contentType = contentTypesData[entry.sys.contentType.sys.id];

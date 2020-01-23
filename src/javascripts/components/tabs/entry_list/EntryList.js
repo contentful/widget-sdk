@@ -363,8 +363,8 @@ export class BulkActionsRow extends React.Component {
 }
 
 const StatusCell = ({ href, jobs, entry }) => {
-  const filter = job => job.sys.entity.sys.id === entry.data.sys.id;
-  const hasJobForEntry = jobs.find(job => job.sys.entity.sys.id === entry.data.sys.id);
+  const filter = job => job.entity.sys.id === entry.data.sys.id;
+  const hasJobForEntry = jobs.find(job => job.entity.sys.id === entry.data.sys.id);
   return (
     <SecretiveLink href={href}>
       <ScheduleTooltip jobs={jobs} filter={filter}>

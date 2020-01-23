@@ -34,8 +34,8 @@ export const getScheduledJobsTooltip = (entityType, node, widgetAPI) => {
   const referencedEntityId = _.get(target, 'sys.id', undefined);
   const jobs = widgetAPI.jobs
     .getPendingJobs()
-    .filter(job => job.sys.entity.sys.id === referencedEntityId)
-    .sort((a, b) => new Date(a.scheduledAt) > new Date(b.scheduledAt));
+    .filter(job => job.entity.sys.id === referencedEntityId)
+    .sort((a, b) => new Date(a.scheduledFor.datetime) > new Date(b.scheduledFor.datetime));
   return jobs.length ? (
     <>
       <hr className={styles.tooltipSeparator} />

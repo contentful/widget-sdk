@@ -26,14 +26,16 @@ describe('WrappedEntityCard', () => {
     jobs = [
       {
         action: ScheduledActionActions.Publish,
-        scheduledAt: new Date().toISOString(),
-        sys: {
-          id: 'job1',
-          entity: {
-            sys: {
-              id: entity.sys.id
-            }
+        scheduledFor: {
+          datetime: new Date().toISOString()
+        },
+        entity: {
+          sys: {
+            id: entity.sys.id
           }
+        },
+        sys: {
+          id: 'job1'
         }
       }
     ];

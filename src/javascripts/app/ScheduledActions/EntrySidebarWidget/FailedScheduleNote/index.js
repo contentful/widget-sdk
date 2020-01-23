@@ -21,8 +21,8 @@ export class FailedScheduleNote extends Component {
     return (
       <Note className={styles.note} noteType="negative" testId="failed-job-note">
         Due to validation errors this entry failed to publish on:{' '}
-        {moment(this.props.job.scheduledAt).format('ddd, MMM Do, YYYY - hh:mm A')}. Please check
-        individual fields and attempt to publish again.
+        {moment(this.props.job.scheduledFor.datetime).format('ddd, MMM Do, YYYY - hh:mm A')}. Please
+        check individual fields and attempt to publish again.
       </Note>
     );
   }

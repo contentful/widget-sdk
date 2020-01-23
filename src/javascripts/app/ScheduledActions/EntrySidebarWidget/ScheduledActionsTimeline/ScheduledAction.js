@@ -92,7 +92,7 @@ class Job extends Component {
 export const propTypes = {
   scheduledAt: PropTypes.string.isRequired,
   action: PropTypes.string.isRequired,
-  status: PropTypes.oneOf(['pending', 'cancelled', 'success', 'error']),
+  status: PropTypes.oneOf(['scheduled', 'canceled', 'succeeded', 'failed']),
   id: PropTypes.string.isRequired,
   onCancel: PropTypes.func.isRequired,
   isReadOnly: PropTypes.bool.isRequired,
