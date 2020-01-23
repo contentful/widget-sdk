@@ -11,7 +11,7 @@ import { getOrganization } from 'services/TokenStore';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { getVariation } from 'LaunchDarkly';
-import { PENDING_ORG_MEMBERSHIPS, SHOW_2FA_STATUS_FLAG } from 'featureFlags';
+import { PENDING_ORG_MEMBERSHIPS } from 'featureFlags';
 
 const UserListFetcher = createFetcherComponent(({ orgId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
@@ -28,8 +28,7 @@ const UserListFetcher = createFetcherComponent(({ orgId }) => {
     safeGetTeams(),
     getOrganization(orgId),
     getOrgFeature(orgId, 'teams', false),
-    getVariation(PENDING_ORG_MEMBERSHIPS, { organizationId: orgId }),
-    getVariation(SHOW_2FA_STATUS_FLAG, { organizationId: orgId })
+    getVariation(PENDING_ORG_MEMBERSHIPS, { organizationId: orgId })
   ];
 
   return Promise.all(promises);
@@ -65,8 +64,7 @@ export default class UserListRoute extends React.Component {
               teams,
               org,
               hasTeamsFeature,
-              hasPendingOrgMembershipsEnabled,
-              has2FAStatusEnabled
+              hasPendingOrgMembershipsEnabled
             ] = data;
 
             return (
@@ -80,7 +78,6 @@ export default class UserListRoute extends React.Component {
                   hasSsoEnabled={org.hasSsoEnabled}
                   hasTeamsFeature={hasTeamsFeature}
                   hasPendingOrgMembershipsEnabled={hasPendingOrgMembershipsEnabled}
-                  has2FAStatusEnabled={has2FAStatusEnabled}
                 />
               </>
             );

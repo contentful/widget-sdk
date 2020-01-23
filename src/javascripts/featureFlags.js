@@ -13,7 +13,6 @@ export const PENDING_ORG_MEMBERSHIPS = 'feature-bv-09-2019-new-invitation-flow-n
 export const NEW_INVITATION_FORM = 'feature-bv-05-2019-new-invitation-flow';
 export const TWO_FA = 'feature-ogg-10-2019-2fa';
 export const IE11_DEPRECATION_NOTICE = 'feature-pul-11-2019-ie11-notice';
-export const SHOW_2FA_STATUS_FLAG = 'flag-ogg-2019-12-show-2fa-enabled-org-mem';
 
 export const BREAK_IE11 = 'break-ie-11-experience';
 export const NEW_MARKDOWN_EDITOR = 'new-markdown-editor';
