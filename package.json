@@ -251,7 +251,7 @@
   },
   "scripts": {
     "clean-logs-pacts": "rm -rf logs/ pacts/",
-    "start": "node ./server.js",
+    "start": "node --max_old_space_size=4096 ./server.js",
     "dev-staging": "NODE_ENV=dev UI_CONFIG=dev-on-staging node ./server.js",
     "cypress": "npm run clean-logs-pacts && npx cypress open",
     "test": "NODE_ENV=test NODE_OPTIONS=--max-old-space-size=4096 TZ=UTC node run-tests.js",
