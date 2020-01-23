@@ -89,8 +89,7 @@ class UsersList extends React.Component {
     updateSearchTerm: PropTypes.func.isRequired,
     hasSsoEnabled: PropTypes.bool,
     hasTeamsFeature: PropTypes.bool,
-    hasPendingOrgMembershipsEnabled: PropTypes.bool,
-    has2FAStatusEnabled: PropTypes.bool
+    hasPendingOrgMembershipsEnabled: PropTypes.bool
   };
 
   state = {
@@ -228,7 +227,12 @@ class UsersList extends React.Component {
       Notification.success(message);
       // last item in page removed
       if (usersList.length === 1 && pagination.skip > 0) {
-        this.setState({ pagination: { ...pagination, skip: pagination.skip - pagination.limit } });
+        this.setState({
+          pagination: {
+            ...pagination,
+            skip: pagination.skip - pagination.limit
+          }
+        });
       }
       await this.fetch(true);
     } catch (e) {
@@ -262,14 +266,7 @@ class UsersList extends React.Component {
       numberOrgMemberships,
       initialLoad
     } = this.state;
-    const {
-      searchTerm,
-      spaces,
-      spaceRoles,
-      filters,
-      hasPendingOrgMembershipsEnabled,
-      has2FAStatusEnabled
-    } = this.props;
+    const { searchTerm, spaces, spaceRoles, filters, hasPendingOrgMembershipsEnabled } = this.props;
 
     return (
       <Workbench testId="organization-users-page">
@@ -329,13 +326,11 @@ class UsersList extends React.Component {
                       <TableCell width="50">User</TableCell>
                       <TableCell width="200">Organization role</TableCell>
                       <TableCell>Last active</TableCell>
-                      {has2FAStatusEnabled && (
-                        <TableCell>
-                          <Tooltip content="2FA status will not be present for users who are ineligible or haven’t enabled it.">
-                            2FA status
-                          </Tooltip>
-                        </TableCell>
-                      )}
+                      <TableCell>
+                        <Tooltip content="2FA status will not be present for users who are ineligible or haven’t enabled it.">
+                          2FA status
+                        </Tooltip>
+                      </TableCell>
                       <TableCell></TableCell>
                     </TableRow>
                   </TableHead>
@@ -354,7 +349,7 @@ class UsersList extends React.Component {
                         </TableCell>
                         <TableCell>{startCase(membership.role)}</TableCell>
                         <TableCell>{getLastActivityDate(membership)}</TableCell>
-                        {has2FAStatusEnabled && <TableCell>{get2FAStatus(membership)}</TableCell>}
+                        <TableCell>{get2FAStatus(membership)}</TableCell>
                         <TableCell align="right">
                           <div className="membership-list__item__menu">
                             <Button
