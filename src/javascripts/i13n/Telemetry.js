@@ -1,6 +1,5 @@
 import createMicroBackendsClient from 'MicroBackendsClient';
 import { gitRevision as uiVersion } from 'Config';
-import { id as randomId } from 'utils/Random';
 
 // How often measurements should be sent.
 // Please note it means some measurements may be dropped.
@@ -13,15 +12,23 @@ const INTERVAL = 120 * 1000;
 // and only then setup the long-running interval.
 const INITIAL_DELAY = 10 * 1000;
 
-const makeMeasurement = (name, value, tags, { initializedAt, sessionId }) => {
+const makeMeasurement = (name, value, tags, { initializedAt }) => {
   if (tags) {
     tags.uiVersion = uiVersion;
   } else {
     tags = { uiVersion };
   }
 
-  tags.timeSinceInitialization = Date.now() - initializedAt;
-  tags.uiTelemetrySessionId = sessionId;
+  // The "post initialization window" is the 15 window in which the request occurred,
+  // starting from 1.
+  //
+  // That means, if the request occurred at 1:30, its `postInitializationWindow` would be 1,
+  // and if at 17:45, its window would be 2.
+  //
+  // Doing `|| 1` at the end guarantees that this will always be at minimum 1 (never 0).
+  const postInitializationWindow = Math.ceil((Date.now() - initializedAt) / (15 * 60 * 1000)) || 1;
+
+  tags.postInitializationWindow = postInitializationWindow;
 
   return { name, value, tags };
 };
@@ -72,8 +79,6 @@ export function init() {
   withState(state => {
     if (!state.initialized) {
       state.initialized = true;
-      state.initializedAt = Date.now();
-      state.sessionId = randomId();
 
       setTimeout(() => {
         send(state);
@@ -85,6 +90,11 @@ export function init() {
 
 function withState(cb) {
   if (!state.client) {
+    // Although the name of this isn't exactly correct, the first recording and the initialization
+    // occur at essentially the same time and since we are using a window, the exact time that
+    // the telemetry was initialized isn't critically important. Doing this here also guarantees that
+    // `initializedAt` is always available in `state`.
+    state.initializedAt = Date.now();
     state.measurements = [];
     state.client = createMicroBackendsClient({ backendName: 'telemetry' });
   }
