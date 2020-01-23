@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { Paragraph } from '@contentful/forma-36-react-components';
-import f36Tokens from '@contentful/forma-36-tokens';
+import tokens from '@contentful/forma-36-tokens';
 import FileIcon from 'components/FileIcon/FileIcon';
 
 const styles = {
   fileArchived: css({
-    border: `1px solid ${f36Tokens.colorElementLight}`,
-    padding: '10px 0',
+    border: `1px solid ${tokens.colorElementLight}`,
+    padding: `${tokens.spacingS} 0`,
     verticalAlign: 'middle',
     display: 'flex',
     alignItems: 'center'
@@ -16,7 +16,7 @@ const styles = {
   icon: css({
     display: 'inline-block',
     height: '22px',
-    color: f36Tokens.colorTextLight
+    color: tokens.colorTextLight
   })
 };
 
