@@ -28,12 +28,6 @@ import 'element-closest';
 // CodeMirror: JSON field editor component
 import 'codemirror/addon/edit/closebrackets';
 import 'codemirror/mode/javascript/javascript';
-// CodeMirror: Markdown field editor component
-import 'codemirror/mode/markdown/markdown';
-// CodeMirror: HTML highlighting inside Markdown
-import 'codemirror/mode/xml/xml';
-import 'codemirror/addon/edit/continuelist';
-import 'codemirror/addon/mode/overlay';
 // CodeMirror: mixed HTML mode for UI Extension editor
 import 'codemirror/mode/htmlmixed/htmlmixed';
 
