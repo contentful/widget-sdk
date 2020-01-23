@@ -6,7 +6,6 @@ import { go } from 'states/Navigator';
 import { getSpaces, user$ } from 'services/TokenStore';
 import { getValue } from 'utils/kefir';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
-
 const store = getStore();
 
 /**
@@ -36,6 +35,9 @@ export default makeState({
   name: 'home',
   url: '/',
   template: template(),
+  params: {
+    onboardingInOrgId: null
+  },
   navComponent: EmptyNavigationBar,
   loadingText: 'Loading…',
   resolve: {
@@ -59,9 +61,13 @@ export default makeState({
   },
   controller: [
     '$scope',
+    '$stateParams',
     'space',
-    ($scope, space) => {
-      if (space) {
+    ($scope, $stateParams, space) => {
+      if ($stateParams.onboardingInOrgId) {
+        $scope.onboardingInOrgId = $stateParams.onboardingInOrgId;
+        $scope.context.ready = true;
+      } else if (space) {
         // If a space is found during resolving, send the user to that space
         go({
           path: ['spaces', 'detail'],

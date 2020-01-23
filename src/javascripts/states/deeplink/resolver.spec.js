@@ -4,6 +4,7 @@ import { getSpaceInfo, checkOrgAccess, getOrg, getOnboardingSpaceId } from './ut
 import spaceContextMock from 'ng/spaceContext';
 import * as AccessCheckerMocked from 'access_control/AccessChecker';
 import { resolveLink } from './resolver';
+import { getOrganizationSpaces } from 'services/TokenStore';
 
 const mockApiKeyRepo = {
   getAll: jest.fn()
@@ -38,7 +39,8 @@ jest.mock(
   'services/TokenStore',
   () => ({
     getSpaces: jest.fn(),
-    getOrganizations: jest.fn()
+    getOrganizations: jest.fn(),
+    getOrganizationSpaces: jest.fn()
   }),
   { virtual: true }
 );
@@ -435,6 +437,38 @@ describe('states/deeplink/resolver', () => {
 
       expect(await resolveLink('org', {})).toEqual({
         onboarding: false
+      });
+    });
+  });
+
+  describe('#invitation-accepted', () => {
+    it('should redirect to first space the user has access in the invitation organization', async function() {
+      getOrganizationSpaces.mockResolvedValue([
+        {
+          sys: { id: 'testSpaceId1' },
+          organization: { sys: { id: 'testOrgId' } }
+        },
+        {
+          sys: { id: 'testSpaceId2' },
+          organization: { sys: { id: 'testOrgId' } }
+        }
+      ]);
+
+      expect(await resolveLink('invitation-accepted', { orgId: 'testOrgId' })).toEqual({
+        path: ['spaces', 'detail', 'home'],
+        params: {
+          spaceId: 'testSpaceId1'
+        }
+      });
+    });
+    it('should redirect to home if there are no accessible spaces in the invitation organization', async function() {
+      getOrganizationSpaces.mockResolvedValue([]);
+
+      expect(await resolveLink('invitation-accepted', { orgId: 'testOrgId' })).toEqual({
+        path: ['home'],
+        params: {
+          onboardingInOrgId: 'testOrgId'
+        }
       });
     });
   });

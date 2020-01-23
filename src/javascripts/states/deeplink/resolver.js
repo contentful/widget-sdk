@@ -312,9 +312,7 @@ async function resolveSpaceHome({ orgId }) {
   if (spaces.length === 0) {
     return {
       path: ['home'],
-      params: {
-        orgId
-      }
+      params: { onboardingInOrgId: orgId }
     };
   }
   const spaceId = spaces[0].sys.id;

@@ -87,7 +87,12 @@ const fetchData = (setLoading, setState, isSpaceAdmin) => async () => {
   }
 };
 
-const SpaceHomePage = ({ spaceTemplateCreated, lastUsedOrg, orgOwnerOrAdmin }) => {
+const SpaceHomePage = ({
+  spaceTemplateCreated,
+  lastUsedOrg,
+  orgOwnerOrAdmin,
+  onboardingInOrgId
+}) => {
   const spaceContext = getModule('spaceContext');
   const [isLoading, setLoading] = useState(true);
   const [
@@ -162,6 +167,9 @@ const SpaceHomePage = ({ spaceTemplateCreated, lastUsedOrg, orgOwnerOrAdmin }) =
   return (
     <div className="home home-section" data-test-id="space-home-page-container">
       <DocumentTitle title="Space home" />
+      {onboardingInOrgId && (
+        <EmptySpaceHome lastUsedOrg={onboardingInOrgId} orgOwnerOrAdmin={false} />
+      )}
       {isLoading && (
         <EmptyStateContainer>
           <Spinner size="large" />
@@ -185,7 +193,8 @@ const SpaceHomePage = ({ spaceTemplateCreated, lastUsedOrg, orgOwnerOrAdmin }) =
 SpaceHomePage.propTypes = {
   spaceTemplateCreated: PropTypes.bool,
   lastUsedOrg: PropTypes.string,
-  orgOwnerOrAdmin: PropTypes.bool
+  orgOwnerOrAdmin: PropTypes.bool,
+  onboardingInOrgId: PropTypes.string
 };
 
 export default SpaceHomePage;
