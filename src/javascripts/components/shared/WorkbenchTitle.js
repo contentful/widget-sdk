@@ -32,7 +32,8 @@ const styles = {
   }),
   locale: css({
     color: tokens.colorTextLight,
-    fontWeight: tokens.fontWeightNormal
+    fontWeight: tokens.fontWeightNormal,
+    marginLeft: tokens.spacing2Xs
   }),
   knowledgeBase: css({
     marginLeft: tokens.spacingS
@@ -51,7 +52,7 @@ export default function WorkbenchTitle({
       <div className={styles.contentType}>{contentTypeName}</div>
       <Heading className={styles.heading}>
         {title + ' '}
-        {isSingleLocaleModeOn && <span className={styles.locale}> - {localeName}</span>}
+        {isSingleLocaleModeOn && <span className={styles.locale}> {`- ${localeName}`}</span>}
         <LinkedEntitiesBadge entityInfo={entityInfo} className={styles.linkedEntitiesBadge} />
       </Heading>
     </div>

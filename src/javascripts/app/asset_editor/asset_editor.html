@@ -5,16 +5,11 @@
 <div class="asset-editor workbench">
   <header class="workbench-header">
     <react-component name="app/entity_editor/Components/BackNav"></react-component>
-    <cf-icon class="workbench-header__icon" name="page-media" scale="0.75"></cf-icon>
-    <h1 class="workbench-header__title">
-      {{ title }}<span class="locale" ng-if="localeData.isSingleLocaleModeOn"
-        >&nbsp;- {{localeData.focusedLocale.name}}</span
-      >
-      <react-component
-        name="components/shared/knowledge_base_icon/KnowledgeBase"
-        props="{target: 'asset', className: 'workbench-header__kb-link'}"
-      ></react-component>
-    </h1>
+    <cf-icon class="workbench-header__icon" name="page-media" scale="1"></cf-icon>
+    <react-component
+      name="components/shared/WorkbenchTitle"
+      props="{title, localeName: localeData.focusedLocale.name, isSingleLocaleModeOn: localeData.isSingleLocaleModeOn, contentTypeName: 'Asset', entityInfo }"
+    ></react-component>
     <div class="workbench-header__actions">
       <button
         class="btn-secondary-action"

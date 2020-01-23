@@ -12,7 +12,7 @@ Object {
 }
 
 .emotion-3 {
-  line-height: 1;
+  line-height: 0;
 }
 
 .emotion-8 {
@@ -183,7 +183,7 @@ Object {
 }
 
 .emotion-3 {
-  line-height: 1;
+  line-height: 0;
 }
 
 .emotion-2 {
@@ -312,7 +312,7 @@ Object {
 }
 
 .emotion-3 {
-  line-height: 1;
+  line-height: 0;
 }
 
 .emotion-2 {
@@ -386,7 +386,7 @@ Object {
 }
 
 .emotion-3 {
-  line-height: 1;
+  line-height: 0;
 }
 
 .emotion-2 {
@@ -535,7 +535,7 @@ Object {
 }
 
 .emotion-3 {
-  line-height: 1;
+  line-height: 0;
 }
 
 .emotion-11 {
@@ -727,7 +727,7 @@ Object {
 }
 
 .emotion-3 {
-  line-height: 1;
+  line-height: 0;
 }
 
 <div>

@@ -35,7 +35,7 @@ const styles = {
     marginRight: '2px'
   }),
   dropdown: css({
-    lineHeight: 1
+    lineHeight: 0
   }),
   linkList: css({
     padding: 0,
