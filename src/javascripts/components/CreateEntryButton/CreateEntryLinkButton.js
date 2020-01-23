@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import get from 'lodash/get';
 import { css } from 'emotion';
 import { Icon, TextLink, Spinner } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
@@ -24,34 +25,38 @@ const CreateEntryLinkButton = ({
   hasPlusIcon,
   suggestedContentTypeId,
   disabled
-}) => (
-  <CreateEntryMenuTrigger
-    contentTypes={contentTypes}
-    suggestedContentTypeId={suggestedContentTypeId}
-    onSelect={onSelect}
-    testId={testId}>
-    {({ openMenu, isSelecting }) => (
-      <>
-        {isSelecting && <Spinner size="small" className={styles.spinnerMargin} />}
-        <TextLink
-          onClick={openMenu}
-          disabled={disabled || isSelecting || (contentTypes && contentTypes.length === 0)}
-          icon={isSelecting || !hasPlusIcon ? null : 'Plus'}
-          testId="create-entry-link-button">
-          {text}
-          {contentTypes.length > 1 && (
-            <Icon
-              data-test-id="dropdown-icon"
-              icon="ChevronDown"
-              color="secondary"
-              className={styles.chevronIcon}
-            />
-          )}
-        </TextLink>
-      </>
-    )}
-  </CreateEntryMenuTrigger>
-);
+}) => {
+  const buttonText =
+    text || `Add ${suggestedContentTypeId || get(contentTypes[0], 'name', 'entry')}`;
+  return (
+    <CreateEntryMenuTrigger
+      contentTypes={contentTypes}
+      suggestedContentTypeId={suggestedContentTypeId}
+      onSelect={onSelect}
+      testId={testId}>
+      {({ openMenu, isSelecting }) => (
+        <>
+          {isSelecting && <Spinner size="small" className={styles.spinnerMargin} />}
+          <TextLink
+            onClick={openMenu}
+            disabled={disabled || isSelecting || (contentTypes && contentTypes.length === 0)}
+            icon={isSelecting || !hasPlusIcon ? null : 'Plus'}
+            testId="create-entry-link-button">
+            {buttonText}
+            {contentTypes.length > 1 && (
+              <Icon
+                data-test-id="dropdown-icon"
+                icon="ChevronDown"
+                color="secondary"
+                className={styles.chevronIcon}
+              />
+            )}
+          </TextLink>
+        </>
+      )}
+    </CreateEntryMenuTrigger>
+  );
+};
 
 CreateEntryLinkButton.propTypes = {
   contentTypes: PropTypes.array.isRequired,

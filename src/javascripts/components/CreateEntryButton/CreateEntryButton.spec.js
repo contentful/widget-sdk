@@ -23,12 +23,23 @@ describe('CreateEntryButton general', () => {
     expect(getByTestId('create-entry-button-menu-trigger')).toBeDefined();
     const button = findButton(getByTestId);
     expect(button).toBeDefined();
-    expect(button.textContent).toBe(`Add ${props.contentTypes[0].name}`);
+    expect(button.textContent).toBe('Add entry');
     expect(() => getByTestId('add-entry-menu')).toThrow(
       'Unable to find an element by: [data-test-id="add-entry-menu"]'
     );
     // dropdown icon
     expect(button.querySelector('svg')).toBeDefined();
+  });
+
+  it('renders suggestedContentTypeId as text when given', () => {
+    const suggestedContentTypeId = 'Test-1';
+    const { getByTestId } = render(
+      <CreateEntryButton {...props} suggestedContentTypeId={suggestedContentTypeId} />
+    );
+    expect(getByTestId('create-entry-button-menu-trigger')).toBeDefined();
+    const button = findButton(getByTestId);
+    expect(button).toBeDefined();
+    expect(button.textContent).toBe(`Add ${suggestedContentTypeId}`);
   });
 
   it('renders a menu on click when with multiple content types', () => {
