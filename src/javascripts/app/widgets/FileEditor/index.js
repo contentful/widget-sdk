@@ -4,6 +4,17 @@ import { FieldConnector } from '@contentful/field-editor-shared';
 import FileEditor from './FileEditor';
 import * as stringUtils from 'utils/StringUtils';
 
+/**
+ * Given an assetSys determines if the asset is archived
+ *
+ * @param {object} assetSys
+ * @param {string?} assetSys.archivedAt
+ * @returns {boolean} true if the asset is archived, false otherwise
+ */
+function isArchivedAsset(assetSys) {
+  return !!(assetSys && typeof assetSys.archivedAt !== 'undefined');
+}
+
 export default function FileEditorConnected(props) {
   const { sdk } = props;
 
@@ -14,8 +25,10 @@ export default function FileEditorConnected(props) {
     }
   };
 
+  const assetSys = sdk.entry.getSys();
+  const isArchived = isArchivedAsset(assetSys);
+
   const processAsset = async () => {
-    const assetSys = sdk.entry.getSys();
     const asset = await sdk.space.getAsset(assetSys.id);
     await sdk.space.processAsset(asset, sdk.field.locale);
     await sdk.space.waitUntilAssetProcessed(assetSys.id, sdk.field.locale);
@@ -30,6 +43,7 @@ export default function FileEditorConnected(props) {
             setValue={setValue}
             maybeSetTitle={maybeSetTitle}
             disabled={disabled}
+            archived={isArchived}
             processAsset={processAsset}
           />
         );
