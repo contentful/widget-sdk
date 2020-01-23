@@ -24,8 +24,12 @@ const styles = {
     borderRadius: '4px',
     color: tokens.colorWhite
   }),
+  idle: css({
+    background: tokens.colorElementLight,
+    color: tokens.colorTextMid
+  }),
   linksLength: css({
-    color: tokens.colorWhite
+    color: 'inherit'
   }),
   icon: css({
     marginRight: '2px'
@@ -36,7 +40,8 @@ const styles = {
   linkList: css({
     padding: 0,
     maxHeight: '200px',
-    overflow: 'scroll'
+    overflowY: 'auto',
+    overflowX: 'hidden'
   }),
   linkListHeader: css({
     padding: `0 ${tokens.spacingXs}`,
@@ -73,9 +78,12 @@ export default function LinkedEntitiesBadge({ entityInfo, className }) {
     <FetchLinksToEntity
       {...entityInfo}
       render={({ links }) => {
-        if (!links || links.length < 2) {
-          return null;
-        }
+        const title = `${links.length === 1 ? 'Used' : 'Reused'} by ${links.length} ${
+          links.length === 1 ? 'entry' : 'entries'
+        }`;
+
+        const isReused = links.length > 1;
+
         return (
           <Dropdown
             isOpen={isLinkListOpen}
@@ -86,8 +94,9 @@ export default function LinkedEntitiesBadge({ entityInfo, className }) {
             toggleElement={
               <div
                 data-test-id="cf-linked-entities-icon"
-                className={cx(styles.badge, className)}
-                onMouseEnter={() => setLinkListOpen(true)}
+                title={title}
+                className={cx(styles.badge, (!links || !isReused) && styles.idle, className)}
+                onMouseEnter={() => links.length > 0 && setLinkListOpen(true)}
                 onMouseLeave={e => {
                   if (
                     e.relatedTarget === window ||
@@ -97,7 +106,7 @@ export default function LinkedEntitiesBadge({ entityInfo, className }) {
                     setLinkListOpen(false);
                   }
                 }}>
-                <Icon icon="Link" color="white" className={styles.icon} />
+                <Icon icon="Link" color={isReused ? 'white' : 'muted'} className={styles.icon} />
                 <Paragraph className={styles.linksLength}>{links.length}</Paragraph>
               </div>
             }>
@@ -105,7 +114,7 @@ export default function LinkedEntitiesBadge({ entityInfo, className }) {
               onMouseEnter={() => setLinkListOpen(true)}
               onMouseLeave={() => setLinkListOpen(false)}>
               <div className={styles.linkListHeader} data-test-id="cf-linked-entities-header">
-                <Paragraph>{`Reused by ${links.length} entries`}</Paragraph>
+                <Paragraph>{title}</Paragraph>
               </div>
               <List className={styles.linkList}>
                 {links.map(link => (

@@ -59,13 +59,15 @@ describe('LinkedEntitiesBadge', () => {
     fetchLinks.mockImplementation(() => Promise.resolve([mockedLinks[0]]));
     const [renderResult] = build();
     await wait();
+    fireEvent.mouseOver(renderResult.getByTestId('cf-linked-entities-icon'));
     expect(renderResult).toMatchSnapshot();
   });
 
-  it('does not render the component if no links are present', async () => {
+  it('does render the disabled badge component if no links are present', async () => {
     fetchLinks.mockImplementation(() => Promise.resolve([]));
     const [renderResult] = build();
     await wait();
+    fireEvent.mouseOver(renderResult.getByTestId('cf-linked-entities-icon'));
     expect(renderResult).toMatchSnapshot();
   });
 

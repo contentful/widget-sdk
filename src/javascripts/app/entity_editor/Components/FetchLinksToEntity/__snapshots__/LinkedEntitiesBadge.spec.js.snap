@@ -1,12 +1,251 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`LinkedEntitiesBadge does not render the component if no links are present 1`] = `
+exports[`LinkedEntitiesBadge does not render with 1 linked entry 1`] = `
 Object {
   "asFragment": [Function],
-  "baseElement": <body>
-    <div />
+  "baseElement": .emotion-1 {
+  color: inherit;
+}
+
+.emotion-0 {
+  margin-right: 2px;
+}
+
+.emotion-3 {
+  line-height: 1;
+}
+
+.emotion-8 {
+  padding: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.emotion-4 {
+  padding: 0 0.5rem;
+  background: #e5ebed;
+}
+
+.emotion-7 {
+  cursor: pointer;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 0.5rem;
+}
+
+.emotion-7:hover {
+  background: #f7f9fa;
+}
+
+.emotion-5 {
+  margin-right: 1.5rem;
+  max-width: 400px;
+  color: #2a3039;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+}
+
+.emotion-5 span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.emotion-6 {
+  margin-left: auto;
+}
+
+.emotion-2 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  background: #8C53C2;
+  font-size: 1rem;
+  padding: 0px 5px;
+  border-radius: 4px;
+  color: #ffffff;
+  background: #e5ebed;
+  color: #536171;
+}
+
+<body>
+    <div>
+      <div
+        class="Dropdown__Dropdown___1qyn8 emotion-3"
+        data-test-id="cf-ui-dropdown"
+        position="bottom-left"
+      >
+        <div
+          aria-expanded="true"
+          aria-haspopup="menu"
+          class="emotion-2"
+          data-test-id="cf-linked-entities-icon"
+          title="Used by 1 entry"
+        >
+          <svg
+            class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--muted___3egnD emotion-0"
+            data-test-id="cf-ui-icon"
+            height="18"
+            viewBox="0 0 24 24"
+            width="18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M0 0h24v24H0z"
+              fill="none"
+            />
+            <path
+              d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"
+            />
+          </svg>
+          <p
+            class="Paragraph__Paragraph___2aO-9 emotion-1"
+            data-test-id="cf-ui-paragraph"
+          >
+            1
+          </p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div
+        class="DropdownContainer__DropdownContainer___3WlJM"
+        style="top: 0px; left: 0px;"
+      >
+        <div
+          class="InViewport__InViewport___2o6g4"
+          data-test-id="cf-ui-in-viewport"
+          offset="0"
+        >
+          <div>
+            <div
+              class="emotion-4"
+              data-test-id="cf-linked-entities-header"
+            >
+              <p
+                class="Paragraph__Paragraph___2aO-9"
+                data-test-id="cf-ui-paragraph"
+              >
+                Used by 1 entry
+              </p>
+            </div>
+            <ul
+              class="List__List___1awv4 emotion-8"
+              data-test-id="cf-ui-list"
+            >
+              <li
+                class="ListItem__ListItem___3S9Oc emotion-7"
+                data-test-id="cf-linked-entry-id1"
+              >
+                <button
+                  class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 emotion-5 TextLink__TextLink--primary___2Vc9F"
+                  data-test-id="cf-ui-text-link"
+                  type="button"
+                >
+                  <span
+                    class="TabFocusTrap__TabFocusTrap___39Vty"
+                    tabindex="-1"
+                  >
+                    title1
+                  </span>
+                </button>
+                <p
+                  class="Paragraph__Paragraph___2aO-9 emotion-6"
+                  data-test-id="cf-ui-paragraph"
+                >
+                  contentTypeName1
+                </p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>,
-  "container": <div />,
+  "container": .emotion-1 {
+  color: inherit;
+}
+
+.emotion-0 {
+  margin-right: 2px;
+}
+
+.emotion-3 {
+  line-height: 1;
+}
+
+.emotion-2 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  background: #8C53C2;
+  font-size: 1rem;
+  padding: 0px 5px;
+  border-radius: 4px;
+  color: #ffffff;
+  background: #e5ebed;
+  color: #536171;
+}
+
+<div>
+    <div
+      class="Dropdown__Dropdown___1qyn8 emotion-3"
+      data-test-id="cf-ui-dropdown"
+      position="bottom-left"
+    >
+      <div
+        aria-expanded="true"
+        aria-haspopup="menu"
+        class="emotion-2"
+        data-test-id="cf-linked-entities-icon"
+        title="Used by 1 entry"
+      >
+        <svg
+          class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--muted___3egnD emotion-0"
+          data-test-id="cf-ui-icon"
+          height="18"
+          viewBox="0 0 24 24"
+          width="18"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M0 0h24v24H0z"
+            fill="none"
+          />
+          <path
+            d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"
+          />
+        </svg>
+        <p
+          class="Paragraph__Paragraph___2aO-9 emotion-1"
+          data-test-id="cf-ui-paragraph"
+        >
+          1
+        </p>
+      </div>
+    </div>
+  </div>,
   "debug": [Function],
   "findAllByAltText": [Function],
   "findAllByDisplayValue": [Function],
@@ -61,13 +300,155 @@ Object {
 }
 `;
 
-exports[`LinkedEntitiesBadge does not render with 1 linked entry 1`] = `
+exports[`LinkedEntitiesBadge does render the disabled badge component if no links are present 1`] = `
 Object {
   "asFragment": [Function],
-  "baseElement": <body>
-    <div />
+  "baseElement": .emotion-1 {
+  color: inherit;
+}
+
+.emotion-0 {
+  margin-right: 2px;
+}
+
+.emotion-3 {
+  line-height: 1;
+}
+
+.emotion-2 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  background: #8C53C2;
+  font-size: 1rem;
+  padding: 0px 5px;
+  border-radius: 4px;
+  color: #ffffff;
+  background: #e5ebed;
+  color: #536171;
+}
+
+<body>
+    <div>
+      <div
+        class="Dropdown__Dropdown___1qyn8 emotion-3"
+        data-test-id="cf-ui-dropdown"
+        position="bottom-left"
+      >
+        <div
+          aria-expanded="false"
+          aria-haspopup="menu"
+          class="emotion-2"
+          data-test-id="cf-linked-entities-icon"
+          title="Reused by 0 entries"
+        >
+          <svg
+            class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--muted___3egnD emotion-0"
+            data-test-id="cf-ui-icon"
+            height="18"
+            viewBox="0 0 24 24"
+            width="18"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M0 0h24v24H0z"
+              fill="none"
+            />
+            <path
+              d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"
+            />
+          </svg>
+          <p
+            class="Paragraph__Paragraph___2aO-9 emotion-1"
+            data-test-id="cf-ui-paragraph"
+          >
+            0
+          </p>
+        </div>
+      </div>
+    </div>
   </body>,
-  "container": <div />,
+  "container": .emotion-1 {
+  color: inherit;
+}
+
+.emotion-0 {
+  margin-right: 2px;
+}
+
+.emotion-3 {
+  line-height: 1;
+}
+
+.emotion-2 {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  background: #8C53C2;
+  font-size: 1rem;
+  padding: 0px 5px;
+  border-radius: 4px;
+  color: #ffffff;
+  background: #e5ebed;
+  color: #536171;
+}
+
+<div>
+    <div
+      class="Dropdown__Dropdown___1qyn8 emotion-3"
+      data-test-id="cf-ui-dropdown"
+      position="bottom-left"
+    >
+      <div
+        aria-expanded="false"
+        aria-haspopup="menu"
+        class="emotion-2"
+        data-test-id="cf-linked-entities-icon"
+        title="Reused by 0 entries"
+      >
+        <svg
+          class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--muted___3egnD emotion-0"
+          data-test-id="cf-ui-icon"
+          height="18"
+          viewBox="0 0 24 24"
+          width="18"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M0 0h24v24H0z"
+            fill="none"
+          />
+          <path
+            d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"
+          />
+        </svg>
+        <p
+          class="Paragraph__Paragraph___2aO-9 emotion-1"
+          data-test-id="cf-ui-paragraph"
+        >
+          0
+        </p>
+      </div>
+    </div>
+  </div>,
   "debug": [Function],
   "findAllByAltText": [Function],
   "findAllByDisplayValue": [Function],
@@ -146,7 +527,7 @@ Object {
 }
 
 .emotion-1 {
-  color: #ffffff;
+  color: inherit;
 }
 
 .emotion-0 {
@@ -160,7 +541,8 @@ Object {
 .emotion-11 {
   padding: 0;
   max-height: 200px;
-  overflow: scroll;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .emotion-4 {
@@ -211,6 +593,7 @@ Object {
           aria-haspopup="menu"
           class="emotion-2"
           data-test-id="cf-linked-entities-icon"
+          title="Reused by 2 entries"
         >
           <svg
             class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--white___3GVPJ emotion-0"
@@ -336,7 +719,7 @@ Object {
 }
 
 .emotion-1 {
-  color: #ffffff;
+  color: inherit;
 }
 
 .emotion-0 {
@@ -358,6 +741,7 @@ Object {
         aria-haspopup="menu"
         class="emotion-2"
         data-test-id="cf-linked-entities-icon"
+        title="Reused by 2 entries"
       >
         <svg
           class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--white___3GVPJ emotion-0"
