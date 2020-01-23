@@ -133,7 +133,7 @@ export default function FileEditor(props) {
           setBusy(true);
           try {
             const updatedFile = await ImageOperations.crop(mode, file);
-            if (updateFile) {
+            if (updatedFile) {
               updateFile(updatedFile);
             }
           } catch (err) {
