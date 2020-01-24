@@ -87,7 +87,8 @@ const fetchData = (setLoading, setState, isSpaceAdmin) => async () => {
   }
 };
 
-const SpaceHomePage = ({ spaceTemplateCreated, lastUsedOrg, orgOwnerOrAdmin, orgId }) => {
+// TODO should fix this template being used by both spaceHome and Home
+const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
   const spaceContext = getModule('spaceContext');
   const [isLoading, setLoading] = useState(true);
   const [
@@ -159,17 +160,12 @@ const SpaceHomePage = ({ spaceTemplateCreated, lastUsedOrg, orgOwnerOrAdmin, org
     }
   }
 
-  let emptySpaceHome;
-  if (orgId) {
-    emptySpaceHome = <EmptySpaceHome lastUsedOrg={orgId} orgOwnerOrAdmin={orgOwnerOrAdmin} />;
-  } else if (!isLoading && !spaceContext.space) {
-    emptySpaceHome = <EmptySpaceHome lastUsedOrg={lastUsedOrg} orgOwnerOrAdmin={orgOwnerOrAdmin} />;
-  }
-
   return (
     <div className="home home-section" data-test-id="space-home-page-container">
       <DocumentTitle title="Space home" />
-      {emptySpaceHome}
+      {!isLoading && !spaceContext.space && (
+        <EmptySpaceHome lastUsedOrg={orgId} orgOwnerOrAdmin={orgOwnerOrAdmin} />
+      )}
       {isLoading && (
         <EmptyStateContainer>
           <Spinner size="large" />
@@ -189,7 +185,6 @@ const SpaceHomePage = ({ spaceTemplateCreated, lastUsedOrg, orgOwnerOrAdmin, org
 
 SpaceHomePage.propTypes = {
   spaceTemplateCreated: PropTypes.bool,
-  lastUsedOrg: PropTypes.string,
   orgOwnerOrAdmin: PropTypes.bool,
   orgId: PropTypes.string
 };

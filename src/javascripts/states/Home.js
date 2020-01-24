@@ -88,7 +88,7 @@ export default makeState({
         $scope.orgOwnerOrAdmin =
           currentOrgMembership &&
           (currentOrgMembership.role === 'owner' || currentOrgMembership.role === 'admin');
-        $scope.lastUsedOrg = currentOrgMembership.organization.sys.id;
+        $scope.orgId = currentOrgMembership.organization.sys.id;
         $scope.spaceTemplateCreated = false;
         $scope.context.ready = true;
         // This listener is triggered on completion of The Example Space creation
