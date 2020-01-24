@@ -36,7 +36,7 @@ export default makeState({
   url: '/',
   template: template(),
   params: {
-    onboardingInOrgId: null,
+    orgId: null,
     orgOwnerOrAdmin: null
   },
   navComponent: EmptyNavigationBar,
@@ -65,8 +65,8 @@ export default makeState({
     '$stateParams',
     'space',
     ($scope, $stateParams, space) => {
-      if ($stateParams.onboardingInOrgId) {
-        $scope.onboardingInOrgId = $stateParams.onboardingInOrgId;
+      if ($stateParams.orgId) {
+        $scope.orgId = $stateParams.orgId;
         $scope.orgOwnerOrAdmin = $stateParams.orgOwnerOrAdmin;
         $scope.context.ready = true;
       } else if (space) {

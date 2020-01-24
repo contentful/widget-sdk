@@ -87,12 +87,7 @@ const fetchData = (setLoading, setState, isSpaceAdmin) => async () => {
   }
 };
 
-const SpaceHomePage = ({
-  spaceTemplateCreated,
-  lastUsedOrg,
-  orgOwnerOrAdmin,
-  onboardingInOrgId
-}) => {
+const SpaceHomePage = ({ spaceTemplateCreated, lastUsedOrg, orgOwnerOrAdmin, orgId }) => {
   const spaceContext = getModule('spaceContext');
   const [isLoading, setLoading] = useState(true);
   const [
@@ -164,19 +159,21 @@ const SpaceHomePage = ({
     }
   }
 
+  let emptySpaceHome;
+  if (orgId) {
+    emptySpaceHome = <EmptySpaceHome lastUsedOrg={orgId} orgOwnerOrAdmin={orgOwnerOrAdmin} />;
+  } else if (!isLoading && !spaceContext.space) {
+    emptySpaceHome = <EmptySpaceHome lastUsedOrg={lastUsedOrg} orgOwnerOrAdmin={orgOwnerOrAdmin} />;
+  }
+
   return (
     <div className="home home-section" data-test-id="space-home-page-container">
       <DocumentTitle title="Space home" />
-      {onboardingInOrgId && (
-        <EmptySpaceHome lastUsedOrg={onboardingInOrgId} orgOwnerOrAdmin={orgOwnerOrAdmin} />
-      )}
+      {emptySpaceHome}
       {isLoading && (
         <EmptyStateContainer>
           <Spinner size="large" />
         </EmptyStateContainer>
-      )}
-      {!isLoading && !spaceContext.space && (
-        <EmptySpaceHome lastUsedOrg={lastUsedOrg} orgOwnerOrAdmin={orgOwnerOrAdmin} />
       )}
       {!isLoading && isAuthorOrEditor && !readOnlySpace && (
         <AuthorEditorSpaceHome
@@ -194,7 +191,7 @@ SpaceHomePage.propTypes = {
   spaceTemplateCreated: PropTypes.bool,
   lastUsedOrg: PropTypes.string,
   orgOwnerOrAdmin: PropTypes.bool,
-  onboardingInOrgId: PropTypes.string
+  orgId: PropTypes.string
 };
 
 export default SpaceHomePage;

@@ -10,6 +10,7 @@ export const NavStates = makeSum({
   Space: ['space', 'env', 'org', 'availableEnvironments', 'environmentMeta'],
   OrgSettings: ['org'],
   UserProfile: [],
+  Home: ['org'],
   NewOrg: [],
   Default: []
 });
@@ -39,6 +40,10 @@ export async function updateNavState(state, params, { space, organization, envir
     navStateBus.set(
       NavStates.Space(data, environment, organization, environments, environmentMeta)
     );
+  } else if (state.name === 'home' && params.orgId) {
+    getOrganization(params.orgId).then(org => {
+      navStateBus.set(NavStates.Home(org));
+    });
   } else {
     navStateBus.set(NavStates.Default());
   }

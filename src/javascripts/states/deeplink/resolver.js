@@ -313,7 +313,7 @@ async function resolveSpaceHome({ orgId }) {
     const orgOwnerOrAdmin = await checkOrgAccess(orgId);
     return {
       path: ['home'],
-      params: { onboardingInOrgId: orgId, orgOwnerOrAdmin: orgOwnerOrAdmin }
+      params: { orgId: orgId, orgOwnerOrAdmin: orgOwnerOrAdmin }
     };
   }
   const spaceId = spaces[0].sys.id;

@@ -467,7 +467,7 @@ describe('states/deeplink/resolver', () => {
       expect(await resolveLink('invitation-accepted', { orgId: 'testOrgId' })).toEqual({
         path: ['home'],
         params: {
-          onboardingInOrgId: 'testOrgId',
+          orgId: 'testOrgId',
           orgOwnerOrAdmin: false
         }
       });
