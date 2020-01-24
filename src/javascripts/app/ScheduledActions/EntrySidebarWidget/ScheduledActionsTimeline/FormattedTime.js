@@ -5,7 +5,7 @@ const formatTime = (time, size) =>
   moment
     .utc(time)
     .local()
-    .format(size === 'default' ? 'ddd, MMM Do, YYYY - h:mm A' : 'MMM Do, YYYY - h:mm A');
+    .format(size === 'default' ? 'ddd, DD MMM YYYY [at] h:mm A' : 'MMM Do, YYYY - h:mm A');
 
 const FormattedTime = ({ time, size }) => formatTime(time, size);
 

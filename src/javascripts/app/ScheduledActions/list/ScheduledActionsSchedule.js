@@ -75,13 +75,13 @@ function formatDate(date) {
       .diff(moment(date).startOf('day'), 'days')
   ) {
     case 0:
-      return `Today, ${moment(date).format('MMM Do, YYYY')}`;
+      return `Today, ${moment(date).format('DD MMM YYYY')}`;
     case -1:
-      return `Tomorrow, ${moment(date).format('MMM Do, YYYY')}`;
+      return `Tomorrow, ${moment(date).format('DD MMM YYYY')}`;
     case 1:
-      return `Yesterday, ${moment(date).format('MMM Do, YYYY')}`;
+      return `Yesterday, ${moment(date).format('DD MMM YYYY')}`;
     default:
-      return moment(date).format('ddd, MMM Do, YYYY');
+      return moment(date).format('ddd, DD MMM YYYY');
   }
 }
 
@@ -129,7 +129,7 @@ export default class JobsSchedule extends React.Component {
 
     const jobsWithExisitingEntry = jobs.filter(job => entriesData[job.entity.sys.id]);
     const groupedJobs = _.chain(jobsWithExisitingEntry)
-      .groupBy(item => moment(item.scheduledAt).format('YYYY.MM.DD'))
+      .groupBy(item => moment(item.scheduledFor.datetime).format('YYYY.MM.DD'))
       .map(item => item)
       .value();
     return (

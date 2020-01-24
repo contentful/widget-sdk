@@ -80,7 +80,7 @@ export class DatePicker extends Component {
               }
             }
           }}
-          value={moment(this.props.value).format('ddd, MMM Do, YYYY')}
+          value={moment(this.props.value).format('ddd, DD MMM YYYY')}
           validationMessage={this.state.validationError}
           id={id}
           onFocus={this.handleOpen}
