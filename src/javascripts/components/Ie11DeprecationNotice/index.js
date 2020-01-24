@@ -1,7 +1,6 @@
 import React from 'react';
 import { css } from 'emotion';
 import { Note, TextLink } from '@contentful/forma-36-react-components';
-import tokens from '@contentful/forma-36-tokens';
 import * as Analytics from 'analytics/Analytics';
 import { isIE } from 'utils/browser';
 import BooleanFeatureFlag from 'utils/LaunchDarkly/BooleanFeatureFlag';
@@ -10,13 +9,13 @@ import * as FeatureFlagKey from 'featureFlags';
 const styles = {
   container: css({
     position: 'fixed',
-    bottom: tokens.spacingXl,
+    bottom: '40%',
     width: '100%',
     left: 0,
     right: 0
   }),
   note: css({
-    width: '500px',
+    width: '700px',
     margin: '0 auto'
   })
 };
