@@ -36,7 +36,8 @@ export default makeState({
   url: '/',
   template: template(),
   params: {
-    onboardingInOrgId: null
+    onboardingInOrgId: null,
+    orgOwnerOrAdmin: null
   },
   navComponent: EmptyNavigationBar,
   loadingText: 'Loading…',
@@ -66,6 +67,7 @@ export default makeState({
     ($scope, $stateParams, space) => {
       if ($stateParams.onboardingInOrgId) {
         $scope.onboardingInOrgId = $stateParams.onboardingInOrgId;
+        $scope.orgOwnerOrAdmin = $stateParams.orgOwnerOrAdmin;
         $scope.context.ready = true;
       } else if (space) {
         // If a space is found during resolving, send the user to that space

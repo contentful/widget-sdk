@@ -310,9 +310,10 @@ async function resolveSubscriptions() {
 async function resolveSpaceHome({ orgId }) {
   const spaces = await getOrganizationSpaces(orgId);
   if (spaces.length === 0) {
+    const orgOwnerOrAdmin = await checkOrgAccess(orgId);
     return {
       path: ['home'],
-      params: { onboardingInOrgId: orgId }
+      params: { onboardingInOrgId: orgId, orgOwnerOrAdmin: orgOwnerOrAdmin }
     };
   }
   const spaceId = spaces[0].sys.id;
