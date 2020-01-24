@@ -1,10 +1,15 @@
 import createMicroBackendsClient from 'MicroBackendsClient';
 import { gitRevision as uiVersion } from 'Config';
+import { track } from 'analytics/Analytics';
 
-// How often measurements should be sent.
+// How often measurements should be sent using `send`.
+//
 // Please note it means some measurements may be dropped.
 // We could use `localStorage` but it would require
 // synchronization between opened browser tabs.
+//
+// Also note, measurements are always tracked using `Analytics.track`
+// immediately, but sent using `send` only every INTERVAL seconds.
 const INTERVAL = 120 * 1000;
 
 // We want to send the first batch of measurements
@@ -48,8 +53,13 @@ export function count(name, tags) {
 // `name` is a string metric name and `tags` is an optional
 // object of tags `{ 'tag-name': 'tag-value' }`.
 export function record(name, value, tags) {
+  const measurement = makeMeasurement(name, value, tags, state);
+
+  // Immediately track the measurement
+  track(`telemetry:measurement`, measurement);
+
   withState(state => {
-    state.measurements = [...state.measurements, makeMeasurement(name, value, tags, state)];
+    state.measurements = [...state.measurements, measurement];
   });
 }
 
@@ -66,8 +76,13 @@ export function countImmediate(name, tags) {
 }
 
 export function recordImmediate(name, value, tags) {
+  const measurement = makeMeasurement(name, value, tags, state);
+
+  // Immediately track the measurement
+  track(`telemetry:measurement`, measurement);
+
   withState(state => {
-    const body = JSON.stringify([makeMeasurement(name, value, tags, state)]);
+    const body = JSON.stringify([measurement]);
     callBackend(state.client, body).catch(err => {
       // eslint-disable-next-line no-console
       console.error('Could not send measurement.', body, err);

@@ -143,7 +143,8 @@ export const validEvents = {
   jobs: ['cancel', 'create'],
   teams_in_space: ['teams_added', 'users_added', 'users_to_teams_page_navigation'],
   entity_state: ['revert'],
-  asset_list: ['add_asset_single', 'add_asset_multiple']
+  asset_list: ['add_asset_single', 'add_asset_multiple'],
+  telemetry: ['measurement']
 };
 
 export const validateEvent = eventName => {
