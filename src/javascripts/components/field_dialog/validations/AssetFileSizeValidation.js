@@ -34,6 +34,13 @@ const AssetFileSizeValidation = ({
     updateValidationMessageValue(message);
   }, [message, updateValidationMessageValue]);
 
+  const resetView = currentView => {
+    // TODO: remove after migrating content type settings dialog to React
+    setMin(null);
+    setMax(null);
+    setCurrentView(currentView);
+  };
+
   const getControls = () => {
     switch (currentView) {
       case 'min':
@@ -58,7 +65,7 @@ const AssetFileSizeValidation = ({
         <Select
           name="Select condition"
           testId="select-condition"
-          onChange={({ target: { value } }) => setCurrentView(value)}
+          onChange={({ target: { value } }) => resetView(value)}
           value={currentView}
           width="medium">
           {validation.views.map(({ name, label }, index) => (

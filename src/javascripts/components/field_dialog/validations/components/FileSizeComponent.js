@@ -26,15 +26,11 @@ const getScaledValue = (displayValue, factor) => {
 const FileSizeComponent = ({ type, value, onUpdate }) => {
   const [factor, setFactor] = useState(() => getUnitFactor(value));
   const [displayValue, setDisplayValue] = useState(() => getDisplayValue(value, factor));
-  const [scaledValue, setScaledValue] = useState(value);
 
   useEffect(() => {
-    setScaledValue(getScaledValue(displayValue, factor));
-  }, [displayValue, factor]);
-
-  useEffect(() => {
-    onUpdate(scaledValue);
-  }, [scaledValue, onUpdate]);
+    const value = getScaledValue(displayValue, factor);
+    onUpdate(value);
+  }, [displayValue, factor, onUpdate]);
 
   return (
     <>
