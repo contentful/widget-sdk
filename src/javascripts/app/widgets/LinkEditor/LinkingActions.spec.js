@@ -1,6 +1,7 @@
 import { forEach } from 'lodash';
 import React from 'react';
-import Enzyme from 'enzyme';
+import { render, fireEvent, cleanup } from '@testing-library/react';
+import '@testing-library/jest-dom/extend-expect';
 
 import { default as LinkingActions, labels, testIds } from './LinkingActions';
 import { TYPES } from './Util';
@@ -53,63 +54,73 @@ describe('LinkingActions', () => {
       expectedLinkExistingLabel: labels.linkExisting('entries')
     }
   };
+
   forEach(testCases, (testCase, description) => {
     const { props, expectedCreateAndLinkLabel, expectedLinkExistingLabel } = testCase;
 
     describe(description, () => {
-      let wrapper, onCreateAndLink, onLinkExisting;
+      const onCreateAndLink = jest.fn();
+      const onLinkExisting = jest.fn();
+      let allProps;
+
+      afterEach(cleanup);
 
       beforeEach(() => {
-        onCreateAndLink = jest.fn();
-        onLinkExisting = jest.fn();
-        const allProps = { ...props, onCreateAndLink, onLinkExisting };
-        wrapper = Enzyme.mount(<LinkingActions {...allProps} />);
+        onCreateAndLink.mockReset();
+        onLinkExisting.mockReset();
+        allProps = { ...props, onCreateAndLink, onLinkExisting };
       });
 
       describe('"create and link" action', () => {
-        let createAndLink;
-
-        beforeEach(() => (createAndLink = byTestId(wrapper, testIds.createAndLink)));
-
         if (expectedCreateAndLinkLabel) {
           it('is rendered', () => {
-            expect(createAndLink.text()).toEqual(expectedCreateAndLinkLabel);
+            const { getByTestId } = render(<LinkingActions {...allProps} />);
+            expect(getByTestId(testIds.createAndLink).textContent).toEqual(
+              expectedCreateAndLinkLabel
+            );
           });
 
           it('invokes `onCreateAndLink` when clicked', () => {
-            if (createAndLink.parent().is('CreateEntryMenuTrigger')) {
-              const simulateClick = createAndLink.parent().prop('onSelect');
-              simulateClick();
-            } else {
-              createAndLink.simulate('click');
+            const { getByTestId } = render(<LinkingActions {...allProps} />);
+            const createAndLink = getByTestId(testIds.createAndLink);
+            try {
+              // if the trigger is create-entry-link-button
+              const button = getByTestId('create-entry-link-button');
+              // we click on it to open the menu of available content types
+              fireEvent.click(button);
+              if (allProps.contentTypes.length > 1) {
+                // and click the first one
+                fireEvent.click(getByTestId('add-entry-menu').querySelector('li[role="menuitem"]'));
+              }
+            } catch (e) {
+              // otherwise, just clicking the link
+              fireEvent.click(createAndLink);
+            } finally {
+              expect(onCreateAndLink).toHaveBeenCalledTimes(1);
             }
-            expect(onCreateAndLink).toHaveBeenCalledTimes(1);
           });
         } else {
           it('is hidden', () => {
-            expect(createAndLink).toHaveLength(0);
+            const { getAllByTestId } = render(<LinkingActions {...allProps} />);
+            expect(() => {
+              getAllByTestId(testIds.createAndLink);
+            }).toThrow(`Unable to find an element by: [data-test-id="${testIds.createAndLink}"]`);
           });
         }
       });
 
       describe('"link existing" action', () => {
-        let linkExisting;
-
-        beforeEach(() => (linkExisting = byTestId(wrapper, testIds.linkExisting)));
-
         it('is rendered', () => {
-          expect(linkExisting.text()).toEqual(expectedLinkExistingLabel);
+          const { getByTestId } = render(<LinkingActions {...allProps} />);
+          expect(getByTestId(testIds.linkExisting).textContent).toEqual(expectedLinkExistingLabel);
         });
 
         it('invokes `onLinkExisting` when clicked', () => {
-          linkExisting.simulate('click');
+          const { getByTestId } = render(<LinkingActions {...allProps} />);
+          fireEvent.click(getByTestId(testIds.linkExisting));
           expect(onLinkExisting).toHaveBeenCalledTimes(1);
         });
       });
     });
   });
 });
-
-function byTestId(wrapper, id) {
-  return wrapper.find(`[data-test-id="${id}"]`).first();
-}

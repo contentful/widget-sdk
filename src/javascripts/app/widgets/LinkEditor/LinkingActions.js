@@ -36,62 +36,61 @@ const styles = {
   })
 };
 
-export default class LinkingActions extends React.Component {
-  static propTypes = {
-    type: PropTypes.oneOf(Object.values(TYPES)).isRequired,
-    isDisabled: PropTypes.bool,
-    isSingle: PropTypes.bool,
-    canCreateEntity: PropTypes.bool.isRequired,
-    contentTypes: PropTypes.arrayOf(PropTypes.object),
-    onCreateAndLink: PropTypes.func,
-    onLinkExisting: PropTypes.func
-  };
-
-  static defaultProps = {
-    contentTypes: [],
-    onCreateAndLink: noop,
-    onLinkExisting: noop
-  };
-
-  render() {
-    const {
-      type,
-      isSingle,
-      canCreateEntity,
-      contentTypes,
-      onCreateAndLink,
-      onLinkExisting
-    } = this.props;
-    const typeName = TYPE_NAMES[type];
-    const singleCtOrTypeName = contentTypes.length === 1 ? contentTypes[0].name : typeName;
-    return (
-      <div className={styles.linkEditor}>
-        <Visible if={type === TYPES.ENTRY && canCreateEntity}>
-          <CreateEntryLinkButton
-            testId={testIds.createAndLink}
-            text={labels.createAndLink(singleCtOrTypeName)}
-            contentTypes={contentTypes}
-            hasPlusIcon={true}
-            onSelect={contentType => onCreateAndLink(contentType)}
-          />
-        </Visible>
-        <Visible if={type === TYPES.ASSET && canCreateEntity}>
-          <TextLink
-            testId={testIds.createAndLink}
-            onClick={() => onCreateAndLink(null)}
-            linkType="primary"
-            icon="Link">
-            {labels.createAndLink(typeName)}
-          </TextLink>
-        </Visible>
+const LinkingActions = ({
+  type,
+  isSingle,
+  canCreateEntity,
+  contentTypes,
+  onCreateAndLink,
+  onLinkExisting
+}) => {
+  const typeName = TYPE_NAMES[type];
+  const singleCtOrTypeName = contentTypes.length === 1 ? contentTypes[0].name : typeName;
+  return (
+    <div className={styles.linkEditor}>
+      <Visible if={type === TYPES.ENTRY && canCreateEntity}>
+        <CreateEntryLinkButton
+          testId={testIds.createAndLink}
+          text={labels.createAndLink(singleCtOrTypeName)}
+          contentTypes={contentTypes}
+          hasPlusIcon={true}
+          onSelect={contentType => onCreateAndLink(contentType)}
+        />
+      </Visible>
+      <Visible if={type === TYPES.ASSET && canCreateEntity}>
         <TextLink
-          testId={testIds.linkExisting}
-          onClick={onLinkExisting}
+          testId={testIds.createAndLink}
+          onClick={() => onCreateAndLink(null)}
           linkType="primary"
           icon="Link">
-          {labels.linkExisting(isSingle ? typeName : pluralize(typeName))}
+          {labels.createAndLink(typeName)}
         </TextLink>
-      </div>
-    );
-  }
-}
+      </Visible>
+      <TextLink
+        testId={testIds.linkExisting}
+        onClick={onLinkExisting}
+        linkType="primary"
+        icon="Link">
+        {labels.linkExisting(isSingle ? typeName : pluralize(typeName))}
+      </TextLink>
+    </div>
+  );
+};
+
+LinkingActions.propTypes = {
+  type: PropTypes.oneOf(Object.values(TYPES)).isRequired,
+  isDisabled: PropTypes.bool,
+  isSingle: PropTypes.bool,
+  canCreateEntity: PropTypes.bool.isRequired,
+  contentTypes: PropTypes.arrayOf(PropTypes.object),
+  onCreateAndLink: PropTypes.func,
+  onLinkExisting: PropTypes.func
+};
+
+LinkingActions.defaultProps = {
+  contentTypes: [],
+  onCreateAndLink: noop,
+  onLinkExisting: noop
+};
+
+export default LinkingActions;
