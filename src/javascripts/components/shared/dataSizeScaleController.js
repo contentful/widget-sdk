@@ -33,6 +33,8 @@ export default function register() {
 
       $scope.unitFactor = getUnitFactor(getModelValue());
 
+      // console.log('unitFactors', unitFactors);
+
       $scope.$watch($attrs.model, updateScaledValue);
       $scope.$watch('unitFactor', updateModelValue);
       $scope.$watch('value', updateModelValue);
@@ -40,11 +42,13 @@ export default function register() {
       $scope.$on('ngModel:commit', updateModelValue);
 
       function updateModelValue() {
+        // console.log('updateModelValue, $scope.value: ', $scope.value);
         const raw = _.isFinite($scope.value) ? $scope.value * $scope.unitFactor : null;
         setModelValue(raw);
       }
 
       function updateScaledValue(raw) {
+        // console.log('updateScaledValue, raw: ', raw);
         $scope.value = _.isFinite(raw) ? raw / $scope.unitFactor : null;
       }
 
