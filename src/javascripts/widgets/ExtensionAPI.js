@@ -2,6 +2,7 @@ import { pick, get, difference } from 'lodash';
 import createIDMap from './IDMap';
 import * as PublicContentType from './PublicContentType';
 import * as Analytics from 'analytics/Analytics';
+import { getLocalesObject } from 'app/widgets/NewWidgetApi/createLocalesApi';
 
 const sharedFieldProps = field => ({
   id: field.apiName || field.id,
@@ -137,16 +138,10 @@ export default class ExtensionAPI {
           ...sharedFieldProps(field)
         };
       }),
-      locales: {
-        available: locales.available.map(locale => locale.code),
-        default: locales.default.code,
-        fallbacks: locales.available.reduce((acc, locale) => {
-          return { ...acc, [locale.code]: locale.fallbackCode || undefined };
-        }, {}),
-        names: locales.available.reduce((acc, locale) => {
-          return { ...acc, [locale.code]: locale.name };
-        }, {})
-      },
+      locales: getLocalesObject({
+        availableLocales: locales.available,
+        defaultLocale: locales.default
+      }),
       // We only need `sys` in the SDK.
       // Make sure we don't leak internal field IDs:
       entry: { sys: entryData.sys },
