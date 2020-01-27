@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Select, Option, TextInput } from '@contentful/forma-36-react-components';
-import { toString, toNumber, map, findLast, isFinite } from 'lodash';
+import { toString, toNumber, map, findLast, isFinite, startCase } from 'lodash';
 import styles from '../styles';
 
 const units = [
@@ -35,9 +35,9 @@ const FileSizeComponent = ({ type, value, onUpdate }) => {
   return (
     <>
       <TextInput
-        testId="min-size-input"
+        testId={`${type}-size-input`}
         className={styles.textInputNumber}
-        placeholder={type}
+        placeholder={startCase(type)}
         type="number"
         value={toString(displayValue)}
         onChange={({ target: { value } }) => setDisplayValue(toNumber(value))}
@@ -45,7 +45,7 @@ const FileSizeComponent = ({ type, value, onUpdate }) => {
       />
       <Select
         name="Select size unit"
-        testId="select-size-unit"
+        testId={`select-${type}-size-unit`}
         onChange={({ target: { value } }) => setFactor(toNumber(value))}
         value={toString(factor)}
         width="small">
