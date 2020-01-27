@@ -9,6 +9,7 @@ import { css } from 'emotion';
 import ScheduledActionsEmptyStateMessage from './ScheduledActionsEmptyStateMessage';
 import WrappedEntityList from 'app/common/WrappedEntityList';
 import ScheduledActionAction from '../ScheduledActionAction';
+import { formatDate } from '../EntrySidebarWidget/ScheduledActionsTimeline/FormattedDateAndTime';
 
 const styles = {
   jobsSchedule: css({}),
@@ -67,23 +68,6 @@ TimeGroup.propTypes = {
   entriesData: PropTypes.object,
   contentTypesData: PropTypes.object
 };
-
-function formatDate(date) {
-  switch (
-    moment()
-      .startOf('day')
-      .diff(moment(date).startOf('day'), 'days')
-  ) {
-    case 0:
-      return `Today, ${moment(date).format('DD MMM YYYY')}`;
-    case -1:
-      return `Tomorrow, ${moment(date).format('DD MMM YYYY')}`;
-    case 1:
-      return `Yesterday, ${moment(date).format('DD MMM YYYY')}`;
-    default:
-      return moment(date).format('ddd, DD MMM YYYY');
-  }
-}
 
 const DateGroup = ({ jobs, entriesData, contentTypesData }) => {
   const timeGroups = _.chain(jobs)

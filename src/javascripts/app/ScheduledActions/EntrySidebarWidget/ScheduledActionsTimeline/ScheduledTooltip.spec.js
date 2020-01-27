@@ -4,6 +4,9 @@ import { Icon } from '@contentful/forma-36-react-components';
 import ScheduledActionActions from 'app/ScheduledActions/ScheduledActionAction';
 
 import ScheduleTooltip, { ScheduleTooltipContent } from './ScheduleTooltip';
+import * as FormattedDateAndTime from './FormattedDateAndTime';
+
+const formatDateAndTimeSpy = jest.spyOn(FormattedDateAndTime, 'formatDateAndTime');
 
 describe('ScheduleTooltip', () => {
   it('should not display anything if no jobs were given', () => {
@@ -155,7 +158,7 @@ describe('ScheduleTooltipContent', () => {
 
     const wrapper = shallow(<ScheduleTooltipContent job={job} jobsCount={jobsCount} />);
     expect(wrapper.html()).not.toBeNull();
-    expect(wrapper.find('FormattedTime').prop('time')).toBe(job.scheduledFor.datetime);
+    expect(formatDateAndTimeSpy).toHaveBeenCalledWith(job.scheduledFor.datetime);
     expect(
       wrapper
         .find('Tag')
@@ -185,7 +188,7 @@ describe('ScheduleTooltipContent', () => {
 
     const wrapper = shallow(<ScheduleTooltipContent job={job} jobsCount={jobsCount} />);
     expect(wrapper.html()).not.toBeNull();
-    expect(wrapper.find('FormattedTime').prop('time')).toBe(job.scheduledFor.datetime);
+    expect(formatDateAndTimeSpy).toHaveBeenCalledWith(job.scheduledFor.datetime);
     expect(
       wrapper
         .find('Tag')

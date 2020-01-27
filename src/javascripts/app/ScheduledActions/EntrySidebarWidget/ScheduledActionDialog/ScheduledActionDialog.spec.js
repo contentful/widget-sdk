@@ -107,7 +107,7 @@ describe('ScheduledActionDialog', () => {
     const selectedItem = renderResult.getByText(timezone, { exact: false });
     fireEvent.click(selectedItem);
 
-    const expectedLocalTime = moment(expected).format('ddd, MMM Do, YYYY - hh:mm A');
+    const expectedLocalTime = moment(expected).format('ddd, DD MMM YYYY [at] h:mm A');
 
     expect(
       renderResult.getByText(`The scheduled time you have selected will be: ${expectedLocalTime}`, {

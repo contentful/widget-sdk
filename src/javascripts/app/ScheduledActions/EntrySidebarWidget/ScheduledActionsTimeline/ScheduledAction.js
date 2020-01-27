@@ -13,7 +13,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import { scheduleStyles as styles } from './styles';
 import CancellationModal from './CancellationModal';
-import FormattedTime from './FormattedTime';
+import { formatDateAndTime, formatDate, formatTime } from './FormattedDateAndTime';
 import ScheduledActionAction from 'app/ScheduledActions/ScheduledActionAction';
 
 const tagTypeForAction = {
@@ -75,14 +75,16 @@ class Job extends Component {
                   this.toggleCancelDialog();
                   onCancel(id);
                 }}>
-                This entry is scheduled to {action} on <FormattedTime time={scheduledAt} />. <br />
+                This entry is scheduled to {action} on {formatDateAndTime(scheduledAt)}. <br />
                 Are you sure you want to cancel?
               </CancellationModal>
             </>
           )}
         </div>
-        <span className={cn(styles.date, size === 'small' ? styles.dateSmall : '')}>
-          <FormattedTime time={scheduledAt} size={size} />
+        <span
+          className={cn(styles.date, size === 'small' ? styles.dateSmall : '')}
+          title={`${formatDate(scheduledAt)} at ${formatTime(scheduledAt)}`}>
+          {formatDateAndTime(scheduledAt, size === 'small')}
         </span>
       </Card>
     );

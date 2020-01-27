@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Tag, Tooltip, Paragraph } from '@contentful/forma-36-react-components';
 import { orderBy } from 'lodash';
 import tokens from '@contentful/forma-36-tokens';
-import FormattedTime from 'app/ScheduledActions/EntrySidebarWidget/ScheduledActionsTimeline/FormattedTime';
+import { formatDateAndTime } from 'app/ScheduledActions/EntrySidebarWidget/ScheduledActionsTimeline/FormattedDateAndTime';
 import ScheduledActionActions from 'app/ScheduledActions/ScheduledActionAction';
 
 import cn from 'classnames';
@@ -56,7 +56,9 @@ const ScheduleTooltipContent = ({ job, jobsCount }) => {
 
   return (
     <>
-      <FormattedTime className={styles.time} time={job.scheduledFor.datetime} />
+      <span className={styles.time} data-test-id="cf-scheduled-time-tootlip-content">
+        {formatDateAndTime(job.scheduledFor.datetime)}
+      </span>
       <Tag
         tagType={actionColors[job.action.toLowerCase()]}
         testId="scheduled-publish-trigger"

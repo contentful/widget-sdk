@@ -50,7 +50,7 @@ function TimezoneNote({ date, time, timezone }) {
       title="Timezone changed">
       The scheduled time you have selected will be:{' '}
       {moment(formatScheduledAtDate({ date, time, timezone })).format(
-        'ddd, MMM Do, YYYY - hh:mm A'
+        'ddd, DD MMM YYYY [at] h:mm A'
       )}
       <br />
       in your local time. ({localTimezoneName})
