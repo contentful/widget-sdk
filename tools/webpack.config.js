@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const path = require('path');
 const fs = require('fs');
+const _ = require('lodash');
 const { createBabelOptions } = require('./app-babel-options');
 const WebpackRequireFrom = require('webpack-require-from');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -295,9 +296,25 @@ module.exports = () => {
         // TODO: Make this a bit cleaner
         cacheGroups: !isTest
           ? {
+              nodeModules: {
+                name: 'libs',
+                test: module => {
+                  if (module.resource && module.resource.split('node_modules').length !== 1) {
+                    if (anyIssuerInChainIsIncludedAsync(module)) {
+                      return false;
+                    }
+
+                    return true;
+                  }
+                }
+              },
               app: {
                 name: 'main',
-                test: (_, chunks) => {
+                test: (module, chunks) => {
+                  if (module.resource && module.resource.split('node_modules').length !== 1) {
+                    return false;
+                  }
+
                   if (chunks[0] && chunks[0].name === 'app') {
                     return false;
                   }
@@ -333,5 +350,38 @@ function anyChunkHasSrcJavascripts(chunks) {
         return _module.userRequest && _module.userRequest.split('/src/javascripts/').length !== 1;
       });
     })
+  );
+}
+
+/*
+  This checks to see if the current issuer, or any of its parent issuers, are included
+  asynchronously in our application code.
+
+  See below in `issuerIsIncludedAsync` for an explanation on how this works.
+ */
+function anyIssuerInChainIsIncludedAsync(issuer) {
+  if (!issuer.issuer) {
+    return false;
+  }
+
+  if (issuerIsIncludedAsync(issuer)) {
+    return true;
+  }
+
+  return anyIssuerInChainIsIncludedAsync(issuer.issuer);
+}
+
+/*
+  If the current `issuer` is included using `require.ensure`, and
+  its parent issuer is from `src/javascripts`, return true.
+ */
+function issuerIsIncludedAsync(issuer) {
+  const asyncDependencyReasonNames = ['RequireEnsureItemDependency'];
+
+  return (
+    _.intersection(
+      asyncDependencyReasonNames,
+      issuer.reasons.map(r => r.dependency.constructor.name)
+    ).length !== 0 && issuer.issuer.userRequest.match(/src\/javascripts/)
   );
 }
