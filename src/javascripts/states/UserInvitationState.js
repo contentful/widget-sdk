@@ -2,7 +2,9 @@ import makeState from 'states/Base';
 import { createEndpoint } from 'data/EndpointFactory';
 import { go } from 'states/Navigator';
 import { Notification } from '@contentful/forma-36-react-components';
-import { getUser } from 'services/TokenStore';
+import { getUser, getOrganization } from 'services/TokenStore';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { get } from 'lodash';
 import _ from 'lodash';
 
 export default makeState({
@@ -33,8 +35,12 @@ export default makeState({
 
         // Redirect to home with success message if user already accepted the invitation
         if (invitation.status === 'accepted') {
+          const orgId = get(invitation, 'sys.organization.sys.id');
+          const org = await getOrganization(orgId);
+          const orgOwnerOrAdmin = isOwnerOrAdmin(org);
           go({
-            path: ['home']
+            path: ['home'],
+            params: { orgId: orgId, orgOwnerOrAdmin: orgOwnerOrAdmin }
           }).then(() => {
             Notification.success(`You’ve already accepted this invitation!`);
           });
