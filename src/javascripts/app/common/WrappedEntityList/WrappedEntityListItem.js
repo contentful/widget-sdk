@@ -60,8 +60,9 @@ export default function WrappedEntityListItem({
             key={entity.sys.id}
             title={entityData.title || 'Untitled'}
             contentType={contentType}
+            entityType={entity.sys.type && entity.sys.type.toLowerCase()}
             thumbnailUrl={
-              entityData.file
+              entityData.file && entityData.status !== 'archived'
                 ? `${AssetUrlService.transformHostname(entityData.file.url)}?w=46&h=46&fit=thumb`
                 : ''
             }
