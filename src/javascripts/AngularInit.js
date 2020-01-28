@@ -62,7 +62,6 @@ export const angularInitRun = [
       import('components/forms/datetime_editor/cfDatetimeEditorDirective'),
       import('components/shared/cfSelectionDirective'),
       import('components/shared/create_new_space/createNewSpaceDirective'),
-      import('components/shared/dataSizeScaleController'),
       import('components/shared/endlessContainerDirective'),
       import('components/shared/listViewsController'),
       import('components/shared/space-wizard/SpaceWizardDirective'),
