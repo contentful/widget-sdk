@@ -1,6 +1,7 @@
-import { get } from 'lodash';
+import { get, isPlainObject } from 'lodash';
 
 import { NAMESPACE_EXTENSION, NAMESPACE_APP } from './WidgetNamespaces';
+import { LOCATION_ENTRY_FIELD } from './WidgetLocations';
 import { toInternalFieldType } from './FieldTypes';
 
 export function buildExtensionWidget({ sys, extension, parameters }) {
@@ -28,17 +29,30 @@ export function buildExtensionWidget({ sys, extension, parameters }) {
 }
 
 export function buildAppWidget({ id, title, icon, appDefinition, appInstallation }) {
+  // Legacy way of defining field types for apps.
+  // TODO: remove once API changes are deployed.
+  let fieldTypes = appDefinition.fieldTypes;
+
+  // Supports new API format:
+  // { ..., locations: [ { location: 'entry-field', fieldTypes: [...] } ] }
+  const entryFieldLocation = (appDefinition.locations || []).find(l => {
+    return isPlainObject(l) && l.location === LOCATION_ENTRY_FIELD;
+  });
+
+  if (entryFieldLocation) {
+    fieldTypes = entryFieldLocation.fieldTypes;
+  }
+
   return {
     src: appDefinition.src,
     id: appDefinition.sys.id,
     appDefinitionId: appDefinition.sys.id,
     namespace: NAMESPACE_APP,
     name: title,
-    fieldTypes: (appDefinition.fieldTypes || []).map(toInternalFieldType),
+    fieldTypes: (fieldTypes || []).map(toInternalFieldType),
     appId: id,
     appIconUrl: icon,
     sidebar: false,
-    locations: appDefinition.locations,
     parameters: [],
     installationParameters: {
       definitions: [],

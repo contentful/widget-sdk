@@ -63,8 +63,7 @@ export default class AppListItem extends Component {
       tagLine: PropTypes.string,
       icon: PropTypes.string,
       appInstallation: PropTypes.object,
-      isPrivateApp: PropTypes.bool,
-      enabled: PropTypes.bool.isRequired
+      isPrivateApp: PropTypes.bool
     }).isRequired,
     openDetailModal: PropTypes.func.isRequired
   };
@@ -119,7 +118,7 @@ export default class AppListItem extends Component {
           )}
           {!app.isPrivateApp && (
             <TextLink onClick={openDetailsFunc} linkType="primary">
-              {app.enabled ? 'About' : 'Enterprise feature'}
+              About
             </TextLink>
           )}
         </div>

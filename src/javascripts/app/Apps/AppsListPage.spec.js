@@ -17,7 +17,6 @@ describe('AppsListPage', () => {
   const orgId = '123';
   const spaceId = '456';
   const userId = '000';
-  const mockProductCatalog = { isAppEnabled: () => true };
 
   afterEach(cleanup);
 
@@ -29,7 +28,7 @@ describe('AppsListPage', () => {
         organizationId={orgId}
         spaceId={spaceId}
         userId={userId}
-        productCatalog={mockProductCatalog}
+        hasAppsFeature={true}
       />
     );
 
@@ -48,7 +47,7 @@ describe('AppsListPage', () => {
         organizationId={orgId}
         spaceId={spaceId}
         userId={userId}
-        productCatalog={mockProductCatalog}
+        hasAppsFeature={true}
       />
     );
 

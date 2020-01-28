@@ -178,9 +178,7 @@ export default class AppsListPage extends React.Component {
     organizationId: PropTypes.string.isRequired,
     spaceId: PropTypes.string.isRequired,
     userId: PropTypes.string.isRequired,
-    productCatalog: PropTypes.shape({
-      isAppEnabled: PropTypes.func.isRequired
-    }).isRequired,
+    hasAppsFeature: PropTypes.bool.isRequired,
     deeplinkAppId: PropTypes.string,
     deeplinkReferrer: PropTypes.string
   };
@@ -188,28 +186,18 @@ export default class AppsListPage extends React.Component {
   state = { ready: false };
 
   async componentDidMount() {
-    const { repo, productCatalog } = this.props;
+    const { repo, hasAppsFeature } = this.props;
 
     try {
       const apps = await repo.getApps();
-
-      const preparedApps = await Promise.all(
-        apps.map(async app => ({
-          ...app,
-          enabled: await productCatalog.isAppEnabled(app.appDefinition)
-        }))
-      );
-
-      const appsFeatureDisabled = preparedApps.every(app => !app.enabled);
-
-      const [installedApps, availableApps] = partition(preparedApps, app => !!app.appInstallation);
+      const [installedApps, availableApps] = partition(apps, app => !!app.appInstallation);
 
       this.setState(
         {
           ready: true,
           availableApps,
           installedApps,
-          appsFeatureDisabled
+          appsFeatureDisabled: !hasAppsFeature
         },
         () => {
           this.openDeeplinkedAppDetails();
