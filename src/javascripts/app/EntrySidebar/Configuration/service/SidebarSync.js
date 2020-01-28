@@ -8,7 +8,6 @@ import {
   NAMESPACE_EXTENSION,
   NAMESPACE_APP
 } from 'widgets/WidgetNamespaces';
-import { LOCATION_ENTRY_SIDEBAR } from 'widgets/WidgetLocations';
 
 /**
  * Converts internal state of configuration reducer
@@ -49,16 +48,8 @@ function convertToWidgetConfiguration(widget) {
   return {
     widgetId: widget.id,
     widgetNamespace: widget.namespace,
-    ...pick(widget, ['name', 'locations', 'parameters'])
+    ...pick(widget, ['name', 'parameters'])
   };
-}
-
-function canBeUsedInSidebar(widget) {
-  if (!Array.isArray(widget.locations)) {
-    return true;
-  }
-
-  return widget.locations.includes(LOCATION_ENTRY_SIDEBAR);
 }
 
 /**
@@ -71,7 +62,7 @@ export function convertConfigirationToInternalState(configuration, widgets, init
     return {
       sidebarType: SidebarType.default,
       items: initialItems,
-      availableItems: widgets.filter(canBeUsedInSidebar).map(convertToWidgetConfiguration),
+      availableItems: widgets.map(convertToWidgetConfiguration),
       configurableWidget: null
     };
   }
@@ -123,7 +114,7 @@ export function convertConfigirationToInternalState(configuration, widgets, init
   widgets.forEach(widget => {
     const found = items.find(validWidgetMatcher(widget));
 
-    if (!found && canBeUsedInSidebar(widget)) {
+    if (!found) {
       availableItems.push(widget);
     }
   });

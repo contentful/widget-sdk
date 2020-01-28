@@ -5,6 +5,7 @@ import {
   NAMESPACE_SIDEBAR_BUILTIN,
   NAMESPACE_APP
 } from './WidgetNamespaces';
+import { LOCATION_ENTRY_FIELD } from './WidgetLocations';
 
 const app = {
   appDefinition: {
@@ -14,8 +15,13 @@ const app = {
     },
     name: 'I am app',
     src: 'https://someapp.com',
-    public: true,
-    locations: ['app', 'entry-sidebar']
+    locations: [
+      {
+        location: LOCATION_ENTRY_FIELD,
+        fieldTypes: [{ type: 'Symbol' }]
+      }
+    ],
+    public: true
   },
   appInstallation: {
     sys: {
@@ -39,14 +45,13 @@ const app = {
 };
 
 const expectedAppWidget = {
-  fieldTypes: [],
+  fieldTypes: ['Symbol'],
   id: 'some-app',
   appDefinitionId: 'some-app',
   namespace: NAMESPACE_APP,
   src: 'https://someapp.com',
   appId: 'someappid',
   appIconUrl: '//images.ctfassets.net/myappicon.svg',
-  locations: ['app', 'entry-sidebar'],
   name: 'Some app',
   parameters: [],
   sidebar: false,
