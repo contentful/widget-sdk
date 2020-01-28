@@ -8,13 +8,13 @@ import * as CreateSpace from 'services/CreateSpace';
 import Illustration from 'svg/readonly-space-home-ill.svg';
 import EmptyStateAdminIllustration from 'svg/folder-illustration.svg';
 
-const EmptySpaceHomePage = ({ lastUsedOrg, orgOwnerOrAdmin }) => {
+const EmptySpaceHomePage = ({ orgId, orgOwnerOrAdmin }) => {
   return orgOwnerOrAdmin ? (
     <EmptyStateContainer>
       <EmptyStateAdminIllustration className={defaultSVGStyle} />
       <Heading>Starting something new?</Heading>
       <Paragraph>A space is an area to manage and store content for a specific project.</Paragraph>
-      <Button onClick={() => CreateSpace.showDialog(lastUsedOrg)}>Add a space</Button>
+      <Button onClick={() => CreateSpace.showDialog(orgId)}>Add a space</Button>
     </EmptyStateContainer>
   ) : (
     <EmptyStateContainer>
@@ -32,7 +32,7 @@ const EmptySpaceHomePage = ({ lastUsedOrg, orgOwnerOrAdmin }) => {
 };
 
 EmptySpaceHomePage.propTypes = {
-  lastUsedOrg: PropTypes.string,
+  orgId: PropTypes.string,
   orgOwnerOrAdmin: PropTypes.bool
 };
 

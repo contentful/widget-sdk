@@ -164,7 +164,7 @@ const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
     <div className="home home-section" data-test-id="space-home-page-container">
       <DocumentTitle title="Space home" />
       {!isLoading && !spaceContext.space && (
-        <EmptySpaceHome lastUsedOrg={orgId} orgOwnerOrAdmin={orgOwnerOrAdmin} />
+        <EmptySpaceHome orgId={orgId} orgOwnerOrAdmin={orgOwnerOrAdmin} />
       )}
       {isLoading && (
         <EmptyStateContainer>
