@@ -19,18 +19,12 @@ import StateRedirect from 'app/common/StateRedirect';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer';
 import { buildAppDefinitionWidget } from 'widgets/WidgetTypes';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import EmptyStateContainer, {
-  defaultSVGStyle
-} from 'components/EmptyStateContainer/EmptyStateContainer';
-import EmptyStateIllustration from 'svg/connected-forms-illustration.svg';
 import { installOrUpdate, uninstall } from './AppOperations';
 import { APP_EVENTS_IN, APP_EVENTS_OUT } from './AppHookBus';
 import UnknownErrorMessage from 'components/shared/UnknownErrorMessage';
 import UninstallModal from './UninstallModal';
 import ModalLauncher from 'app/common/ModalLauncher';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
-
-import { websiteUrl } from 'Config';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 
 const BUSY_STATE_INSTALLATION = 'installation';
@@ -122,9 +116,6 @@ export default class AppRoute extends Component {
   static propTypes = {
     goBackToList: PropTypes.func.isRequired,
     app: PropTypes.object.isRequired,
-    productCatalog: PropTypes.shape({
-      isAppEnabled: PropTypes.func.isRequired
-    }),
     bridge: PropTypes.object.isRequired,
     appHookBus: PropTypes.shape({
       on: PropTypes.func.isRequired,
@@ -174,13 +165,9 @@ export default class AppRoute extends Component {
   };
 
   initialize = async () => {
-    const { appHookBus, app, productCatalog } = this.props;
+    const { appHookBus, app } = this.props;
     const { appDefinition } = app;
-
-    const [{ appInstallation }, appEnabled] = await Promise.all([
-      this.checkAppStatus(appDefinition),
-      productCatalog.isAppEnabled(appDefinition)
-    ]);
+    const { appInstallation } = await this.checkAppStatus(appDefinition);
 
     appHookBus.setInstallation(appInstallation);
     appHookBus.on(APP_EVENTS_IN.CONFIGURED, this.onAppConfigured);
@@ -192,7 +179,6 @@ export default class AppRoute extends Component {
     this.setState(
       {
         ready: true,
-        appEnabled,
         isInstalled: !!appInstallation,
         appDefinition,
         actionList: get(app, ['actionList'], [])
@@ -325,29 +311,6 @@ export default class AppRoute extends Component {
     this.props.goBackToList();
   };
 
-  renderAccessDenied() {
-    return (
-      <Workbench>
-        <Workbench.Header title={this.renderTitle()} onBack={this.props.goBackToList} />
-        <Workbench.Content type="text">
-          <EmptyStateContainer data-test-id="extensions.empty">
-            <div className={defaultSVGStyle}>
-              <EmptyStateIllustration />
-            </div>
-            <Heading>Not included in your pricing plan</Heading>
-            <Paragraph>This app is available to customers on a committed, annual plan.</Paragraph>
-            <Paragraph>
-              If your interested in learning more about our expanded, enterprise-grade platform,
-              contact your account manager.
-            </Paragraph>
-
-            <Button href={websiteUrl('/contact/sales/')}>Contact us</Button>
-          </EmptyStateContainer>
-        </Workbench.Content>
-      </Workbench>
-    );
-  }
-
   renderBusyOverlay() {
     if (!this.state.busyWith) {
       return null;
@@ -475,14 +438,10 @@ export default class AppRoute extends Component {
       return <StateRedirect to="spaces.detail.entries.list" />;
     }
 
-    const { ready, appLoaded, loadingError, isInstalled, appEnabled } = this.state;
+    const { ready, appLoaded, loadingError } = this.state;
 
     if (!ready) {
       return this.renderLoading();
-    }
-
-    if (!appEnabled && !isInstalled) {
-      return this.renderAccessDenied();
     }
 
     return (

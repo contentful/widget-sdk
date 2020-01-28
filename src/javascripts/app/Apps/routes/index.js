@@ -1,7 +1,6 @@
 import { get } from 'lodash';
 import AppsListPage from '../AppsListPage';
 import AppPage from '../AppPage';
-import { AppProductCatalog } from '../AppProductCatalog';
 import { makeAppHookBus } from '../AppHookBus';
 import createAppExtensionBridge from 'widgets/bridges/createAppExtensionBridge';
 import * as Navigator from 'states/Navigator';
@@ -10,6 +9,20 @@ import { getAppsRepo } from '../AppsRepoInstance';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { NAMESPACE_APP } from 'widgets/WidgetNamespaces';
+
+const BASIC_APPS_FEATURE_KEY = 'basic_apps';
+const DEFAULT_FEATURE_STATUS = true; // Fail open
+
+const appsFeatureResolver = [
+  'spaceContext',
+  async spaceContext => {
+    try {
+      return getSpaceFeature(spaceContext.getId(), BASIC_APPS_FEATURE_KEY, DEFAULT_FEATURE_STATUS);
+    } catch (err) {
+      return DEFAULT_FEATURE_STATUS;
+    }
+  }
+];
 
 export default {
   name: 'apps',
@@ -23,16 +36,20 @@ export default {
         appId: null,
         referrer: null
       },
+      resolve: {
+        hasAppsFeature: appsFeatureResolver
+      },
       component: AppsListPage,
       mapInjectedToProps: [
         'spaceContext',
         '$state',
         '$stateParams',
-        (spaceContext, $state, $stateParams) => {
+        'hasAppsFeature',
+        (spaceContext, $state, $stateParams, hasAppsFeature) => {
           return {
             goToContent: () => $state.go('^.^.entries.list'),
             repo: getAppsRepo(),
-            productCatalog: new AppProductCatalog(spaceContext.space.data.sys.id, getSpaceFeature),
+            hasAppsFeature,
             organizationId: spaceContext.organization.sys.id,
             spaceId: spaceContext.space.data.sys.id,
             userId: spaceContext.user.sys.id,
@@ -52,14 +69,16 @@ export default {
       resolve: {
         // Define dependency on spaceContext so we load the app
         // only when the space is initialized.
-        app: ['$stateParams', 'spaceContext', ({ appId }) => getAppsRepo().getApp(appId)]
+        app: ['$stateParams', 'spaceContext', ({ appId }) => getAppsRepo().getApp(appId)],
+        hasAppsFeature: appsFeatureResolver
       },
       onEnter: [
         '$state',
         '$stateParams',
         'spaceContext',
         'app',
-        ($state, $stateParams, spaceContext, app) => {
+        'hasAppsFeature',
+        ($state, $stateParams, spaceContext, app, hasAppsFeature) => {
           // No need to consent for private apps.
           if (app.isPrivateApp) {
             // Allow to continue page rendering.
@@ -68,14 +87,19 @@ export default {
 
           // If an app is not installed and permissions were not accepted
           // we display the app dialog so consent can be given.
-          if (!app.appInstallation && !$stateParams.acceptedPermissions) {
+          const installingWithoutConsent =
+            !app.appInstallation && !$stateParams.acceptedPermissions;
+
+          if (!hasAppsFeature || installingWithoutConsent) {
             // When executing `onEnter` after a page refresh
             // the current state won't be initialized. For this reason
             // we need to compute params and an absolute path manually.
-            const params = {
-              spaceId: spaceContext.getId(),
-              appId: app.id // Passing this param will open the app dialog.
-            };
+            const params = { spaceId: spaceContext.getId() };
+
+            if (hasAppsFeature) {
+              // Passing this param will open the app dialog.
+              params.appId = app.id;
+            }
 
             let absoluteListPath = 'spaces.detail.apps.list';
             if (!spaceContext.isMasterEnvironment()) {
@@ -102,14 +126,8 @@ export default {
             appDefinition: app.appDefinition
           });
 
-          const productCatalog = new AppProductCatalog(
-            spaceContext.space.data.sys.id,
-            getSpaceFeature
-          );
-
           return {
             goBackToList: () => $state.go('^.list'),
-            productCatalog,
             app,
             bridge,
             appHookBus,

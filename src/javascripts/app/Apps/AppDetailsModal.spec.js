@@ -16,7 +16,6 @@ jest.mock(
 describe('AppDetailsModal', () => {
   const modalProps = {
     app: {
-      enabled: true,
       id: 'optimizely',
       title: 'Optimizely',
       author: {
