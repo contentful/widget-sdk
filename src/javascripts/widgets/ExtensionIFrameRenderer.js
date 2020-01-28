@@ -121,6 +121,7 @@ export default class ExtensionIFrameRenderer extends React.Component {
     iframe.allowfullscreen = true;
     iframe.msallowfullscreen = true;
     iframe.allow = 'fullscreen';
+    iframe.style.display = 'block';
 
     iframe.dataset.extensionId = id;
     iframe.dataset.location = bridgeData.location;
