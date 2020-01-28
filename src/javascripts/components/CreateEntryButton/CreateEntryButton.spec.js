@@ -32,14 +32,14 @@ describe('CreateEntryButton general', () => {
   });
 
   it('renders suggestedContentTypeId as text when given', () => {
-    const suggestedContentTypeId = 'Test-1';
+    const suggestedContentTypeId = 'ID_2';
     const { getByTestId } = render(
       <CreateEntryButton {...props} suggestedContentTypeId={suggestedContentTypeId} />
     );
     expect(getByTestId('create-entry-button-menu-trigger')).toBeDefined();
     const button = findButton(getByTestId);
     expect(button).toBeDefined();
-    expect(button.textContent).toBe(`Add ${suggestedContentTypeId}`);
+    expect(button.textContent).toBe(`Add ${CONTENT_TYPE_2.name}`);
   });
 
   it('renders a menu on click when with multiple content types', () => {

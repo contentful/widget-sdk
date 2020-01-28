@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import get from 'lodash/get';
+import { get } from 'lodash';
 import { css } from 'emotion';
 import { Icon, TextLink, Spinner } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
@@ -26,8 +26,8 @@ const CreateEntryLinkButton = ({
   suggestedContentTypeId,
   disabled
 }) => {
-  const buttonText =
-    text || `Add ${suggestedContentTypeId || get(contentTypes[0], 'name', 'entry')}`;
+  const suggestedContentType = contentTypes.find(ct => ct.sys.id === suggestedContentTypeId);
+  const buttonText = text || `Add ${get(suggestedContentType || contentTypes[0], 'name', 'entry')}`;
   return (
     <CreateEntryMenuTrigger
       contentTypes={contentTypes}

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import get from 'lodash/get';
 import { css } from 'emotion';
 import { Button } from '@contentful/forma-36-react-components';
 import CreateEntryMenuTrigger from './CreateEntryMenuTrigger';
@@ -18,7 +19,8 @@ const CreateEntryButton = ({
   suggestedContentTypeId,
   disabled
 }) => {
-  const buttonText = text || `Add ${suggestedContentTypeId || 'entry'}`;
+  const suggestedContentType = contentTypes.find(ct => ct.sys.id === suggestedContentTypeId);
+  const buttonText = text || `Add ${get(suggestedContentType, 'name', 'entry')}`;
   return (
     <CreateEntryMenuTrigger
       contentTypes={contentTypes}
