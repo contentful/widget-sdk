@@ -73,6 +73,7 @@ exports[`OrganizationUsage should render page without errors 1`] = `
             "cda": undefined,
             "cma": undefined,
             "cpa": undefined,
+            "gql": undefined,
           },
           "org": undefined,
         }
