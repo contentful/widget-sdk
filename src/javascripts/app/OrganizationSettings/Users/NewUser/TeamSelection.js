@@ -40,7 +40,7 @@ export default function TeamSelection({ onRemove, team, teamSpaceMemberships = [
     <AutocompleteSelection
       onRemove={onRemove}
       key={team.sys.id}
-      testId="space-membership-list.item"
+      testId="add-to-spaces.list.item"
       extraContent={
         isOpen ? <TeamSpaceMembershipList teamSpaceMemberships={teamSpaceMemberships} /> : null
       }>

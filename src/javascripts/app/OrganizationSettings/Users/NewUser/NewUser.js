@@ -18,13 +18,13 @@ import pluralize from 'pluralize';
 import { orgRoles } from 'utils/MembershipUtils';
 import { useAddToOrg } from './NewUserHooks';
 import { isValidEmail, parseList } from 'utils/StringUtils';
-import SpaceMembershipList from './SpaceMembershipList';
 import TeamList from './TeamList';
 import NewUserSuccess from './NewUserSuccess';
 import NewUserProgress from './NewUserProgress';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import ModalLauncher from 'app/common/ModalLauncher';
+import AddToSpaces from '../common/AddToSpaces';
 
 const styles = {
   subheading: css({
@@ -241,10 +241,11 @@ export default function NewUser({ orgId, hasSsoEnabled, hasTeamsFeature, isOwner
             <Subheading element="h3" className={styles.subheading}>
               Add to spaces
             </Subheading>
-            <SpaceMembershipList
+            <AddToSpaces
               orgId={orgId}
               onChange={handleSpaceSelected}
               submitted={submitted}
+              inputWidth="large"
             />
             {spaceMembershipsError && (
               <ValidationMessage testId="new-user.space-memberships.error">

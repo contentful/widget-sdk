@@ -12,6 +12,7 @@ import SpaceRoleEditor from 'app/OrganizationSettings/SpaceRoleEditor';
 import AutocompleteSelection from 'app/common/AutocompleteSelection';
 import useAsync from 'app/common/hooks/useAsync';
 import { createImmerReducer } from 'redux/utils/createImmerReducer';
+import { Space } from 'app/OrganizationSettings/PropTypes';
 
 const styles = {
   count: css({
@@ -67,7 +68,13 @@ const reducer = createImmerReducer({
  * Calls a callback when memberships change
  * [{ space: {}, roles: [ROLE_ID_1, ROLE_ID_2]]
  */
-export default function SpaceMembershipList({ orgId, submitted = false, onChange }) {
+export default function AddToSpaces({
+  orgId,
+  submitted = false,
+  ignoredSpaces = [],
+  onChange,
+  inputWidth = 'full'
+}) {
   const [{ spaceMemberships }, dispatch] = useReducer(reducer, { spaceMemberships: [] });
   const [allRoles, setAllRoles] = useState([]);
 
@@ -77,10 +84,6 @@ export default function SpaceMembershipList({ orgId, submitted = false, onChange
   }, [orgId]);
 
   const { isLoading, data } = useAsync(getRoles);
-
-  useEffect(() => {
-    data && setAllRoles(groupBy(data, 'sys.space.sys.id'));
-  }, [data]);
 
   const handleSpaceSelected = space => {
     dispatch({ type: 'SPACE_ADDED', payload: space });
@@ -98,13 +101,29 @@ export default function SpaceMembershipList({ orgId, submitted = false, onChange
     spaceMemberships
   ]);
 
+  // Create a list composed of `ignoredSpaces` and `selectedSpaces` and pass it down
+  // as value. These spaces will not be displayed by SpacesAutocomplete
+  const autoCompleteValue = useMemo(() => [...ignoredSpaces, ...selectedSpaces], [
+    selectedSpaces,
+    ignoredSpaces
+  ]);
+
+  useEffect(() => {
+    data && setAllRoles(groupBy(data, 'sys.space.sys.id'));
+  }, [data]);
+
   useEffect(() => {
     onChange(spaceMemberships);
   }, [onChange, spaceMemberships]);
 
   return (
-    <div data-test-id="new-user.spaces">
-      <SpacesAutoComplete orgId={orgId} onChange={handleSpaceSelected} value={selectedSpaces} />
+    <div data-test-id="add-to-spaces">
+      <SpacesAutoComplete
+        orgId={orgId}
+        onChange={handleSpaceSelected}
+        value={autoCompleteValue}
+        inputWidth={inputWidth}
+      />
       {selectedSpaces.length > 0 && (
         <SectionHeading className={styles.count}>{`${pluralize(
           'space',
@@ -117,7 +136,7 @@ export default function SpaceMembershipList({ orgId, submitted = false, onChange
           <AutocompleteSelection
             onRemove={() => handleSpaceRemoved(space.sys.id)}
             key={space.sys.id}
-            testId="space-membership-list.item">
+            testId="add-to-spaces.list.item">
             <div className={styles.leftColumn}>
               <strong className={styles.spaceName}>{space.name}</strong>
               <SpaceRoleEditor
@@ -138,8 +157,10 @@ export default function SpaceMembershipList({ orgId, submitted = false, onChange
   );
 }
 
-SpaceMembershipList.propTypes = {
+AddToSpaces.propTypes = {
   orgId: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
-  submitted: PropTypes.bool
+  ignoredSpaces: PropTypes.arrayOf(Space),
+  submitted: PropTypes.bool,
+  inputWidth: PropTypes.oneOf(['small', 'medium', 'large', 'full'])
 };
