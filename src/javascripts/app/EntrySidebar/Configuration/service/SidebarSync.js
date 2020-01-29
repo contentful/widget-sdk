@@ -8,6 +8,7 @@ import {
   NAMESPACE_EXTENSION,
   NAMESPACE_APP
 } from 'widgets/WidgetNamespaces';
+import { LOCATION_ENTRY_SIDEBAR } from 'widgets/WidgetLocations';
 
 /**
  * Converts internal state of configuration reducer
@@ -48,8 +49,20 @@ function convertToWidgetConfiguration(widget) {
   return {
     widgetId: widget.id,
     widgetNamespace: widget.namespace,
-    ...pick(widget, ['name', 'parameters'])
+    ...pick(widget, ['name', 'locations', 'parameters'])
   };
+}
+
+function canBeUsedInSidebar(widget) {
+  // If a widget does not declare locations it can
+  // be used in the sidebar. In general it's true
+  // for Extensions.
+  if (!Array.isArray(widget.locations)) {
+    return true;
+  }
+
+  // Otherwise we check for entry sidebar location.
+  return widget.locations.includes(LOCATION_ENTRY_SIDEBAR);
 }
 
 /**
@@ -62,7 +75,7 @@ export function convertConfigirationToInternalState(configuration, widgets, init
     return {
       sidebarType: SidebarType.default,
       items: initialItems,
-      availableItems: widgets.map(convertToWidgetConfiguration),
+      availableItems: widgets.filter(canBeUsedInSidebar).map(convertToWidgetConfiguration),
       configurableWidget: null
     };
   }
@@ -114,7 +127,7 @@ export function convertConfigirationToInternalState(configuration, widgets, init
   widgets.forEach(widget => {
     const found = items.find(validWidgetMatcher(widget));
 
-    if (!found) {
+    if (!found && canBeUsedInSidebar(widget)) {
       availableItems.push(widget);
     }
   });

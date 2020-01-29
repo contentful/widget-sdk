@@ -48,6 +48,7 @@ export function buildAppWidget({ id, title, icon, appDefinition, appInstallation
     namespace: NAMESPACE_APP,
     name: title,
     fieldTypes: getAppFieldTypes(appDefinition),
+    locations: (appDefinition.locations || []).map(l => l.location),
     appId: id,
     appIconUrl: icon,
     sidebar: false,

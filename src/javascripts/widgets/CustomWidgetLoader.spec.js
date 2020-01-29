@@ -45,11 +45,12 @@ const app = {
 };
 
 const expectedAppWidget = {
-  fieldTypes: ['Symbol'],
   id: 'some-app',
   appDefinitionId: 'some-app',
   namespace: NAMESPACE_APP,
   src: 'https://someapp.com',
+  fieldTypes: ['Symbol'],
+  locations: [LOCATION_ENTRY_FIELD],
   appId: 'someappid',
   appIconUrl: '//images.ctfassets.net/myappicon.svg',
   name: 'Some app',
