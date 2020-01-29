@@ -6,6 +6,7 @@ import { TextLink } from '@contentful/forma-36-react-components';
 import SsoExemptionDialog from './SsoExemptionModal';
 import ModalLauncher from 'app/common/ModalLauncher';
 import { OrganizationMembership as OrganizationMembershipPropType } from 'app/OrganizationSettings/PropTypes';
+import UserAttributeList from '../UserAttributeList';
 
 export default class UserSsoInfo extends React.Component {
   static propTypes = {
@@ -20,25 +21,29 @@ export default class UserSsoInfo extends React.Component {
 
   render() {
     const { isExemptFromRestrictedMode, lastSignInAt } = this.props.membership.sys.sso;
+    const lastSSOLogin = lastSignInAt ? moment(lastSignInAt).format('dddd, MMMM Do YYYY') : 'Never';
+    const exempt = (
+      <span onClick={this.showExemptionDialog}>
+        Yes -{' '}
+        <TextLink linkType="secondary" style={{ verticalAlign: 'bottom' }}>
+          See why
+        </TextLink>
+      </span>
+    );
 
     return (
-      <dl className="definition-list">
-        <dt>Last SSO login</dt>
-        <dd>{lastSignInAt ? moment(lastSignInAt).format('dddd, MMMM Do YYYY') : 'Never'}</dd>
-        <dt>Exempt from SSO</dt>
-        <dd>
-          {isExemptFromRestrictedMode ? (
-            <span onClick={this.showExemptionDialog}>
-              Yes -{' '}
-              <TextLink linkType="secondary" style={{ verticalAlign: 'bottom' }}>
-                See why
-              </TextLink>
-            </span>
-          ) : (
-            'No'
-          )}
-        </dd>
-      </dl>
+      <UserAttributeList
+        attributes={[
+          {
+            label: 'Last SSO login',
+            value: lastSSOLogin
+          },
+          {
+            label: 'Exempt from SSO',
+            value: isExemptFromRestrictedMode ? exempt : 'No'
+          }
+        ]}
+      />
     );
   }
 }

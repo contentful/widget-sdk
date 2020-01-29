@@ -15,6 +15,7 @@ import { joinWithAnd } from 'utils/StringUtils';
 import SpaceMembershipEditor from './SpaceMembershipEditor';
 import SpaceMembershipDropDown from './SpaceMembershipDropdown';
 import {
+  Paragraph,
   Table,
   TableRow,
   TableHead,
@@ -226,6 +227,7 @@ class UserSpaceMemberships extends React.Component {
             </Tooltip>
           )}
         </header>
+        {!memberships.length && <Paragraph>{user.firstName} is not in any space</Paragraph>}
         {(!!memberships.length || showingForm) && (
           <Table
             style={{ marginBottom: 20, tableLayout: 'fixed' }}

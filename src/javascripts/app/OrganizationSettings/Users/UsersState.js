@@ -1,6 +1,6 @@
 import { reactStateWrapper } from 'states/utils';
 import NewUserRoute from 'app/OrganizationSettings/Users/NewUser/NewUserRoute';
-import UserDetailRoute from 'app/OrganizationSettings/Users/UserDetail/UserDetailRoute';
+import UserDetailsRoute from 'app/OrganizationSettings/Users/UserDetail/UserDetailsRoute';
 import UserListRoute from 'app/OrganizationSettings/Users/UsersList/UserListRoute';
 
 export const inviteUsersState = reactStateWrapper({
@@ -17,7 +17,7 @@ export const userDetailState = reactStateWrapper({
   },
   title: 'Organization user',
   url: '/organization_memberships/:userId',
-  component: UserDetailRoute
+  component: UserDetailsRoute
 });
 
 export const usersListState = reactStateWrapper({

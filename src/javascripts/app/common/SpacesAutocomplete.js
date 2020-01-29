@@ -18,7 +18,8 @@ export default function SpacesAutoComplete({
 
   const getSpaces = useCallback(async () => {
     const endpoint = createOrganizationEndpoint(orgId);
-    return getAllSpaces(endpoint);
+    const spaces = await getAllSpaces(endpoint);
+    return spaces;
   }, [orgId]);
 
   const { isLoading, data: spaces } = useAsync(getSpaces);

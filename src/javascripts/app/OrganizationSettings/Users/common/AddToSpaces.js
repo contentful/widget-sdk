@@ -131,7 +131,7 @@ export default function AddToSpaces({
           true
         )} selected`}</SectionHeading>
       )}
-      <div className={styles.list}>
+      <div className={styles.list} data-test-id="add-to-spaces.list">
         {spaceMemberships.map(({ space, roles }) => (
           <AutocompleteSelection
             onRemove={() => handleSpaceRemoved(space.sys.id)}

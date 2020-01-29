@@ -46,3 +46,17 @@ export default function ResolveLinks({
     return clone;
   });
 }
+
+// Receives a requester function and a list of `include` paths
+// Returns and array with the resolved items
+
+/**
+ * Receives a requester function and a list of `include` paths.
+ * Returns and array with the resolved items
+ * @param {Promise} fetchPromise A promise resulted from a request for a collection
+ * @param {string[]} paths A list of strings representing the include paths
+ * @returns {array} Array of resolved items
+ */
+export function fetchAndResolve(fetchPromise, paths) {
+  return fetchPromise.then(({ items, includes }) => ResolveLinks({ paths, items, includes }));
+}
