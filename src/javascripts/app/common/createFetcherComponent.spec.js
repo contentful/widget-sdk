@@ -1,11 +1,9 @@
 import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
-import { render, cleanup } from '@testing-library/react';
+
+import { render } from '@testing-library/react';
 import createFetcherComponent, { FetcherLoading } from './createFetcherComponent';
 
 describe('createFetcherComponent', () => {
-  afterEach(cleanup);
-
   it('should create fetcher component and renders LoadingComponent', () => {
     const promiseStub = jest.fn().mockResolvedValue({});
 

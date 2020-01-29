@@ -1,7 +1,7 @@
 import React from 'react';
 import ApiKeyListRoute from './ApiKeyListRoute';
-import { render, cleanup, waitForElement } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { render, waitForElement } from '@testing-library/react';
+
 import * as spaceContextMocked from 'ng/spaceContext';
 
 let mockedResource;
@@ -49,8 +49,6 @@ jest.mock('services/ResourceService', () => () => ({
 }));
 
 describe('ApiKeyListRoute', () => {
-  afterEach(cleanup);
-
   beforeEach(() => {
     mockApiKeyRepo.create.mockReset();
     mockApiKeyRepo.getAll.mockReset();

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, wait, cleanup } from '@testing-library/react';
+import { render, wait } from '@testing-library/react';
 
 import { AppDetails } from './AppDetailsModal';
 
@@ -44,8 +44,6 @@ The Optimizely app makes it easier to power experiments with structured content.
     showPermissions: null,
     onClose: () => {}
   };
-
-  afterEach(cleanup);
 
   it('should match the snapshot', async () => {
     const { container } = render(<AppDetails {...modalProps} />);

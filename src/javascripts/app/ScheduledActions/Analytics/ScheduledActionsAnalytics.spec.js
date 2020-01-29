@@ -14,10 +14,6 @@ describe('JobsAnalytics', () => {
     }));
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   it('Dialog open', () => {
     JobsAnalytics.createDialogOpen();
 

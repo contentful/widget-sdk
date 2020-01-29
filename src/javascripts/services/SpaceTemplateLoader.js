@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import * as Config from 'Config';
 import * as logger from 'services/logger';
-import { newClient as newContentfulClient } from 'services/contentfulClient';
+import newContentfulClient from './contentfulClient';
 
 const contentfulConfig = Config.services.contentful;
 

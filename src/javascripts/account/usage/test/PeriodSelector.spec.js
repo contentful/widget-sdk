@@ -1,4 +1,5 @@
 import { shallow } from 'enzyme';
+import 'jest-enzyme';
 import React from 'react';
 import moment from 'moment';
 import { Select } from '@contentful/forma-36-react-components';

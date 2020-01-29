@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, cleanup, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { render, fireEvent } from '@testing-library/react';
+
 import QuickNav from './QuickNav';
 import ModalLauncher from 'app/common/ModalLauncher';
 
@@ -9,10 +9,6 @@ let wrapper;
 beforeEach(() => {
   wrapper = render(<QuickNav />);
   ModalLauncher.open = jest.fn();
-});
-
-afterEach(() => {
-  cleanup();
 });
 
 describe('shared/QuickNav', () => {

@@ -1,5 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
+import 'jest-enzyme';
 import { Spinner } from '@contentful/forma-36-react-components';
 
 import { OrganizationUsage, WorkbenchContent, WorkbenchActions } from '../OrganizationUsage';

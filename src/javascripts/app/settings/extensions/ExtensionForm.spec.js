@@ -1,5 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
+import 'jest-enzyme';
 
 import Form from './ExtensionForm';
 import { Controlled as CodeMirror } from 'react-codemirror2';

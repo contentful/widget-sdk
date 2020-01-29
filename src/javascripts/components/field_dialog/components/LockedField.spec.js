@@ -1,9 +1,8 @@
 import React from 'react';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import LockedField from './LockedField';
 
 describe('Locked Field', () => {
-  afterEach(cleanup);
   const constProps = {
     testId: 'locked-field',
     labelText: 'Field ID',

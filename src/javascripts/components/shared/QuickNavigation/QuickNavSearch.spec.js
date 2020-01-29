@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, cleanup, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { render, fireEvent } from '@testing-library/react';
+
 import QuickNavSearch from './QuickNavSearch';
 import spaceContext from 'ng/spaceContext';
 
@@ -50,10 +50,6 @@ beforeEach(() => {
   spaceContext.cma.getAssets.mockClear();
   spaceContext.publishedCTs.getAllBare.mockClear();
   wrapper = render(<QuickNavSearch />);
-});
-
-afterEach(() => {
-  cleanup();
 });
 
 describe('shared/QuickNavSearch', () => {

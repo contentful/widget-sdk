@@ -1,4 +1,5 @@
 import { render } from 'enzyme';
+import 'jest-enzyme';
 import * as WizardUtils from './WizardUtils';
 
 jest.mock('utils/ResourceUtils', () => ({

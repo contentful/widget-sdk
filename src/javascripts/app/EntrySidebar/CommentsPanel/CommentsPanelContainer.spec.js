@@ -1,5 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
+import 'jest-enzyme';
 import mitt from 'mitt';
 
 import SidebarEventTypes from '../SidebarEventTypes';

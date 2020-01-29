@@ -1,18 +1,16 @@
 import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
-import { render, fireEvent, cleanup, waitForElement } from '@testing-library/react';
+
+import { render, fireEvent, waitForElement, screen, wait } from '@testing-library/react';
 import GenerateCMATokenDialog from './GenerateCMATokenDialog';
 import * as Analytics from 'analytics/Analytics';
 
 describe('CMATokens/GenerateCMATokenDialog', () => {
-  afterEach(cleanup);
-
   it('should ask user to provide token name when opened', () => {
     const stubs = {
       onCancel: jest.fn()
     };
 
-    const { getByLabelText, getByText } = render(
+    render(
       <GenerateCMATokenDialog
         isShown
         onConfirm={() => {}}
@@ -22,8 +20,8 @@ describe('CMATokens/GenerateCMATokenDialog', () => {
       />
     );
 
-    const tokenInput = getByLabelText('Token name', { exact: false });
-    const generateBtn = getByText('Generate');
+    const tokenInput = screen.getByLabelText('Token name', { exact: false });
+    const generateBtn = screen.getByText('Generate');
 
     expect(tokenInput).toHaveFocus();
     expect(generateBtn).toBeDisabled();
@@ -32,7 +30,7 @@ describe('CMATokens/GenerateCMATokenDialog', () => {
 
     expect(generateBtn).not.toBeDisabled();
 
-    fireEvent.click(getByText('Close'));
+    fireEvent.click(screen.getByText('Close'));
 
     expect(stubs.onCancel).toHaveBeenCalled();
   });
@@ -43,7 +41,7 @@ describe('CMATokens/GenerateCMATokenDialog', () => {
       createToken: jest.fn().mockRejectedValue(),
       successHandler: jest.fn()
     };
-    const { getByLabelText, getByText, getByTestId } = render(
+    render(
       <GenerateCMATokenDialog
         isShown
         onConfirm={stubs.onConfirm}
@@ -53,14 +51,16 @@ describe('CMATokens/GenerateCMATokenDialog', () => {
       />
     );
 
-    fireEvent.change(getByLabelText('Token name', { exact: false }), {
+    fireEvent.change(screen.getByLabelText('Token name', { exact: false }), {
       target: { value: 'new token' }
     });
 
-    fireEvent.click(getByText('Generate'));
+    fireEvent.click(screen.getByText('Generate'));
 
-    const retryButton = await waitForElement(() => getByText('Retry'));
-    expect(getByTestId('pat.create.tokenGenerationFailed').textContent).toMatchInlineSnapshot(
+    const retryButton = await waitForElement(() => screen.getByText('Retry'));
+    expect(
+      screen.getByTestId('pat.create.tokenGenerationFailed').textContent
+    ).toMatchInlineSnapshot(
       `"The token generation failed. We\\"ve been informed about this problem. Please retry shortly, or reach out to our support team if the problem persists."`
     );
 
@@ -72,6 +72,8 @@ describe('CMATokens/GenerateCMATokenDialog', () => {
     fireEvent.click(retryButton);
 
     expect(stubs.createToken).toHaveBeenCalledTimes(2);
+
+    await wait();
   });
 
   it('should show copy token input if request was successful', async () => {
@@ -83,7 +85,7 @@ describe('CMATokens/GenerateCMATokenDialog', () => {
       }),
       successHandler: jest.fn()
     };
-    const { getByLabelText, getByText, getByTestId, getByDisplayValue } = render(
+    render(
       <GenerateCMATokenDialog
         isShown
         onConfirm={stubs.onConfirm}
@@ -93,13 +95,13 @@ describe('CMATokens/GenerateCMATokenDialog', () => {
       />
     );
 
-    fireEvent.change(getByLabelText('Token name', { exact: false }), {
+    fireEvent.change(screen.getByLabelText('Token name', { exact: false }), {
       target: { value: 'new token' }
     });
 
-    fireEvent.click(getByText('Generate'));
+    fireEvent.click(screen.getByText('Generate'));
 
-    const doneButton = await waitForElement(() => getByTestId('pat.create.done-button'));
+    const doneButton = await waitForElement(() => screen.getByTestId('pat.create.done-button'));
 
     expect(stubs.createToken).toHaveBeenCalledWith('new token');
     expect(stubs.createToken).toHaveBeenCalledTimes(1);
@@ -110,14 +112,18 @@ describe('CMATokens/GenerateCMATokenDialog', () => {
       patId: 'new-token-id'
     });
 
-    expect(getByTestId('pat.create.tokenGenerationSuccess').textContent).toMatchInlineSnapshot(
+    expect(
+      screen.getByTestId('pat.create.tokenGenerationSuccess').textContent
+    ).toMatchInlineSnapshot(
       `"\\"new token\\" is ready!Make sure to immediately copy your new Personal Access Token. You won\\"t be able to see it again!"`
     );
 
-    expect(getByDisplayValue('new-token-value')).toBeDisabled();
+    expect(screen.getByDisplayValue('new-token-value')).toBeDisabled();
 
     fireEvent.click(doneButton);
 
     expect(stubs.onConfirm).toHaveBeenCalledWith('new-token-value');
+
+    await wait();
   });
 });

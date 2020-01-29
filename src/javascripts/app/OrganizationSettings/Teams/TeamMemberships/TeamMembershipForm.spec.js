@@ -1,6 +1,7 @@
 import React from 'react';
 import { createStore } from 'redux';
 import { mount } from 'enzyme';
+import 'jest-enzyme';
 import { Provider } from 'react-redux';
 import { noop } from 'lodash';
 import { Button, Option, Select, Table, TableBody } from '@contentful/forma-36-react-components';

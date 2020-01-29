@@ -1,5 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
+import 'jest-enzyme';
 import ExtensionsList from './ExtensionsList';
 import * as $stateMocked from 'ng/$state';
 

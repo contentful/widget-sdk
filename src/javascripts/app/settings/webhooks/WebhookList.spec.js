@@ -1,26 +1,27 @@
 import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
-import { render, cleanup } from '@testing-library/react';
+
+import { render } from '@testing-library/react';
 import WebhookList from './WebhookList';
 
-const mockWebhookRepo = {
-  logs: {
-    getHealth: jest.fn().mockResolvedValue({
-      calls: {
-        healthy: 50,
-        total: 100
+jest.mock(
+  'app/settings/webhooks/services/WebhookRepoInstance',
+  () => ({
+    getWebhookRepo: () => ({
+      logs: {
+        getCall: jest.fn(),
+        getHealth: jest.fn().mockResolvedValue({
+          calls: {
+            healthy: 50,
+            total: 100
+          }
+        })
       }
     })
-  }
-};
-
-jest.mock('app/settings/webhooks/services/WebhookRepoInstance', () => ({
-  getWebhookRepo: () => mockWebhookRepo
-}));
+  }),
+  { virtual: true }
+);
 
 describe('WebhookList', () => {
-  afterEach(cleanup);
-
   const renderComponent = webhooks => {
     return render(
       <WebhookList webhooks={webhooks} hasAwsProxy={false} openTemplateDialog={() => {}} />
@@ -34,7 +35,7 @@ describe('WebhookList', () => {
     );
   });
 
-  it.skip('renders non-empty list of webhooks', () => {
+  it('renders non-empty list of webhooks', () => {
     const wh1 = { name: 'wh1', url: 'http://test.com', sys: { id: 'wh1' } };
     const wh2 = {
       name: 'wh2',

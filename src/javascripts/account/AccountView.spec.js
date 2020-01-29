@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, cleanup, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { render, fireEvent } from '@testing-library/react';
+
 import AccountView from './AccountView';
 
 jest.mock('account/UrlSyncHelper', () => ({
@@ -8,8 +8,6 @@ jest.mock('account/UrlSyncHelper', () => ({
 }));
 
 describe('AccountView', () => {
-  afterEach(cleanup);
-
   const props = {
     title: 'My Account Page',
     onReady: jest.fn()

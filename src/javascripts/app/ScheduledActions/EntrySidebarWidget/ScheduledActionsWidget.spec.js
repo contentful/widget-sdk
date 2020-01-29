@@ -1,6 +1,5 @@
 import React from 'react';
-import { render, cleanup, wait, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { render, wait, fireEvent } from '@testing-library/react';
 
 import { Notification } from '@contentful/forma-36-react-components';
 import { default as ScheduledActionsWidget } from './ScheduledActionsWidget';
@@ -28,11 +27,6 @@ describe('<ScheduledActionsWidget />', () => {
   beforeEach(() => {
     jest.spyOn(Notification, 'success').mockImplementation(() => {});
     jest.spyOn(Notification, 'error').mockImplementation(() => {});
-  });
-
-  afterEach(() => {
-    cleanup();
-    jest.clearAllMocks();
   });
 
   const build = props => {

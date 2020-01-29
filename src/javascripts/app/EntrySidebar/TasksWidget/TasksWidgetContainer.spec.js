@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, cleanup, wait } from '@testing-library/react';
+import { render, wait } from '@testing-library/react';
 
 import * as FeatureFlagKey from 'featureFlags';
 import TasksWidgetContainer from './TasksWidgetContainer';
@@ -13,8 +13,6 @@ jest.mock('./analytics');
 describe('<TasksWidgetContainer />', () => {
   afterEach(() => {
     ProductCatalog.getCurrentSpaceFeature.mockClear();
-    jest.clearAllMocks();
-    cleanup();
   });
 
   const build = () => {

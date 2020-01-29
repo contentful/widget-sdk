@@ -1,7 +1,6 @@
 import React from 'react';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import StatusWidget from './StatusWidget';
-import '@testing-library/jest-dom/extend-expect';
 
 const createCommand = props => ({
   isDisabled: () => false,
@@ -39,8 +38,6 @@ describe('<StatusWidget />', () => {
     );
     return { renderResult };
   };
-
-  afterEach(cleanup);
 
   it('shows proper buttons for "Draft" status', () => {
     const stubs = {

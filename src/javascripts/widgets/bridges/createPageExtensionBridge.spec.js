@@ -102,7 +102,7 @@ describe('createPageExtensionBridge', () => {
         await callSpaceMethod('updateEntry', { data: 'data' });
       } catch (err) {
         expect(stubs.updateEntry).not.toBeCalled();
-        expect(err).toMatchObject({ message: 'Cannot modify data in read-only mode.' });
+        expect(err.message).toBe('Request failed.');
       }
     });
   });

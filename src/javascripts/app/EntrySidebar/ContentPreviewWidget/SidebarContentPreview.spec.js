@@ -1,5 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
+import 'jest-enzyme';
 import SidebarContentPreview from './SidebarContentPreview';
 
 describe('entity_editor/Components/SidebarContentPreview', () => {

@@ -1,5 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
+import 'jest-enzyme';
 import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
 import withTracking from './withTracking';
 import { track } from 'analytics/Analytics';
@@ -31,7 +32,6 @@ describe('withTracking() returned hoc', () => {
       }
     };
     setup = () => {
-      jest.clearAllMocks();
       const HOC = withTracking(LOC);
       const wrapper = Enzyme.shallow(<HOC {...props} />);
       locNode = wrapper.find('LOC');

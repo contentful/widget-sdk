@@ -1,6 +1,6 @@
 import React from 'react';
-import { render as renderReact, within, cleanup, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { render as renderReact, within, fireEvent } from '@testing-library/react';
+
 import { mapValues, toArray } from 'lodash';
 
 import PublicationWidget from './PublicationWidget';
@@ -76,8 +76,6 @@ describe('app/EntrySidebar/PublicationWidget', () => {
     const wrapper = renderReact(<PublicationWidget isSaving={false} {...allProps} />);
     return { wrapper, props: allProps };
   }
-
-  afterEach(cleanup);
 
   it('shows last changed date', () => {
     const { wrapper } = render({

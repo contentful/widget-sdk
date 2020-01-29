@@ -171,7 +171,7 @@ describe('data/Endpoint', () => {
   describeCreateEndpoint('createOrganizationEndpoint', 'organizations');
 
   describe('.createSpaceEndpoint()', () => {
-    it('is aware of environment', function() {
+    xit('is aware of environment', function() {
       const test = (envId, expected) => {
         const auth = { getToken: sinon.stub().resolves('TOKEN') };
         this.$http.expectGET(expected).respond();

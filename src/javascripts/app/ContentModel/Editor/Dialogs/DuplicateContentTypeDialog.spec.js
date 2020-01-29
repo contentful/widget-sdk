@@ -1,5 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
+import 'jest-enzyme';
 import { DuplicateContentTypeForm } from './DuplicateContentTypeDialog';
 import { Promise } from 'bluebird';
 

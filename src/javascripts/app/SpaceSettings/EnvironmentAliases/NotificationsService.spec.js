@@ -1,6 +1,5 @@
-import { cleanup } from '@testing-library/react';
 import initEnvAliasChangeHandler from './NotificationsService';
-import '@testing-library/jest-dom/extend-expect';
+
 import { Notification } from '@contentful/forma-36-react-components';
 import * as Navigator from 'states/Navigator';
 import * as accessChecker from 'access_control/AccessChecker';
@@ -28,7 +27,6 @@ const update = {
 };
 
 describe('initEnvAliasChangeHandler', () => {
-  afterEach(cleanup);
   beforeEach(() => {
     // handleAliasChanged.mockReset();
     Notification.warning.mockReset();

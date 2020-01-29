@@ -1,6 +1,6 @@
 import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
-import { render, cleanup, getByTestId, fireEvent } from '@testing-library/react';
+
+import { render, getByTestId, fireEvent } from '@testing-library/react';
 import { cloneDeep } from 'lodash';
 import { WebhookTemplateForm } from './WebhookTemplateForm';
 import * as AnalyticsMocked from 'analytics/Analytics';
@@ -43,8 +43,6 @@ describe('WebhookTemplateForm', () => {
   beforeEach(() => {
     AnalyticsMocked.track.mockClear();
   });
-
-  afterEach(cleanup);
 
   const selectors = {
     textField: container => getByTestId(container, 'webhook-template-field--url'),

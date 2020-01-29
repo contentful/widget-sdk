@@ -1,6 +1,6 @@
 import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
-import { render, cleanup, waitForElement, fireEvent } from '@testing-library/react';
+
+import { render, waitForElement, fireEvent } from '@testing-library/react';
 import { flatten, concat } from 'lodash';
 
 import { ContentTypesPage as Page } from './ContentTypeListPage';
@@ -57,8 +57,6 @@ function renderComponent({ props = {}, items = [] }) {
 }
 
 describe('ContentTypeList Page', () => {
-  afterEach(cleanup);
-
   it('renders loader', () => {
     const [{ container }, getStub] = renderComponent({ items: mockContentTypeList });
 

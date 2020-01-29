@@ -13,6 +13,7 @@ module.exports = (resolve, rootDir, srcRoots, coverageDirectory) => {
     coverageDirectory,
     modulePaths: srcRoots.map(toRelRootDir),
     testEnvironment: 'jsdom',
+    clearMocks: true,
     testURL: 'http://localhost',
     transform: {
       '^.+\\.(js|jsx)$': resolve('tools/testing/babel-transform.js'),

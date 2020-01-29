@@ -89,7 +89,7 @@ export default class ExtensionIFrameChannel {
     this.iframe.contentWindow.postMessage({ method, params }, '*');
   }
 
-  async _dispatch(method, callId, args) {
+  async _dispatch(method, callId, args = []) {
     const handler = this.handlers[method];
 
     if (!handler) {

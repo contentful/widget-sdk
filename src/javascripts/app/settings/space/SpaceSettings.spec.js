@@ -1,6 +1,6 @@
 import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+
+import { render, fireEvent } from '@testing-library/react';
 import { noop } from 'lodash';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
@@ -41,8 +41,6 @@ describe('SpaceSettings', () => {
       }
     });
   });
-
-  afterEach(cleanup);
 
   const renderComponent = props => {
     return render(

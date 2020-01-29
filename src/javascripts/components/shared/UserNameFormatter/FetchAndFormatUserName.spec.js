@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, cleanup } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import FetchAndFormatUserName from './FetchAndFormatUserName';
 
 import * as spaceContextMock from 'ng/spaceContext';
@@ -7,8 +7,6 @@ import * as spaceContextMock from 'ng/spaceContext';
 jest.mock('.', () => jest.fn().mockReturnValue('Me'), { virtual: true });
 
 describe('FetchAndFormatUserName', () => {
-  afterEach(cleanup);
-
   let getStub;
   const user = { sys: { id: '2' } };
 

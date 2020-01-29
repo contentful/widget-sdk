@@ -1,11 +1,9 @@
 import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+
+import { render, fireEvent } from '@testing-library/react';
 import ChooseNewFallbackLocaleDialog from './ChooseNewFallbackLocaleDialog';
 
 describe('locales/components/ChooseNewFallbackLocaleDialog', () => {
-  afterEach(cleanup);
-
   const renderComponent = props =>
     render(
       <ChooseNewFallbackLocaleDialog

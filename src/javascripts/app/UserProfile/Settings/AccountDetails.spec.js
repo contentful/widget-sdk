@@ -1,8 +1,7 @@
 import React from 'react';
-import { render, cleanup, fireEvent, wait } from '@testing-library/react';
+import { render, fireEvent, wait } from '@testing-library/react';
 import AccountDetails from './AccountDetails';
 import * as ModalLauncher from 'app/common/ModalLauncher';
-import '@testing-library/jest-dom/extend-expect';
 
 describe('AccountDetails', () => {
   const makeUser = custom => {
@@ -24,8 +23,6 @@ describe('AccountDetails', () => {
       <AccountDetails user={user} onEdit={onEdit} onChangePassword={onChangePassword} />
     );
   };
-
-  afterEach(cleanup);
 
   it('should allow the user to change their password if the passowrd is set', () => {
     const user = makeUser({

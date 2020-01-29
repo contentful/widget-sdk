@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import { openDeleteSpaceDialog, DeleteSpaceModal } from './DeleteSpace';
 import * as ModalLauncher from 'app/common/ModalLauncher';
 import * as TokenStore from 'services/TokenStore';
@@ -9,8 +9,6 @@ jest.mock('services/TokenStore');
 jest.mock('app/common/ModalLauncher');
 
 describe('DeleteSpace service', () => {
-  afterEach(cleanup);
-
   describe('openDeleteSpaceDialog', () => {
     beforeEach(() => {
       ModalLauncher.open.mockResolvedValue(true);

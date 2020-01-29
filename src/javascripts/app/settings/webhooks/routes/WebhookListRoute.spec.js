@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, cleanup } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { render } from '@testing-library/react';
+
 import WebhookListRoute from './WebhookListRoute';
 import * as $stateMocked from 'ng/$state';
 import * as AccessCheckerMocked from 'access_control/AccessChecker';
@@ -41,8 +41,6 @@ describe('WebhookListRoute', () => {
     mockWebhookRepo.getAll.mockClear();
     AccessCheckerMocked.getSectionVisibility.mockReset();
   });
-
-  afterEach(cleanup);
 
   const setSectionVisibility = isVisible => {
     AccessCheckerMocked.getSectionVisibility.mockImplementation(() => ({ webhooks: isVisible }));

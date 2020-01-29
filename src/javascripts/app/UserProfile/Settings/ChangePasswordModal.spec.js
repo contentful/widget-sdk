@@ -1,10 +1,8 @@
 import React from 'react';
-import { render, cleanup, fireEvent, within, wait } from '@testing-library/react';
+import { render, fireEvent, within, wait } from '@testing-library/react';
 import ChangePasswordModal from './ChangePasswordModal';
 import { updateUserData } from './AccountRepository';
 import { Notification } from '@contentful/forma-36-react-components';
-
-import '@testing-library/jest-dom/extend-expect';
 
 jest.mock('./AccountRepository', () => ({
   updateUserData: jest.fn()
@@ -46,8 +44,6 @@ describe('ChangePasswordModal', () => {
       return null;
     }
   };
-
-  afterEach(cleanup);
 
   it('should call onCancel if the user presses the cancel button', () => {
     const onCancel = jest.fn();

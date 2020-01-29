@@ -1,6 +1,6 @@
 import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+
+import { render, fireEvent } from '@testing-library/react';
 import StateLink from './StateLink';
 import * as $stateMocked from 'ng/$state';
 
@@ -9,8 +9,6 @@ describe('StateLink', () => {
     $stateMocked.go.mockClear();
     $stateMocked.href.mockClear();
   });
-
-  afterEach(cleanup);
 
   it('should render <a>', () => {
     const { container } = render(<StateLink to="home.list" />);

@@ -1,10 +1,8 @@
 import React from 'react';
-import { render, cleanup, fireEvent, within, wait } from '@testing-library/react';
+import { render, fireEvent, within, wait } from '@testing-library/react';
 import { Notification } from '@contentful/forma-36-react-components';
 import UserEditModal from './UserEditModal';
 import { updateUserData } from './AccountRepository';
-
-import '@testing-library/jest-dom/extend-expect';
 
 jest.mock('./AccountRepository', () => ({
   updateUserData: jest.fn()
@@ -61,8 +59,6 @@ describe('UserEditModal', () => {
   beforeEach(() => {
     updateUserData.mockResolvedValueOnce({});
   });
-
-  afterEach(cleanup);
 
   it('should call onCancel if the user presses the cancel button', () => {
     const onCancel = jest.fn();

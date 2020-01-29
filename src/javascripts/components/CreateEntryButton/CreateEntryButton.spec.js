@@ -1,7 +1,7 @@
 import React from 'react';
-import { cleanup, render, fireEvent } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import { noop } from 'lodash';
-import '@testing-library/jest-dom/extend-expect';
+
 import CreateEntryButton from './CreateEntryButton';
 
 const CONTENT_TYPE_1 = { name: 'name-1', sys: { id: 'ID_1' } };
@@ -11,8 +11,6 @@ const CONTENT_TYPE_3 = { name: 'name-3', sys: { id: 'ID_3' } };
 const findButton = getByTestId => getByTestId('create-entry-button');
 
 describe('CreateEntryButton general', () => {
-  afterEach(cleanup);
-
   const props = {
     contentTypes: [CONTENT_TYPE_1, CONTENT_TYPE_2, CONTENT_TYPE_3],
     onSelect: noop
@@ -69,8 +67,6 @@ describe('CreateEntryButton general', () => {
 });
 
 describe('CreateEntryButton with multiple entries', () => {
-  afterEach(cleanup);
-
   const props = {
     contentTypes: [CONTENT_TYPE_1, CONTENT_TYPE_2, CONTENT_TYPE_3],
     onSelect: noop
@@ -108,8 +104,6 @@ describe('CreateEntryButton with multiple entries', () => {
 });
 
 describe('CreateEntryButton with a single entry', () => {
-  afterEach(cleanup);
-
   const props = {
     contentTypes: [CONTENT_TYPE_1],
     onSelect: noop

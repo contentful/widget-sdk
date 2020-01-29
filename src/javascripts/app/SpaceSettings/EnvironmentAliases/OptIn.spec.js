@@ -1,7 +1,7 @@
 import React from 'react';
-import { render, cleanup, fireEvent, wait } from '@testing-library/react';
+import { render, fireEvent, wait } from '@testing-library/react';
 import OptIn from './OptIn';
-import '@testing-library/jest-dom/extend-expect';
+
 import { STEPS } from './Utils';
 
 const setStep = jest.fn();
@@ -16,8 +16,6 @@ const getComponent = (props = {}) => {
 };
 
 describe('OptIn', () => {
-  afterEach(cleanup);
-
   it('shows the first step and guides you to the second step', () => {
     const component = getComponent({ step: STEPS.FIRST_ALIAS });
     const { getByTestId } = render(component);

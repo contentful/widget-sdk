@@ -1,12 +1,10 @@
 import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+
+import { render, fireEvent } from '@testing-library/react';
 import WebhookOtherEventsSection from './WebhookOtherEventsSection';
 import { transformTopicsToMap } from './WebhookSegmentationState';
 
 describe('WebhookOtherEventsSection', () => {
-  afterEach(cleanup);
-
   const renderComponent = topics => {
     const onChangeStub = jest.fn();
     const wrapper = render(

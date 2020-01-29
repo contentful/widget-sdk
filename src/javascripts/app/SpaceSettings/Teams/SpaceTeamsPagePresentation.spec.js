@@ -1,7 +1,6 @@
 import React from 'react';
 import { noop } from 'lodash';
-import { cleanup, render } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { render } from '@testing-library/react';
 
 import SpaceTeamsPagePresentation from './SpaceTeamsPagePresentation';
 
@@ -29,8 +28,6 @@ let teamSpaceMemberships;
 let teams;
 
 describe('SpaceTeamsPage', () => {
-  afterEach(cleanup);
-
   describe('being rendered', () => {
     it('should not break', () => {
       expect(build).not.toThrow();
@@ -189,20 +186,17 @@ describe('SpaceTeamsPage', () => {
     });
 
     it('should disable the Add Teams button if number of teamSpaceMemberships equals number of teams', () => {
-      let helpers;
-      let addTeamsButton;
+      const helpers = build({ teamSpaceMemberships, teams: [{ sys: { id: 'team1' } }], isLoading });
 
-      helpers = build({ teamSpaceMemberships, teams: [{ sys: { id: 'team1' } }], isLoading });
-
-      addTeamsButton = helpers.getByTestId('add-teams');
+      const addTeamsButton = helpers.getByTestId('add-teams');
 
       expect(addTeamsButton.hasAttribute('disabled')).toBeFalse();
+    });
 
-      cleanup();
+    it('should disable the Add Teams button if number of teamSpaceMemberships equals number of teams - 2', () => {
+      const helpers = build({ teamSpaceMemberships, teams, isLoading });
 
-      helpers = build({ teamSpaceMemberships, teams, isLoading });
-
-      addTeamsButton = helpers.getByTestId('add-teams');
+      const addTeamsButton = helpers.getByTestId('add-teams');
 
       expect(addTeamsButton.hasAttribute('disabled')).toBeTrue();
     });

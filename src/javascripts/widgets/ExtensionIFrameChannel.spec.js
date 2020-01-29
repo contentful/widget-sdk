@@ -143,23 +143,18 @@ describe('ExtensionIFrameChannel', () => {
       expect(stubs.postMessage).toBeCalledWith({ id: 'CALL ID', result: 'RESULT' }, '*');
     });
 
-    it('sends result when handler promise is resolved', async () => {
+    it('sends result when handler promise is resolved', done => {
       const [channel, stubs, receiveMessage] = makeChannel();
 
-      let resolve;
-      const promise = new Promise(_resolve => {
-        resolve = _resolve;
-      });
-      const handler = jest.fn(() => promise);
+      const handler = jest.fn().mockResolvedValue('RESULT');
       channel.handlers['MY_METHOD'] = handler;
 
-      const resultPromise = receiveMessage({ method: 'MY_METHOD', id: 'CALL ID' });
-      expect(stubs.postMessage).not.toBeCalled();
+      receiveMessage({ method: 'MY_METHOD', id: 'CALL ID' });
 
-      resolve('RESULT');
-      await resultPromise;
-
-      expect(stubs.postMessage).toBeCalledWith({ id: 'CALL ID', result: 'RESULT' }, '*');
+      process.nextTick(() => {
+        expect(stubs.postMessage).toBeCalledWith({ id: 'CALL ID', result: 'RESULT' }, '*');
+        done();
+      });
     });
 
     it('does not send result when channel is destroyed', async () => {
@@ -176,29 +171,29 @@ describe('ExtensionIFrameChannel', () => {
       expect(stubs.postMessage).not.toBeCalled();
     });
 
-    it('sends error when handler promise is rejected', async () => {
+    it('sends error when handler promise is rejected', done => {
       const [channel, stubs, receiveMessage] = makeChannel();
 
-      const handler = jest.fn(() =>
-        Promise.reject({
-          code: 'ECODE',
-          message: 'EMESSAGE',
-          data: 'EDATA'
-        })
-      );
+      const handler = jest.fn().mockRejectedValue({
+        code: 'ECODE',
+        message: 'EMESSAGE',
+        data: 'EDATA'
+      });
+
       channel.handlers['MY_METHOD'] = handler;
 
-      const resultPromise = receiveMessage({ method: 'MY_METHOD', id: 'CALL ID' });
-      expect(stubs.postMessage).not.toBeCalled();
+      receiveMessage({ method: 'MY_METHOD', id: 'CALL ID' });
 
-      await resultPromise;
-      expect(stubs.postMessage).toBeCalledWith(
-        {
-          id: 'CALL ID',
-          error: { code: 'ECODE', message: 'EMESSAGE', data: 'EDATA' }
-        },
-        '*'
-      );
+      process.nextTick(() => {
+        expect(stubs.postMessage).toBeCalledWith(
+          {
+            id: 'CALL ID',
+            error: { code: 'ECODE', message: 'EMESSAGE', data: 'EDATA' }
+          },
+          '*'
+        );
+        done();
+      });
     });
 
     it('sends error when handler synchronously throws', () => {

@@ -49,5 +49,6 @@ export const endpoint = jest.fn();
 export const getEnvironmentId = jest.fn();
 
 export const space = {
-  getId: jest.fn()
+  getId: jest.fn(),
+  endpoint: jest.fn()
 };

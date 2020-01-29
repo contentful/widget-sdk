@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+
 import EnterpriseSpaceWizard from './EnterpriseSpaceWizard';
 import store from 'redux/store';
 

@@ -1,11 +1,9 @@
 import React from 'react';
-import { render, cleanup, fireEvent, within, wait } from '@testing-library/react';
+import { render, fireEvent, within, wait, screen } from '@testing-library/react';
 import { Notification } from '@contentful/forma-36-react-components';
 import Enable2FAModal from './Enable2FAModal';
 import { enableTotp } from './AccountRepository';
 import { createQRCodeDataURI } from './utils';
-
-import '@testing-library/jest-dom/extend-expect';
 
 jest.mock('./utils', () => ({
   createQRCodeDataURI: jest.fn()
@@ -40,8 +38,6 @@ describe('Enable2FAModal', () => {
     return render(<Enable2FAModal isShown {...props} />);
   };
 
-  afterEach(cleanup);
-
   it('should create a QR code data URI with totp.provisioningUri', () => {
     const totp = makeTotp();
 
@@ -55,46 +51,50 @@ describe('Enable2FAModal', () => {
 
     createQRCodeDataURI.mockReturnValueOnce(exampleURI);
 
-    const { queryByTestId } = build();
+    build();
 
-    expect(queryByTestId('qrcode')).toHaveAttribute('src', exampleURI);
+    expect(screen.queryByTestId('qrcode')).toHaveAttribute('src', exampleURI);
   });
 
-  it('should call enableTotp with the inputted code on submit', () => {
-    const { queryByTestId } = build();
+  it('should call enableTotp with the inputted code on submit', async () => {
+    build();
 
-    const input = queryByTestId('code-input').querySelector('input');
+    const input = screen.queryByTestId('code-input').querySelector('input');
 
     fireEvent.change(input, { target: { value: '123456' } });
-    fireEvent.click(queryByTestId('submit'));
+    fireEvent.click(screen.queryByTestId('submit'));
 
     expect(enableTotp).toHaveBeenCalledWith('123456');
+
+    await wait();
   });
 
-  it('should set both buttons as disabled when submitting', () => {
-    const { queryByTestId } = build();
+  it('should set both buttons as disabled when submitting', async () => {
+    build();
 
-    const input = queryByTestId('code-input').querySelector('input');
-    const submitButton = queryByTestId('submit');
-    const cancelButton = queryByTestId('cancel');
+    const input = screen.queryByTestId('code-input').querySelector('input');
+    const submitButton = screen.queryByTestId('submit');
+    const cancelButton = screen.queryByTestId('cancel');
 
     fireEvent.change(input, { target: { value: '123456' } });
     fireEvent.click(submitButton);
 
     expect(submitButton).toHaveAttribute('disabled');
     expect(cancelButton).toHaveAttribute('disabled');
+
+    await wait();
   });
 
   it('should show a validation message and enable the buttons if enableTotp rejects', async () => {
     enableTotp.mockRejectedValueOnce();
 
-    const { queryByTestId } = build();
+    build();
 
-    const codeField = queryByTestId('code-input');
+    const codeField = screen.queryByTestId('code-input');
     const input = codeField.querySelector('input');
 
-    const submitButton = queryByTestId('submit');
-    const cancelButton = queryByTestId('cancel');
+    const submitButton = screen.queryByTestId('submit');
+    const cancelButton = screen.queryByTestId('cancel');
 
     fireEvent.change(input, { target: { value: '123456' } });
     fireEvent.click(submitButton);
@@ -112,13 +112,13 @@ describe('Enable2FAModal', () => {
     enableTotp.mockRejectedValueOnce();
 
     const onConfirm = jest.fn();
-    const { queryByTestId } = build({ onConfirm });
+    build({ onConfirm });
 
-    const codeField = queryByTestId('code-input');
+    const codeField = screen.queryByTestId('code-input');
     const input = codeField.querySelector('input');
 
     fireEvent.change(input, { target: { value: '123456' } });
-    fireEvent.click(queryByTestId('submit'));
+    fireEvent.click(screen.queryByTestId('submit'));
 
     await wait();
 
@@ -133,13 +133,13 @@ describe('Enable2FAModal', () => {
     enableTotp.mockResolvedValueOnce();
 
     const onConfirm = jest.fn();
-    const { queryByTestId } = build({ onConfirm });
+    build({ onConfirm });
 
-    const codeField = queryByTestId('code-input');
+    const codeField = screen.queryByTestId('code-input');
     const input = codeField.querySelector('input');
 
     fireEvent.change(input, { target: { value: '123456' } });
-    fireEvent.click(queryByTestId('submit'));
+    fireEvent.click(screen.queryByTestId('submit'));
 
     await wait();
 

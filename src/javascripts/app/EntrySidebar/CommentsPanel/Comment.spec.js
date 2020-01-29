@@ -1,6 +1,6 @@
 import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
-import { render, cleanup } from '@testing-library/react';
+
+import { render } from '@testing-library/react';
 import Comment from './Comment';
 import * as TokenStore from 'services/TokenStore';
 import * as spaceContextMocked from 'ng/spaceContext';
@@ -56,8 +56,6 @@ describe('Comment', () => {
     setAsCommentAuthor(false);
     jest.spyOn(Date, 'now').mockImplementation(() => now);
   });
-
-  afterEach(cleanup);
 
   afterAll(() => {
     Date.now.mockRestore();

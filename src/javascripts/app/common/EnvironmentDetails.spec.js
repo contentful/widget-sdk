@@ -1,7 +1,6 @@
 import React from 'react';
-import { render, cleanup } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import EnvironmentDetails from './EnvironmentDetails';
-import '@testing-library/jest-dom/extend-expect';
 
 const getComponent = (props = {}) => {
   return (
@@ -19,8 +18,6 @@ const getComponent = (props = {}) => {
 };
 
 describe('EnvironmentDetails', () => {
-  afterEach(cleanup);
-
   it('displays with copy button, default and createdAt', () => {
     const component = getComponent();
     const { getByTestId } = render(component);

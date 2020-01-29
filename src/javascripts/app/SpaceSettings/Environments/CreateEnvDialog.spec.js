@@ -1,14 +1,12 @@
 import React from 'react';
-import { render, cleanup, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { render, fireEvent, wait, screen } from '@testing-library/react';
+
 import * as Environment from 'data/CMA/SpaceEnvironmentsRepo';
 import { CreateEnvironmentView } from './CreateEnvDialog';
 
 describe('CreateEnvironmentDialog', () => {
-  afterEach(cleanup);
-
   describe('when environment branching is disabled', function() {
-    it('does not show the env selector and uses master', function() {
+    it('does not show the env selector and uses master', async function() {
       const stubs = {
         createEnvironment: jest.fn().mockResolvedValue({
           type: Environment.EnvironmentUpdated
@@ -17,7 +15,7 @@ describe('CreateEnvironmentDialog', () => {
         onCreate: jest.fn()
       };
 
-      const { getByTestId, queryByTestId, getByText } = render(
+      render(
         <CreateEnvironmentView
           environments={[{ id: 'master', status: 'ready' }, { id: 'test', status: 'ready' }]}
           currentEnvironment="master"
@@ -28,27 +26,33 @@ describe('CreateEnvironmentDialog', () => {
         />
       );
 
-      expect(queryByTestId('source.id')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('source.id')).not.toBeInTheDocument();
 
-      fireEvent.change(getByTestId('field.id'), {
+      fireEvent.change(screen.getByTestId('field.id'), {
         target: { value: 'new env!!!' }
       });
-      fireEvent.click(getByTestId('submit'));
+
+      fireEvent.click(screen.getByTestId('submit'));
 
       expect(
-        getByText('Please use only letters, numbers, underscores, dashes and dots for the ID.')
+        screen.getByText(
+          'Please use only letters, numbers, underscores, dashes and dots for the ID.'
+        )
       ).toBeInTheDocument();
 
-      fireEvent.change(getByTestId('field.id'), {
+      fireEvent.change(screen.getByTestId('field.id'), {
         target: { value: 'new_env' }
       });
-      fireEvent.click(getByTestId('submit'));
+
+      fireEvent.click(screen.getByTestId('submit'));
 
       expect(stubs.createEnvironment).toHaveBeenCalledWith({
         id: 'new_env',
         name: 'new_env',
         source: 'master'
       });
+
+      return wait();
     });
 
     describe('when environment branching is enabled', function() {
@@ -61,7 +65,7 @@ describe('CreateEnvironmentDialog', () => {
           onCreate: jest.fn()
         };
 
-        const { getByTestId, getByText } = render(
+        render(
           <CreateEnvironmentView
             environments={[{ id: 'master', status: 'ready' }, { id: 'test', status: 'ready' }]}
             currentEnvironment="master"
@@ -72,31 +76,35 @@ describe('CreateEnvironmentDialog', () => {
           />
         );
 
-        expect(getByTestId('source.id').value).toEqual('master');
+        expect(screen.getByTestId('source.id').value).toEqual('master');
 
-        fireEvent.change(getByTestId('field.id'), {
+        fireEvent.change(screen.getByTestId('field.id'), {
           target: { value: 'new env!!!' }
         });
-        fireEvent.click(getByTestId('submit'));
+        fireEvent.click(screen.getByTestId('submit'));
 
         expect(
-          getByText('Please use only letters, numbers, underscores, dashes and dots for the ID.')
+          screen.getByText(
+            'Please use only letters, numbers, underscores, dashes and dots for the ID.'
+          )
         ).toBeInTheDocument();
 
-        fireEvent.change(getByTestId('field.id'), {
+        fireEvent.change(screen.getByTestId('field.id'), {
           target: { value: 'new_env' }
         });
-        fireEvent.change(getByTestId('source.id'), {
+        fireEvent.change(screen.getByTestId('source.id'), {
           target: { value: 'test' }
         });
 
-        fireEvent.click(getByTestId('submit'));
+        fireEvent.click(screen.getByTestId('submit'));
 
         expect(stubs.createEnvironment).toHaveBeenCalledWith({
           id: 'new_env',
           name: 'new_env',
           source: 'test'
         });
+
+        return wait();
       });
     });
   });

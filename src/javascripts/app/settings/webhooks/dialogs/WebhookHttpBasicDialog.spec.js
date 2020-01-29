@@ -1,12 +1,10 @@
 import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+
+import { render, fireEvent } from '@testing-library/react';
 import WebhookHttpBasicDialog from './WebhookHttpBasicDialog';
 import base64safe from '../base64safe';
 
 describe('webhooks/dialogs/WebhookHttpBasicDialog', () => {
-  afterEach(cleanup);
-
   const renderComponent = () => {
     const stubs = {
       onConfirm: jest.fn(),

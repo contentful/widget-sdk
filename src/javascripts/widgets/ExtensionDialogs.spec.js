@@ -55,8 +55,6 @@ describe('ExtensionDialogs', () => {
   });
 
   describe('opening dialogs and return values', () => {
-    beforeEach(() => jest.clearAllMocks());
-
     it('alert always resolves to true', async () => {
       const { open } = jest.requireMock('app/common/ModalLauncher');
       open.mockResolvedValue('blah blah blah');

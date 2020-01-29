@@ -1,5 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
+import 'jest-enzyme';
 import * as spaceContextMocked from 'ng/spaceContext';
 import * as $stateMocked from 'ng/$state';
 import ExtensionsListRoute from './ExtensionsListRoute';

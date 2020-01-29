@@ -1,5 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
+import 'jest-enzyme';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { Button, IconButton } from '@contentful/forma-36-react-components';

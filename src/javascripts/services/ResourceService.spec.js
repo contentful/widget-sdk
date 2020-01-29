@@ -13,8 +13,6 @@ jest.mock('utils/ResourceUtils', () => ({
 }));
 
 describe('ResourceService', () => {
-  afterEach(jest.clearAllMocks);
-
   describe('instantiation', () => {
     it('should by default use the space endpoint for instantiation', () => {
       createResourceService('space_1234');

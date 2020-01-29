@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, cleanup, fireEvent, wait } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { render, fireEvent, wait } from '@testing-library/react';
+
 import AccountDropdown from './AccountDropdown';
 import { href } from 'states/Navigator';
 import { getUser } from 'services/TokenStore';
@@ -45,11 +45,6 @@ describe('AccountDropdown', () => {
     Authentication.logout.mockClear();
     getUser.mockClear();
     wrapper = render(<AccountDropdown />);
-  });
-
-  afterEach(() => {
-    cleanup();
-    jest.clearAllMocks();
   });
 
   it('renders the account dropdown toggle', () => {

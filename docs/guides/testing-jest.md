@@ -135,12 +135,10 @@ Jest stores snapshots besides your tests in files like `__snapshots__/Label.spec
 That's enought for most non-interactive components:
 
 ```js
-import { render, cleanup } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import Comment from './comment.es6';
 
 describe('Comment component', () => {
-  // Always unmount the component and clean up the DOM after the tests
-  afterEach(cleanup);
 
   it('renders the comment body', () => {
     const { getByTestId } = render(<Commment text="Hello world" />);
@@ -164,18 +162,6 @@ it('renders Markdown in preview mode', () => {
 
   expect(getByTestId('markdown.preview')).toContainHTML('<strong>Hello</strong> Jest!');
 });
-```
-
-You can use custom Jest DOM matchers by including them in the test file, like so:
-
-```js
-
-import '@testing-library/jest-dom/extend-expect';
-
-// ...
-
-expect(body).toHaveTextContent('Hello world');
-
 ```
 
 ### Testing event handlers

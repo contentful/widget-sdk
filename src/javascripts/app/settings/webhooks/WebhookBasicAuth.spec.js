@@ -1,11 +1,9 @@
 import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+
+import { render, fireEvent } from '@testing-library/react';
 import WebhookBasicAuth from './WebhookBasicAuth';
 
 describe('WebhookBasicAuth', () => {
-  afterEach(cleanup);
-
   const renderComponent = user => {
     const onChangeStub = jest.fn();
     const wrapper = render(<WebhookBasicAuth httpBasicUsername={user} onChange={onChangeStub} />);

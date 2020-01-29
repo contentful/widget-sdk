@@ -1,6 +1,7 @@
 import React from 'react';
 import { cloneDeep } from 'lodash';
 import { shallow } from 'enzyme';
+import 'jest-enzyme';
 import { generateFilterDefinitions } from './FilterDefinitions';
 import SearchFilter from './SearchFilter';
 import { UserListFilters } from './UserListFilters';

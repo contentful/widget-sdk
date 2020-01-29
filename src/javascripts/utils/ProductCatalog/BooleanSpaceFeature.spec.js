@@ -1,5 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
+import 'jest-enzyme';
 import BooleanSpaceFeature from './BooleanSpaceFeature';
 import flushPromises from 'testHelpers/flushPromises';
 import * as spaceContextMocked from 'ng/spaceContext';
@@ -11,7 +12,6 @@ jest.mock('data/CMA/ProductCatalog', () => ({ getCurrentSpaceFeature: jest.fn() 
 
 describe('BooleanSpaceFeature Component', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
     ProductCatalog.getCurrentSpaceFeature.mockClear();
     spaceContextMocked.getId.mockReturnValue(spaceId);
   });

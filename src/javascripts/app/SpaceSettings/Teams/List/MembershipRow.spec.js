@@ -1,7 +1,7 @@
 import React from 'react';
-import { cleanup, within, render, fireEvent, getByTestId } from '@testing-library/react';
+import { within, render, fireEvent, getByTestId } from '@testing-library/react';
 import { Table, TableBody } from '@contentful/forma-36-react-components';
-import '@testing-library/jest-dom/extend-expect';
+
 import { noop } from 'lodash';
 
 import MembershipRow from './MembershipRow';
@@ -46,8 +46,6 @@ describe('MembershipRow', () => {
     onUpdateTeamSpaceMembership = jest.fn(noop);
     onRemoveTeamSpaceMembership = jest.fn(noop);
   });
-
-  afterEach(cleanup);
 
   describe('being rendered', () => {
     it('should not break', () => {

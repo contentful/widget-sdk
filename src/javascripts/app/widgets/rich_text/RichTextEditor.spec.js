@@ -1,5 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
+import 'jest-enzyme';
 
 import RichTextEditor from './RichTextEditor';
 import Toolbar from './Toolbar';

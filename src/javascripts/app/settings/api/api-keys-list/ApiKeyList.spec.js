@@ -1,6 +1,5 @@
 import React from 'react';
-import { render, cleanup } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { render } from '@testing-library/react';
 
 import ApiKeyList from './ApiKeyList';
 
@@ -15,8 +14,6 @@ const mockKeyData = [
 ];
 
 describe('ApiKeyList', () => {
-  afterEach(cleanup);
-
   it('should render real api key data when passed correct data', () => {
     const { getAllByTestId } = render(<ApiKeyList apiKeys={mockKeyData} />);
     const apiLinks = getAllByTestId('api-link');

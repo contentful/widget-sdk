@@ -1,5 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
+import 'jest-enzyme';
 import TranslationWidget from './TranslationWidget';
 import EntrySidebarWidget from '../EntrySidebarWidget';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';

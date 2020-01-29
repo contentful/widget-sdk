@@ -257,6 +257,6 @@ function getLink(response, link) {
   );
 }
 
-export function newClient(params) {
+export default function newClient(params) {
   return new Client(params);
 }

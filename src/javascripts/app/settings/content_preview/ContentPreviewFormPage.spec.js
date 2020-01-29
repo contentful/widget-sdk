@@ -2,6 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import ContentPreviewFormPage from './ContentPreviewFormPage';
 import Enzyme from 'enzyme';
+import 'jest-enzyme';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as Analytics from 'analytics/Analytics';
 import $state from 'ng/$state';
@@ -24,10 +25,6 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
     mockContentPreview.remove.mockReset();
     jest.spyOn(Notification, 'success').mockImplementation(() => {});
     jest.spyOn(Notification, 'error').mockImplementation(() => {});
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
   });
 
   const selectors = {

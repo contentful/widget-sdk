@@ -8,8 +8,6 @@ jest.mock('ng/$location', () => ({ search: jest.fn() }));
 jest.mock('ng/$state', () => ({ params: {}, go: jest.fn() }));
 
 describe('SlideInNavigator', () => {
-  beforeEach(jest.clearAllMocks);
-
   describe('getSlideInEntities()', () => {
     function testFn(message, { params = {}, search = {} }, expectedOutput) {
       it(message, () => {

@@ -1,5 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
+import 'jest-enzyme';
 import * as mockedSpaceContext from 'ng/spaceContext';
 import SidebarContentPreviewContainer from './SidebarContentPreviewContainer';
 import flushPromises from 'testHelpers/flushPromises';

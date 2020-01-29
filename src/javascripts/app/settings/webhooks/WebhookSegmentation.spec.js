@@ -1,12 +1,10 @@
 import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+
+import { render, fireEvent } from '@testing-library/react';
 import WebhookSegmentation from './WebhookSegmentation';
 import { transformMapToTopics, transformTopicsToMap } from './WebhookSegmentationState';
 
 describe('WebhookSegmentation', () => {
-  afterEach(cleanup);
-
   const renderComponent = topics => {
     const onChangeStub = jest.fn();
 

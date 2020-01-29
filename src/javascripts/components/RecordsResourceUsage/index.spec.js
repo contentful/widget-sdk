@@ -1,9 +1,7 @@
 import React from 'react';
-import { render, cleanup, wait } from '@testing-library/react';
-import RecordsResourceUsage from '.';
+import { render, wait } from '@testing-library/react';
+import RecordsResourceUsage from './';
 import createResourceService from 'services/ResourceService';
-
-import '@testing-library/jest-dom/extend-expect';
 
 jest.mock('services/ResourceService', () => {
   const get = jest.fn();
@@ -47,8 +45,6 @@ describe('RecordsResourceUsage', () => {
   beforeEach(() => {
     createResourceService.__get.mockResolvedValueOnce(makeResource());
   });
-
-  afterEach(cleanup);
 
   it('should attempt to get the resource when mounted', async () => {
     build();

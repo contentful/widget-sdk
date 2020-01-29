@@ -9,12 +9,6 @@ const SPACE_ID = 'space-id';
 const ENVIRONMENT_ID = 'environment-id';
 
 describe('FetchUnpublishedReferences', () => {
-  beforeEach(() => {});
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   it('returns unpublished refs from rich text document', async () => {
     const entryRef = createEntity('Entry');
     const publishedEntryRef = publishEntity(createEntity('Entry'));

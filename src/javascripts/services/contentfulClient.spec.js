@@ -1,7 +1,5 @@
-import { newClient } from './contentfulClient';
+import newClient from './contentfulClient';
 import $httpMocked from 'ng/$http';
-
-jest.mock('ng/$http', () => jest.fn(), { virtual: true });
 
 describe('Contentful Client', () => {
   let client;

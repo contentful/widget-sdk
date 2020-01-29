@@ -1,11 +1,9 @@
 import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
-import { render, cleanup } from '@testing-library/react';
+
+import { render } from '@testing-library/react';
 import Thumbnail from './Thumbnail';
 
 describe('Thumbnail', () => {
-  afterEach(cleanup);
-
   describe('file without preview', () => {
     it('does not render preview for non-images MIME types', () => {
       const { container } = render(

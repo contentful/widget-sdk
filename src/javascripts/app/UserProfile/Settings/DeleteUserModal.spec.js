@@ -1,10 +1,8 @@
 import React from 'react';
-import { render, cleanup, fireEvent, wait } from '@testing-library/react';
+import { render, fireEvent, wait } from '@testing-library/react';
 import { Notification } from '@contentful/forma-36-react-components';
 import DeleteUserModal from './DeleteUserModal';
 import { deleteUserAccount } from './AccountRepository';
-
-import '@testing-library/jest-dom/extend-expect';
 
 jest.mock('./AccountRepository', () => ({
   deleteUserAccount: jest.fn()
@@ -28,8 +26,6 @@ describe('DeleteUser', () => {
   beforeEach(() => {
     deleteUserAccount.mockResolvedValueOnce();
   });
-
-  afterEach(cleanup);
 
   it('should default to selecting the "other" reason', () => {
     const { queryByTestId } = build();

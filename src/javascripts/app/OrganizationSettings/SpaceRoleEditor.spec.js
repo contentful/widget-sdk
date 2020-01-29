@@ -1,5 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
+import 'jest-enzyme';
 import { ADMIN_ROLE_ID } from 'access_control/constants';
 import SpaceRoleEditor from './SpaceRoleEditor';
 

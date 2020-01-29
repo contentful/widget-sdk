@@ -1,6 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import '@testing-library/jest-dom/extend-expect';
+import 'jest-enzyme';
+
 import FileIcon from './FileIcon';
 
 describe('FileIcon', () => {

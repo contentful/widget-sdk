@@ -1,6 +1,6 @@
 import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+
+import { render, fireEvent } from '@testing-library/react';
 import WebhookForm from './WebhookForm';
 import * as spaceContextMocked from 'ng/spaceContext';
 
@@ -8,8 +8,6 @@ describe('WebhookForm', () => {
   beforeAll(() => {
     spaceContextMocked.environments = [{ sys: { aliases: undefined } }];
   });
-
-  afterEach(cleanup);
 
   const renderComponent = () => {
     const onChangeStub = jest.fn();

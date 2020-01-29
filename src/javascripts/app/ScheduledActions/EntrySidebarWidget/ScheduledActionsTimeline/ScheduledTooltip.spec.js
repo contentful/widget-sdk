@@ -1,5 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
+import 'jest-enzyme';
 import { Icon } from '@contentful/forma-36-react-components';
 import ScheduledActionActions from 'app/ScheduledActions/ScheduledActionAction';
 

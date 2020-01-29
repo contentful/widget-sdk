@@ -1,6 +1,7 @@
 import React from 'react';
 import mitt from 'mitt';
 import Enzyme from 'enzyme';
+import 'jest-enzyme';
 import { deepFreeze } from 'utils/Freeze';
 import { cloneDeep } from 'lodash';
 import VersionsWidgetContainer, { PREVIEW_COUNT } from './VersionsWidgetContainer';

@@ -1,5 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
+import 'jest-enzyme';
 import { noop } from 'lodash';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';

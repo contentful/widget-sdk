@@ -4,9 +4,6 @@ import * as EntityResolver from './EntityResolver';
 import * as spaceContextMocked from 'ng/spaceContext';
 
 describe('EntityResolver', () => {
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
   it('fetches each ID', async function() {
     const ids = ['a', 'b', 'c'];
     const entities = [];

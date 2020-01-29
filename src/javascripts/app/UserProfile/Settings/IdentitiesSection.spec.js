@@ -1,10 +1,8 @@
 import React from 'react';
-import { cleanup, fireEvent, render, wait } from '@testing-library/react';
+import { fireEvent, render, wait } from '@testing-library/react';
 import { Notification } from '@contentful/forma-36-react-components';
 import IdentitiesSection from './IdentitiesSection';
 import { deleteUserIdentityData } from './AccountRepository';
-
-import '@testing-library/jest-dom/extend-expect';
 
 jest.mock('./AccountRepository', () => ({
   deleteUserIdentityData: jest.fn()
@@ -15,8 +13,6 @@ describe('IdentitiesSection', () => {
     jest.spyOn(Notification, 'success').mockImplementation(() => {});
     jest.spyOn(Notification, 'error').mockImplementation(() => {});
   });
-
-  afterEach(cleanup);
 
   it('should Google, Github, and Twitter as available if no identities are passed in', () => {
     const { getByTestId } = render(

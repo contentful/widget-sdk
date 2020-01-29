@@ -1,11 +1,9 @@
 import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
-import { render, cleanup, fireEvent, getByTestId } from '@testing-library/react';
+
+import { render, fireEvent, getByTestId } from '@testing-library/react';
 import { WebhookHeaders } from './WebhookHeaders';
 
 describe('WebhookHeaders', () => {
-  afterEach(cleanup);
-
   const renderComponent = headers => {
     const onChangeStub = jest.fn();
     return [render(<WebhookHeaders headers={headers} onChange={onChangeStub} />), onChangeStub];

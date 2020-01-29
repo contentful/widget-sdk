@@ -1,11 +1,9 @@
 import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+
+import { render, fireEvent } from '@testing-library/react';
 import WebhookBodyTransformation from './WebhookBodyTransformation';
 
 describe('WebhookBodyTransformation', () => {
-  afterEach(cleanup);
-
   const renderComponent = body => {
     const onChangeStub = jest.fn();
     const wrapper = render(<WebhookBodyTransformation body={body} onChange={onChangeStub} />);

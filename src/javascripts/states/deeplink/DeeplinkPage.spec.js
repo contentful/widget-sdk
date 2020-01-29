@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, cleanup, waitForElement, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { render, waitForElement, fireEvent } from '@testing-library/react';
+
 import DeeplinkPage from './DeeplinkPage';
 import { resolveLink } from './resolver';
 import { getSpaceInfo, getAllEnviroments } from './utils';
@@ -20,12 +20,6 @@ jest.mock(
 );
 
 describe('deeplink/DeeplinkPage', () => {
-  beforeEach(() => {
-    $state.go.mockClear();
-  });
-
-  afterEach(cleanup);
-
   it('should redirect user accoring to resolver response', async () => {
     resolveLink.mockResolvedValue({
       path: ['spaces', 'detail', 'environment', 'apps', 'list'],
@@ -107,8 +101,7 @@ describe('deeplink/DeeplinkPage', () => {
     );
 
     expect(resolveLink).toHaveBeenCalledWith('some-link', {
-      param1: '1',
-      param2: '2'
+      spaceId: 'deeplink-space-id'
     });
 
     await waitForElement(() => getByTestId('deeplink-select-space'));

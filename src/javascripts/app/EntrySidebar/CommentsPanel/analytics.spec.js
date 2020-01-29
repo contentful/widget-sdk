@@ -6,10 +6,6 @@ describe('CommentsPanel/analytics', () => {
     jest.spyOn(Intercom, 'trackEvent').mockImplementation(() => {});
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   it('trackCommentCreated()', () => {
     trackCommentCreated();
     expect(Intercom.trackEvent).toHaveBeenCalledTimes(1);

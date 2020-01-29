@@ -1,5 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
+import 'jest-enzyme';
 import VersionsWidget, { noSnapshotsText, compareHelpText } from './VersionsWidget';
 import $state from 'ng/$state';
 

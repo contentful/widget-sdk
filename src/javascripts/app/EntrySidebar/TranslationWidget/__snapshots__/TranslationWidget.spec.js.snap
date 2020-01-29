@@ -34,28 +34,7 @@ exports[`EntrySidebar/TranslationWidget when single locale mode is off should ma
   <TranslationWidgetPills
     emitter={
       Object {
-        "emit": [MockFunction] {
-          "calls": Array [
-            Array [
-              "sidebar:set-single-locale-mode",
-              false,
-            ],
-            Array [
-              "sidebar:set-single-locale-mode",
-              false,
-            ],
-          ],
-          "results": Array [
-            Object {
-              "type": "return",
-              "value": undefined,
-            },
-            Object {
-              "type": "return",
-              "value": undefined,
-            },
-          ],
-        },
+        "emit": [MockFunction],
       }
     }
     localeData={

@@ -1,5 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
+import 'jest-enzyme';
 import EntityCard from './WrappedEntityCard';
 import ScheduledActionActions from 'app/ScheduledActions/ScheduledActionAction';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';

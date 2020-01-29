@@ -1,7 +1,6 @@
 import React from 'react';
 import { noop } from 'lodash';
-import { cleanup, render, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { render, fireEvent } from '@testing-library/react';
 
 import SpaceMembershipsPresentation from './SpaceMembershipsPresentation';
 
@@ -17,8 +16,6 @@ const build = (props = {}) =>
   );
 
 describe('SpaceMembershipsPresentation', () => {
-  afterEach(cleanup);
-
   describe('being rendered', () => {
     it('should not break', () => {
       expect(build).not.toThrow();

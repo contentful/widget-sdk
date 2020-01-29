@@ -1,12 +1,10 @@
 import React from 'react';
-import { render, cleanup, fireEvent, wait } from '@testing-library/react';
+import { render, fireEvent, wait } from '@testing-library/react';
 import { Notification } from '@contentful/forma-36-react-components';
 import SecuritySection from './SecuritySection';
 import $window from 'utils/ngCompat/window';
 import * as ModalLauncher from 'app/common/ModalLauncher';
 import { getUserTotp } from './AccountRepository';
-
-import '@testing-library/jest-dom/extend-expect';
 
 jest.mock('utils/ngCompat/window', () => {
   const locationMock = jest.fn();
@@ -40,7 +38,6 @@ describe('SecuritySection', () => {
 
   afterEach(() => {
     ModalLauncher.open.mockReset();
-    cleanup();
   });
 
   describe('not eligible', () => {

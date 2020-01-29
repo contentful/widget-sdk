@@ -1,5 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
+import 'jest-enzyme';
 import StatusNotification from './StatusNotification';
 import DocumentStatusCode from 'data/document/statusCode';
 import { range } from 'lodash';

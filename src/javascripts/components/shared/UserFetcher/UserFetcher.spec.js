@@ -1,5 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
+import 'jest-enzyme';
 import UserFetcher from '.';
 
 import * as spaceContextMock from 'ng/spaceContext';

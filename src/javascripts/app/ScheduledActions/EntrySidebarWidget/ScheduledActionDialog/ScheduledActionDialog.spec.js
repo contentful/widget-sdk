@@ -1,8 +1,7 @@
 import React from 'react';
-import { render, cleanup, fireEvent, wait } from '@testing-library/react';
+import { render, fireEvent, wait } from '@testing-library/react';
 import { Notification } from '@contentful/forma-36-react-components';
 
-import '@testing-library/jest-dom/extend-expect';
 import * as DateMocks from 'DateMocks';
 import ScheduledActionDialog from '.';
 import moment from 'moment';
@@ -16,14 +15,9 @@ jest.mock('data/APIClient', () =>
 
 describe('ScheduledActionDialog', () => {
   let dateNowSpy;
-  afterEach(cleanup);
   beforeAll(() => {
     dateNowSpy = DateMocks.spyOnDateNow();
     DateMocks.mockNow(dateNowSpy, '2017-06-18T00:00:00.000+00:00');
-  });
-
-  afterAll(() => {
-    jest.clearAllMocks();
   });
 
   const build = () => {

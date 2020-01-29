@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, wait, fireEvent, cleanup } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { render, wait, fireEvent } from '@testing-library/react';
+
 import * as Navigator from 'states/Navigator';
 import EntrySecondaryActions from './EntrySecondaryActions';
 
@@ -17,7 +17,6 @@ const entryActions = {
 };
 const onDelete = { execute: jest.fn() };
 describe('EntrySecondaryActions', () => {
-  afterEach(cleanup);
   const build = props => {
     const resultProps = {
       entityInfo: {

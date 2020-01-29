@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, cleanup, waitForElement, wait } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { render, waitForElement, wait } from '@testing-library/react';
+
 import EnvironmentsRoute from './EnvironmentsRoute';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as LD from 'utils/LaunchDarkly';
@@ -68,7 +68,6 @@ describe('EnvironmentsRoute', () => {
   };
 
   afterEach(() => {
-    cleanup();
     defaultProps.goToSpaceDetail.mockClear();
   });
 
@@ -95,9 +94,10 @@ describe('EnvironmentsRoute', () => {
   };
 
   describe('redirections based on permissions', () => {
-    it("redirects if user can't manage environments", () => {
+    it("redirects if user can't manage environments", async () => {
       accessChecker.can.mockReturnValueOnce(false);
       render(<EnvironmentsRoute {...defaultProps} />);
+      await wait();
     });
 
     it('redirects if space has environments disabled', async () => {

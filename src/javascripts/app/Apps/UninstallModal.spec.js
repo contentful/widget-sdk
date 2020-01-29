@@ -1,11 +1,9 @@
 import React from 'react';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 
 import UninstallModal from './UninstallModal';
 
 describe('UninstallModal', () => {
-  afterEach(cleanup);
-
   const actionList = [
     { info: 'first thing is does' },
     { info: 'second thing is does negative', negative: true },

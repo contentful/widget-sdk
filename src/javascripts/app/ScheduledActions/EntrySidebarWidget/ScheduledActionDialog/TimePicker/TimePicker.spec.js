@@ -1,14 +1,12 @@
 import React from 'react';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import moment from 'moment';
-import '@testing-library/jest-dom/extend-expect';
 
 import TimePicker from '../TimePicker';
 
 describe('TimePicker', () => {
   let dateNowSpy;
 
-  afterEach(cleanup);
   beforeEach(() => {
     dateNowSpy = jest.spyOn(Date, 'now');
   });

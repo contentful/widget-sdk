@@ -1,6 +1,6 @@
 import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+
+import { render, fireEvent } from '@testing-library/react';
 import * as $stateMocked from 'ng/$state';
 import LocalesTable from './LocalesTable';
 
@@ -8,8 +8,6 @@ describe('app/settings/locales/LocalesTable', () => {
   beforeEach(() => {
     $stateMocked.go.mockClear();
   });
-
-  afterEach(cleanup);
 
   const locales = [
     {

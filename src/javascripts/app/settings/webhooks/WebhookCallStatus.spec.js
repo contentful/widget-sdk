@@ -1,11 +1,9 @@
 import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
-import { cleanup, render } from '@testing-library/react';
+
+import { render } from '@testing-library/react';
 import WebhookCallStatus from './WebhookCallStatus';
 
 describe('WebhookCallStatus', () => {
-  afterEach(cleanup);
-
   const renderComponent = (code, error) => {
     const call = { errors: error ? [error] : undefined, statusCode: code };
     return render(<WebhookCallStatus call={call} />);

@@ -10,7 +10,6 @@ describe('newEntityBatchLoaderFn({ getResources, newEntityNotFoundError}) -> ent
   let getResources, newEntityNotFoundError, entityBatchLoaderFn;
 
   beforeEach(() => {
-    jest.clearAllMocks();
     getResources = jest.fn();
     newEntityNotFoundError = jest.fn();
   });

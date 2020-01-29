@@ -1,6 +1,7 @@
 import React from 'react';
 import { createStore } from 'redux';
 import { mount } from 'enzyme';
+import 'jest-enzyme';
 import { Provider } from 'react-redux';
 import {
   Button,

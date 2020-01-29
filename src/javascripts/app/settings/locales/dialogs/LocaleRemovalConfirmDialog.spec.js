@@ -1,11 +1,9 @@
 import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+
+import { render, fireEvent } from '@testing-library/react';
 import LocaleRemovalConfirmDialog from './LocaleRemovalConfirmDialog';
 
 describe('locales/components/LocaleRemovalConfirmDialog', () => {
-  afterEach(cleanup);
-
   const renderComponent = props =>
     render(
       <LocaleRemovalConfirmDialog

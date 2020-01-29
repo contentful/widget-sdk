@@ -1,12 +1,10 @@
 import React from 'react';
-import { render, fireEvent, cleanup, wait, within } from '@testing-library/react';
+import { render, fireEvent, wait, within } from '@testing-library/react';
 import { Notification } from '@contentful/forma-36-react-components';
 import { createTeamSpaceMembership } from 'access_control/TeamRepository';
 import { go } from 'states/Navigator';
 import { track } from 'analytics/Analytics';
 import AddTeamsPage from './AddTeamsPage';
-
-import '@testing-library/jest-dom/extend-expect';
 
 jest.mock('states/Navigator', () => ({
   go: jest.fn().mockResolvedValue(true)
@@ -100,15 +98,9 @@ describe('AddTeamsPage', () => {
   });
 
   afterEach(() => {
-    createTeamSpaceMembership.mockReset();
-    go.mockReset();
-    track.mockReset();
-
     notificationSuccessSpy.mockRestore();
     notificationErrorSpy.mockRestore();
   });
-
-  afterEach(cleanup);
 
   it('should show the search box on initial load (at least one team, no interaction)', () => {
     const { queryByTestId } = mount({ teams: [{ sys: { id: 'team1' }, name: 'Team 1' }] });
@@ -181,17 +173,15 @@ describe('AddTeamsPage', () => {
   });
 
   it('should hide the other roles radio if none are available', () => {
-    let helpers;
-
-    helpers = mount({ teams });
+    const helpers = mount({ teams });
 
     searchAndSelectTeam('Test team', { queryByTestId: helpers.queryByTestId });
 
     expect(helpers.queryByTestId('RoleSelector.admin_false')).toBeNull();
+  });
 
-    cleanup();
-
-    helpers = mount({ teams, roles });
+  it('should hide the other roles radio if none are available - 2', () => {
+    const helpers = mount({ teams, roles });
 
     searchAndSelectTeam('Test team', { queryByTestId: helpers.queryByTestId });
 

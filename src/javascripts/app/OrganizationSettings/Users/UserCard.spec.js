@@ -1,7 +1,7 @@
 import React from 'react';
 import UserCard from './UserCard';
-import '@testing-library/jest-dom/extend-expect';
-import { render, cleanup } from '@testing-library/react';
+
+import { render } from '@testing-library/react';
 
 const user = {
   firstName: 'User',
@@ -11,7 +11,6 @@ const user = {
 };
 
 describe('UserCard', () => {
-  afterEach(cleanup);
   it('status is undefined, no INVITED tag present', () => {
     const { getByTestId, queryByTestId } = render(<UserCard user={user} />);
     const userNameAndStatus = getByTestId('user-name-status');

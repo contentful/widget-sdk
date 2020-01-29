@@ -1,7 +1,6 @@
 import { forEach } from 'lodash';
 import React from 'react';
-import { render, fireEvent, cleanup } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+import { render, fireEvent } from '@testing-library/react';
 
 import { default as LinkingActions, labels, testIds } from './LinkingActions';
 import { TYPES } from './Util';
@@ -62,8 +61,6 @@ describe('LinkingActions', () => {
       const onCreateAndLink = jest.fn();
       const onLinkExisting = jest.fn();
       let allProps;
-
-      afterEach(cleanup);
 
       beforeEach(() => {
         onCreateAndLink.mockReset();

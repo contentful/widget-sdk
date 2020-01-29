@@ -1,7 +1,6 @@
 import React from 'react';
-import { render, cleanup } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import EnvironmentAliases from './EnvironmentAliases';
-import '@testing-library/jest-dom/extend-expect';
 
 jest.mock('./Feedback', () => () => <div>Feedback</div>);
 
@@ -40,8 +39,6 @@ const getComponent = (props = {}) => {
 };
 
 describe('EnvironmentAliases', () => {
-  afterEach(cleanup);
-
   it('does not show the component', () => {
     const component = getComponent({ items: [] });
     const { getByTestId } = render(component);

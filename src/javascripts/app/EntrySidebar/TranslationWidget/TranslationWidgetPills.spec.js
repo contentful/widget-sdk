@@ -1,5 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
+import 'jest-enzyme';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
 import TranslationWidgetPills from './TranslationWidgetPills';
 import ModalLauncherMocked from 'app/common/ModalLauncher';

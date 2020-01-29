@@ -1,20 +1,14 @@
 import React from 'react';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 
-import '@testing-library/jest-dom/extend-expect';
 import * as DateMocks from 'DateMocks';
 import TimezonePicker from '../TimezonePicker';
 
 describe('TimezonePicker', () => {
   let dateNowSpy;
-  afterEach(cleanup);
   beforeAll(() => {
     dateNowSpy = DateMocks.spyOnDateNow();
     DateMocks.mockNow(dateNowSpy, '2017-06-18T00:00:00.000+00:00');
-  });
-
-  afterAll(() => {
-    jest.clearAllMocks();
   });
 
   const build = () => {

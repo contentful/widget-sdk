@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, cleanup } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { trackAlphaEligibilityToIntercom } from './Analytics/ScheduledActionsAnalytics';
 
 import BooleanSpaceFeature from 'utils/ProductCatalog/BooleanSpaceFeature';
@@ -9,11 +9,6 @@ import ScheduledActionsFeatureFlag from './ScheduledActionsFeatureFlag';
 jest.mock('utils/ProductCatalog/BooleanSpaceFeature', () => jest.fn().mockReturnValue(null));
 jest.mock('./Analytics/ScheduledActionsAnalytics');
 describe('<ScheduledActionsFeatureFlag />', () => {
-  afterEach(() => {
-    jest.clearAllMocks();
-    cleanup();
-  });
-
   const build = () => {
     const props = {
       children: jest.fn().mockReturnValue(null)

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, wait, cleanup } from '@testing-library/react';
+import { render, wait } from '@testing-library/react';
 import AppsListPage from './AppsListPage';
 import repoAppsMock from './mockData/repoAppsMock.json';
 
@@ -17,8 +17,6 @@ describe('AppsListPage', () => {
   const orgId = '123';
   const spaceId = '456';
   const userId = '000';
-
-  afterEach(cleanup);
 
   it('should match snapshot for loading state', async () => {
     const { container } = render(

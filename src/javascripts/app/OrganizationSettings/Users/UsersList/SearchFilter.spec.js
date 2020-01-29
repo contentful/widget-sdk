@@ -1,6 +1,6 @@
 import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+
+import { render, fireEvent } from '@testing-library/react';
 import SearchFilter from './SearchFilter';
 
 describe('SearchFilter', () => {
@@ -27,8 +27,9 @@ describe('SearchFilter', () => {
     return render(<SearchFilter {...props} />);
   };
 
-  afterEach(cleanup);
-  afterEach(onChangeCb.mockReset);
+  afterEach(() => {
+    onChangeCb.mockReset();
+  });
 
   it('displays the correct label', () => {
     const { getByTestId } = build();

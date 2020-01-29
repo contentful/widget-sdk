@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, wait, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
+
 import LinkedEntitiesBadge from './LinkedEntitiesBadge';
 import { Promise } from 'bluebird';
 import * as slideInNavigator from 'navigation/SlideInNavigator';

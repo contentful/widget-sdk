@@ -1,17 +1,13 @@
 import React from 'react';
-import { render, cleanup, fireEvent, wait } from '@testing-library/react';
+import { render, fireEvent, wait } from '@testing-library/react';
 import * as ModalLauncher from 'app/common/ModalLauncher';
 import { cancelUser } from 'Authentication';
 import DangerZoneSection from './DangerZoneSection';
-
-import '@testing-library/jest-dom/extend-expect';
 
 describe('DangerZoneSection', () => {
   const build = () => {
     return render(<DangerZoneSection singleOwnerOrganizations={[]} />);
   };
-
-  afterEach(cleanup);
 
   it('should not call cancelUser if ModalLauncher.open resolves false', async () => {
     ModalLauncher.open.mockResolvedValueOnce(false);

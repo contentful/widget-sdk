@@ -1,5 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
+import 'jest-enzyme';
 import moment from 'moment';
 import { shorten } from 'utils/NumberUtils';
 

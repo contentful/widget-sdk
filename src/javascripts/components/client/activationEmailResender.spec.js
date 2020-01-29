@@ -2,8 +2,6 @@ import { resendActivationEmail } from './activationEmailResender';
 import $httpMocked from 'ng/$http';
 import * as loggerMocked from 'services/logger';
 
-jest.mock('ng/$http', () => jest.fn(), { virtual: true });
-
 describe('activationEmailResender', () => {
   describe('.resend() without email', () => {
     it('throws an error since no email is given', async () => {

@@ -1,5 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
+import 'jest-enzyme';
 import { IDPSetupForm } from './IDPSetupForm';
 import { TEST_RESULTS } from './constants';
 import ModalLauncher from 'app/common/ModalLauncher';

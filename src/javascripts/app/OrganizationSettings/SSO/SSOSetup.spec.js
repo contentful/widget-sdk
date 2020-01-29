@@ -1,5 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
+import 'jest-enzyme';
 import { FetcherLoading } from 'app/common/createFetcherComponent';
 import { SSOSetup } from './SSOSetup';
 import IDPSetupForm from './IDPSetupForm';

@@ -1,13 +1,11 @@
 import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+
+import { render, fireEvent } from '@testing-library/react';
 import * as $stateMocked from 'ng/$state';
 import { Notification } from '@contentful/forma-36-react-components';
 import { AddLocaleButton, LocalesAdvice } from './LocalesListPricingOne';
 
 describe('app/settings/locales/LocalesListPricingOne', () => {
-  afterEach(cleanup);
-
   describe('AddLocaleButton', () => {
     it('if getComputeLocalesUsageForOrganization returns positive value than notification should be shown', () => {
       const notificationSpy = jest.spyOn(Notification, 'error').mockImplementation(() => {});

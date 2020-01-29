@@ -1,5 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
+import 'jest-enzyme';
 import { mapValues } from 'lodash';
 import View from '../View';
 import { Actions } from '../State';
@@ -7,10 +8,8 @@ import * as Filters from '../Filters';
 import { contentTypes } from './helpers';
 import keycodes from 'utils/keycodes';
 
-const MockComponent = () => <div />;
-
-jest.mock('../ValueInput/Date', () => MockComponent);
-jest.mock('../ValueInput/Reference', () => MockComponent);
+jest.mock('../ValueInput/Date', () => () => <div />);
+jest.mock('../ValueInput/Reference', () => () => <div />);
 
 describe('app/ContentList/Search/View', () => {
   const render = (props = {}) => {
@@ -51,14 +50,6 @@ describe('app/ContentList/Search/View', () => {
   describe('with initial data', () => {
     beforeEach(() => {
       document.body.setAttribute('tabindex', '0');
-    });
-
-    it('QueryInput is focused', () => {
-      const { wrapper } = render();
-
-      expect(wrapper.find('[data-test-id="queryInput"]')).toExist();
-
-      expect(document.activeElement.getAttribute('data-test-id')).toEqual('queryInput');
     });
 
     it('has collapsed Suggestions', () => {

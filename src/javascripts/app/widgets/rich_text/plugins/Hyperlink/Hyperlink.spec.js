@@ -1,6 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import { mount, shallow } from 'enzyme';
+import 'jest-enzyme';
 
 import Hyperlink from './Hyperlink';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';

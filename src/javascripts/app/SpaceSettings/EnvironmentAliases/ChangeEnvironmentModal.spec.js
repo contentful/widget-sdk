@@ -1,7 +1,6 @@
 import React from 'react';
-import { render, cleanup, wait } from '@testing-library/react';
+import { render, wait } from '@testing-library/react';
 import ChangeEnvironmentModal from './ChangeEnvironmentModal';
-import '@testing-library/jest-dom/extend-expect';
 
 jest.mock('./Utils', () => ({
   handleChangeEnvironment: jest.fn().mockImplementation((...res) => Promise.resolve(res))
@@ -9,7 +8,6 @@ jest.mock('./Utils', () => ({
 
 let setModalOpen;
 describe('ChangeEnvironmentModal', () => {
-  afterEach(cleanup);
   setModalOpen = jest.fn();
 
   const build = (props = {}) => {

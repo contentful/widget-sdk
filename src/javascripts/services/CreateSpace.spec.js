@@ -1,5 +1,3 @@
-import '@testing-library/jest-dom/extend-expect';
-
 import * as modalDialogMocked from 'ng/modalDialog';
 
 import { showDialog } from './CreateSpace';

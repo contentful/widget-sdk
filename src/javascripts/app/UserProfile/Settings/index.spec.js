@@ -1,10 +1,8 @@
 import React from 'react';
-import { render, cleanup, wait } from '@testing-library/react';
+import { render, wait } from '@testing-library/react';
 import IndexPage from '.';
 import { fetchUserData } from './AccountRepository';
 import { getVariation } from 'LaunchDarkly';
-
-import '@testing-library/jest-dom/extend-expect';
 
 jest.mock('./AccountRepository', () => ({
   fetchUserData: jest.fn()
@@ -40,8 +38,6 @@ describe('IndexPage', () => {
     const profileData = createProfile();
     fetchUserData.mockResolvedValueOnce(profileData);
   });
-
-  afterEach(cleanup);
 
   it('should fetch user data when the component renders', async () => {
     build();

@@ -1,7 +1,7 @@
 import React from 'react';
-import { render, cleanup } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import StaticDropdown from './StaticDropdown';
-import '@testing-library/jest-dom/extend-expect';
+
 import { spacingM } from '@contentful/forma-36-tokens';
 
 const getAttribute = (el, property) => window.getComputedStyle(el, null).getPropertyValue(property);
@@ -15,8 +15,6 @@ const getComponent = (props = {}) => {
 };
 
 describe('StaticDropdown', () => {
-  afterEach(cleanup);
-
   const build = props => render(getComponent(props));
 
   it('displays with offset', () => {

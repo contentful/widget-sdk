@@ -6,10 +6,6 @@ describe('TasksWidget/analytics', () => {
     jest.spyOn(Intercom, 'trackEvent').mockImplementation(() => {});
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   it('trackTaskCreated()', () => {
     trackTaskCreated();
     expect(Intercom.trackEvent).toHaveBeenCalledTimes(1);

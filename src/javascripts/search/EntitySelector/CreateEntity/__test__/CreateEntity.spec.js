@@ -1,5 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
+import 'jest-enzyme';
 import * as slideInNavigator from 'navigation/SlideInNavigator';
 
 import CreateEntity, { entityTypes } from '..';
@@ -7,6 +8,7 @@ import * as accessChecker from 'access_control/AccessChecker';
 import * as entityCreator from 'components/app_container/entityCreator';
 
 import flushPromises from 'testHelpers/flushPromises';
+import { act } from 'react-dom/test-utils';
 
 jest.mock(
   'navigation/SlideInNavigator',
@@ -40,10 +42,6 @@ const mountComponent = props => {
 };
 
 describe('CreateEntity', () => {
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   it('renders "create entry" link if entity type is "Entry"', () => {
     const props = {
       type: entityTypes.Entry,
@@ -102,7 +100,9 @@ describe('CreateEntity', () => {
 
     const wrapper = mountComponent(props);
 
-    wrapper.find('[data-test-id="create-entry-link-button"]').simulate('click');
+    act(() => {
+      wrapper.find('[data-test-id="create-entry-link-button"]').simulate('click');
+    });
 
     await flushPromises();
     wrapper.update();
@@ -128,7 +128,9 @@ describe('CreateEntity', () => {
 
     const wrapper = mountComponent(props);
 
-    wrapper.find('[data-test-id="create-asset"]').simulate('click');
+    act(() => {
+      wrapper.find('[data-test-id="create-asset"]').simulate('click');
+    });
 
     await flushPromises();
     wrapper.update();

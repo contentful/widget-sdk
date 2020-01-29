@@ -2,6 +2,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { noop } from 'lodash';
 import { mount } from 'enzyme';
+import 'jest-enzyme';
 import { createStore } from 'redux';
 import reducer from 'redux/reducer';
 import ROUTES from 'redux/routes';

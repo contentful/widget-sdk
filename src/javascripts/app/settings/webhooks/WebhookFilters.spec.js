@@ -1,12 +1,10 @@
 import React from 'react';
-import '@testing-library/jest-dom/extend-expect';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+
+import { render, fireEvent } from '@testing-library/react';
 import WebhookFilters from './WebhookFilters';
 import { transformFiltersToList, transformListToFilters } from './WebhookFiltersState';
 
 describe('WebhookFilters', () => {
-  afterEach(cleanup);
-
   const renderComponent = filters => {
     const onChangeStub = jest.fn();
     const wrapper = render(

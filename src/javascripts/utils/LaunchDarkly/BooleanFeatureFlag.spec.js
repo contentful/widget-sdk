@@ -1,5 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
+import 'jest-enzyme';
 import BooleanFeatureFlag from './BooleanFeatureFlag';
 import flushPromises from 'testHelpers/flushPromises';
 import * as spaceContextMocked from 'ng/spaceContext';
@@ -11,7 +12,6 @@ const spaceId = 'space-id';
 
 describe('BooleanFeatureFlag Component', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
     spaceContextMocked.getData.mockReturnValue(organizationId);
     spaceContextMocked.getId.mockReturnValue(spaceId);
   });

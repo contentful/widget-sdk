@@ -1,5 +1,6 @@
 import React from 'react';
 import Enzyme from 'enzyme';
+import 'jest-enzyme';
 import WalkthroughWidget from './WalkthroughWidget.js';
 
 const waitToUpdate = async wrapper => {
