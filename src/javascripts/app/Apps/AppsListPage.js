@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import { partition } from 'lodash';
+import { get, partition } from 'lodash';
 
 import tokens from '@contentful/forma-36-tokens';
 import {
@@ -186,38 +186,40 @@ export default class AppsListPage extends React.Component {
   state = { ready: false };
 
   async componentDidMount() {
-    const { repo, hasAppsFeature } = this.props;
-
     try {
-      const apps = await repo.getApps();
+      const apps = await this.props.repo.getApps();
       const [installedApps, availableApps] = partition(apps, app => !!app.appInstallation);
 
-      this.setState(
-        {
-          ready: true,
-          availableApps,
-          installedApps,
-          appsFeatureDisabled: !hasAppsFeature
-        },
-        () => {
-          this.openDeeplinkedAppDetails();
-        }
-      );
+      this.setState({ ready: true, availableApps, installedApps }, () => {
+        this.openDeeplinkedAppDetails();
+      });
     } catch (err) {
       Notification.error('Failed to load apps.');
     }
   }
 
   openDeeplinkedAppDetails() {
-    if (this.props.deeplinkAppId && !this.state.appsFeatureDisabled) {
-      const apps = this.state.installedApps.concat(this.state.availableApps);
-      const deeplinkedApp = apps.find(app => app.id === this.props.deeplinkAppId);
+    const { deeplinkAppId, hasAppsFeature } = this.props;
 
-      if (deeplinkedApp) {
-        // TODO: we could potentially track the deeplink.
-        // Use `this.props.deeplinkReferrer`.
-        openDetailModal(deeplinkedApp);
-      }
+    if (!hasAppsFeature || !deeplinkAppId) {
+      return;
+    }
+
+    const apps = this.state.installedApps.concat(this.state.availableApps);
+    const deeplinkedApp = apps.find(app => {
+      // Find either by marketplace ID ("slug", pretty)
+      // or definition ID (Contentful UUID, ugly).
+      const byMarketplaceId = app.id === deeplinkAppId;
+      const definitionId = get(app, ['appDefinition', 'sys', 'id']);
+      const byDefinitionId = definitionId === deeplinkAppId;
+
+      return byMarketplaceId || byDefinitionId;
+    });
+
+    if (deeplinkedApp && !deeplinkedApp.isPrivateApp) {
+      // TODO: we could potentially track the deeplink.
+      // Use `this.props.deeplinkReferrer`.
+      openDetailModal(deeplinkedApp);
     }
   }
 
@@ -235,15 +237,15 @@ export default class AppsListPage extends React.Component {
   }
 
   renderList() {
-    const { organizationId, spaceId, userId } = this.props;
-    const { installedApps, availableApps, appsFeatureDisabled } = this.state;
+    const { organizationId, spaceId, userId, hasAppsFeature } = this.props;
+    const { installedApps, availableApps } = this.state;
 
     return (
       <AppsListShell
         organizationId={organizationId}
         spaceId={spaceId}
         userId={userId}
-        appsFeatureDisabled={appsFeatureDisabled}>
+        appsFeatureDisabled={!hasAppsFeature}>
         {installedApps.length > 0 && (
           <>
             <Heading element="h2">Installed</Heading>
