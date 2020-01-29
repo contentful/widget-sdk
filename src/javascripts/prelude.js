@@ -63,8 +63,7 @@ angular
     $locationProvider => {
       $locationProvider.html5Mode({
         enabled: true,
-        requireBase: false,
-        rewriteLinks: false
+        requireBase: false
       });
 
       // This is not actually used but prevents gobbling of fragments in
