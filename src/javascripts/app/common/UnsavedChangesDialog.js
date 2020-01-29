@@ -4,11 +4,24 @@ import PropTypes from 'prop-types';
 import { Modal, Button, Paragraph } from '@contentful/forma-36-react-components';
 import ModalLauncher from './ModalLauncher';
 
-export default function createUnsavedChangesDialogOpener(save) {
+/**
+ * @param {function} save
+ * @param {object={}} modalOpts Options for the ModalLauncher
+ * @param {string} modalOpts.modalId The id to use for the resulting UnsavedChangesDialog. Defaults to the current epoch ms
+ */
+export default function createUnsavedChangesDialogOpener(save, modalOpts = {}) {
   return () =>
-    ModalLauncher.open(({ isShown, onClose }) => (
-      <UnsavedChangesDialog key={`${Date.now()}`} save={save} isShown={isShown} onClose={onClose} />
-    ));
+    ModalLauncher.open(
+      ({ isShown, onClose }) => (
+        <UnsavedChangesDialog
+          key={`${Date.now()}`}
+          save={save}
+          isShown={isShown}
+          onClose={onClose}
+        />
+      ),
+      modalOpts
+    );
 }
 
 class UnsavedChangesDialog extends React.Component {
