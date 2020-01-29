@@ -64,14 +64,18 @@ export function create() {
     fieldTypes: ['Text', 'Symbol'],
     name: 'Single line',
     icon: 'singleline',
-    renderFieldEditor: ({ widgetApi }) => <SingleLineEditor field={widgetApi.field} />
+    renderFieldEditor: ({ widgetApi }) => (
+      <SingleLineEditor field={widgetApi.field} locales={widgetApi.locales} />
+    )
   });
 
   registerWidget('multipleLine', {
     fieldTypes: ['Text'],
     name: 'Multiple line',
     icon: 'multipleline',
-    renderFieldEditor: ({ widgetApi }) => <MultipleLineEditor field={widgetApi.field} />
+    renderFieldEditor: ({ widgetApi }) => (
+      <MultipleLineEditor field={widgetApi.field} locales={widgetApi.locales} />
+    )
   });
 
   registerWidget('urlEditor', {
@@ -155,7 +159,9 @@ export function create() {
     name: 'Dropdown',
     icon: 'dropdown',
     notFocusable: true,
-    renderFieldEditor: ({ widgetApi }) => <DropdownEditor field={widgetApi.field} />
+    renderFieldEditor: ({ widgetApi }) => (
+      <DropdownEditor field={widgetApi.field} locales={widgetApi.locales} />
+    )
   });
 
   registerWidget('radio', {
@@ -163,7 +169,9 @@ export function create() {
     name: 'Radio',
     icon: 'radio',
     notFocusable: true,
-    renderFieldEditor: ({ widgetApi }) => <RadioEditor field={widgetApi.field} />
+    renderFieldEditor: ({ widgetApi }) => (
+      <RadioEditor field={widgetApi.field} locales={widgetApi.locales} />
+    )
   });
 
   registerWidget('boolean', {
@@ -286,7 +294,9 @@ export function create() {
     fieldTypes: ['Symbols'],
     name: 'List',
     icon: 'singleline',
-    renderFieldEditor: ({ widgetApi }) => <ListEditor field={widgetApi.field} />,
+    renderFieldEditor: ({ widgetApi }) => (
+      <ListEditor field={widgetApi.field} locales={widgetApi.locales} />
+    ),
     parameters: [
       {
         ...HELP_TEXT_PARAMETER,
@@ -299,7 +309,9 @@ export function create() {
     fieldTypes: ['Symbols'],
     name: 'Checkbox',
     icon: 'checkbox',
-    renderFieldEditor: ({ widgetApi }) => <CheckboxEditor field={widgetApi.field} />
+    renderFieldEditor: ({ widgetApi }) => (
+      <CheckboxEditor field={widgetApi.field} locales={widgetApi.locales} />
+    )
   });
 
   registerWidget('fileEditor', {
