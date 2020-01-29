@@ -131,7 +131,13 @@ WebhookLinkHeader.propTypes = {
 };
 
 export function AppLinkHeader({ appId, apps }) {
-  const app = apps[appId];
+  // Try to find by marketplace ID first and then use definition ID.
+  const app =
+    apps[appId] ||
+    Object.values(apps).find(({ definitionId }) => {
+      return definitionId === appId;
+    });
+
   return (
     <>
       <InstallHeader>Install {app ? app.title : 'app'} to Contentful</InstallHeader>
