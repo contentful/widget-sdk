@@ -10,7 +10,7 @@ export default function register() {
   registerController('ValidationLinkTypeController', [
     '$scope',
     'spaceContext',
-    ($scope, spaceContext) => {
+    function ValidationLinkTypeController($scope, spaceContext) {
       K.onValueScope($scope, spaceContext.publishedCTs.items$, cts => {
         $scope.contentTypes = cts.map(decorateContentType);
       });

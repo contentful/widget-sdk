@@ -17,7 +17,14 @@ export default function register() {
     'entityType',
     'getBlankView',
     'resetList',
-    ($scope, $location, spaceContext, entityType, getBlankView, resetList) => {
+    function ListViewsController(
+      $scope,
+      $location,
+      spaceContext,
+      entityType,
+      getBlankView,
+      resetList
+    ) {
       const viewPersistor = createViewPersistor({
         spaceId: spaceContext.getId(),
         entityType,

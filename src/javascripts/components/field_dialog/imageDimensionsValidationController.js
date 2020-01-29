@@ -20,7 +20,7 @@ export default function register() {
    */
   registerController('ImageDimensionsValidationController', [
     '$scope',
-    function($scope) {
+    function ImageDimensionsValidationController($scope) {
       const controller = this;
 
       // Either 'width' or 'height';

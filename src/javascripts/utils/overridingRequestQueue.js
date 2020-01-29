@@ -36,8 +36,8 @@ export default function register() {
    */
   registerFactory('overridingRequestQueue', [
     '$q',
-    $q =>
-      function createQueue(requestFn, onceFn) {
+    function overridingRequestQueueFactory($q) {
+      return function createQueue(requestFn, onceFn) {
         let deferred, requests, required, performed;
         reset();
 
@@ -119,6 +119,7 @@ export default function register() {
           required = [];
           performed = {};
         }
-      }
+      };
+    }
   ]);
 }

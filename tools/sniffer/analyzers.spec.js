@@ -17,7 +17,7 @@ describe('analyze', () => {
         const SpaceMembershipRepository = getModule('access_control/SpaceMembershipRepository');
 
 
-        registerController('controllerWithNoDeps', [() => {
+        registerController('controllerWithNoDeps', [function() {
 
         }]);
 
@@ -26,7 +26,7 @@ describe('analyze', () => {
           'spaceContext',
           'access_control/AccessChecker',
           'services/TokenStore',
-          () => {}
+          function() {}
         ]);
 
     `

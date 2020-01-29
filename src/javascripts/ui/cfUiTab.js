@@ -68,7 +68,7 @@ export default function register() {
     }
   }));
 
-  registerController('UiTabController', function() {
+  registerController('UiTabController', function UiTabController() {
     function Tab(controller, name) {
       this.name = name;
       this.activate = () => {

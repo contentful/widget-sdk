@@ -12,7 +12,7 @@ export default function register() {
    */
   registerFactory('entityEditor/Document/PresenceHub', [
     '$interval',
-    $interval => {
+    function($interval) {
       const FOCUS_THROTTLE = 10e3;
       const PING_TIMEOUT = 60e3;
 

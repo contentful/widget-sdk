@@ -12,7 +12,7 @@ export default function register() {
    * and to bugsnag if it is enabled.
    */
   registerFactory('$exceptionHandler', [
-    () => {
+    function exceptionHandler() {
       return exception => {
         const metaData = _.extend({ promptedReload: true }, exception.metaData);
 

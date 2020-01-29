@@ -19,7 +19,7 @@ export default function register() {
     '$q',
     'spaceContext',
     'overridingRequestQueue',
-    function($scope, $q, spaceContext, createRequestQueue) {
+    function EntryListSearchController($scope, $q, spaceContext, createRequestQueue) {
       let initialized = false;
       let lastUISearchState = null;
 

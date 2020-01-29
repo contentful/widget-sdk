@@ -18,7 +18,7 @@ export default function register() {
    */
   registerFactory('spaceContext', [
     '$rootScope',
-    $rootScope => {
+    function spaceContext($rootScope) {
       const publishedCTsBus$ = K.createPropertyBus([]);
 
       // Enforcements deinitialization function, when changing space

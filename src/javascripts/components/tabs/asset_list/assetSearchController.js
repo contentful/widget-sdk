@@ -20,7 +20,7 @@ export default function register() {
     '$q',
     'spaceContext',
     'PromisedLoader',
-    function($scope, $q, spaceContext, PromisedLoader) {
+    function AssetSearchController($scope, $q, spaceContext, PromisedLoader) {
       const controller = this;
       const assetLoader = new PromisedLoader();
 

@@ -35,7 +35,7 @@ export default function register() {
   registerController('WidgetApiController', [
     '$scope',
     'spaceContext',
-    function($scope, spaceContext) {
+    function WidgetApiController($scope, spaceContext) {
       const {
         locale,
         fieldLocale,

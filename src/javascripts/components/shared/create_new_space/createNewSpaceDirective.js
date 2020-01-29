@@ -28,7 +28,7 @@ export default function register() {
     '$state',
     '$element',
     'spaceContext',
-    function($scope, $rootScope, $state, $element, spaceContext) {
+    function createSpaceController($scope, $rootScope, $state, $element, spaceContext) {
       const controller = this;
       const DEFAULT_LOCALE = 'en-US';
       const DEFAULT_ERROR_MESSAGE =

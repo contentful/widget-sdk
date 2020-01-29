@@ -23,7 +23,7 @@ export default function register() {
     'validator',
     'otDoc',
     'spaceContext',
-    function($scope, notify, validator, otDoc, spaceContext) {
+    function EntityEditorStateController($scope, notify, validator, otDoc, spaceContext) {
       const controller = this;
       const permissions = otDoc.permissions;
       const reverter = otDoc.reverter;

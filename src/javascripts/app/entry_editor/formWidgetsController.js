@@ -15,7 +15,7 @@ export default function register() {
   registerController('FormWidgetsController', [
     '$scope',
     'controls',
-    ($scope, controls) => {
+    function FormWidgetsController($scope, controls) {
       // Visibility can change when:
       // - "Show disabled fields" option is used.
       // - The single/multi-locale mode is toggled.

@@ -34,7 +34,7 @@ export default function register() {
    * The Schema Controller validates data against a schema creates
    * error messages.
    */
-  registerFactory('SchemaController', () => {
+  registerFactory('SchemaController', function() {
     function SchemaController(messageBuilder, schema) {
       this.messageBuilder = messageBuilder;
       this.context = {};

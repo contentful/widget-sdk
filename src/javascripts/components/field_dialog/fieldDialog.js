@@ -34,7 +34,7 @@ export default function register() {
    */
   registerFactory('openFieldDialog', [
     'modalDialog',
-    modalDialog => {
+    function openFieldDialog(modalDialog) {
       return function openFieldDialog($scope, field, widget) {
         const scope = extend($scope.$new(), {
           field: field,
@@ -251,7 +251,7 @@ export default function register() {
 
   registerController('FieldDialogSettingsController', [
     '$scope',
-    $scope => {
+    function FieldDialogSettingsController($scope) {
       $scope.schema = {
         errors: function(decoratedField) {
           return fieldDecorator.validateInContentType(decoratedField, $scope.contentType.data);
@@ -312,7 +312,7 @@ export default function register() {
    */
   registerController('FieldDialogValidationsController', [
     '$scope',
-    $scope => {
+    function FieldDialogValidationsController($scope) {
       $scope.$watch('fieldValidationsForm.$invalid', isInvalid => {
         $scope.tab.invalid = isInvalid;
       });
@@ -367,7 +367,7 @@ export default function register() {
   registerController('FieldDialogAppearanceController', [
     '$scope',
     'spaceContext',
-    ($scope, spaceContext) => {
+    function FieldDialogAppearanceController($scope, spaceContext) {
       const isAdmin = !!spaceContext.getData('spaceMember.admin', false);
 
       const hasCustomEditor =

@@ -60,7 +60,7 @@ export default function register() {
   registerController('FieldErrorController', [
     '$scope',
     'fieldErrorMessage',
-    function($scope, fieldErrorMessage) {
+    function FieldErrorController($scope, fieldErrorMessage) {
       const controller = this;
       let unwatchErrors, unwatchHide;
 

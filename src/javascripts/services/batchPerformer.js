@@ -10,7 +10,7 @@ export default function register() {
   registerFactory('batchPerformer', [
     '$q',
     'spaceContext',
-    ($q, spaceContext) => {
+    function batchPerformer($q, spaceContext) {
       const ACTION_NAMES = {
         publish: 'published',
         unpublish: 'unpublished',

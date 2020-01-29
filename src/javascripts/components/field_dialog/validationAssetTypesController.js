@@ -9,7 +9,7 @@ export default function register() {
    */
   registerController('ValidationAssetTypesController', [
     '$scope',
-    function($scope) {
+    function ValidationAssetTypesController($scope) {
       const controller = this;
 
       controller.types = _.map(mimetype.getGroupNames(), (label, name) => ({

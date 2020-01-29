@@ -24,7 +24,7 @@ export default function register() {
     '$location',
     'spaceContext',
     'modalDialog',
-    ($rootScope, $state, $location, spaceContext, modalDialog) => {
+    function($rootScope, $state, $location, spaceContext, modalDialog) {
       const { updateNavState } = NavState;
 
       // Result of confirmation dialog

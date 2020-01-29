@@ -27,7 +27,7 @@ const VALID_DEFINITION_PROPS = [
 export default function register() {
   registerProvider('states/config', [
     '$stateProvider',
-    $stateProvider => {
+    function($stateProvider) {
       const states = [];
 
       return {
@@ -119,7 +119,7 @@ export default function register() {
 
             $scope.component = component;
 
-            import('access_control/AccessChecker').then(i => accessChecker = i);
+            import('access_control/AccessChecker').then(i => (accessChecker = i));
 
             // force nav component rerender on every navigation change
             const unsubscribe = $rootScope.$on('$stateChangeSuccess', () => {

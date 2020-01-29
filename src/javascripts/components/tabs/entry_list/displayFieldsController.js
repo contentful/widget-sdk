@@ -6,7 +6,7 @@ export default function register() {
   registerController('DisplayedFieldsController', [
     '$scope',
     'spaceContext',
-    ($scope, spaceContext) => {
+    function DisplayedFieldsController($scope, spaceContext) {
       function getAvailableFields(contentTypeId) {
         const filteredContentType = spaceContext.publishedCTs.get(contentTypeId);
         const contentTypeFields = filteredContentType

@@ -25,7 +25,7 @@ export default function register() {
   registerController('FieldLocaleController', [
     '$scope',
     'spaceContext',
-    function($scope, spaceContext) {
+    function FieldLocaleController($scope, spaceContext) {
       const controller = this;
       const field = $scope.widget.field;
       const locale = $scope.locale;

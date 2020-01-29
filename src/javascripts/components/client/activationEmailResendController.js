@@ -13,7 +13,7 @@ import * as TokenStore from 'services/TokenStore';
 export default function register() {
   registerFactory('activationEmailResendController', [
     '$timeout',
-    $timeout => {
+    function activationEmailResendController($timeout) {
       const HOUR_IN_MS = 1000 * 60 * 60;
       const HOURS_BEFORE_REOPEN_DIALOG = 24;
       const store = getStore().forKey('lastActivationEmailResendReminderTimestamp');

@@ -38,7 +38,7 @@ export default function register() {
     '$q',
     '$rootScope',
     '$timeout',
-    ($compile, $q, $rootScope, $timeout) => {
+    function modalDialog($compile, $q, $rootScope, $timeout) {
       const opened = [];
 
       function Dialog(params) {

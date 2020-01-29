@@ -5,7 +5,7 @@ import debounce from 'lodash/debounce';
 export default function register() {
   registerFactory('PromisedLoader', [
     '$q',
-    $q => {
+    function PromisedLoaderFactory($q) {
       function PromisedLoader() {
         this.inProgress = false;
         this._loadPromise = debounce(this._loadPromiseImmediately, 500, { leading: true });

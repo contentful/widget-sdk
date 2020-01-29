@@ -5,7 +5,7 @@ import * as SystemFields from 'data/SystemFields';
 export default function register() {
   registerController('EntryListColumnsController', [
     '$scope',
-    $scope => {
+    function EntryListColumnsController($scope) {
       const SORTABLE_TYPES = ['Boolean', 'Date', 'Integer', 'Number', 'Symbol', 'Location'];
 
       $scope.fieldIsSortable = field => {

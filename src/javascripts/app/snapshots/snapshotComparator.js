@@ -36,7 +36,7 @@ export default function register() {
     '$state',
     '$stateParams',
     'spaceContext',
-    ($scope, $q, $state, $stateParams, spaceContext) => {
+    function SnapshotComparatorController($scope, $q, $state, $stateParams, spaceContext) {
       $scope.versionPicker = versionPicker.create();
       $scope.snapshotCount = $stateParams.snapshotCount;
 
@@ -141,7 +141,7 @@ export default function register() {
 
   registerController('SnapshotComparisonController', [
     '$scope',
-    $scope => {
+    function SnapshotComparisonController($scope) {
       const field = $scope.widget.field;
       const locale = $scope.locale;
       const fieldPath = ['fields', field.id, locale.internal_code];

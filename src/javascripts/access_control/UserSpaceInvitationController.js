@@ -17,7 +17,7 @@ export default function register() {
     '$q',
     '$timeout',
     'spaceContext',
-    function($scope, $q, $timeout, spaceContext) {
+    function UserSpaceInvitationController($scope, $q, $timeout, spaceContext) {
       // A hash with user ids as keys, and role ids as values
       $scope.selectedRoles = {};
 

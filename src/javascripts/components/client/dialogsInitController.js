@@ -14,7 +14,7 @@ export default function register() {
     '$rootScope',
     'spaceContext',
     'activationEmailResendController',
-    ($rootScope, spaceContext, activationEmailResendController) => {
+    function dialogsInitController($rootScope, spaceContext, activationEmailResendController) {
       return { init };
 
       function init() {

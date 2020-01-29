@@ -42,7 +42,7 @@ export default function register() {
   registerController('SnapshotSelectorController', [
     '$scope',
     'spaceContext',
-    ($scope, spaceContext) => {
+    function SnapshotSelectorController($scope, spaceContext) {
       const PER_PAGE = 20;
 
       const entryId = $scope.entityInfo.id;

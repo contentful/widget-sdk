@@ -198,7 +198,7 @@ export default function register() {
     '$scope',
     '$controller',
     'spaceContext',
-    function($scope, $controller, spaceContext) {
+    function InlineEditingControllerEditor($scope, $controller, spaceContext) {
       const editorData = $scope.editorData;
       const entityInfo = (this.entityInfo = editorData.entityInfo);
       const notify = makeNotify('Entry', () => '“' + $scope.title + '”');

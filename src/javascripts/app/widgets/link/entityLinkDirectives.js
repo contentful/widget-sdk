@@ -86,7 +86,7 @@ export default function register() {
 
   registerController('EntityLinkController', [
     '$scope',
-    $scope => {
+    function EntityLinkController($scope) {
       /**
        * Given an entity state we return
        */
