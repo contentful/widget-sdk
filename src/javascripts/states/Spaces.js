@@ -20,7 +20,7 @@ import pageExtensions from 'app/pageExtensions/routes';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
 
 import createSpaceAdviceTemplate from 'components/app_container/cf_create_space_advice.html';
-import spaceHibernationAdviceTemplate from 'components/app_container/cf_space_hibernation_advice.html';
+import SpaceHibernationAdvice from 'components/app_container/SpaceHibernationAdvice';
 import noSectionAvailableTemplate from 'components/app_container/cf_no_section_available.html';
 
 const store = getStore();
@@ -41,7 +41,7 @@ const hibernation = {
   name: 'hibernation',
   url: '/hibernation',
   navComponent: EmptyNavigationBar,
-  template: spaceHibernationAdviceTemplate
+  component: SpaceHibernationAdvice
 };
 
 const resolveSpaceData = [
