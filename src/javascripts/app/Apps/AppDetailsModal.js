@@ -14,7 +14,7 @@ import {
 import StateLink from 'app/common/StateLink';
 import AppPermissions from './AppPermissions';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
-import AppMarkdown from './AppMarkdown';
+import MarkdownRenderer from 'app/common/MarkdownRenderer';
 
 const styles = {
   root: css({
@@ -181,7 +181,7 @@ export function AppDetails(props) {
     <div className={cx(styles.root)}>
       <div className={styles.mainColumn}>
         <AppHeader app={app} showPermissions={showPermissions} />
-        <AppMarkdown source={app.description} />
+        <MarkdownRenderer source={app.description} />
       </div>
       <div className={styles.sidebarColumn}>
         <StateLink to="^.detail" params={{ appId: app.id }}>

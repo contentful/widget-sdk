@@ -104,7 +104,6 @@ export const validEvents = {
   // schema.
   reference_editor: ['create_entry', 'edit_entry'],
   account_dropdown: ['pending_tasks_fetched'],
-  markdown_editor: ['action'],
   reference_editor_action: ['create', 'edit', 'delete', 'link'],
   incoming_links: [
     'dialog_open',

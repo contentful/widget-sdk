@@ -5,7 +5,6 @@ import React from 'react';
 import * as Config from 'Config';
 import { NAMESPACE_BUILTIN } from './WidgetNamespaces';
 import { getModule } from 'NgRegistry';
-
 import { default as RichTextEditor } from 'app/widgets/rich_text';
 import LinkEditor, {
   SingleLinkEditor,
@@ -32,7 +31,7 @@ import FileEditor from 'app/widgets/FileEditor';
 import { canUploadMultipleAssets } from 'access_control/AccessChecker';
 import { getVariation } from 'LaunchDarkly';
 import { detect as detectBrowser } from 'detect-browser';
-import { NEW_MARKDOWN_EDITOR, BREAK_IE11 } from 'featureFlags';
+import { IE11_DEPRECATION_NOTICE } from 'featureFlags';
 
 function browserIsIE11() {
   return detectBrowser().name === 'ie';
@@ -108,7 +107,7 @@ export function create() {
       const spaceId = spaceContext.space.getId();
 
       if (browserIsIE11()) {
-        const isBreakIEIntentionally = await getVariation(BREAK_IE11, {
+        const isBreakIEIntentionally = await getVariation(IE11_DEPRECATION_NOTICE, {
           spaceId,
           organizationId
         });
@@ -125,39 +124,28 @@ export function create() {
         }
       }
 
-      const isNewMarkdownEnabled = await getVariation(NEW_MARKDOWN_EDITOR, {
-        spaceId,
-        organizationId
-      });
-
-      if (isNewMarkdownEnabled) {
-        return {
-          renderFieldEditor: ({ widgetApi }) => {
-            const sdk = Object.assign({}, widgetApi);
-
-            const previewComponents = {
-              embedly: ({ url }) => <EmbedlyPreview previewUrl={url} delay={100} />
-            };
-
-            sdk.dialogs.openExtension = openMarkdownDialog(sdk, previewComponents);
-
-            return (
-              <MarkdownEditor
-                sdk={sdk}
-                parameters={Object.assign({}, widgetApi.parameters, {
-                  instance: {
-                    canUploadAssets: canUploadMultipleAssets()
-                  }
-                })}
-                previewComponents={previewComponents}
-              />
-            );
-          }
-        };
-      }
-
       return {
-        template: '<cf-markdown-editor />'
+        renderFieldEditor: ({ widgetApi }) => {
+          const sdk = Object.assign({}, widgetApi);
+
+          const previewComponents = {
+            embedly: ({ url }) => <EmbedlyPreview previewUrl={url} delay={100} />
+          };
+
+          sdk.dialogs.openExtension = openMarkdownDialog(sdk, previewComponents);
+
+          return (
+            <MarkdownEditor
+              sdk={sdk}
+              parameters={Object.assign({}, widgetApi.parameters, {
+                instance: {
+                  canUploadAssets: canUploadMultipleAssets()
+                }
+              })}
+              previewComponents={previewComponents}
+            />
+          );
+        }
       };
     }
   });

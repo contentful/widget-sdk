@@ -1,15 +1,15 @@
 import { registerDirective } from 'NgRegistry';
+import React from 'react';
 import _ from 'lodash';
+import EmbedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
 import moment from 'moment';
-import * as K from 'utils/kefir';
-
 import createSnapshotExtensionBridge from 'widgets/bridges/createSnapshotExtensionBridge';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 import { userInputFromDatetime } from './dateUtils';
 import * as EntityResolver from 'data/CMA/EntityResolver';
-import generatePreview from 'markdown_editor/PreviewGenerator';
 import { isRtlLocale } from 'utils/locales';
 import * as EntityHelpers from 'app/entity_editor/entityHelpers';
+import { MarkdownPreview } from '@contentful/field-editor-markdown';
 
 import snapshotPresenterTemplate from './cf_snapshot_presenter.html';
 
@@ -84,16 +84,21 @@ export default function register() {
   registerDirective('cfSnapshotPresenterMarkdown', [
     () => ({
       restrict: 'E',
-      template: '<cf-markdown-preview class="markdown-preview" preview="preview" />',
+      template: '<react-component props="props" component="component" />',
 
       controller: [
         '$scope',
         $scope => {
-          const markdown$ = K.fromScopeValue($scope, scope => scope.value);
-          const preview$ = generatePreview(markdown$);
-          K.onValueScope($scope, preview$, preview => {
-            $scope.preview = preview.preview;
-          });
+          $scope.component = MarkdownPreview;
+          $scope.props = {
+            value: $scope.value,
+            mode: 'zen',
+            direction: 'ltr',
+            previewComponents: {
+              // eslint-disable-next-line
+              embedly: ({ url }) => <EmbedlyPreview previewUrl={url} delay={100} />
+            }
+          };
         }
       ]
     })

@@ -51,9 +51,6 @@ import * as navigationModernStackOnboardingRelaunchEs6 from 'navigation/modernSt
 import * as componentsIe11DeprecationNoticeIndexEs6 from 'components/Ie11DeprecationNotice';
 import * as appEntityEditorBulkEditorTitleEs6 from 'app/entity_editor/bulk_editor/BulkEditorTitle';
 import * as embedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
-import * as HeadingContextMenu from 'markdown_editor/components/HeadingContextMenu';
-import * as InsertMediaComponent from 'markdown_editor/components/InsertMediaComponent';
-import * as ActionComponent from 'markdown_editor/components/ActionComponent';
 import * as FieldDialogSettingsComponent from 'components/field_dialog/components/FieldDialogSettingsComponent';
 import * as ThumbnailComponent from 'components/Thumbnail/Thumbnail';
 import * as SizeValidation from 'components/field_dialog/validations/SizeValidation';
@@ -301,9 +298,6 @@ function getModule(name) {
     'components/Ie11DeprecationNotice': componentsIe11DeprecationNoticeIndexEs6,
     'app/entity_editor/bulk_editor/BulkEditorTitle': appEntityEditorBulkEditorTitleEs6,
     'components/forms/embedly_preview/EmbedlyPreview': embedlyPreview,
-    'markdown_editor/components/HeadingContextMenu': HeadingContextMenu,
-    'markdown_editor/components/InsertMediaComponent': InsertMediaComponent,
-    'markdown_editor/components/ActionComponent': ActionComponent,
     'components/field_dialog/components/FieldDialogSettingsComponent': FieldDialogSettingsComponent,
     'components/Thumbnail/Thumbnail': ThumbnailComponent,
     'components/field_dialog/validations/SizeValidation': SizeValidation,

@@ -14,9 +14,6 @@ export const NEW_INVITATION_FORM = 'feature-bv-05-2019-new-invitation-flow';
 export const TWO_FA = 'feature-ogg-10-2019-2fa';
 export const IE11_DEPRECATION_NOTICE = 'feature-pul-11-2019-ie11-notice';
 
-export const BREAK_IE11 = 'break-ie-11-experience';
-export const NEW_MARKDOWN_EDITOR = 'new-markdown-editor';
-
 // Gatekeeper Product Catalog Flags
 export const ENVIRONMENT_USAGE_ENFORCEMENT = 'environment_usage_enforcements';
 export const ENVIRONMENT_ALIASING = 'environment_aliasing';

@@ -1,6 +1,6 @@
 import { find, get as getAtPath, set as setAtPath } from 'lodash';
 import { map, filter, assign, findMap, insertAt, move } from 'utils/Collections';
-import { create as createStortable } from 'sortablejs';
+import { create as createSortable } from 'sortablejs';
 
 import * as random from 'utils/Random';
 
@@ -82,7 +82,7 @@ export default function create(getFolders, saveFolders) {
     // Create a new instance only if there's a defined, changed element.
     if (el && getAtPath(sortables, path) !== el) {
       setAtPath(sortables, path, el);
-      createStortable(el, config);
+      createSortable(el, config);
     }
   }
 }

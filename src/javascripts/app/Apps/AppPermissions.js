@@ -4,7 +4,7 @@ import { Card, Heading, Icon, Button } from '@contentful/forma-36-react-componen
 import { css } from 'emotion';
 import PropTypes from 'prop-types';
 import AppIcon from './AppIcon';
-import AppMarkdown from './AppMarkdown';
+import MarkdownRenderer from 'app/common/MarkdownRenderer';
 
 const styles = {
   container: css({
@@ -63,7 +63,7 @@ export default function AppPermissions(props) {
           <img src={icon} className={styles.icon} />
         </div>
 
-        <AppMarkdown source={permissions} />
+        <MarkdownRenderer source={permissions} />
       </Card>
       <div className={styles.actions}>
         <Button

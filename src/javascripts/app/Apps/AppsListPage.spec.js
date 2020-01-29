@@ -3,7 +3,7 @@ import { render, wait, cleanup } from '@testing-library/react';
 import AppsListPage from './AppsListPage';
 import repoAppsMock from './mockData/repoAppsMock.json';
 
-jest.mock('./AppMarkdown', () => () => null, { virtual: true });
+jest.mock('app/common/MarkdownRenderer', () => () => null, { virtual: true });
 
 jest.mock('MicroBackendsClient', () => {
   return () => {};
