@@ -28,28 +28,27 @@ export function buildExtensionWidget({ sys, extension, parameters }) {
   };
 }
 
-export function buildAppWidget({ id, title, icon, appDefinition, appInstallation }) {
-  // Legacy way of defining field types for apps.
-  // TODO: remove once API changes are deployed.
-  let fieldTypes = appDefinition.fieldTypes;
-
-  // Supports new API format:
-  // { ..., locations: [ { location: 'entry-field', fieldTypes: [...] } ] }
+function getAppFieldTypes(appDefinition) {
   const entryFieldLocation = (appDefinition.locations || []).find(l => {
     return isPlainObject(l) && l.location === LOCATION_ENTRY_FIELD;
   });
 
   if (entryFieldLocation) {
-    fieldTypes = entryFieldLocation.fieldTypes;
+    return (entryFieldLocation.fieldTypes || []).map(toInternalFieldType);
+  } else {
+    return [];
   }
+}
 
+export function buildAppWidget({ id, title, icon, appDefinition, appInstallation }) {
   return {
     src: appDefinition.src,
     id: appDefinition.sys.id,
     appDefinitionId: appDefinition.sys.id,
     namespace: NAMESPACE_APP,
     name: title,
-    fieldTypes: (fieldTypes || []).map(toInternalFieldType),
+    fieldTypes: getAppFieldTypes(appDefinition),
+    locations: (appDefinition.locations || []).map(l => l.location),
     appId: id,
     appIconUrl: icon,
     sidebar: false,
