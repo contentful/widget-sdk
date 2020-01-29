@@ -3,7 +3,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { Card, Heading, Icon, Button } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import PropTypes from 'prop-types';
-import AppIcon from './AppIcon';
+import SVGIcon from 'ui/Components/Icon';
 import MarkdownRenderer from 'app/common/MarkdownRenderer';
 
 const styles = {
@@ -57,7 +57,7 @@ export default function AppPermissions(props) {
         </Heading>
 
         <div className={styles.logos}>
-          <AppIcon appId="contentful" className={styles.appIcon} />
+          <SVGIcon name="contentful-logo-light" className={styles.appIcon} />
           <Icon icon="ChevronLeft" color="muted" className={styles.arrowIcon} />
           <Icon icon="ChevronRight" color="muted" className={styles.arrowIcon} />
           <img src={icon} className={styles.icon} />
