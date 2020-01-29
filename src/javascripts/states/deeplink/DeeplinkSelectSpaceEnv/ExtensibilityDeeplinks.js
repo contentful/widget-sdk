@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
 import { Icon, Paragraph } from '@contentful/forma-36-react-components';
-import AppIcon from 'app/Apps/AppIcon';
 import { css } from 'emotion';
 import WebhookTemplates from 'app/settings/webhooks/templates';
+import SVGIcon from 'ui/Components/Icon';
 
 const styles = {
   installHeader: css({
@@ -90,7 +90,7 @@ export function isInstallLink(link, id) {
 export function InstallHeader(props) {
   return (
     <div className={styles.installHeader}>
-      <AppIcon className={styles.installHeaderIcon} appId="contentful" size="xsmall" />
+      <SVGIcon name="contentful-logo-light" height={20} className={styles.installHeaderIcon} />
       {props.children}
     </div>
   );
@@ -99,7 +99,7 @@ export function InstallHeader(props) {
 export function InstallLogos(props) {
   return (
     <div className={styles.logos}>
-      <AppIcon appId="contentful" className={styles.appIcon} />
+      <SVGIcon name="contentful-logo-light" className={styles.appIcon} />
       <Icon icon="ChevronLeft" color="muted" className={styles.arrowIcon} />
       <Icon icon="ChevronRight" color="muted" className={styles.arrowIcon} />
       {props.children}
@@ -145,7 +145,7 @@ export function AppLinkHeader({ appId, apps }) {
         {app ? (
           <img src={app.icon} className={styles.appIcon} />
         ) : (
-          <AppIcon appId="generic" className={styles.appIcon} />
+          <SVGIcon name="page-apps" className={styles.appIcon} />
         )}
       </InstallLogos>
     </>
@@ -162,7 +162,7 @@ export function ExtensionLinkHeader({ url }) {
     <>
       <InstallHeader>Install extension to Contentful</InstallHeader>
       <InstallLogos>
-        <AppIcon appId="generic" className={styles.appIcon} />
+        <SVGIcon name="page-apps" className={styles.appIcon} />
       </InstallLogos>
       <div className={styles.extensionLink}>
         <Paragraph>Make sure this extension comes from a trusted source.</Paragraph>
