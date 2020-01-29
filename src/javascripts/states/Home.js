@@ -6,7 +6,6 @@ import { go } from 'states/Navigator';
 import { getSpaces, user$ } from 'services/TokenStore';
 import { getValue } from 'utils/kefir';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
-
 const store = getStore();
 
 /**
@@ -36,6 +35,10 @@ export default makeState({
   name: 'home',
   url: '/',
   template: template(),
+  params: {
+    orgId: null,
+    orgOwnerOrAdmin: null
+  },
   navComponent: EmptyNavigationBar,
   loadingText: 'Loading…',
   resolve: {
@@ -59,9 +62,14 @@ export default makeState({
   },
   controller: [
     '$scope',
+    '$stateParams',
     'space',
-    ($scope, space) => {
-      if (space) {
+    ($scope, $stateParams, space) => {
+      if ($stateParams.orgId) {
+        $scope.orgId = $stateParams.orgId;
+        $scope.orgOwnerOrAdmin = $stateParams.orgOwnerOrAdmin;
+        $scope.context.ready = true;
+      } else if (space) {
         // If a space is found during resolving, send the user to that space
         go({
           path: ['spaces', 'detail'],
@@ -80,7 +88,7 @@ export default makeState({
         $scope.orgOwnerOrAdmin =
           currentOrgMembership &&
           (currentOrgMembership.role === 'owner' || currentOrgMembership.role === 'admin');
-        $scope.lastUsedOrg = currentOrgMembership.organization.sys.id;
+        $scope.orgId = currentOrgMembership.organization.sys.id;
         $scope.spaceTemplateCreated = false;
         $scope.context.ready = true;
         // This listener is triggered on completion of The Example Space creation

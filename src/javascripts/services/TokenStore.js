@@ -152,6 +152,21 @@ export function getSpace(id) {
   });
 }
 
+/**
+ * @ngdoc method
+ * @name TokenStore#getOrganizationSpaces
+ * @param {string} id
+ * @returns {Promise<API.Space>}
+ * @description
+ * This method returns a promise of all spaces one has access to,
+ * that are part of the organization with the provided ID.
+ */
+export function getOrganizationSpaces(id) {
+  return getSpaces().then(spaces => {
+    return spaces.filter(space => space.organization.sys.id === id);
+  });
+}
+
 export function getDomains() {
   const domains = get(tokenInfo, 'domains', []);
   return domains.reduce((map, value) => {

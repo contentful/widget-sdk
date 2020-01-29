@@ -1,13 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Fullscreen from 'components/shared/Fullscreen';
-import { Button } from '@contentful/forma-36-react-components';
+import { Button, Heading, Paragraph, List, ListItem } from '@contentful/forma-36-react-components';
 import Icon from 'ui/Components/Icon';
 import { get } from 'lodash';
 import { createEndpoint } from 'data/EndpointFactory';
 import { Notification } from '@contentful/forma-36-react-components';
 import { go } from 'states/Navigator';
-import { refresh as refreshToken } from 'services/TokenStore';
+import { refresh as refreshToken, getOrganization } from 'services/TokenStore';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { article } from 'utils/StringUtils';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import { User as UserPropType } from 'app/OrganizationSettings/PropTypes';
@@ -67,7 +68,11 @@ export default class UserInvitation extends React.Component {
         navMeta.params = { spaceId: firstSpaceId };
       } else {
         // Just go to home
+        const orgId = get(acceptedInvitation, 'sys.organization.sys.id');
+        const org = await getOrganization(orgId);
+        const orgOwnerOrAdmin = isOwnerOrAdmin(org);
         navMeta.path = ['home'];
+        navMeta.params = { orgId: orgId, orgOwnerOrAdmin: orgOwnerOrAdmin };
       }
 
       go(navMeta).then(() => {
@@ -98,24 +103,28 @@ export default class UserInvitation extends React.Component {
               <React.Fragment>
                 <div className="user-invitation--error">
                   <Icon name="invitation-not-found" />
-                  <h2 className="user-invitation--title">This invitation doesn’t exist.</h2>
-                  <p className="user-invitation--error-details">
+                  <Heading element="h2" className="user-invitation--title">
+                    This invitation doesn’t exist.
+                  </Heading>
+                  <Paragraph className="user-invitation--error-details">
                     If you’ve arrived here by accident, it means that you may have been invited with
                     an email different than the one you’re logged in with — <strong>{email}</strong>
                     . Ask the person who sent you the invitation if they can invite you with this
                     email.
-                  </p>
+                  </Paragraph>
                 </div>
               </React.Fragment>
             )}
             {!errored && (
               <React.Fragment>
                 <div className="user-invitation--info">
-                  <h2 className="user-invitation--title">
+                  <Heading element="h2" className="user-invitation--title">
                     You’ve been invited to the <em>{organizationName}</em> organization in
                     Contentful as {article(role)} {role}
-                  </h2>
-                  <p className="user-invitation--inviter">Invited by {inviterName}</p>
+                  </Heading>
+                  <Paragraph className="user-invitation--inviter">
+                    Invited by {inviterName}
+                  </Paragraph>
                   <Button
                     buttonType="primary"
                     className="user-invitation--join-org-button"
@@ -126,12 +135,12 @@ export default class UserInvitation extends React.Component {
                   </Button>
                 </div>
                 <div className="user-invitation--org-details">
-                  <p>Owners and admins of this organization will be able to see:</p>
+                  <Paragraph>Owners and admins of this organization will be able to see:</Paragraph>
 
-                  <ul>
-                    <li>Your name and profile picture</li>
-                    <li>Last time that you were active within the organization</li>
-                    <li>
+                  <List>
+                    <ListItem>Your name and profile picture</ListItem>
+                    <ListItem> Last time that you were active within the organization</ListItem>
+                    <ListItem>
                       Your{' '}
                       <KnowledgeBase
                         target="spacesAndOrganizations"
@@ -139,8 +148,8 @@ export default class UserInvitation extends React.Component {
                         icon={false}
                       />{' '}
                       in spaces within the organization
-                    </li>
-                  </ul>
+                    </ListItem>
+                  </List>
                 </div>
               </React.Fragment>
             )}
