@@ -114,6 +114,7 @@ export default function NavigationDropdown(props) {
                   if (e.ctrlKey || e.metaKey) {
                     return;
                   }
+                  e.preventDefault();
                   Navigator.go(getNavigationProps(subitem));
                   onClose();
                 }}>
