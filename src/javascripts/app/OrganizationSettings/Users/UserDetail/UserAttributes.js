@@ -115,15 +115,15 @@ export default function UserAttributes({ membership, isSelf, onRoleChange, orgId
       <ul className={styles.column}>
         <li className={styles.item}>
           <strong className={styles.label}>Last active</strong>
-          {lastActiveAt}
+          <span data-test-id="user-attributes.last-active-at">{lastActiveAt}</span>
         </li>
         <li className={styles.item}>
           <strong className={styles.label}>Member since</strong>
-          {memberSince}
+          <span data-test-id="user-attributes.member-since">{memberSince}</span>
         </li>
         <li className={styles.item}>
           <strong className={styles.label}>Invited by</strong>
-          {invitedBy}
+          <span data-test-id="user-attributes.invited-by">{invitedBy}</span>
         </li>
       </ul>
       {membership.sys.sso && <UserSsoInfo membership={membership} />}
@@ -140,7 +140,10 @@ export default function UserAttributes({ membership, isSelf, onRoleChange, orgId
           </li>
           <li>
             <Paragraph>
-              <TextLink linkType="negative" onClick={removeUser}>
+              <TextLink
+                linkType="negative"
+                onClick={removeUser}
+                testId="user-attributes.remove-button">
                 Remove user from organization
               </TextLink>
             </Paragraph>
@@ -171,11 +174,13 @@ function UserSsoInfo({ membership }) {
     <ul className={styles.column}>
       <li className={styles.item}>
         <strong className={styles.label}>Last SSO login</strong>
-        {lastSSOLogin}
+        <span data-test-id="user-attributes.last-sso-login">{lastSSOLogin}</span>
       </li>
       <li className={styles.item}>
         <strong className={styles.label}>Exempt from SSO</strong>
-        {isExemptFromRestrictedMode ? exempt : 'No'}
+        <span data-test-id="user-attributes.sso-exemption-status">
+          {isExemptFromRestrictedMode ? exempt : 'No'}
+        </span>
       </li>
     </ul>
   );

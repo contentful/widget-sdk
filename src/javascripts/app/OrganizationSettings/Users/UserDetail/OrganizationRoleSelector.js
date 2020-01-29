@@ -48,7 +48,12 @@ export class OrganizationRoleSelector extends React.Component {
 
   renderToggle() {
     return (
-      <Button buttonType="muted" size="small" indicateDropdown onClick={() => this.toggle()}>
+      <Button
+        buttonType="muted"
+        size="small"
+        indicateDropdown
+        onClick={() => this.toggle()}
+        testId="org-role-selector.button">
         {this.getOrgRole().name}
       </Button>
     );

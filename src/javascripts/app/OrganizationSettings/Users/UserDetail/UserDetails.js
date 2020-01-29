@@ -2,8 +2,6 @@ import React, { useReducer, useMemo, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { OrganizationMembership as OrganizationMembershipPropType } from 'app/OrganizationSettings/PropTypes';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
-import UserCard from '../UserCard';
-import Icon from 'ui/Components/Icon';
 import { Tabs, Tab, Button, Heading } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
@@ -14,13 +12,15 @@ import { useAsyncFn } from 'app/common/hooks/useAsync';
 import { fetchAndResolve } from 'data/LinkResolver';
 import { getSpaceMemberships } from 'access_control/OrganizationMembershipRepository';
 import { getAllTeamMemberships } from 'access_control/TeamRepository';
+import { go } from 'states/Navigator';
+import UserCard from '../UserCard';
+import Icon from 'ui/Components/Icon';
 import UserSpaceList from './UserSpaceList';
 import UserTeamList from './UserTeamList';
 import UserAttributes from './UserAttributes';
 import ModalLauncher from 'app/common/ModalLauncher';
 import AddToSpacesModal from 'app/OrganizationSettings/Users/common/AddToSpacesModal';
 import EditSpaceMembershipModal from './EditSpaceMembershipModal';
-import { go } from 'states/Navigator';
 
 const styles = {
   tabs: css({
@@ -166,7 +166,7 @@ export default function UserDetails({ initialMembership, isSelf, orgId, hasTeams
         onBack={handleBackButtonClicked}
       />
       <Workbench.Content>
-        <UserCard user={membership.sys.user} size="large" />
+        <UserCard user={membership.sys.user} size="large" status={membership.status} />
         <UserAttributes
           membership={membership}
           isSelf={isSelf}
