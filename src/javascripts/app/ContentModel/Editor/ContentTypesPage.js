@@ -101,7 +101,7 @@ export default function ContentTypesPage(props) {
             />
             {props.hasAdvancedExtensibility && (
               <EntryEditorAppearanceSection
-                extensions={props.extensions}
+                widgets={props.extensions}
                 editorConfiguration={props.editorConfiguration}
                 updateEditorConfiguration={props.actions.updateEditorConfiguration}
               />
@@ -142,5 +142,6 @@ ContentTypesPage.propTypes = {
   hasAdvancedExtensibility: PropTypes.bool.isRequired,
   sidebarConfiguration: PropTypes.array,
   editorConfiguration: PropTypes.object,
+  // TODO: rename to "widgets". Make sure it "isRequired".
   extensions: PropTypes.array
 };
