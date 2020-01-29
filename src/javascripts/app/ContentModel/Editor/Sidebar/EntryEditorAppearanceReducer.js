@@ -10,40 +10,47 @@ export const selectActiveOption = option => ({
   }
 });
 
-const SET_EXTENSION_ID = 'editor/SET_EXTENSION_ID';
+const SET_WIDGET = 'editor/SET_WIDGET';
 
-export const setExtensionId = id => ({
-  type: SET_EXTENSION_ID,
+export const setWidget = widget => ({
+  type: SET_WIDGET,
   payload: {
-    id
+    widget
   }
 });
 
-const SET_EXTENSION_SETTINGS = 'editor/SET_EXTENSION_SETTINGS';
+const SET_SETTINGS = 'editor/SET_SETTINGS';
 
-export const setExtensionSettings = settings => ({
-  type: SET_EXTENSION_SETTINGS,
+export const setSettings = settings => ({
+  type: SET_SETTINGS,
   payload: {
     settings
   }
 });
 
 export const actions = {
-  setExtensionId,
   selectActiveOption,
-  setExtensionSettings
+  setWidget,
+  setSettings
 };
 
 export const reducer = createImmerReducer({
   [SELECT_ACTIVE_OPTION]: (state, action) => {
     state.activeOption = action.payload.option;
   },
-  [SET_EXTENSION_ID]: (state, action) => {
-    state.extensionId = action.payload.id;
-    state.extensionSettings = {};
+  [SET_WIDGET]: (state, action) => {
+    const { widget } = action.payload;
+    state.configuration = widget
+      ? {
+          widgetNamespace: widget.namespace,
+          widgetId: widget.id,
+          settings: {}
+        }
+      : undefined;
     state.touched = true;
   },
-  [SET_EXTENSION_SETTINGS]: (state, action) => {
-    state.extensionSettings = action.payload.settings;
+  [SET_SETTINGS]: (state, action) => {
+    state.configuration = state.configuration || {};
+    state.configuration.settings = action.payload.settings;
   }
 });

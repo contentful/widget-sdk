@@ -6,7 +6,6 @@ import WidgetParametersForm from 'widgets/WidgetParametersForm';
 import { Modal, Button } from '@contentful/forma-36-react-components';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils';
 import useFormState from 'app/common/hooks/useFormState';
-import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 
 const styles = {
   saveButton: css({
@@ -15,25 +14,25 @@ const styles = {
 };
 
 export default function EditorInstanceParametersConfigurationModal(props) {
-  const { extension } = props;
+  const { widget } = props;
 
   const [formState, updateValue] = useFormState(props.initialSettings || {});
 
-  let definitions = extension.parameters;
+  let definitions = widget.parameters;
 
   const values = WidgetParametersUtils.applyDefaultValues(definitions, formState);
   definitions = WidgetParametersUtils.filterDefinitions(definitions, values, {
-    namespace: NAMESPACE_EXTENSION,
-    id: extension.id
+    namespace: widget.namespace,
+    id: widget.id
   });
   definitions = WidgetParametersUtils.unifyEnumOptions(definitions);
   const missing = WidgetParametersUtils.markMissingValues(definitions, values);
   const anyIsMissing = Object.values(missing).reduce((prev, acc) => prev || acc, false);
 
   return (
-    <Modal size="large" isShown onClose={props.onClose} title={`Configure ${extension.name}`}>
+    <Modal size="large" isShown onClose={props.onClose} title={`Configure ${widget.name}`}>
       <WidgetParametersForm
-        definitions={extension.parameters}
+        definitions={widget.parameters}
         updateValue={updateValue}
         missing={missing}
         values={values}
@@ -61,7 +60,7 @@ export default function EditorInstanceParametersConfigurationModal(props) {
 
 EditorInstanceParametersConfigurationModal.propTypes = {
   initialSettings: PropTypes.object.isRequired,
-  extension: PropTypes.object.isRequired,
+  widget: PropTypes.object.isRequired,
   onSave: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired
 };

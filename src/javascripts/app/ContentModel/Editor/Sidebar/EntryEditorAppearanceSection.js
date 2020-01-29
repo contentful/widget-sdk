@@ -1,3 +1,4 @@
+import { get } from 'lodash';
 import React, { useState, useEffect, useReducer, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -12,7 +13,8 @@ import {
   TextLink,
   Subheading
 } from '@contentful/forma-36-react-components';
-import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
+import { NAMESPACE_APP, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
+import { LOCATION_ENTRY_EDITOR } from 'widgets/WidgetLocations';
 import EditorInstanceParametersConfigurationModal from './EditorInstanceParametersConfigurationModal';
 import { reducer, actions } from './EntryEditorAppearanceReducer';
 import { css } from 'emotion';
@@ -23,8 +25,6 @@ const Options = {
   custom: 'custom'
 };
 
-const NOT_SELECTED = '__NOT_SELECTED__';
-
 const styles = {
   validationMessage: css({
     marginTop: tokens.spacingS
@@ -34,54 +34,64 @@ const styles = {
   })
 };
 
-function getInitialValues(editorConfiguration, extensions) {
-  const extensionIds = extensions.map(extension => extension.id);
-  const isCorrectEditorConfiguration =
-    editorConfiguration &&
-    editorConfiguration.widgetNamespace === NAMESPACE_EXTENSION &&
-    extensionIds.includes(editorConfiguration.widgetId);
+function canBeUsedAsEntryEditor(widget) {
+  if (!Array.isArray(widget.locations)) {
+    return true;
+  }
+
+  return widget.locations.includes(LOCATION_ENTRY_EDITOR);
+}
+
+function getInitialValues(configuration, widgets) {
+  const validWidgets = widgets.filter(canBeUsedAsEntryEditor);
+
+  configuration = configuration || {};
+  configuration.settings = configuration.settings || {};
+
+  const isCustom = [NAMESPACE_EXTENSION, NAMESPACE_APP].includes(configuration.widgetNamespace);
+  const isValid = !!validWidgets.find(w => {
+    return w.namespace === configuration.widgetNamespace && w.id === configuration.widgetId;
+  });
+  const isConfigurationValid = isCustom && isValid;
 
   return {
-    extensions,
+    validWidgets,
     touched: false,
-    activeOption: isCorrectEditorConfiguration ? Options.custom : Options.default,
-    extensionId: isCorrectEditorConfiguration ? editorConfiguration.widgetId : NOT_SELECTED,
-    extensionSettings:
-      isCorrectEditorConfiguration && editorConfiguration.settings
-        ? editorConfiguration.settings
-        : {}
+    activeOption: isConfigurationValid ? Options.custom : Options.default,
+    configuration: isConfigurationValid ? configuration : null
   };
 }
 
 export default function EntryEditorAppearanceSection(props) {
-  const { updateEditorConfiguration, editorConfiguration, extensions } = props;
+  const { updateEditorConfiguration, editorConfiguration, widgets } = props;
 
-  const initialValues = getInitialValues(editorConfiguration, extensions);
+  const initialValues = getInitialValues(editorConfiguration, widgets);
   const [state, dispatch] = useReducer(reducer, initialValues);
   const [isConfigurationOpen, setConfigurationOpen] = useState(false);
 
   useEffect(() => {
     if (state.activeOption === Options.default) {
       updateEditorConfiguration(undefined);
-    } else if (state.activeOption === Options.custom && state.extensionId !== NOT_SELECTED) {
-      updateEditorConfiguration({
-        widgetId: state.extensionId,
-        widgetNamespace: NAMESPACE_EXTENSION,
-        settings: state.extensionSettings
-      });
+    } else if (state.activeOption === Options.custom && state.configuration) {
+      updateEditorConfiguration(state.configuration);
     }
-  }, [state.activeOption, state.extensionId, state.extensionSettings, updateEditorConfiguration]);
+  }, [state.activeOption, state.configuration, updateEditorConfiguration]);
 
-  const currentExtension = useMemo(() => {
-    return extensions.find(item => item.id === state.extensionId);
-  }, [extensions, state.extensionId]);
+  const currentWidget = useMemo(() => {
+    const config = state.configuration;
+    return (
+      config &&
+      state.validWidgets.find(w => {
+        return w.namespace === config.widgetNamespace && w.id === config.widgetId;
+      })
+    );
+  }, [state.validWidgets, state.configuration]);
 
-  const hasError = state.touched && state.extensionId === NOT_SELECTED;
-  const hasParams =
-    currentExtension && currentExtension.parameters && currentExtension.parameters.length > 0;
+  const hasError = state.touched && !state.configuration;
+  const hasParams = get(currentWidget, ['parameters'], []).length > 0;
 
   return (
-    <React.Fragment>
+    <>
       <Subheading className="entity-sidebar__heading">Entry Editor Appearance</Subheading>
       <Typography>
         <Paragraph>Change the entry editor’s appearance for this content type. </Paragraph>
@@ -112,17 +122,19 @@ export default function EntryEditorAppearanceSection(props) {
           />
         </FieldGroup>
         {state.activeOption === Options.custom && (
-          <React.Fragment>
+          <>
             <Select
               hasError={hasError}
-              value={state.extensionId}
+              value={`${state.validWidgets.indexOf(currentWidget)}`}
               onChange={e => {
-                dispatch(actions.setExtensionId(e.target.value));
+                const widget = state.validWidgets[e.target.value];
+                dispatch(actions.setWidget(widget));
               }}>
-              <Option value={NOT_SELECTED}>Select custom entry editor</Option>
-              {extensions.map(extension => (
-                <Option value={extension.id} key={extension.id}>
-                  {extension.name}
+              <Option value="-1">Select custom entry editor</Option>
+              {state.validWidgets.map((w, i) => (
+                <Option value={`${i}`} key={[w.namespace, w.id].join(',')}>
+                  {w.name}
+                  {w.namespace === NAMESPACE_APP ? ' (app)' : ''}
                 </Option>
               ))}
             </Select>
@@ -140,15 +152,15 @@ export default function EntryEditorAppearanceSection(props) {
                 Change instance parameters
               </TextLink>
             )}
-          </React.Fragment>
+          </>
         )}
       </Form>
-      {isConfigurationOpen && currentExtension && (
+      {isConfigurationOpen && currentWidget && (
         <EditorInstanceParametersConfigurationModal
-          initialSettings={state.extensionSettings}
-          extension={currentExtension}
+          initialSettings={get(state, ['configuration', 'settings'], {})}
+          widget={currentWidget}
           onSave={settings => {
-            dispatch(actions.setExtensionSettings(settings));
+            dispatch(actions.setSettings(settings));
             setConfigurationOpen(false);
           }}
           onClose={() => {
@@ -156,12 +168,12 @@ export default function EntryEditorAppearanceSection(props) {
           }}
         />
       )}
-    </React.Fragment>
+    </>
   );
 }
 
 EntryEditorAppearanceSection.propTypes = {
-  extensions: PropTypes.array.isRequired,
+  widgets: PropTypes.array.isRequired,
   editorConfiguration: PropTypes.object,
   updateEditorConfiguration: PropTypes.func.isRequired
 };
