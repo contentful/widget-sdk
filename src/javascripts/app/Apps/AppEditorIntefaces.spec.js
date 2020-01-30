@@ -44,7 +44,7 @@ describe('AppEditorInterfaces', () => {
   });
 
   describe('transformEditorInterfacesToTargetState', () => {
-    it('inserts extension references to editor interfaces', async () => {
+    it('inserts widget references to editor interfaces', async () => {
       cma.getEditorInterfaces.mockImplementationOnce(() =>
         Promise.resolve({
           items: [
@@ -79,11 +79,8 @@ describe('AppEditorInterfaces', () => {
 
       await transform({
         CT1: {
-          controls: [{ fieldId: 'test', settings: { test: true } }, { fieldId: 'test2' }],
-          sidebar: {
-            position: 1,
-            settings: { hello: 'world' }
-          }
+          controls: [{ fieldId: 'test' }, { fieldId: 'test2' }],
+          sidebar: { position: 1 }
         },
         CT2: {
           editor: true,
@@ -99,8 +96,7 @@ describe('AppEditorInterfaces', () => {
           {
             fieldId: 'test',
             widgetNamespace: NAMESPACE_APP,
-            widgetId: APP_ID,
-            settings: { test: true }
+            widgetId: APP_ID
           },
           { fieldId: 'test2', widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }
         ],
@@ -108,8 +104,7 @@ describe('AppEditorInterfaces', () => {
           { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'publication-widget' },
           {
             widgetNamespace: NAMESPACE_APP,
-            widgetId: APP_ID,
-            settings: { hello: 'world' }
+            widgetId: APP_ID
           },
           { widgetNamespace: NAMESPACE_EXTENSION, widgetId: 'some-extension' }
         ]
@@ -153,7 +148,7 @@ describe('AppEditorInterfaces', () => {
       });
     });
 
-    it('updates widget settings and position in the sidebar', async () => {
+    it('updates widget position in the sidebar', async () => {
       cma.getEditorInterfaces.mockImplementationOnce(() =>
         Promise.resolve({
           items: [
@@ -163,18 +158,13 @@ describe('AppEditorInterfaces', () => {
                 {
                   fieldId: 'test',
                   widgetNamespace: NAMESPACE_APP,
-                  widgetId: APP_ID,
-                  settings: { test: true }
+                  widgetId: APP_ID
                 }
               ],
               sidebar: [
                 { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'publication-widget' },
                 { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'versions-widget' },
-                {
-                  widgetNamespace: NAMESPACE_APP,
-                  widgetId: APP_ID,
-                  settings: { hello: 'world' }
-                }
+                { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }
               ]
             }
           ]
@@ -183,11 +173,8 @@ describe('AppEditorInterfaces', () => {
 
       await transform({
         CT1: {
-          controls: [{ fieldId: 'test', settings: { test: false, extra: true } }],
-          sidebar: {
-            position: 1,
-            settings: { hello: 'jakub' }
-          }
+          controls: [{ fieldId: 'test' }],
+          sidebar: { position: 1 }
         }
       });
 
@@ -199,17 +186,12 @@ describe('AppEditorInterfaces', () => {
           {
             fieldId: 'test',
             widgetNamespace: NAMESPACE_APP,
-            widgetId: APP_ID,
-            settings: { test: false, extra: true }
+            widgetId: APP_ID
           }
         ],
         sidebar: [
           { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'publication-widget' },
-          {
-            widgetNamespace: NAMESPACE_APP,
-            widgetId: APP_ID,
-            settings: { hello: 'jakub' }
-          },
+          { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
           { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'versions-widget' }
         ]
       });
@@ -287,11 +269,7 @@ describe('AppEditorInterfaces', () => {
                 { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'publication-widget' },
                 { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
                 { widgetNamespace: NAMESPACE_EXTENSION, widgetId: 'different-extension' },
-                {
-                  widgetNamespace: NAMESPACE_APP,
-                  widgetId: APP_ID,
-                  settings: { test: true }
-                }
+                { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }
               ]
             },
             {
@@ -301,12 +279,7 @@ describe('AppEditorInterfaces', () => {
                 { fieldId: 'author', widgetNamespace: NAMESPACE_BUILTIN, widgetId: APP_ID },
                 { fieldId: 'date', widgetNamespace: NAMESPACE_APP, widgetId: 'different' },
                 { fieldId: 'lead', widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
-                {
-                  fieldId: 'content',
-                  widgetNamespace: NAMESPACE_APP,
-                  widgetId: APP_ID,
-                  settings: { test: true }
-                }
+                { fieldId: 'content', widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }
               ],
               editor: {
                 widgetNamespace: NAMESPACE_APP,

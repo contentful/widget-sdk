@@ -26,7 +26,8 @@ export default function validateTargetState(targetState) {
     }
 
     (ei.controls || []).forEach(control => {
-      const validControl = typeof control.fieldId === 'string' && isObject(control.settings || {});
+      const validControl =
+        isObject(control) && typeof control.fieldId === 'string' && control.fieldId.length > 0;
       if (!validControl) {
         throw new Error(`Invalid target controls declared for EditorInterface ${ctId}.`);
       }
@@ -39,22 +40,14 @@ export default function validateTargetState(targetState) {
 
     if (isObject(ei.sidebar)) {
       const validPosition = !ei.sidebar.position || isUnsignedInteger(ei.sidebar.position);
-      const validSettings = isObject(ei.sidebar.settings || {});
-      if (!(validPosition && validSettings)) {
+      if (!validPosition) {
         throw new Error(`Invalid target sidebar declared for EditorInterface ${ctId}.`);
       }
     }
 
-    const validEditor = !ei.editor || ei.editor === true || isObject(ei.editor);
+    const validEditor = !ei.editor || ei.editor === true;
     if (!validEditor) {
       throw new Error(`Invalid target editor declared for EditorInterface ${ctId}`);
-    }
-
-    if (isObject(ei.editor)) {
-      const validSettings = isObject(ei.editor.settings || {});
-      if (!validSettings) {
-        throw new Error(`Invalid target editor declared for EditorInterface ${ctId}.`);
-      }
     }
   });
 }
