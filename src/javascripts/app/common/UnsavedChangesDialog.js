@@ -6,9 +6,17 @@ import ModalLauncher from './ModalLauncher';
 
 export default function createUnsavedChangesDialogOpener(save) {
   return () =>
-    ModalLauncher.open(({ isShown, onClose }) => (
-      <UnsavedChangesDialog key={`${Date.now()}`} save={save} isShown={isShown} onClose={onClose} />
-    ));
+    ModalLauncher.open(
+      ({ isShown, onClose }) => (
+        <UnsavedChangesDialog
+          key={`${Date.now()}`}
+          save={save}
+          isShown={isShown}
+          onClose={onClose}
+        />
+      ),
+      { modalId: 'UnsavedChangesDialog' }
+    );
 }
 
 class UnsavedChangesDialog extends React.Component {
