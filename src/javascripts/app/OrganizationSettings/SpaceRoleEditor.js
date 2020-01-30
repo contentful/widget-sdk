@@ -152,23 +152,25 @@ class SpaceRoleEditor extends React.Component {
               </div>
             </DropdownListItem>
           </DropdownList>
-          <DropdownList border="top">
-            <DropdownListItem isTitle={true}>other roles</DropdownListItem>
-            {sortedOptions.map(({ name, sys: { id } }) => (
-              // Allow the whole list item to be clicked
-              <DropdownListItem
-                key={id}
-                testId="space-role-editor.role-option"
-                onClick={this.toggleRole(id)}>
-                <div className={styles.roleListItem}>
-                  {/* We don't use CheckboxField, as it emits double click events */}
-                  {/* https://codesandbox.io/embed/cocky-wiles-r03rq */}
-                  <Checkbox labelText={name} checked={value.includes(id)} id={id} />
-                  <div>{name}</div>
-                </div>
-              </DropdownListItem>
-            ))}
-          </DropdownList>
+          {sortedOptions.length > 0 && (
+            <DropdownList border="top">
+              <DropdownListItem isTitle={true}>other roles</DropdownListItem>
+              {sortedOptions.map(({ name, sys: { id } }) => (
+                // Allow the whole list item to be clicked
+                <DropdownListItem
+                  key={id}
+                  testId="space-role-editor.role-option"
+                  onClick={this.toggleRole(id)}>
+                  <div className={styles.roleListItem}>
+                    {/* We don't use CheckboxField, as it emits double click events */}
+                    {/* https://codesandbox.io/embed/cocky-wiles-r03rq */}
+                    <Checkbox labelText={name} checked={value.includes(id)} id={id} />
+                    <div>{name}</div>
+                  </div>
+                </DropdownListItem>
+              ))}
+            </DropdownList>
+          )}
         </div>
       </Dropdown>
     );
