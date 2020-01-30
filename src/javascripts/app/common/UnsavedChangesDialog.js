@@ -4,12 +4,7 @@ import PropTypes from 'prop-types';
 import { Modal, Button, Paragraph } from '@contentful/forma-36-react-components';
 import ModalLauncher from './ModalLauncher';
 
-/**
- * @param {function} save
- * @param {object={}} modalOpts Options for the ModalLauncher
- * @param {string} modalOpts.modalId The id to use for the resulting UnsavedChangesDialog. Defaults to the current epoch ms
- */
-export default function createUnsavedChangesDialogOpener(save, modalOpts = {}) {
+export default function createUnsavedChangesDialogOpener(save) {
   return () =>
     ModalLauncher.open(
       ({ isShown, onClose }) => (
@@ -20,7 +15,7 @@ export default function createUnsavedChangesDialogOpener(save, modalOpts = {}) {
           onClose={onClose}
         />
       ),
-      modalOpts
+      { modalId: 'UnsavedChangesDialog' }
     );
 }
 

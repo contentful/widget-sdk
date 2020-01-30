@@ -43,8 +43,7 @@ export default function register() {
 
       $scope.actions = createActions($scope, $scope.contentTypeIds);
       $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(
-        $scope.actions.saveAndClose,
-        { modalId: 'contentTypeEditorUnsavedChanges' }
+        $scope.actions.saveAndClose
       );
 
       // We want to track if the user is creating a new CT, but the save
