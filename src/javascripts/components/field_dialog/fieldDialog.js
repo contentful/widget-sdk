@@ -167,7 +167,7 @@ export default function register() {
 
         const selectedWidget = availableWidgets.find(widget => {
           const { namespace, id } = $scope.widgetSettings;
-          return widget.namespace === namespace && widget.id === id;
+          return widget && widget.namespace === namespace && widget.id === id;
         });
 
         let values = $scope.widgetSettings.params;
