@@ -35,7 +35,7 @@
     "@contentful/pubsub-subscriber": "^1.1.0",
     "@contentful/rich-text-links": "^14.0.0",
     "@contentful/rich-text-plain-text-renderer": "^14.0.0",
-    "@contentful/rich-text-types": "^14.0.0",
+    "@contentful/rich-text-types": "^14.0.1",
     "@contentful/sharejs": "^2.15.0",
     "@contentful/validation": "^9.2.0",
     "@contentful/worf": "^4.3.0",

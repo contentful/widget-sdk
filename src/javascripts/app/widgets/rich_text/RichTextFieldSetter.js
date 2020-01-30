@@ -1,5 +1,5 @@
 import jsondiff from 'json0-ot-diff';
-import emptyDoc from './constants/EmptyDoc';
+import { EMPTY_DOCUMENT } from '@contentful/rich-text-types';
 import deepEqual from 'fast-deep-equal';
 import * as ShareJS from 'data/sharejs/utils';
 
@@ -38,7 +38,7 @@ export const is = (fieldId, contentType) => {
  */
 export const setAt = (doc, fieldPath, nextFieldValue) => {
   const fieldValue = ShareJS.peek(doc, fieldPath);
-  if (deepEqual(nextFieldValue, emptyDoc)) {
+  if (deepEqual(nextFieldValue, EMPTY_DOCUMENT)) {
     /**
      * When the editor state displays an empty document, we need to reset the
      * ShareJS field value to `undefined` because:
@@ -67,8 +67,8 @@ export const setAt = (doc, fieldPath, nextFieldValue) => {
      * `undefined` value to an empty document in order for the the subsequent
      * `setValue` invocation to work.
      */
-    return ShareJS.setDeep(doc, fieldPath, emptyDoc).then(() =>
-      setValue(doc, fieldPath, emptyDoc, nextFieldValue)
+    return ShareJS.setDeep(doc, fieldPath, EMPTY_DOCUMENT).then(() =>
+      setValue(doc, fieldPath, EMPTY_DOCUMENT, nextFieldValue)
     );
   }
 

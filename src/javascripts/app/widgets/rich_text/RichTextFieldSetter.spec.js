@@ -1,6 +1,5 @@
-import { BLOCKS } from '@contentful/rich-text-types';
+import { BLOCKS, EMPTY_DOCUMENT } from '@contentful/rich-text-types';
 import * as RichTextFieldSetter from './RichTextFieldSetter';
-import emptyDoc from './constants/EmptyDoc';
 import { document, block, mark, text } from './helpers/nodeFactory';
 
 const mocks = {
@@ -57,17 +56,17 @@ describe('RichTextFieldSetter', () => {
 
       await RichTextFieldSetter.setAt(doc, fieldPath, nextValue);
 
-      expect(mocks.ShareJS.setDeep).toBeCalledWith(doc, fieldPath, emptyDoc);
+      expect(mocks.ShareJS.setDeep).toBeCalledWith(doc, fieldPath, EMPTY_DOCUMENT);
     });
 
     it('resets empty documents to `undefined`', async () => {
       const doc = {
         submitOp: jest.fn().mockImplementationOnce((_ops, cb) => cb())
       };
-      mocks.ShareJS.peek.mockReturnValueOnce(emptyDoc);
+      mocks.ShareJS.peek.mockReturnValueOnce(EMPTY_DOCUMENT);
 
       const fieldPath = ['fields', 'id', 'locale'];
-      const nextValue = emptyDoc;
+      const nextValue = EMPTY_DOCUMENT;
 
       await RichTextFieldSetter.setAt(doc, fieldPath, nextValue);
 
