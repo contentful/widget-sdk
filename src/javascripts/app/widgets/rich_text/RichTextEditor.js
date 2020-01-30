@@ -16,8 +16,7 @@ import { createRichTextAPI } from './plugins/shared/PluginApi';
 import { buildPlugins } from './plugins';
 
 import schema from './constants/Schema';
-import emptyDoc from './constants/EmptyDoc';
-import { BLOCKS } from '@contentful/rich-text-types';
+import { BLOCKS, EMPTY_DOCUMENT } from '@contentful/rich-text-types';
 
 import Toolbar from './Toolbar';
 
@@ -39,7 +38,7 @@ const createSlateValue = contentfulDocument => {
   return normalizedValue;
 };
 
-const emptySlateValue = createSlateValue(emptyDoc);
+const emptySlateValue = createSlateValue(EMPTY_DOCUMENT);
 
 export default class RichTextEditor extends React.Component {
   static propTypes = {
@@ -62,7 +61,7 @@ export default class RichTextEditor extends React.Component {
   };
 
   static defaultProps = {
-    value: emptyDoc,
+    value: EMPTY_DOCUMENT,
     onChange: noop,
     onAction: noop,
     isToolbarHidden: false,
