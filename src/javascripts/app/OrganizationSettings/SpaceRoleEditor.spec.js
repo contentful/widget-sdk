@@ -2,6 +2,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { ADMIN_ROLE_ID } from 'access_control/constants';
 import SpaceRoleEditor from './SpaceRoleEditor';
+import { DropdownListItem } from '@contentful/forma-36-react-components';
 
 describe('SpaceRoleEditor', () => {
   let changeCb;
@@ -36,6 +37,14 @@ describe('SpaceRoleEditor', () => {
     const component = render();
     component.find('button').simulate('click');
     expect(component).toMatchSnapshot();
+  });
+
+  it('shows only admin role if no any other role options are available', () => {
+    const component = render();
+    component.props({ options: [] });
+    expect(
+      component.find(DropdownListItem).filter({ testId: 'space-role-editor.role-option' })
+    ).toHaveLength(0);
   });
 
   it('removes the admin role if any other role is selected', () => {
