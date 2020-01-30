@@ -522,7 +522,7 @@ export default function EntryList({
             );
           })}
         {entries.map(entry => (
-          <StateLink to="^.detail" params={{ entryId: entry.getId() }} key={entry.getId()}>
+          <StateLink path="^.detail" params={{ entryId: entry.getId() }} key={entry.getId()}>
             {({ onClick, getHref }) => {
               return (
                 <TableRow

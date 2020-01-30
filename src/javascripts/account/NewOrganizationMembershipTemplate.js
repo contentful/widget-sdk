@@ -329,7 +329,7 @@ export function ErrorMessage({ failedEmails }) {
         <p>
           They were either an existing user in the organization or a user that’s already been
           invited.{' '}
-          <StateLink to="account.organizations.users.invitations">View invitations</StateLink>.
+          <StateLink path="account.organizations.users.invitations">View invitations</StateLink>.
         </p>
       </div>
       <ul className="pill-list u-separator--small">
@@ -361,7 +361,7 @@ export function SuccessMessage({ successfulOrgInvitations }) {
         </h3>
         <p>
           They should receive an invitation email soon.{' '}
-          <StateLink to="account.organizations.users.list">Go back to the users list</StateLink>
+          <StateLink path="account.organizations.users.list">Go back to the users list</StateLink>
         </p>
       </div>
       <ul className="pill-list u-separator--small">

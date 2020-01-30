@@ -57,7 +57,7 @@ class NewLocaleForm extends Component {
     if (this.state.savedLocale) {
       return (
         <StateRedirect
-          to="^.detail"
+          path="^.detail"
           params={{
             localeId: this.state.savedLocale.sys.id
           }}
@@ -109,7 +109,7 @@ export default class LocalesNewRoute extends React.Component {
               return <FetcherLoading message="Loading locale..." />;
             }
             if (isError) {
-              return <StateRedirect to="^.list" />;
+              return <StateRedirect path="^.list" />;
             }
             const spaceLocales = data;
             return (

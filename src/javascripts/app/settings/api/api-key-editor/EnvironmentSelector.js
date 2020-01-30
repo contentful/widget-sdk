@@ -73,7 +73,7 @@ function Hint() {
       <InfoIcon />
       <p className={styles.hintParagraph}>
         You {`haven't`} set up any additional environments for this space. Head to the{' '}
-        <StateLink key="state-link-environments" to="spaces.detail.settings.environments">
+        <StateLink key="state-link-environments" path="spaces.detail.settings.environments">
           environment settings
         </StateLink>{' '}
         to learn more.

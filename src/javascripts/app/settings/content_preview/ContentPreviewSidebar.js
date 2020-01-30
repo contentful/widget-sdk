@@ -104,8 +104,9 @@ export const LegacyTokens = () => (
         <em>{'{entry_field.slug}'}</em>.
       </Paragraph>
       <Paragraph>
-        Use the <StateLink to="spaces.detail.content_types.list">content model explorer</StateLink>{' '}
-        to retreive the ID of the field(s) you want to use.
+        Use the{' '}
+        <StateLink path="spaces.detail.content_types.list">content model explorer</StateLink> to
+        retreive the ID of the field(s) you want to use.
       </Paragraph>
     </Typography>
   </WorkbenchSidebarItem>

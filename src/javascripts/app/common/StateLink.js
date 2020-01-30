@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import * as Navigator from 'states/Navigator';
 
-const StateLink = ({ to, params, options, children, onClick, ...rest }) => {
+const StateLink = ({ path, params, options, children, onClick, component, ...rest }) => {
   const onClickHandler = e => {
     if (!e) {
-      Navigator.go({ path: to, params, options });
+      Navigator.go({ path, params, options });
       return;
     }
 
@@ -14,7 +14,7 @@ const StateLink = ({ to, params, options, children, onClick, ...rest }) => {
     } else {
       // perform Angular UI router transition only
       e.preventDefault();
-      Navigator.go({ path: to, params, options });
+      Navigator.go({ path, params, options });
       if (onClick) {
         onClick(e);
       }
@@ -23,23 +23,27 @@ const StateLink = ({ to, params, options, children, onClick, ...rest }) => {
 
   if (typeof children === 'function') {
     return children({
-      getHref: () => Navigator.href({ path: to, params, options }),
+      getHref: () => Navigator.href({ path, params, options }),
       onClick: onClickHandler
     });
   }
+
+  const Component = component || 'a';
+
   return (
-    <a {...rest} href={Navigator.href({ path: to, params })} onClick={onClickHandler}>
+    <Component {...rest} href={Navigator.href({ path, params })} onClick={onClickHandler}>
       {children}
-    </a>
+    </Component>
   );
 };
 
 StateLink.propTypes = {
-  to: PropTypes.string.isRequired,
+  path: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]).isRequired,
   params: PropTypes.object,
   options: PropTypes.object,
   children: PropTypes.any,
-  onClick: PropTypes.func
+  onClick: PropTypes.func,
+  component: PropTypes.any
 };
 
 export default StateLink;

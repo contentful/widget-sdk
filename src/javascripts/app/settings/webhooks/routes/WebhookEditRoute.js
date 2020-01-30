@@ -32,7 +32,7 @@ export class WebhookEditRoute extends React.Component {
             return <FetcherLoading message="Loading webhook..." />;
           }
           if (isError) {
-            return <StateRedirect to="^.list" />;
+            return <StateRedirect path="^.list" />;
           }
           return (
             <React.Fragment>

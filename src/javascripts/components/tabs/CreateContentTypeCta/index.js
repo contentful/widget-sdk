@@ -26,7 +26,7 @@ export default function CreateContentTypeCta({ size = null, testId }) {
     return null;
   }
   return (
-    <StateLink to="^.new">
+    <StateLink path="^.new">
       {({ onClick }) => (
         <Button
           className={styles.button}

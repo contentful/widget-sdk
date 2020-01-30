@@ -21,7 +21,7 @@ const LocalesListPropTypes = {
 };
 
 export const AddLocaleButton = ({ getComputeLocalesUsageForOrganization }) => (
-  <StateLink to="^.new">
+  <StateLink path="^.new">
     {({ onClick }) => (
       <Button
         icon="PlusCircle"
@@ -66,7 +66,7 @@ export const LocalesAdvice = props => {
   const upgradeLink =
     subscriptionState && subscriptionState.path ? (
       <StateLink
-        to={subscriptionState.path.join('.')}
+        path={subscriptionState.path.join('.')}
         params={subscriptionState.params}
         options={subscriptionState.options}
         className="text-link upgrade-link">

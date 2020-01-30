@@ -26,7 +26,7 @@ export class AdminOnly extends React.Component {
     if (this.props.render) {
       return this.props.render(StateRedirect);
     }
-    return <StateRedirect to={this.props.redirect} />;
+    return <StateRedirect path={this.props.redirect} />;
   }
 }
 

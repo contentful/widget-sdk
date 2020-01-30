@@ -58,7 +58,7 @@ class ExtensionsListRoute extends React.Component {
             return <ExtensionListShell />;
           }
           if (isError) {
-            return <StateRedirect to="spaces.detail.entries.list" />;
+            return <StateRedirect path="spaces.detail.entries.list" />;
           }
           return (
             <React.Fragment>

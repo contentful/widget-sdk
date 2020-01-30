@@ -37,7 +37,7 @@ export default class LocalesTable extends React.Component {
 
   renderRowForLocale(locale) {
     return (
-      <StateLink to="^.detail" params={{ localeId: locale.sys.id }} key={locale.sys.id}>
+      <StateLink path="^.detail" params={{ localeId: locale.sys.id }} key={locale.sys.id}>
         {({ onClick }) => (
           <TableRow onClick={onClick} style={{ cursor: 'pointer' }}>
             <TableCell aria-label="cell-name">

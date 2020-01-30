@@ -29,7 +29,7 @@ export const compareHelpText =
 
 const CompareButton = props => (
   <StateLink
-    to="spaces.detail.entries.detail.compare.withCurrent"
+    path="spaces.detail.entries.detail.compare.withCurrent"
     params={{ entryId: props.entryId, snapshotId: props.selectedId }}>
     {({ onClick }) => (
       <Button

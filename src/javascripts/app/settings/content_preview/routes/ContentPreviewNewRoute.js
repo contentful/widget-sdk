@@ -4,9 +4,7 @@ import PropTypes from 'prop-types';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import AdminOnly from 'app/common/AdminOnly';
 import StateRedirect from 'app/common/StateRedirect';
-import ContentPreviewFormPage, {
-  ContentPreviewFormPageSkeleton
-} from '../ContentPreviewFormPage';
+import ContentPreviewFormPage, { ContentPreviewFormPageSkeleton } from '../ContentPreviewFormPage';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { contentPreviewToInternal } from 'services/contentPreview/contentPreviewToInternal';
 
@@ -31,7 +29,7 @@ export default class ContentPreviewNewRoute extends Component {
               return <ContentPreviewFormPageSkeleton />;
             }
             if (isError) {
-              return <StateRedirect to="^.list" />;
+              return <StateRedirect path="^.list" />;
             }
 
             const initialValue = contentPreviewToInternal(

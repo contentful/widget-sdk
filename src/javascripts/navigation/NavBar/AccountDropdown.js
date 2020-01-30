@@ -211,7 +211,7 @@ export default class AccountDropdown extends Component {
           </button>
         }>
         <DropdownList border="bottom" className={styles.dropdownList}>
-          <StateLink to="account.profile.user">
+          <StateLink path="account.profile.user">
             {({ getHref, onClick }) => (
               <DropdownListItem
                 testId="nav.account.userProfile"
@@ -225,7 +225,7 @@ export default class AccountDropdown extends Component {
             )}
           </StateLink>
           {this.state.shouldShowPendingTasks && (
-            <StateLink to="spaces.detail.tasks.list">
+            <StateLink path="spaces.detail.tasks.list">
               {({ getHref, onClick }) => (
                 <DropdownListItem
                   testId="nav.account.pendingTasks"

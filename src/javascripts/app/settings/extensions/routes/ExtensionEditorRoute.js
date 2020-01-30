@@ -34,7 +34,7 @@ export class ExtensionEditorRoute extends React.Component {
             return <ExtensionEditorShell goToList={this.props.goToList} />;
           }
           if (isError) {
-            return <StateRedirect to="^.list" />;
+            return <StateRedirect path="^.list" />;
           }
           return (
             <React.Fragment>

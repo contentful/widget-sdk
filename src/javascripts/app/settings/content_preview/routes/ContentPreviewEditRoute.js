@@ -4,9 +4,7 @@ import { getModule } from 'NgRegistry';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import AdminOnly from 'app/common/AdminOnly';
 import StateRedirect from 'app/common/StateRedirect';
-import ContentPreviewFormPage, {
-  ContentPreviewFormPageSkeleton
-} from '../ContentPreviewFormPage';
+import ContentPreviewFormPage, { ContentPreviewFormPageSkeleton } from '../ContentPreviewFormPage';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { getContentPreview } from 'services/contentPreview';
 import { contentPreviewToInternal } from 'services/contentPreview/contentPreviewToInternal';
@@ -36,7 +34,7 @@ export default class ContentPreviewEditRoute extends Component {
               return <ContentPreviewFormPageSkeleton />;
             }
             if (isError) {
-              return <StateRedirect to="^.list" />;
+              return <StateRedirect path="^.list" />;
             }
             const [contentTypes, preview] = data;
             const initialValue = contentPreviewToInternal(preview, contentTypes);

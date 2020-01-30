@@ -210,7 +210,7 @@ export class ExtensionsList extends React.Component {
     const body = extensions.map(extension => (
       <TableRow key={extension.id}>
         <TableCell>
-          <StateLink to="^.detail" params={{ extensionId: extension.id }}>
+          <StateLink path="^.detail" params={{ extensionId: extension.id }}>
             {extension.name}
           </StateLink>
         </TableCell>
@@ -226,7 +226,7 @@ export class ExtensionsList extends React.Component {
         <TableCell className="x--small-cell">
           <div>
             <div>
-              <StateLink to="^.detail" params={{ extensionId: extension.id }}>
+              <StateLink path="^.detail" params={{ extensionId: extension.id }}>
                 {({ getHref, onClick }) => (
                   <TextLink href={getHref()} onClick={onClick} linkType="primary">
                     Edit

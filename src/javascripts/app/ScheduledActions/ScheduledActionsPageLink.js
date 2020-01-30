@@ -22,7 +22,7 @@ const styles = {
 
 export function ScheduledActionsStateLink({ isMasterEnvironment, children }) {
   const path = `spaces.detail.${isMasterEnvironment ? '' : 'environment.'}jobs.list`;
-  return <StateLink to={path}>{children}</StateLink>;
+  return <StateLink path={path}>{children}</StateLink>;
 }
 
 ScheduledActionsStateLink.propTypes = {

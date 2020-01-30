@@ -28,7 +28,7 @@ export default class ScheduledActionsListRoute extends Component {
               />
             );
           } else if (currentVariation === false) {
-            return <StateRedirect to="spaces.detail.entries.list" />;
+            return <StateRedirect path="spaces.detail.entries.list" />;
           } else {
             return null;
           }

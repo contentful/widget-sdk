@@ -352,7 +352,7 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
     <EmptyStateContainer>
       <EmptyStateTeams />
       <Heading>No Teams are available to be added to this space</Heading>
-      <StateLink to="^.list">
+      <StateLink path="^.list">
         {({ onClick }) => (
           <Button buttonType="primary" onClick={onClick}>
             Back to Teams list

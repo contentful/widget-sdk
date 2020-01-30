@@ -43,7 +43,7 @@ export default function RolesListRoute(props) {
             return <RolesWorkbenchShell title="Roles" />;
           }
           if (isError) {
-            return <StateRedirect to="spaces.detail.entries.list" />;
+            return <StateRedirect path="spaces.detail.entries.list" />;
           }
           return (
             <RolesList

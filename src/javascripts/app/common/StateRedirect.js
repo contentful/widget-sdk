@@ -4,13 +4,13 @@ import * as Navigator from 'states/Navigator';
 
 class StateRedirect extends React.Component {
   static propTypes = {
-    to: PropTypes.string.isRequired,
+    path: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]).isRequired,
     params: PropTypes.object,
     options: PropTypes.object
   };
 
   componentDidMount() {
-    Navigator.go({ path: this.props.to, params: this.props.params, options: this.props.options });
+    Navigator.go({ path: this.props.path, params: this.props.params, options: this.props.options });
   }
 
   render() {

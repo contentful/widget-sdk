@@ -36,7 +36,7 @@ export default class SidebarContentPreview extends Component {
         {isAdmin && (
           <React.Fragment>
             <p>No preview is set up for the content type of this entry.</p>{' '}
-            <StateLink to="^.^.settings.content_preview.list">
+            <StateLink path="^.^.settings.content_preview.list">
               Click here to set up a custom content preview.
             </StateLink>
           </React.Fragment>

@@ -25,7 +25,7 @@ export default function NoContentTypeAdvice() {
           content modeling documentation
         </TextLink>
       </Paragraph>
-      <StateLink to="spaces.detail.content_types.new">
+      <StateLink path="spaces.detail.content_types.new">
         {({ onClick }) => (
           <Button testId="create-content-type-empty-state" onClick={onClick}>
             Add content type

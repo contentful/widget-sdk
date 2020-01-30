@@ -162,7 +162,7 @@ export function AppDetails(props) {
 
   if (showPermissions) {
     return (
-      <StateLink to="^.detail" params={{ appId: app.id, acceptedPermissions: true }}>
+      <StateLink path="^.detail" params={{ appId: app.id, acceptedPermissions: true }}>
         {({ onClick }) => (
           <AppPermissionScreen
             app={app}
@@ -184,7 +184,7 @@ export function AppDetails(props) {
         <MarkdownRenderer source={app.description} />
       </div>
       <div className={styles.sidebarColumn}>
-        <StateLink to="^.detail" params={{ appId: app.id }}>
+        <StateLink path="^.detail" params={{ appId: app.id }}>
           {({ onClick }) => (
             <Button
               onClick={determineOnClick(installed, onClick, onClose, setShowPermissions)}

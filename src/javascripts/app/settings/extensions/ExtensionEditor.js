@@ -178,7 +178,7 @@ class ExtensionEditor extends React.Component {
   renderActions = dirty => {
     return (
       <React.Fragment>
-        <StateLink to="^.list">
+        <StateLink path="^.list">
           {({ onClick }) => (
             <Button className={styles.actionButton} buttonType="muted" onClick={onClick}>
               Close

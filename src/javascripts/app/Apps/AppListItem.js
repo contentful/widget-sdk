@@ -85,7 +85,7 @@ export default class AppListItem extends Component {
       <div className={styles.item}>
         <div className={styles.title} data-test-id="app-title">
           <Heading element="h3" className={styles.titleText}>
-            <StateLink to="^.detail" params={{ appId: app.id }}>
+            <StateLink path="^.detail" params={{ appId: app.id }}>
               {({ onClick }) => (
                 <div
                   onClick={this.determineOnClick(onClick, openDetailsFunc)}
@@ -108,7 +108,7 @@ export default class AppListItem extends Component {
         </div>
         <div className={styles.actions}>
           {!!app.appInstallation && (
-            <StateLink to="^.detail" params={{ appId: app.id }}>
+            <StateLink path="^.detail" params={{ appId: app.id }}>
               {({ onClick }) => (
                 <TextLink onClick={onClick} linkType="primary">
                   Configure

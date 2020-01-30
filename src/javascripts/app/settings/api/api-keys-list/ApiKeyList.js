@@ -22,7 +22,7 @@ export default function ApiKeyList({ apiKeys }) {
         {apiKeys.map(key => (
           <TableRow key={key.sys.id}>
             <TableCell>
-              <StateLink to="^.detail" params={{ apiKeyId: key.sys.id }} data-test-id="api-link">
+              <StateLink path="^.detail" params={{ apiKeyId: key.sys.id }} data-test-id="api-link">
                 {key.name}
               </StateLink>
             </TableCell>

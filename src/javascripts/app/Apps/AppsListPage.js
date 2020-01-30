@@ -225,7 +225,7 @@ export default class AppsListPage extends React.Component {
 
   render() {
     if (!getSectionVisibility()['apps']) {
-      return <StateRedirect to="spaces.detail.entries.list" />;
+      return <StateRedirect path="spaces.detail.entries.list" />;
     }
 
     return (

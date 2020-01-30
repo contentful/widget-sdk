@@ -65,7 +65,7 @@ export class WebhookListRoute extends React.Component {
       if (this.props.templateId) {
         return <WebhookForbiddenPage templateId={this.props.templateId} />;
       }
-      return <StateRedirect to="spaces.detail.entries.list" />;
+      return <StateRedirect path="spaces.detail.entries.list" />;
     }
     return (
       <WebhooksFetcher>
@@ -74,7 +74,7 @@ export class WebhookListRoute extends React.Component {
             return <WebhooksLoadingSkeleton />;
           }
           if (isError) {
-            return <StateRedirect to="spaces.detail.entries.list" />;
+            return <StateRedirect path="spaces.detail.entries.list" />;
           }
           const [webhooks, hasAwsProxy] = data;
           return (

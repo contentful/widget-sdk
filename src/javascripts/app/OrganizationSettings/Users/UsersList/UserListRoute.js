@@ -55,7 +55,7 @@ export default class UserListRoute extends React.Component {
               return <FetcherLoading message="Loading users..." />;
             }
             if (isError) {
-              return <StateRedirect to="spaces.detail.entries.list" />;
+              return <StateRedirect path="spaces.detail.entries.list" />;
             }
 
             const [

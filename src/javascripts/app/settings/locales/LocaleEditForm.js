@@ -125,7 +125,7 @@ export default class LocaleEditForm extends Component {
           }`}
           actions={
             <>
-              <StateLink to="^.list">
+              <StateLink path="^.list">
                 {({ onClick }) => (
                   <Button
                     onClick={onClick}

@@ -21,12 +21,12 @@ import {
 } from '@contentful/forma-36-react-components';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
+import StateLink from 'app/common/StateLink';
 import { formatQuery } from './QueryBuilder';
 import ResolveLinks from 'data/LinkResolver';
 import UserListFilters from './UserListFilters';
 import UserCard from '../UserCard';
 import Pagination from 'app/common/Pagination';
-import { href } from 'states/Navigator';
 import { getMemberships, removeMembership } from 'access_control/OrganizationMembershipRepository';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import ModalLauncher from 'app/common/ModalLauncher';
@@ -181,10 +181,10 @@ class UsersList extends React.Component {
   };
 
   getLinkToInvitation() {
-    return href({
+    return {
       path: ['account', 'organizations', 'users', 'new'],
       params: { orgId: this.props.orgId }
-    });
+    };
   }
 
   // TODO: temporarily using the membership id instead of the user id
@@ -192,19 +192,19 @@ class UsersList extends React.Component {
   // This should be changed after `include` is implemented in the backend
   // so that we can get the linked membership from the user endpoint response
   getLinkToUser(user) {
-    return href({
-      path: ['account', 'organizations', 'users', 'detail'],
+    return {
+      path: 'account.organizations.users.detail',
       params: {
         userId: user.sys.id
       }
-    });
+    };
   }
 
   getLinkToInvitationsList() {
-    return href({
-      path: ['account', 'organizations', 'users', 'invitations'],
+    return {
+      path: 'account.organizations.users.invitations',
       params: { orgId: this.props.orgId }
-    });
+    };
   }
 
   handleMembershipRemove = membership => async () => {
@@ -292,13 +292,15 @@ class UsersList extends React.Component {
                       true
                     )} in your organization`}</div>
                     {invitedUsersCount != null && invitedUsersCount > 0 && (
-                      <TextLink href={this.getLinkToInvitationsList()}>
+                      <StateLink component={TextLink} {...this.getLinkToInvitationsList()}>
                         {invitedUsersCount} invited users
-                      </TextLink>
+                      </StateLink>
                     )}
                   </div>
                 )}
-                <Button href={this.getLinkToInvitation()}>Invite users</Button>
+                <StateLink component={Button} {...this.getLinkToInvitation()}>
+                  Invite users
+                </StateLink>
               </div>
             </div>
           }
@@ -341,11 +343,12 @@ class UsersList extends React.Component {
                         className="membership-list__item"
                         data-test-id="organization-membership-list-row">
                         <TableCell>
-                          <TextLink
-                            href={this.getLinkToUser(membership)}
+                          <StateLink
+                            component={TextLink}
+                            {...this.getLinkToUser(membership)}
                             className={styles.membershipLink}>
                             <UserCard user={membership.sys.user} status={membership.status} />
-                          </TextLink>
+                          </StateLink>
                         </TableCell>
                         <TableCell>{startCase(membership.role)}</TableCell>
                         <TableCell>{getLastActivityDate(membership)}</TableCell>
@@ -359,13 +362,15 @@ class UsersList extends React.Component {
                               className="membership-list__item__menu__button">
                               Remove
                             </Button>
-                            <Button
+                            <StateLink
+                              component={Button}
                               buttonType="muted"
                               size="small"
                               href={this.getLinkToUser(membership)}
-                              className="membership-list__item__menu__button">
+                              className="membership-list__item__menu__button"
+                              {...this.getLinkToUser(membership)}>
                               Edit
-                            </Button>
+                            </StateLink>
                           </div>
                         </TableCell>
                       </TableRow>

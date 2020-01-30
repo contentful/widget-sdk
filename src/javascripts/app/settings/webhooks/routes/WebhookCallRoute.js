@@ -32,7 +32,7 @@ export class WebhookCallRoute extends React.Component {
             return <FetcherLoading message="Loading webhook call..." />;
           }
           if (isError) {
-            return <StateRedirect to="^.^.detail" />;
+            return <StateRedirect path="^.^.detail" />;
           }
           const [webhook, call] = data;
           return <WebhookCall webhook={webhook} call={call} onGoBack={this.props.onGoBack} />;

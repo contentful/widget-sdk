@@ -93,7 +93,7 @@ export default class UserInvitationsListRouter extends React.Component {
             }
 
             if (isError) {
-              return <StateRedirect to="spaces.detail.entries.list" />;
+              return <StateRedirect path="spaces.detail.entries.list" />;
             }
 
             const [invitation, membership] = data;

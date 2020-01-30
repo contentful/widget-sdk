@@ -11,7 +11,6 @@ import {
   Typography
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
-import { href } from 'states/Navigator';
 import { billing } from './links';
 
 import Icon from 'ui/Components/Icon';
@@ -71,11 +70,12 @@ function NonPayingOrgCopy({ organizationId }) {
         paid spaces or adding users beyond the free limit.
       </Paragraph>
       <Icon name="invoice" className={styles.icon} />
-      <TextLink
-        href={href(billing(organizationId))}
-        testId="subscription-page.sidebar.add-payment-link">
+      <StateLink
+        component={TextLink}
+        testId="subscription-page.sidebar.add-payment-link"
+        {...billing(organizationId)}>
         Enter payment details
-      </TextLink>
+      </StateLink>
     </>
   );
 }
@@ -92,7 +92,7 @@ function InaccessibleSpacesCopy({ isOrgOwner, organizationId: orgId }) {
         <Paragraph>
           However, since you’re an organization {isOrgOwner ? 'owner' : 'admin'} you can grant
           yourself access by going to{' '}
-          <StateLink to="account.organizations.users.list" params={{ orgId }}>
+          <StateLink path="account.organizations.users.list" params={{ orgId }}>
             Users
           </StateLink>{' '}
           and adding yourself to the space.

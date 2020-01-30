@@ -4,9 +4,9 @@ import { css } from 'emotion';
 
 import { Paragraph, TextLink, Heading } from '@contentful/forma-36-react-components';
 
-import { href } from 'states/Navigator';
 import { memberships as orgMemberships } from './links';
 import Pluralized from 'ui/Components/Pluralized';
+import StateLink from 'app/common/StateLink';
 
 const styles = {
   container: css({
@@ -36,11 +36,12 @@ function UsersForPlan({ usersMeta, organizationId }) {
             <Pluralized text="user" count={numPaid} />. That is <b>${cost}</b> per month.{' '}
           </>
         )}
-        <TextLink
-          href={href(orgMemberships(organizationId))}
+        <StateLink
+          component={TextLink}
+          {...orgMemberships(organizationId)}
           testId="subscription-page.org-memberships-link">
           Manage users
-        </TextLink>
+        </StateLink>
       </Paragraph>
     </div>
   );

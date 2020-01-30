@@ -80,7 +80,7 @@ export class WebhookList extends React.Component {
       <WebhookListShell
         title={`Webhooks (${webhooks.length})`}
         actions={
-          <StateLink to="^.new">
+          <StateLink path="^.new">
             {({ onClick }) => (
               <Button testId="add-webhook-button" icon="PlusCircle" onClick={onClick}>
                 Add Webhook
@@ -103,7 +103,7 @@ export class WebhookList extends React.Component {
               webhooks.map(wh => {
                 return (
                   <StateLink
-                    to="^.detail"
+                    path="^.detail"
                     params={{
                       webhookId: wh.sys.id
                     }}

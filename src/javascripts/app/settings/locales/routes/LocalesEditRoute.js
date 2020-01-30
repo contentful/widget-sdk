@@ -162,7 +162,7 @@ class EditLocaleForm extends Component {
 
   render() {
     if (this.state.isDeleted) {
-      return <StateRedirect to="^.list" />;
+      return <StateRedirect path="^.list" />;
     }
     const isDefaultLocale = !!this.props.initialLocale.default;
     return (
@@ -209,12 +209,12 @@ export default class LocalesEditRoute extends React.Component {
             return <FetcherLoading message="Loading locale..." />;
           }
           if (isError) {
-            return <StateRedirect to="^.list" />;
+            return <StateRedirect path="^.list" />;
           }
           const spaceLocales = data;
           const locale = spaceLocales.find(locale => locale.sys.id === this.props.localeId);
           if (!locale) {
-            return <StateRedirect to="^.list" />;
+            return <StateRedirect path="^.list" />;
           }
 
           return (

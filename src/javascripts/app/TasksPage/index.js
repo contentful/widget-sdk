@@ -143,7 +143,7 @@ export default class TasksPage extends Component {
               <RelativeDateTime value={task.createdAt} />
             </TableCell>
             <TableCell className={styles.entryColumn}>
-              <StateLink to="spaces.detail.entries.detail" params={{ entryId: task.entryId }}>
+              <StateLink path="spaces.detail.entries.detail" params={{ entryId: task.entryId }}>
                 {({ getHref, onClick }) => (
                   <TextLink icon="Entry" href={getHref()} onClick={onClick}>
                     {task.entryTitle}

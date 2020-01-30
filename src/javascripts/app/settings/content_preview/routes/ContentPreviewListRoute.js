@@ -4,9 +4,7 @@ import { values } from 'lodash';
 import * as AccessChecker from 'access_control/AccessChecker';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import StateRedirect from 'app/common/StateRedirect';
-import ContentPreviewListPage, {
-  ContentPreviewListPageSkeleton
-} from '../ContentPreviewListPage';
+import ContentPreviewListPage, { ContentPreviewListPageSkeleton } from '../ContentPreviewListPage';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { getContentPreview } from 'services/contentPreview';
 
@@ -20,7 +18,7 @@ export default class ContentPreviewListRoute extends Component {
   render() {
     const isForbidden = !AccessChecker.getSectionVisibility().settings;
     if (isForbidden) {
-      return <StateRedirect to="spaces.detail.entries.list" />;
+      return <StateRedirect path="spaces.detail.entries.list" />;
     }
     return (
       <ContentPreviewsFetcher>
@@ -29,7 +27,7 @@ export default class ContentPreviewListRoute extends Component {
             return <ContentPreviewListPageSkeleton />;
           }
           if (isError) {
-            return <StateRedirect to="spaces.detail.entries.list" />;
+            return <StateRedirect path="spaces.detail.entries.list" />;
           }
           return (
             <React.Fragment>

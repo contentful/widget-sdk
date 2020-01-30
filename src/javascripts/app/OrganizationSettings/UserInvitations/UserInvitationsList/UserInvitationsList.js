@@ -13,7 +13,6 @@ import {
   Notification
 } from '@contentful/forma-36-react-components';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
-import { go, href } from 'states/Navigator';
 import {
   removeMembership,
   removeInvitation
@@ -23,6 +22,7 @@ import { getInvitedUsers } from '../UserInvitationUtils';
 import { FetcherLoading } from 'app/common/createFetcherComponent';
 import UserInvitationRemovalModal from '../UserInvitationRemovalModal';
 import ModalLauncher from 'app/common/ModalLauncher';
+import StateLink from 'app/common/StateLink';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -39,6 +39,15 @@ const styles = {
   })
 };
 
+const getUserInvitationDetailLink = invitationId => {
+  return {
+    path: 'account.organizations.users.invitation',
+    params: {
+      invitationId
+    }
+  };
+};
+
 export default class InvitationsList extends React.Component {
   static propTypes = {
     orgId: PropTypes.string.isRequired,
@@ -52,27 +61,6 @@ export default class InvitationsList extends React.Component {
   componentDidMount() {
     this.getInvitations();
   }
-
-  getLinkToUsersList() {
-    return href({
-      path: ['account', 'organizations', 'users', 'list']
-    });
-  }
-
-  getLinkToInviteUsersPage() {
-    return href({
-      path: ['account', 'organizations', 'users', 'new']
-    });
-  }
-
-  goToUserInvitationDetail = invitationId => () => {
-    return go({
-      path: ['account', 'organizations', 'users', 'invitation'],
-      params: {
-        invitationId
-      }
-    });
-  };
 
   getInvitations = async () => {
     const { orgId } = this.props;
@@ -136,10 +124,15 @@ export default class InvitationsList extends React.Component {
           title={`Invited users (${invitations.length})`}
           actions={
             <div className={styles.actionsWrapper}>
-              <TextLink href={this.getLinkToUsersList()} className={styles.userListLink}>
+              <StateLink
+                component={TextLink}
+                path="account,organizations.users.list"
+                className={styles.userListLink}>
                 View all users ({membershipsCount})
-              </TextLink>
-              <Button href={this.getLinkToInviteUsersPage()}>Invite users</Button>
+              </StateLink>
+              <StateLink component={Button} path="account.organizations.users.new">
+                Invite users
+              </StateLink>
             </div>
           }></Workbench.Header>
         <Workbench.Content className={styles.workbenchContent}>
@@ -154,11 +147,13 @@ export default class InvitationsList extends React.Component {
             <TableBody>
               {sortedList.map(invitation => (
                 <TableRow key={invitation.id} className="user-invitations-list__row">
-                  <TableCell
-                    onClick={this.goToUserInvitationDetail(invitation.id)}
-                    className="user-invitations-list__email">
-                    {invitation.email}
-                  </TableCell>
+                  <StateLink {...getUserInvitationDetailLink(invitation.id)}>
+                    {({ onClick }) => (
+                      <TableCell onClick={onClick} className="user-invitations-list__email">
+                        {invitation.email}
+                      </TableCell>
+                    )}
+                  </StateLink>
                   <TableCell>{invitation.role}</TableCell>
                   <TableCell>{moment(invitation.createdAt).format('MMMM D, YYYY')}</TableCell>
                   <TableCell align="right" className="user-invitations-list__buttons">
@@ -170,13 +165,15 @@ export default class InvitationsList extends React.Component {
                         className="user-invitations-list__button">
                         Revoke
                       </Button>
-                      <Button
+
+                      <StateLink
+                        component={Button}
                         buttonType="muted"
                         size="small"
-                        onClick={this.goToUserInvitationDetail(invitation.id)}
-                        className="user-invitations-list__button">
+                        className="user-invitations-list__button"
+                        {...getUserInvitationDetailLink(invitation.id)}>
                         View
-                      </Button>
+                      </StateLink>
                     </div>
                   </TableCell>
                 </TableRow>

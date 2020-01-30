@@ -83,7 +83,7 @@ class WebhookActivityLog extends React.Component {
               pageCalls.map(call => {
                 return (
                   <StateLink
-                    to="^.detail.call"
+                    path="^.detail.call"
                     params={{
                       callId: call.sys.id
                     }}

@@ -73,7 +73,7 @@ export default function RoleEditorRoute(props) {
             return <RolesWorkbenchShell onBack={() => {}} />;
           }
           if (isError) {
-            return <StateRedirect to="spaces.detail.entries.list" />;
+            return <StateRedirect path="spaces.detail.entries.list" />;
           }
 
           return (

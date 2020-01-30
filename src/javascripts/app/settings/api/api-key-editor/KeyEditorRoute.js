@@ -42,7 +42,7 @@ export default function KeyEditorRoute(props) {
           return <KeyEditorWorkbench />;
         }
         if (isError) {
-          return <StateRedirect to="^.list" />;
+          return <StateRedirect path="^.list" />;
         }
         return (
           <KeyEditor

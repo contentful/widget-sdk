@@ -13,7 +13,7 @@ export default function EntityStateLink({ entity, children }) {
   const params = { [type === 'Entry' ? 'entryId' : 'assetId']: id };
 
   return (
-    <StateLink to={path.join('.')} params={params}>
+    <StateLink path={path.join('.')} params={params}>
       {children}
     </StateLink>
   );

@@ -60,7 +60,7 @@ export default class FieldDialogWidgetItem extends Component {
             <span>UI Extension</span>
             {isAdmin && (
               <StateLink
-                to="^.^.^.settings.extensions.detail"
+                path="^.^.^.settings.extensions.detail"
                 params={{ extensionId: widget.id }}
                 target="_blank">
                 <Icon name="edit" scale="0.9" />
@@ -72,7 +72,7 @@ export default class FieldDialogWidgetItem extends Component {
           <div className="field-dialog__widget-item-header">
             <span>App</span>
             {isAdmin && (
-              <StateLink to="^.^.^.apps.detail" params={{ appId: widget.appId }} target="_blank">
+              <StateLink path="^.^.^.apps.detail" params={{ appId: widget.appId }} target="_blank">
                 <Icon name="edit" scale="0.9" />
               </StateLink>
             )}

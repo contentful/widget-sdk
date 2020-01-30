@@ -135,8 +135,8 @@ const ExampleProjectOverview = ({ cdaToken, cpaToken }) => {
           <TextLink
             onClick={() => trackClickCTA('preview_app_link')}
             href={getPreviewUrl()}
-            target={'_blank'}
-            rel={'noopener noreferrer'}>
+            target="_blank"
+            rel="noopener noreferrer">
             Preview The Example App
           </TextLink>
         </Paragraph>

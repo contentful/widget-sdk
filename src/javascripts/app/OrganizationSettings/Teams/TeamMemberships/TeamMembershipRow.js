@@ -2,21 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { css } from 'emotion';
 import UserCard from 'app/OrganizationSettings/Users/UserCard';
 import { getUserName } from 'app/OrganizationSettings/Users/UserUtils';
 import { hasReadOnlyPermission } from 'redux/selectors/teams';
 import { TeamMembership as TeamMembershipPropType } from 'app/OrganizationSettings/PropTypes';
 import { TableCell, TableRow, Button, TextLink } from '@contentful/forma-36-react-components';
-import { href } from 'states/Navigator';
-
-const styles = {
-  userLink: css({
-    ':link': {
-      textDecoration: 'none'
-    }
-  })
-};
+import StateLink from 'app/common/StateLink';
 
 class TeamMembershipRow extends React.Component {
   static propTypes = {
@@ -25,18 +16,6 @@ class TeamMembershipRow extends React.Component {
     readOnlyPermission: PropTypes.bool.isRequired,
     removeMembership: PropTypes.func.isRequired
   };
-
-  getLinkToUserByOrganizationMembership(membership) {
-    if (!membership) {
-      return '';
-    }
-    return href({
-      path: ['account', 'organizations', 'users', 'detail'],
-      params: {
-        userId: membership.sys.id
-      }
-    });
-  }
 
   render() {
     const { removeMembership, readOnlyPermission } = this.props;
@@ -49,13 +28,18 @@ class TeamMembershipRow extends React.Component {
         <TableCell>
           {readOnlyPermission ? (
             <UserCard testId="user-card" user={user} />
-          ) : (
-            <TextLink
+          ) : organizationMembership ? (
+            <StateLink
+              component={TextLink}
               testId="user-text-link"
-              href={this.getLinkToUserByOrganizationMembership(organizationMembership)}
-              className={styles.userLink}>
+              path="account.organizations.users.detail"
+              params={{
+                userId: organizationMembership.sys.id
+              }}>
               <UserCard testId="user-card" user={user} />
-            </TextLink>
+            </StateLink>
+          ) : (
+            <UserCard testId="user-card" user={user} />
           )}
         </TableCell>
         <TableCell testId="created-at-cell">{moment(createdAt).format('MMMM DD, YYYY')}</TableCell>

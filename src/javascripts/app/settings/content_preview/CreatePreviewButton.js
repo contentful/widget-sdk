@@ -4,7 +4,7 @@ import StateLink from 'app/common/StateLink';
 
 export default function CreatePreviewButton() {
   return (
-    <StateLink to="^.new">
+    <StateLink path="^.new">
       {({ onClick }) => (
         <Button
           icon="PlusCircle"

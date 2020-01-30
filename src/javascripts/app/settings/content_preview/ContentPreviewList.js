@@ -52,7 +52,7 @@ export default class ContentPreviewList extends Component {
           {this.props.contentPreviews.map(preview => (
             <StateLink
               key={preview.sys.id}
-              to="^.detail"
+              path="^.detail"
               params={{ contentPreviewId: preview.sys.id }}>
               {({ onClick }) => (
                 <TableRow onClick={onClick} style={{ cursor: 'pointer' }}>
@@ -79,7 +79,7 @@ export default class ContentPreviewList extends Component {
           custom content preview for this space in{' '}
           <KnowledgeBase target="content_preview" text="our guide" inlineText />.
         </Paragraph>
-        <StateLink to="^.new">
+        <StateLink path="^.new">
           {({ onClick }) => (
             <Button buttonType="primary" onClick={onClick} testId="add-content-preview-button">
               Set up content preview

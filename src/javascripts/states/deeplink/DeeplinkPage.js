@@ -69,7 +69,7 @@ export function useDeeplinkPage({ searchParams }) {
         setStatus(PageStatuses.selectSpaceEnv);
       }
       setRedirect({
-        to: result.path.join('.'),
+        path: result.path.join('.'),
         params: result.params,
         options: { location: 'replace' }
       });
@@ -117,7 +117,9 @@ export default function DeeplinkPage(props) {
     <Workbench>
       <Workbench.Content type="text">
         {status === PageStatuses.redirecting && <DeeplinkRedirectingMessage />}
-        {status === PageStatuses.redirecting && redirect ? <StateRedirect {...redirect} /> : null}
+        {status === PageStatuses.redirecting && redirect ? (
+          <StateRedirect path={redirect.path} params={redirect.params} options={redirect.options} />
+        ) : null}
         {status === PageStatuses.notExistError && (
           <DeeplinkPageMessage
             title="The link you provided is broken or does not exist"
@@ -125,7 +127,7 @@ export default function DeeplinkPage(props) {
             subtitle={
               <React.Fragment>
                 We are notified about it. You can contact our support or{' '}
-                <StateLink to="home">go to the main page</StateLink>.
+                <StateLink path="home">go to the main page</StateLink>.
               </React.Fragment>
             }
           />
@@ -134,7 +136,7 @@ export default function DeeplinkPage(props) {
           <DeeplinkPageMessage
             testId="deeplink-onboarding-error"
             title="Unfortunately, we didn't find your onboarding space."
-            subtitle={<StateLink to="home">Go to the main page.</StateLink>}
+            subtitle={<StateLink path="home">Go to the main page.</StateLink>}
           />
         )}
         {status === PageStatuses.selectSpaceEnv && (

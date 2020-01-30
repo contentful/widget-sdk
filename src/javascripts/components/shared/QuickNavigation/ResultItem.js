@@ -67,7 +67,7 @@ const EntityListItem = ({ item, index, highlightedIndex, closeModal, getItemProp
       className: highlightedIndex === index ? cx(styles.highlightedItem, styles.item) : styles.item
     })}>
     <StateLink
-      to={item.link.path}
+      path={item.link.path}
       params={item.link.params}
       onClick={closeModal}
       className={styles.entityLink}>
@@ -102,7 +102,7 @@ const SearchLinkListItem = ({ item, getItemProps, highlightedIndex, index, close
             : cx(styles.item, styles.seeMoreItem)
       })}>
       <StateLink
-        to={item.link.path}
+        path={item.link.path}
         params={item.link.params}
         onClick={closeModal}
         className={styles.entityLink}>

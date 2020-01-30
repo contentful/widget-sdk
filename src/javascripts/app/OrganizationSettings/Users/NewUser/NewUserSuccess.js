@@ -12,7 +12,7 @@ import {
 import tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';
 import { css } from 'emotion';
-import { href } from 'states/Navigator';
+import StateLink from 'app/common/StateLink';
 import { isForbidden } from 'utils/ServerErrorUtils';
 
 const noteStyle = css({
@@ -31,14 +31,6 @@ const linkStyle = css({
 });
 
 export default function NewUserSuccess({ failures = [], successes = [], onRestart, orgId }) {
-  const invitationsUrl = useMemo(
-    () =>
-      href({
-        path: ['account', 'organizations', 'users', 'invitations'],
-        params: { orgId }
-      }),
-    [orgId]
-  );
   const isTotalSuccess = !failures.length;
   const isTotalFailure = !successes.length;
   const isPartialSuccess = !isTotalFailure && !isTotalSuccess;
@@ -69,9 +61,14 @@ export default function NewUserSuccess({ failures = [], successes = [], onRestar
             successes.length
           )} been invited to your organization.`}
 
-          <TextLink href={invitationsUrl} linkType="positive" className={linkStyle}>
+          <StateLink
+            path="account.organizations.users.invitations"
+            params={{ orgId }}
+            component={TextLink}
+            linkType="positive"
+            className={linkStyle}>
             View all users
-          </TextLink>
+          </StateLink>
 
           <TextLink onClick={onRestart} linkType="positive" className={linkStyle}>
             Invite more people

@@ -88,7 +88,7 @@ class ContentTypeList extends Component {
           {this.props.contentTypes.map(contentType => {
             return (
               <StateLink
-                to="^.detail.fields"
+                path="^.detail.fields"
                 params={{ contentTypeId: contentType.sys.id }}
                 key={contentType.sys.id}>
                 {({ onClick }) => {

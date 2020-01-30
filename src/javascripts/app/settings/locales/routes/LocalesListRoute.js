@@ -75,7 +75,7 @@ class LocalesListRoute extends React.Component {
               return <LocalesLoadingShell />;
             }
             if (isError) {
-              return <StateRedirect to="spaces.detail.entries.list" />;
+              return <StateRedirect path="spaces.detail.entries.list" />;
             }
             const [
               locales,

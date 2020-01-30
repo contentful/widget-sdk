@@ -188,12 +188,6 @@ describe('TeamMembershipRow', () => {
           const { wrapper } = renderComponent(actions, membership);
           expect(
             wrapper
-              .find(TextLink)
-              .filter({ testId: 'user-text-link' })
-              .props()
-          ).toHaveProperty('href', '');
-          expect(
-            wrapper
               .find(UserCard)
               .filter({ testId: 'user-card' })
               .props()

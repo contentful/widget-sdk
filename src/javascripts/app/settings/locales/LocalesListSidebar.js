@@ -32,7 +32,7 @@ export default class LocalesListSidebar extends React.Component {
   renderAddButton() {
     return (
       <div className="entity-sidebar__widget">
-        <StateLink to="^.new">
+        <StateLink path="^.new">
           {({ onClick }) => (
             <Button onClick={onClick} isFullWidth buttonType="primary" testId="add-locales-button">
               Add Locale

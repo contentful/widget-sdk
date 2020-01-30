@@ -77,7 +77,7 @@ export default class UserDetailRoute extends React.Component {
               return <FetcherLoading message="Loading user..." />;
             }
             if (isError) {
-              return <StateRedirect to="spaces.detail.entries.list" />;
+              return <StateRedirect path="spaces.detail.entries.list" />;
             }
             const user = data.initialMembership.sys.user;
 
