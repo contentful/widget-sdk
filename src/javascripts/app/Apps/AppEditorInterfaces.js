@@ -40,11 +40,8 @@ function isCurrentApp(widget, appInstallation) {
  * The input format is:
  * {
  *   'content-type-id-1': {
- *     controls: [
- *       { fieldId: 'title' },
- *       { fieldId: 'media', settings: { maxSize: 100 }}
- *     ],
- *     sidebar: { position: 2, settings: { externalId: 'test' } }
+ *     controls: [{ fieldId: 'title' }, { fieldId: 'media' }],
+ *     sidebar: { position: 2 }
  *   },
  *   'some-other-ct-id': { editor: true }
  * }
@@ -80,21 +77,20 @@ function transformSingleEditorInterfaceToTargetState(
 
   const widgetId = get(appInstallation, ['sys', 'appDefinition', 'sys', 'id']);
 
-  // Target state object for controls: `{ fieldId, settings? }`
+  // Target state object for controls: `{ fieldId }`
   if (Array.isArray(targetState.controls)) {
     targetState.controls.forEach(control => {
       const idx = (result.controls || []).findIndex(cur => cur.fieldId === control.fieldId);
       result.controls[idx] = {
         fieldId: control.fieldId,
         widgetNamespace: NAMESPACE_APP,
-        widgetId,
-        settings: control.settings
+        widgetId
       };
     });
   }
 
-  // Target state object for sidebar: `{ position?, settings? }`.
-  // It can also be `true` (it'll be put at the bottom of the sidebar with no settings).
+  // Target state object for sidebar: `{ position? }`.
+  // It can also be `true` (it'll be put at the bottom of the sidebar).
   if (targetState.sidebar === true || isObject(targetState.sidebar)) {
     const targetSidebar = isObject(targetState.sidebar) ? targetState.sidebar : {};
 
@@ -102,10 +98,6 @@ function transformSingleEditorInterfaceToTargetState(
     result.sidebar = Array.isArray(result.sidebar) ? result.sidebar : cloneDeep(defaultSidebar);
 
     const widget = { widgetNamespace: NAMESPACE_APP, widgetId };
-
-    if (isObject(targetSidebar.settings)) {
-      widget.settings = targetSidebar.settings;
-    }
 
     // If position is defined use it for insertion.
     if (isUnsignedInteger(targetSidebar.position)) {
@@ -119,13 +111,6 @@ function transformSingleEditorInterfaceToTargetState(
   // If editor target state is set to `true` we just use the widget.
   if (targetState.editor === true) {
     result.editor = { widgetNamespace: NAMESPACE_APP, widgetId };
-  } else if (isObject(targetState.editor)) {
-    // Target state for editor may also be: `{ settings? }`
-    result.editor = {
-      widgetNamespace: NAMESPACE_APP,
-      widgetId,
-      settings: targetState.editor.settings
-    };
   }
 
   return result;

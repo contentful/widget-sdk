@@ -26,12 +26,12 @@ describe('validateTargetState', () => {
       });
     });
 
-    it('accepts controls for multiple CTs with defined field IDs and settings', () => {
+    it('accepts controls for multiple CTs with defined field IDs', () => {
       expect(() => {
         validateTargetState({
           EditorInterface: {
             someCtId: {
-              controls: [{ fieldId: 'title' }, { fieldId: 'hello-world', settings: { test: true } }]
+              controls: [{ fieldId: 'title' }, { fieldId: 'hello-world' }]
             },
             otherCt: {
               controls: [{ fieldId: 'test' }]
@@ -43,9 +43,9 @@ describe('validateTargetState', () => {
 
     it('rejects invalid controls', () => {
       [
-        { settings: { test: true } }, // no field ID
+        {}, // no field ID
         { fieldId: 123 }, // field ID not a string
-        { fieldId: 'hello', settings: 'YOLO' } // settings not an object
+        { fieldId: '' } // field ID is empty
       ].forEach(control => {
         expect(() => {
           validateTargetState({
@@ -71,15 +71,15 @@ describe('validateTargetState', () => {
       });
     });
 
-    it('accepts position and settings for multiple CTs', () => {
+    it('accepts position for multiple CTs', () => {
       expect(() => {
         validateTargetState({
           EditorInterface: {
             someCtId: {
-              sidebar: { settings: { test: true } }
+              sidebar: { position: 1 }
             },
             otherCt: {
-              sidebar: { position: 7, settings: { hello: 'world' } }
+              sidebar: { position: 7 }
             }
           }
         });
@@ -98,9 +98,9 @@ describe('validateTargetState', () => {
 
     it('rejects invalid sidebar', () => {
       [
-        { settings: 'YOLO' }, // settings are not an object
         { position: 'TEST' }, // position is not a number
-        { position: 1.23 } // position is not an integer
+        { position: 1.23 }, // position is not an integer
+        { position: -1 } // position is a negative number
       ].forEach(sidebar => {
         expect(() => {
           validateTargetState({
@@ -126,18 +126,6 @@ describe('validateTargetState', () => {
       });
     });
 
-    it('accepts settings for multiple CTs', () => {
-      expect(() => {
-        validateTargetState({
-          EditorInterface: {
-            someCtId: { editor: { settings: { test: true } } },
-            otherCt: { editor: {} },
-            yetAnotherCt: { editor: { settings: { hello: 'world' } } }
-          }
-        });
-      }).not.toThrow();
-    });
-
     it('accepts editor set to true', () => {
       expect(() => {
         validateTargetState({
@@ -152,7 +140,7 @@ describe('validateTargetState', () => {
       expect(() => {
         validateTargetState({
           EditorInterface: {
-            someCtId: { editor: { settings: 'BOO' } } // settings are not an object
+            someCtId: { editor: 'BOOM' }
           }
         });
       }).toThrow();
@@ -164,22 +152,18 @@ describe('validateTargetState', () => {
       validateTargetState({
         EditorInterface: {
           someCtId: {
-            fields: [{ fieldId: 'title' }, { fieldId: 'hello', settings: { test: true } }],
+            fields: [{ fieldId: 'title' }, { fieldId: 'hello' }],
             editor: true
           },
           otherCt: {
             fields: [{ fieldId: 'author' }],
             sidebar: {
-              position: 3,
-              settings: {
-                num: 123,
-                str: 'test'
-              }
+              position: 3
             }
           },
           yetAnotherCt: {
             sidebar: true,
-            editor: { settings: { hello: 'world' } }
+            editor: true
           }
         }
       });
