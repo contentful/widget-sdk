@@ -4,7 +4,6 @@ export const CONTACT_US_SPACE_HOME = 'feature-ps-10-2017-contact-us-space-home';
 export const ENVIRONMENTS_FLAG = 'feature-dv-11-2017-environments';
 export const UPGRADE_PRICING_FLAG = 'feature-dl-09-2018-upgrade-pricing-space-home';
 export const SSO_SELF_CONFIG_FLAG = 'feature-bv-2019-01-sso-self-config';
-export const QUICK_NAVIGATION = 'feature-ht-04-2019-quick-navigation';
 export const ENTRY_COMMENTS = 'feature-04-2019-entry-comments';
 export const TEAMS_IN_SPACES = 'feature-bv-04-2019-teams-iteration-2';
 export const ENTITY_EDITOR_CMA_EXPERIMENT =

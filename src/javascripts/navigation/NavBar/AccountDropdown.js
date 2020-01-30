@@ -6,11 +6,12 @@ import * as Authentication from 'Authentication';
 import * as Intercom from 'services/intercom';
 import * as Config from 'Config';
 import { getUser } from 'services/TokenStore';
-import { getCurrentStateName, href } from 'states/Navigator';
+import { getCurrentStateName } from 'states/Navigator';
 import { getOpenAssignedTasksAndEntries } from 'app/TasksPage/helpers';
 import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
 import * as FeatureFlagKey from 'featureFlags';
 import { getModule } from 'NgRegistry';
+import StateLink from 'app/common/StateLink';
 
 import {
   Icon,
@@ -154,8 +155,7 @@ export default class AccountDropdown extends Component {
     this.setState(prevState => ({ isOpen: !prevState.isOpen }));
   };
 
-  handleLogout = e => {
-    e.preventDefault();
+  handleLogout = () => {
     Analytics.track('global:logout_clicked');
     Analytics.disable();
     Authentication.logout();
@@ -211,27 +211,41 @@ export default class AccountDropdown extends Component {
           </button>
         }>
         <DropdownList border="bottom" className={styles.dropdownList}>
-          <DropdownListItem
-            testId="nav.account.userProfile"
-            onClick={this.handleDropdownListItemClick}
-            href={href({ path: ['account', 'profile', 'user'] })}>
-            User Profile
-          </DropdownListItem>
+          <StateLink to="account.profile.user">
+            {({ getHref, onClick }) => (
+              <DropdownListItem
+                testId="nav.account.userProfile"
+                onClick={e => {
+                  onClick(e);
+                  this.handleDropdownListItemClick();
+                }}
+                href={getHref()}>
+                User Profile
+              </DropdownListItem>
+            )}
+          </StateLink>
           {this.state.shouldShowPendingTasks && (
-            <DropdownListItem
-              data-test-id="nav.account.pendingTasks"
-              onClick={this.handleDropdownListItemClick}
-              href={href({ path: ['spaces', 'detail', 'tasks'] })}>
-              <span className={styles.pendingTasksItem}>
-                {`Pending tasks (${this.state.pendingTasksCount})`}
-              </span>
-            </DropdownListItem>
+            <StateLink to="spaces.detail.tasks.list">
+              {({ getHref, onClick }) => (
+                <DropdownListItem
+                  testId="nav.account.pendingTasks"
+                  onClick={e => {
+                    onClick(e);
+                    this.handleDropdownListItemClick();
+                  }}
+                  href={getHref()}>
+                  <span className={styles.pendingTasksItem}>
+                    {`Pending tasks (${this.state.pendingTasksCount})`}
+                  </span>
+                </DropdownListItem>
+              )}
+            </StateLink>
           )}
         </DropdownList>
 
         <DropdownList border="bottom">
           {Intercom.isEnabled && (
-            <DropdownListItem testId="nav.account.intercom" onMouseDown={this.handleLiveChat}>
+            <DropdownListItem testId="nav.account.intercom" onClick={this.handleLiveChat}>
               Talk to us
             </DropdownListItem>
           )}
@@ -246,8 +260,8 @@ export default class AccountDropdown extends Component {
           </DropdownListItem>
         </DropdownList>
 
-        <DropdownList onClick={this.handleLogout}>
-          <DropdownListItem href="#" testId="nav.account.logout">
+        <DropdownList>
+          <DropdownListItem testId="nav.account.logout" onClick={this.handleLogout}>
             Log out
           </DropdownListItem>
         </DropdownList>

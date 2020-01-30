@@ -56,13 +56,15 @@ describe('AccountDropdown', () => {
     fireEvent.click(wrapper.getByTestId('nav.account.userProfile'));
 
     expect(href).toHaveBeenCalledWith({
-      path: ['account', 'profile', 'user']
+      path: 'account.profile.user',
+      options: undefined,
+      params: undefined
     });
   });
 
   it('logs out the user', async () => {
     fireEvent.click(wrapper.getByTestId('account-menu-trigger'));
-    fireEvent.click(wrapper.queryByTestId('nav.account.logout'));
+    fireEvent.click(wrapper.getByTestId('nav.account.logout').querySelector('button'));
 
     await wait();
 

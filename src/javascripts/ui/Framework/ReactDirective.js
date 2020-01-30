@@ -44,7 +44,6 @@ import * as componentsTabsAssetListAssetsEmptyStateEs6 from 'components/tabs/ass
 import * as appScheduledActionsPageLinkEs6 from 'app/ScheduledActions/ScheduledActionsPageLink';
 import * as componentsTabsEntryListEntryListEs6 from 'components/tabs/entry_list/EntryList';
 import * as componentsTabsEntryListEmptyStatesIndexEs6 from 'components/tabs/entry_list/EmptyStates';
-import * as componentsSharedQuickNavigationQuickNavWithFeatureFlagEs6 from 'components/shared/QuickNavigation/QuickNavWithFeatureFlag';
 import * as searchEntitySelectorCreateEntityIndexEs6 from 'search/EntitySelector/CreateEntity';
 import * as componentsSharedEnterpriseSpaceWizardEnterpriseSpaceWizardEs6 from 'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard';
 import * as navigationModernStackOnboardingRelaunchEs6 from 'navigation/modernStackOnboardingRelaunch';
@@ -291,7 +290,6 @@ function getModule(name) {
     'app/ScheduledActions/ScheduledActionsPageLink': appScheduledActionsPageLinkEs6,
     'components/tabs/entry_list/EntryList': componentsTabsEntryListEntryListEs6,
     'components/tabs/entry_list/EmptyStates': componentsTabsEntryListEmptyStatesIndexEs6,
-    'components/shared/QuickNavigation/QuickNavWithFeatureFlag': componentsSharedQuickNavigationQuickNavWithFeatureFlagEs6,
     'search/EntitySelector/CreateEntity': searchEntitySelectorCreateEntityIndexEs6,
     'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard': componentsSharedEnterpriseSpaceWizardEnterpriseSpaceWizardEs6,
     'navigation/modernStackOnboardingRelaunch': navigationModernStackOnboardingRelaunchEs6,

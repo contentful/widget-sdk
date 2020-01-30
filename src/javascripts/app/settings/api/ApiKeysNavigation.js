@@ -1,8 +1,8 @@
 import React from 'react';
 import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import StateLink from 'app/common/StateLink';
 import PropTypes from 'prop-types';
+import { go } from 'states/Navigator';
 import { Tabs, Tab } from '@contentful/forma-36-react-components';
 
 const styles = {
@@ -18,29 +18,26 @@ const styles = {
 export default function ApiKeysNavigation(props) {
   return (
     <div className={cx('workbench-nav', styles.container)}>
-      <Tabs role="navigation">
-        <StateLink to="spaces.detail.api.keys.list">
-          {({ getHref }) => (
-            <Tab
-              id="cda-tokens"
-              href={getHref()}
-              selected={props.currentTab === 'cda-tokens'}
-              testId="api-keys-cda-tokens-tab">
-              Content delivery / preview tokens
-            </Tab>
-          )}
-        </StateLink>
-        <StateLink to="spaces.detail.api.cma_tokens">
-          {({ getHref }) => (
-            <Tab
-              id="cma-tokens"
-              selected={props.currentTab === 'cma-tokens'}
-              href={getHref()}
-              testId="api-keys-cma-tokens-tab">
-              Content management tokens
-            </Tab>
-          )}
-        </StateLink>
+      <Tabs>
+        <Tab
+          id="cda-tokens"
+          onSelect={() => {
+            go({ path: 'spaces.detail.api.keys.list' });
+          }}
+          selected={props.currentTab === 'cda-tokens'}
+          testId="api-keys-cda-tokens-tab">
+          Content delivery / preview tokens
+        </Tab>
+
+        <Tab
+          id="cma-tokens"
+          selected={props.currentTab === 'cma-tokens'}
+          onSelect={() => {
+            go({ path: 'spaces.detail.api.cma_tokens' });
+          }}
+          testId="api-keys-cma-tokens-tab">
+          Content management tokens
+        </Tab>
       </Tabs>
     </div>
   );

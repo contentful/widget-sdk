@@ -29,16 +29,6 @@ describe('Sidebar configuration', () => {
     cy.wait(interactions);
   });
 
-  describe('Opening the page with no configuration saved', () => {
-    it('renders the page', () => {
-      const expectedUrl = `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}/sidebar_configuration`;
-      cy.getByTestId('sidebar-config-tab')
-        .should('be.visible')
-        .should('have.attr', 'href')
-        .and('eq', expectedUrl);
-    });
-  });
-
   describe('Saving the content type with configured custom sidebar', () => {
     beforeEach(() => {
       cy.resetAllFakeServers();

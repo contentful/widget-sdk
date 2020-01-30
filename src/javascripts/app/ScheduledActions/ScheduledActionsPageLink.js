@@ -21,7 +21,7 @@ const styles = {
 };
 
 export function ScheduledActionsStateLink({ isMasterEnvironment, children }) {
-  const path = `spaces.detail.${isMasterEnvironment ? '' : 'environment.'}jobs`;
+  const path = `spaces.detail.${isMasterEnvironment ? '' : 'environment.'}jobs.list`;
   return <StateLink to={path}>{children}</StateLink>;
 }
 
@@ -37,12 +37,10 @@ export default function ScheduledActionsPageLink({ isMasterEnvironment }) {
         return currentVariation ? (
           <div className={styles.linkContainer}>
             <ScheduledActionsStateLink isMasterEnvironment={isMasterEnvironment}>
-              {({ getHref }) => (
-                <React.Fragment>
-                  <TextLink href={getHref()} icon="Clock">
-                    Scheduled Content
-                  </TextLink>
-                </React.Fragment>
+              {({ getHref, onClick }) => (
+                <TextLink href={getHref()} onClick={onClick} icon="Clock">
+                  Scheduled Content
+                </TextLink>
               )}
             </ScheduledActionsStateLink>
           </div>

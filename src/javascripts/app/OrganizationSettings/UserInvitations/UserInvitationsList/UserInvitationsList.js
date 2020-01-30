@@ -13,7 +13,7 @@ import {
   Notification
 } from '@contentful/forma-36-react-components';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
-import { href, go } from 'states/Navigator';
+import { go, href } from 'states/Navigator';
 import {
   removeMembership,
   removeInvitation

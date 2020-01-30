@@ -182,8 +182,8 @@ const JobsTimeline = ({
       </div>
       {showAllScheduleLink && (
         <ScheduledActionsStateLink isMasterEnvironment={isMasterEnvironment}>
-          {({ getHref }) => (
-            <TextLink linkType="muted" href={getHref()}>
+          {({ getHref, onClick }) => (
+            <TextLink linkType="muted" href={getHref()} onClick={onClick}>
               View all scheduled entries
             </TextLink>
           )}

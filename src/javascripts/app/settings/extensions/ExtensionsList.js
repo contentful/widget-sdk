@@ -227,8 +227,8 @@ export class ExtensionsList extends React.Component {
           <div>
             <div>
               <StateLink to="^.detail" params={{ extensionId: extension.id }}>
-                {({ getHref }) => (
-                  <TextLink href={getHref()} linkType="primary">
+                {({ getHref, onClick }) => (
+                  <TextLink href={getHref()} onClick={onClick} linkType="primary">
                     Edit
                   </TextLink>
                 )}

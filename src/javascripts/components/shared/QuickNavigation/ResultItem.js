@@ -7,7 +7,7 @@ import tokens from '@contentful/forma-36-tokens';
 import ResultItemIcon from './ResultItemIcon';
 import { stateName, getState } from 'data/CMA/EntityState';
 import { EntityStatusTag } from '../EntityStatusTag';
-import { href } from 'states/Navigator';
+import StateLink from 'app/common/StateLink';
 
 const styles = {
   item: css({ padding: 0, margin: 0 }),
@@ -66,7 +66,11 @@ const EntityListItem = ({ item, index, highlightedIndex, closeModal, getItemProp
       item,
       className: highlightedIndex === index ? cx(styles.highlightedItem, styles.item) : styles.item
     })}>
-    <a href={href(item.link)} onClick={closeModal} className={styles.entityLink}>
+    <StateLink
+      to={item.link.path}
+      params={item.link.params}
+      onClick={closeModal}
+      className={styles.entityLink}>
       <ResultItemIcon type={item.type} />
       <span className={styles.entityLinkLabel}>{item.title}</span>
       {item.type == 'entries' && (
@@ -82,7 +86,7 @@ const EntityListItem = ({ item, index, highlightedIndex, closeModal, getItemProp
           <Tag tagType="positive">active</Tag>
         </div>
       )}
-    </a>
+    </StateLink>
   </li>
 );
 
@@ -97,7 +101,11 @@ const SearchLinkListItem = ({ item, getItemProps, highlightedIndex, index, close
             ? cx(styles.highlightedItem, styles.item, styles.seeMoreItem)
             : cx(styles.item, styles.seeMoreItem)
       })}>
-      <a href={href(item.link)} onClick={closeModal} className={styles.entityLink}>
+      <StateLink
+        to={item.link.path}
+        params={item.link.params}
+        onClick={closeModal}
+        className={styles.entityLink}>
         <ResultItemIcon type={item.linkType} />
         <span className={styles.seeMoreLabel}>
           See all {item.total} {item.title}
@@ -105,14 +113,17 @@ const SearchLinkListItem = ({ item, getItemProps, highlightedIndex, index, close
         <div className={styles.entityStatusTag}>
           <Icon icon="ChevronRight" />
         </div>
-      </a>
+      </StateLink>
     </li>
   );
 };
 
-export const ResultItem = ({ item, index, highlightedIndex, closeModal, getItemProps, query }) =>
-  item &&
-  (item.type === 'search_link' ? (
+export const ResultItem = ({ item, index, highlightedIndex, closeModal, getItemProps, query }) => {
+  if (!item) {
+    return null;
+  }
+
+  return item.type === 'search_link' ? (
     <SearchLinkListItem
       item={item}
       index={index}
@@ -129,7 +140,8 @@ export const ResultItem = ({ item, index, highlightedIndex, closeModal, getItemP
       closeModal={closeModal}
       getItemProps={getItemProps}
     />
-  ));
+  );
+};
 
 ResultItem.propTypes = {
   item: PropTypes.any,

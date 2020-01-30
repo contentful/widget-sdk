@@ -24,7 +24,7 @@ import FolderIllustration from 'svg/folder-illustration.svg';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
 import { getEntryTitle } from 'classes/EntityFieldValueHelpers';
 import { getOpenAssignedTasksAndEntries } from './helpers';
-import { href } from 'states/Navigator';
+import StateLink from 'app/common/StateLink';
 
 const styles = {
   workbenchContent: css({
@@ -143,16 +143,13 @@ export default class TasksPage extends Component {
               <RelativeDateTime value={task.createdAt} />
             </TableCell>
             <TableCell className={styles.entryColumn}>
-              <TextLink
-                icon="Entry"
-                href={href({
-                  path: ['spaces', 'detail', 'entries', 'detail'],
-                  params: {
-                    entryId: task.entryId
-                  }
-                })}>
-                {task.entryTitle}
-              </TextLink>
+              <StateLink to="spaces.detail.entries.detail" params={{ entryId: task.entryId }}>
+                {({ getHref, onClick }) => (
+                  <TextLink icon="Entry" href={getHref()} onClick={onClick}>
+                    {task.entryTitle}
+                  </TextLink>
+                )}
+              </StateLink>
             </TableCell>
           </TableRow>
         ))}

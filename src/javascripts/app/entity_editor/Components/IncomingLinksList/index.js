@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { TextLink } from '@contentful/forma-36-react-components';
 import { template } from '../template';
 import { Origin as IncomingLinksOrigin } from 'analytics/events/IncomingLinks';
 
@@ -46,16 +47,16 @@ class IncomingLinksList extends React.Component {
 
             return (
               <li key={url} className="incoming-links__item">
-                <a
+                <TextLink
                   className="incoming-links__link"
                   href={url}
                   target="_blank"
                   rel="noopener noreferrer"
                   title={title}
-                  data-test-id="link"
+                  testId="link"
                   onClick={() => this.handleClick(id)}>
                   {title}
-                </a>
+                </TextLink>
               </li>
             );
           })}

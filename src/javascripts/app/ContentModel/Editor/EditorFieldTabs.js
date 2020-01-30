@@ -1,6 +1,6 @@
 import React from 'react';
 import { css } from 'emotion';
-import StateLink from 'app/common/StateLink';
+import { go } from 'states/Navigator';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
 import { Tabs, Tab } from '@contentful/forma-36-react-components';
@@ -14,34 +14,34 @@ const styles = {
 export default function EditorFieldTabs(props) {
   return (
     <div className={styles.editorFieldTabs}>
-      <Tabs role="navigation" withDivider>
-        <StateLink to="^.fields">
-          {({ getHref }) => (
-            <Tab id="fields" href={getHref()} selected={props.currentTab === 'fields'}>
-              Fields
-              {props.fieldsCount > 0 ? ` (${props.fieldsCount})` : ''}
-            </Tab>
-          )}
-        </StateLink>
-        <StateLink to="^.preview">
-          {({ getHref }) => (
-            <Tab id="preview" selected={props.currentTab === 'preview'} href={getHref()}>
-              JSON preview
-            </Tab>
-          )}
-        </StateLink>
+      <Tabs withDivider>
+        <Tab
+          id="fields"
+          onSelect={() => {
+            go({ path: '^.fields' });
+          }}
+          selected={props.currentTab === 'fields'}>
+          Fields
+          {props.fieldsCount > 0 ? ` (${props.fieldsCount})` : ''}
+        </Tab>
+        <Tab
+          id="preview"
+          selected={props.currentTab === 'preview'}
+          onSelect={() => {
+            go({ path: '^.preview' });
+          }}>
+          JSON preview
+        </Tab>
         {props.hasAdvancedExtensibility && (
-          <StateLink to="^.sidebar_configuration">
-            {({ getHref }) => (
-              <Tab
-                id="sidebar_configuration"
-                selected={props.currentTab === 'sidebar_configuration'}
-                href={getHref()}
-                testId="sidebar-config-tab">
-                Sidebar
-              </Tab>
-            )}
-          </StateLink>
+          <Tab
+            id="sidebar_configuration"
+            selected={props.currentTab === 'sidebar_configuration'}
+            onSelect={() => {
+              go({ path: '^.sidebar_configuration' });
+            }}
+            testId="sidebar-config-tab">
+            Sidebar
+          </Tab>
         )}
       </Tabs>
     </div>
