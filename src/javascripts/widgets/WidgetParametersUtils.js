@@ -5,7 +5,7 @@ import { NAMESPACE_BUILTIN } from './WidgetNamespaces';
 // We could buit a generic dependency mechanism but for now we just
 // filter manually the only known scenario.
 export function filterDefinitions(definitions, values, widget) {
-  if (widget.namespace === NAMESPACE_BUILTIN && widget.id === 'datePicker') {
+  if (widget && widget.namespace === NAMESPACE_BUILTIN && widget.id === 'datePicker') {
     return definitions.filter(definition => {
       // Always display all parameters but `ampm`. Show `ampm` only
       // if `format` includes time.
