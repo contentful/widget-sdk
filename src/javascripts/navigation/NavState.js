@@ -32,6 +32,7 @@ export async function updateNavState(state, params, { space, organization, envir
   if (state.name === 'account.new_organization') {
     navStateBus.set(NavStates.NewOrg());
   } else if (startsWith(state.name, 'account.profile')) {
+    //we have to keep the correct state of the organization in the Sidepanel
     const orgId = store.get('lastUsedOrg');
     getOrganization(orgId).then(org => {
       navStateBus.set(NavStates.UserProfile(org));
