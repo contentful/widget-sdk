@@ -2,6 +2,8 @@ import { makeSum } from 'sum-types';
 import { startsWith } from 'lodash';
 import * as K from 'utils/kefir';
 import { getOrganization } from 'services/TokenStore';
+import { getStore } from 'browserStorage';
+const store = getStore();
 
 /**
  * Possible app states for navigation (as shown in sidepanel)
@@ -9,7 +11,7 @@ import { getOrganization } from 'services/TokenStore';
 export const NavStates = makeSum({
   Space: ['space', 'env', 'org', 'availableEnvironments', 'environmentMeta'],
   OrgSettings: ['org'],
-  UserProfile: [],
+  UserProfile: ['org'],
   Home: ['org'],
   NewOrg: [],
   Default: []
@@ -30,7 +32,10 @@ export async function updateNavState(state, params, { space, organization, envir
   if (state.name === 'account.new_organization') {
     navStateBus.set(NavStates.NewOrg());
   } else if (startsWith(state.name, 'account.profile')) {
-    navStateBus.set(NavStates.UserProfile());
+    const orgId = store.get('lastUsedOrg');
+    getOrganization(orgId).then(org => {
+      navStateBus.set(NavStates.UserProfile(org));
+    });
   } else if (startsWith(state.name, 'account.organizations') && params.orgId) {
     getOrganization(params.orgId).then(org => {
       navStateBus.set(NavStates.OrgSettings(org));
