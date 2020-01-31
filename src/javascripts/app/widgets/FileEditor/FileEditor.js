@@ -109,12 +109,19 @@ export default function FileEditor(props) {
     return <FileEditorArchived file={file} />;
   }
 
+  if (disabled) {
+    return (
+      <div className="file-info">
+        {!file.url || isUnprocessed ? <FileEditorLoading /> : <FileEditorPreview file={file} />}
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="file-info">
-        {disabled && <FileEditorLoading />}
         {isUnprocessed && <FileEditorLoading message="Processing..." />}
-        {file.url && !disabled && !isUnprocessed && <FileEditorPreview file={file} />}
+        {file.url && !isUnprocessed && <FileEditorPreview file={file} />}
         {showMetaData && <FileEditorMetadata file={file} />}
       </div>
       <FileEditorActions
