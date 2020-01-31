@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import NavBar from './NavBar/NavBar';
-import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { isOwner, isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
 import { SSO_SELF_CONFIG_FLAG } from 'featureFlags';
 import { getOrgFeature } from '../data/CMA/ProductCatalog';
 import SidepanelContainer from './Sidepanel/SidepanelContainer';
 import createLegacyFeatureService from 'services/LegacyFeatureService';
+import * as AdvancedExtensibilityFeature from 'app/settings/extensions/services/AdvancedExtensibilityFeature';
 
 import { getVariation } from 'LaunchDarkly';
 
@@ -98,6 +99,18 @@ function getItems(params, { orgId }) {
       dataViewType: 'organization-teams'
     },
     {
+      if: params.canManageApps,
+      title: 'Apps',
+      sref: 'account.organizations.apps.list',
+      srefParams: { orgId },
+      rootSref: 'account.organizations.apps',
+      srefOptions: {
+        inherit: false
+      },
+      icon: 'nav-apps',
+      dataViewType: 'organization-apps'
+    },
+    {
       if: params.ssoEnabled && params.isOwnerOrAdmin,
       title: 'SSO',
       sref: 'account.organizations.sso',
@@ -161,17 +174,28 @@ export default class OrganizationNavigationBar extends React.Component {
   async getConfiguration() {
     const { orgId } = this.props.stateParams;
     const FeatureService = createLegacyFeatureService(orgId, 'organization');
-    const [variation, ssoFeatureEnabled, organization, hasOffsiteBackup] = await Promise.all([
+    const [
+      variation,
+      ssoFeatureEnabled,
+      organization,
+      hasOffsiteBackup,
+      hasAdvancedExtensibility
+    ] = await Promise.all([
       getVariation(SSO_SELF_CONFIG_FLAG, { organizationId: orgId }),
       getOrgFeature(orgId, 'self_configure_sso'),
       TokenStore.getOrganization(orgId),
-      FeatureService.get('offsiteBackup')
+      FeatureService.get('offsiteBackup'),
+      AdvancedExtensibilityFeature.isEnabled()
     ]);
+
+    const canManageApps =
+      hasAdvancedExtensibility && (isOwnerOrAdmin(organization) || isDeveloper(organization));
 
     const params = {
       ssoEnabled: variation && ssoFeatureEnabled,
       pricingVersion: organization.pricingVersion,
       isOwnerOrAdmin: isOwnerOrAdmin(organization),
+      canManageApps,
       hasOffsiteBackup,
       hasBillingTab: organization.isBillable && isOwner(organization),
       hasSettingsTab: isOwner(organization)
