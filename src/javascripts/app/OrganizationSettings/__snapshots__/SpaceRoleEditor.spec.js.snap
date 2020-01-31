@@ -413,7 +413,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
         openSubmenu={[Function]}
         position="bottom-left"
         submenu={false}
-        testId="cf-ui-dropdown-portal"
+        testId="cf-ui-dropdown-container"
       >
         <Portal
           containerInfo={
@@ -443,6 +443,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
 <div>
               <div
                 class="DropdownContainer__DropdownContainer___3WlJM"
+                data-test-id="cf-ui-dropdown-container"
                 style="top: 0px; left: 0px;"
               >
                 <div
@@ -588,6 +589,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
         >
           <div
             className="DropdownContainer__DropdownContainer___3WlJM"
+            data-test-id="cf-ui-dropdown-container"
             onFocus={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}

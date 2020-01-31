@@ -5,7 +5,8 @@ import {
   fireEvent,
   wait,
   waitForElement,
-  waitForElementToBeRemoved
+  waitForElementToBeRemoved,
+  act
 } from '@testing-library/react';
 
 import CreateEntryLinkButton from './CreateEntryLinkButton';
@@ -29,21 +30,42 @@ describe('CreateEntryLinkButton general', () => {
     expect(link).toBeDefined();
     expect(link.textContent).toBe('Add entry');
     expect(getByTestId('dropdown-icon')).toBeDefined();
-    expect(() => getByTestId('add-entry-menu')).toThrow(
-      'Unable to find an element by: [data-test-id="add-entry-menu"]'
+    expect(() => getByTestId('add-entry-menu-container')).toThrow(
+      'Unable to find an element by: [data-test-id="add-entry-menu-container"]'
     );
   });
 
   it('renders dropdown menu on click when with multiple content types', () => {
     const { getByTestId } = render(<CreateEntryLinkButton {...props} />);
     fireEvent.click(findButton(getByTestId));
-    const menu = getByTestId('add-entry-menu');
+    const menu = getByTestId('add-entry-menu-container');
     expect(menu).toBeDefined();
-    const menuItems = menu.querySelectorAll('[role="menuitem"]');
+    const menuItems = menu.querySelectorAll('[data-test-id="contentType"]');
     expect(menuItems).toHaveLength(props.contentTypes.length);
     menuItems.forEach((item, index) =>
       expect(item.textContent).toBe(props.contentTypes[index].name)
     );
+  });
+
+  it('renders suggestedContentType as text when given', () => {
+    const suggestedContentTypeId = 'ID_2';
+    const { getByTestId } = render(
+      <CreateEntryLinkButton {...props} suggestedContentTypeId={suggestedContentTypeId} />
+    );
+    expect(getByTestId('create-entry-button-menu-trigger')).toBeDefined();
+    const button = findButton(getByTestId);
+    expect(button).toBeDefined();
+    expect(button.textContent).toBe(`Add ${CONTENT_TYPE_2.name}`);
+  });
+
+  it('renders the name of the content type as part of the text if only 1 content type is given', () => {
+    const { getByTestId } = render(
+      <CreateEntryLinkButton onSelect={props.onSelect} contentTypes={[CONTENT_TYPE_1]} />
+    );
+    expect(getByTestId('create-entry-button-menu-trigger')).toBeDefined();
+    const button = findButton(getByTestId);
+    expect(button).toBeDefined();
+    expect(button.textContent).toBe(`Add ${CONTENT_TYPE_1.name}`);
   });
 
   it('renders custom text, icon', () => {
@@ -67,30 +89,32 @@ describe('CreateEntryLinkButton with multiple entries', () => {
   it('should display and close menu on button click', () => {
     const { getByTestId } = render(<CreateEntryLinkButton {...props} />);
     fireEvent.click(findButton(getByTestId));
-    expect(getByTestId('add-entry-menu')).toBeDefined();
+    expect(getByTestId('add-entry-menu-container')).toBeDefined();
     fireEvent.click(findButton(getByTestId));
-    expect(() => getByTestId('add-entry-menu')).toThrow(
-      'Unable to find an element by: [data-test-id="add-entry-menu"]'
+    expect(() => getByTestId('add-entry-menu-container')).toThrow(
+      'Unable to find an element by: [data-test-id="add-entry-menu-container"]'
     );
   });
 
-  // eslint-disable-next-line
-  it.skip('should render dropdown items for each content type', () => {
-    // TODO: Add once Menu is replaced with forma instead of custom implementation
-    const { getByTestId } = render(<CreateEntryLinkButton {...props} />);
+  it('should render dropdown items for each content type', () => {
+    const { getByTestId, getAllByTestId } = render(<CreateEntryLinkButton {...props} />);
     fireEvent.click(findButton(getByTestId));
-    expect(getByTestId('dropdown-icon')).toHaveLength(props.contentTypes.length);
+    expect(getAllByTestId('cf-ui-dropdown-list-item-button')).toHaveLength(
+      props.contentTypes.length
+    );
   });
 
   it('calls onSelect after click on menu item', () => {
-    // TODO: Possibly remove once menu is replace with forma if handled by forma automatically.
-    // No need to test what was already tested in forma repo
     const selectSpy = jest.fn();
     const { getByTestId, getAllByTestId } = render(
       <CreateEntryLinkButton {...props} onSelect={selectSpy} />
     );
     fireEvent.click(findButton(getByTestId));
-    fireEvent.click(getAllByTestId('contentType')[1]);
+    fireEvent.click(
+      getAllByTestId('contentType')[1].querySelector(
+        '[data-test-id="cf-ui-dropdown-list-item-button"]'
+      )
+    );
     expect(selectSpy).toHaveBeenCalledWith(CONTENT_TYPE_2.sys.id);
   });
 });
@@ -155,9 +179,11 @@ describe('CreateEntryLinkButton common', () => {
     const { getByTestId } = render(
       <CreateEntryLinkButton contentTypes={[CONTENT_TYPE_1]} onSelect={onSelect} />
     );
-    fireEvent.click(findButton(getByTestId));
-    await wait(noop, 100);
-    fireEvent.click(findButton(getByTestId));
+    await act(async () => {
+      fireEvent.click(findButton(getByTestId));
+      await wait(noop, 100);
+      fireEvent.click(findButton(getByTestId));
+    });
     expect(onSelect).toHaveBeenCalledTimes(2);
   });
 });

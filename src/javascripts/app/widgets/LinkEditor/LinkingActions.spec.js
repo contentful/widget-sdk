@@ -87,7 +87,11 @@ describe('LinkingActions', () => {
               fireEvent.click(button);
               if (allProps.contentTypes.length > 1) {
                 // and click the first one
-                fireEvent.click(getByTestId('add-entry-menu').querySelector('li[role="menuitem"]'));
+                fireEvent.click(
+                  getByTestId('add-entry-menu-container').querySelector(
+                    '[data-test-id="cf-ui-dropdown-list-item-button"]'
+                  )
+                );
               }
             } catch (e) {
               // otherwise, just clicking the link

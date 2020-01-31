@@ -27,7 +27,14 @@ const CreateEntryLinkButton = ({
   disabled
 }) => {
   const suggestedContentType = contentTypes.find(ct => ct.sys.id === suggestedContentTypeId);
-  const buttonText = text || `Add ${get(suggestedContentType || contentTypes[0], 'name', 'entry')}`;
+  const buttonText =
+    text ||
+    `Add ${get(
+      suggestedContentType || (contentTypes.length === 1 ? contentTypes[0] : {}),
+      'name',
+      'entry'
+    )}`;
+
   return (
     <CreateEntryMenuTrigger
       contentTypes={contentTypes}
@@ -36,8 +43,9 @@ const CreateEntryLinkButton = ({
       testId={testId}>
       {({ openMenu, isSelecting }) => (
         <>
-          {isSelecting && <Spinner size="small" className={styles.spinnerMargin} />}
+          {isSelecting && <Spinner size="small" key="spinner" className={styles.spinnerMargin} />}
           <TextLink
+            key="textLink"
             onClick={openMenu}
             disabled={disabled || isSelecting || (contentTypes && contentTypes.length === 0)}
             icon={isSelecting || !hasPlusIcon ? null : 'Plus'}
@@ -70,8 +78,7 @@ CreateEntryLinkButton.propTypes = {
 
 CreateEntryLinkButton.defaultProps = {
   hasPlusIcon: false,
-  disabled: false,
-  text: 'Add entry'
+  disabled: false
 };
 
 export default CreateEntryLinkButton;

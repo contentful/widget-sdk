@@ -122,6 +122,7 @@ Object {
     <div>
       <div
         class="DropdownContainer__DropdownContainer___3WlJM"
+        data-test-id="cf-ui-dropdown-container"
         style="top: 0px; left: 0px;"
       >
         <div
@@ -623,6 +624,7 @@ Object {
     <div>
       <div
         class="DropdownContainer__DropdownContainer___3WlJM"
+        data-test-id="cf-ui-dropdown-container"
         style="top: 0px; left: 0px;"
       >
         <div
