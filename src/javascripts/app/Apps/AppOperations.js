@@ -14,8 +14,13 @@ export async function installOrUpdate(
 ) {
   validateTargetState(targetState);
 
-  const { appDefinition } = await checkAppStatus();
-  const appInstallation = await cma.updateAppInstallation(appDefinition.sys.id, parameters);
+  const { appDefinition, isMarketplaceInstallation } = await checkAppStatus();
+
+  const appInstallation = await cma.updateAppInstallation(
+    appDefinition.sys.id,
+    parameters,
+    isMarketplaceInstallation
+  );
 
   await transformEditorInterfacesToTargetState(
     cma,
