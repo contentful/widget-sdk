@@ -30,12 +30,14 @@ module.exports.render = function render(uiVersion, config, manifest) {
   const templatePath = path.resolve(__dirname, '..', '..', 'index.html');
   const template = fs.readFileSync(templatePath).toString();
 
+  const externalConfig = JSON.stringify({
+    uiVersion,
+    config
+  });
+
   const compiled = _.template(template)({
     manifest,
-    externalConfig: {
-      uiVersion,
-      config
-    }
+    externalConfig
   });
 
   return minify(compiled, {
