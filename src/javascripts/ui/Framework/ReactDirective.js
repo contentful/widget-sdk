@@ -58,6 +58,7 @@ import * as LinkedEntitiesValidation from 'components/field_dialog/validations/L
 import * as CreateEntryButton from 'components/CreateEntryButton/CreateEntryButton';
 import * as CreateEntryLinkButton from 'components/CreateEntryButton/CreateEntryLinkButton';
 import * as AssetFileSizeValidation from 'components/field_dialog/validations/AssetFileSizeValidation';
+import * as AssetImageDimensionsValidations from 'components/field_dialog/validations/AssetImageDimensionsValidations';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -303,7 +304,8 @@ function getModule(name) {
     'components/field_dialog/validations/LinkedEntitiesValidation': LinkedEntitiesValidation,
     'components/CreateEntryButton/CreateEntryButton': CreateEntryButton,
     'components/CreateEntryButton/CreateEntryLinkButton': CreateEntryLinkButton,
-    'components/field_dialog/validations/AssetFileSizeValidation': AssetFileSizeValidation
+    'components/field_dialog/validations/AssetFileSizeValidation': AssetFileSizeValidation,
+    'components/field_dialog/validations/AssetImageDimensionsValidations': AssetImageDimensionsValidations
   };
 
   return get(allowedModules, name, null);

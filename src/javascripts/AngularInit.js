@@ -55,7 +55,6 @@ export const angularInitRun = [
       import('components/client/dialogsInitController'),
       import('components/field_dialog/cfValidationDateSelectDirective'),
       import('components/field_dialog/cfValidationSettingsDirective'),
-      import('components/field_dialog/imageDimensionsValidationController'),
       import('components/field_dialog/validationAssetTypesController'),
       import('components/field_dialog/validationLinkTypeController'),
       import('components/forms/datetime_editor/cfDatetimeEditorDirective'),

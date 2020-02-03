@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Select, Option, TextInput } from '@contentful/forma-36-react-components';
-import { toString, toNumber, map, findLast, isFinite, startCase } from 'lodash';
+import { toString, toNumber, map, findLast, isFinite, startCase, isEmpty } from 'lodash';
 import styles from '../styles';
 
 const units = [
@@ -27,6 +27,8 @@ const FileSizeComponent = ({ type, value, onUpdate }) => {
   const [factor, setFactor] = useState(() => getUnitFactor(value));
   const [displayValue, setDisplayValue] = useState(() => getDisplayValue(value, factor));
 
+  const normalizeValue = value => (isEmpty(value) ? null : toNumber(value));
+
   useEffect(() => {
     const value = getScaledValue(displayValue, factor);
     onUpdate(value);
@@ -39,14 +41,15 @@ const FileSizeComponent = ({ type, value, onUpdate }) => {
         className={styles.textInputNumber}
         placeholder={startCase(type)}
         type="number"
+        min="0"
         value={toString(displayValue)}
-        onChange={({ target: { value } }) => setDisplayValue(toNumber(value))}
+        onChange={({ target: { value } }) => setDisplayValue(normalizeValue(value))}
         width="small"
       />
       <Select
         name="Select size unit"
         testId={`select-${type}-size-unit`}
-        onChange={({ target: { value } }) => setFactor(toNumber(value))}
+        onChange={({ target: { value } }) => setFactor(normalizeValue(value))}
         value={toString(factor)}
         width="small">
         {units.map(({ label, factor }, index) => (
