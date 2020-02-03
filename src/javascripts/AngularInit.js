@@ -84,7 +84,6 @@ export const angularInitRun = [
       import('services/batchPerformer'),
       import('components/tabs/listActionsController'),
       import('directives/bindHtmlCompileDirective'),
-      import('directives/cfFocusOnRenderDirective'),
       import('directives/cfFocusOtInputDirective'),
       import('directives/cfSchemaDirectives'),
       import('directives/cfValidateDirective'),
@@ -99,9 +98,9 @@ export const angularInitRun = [
       import('services/exceptionHandler'),
       import('states/cfSrefDirective'),
       import('ui/Framework/ReactDirective'),
-      import('ui/cfIconDirective'),
-      import('ui/cfUiTab'),
-      import('ui/loader')
+      import('directives/cfIconDirective'),
+      import('directives/cfUiTab'),
+      import('directives/cfLoader')
     ]);
     modules.forEach(module => module.default());
 
