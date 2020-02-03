@@ -131,6 +131,18 @@ function getItems(params, { orgId }) {
       children: enterpriseToolsDropdownItems
     },
     {
+      if: params.scimFeatureEnabled && params.isOwnerOrAdmin,
+      title: 'User provisioning',
+      sref: 'account.organizations.user-provisioning',
+      srefParams: { orgId },
+      rootSref: 'account.organizations.user-provisioning',
+      srefOptions: {
+        inherit: false
+      },
+      icon: 'nav-organization-sso',
+      dataViewType: 'organization-sso'
+    },
+    {
       if: params.pricingVersion == 'pricing_version_1' && params.isOwnerOrAdmin,
       title: 'Spaces',
       sref: 'account.organizations.spaces',
