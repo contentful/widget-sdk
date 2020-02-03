@@ -10411,28 +10411,6 @@ pre,
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=90)";
     filter: alpha(opacity=90);
   }
-  .view-role-selector__role {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    padding: 12.5px 25px;
-    cursor: pointer;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-  .view-role-selector__role.x--selected {
-    background-color: #d3dce0;
-  }
-  .view-role-selector__role:hover {
-    background-color: #e5ebed;
-  }
-  .view-role-selector__role.x--disabled {
-    background-color: #d3dce0;
-    cursor: not-allowed;
-    color: #8091a5;
-  }
   .space-home-page-contact-us__container {
     display: -webkit-box;
     display: -ms-flexbox;

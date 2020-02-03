@@ -8,7 +8,7 @@ import ViewMenu from './ViewMenu';
 import createDnD from './SavedViewsDnD';
 import { makeBlankFolder } from 'data/UiConfig/Blanks';
 
-import openRoleSelector from './RoleSelector';
+import { openRoleSelector } from './RoleSelector';
 
 import { getStore } from 'browserStorage';
 import { Notification } from '@contentful/forma-36-react-components';
@@ -140,11 +140,12 @@ export default function({ scopedFolders, loadView, getCurrentView, roleAssignmen
     return scopedFolders.get();
   }
 
-  function saveCurrentView(title) {
+  async function saveCurrentView(title) {
     if (scopedFolders.canEdit && roleAssignment) {
-      openRoleSelector(roleAssignment.endpoint).then(roles =>
-        store.dispatch(SaveCurrentView, { title, roles })
-      );
+      const roles = await openRoleSelector(roleAssignment.endpoint);
+      if (roles !== false) {
+        store.dispatch(SaveCurrentView, { title, roles });
+      }
     } else {
       store.dispatch(SaveCurrentView, { title });
     }
