@@ -84,7 +84,12 @@ export default function EditSpaceMembershipModal({ membership, isShown, onClose,
   };
 
   return (
-    <Modal title={`Choose space roles`} isShown={isShown} onClose={onClose} size="small">
+    <Modal
+      title={`Choose space roles`}
+      isShown={isShown}
+      onClose={onClose}
+      size="small"
+      testId="edit-space-membership">
       {({ title, onClose }) => (
         <>
           <Modal.Header title={title} onClose={onClose} />

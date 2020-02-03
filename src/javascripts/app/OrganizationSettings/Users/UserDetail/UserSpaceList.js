@@ -41,7 +41,7 @@ export default function UserSpaceList({
   if (loading) return <Skeleton />;
   if (!loading && memberships.length === 0) return <EmptyState user={user} />;
   return (
-    <Table testId="user-memberships-table">
+    <Table testId="user-space-list">
       <TableHead>
         <TableRow>
           <TableCell>Space</TableCell>
@@ -75,20 +75,20 @@ UserSpaceList.propTypes = {
 
 function UserSpaceRow({ membership, onRemove, onEdit }) {
   return (
-    <TableRow key={membership.sys.id}>
+    <TableRow key={membership.sys.id} testId="user-space-list.item">
       <TableCell>{membership.sys.space.name}</TableCell>
       <TableCell>{joinWithAnd(getMembershipRoles(membership).map(role => role.name))}</TableCell>
       <TableCell>{getUserName(membership.sys.createdBy)}</TableCell>
       <TableCell>{moment(membership.sys.createdAt).format('MMMM DD, YYYY')}</TableCell>
       <TableCell align="right">
         <CardActions
-          iconButtonProps={{ buttonType: 'primary' }}
-          data-test-id="user-details.space.menu">
+          iconButtonProps={{ buttonType: 'primary', testId: 'user-space-list.menu.trigger' }}
+          data-test-id="user-space-list.menu">
           <DropdownList>
-            <DropdownListItem onClick={onEdit} testId="user-details.space.menu.edit">
+            <DropdownListItem onClick={onEdit} testId="user-space-list.menu.edit">
               Change space role
             </DropdownListItem>
-            <DropdownListItem onClick={onRemove} testId="user-details.space.menu.remove">
+            <DropdownListItem onClick={onRemove} testId="user-space-list.menu.remove">
               Remove memberships
             </DropdownListItem>
           </DropdownList>

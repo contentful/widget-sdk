@@ -26,7 +26,7 @@ export default function UserTeamMemberships({ memberships = [], loading, user })
   if (loading) return <Skeleton />;
   if (!loading && memberships.length === 0) return <EmptyState user={user} />;
   return (
-    <Table>
+    <Table testId="user-team-list">
       <TableHead>
         <TableRow>
           <TableCell>Name</TableCell>
@@ -37,7 +37,7 @@ export default function UserTeamMemberships({ memberships = [], loading, user })
       </TableHead>
       <TableBody>
         {memberships.map(membership => (
-          <TableRow key={membership.sys.id}>
+          <TableRow key={membership.sys.id} testId="user-team-list.item">
             <TableCell>{membership.sys.team.name}</TableCell>
             <TableCell>{membership.sys.team.description}</TableCell>
             <TableCell>{membership.sys.team.memberCount}</TableCell>

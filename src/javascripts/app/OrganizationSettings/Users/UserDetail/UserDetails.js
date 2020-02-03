@@ -64,12 +64,10 @@ const reducer = createImmerReducer({
 
 const tabs = {
   SPACES: {
-    label: 'Spaces',
-    buttonLabel: 'Add to space'
+    label: 'Spaces'
   },
   TEAMS: {
-    label: 'Teams',
-    buttonLabel: 'Add to team'
+    label: 'Teams'
   }
 };
 
@@ -189,7 +187,9 @@ export default function UserDetails({ initialMembership, isSelf, orgId, hasTeams
           )}
           {!hasTeamsFeature && <Heading>Spaces</Heading>}
           {selectedTab === tabs.SPACES && (
-            <Button onClick={handleAddToSpace}>{selectedTab.buttonLabel}</Button>
+            <Button onClick={handleAddToSpace} testId="user-details.add-to-space-button">
+              Add to space
+            </Button>
           )}
         </div>
 

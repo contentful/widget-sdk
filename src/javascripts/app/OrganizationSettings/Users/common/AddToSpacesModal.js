@@ -97,7 +97,8 @@ export default function AddToSpacesModal({
       onClose={onClose}
       shouldCloseOnEscapePress={!inProgress}
       shouldCloseOnOverlayClick={!inProgress}
-      size="large">
+      size="large"
+      testId="add-to-spaces-modal">
       {({ title, onClose }) => (
         <>
           <Modal.Header title={title} onClose={onClose} />
