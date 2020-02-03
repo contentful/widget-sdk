@@ -243,7 +243,7 @@ function getAllUserTeamMemberships(membershipId, orgId, hasTeamsFeature) {
   const endpoint = createOrganizationEndpoint(orgId);
   const includePaths = ['sys.team'];
 
-  if (hasTeamsFeature)
+  if (hasTeamsFeature) {
     return fetchAndResolve(
       getAllTeamMemberships(endpoint, {
         include: includePaths,
@@ -251,6 +251,6 @@ function getAllUserTeamMemberships(membershipId, orgId, hasTeamsFeature) {
       }),
       includePaths
     );
-
+  }
   return Promise.resolve([]);
 }

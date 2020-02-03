@@ -129,7 +129,7 @@ const styles = {
 function EmptyState({ user }) {
   return (
     <EmptyStateContainer className={styles.emptyState}>
-      <Heading>{`${getFullNameOrEmail(user)} is not a member of any space`}</Heading>
+      <Heading>{getFullNameOrEmail(user)} is not a member of any space</Heading>
       <Paragraph>Add them to a space to give them access.</Paragraph>
     </EmptyStateContainer>
   );

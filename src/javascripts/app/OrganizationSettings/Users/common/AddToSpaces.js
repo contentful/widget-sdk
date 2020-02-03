@@ -12,7 +12,7 @@ import SpaceRoleEditor from 'app/OrganizationSettings/SpaceRoleEditor';
 import AutocompleteSelection from 'app/common/AutocompleteSelection';
 import useAsync from 'app/common/hooks/useAsync';
 import { createImmerReducer } from 'redux/utils/createImmerReducer';
-import { Space } from 'app/OrganizationSettings/PropTypes';
+import { Space as SpacePropType } from 'app/OrganizationSettings/PropTypes';
 
 const styles = {
   count: css({
@@ -160,7 +160,7 @@ export default function AddToSpaces({
 AddToSpaces.propTypes = {
   orgId: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
-  ignoredSpaces: PropTypes.arrayOf(Space),
+  ignoredSpaces: PropTypes.arrayOf(SpacePropType),
   submitted: PropTypes.bool,
   inputWidth: PropTypes.oneOf(['small', 'medium', 'large', 'full'])
 };

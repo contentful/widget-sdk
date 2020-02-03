@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import UserDetail from './UserDetails';
+import UserDetails from './UserDetails';
 import OrgAdminOnly from 'app/common/OrgAdminOnly';
 import StateRedirect from 'app/common/StateRedirect';
 import DocumentTitle from 'components/shared/DocumentTitle';
@@ -23,7 +23,7 @@ const getCreatedBy = async (endpoint, membership) => {
   }
 };
 
-const UserDetailFetcher = createFetcherComponent(async ({ orgId, userId }) => {
+const UserDetailsFetcher = createFetcherComponent(async ({ orgId, userId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
   const orgMembership = await getMembership(endpoint, userId);
 
@@ -61,7 +61,7 @@ export default class UserDetailRoute extends React.Component {
 
     return (
       <OrgAdminOnly orgId={orgId}>
-        <UserDetailFetcher orgId={orgId} userId={userId}>
+        <UserDetailsFetcher orgId={orgId} userId={userId}>
           {({ isLoading, isError, error, data }) => {
             if (isLoading) {
               return <FetcherLoading message="Loading user..." />;
@@ -75,11 +75,11 @@ export default class UserDetailRoute extends React.Component {
             return (
               <React.Fragment>
                 <DocumentTitle title={[getUserName(user), 'Users']} />
-                <UserDetail {...data} orgId={orgId} />
+                <UserDetails {...data} orgId={orgId} />
               </React.Fragment>
             );
           }}
-        </UserDetailFetcher>
+        </UserDetailsFetcher>
       </OrgAdminOnly>
     );
   }

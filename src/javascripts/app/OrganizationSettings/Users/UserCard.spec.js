@@ -13,7 +13,7 @@ const user = {
 describe('UserCard', () => {
   it('status is undefined, no INVITED tag present', () => {
     const { getByTestId, queryByTestId } = render(<UserCard user={user} />);
-    const userNameAndStatus = getByTestId('user-name-status');
+    const userNameAndStatus = getByTestId('user-card.name');
     expect(userNameAndStatus.textContent).toBe('User Test');
     expect(queryByTestId('user-card.status')).toBeNull();
   });
