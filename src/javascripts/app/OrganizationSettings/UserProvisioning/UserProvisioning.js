@@ -1,60 +1,48 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import { TextLink, Heading, Paragraph, Note } from '@contentful/forma-36-react-components';
 import Icon from 'ui/Components/Icon';
-import { getOrgFeature } from 'data/CMA/ProductCatalog';
-import OrgAdminOnly from 'app/common/OrgAdminOnly';
-import StateRedirect from 'app/common/StateRedirect';
-import ForbiddenState from 'app/common/ForbiddenState';
-import UserProvisioningConfiguration from './UserProvisioningConfiguration';
-import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 
-const FeatureFetcher = createFetcherComponent(async ({ orgId }) => {
-  const featureEnabled = await getOrgFeature(orgId, 'scim');
-  return [featureEnabled];
-});
+const styles = {
+  heading: css({
+    marginBottom: tokens.spacingM,
+    marginTop: tokens.spacing2Xl
+  }),
+  setupParagraph: css({
+    marginBottom: tokens.spacingL
+  })
+};
 
-export default class UserProvisioning extends Component {
-  static propTypes = {
-    orgId: PropTypes.string.isRequired,
-    onReady: PropTypes.func.isRequired
-  };
+const UserProvisioning = ({ onReady }) => {
+  onReady();
 
-  componentDidMount() {
-    this.props.onReady();
-  }
+  return (
+    <Workbench className="scim-setup">
+      <Workbench.Header icon={<Icon name="page-sso" scale="0.75" />} title="User Provisoning" />
+      <Workbench.Content>
+        <div className="scim-setup__main">
+          <Heading element="h1" className={styles.heading} testId="scim-header">
+            Set up user provisioning with SCIM 2.0
+          </Heading>
+          <Paragraph className={styles.setupParagraph}>
+            Set up user provisioning for your organization in Contentful in a few steps.&nbsp;&nbsp;
+            <TextLink href="https://www.contentful.com/faq/">Check out the FAQs</TextLink>
+          </Paragraph>
+        </div>
+        <Note noteType="primary">
+          We strongly recommend using a service account for setting up user provisioning to better
+          manage the organization access in Contentful.
+        </Note>
+      </Workbench.Content>
+    </Workbench>
+  );
+};
 
-  render() {
-    const { orgId } = this.props;
+UserProvisioning.propTypes = {
+  onReady: PropTypes.func.isRequired
+};
 
-    return (
-      <OrgAdminOnly orgId={orgId}>
-        <FeatureFetcher orgId={orgId}>
-          {({ isLoading, isError, data }) => {
-            if (isLoading) {
-              return <FetcherLoading message="Loading..." />;
-            }
-            if (isError) {
-              return <StateRedirect path="home" />;
-            }
-            if (!data.featureEnabled) {
-              return <ForbiddenState />;
-            }
-
-            return (
-              <Workbench>
-                <Workbench.Header
-                  icon={<Icon name="page-sso" scale="0.75" />}
-                  title="User Provisioning"
-                />
-                <Workbench.Content>
-                  <UserProvisioningConfiguration />
-                </Workbench.Content>
-              </Workbench>
-            );
-          }}
-        </FeatureFetcher>
-      </OrgAdminOnly>
-    );
-  }
-}
+export default UserProvisioning;
