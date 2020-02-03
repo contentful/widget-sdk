@@ -109,7 +109,18 @@ function getItems(params, { orgId }) {
       icon: 'nav-organization-sso',
       dataViewType: 'organization-sso'
     },
-
+    {
+      if: params.scimFeatureEnabled && params.isOwnerOrAdmin,
+      title: 'User provisioning',
+      sref: 'account.organizations.user-provisioning',
+      srefParams: { orgId },
+      rootSref: 'account.organizations.user-provisioning',
+      srefOptions: {
+        inherit: false
+      },
+      icon: 'nav-organization-sso',
+      dataViewType: 'organization-sso'
+    },
     {
       if: params.pricingVersion == 'pricing_version_1' && params.isOwnerOrAdmin,
       title: 'Spaces',
@@ -161,15 +172,23 @@ export default class OrganizationNavigationBar extends React.Component {
   async getConfiguration() {
     const { orgId } = this.props.stateParams;
     const FeatureService = createLegacyFeatureService(orgId, 'organization');
-    const [variation, ssoFeatureEnabled, organization, hasOffsiteBackup] = await Promise.all([
+    const [
+      variation,
+      ssoFeatureEnabled,
+      scimFeatureEnabled,
+      organization,
+      hasOffsiteBackup
+    ] = await Promise.all([
       getVariation(SSO_SELF_CONFIG_FLAG, { organizationId: orgId }),
       getOrgFeature(orgId, 'self_configure_sso'),
+      getOrgFeature(orgId, 'scim'),
       TokenStore.getOrganization(orgId),
       FeatureService.get('offsiteBackup')
     ]);
 
     const params = {
       ssoEnabled: variation && ssoFeatureEnabled,
+      userProvisioningEnabled: scimFeatureEnabled,
       pricingVersion: organization.pricingVersion,
       isOwnerOrAdmin: isOwnerOrAdmin(organization),
       hasOffsiteBackup,
