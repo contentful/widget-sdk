@@ -1,6 +1,5 @@
 const webpack = require('webpack');
 const path = require('path');
-const fs = require('fs');
 const _ = require('lodash');
 const { createBabelOptions } = require('./app-babel-options');
 const WebpackRequireFrom = require('webpack-require-from');
@@ -73,7 +72,7 @@ module.exports = () => {
     ),
     output: {
       filename: isProd ? '[name]-[contenthash].js' : '[name].js',
-      path: path.resolve(projectRoot, 'public', 'app'),
+      path: path.join(projectRoot, 'public', 'app'),
       publicPath,
       chunkFilename: isProd ? 'chunk_[name]-[contenthash].js' : 'chunk_[name].js'
     },
@@ -81,7 +80,7 @@ module.exports = () => {
     resolve: {
       modules: ['node_modules', 'src/javascripts'],
       alias: {
-        'saved-views-migrator': path.resolve(
+        'saved-views-migrator': path.join(
           projectRoot,
           'src',
           'javascripts',
@@ -227,20 +226,16 @@ module.exports = () => {
                 profile: true
               }),
               new HtmlWebpackPlugin({
+                /*
+                  We use `HtmlWebpackPlugin`'s lodash template parser
+                  maintaining compatibility with our build and CI scripts.
+                 */
                 template: 'index.html',
                 inject: false,
                 /*
-                  We generate the template parameters manually below so that
-                  we can use the `index.html` in a simple lodash template parser
-                  script, that doesn't need to have `htmlWebpackPlugin.`
-
-                  This exposes to the template a manifest object that contains
-                  the manifested assets listed in the array below. This dramatically
-                  simplifies creating the compiled index.html when creating for
-                  preview/staging/prod.
-
-                  This also exposes the externalConfig, with a `null` uiVersion and the
-                  chosen development config.
+                  Both webpack and build scripts expect a manifest object which
+                  maps assets to their fingerprinted names as well as the
+                  `externalConfig`.
                  */
                 templateParameters: compilation => {
                   const stats = compilation.getStats().toJson({
@@ -266,24 +261,26 @@ module.exports = () => {
                     return acc;
                   }, {});
 
+                  const config = require(path.join(projectRoot, 'config', `${configName}.json`));
+
                   return {
                     manifest,
                     externalConfig: {
                       uiVersion: null,
-                      config: JSON.parse(
-                        fs
-                          .readFileSync(
-                            path.resolve(__dirname, '..', 'config', `${configName}.json`)
-                          )
-                          .toString()
-                      )
+                      config
                     }
                   };
                 }
               })
             ]
           : [],
-        isProd ? [new ManifestPlugin()] : []
+        isProd
+          ? [
+              new ManifestPlugin({
+                fileName: path.join(projectRoot, 'public', 'manifest.json')
+              })
+            ]
+          : []
       ),
 
     // For development and testing, we're using `cheap-module-source-map` as this allows

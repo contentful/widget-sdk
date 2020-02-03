@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="x-ua-compatible" content="ID=edge" />
-    <meta name="external-config" content="<%= _.escape(JSON.stringify(externalConfig)) %>" />
+    <meta name="external-config" content="<%- JSON.stringify(externalConfig) %>" />
 
     <title>Contentful</title>
     <link href="<%= manifest['styles.css'] %>" type="text/css" rel="stylesheet" media="all" />
