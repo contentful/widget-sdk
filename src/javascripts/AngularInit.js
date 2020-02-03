@@ -28,7 +28,6 @@ export const angularInitRun = [
 
     const modules = await Promise.all([
       import('access_control/UserSpaceInvitationController'),
-      import('account/cfNewOrganizationMembership'),
       import('analytics/analyticsConsoleDirective'),
       import('app/ContentModel/Editor/addFieldDialogController'),
       import('services/modalDialogService'),
