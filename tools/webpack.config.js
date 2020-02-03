@@ -263,14 +263,12 @@ module.exports = () => {
 
                   const config = require(path.join(projectRoot, 'config', `${configName}.json`));
 
-                  const externalConfig = JSON.stringify({
-                    uiVersion: null,
-                    config
-                  });
-
                   return {
                     manifest,
-                    externalConfig
+                    externalConfig: {
+                      uiVersion: null,
+                      config
+                    }
                   };
                 }
               })
