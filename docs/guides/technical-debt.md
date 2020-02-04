@@ -6,11 +6,9 @@ This is a list of technical debt in the code base. Technical debt includes:
 - code hotspots that need constant improvement, and
 - deprecated programming patterns
 
-`Deprecated`: Angular, Karma, Enzyme, Stylus, Sinon, gulp
+`Deprecated`: Angular, Karma, Enzyme, Sinon, Redux
 
 `Use instead`: React, Jest, React Testing Library, Emotion, CSS-in-JS, webpack
-
-`Some usage`: Redux
 
 If you come across code that you see as technical debt then please record it
 here. If the debt is localized it suffices to put a `TODO` comment into the code

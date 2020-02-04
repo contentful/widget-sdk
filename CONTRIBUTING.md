@@ -12,13 +12,13 @@ Here are the guidelines we'd like you to follow:
 
 ## <a name="issue"></a> Issue reporting
 
-If you find a bug, you can help us by creating an issue under the "Bugs pool" in Target Process and assigning it to "Frontend". Please check for duplicates first though.
+If you find a bug, you can help us by creating a BUG in JIRA and ping dev-frontend. Please check for duplicates first though.
 
 Better still, submit a pull request with a fix. You can also talk to the support person for dev-frontend, or ask in slack channel for things tackled by teams, not chapter.
 
 ## <a name="feature"></a> Requesting a feature
 
-If you have a small improvement suggestion, add it to the "Features Pool" in Target Process and talk to PM. Ask in product-experts channel, and talk to one of the PMs who deal with UI for larger features.
+If you have a small improvement suggestion, ask in product-experts channel, and talk to one of the PMs who deal with UI for larger features.
 
 ## <a name="switcher"></a> Version switcher
 
