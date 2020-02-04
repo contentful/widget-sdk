@@ -1,9 +1,21 @@
-/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Icon } from '@contentful/forma-36-react-components';
+import {
+  Modal,
+  Icon,
+  Paragraph,
+  TextLink,
+  List,
+  Typography,
+  ListItem
+} from '@contentful/forma-36-react-components';
 
 import { OrganizationMembership as OrganizationMembershipPropType } from 'app/OrganizationSettings/PropTypes';
+import { css } from 'emotion';
+
+const styles = {
+  faded: css({ opacity: 0.5 })
+};
 
 export default class SseExemptionModal extends React.Component {
   static propTypes = {
@@ -27,44 +39,41 @@ export default class SseExemptionModal extends React.Component {
 
     return (
       <Modal isShown={isShown} onClose={onClose} title="SSO exemption">
-        <div>
-          <p>
+        <Typography>
+          <Paragraph>
             {`We can't enforce login via SSO on ${user.firstName ? user.firstName : user.email}`}.
-          </p>
-          <p>
+          </Paragraph>
+          <Paragraph>
             Users can continue logging into Contentful via email and third-party services even when{' '}
-            <a
+            <TextLink
               href="https://www.contentful.com/faq/sso/#how-does-sso-restricted-mode-work"
               rel="noopener noreferrer"
               target="_blank">
               Restricted Mode
-            </a>{' '}
+            </TextLink>{' '}
             is enabled if they fall into one or more of the following conditions:
-          </p>
-          <ul style={{ marginBottom: 20 }}>
+          </Paragraph>
+          <List>
             {Object.keys(exemptionReasonsMap)
               .sort((a, b) => {
                 return exemptionReasons.indexOf(b) - exemptionReasons.indexOf(a);
               })
               .map(reason => (
-                <li key={reason} style={{ opacity: includesReason(reason) ? '1' : '0.5' }}>
-                  • {exemptionReasonsMap[reason]}{' '}
-                  {includesReason(reason) && (
-                    <Icon
-                      icon="CheckCircle"
-                      color="positive"
-                      style={{ verticalAlign: 'text-bottom' }}
-                    />
-                  )}
-                </li>
+                <ListItem key={reason} className={includesReason(reason) ? null : styles.faded}>
+                  {exemptionReasonsMap[reason]}{' '}
+                  {includesReason(reason) && <Icon icon="CheckCircle" color="positive" />}
+                </ListItem>
               ))}
-          </ul>
-          <p>
-            <a href="https://www.contentful.com/faq/sso/" rel="noopener noreferrer" target="_blank">
+          </List>
+          <Paragraph>
+            <TextLink
+              href="https://www.contentful.com/faq/sso/"
+              rel="noopener noreferrer"
+              target="_blank">
               Learn more about SSO in Contentful
-            </a>
-          </p>
-        </div>
+            </TextLink>
+          </Paragraph>
+        </Typography>
       </Modal>
     );
   }

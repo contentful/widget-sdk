@@ -59,7 +59,7 @@ function Skeleton() {
   return (
     <SkeletonContainer
       data-test-id="content-loader"
-      ariaLabel="Loading the list of spaces"
+      ariaLabel="Loading the list of teams"
       svgWidth="100%">
       <SkeletonBodyText numberOfLines={2} />
       <SkeletonBodyText numberOfLines={2} offsetTop={75} />
