@@ -12,14 +12,14 @@ import * as accessChecker from 'access_control/AccessChecker';
 import * as ListQuery from 'search/listQuery';
 import * as ScheduledActionsService from 'app/ScheduledActions/DataManagement/ScheduledActionsService';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
+import { createRequestQueue } from 'utils/overridingRequestQueue';
 
 export default function register() {
   registerController('EntryListSearchController', [
     '$scope',
     '$q',
     'spaceContext',
-    'overridingRequestQueue',
-    function EntryListSearchController($scope, $q, spaceContext, createRequestQueue) {
+    function EntryListSearchController($scope, $q, spaceContext) {
       let initialized = false;
       let lastUISearchState = null;
 

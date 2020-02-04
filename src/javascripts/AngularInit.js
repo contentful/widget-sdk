@@ -77,7 +77,6 @@ export const angularInitRun = [
       import('components/tabs/entry_list/entryListColumnsController'),
       import('components/tabs/entry_list/entryListController'),
       import('components/tabs/entry_list/entryListDirective'),
-      import('utils/overridingRequestQueue'),
       import('components/tabs/entry_list/entryListSearchController'),
       import('services/batchPerformer'),
       import('components/tabs/listActionsController'),
