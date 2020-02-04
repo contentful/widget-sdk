@@ -34,7 +34,7 @@ orbs:
           - aws-s3/copy:
               from: <<parameters.path>>
               to: s3://<<parameters.bucket>>
-              arguments: '--acl public-read --recursive'
+              arguments: '--acl public-read --recursive --cache-control "max-age=86400"'
 
   post-comment:
     commands:
