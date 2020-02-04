@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { getUserName } from '../UserUtils';
+import { getUserName, getLastActivityDate } from '../UserUtils';
 import { OrganizationMembership as OrganizationMembershipPropType } from 'app/OrganizationSettings/PropTypes';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { OrganizationRoleSelector } from './OrganizationRoleSelector';
-import { Paragraph, TextLink, Notification } from '@contentful/forma-36-react-components';
+import { Paragraph, TextLink, Notification, List } from '@contentful/forma-36-react-components';
 import { orgRoles } from 'utils/MembershipUtils';
 import SsoExemptionDialog from './SsoExemptionModal';
 import ModalLauncher from 'app/common/ModalLauncher';
@@ -43,9 +43,7 @@ const styles = {
 };
 
 export default function UserAttributes({ membership, isSelf, onRoleChange, orgId }) {
-  const lastActiveAt = membership.sys.lastActiveAt
-    ? moment(membership.sys.lastActiveAt, moment.ISO_8601).fromNow()
-    : 'Never';
+  const lastActiveAt = getLastActivityDate(membership);
   const memberSince = moment(membership.sys.createdAt, moment.ISO_8601).format('MMMM DD, YYYY');
   const invitedBy = getUserName(membership.sys.createdBy);
 
@@ -112,7 +110,7 @@ export default function UserAttributes({ membership, isSelf, onRoleChange, orgId
 
   return (
     <div className={styles.row}>
-      <ul className={styles.column}>
+      <List className={styles.column}>
         <li className={styles.item}>
           <strong className={styles.label}>Last active</strong>
           <span data-test-id="user-attributes.last-active-at">{lastActiveAt}</span>
@@ -125,10 +123,10 @@ export default function UserAttributes({ membership, isSelf, onRoleChange, orgId
           <strong className={styles.label}>Invited by</strong>
           <span data-test-id="user-attributes.invited-by">{invitedBy}</span>
         </li>
-      </ul>
+      </List>
       {membership.sys.sso && <UserSsoInfo membership={membership} />}
       <div>
-        <ul className={styles.column}>
+        <List className={styles.column}>
           <li className={styles.item}>
             <strong className={styles.label}>Organization role</strong>
             <OrganizationRoleSelector initialRole={membership.role} onChange={changeRole} />
@@ -148,14 +146,14 @@ export default function UserAttributes({ membership, isSelf, onRoleChange, orgId
               </TextLink>
             </Paragraph>
           </li>
-        </ul>
+        </List>
       </div>
     </div>
   );
 }
 
 UserAttributes.propTypes = {
-  membership: OrganizationMembershipPropType,
+  membership: OrganizationMembershipPropType.isRequired,
   isSelf: PropTypes.bool.isRequired,
   onRoleChange: PropTypes.func.isRequired,
   orgId: PropTypes.string
@@ -171,7 +169,7 @@ function UserSsoInfo({ membership }) {
   );
 
   return (
-    <ul className={styles.column}>
+    <List className={styles.column}>
       <li className={styles.item}>
         <strong className={styles.label}>Last SSO login</strong>
         <span data-test-id="user-attributes.last-sso-login">{lastSSOLogin}</span>
@@ -182,7 +180,7 @@ function UserSsoInfo({ membership }) {
           {isExemptFromRestrictedMode ? exempt : 'No'}
         </span>
       </li>
-    </ul>
+    </List>
   );
 }
 

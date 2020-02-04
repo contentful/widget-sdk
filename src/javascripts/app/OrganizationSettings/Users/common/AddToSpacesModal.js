@@ -49,10 +49,6 @@ export default function AddToSpacesModal({
   onClose,
   onAddedToSpaces
 }) {
-  // const [spaceMemberships, setSpaceMemberships] = useState([]);
-  // const [isSubmitted, setSubmitted] = useState(false);
-  // const [isInvalid, setInvalid] = useState(false);
-
   const [{ spaceMemberships, isSubmitted, isInvalid, inProgress }, dispatch] = useReducer(reducer, {
     spaceMemberships: [],
     isSubmitted: false,

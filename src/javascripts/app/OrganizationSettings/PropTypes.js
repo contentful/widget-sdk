@@ -62,7 +62,7 @@ export const OrganizationMembership = PropTypes.shape({
   role: PropTypes.oneOf(orgRoles.map(role => role.value)).isRequired,
   sys: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    user: User.isRequired,
+    user: PropTypes.oneOfType([User, Link]),
     sso: OrganizationMembershipSSO
   }).isRequired
 });
