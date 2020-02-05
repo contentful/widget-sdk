@@ -32,9 +32,13 @@ orbs:
                 echo 'export AWS_SECRET_ACCESS_KEY=<<parameters.secret_access_key>>' >> $BASH_ENV
                 echo 'export AWS_REGION=<<parameters.region>>' >> $BASH_ENV
           - aws-s3/copy:
-              from: <<parameters.path>>
-              to: s3://<<parameters.bucket>>
-              arguments: '--acl public-read --recursive --cache-control "max-age=86400"'
+              from: <<parameters.path>>/app
+              to: s3://<<parameters.bucket>>/app
+              arguments: --acl public-read --recursive --cache-control "immutable,public,max-age=86400"
+          - aws-s3/copy:
+              from: <<parameters.path>>/archive
+              to: s3://<<parameters.bucket>>/archive
+              arguments: --acl public-read --recursive --cache-control "no-cache"
 
   post-comment:
     commands:
