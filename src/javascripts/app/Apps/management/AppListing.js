@@ -16,7 +16,8 @@ import {
   TextInput,
   Paragraph,
   TextLink,
-  Typography
+  Typography,
+  CopyButton
 } from '@contentful/forma-36-react-components';
 
 import StateLink from 'app/common/StateLink';
@@ -37,6 +38,16 @@ const styles = {
   appActions: css({
     'button:first-child': css({
       marginRight: tokens.spacingS
+    })
+  }),
+  copyButton: css({
+    button: css({
+      border: 'none',
+      backgroundColor: 'transparent',
+      '&:hover': css({
+        backgroundColor: 'transparent',
+        border: 'none'
+      })
     })
   })
 };
@@ -85,9 +96,13 @@ export default function AppListing({ definitions }) {
               return (
                 <TableRow key={def.sys.id}>
                   <TableCell>
-                    <b>{def.name}</b>
+                    <StateLink path="^.definitions" params={{ definitionId: def.sys.id }}>
+                      <b>{def.name}</b>
+                    </StateLink>
                   </TableCell>
-                  <TableCell>{def.sys.id}</TableCell>
+                  <TableCell>
+                    {def.sys.id} <CopyButton className={styles.copyButton} copyValue={def.sys.id} />
+                  </TableCell>
                   <TableCell className={styles.appActions} align="right">
                     <StateLink path="^.definitions" params={{ definitionId: def.sys.id }}>
                       {({ onClick }) => (
