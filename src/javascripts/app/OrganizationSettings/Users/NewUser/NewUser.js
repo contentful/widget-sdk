@@ -1,4 +1,4 @@
-import React, { useMemo, useReducer, useEffect, useCallback } from 'react';
+import React, { useMemo, useReducer, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import {
   Heading,
@@ -75,7 +75,7 @@ const reducer = (state, action) => {
   }
 };
 
-export default function NewUser({ orgId, onReady, hasSsoEnabled, hasTeamsFeature, isOwner }) {
+export default function NewUser({ orgId, hasSsoEnabled, hasTeamsFeature, isOwner }) {
   const [
     {
       submitted,
@@ -175,11 +175,6 @@ export default function NewUser({ orgId, onReady, hasSsoEnabled, hasTeamsFeature
   }, [spaceMemberships, submitted]);
 
   const availableOrgRoles = isOwner ? orgRoles : orgRoles.filter(role => role.value !== 'owner');
-
-  // dismiss the loading state of the Angular UI router state
-  useEffect(() => {
-    onReady();
-  }, [onReady]);
 
   const handleSpaceSelected = useCallback(spaceMemberships => {
     dispatch({ type: 'SPACE_MEMBERSHIPS_CHANGED', payload: spaceMemberships });
@@ -298,7 +293,6 @@ export default function NewUser({ orgId, onReady, hasSsoEnabled, hasTeamsFeature
 
 NewUser.propTypes = {
   orgId: PropTypes.string.isRequired,
-  onReady: PropTypes.func.isRequired,
   hasSsoEnabled: PropTypes.bool,
   hasTeamsFeature: PropTypes.bool,
   isOwner: PropTypes.bool

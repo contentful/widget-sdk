@@ -131,12 +131,6 @@ describe('NewUser', () => {
     getVariation.mockReset();
   });
 
-  it('dismisses the loading state', async () => {
-    build();
-    expect(mockOnReady).toHaveBeenCalled();
-    await wait();
-  });
-
   it('does not show the owner role as an option to non owners', async () => {
     build(false, false);
     expect(screen.queryByLabelText('Owner')).toBeNull();
