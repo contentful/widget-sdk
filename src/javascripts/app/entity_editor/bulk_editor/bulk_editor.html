@@ -15,11 +15,11 @@
   </header>
   <div class="workbench-main">
     <div class="workbench-main__content" ng-show="!data.loaded" style="padding-top: 0">
-      <cf-loader
-        ng-if="entityContexts.length &gt; 0"
-        is-shown="true"
-        loader-msg="Loading entries…"
-      ></cf-loader>
+      <react-component
+        ng-if="entityContexts.length > 0"
+        name="ui/Loader"
+        props="{isShown: true, message: 'Loading entries...'}"
+      />
       <div class="empty-state" ng-if="entityContexts.length === 0">
         <div class="empty-state__description">There are no entries linked yet.</div>
       </div>

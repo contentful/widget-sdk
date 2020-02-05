@@ -15,11 +15,12 @@
         ng-if="!slideState.viewProps &amp;&amp; slideState.slide.type === 'BulkEditor'"
         style="height: 100%"
       >
-        <cf-loader
+        <react-component
           ng-if="!slideState.loadingError"
-          is-shown="true"
-          loader-msg="Loading entry…"
-        ></cf-loader>
+          name="ui/Loader"
+          props="{isShown: true, message: 'Loading entry…'}"
+        />
+        >
         <div class="empty-state" ng-if="slideState.loadingError">
           <div class="empty-state__title" ng-if="slideState.loadingError.statusCode === 404">
             Entry missing or inaccessible
@@ -36,11 +37,11 @@
         ng-if="!slideState.viewProps &amp;&amp; slideState.slide.type === 'Entry'"
         style="height: 100%"
       >
-        <cf-loader
+        <react-component
           ng-if="!slideState.loadingError"
-          is-shown="true"
-          loader-msg="Loading entry…"
-        ></cf-loader>
+          name="ui/Loader"
+          props="{isShown: true, message: 'Loading entry…'}"
+        />
         <div class="empty-state" ng-if="slideState.loadingError">
           <div class="empty-state__title" ng-if="slideState.loadingError.statusCode === 404">
             Entry missing or inaccessible
@@ -57,11 +58,11 @@
         ng-if="!slideState.viewProps &amp;&amp; slideState.slide.type === 'Asset'"
         style="height: 100%"
       >
-        <cf-loader
+        <react-component
           ng-if="!slideState.loadingError"
-          is-shown="true"
-          loader-msg="Loading asset…"
-        ></cf-loader>
+          name="ui/Loader"
+          props="{isShown: true, message: 'Loading asset…'}"
+        />
         <div class="empty-state" ng-if="slideState.loadingError">
           <div class="empty-state__title" ng-if="slideState.loadingError.statusCode === 404">
             Asset missing or inaccessible

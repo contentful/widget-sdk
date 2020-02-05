@@ -96,8 +96,7 @@ export const angularInitRun = [
       import('states/cfSrefDirective'),
       import('ui/Framework/ReactDirective'),
       import('directives/cfIconDirective'),
-      import('directives/cfUiTab'),
-      import('directives/cfLoader')
+      import('directives/cfUiTab')
     ]);
     modules.forEach(module => module.default());
 
