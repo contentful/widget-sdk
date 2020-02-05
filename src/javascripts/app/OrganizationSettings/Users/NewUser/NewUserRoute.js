@@ -1,6 +1,10 @@
 import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
 
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+
+import Icon from 'ui/Components/Icon';
 import ErrorState from 'app/common/ErrorState';
 import LoadingState from 'app/common/LoadingState';
 import useAsync from 'app/common/hooks/useAsync';
@@ -10,6 +14,16 @@ import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
 
 import NewUser from './NewUser';
+
+// TODO: put this in the component library -- we shouldn't have to set height like this
+const styles = {
+  content: css({
+    height: '100%',
+    '> div': {
+      height: '100%'
+    }
+  })
+};
 
 export default function NewUserRoute({ onReady, orgId }) {
   useEffect(onReady, [onReady]);
@@ -33,11 +47,14 @@ export default function NewUserRoute({ onReady, orgId }) {
   );
 
   return (
-    <>
-      {isLoading && <LoadingState loadingText="Loading…" />}
-      {!isLoading && error && <ErrorState />}
-      {!isLoading && !error && <NewUser orgId={orgId} {...componentProps} />}
-    </>
+    <Workbench title="Invite users">
+      <Workbench.Header title="Invite users" icon={<Icon name="page-users" scale="0.75" />} />
+      <Workbench.Content className={styles.content} type="text">
+        {isLoading && <LoadingState loadingText="Loading…" />}
+        {!isLoading && error && <ErrorState />}
+        {!isLoading && !error && <NewUser orgId={orgId} {...componentProps} />}
+      </Workbench.Content>
+    </Workbench>
   );
 }
 

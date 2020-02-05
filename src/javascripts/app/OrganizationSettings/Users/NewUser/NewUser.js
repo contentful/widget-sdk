@@ -14,7 +14,6 @@ import {
   ModalConfirm,
   Typography
 } from '@contentful/forma-36-react-components';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import pluralize from 'pluralize';
 import { orgRoles } from 'utils/MembershipUtils';
 import { useAddToOrg } from './NewUserHooks';
@@ -26,7 +25,6 @@ import NewUserProgress from './NewUserProgress';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import ModalLauncher from 'app/common/ModalLauncher';
-import Icon from 'ui/Components/Icon';
 
 const styles = {
   subheading: css({
@@ -185,109 +183,104 @@ export default function NewUser({ orgId, hasSsoEnabled, hasTeamsFeature, isOwner
   }, []);
 
   return (
-    <Workbench title="Invite users">
-      <Workbench.Header title="Invite users" icon={<Icon name="page-users" scale="0.75" />} />
-      <Workbench.Content type="text">
-        {error && <Paragraph>Something went wrong</Paragraph>}
-        {isLoading && <NewUserProgress progress={progress} emailList={emailList} />}
-        {data && (
-          <NewUserSuccess
-            failures={data.failures}
-            successes={data.successes}
-            onRestart={reset}
-            orgId={orgId}
+    <>
+      {error && <Paragraph>Something went wrong</Paragraph>}
+      {isLoading && <NewUserProgress progress={progress} emailList={emailList} />}
+      {data && (
+        <NewUserSuccess
+          failures={data.failures}
+          successes={data.successes}
+          onRestart={reset}
+          orgId={orgId}
+        />
+      )}
+      {!data && !error && !isLoading && (
+        <Form>
+          <Heading>Invite users to your organization</Heading>
+          <TextField
+            id="emails"
+            name="emails"
+            testId="new-user.emails"
+            disabled={isLoading}
+            textarea
+            required
+            onChange={handleEmailsChange}
+            value={emailsValue}
+            labelText="User email(s)"
+            validationMessage={emailsErrorMessage}
+            helpText="Up to 100 email addresses, separated by comma or line breaks"
           />
-        )}
-        {!data && !error && !isLoading && (
-          <Form>
-            <Heading>Invite users to your organization</Heading>
-            <TextField
-              id="emails"
-              name="emails"
-              testId="new-user.emails"
-              disabled={isLoading}
-              textarea
-              required
-              onChange={handleEmailsChange}
-              value={emailsValue}
-              labelText="User email(s)"
-              validationMessage={emailsErrorMessage}
-              helpText="Up to 100 email addresses, separated by comma or line breaks"
+
+          <fieldset>
+            <Subheading element="h3" className={styles.subheading}>
+              Choose an organization role
+            </Subheading>
+            <FieldGroup>
+              {availableOrgRoles.map(role => (
+                <RadioButtonField
+                  testId="new-user.role"
+                  id={role.value}
+                  disabled={isLoading}
+                  labelText={role.name}
+                  helpText={role.description}
+                  key={role.value}
+                  onChange={handleRoleChange}
+                  checked={orgRole === role.value}
+                  value={role.value}
+                  name="orgRole"
+                />
+              ))}
+            </FieldGroup>
+
+            {orgRoleError && (
+              <ValidationMessage testId="new-user.org-role.error">{orgRoleError}</ValidationMessage>
+            )}
+          </fieldset>
+
+          <fieldset>
+            <Subheading element="h3" className={styles.subheading}>
+              Add to spaces
+            </Subheading>
+            <SpaceMembershipList
+              orgId={orgId}
+              onChange={handleSpaceSelected}
+              submitted={submitted}
             />
-
+            {spaceMembershipsError && (
+              <ValidationMessage testId="new-user.space-memberships.error">
+                {spaceMembershipsError}
+              </ValidationMessage>
+            )}
+          </fieldset>
+          {hasTeamsFeature && (
             <fieldset>
               <Subheading element="h3" className={styles.subheading}>
-                Choose an organization role
+                Add to teams
               </Subheading>
-              <FieldGroup>
-                {availableOrgRoles.map(role => (
-                  <RadioButtonField
-                    testId="new-user.role"
-                    id={role.value}
-                    disabled={isLoading}
-                    labelText={role.name}
-                    helpText={role.description}
-                    key={role.value}
-                    onChange={handleRoleChange}
-                    checked={orgRole === role.value}
-                    value={role.value}
-                    name="orgRole"
-                  />
-                ))}
-              </FieldGroup>
-
-              {orgRoleError && (
-                <ValidationMessage testId="new-user.org-role.error">
-                  {orgRoleError}
-                </ValidationMessage>
-              )}
+              <TeamList orgId={orgId} onChange={handleTeamSelected} />
             </fieldset>
+          )}
+          {hasSsoEnabled && (
+            <CheckboxField
+              id="sendNotifications"
+              checked={!suppressInvitation}
+              onChange={handleNotificationsPreferenceChange}
+              testId="new-user.notifications-checkbox"
+              labelText="Send email notifications"
+              helpText="Leave this unchecked if you want to inform your users yourself"
+            />
+          )}
 
-            <fieldset>
-              <Subheading element="h3" className={styles.subheading}>
-                Add to spaces
-              </Subheading>
-              <SpaceMembershipList
-                orgId={orgId}
-                onChange={handleSpaceSelected}
-                submitted={submitted}
-              />
-              {spaceMembershipsError && (
-                <ValidationMessage testId="new-user.space-memberships.error">
-                  {spaceMembershipsError}
-                </ValidationMessage>
-              )}
-            </fieldset>
-            {hasTeamsFeature && (
-              <fieldset>
-                <Subheading element="h3" className={styles.subheading}>
-                  Add to teams
-                </Subheading>
-                <TeamList orgId={orgId} onChange={handleTeamSelected} />
-              </fieldset>
-            )}
-            {hasSsoEnabled && (
-              <CheckboxField
-                id="sendNotifications"
-                checked={!suppressInvitation}
-                onChange={handleNotificationsPreferenceChange}
-                testId="new-user.notifications-checkbox"
-                labelText="Send email notifications"
-                helpText="Leave this unchecked if you want to inform your users yourself"
-              />
-            )}
-
-            <Button
-              buttonType="positive"
-              testId="new-user.submit"
-              loading={isLoading}
-              onClick={handleSubmit}>
-              Send invitations
-            </Button>
-          </Form>
-        )}
-      </Workbench.Content>
-    </Workbench>
+          <Button
+            buttonType="positive"
+            testId="new-user.submit"
+            loading={isLoading}
+            onClick={handleSubmit}>
+            Send invitations
+          </Button>
+        </Form>
+      )}
+    </>
   );
 }
 
