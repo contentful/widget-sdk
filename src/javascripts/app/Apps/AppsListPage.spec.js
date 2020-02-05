@@ -43,7 +43,15 @@ describe('AppsListPage', () => {
         goToContent={() => {}}
         repo={mockRepo}
         organizationId={orgId}
-        spaceId={spaceId}
+        spaceInformation={{
+          spaceId: spaceId,
+          spaceName: 'my-test-space',
+          envMeta: {
+            environmentId: 'master',
+            isMasterEnvironment: true,
+            aliasId: undefined
+          }
+        }}
         userId={userId}
         hasAppsFeature={true}
       />

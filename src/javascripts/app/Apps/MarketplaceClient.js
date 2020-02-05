@@ -52,7 +52,6 @@ export async function fetchMarketplaceApps() {
 function createAppObject(entry) {
   const definitionId = get(entry, ['fields', 'appDefinitionId']);
   const title = get(entry, ['fields', 'title'], '');
-  const permissionsText = get(entry, ['fields', 'permissions', 'fields', 'text'], '');
 
   return {
     definitionId,
@@ -69,7 +68,10 @@ function createAppObject(entry) {
     description: get(entry, ['fields', 'description'], ''),
     icon: get(entry, ['fields', 'icon', 'fields', 'file', 'url'], ''),
     links: get(entry, ['fields', 'links'], []).map(link => link.fields),
-    permissions: `__${title} app__ ${permissionsText}`,
+    legal: {
+      eula: get(entry, ['fields', 'eula'], ''),
+      privacyPolicy: get(entry, ['fields', 'privacyPolicy'], '')
+    },
     tagLine: get(entry, ['fields', 'tagLine'], ''),
     actionList: get(entry, ['fields', 'uninstallMessages'], []).map(msg => msg.fields)
   };

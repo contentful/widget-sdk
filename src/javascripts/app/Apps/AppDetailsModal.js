@@ -112,7 +112,7 @@ AppHeader.propTypes = {
   app: AppPropType.isRequired
 };
 
-function AppPermissionScreen({ app, onInstall, onCancel, onClose }) {
+function AppPermissionScreen({ app, onInstall, onCancel, onClose, spaceInformation }) {
   useEffect(() => {
     AppLifecycleTracking.permissionsOpened(app.id);
   }, [app.id]);
@@ -135,7 +135,9 @@ function AppPermissionScreen({ app, onInstall, onCancel, onClose }) {
         onCancel={() => onCancelTracked()}
         icon={app.icon}
         title={app.title}
-        permissions={app.permissions}
+        space={spaceInformation.spaceName}
+        envMeta={spaceInformation.envMeta}
+        legal={app.legal}
       />
     </div>
   );
@@ -145,7 +147,16 @@ AppPermissionScreen.propTypes = {
   app: AppPropType.isRequired,
   onInstall: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired
+  onClose: PropTypes.func.isRequired,
+  spaceInformation: PropTypes.shape({
+    spaceId: PropTypes.string.isRequired,
+    spaceName: PropTypes.string.isRequired,
+    envMeta: PropTypes.shape({
+      environmentId: PropTypes.string.isRequired,
+      isMasterEnvironment: PropTypes.bool.isRequired,
+      aliasId: PropTypes.string
+    })
+  })
 };
 
 function determineOnClick(installed = false, onClick, onClose, setShowPermissions) {
@@ -158,7 +169,7 @@ function determineOnClick(installed = false, onClick, onClose, setShowPermission
 }
 
 export function AppDetails(props) {
-  const { app, onClose, showPermissions, setShowPermissions } = props;
+  const { app, onClose, showPermissions, setShowPermissions, spaceInformation } = props;
 
   if (showPermissions) {
     return (
@@ -166,6 +177,7 @@ export function AppDetails(props) {
         {({ onClick }) => (
           <AppPermissionScreen
             app={app}
+            spaceInformation={spaceInformation}
             onInstall={onClick}
             onCancel={() => setShowPermissions(false)}
             onClose={onClose}
@@ -234,6 +246,15 @@ export function AppDetails(props) {
 
 AppDetails.propTypes = {
   app: AppPropType.isRequired,
+  spaceInformation: PropTypes.shape({
+    spaceId: PropTypes.string.isRequired,
+    spaceName: PropTypes.string.isRequired,
+    envMeta: PropTypes.shape({
+      environmentId: PropTypes.string.isRequired,
+      isMasterEnvironment: PropTypes.bool.isRequired,
+      aliasId: PropTypes.string
+    })
+  }),
   onClose: PropTypes.func.isRequired,
   showPermissions: PropTypes.bool,
   setShowPermissions: PropTypes.func
@@ -241,7 +262,7 @@ AppDetails.propTypes = {
 
 export default function AppDetailsModal(props) {
   const [showPermissions, setShowPermissions] = useState(null);
-  const modalTitle = showPermissions ? 'Authorize' : 'App details';
+  const modalTitle = showPermissions ? `Install ${props.app.title}` : 'App details';
   const modalSize = showPermissions ? null : '1000px';
   return (
     <Modal
@@ -255,6 +276,7 @@ export default function AppDetailsModal(props) {
       onClose={props.onClose}>
       <AppDetails
         app={props.app}
+        spaceInformation={props.spaceInformation}
         onClose={props.onClose}
         showPermissions={showPermissions}
         setShowPermissions={setShowPermissions}
@@ -266,5 +288,11 @@ export default function AppDetailsModal(props) {
 AppDetailsModal.propTypes = {
   isShown: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  app: AppPropType.isRequired
+  app: AppPropType.isRequired,
+  spaceInformation: PropTypes.shape({
+    spaceId: PropTypes.string.isRequired,
+    spaceName: PropTypes.string.isRequired,
+    envName: PropTypes.string.isRequired,
+    envIsMaster: PropTypes.bool.isRequired
+  })
 };

@@ -1057,6 +1057,8 @@
           ],
           "description": "### About the app\n\nThe Netlify App gives content editors control over static site builds and makes the process more transparent.\n\n---\n\n### This app provides the following functionality:\n\n- triggers Netlify builds with a simple click in the sidebar\n- displays build status so editors don't preview outdated sites\n- brings Netlify functionality into the Contentful web app\n- makes it possible to configure on a per-content-type level\n\n---\n\n### To use this app, you need:\n\n- a static site based on a service such as Gatsby, Middleman or Hugo\n- your site configured to load content from Contentful and its code pushed to a remote repository, such as GitHub or Gitlab\n- a Netlify setup where the site is connected to the remote repository and enabled for continuous deployment\n\n---\n\n### Screenshots\n\n![Netlify config](//images.ctfassets.net/lpjm8d10rkpy/4Rf8yoGPw4AQwdMboiVwhF/a0a9a8b8e73a5ace1fdf78adebc24a49/apps-netlify-site-setup.b4a24a69c0.png)\n\n![Netlify sidebar](//images.ctfassets.net/lpjm8d10rkpy/RrSqXTcdlpfkPt7sJzkEb/57172d0fd3eaa36a5ab90e7d183ed171/apps-netlify-sidebar.0ffd73e12b.png) ",
           "tagLine": "Easily build and preview Netlify sites directly from Contentful ",
+          "eula": "https://www.EULA.com",
+          "privacyPolicy": "https://www.privacy.com",
           "uninstallMessages": [
             {
               "sys": {

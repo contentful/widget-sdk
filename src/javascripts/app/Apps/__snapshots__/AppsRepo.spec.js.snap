@@ -76,6 +76,10 @@ The Netlify App gives content editors control over static site builds and makes 
 ![Netlify sidebar](//images.ctfassets.net/lpjm8d10rkpy/RrSqXTcdlpfkPt7sJzkEb/57172d0fd3eaa36a5ab90e7d183ed171/apps-netlify-sidebar.0ffd73e12b.png) ",
     "icon": "//images.ctfassets.net/lpjm8d10rkpy/2dYQ3x6VMNZJgDXYmMzLBx/b338ad4b50cd0ff31e7157671b801b4d/logomark.svg",
     "id": "netlify",
+    "legal": Object {
+      "eula": "https://www.EULA.com",
+      "privacyPolicy": "https://www.privacy.com",
+    },
     "links": Array [
       Object {
         "title": "Netlify Docs",
@@ -86,11 +90,6 @@ The Netlify App gives content editors control over static site builds and makes 
         "url": "https://www.contentful.com/developers/docs/extensibility/apps/netlify/",
       },
     ],
-    "permissions": "__Netlify app__ is asking for permissions to access this Contentful environment.
-
-The app will be able to manage this environment and any content in it.
-
-You can revoke access at any time by uninstalling the app.",
     "tagLine": "Easily build and preview Netlify sites directly from Contentful ",
     "title": "Netlify",
   },
