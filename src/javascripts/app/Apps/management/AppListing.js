@@ -63,18 +63,42 @@ const styles = {
   miniIcon: css({
     marginRight: tokens.spacingS,
     verticalAlign: 'sub'
+  }),
+  learnMore: css({
+    maxWidth: '768px',
+    margin: '0 auto',
+    marginTop: '100px',
+    textAlign: 'center'
   })
 };
 
 export default function AppListing({ definitions }) {
+  const learnMoreParagraph = (
+    <Paragraph>
+      Learn more about{' '}
+      <TextLink href="https://www.contentful.com/developers/docs/extensibility/apps/building-apps/">
+        building Contentful apps
+      </TextLink>{' '}
+      or check out our <TextLink href="https://contentful.com/marketplace">Marketplace</TextLink>.
+    </Paragraph>
+  );
+
   if (definitions.length < 1) {
     return (
-      <>
-        <Heading>No apps found</Heading>
+      <div className={styles.learnMore}>
+        <Typography>
+          <Heading>Build apps for Contentful</Heading>
+          <Paragraph>
+            Contentful apps extend and expand the capabilities of the Contentful web app and the
+            editors who use it. Apps empower you to integrate third-party services, build
+            extraordinary workflows and customize the functionality of the Contentful web app.
+          </Paragraph>
+          {learnMoreParagraph}
+        </Typography>
         <StateLink path="^.new_definition">
-          {({ onClick }) => <Button onClick={onClick}>Create new</Button>}
+          {({ onClick }) => <Button onClick={onClick}>Create an app</Button>}
         </StateLink>
-      </>
+      </div>
     );
   }
 
@@ -147,14 +171,7 @@ export default function AppListing({ definitions }) {
             Build private apps for Contentful to extend the core functionality of the web app and
             optimize the workflow of editors.
           </Paragraph>
-          <Paragraph>
-            Learn more about{' '}
-            <TextLink href="https://www.contentful.com/developers/docs/extensibility/apps/building-apps/">
-              building Contentful apps
-            </TextLink>{' '}
-            or check out our{' '}
-            <TextLink href="https://contentful.com/marketplace">Marketplace</TextLink>.
-          </Paragraph>
+          {learnMoreParagraph}
         </Typography>
       </Workbench.Sidebar>
     </Workbench>
