@@ -132,20 +132,19 @@ Jest stores snapshots besides your tests in files like `__snapshots__/Label.spec
 
 ### Testing basic component rendering
 
-That's enought for most non-interactive components:
+That's enough for most non-interactive components:
 
 ```js
 import { render } from '@testing-library/react';
 import Comment from './comment.es6';
 
 describe('Comment component', () => {
-
   it('renders the comment body', () => {
     const { getByTestId } = render(<Commment text="Hello world" />);
     const body = getByTestId('comment.body');
     expect(body.textContent).toBe('Hello world');
-  })
-})
+  });
+});
 ```
 
 ### Testing events
@@ -177,7 +176,7 @@ it('it calls the onChange handler with the selected value', () => {
   const { getByTestId } = render(<Select items={items} onChange={onChange} />);
   const selectEl = getByTestId('select');
 
-  fireEvent.change(selectEl, {target: { value }});
+  fireEvent.change(selectEl, { target: { value } });
 
   expect(onChange).toBeCalledWith(value);
 });
@@ -283,7 +282,7 @@ Debugging Jest tests is supported out of the box for [Visual Studio Code](https:
 
 Use the following [`launch.json`](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations) configuration file:
 
-```
+```json
 {
   "version": "0.2.0",
   "configurations": [
@@ -293,10 +292,7 @@ Use the following [`launch.json`](https://code.visualstudio.com/docs/editor/debu
       "request": "launch",
       "runtimeExecutable": "node",
       "program": "${workspaceRoot}/run-tests-jest.js",
-      "args": [
-        "--runInBand",
-        "--no-cache"
-      ],
+      "args": ["--runInBand", "--no-cache"],
       "cwd": "${workspaceRoot}",
       "protocol": "inspector",
       "console": "integratedTerminal",
