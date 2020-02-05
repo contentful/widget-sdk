@@ -11,6 +11,34 @@ import createLegacyFeatureService from 'services/LegacyFeatureService';
 import { getVariation } from 'LaunchDarkly';
 
 function getItems(params, { orgId }) {
+  const provisionDropdownItems = [];
+  if (params.ssoEnabled) {
+    provisionDropdownItems.push({
+      if: params.ssoEnabled,
+      title: 'SSO',
+      sref: 'account.organizations.sso',
+      srefParams: { orgId },
+      rootSref: 'account.organizations.sso',
+      srefOptions: {
+        inherit: false
+      },
+      dataViewType: 'organization-sso'
+    });
+  }
+  if (params.scimFeatureEnabled) {
+    provisionDropdownItems.push({
+      if: params.scimFeatureEnabled,
+      title: 'User provisioning',
+      sref: 'account.organizations.user-provisioning',
+      srefParams: { orgId },
+      rootSref: 'account.organizations.user-provisioning',
+      srefOptions: {
+        inherit: false
+      },
+      dataViewType: 'organization-user-provisioning'
+    });
+  }
+
   return [
     {
       if: params.hasSettingsTab,
@@ -98,28 +126,12 @@ function getItems(params, { orgId }) {
       dataViewType: 'organization-teams'
     },
     {
-      if: params.ssoEnabled && params.isOwnerOrAdmin,
-      title: 'SSO',
-      sref: 'account.organizations.sso',
-      srefParams: { orgId },
-      rootSref: 'account.organizations.sso',
-      srefOptions: {
-        inherit: false
-      },
+      if: params.isOwnerOrAdmin && provisionDropdownItems && provisionDropdownItems.length > 0,
+      title: 'Provisions',
+      rootSref: 'organization-provisions',
       icon: 'nav-organization-sso',
-      dataViewType: 'organization-sso'
-    },
-    {
-      if: params.scimFeatureEnabled && params.isOwnerOrAdmin,
-      title: 'User provisioning',
-      sref: 'account.organizations.user-provisioning',
-      srefParams: { orgId },
-      rootSref: 'account.organizations.user-provisioning',
-      srefOptions: {
-        inherit: false
-      },
-      icon: 'nav-organization-sso',
-      dataViewType: 'organization-sso'
+      dataViewType: 'organization-provisions',
+      children: provisionDropdownItems
     },
     {
       if: params.pricingVersion == 'pricing_version_1' && params.isOwnerOrAdmin,
