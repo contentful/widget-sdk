@@ -13,11 +13,11 @@ import {
   TableRow,
   TableCell,
   Button,
-  TextInput,
   Paragraph,
   TextLink,
   Typography,
-  CopyButton
+  CopyButton,
+  SectionHeading
 } from '@contentful/forma-36-react-components';
 
 import StateLink from 'app/common/StateLink';
@@ -49,6 +49,20 @@ const styles = {
         border: 'none'
       })
     })
+  }),
+  sidebarHeading: css({
+    color: tokens.colorElementDarkest,
+    borderBottom: `1px solid ${tokens.colorElementMid}`,
+    fontWeight: tokens.fontWeightNormal
+  }),
+  cell: css({
+    height: '40px',
+    display: 'flex',
+    alignItems: 'center'
+  }),
+  miniIcon: css({
+    marginRight: tokens.spacingS,
+    verticalAlign: 'sub'
   })
 };
 
@@ -70,16 +84,9 @@ export default function AppListing({ definitions }) {
         title={<Heading>Apps</Heading>}
         icon={<Icon name="page-apps" scale="1" />}
         actions={
-          <div className={styles.headerActions}>
-            <div className={styles.headerInput}>
-              <TextInput placeholder="Search by app name or ID" onChange={() => {}} />
-            </div>
-            <div>
-              <StateLink path="^.new_definition">
-                {({ onClick }) => <Button onClick={onClick}>Create new</Button>}
-              </StateLink>
-            </div>
-          </div>
+          <StateLink path="^.new_definition">
+            {({ onClick }) => <Button onClick={onClick}>Create new</Button>}
+          </StateLink>
         }
       />
       <Workbench.Content>
@@ -96,28 +103,36 @@ export default function AppListing({ definitions }) {
               return (
                 <TableRow key={def.sys.id}>
                   <TableCell>
-                    <StateLink path="^.definitions" params={{ definitionId: def.sys.id }}>
-                      <b>{def.name}</b>
-                    </StateLink>
+                    <div className={styles.cell}>
+                      <StateLink path="^.definitions" params={{ definitionId: def.sys.id }}>
+                        <Icon name="page-apps" scale="0.5" className={styles.miniIcon} />{' '}
+                        <b>{def.name}</b>
+                      </StateLink>
+                    </div>
                   </TableCell>
                   <TableCell>
-                    {def.sys.id} <CopyButton className={styles.copyButton} copyValue={def.sys.id} />
+                    <div className={styles.cell}>
+                      {def.sys.id}{' '}
+                      <CopyButton className={styles.copyButton} copyValue={def.sys.id} />
+                    </div>
                   </TableCell>
                   <TableCell className={styles.appActions} align="right">
-                    <StateLink path="^.definitions" params={{ definitionId: def.sys.id }}>
-                      {({ onClick }) => (
-                        <Button buttonType="muted" onClick={onClick} size="small">
-                          Install to space
-                        </Button>
-                      )}
-                    </StateLink>
-                    <StateLink path="^.definitions" params={{ definitionId: def.sys.id }}>
-                      {({ onClick }) => (
-                        <Button buttonType="muted" onClick={onClick} size="small">
-                          Edit
-                        </Button>
-                      )}
-                    </StateLink>
+                    <div className={styles.cell}>
+                      <StateLink path="^.definitions" params={{ definitionId: def.sys.id }}>
+                        {({ onClick }) => (
+                          <Button buttonType="muted" onClick={onClick} size="small">
+                            Install to space
+                          </Button>
+                        )}
+                      </StateLink>
+                      <StateLink path="^.definitions" params={{ definitionId: def.sys.id }}>
+                        {({ onClick }) => (
+                          <Button buttonType="muted" onClick={onClick} size="small">
+                            Edit
+                          </Button>
+                        )}
+                      </StateLink>
+                    </div>
                   </TableCell>
                 </TableRow>
               );
@@ -127,14 +142,18 @@ export default function AppListing({ definitions }) {
       </Workbench.Content>
       <Workbench.Sidebar position="right">
         <Typography>
-          About Apps
+          <SectionHeading className={styles.sidebarHeading}>About Apps</SectionHeading>
           <Paragraph>
             Build private apps for Contentful to extend the core functionality of the web app and
             optimize the workflow of editors.
           </Paragraph>
           <Paragraph>
-            Learn more about <TextLink href="">building Contentful apps</TextLink> or check out our{' '}
-            <TextLink href="">Marketplace</TextLink>.
+            Learn more about{' '}
+            <TextLink href="https://www.contentful.com/developers/docs/extensibility/apps/building-apps/">
+              building Contentful apps
+            </TextLink>{' '}
+            or check out our{' '}
+            <TextLink href="https://contentful.com/marketplace">Marketplace</TextLink>.
           </Paragraph>
         </Typography>
       </Workbench.Sidebar>
