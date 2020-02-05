@@ -17,7 +17,8 @@ import {
   TextLink,
   Typography,
   CopyButton,
-  SectionHeading
+  SectionHeading,
+  EmptyState
 } from '@contentful/forma-36-react-components';
 
 import StateLink from 'app/common/StateLink';
@@ -85,20 +86,20 @@ export default function AppListing({ definitions }) {
 
   if (definitions.length < 1) {
     return (
-      <div className={styles.learnMore}>
-        <Typography>
-          <Heading>Build apps for Contentful</Heading>
-          <Paragraph>
-            Contentful apps extend and expand the capabilities of the Contentful web app and the
-            editors who use it. Apps empower you to integrate third-party services, build
-            extraordinary workflows and customize the functionality of the Contentful web app.
-          </Paragraph>
-          {learnMoreParagraph}
-        </Typography>
+      <EmptyState
+        headingProps={{ text: 'Build apps for Contentful' }}
+        descriptionProps={{ text: '' }}>
+        <Paragraph>
+          Contentful apps extend and expand the capabilities of the Contentful web app and the
+          editors who use it. Apps empower you to integrate third-party services, build
+          extraordinary workflows and customize the functionality of the Contentful web app.
+        </Paragraph>
+        {learnMoreParagraph}
+        <br />
         <StateLink path="^.new_definition">
           {({ onClick }) => <Button onClick={onClick}>Create an app</Button>}
         </StateLink>
-      </div>
+      </EmptyState>
     );
   }
 
