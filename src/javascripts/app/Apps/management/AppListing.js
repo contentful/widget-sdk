@@ -22,17 +22,22 @@ import {
 import StateLink from 'app/common/StateLink';
 
 const styles = {
-  actions: css({
+  headerActions: css({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
     marginLeft: tokens.spacingXs
   }),
-  actionsInput: css({
+  headerInput: css({
     maxWidth: '1100px',
     width: '100%',
     marginLeft: tokens.spacing4Xl
+  }),
+  appActions: css({
+    'button:first-child': css({
+      marginRight: tokens.spacingS
+    })
   })
 };
 
@@ -54,8 +59,8 @@ export default function AppListing({ definitions }) {
         title={<Heading>Apps</Heading>}
         icon={<Icon name="page-apps" scale="1" />}
         actions={
-          <div className={styles.actions}>
-            <div className={styles.actionsInput}>
+          <div className={styles.headerActions}>
+            <div className={styles.headerInput}>
               <TextInput placeholder="Search by app name or ID" onChange={() => {}} />
             </div>
             <div>
@@ -79,19 +84,21 @@ export default function AppListing({ definitions }) {
             {definitions.map(def => {
               return (
                 <TableRow key={def.sys.id}>
-                  <TableCell>{def.name}</TableCell>
-                  <TableCell>{def.sys.id}</TableCell>
                   <TableCell>
+                    <b>{def.name}</b>
+                  </TableCell>
+                  <TableCell>{def.sys.id}</TableCell>
+                  <TableCell className={styles.appActions} align="right">
                     <StateLink path="^.definitions" params={{ definitionId: def.sys.id }}>
                       {({ onClick }) => (
-                        <Button buttonType="muted" onClick={onClick}>
+                        <Button buttonType="muted" onClick={onClick} size="small">
                           Install to space
                         </Button>
                       )}
                     </StateLink>
                     <StateLink path="^.definitions" params={{ definitionId: def.sys.id }}>
                       {({ onClick }) => (
-                        <Button buttonType="muted" onClick={onClick}>
+                        <Button buttonType="muted" onClick={onClick} size="small">
                           Edit
                         </Button>
                       )}
