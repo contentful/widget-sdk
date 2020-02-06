@@ -7,18 +7,40 @@ import { css } from 'emotion';
 import Icon from 'ui/Components/Icon';
 import AppEditor from './AppEditor';
 import * as ManagementApiClient from './ManagementApiClient';
+import StateLink from 'app/common/StateLink';
 
 const styles = {
   title: css({
     display: 'flex',
     alignItems: 'center',
-    paddingBottom: tokens.spacingS,
-    borderBottom: `2px solid ${tokens.colorElementMid}`,
+    paddingBottom: tokens.spacingM,
+    borderBottom: `1px solid ${tokens.colorElementLight}`,
     '& div:first-child': css({
       marginRight: tokens.spacingL
     })
+  }),
+  info: css({
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: `${tokens.spacingM} 0`,
+    borderBottom: `1px solid ${tokens.colorElementLight}`,
+    '& div:first-child p:first-child': css({
+      marginBottom: tokens.spacingXs
+    }),
+    '& div:last-child button:first-child': css({
+      marginRight: tokens.spacingXs
+    })
   })
 };
+
+function formatDate(date) {
+  return new Date(date).toLocaleString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  });
+}
 
 export default class AppDetails extends React.Component {
   constructor(props) {
@@ -27,7 +49,8 @@ export default class AppDetails extends React.Component {
     this.state = {
       busy: false,
       name: props.definition.name,
-      definition: props.definition
+      definition: props.definition,
+      redirect: false
     };
   }
 
@@ -45,12 +68,31 @@ export default class AppDetails extends React.Component {
     this.setState({ busy: false });
   };
 
+  delete = async () => {
+    this.setState({ busy: true });
+
+    try {
+      await ManagementApiClient.deleteDef(this.state.definition);
+      Notification.success(`${this.state.definition.name} was deleted!`);
+      this.setState({ redirect: true });
+    } catch (err) {
+      Notification.error('App failed to delete. Please try again');
+      this.setState({ busy: false });
+    }
+  };
+
   render() {
-    const { name, definition, busy } = this.state;
+    const { redirect, name, definition, busy } = this.state;
+
+    if (redirect) {
+      return <StateLink path="^.list">{({ onClick }) => onClick() || null}</StateLink>;
+    }
 
     return (
       <Workbench>
-        <Workbench.Header title="App details" onBack={() => {}}></Workbench.Header>
+        <Workbench.Header
+          title="App details"
+          onBack={() => this.setState({ redirect: true })}></Workbench.Header>
         <Workbench.Content type="text">
           <div className={styles.title}>
             <div>
@@ -58,13 +100,23 @@ export default class AppDetails extends React.Component {
             </div>
             <div>
               <Heading>{name}</Heading>
-              <Paragraph>{this.props.definition.sys.id}</Paragraph>
+              <Paragraph>{definition.sys.id}</Paragraph>
             </div>
           </div>
-          <Heading>App details</Heading>
-          <Button loading={busy} disabled={busy} onClick={this.save}>
-            Save
-          </Button>
+          <div className={styles.info}>
+            <div>
+              <Paragraph>Created at: {formatDate(definition.sys.createdAt)}</Paragraph>
+              <Paragraph>Created by: {definition.sys.createdBy.sys.id}</Paragraph>
+            </div>
+            <div>
+              <Button loading={busy} disabled={busy} onClick={this.save}>
+                Install to space
+              </Button>
+              <Button loading={busy} disabled={busy} onClick={this.delete} buttonType="negative">
+                Delete
+              </Button>
+            </div>
+          </div>
           <AppEditor
             definition={definition}
             onChange={definition => this.setState({ definition })}

@@ -18,3 +18,15 @@ export function save(definition) {
     data: omit(definition, ['sys'])
   });
 }
+
+export function deleteDef(definition) {
+  const orgId = get(definition, ['sys', 'organization', 'sys', 'id']);
+  const id = get(definition, ['sys', 'id']);
+
+  const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
+
+  return orgEndpoint({
+    method: 'DELETE',
+    path: ['app_definitions', id]
+  });
+}
