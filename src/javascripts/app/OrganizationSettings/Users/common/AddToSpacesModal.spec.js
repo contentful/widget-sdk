@@ -1,49 +1,18 @@
 import React from 'react';
-import { render, cleanup, waitForElement, fireEvent, within } from '@testing-library/react';
+import { render, fireEvent, within, wait, screen } from '@testing-library/react';
+
 import '@testing-library/jest-dom/extend-expect';
 import AddToSpacesModal from './AddToSpacesModal';
+import * as fake from 'testHelpers/fakeFactory';
 
-const mockRoles = [
-  {
-    name: 'Editor',
-    sys: {
-      id: 'editorid',
-      space: { sys: { id: '123' } }
-    }
-  },
-  {
-    name: 'Author',
-    sys: {
-      id: 'authorid',
-      space: { sys: { id: '456' } }
-    }
-  }
-];
-const mockSpaces = [
-  {
-    name: 'Foo',
-    sys: { id: '123' }
-  },
-  {
-    name: 'Bar',
-    sys: { id: '456' }
-  }
-];
-
-const mockSpaceMembership = {
-  admin: true,
-  roles: []
-};
-
-const user = {
-  firstName: 'John',
-  lastName: 'Doe',
-  email: 'john.doe@enterprise.com',
-  avatarUrl: 'avatar.jpg',
-  sys: {
-    id: 'xyz'
-  }
-};
+const fooSpace = fake.Space('Foo');
+const barSpace = fake.Space('Bar');
+const mockSpaces = [fooSpace, barSpace];
+const editorRole = fake.Role('Editor', fooSpace);
+const authorRole = fake.Role('Author', barSpace);
+const mockRoles = [editorRole, authorRole];
+const mockSpaceMembership = fake.SpaceMembership();
+const user = fake.User();
 
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
   getAllSpaces: jest.fn(async () => mockSpaces),
@@ -60,48 +29,46 @@ const onCloseCb = jest.fn();
 const onAddedToSpacesCb = jest.fn();
 
 describe('AddToSpacesModal', () => {
-  afterEach(cleanup);
-
   it('should should display a list of space options', async () => {
-    const { getAllByTestId, getByTestId, getByText } = build();
-    const input = getByTestId('autocomplete.input');
+    await build();
+    const input = screen.getByTestId('autocomplete.input');
     fireEvent.focus(input);
-    await waitForElement(() => getAllByTestId('autocomplete.dropdown-list-item'));
+    await screen.findAllByTestId('autocomplete.dropdown-list-item');
 
     mockSpaces.forEach(space => {
-      const option = getByText(space.name);
+      const option = screen.getByText(space.name);
       expect(option).toBeVisible();
     });
   });
 
   it('should should not display unavailable spaces', async () => {
-    const unavailable = mockSpaces[0];
-    const available = mockSpaces[1];
+    const unavailable = fooSpace;
+    const available = barSpace;
 
-    const { getAllByTestId, getByTestId, queryByText } = build([unavailable]);
-    const input = getByTestId('autocomplete.input');
+    await build([unavailable]);
+    const input = screen.getByTestId('autocomplete.input');
     fireEvent.focus(input);
-    await waitForElement(() => getAllByTestId('autocomplete.dropdown-list-item'));
+    await screen.findAllByTestId('autocomplete.dropdown-list-item');
 
-    expect(queryByText(unavailable.name)).toBeNull();
-    expect(queryByText(available.name)).toBeVisible();
+    expect(screen.queryByText(unavailable.name)).toBeNull();
+    expect(screen.queryByText(available.name)).toBeVisible();
   });
 
   it('should create space memberships', async () => {
-    const wrapper = build();
+    await build();
     const membershipPlans = [
-      { spaceName: 'Foo', roleNames: ['Editor'] },
-      { spaceName: 'Bar', roleNames: ['Author'] }
+      { spaceName: fooSpace.name, roleNames: [editorRole.name] },
+      { spaceName: barSpace.name, roleNames: [authorRole.name] }
     ];
-    await setupMemberships(wrapper, membershipPlans);
+    await setupMemberships(membershipPlans);
     // wait for notification to pop up
-    await wrapper.findAllByTestId('cf-ui-notification');
+    await screen.findAllByTestId('cf-ui-notification');
     expect(onAddedToSpacesCb).toHaveBeenCalled();
   });
 });
 
 function build(currentSpaces = []) {
-  return render(
+  render(
     <AddToSpacesModal
       user={user}
       orgId="org1"
@@ -111,35 +78,36 @@ function build(currentSpaces = []) {
       onAddedToSpaces={onAddedToSpacesCb}
     />
   );
+  // the component automatically fetches roles.
+  // we have to wait until it's happened
+  return wait();
 }
 
-async function setupMemberships(wrapper, membershipPlans = [{ spaceName: '', roleNames: [] }]) {
-  const { getAllByTestId, findAllByTestId, getByTestId, queryByText, getByLabelText } = wrapper;
-
+async function setupMemberships(membershipPlans = [{ spaceName: '', roleNames: [] }]) {
   // focus on autocomplete and wait for options to show up
-  const input = getByTestId('autocomplete.input');
+  const input = screen.getByTestId('autocomplete.input');
   fireEvent.focus(input);
-  await waitForElement(() => getAllByTestId('autocomplete.dropdown-list-item'));
+  await screen.findAllByTestId('autocomplete.dropdown-list-item');
 
   // select spaces in thr autocomplete
   membershipPlans.forEach(({ spaceName }) => {
     fireEvent.focus(input);
-    const space = queryByText(spaceName);
+    const space = screen.queryByText(spaceName);
     fireEvent.click(space);
   });
 
   // select all roles
   await Promise.all(
     membershipPlans.map(async ({ roleNames }, index) => {
-      const membershipListItem = getAllByTestId('add-to-spaces.list.item')[index];
+      const membershipListItem = screen.getAllByTestId('add-to-spaces.list.item')[index];
       await Promise.all(
         roleNames.map(async roleName => {
           const rolesDropdownTrigger = within(membershipListItem).getByTestId(
             'space-role-editor.button'
           );
           fireEvent.click(rolesDropdownTrigger);
-          await findAllByTestId('space-role-editor.options');
-          const role = getByLabelText(roleName);
+          await screen.findAllByTestId('space-role-editor.options');
+          const role = screen.getByLabelText(roleName);
           fireEvent.click(role);
         })
       );
@@ -147,6 +115,6 @@ async function setupMemberships(wrapper, membershipPlans = [{ spaceName: '', rol
   );
 
   // submit form
-  const submitButton = getByTestId('add-to-spaces.modal.submit-button');
+  const submitButton = screen.getByTestId('add-to-spaces.modal.submit-button');
   fireEvent.click(submitButton);
 }

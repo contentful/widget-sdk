@@ -55,9 +55,6 @@ export default function AddToSpacesModal({
     isInvalid: false,
     inProgress: false
   });
-
-  // const [{ isLoading, data }, addFn] = useAddUserToSpaces(user);
-
   const handleChange = useCallback(data => {
     dispatch({ type: 'SPACE_MEMBERSHIPS_CHANGED', payload: data });
   }, []);

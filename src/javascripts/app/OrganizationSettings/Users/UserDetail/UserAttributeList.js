@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
+import { List, ListItem } from '@contentful/forma-36-react-components';
 
 const styles = {
   list: css({
@@ -21,14 +22,14 @@ const styles = {
 
 export default function UserAttributeList({ attributes }) {
   return (
-    <ul className={styles.list}>
+    <List className={styles.list}>
       {attributes.map(({ label, value }) => (
-        <li key={label} className={styles.item}>
+        <ListItem key={label} className={styles.item}>
           <strong className={styles.label}>{label}</strong>
           {value}
-        </li>
+        </ListItem>
       ))}
-    </ul>
+    </List>
   );
 }
 

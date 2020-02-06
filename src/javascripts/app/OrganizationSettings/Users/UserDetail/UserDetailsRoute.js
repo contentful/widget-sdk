@@ -8,8 +8,7 @@ import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcher
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getMembership, getUser } from 'access_control/OrganizationMembershipRepository';
 import { getUserName } from 'utils/UserUtils';
-import { getValue } from 'utils/kefir';
-import { user$ } from 'services/TokenStore';
+import { getUserSync } from 'services/TokenStore';
 
 import { logError } from 'services/logger';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
@@ -34,7 +33,7 @@ const UserDetailsFetcher = createFetcherComponent(async ({ orgId, userId }) => {
 
   const createdBy = await getCreatedBy(endpoint, orgMembership);
   const initialMembership = { ...orgMembership, sys: { ...orgMembership.sys, user, createdBy } };
-  const currentUser = getValue(user$);
+  const currentUser = getUserSync();
   const isSelf = currentUser && currentUser.sys.id === initialMembership.sys.user.sys.id;
 
   return {

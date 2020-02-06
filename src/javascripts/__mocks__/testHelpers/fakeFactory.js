@@ -1,5 +1,16 @@
 import { uniqueId } from 'lodash';
 
+const types = {
+  USER: 'User',
+  SPACE: 'Space',
+  ORGANIZATION: 'Organization',
+  ROLE: 'Role',
+  TEAM: 'Team',
+  SPACE_MEMBERSHIP: 'SpaceMembership',
+  ORGANIZATION_MEMBERSHIP: 'OrganizationMembership',
+  TEAM_MEMBERSHIP: 'TeamMembership'
+};
+
 export function sys(type = '', id) {
   return {
     type,
@@ -20,25 +31,24 @@ export function Link(linkType = '', id) {
 export function Space(name = '') {
   return {
     name: name || uniqueId('Space'),
-    sys: sys('Space')
+    sys: sys(types.SPACE)
   };
 }
 
 export function Organization(name = '') {
   return {
     name: name || uniqueId('Organization'),
-    sys: sys('Organization')
+    sys: sys(types.ORGANIZATION)
   };
 }
 
-export function User(firstName = '', lastName = 'Doe') {
-  const name = firstName || uniqueId('User');
+export function User(firstName = 'John', lastName = 'Doe') {
   return {
-    firstName: name,
+    firstName: firstName,
     lastName: lastName,
     email: `${firstName}@enterprise.com`,
     avatarUrl: 'avatar.jpg',
-    sys: sys('User')
+    sys: sys(types.USER)
   };
 }
 
@@ -46,42 +56,65 @@ export function Team(name = '', description = '') {
   return {
     name,
     description,
-    sys: sys('Team')
+    sys: sys(types.TEAM)
   };
 }
 
-export function SpaceMembership(space, user, admin, roles) {
+export function Role(name = '', space = Link(types.SPACE)) {
   return {
-    admin: admin || true,
-    roles: roles || [],
+    name,
     sys: {
-      ...sys('SpaceMembership'),
-      user: user || Link('User'),
-      space: space || Link('Space'),
-      createdBy: Link('User')
+      ...sys(types.ROLE),
+      space
     }
   };
 }
 
-export function OrganizationMembership(role = 'member', status = 'active', user) {
+export function SpaceMembership(
+  space = Link(types.SPACE),
+  user = Link(types.USER),
+  admin = true,
+  roles = []
+) {
+  return {
+    admin: admin,
+    roles: roles,
+    sys: {
+      ...sys(types.SPACE_MEMBERSHIP),
+      user: user,
+      space: space,
+      createdBy: Link(types.USER)
+    }
+  };
+}
+
+export function OrganizationMembership(
+  role = 'member',
+  status = 'active',
+  user = Link(types.USER)
+) {
   return {
     role,
     status,
     sys: {
-      ...sys('OrganizationMemberahip'),
-      user: user || Link('User'),
-      createdBy: Link('User')
+      ...sys(types.ORGANIZATION_MEMBERSHIP),
+      user: user,
+      createdBy: Link(types.USER)
     }
   };
 }
 
-export function TeamMembership(team, organizationMembership, user) {
+export function TeamMembership(
+  team = Link(types.TEAM),
+  organizationMembership = Link(types.ORGANIZATION_MEMBERSHIP),
+  user = Link(types.USER)
+) {
   return {
     sys: {
-      ...sys('TeamMembership'),
-      team: team || Link('Link'),
-      organizationMembership: organizationMembership || Link('OrganizationMembership'),
-      user: user || Link('User')
+      ...sys(types.TEAM_MEMBERSHIP),
+      team,
+      organizationMembership,
+      user
     }
   };
 }
