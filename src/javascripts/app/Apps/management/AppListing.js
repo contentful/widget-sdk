@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import Icon from 'ui/Components/Icon';
+import ContextMenu from 'ui/Components/ContextMenu';
+import AppsPrivateFrameworkIllustration from 'svg/apps-private-framework.svg';
 import tokens from '@contentful/forma-36-tokens';
 
 import {
@@ -43,11 +45,17 @@ const styles = {
   }),
   copyButton: css({
     button: css({
+      height: '20px',
       border: 'none',
       backgroundColor: 'transparent',
+      transform: 'translateX(-10px)',
+      opacity: '0',
+      transition: `all ${tokens.transitionDurationDefault} ${tokens.transitionEasingCubicBezier}`,
       '&:hover': css({
         backgroundColor: 'transparent',
-        border: 'none'
+        border: 'none',
+        opacity: '1',
+        transform: 'translateX(0)'
       })
     })
   }),
@@ -57,7 +65,6 @@ const styles = {
     fontWeight: tokens.fontWeightNormal
   }),
   cell: css({
-    height: '40px',
     display: 'flex',
     alignItems: 'center'
   }),
@@ -70,8 +77,34 @@ const styles = {
     margin: '0 auto',
     marginTop: '100px',
     textAlign: 'center'
+  }),
+  emptyState: css({
+    maxWidth: '768px',
+    margin: '0 auto',
+    marginTop: tokens.spacing4Xl,
+    textAlign: 'center',
+    '& svg': css({
+      width: '100%'
+    })
+  }),
+  menuCell: css({
+    display: 'flex',
+    justifyContent: 'flex-end',
+    height: '20px',
+    div: css({
+      display: 'flex',
+      justifyContent: 'center'
+    })
   })
 };
+
+const idStyle = css({
+  fontFamily: tokens.fontStackMonospace,
+  [`&:hover ~ .${styles.copyButton} button`]: css({
+    opacity: '1',
+    transform: 'translateX(0)'
+  })
+});
 
 export default function AppListing({ definitions }) {
   const learnMoreParagraph = (
@@ -86,20 +119,24 @@ export default function AppListing({ definitions }) {
 
   if (definitions.length < 1) {
     return (
-      <EmptyState
-        headingProps={{ text: 'Build apps for Contentful' }}
-        descriptionProps={{ text: '' }}>
-        <Paragraph>
-          Contentful apps extend and expand the capabilities of the Contentful web app and the
-          editors who use it. Apps empower you to integrate third-party services, build
-          extraordinary workflows and customize the functionality of the Contentful web app.
-        </Paragraph>
-        {learnMoreParagraph}
-        <br />
-        <StateLink path="^.new_definition">
-          {({ onClick }) => <Button onClick={onClick}>Create an app</Button>}
-        </StateLink>
-      </EmptyState>
+      <div className={styles.emptyState}>
+        <AppsPrivateFrameworkIllustration />
+        <EmptyState
+          headingProps={{ text: 'Build apps for Contentful' }}
+          descriptionProps={{ text: '' }}>
+          <Typography>
+            <Paragraph>
+              Contentful apps extend and expand the capabilities of the Contentful web app and the
+              editors who use it. Apps empower you to integrate third-party services, build
+              extraordinary workflows and customize the functionality of the Contentful web app.
+            </Paragraph>
+            {learnMoreParagraph}
+          </Typography>
+          <StateLink path="^.new_definition">
+            {({ onClick }) => <Button onClick={onClick}>Create an app</Button>}
+          </StateLink>
+        </EmptyState>
+      </div>
     );
   }
 
@@ -137,24 +174,20 @@ export default function AppListing({ definitions }) {
                   </TableCell>
                   <TableCell>
                     <div className={styles.cell}>
-                      {def.sys.id}{' '}
+                      <span className={idStyle}>{def.sys.id} </span>
                       <CopyButton className={styles.copyButton} copyValue={def.sys.id} />
                     </div>
                   </TableCell>
                   <TableCell className={styles.appActions} align="right">
-                    <div className={styles.cell}>
+                    <div className={styles.menuCell}>
                       <StateLink path="^.definitions" params={{ definitionId: def.sys.id }}>
                         {({ onClick }) => (
-                          <Button buttonType="muted" onClick={onClick} size="small">
-                            Install to space
-                          </Button>
-                        )}
-                      </StateLink>
-                      <StateLink path="^.definitions" params={{ definitionId: def.sys.id }}>
-                        {({ onClick }) => (
-                          <Button buttonType="muted" onClick={onClick} size="small">
-                            Edit
-                          </Button>
+                          <ContextMenu
+                            items={[
+                              { label: 'Edit', action: onClick },
+                              { label: 'Install to space', action: () => {} }
+                            ]}
+                          />
                         )}
                       </StateLink>
                     </div>
@@ -169,8 +202,8 @@ export default function AppListing({ definitions }) {
         <Typography>
           <SectionHeading className={styles.sidebarHeading}>About Apps</SectionHeading>
           <Paragraph>
-            Build private apps for Contentful to extend the core functionality of the web app and
-            optimize the workflow of editors.
+            Build apps for your Contentful organization to extend the core functionality of the web
+            app and optimize the workflow of editors.
           </Paragraph>
           {learnMoreParagraph}
         </Typography>
