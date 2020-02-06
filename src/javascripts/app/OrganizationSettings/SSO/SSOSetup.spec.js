@@ -32,8 +32,7 @@ describe('SSOSetup', () => {
     identityProvider,
     organization,
     createIdp = () => {},
-    retrieveIdp = jest.fn().mockResolvedValue(true),
-    onReady = () => {}
+    retrieveIdp = jest.fn().mockResolvedValue(true)
   } = {}) => {
     const rendered = Enzyme.shallow(
       <SSOSetup
@@ -41,7 +40,6 @@ describe('SSOSetup', () => {
         organization={organization}
         createIdp={createIdp}
         retrieveIdp={retrieveIdp}
-        onReady={onReady}
       />
     );
 
@@ -54,31 +52,26 @@ describe('SSOSetup', () => {
     track.mockClear();
   });
 
-  it('should call retrieveIdp and onReady when the component is mounted if org is present', async () => {
+  it('should call retrieveIdp when the component is mounted if org is present', async () => {
     const retrieveIdp = jest.fn().mockResolvedValue(true);
-    const onReady = jest.fn();
 
-    await render({ organization, retrieveIdp, onReady });
+    await render({ organization, retrieveIdp });
 
     expect(retrieveIdp.mock.calls).toHaveLength(1);
-    expect(onReady.mock.calls).toHaveLength(1);
   });
 
-  it('should call retrieveIdp and onReady if an org is not initially present but is later given in props', async () => {
+  it('should call retrieveIdp if an org is not initially present but is later given in props', async () => {
     const retrieveIdp = jest.fn().mockResolvedValue(true);
-    const onReady = jest.fn();
 
-    const instance = await render({ retrieveIdp, onReady });
+    const instance = await render({ retrieveIdp });
 
     expect(retrieveIdp.mock.calls).toHaveLength(0);
-    expect(onReady.mock.calls).toHaveLength(0);
 
     instance.setProps({ organization });
 
     await awaitSetImmediate();
 
     expect(retrieveIdp.mock.calls).toHaveLength(1);
-    expect(onReady.mock.calls).toHaveLength(1);
   });
 
   it('should render a loading state if the org is not given in props', async () => {
@@ -94,33 +87,28 @@ describe('SSOSetup', () => {
   });
 
   /*
-    Should call `getOrgStatus`, should show ForbiddenPage, should call `onReady`, should
-    not call `retrieveIdp`
+    Should call `getOrgStatus`, should show ForbiddenPage, should not call `retrieveIdp`
    */
   it('should go through the forbidden flow if the feature is not enabled', async () => {
     const retrieveIdp = jest.fn();
-    const onReady = jest.fn();
 
     getOrgFeature.mockResolvedValueOnce(false);
 
-    const rendered = await render({ organization, onReady, retrieveIdp });
+    const rendered = await render({ organization, retrieveIdp });
 
     expect(rendered.find(ForbiddenPage)).toHaveLength(1);
-    expect(onReady.mock.calls).toHaveLength(1);
 
     expect(retrieveIdp.mock.calls).toHaveLength(0);
   });
 
   it('should go through the forbidden flow if the user is not admin/owner', async () => {
     const retrieveIdp = jest.fn();
-    const onReady = jest.fn();
 
     isOwnerOrAdmin.mockReturnValueOnce(false);
 
-    const rendered = await render({ organization, onReady, retrieveIdp });
+    const rendered = await render({ organization, retrieveIdp });
 
     expect(rendered.find(ForbiddenPage)).toHaveLength(1);
-    expect(onReady.mock.calls).toHaveLength(1);
 
     expect(retrieveIdp.mock.calls).toHaveLength(0);
   });
