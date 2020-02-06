@@ -195,7 +195,7 @@ export default function NewUser({ orgId, hasSsoEnabled, hasTeamsFeature, isOwner
         />
       )}
       {!data && !error && !isLoading && (
-        <Form>
+        <Form data-test-id="new-user-invitation-form">
           <Heading>Invite users to your organization</Heading>
           <TextField
             id="emails"
