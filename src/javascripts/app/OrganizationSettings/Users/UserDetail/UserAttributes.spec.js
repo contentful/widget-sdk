@@ -25,7 +25,7 @@ jest.mock('states/Navigator', () => ({
 }));
 
 describe('UserAttributes', () => {
-  afterEach(Notification.closeAll);
+  beforeEach(Notification.closeAll);
 
   it('should display the list of options', () => {
     build();
