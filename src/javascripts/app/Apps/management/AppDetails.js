@@ -13,7 +13,7 @@ const styles = {
   title: css({
     display: 'flex',
     alignItems: 'center',
-    paddingBottom: tokens.spacingM,
+    paddingBottom: tokens.spacingL,
     borderBottom: `1px solid ${tokens.colorElementLight}`,
     '& div:first-child': css({
       marginRight: tokens.spacingL
@@ -23,7 +23,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: `${tokens.spacingM} 0`,
+    padding: `${tokens.spacingL} 0`,
     borderBottom: `1px solid ${tokens.colorElementLight}`,
     '& div:first-child p:first-child': css({
       marginBottom: tokens.spacingXs
@@ -31,6 +31,9 @@ const styles = {
     '& div:last-child button:first-child': css({
       marginRight: tokens.spacingXs
     })
+  }),
+  appEditor: css({
+    padding: `${tokens.spacingL} 0`
   })
 };
 
@@ -72,7 +75,8 @@ export default class AppDetails extends React.Component {
     this.setState({ busy: true });
 
     try {
-      await ManagementApiClient.deleteDef(this.state.definition);
+      // TODO: Hook this logic up to the modal
+      // await ManagementApiClient.deleteDef(this.state.definition);
       Notification.success(`${this.state.definition.name} was deleted!`);
       this.setState({ redirect: true });
     } catch (err) {
@@ -117,10 +121,12 @@ export default class AppDetails extends React.Component {
               </Button>
             </div>
           </div>
-          <AppEditor
-            definition={definition}
-            onChange={definition => this.setState({ definition })}
-          />
+          <div className={styles.appEditor}>
+            <AppEditor
+              definition={definition}
+              onChange={definition => this.setState({ definition })}
+            />
+          </div>
         </Workbench.Content>
       </Workbench>
     );

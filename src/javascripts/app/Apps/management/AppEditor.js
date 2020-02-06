@@ -1,9 +1,30 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { cloneDeep } from 'lodash';
-import { Form, TextField, CheckboxField } from '@contentful/forma-36-react-components';
+import {
+  ToggleButton,
+  Paragraph,
+  Form,
+  TextField,
+  CheckboxField,
+  FormLabel
+} from '@contentful/forma-36-react-components';
 import * as WidgetLocations from 'widgets/WidgetLocations';
 import { toInternalFieldType, toApiFieldType } from 'widgets/FieldTypes';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
+
+const styles = {
+  helpParagraph: css({}),
+  locationToggle: css({
+    width: '100%',
+    '& label ~ p': css({
+      display: 'inline',
+      marginLeft: tokens.spacingXs,
+      color: 'blue'
+    })
+  })
+};
 
 const LOCATION_ORDER = [
   ['App configuration screen', WidgetLocations.LOCATION_APP_CONFIG],
@@ -96,7 +117,6 @@ export default function AppEditor({ definition, onChange }) {
           id="app-name"
           labelText="Name"
           value={definition.name || ''}
-          helpText="App name"
           onChange={e => onChange({ ...definition, name: e.target.value })}
         />
         <TextField
@@ -105,13 +125,22 @@ export default function AppEditor({ definition, onChange }) {
           id="app-src"
           labelText="Source URL"
           value={definition.src || ''}
-          helpText="HTTP only for localhost"
+          helpText="Valid URLs use HTTPS. Only localhost can use HTTP."
           onChange={e => onChange({ ...definition, src: e.target.value })}
         />
 
+        <div>
+          <FormLabel>Locations</FormLabel>
+          <Paragraph className={styles.helpParagraph}>
+            Specify where the app can be rendered. Check out the documentation for more details.
+          </Paragraph>
+        </div>
         {LOCATION_ORDER.map(([name, locationValue]) => {
           return (
-            <div key={locationValue}>
+            <ToggleButton
+              key={locationValue}
+              className={styles.locationToggle}
+              isActive={hasLocation(locationValue)}>
               <CheckboxField
                 labelText={name}
                 onChange={() => toggleLocation(locationValue)}
@@ -135,7 +164,7 @@ export default function AppEditor({ definition, onChange }) {
                     })}
                   </div>
                 )}
-            </div>
+            </ToggleButton>
           );
         })}
       </Form>
