@@ -1,5 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import Icon from 'ui/Components/Icon';
+import ContextMenu from 'ui/Components/ContextMenu';
+import AppsPrivateFrameworkIllustration from 'svg/apps-private-framework.svg';
+import tokens from '@contentful/forma-36-tokens';
 
 import {
   Heading,
@@ -8,54 +14,201 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Button
+  Button,
+  Paragraph,
+  TextLink,
+  Typography,
+  CopyButton,
+  SectionHeading,
+  EmptyState
 } from '@contentful/forma-36-react-components';
 
 import StateLink from 'app/common/StateLink';
 
+const styles = {
+  headerActions: css({
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    marginLeft: tokens.spacingXs
+  }),
+  headerInput: css({
+    maxWidth: '1100px',
+    width: '100%',
+    marginLeft: tokens.spacing4Xl
+  }),
+  appActions: css({
+    'button:first-child': css({
+      marginRight: tokens.spacingS
+    })
+  }),
+  copyButton: css({
+    button: css({
+      height: '20px',
+      border: 'none',
+      backgroundColor: 'transparent',
+      transform: 'translateX(-10px)',
+      opacity: '0',
+      transition: `all ${tokens.transitionDurationDefault} ${tokens.transitionEasingCubicBezier}`,
+      '&:hover': css({
+        backgroundColor: 'transparent',
+        border: 'none',
+        opacity: '1',
+        transform: 'translateX(0)'
+      })
+    })
+  }),
+  sidebarHeading: css({
+    color: tokens.colorElementDarkest,
+    borderBottom: `1px solid ${tokens.colorElementMid}`,
+    fontWeight: tokens.fontWeightNormal
+  }),
+  cell: css({
+    display: 'flex',
+    alignItems: 'center'
+  }),
+  miniIcon: css({
+    marginRight: tokens.spacingS,
+    verticalAlign: 'sub'
+  }),
+  learnMore: css({
+    maxWidth: '768px',
+    margin: '0 auto',
+    marginTop: '100px',
+    textAlign: 'center'
+  }),
+  emptyState: css({
+    maxWidth: '768px',
+    margin: '0 auto',
+    marginTop: tokens.spacing4Xl,
+    textAlign: 'center',
+    '& svg': css({
+      width: '100%'
+    })
+  }),
+  menuCell: css({
+    display: 'flex',
+    justifyContent: 'flex-end',
+    height: '20px',
+    div: css({
+      display: 'flex',
+      justifyContent: 'center'
+    })
+  })
+};
+
+const idStyle = css({
+  fontFamily: tokens.fontStackMonospace,
+  [`&:hover ~ .${styles.copyButton} button`]: css({
+    opacity: '1',
+    transform: 'translateX(0)'
+  })
+});
+
 export default function AppListing({ definitions }) {
+  const learnMoreParagraph = (
+    <Paragraph>
+      Learn more about{' '}
+      <TextLink href="https://www.contentful.com/developers/docs/extensibility/apps/building-apps/">
+        building Contentful apps
+      </TextLink>{' '}
+      or check out our <TextLink href="https://contentful.com/marketplace">Marketplace</TextLink>.
+    </Paragraph>
+  );
+
   if (definitions.length < 1) {
     return (
-      <>
-        <Heading>No apps found</Heading>
-        <StateLink path="^.new_definition">
-          {({ onClick }) => <Button onClick={onClick}>Create new</Button>}
-        </StateLink>
-      </>
+      <div className={styles.emptyState}>
+        <AppsPrivateFrameworkIllustration />
+        <EmptyState
+          headingProps={{ text: 'Build apps for Contentful' }}
+          descriptionProps={{ text: '' }}>
+          <Typography>
+            <Paragraph>
+              Contentful apps extend and expand the capabilities of the Contentful web app and the
+              editors who use it. Apps empower you to integrate third-party services, build
+              extraordinary workflows and customize the functionality of the Contentful web app.
+            </Paragraph>
+            {learnMoreParagraph}
+          </Typography>
+          <StateLink path="^.new_definition">
+            {({ onClick }) => <Button onClick={onClick}>Create an app</Button>}
+          </StateLink>
+        </EmptyState>
+      </div>
     );
   }
 
   return (
-    <>
-      <Heading>Apps</Heading>
-      <StateLink path="^.new_definition">
-        {({ onClick }) => <Button onClick={onClick}>Create new</Button>}
-      </StateLink>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell>ID</TableCell>
-            <TableCell></TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {definitions.map(def => {
-            return (
-              <TableRow key={def.sys.id}>
-                <TableCell>{def.name}</TableCell>
-                <TableCell>{def.sys.id}</TableCell>
-                <TableCell>
-                  <StateLink path="^.definitions" params={{ definitionId: def.sys.id }}>
-                    {({ onClick }) => <Button onClick={onClick}>Edit</Button>}
-                  </StateLink>
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </>
+    <Workbench>
+      <Workbench.Header
+        title={<Heading>Apps</Heading>}
+        icon={<Icon name="page-apps" scale="1" />}
+        actions={
+          <StateLink path="^.new_definition">
+            {({ onClick }) => <Button onClick={onClick}>Create new</Button>}
+          </StateLink>
+        }
+      />
+      <Workbench.Content>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>ID</TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {definitions.map(def => {
+              return (
+                <TableRow key={def.sys.id}>
+                  <TableCell>
+                    <div className={styles.cell}>
+                      <StateLink path="^.definitions" params={{ definitionId: def.sys.id }}>
+                        <Icon name="page-apps" scale="0.5" className={styles.miniIcon} />{' '}
+                        <b>{def.name}</b>
+                      </StateLink>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className={styles.cell}>
+                      <span className={idStyle}>{def.sys.id} </span>
+                      <CopyButton className={styles.copyButton} copyValue={def.sys.id} />
+                    </div>
+                  </TableCell>
+                  <TableCell className={styles.appActions} align="right">
+                    <div className={styles.menuCell}>
+                      <StateLink path="^.definitions" params={{ definitionId: def.sys.id }}>
+                        {({ onClick }) => (
+                          <ContextMenu
+                            items={[
+                              { label: 'Edit', action: onClick },
+                              { label: 'Install to space', action: () => {} }
+                            ]}
+                          />
+                        )}
+                      </StateLink>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </Workbench.Content>
+      <Workbench.Sidebar position="right">
+        <Typography>
+          <SectionHeading className={styles.sidebarHeading}>About Apps</SectionHeading>
+          <Paragraph>
+            Build apps for your Contentful organization to extend the core functionality of the web
+            app and optimize the workflow of editors.
+          </Paragraph>
+          {learnMoreParagraph}
+        </Typography>
+      </Workbench.Sidebar>
+    </Workbench>
   );
 }
 

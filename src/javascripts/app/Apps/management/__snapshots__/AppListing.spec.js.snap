@@ -1,0 +1,1561 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AppListing should render the app listing when definitions are present 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": .emotion-6 button:first-child {
+  margin-right: 0.75rem;
+}
+
+.emotion-3 button {
+  height: 20px;
+  border: none;
+  background-color: transparent;
+  -webkit-transform: translateX(-10px);
+  -ms-transform: translateX(-10px);
+  transform: translateX(-10px);
+  opacity: 0;
+  -webkit-transition: all 0.2s cubic-bezier(0.13,0.62,0.11,0.99);
+  transition: all 0.2s cubic-bezier(0.13,0.62,0.11,0.99);
+}
+
+.emotion-3 button:hover {
+  background-color: transparent;
+  border: none;
+  opacity: 1;
+  -webkit-transform: translateX(0);
+  -ms-transform: translateX(0);
+  transform: translateX(0);
+}
+
+.emotion-21 {
+  color: #b4c3ca;
+  border-bottom: 1px solid #d3dce0;
+  font-weight: 400;
+}
+
+.emotion-1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.emotion-0 {
+  margin-right: 0.75rem;
+  vertical-align: sub;
+}
+
+.emotion-5 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+  height: 20px;
+}
+
+.emotion-5 div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+.emotion-2 {
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+}
+
+.emotion-2:hover ~ .emotion-3 button {
+  opacity: 1;
+  -webkit-transform: translateX(0);
+  -ms-transform: translateX(0);
+  transform: translateX(0);
+}
+
+<body>
+    <div>
+      <div
+        class="Workbench__Workbench___THi9K"
+        data-test-id="cf-ui-workbench"
+      >
+        <div
+          class="Workbench__Workbench__header___2wo2E"
+          data-test-id="cf-ui-workbench-header"
+        >
+          <div
+            class="Workbench__Workbench__header-icon___1kJlL"
+          >
+            <span
+              class="icon-component"
+              data-icon-name="page-apps"
+            >
+              <page-apps.svg
+                viewbox="0 0 NaN NaN"
+              />
+            </span>
+          </div>
+          <div
+            class="Workbench__Workbench__header-title___3xp7b"
+            data-test-id="workbench-title"
+          >
+            <h1
+              class="Heading__Heading___83D3K"
+              data-test-id="cf-ui-heading"
+            >
+              Apps
+            </h1>
+          </div>
+          <div
+            class="Workbench__Workbench__header-actions___mJoSR"
+          >
+            <button
+              class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO"
+              data-test-id="cf-ui-button"
+              type="button"
+            >
+              <span
+                class="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+                tabindex="-1"
+              >
+                <span
+                  class="Button__Button__label___3tcOj"
+                >
+                  Create new
+                </span>
+              </span>
+            </button>
+          </div>
+        </div>
+        <div
+          class="Workbench__Workbench__content-wrapper___3yWKi"
+        >
+          <div
+            class="Workbench__Workbench__content___1U8bV"
+            data-test-id="cf-ui-workbench-content"
+          >
+            <div
+              class="Workbench__Workbench__content-inner___36_Hx Workbench__Workbench__content-inner--default___2wRXn"
+            >
+              <table
+                cellpadding="0"
+                cellspacing="0"
+                class="Table__Table___2x3zV"
+                data-test-id="cf-ui-table"
+              >
+                <thead
+                  class=""
+                  data-test-id="cf-ui-table-head"
+                >
+                  <tr
+                    class="TableRow__TableRow___3kcNC"
+                    data-test-id="cf-ui-table-row"
+                  >
+                    <th
+                      align="left"
+                      class="TableCell__TableCell___Wou8a TableCell__TableCell--head___1HhvZ"
+                      data-test-id="cf-ui-table-cell"
+                      style="top: 0px;"
+                    >
+                      Name
+                    </th>
+                    <th
+                      align="left"
+                      class="TableCell__TableCell___Wou8a TableCell__TableCell--head___1HhvZ"
+                      data-test-id="cf-ui-table-cell"
+                      style="top: 0px;"
+                    >
+                      ID
+                    </th>
+                    <th
+                      align="left"
+                      class="TableCell__TableCell___Wou8a TableCell__TableCell--head___1HhvZ"
+                      data-test-id="cf-ui-table-cell"
+                      style="top: 0px;"
+                    />
+                  </tr>
+                </thead>
+                <tbody
+                  data-test-id="cf-ui-table-body"
+                >
+                  <tr
+                    class="TableRow__TableRow___3kcNC"
+                    data-test-id="cf-ui-table-row"
+                  >
+                    <td
+                      align="left"
+                      class="TableCell__TableCell___Wou8a"
+                      data-test-id="cf-ui-table-cell"
+                      style="top: 0px;"
+                    >
+                      <div
+                        class="emotion-1"
+                      >
+                        <a
+                          href="^.definitions?definitionId=3AjEyjWz5tRouW4cVOF9la"
+                        >
+                          <span
+                            class="icon-component emotion-0"
+                            data-icon-name="page-apps"
+                          >
+                            <page-apps.svg
+                              viewbox="0 0 NaN NaN"
+                            />
+                          </span>
+                           
+                          <b>
+                            Google Analytics
+                          </b>
+                        </a>
+                      </div>
+                    </td>
+                    <td
+                      align="left"
+                      class="TableCell__TableCell___Wou8a"
+                      data-test-id="cf-ui-table-cell"
+                      style="top: 0px;"
+                    >
+                      <div
+                        class="emotion-1"
+                      >
+                        <span
+                          class="emotion-2"
+                        >
+                          3AjEyjWz5tRouW4cVOF9la
+                           
+                        </span>
+                        <div
+                          class="CopyButton__CopyButton___OoA5D emotion-3"
+                          data-test-id="cf-ui-copy-button"
+                          id="copyButton"
+                        >
+                          <span
+                            class="Tooltip__Tooltip__target-wrapper___Mtw42"
+                          >
+                            <button
+                              class="CopyButton__CopyButton__button___52Bc0 a11y__focus-outline--default___2hwb1"
+                              type="button"
+                            >
+                              <span
+                                class="TabFocusTrap__TabFocusTrap___39Vty CopyButton__CopyButton__TabFocusTrap___1Q_DQ"
+                                tabindex="-1"
+                              >
+                                <span
+                                  class="CopyButton__CopyButton__text___269PQ helpers__sr-only___3Kv3z"
+                                >
+                                  Copy 
+                                  3AjEyjWz5tRouW4cVOF9la
+                                   to clipboard
+                                </span>
+                                <svg
+                                  class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--muted___3egnD"
+                                  data-test-id="cf-ui-icon"
+                                  height="18"
+                                  viewBox="0 0 24 24"
+                                  width="18"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M0 0h24v24H0z"
+                                    fill="none"
+                                  />
+                                  <path
+                                    d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"
+                                  />
+                                </svg>
+                              </span>
+                            </button>
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    <td
+                      align="right"
+                      class="TableCell__TableCell___Wou8a emotion-6"
+                      data-test-id="cf-ui-table-cell"
+                      style="top: 0px;"
+                    >
+                      <div
+                        class="emotion-5"
+                      >
+                        <div
+                          style="margin-left: 10px; position: relative;"
+                        >
+                          <button
+                            class="btn-inline btn-actions-nav"
+                          >
+                            •••
+                          </button>
+                          
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr
+                    class="TableRow__TableRow___3kcNC"
+                    data-test-id="cf-ui-table-row"
+                  >
+                    <td
+                      align="left"
+                      class="TableCell__TableCell___Wou8a"
+                      data-test-id="cf-ui-table-cell"
+                      style="top: 0px;"
+                    >
+                      <div
+                        class="emotion-1"
+                      >
+                        <a
+                          href="^.definitions?definitionId=2WoMzSs2fRJx79JeVvqdGR"
+                        >
+                          <span
+                            class="icon-component emotion-0"
+                            data-icon-name="page-apps"
+                          >
+                            <page-apps.svg
+                              viewbox="0 0 NaN NaN"
+                            />
+                          </span>
+                           
+                          <b>
+                            Jira
+                          </b>
+                        </a>
+                      </div>
+                    </td>
+                    <td
+                      align="left"
+                      class="TableCell__TableCell___Wou8a"
+                      data-test-id="cf-ui-table-cell"
+                      style="top: 0px;"
+                    >
+                      <div
+                        class="emotion-1"
+                      >
+                        <span
+                          class="emotion-2"
+                        >
+                          2WoMzSs2fRJx79JeVvqdGR
+                           
+                        </span>
+                        <div
+                          class="CopyButton__CopyButton___OoA5D emotion-3"
+                          data-test-id="cf-ui-copy-button"
+                          id="copyButton"
+                        >
+                          <span
+                            class="Tooltip__Tooltip__target-wrapper___Mtw42"
+                          >
+                            <button
+                              class="CopyButton__CopyButton__button___52Bc0 a11y__focus-outline--default___2hwb1"
+                              type="button"
+                            >
+                              <span
+                                class="TabFocusTrap__TabFocusTrap___39Vty CopyButton__CopyButton__TabFocusTrap___1Q_DQ"
+                                tabindex="-1"
+                              >
+                                <span
+                                  class="CopyButton__CopyButton__text___269PQ helpers__sr-only___3Kv3z"
+                                >
+                                  Copy 
+                                  2WoMzSs2fRJx79JeVvqdGR
+                                   to clipboard
+                                </span>
+                                <svg
+                                  class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--muted___3egnD"
+                                  data-test-id="cf-ui-icon"
+                                  height="18"
+                                  viewBox="0 0 24 24"
+                                  width="18"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M0 0h24v24H0z"
+                                    fill="none"
+                                  />
+                                  <path
+                                    d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"
+                                  />
+                                </svg>
+                              </span>
+                            </button>
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    <td
+                      align="right"
+                      class="TableCell__TableCell___Wou8a emotion-6"
+                      data-test-id="cf-ui-table-cell"
+                      style="top: 0px;"
+                    >
+                      <div
+                        class="emotion-5"
+                      >
+                        <div
+                          style="margin-left: 10px; position: relative;"
+                        >
+                          <button
+                            class="btn-inline btn-actions-nav"
+                          >
+                            •••
+                          </button>
+                          
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr
+                    class="TableRow__TableRow___3kcNC"
+                    data-test-id="cf-ui-table-row"
+                  >
+                    <td
+                      align="left"
+                      class="TableCell__TableCell___Wou8a"
+                      data-test-id="cf-ui-table-cell"
+                      style="top: 0px;"
+                    >
+                      <div
+                        class="emotion-1"
+                      >
+                        <a
+                          href="^.definitions?definitionId=3cG9ueyzkY0GCndLiQzmZ0"
+                        >
+                          <span
+                            class="icon-component emotion-0"
+                            data-icon-name="page-apps"
+                          >
+                            <page-apps.svg
+                              viewbox="0 0 NaN NaN"
+                            />
+                          </span>
+                           
+                          <b>
+                            Smartling
+                          </b>
+                        </a>
+                      </div>
+                    </td>
+                    <td
+                      align="left"
+                      class="TableCell__TableCell___Wou8a"
+                      data-test-id="cf-ui-table-cell"
+                      style="top: 0px;"
+                    >
+                      <div
+                        class="emotion-1"
+                      >
+                        <span
+                          class="emotion-2"
+                        >
+                          3cG9ueyzkY0GCndLiQzmZ0
+                           
+                        </span>
+                        <div
+                          class="CopyButton__CopyButton___OoA5D emotion-3"
+                          data-test-id="cf-ui-copy-button"
+                          id="copyButton"
+                        >
+                          <span
+                            class="Tooltip__Tooltip__target-wrapper___Mtw42"
+                          >
+                            <button
+                              class="CopyButton__CopyButton__button___52Bc0 a11y__focus-outline--default___2hwb1"
+                              type="button"
+                            >
+                              <span
+                                class="TabFocusTrap__TabFocusTrap___39Vty CopyButton__CopyButton__TabFocusTrap___1Q_DQ"
+                                tabindex="-1"
+                              >
+                                <span
+                                  class="CopyButton__CopyButton__text___269PQ helpers__sr-only___3Kv3z"
+                                >
+                                  Copy 
+                                  3cG9ueyzkY0GCndLiQzmZ0
+                                   to clipboard
+                                </span>
+                                <svg
+                                  class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--muted___3egnD"
+                                  data-test-id="cf-ui-icon"
+                                  height="18"
+                                  viewBox="0 0 24 24"
+                                  width="18"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M0 0h24v24H0z"
+                                    fill="none"
+                                  />
+                                  <path
+                                    d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"
+                                  />
+                                </svg>
+                              </span>
+                            </button>
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    <td
+                      align="right"
+                      class="TableCell__TableCell___Wou8a emotion-6"
+                      data-test-id="cf-ui-table-cell"
+                      style="top: 0px;"
+                    >
+                      <div
+                        class="emotion-5"
+                      >
+                        <div
+                          style="margin-left: 10px; position: relative;"
+                        >
+                          <button
+                            class="btn-inline btn-actions-nav"
+                          >
+                            •••
+                          </button>
+                          
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div
+            class="Workbench__Workbench__sidebar___3i7n0 Workbench__Workbench__sidebar--right___3f4XO"
+            data-test-id="cf-ui-workbench-sidebar-right"
+          >
+            <div
+              class="Typography__Typography___1ZUfE"
+              data-test-id="cf-ui-text-container"
+            >
+              <h3
+                class="SectionHeading__SectionHeading___39J6j emotion-21 f36-margin-bottom--l"
+                data-test-id="cf-ui-section-heading"
+              >
+                About Apps
+              </h3>
+              <p
+                class="Paragraph__Paragraph___2aO-9 f36-margin-bottom--m"
+                data-test-id="cf-ui-paragraph"
+              >
+                Build apps for your Contentful organization to extend the core functionality of the web app and optimize the workflow of editors.
+              </p>
+              <p
+                class="Paragraph__Paragraph___2aO-9 f36-margin-bottom--m"
+                data-test-id="cf-ui-paragraph"
+              >
+                Learn more about
+                 
+                <a
+                  class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                  data-test-id="cf-ui-text-link"
+                  href="https://www.contentful.com/developers/docs/extensibility/apps/building-apps/"
+                >
+                  <span
+                    class="TabFocusTrap__TabFocusTrap___39Vty"
+                    tabindex="-1"
+                  >
+                    building Contentful apps
+                  </span>
+                </a>
+                 
+                or check out our 
+                <a
+                  class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                  data-test-id="cf-ui-text-link"
+                  href="https://contentful.com/marketplace"
+                >
+                  <span
+                    class="TabFocusTrap__TabFocusTrap___39Vty"
+                    tabindex="-1"
+                  >
+                    Marketplace
+                  </span>
+                </a>
+                .
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div
+        aria-hidden="true"
+        class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
+        contenteditable="false"
+        data-test-id="cf-ui-tooltip"
+        role="tooltip"
+        style="max-width: 360px;"
+      >
+        <div
+          class="InViewport__InViewport___2o6g4"
+          data-test-id="cf-ui-in-viewport"
+          offset="0"
+        >
+          <span>
+            Copy to 
+            <br />
+             clipboard
+          </span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div
+        aria-hidden="true"
+        class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
+        contenteditable="false"
+        data-test-id="cf-ui-tooltip"
+        role="tooltip"
+        style="max-width: 360px;"
+      >
+        <div
+          class="InViewport__InViewport___2o6g4"
+          data-test-id="cf-ui-in-viewport"
+          offset="0"
+        >
+          <span>
+            Copy to 
+            <br />
+             clipboard
+          </span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div
+        aria-hidden="true"
+        class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
+        contenteditable="false"
+        data-test-id="cf-ui-tooltip"
+        role="tooltip"
+        style="max-width: 360px;"
+      >
+        <div
+          class="InViewport__InViewport___2o6g4"
+          data-test-id="cf-ui-in-viewport"
+          offset="0"
+        >
+          <span>
+            Copy to 
+            <br />
+             clipboard
+          </span>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": .emotion-6 button:first-child {
+  margin-right: 0.75rem;
+}
+
+.emotion-3 button {
+  height: 20px;
+  border: none;
+  background-color: transparent;
+  -webkit-transform: translateX(-10px);
+  -ms-transform: translateX(-10px);
+  transform: translateX(-10px);
+  opacity: 0;
+  -webkit-transition: all 0.2s cubic-bezier(0.13,0.62,0.11,0.99);
+  transition: all 0.2s cubic-bezier(0.13,0.62,0.11,0.99);
+}
+
+.emotion-3 button:hover {
+  background-color: transparent;
+  border: none;
+  opacity: 1;
+  -webkit-transform: translateX(0);
+  -ms-transform: translateX(0);
+  transform: translateX(0);
+}
+
+.emotion-21 {
+  color: #b4c3ca;
+  border-bottom: 1px solid #d3dce0;
+  font-weight: 400;
+}
+
+.emotion-1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.emotion-0 {
+  margin-right: 0.75rem;
+  vertical-align: sub;
+}
+
+.emotion-5 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+  height: 20px;
+}
+
+.emotion-5 div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+.emotion-2 {
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+}
+
+.emotion-2:hover ~ .emotion-3 button {
+  opacity: 1;
+  -webkit-transform: translateX(0);
+  -ms-transform: translateX(0);
+  transform: translateX(0);
+}
+
+<div>
+    <div
+      class="Workbench__Workbench___THi9K"
+      data-test-id="cf-ui-workbench"
+    >
+      <div
+        class="Workbench__Workbench__header___2wo2E"
+        data-test-id="cf-ui-workbench-header"
+      >
+        <div
+          class="Workbench__Workbench__header-icon___1kJlL"
+        >
+          <span
+            class="icon-component"
+            data-icon-name="page-apps"
+          >
+            <page-apps.svg
+              viewbox="0 0 NaN NaN"
+            />
+          </span>
+        </div>
+        <div
+          class="Workbench__Workbench__header-title___3xp7b"
+          data-test-id="workbench-title"
+        >
+          <h1
+            class="Heading__Heading___83D3K"
+            data-test-id="cf-ui-heading"
+          >
+            Apps
+          </h1>
+        </div>
+        <div
+          class="Workbench__Workbench__header-actions___mJoSR"
+        >
+          <button
+            class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO"
+            data-test-id="cf-ui-button"
+            type="button"
+          >
+            <span
+              class="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+              tabindex="-1"
+            >
+              <span
+                class="Button__Button__label___3tcOj"
+              >
+                Create new
+              </span>
+            </span>
+          </button>
+        </div>
+      </div>
+      <div
+        class="Workbench__Workbench__content-wrapper___3yWKi"
+      >
+        <div
+          class="Workbench__Workbench__content___1U8bV"
+          data-test-id="cf-ui-workbench-content"
+        >
+          <div
+            class="Workbench__Workbench__content-inner___36_Hx Workbench__Workbench__content-inner--default___2wRXn"
+          >
+            <table
+              cellpadding="0"
+              cellspacing="0"
+              class="Table__Table___2x3zV"
+              data-test-id="cf-ui-table"
+            >
+              <thead
+                class=""
+                data-test-id="cf-ui-table-head"
+              >
+                <tr
+                  class="TableRow__TableRow___3kcNC"
+                  data-test-id="cf-ui-table-row"
+                >
+                  <th
+                    align="left"
+                    class="TableCell__TableCell___Wou8a TableCell__TableCell--head___1HhvZ"
+                    data-test-id="cf-ui-table-cell"
+                    style="top: 0px;"
+                  >
+                    Name
+                  </th>
+                  <th
+                    align="left"
+                    class="TableCell__TableCell___Wou8a TableCell__TableCell--head___1HhvZ"
+                    data-test-id="cf-ui-table-cell"
+                    style="top: 0px;"
+                  >
+                    ID
+                  </th>
+                  <th
+                    align="left"
+                    class="TableCell__TableCell___Wou8a TableCell__TableCell--head___1HhvZ"
+                    data-test-id="cf-ui-table-cell"
+                    style="top: 0px;"
+                  />
+                </tr>
+              </thead>
+              <tbody
+                data-test-id="cf-ui-table-body"
+              >
+                <tr
+                  class="TableRow__TableRow___3kcNC"
+                  data-test-id="cf-ui-table-row"
+                >
+                  <td
+                    align="left"
+                    class="TableCell__TableCell___Wou8a"
+                    data-test-id="cf-ui-table-cell"
+                    style="top: 0px;"
+                  >
+                    <div
+                      class="emotion-1"
+                    >
+                      <a
+                        href="^.definitions?definitionId=3AjEyjWz5tRouW4cVOF9la"
+                      >
+                        <span
+                          class="icon-component emotion-0"
+                          data-icon-name="page-apps"
+                        >
+                          <page-apps.svg
+                            viewbox="0 0 NaN NaN"
+                          />
+                        </span>
+                         
+                        <b>
+                          Google Analytics
+                        </b>
+                      </a>
+                    </div>
+                  </td>
+                  <td
+                    align="left"
+                    class="TableCell__TableCell___Wou8a"
+                    data-test-id="cf-ui-table-cell"
+                    style="top: 0px;"
+                  >
+                    <div
+                      class="emotion-1"
+                    >
+                      <span
+                        class="emotion-2"
+                      >
+                        3AjEyjWz5tRouW4cVOF9la
+                         
+                      </span>
+                      <div
+                        class="CopyButton__CopyButton___OoA5D emotion-3"
+                        data-test-id="cf-ui-copy-button"
+                        id="copyButton"
+                      >
+                        <span
+                          class="Tooltip__Tooltip__target-wrapper___Mtw42"
+                        >
+                          <button
+                            class="CopyButton__CopyButton__button___52Bc0 a11y__focus-outline--default___2hwb1"
+                            type="button"
+                          >
+                            <span
+                              class="TabFocusTrap__TabFocusTrap___39Vty CopyButton__CopyButton__TabFocusTrap___1Q_DQ"
+                              tabindex="-1"
+                            >
+                              <span
+                                class="CopyButton__CopyButton__text___269PQ helpers__sr-only___3Kv3z"
+                              >
+                                Copy 
+                                3AjEyjWz5tRouW4cVOF9la
+                                 to clipboard
+                              </span>
+                              <svg
+                                class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--muted___3egnD"
+                                data-test-id="cf-ui-icon"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                width="18"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M0 0h24v24H0z"
+                                  fill="none"
+                                />
+                                <path
+                                  d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"
+                                />
+                              </svg>
+                            </span>
+                          </button>
+                        </span>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    align="right"
+                    class="TableCell__TableCell___Wou8a emotion-6"
+                    data-test-id="cf-ui-table-cell"
+                    style="top: 0px;"
+                  >
+                    <div
+                      class="emotion-5"
+                    >
+                      <div
+                        style="margin-left: 10px; position: relative;"
+                      >
+                        <button
+                          class="btn-inline btn-actions-nav"
+                        >
+                          •••
+                        </button>
+                        
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr
+                  class="TableRow__TableRow___3kcNC"
+                  data-test-id="cf-ui-table-row"
+                >
+                  <td
+                    align="left"
+                    class="TableCell__TableCell___Wou8a"
+                    data-test-id="cf-ui-table-cell"
+                    style="top: 0px;"
+                  >
+                    <div
+                      class="emotion-1"
+                    >
+                      <a
+                        href="^.definitions?definitionId=2WoMzSs2fRJx79JeVvqdGR"
+                      >
+                        <span
+                          class="icon-component emotion-0"
+                          data-icon-name="page-apps"
+                        >
+                          <page-apps.svg
+                            viewbox="0 0 NaN NaN"
+                          />
+                        </span>
+                         
+                        <b>
+                          Jira
+                        </b>
+                      </a>
+                    </div>
+                  </td>
+                  <td
+                    align="left"
+                    class="TableCell__TableCell___Wou8a"
+                    data-test-id="cf-ui-table-cell"
+                    style="top: 0px;"
+                  >
+                    <div
+                      class="emotion-1"
+                    >
+                      <span
+                        class="emotion-2"
+                      >
+                        2WoMzSs2fRJx79JeVvqdGR
+                         
+                      </span>
+                      <div
+                        class="CopyButton__CopyButton___OoA5D emotion-3"
+                        data-test-id="cf-ui-copy-button"
+                        id="copyButton"
+                      >
+                        <span
+                          class="Tooltip__Tooltip__target-wrapper___Mtw42"
+                        >
+                          <button
+                            class="CopyButton__CopyButton__button___52Bc0 a11y__focus-outline--default___2hwb1"
+                            type="button"
+                          >
+                            <span
+                              class="TabFocusTrap__TabFocusTrap___39Vty CopyButton__CopyButton__TabFocusTrap___1Q_DQ"
+                              tabindex="-1"
+                            >
+                              <span
+                                class="CopyButton__CopyButton__text___269PQ helpers__sr-only___3Kv3z"
+                              >
+                                Copy 
+                                2WoMzSs2fRJx79JeVvqdGR
+                                 to clipboard
+                              </span>
+                              <svg
+                                class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--muted___3egnD"
+                                data-test-id="cf-ui-icon"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                width="18"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M0 0h24v24H0z"
+                                  fill="none"
+                                />
+                                <path
+                                  d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"
+                                />
+                              </svg>
+                            </span>
+                          </button>
+                        </span>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    align="right"
+                    class="TableCell__TableCell___Wou8a emotion-6"
+                    data-test-id="cf-ui-table-cell"
+                    style="top: 0px;"
+                  >
+                    <div
+                      class="emotion-5"
+                    >
+                      <div
+                        style="margin-left: 10px; position: relative;"
+                      >
+                        <button
+                          class="btn-inline btn-actions-nav"
+                        >
+                          •••
+                        </button>
+                        
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr
+                  class="TableRow__TableRow___3kcNC"
+                  data-test-id="cf-ui-table-row"
+                >
+                  <td
+                    align="left"
+                    class="TableCell__TableCell___Wou8a"
+                    data-test-id="cf-ui-table-cell"
+                    style="top: 0px;"
+                  >
+                    <div
+                      class="emotion-1"
+                    >
+                      <a
+                        href="^.definitions?definitionId=3cG9ueyzkY0GCndLiQzmZ0"
+                      >
+                        <span
+                          class="icon-component emotion-0"
+                          data-icon-name="page-apps"
+                        >
+                          <page-apps.svg
+                            viewbox="0 0 NaN NaN"
+                          />
+                        </span>
+                         
+                        <b>
+                          Smartling
+                        </b>
+                      </a>
+                    </div>
+                  </td>
+                  <td
+                    align="left"
+                    class="TableCell__TableCell___Wou8a"
+                    data-test-id="cf-ui-table-cell"
+                    style="top: 0px;"
+                  >
+                    <div
+                      class="emotion-1"
+                    >
+                      <span
+                        class="emotion-2"
+                      >
+                        3cG9ueyzkY0GCndLiQzmZ0
+                         
+                      </span>
+                      <div
+                        class="CopyButton__CopyButton___OoA5D emotion-3"
+                        data-test-id="cf-ui-copy-button"
+                        id="copyButton"
+                      >
+                        <span
+                          class="Tooltip__Tooltip__target-wrapper___Mtw42"
+                        >
+                          <button
+                            class="CopyButton__CopyButton__button___52Bc0 a11y__focus-outline--default___2hwb1"
+                            type="button"
+                          >
+                            <span
+                              class="TabFocusTrap__TabFocusTrap___39Vty CopyButton__CopyButton__TabFocusTrap___1Q_DQ"
+                              tabindex="-1"
+                            >
+                              <span
+                                class="CopyButton__CopyButton__text___269PQ helpers__sr-only___3Kv3z"
+                              >
+                                Copy 
+                                3cG9ueyzkY0GCndLiQzmZ0
+                                 to clipboard
+                              </span>
+                              <svg
+                                class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--muted___3egnD"
+                                data-test-id="cf-ui-icon"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                width="18"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M0 0h24v24H0z"
+                                  fill="none"
+                                />
+                                <path
+                                  d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"
+                                />
+                              </svg>
+                            </span>
+                          </button>
+                        </span>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    align="right"
+                    class="TableCell__TableCell___Wou8a emotion-6"
+                    data-test-id="cf-ui-table-cell"
+                    style="top: 0px;"
+                  >
+                    <div
+                      class="emotion-5"
+                    >
+                      <div
+                        style="margin-left: 10px; position: relative;"
+                      >
+                        <button
+                          class="btn-inline btn-actions-nav"
+                        >
+                          •••
+                        </button>
+                        
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div
+          class="Workbench__Workbench__sidebar___3i7n0 Workbench__Workbench__sidebar--right___3f4XO"
+          data-test-id="cf-ui-workbench-sidebar-right"
+        >
+          <div
+            class="Typography__Typography___1ZUfE"
+            data-test-id="cf-ui-text-container"
+          >
+            <h3
+              class="SectionHeading__SectionHeading___39J6j emotion-21 f36-margin-bottom--l"
+              data-test-id="cf-ui-section-heading"
+            >
+              About Apps
+            </h3>
+            <p
+              class="Paragraph__Paragraph___2aO-9 f36-margin-bottom--m"
+              data-test-id="cf-ui-paragraph"
+            >
+              Build apps for your Contentful organization to extend the core functionality of the web app and optimize the workflow of editors.
+            </p>
+            <p
+              class="Paragraph__Paragraph___2aO-9 f36-margin-bottom--m"
+              data-test-id="cf-ui-paragraph"
+            >
+              Learn more about
+               
+              <a
+                class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                data-test-id="cf-ui-text-link"
+                href="https://www.contentful.com/developers/docs/extensibility/apps/building-apps/"
+              >
+                <span
+                  class="TabFocusTrap__TabFocusTrap___39Vty"
+                  tabindex="-1"
+                >
+                  building Contentful apps
+                </span>
+              </a>
+               
+              or check out our 
+              <a
+                class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                data-test-id="cf-ui-text-link"
+                href="https://contentful.com/marketplace"
+              >
+                <span
+                  class="TabFocusTrap__TabFocusTrap___39Vty"
+                  tabindex="-1"
+                >
+                  Marketplace
+                </span>
+              </a>
+              .
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
+
+exports[`AppListing should show the empty state when no definitions are passed 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": .emotion-0 {
+  max-width: 768px;
+  margin: 0 auto;
+  margin-top: 5rem;
+  text-align: center;
+}
+
+.emotion-0 svg {
+  width: 100%;
+}
+
+<body>
+    <div>
+      <div
+        class="emotion-0"
+      >
+        <apps-private-framework.svg />
+        <div
+          class="EmptyState__EmptyState___35Xbk"
+          data-test-id="cf-ui-empty-state"
+        >
+          <div
+            class="EmptyState__EmptyState_container___34eoG"
+          >
+            <div
+              class="EmptyState__EmptyState_element___1cYfd"
+            />
+            <h1
+              class="Heading__Heading___83D3K EmptyState__EmptyState_element___1cYfd"
+              data-test-id="cf-ui-heading"
+            >
+              Build apps for Contentful
+            </h1>
+            <p
+              class="Paragraph__Paragraph___2aO-9 EmptyState__EmptyState_paragraph___KTUQq EmptyState__EmptyState_element___1cYfd"
+              data-test-id="cf-ui-paragraph"
+            />
+            <div
+              class="Typography__Typography___1ZUfE"
+              data-test-id="cf-ui-text-container"
+            >
+              <p
+                class="Paragraph__Paragraph___2aO-9 f36-margin-bottom--m"
+                data-test-id="cf-ui-paragraph"
+              >
+                Contentful apps extend and expand the capabilities of the Contentful web app and the editors who use it. Apps empower you to integrate third-party services, build extraordinary workflows and customize the functionality of the Contentful web app.
+              </p>
+              <p
+                class="Paragraph__Paragraph___2aO-9 f36-margin-bottom--m"
+                data-test-id="cf-ui-paragraph"
+              >
+                Learn more about
+                 
+                <a
+                  class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                  data-test-id="cf-ui-text-link"
+                  href="https://www.contentful.com/developers/docs/extensibility/apps/building-apps/"
+                >
+                  <span
+                    class="TabFocusTrap__TabFocusTrap___39Vty"
+                    tabindex="-1"
+                  >
+                    building Contentful apps
+                  </span>
+                </a>
+                 
+                or check out our 
+                <a
+                  class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                  data-test-id="cf-ui-text-link"
+                  href="https://contentful.com/marketplace"
+                >
+                  <span
+                    class="TabFocusTrap__TabFocusTrap___39Vty"
+                    tabindex="-1"
+                  >
+                    Marketplace
+                  </span>
+                </a>
+                .
+              </p>
+            </div>
+            <button
+              class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO"
+              data-test-id="cf-ui-button"
+              type="button"
+            >
+              <span
+                class="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+                tabindex="-1"
+              >
+                <span
+                  class="Button__Button__label___3tcOj"
+                >
+                  Create an app
+                </span>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": .emotion-0 {
+  max-width: 768px;
+  margin: 0 auto;
+  margin-top: 5rem;
+  text-align: center;
+}
+
+.emotion-0 svg {
+  width: 100%;
+}
+
+<div>
+    <div
+      class="emotion-0"
+    >
+      <apps-private-framework.svg />
+      <div
+        class="EmptyState__EmptyState___35Xbk"
+        data-test-id="cf-ui-empty-state"
+      >
+        <div
+          class="EmptyState__EmptyState_container___34eoG"
+        >
+          <div
+            class="EmptyState__EmptyState_element___1cYfd"
+          />
+          <h1
+            class="Heading__Heading___83D3K EmptyState__EmptyState_element___1cYfd"
+            data-test-id="cf-ui-heading"
+          >
+            Build apps for Contentful
+          </h1>
+          <p
+            class="Paragraph__Paragraph___2aO-9 EmptyState__EmptyState_paragraph___KTUQq EmptyState__EmptyState_element___1cYfd"
+            data-test-id="cf-ui-paragraph"
+          />
+          <div
+            class="Typography__Typography___1ZUfE"
+            data-test-id="cf-ui-text-container"
+          >
+            <p
+              class="Paragraph__Paragraph___2aO-9 f36-margin-bottom--m"
+              data-test-id="cf-ui-paragraph"
+            >
+              Contentful apps extend and expand the capabilities of the Contentful web app and the editors who use it. Apps empower you to integrate third-party services, build extraordinary workflows and customize the functionality of the Contentful web app.
+            </p>
+            <p
+              class="Paragraph__Paragraph___2aO-9 f36-margin-bottom--m"
+              data-test-id="cf-ui-paragraph"
+            >
+              Learn more about
+               
+              <a
+                class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                data-test-id="cf-ui-text-link"
+                href="https://www.contentful.com/developers/docs/extensibility/apps/building-apps/"
+              >
+                <span
+                  class="TabFocusTrap__TabFocusTrap___39Vty"
+                  tabindex="-1"
+                >
+                  building Contentful apps
+                </span>
+              </a>
+               
+              or check out our 
+              <a
+                class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                data-test-id="cf-ui-text-link"
+                href="https://contentful.com/marketplace"
+              >
+                <span
+                  class="TabFocusTrap__TabFocusTrap___39Vty"
+                  tabindex="-1"
+                >
+                  Marketplace
+                </span>
+              </a>
+              .
+            </p>
+          </div>
+          <button
+            class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO"
+            data-test-id="cf-ui-button"
+            type="button"
+          >
+            <span
+              class="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+              tabindex="-1"
+            >
+              <span
+                class="Button__Button__label___3tcOj"
+              >
+                Create an app
+              </span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
