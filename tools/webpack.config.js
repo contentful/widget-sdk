@@ -287,7 +287,20 @@ module.exports = () => {
     // us to see errors and stack traces with Karma rather than just "Script error".
     devtool: isTest || isDev ? 'cheap-module-source-map' : false,
     optimization: {
-      minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})],
+      minimize: isProd,
+      minimizer: [
+        new TerserJSPlugin({
+          terserOptions: {
+            // fix wrong minification for Safari
+            // https://github.com/terser/terser/issues/117,
+            safari10: true,
+            mangle: {
+              safari10: true
+            }
+          }
+        }),
+        new OptimizeCSSAssetsPlugin({})
+      ],
       chunkIds: isTest || isDev ? 'named' : false,
       splitChunks: {
         // TODO: Make this a bit cleaner
