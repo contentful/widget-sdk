@@ -48,12 +48,7 @@ export const getPlatform = _.constant(platform);
  * @description Returns modifier key as string ("Ctrl" or "Cmd")
  */
 export const getCtrlKey = _.constant(ctrlKey);
-/**
- * @ngdoc method
- * @name userAgent#isIE
- * @description Returns true if user is using IE
- */
-export const isIE = _.constant(tests.ie);
+
 /**
  * @ngdoc method
  * @name userAgent#isIOS

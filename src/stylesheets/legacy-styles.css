@@ -8349,9 +8349,6 @@ pre,
     text-transform: uppercase;
     margin-left: 7px;
   }
-  .entity-editor__ie11-support-message {
-    max-width: 800px;
-  }
   .entity-editor__no-permission-info {
     margin-left: auto;
     white-space: nowrap;
@@ -8908,10 +8905,6 @@ pre,
     align-self: flex-start;
     -ms-flex-item-align: start;
     margin-left: auto;
-  }
-  .rich-text .sticky-wrapper {
-    -webkit-transform: none !important;
-    transform: none !important;
   }
   .rich-text--enabled .native-sticky {
     position: -webkit-sticky;

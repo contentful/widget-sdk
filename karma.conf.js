@@ -98,7 +98,7 @@ module.exports = function(config) {
                 useBuiltIns: false
               }
             ],
-            '@babel/react',
+            '@babel/preset-react',
             '@dr.pogodin/babel-preset-svgr'
           ],
           plugins: [
