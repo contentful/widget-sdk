@@ -1,8 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import tokens from '@contentful/forma-36-tokens';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import { Notification, Heading, Button, Paragraph } from '@contentful/forma-36-react-components';
+import { css } from 'emotion';
+import Icon from 'ui/Components/Icon';
 import AppEditor from './AppEditor';
 import * as ManagementApiClient from './ManagementApiClient';
+
+const styles = {
+  title: css({
+    display: 'flex',
+    alignItems: 'center',
+    paddingBottom: tokens.spacingS,
+    borderBottom: `2px solid ${tokens.colorElementMid}`,
+    '& div:first-child': css({
+      marginRight: tokens.spacingL
+    })
+  })
+};
 
 export default class AppDetails extends React.Component {
   constructor(props) {
@@ -33,15 +49,28 @@ export default class AppDetails extends React.Component {
     const { name, definition, busy } = this.state;
 
     return (
-      <>
-        <Heading>App details</Heading>
-        <Heading>{name}</Heading>
-        <Paragraph>{this.props.definition.sys.id}</Paragraph>
-        <Button loading={busy} disabled={busy} onClick={this.save}>
-          Save
-        </Button>
-        <AppEditor definition={definition} onChange={definition => this.setState({ definition })} />
-      </>
+      <Workbench>
+        <Workbench.Header title="App details" onBack={() => {}}></Workbench.Header>
+        <Workbench.Content type="text">
+          <div className={styles.title}>
+            <div>
+              <Icon name="page-apps" scale="2" />
+            </div>
+            <div>
+              <Heading>{name}</Heading>
+              <Paragraph>{this.props.definition.sys.id}</Paragraph>
+            </div>
+          </div>
+          <Heading>App details</Heading>
+          <Button loading={busy} disabled={busy} onClick={this.save}>
+            Save
+          </Button>
+          <AppEditor
+            definition={definition}
+            onChange={definition => this.setState({ definition })}
+          />
+        </Workbench.Content>
+      </Workbench>
     );
   }
 }
