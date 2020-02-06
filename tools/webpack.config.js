@@ -253,6 +253,7 @@ module.exports = () => {
 
                   const manifestedAssets = [
                     'app.js',
+                    'chunk_vendors~app.js',
                     'styles.css',
                     'assets/favicon32x32.png',
                     'assets/apple_icon57x57.png',
@@ -310,40 +311,15 @@ module.exports = () => {
       ],
       chunkIds: isTest || isDev ? 'named' : false,
       splitChunks: {
-        // TODO: Make this a bit cleaner
         cacheGroups: !isTest
           ? {
-              nodeModules: {
-                name: 'libs',
+              vendors: {
                 test: module => {
-                  if (module.resource && module.resource.split('node_modules').length !== 1) {
-                    if (anyIssuerInChainIsIncludedAsync(module)) {
-                      return false;
-                    }
-
-                    return true;
-                  }
-                }
-              },
-              app: {
-                name: 'main',
-                test: (module, chunks) => {
-                  if (module.resource && module.resource.split('node_modules').length !== 1) {
-                    return false;
-                  }
-
-                  if (chunks[0] && chunks[0].name === 'app') {
-                    return false;
-                  }
-
-                  // If any of the chunks that would be generated contain a `src/javascripts` file,
-                  // include them in this bundle.
-                  if (anyChunkHasSrcJavascripts(chunks)) {
-                    return true;
-                  }
-
-                  // Do not include anything else in this bundle.
-                  return false;
+                  return (
+                    module.userRequest &&
+                    module.userRequest.match(/[\\/]node_modules[\\/]/) &&
+                    module.type.match(/javascript|json/)
+                  );
                 },
                 chunks: 'all'
               }
@@ -357,48 +333,3 @@ module.exports = () => {
     }
   };
 };
-
-function anyChunkHasSrcJavascripts(chunks) {
-  return Boolean(
-    chunks.find(chunk => {
-      const chunkModules = Array.from(chunk._modules);
-
-      return chunkModules.find(_module => {
-        return _module.userRequest && _module.userRequest.split('/src/javascripts/').length !== 1;
-      });
-    })
-  );
-}
-
-/*
-  This checks to see if the current issuer, or any of its parent issuers, are included
-  asynchronously in our application code.
-
-  See below in `issuerIsIncludedAsync` for an explanation on how this works.
- */
-function anyIssuerInChainIsIncludedAsync(issuer) {
-  if (!issuer.issuer) {
-    return false;
-  }
-
-  if (issuerIsIncludedAsync(issuer)) {
-    return true;
-  }
-
-  return anyIssuerInChainIsIncludedAsync(issuer.issuer);
-}
-
-/*
-  If the current `issuer` is included using `require.ensure`, and
-  its parent issuer is from `src/javascripts`, return true.
- */
-function issuerIsIncludedAsync(issuer) {
-  const asyncDependencyReasonNames = ['RequireEnsureItemDependency'];
-
-  return (
-    _.intersection(
-      asyncDependencyReasonNames,
-      issuer.reasons.map(r => r.dependency.constructor.name)
-    ).length !== 0 && issuer.issuer.userRequest.match(/src\/javascripts/)
-  );
-}
