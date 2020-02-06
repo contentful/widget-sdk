@@ -128,14 +128,16 @@
           >
           <div class="delete-confirm" cf-context-menu="bottom">
             <p>
-              You are about to delete
+              You are about to permanently delete
               <react-component
                 name="components/tabs/PluralizeEntityMessage"
                 props="{entityType: 'asset', count: selection.size()}"
               ></react-component>
             </p>
-            <button class="btn-caution" type="button" ng-click="deleteSelected()">Delete</button>
-            <button class="btn-secondary-action" type="button">Don't Delete</button>
+            <button class="btn-caution" type="button" ng-click="deleteSelected()">
+              Permanently delete
+            </button>
+            <button class="btn-secondary-action" type="button">Cancel</button>
           </div>
           <span
             class="text-link--constructive"

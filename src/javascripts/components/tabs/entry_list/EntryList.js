@@ -196,19 +196,27 @@ SortableTableCell.propTypes = {
   onClick: PropTypes.func.isRequired
 };
 
-function DeleteEntryConfirm({ itemsCount, onCancel, onConfirm }) {
+function DeleteEntryConfirm({ itemsCount, onCancel, onConfirm, onSecondary }) {
   return (
     <ModalConfirm
-      title={`Delete ${pluralize('entry', itemsCount, true)}`}
+      title={`Permanently delete ${pluralize('entry', itemsCount, true)}?`}
       isShown={true}
       intent="negative"
-      confirmLabel="Delete"
+      secondaryIntent="muted"
+      confirmLabel="Permanently delete"
+      secondaryLabel="Archive, instead"
       cancelLabel="Cancel"
       confirmTestId="delete-entry-confirm"
+      secondaryTestId="delete-entry-secondary"
       cancelTestId="delete-entry-cancel"
       onCancel={onCancel}
-      onConfirm={onConfirm}>
-      <Paragraph>Do you really want to delete {pluralize('entry', itemsCount, true)}?</Paragraph>
+      onConfirm={onConfirm}
+      onSecondary={onSecondary}>
+      <Paragraph>
+        Do you really want to permanently delete {pluralize('entry', itemsCount, true)}? Once you
+        delete an entry, it’s gone for good and cannot be retrieved. We suggest Archiving if you may
+        need to retrieve it later.
+      </Paragraph>
     </ModalConfirm>
   );
 }
@@ -216,7 +224,8 @@ function DeleteEntryConfirm({ itemsCount, onCancel, onConfirm }) {
 DeleteEntryConfirm.propTypes = {
   itemsCount: PropTypes.number.isRequired,
   onCancel: PropTypes.func.isRequired,
-  onConfirm: PropTypes.func.isRequired
+  onConfirm: PropTypes.func.isRequired,
+  onSecondary: PropTypes.func.isRequired
 };
 
 export class BulkActionsRow extends React.Component {
@@ -312,6 +321,10 @@ export class BulkActionsRow extends React.Component {
                     itemsCount={selection.size()}
                     onConfirm={() => {
                       this.fireAction('delete');
+                      this.setConfirmVisibility(false);
+                    }}
+                    onSecondary={() => {
+                      this.fireAction('archive');
                       this.setConfirmVisibility(false);
                     }}
                     onCancel={() => this.setConfirmVisibility(false)}

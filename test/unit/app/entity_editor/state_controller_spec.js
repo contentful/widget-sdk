@@ -9,7 +9,8 @@ describe('entityEditor/StateController', () => {
   beforeEach(async function() {
     this.stubs = {
       goToPreviousSlideOrExit: sinon.stub(),
-      showUnpublishedReferencesWarning: sinon.stub().returns(Promise.resolve(true))
+      showUnpublishedReferencesWarning: sinon.stub().returns(Promise.resolve(true)),
+      modalLauncher: sinon.stub()
     };
 
     this.registerWarningSpy = sinon.stub();
@@ -21,7 +22,7 @@ describe('entityEditor/StateController', () => {
 
     this.system.set('app/common/ModalLauncher', {
       default: {
-        open: sinon.stub().resolves(true)
+        open: this.stubs.modalLauncher
       }
     });
 
@@ -117,6 +118,7 @@ describe('entityEditor/StateController', () => {
     });
 
     it('makes delete request', async function() {
+      this.stubs.modalLauncher.resolves({ action: 'delete' });
       await this.controller.delete.execute();
       $apply();
 
@@ -131,6 +133,7 @@ describe('entityEditor/StateController', () => {
     });
 
     it('sends success notification', async function() {
+      this.stubs.modalLauncher.resolves({ action: 'delete' });
       await this.controller.delete.execute();
 
       $apply();
@@ -139,6 +142,7 @@ describe('entityEditor/StateController', () => {
     });
 
     it('sends failure notification with API error', async function() {
+      this.stubs.modalLauncher.resolves({ action: 'delete' });
       this.spaceEndpoint.rejects('ERROR');
       await this.controller.delete.execute();
       $apply();
@@ -146,9 +150,25 @@ describe('entityEditor/StateController', () => {
     });
 
     it('navigates to the previous slide-in entity or closes the current state as a fallback', async function() {
+      this.stubs.modalLauncher.resolves({ action: 'delete' });
       await this.controller.delete.execute();
       $apply();
       sinon.assert.calledOnceWith(this.stubs.goToPreviousSlideOrExit, 'delete');
+    });
+
+    it('[PUL-273] should allow to execute alternate action instead of the initial one', async function() {
+      this.stubs.modalLauncher.resolves({ action: 'archive' });
+      await this.controller.delete.execute();
+      $apply();
+      sinon.assert.notCalled(this.stubs.goToPreviousSlideOrExit);
+      sinon.assert.calledWith(
+        this.spaceEndpoint,
+        sinon.match({
+          method: 'PUT',
+          path: ['entries', 'EID', 'archived'],
+          version: 42
+        })
+      );
     });
   });
 
@@ -181,6 +201,7 @@ describe('entityEditor/StateController', () => {
       });
 
       it('unpublishes and archives the entity', async function() {
+        this.stubs.modalLauncher.resolves({ action: 'archive' });
         await this.action.execute();
         $apply();
 
@@ -209,6 +230,7 @@ describe('entityEditor/StateController', () => {
       });
 
       it('unpublishes the entity', async function() {
+        this.stubs.modalLauncher.resolves({ action: 'unpublish' });
         await this.action.execute();
         $apply();
 
@@ -231,6 +253,7 @@ describe('entityEditor/StateController', () => {
 
     describe('primary action publish', () => {
       it('publishes entity', async function() {
+        this.stubs.modalLauncher.resolves({ action: 'publish' });
         await this.controller.primary.execute();
 
         await flushPromises();
@@ -249,6 +272,7 @@ describe('entityEditor/StateController', () => {
       });
 
       it('notifies on success', async function() {
+        this.stubs.modalLauncher.resolves({ action: 'publish' });
         await this.controller.primary.execute();
         await flushPromises();
         $apply();
@@ -257,6 +281,7 @@ describe('entityEditor/StateController', () => {
       });
 
       it('runs the validator', async function() {
+        this.stubs.modalLauncher.resolves({ action: 'publish' });
         await this.controller.primary.execute();
 
         await flushPromises();
@@ -285,6 +310,7 @@ describe('entityEditor/StateController', () => {
         describe('when we are in the bulk editor', () => {
           beforeEach(function() {
             this.scope.bulkEditorContext = {};
+            this.stubs.modalLauncher.resolves({ action: 'publish' });
           });
 
           itTracksThePublishEventWithOrigin('bulk-editor');
@@ -293,6 +319,7 @@ describe('entityEditor/StateController', () => {
         describe('when we are in the entry editor', () => {
           beforeEach(function() {
             delete this.scope.bulkEditorContext;
+            this.stubs.modalLauncher.resolves({ action: 'publish' });
           });
 
           itTracksThePublishEventWithOrigin('entry-editor');
@@ -327,6 +354,7 @@ describe('entityEditor/StateController', () => {
         });
 
         it('does not track the publish event', async function() {
+          this.stubs.modalLauncher.resolves({ action: 'publish' });
           await this.controller.primary.execute();
 
           await flushPromises();
@@ -339,6 +367,7 @@ describe('entityEditor/StateController', () => {
 
       it('sends notification if validation failed', async function() {
         this.validator.run.returns(false);
+        this.stubs.modalLauncher.resolves({ action: 'publish' });
         await this.controller.primary.execute();
         await flushPromises();
         $apply();
@@ -351,7 +380,7 @@ describe('entityEditor/StateController', () => {
 
       it('does not publish if validation failed', async function() {
         this.validator.run.returns(false);
-
+        this.stubs.modalLauncher.resolves({ action: 'publish' });
         await this.controller.primary.execute();
         await flushPromises();
         $apply();
@@ -361,6 +390,7 @@ describe('entityEditor/StateController', () => {
 
       it('sends notification on server error', async function() {
         this.spaceEndpoint.rejects('ERROR');
+        this.stubs.modalLauncher.resolves({ action: 'publish' });
         await this.controller.primary.execute();
 
         await flushPromises();
@@ -380,6 +410,7 @@ describe('entityEditor/StateController', () => {
       });
 
       it('archives entity', async function() {
+        this.stubs.modalLauncher.resolves({ action: 'archive' });
         await this.action.execute();
         $apply();
 
@@ -394,6 +425,7 @@ describe('entityEditor/StateController', () => {
       });
 
       it('notifies on success', async function() {
+        this.stubs.modalLauncher.resolves({ action: 'archive' });
         await this.action.execute();
         $apply();
 
@@ -401,6 +433,7 @@ describe('entityEditor/StateController', () => {
       });
 
       it('notifies on failure', async function() {
+        this.stubs.modalLauncher.resolves({ action: 'archive' });
         this.spaceEndpoint.rejects('ERROR');
         await this.action.execute();
         $apply();
@@ -429,6 +462,7 @@ describe('entityEditor/StateController', () => {
       this.doc.reverter.revert.resolves();
 
       sinon.assert.notCalled(this.doc.reverter.revert);
+      this.stubs.modalLauncher.resolves({ action: 'revert' });
       this.controller.revertToPrevious.execute();
       $apply();
 
@@ -440,6 +474,7 @@ describe('entityEditor/StateController', () => {
       this.doc.reverter.revert.rejects('ERROR');
 
       sinon.assert.notCalled(this.doc.reverter.revert);
+      this.stubs.modalLauncher.resolves({ action: 'revert' });
       this.controller.revertToPrevious.execute();
       $apply();
 
@@ -450,6 +485,7 @@ describe('entityEditor/StateController', () => {
 
   describe('publication warnings', () => {
     it('shows publication warnings before actual action', async function() {
+      this.stubs.modalLauncher.resolves({ action: 'publish' });
       $apply();
       await this.controller.primary.execute();
 

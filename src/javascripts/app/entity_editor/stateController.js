@@ -172,7 +172,7 @@ export default function register() {
           .then(() => {
             if (validator.run()) {
               return applyAction(Action.Publish()).then(
-                entity => {
+                ({ entity }) => {
                   const entityInfo = $scope.entityInfo;
                   let contentType;
                   if (entityInfo.type === 'Entry') {
@@ -213,8 +213,10 @@ export default function register() {
 
       controller.delete = createCommand(
         () =>
-          applyActionWithConfirmation(Action.Delete()).then(() => {
-            goToPreviousSlideOrExit('delete');
+          applyActionWithConfirmation(Action.Delete()).then(({ action }) => {
+            if (action !== Action.Archive()) {
+              goToPreviousSlideOrExit('delete');
+            }
           }),
         {
           disabled: function() {
@@ -271,7 +273,7 @@ export default function register() {
         return docStateManager.apply(action).then(
           data => {
             notify(Notification.Success(action));
-            return data;
+            return { action, entity: data };
           },
           err => {
             notify(Notification.Error(action, err));
@@ -281,7 +283,9 @@ export default function register() {
       }
 
       function applyActionWithConfirmation(action) {
-        return showConfirmationMessage({ action: action }).then(() => applyAction(action));
+        return showConfirmationMessage({ action }).then(payload =>
+          applyAction(_.get(payload, 'action', action))
+        );
       }
 
       // TODO Move these checks into the document resource manager
@@ -300,11 +304,12 @@ export default function register() {
             isShown={isShown}
             action={props.action}
             entityInfo={$scope.entityInfo}
-            onConfirm={() => onClose(true)}
-            onCancel={() => onClose(false)}
+            onConfirm={() => onClose({ action: props.action })}
+            onCancel={() => onClose({ action: null })}
+            onArchive={() => onClose({ action: Action.Archive() })}
           />
-        )).then(wasConfirmed => {
-          if (wasConfirmed) return;
+        )).then(result => {
+          if (result.action) return result;
           return Promise.reject();
         });
       }
