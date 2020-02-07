@@ -33,16 +33,25 @@ const styles = {
     borderBottom: `1px solid ${tokens.colorElementLight}`,
     '& div:first-child': css({
       marginRight: tokens.spacingL
+    }),
+    '& div:last-child h1': css({
+      marginBottom: tokens.spacingXs
     })
+  }),
+  sysId: css({
+    fontFamily: tokens.fontStackMonospace,
+    fontSize: tokens.fontSizeS,
+    color: tokens.colorTextMid
   }),
   info: css({
     padding: `${tokens.spacingL} 0`,
     borderBottom: `1px solid ${tokens.colorElementLight}`,
-    '& div:first-child p:first-child': css({
-      marginBottom: tokens.spacingXs
+    '& p:first-child': css({
+      marginBottom: tokens.spacing2Xs
     }),
-    '& div:last-child button:first-child': css({
-      marginRight: tokens.spacingXs
+    '& p b': css({
+      color: tokens.colorTextMid,
+      marginRight: tokens.spacing2Xs
     })
   }),
   appEditor: css({
@@ -137,11 +146,11 @@ export default class AppDetails extends React.Component {
         <Workbench.Content type="text">
           <div className={styles.title}>
             <div>
-              <Icon name="page-apps" scale="2" />
+              <Icon name="page-apps" scale="1.6" />
             </div>
             <div>
               <Heading>{name}</Heading>
-              <Paragraph>{definition.sys.id}</Paragraph>
+              <Paragraph className={styles.sysId}>{definition.sys.id}</Paragraph>
             </div>
           </div>
           <div className={styles.info}>

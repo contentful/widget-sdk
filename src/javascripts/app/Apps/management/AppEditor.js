@@ -4,7 +4,6 @@ import { cloneDeep } from 'lodash';
 import {
   ToggleButton,
   Paragraph,
-  Form,
   TextField,
   CheckboxField,
   FormLabel,
@@ -16,10 +15,21 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 
 const styles = {
-  helpParagraph: css({}),
+  helpParagraph: css({
+    color: tokens.colorTextLight
+  }),
+  input: css({
+    marginBottom: tokens.spacingL
+  }),
+  toggleContainer: css({
+    marginBottom: tokens.spacingXs
+  }),
+  locationP: css({
+    marginBottom: tokens.spacingL
+  }),
   locationToggle: css({
     width: '100%',
-    padding: `${tokens.spacingXs} 0`,
+    padding: `${tokens.spacing2Xs} 0`,
     '& label ~ p': css({
       display: 'inline',
       marginLeft: tokens.spacingXs,
@@ -142,8 +152,9 @@ export default function AppEditor({ definition, onChange }) {
 
   return (
     <>
-      <Form>
+      <div>
         <TextField
+          className={styles.input}
           required
           name="app-name"
           id="app-name"
@@ -152,6 +163,7 @@ export default function AppEditor({ definition, onChange }) {
           onChange={e => onChange({ ...definition, name: e.target.value })}
         />
         <TextField
+          className={styles.input}
           required
           name="app-src"
           id="app-src"
@@ -160,8 +172,7 @@ export default function AppEditor({ definition, onChange }) {
           helpText="Valid URLs use HTTPS. Only localhost can use HTTP."
           onChange={e => onChange({ ...definition, src: e.target.value })}
         />
-
-        <div>
+        <div className={styles.locationP}>
           <FormLabel>Locations</FormLabel>
           <Paragraph className={styles.helpParagraph}>
             Specify where the app can be rendered. Check out the documentation for more details.
@@ -169,9 +180,8 @@ export default function AppEditor({ definition, onChange }) {
         </div>
         {LOCATION_ORDER.map(([name, locationValue]) => {
           return (
-            <>
+            <div key={locationValue} className={styles.toggleContainer}>
               <ToggleButton
-                key={locationValue}
                 className={styles.locationToggle}
                 isActive={hasLocation(locationValue)}
                 onClick={() => toggleLocation(locationValue)}>
@@ -208,10 +218,10 @@ export default function AppEditor({ definition, onChange }) {
                   </div>
                 </div>
               )}
-            </>
+            </div>
           );
         })}
-      </Form>
+      </div>
     </>
   );
 }
