@@ -247,7 +247,7 @@ function getAllUserTeamMemberships(membershipId, orgId, hasTeamsFeature) {
     return fetchAndResolve(
       getAllTeamMemberships(endpoint, {
         include: includePaths,
-        'sys.organizationMembership.id': membershipId
+        'sys.organizationMembership.sys.id': membershipId
       }),
       includePaths
     );
