@@ -11,9 +11,8 @@ import createLegacyFeatureService from 'services/LegacyFeatureService';
 import { getVariation } from 'LaunchDarkly';
 
 function getItems(params, { orgId }) {
-  const provisionDropdownItems = [];
-  if (params.ssoEnabled) {
-    provisionDropdownItems.push({
+  const enterpriseToolsDropdownItems = [
+    {
       if: params.ssoEnabled,
       title: 'SSO',
       sref: 'account.organizations.sso',
@@ -23,10 +22,8 @@ function getItems(params, { orgId }) {
         inherit: false
       },
       dataViewType: 'organization-sso'
-    });
-  }
-  if (params.scimFeatureEnabled) {
-    provisionDropdownItems.push({
+    },
+    {
       if: params.scimFeatureEnabled,
       title: 'User provisioning',
       sref: 'account.organizations.user-provisioning',
@@ -36,8 +33,8 @@ function getItems(params, { orgId }) {
         inherit: false
       },
       dataViewType: 'organization-user-provisioning'
-    });
-  }
+    }
+  ];
 
   return [
     {
@@ -126,12 +123,12 @@ function getItems(params, { orgId }) {
       dataViewType: 'organization-teams'
     },
     {
-      if: params.isOwnerOrAdmin && provisionDropdownItems && provisionDropdownItems.length > 0,
-      title: 'Provisions',
-      rootSref: 'organization-provisions',
+      if: params.isOwnerOrAdmin && enterpriseToolsDropdownItems.length > 0,
+      title: 'Enterprise Tools',
+      rootSref: 'organization-enterprise-tools',
       icon: 'nav-organization-sso',
-      dataViewType: 'organization-provisions',
-      children: provisionDropdownItems
+      dataViewType: 'organization-enterprise-tools',
+      children: enterpriseToolsDropdownItems
     },
     {
       if: params.pricingVersion == 'pricing_version_1' && params.isOwnerOrAdmin,
