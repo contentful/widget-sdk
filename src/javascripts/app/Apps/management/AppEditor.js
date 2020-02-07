@@ -172,6 +172,7 @@ export default function AppEditor({ definition, onChange }) {
           name="app-name"
           id="app-name"
           labelText="Name"
+          testId="app-name-input"
           value={definition.name || ''}
           onChange={e => onChange({ ...definition, name: e.target.value })}
         />
@@ -181,12 +182,13 @@ export default function AppEditor({ definition, onChange }) {
           name="app-src"
           id="app-src"
           labelText="Source URL"
+          testId="app-src-input"
           value={definition.src || ''}
           helpText="Valid URLs use HTTPS. Only localhost can use HTTP."
           onChange={e => onChange({ ...definition, src: e.target.value })}
         />
         <div className={styles.locationP}>
-          <FormLabel>Locations</FormLabel>
+          <FormLabel htmlFor="">Locations</FormLabel>
           <Paragraph className={styles.helpParagraph}>
             Specify where the app can be rendered. Check out the documentation for more details.
           </Paragraph>
@@ -195,6 +197,7 @@ export default function AppEditor({ definition, onChange }) {
           return (
             <div key={locationValue} className={styles.toggleContainer}>
               <ToggleButton
+                testId={`app-location-${locationValue}`}
                 className={styles.locationToggle}
                 isActive={hasLocation(locationValue)}
                 onClick={() => toggleLocation(locationValue)}>
@@ -237,7 +240,8 @@ export default function AppEditor({ definition, onChange }) {
         {definition.sys.organization.sys.id === PUBLIC_ORG_ID && (
           <div className={styles.publicSwitch}>
             <Switch
-              id="testSwitch"
+              testId="public-switch"
+              id="public-switch"
               isChecked={definition.public}
               labelText="Public"
               onToggle={() => togglePublic()}

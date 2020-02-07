@@ -198,7 +198,7 @@ export default class AppDetails extends React.Component {
             />
           </div>
           <div className={styles.formActions}>
-            <Button loading={busy} disabled={busy} onClick={this.save}>
+            <Button loading={busy} disabled={busy} onClick={this.save} testId="app-save">
               Update app
             </Button>
             <TextLink linkType="negative" disabled={busy} onClick={this.delete}>
