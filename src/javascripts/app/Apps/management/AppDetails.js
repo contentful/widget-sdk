@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import { getUser } from 'access_control/OrganizationMembershipRepository';
 import {
   TextLink,
   Notification,
@@ -26,9 +27,6 @@ const styles = {
     })
   }),
   info: css({
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     padding: `${tokens.spacingL} 0`,
     borderBottom: `1px solid ${tokens.colorElementLight}`,
     '& div:first-child p:first-child': css({
@@ -40,6 +38,11 @@ const styles = {
   }),
   appEditor: css({
     padding: `${tokens.spacingL} 0`
+  }),
+  formActions: css({
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   })
 };
 
@@ -59,8 +62,20 @@ export default class AppDetails extends React.Component {
       busy: false,
       name: props.definition.name,
       definition: props.definition,
-      redirect: false
+      redirect: false,
+      creator: ''
     };
+  }
+
+  async componentDidMount() {
+    const { definition } = this.props;
+
+    const { firstName, lastName } = await getUser(
+      ManagementApiClient.createOrgEndpointByDef(definition),
+      definition.sys.createdBy.sys.id
+    );
+
+    this.setState({ creator: [firstName, lastName].join(' ') });
   }
 
   save = async () => {
@@ -71,7 +86,9 @@ export default class AppDetails extends React.Component {
       this.setState({ name: updated.name, definition: updated });
       Notification.success('App updated successfully.');
     } catch (err) {
-      Notification.error('Validation failed.');
+      Notification.error(
+        'Validation failed. Please check that you have provided a app Name and valid Source URL.'
+      );
     }
 
     this.setState({ busy: false });
@@ -94,12 +111,9 @@ export default class AppDetails extends React.Component {
   render() {
     const { redirect, name, definition, busy } = this.state;
 
-    if (redirect) {
-      return <StateLink path="^.list">{({ onClick }) => onClick() || null}</StateLink>;
-    }
-
     return (
       <Workbench>
+        {redirect && <StateLink path="^.list">{({ onClick }) => onClick() || null}</StateLink>}
         <Workbench.Header
           title="App details"
           actions={
@@ -119,17 +133,12 @@ export default class AppDetails extends React.Component {
             </div>
           </div>
           <div className={styles.info}>
-            <div>
-              <Paragraph title={new Date(definition.sys.createdAt)}>
-                Created at: {formatDate(definition.sys.createdAt)}
-              </Paragraph>
-              <Paragraph>Created by: {definition.sys.createdBy.sys.id}</Paragraph>
-            </div>
-            <div>
-              <TextLink disabled={busy} onClick={this.delete}>
-                Delete
-              </TextLink>
-            </div>
+            <Paragraph title={new Date(definition.sys.createdAt)}>
+              <b>Created</b> {formatDate(definition.sys.createdAt)}
+            </Paragraph>
+            <Paragraph>
+              <b>Created by</b> {this.state.creator}
+            </Paragraph>
           </div>
           <div className={styles.appEditor}>
             <AppEditor
@@ -137,9 +146,14 @@ export default class AppDetails extends React.Component {
               onChange={definition => this.setState({ definition })}
             />
           </div>
-          <Button loading={busy} disabled={busy} onClick={this.save}>
-            Save
-          </Button>
+          <div className={styles.formActions}>
+            <Button loading={busy} disabled={busy} onClick={this.save}>
+              Update app
+            </Button>
+            <TextLink linkType="negative" disabled={busy} onClick={this.delete}>
+              Delete {name}
+            </TextLink>
+          </div>
         </Workbench.Content>
       </Workbench>
     );

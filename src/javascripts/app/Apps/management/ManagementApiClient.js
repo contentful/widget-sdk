@@ -3,11 +3,14 @@ import * as Auth from 'Authentication';
 import * as Config from 'Config';
 import { createOrganizationEndpoint } from 'data/Endpoint';
 
-export function save(definition) {
+export function createOrgEndpointByDef(definition) {
   const orgId = get(definition, ['sys', 'organization', 'sys', 'id']);
-  const id = get(definition, ['sys', 'id']);
+  return createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
+}
 
-  const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
+export function save(definition) {
+  const orgEndpoint = createOrgEndpointByDef(definition);
+  const id = get(definition, ['sys', 'id']);
 
   const isPersisted = typeof id === 'string';
   const method = isPersisted ? 'PUT' : 'POST';
@@ -20,10 +23,8 @@ export function save(definition) {
 }
 
 export function deleteDef(definition) {
-  const orgId = get(definition, ['sys', 'organization', 'sys', 'id']);
+  const orgEndpoint = createOrgEndpointByDef(definition);
   const id = get(definition, ['sys', 'id']);
-
-  const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
 
   return orgEndpoint({
     method: 'DELETE',
