@@ -8,7 +8,8 @@ import {
   CheckboxField,
   FormLabel,
   Icon,
-  Switch
+  Switch,
+  Note
 } from '@contentful/forma-36-react-components';
 import * as WidgetLocations from 'widgets/WidgetLocations';
 import { toInternalFieldType, toApiFieldType } from 'widgets/FieldTypes';
@@ -51,14 +52,16 @@ const styles = {
     backgroundColor: tokens.colorElementLightest,
     border: `1px solid ${tokens.colorElementLight}`,
     transition: `all ${tokens.transitionDurationDefault} ${tokens.transitionEasingDefault}`,
+    overflow: 'hidden',
     p: css({
       color: tokens.colorTextMid
     })
   }),
   fieldTypesOpen: css({
     opacity: '1',
-    height: '230px',
-    padding: tokens.spacingS
+    height: '215px',
+    padding: tokens.spacingS,
+    overflow: 'hidden'
   }),
   fieldTypeChecks: css({
     display: 'grid',
@@ -246,6 +249,10 @@ export default function AppEditor({ definition, onChange }) {
               labelText="Public"
               onToggle={() => togglePublic()}
             />
+            <br />
+            <Note noteType="warning" title="ENTERING THE DANGER ZONE">
+              You are about to modify the definition for a Contentful Marketplace app!
+            </Note>
           </div>
         )}
       </div>
