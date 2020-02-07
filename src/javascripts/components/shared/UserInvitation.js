@@ -7,7 +7,11 @@ import { get } from 'lodash';
 import { createEndpoint } from 'data/EndpointFactory';
 import { Notification } from '@contentful/forma-36-react-components';
 import { go } from 'states/Navigator';
-import { refresh as refreshToken, getOrganization } from 'services/TokenStore';
+import {
+  refresh as refreshToken,
+  getOrganization,
+  getOrganizationSpaces
+} from 'services/TokenStore';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { article } from 'utils/StringUtils';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
@@ -52,7 +56,7 @@ export default class UserInvitation extends React.Component {
 
       await refreshToken();
 
-      const firstSpaceId = get(acceptedInvitation, [
+      let firstSpaceId = get(acceptedInvitation, [
         'spaceInvitations',
         0,
         'sys',
@@ -60,6 +64,12 @@ export default class UserInvitation extends React.Component {
         'sys',
         'id'
       ]);
+
+      if (!firstSpaceId) {
+        const orgId = get(acceptedInvitation, 'sys.organization.sys.id');
+        const spaces = await getOrganizationSpaces(orgId);
+        firstSpaceId = spaces ? spaces[0].sys.id : null;
+      }
 
       const navMeta = {};
 
