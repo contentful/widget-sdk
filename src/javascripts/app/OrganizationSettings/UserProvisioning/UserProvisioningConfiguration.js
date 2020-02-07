@@ -36,6 +36,8 @@ const styles = {
     marginBottom: tokens.spacingL
   }),
   note: css({
+    fontFamily: 'Avenir Next',
+    fontSize: tokens.fontSizeM,
     marginBottom: tokens.spacingM
   })
 };
