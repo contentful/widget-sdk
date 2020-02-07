@@ -7,7 +7,8 @@ import {
   TextField,
   CheckboxField,
   FormLabel,
-  Icon
+  Icon,
+  Switch
 } from '@contentful/forma-36-react-components';
 import * as WidgetLocations from 'widgets/WidgetLocations';
 import { toInternalFieldType, toApiFieldType } from 'widgets/FieldTypes';
@@ -65,8 +66,13 @@ const styles = {
   }),
   entryFieldCheck: css({
     marginTop: tokens.spacingS
+  }),
+  publicSwitch: css({
+    marginTop: tokens.spacingL
   })
 };
+
+const PUBLIC_ORG_ID = '5EJGHo8tYJcjnEhYWDxivp';
 
 const LOCATION_ORDER = [
   ['App configuration screen', WidgetLocations.LOCATION_APP_CONFIG],
@@ -116,6 +122,13 @@ export default function AppEditor({ definition, onChange }) {
     } else {
       updated.locations = definition.locations.concat([{ location: locationValue }]);
     }
+
+    onChange(updated);
+  };
+
+  const togglePublic = () => {
+    const updated = cloneDeep(definition);
+    updated.public = !updated.public;
 
     onChange(updated);
   };
@@ -221,6 +234,16 @@ export default function AppEditor({ definition, onChange }) {
             </div>
           );
         })}
+        {definition.sys.organization.sys.id === PUBLIC_ORG_ID && (
+          <div className={styles.publicSwitch}>
+            <Switch
+              id="testSwitch"
+              isChecked={definition.public}
+              labelText="Public"
+              onToggle={() => togglePublic()}
+            />
+          </div>
+        )}
       </div>
     </>
   );
