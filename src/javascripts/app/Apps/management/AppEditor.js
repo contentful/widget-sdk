@@ -251,7 +251,7 @@ export default function AppEditor({ definition, onChange }) {
             />
             <br />
             <Note noteType="warning" title="ENTERING THE DANGER ZONE">
-              You are about to modify the definition for a Contentful Marketplace app!
+              You are about to modify the definition of a Contentful Marketplace app!
             </Note>
           </div>
         )}
