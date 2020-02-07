@@ -2,7 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
-import { Notification, Heading, Button, Paragraph } from '@contentful/forma-36-react-components';
+import {
+  TextLink,
+  Notification,
+  Heading,
+  Button,
+  Paragraph
+} from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import Icon from 'ui/Components/Icon';
 import AppEditor from './AppEditor';
@@ -96,6 +102,11 @@ export default class AppDetails extends React.Component {
       <Workbench>
         <Workbench.Header
           title="App details"
+          actions={
+            <Button disabled={busy} onClick={() => {}}>
+              Install to space
+            </Button>
+          }
           onBack={() => this.setState({ redirect: true })}></Workbench.Header>
         <Workbench.Content type="text">
           <div className={styles.title}>
@@ -109,16 +120,15 @@ export default class AppDetails extends React.Component {
           </div>
           <div className={styles.info}>
             <div>
-              <Paragraph>Created at: {formatDate(definition.sys.createdAt)}</Paragraph>
+              <Paragraph title={new Date(definition.sys.createdAt)}>
+                Created at: {formatDate(definition.sys.createdAt)}
+              </Paragraph>
               <Paragraph>Created by: {definition.sys.createdBy.sys.id}</Paragraph>
             </div>
             <div>
-              <Button loading={busy} disabled={busy} onClick={this.save}>
-                Install to space
-              </Button>
-              <Button loading={busy} disabled={busy} onClick={this.delete} buttonType="negative">
+              <TextLink disabled={busy} onClick={this.delete}>
                 Delete
-              </Button>
+              </TextLink>
             </div>
           </div>
           <div className={styles.appEditor}>
@@ -127,6 +137,9 @@ export default class AppDetails extends React.Component {
               onChange={definition => this.setState({ definition })}
             />
           </div>
+          <Button loading={busy} disabled={busy} onClick={this.save}>
+            Save
+          </Button>
         </Workbench.Content>
       </Workbench>
     );

@@ -27,19 +27,24 @@ const styles = {
   }),
   fieldTypes: css({
     opacity: '0',
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr 1fr',
     height: '0px',
     borderRadius: '2px',
     padding: '0',
     backgroundColor: tokens.colorElementLightest,
     border: `1px solid ${tokens.colorElementLight}`,
-    transition: `all ${tokens.transitionDurationDefault} ${tokens.transitionEasingDefault}`
+    transition: `all ${tokens.transitionDurationDefault} ${tokens.transitionEasingDefault}`,
+    p: css({
+      color: tokens.colorTextMid
+    })
   }),
   fieldTypesOpen: css({
     opacity: '1',
-    height: '200px',
-    padding: tokens.spacingXs
+    height: '230px',
+    padding: tokens.spacingS
+  }),
+  fieldTypeChecks: css({
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr 1fr'
   }),
   entryFieldCheck: css({
     marginTop: tokens.spacingS
@@ -177,7 +182,7 @@ export default function AppEditor({ definition, onChange }) {
                     .concat(hasLocation(locationValue) ? styles.fieldTypesOpen : [])
                     .join(' ')}>
                   <Paragraph>Select the field types the app can be rendered in.</Paragraph>
-                  <div>
+                  <div className={styles.fieldTypeChecks}>
                     {FIELD_TYPES_ORDER.map(([label, internalFieldType]) => {
                       return (
                         <CheckboxField
