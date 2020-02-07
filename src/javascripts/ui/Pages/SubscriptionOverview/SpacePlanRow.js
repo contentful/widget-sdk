@@ -4,7 +4,14 @@ import moment from 'moment';
 import { css } from 'emotion';
 import { joinAnd } from 'utils/StringUtils';
 import tokens from '@contentful/forma-36-tokens';
-import { TableRow, TableCell, Tooltip } from '@contentful/forma-36-react-components';
+import {
+  TableRow,
+  TableCell,
+  Tooltip,
+  CardActions,
+  DropdownList,
+  DropdownListItem
+} from '@contentful/forma-36-react-components';
 
 import { get } from 'lodash';
 
@@ -15,7 +22,6 @@ import { getUserName } from 'utils/UserUtils';
 
 import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import Price from 'ui/Components/Price';
-import ContextMenu from 'ui/Components/ContextMenu';
 import QuestionMarkIcon from 'svg/QuestionMarkIcon.svg';
 
 const styles = {
@@ -55,48 +61,19 @@ function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }
     createdAt = moment.utc(space.sys.createdAt).format('DD/MM/YYYY');
   }
 
-  const contextMenuItems = [
-    {
-      label: 'Change space type',
-      action: onChangeSpace(space, 'change'),
-      otherProps: {
-        'data-test-id': 'subscription-page.spaces-list.change-space-link'
-      }
-    },
-    {
-      label: 'Go to space',
-      disabled: Boolean(space && !space.isAccessible),
-      action: () =>
-        go({
-          path: ['spaces', 'detail', 'home'],
-          params: { spaceId: space.sys.id },
-          options: { reload: true }
-        }),
-      otherProps: {
-        'data-test-id': 'subscription-page.spaces-list.space-link'
-      }
-    },
-    {
-      label: 'Usage',
-      disabled: Boolean(space && !space.isAccessible),
-      action: () =>
-        go({
-          path: ['spaces', 'detail', 'settings', 'usage'],
-          params: { spaceId: space.sys.id },
-          options: { reload: true }
-        }),
-      otherProps: {
-        'data-test-id': 'subscription-page.spaces-list.space-usage-link'
-      }
-    },
-    {
-      label: 'Delete',
-      action: onDeleteSpace(space, plan),
-      otherProps: {
-        'data-test-id': 'subscription-page.spaces-list.delete-space-link'
-      }
-    }
-  ];
+  const onViewSpace = () =>
+    go({
+      path: ['spaces', 'detail', 'home'],
+      params: { spaceId: space.sys.id },
+      options: { reload: true }
+    });
+
+  const onViewUsage = () =>
+    go({
+      path: ['spaces', 'detail', 'settings', 'usage'],
+      params: { spaceId: space.sys.id },
+      options: { reload: true }
+    });
 
   const className = upgraded ? 'x--success' : '';
 
@@ -128,12 +105,37 @@ function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }
       <TableCell>{createdBy}</TableCell>
       <TableCell>{createdAt}</TableCell>
       <TableCell className={styles.dotsRow}>
-        {space && (
-          <ContextMenu
-            testId="subscription-page.spaces-list.space-context-menu"
-            items={contextMenuItems}
-          />
-        )}
+        <CardActions
+          iconButtonProps={{
+            buttonType: 'primary',
+            testId: 'subscription-page.spaces-list.space-context-menu.trigger'
+          }}
+          data-test-id="subscription-page.spaces-list.space-context-menu">
+          <DropdownList>
+            <DropdownListItem
+              onClick={onChangeSpace(space, 'change')}
+              testId="subscription-page.spaces-list.change-space-link">
+              Change space type
+            </DropdownListItem>
+            <DropdownListItem
+              onClick={onViewSpace}
+              isDisabled={Boolean(space && !space.isAccessible)}
+              testId="subscription-page.spaces-list.space-link">
+              Go to space
+            </DropdownListItem>
+            <DropdownListItem
+              onClick={onViewUsage}
+              isDisabled={Boolean(space && !space.isAccessible)}
+              testId="subscription-page.spaces-list.space-usage-link">
+              Usage
+            </DropdownListItem>
+            <DropdownListItem
+              onClick={onDeleteSpace(space, plan)}
+              testId="subscription-page.spaces-list.delete-space-link">
+              Delete
+            </DropdownListItem>
+          </DropdownList>
+        </CardActions>
       </TableCell>
     </TableRow>
   );
