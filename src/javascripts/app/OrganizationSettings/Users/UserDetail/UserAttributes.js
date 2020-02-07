@@ -3,10 +3,16 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import { getUserName, getLastActivityDate } from '../UserUtils';
 import { OrganizationMembership as OrganizationMembershipPropType } from 'app/OrganizationSettings/PropTypes';
-import { css } from 'emotion';
+import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { OrganizationRoleSelector } from './OrganizationRoleSelector';
-import { Paragraph, TextLink, Notification, List } from '@contentful/forma-36-react-components';
+import {
+  Paragraph,
+  TextLink,
+  Notification,
+  List,
+  ListItem
+} from '@contentful/forma-36-react-components';
 import { orgRoles } from 'utils/MembershipUtils';
 import SsoExemptionDialog from './SsoExemptionModal';
 import ModalLauncher from 'app/common/ModalLauncher';
@@ -27,6 +33,9 @@ const styles = {
     gridTemplateColumns: '1fr 1fr',
     marginTop: tokens.spacingL,
     marginBottom: tokens.spacingL
+  }),
+  rowWithSso: css({
+    gridTemplateColumns: '1fr 1fr 1fr'
   }),
   column: css({
     borderTop: `1px solid ${tokens.colorElementLight}`,
@@ -109,34 +118,34 @@ export default function UserAttributes({ membership, isSelf, onRoleChange, orgId
   };
 
   return (
-    <div className={styles.row}>
+    <div className={cx(membership.sys.sso ? [styles.row, styles.rowWithSso] : [styles.row])}>
       <List className={styles.column}>
-        <li className={styles.item}>
+        <ListItem className={styles.item}>
           <strong className={styles.label}>Last active</strong>
           <span data-test-id="user-attributes.last-active-at">{lastActiveAt}</span>
-        </li>
-        <li className={styles.item}>
+        </ListItem>
+        <ListItem className={styles.item}>
           <strong className={styles.label}>Member since</strong>
           <span data-test-id="user-attributes.member-since">{memberSince}</span>
-        </li>
-        <li className={styles.item}>
+        </ListItem>
+        <ListItem className={styles.item}>
           <strong className={styles.label}>Invited by</strong>
           <span data-test-id="user-attributes.invited-by">{invitedBy}</span>
-        </li>
+        </ListItem>
       </List>
       {membership.sys.sso && <UserSsoInfo membership={membership} />}
       <div>
         <List className={styles.column}>
-          <li className={styles.item}>
+          <ListItem className={styles.item}>
             <strong className={styles.label}>Organization role</strong>
             <OrganizationRoleSelector initialRole={membership.role} onChange={changeRole} />
-          </li>
-          <li>
+          </ListItem>
+          <ListItem>
             <Paragraph>
               {orgRoles.find(role => role.value === membership.role).description}
             </Paragraph>
-          </li>
-          <li>
+          </ListItem>
+          <ListItem>
             <Paragraph>
               <TextLink
                 linkType="negative"
@@ -145,7 +154,7 @@ export default function UserAttributes({ membership, isSelf, onRoleChange, orgId
                 Remove user from organization
               </TextLink>
             </Paragraph>
-          </li>
+          </ListItem>
         </List>
       </div>
     </div>
