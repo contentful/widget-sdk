@@ -7,7 +7,8 @@ import {
   Form,
   TextField,
   CheckboxField,
-  FormLabel
+  FormLabel,
+  Icon
 } from '@contentful/forma-36-react-components';
 import * as WidgetLocations from 'widgets/WidgetLocations';
 import { toInternalFieldType, toApiFieldType } from 'widgets/FieldTypes';
@@ -22,7 +23,13 @@ const styles = {
     '& label ~ p': css({
       display: 'inline',
       marginLeft: tokens.spacingXs,
-      color: tokens.colorElementDarkest
+      color: tokens.colorElementDarkest,
+      fontFamily: tokens.fontStackMonospace
+    }),
+    '& svg': css({
+      position: 'absolute',
+      right: tokens.spacingS,
+      top: 'calc(50% - 9px)'
     })
   }),
   fieldTypes: css({
@@ -175,6 +182,9 @@ export default function AppEditor({ definition, onChange }) {
                   helpText={`(${locationValue})`}
                   id={`app-location-${locationValue}`}
                 />
+                {locationValue === WidgetLocations.LOCATION_ENTRY_FIELD && (
+                  <Icon icon="ListBulleted" color="secondary" />
+                )}
               </ToggleButton>
               {locationValue === WidgetLocations.LOCATION_ENTRY_FIELD && (
                 <div

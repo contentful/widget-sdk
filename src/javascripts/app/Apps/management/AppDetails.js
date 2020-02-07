@@ -10,11 +10,20 @@ import {
   Button,
   Paragraph
 } from '@contentful/forma-36-react-components';
-import { css } from 'emotion';
+import { css, keyframes } from 'emotion';
 import Icon from 'ui/Components/Icon';
 import AppEditor from './AppEditor';
 import * as ManagementApiClient from './ManagementApiClient';
 import StateLink from 'app/common/StateLink';
+
+const fadeIn = keyframes({
+  from: {
+    opacity: '0'
+  },
+  to: {
+    opacity: '1'
+  }
+});
 
 const styles = {
   title: css({
@@ -43,6 +52,9 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center'
+  }),
+  creator: css({
+    animation: `${fadeIn} .2s ease`
   })
 };
 
@@ -137,7 +149,8 @@ export default class AppDetails extends React.Component {
               <b>Created</b> {formatDate(definition.sys.createdAt)}
             </Paragraph>
             <Paragraph>
-              <b>Created by</b> {this.state.creator}
+              <b>Created by</b>{' '}
+              {this.state.creator && <span className={styles.creator}>{this.state.creator}</span>}
             </Paragraph>
           </div>
           <div className={styles.appEditor}>
