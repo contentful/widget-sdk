@@ -1,165 +1,129 @@
-import ResolveLinks from './LinkResolver';
+import * as fake from 'testHelpers/fakeFactory';
+import ResolveLinks, { fetchAndResolve } from './LinkResolver';
 
 describe('LinkResolver', () => {
-  it('returns an unchanged array if no link paths are given', () => {
-    const items = [
-      {
-        foo: 'bar',
-        bar: 'foo'
-      }
-    ];
+  describe('resolveLinks', () => {
+    it('returns an unchanged array if no link paths are given', () => {
+      const items = [fake.SpaceMembership(), fake.SpaceMembership()];
 
-    const result = ResolveLinks({
-      paths: [],
-      includes: {},
-      items
+      const result = ResolveLinks({
+        paths: [],
+        includes: {},
+        items
+      });
+
+      expect(result).toEqual(items);
     });
 
-    expect(result).toEqual(items);
-  });
-
-  it('resolves a shallow link', () => {
-    const user = { name: 'John', sys: { id: 9 } };
-    const result = ResolveLinks({
-      paths: ['user'],
-      includes: {
-        User: [user]
-      },
-      items: [
-        {
-          foo: 'bar',
-          user: {
-            sys: {
-              linkType: 'User',
-              id: 9
-            }
+    it('resolves a shallow link', () => {
+      const user = fake.User('John', 'Doe');
+      const result = ResolveLinks({
+        paths: ['user'],
+        includes: {
+          User: [user]
+        },
+        items: [
+          {
+            foo: 'bar',
+            user: fake.Link('User', user.sys.id)
           }
-        }
-      ]
+        ]
+      });
+
+      expect(result[0].user).toBe(user);
     });
 
-    expect(result[0].user).toBe(user);
-  });
-
-  it('resolves a deep link', () => {
-    const user = { name: 'John', sys: { id: 9 } };
-    const result = ResolveLinks({
-      paths: ['membership.sys.user'],
-      includes: {
-        User: [user]
-      },
-      items: [
-        {
-          foo: 'bar',
-          membership: {
-            sys: {
-              user: {
-                sys: {
-                  linkType: 'User',
-                  id: 9
-                }
+    it('resolves a deep link', () => {
+      const user = fake.User('John', 'Doe');
+      const result = ResolveLinks({
+        paths: ['membership.sys.user'],
+        includes: {
+          User: [user]
+        },
+        items: [
+          {
+            foo: 'bar',
+            membership: {
+              sys: {
+                user: fake.Link('User', user.sys.id)
               }
             }
           }
-        }
-      ]
+        ]
+      });
+
+      expect(result[0].membership.sys.user).toBe(user);
     });
 
-    expect(result[0].membership.sys.user).toBe(user);
+    it('resolves an array of links', () => {
+      const spaces = [fake.Space(), fake.Space()];
+      const result = ResolveLinks({
+        paths: ['spaces'],
+        includes: {
+          Space: spaces
+        },
+        items: [
+          {
+            foo: 'bar',
+            spaces: [fake.Link('Space', spaces[0].sys.id), fake.Link('Space', spaces[1].sys.id)]
+          }
+        ]
+      });
+
+      expect(result[0].spaces).toEqual(spaces);
+    });
+
+    it('does not resolve a link if no object is found', () => {
+      const link = fake.Link('Space');
+      const space = fake.Space();
+      const result = ResolveLinks({
+        paths: ['spaces'],
+        includes: {
+          Space: [space]
+        },
+        items: [
+          {
+            foo: 'bar',
+            spaces: [fake.Link('Space', space.sys.id), link]
+          }
+        ]
+      });
+
+      expect(result[0].spaces).toEqual([space, link]);
+    });
+
+    it('does not resolve a link if no collection is found in `includes`', () => {
+      const link = fake.Link('Space');
+      const result = ResolveLinks({
+        paths: ['spaces'],
+        includes: {},
+        items: [
+          {
+            spaces: [link]
+          }
+        ]
+      });
+
+      expect(result[0].spaces).toEqual([link]);
+    });
   });
 
-  it('resolves an array of links', () => {
-    const roles = [
-      {
-        name: 'Editor',
-        sys: { id: 'x' }
-      },
-      {
-        name: 'Translator',
-        sys: { id: 'y' }
-      }
-    ];
-    const result = ResolveLinks({
-      paths: ['roles'],
-      includes: {
-        Role: roles
-      },
-      items: [
-        {
-          foo: 'bar',
-          roles: [
-            {
-              sys: {
-                linkType: 'Role',
-                id: 'x'
-              }
-            },
-            {
-              sys: {
-                linkType: 'Role',
-                id: 'y'
-              }
-            }
-          ]
-        }
-      ]
+  describe('fetchAndResolve', () => {
+    it('receives a promise for a collection and returns it with resolved links in given paths', async () => {
+      const spaces = [fake.Space(), fake.Space()];
+      const originalResponse = {
+        includes: {
+          Space: spaces
+        },
+        items: [
+          fake.SpaceMembership(fake.Link('Space', spaces[0].sys.id)),
+          fake.SpaceMembership(fake.Link('Space', spaces[1].sys.id))
+        ]
+      };
+      const promise = Promise.resolve(originalResponse);
+      const resolved = await fetchAndResolve(promise, ['sys.space']);
+
+      expect(resolved.map(membership => membership.sys.space)).toEqual(spaces);
     });
-
-    expect(result[0].roles).toEqual(roles);
-  });
-
-  it('does not resolve a link if no object is found', () => {
-    const link = {
-      sys: {
-        linkType: 'Role',
-        id: 'x'
-      }
-    };
-    const role = {
-      name: 'Translator',
-      sys: { id: 'y' }
-    };
-    const result = ResolveLinks({
-      paths: ['roles'],
-      includes: {
-        Role: [role]
-      },
-      items: [
-        {
-          foo: 'bar',
-          roles: [
-            link,
-            {
-              sys: {
-                linkType: 'Role',
-                id: 'y'
-              }
-            }
-          ]
-        }
-      ]
-    });
-
-    expect(result[0].roles).toEqual([link, role]);
-  });
-
-  it('does not resolve a link if no collection is found in `includes`', () => {
-    const link = {
-      sys: {
-        linkType: 'Role',
-        id: 'x'
-      }
-    };
-    const result = ResolveLinks({
-      paths: ['roles'],
-      includes: {},
-      items: [
-        {
-          roles: [link]
-        }
-      ]
-    });
-
-    expect(result[0].roles).toEqual([link]);
   });
 });

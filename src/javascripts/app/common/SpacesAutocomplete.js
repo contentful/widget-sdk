@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Space } from 'app/OrganizationSettings/PropTypes';
 import { Autocomplete } from '@contentful/forma-36-react-components/dist/alpha';
@@ -10,22 +10,19 @@ export default function SpacesAutoComplete({
   value,
   orgId,
   disabled = false,
+  inputWidth = 'large',
   validationMessage,
   onChange
 }) {
-  const [spaces, setSpaces] = useState([]);
   const [lastQuery, setLastQuery] = useState('');
 
   const getSpaces = useCallback(async () => {
     const endpoint = createOrganizationEndpoint(orgId);
-    return getAllSpaces(endpoint);
+    const spaces = await getAllSpaces(endpoint);
+    return spaces;
   }, [orgId]);
 
-  const { isLoading, data } = useAsync(getSpaces);
-
-  useEffect(() => {
-    data && setSpaces(data);
-  }, [data]);
+  const { isLoading, data: spaces } = useAsync(getSpaces);
 
   const handleChange = item => {
     onChange(item);
@@ -36,14 +33,18 @@ export default function SpacesAutoComplete({
   };
 
   // Get the updated list of items, filtered by the last query (autocomplete input value)
-  const items = useMemo(
-    () =>
-      spaces.filter(item => {
-        const name = item.name.toLowerCase();
-        return name.includes((lastQuery || '').toLowerCase()) && !value.includes(item);
-      }),
-    [lastQuery, spaces, value]
-  );
+  const items = useMemo(() => {
+    const valueIds = value.map(space => space.sys.id);
+
+    if (!spaces) return [];
+
+    return spaces.filter(item => {
+      const name = item.name.toLowerCase();
+      const isAvailable = !valueIds.includes(item.sys.id);
+      const nameMatchesQuery = name.includes((lastQuery || '').toLowerCase());
+      return nameMatchesQuery && isAvailable;
+    });
+  }, [lastQuery, spaces, value]);
 
   return (
     <Autocomplete
@@ -54,7 +55,7 @@ export default function SpacesAutoComplete({
       placeholder="Choose from spaces in your organization"
       validationMessage={validationMessage}
       isLoading={isLoading}
-      width="large"
+      width={inputWidth}
       disabled={disabled}
       emptyListMessage="There are no spaces to choose from"
       noMatchesMessage="No spaces found"
@@ -69,5 +70,6 @@ SpacesAutoComplete.propTypes = {
   orgId: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
+  inputWidth: PropTypes.oneOf(['small', 'medium', 'large', 'full']),
   validationMessage: PropTypes.string
 };

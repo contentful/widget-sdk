@@ -467,7 +467,7 @@ async function submitForm(emails = '', role = '', spaceMemberships = [], teams =
 }
 
 async function addSpaceMemberships(spaceMemberships) {
-  const spacesSection = screen.getByTestId('new-user.spaces');
+  const spacesSection = screen.getByTestId('add-to-spaces');
   const spacesAutocomplete = within(spacesSection).getByTestId('autocomplete.input');
 
   // focus on the autocomplete input to display dropdown with options
@@ -485,7 +485,7 @@ async function addSpaceMemberships(spaceMemberships) {
 
   spaceMemberships.forEach(({ roleNames }, index) => {
     // get the space membership form by index
-    const spaceMembershipForm = screen.getAllByTestId('space-membership-list.item')[index];
+    const spaceMembershipForm = screen.getAllByTestId('add-to-spaces.list.item')[index];
     // for each role, click on the checkbox referenced by a label with the correct role name
     roleNames.forEach(async roleName => {
       const roleEditorButton = within(spaceMembershipForm).getByTestId('space-role-editor.button');

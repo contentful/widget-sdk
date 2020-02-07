@@ -43,21 +43,24 @@ export default class UserCard extends React.Component {
 
     return (
       <div
+        data-test-id="user-card"
         className={`
         user-card
         ${CardClassNames[size]}
       `}>
-        <img src={avatarUrl} className="user-card__avatar" />
+        <img src={avatarUrl} className="user-card__avatar" data-test-id="user-card.avatar" />
         <div>
           {this.shouldShowInvitedTag() && (
-            <Tag testId="invited-status" tagType="warning">
+            <Tag testId="user-card.status" tagType="warning">
               Invited
             </Tag>
           )}
-          <Heading element="h2" className="user-card__name" testId="user-name-status">
+          <Heading element="h2" className="user-card__name" testId="user-card.name">
             {firstName} {lastName}
           </Heading>
-          <span className="user-card__email">{email}</span>
+          <span className="user-card__email" data-test-id="user-card.email">
+            {email}
+          </span>
         </div>
       </div>
     );
