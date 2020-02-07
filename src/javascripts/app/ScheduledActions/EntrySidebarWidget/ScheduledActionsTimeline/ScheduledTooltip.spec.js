@@ -5,7 +5,7 @@ import { Icon } from '@contentful/forma-36-react-components';
 import ScheduledActionActions from 'app/ScheduledActions/ScheduledActionAction';
 
 import ScheduleTooltip, { ScheduleTooltipContent } from './ScheduleTooltip';
-import * as FormattedDateAndTime from './FormattedDateAndTime';
+import * as FormattedDateAndTime from '../../FormattedDateAndTime';
 
 const formatDateAndTimeSpy = jest.spyOn(FormattedDateAndTime, 'formatDateAndTime');
 

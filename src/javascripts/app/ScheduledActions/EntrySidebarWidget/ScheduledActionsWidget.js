@@ -53,6 +53,10 @@ function shouldShowErrorNote(lastJob, entity) {
     return false;
   }
 
+  if (lastJob.action !== 'publish') {
+    return false;
+  }
+
   if (entity.sys.publishedAt) {
     const entryPublishedAfterLastFailedJob = moment(entity.sys.publishedAt).isAfter(
       lastJob.scheduledFor.datetime

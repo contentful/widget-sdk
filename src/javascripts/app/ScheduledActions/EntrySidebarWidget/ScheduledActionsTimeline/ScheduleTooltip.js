@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Tag, Tooltip, Paragraph } from '@contentful/forma-36-react-components';
 import { orderBy } from 'lodash';
 import tokens from '@contentful/forma-36-tokens';
-import { formatDateAndTime } from 'app/ScheduledActions/EntrySidebarWidget/ScheduledActionsTimeline/FormattedDateAndTime';
+import { formatDateAndTime } from 'app/ScheduledActions/FormattedDateAndTime';
 import ScheduledActionActions from 'app/ScheduledActions/ScheduledActionAction';
 
 import cn from 'classnames';
