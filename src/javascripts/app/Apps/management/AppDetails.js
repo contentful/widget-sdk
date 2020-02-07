@@ -8,7 +8,8 @@ import {
   Notification,
   Heading,
   Button,
-  Paragraph
+  Paragraph,
+  CopyButton
 } from '@contentful/forma-36-react-components';
 import { css, keyframes } from 'emotion';
 import Icon from 'ui/Components/Icon';
@@ -38,10 +39,21 @@ const styles = {
       marginBottom: tokens.spacingXs
     })
   }),
-  sysId: css({
-    fontFamily: tokens.fontStackMonospace,
-    fontSize: tokens.fontSizeS,
-    color: tokens.colorTextMid
+  copyButton: css({
+    button: css({
+      height: '20px',
+      border: 'none',
+      backgroundColor: 'transparent',
+      transform: 'translateX(-10px)',
+      opacity: '0',
+      transition: `all ${tokens.transitionDurationDefault} ${tokens.transitionEasingCubicBezier}`,
+      '&:hover': css({
+        backgroundColor: 'transparent',
+        border: 'none',
+        opacity: '1',
+        transform: 'translateX(0)'
+      })
+    })
   }),
   info: css({
     padding: `${tokens.spacingL} 0`,
@@ -66,6 +78,20 @@ const styles = {
     animation: `${fadeIn} .2s ease`
   })
 };
+
+const sysIdStyle = css({
+  display: 'flex',
+  flexDirection: 'row',
+  '& p': css({
+    fontFamily: tokens.fontStackMonospace,
+    fontSize: tokens.fontSizeS,
+    color: tokens.colorTextMid
+  }),
+  [`&:hover .${styles.copyButton} button`]: css({
+    opacity: '1',
+    transform: 'translateX(0)'
+  })
+});
 
 function formatDate(date) {
   return new Date(date).toLocaleString('en-US', {
@@ -150,7 +176,10 @@ export default class AppDetails extends React.Component {
             </div>
             <div>
               <Heading>{name}</Heading>
-              <Paragraph className={styles.sysId}>{definition.sys.id}</Paragraph>
+              <div className={sysIdStyle}>
+                <Paragraph>{definition.sys.id}</Paragraph>
+                <CopyButton className={styles.copyButton} copyValue={definition.sys.id} />
+              </div>
             </div>
           </div>
           <div className={styles.info}>
