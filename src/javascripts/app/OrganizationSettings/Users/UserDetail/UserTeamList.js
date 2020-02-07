@@ -21,6 +21,7 @@ import { css } from 'emotion';
 
 import { getFullNameOrEmail } from 'app/OrganizationSettings/Users/UserUtils';
 import moment from 'moment';
+import StateLink from 'app/common/StateLink';
 
 const styles = {
   table: css({
@@ -53,7 +54,13 @@ export default function UserTeamMemberships({ memberships = [], loading, user })
         {memberships.map(membership => (
           <TableRow key={membership.sys.id} testId="user-team-list.item">
             <TableCell>
-              <div className={styles.ellipsis}>{membership.sys.team.name}</div>
+              <div className={styles.ellipsis}>
+                <StateLink
+                  path="account.organizations.teams.detail"
+                  params={{ teamId: membership.sys.team.sys.id }}>
+                  {membership.sys.team.name}
+                </StateLink>
+              </div>
             </TableCell>
             <TableCell>
               <div className={styles.ellipsis}>{membership.sys.team.description}</div>
