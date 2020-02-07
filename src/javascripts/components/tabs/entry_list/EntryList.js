@@ -204,7 +204,7 @@ function DeleteEntryConfirm({ itemsCount, onCancel, onConfirm, onSecondary }) {
       intent="negative"
       secondaryIntent="muted"
       confirmLabel="Permanently delete"
-      secondaryLabel="Archive, instead"
+      secondaryLabel="Archive instead"
       cancelLabel="Cancel"
       confirmTestId="delete-entry-confirm"
       secondaryTestId="delete-entry-secondary"
@@ -213,9 +213,8 @@ function DeleteEntryConfirm({ itemsCount, onCancel, onConfirm, onSecondary }) {
       onConfirm={onConfirm}
       onSecondary={onSecondary}>
       <Paragraph>
-        Do you really want to permanently delete {pluralize('entry', itemsCount, true)}? Once you
-        delete an entry, it’s gone for good and cannot be retrieved. We suggest Archiving if you may
-        need to retrieve it later.
+        Once you delete an entry, it’s gone for good and cannot be retrieved. We suggest archiving
+        if you need to retrieve it later.
       </Paragraph>
     </ModalConfirm>
   );
