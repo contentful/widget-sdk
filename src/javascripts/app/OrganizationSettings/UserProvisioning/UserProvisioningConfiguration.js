@@ -21,13 +21,13 @@ const styles = {
   }),
   heading: css({
     fontFamily: 'Avenir Next',
+    fontWeight: tokens.fontWeightMedium,
     marginBottom: tokens.spacingL,
     marginTop: tokens.spacing2Xl
   }),
   subheading: css({
     color: '#2A3039',
     fontFamily: 'Avenir Next',
-    fontSize: tokens.fontSizeM,
     marginBottom: tokens.spacingXs,
     marginTop: tokens.spacingL
   }),
@@ -35,12 +35,10 @@ const styles = {
   paragraph: css({
     color: '#536171',
     fontFamily: 'Avenir Next',
-    fontSize: tokens.fontSizeM,
-    marginBottom: tokens.spacingM
+    marginBottom: tokens.spacingL
   }),
   note: css({
     fontFamily: 'Avenir Next',
-    fontSize: tokens.fontSizeM,
     marginBottom: tokens.spacingM
   })
 };
@@ -71,9 +69,7 @@ function UserProvisioningConfiguration() {
 
   return (
     <div className={styles.content}>
-      <Heading className={styles.heading} testId="scim-header">
-        Set up user provisioning with SCIM 2.0
-      </Heading>
+      <Heading className={styles.heading}>Set up user provisioning with SCIM 2.0</Heading>
       <Paragraph className={styles.paragraph}>
         Set up user provisioning for your organization in Contentful in a few steps.&nbsp;&nbsp;
         <TextLink href="https://www.contentful.com/faq/">Check out the FAQs.</TextLink>
@@ -118,7 +114,9 @@ function UserProvisioningConfiguration() {
           />
         </>
       ) : (
-        <Button onClick={openGenerateDialog}>Generate personal access token</Button>
+        <Button testId="generate-btn" onClick={openGenerateDialog}>
+          Generate personal access token
+        </Button>
       )}
     </div>
   );
