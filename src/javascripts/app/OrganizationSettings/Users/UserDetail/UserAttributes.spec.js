@@ -13,6 +13,7 @@ import { go } from 'states/Navigator';
 
 const mockMember = fake.OrganizationMembership('member', 'active');
 const mockDeveloper = fake.OrganizationMembership('developer', 'active');
+const mockOwner = fake.OrganizationMembership('owner', 'active');
 const onRoleChangeCb = jest.fn();
 
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
@@ -57,6 +58,23 @@ describe('UserAttributes', () => {
     expect(onRoleChangeCb).toHaveBeenCalledWith(mockDeveloper);
   });
 
+  it('should not let non-owners change the role of an owner', () => {
+    build(false, false, mockOwner);
+    expect(screen.getByTestId('org-role-selector.button')).toBeDisabled();
+  });
+
+  it('should let owners change the role of another owner', () => {
+    build(false, true, mockOwner);
+    expect(screen.getByTestId('org-role-selector.button')).not.toBeDisabled();
+  });
+
+  it('should disable the owner role for non-owners', () => {
+    build(false, false, mockMember);
+    selectRole('Owner');
+    expect(updateMembership).not.toHaveBeenCalled();
+    expect(onRoleChangeCb).not.toHaveBeenCalled();
+  });
+
   it('should confirm before removing the org membership', () => {
     build();
     removeUser();
@@ -89,21 +107,22 @@ describe('UserAttributes', () => {
   });
 });
 
-function build(isSelf = false) {
+function build(isSelf = false, isOwner = false, membership = mockMember) {
   return render(
     <UserAttributes
-      membership={mockMember}
+      membership={membership}
       isSelf={isSelf}
+      isOwner={isOwner}
       onRoleChange={onRoleChangeCb}
       orgId="123"
     />
   );
 }
 
-function selectRole() {
+function selectRole(roleName = 'Developer') {
   const button = screen.getByTestId('org-role-selector.button');
   fireEvent.click(button);
-  const option = screen.getByText('Developer');
+  const option = screen.getByText(roleName);
   fireEvent.click(option);
 }
 

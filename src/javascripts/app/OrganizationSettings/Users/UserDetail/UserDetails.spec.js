@@ -155,6 +155,7 @@ function build(options = { initialMembership: mockOrgMembership }) {
     <UserDetails
       initialMembership={options.initialMembership}
       isSelf={false}
+      isOwner={false}
       orgId="org-id"
       hasTeamsFeature={true}
     />

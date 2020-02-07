@@ -19,7 +19,13 @@ const styles = {
   })
 };
 
-export function OrganizationRoleSelector({ initialRole, onChange, disableOwnerRole, className }) {
+export function OrganizationRoleSelector({
+  isDisabled = false,
+  initialRole,
+  onChange,
+  disableOwnerRole,
+  className
+}) {
   const [isOpen, setOpen] = useState(false);
 
   const getOrgRole = () => {
@@ -36,7 +42,7 @@ export function OrganizationRoleSelector({ initialRole, onChange, disableOwnerRo
   };
 
   const renderOption = role => {
-    const disabled = role.id === 'owner' && disableOwnerRole;
+    const disabled = role.value === 'owner' && disableOwnerRole;
     return (
       <DropdownListItem
         key={role.value}
@@ -60,6 +66,7 @@ export function OrganizationRoleSelector({ initialRole, onChange, disableOwnerRo
           size="small"
           indicateDropdown
           onClick={toggle}
+          disabled={isDisabled}
           testId="org-role-selector.button">
           {getOrgRole().name}
         </Button>
@@ -74,6 +81,7 @@ export function OrganizationRoleSelector({ initialRole, onChange, disableOwnerRo
 OrganizationRoleSelector.propTypes = {
   initialRole: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
+  isDisabled: PropTypes.bool,
   disableOwnerRole: PropTypes.bool,
   className: PropTypes.string
 };
