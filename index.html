@@ -33,6 +33,45 @@
           transform: rotate(360deg);
         }
       }
+
+      .your-browser-is-deprecated {
+        display: none;
+        margin-left: 28px;
+        text-align: center;
+      }
+
+      .your-browser-is-deprecated h1 {
+        font-size: 2em;
+        margin-top: 0.9em;
+        margin-bottom: 1em;
+      }
+
+      .your-browser-is-deprecated p {
+        margin-bottom: 1em;
+        font-size: 1em;
+        display: block;
+      }
+
+      .loading-contentful-text {
+        display: block;
+      }
+
+      .contentful-splash-logo path {
+        animation: rotate 2s infinite cubic-bezier(0.6, 0.03, 0.15, 1);
+      }
+
+      /* styles only for IE11 and IE10 */
+      @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+        .your-browser-is-deprecated {
+          display: block;
+        }
+        .contentful-splash-logo path {
+          animation: none;
+        }
+        .loading-contentful-text {
+          display: none;
+        }
+      }
     </style>
   </head>
   <body
@@ -47,22 +86,63 @@
         <div
           style="position: absolute; top: 0; right: 0; bottom: 0; left: 0; display: flex; flex-direction: column; justify-content: center; align-items: center;"
         >
-          <svg width="60" height="60" style="transform: rotate(-45deg);">
+          <svg
+            class="contentful-splash-logo"
+            width="60"
+            height="60"
+            style="transform: rotate(-45deg);"
+          >
             <path
               d="M10,30 a20,20 0 0,0 20,20"
-              style="stroke-width: 11px; stroke: #e0534e; stroke-linecap: round; fill: transparent; mix-blend-mode: darken; animation: rotate 2s infinite cubic-bezier(0.6, 0.03, 0.15, 1); transform-origin: 30px 30px; animation-delay: 0"
+              style="stroke-width: 11px; stroke: #e0534e; stroke-linecap: round; fill: transparent; mix-blend-mode: darken; transform-origin: 30px 30px; animation-delay: 0"
             />
             <path
               d="M30,10 a20,20 0 0,0 -20,20"
-              style="stroke-width: 11px; stroke: #faec28; stroke-linecap: round; fill: transparent; mix-blend-mode: darken; animation: rotate 2s infinite cubic-bezier(0.6, 0.03, 0.15, 1); transform-origin: 30px 30px; animation-delay: 0.3s"
+              style="stroke-width: 11px; stroke: #faec28; stroke-linecap: round; fill: transparent; mix-blend-mode: darken; transform-origin: 30px 30px; animation-delay: 0.3s"
             />
             <path
               d="M50,30 a20,20 0 0,0 -20,-20"
-              style="stroke-width: 11px; stroke: #56aed2; stroke-linecap: round; fill: transparent; mix-blend-mode: darken; animation: rotate 2s infinite cubic-bezier(0.6, 0.03, 0.15, 1); transform-origin: 30px 30px; animation-delay: 0.15s"
+              style="stroke-width: 11px; stroke: #56aed2; stroke-linecap: round; fill: transparent; mix-blend-mode: darken; transform-origin: 30px 30px; animation-delay: 0.15s"
             />
           </svg>
-          <div style="font-size: 2em; margin-top: 0.9em; margin-left: 28px;">
+          <div
+            style="font-size: 2em; margin-top: 0.9em; margin-left: 28px;"
+            class="loading-contentful-text"
+          >
             Loading Contentful…
+          </div>
+          <div class="your-browser-is-deprecated">
+            <h1>Your browser is not supported</h1>
+            <p>
+              To use the Contentful web app, we recommend using the latest version of the following
+              browsers:
+            </p>
+            <p>
+              <a href="https://www.google.com/chrome/" target="_blank" rel="noreferrer noopener"
+                >Chrome</a
+              >
+            </p>
+            <p>
+              <a
+                href="https://www.mozilla.org/en-US/firefox/new/"
+                target="_blank"
+                rel="noreferrer noopener"
+                >Firefox</a
+              >
+            </p>
+            <p>
+              <a href="https://www.apple.com/safari/" target="_blank" rel="noreferrer noopener"
+                >Safari</a
+              >
+            </p>
+            <p>
+              <a
+                href="https://www.microsoft.com/en-us/edge"
+                target="_blank"
+                rel="noreferrer noopener"
+                >Edge</a
+              >
+            </p>
           </div>
         </div>
       </div>

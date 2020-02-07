@@ -93,12 +93,12 @@ module.exports = function(config) {
             [
               '@babel/preset-env',
               {
-                loose: true,
+                loose: false,
                 modules: false,
                 useBuiltIns: false
               }
             ],
-            '@babel/react',
+            '@babel/preset-react',
             '@dr.pogodin/babel-preset-svgr'
           ],
           plugins: [

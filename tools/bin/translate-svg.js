@@ -14,7 +14,7 @@ require('@babel/register')({
     [
       require.resolve('@babel/preset-env'),
       {
-        loose: true,
+        loose: false,
         useBuiltIns: false
       }
     ],
@@ -49,7 +49,10 @@ fs.readdirSync(sourceDir).forEach(name => {
 
   return fs.writeFileSync(
     newFilename,
-    ReactDOMServer.renderToString(React.createElement(require(resolved).default)).replace(/ data-reactroot=""/g, ''),
+    ReactDOMServer.renderToString(React.createElement(require(resolved).default)).replace(
+      / data-reactroot=""/g,
+      ''
+    ),
     'utf8'
   );
 });

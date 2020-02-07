@@ -545,12 +545,6 @@ workflows:
           name: run-ui-extensions-integration
           <<: *run_only_on_master_branch
       - saucelabs/run:
-          name: run-win10-ie-tests
-          browser: 'internet explorer'
-          requires:
-            - deploy-assets-to-staging
-          <<: *run_only_on_master_branch
-      - saucelabs/run:
           name: run-win10-edge-tests
           browser: 'MicrosoftEdge'
           selenium: '3.14.0'
@@ -563,13 +557,14 @@ workflows:
           requires:
             - deploy-assets-to-staging
           <<: *run_only_on_master_branch
-      - saucelabs/run:
-          name: run-osx10-safari-tests
-          platform: 'macOS 10.13'
-          browser: 'safari'
-          requires:
-            - deploy-assets-to-staging
-          <<: *run_only_on_master_branch
+      # # Temporary turned off due to problems with SauceLabs
+      # - saucelabs/run:
+      #     name: run-osx10-safari-tests
+      #     platform: 'macOS 10.13'
+      #     browser: 'safari'
+      #     requires:
+      #       - deploy-assets-to-staging
+      #     <<: *run_only_on_master_branch
 
 notify:
   webhooks:

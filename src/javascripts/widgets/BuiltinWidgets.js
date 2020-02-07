@@ -4,13 +4,11 @@ import { range } from 'lodash';
 import React from 'react';
 import * as Config from 'Config';
 import { NAMESPACE_BUILTIN } from './WidgetNamespaces';
-import { getModule } from 'NgRegistry';
 import { default as RichTextEditor } from 'app/widgets/rich_text';
 import LinkEditor, {
   SingleLinkEditor,
   withCfWebApp as linkEditorWithCfWebApp
 } from 'app/widgets/LinkEditor';
-import { Note } from '@contentful/forma-36-react-components';
 import EmbedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
 import { TagsEditor } from '@contentful/field-editor-tags';
 import { SingleLineEditor } from '@contentful/field-editor-single-line';
@@ -29,13 +27,6 @@ import { DateEditor } from '@contentful/field-editor-date';
 import { MarkdownEditor, openMarkdownDialog } from '@contentful/field-editor-markdown';
 import FileEditor from 'app/widgets/FileEditor';
 import { canUploadMultipleAssets } from 'access_control/AccessChecker';
-import { getVariation } from 'LaunchDarkly';
-import { detect as detectBrowser } from 'detect-browser';
-import { IE11_DEPRECATION_NOTICE } from 'featureFlags';
-
-function browserIsIE11() {
-  return detectBrowser().name === 'ie';
-}
 
 const CfLinkEditor = linkEditorWithCfWebApp(LinkEditor);
 const CfSingleLinkEditor = linkEditorWithCfWebApp(SingleLinkEditor);
@@ -105,29 +96,6 @@ export function create() {
     name: 'Markdown',
     icon: 'markdown',
     renderWhen: async () => {
-      const spaceContext = getModule('spaceContext');
-
-      const organizationId = spaceContext.getData('organization.sys.id');
-      const spaceId = spaceContext.space.getId();
-
-      if (browserIsIE11()) {
-        const isBreakIEIntentionally = await getVariation(IE11_DEPRECATION_NOTICE, {
-          spaceId,
-          organizationId
-        });
-        if (isBreakIEIntentionally) {
-          return {
-            renderFieldEditor: () => {
-              return (
-                <Note noteType="warning">
-                  {`Markdown editor is not supported in Internet Explorer 11. Please use a different browser.`}
-                </Note>
-              );
-            }
-          };
-        }
-      }
-
       return {
         renderFieldEditor: ({ widgetApi }) => {
           const sdk = Object.assign({}, widgetApi);
