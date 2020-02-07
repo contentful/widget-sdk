@@ -22,15 +22,29 @@ import { css } from 'emotion';
 import { getFullNameOrEmail } from 'app/OrganizationSettings/Users/UserUtils';
 import moment from 'moment';
 
+const styles = {
+  table: css({
+    tableLayout: 'fixed'
+  }),
+  ellipsis: css({
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden'
+  }),
+  emptyState: css({
+    marginTop: tokens.spacing4Xl
+  })
+};
+
 export default function UserTeamMemberships({ memberships = [], loading, user }) {
   if (loading) return <Skeleton />;
   if (!loading && memberships.length === 0) return <EmptyState user={user} />;
   return (
-    <Table testId="user-team-list">
+    <Table testId="user-team-list" className={styles.table}>
       <TableHead>
         <TableRow>
-          <TableCell>Name</TableCell>
-          <TableCell>Description</TableCell>
+          <TableCell width="33%">Name</TableCell>
+          <TableCell width="33%">Description</TableCell>
           <TableCell>Members</TableCell>
           <TableCell>Added at</TableCell>
         </TableRow>
@@ -38,8 +52,12 @@ export default function UserTeamMemberships({ memberships = [], loading, user })
       <TableBody>
         {memberships.map(membership => (
           <TableRow key={membership.sys.id} testId="user-team-list.item">
-            <TableCell>{membership.sys.team.name}</TableCell>
-            <TableCell>{membership.sys.team.description}</TableCell>
+            <TableCell>
+              <div className={styles.ellipsis}>{membership.sys.team.name}</div>
+            </TableCell>
+            <TableCell>
+              <div className={styles.ellipsis}>{membership.sys.team.description}</div>
+            </TableCell>
             <TableCell>{membership.sys.team.memberCount}</TableCell>
             <TableCell>{moment(membership.sys.createdAt).format('MMMM DD, YYYY')}</TableCell>
           </TableRow>
@@ -70,12 +88,6 @@ function Skeleton() {
     </SkeletonContainer>
   );
 }
-
-const styles = {
-  emptyState: css({
-    marginTop: tokens.spacing4Xl
-  })
-};
 
 function EmptyState({ user }) {
   return (
