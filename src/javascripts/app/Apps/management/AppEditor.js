@@ -18,11 +18,31 @@ const styles = {
   helpParagraph: css({}),
   locationToggle: css({
     width: '100%',
+    padding: `${tokens.spacingXs} 0`,
     '& label ~ p': css({
       display: 'inline',
       marginLeft: tokens.spacingXs,
-      color: 'blue'
+      color: tokens.colorElementDarkest
     })
+  }),
+  fieldTypes: css({
+    opacity: '0',
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr 1fr',
+    height: '0px',
+    borderRadius: '2px',
+    padding: '0',
+    backgroundColor: tokens.colorElementLightest,
+    border: `1px solid ${tokens.colorElementLight}`,
+    transition: `all ${tokens.transitionDurationDefault} ${tokens.transitionEasingDefault}`
+  }),
+  fieldTypesOpen: css({
+    opacity: '1',
+    height: '200px',
+    padding: tokens.spacingXs
+  }),
+  entryFieldCheck: css({
+    marginTop: tokens.spacingS
   })
 };
 
@@ -137,23 +157,31 @@ export default function AppEditor({ definition, onChange }) {
         </div>
         {LOCATION_ORDER.map(([name, locationValue]) => {
           return (
-            <ToggleButton
-              key={locationValue}
-              className={styles.locationToggle}
-              isActive={hasLocation(locationValue)}>
-              <CheckboxField
-                labelText={name}
-                onChange={() => toggleLocation(locationValue)}
-                checked={hasLocation(locationValue)}
-                helpText={locationValue}
-                id={`app-location-${locationValue}`}
-              />
-              {locationValue === WidgetLocations.LOCATION_ENTRY_FIELD &&
-                hasLocation(WidgetLocations.LOCATION_ENTRY_FIELD) && (
+            <>
+              <ToggleButton
+                key={locationValue}
+                className={styles.locationToggle}
+                isActive={hasLocation(locationValue)}
+                onClick={() => toggleLocation(locationValue)}>
+                <CheckboxField
+                  labelText={name}
+                  onChange={() => toggleLocation(locationValue)}
+                  checked={hasLocation(locationValue)}
+                  helpText={`(${locationValue})`}
+                  id={`app-location-${locationValue}`}
+                />
+              </ToggleButton>
+              {locationValue === WidgetLocations.LOCATION_ENTRY_FIELD && (
+                <div
+                  className={[styles.fieldTypes]
+                    .concat(hasLocation(locationValue) ? styles.fieldTypesOpen : [])
+                    .join(' ')}>
+                  <Paragraph>Select the field types the app can be rendered in.</Paragraph>
                   <div>
                     {FIELD_TYPES_ORDER.map(([label, internalFieldType]) => {
                       return (
                         <CheckboxField
+                          className={styles.entryFieldCheck}
                           key={internalFieldType}
                           labelText={label}
                           onChange={() => toggleFieldType(internalFieldType)}
@@ -163,8 +191,9 @@ export default function AppEditor({ definition, onChange }) {
                       );
                     })}
                   </div>
-                )}
-            </ToggleButton>
+                </div>
+              )}
+            </>
           );
         })}
       </Form>
