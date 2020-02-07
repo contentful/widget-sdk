@@ -178,7 +178,7 @@ describe('<ScheduledActionsWidget />', () => {
     await wait();
     fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
     expect(renderResult.getByTestId('schedule-publication')).toBeInTheDocument();
-    expect(renderResult.getByTestId('failed-job-note')).not.toBeInTheDocument();
+    expect(renderResult.queryByTestId('failed-job-note')).toBeNull();
   });
 
   it('does not rerender if publishedAt date is the same', async () => {
