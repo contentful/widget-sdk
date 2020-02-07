@@ -17,6 +17,7 @@ import { getModule } from 'NgRegistry';
 import LockedField from './LockedField';
 import * as ModalLauncher from 'app/common/ModalLauncher';
 import { joinAndTruncate } from 'utils/StringUtils';
+import IE11DeprecationBanner from 'components/shared/IE11DeprecationBanner';
 import RichTextOptions from 'components/field_dialog/RichTextOptions';
 
 const styles = {
@@ -64,6 +65,7 @@ const FieldDialogSettingsComponent = ({
   locales,
   updateFieldSettings,
   updateValidation,
+  fieldTypeLabel,
   richTextOptions,
   onRichTextOptionsChange
 }) => {
@@ -184,6 +186,8 @@ const FieldDialogSettingsComponent = ({
           />
         )}
       </div>
+      {/* TODO: remove when we drop IE11 support */}
+      {field.isRichTextField && <IE11DeprecationBanner featureName={fieldTypeLabel} />}
     </>
   );
 };
@@ -193,6 +197,7 @@ FieldDialogSettingsComponent.propTypes = {
   contentTypeData: PropTypes.any,
   locales: PropTypes.any,
   updateFieldSettings: PropTypes.func,
+  fieldTypeLabel: PropTypes.string,
   richTextOptions: PropTypes.any,
   onRichTextOptionsChange: PropTypes.func,
   updateValidation: PropTypes.func

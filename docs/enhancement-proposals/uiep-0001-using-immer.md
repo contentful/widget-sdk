@@ -127,8 +127,7 @@ Notice that it is not needed to handle the default case, a producer that doesn't
 ## Cons
 
 * Immer with proxies is roughly speaking twice to three times slower as a handwritten reduce.
-* By default produce tries to use proxies for optimal performance. However, on older JavaScript engines `Proxy` is not available. ~~In our case, it's [just IE11](https://caniuse.com/#search=Proxy)~~. **IE11 support has been droppped**. In such cases, Immer will fallback to an ES5 compatible implementation which works identically, but roughly twice slower.
-
+* By default produce tries to use proxies for optimal performance. However, on older JavaScript engines `Proxy` is not available. In our case, it's [just IE11](https://caniuse.com/#search=Proxy). In such cases, Immer will fallback to an ES5 compatible implementation which works identically, but roughly twice slower.
 
 ## Learnings
 

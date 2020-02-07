@@ -69,6 +69,7 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
       'json-stringify-safe',
       'sum-types',
       'sum-types/caseof-eq',
+      'react-sticky-el',
       'detect-browser'
     ].includes(path) || endsWith('.es6', path);
   const toBoundName = path => last(path.replace('.es6', '').split('/'));

@@ -6,7 +6,7 @@ import { truncate } from 'utils/StringUtils';
 import { INLINES } from '@contentful/rich-text-types';
 import { default as FetchEntity, RequestStatus } from 'app/widgets/shared/FetchEntity';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';
-import { isEdge } from 'utils/browser';
+import { isIE, isEdge } from 'utils/browser';
 import { EntityStatusTag } from 'components/shared/EntityStatusTag';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -142,6 +142,6 @@ function isUrl(string) {
 }
 
 function hasRealHyperlinkInSlateSupport() {
-  // The <a/> element as an inline node causes buggy behavior in Edge.
-  return !isEdge();
+  // The <a/> element as an inline node causes buggy behavior in IE11/Edge.
+  return !isIE() && !isEdge();
 }

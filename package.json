@@ -103,6 +103,7 @@
     "react-player": "^1.11.1",
     "react-redux": "^5.1.1",
     "react-sortable-hoc": "1.9.1",
+    "react-sticky-el": "^1.0.20",
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
@@ -299,11 +300,9 @@
     "url": "https://github.com/contentful/user_interface/issues"
   },
   "browserslist": [
-    "last 5 Chrome versions",
-    "last 2 Edge versions",
-    "last 2 Firefox versions",
-    "last 2 Opera versions",
-    "last 3 Safari versions"
+    "last 2 versions",
+    "IE >= 11",
+    "not IE 10"
   ],
   "homepage": "https://github.com/contentful/user_interface",
   "husky": {

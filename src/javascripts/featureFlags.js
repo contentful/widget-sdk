@@ -11,6 +11,7 @@ export const ENTITY_EDITOR_CMA_EXPERIMENT =
 export const PENDING_ORG_MEMBERSHIPS = 'feature-bv-09-2019-new-invitation-flow-new-entity';
 export const NEW_INVITATION_FORM = 'feature-bv-05-2019-new-invitation-flow';
 export const TWO_FA = 'feature-ogg-10-2019-2fa';
+export const IE11_DEPRECATION_NOTICE = 'feature-pul-11-2019-ie11-notice';
 
 // Gatekeeper Product Catalog Flags
 export const ENVIRONMENT_USAGE_ENFORCEMENT = 'environment_usage_enforcements';

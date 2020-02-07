@@ -77,6 +77,11 @@
             </div>
           </div>
         </div>
+        <react-component
+          ng-if="fieldGroup.modernBrowsersOnly"
+          name="components/shared/IE11DeprecationBanner"
+          props="{featureName: '{{fieldGroup.label}}'}"
+        ></react-component>
         <div class="add-field-dialog__settings" ng-switch="fieldGroup.name">
           <div ng-switch-when="text">
             <div class="add-field-dialog__setting-sections">

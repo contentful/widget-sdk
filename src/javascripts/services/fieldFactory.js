@@ -74,7 +74,8 @@ export const groups = [
     icon: 'richtext',
     label: 'Rich text',
     description: 'Text formatting with references and media',
-    types: ['RichText']
+    types: ['RichText'],
+    modernBrowsersOnly: true
   },
   {
     name: 'text',
