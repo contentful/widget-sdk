@@ -8,10 +8,11 @@ import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcher
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getMembership, getUser } from 'access_control/OrganizationMembershipRepository';
 import { getUserName } from 'utils/UserUtils';
-import { getUserSync } from 'services/TokenStore';
+import { getUserSync, getOrganization } from 'services/TokenStore';
 
 import { logError } from 'services/logger';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
+import { isOwner } from 'services/OrganizationRoles';
 
 const getCreatedBy = async (endpoint, membership) => {
   try {
@@ -26,7 +27,8 @@ const UserDetailsFetcher = createFetcherComponent(async ({ orgId, userId }) => {
   const endpoint = createOrganizationEndpoint(orgId);
   const orgMembership = await getMembership(endpoint, userId);
 
-  const [user, hasTeamsFeature] = await Promise.all([
+  const [organization, user, hasTeamsFeature] = await Promise.all([
+    getOrganization(orgId),
     getUser(endpoint, orgMembership.sys.user.sys.id),
     getOrgFeature(orgId, 'teams', false)
   ]);
@@ -35,10 +37,12 @@ const UserDetailsFetcher = createFetcherComponent(async ({ orgId, userId }) => {
   const initialMembership = { ...orgMembership, sys: { ...orgMembership.sys, user, createdBy } };
   const currentUser = getUserSync();
   const isSelf = currentUser && currentUser.sys.id === initialMembership.sys.user.sys.id;
+  const currentUserIsOwner = isOwner(organization);
 
   return {
     initialMembership,
     isSelf,
+    isOwner: currentUserIsOwner,
     hasTeamsFeature
   };
 });

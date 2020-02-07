@@ -71,7 +71,13 @@ const tabs = {
   }
 };
 
-export default function UserDetails({ initialMembership, isSelf, orgId, hasTeamsFeature }) {
+export default function UserDetails({
+  initialMembership,
+  isSelf,
+  isOwner,
+  orgId,
+  hasTeamsFeature
+}) {
   const userId = initialMembership.sys.user.sys.id;
 
   const [{ membership, selectedTab, spaceMemberships, teamMemberships }, dispatch] = useReducer(
@@ -168,6 +174,7 @@ export default function UserDetails({ initialMembership, isSelf, orgId, hasTeams
         <UserAttributes
           membership={membership}
           isSelf={isSelf}
+          isOwner={isOwner}
           orgId={orgId}
           onRoleChange={membership => dispatch({ type: 'ORG_ROLE_CHANGED', payload: membership })}
         />
@@ -218,6 +225,7 @@ UserDetails.propTypes = {
   initialMembership: OrganizationMembershipPropType.isRequired,
   orgId: PropTypes.string.isRequired,
   isSelf: PropTypes.bool.isRequired,
+  isOwner: PropTypes.bool.isRequired,
   hasTeamsFeature: PropTypes.bool.isRequired
 };
 

@@ -51,10 +51,13 @@ const styles = {
   })
 };
 
-export default function UserAttributes({ membership, isSelf, onRoleChange, orgId }) {
+export default function UserAttributes({ membership, isSelf, isOwner, onRoleChange, orgId }) {
   const lastActiveAt = getLastActivityDate(membership);
   const memberSince = moment(membership.sys.createdAt, moment.ISO_8601).format('MMMM DD, YYYY');
   const invitedBy = getUserName(membership.sys.createdBy);
+
+  // disable changing the org role if a non-owner is viewing an owner
+  const shouldDisableRoleSelector = !isOwner && membership.role === 'owner';
 
   const changeRole = async role => {
     if (isSelf) {
@@ -138,7 +141,12 @@ export default function UserAttributes({ membership, isSelf, onRoleChange, orgId
         <List className={styles.column}>
           <ListItem className={styles.item}>
             <strong className={styles.label}>Organization role</strong>
-            <OrganizationRoleSelector initialRole={membership.role} onChange={changeRole} />
+            <OrganizationRoleSelector
+              isDisabled={shouldDisableRoleSelector}
+              initialRole={membership.role}
+              onChange={changeRole}
+              disableOwnerRole={!isOwner}
+            />
           </ListItem>
           <ListItem>
             <Paragraph>
@@ -164,6 +172,7 @@ export default function UserAttributes({ membership, isSelf, onRoleChange, orgId
 UserAttributes.propTypes = {
   membership: OrganizationMembershipPropType.isRequired,
   isSelf: PropTypes.bool.isRequired,
+  isOwner: PropTypes.bool.isRequired,
   onRoleChange: PropTypes.func.isRequired,
   orgId: PropTypes.string
 };
