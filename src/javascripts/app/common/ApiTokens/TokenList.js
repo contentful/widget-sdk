@@ -34,7 +34,7 @@ const TokenList = ({
 }) => {
   if (loadingTokensError) {
     return (
-      <Note noteType="warning">
+      <Note noteType="warning" data-test-id="pat.error">
         The list of tokens failed to load, try refreshing the page. If the problem persists{' '}
         <LinkOpen key="contact-support-link" url={Config.supportUrl}>
           contact support
@@ -48,6 +48,7 @@ const TokenList = ({
       <div className={styles.tableWrapper}>
         {loadingTokens && (
           <SkeletonContainer
+            testId="pat.loading"
             clipId="loading-tokens"
             ariaLabel="Loading..."
             svgWidth="100%"

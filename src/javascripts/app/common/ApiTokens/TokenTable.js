@@ -23,11 +23,11 @@ const styles = {
 };
 const TokenTable = ({ tokens, revoke }) => {
   if (tokens.length === 0) {
-    return <div />;
+    return <div data-test-id="pat.emptyTokenTable" />;
   }
 
   return (
-    <Table>
+    <Table data-test-id="pat.tokenTable">
       <TableHead>
         <TableRow>
           <TableCell>Name</TableCell>
