@@ -16,6 +16,7 @@ import Icon from 'ui/Components/Icon';
 import AppEditor from './AppEditor';
 import * as ManagementApiClient from './ManagementApiClient';
 import StateLink from 'app/common/StateLink';
+import AppInstallModal from './AppInstallModal';
 
 const fadeIn = keyframes({
   from: {
@@ -110,7 +111,8 @@ export default class AppDetails extends React.Component {
       name: props.definition.name,
       definition: props.definition,
       redirect: false,
-      creator: ''
+      creator: '',
+      showInstallModal: false
     };
   }
 
@@ -155,16 +157,23 @@ export default class AppDetails extends React.Component {
     }
   };
 
+  openInstallModal = () => this.setState({ showInstallModal: true });
+  closeInstallModal = () => this.setState({ showInstallModal: false });
+
   render() {
-    const { redirect, name, definition, busy } = this.state;
+    const { redirect, name, definition, busy, showInstallModal } = this.state;
 
     return (
       <Workbench>
+        <AppInstallModal
+          definition={showInstallModal ? definition : null}
+          onClose={this.closeInstallModal}
+        />
         {redirect && <StateLink path="^.list">{({ onClick }) => onClick() || null}</StateLink>}
         <Workbench.Header
           title="App details"
           actions={
-            <Button disabled={busy} onClick={() => {}}>
+            <Button disabled={busy} onClick={this.openInstallModal}>
               Install to space
             </Button>
           }

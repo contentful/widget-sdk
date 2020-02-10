@@ -24,7 +24,7 @@ import {
 } from '@contentful/forma-36-react-components';
 
 import StateLink from 'app/common/StateLink';
-import AppInstallModal from './AppInstall';
+import AppInstallModal from './AppInstallModal';
 
 const styles = {
   headerActions: css({
