@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal, Form, SelectField, Option } from '@contentful/forma-36-react-components';
-import { getSpaces, getOrganizations } from 'services/TokenStore';
-import { createSpaceEndpoint } from 'data/EndpointFactory';
-import { create as createSpaceEnvRepo } from 'data/CMA/SpaceEnvironmentsRepo';
-import { getStore } from 'browserStorage';
 import * as Navigator from 'states/Navigator';
+import { getOrgsAndSpaces, getEnvsFor, getLastUsedSpace } from './util';
 
 function goToInstallation(spaceId, environmentId, appId) {
   Navigator.go({
@@ -30,37 +27,20 @@ export default function AppInstallModal({ definition, onClose }) {
   const [selectedEnv, setSelectedEnv] = useState('');
 
   useEffect(() => {
-    async function getSpace() {
-      const orgs = await getOrganizations();
-      const spaces = await getSpaces();
-      const lastUsedSpace = getStore().get('lastUsedSpace') || '';
+    async function getSpaces() {
+      const orgsAndSpaces = await getOrgsAndSpaces();
+      const lastUsedSpace = getLastUsedSpace();
 
-      const orgSpaceMap = spaces.reduce((acc, space) => {
-        const orgId = space.organization.sys.id;
-
-        if (acc[orgId]) {
-          acc[orgId].push(space);
-        } else {
-          acc[orgId] = [space];
-        }
-
-        return acc;
-      }, {});
-
-      const orgAndSpaces = orgs.map(org => ({ org, spaces: orgSpaceMap[org.sys.id] }));
-
-      setOrgSpaces(orgAndSpaces);
+      setOrgSpaces(orgsAndSpaces);
       setSelectedSpace(lastUsedSpace);
     }
 
-    getSpace();
+    getSpaces();
   }, []);
 
   useEffect(() => {
     async function getEnvs() {
-      const spaceEndpoint = createSpaceEndpoint(selectedSpace, 'master');
-      const spaceEnvRepo = createSpaceEnvRepo(spaceEndpoint);
-      const { environments } = await spaceEnvRepo.getAll();
+      const environments = await getEnvsFor(selectedSpace);
 
       setSpaceEnvs(environments);
       setSelectedEnv(environments[0].sys.id);
@@ -94,6 +74,8 @@ export default function AppInstallModal({ definition, onClose }) {
             <Form>
               <SelectField
                 labelText="Select a space"
+                id="spaceSelection"
+                name="spaceSelection"
                 required
                 value={selectedSpace}
                 onChange={e => setSelectedSpace(e.target.value)}>
@@ -112,6 +94,8 @@ export default function AppInstallModal({ definition, onClose }) {
               </SelectField>
               <SelectField
                 labelText="Select an environment"
+                id="envSelection"
+                name="envSelection"
                 required
                 onChange={e => setSelectedEnv(e.target.value)}
                 value={selectedEnv}>
@@ -131,7 +115,8 @@ export default function AppInstallModal({ definition, onClose }) {
               onClick={onContinue}
               buttonType="primary"
               loading={redirecting}
-              disabled={redirecting}>
+              disabled={redirecting}
+              testId="continue-button">
               Continue
             </Button>
             <Button onClick={onClose} buttonType="muted">
@@ -145,6 +130,6 @@ export default function AppInstallModal({ definition, onClose }) {
 }
 
 AppInstallModal.propTypes = {
-  definition: PropTypes.object.isRequired,
+  definition: PropTypes.object,
   onClose: PropTypes.func.isRequired
 };
