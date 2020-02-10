@@ -14,7 +14,7 @@ describe('AppDetails', () => {
 
   it('should show the details of an app with the provided definition', async () => {
     const definition = mockDefinitions[0];
-    const wrapper = render(<AppDetails definition={definition} />);
+    const wrapper = render(<AppDetails definition={definition} goToListView={() => {}} />);
     await wait();
 
     // should not show the public switch
@@ -24,7 +24,7 @@ describe('AppDetails', () => {
 
   it('should show the public toggle for the APPS_PUBLIC_ORG', async () => {
     const definition = mockDefinitions[1];
-    const wrapper = render(<AppDetails definition={definition} />);
+    const wrapper = render(<AppDetails definition={definition} goToListView={() => {}} />);
     await wait();
 
     expect(wrapper).toMatchSnapshot();
@@ -32,7 +32,9 @@ describe('AppDetails', () => {
 
   it('should update and save the definition', async () => {
     const definition = mockDefinitions[1];
-    const { getByTestId, getAllByTestId } = render(<AppDetails definition={definition} />);
+    const { getByTestId, getAllByTestId } = render(
+      <AppDetails definition={definition} goToListView={() => {}} />
+    );
 
     const saveButton = getByTestId('app-save');
     const [nameInput, srcInput] = getAllByTestId('cf-ui-text-input');

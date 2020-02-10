@@ -14,7 +14,6 @@ import { css, keyframes } from 'emotion';
 import Icon from 'ui/Components/Icon';
 import AppEditor from './AppEditor';
 import * as ManagementApiClient from './ManagementApiClient';
-import StateLink from 'app/common/StateLink';
 
 const fadeIn = keyframes({
   from: {
@@ -108,7 +107,6 @@ export default class AppDetails extends React.Component {
       busy: false,
       name: props.definition.name,
       definition: props.definition,
-      redirect: false,
       creator: ''
     };
   }
@@ -144,7 +142,7 @@ export default class AppDetails extends React.Component {
       // TODO: Hook this logic up to the modal
       // await ManagementApiClient.deleteDef(this.state.definition);
       Notification.success(`${this.state.definition.name} was deleted!`);
-      this.setState({ redirect: true });
+      this.props.goToListView();
     } catch (err) {
       Notification.error('App failed to delete. Please try again');
       this.setState({ busy: false });
@@ -152,11 +150,10 @@ export default class AppDetails extends React.Component {
   };
 
   render() {
-    const { redirect, name, definition, busy } = this.state;
+    const { name, definition, busy } = this.state;
 
     return (
       <Workbench>
-        {redirect && <StateLink path="^.list">{({ onClick }) => onClick() || null}</StateLink>}
         <Workbench.Header
           title="App details"
           actions={
@@ -164,7 +161,7 @@ export default class AppDetails extends React.Component {
               Install to space
             </Button>
           }
-          onBack={() => this.setState({ redirect: true })}></Workbench.Header>
+          onBack={this.props.goToListView}></Workbench.Header>
         <Workbench.Content type="text">
           <div className={styles.title}>
             <div>
@@ -208,5 +205,6 @@ export default class AppDetails extends React.Component {
 }
 
 AppDetails.propTypes = {
-  definition: PropTypes.object.isRequired
+  definition: PropTypes.object.isRequired,
+  goToListView: PropTypes.func.isRequired
 };
