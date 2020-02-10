@@ -106,7 +106,7 @@ export function SuccessStatus(props) {
         className={styles.note}
         noteType="positive"
         title={`"${props.tokenName}" is ready!`}>
-        Make sure to <em>immediately</em> copy your new Personal Access Token. You won&quot;t be
+        Make sure to <em>immediately</em> copy your new Personal Access Token. You won&apos;t be
         able to see it again!
       </Note>
       <TextInput className={styles.textInput} value={props.tokenValue} disabled withCopyButton />

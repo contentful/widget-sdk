@@ -115,7 +115,7 @@ describe('CMATokens/GenerateCMATokenDialog', () => {
     expect(
       screen.getByTestId('pat.create.tokenGenerationSuccess').textContent
     ).toMatchInlineSnapshot(
-      `"\\"new token\\" is ready!Make sure to immediately copy your new Personal Access Token. You won\\"t be able to see it again!"`
+      `"\\"new token\\" is ready!Make sure to immediately copy your new Personal Access Token. You won't be able to see it again!"`
     );
 
     expect(screen.getByDisplayValue('new-token-value')).toBeDisabled();
