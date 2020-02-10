@@ -30,9 +30,9 @@ function DeleteAppForm({ appName, value, setValue }) {
   return (
     <>
       <Paragraph className={styles.spacer}>
-        You are about to delete the <strong>{appName}</strong>. This will also delete all existing
-        installations of this app in your spaces. Spaces in this organization might expect this app
-        to exist, so they might break after the app is gone.
+        You are about to delete the <strong>{appName}</strong> app. This will also delete all
+        existing installations of this app in your spaces. Deleting this app will result in a
+        degraded editing experience in spaces that depend on it.
       </Paragraph>
 
       <Paragraph className={styles.spacer}>
