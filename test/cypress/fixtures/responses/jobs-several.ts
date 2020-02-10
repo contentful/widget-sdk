@@ -5,7 +5,6 @@ export const severalPendingJobsResponse = {
   sys: {
     type: 'Array'
   },
-  skip: 0,
   limit: 100,
   items: [
     job({ sys: { id: Matchers.somethingLike(defaultJobId) } }),
@@ -18,7 +17,6 @@ export const severalCompletedJobsResponse = {
   sys: {
     type: 'Array'
   },
-  skip: 0,
   limit: 100,
   items: [
     job({ sys: { id: Matchers.somethingLike('jobID3'), status: 'succeeded' } }),
@@ -29,7 +27,6 @@ export const severalFailedJobsResponse = {
   sys: {
     type: 'Array'
   },
-  skip: 0,
   limit: 100,
   items: [
     job({ sys: { id: Matchers.somethingLike('jobID5'), status: 'failed' } }),
@@ -41,7 +38,6 @@ export const onePendingJobResponse = {
   sys: {
     type: 'Array'
   },
-  skip: 0,
   limit: 100,
   items: [job({ sys: { id: Matchers.somethingLike(defaultJobId) } })]
 };
@@ -50,7 +46,6 @@ export const oneFailedJobResponse = {
   sys: {
     type: 'Array'
   },
-  skip: 0,
   limit: 100,
   items: [job({ sys: { id: Matchers.somethingLike(defaultJobId), status: 'failed' } })]
 };
