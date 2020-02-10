@@ -66,6 +66,7 @@ export default class UserInvitation extends React.Component {
       ]);
 
       if (!firstSpaceId) {
+        //the user might have access to spaces through team memberships
         const orgId = get(acceptedInvitation, 'sys.organization.sys.id');
         const spaces = await getOrganizationSpaces(orgId);
         firstSpaceId = spaces ? spaces[0].sys.id : null;
