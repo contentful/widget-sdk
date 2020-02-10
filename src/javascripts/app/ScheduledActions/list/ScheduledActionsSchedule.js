@@ -9,7 +9,7 @@ import { css } from 'emotion';
 import ScheduledActionsEmptyStateMessage from './ScheduledActionsEmptyStateMessage';
 import WrappedEntityList from 'app/common/WrappedEntityList';
 import ScheduledActionAction from '../ScheduledActionAction';
-import { formatDate } from '../EntrySidebarWidget/ScheduledActionsTimeline/FormattedDateAndTime';
+import { formatDate } from 'app/ScheduledActions/FormattedDateAndTime';
 
 const styles = {
   jobsSchedule: css({}),
