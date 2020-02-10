@@ -69,7 +69,14 @@ export default {
           }
         ]
       },
-      mapInjectedToProps: ['definition', definition => ({ definition })],
+      mapInjectedToProps: [
+        '$state',
+        'definition',
+        ($state, definition) => ({
+          goToListView: () => $state.go('^.list'),
+          definition
+        })
+      ],
       component: AppDetails
     }
   ]
