@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
@@ -24,6 +24,7 @@ import {
 } from '@contentful/forma-36-react-components';
 
 import StateLink from 'app/common/StateLink';
+import AppInstallModal from './AppInstall';
 
 const styles = {
   headerActions: css({
@@ -107,6 +108,8 @@ const idStyle = css({
 });
 
 export default function AppListing({ definitions }) {
+  const [selectedDefinition, setSelectedDef] = useState(null);
+
   const learnMoreParagraph = (
     <Paragraph>
       Learn more about{' '}
@@ -185,7 +188,7 @@ export default function AppListing({ definitions }) {
                           <ContextMenu
                             items={[
                               { label: 'Edit', action: onClick },
-                              { label: 'Install to space', action: () => {} }
+                              { label: 'Install to space', action: () => setSelectedDef(def) }
                             ]}
                           />
                         )}
@@ -197,6 +200,7 @@ export default function AppListing({ definitions }) {
             })}
           </TableBody>
         </Table>
+        <AppInstallModal definition={selectedDefinition} onClose={() => setSelectedDef(null)} />
       </Workbench.Content>
       <Workbench.Sidebar position="right">
         <Typography>
