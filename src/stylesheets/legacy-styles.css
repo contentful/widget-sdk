@@ -8579,6 +8579,7 @@ pre,
     text-decoration: underline;
   }
   .entity-sidebar__incoming-links {
+    overflow-y: auto;
     color: #8091a5;
   }
   .entity-sidebar__translation-pills {
