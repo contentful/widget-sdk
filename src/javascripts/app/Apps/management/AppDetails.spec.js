@@ -2,12 +2,12 @@ import React from 'react';
 import { render, wait, cleanup, fireEvent } from '@testing-library/react';
 import AppDetails from './AppDetails';
 import mockDefinitions from './mockData/mockDefinitions.json';
-import * as accessControls from 'access_control/OrganizationMembershipRepository';
 import * as ManagementApiClient from './ManagementApiClient';
-jest.mock('access_control/OrganizationMembershipRepository');
 jest.mock('./ManagementApiClient');
 
-accessControls.getUser = jest.fn(() => ({ firstName: 'John', lastName: 'Smith' }));
+ManagementApiClient.getCreatorOf = jest.fn(() =>
+  Promise.resolve({ firstName: 'John', lastName: 'Smith' })
+);
 
 describe('AppDetails', () => {
   afterEach(cleanup);
@@ -19,9 +19,6 @@ describe('AppDetails', () => {
 
     // should not show the public switch
     expect(() => wrapper.getByTestId('public-switch')).toThrow();
-
-    // should get the user name from the userId
-    expect(accessControls.getUser).toHaveBeenCalledWith(undefined, '5NY5T2MqqnqTlRlJ022S9m');
     expect(wrapper).toMatchSnapshot();
   });
 

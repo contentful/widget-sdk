@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
-import { getUser } from 'access_control/OrganizationMembershipRepository';
 import {
   TextLink,
   Notification,
@@ -117,10 +116,7 @@ export default class AppDetails extends React.Component {
   async componentDidMount() {
     const { definition } = this.props;
 
-    const { firstName, lastName } = await getUser(
-      ManagementApiClient.createOrgEndpointByDef(definition),
-      definition.sys.createdBy.sys.id
-    );
+    const { firstName, lastName } = await ManagementApiClient.getCreatorOf(definition);
 
     this.setState({ creator: [firstName, lastName].join(' ') });
   }
