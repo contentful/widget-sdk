@@ -114,9 +114,9 @@ export default class AppDetails extends React.Component {
   async componentDidMount() {
     const { definition } = this.props;
 
-    const { firstName, lastName } = await ManagementApiClient.getCreatorOf(definition);
+    const creator = await ManagementApiClient.getCreatorNameOf(definition);
 
-    this.setState({ creator: [firstName, lastName].join(' ') });
+    this.setState({ creator });
   }
 
   save = async () => {

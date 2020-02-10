@@ -5,9 +5,7 @@ import mockDefinitions from './mockData/mockDefinitions.json';
 import * as ManagementApiClient from './ManagementApiClient';
 jest.mock('./ManagementApiClient');
 
-ManagementApiClient.getCreatorOf = jest.fn(() =>
-  Promise.resolve({ firstName: 'John', lastName: 'Smith' })
-);
+ManagementApiClient.getCreatorNameOf = jest.fn(() => Promise.resolve('John Smith'));
 
 describe('AppDetails', () => {
   afterEach(cleanup);
