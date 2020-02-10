@@ -2,8 +2,9 @@ import { get, omit } from 'lodash';
 import * as Auth from 'Authentication';
 import * as Config from 'Config';
 import { createOrganizationEndpoint } from 'data/Endpoint';
+import { getUser } from 'access_control/OrganizationMembershipRepository';
 
-export function createOrgEndpointByDef(definition) {
+function createOrgEndpointByDef(definition) {
   const orgId = get(definition, ['sys', 'organization', 'sys', 'id']);
   return createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
 }
@@ -30,4 +31,13 @@ export function deleteDef(definition) {
     method: 'DELETE',
     path: ['app_definitions', id]
   });
+}
+
+export async function getCreatorNameOf(definition) {
+  const { firstName, lastName } = await getUser(
+    createOrgEndpointByDef(definition),
+    definition.sys.createdBy.sys.id
+  );
+
+  return [firstName, lastName].join(' ');
 }

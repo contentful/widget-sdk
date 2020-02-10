@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
-import { getUser } from 'access_control/OrganizationMembershipRepository';
 import {
   TextLink,
   Notification,
@@ -15,7 +14,6 @@ import { css, keyframes } from 'emotion';
 import Icon from 'ui/Components/Icon';
 import AppEditor from './AppEditor';
 import * as ManagementApiClient from './ManagementApiClient';
-import StateLink from 'app/common/StateLink';
 import AppInstallModal from './AppInstallModal';
 
 const fadeIn = keyframes({
@@ -110,7 +108,6 @@ export default class AppDetails extends React.Component {
       busy: false,
       name: props.definition.name,
       definition: props.definition,
-      redirect: false,
       creator: '',
       showInstallModal: false
     };
@@ -119,12 +116,9 @@ export default class AppDetails extends React.Component {
   async componentDidMount() {
     const { definition } = this.props;
 
-    const { firstName, lastName } = await getUser(
-      ManagementApiClient.createOrgEndpointByDef(definition),
-      definition.sys.createdBy.sys.id
-    );
+    const creator = await ManagementApiClient.getCreatorNameOf(definition);
 
-    this.setState({ creator: [firstName, lastName].join(' ') });
+    this.setState({ creator });
   }
 
   save = async () => {
@@ -150,7 +144,7 @@ export default class AppDetails extends React.Component {
       // TODO: Hook this logic up to the modal
       // await ManagementApiClient.deleteDef(this.state.definition);
       Notification.success(`${this.state.definition.name} was deleted!`);
-      this.setState({ redirect: true });
+      this.props.goToListView();
     } catch (err) {
       Notification.error('App failed to delete. Please try again');
       this.setState({ busy: false });
@@ -161,7 +155,7 @@ export default class AppDetails extends React.Component {
   closeInstallModal = () => this.setState({ showInstallModal: false });
 
   render() {
-    const { redirect, name, definition, busy, showInstallModal } = this.state;
+    const { name, definition, busy, showInstallModal } = this.state;
 
     return (
       <Workbench>
@@ -169,7 +163,6 @@ export default class AppDetails extends React.Component {
           definition={showInstallModal ? definition : null}
           onClose={this.closeInstallModal}
         />
-        {redirect && <StateLink path="^.list">{({ onClick }) => onClick() || null}</StateLink>}
         <Workbench.Header
           title="App details"
           actions={
@@ -177,7 +170,7 @@ export default class AppDetails extends React.Component {
               Install to space
             </Button>
           }
-          onBack={() => this.setState({ redirect: true })}></Workbench.Header>
+          onBack={this.props.goToListView}></Workbench.Header>
         <Workbench.Content type="text">
           <div className={styles.title}>
             <div>
@@ -221,5 +214,6 @@ export default class AppDetails extends React.Component {
 }
 
 AppDetails.propTypes = {
-  definition: PropTypes.object.isRequired
+  definition: PropTypes.object.isRequired,
+  goToListView: PropTypes.func.isRequired
 };

@@ -2,7 +2,6 @@ import React from 'react';
 import { render, wait, cleanup, fireEvent } from '@testing-library/react';
 import AppDetails from './AppDetails';
 import mockDefinitions from './mockData/mockDefinitions.json';
-import * as accessControls from 'access_control/OrganizationMembershipRepository';
 import * as ManagementApiClient from './ManagementApiClient';
 import * as util from './util';
 jest.mock('access_control/OrganizationMembershipRepository');
@@ -28,27 +27,24 @@ util.getEnvsFor = jest.fn(() => Promise.resolve([{ name: 'my-env', sys: { id: 'm
 
 util.getLastUsedSpace = jest.fn(() => Promise.resolve('my-space-123'));
 
-accessControls.getUser = jest.fn(() => ({ firstName: 'John', lastName: 'Smith' }));
+ManagementApiClient.getCreatorNameOf = jest.fn(() => Promise.resolve('John Smith'));
 
 describe('AppDetails', () => {
   afterEach(cleanup);
 
   it('should show the details of an app with the provided definition', async () => {
     const definition = mockDefinitions[0];
-    const wrapper = render(<AppDetails definition={definition} />);
+    const wrapper = render(<AppDetails definition={definition} goToListView={() => {}} />);
     await wait();
 
     // should not show the public switch
     expect(() => wrapper.getByTestId('public-switch')).toThrow();
-
-    // should get the user name from the userId
-    expect(accessControls.getUser).toHaveBeenCalledWith(undefined, '5NY5T2MqqnqTlRlJ022S9m');
     expect(wrapper).toMatchSnapshot();
   });
 
   it('should show the public toggle for the APPS_PUBLIC_ORG', async () => {
     const definition = mockDefinitions[1];
-    const wrapper = render(<AppDetails definition={definition} />);
+    const wrapper = render(<AppDetails definition={definition} goToListView={() => {}} />);
     await wait();
 
     expect(wrapper).toMatchSnapshot();
@@ -56,7 +52,9 @@ describe('AppDetails', () => {
 
   it('should update and save the definition', async () => {
     const definition = mockDefinitions[1];
-    const { getByTestId, getAllByTestId } = render(<AppDetails definition={definition} />);
+    const { getByTestId, getAllByTestId } = render(
+      <AppDetails definition={definition} goToListView={() => {}} />
+    );
 
     const saveButton = getByTestId('app-save');
     const [nameInput, srcInput] = getAllByTestId('cf-ui-text-input');
