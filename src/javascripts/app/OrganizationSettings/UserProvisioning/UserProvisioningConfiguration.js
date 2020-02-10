@@ -7,7 +7,7 @@ import {
   Note,
   Button
 } from '@contentful/forma-36-react-components';
-import { css } from 'emotion';
+import { css, cx } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import ModalLauncher from 'app/common/ModalLauncher';
 import GenerateCMATokenDialog from 'app/settings/api/cma-tokens/GenerateCMATokenDialog';
@@ -45,9 +45,9 @@ const styles = {
 
 function UserProvisioningConfiguration() {
   const [personalAccessToken, setPersonalAccessToken] = useState(null);
+  const tokenResourceManager = TokenResourceManager.create(Auth);
 
   const openGenerateDialog = () => {
-    const tokenResourceManager = TokenResourceManager.create(Auth);
     return ModalLauncher.open(({ isShown, onClose }) => (
       <GenerateCMATokenDialog
         key={Date.now()}
@@ -75,9 +75,14 @@ function UserProvisioningConfiguration() {
         <TextLink href="https://www.contentful.com/faq/">Check out the FAQs.</TextLink>
       </Paragraph>
       <Note noteType="primary" className={styles.note}>
-        We strongly recommend using a service account for setting up user provisioning to better
-        manage the organization access in Contentful.&nbsp;&nbsp;
-        <TextLink>Show more</TextLink>
+        We strongly recommend using a service account for setting up user provisioning in
+        Contentful.&nbsp;&nbsp;
+        <TextLink
+          testId="faq-url"
+          href="https://www.contentful.com/faq/" //TODO set correct scim anchor url
+        >
+          Here is why.
+        </TextLink>
       </Note>
       <Heading element="h1" className={styles.heading}>
         SCIM configuration details
@@ -90,7 +95,7 @@ function UserProvisioningConfiguration() {
         withCopyButton
         value="https://app.contentful.com" //TODO set correct base url
       />
-      <div className={`${styles.subheading} ${styles.bold}`}>Personal Access Token</div>
+      <div className={cx(styles.subheading, styles.bold)}>Personal Access Token</div>
       <Paragraph className={styles.paragraph}>
         As an alternative to OAuth applications, you can also leverage Personal Access Tokens to use
         the Content Management API. These tokens are always bound to your individual account, with
