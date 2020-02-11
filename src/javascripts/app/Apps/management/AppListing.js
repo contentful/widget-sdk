@@ -6,6 +6,7 @@ import Icon from 'ui/Components/Icon';
 import ContextMenu from 'ui/Components/ContextMenu';
 import AppsPrivateFrameworkIllustration from 'svg/apps-private-framework.svg';
 import tokens from '@contentful/forma-36-tokens';
+import * as ModalLauncher from 'app/common/ModalLauncher';
 
 import {
   Heading,
@@ -24,6 +25,7 @@ import {
 } from '@contentful/forma-36-react-components';
 
 import StateLink from 'app/common/StateLink';
+import AppInstallModal from './AppInstallModal';
 
 const styles = {
   headerActions: css({
@@ -106,6 +108,12 @@ const idStyle = css({
   })
 });
 
+function openInstallModal(definition) {
+  return ModalLauncher.open(({ isShown, onClose }) => (
+    <AppInstallModal definition={definition} isShown={isShown} onClose={onClose} />
+  ));
+}
+
 export default function AppListing({ definitions }) {
   const learnMoreParagraph = (
     <Paragraph>
@@ -185,7 +193,7 @@ export default function AppListing({ definitions }) {
                           <ContextMenu
                             items={[
                               { label: 'Edit', action: onClick },
-                              { label: 'Install to space', action: () => {} }
+                              { label: 'Install to space', action: () => openInstallModal(def) }
                             ]}
                           />
                         )}
