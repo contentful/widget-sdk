@@ -29,6 +29,11 @@ const styles = {
     fontWeight: tokens.fontWeightNormal,
     color: tokens.colorTextLightest
   }),
+  label: css({
+    marginRight: tokens.spacingXs,
+    marginLeft: tokens.spacingM,
+    alignSelf: 'center'
+  }),
   flexContainer: css({
     display: 'inline-flex',
     alignItems: 'center'

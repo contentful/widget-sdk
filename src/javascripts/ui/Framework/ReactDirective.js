@@ -58,6 +58,7 @@ import * as CreateEntryLinkButton from 'components/CreateEntryButton/CreateEntry
 import * as AssetFileSizeValidation from 'components/field_dialog/validations/AssetFileSizeValidation';
 import * as AssetImageDimensionsValidations from 'components/field_dialog/validations/AssetImageDimensionsValidations';
 import * as Loader from 'ui/Loader';
+import * as RegExpValidation from 'components/field_dialog/validations/RegExpValidation';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -303,7 +304,8 @@ function getModule(name) {
     'components/CreateEntryButton/CreateEntryLinkButton': CreateEntryLinkButton,
     'components/field_dialog/validations/AssetFileSizeValidation': AssetFileSizeValidation,
     'components/field_dialog/validations/AssetImageDimensionsValidations': AssetImageDimensionsValidations,
-    'ui/Loader': Loader
+    'ui/Loader': Loader,
+    'components/field_dialog/validations/RegExpValidation': RegExpValidation
   };
 
   return get(allowedModules, name, null);
