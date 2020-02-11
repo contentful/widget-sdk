@@ -7,16 +7,16 @@ jest.mock('app/settings/api/cma-tokens/TokenResourceManager', () => ({
   create: jest.fn()
 }));
 
-const renderComponent = props => {
-  const component = <UserProvisioningConfiguration {...props} />;
+const renderComponent = () => {
+  const component = <UserProvisioningConfiguration orgId={'testOrgId'} />;
   return render(component);
 };
 
 describe('UserProvisioningConfiguration', () => {
   it('should render scim setup page, with scim url and generate button', () => {
-    const { getByTestId } = renderComponent({ orgId: '123' });
-    expect(getByTestId('scim-url').textContent).toBe(
-      'https://api.contentful.com/scim/v2/organizations/123'
+    const { getByTestId } = renderComponent();
+    expect(getByTestId('scim-url')).toHaveValue(
+      'https://api.contentful.com/scim/v2/organizations/testOrgId'
     );
     expect(getByTestId('generate-btn')).toBeInTheDocument();
   });
