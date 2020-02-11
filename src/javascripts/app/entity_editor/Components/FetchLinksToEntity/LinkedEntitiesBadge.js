@@ -100,6 +100,7 @@ export default function LinkedEntitiesBadge({ entityInfo, className }) {
                 onMouseLeave={e => {
                   if (
                     e.relatedTarget === window ||
+                    !dropdownContainer ||
                     !dropdownContainer.contains(e.relatedTarget) ||
                     !dropdownContainer === e.relatedTarget
                   ) {
