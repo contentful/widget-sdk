@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import {
   TextLink,
   TextInput,
@@ -20,30 +21,28 @@ const styles = {
     margin: '0 280px'
   }),
   heading: css({
-    fontFamily: 'Avenir Next',
     fontWeight: tokens.fontWeightMedium,
     marginBottom: tokens.spacingL,
     marginTop: tokens.spacing2Xl
   }),
   subheading: css({
     color: '#2A3039',
-    fontFamily: 'Avenir Next',
     marginBottom: tokens.spacingXs,
     marginTop: tokens.spacingL
   }),
   bold: css({ fontWeight: tokens.fontWeightMedium }),
   paragraph: css({
     color: '#536171',
-    fontFamily: 'Avenir Next',
     marginBottom: tokens.spacingL
   }),
   note: css({
-    fontFamily: 'Avenir Next',
     marginBottom: tokens.spacingM
   })
 };
 
-function UserProvisioningConfiguration() {
+const SCIM_BASE = 'https://api.contentful.com/scim/v2/organizations/';
+
+function UserProvisioningConfiguration({ orgId }) {
   const [personalAccessToken, setPersonalAccessToken] = useState(null);
   const tokenResourceManager = TokenResourceManager.create(Auth);
 
@@ -93,7 +92,7 @@ function UserProvisioningConfiguration() {
         testId="scim-url"
         disabled
         withCopyButton
-        value="https://app.contentful.com" //TODO set correct base url
+        value={`${SCIM_BASE}${orgId}`}
       />
       <div className={cx(styles.subheading, styles.bold)}>Personal Access Token</div>
       <Paragraph className={styles.paragraph}>
@@ -126,4 +125,9 @@ function UserProvisioningConfiguration() {
     </div>
   );
 }
+
+UserProvisioningConfiguration.propTypes = {
+  orgId: PropTypes.string.isRequired
+};
+
 export default UserProvisioningConfiguration;

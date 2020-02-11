@@ -14,9 +14,11 @@ const renderComponent = props => {
 
 describe('UserProvisioningConfiguration', () => {
   it('should render scim setup page, with scim url and generate button', () => {
-    const { getByTestId } = renderComponent();
-    expect(getByTestId('scim-url')).toBeInTheDocument();
-    expect(getByTestId('generate-btn').textContent).toBe('Generate personal access token');
+    const { getByTestId } = renderComponent({ orgId: '123' });
+    expect(getByTestId('scim-url').textContent).toBe(
+      'https://api.contentful.com/scim/v2/organizations/123'
+    );
+    expect(getByTestId('generate-btn')).toBeInTheDocument();
   });
 
   it('should open generate personal access token modal on btn click', async () => {
