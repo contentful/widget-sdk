@@ -14,6 +14,7 @@ import { css, keyframes } from 'emotion';
 import Icon from 'ui/Components/Icon';
 import AppEditor from './AppEditor';
 import * as ManagementApiClient from './ManagementApiClient';
+import * as ModalLauncher from 'app/common/ModalLauncher';
 import AppInstallModal from './AppInstallModal';
 
 const fadeIn = keyframes({
@@ -151,18 +152,17 @@ export default class AppDetails extends React.Component {
     }
   };
 
-  openInstallModal = () => this.setState({ showInstallModal: true });
-  closeInstallModal = () => this.setState({ showInstallModal: false });
+  openInstallModal = () => {
+    ModalLauncher.open(({ isShown, onClose }) => (
+      <AppInstallModal definition={this.state.definition} isShown={isShown} onClose={onClose} />
+    ));
+  };
 
   render() {
-    const { name, definition, busy, showInstallModal } = this.state;
+    const { name, definition, busy } = this.state;
 
     return (
       <Workbench>
-        <AppInstallModal
-          definition={showInstallModal ? definition : null}
-          onClose={this.closeInstallModal}
-        />
         <Workbench.Header
           title="App details"
           actions={

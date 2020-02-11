@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
@@ -6,6 +6,7 @@ import Icon from 'ui/Components/Icon';
 import ContextMenu from 'ui/Components/ContextMenu';
 import AppsPrivateFrameworkIllustration from 'svg/apps-private-framework.svg';
 import tokens from '@contentful/forma-36-tokens';
+import * as ModalLauncher from 'app/common/ModalLauncher';
 
 import {
   Heading,
@@ -107,9 +108,13 @@ const idStyle = css({
   })
 });
 
-export default function AppListing({ definitions }) {
-  const [selectedDefinition, setSelectedDef] = useState(null);
+function openInstallModal(definition) {
+  return ModalLauncher.open(({ isShown, onClose }) => (
+    <AppInstallModal definition={definition} isShown={isShown} onClose={onClose} />
+  ));
+}
 
+export default function AppListing({ definitions }) {
   const learnMoreParagraph = (
     <Paragraph>
       Learn more about{' '}
@@ -188,7 +193,7 @@ export default function AppListing({ definitions }) {
                           <ContextMenu
                             items={[
                               { label: 'Edit', action: onClick },
-                              { label: 'Install to space', action: () => setSelectedDef(def) }
+                              { label: 'Install to space', action: () => openInstallModal(def) }
                             ]}
                           />
                         )}
@@ -200,7 +205,6 @@ export default function AppListing({ definitions }) {
             })}
           </TableBody>
         </Table>
-        <AppInstallModal definition={selectedDefinition} onClose={() => setSelectedDef(null)} />
       </Workbench.Content>
       <Workbench.Sidebar position="right">
         <Typography>

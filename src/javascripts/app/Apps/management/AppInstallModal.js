@@ -4,7 +4,7 @@ import { Button, Modal, Form, SelectField, Option } from '@contentful/forma-36-r
 import * as Navigator from 'states/Navigator';
 import { getOrgSpacesFor, getEnvsFor, getLastUsedSpace } from './util';
 
-function goToInstallation(spaceId, environmentId, appId) {
+function goToInstallation(spaceId, environmentId, appId, onClose) {
   Navigator.go({
     path: 'spaces.detail.environment.apps.detail',
     params: {
@@ -16,10 +16,10 @@ function goToInstallation(spaceId, environmentId, appId) {
     options: {
       location: 'replace'
     }
-  });
+  }).then(() => onClose());
 }
 
-export default function AppInstallModal({ definition, onClose }) {
+export default function AppInstallModal({ isShown, definition, onClose }) {
   const [redirecting, setRedirecting] = useState(false);
   const [spaces, setSpaces] = useState([]);
   const [spaceEnvs, setSpaceEnvs] = useState([]);
@@ -52,19 +52,15 @@ export default function AppInstallModal({ definition, onClose }) {
     }
   }, [selectedSpace]);
 
-  if (!definition) {
-    return null;
-  }
-
   const onContinue = () => {
     setRedirecting(true);
-    goToInstallation(selectedSpace, selectedEnv, definition.sys.id);
+    goToInstallation(selectedSpace, selectedEnv, definition.sys.id, onClose);
   };
 
   return (
     <Modal
       position="center"
-      isShown
+      isShown={isShown}
       title={`Install ${definition.name} to a space`}
       onClose={onClose}>
       {({ title }) => (
@@ -127,5 +123,6 @@ export default function AppInstallModal({ definition, onClose }) {
 
 AppInstallModal.propTypes = {
   definition: PropTypes.object,
-  onClose: PropTypes.func.isRequired
+  onClose: PropTypes.func.isRequired,
+  isShown: PropTypes.bool.isRequired
 };

@@ -8,7 +8,7 @@ import mockDefinitions from './mockData/mockDefinitions.json';
 jest.mock('./util');
 
 jest.mock('states/Navigator', () => ({
-  go: jest.fn()
+  go: jest.fn(() => Promise.resolve())
 }));
 
 util.getOrgSpacesFor = jest.fn(() =>
@@ -41,7 +41,9 @@ describe('AppInstallModal', () => {
   afterEach(cleanup);
 
   it('should render the last used space and first env on load and be able to install right away', async () => {
-    const wrapper = render(<AppInstallModal definition={mockDefinitions[0]} onClose={() => {}} />);
+    const wrapper = render(
+      <AppInstallModal isShown definition={mockDefinitions[0]} onClose={() => {}} />
+    );
     await wait();
 
     expect(wrapper).toMatchSnapshot();
@@ -61,7 +63,9 @@ describe('AppInstallModal', () => {
   });
 
   it('should be able to pick a different space and env and install', async () => {
-    const wrapper = render(<AppInstallModal definition={mockDefinitions[0]} onClose={() => {}} />);
+    const wrapper = render(
+      <AppInstallModal isShown definition={mockDefinitions[0]} onClose={() => {}} />
+    );
     await wait();
 
     const [spaceSelector, envSelector] = wrapper.getAllByTestId('cf-ui-select');
