@@ -479,7 +479,6 @@ export default function register() {
         const width = parseInt(iconElem.getAttribute('width'), 10);
         const height = parseInt(iconElem.getAttribute('height'), 10);
 
-        iconElem.setAttribute('viewBox', `0 0 ${width} ${height}`);
         iconElem.setAttribute('width', width * scale);
         iconElem.setAttribute('height', height * scale);
       }
