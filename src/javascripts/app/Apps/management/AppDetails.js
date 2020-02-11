@@ -109,8 +109,7 @@ export default class AppDetails extends React.Component {
       busy: false,
       name: props.definition.name,
       definition: props.definition,
-      creator: '',
-      showInstallModal: false
+      creator: ''
     };
   }
 
