@@ -34,6 +34,7 @@ export default {
         ($state, { orgId }) => {
           return {
             goToDefinition: definitionId => $state.go('^.definitions', { definitionId }),
+            goToListView: () => $state.go('^.list'),
             definition: {
               sys: {
                 organization: {

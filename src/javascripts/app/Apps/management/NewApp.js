@@ -1,8 +1,26 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Notification, Heading, Button } from '@contentful/forma-36-react-components';
+import { css } from 'emotion';
+import Icon from 'ui/Components/Icon';
+import { Notification, Button, Paragraph, TextLink } from '@contentful/forma-36-react-components';
+import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import tokens from '@contentful/forma-36-tokens';
 import AppEditor from './AppEditor';
 import * as ManagementApiClient from './ManagementApiClient';
+
+const styles = {
+  spacerM: css({
+    marginBottom: tokens.spacingM
+  }),
+  spacerXl: css({
+    marginBottom: tokens.spacingXl
+  })
+};
+
+const links = {
+  building: 'https://www.contentful.com/developers/docs/extensibility/apps/building-apps/',
+  tutorial: 'javascript:alert("TODO")'
+};
 
 export default class NewApp extends React.Component {
   constructor(props) {
@@ -32,20 +50,39 @@ export default class NewApp extends React.Component {
     const { definition, busy } = this.state;
 
     return (
-      <>
-        <Heading>Add new app</Heading>
+      <Workbench>
+        <Workbench.Header
+          title="Create app"
+          onBack={this.props.goToListView}
+          icon={<Icon name="page-apps" scale={1} />}></Workbench.Header>
+        <Workbench.Content type="text">
+          <Paragraph className={styles.spacerM}>
+            Build apps for Contentful to extend the core functionality of the web app and optimize
+            the workflow of editors.
+          </Paragraph>
+          <Paragraph className={styles.spacerXl}>
+            Learn more about <TextLink href={links.building}>building Contentful apps</TextLink> or
+            follow our <TextLink href={links.tutorial}>tutorial</TextLink> to get started.
+          </Paragraph>
 
-        <AppEditor definition={definition} onChange={definition => this.setState({ definition })} />
+          <div className={styles.spacerXl}>
+            <AppEditor
+              definition={definition}
+              onChange={definition => this.setState({ definition })}
+            />
+          </div>
 
-        <Button loading={busy} disabled={busy} onClick={this.save}>
-          Save
-        </Button>
-      </>
+          <Button loading={busy} disabled={busy} onClick={this.save}>
+            Create app
+          </Button>
+        </Workbench.Content>
+      </Workbench>
     );
   }
 }
 
 NewApp.propTypes = {
   goToDefinition: PropTypes.func.isRequired,
+  goToListView: PropTypes.func.isRequired,
   definition: PropTypes.object.isRequired
 };
