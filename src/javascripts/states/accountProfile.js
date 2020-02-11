@@ -29,10 +29,10 @@ const organizationMemberships = userBase({
   url: '/organization_memberships{pathSuffix:PathSuffix}'
 });
 
-const CMATokens = reactStateWrapper({
+const cmaTokens = reactStateWrapper({
   name: 'cma_tokens',
   title: 'CMA tokens',
-  loadingText: 'Loading spaces…',
+  loadingText: 'Loading tokens…',
   url: '/cma_tokens',
   component: UserCMATokens
 });
@@ -71,7 +71,7 @@ export default base({
   children: [
     userCancellation,
     user,
-    CMATokens,
+    cmaTokens,
     spaceMemberships,
     organizationMemberships,
     accessGrants,

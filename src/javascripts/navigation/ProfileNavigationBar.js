@@ -3,7 +3,7 @@ import NavBar from './NavBar/NavBar';
 import SidepanelContainer from './Sidepanel/SidepanelContainer';
 
 export default function ProfileNavigationBar() {
-  const enterpriseToolsDropdownItems = [
+  const tokensAccessDropdownItems = [
     {
       title: 'Personal access tokens',
       icon: 'nav-user-oauth',
@@ -66,7 +66,7 @@ export default function ProfileNavigationBar() {
                 inherit: false
               },
               dataViewType: 'profile-tokens',
-              children: enterpriseToolsDropdownItems
+              children: tokensAccessDropdownItems
             },
             {
               title: 'Applications',
