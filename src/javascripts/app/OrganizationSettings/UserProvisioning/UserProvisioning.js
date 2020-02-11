@@ -47,7 +47,7 @@ export default class UserProvisioning extends Component {
                   title="User Provisioning"
                 />
                 <Workbench.Content>
-                  <UserProvisioningConfiguration />
+                  <UserProvisioningConfiguration orgId={orgId} />
                 </Workbench.Content>
               </Workbench>
             );
