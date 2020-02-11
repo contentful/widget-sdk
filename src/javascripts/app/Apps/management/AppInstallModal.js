@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal, Form, SelectField, Option } from '@contentful/forma-36-react-components';
 import * as Navigator from 'states/Navigator';
-import { getOrgsAndSpaces, getEnvsFor, getLastUsedSpace } from './util';
+import { getOrgSpacesFor, getEnvsFor, getLastUsedSpace } from './util';
 
 function goToInstallation(spaceId, environmentId, appId) {
   Navigator.go({
@@ -21,22 +21,22 @@ function goToInstallation(spaceId, environmentId, appId) {
 
 export default function AppInstallModal({ definition, onClose }) {
   const [redirecting, setRedirecting] = useState(false);
-  const [orgSpaces, setOrgSpaces] = useState([]);
+  const [spaces, setSpaces] = useState([]);
   const [spaceEnvs, setSpaceEnvs] = useState([]);
-  const [selectedSpace, setSelectedSpace] = useState('');
+  const [selectedSpace, setSelectedSpace] = useState(getLastUsedSpace());
   const [selectedEnv, setSelectedEnv] = useState('');
 
   useEffect(() => {
     async function getSpaces() {
-      const orgsAndSpaces = await getOrgsAndSpaces();
-      const lastUsedSpace = getLastUsedSpace();
+      const spaces = await getOrgSpacesFor(definition.sys.organization.sys.id);
 
-      setOrgSpaces(orgsAndSpaces);
-      setSelectedSpace(lastUsedSpace);
+      setSpaces(spaces);
     }
 
-    getSpaces();
-  }, []);
+    if (definition) {
+      getSpaces();
+    }
+  }, [definition]);
 
   useEffect(() => {
     async function getEnvs() {
@@ -82,14 +82,10 @@ export default function AppInstallModal({ definition, onClose }) {
                 <Option value="" disabled>
                   Select a space
                 </Option>
-                {orgSpaces.map(({ org, spaces }) => (
-                  <optgroup key={org.sys.id} label={org.name}>
-                    {spaces.map(space => (
-                      <Option key={space.sys.id} value={space.sys.id}>
-                        {space.name}
-                      </Option>
-                    ))}
-                  </optgroup>
+                {spaces.map(space => (
+                  <Option key={space.sys.id} value={space.sys.id}>
+                    {space.name}
+                  </Option>
                 ))}
               </SelectField>
               <SelectField

@@ -85,22 +85,18 @@ Object {
                         >
                           Select a space
                         </option>
-                        <optgroup>
-                          <option
-                            data-test-id="cf-ui-select-option"
-                            value="my-space-123"
-                          >
-                            mySpace
-                          </option>
-                        </optgroup>
-                        <optgroup>
-                          <option
-                            data-test-id="cf-ui-select-option"
-                            value="my-other-space-123"
-                          >
-                            myOtherSpace
-                          </option>
-                        </optgroup>
+                        <option
+                          data-test-id="cf-ui-select-option"
+                          value="my-space-123"
+                        >
+                          mySpace
+                        </option>
+                        <option
+                          data-test-id="cf-ui-select-option"
+                          value="my-other-space-123"
+                        >
+                          myOtherSpace
+                        </option>
                       </select>
                       <svg
                         class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--muted___3egnD Select__Select__icon___boRAZ"

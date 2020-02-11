@@ -8,17 +8,12 @@ jest.mock('access_control/OrganizationMembershipRepository');
 jest.mock('./ManagementApiClient');
 jest.mock('./util');
 
-util.getOrgsAndSpaces = jest.fn(() =>
+util.getOrgSpacesFor = jest.fn(() =>
   Promise.resolve([
     {
-      org: { sys: { id: 'my-org-123' } },
-      spaces: [
-        {
-          name: 'mySpace',
-          sys: { id: 'my-space-123' },
-          organization: { sys: { id: 'my-org-123' } }
-        }
-      ]
+      name: 'mySpace',
+      sys: { id: 'my-space-123' },
+      organization: { sys: { id: 'my-org-123' } }
     }
   ])
 );
