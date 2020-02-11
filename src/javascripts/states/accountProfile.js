@@ -4,6 +4,7 @@ import { noop } from 'lodash';
 import ProfileNavigationBar from 'navigation/ProfileNavigationBar';
 import Settings from 'app/UserProfile/Settings';
 import SpaceMemberships from 'app/UserSettings/SpaceMemberships';
+import UserCMATokens from 'app/UserCMATokens/UserCMATokens';
 
 const user = reactStateWrapper({
   loadingText: 'Loading your account…',
@@ -26,6 +27,14 @@ const organizationMemberships = userBase({
   name: 'organization_memberships',
   title: 'Organization memberships',
   url: '/organization_memberships{pathSuffix:PathSuffix}'
+});
+
+const CMATokens = reactStateWrapper({
+  name: 'cma_tokens',
+  title: 'CMA tokens',
+  loadingText: 'Loading spaces…',
+  url: '/cma_tokens',
+  component: UserCMATokens
 });
 
 const accessGrants = userBase({
@@ -62,6 +71,7 @@ export default base({
   children: [
     userCancellation,
     user,
+    CMATokens,
     spaceMemberships,
     organizationMemberships,
     accessGrants,

@@ -3,6 +3,27 @@ import NavBar from './NavBar/NavBar';
 import SidepanelContainer from './Sidepanel/SidepanelContainer';
 
 export default function ProfileNavigationBar() {
+  const enterpriseToolsDropdownItems = [
+    {
+      title: 'Personal access tokens',
+      icon: 'nav-user-oauth',
+      sref: 'account.profile.cma_tokens',
+      srefOptions: {
+        inherit: false
+      },
+      dataViewType: 'profile-tokens'
+    },
+    {
+      title: 'OAuth Tokens',
+      icon: 'nav-user-oauth',
+      sref: 'account.profile.access_grants',
+      srefOptions: {
+        inherit: false
+      },
+      dataViewType: 'profile-tokens'
+    }
+  ];
+
   return (
     <>
       <SidepanelContainer />
@@ -39,13 +60,13 @@ export default function ProfileNavigationBar() {
               dataViewType: 'profile-organizations'
             },
             {
-              title: 'OAuth Tokens',
+              title: 'Tokens',
               icon: 'nav-user-oauth',
-              sref: 'account.profile.access_grants',
               srefOptions: {
                 inherit: false
               },
-              dataViewType: 'profile-tokens'
+              dataViewType: 'profile-tokens',
+              children: enterpriseToolsDropdownItems
             },
             {
               title: 'Applications',
