@@ -114,7 +114,7 @@ function UserProvisioningConfiguration({ orgId }) {
             testId="scim-token"
             disabled
             withCopyButton
-            value={personalAccessToken.token}
+            value={`Bearer ${personalAccessToken.token}`}
           />
         </>
       ) : (

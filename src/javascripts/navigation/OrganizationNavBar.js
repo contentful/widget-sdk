@@ -14,7 +14,7 @@ function getItems(params, { orgId }) {
   const enterpriseToolsDropdownItems = [
     {
       if: params.ssoEnabled,
-      title: 'SSO',
+      title: 'Single Sign-On (SSO)',
       sref: 'account.organizations.sso',
       srefParams: { orgId },
       rootSref: 'account.organizations.sso',
