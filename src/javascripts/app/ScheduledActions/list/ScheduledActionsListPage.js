@@ -7,10 +7,10 @@ import {
   SkeletonText,
   Tabs,
   Tab,
-  TabPanel
+  TabPanel,
+  Workbench
 } from '@contentful/forma-36-react-components';
 import Icon from 'ui/Components/Icon';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 import ScheduledActionsTable from './ScheduledActionsTable';
 

@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import StateLink from 'app/common/StateLink';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import Icon from 'ui/Components/Icon';
 import {
   Table,
@@ -10,7 +9,9 @@ import {
   TableCell,
   TableRow,
   TableBody,
-  Button
+  Button,
+  Workbench,
+  TextLink
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 
@@ -124,7 +125,7 @@ export class WebhookList extends React.Component {
                           <WebhookHealth webhookId={wh.sys.id} />
                         </TableCell>
                         <TableCell>
-                          <button className="text-link">View details</button>
+                          <TextLink>View details</TextLink>
                         </TableCell>
                       </TableRow>
                     )}

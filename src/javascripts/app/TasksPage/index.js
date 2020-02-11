@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { css } from 'emotion';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import {
   TextLink,
   Table,
@@ -14,7 +13,8 @@ import {
   Paragraph,
   Note,
   SkeletonContainer,
-  SkeletonBodyText
+  SkeletonBodyText,
+  Workbench
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import EmptyStateContainer, {

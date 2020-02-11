@@ -16,10 +16,10 @@ import {
   TableHead,
   TableBody,
   TableCell,
-  TableRow
+  TableRow,
+  Workbench
 } from '@contentful/forma-36-react-components';
 import Icon from 'ui/Components/Icon';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 import StateLink from 'app/common/StateLink';
 import EmptyStateContainer, {

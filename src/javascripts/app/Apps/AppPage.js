@@ -10,9 +10,9 @@ import {
   Paragraph,
   Heading,
   SkeletonContainer,
-  SkeletonBodyText
+  SkeletonBodyText,
+  Workbench
 } from '@contentful/forma-36-react-components';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import { get } from 'lodash';
 
 import StateRedirect from 'app/common/StateRedirect';

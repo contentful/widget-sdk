@@ -2,10 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { css } from 'emotion';
 import PropTypes from 'prop-types';
-import { Button, TextField, Form } from '@contentful/forma-36-react-components';
+import { Button, TextField, Form, Workbench } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import Icon from 'ui/Components/Icon';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import getOrgRole from 'redux/selectors/getOrgRole';
 
 const styles = {

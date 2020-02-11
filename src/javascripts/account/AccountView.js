@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { getGatekeeperUrl } from 'account/UrlSyncHelper';
 import { css } from 'emotion';
 
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import { Workbench } from '@contentful/forma-36-react-components';
 
 const wrapperStyle = css({
   position: 'absolute',

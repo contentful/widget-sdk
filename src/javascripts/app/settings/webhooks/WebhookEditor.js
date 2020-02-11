@@ -1,8 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
-import { Button, Notification, Tabs, Tab, TabPanel } from '@contentful/forma-36-react-components';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import {
+  Button,
+  Notification,
+  Tabs,
+  Tab,
+  TabPanel,
+  Workbench
+} from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import Icon from 'ui/Components/Icon';

@@ -12,9 +12,12 @@ import {
   SkeletonContainer,
   SkeletonBodyText,
   SkeletonDisplayText,
-  Heading
+  Heading,
+  Workbench,
+  Paragraph
 } from '@contentful/forma-36-react-components';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 import Icon from 'ui/Components/Icon';
 import validate from './ContentPreviewFormValidation';
 import ModalLauncher from 'app/common/ModalLauncher';
@@ -81,6 +84,12 @@ ContentPreviewFormPageSkeleton.propTypes = {
   title: PropTypes.node,
   actions: PropTypes.node,
   children: PropTypes.node
+};
+
+const styles = {
+  removeButton: css({
+    marginRight: tokens.spacingM
+  })
 };
 
 export default class ContentPreviewFormPage extends Component {
@@ -307,7 +316,7 @@ export default class ContentPreviewFormPage extends Component {
             {!this.props.isNew && (
               <Button
                 testId="delete-content-preview"
-                className="f36-margin-right--m"
+                className={styles.removeButton}
                 buttonType="muted"
                 onClick={this.remove}
                 loading={this.state.busy}>
@@ -358,11 +367,11 @@ export default class ContentPreviewFormPage extends Component {
           <Heading className="section-title" element="h3">
             Content preview URLs
           </Heading>
-          <p>
+          <Paragraph>
             Activate the content preview and specify a custom URL for every content type that should
             display it. Use the tokens documented on the right to include specific field values of
             your entries.
-          </p>
+          </Paragraph>
           <FieldGroup data-test-id="config-group">
             {this.state.preview.configs.map(config => {
               const placeholder = `Preview URL for content type '${

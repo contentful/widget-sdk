@@ -6,8 +6,13 @@ import StateLink from 'app/common/StateLink';
 
 import StateRedirect from 'app/common/StateRedirect';
 import DeeplinkSelectSpaceEnv from './DeeplinkSelectSpaceEnv/DeeplinkSelectSpaceEnv';
-import { Heading, Paragraph, Typography, Spinner } from '@contentful/forma-36-react-components';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import {
+  Heading,
+  Paragraph,
+  Typography,
+  Spinner,
+  Workbench
+} from '@contentful/forma-36-react-components';
 import { resolveLink } from './resolver';
 
 const styles = {

@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { css } from 'emotion';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import { getUserName } from 'app/OrganizationSettings/Users/UserUtils';
 import {
   Table,
@@ -14,7 +13,8 @@ import {
   Notification,
   Tooltip,
   Subheading,
-  Paragraph
+  Paragraph,
+  Workbench
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import {

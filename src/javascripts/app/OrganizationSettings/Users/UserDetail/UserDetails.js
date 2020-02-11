@@ -1,8 +1,7 @@
 import React, { useReducer, useMemo, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { OrganizationMembership as OrganizationMembershipPropType } from 'app/OrganizationSettings/PropTypes';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
-import { Tabs, Tab, Button, Heading } from '@contentful/forma-36-react-components';
+import { Tabs, Tab, Button, Heading, Workbench } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { createImmerReducer } from 'redux/utils/createImmerReducer';

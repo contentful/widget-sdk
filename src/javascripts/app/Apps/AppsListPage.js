@@ -14,10 +14,10 @@ import {
   Note,
   TextLink,
   Card,
-  Paragraph
+  Paragraph,
+  Workbench
 } from '@contentful/forma-36-react-components';
 
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import Icon from 'ui/Components/Icon';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import ModalLauncher from 'app/common/ModalLauncher';

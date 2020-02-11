@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import {
   SkeletonContainer,
   SkeletonBodyText,
-  SkeletonDisplayText
+  SkeletonDisplayText,
+  Workbench
 } from '@contentful/forma-36-react-components';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import Icon from 'ui/Components/Icon';
 
 export default function RolesWorkbenchShell(props) {
