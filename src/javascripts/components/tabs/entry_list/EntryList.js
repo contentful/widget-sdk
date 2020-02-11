@@ -233,7 +233,8 @@ export class BulkActionsRow extends React.Component {
   static propTypes = {
     colSpan: PropTypes.number.isRequired,
     actions: PropTypes.object.isRequired,
-    selection: PropTypes.object.isRequired
+    selection: PropTypes.object.isRequired,
+    onActionComplete: PropTypes.func.isRequired
   };
 
   getPendingMessage = pendingAction => {
@@ -244,7 +245,7 @@ export class BulkActionsRow extends React.Component {
   setConfirmVisibility = isConfirmVisible => this.setState({ isConfirmVisible });
 
   fireAction = async actionName => {
-    const { actions } = this.props;
+    const { actions, onActionComplete } = this.props;
     let pendingMessage;
     let action;
 
@@ -279,6 +280,7 @@ export class BulkActionsRow extends React.Component {
     this.setState({ pendingMessage });
     await action();
     this.setState({ pendingMessage: undefined });
+    onActionComplete();
   };
 
   render() {
@@ -431,18 +433,23 @@ export default function EntryList({
   assetCache,
   jobs = []
 }) {
+  const [hasSelectedAll, setHasSelectedAll] = React.useState(false);
+
   const hasContentTypeSelected = !!context.view.contentTypeId;
 
   // can be undefined
   const displayFieldName = displayFieldForFilteredContentType();
 
   const isContentTypeVisible = !hasContentTypeSelected && !context.view.contentTypeHidden;
+
   const selectAll = (
     <Checkbox
       id="select-all"
       name="select-all"
       className={cn(styles.marginRightS, styles.marginBottomXXS)}
+      checked={hasSelectedAll}
       onChange={e => {
+        setHasSelectedAll(!hasSelectedAll);
         selection.toggleList(entries, e);
       }}
     />
@@ -517,7 +524,12 @@ export default function EntryList({
           </TableCell>
         </TableRow>
         {!selection.isEmpty() && (
-          <BulkActionsRow colSpan={columnLength} actions={actions} selection={selection} />
+          <BulkActionsRow
+            colSpan={columnLength}
+            actions={actions}
+            selection={selection}
+            onActionComplete={() => setHasSelectedAll(false)}
+          />
         )}
       </TableHead>
       <TableBody>
