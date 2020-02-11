@@ -1,6 +1,6 @@
 import { useReducer, useEffect } from 'react';
 import { createImmerReducer } from 'redux/utils/createImmerReducer';
-import { openGenerateTokenDialog } from './GenerateCMATokenDialog';
+import { openGenerateTokenDialog } from 'app/common/ApiTokens/GenerateCMATokenDialog';
 import { Notification } from '@contentful/forma-36-react-components';
 import { track } from 'analytics/Analytics';
 import { truncate } from 'utils/StringUtils';
