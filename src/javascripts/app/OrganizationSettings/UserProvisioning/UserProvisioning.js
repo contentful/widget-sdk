@@ -11,7 +11,7 @@ import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcher
 
 const FeatureFetcher = createFetcherComponent(async ({ orgId }) => {
   const featureEnabled = await getOrgFeature(orgId, 'scim');
-  return [featureEnabled];
+  return { featureEnabled: featureEnabled };
 });
 
 export default class UserProvisioning extends Component {
