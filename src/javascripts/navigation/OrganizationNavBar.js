@@ -22,8 +22,9 @@ function getItems(params, { orgId }) {
         inherit: false
       },
       dataViewType: 'organization-sso'
-    },{
-      if: params.scimFeatureEnabled,
+    },
+    {
+      if: params.userProvisioningEnabled,
       title: 'User provisioning',
       sref: 'account.organizations.user-provisioning',
       srefParams: { orgId },
@@ -33,7 +34,7 @@ function getItems(params, { orgId }) {
       },
       dataViewType: 'organization-user-provisioning'
     }
-  ];
+  ].filter(item => item.if !== false);
 
   return [
     {
@@ -48,7 +49,6 @@ function getItems(params, { orgId }) {
       icon: 'nav-organization-information',
       dataViewType: 'organization-information'
     },
-
     {
       if: params.pricingVersion == 'pricing_version_1' && params.isOwnerOrAdmin,
       title: 'Subscription',
@@ -122,14 +122,6 @@ function getItems(params, { orgId }) {
       dataViewType: 'organization-teams'
     },
     {
-      if: params.isOwnerOrAdmin && enterpriseToolsDropdownItems.length > 0,
-      title: 'Enterprise Tools',
-      rootSref: 'organization-enterprise-tools',
-      icon: 'nav-organization-sso',
-      dataViewType: 'organization-enterprise-tools',
-      children: enterpriseToolsDropdownItems
-    },
-    {
       if: params.pricingVersion == 'pricing_version_1' && params.isOwnerOrAdmin,
       title: 'Spaces',
       sref: 'account.organizations.spaces',
@@ -151,6 +143,14 @@ function getItems(params, { orgId }) {
         inherit: false
       },
       dataViewType: 'offsite-backup'
+    },
+    {
+      if: params.isOwnerOrAdmin && enterpriseToolsDropdownItems.length > 0,
+      title: 'Enterprise Tools',
+      rootSref: 'organization-enterprise-tools',
+      icon: 'nav-organization-sso',
+      dataViewType: 'organization-enterprise-tools',
+      children: enterpriseToolsDropdownItems
     }
   ].filter(item => item.if !== false);
 }

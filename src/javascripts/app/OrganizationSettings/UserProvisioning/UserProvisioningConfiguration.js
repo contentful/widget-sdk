@@ -6,37 +6,32 @@ import {
   Heading,
   Paragraph,
   Note,
-  Button
+  Button,
+  Typography
 } from '@contentful/forma-36-react-components';
-import { css, cx } from 'emotion';
+import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import ModalLauncher from 'app/common/ModalLauncher';
-import GenerateCMATokenDialog from 'app/settings/api/cma-tokens/GenerateCMATokenDialog';
+import GenerateCMATokenDialog from 'app/common/ApiTokens/GenerateCMATokenDialog';
 import * as Auth from 'Authentication';
 import * as TokenResourceManager from 'app/settings/api/cma-tokens/TokenResourceManager';
 
 const styles = {
   content: css({
     width: '700px',
-    margin: '0 280px'
-  }),
-  heading: css({
-    fontWeight: tokens.fontWeightMedium,
-    marginBottom: tokens.spacingL,
+    margin: '0 280px',
     marginTop: tokens.spacing2Xl
   }),
-  subheading: css({
-    color: '#2A3039',
+  intro: css({
+    marginBottom: tokens.spacing3Xl
+  }),
+  bold: css({
     marginBottom: tokens.spacingXs,
-    marginTop: tokens.spacingL
+    fontWeight: tokens.fontWeightMedium
   }),
-  bold: css({ fontWeight: tokens.fontWeightMedium }),
-  paragraph: css({
-    color: '#536171',
+  input: css({
+    marginTop: tokens.spacingXs,
     marginBottom: tokens.spacingL
-  }),
-  note: css({
-    marginBottom: tokens.spacingM
   })
 };
 
@@ -67,48 +62,51 @@ function UserProvisioningConfiguration({ orgId }) {
   };
 
   return (
-    <div className={styles.content}>
-      <Heading className={styles.heading}>Set up user provisioning with SCIM 2.0</Heading>
-      <Paragraph className={styles.paragraph}>
-        Set up user provisioning for your organization in Contentful in a few steps.&nbsp;&nbsp;
-        <TextLink href="https://www.contentful.com/faq/">Check out the FAQs.</TextLink>
-      </Paragraph>
-      <Note noteType="primary" className={styles.note}>
-        We strongly recommend using a service account for setting up user provisioning in
-        Contentful.&nbsp;&nbsp;
-        <TextLink
-          testId="faq-url"
-          href="https://www.contentful.com/faq/" //TODO set correct scim anchor url
-        >
-          Here is why.
-        </TextLink>
-      </Note>
-      <Heading element="h1" className={styles.heading}>
-        SCIM configuration details
-      </Heading>
-      <div className={styles.subheading}>SCIM URL</div>
-      <TextInput
-        name="scim-url"
-        testId="scim-url"
-        disabled
-        withCopyButton
-        value={`${SCIM_BASE}${orgId}`}
-      />
-      <div className={cx(styles.subheading, styles.bold)}>Personal Access Token</div>
-      <Paragraph className={styles.paragraph}>
+    <Typography className={styles.content}>
+      <div className={styles.intro}>
+        <Heading>Set up user provisioning with SCIM 2.0</Heading>
+        <Paragraph>
+          Set up user provisioning for your organization in Contentful in a few steps.&nbsp;&nbsp;
+          <TextLink href="https://www.contentful.com/faq/" target="_blank">
+            Check out the FAQs.
+          </TextLink>
+        </Paragraph>
+        <Note noteType="primary">
+          We strongly recommend using a service account for setting up user provisioning in
+          Contentful.&nbsp;&nbsp;
+          <TextLink
+            testId="faq-url"
+            href="https://www.contentful.com/faq/" //TODO set correct scim anchor url
+            target="_blank">
+            Here is why.
+          </TextLink>
+        </Note>
+      </div>
+      <Heading element="h1">SCIM configuration details</Heading>
+      SCIM URL
+      <div className={styles.input}>
+        <TextInput
+          name="scim-url"
+          testId="scim-url"
+          disabled
+          withCopyButton
+          value={`${SCIM_BASE}${orgId}`}
+        />
+      </div>
+      <div className={styles.bold}>Personal Access Token</div>
+      <Paragraph>
         As an alternative to OAuth applications, you can also leverage Personal Access Tokens to use
         the Content Management API. These tokens are always bound to your individual account, with
         the same permissions you have on all of your spaces and organizations.
       </Paragraph>
       {personalAccessToken ? (
         <>
-          <Note
-            noteType="positive"
-            title={`"${personalAccessToken.name}" is ready!`}
-            className={styles.note}>
-            {`Make sure to immediately copy your new Personal Access Token. You won't be
+          <div className={styles.input}>
+            <Note noteType="positive" title={`"${personalAccessToken.name}" is ready!`}>
+              {`Make sure to immediately copy your new Personal Access Token. You won't be
                         able to see it again.`}
-          </Note>
+            </Note>
+          </div>
           <TextInput
             name="scim-token"
             testId="scim-token"
@@ -122,7 +120,7 @@ function UserProvisioningConfiguration({ orgId }) {
           Generate personal access token
         </Button>
       )}
-    </div>
+    </Typography>
   );
 }
 

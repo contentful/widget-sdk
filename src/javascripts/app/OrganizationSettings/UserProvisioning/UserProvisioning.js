@@ -1,6 +1,7 @@
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import { Workbench } from '@contentful/forma-36-react-components';
+import Icon from 'ui/Components/Icon';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import OrgAdminOnly from 'app/common/OrgAdminOnly';
 import StateRedirect from 'app/common/StateRedirect';
@@ -13,47 +14,41 @@ const FeatureFetcher = createFetcherComponent(async ({ orgId }) => {
   return { featureEnabled: featureEnabled };
 });
 
-export default class UserProvisioning extends Component {
-  static propTypes = {
-    orgId: PropTypes.string.isRequired,
-    onReady: PropTypes.func.isRequired
-  };
+UserProvisioning.propTypes = {
+  orgId: PropTypes.string.isRequired,
+  onReady: PropTypes.func.isRequired
+};
 
-  componentDidMount() {
-    this.props.onReady();
-  }
+export default function UserProvisioning({ orgId, onReady }) {
+  useEffect(onReady, [onReady]);
 
-  render() {
-    const { orgId } = this.props;
+  return (
+    <OrgAdminOnly orgId={orgId}>
+      <FeatureFetcher orgId={orgId}>
+        {({ isLoading, isError, data }) => {
+          if (isLoading) {
+            return <FetcherLoading message="Loading..." />;
+          }
+          if (isError) {
+            return <StateRedirect path="home" />;
+          }
+          if (!data.featureEnabled) {
+            return <ForbiddenState />;
+          }
 
-    return (
-      <OrgAdminOnly orgId={orgId}>
-        <FeatureFetcher orgId={orgId}>
-          {({ isLoading, isError, data }) => {
-            if (isLoading) {
-              return <FetcherLoading message="Loading..." />;
-            }
-            if (isError) {
-              return <StateRedirect path="home" />;
-            }
-            if (!data.featureEnabled) {
-              return <ForbiddenState />;
-            }
-
-            return (
-              <Workbench>
-                <Workbench.Header
-                  icon={<Icon name="page-sso" scale="0.75" />}
-                  title="User Provisioning"
-                />
-                <Workbench.Content>
-                  <UserProvisioningConfiguration orgId={orgId} />
-                </Workbench.Content>
-              </Workbench>
-            );
-          }}
-        </FeatureFetcher>
-      </OrgAdminOnly>
-    );
-  }
+          return (
+            <Workbench>
+              <Workbench.Header
+                icon={<Icon name="page-sso" scale="0.75" />}
+                title="User Provisioning"
+              />
+              <Workbench.Content>
+                <UserProvisioningConfiguration orgId={orgId} />
+              </Workbench.Content>
+            </Workbench>
+          );
+        }}
+      </FeatureFetcher>
+    </OrgAdminOnly>
+  );
 }
