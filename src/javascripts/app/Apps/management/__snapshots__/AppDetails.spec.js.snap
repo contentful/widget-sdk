@@ -1,5 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`AppDetails should pop the app delete definition modal 1`] = `
+<DeleteAppDialog
+  appName="Jira"
+  isShown={true}
+  onCancel={[MockFunction]}
+  onConfirm={[Function]}
+/>
+`;
+
 exports[`AppDetails should show the details of an app with the provided definition 1`] = `
 Object {
   "asFragment": [Function],
@@ -1151,7 +1160,7 @@ Object {
                 </button>
                 <button
                   class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--negative___3yhMk"
-                  data-test-id="cf-ui-text-link"
+                  data-test-id="app-delete"
                   type="button"
                 >
                   <span
@@ -2338,7 +2347,7 @@ Object {
               </button>
               <button
                 class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--negative___3yhMk"
-                data-test-id="cf-ui-text-link"
+                data-test-id="app-delete"
                 type="button"
               >
                 <span
@@ -3620,7 +3629,7 @@ Object {
                 </button>
                 <button
                   class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--negative___3yhMk"
-                  data-test-id="cf-ui-text-link"
+                  data-test-id="app-delete"
                   type="button"
                 >
                   <span
@@ -4867,7 +4876,7 @@ Object {
               </button>
               <button
                 class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--negative___3yhMk"
-                data-test-id="cf-ui-text-link"
+                data-test-id="app-delete"
                 type="button"
               >
                 <span

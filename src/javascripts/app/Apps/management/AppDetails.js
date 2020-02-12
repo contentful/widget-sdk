@@ -16,6 +16,7 @@ import AppEditor from './AppEditor';
 import * as ManagementApiClient from './ManagementApiClient';
 import * as ModalLauncher from 'app/common/ModalLauncher';
 import AppInstallModal from './AppInstallModal';
+import DeleteAppModal from './DeleteAppDialog';
 
 const fadeIn = keyframes({
   from: {
@@ -141,8 +142,7 @@ export default class AppDetails extends React.Component {
     this.setState({ busy: true });
 
     try {
-      // TODO: Hook this logic up to the modal
-      // await ManagementApiClient.deleteDef(this.state.definition);
+      await ManagementApiClient.deleteDef(this.state.definition);
       Notification.success(`${this.state.definition.name} was deleted!`);
       this.props.goToListView();
     } catch (err) {
@@ -154,6 +154,20 @@ export default class AppDetails extends React.Component {
   openInstallModal = () => {
     ModalLauncher.open(({ isShown, onClose }) => (
       <AppInstallModal definition={this.state.definition} isShown={isShown} onClose={onClose} />
+    ));
+  };
+
+  openDeleteModal = () => {
+    ModalLauncher.open(({ isShown, onClose }) => (
+      <DeleteAppModal
+        isShown={isShown}
+        onCancel={onClose}
+        onConfirm={() => {
+          this.delete();
+          onClose();
+        }}
+        appName={this.state.name}
+      />
     ));
   };
 
@@ -202,7 +216,11 @@ export default class AppDetails extends React.Component {
             <Button loading={busy} disabled={busy} onClick={this.save} testId="app-save">
               Update app
             </Button>
-            <TextLink linkType="negative" disabled={busy} onClick={this.delete}>
+            <TextLink
+              linkType="negative"
+              disabled={busy}
+              onClick={this.openDeleteModal}
+              testId="app-delete">
               Delete {name}
             </TextLink>
           </div>

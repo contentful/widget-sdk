@@ -4,9 +4,11 @@ import AppDetails from './AppDetails';
 import mockDefinitions from './mockData/mockDefinitions.json';
 import * as ManagementApiClient from './ManagementApiClient';
 import * as util from './util';
+import * as ModalLauncher from 'app/common/ModalLauncher';
 jest.mock('access_control/OrganizationMembershipRepository');
 jest.mock('./ManagementApiClient');
 jest.mock('./util');
+jest.mock('app/common/ModalLauncher');
 
 util.getOrgSpacesFor = jest.fn(() =>
   Promise.resolve([
@@ -23,6 +25,8 @@ util.getEnvsFor = jest.fn(() => Promise.resolve([{ name: 'my-env', sys: { id: 'm
 util.getLastUsedSpace = jest.fn(() => Promise.resolve('my-space-123'));
 
 ManagementApiClient.getCreatorNameOf = jest.fn(() => Promise.resolve('John Smith'));
+
+ModalLauncher.open = jest.fn();
 
 describe('AppDetails', () => {
   afterEach(cleanup);
@@ -77,6 +81,22 @@ describe('AppDetails', () => {
     expect(ManagementApiClient.save.mock.calls[1][0]).toMatchSnapshot();
   });
 
-  it.todo('should pop the app delete definition modal');
+  it('should pop the app delete definition modal', async () => {
+    const definition = mockDefinitions[1];
+    const wrapper = render(<AppDetails definition={definition} goToListView={() => {}} />);
+
+    const deleteButton = wrapper.getByTestId('app-delete');
+
+    deleteButton.click();
+
+    await wait();
+
+    const launchDeleteModal = ModalLauncher.open.mock.calls[0][0]({
+      isShown: true,
+      onClose: jest.fn()
+    });
+    expect(launchDeleteModal).toMatchSnapshot();
+  });
+
   it.todo('should pop the app installation modal');
 });
