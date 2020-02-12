@@ -9,6 +9,24 @@ function createOrgEndpointByDef(definition) {
   return createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
 }
 
+export function createDefinitionTemplateForOrg(orgId) {
+  if (typeof orgId !== 'string' || !orgId) {
+    throw new Error('orgId must be a string!');
+  }
+
+  return {
+    sys: {
+      organization: {
+        sys: {
+          type: 'Link',
+          linkType: 'Organization',
+          id: orgId
+        }
+      }
+    }
+  };
+}
+
 export function save(definition) {
   const orgEndpoint = createOrgEndpointByDef(definition);
   const id = get(definition, ['sys', 'id']);

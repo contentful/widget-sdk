@@ -31,7 +31,7 @@ export default class NewApp extends React.Component {
 
     this.state = {
       busy: false,
-      definition: props.definition
+      definition: ManagementApiClient.createDefinitionTemplateForOrg(props.orgId)
     };
   }
 
@@ -78,7 +78,7 @@ export default class NewApp extends React.Component {
             />
           </div>
 
-          <Button loading={busy} disabled={busy} onClick={this.save}>
+          <Button loading={busy} disabled={busy} onClick={this.save} testId="app-create">
             Create app
           </Button>
         </Workbench.Content>
@@ -90,5 +90,5 @@ export default class NewApp extends React.Component {
 NewApp.propTypes = {
   goToDefinition: PropTypes.func.isRequired,
   goToListView: PropTypes.func.isRequired,
-  definition: PropTypes.object.isRequired
+  orgId: PropTypes.string.isRequired
 };
