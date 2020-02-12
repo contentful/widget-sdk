@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import {
   TextLink,
   Notification,
   Heading,
   Button,
   Paragraph,
-  CopyButton
+  CopyButton,
+  Workbench
 } from '@contentful/forma-36-react-components';
 import { css, keyframes } from 'emotion';
 import Icon from 'ui/Components/Icon';

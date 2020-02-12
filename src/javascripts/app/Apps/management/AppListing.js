@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import Icon from 'ui/Components/Icon';
 import ContextMenu from 'ui/Components/ContextMenu';
 import AppsPrivateFrameworkIllustration from 'svg/apps-private-framework.svg';
@@ -21,7 +20,8 @@ import {
   Typography,
   CopyButton,
   SectionHeading,
-  EmptyState
+  EmptyState,
+  Workbench
 } from '@contentful/forma-36-react-components';
 
 import StateLink from 'app/common/StateLink';

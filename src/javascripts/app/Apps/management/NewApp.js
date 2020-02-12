@@ -2,8 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import Icon from 'ui/Components/Icon';
-import { Notification, Button, Paragraph, TextLink } from '@contentful/forma-36-react-components';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import {
+  Notification,
+  Button,
+  Paragraph,
+  TextLink,
+  Workbench
+} from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import AppEditor from './AppEditor';
 import * as ManagementApiClient from './ManagementApiClient';
@@ -59,7 +64,10 @@ export default class NewApp extends React.Component {
             the workflow of editors.
           </Paragraph>
           <Paragraph className={styles.spacerXl}>
-            Learn more about <TextLink href={BUILDING_APPS_URL}>building Contentful apps</TextLink>{' '}
+            Learn more about{' '}
+            <TextLink href={BUILDING_APPS_URL} target="_blank">
+              building Contentful apps
+            </TextLink>{' '}
             to get started.
           </Paragraph>
 
