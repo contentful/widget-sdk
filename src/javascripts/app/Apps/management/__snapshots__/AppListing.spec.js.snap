@@ -101,9 +101,7 @@ Object {
               class="icon-component"
               data-icon-name="page-apps"
             >
-              <page-apps.svg
-                viewbox="0 0 NaN NaN"
-              />
+              <page-apps.svg />
             </span>
           </div>
           <div
@@ -209,9 +207,7 @@ Object {
                             class="icon-component emotion-0"
                             data-icon-name="page-apps"
                           >
-                            <page-apps.svg
-                              viewbox="0 0 NaN NaN"
-                            />
+                            <page-apps.svg />
                           </span>
                            
                           <b>
@@ -322,9 +318,7 @@ Object {
                             class="icon-component emotion-0"
                             data-icon-name="page-apps"
                           >
-                            <page-apps.svg
-                              viewbox="0 0 NaN NaN"
-                            />
+                            <page-apps.svg />
                           </span>
                            
                           <b>
@@ -435,9 +429,7 @@ Object {
                             class="icon-component emotion-0"
                             data-icon-name="page-apps"
                           >
-                            <page-apps.svg
-                              viewbox="0 0 NaN NaN"
-                            />
+                            <page-apps.svg />
                           </span>
                            
                           <b>
@@ -755,9 +747,7 @@ Object {
             class="icon-component"
             data-icon-name="page-apps"
           >
-            <page-apps.svg
-              viewbox="0 0 NaN NaN"
-            />
+            <page-apps.svg />
           </span>
         </div>
         <div
@@ -863,9 +853,7 @@ Object {
                           class="icon-component emotion-0"
                           data-icon-name="page-apps"
                         >
-                          <page-apps.svg
-                            viewbox="0 0 NaN NaN"
-                          />
+                          <page-apps.svg />
                         </span>
                          
                         <b>
@@ -976,9 +964,7 @@ Object {
                           class="icon-component emotion-0"
                           data-icon-name="page-apps"
                         >
-                          <page-apps.svg
-                            viewbox="0 0 NaN NaN"
-                          />
+                          <page-apps.svg />
                         </span>
                          
                         <b>
@@ -1089,9 +1075,7 @@ Object {
                           class="icon-component emotion-0"
                           data-icon-name="page-apps"
                         >
-                          <page-apps.svg
-                            viewbox="0 0 NaN NaN"
-                          />
+                          <page-apps.svg />
                         </span>
                          
                         <b>
