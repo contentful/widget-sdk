@@ -74,7 +74,7 @@ module.exports = () => {
       filename: isProd ? '[name]-[contenthash].js' : '[name].js',
       path: path.join(projectRoot, 'public', 'app'),
       publicPath,
-      chunkFilename: isProd ? 'chunk_[name]-[contenthash].js' : 'chunk_[name].js'
+      chunkFilename: isProd ? '[name]-[contenthash].js' : '[name].js'
     },
     mode: isProd ? 'production' : 'development',
     resolve: {
@@ -253,7 +253,7 @@ module.exports = () => {
 
                   const manifestedAssets = [
                     'app.js',
-                    'chunk_vendors~app.js',
+                    'vendors~app.js',
                     'styles.css',
                     'assets/favicon32x32.png',
                     'assets/apple_icon57x57.png',
