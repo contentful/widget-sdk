@@ -17,10 +17,8 @@ const styles = {
   })
 };
 
-const links = {
-  building: 'https://www.contentful.com/developers/docs/extensibility/apps/building-apps/'
-  // tutorial: ''
-};
+const BUILDING_APPS_URL =
+  'https://www.contentful.com/developers/docs/extensibility/apps/building-apps/';
 
 export default class NewApp extends React.Component {
   constructor(props) {
@@ -61,9 +59,8 @@ export default class NewApp extends React.Component {
             the workflow of editors.
           </Paragraph>
           <Paragraph className={styles.spacerXl}>
-            Learn more about <TextLink href={links.building}>building Contentful apps</TextLink>
-            {/* or follow our <TextLink href={links.tutorial}>tutorial</TextLink> */} to get
-            started.
+            Learn more about <TextLink href={BUILDING_APPS_URL}>building Contentful apps</TextLink>{' '}
+            to get started.
           </Paragraph>
 
           <div className={styles.spacerXl}>
