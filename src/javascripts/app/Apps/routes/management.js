@@ -35,17 +35,7 @@ export default {
           return {
             goToDefinition: definitionId => $state.go('^.definitions', { definitionId }),
             goToListView: () => $state.go('^.list'),
-            definition: {
-              sys: {
-                organization: {
-                  sys: {
-                    type: 'Link',
-                    linkType: 'Organization',
-                    id: orgId
-                  }
-                }
-              }
-            }
+            orgId
           };
         }
       ],
