@@ -65,7 +65,7 @@ export default class NewApp extends React.Component {
           </Paragraph>
           <Paragraph className={styles.spacerXl}>
             Learn more about{' '}
-            <TextLink href={BUILDING_APPS_URL} target="_blank">
+            <TextLink href={BUILDING_APPS_URL} target="_blank" rel="noopener noreferrer">
               building Contentful apps
             </TextLink>{' '}
             to get started.
