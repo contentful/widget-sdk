@@ -179,7 +179,7 @@ export default class AppDetails extends React.Component {
         <Workbench.Header
           title="App details"
           actions={
-            <Button disabled={busy} onClick={this.openInstallModal}>
+            <Button disabled={busy} onClick={this.openInstallModal} testId="app-install">
               Install to space
             </Button>
           }
