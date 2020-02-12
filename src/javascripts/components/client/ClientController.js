@@ -202,20 +202,22 @@ export default function register() {
           { ENVIRONMENT_ALIAS_CHANGED_EVENT },
           { default: initEnvAliasChangeHandler }
         ] = await Promise.all([
-          import('analytics/isAnalyticsAllowed'),
-          import('services/logger'),
-          import('services/intercom'),
-          import('data/CMA/ProductCatalog'),
-          import('redux/store'),
-          import('services/EnforcementsService'),
-          import('navigation/NavState'),
-          import('services/CreateSpace'),
-          import('analytics/Analytics'),
-          import('services/TokenStore'),
-          import('services/authorization'),
-          import('classes/EntityFieldValueSpaceContext'),
-          import('services/PubSubService'),
-          import('app/SpaceSettings/EnvironmentAliases/NotificationsService')
+          import(/* webpackMode: "eager" */ 'analytics/isAnalyticsAllowed'),
+          import(/* webpackMode: "eager" */ 'services/logger'),
+          import(/* webpackMode: "eager" */ 'services/intercom'),
+          import(/* webpackMode: "eager" */ 'data/CMA/ProductCatalog'),
+          import(/* webpackMode: "eager" */ 'redux/store'),
+          import(/* webpackMode: "eager" */ 'services/EnforcementsService'),
+          import(/* webpackMode: "eager" */ 'navigation/NavState'),
+          import(/* webpackMode: "eager" */ 'services/CreateSpace'),
+          import(/* webpackMode: "eager" */ 'analytics/Analytics'),
+          import(/* webpackMode: "eager" */ 'services/TokenStore'),
+          import(/* webpackMode: "eager" */ 'services/authorization'),
+          import(/* webpackMode: "eager" */ 'classes/EntityFieldValueSpaceContext'),
+          import(/* webpackMode: "eager" */ 'services/PubSubService'),
+          import(
+            /* webpackMode: "eager" */ 'app/SpaceSettings/EnvironmentAliases/NotificationsService'
+          )
         ]);
 
         refreshNavState = NavState.makeStateRefresher($state, spaceContext);

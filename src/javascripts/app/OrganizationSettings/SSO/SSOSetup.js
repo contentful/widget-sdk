@@ -40,12 +40,12 @@ export class SSOSetup extends React.Component {
     organization: OrganizationPropType,
     identityProvider: IdentityProviderStatePropType,
     retrieveIdp: PropTypes.func.isRequired,
-    createIdp: PropTypes.func.isRequired,
-    onReady: PropTypes.func.isRequired
+    createIdp: PropTypes.func.isRequired
   };
 
   state = {
-    isAllowed: false
+    isAllowed: false,
+    isLoading: true
   };
 
   componentDidMount() {
@@ -67,17 +67,16 @@ export class SSOSetup extends React.Component {
   }
 
   initialize = async () => {
-    const { organization, onReady } = this.props;
+    const { organization } = this.props;
 
     const featureEnabled = await getOrgFeature(organization.sys.id, 'self_configure_sso');
     const hasPerms = isOwnerOrAdmin(organization);
 
     if (!featureEnabled || !hasPerms) {
       this.setState({
-        isAllowed: false
+        isAllowed: false,
+        isLoading: false
       });
-
-      onReady();
 
       return;
     }
@@ -90,7 +89,7 @@ export class SSOSetup extends React.Component {
   };
 
   retrieve = () => {
-    const { retrieveIdp, organization, onReady } = this.props;
+    const { retrieveIdp, organization } = this.props;
 
     // Both create and get identity provider actions return `isPending`
     // to denote the pending state, and it is handled the same when
@@ -99,7 +98,11 @@ export class SSOSetup extends React.Component {
     // Since the component will never be rendered without the idP
     // state populated in Redux, there will never be a case when that
     // we could run into an ambiguous pending state.
-    retrieveIdp({ orgId: organization.sys.id }).then(onReady);
+    retrieveIdp({ orgId: organization.sys.id }).then(() => {
+      this.setState({
+        isLoading: false
+      });
+    });
   };
 
   createIdp = () => {
@@ -114,9 +117,9 @@ export class SSOSetup extends React.Component {
 
   render() {
     const { identityProvider, organization } = this.props;
-    const { isAllowed } = this.state;
+    const { isAllowed, isLoading } = this.state;
 
-    if (!organization) {
+    if (!organization || isLoading) {
       return <FetcherLoading message="Loading SSO..." />;
     }
 

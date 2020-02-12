@@ -119,7 +119,9 @@ export default function register() {
 
             $scope.component = component;
 
-            import('access_control/AccessChecker').then(i => (accessChecker = i));
+            import(/* webpackMode: "eager" */ 'access_control/AccessChecker').then(
+              i => (accessChecker = i)
+            );
 
             // force nav component rerender on every navigation change
             const unsubscribe = $rootScope.$on('$stateChangeSuccess', () => {

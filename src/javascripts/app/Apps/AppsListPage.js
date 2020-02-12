@@ -189,7 +189,7 @@ export default class AppsListPage extends React.Component {
         isMasterEnvironment: PropTypes.bool.isRequired,
         aliasId: PropTypes.string
       })
-    }),
+    }).isRequired,
     userId: PropTypes.string.isRequired,
     hasAppsFeature: PropTypes.bool.isRequired,
     deeplinkAppId: PropTypes.string,

@@ -44,28 +44,29 @@ Array [
     },
     "categories": Array [
       "Featured",
-      "Website Hosting",
+      "Deployment & Delivery",
     ],
     "description": "### About the app
 
-The Netlify App gives content editors control over static site builds and makes the process more transparent.
+The Netlify app makes creating and updating content on your site easier. The app removes the need to navigate between platforms, giving editors full control of everything from previewing to deploying changes. Content writers and editors can trigger Netlify builds with one click in the sidebar. 
+
+See build status in real-time, track progress and view recent changes all from within the web app. 
+
 
 ---
 
-### This app provides the following functionality:
+### What you can do with the Netlify app: 
 
-- triggers Netlify builds with a simple click in the sidebar
-- displays build status so editors don't preview outdated sites
-- brings Netlify functionality into the Contentful web app
-- makes it possible to configure on a per-content-type level
+- Trigger Netlify builds with one click in the sidebar
+- Display build status so editors don't preview outdated sites
+- Bring Netlify functionality into the Contentful web app
+- Configure on a per-content-type level 
 
----
+### Requirements:
 
-### To use this app, you need:
-
-- a static site based on a service such as Gatsby, Middleman or Hugo
-- your site configured to load content from Contentful and its code pushed to a remote repository, such as GitHub or Gitlab
-- a Netlify setup where the site is connected to the remote repository and enabled for continuous deployment
+- A static site based on a static site generator such as Gatsby, Middleman or Hugo
+- Your site configured to load content from Contentful and its code pushed to a remote repository, such as GitHub or Gitlab
+- A Netlify setup where the site is connected to the remote repository and enabled for continuous deployment
 
 ---
 
@@ -77,8 +78,8 @@ The Netlify App gives content editors control over static site builds and makes 
     "icon": "//images.ctfassets.net/lpjm8d10rkpy/2dYQ3x6VMNZJgDXYmMzLBx/b338ad4b50cd0ff31e7157671b801b4d/logomark.svg",
     "id": "netlify",
     "legal": Object {
-      "eula": "https://www.EULA.com",
-      "privacyPolicy": "https://www.privacy.com",
+      "eula": "",
+      "privacyPolicy": "",
     },
     "links": Array [
       Object {
@@ -90,7 +91,7 @@ The Netlify App gives content editors control over static site builds and makes 
         "url": "https://www.contentful.com/developers/docs/extensibility/apps/netlify/",
       },
     ],
-    "tagLine": "Easily build and preview Netlify sites directly from Contentful ",
+    "tagLine": "Easily build and preview sites with the Netlify app ",
     "title": "Netlify",
   },
   Object {
