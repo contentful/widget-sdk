@@ -252,23 +252,35 @@ angular
 
       await initSpaceContext();
 
-      const Config = await import('Config');
-      const { default: handleGKMessage } = await import('account/handleGatekeeperMessage');
-      const { init: initDebug } = await import('./Debug');
-      const { init: initAuthentication } = await import('Authentication');
-      const { init: initTokenStore } = await import('services/TokenStore');
-      const { init: initLD } = await import('utils/LaunchDarkly');
+      const Config = await import(/* webpackMode: "eager" */ 'Config');
+      const { default: handleGKMessage } = await import(
+        /* webpackMode: "eager" */ 'account/handleGatekeeperMessage'
+      );
+      const { init: initDebug } = await import(/* webpackMode: "eager" */ './Debug');
+      const { init: initAuthentication } = await import(
+        /* webpackMode: "eager" */ 'Authentication'
+      );
+      const { init: initTokenStore } = await import(
+        /* webpackMode: "eager" */ 'services/TokenStore'
+      );
+      const { init: initLD } = await import(/* webpackMode: "eager" */ 'utils/LaunchDarkly');
       const { init: initAutoCreateNewSpace } = await import(
+        /* webpackMode: "eager" */
         'components/shared/auto_create_new_space'
       );
-      const { default: initContextMenuHandler } = await import('ui/ContextMenuHandler');
-      const Telemetry = await import('i13n/Telemetry');
-      const { loadAll: loadAllStates } = await import('states/states');
-      const { go } = await import('states/Navigator');
+      const { default: initContextMenuHandler } = await import(
+        /* webpackMode: "eager" */ 'ui/ContextMenuHandler'
+      );
+      const Telemetry = await import(/* webpackMode: "eager" */ 'i13n/Telemetry');
+      const { loadAll: loadAllStates } = await import(/* webpackMode: "eager" */ 'states/states');
+      const { go } = await import(/* webpackMode: "eager" */ 'states/Navigator');
       const { init: initExtentionActivationTracking } = await import(
+        /* webpackMode: "eager" */
         'widgets/ExtensionActivationTracking'
       );
-      const { init: initRolesForWalkMe } = await import('app/RolesForWalkMe');
+      const { init: initRolesForWalkMe } = await import(
+        /* webpackMode: "eager" */ 'app/RolesForWalkMe'
+      );
 
       const { init: initDialogs } = $injector.get('dialogsInitController');
       const { setup: setupStateChangeHandlers } = $injector.get('navigation/stateChangeHandlers');
