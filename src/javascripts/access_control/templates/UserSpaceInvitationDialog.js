@@ -94,8 +94,9 @@ function userRoleSelector() {
         ngRepeat: 'user in users track by user.sys.id'
       },
       [
-        h('cf-user-link', {
-          user: 'user'
+        h('react-component', {
+          name: 'app/widgets/link/UserLink',
+          props: '{user}'
         }),
         h('.user-role-selector__selector-field', [
           h(

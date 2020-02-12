@@ -69,11 +69,12 @@
         entity-helpers="helpers"
         config="{asThumb: true, disableTooltip: true}"
       ></cf-asset-card>
-      <cf-user-link
+      <react-component
+        name="app/widgets/link/UserLink"
         ng-if="config.entityType === 'User'"
         ng-click="toggleSelection(entity, $event)"
-        user="entity"
-      ></cf-user-link>
+        props="{user: entity}"
+      ></react-component>
     </div>
     <div class="loading" ng-if="isLoadingMore"></div>
   </div>
@@ -105,11 +106,12 @@
         entity-helpers="helpers"
         config="{asThumb: true, disableTooltip: true}"
       ></cf-asset-card>
-      <cf-user-link
+      <react-component
+        name="app/widgets/link/UserLink"
         ng-if="config.entityType === 'User'"
         ng-click="toggleSelection(entity, $event)"
-        user="entity"
-      ></cf-user-link>
+        props="{user: entity}"
+      ></react-component>
     </div>
   </div>
   <div

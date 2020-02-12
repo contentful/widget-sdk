@@ -1,12 +1,9 @@
-import React from 'react';
-import { Tooltip } from '@contentful/forma-36-react-components';
 import { registerDirective, registerController } from 'NgRegistry';
 import _ from 'lodash';
 import { caseofEq } from 'sum-types';
 import tokens from '@contentful/forma-36-tokens';
 import assetCardTemplateDef from 'app/widgets/link/AssetCardTemplate';
 import entityLinkTemplateDef from 'app/widgets/link/EntityLinkTemplate';
-import userLinkTemplateDef from 'app/widgets/link/UserLinkTemplate';
 import { makeEntityRef } from 'states/Navigator';
 import * as EntityState from 'data/CMA/EntityState';
 
@@ -57,32 +54,6 @@ export default function register() {
   registerDirective('cfAssetCard', [() => createEntityLinkDirective(assetCardTemplateDef())]);
 
   registerDirective('cfEntityLink', [() => createEntityLinkDirective(entityLinkTemplateDef())]);
-
-  registerDirective('cfUserLink', () => ({
-    restrict: 'E',
-    scope: {
-      // user to be rendered:
-      user: '<'
-    },
-    template: userLinkTemplateDef(),
-    controller: [
-      '$scope',
-      $scope => {
-        $scope.component = () => {
-          const userIsActivated = $scope.user.activated;
-          const content = userIsActivated
-            ? 'This user hasn’t confirmed their email address yet. Therefore  we can’t guarantee the identity of the user'
-            : 'This user hasn’t accepted the invitation to your organization yet.';
-
-          return (
-            <Tooltip content={content} place="bottom">
-              {userIsActivated ? 'not confirmed' : 'hasn’t accepted invitation'}
-            </Tooltip>
-          );
-        };
-      }
-    ]
-  }));
 
   registerController('EntityLinkController', [
     '$scope',

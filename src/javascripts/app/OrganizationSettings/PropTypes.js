@@ -12,6 +12,8 @@ export const User = PropTypes.shape({
   firstName: PropTypes.string,
   lastName: PropTypes.string,
   avatarUrl: PropTypes.string.isRequired,
+  confirmed: PropTypes.bool,
+  activated: PropTypes.bool,
   email: PropTypes.string.isRequired,
   sys: PropTypes.shape({
     id: PropTypes.string.isRequired

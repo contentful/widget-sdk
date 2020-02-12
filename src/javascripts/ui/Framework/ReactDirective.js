@@ -59,6 +59,7 @@ import * as AssetFileSizeValidation from 'components/field_dialog/validations/As
 import * as AssetImageDimensionsValidations from 'components/field_dialog/validations/AssetImageDimensionsValidations';
 import * as Loader from 'ui/Loader';
 import * as RegExpValidation from 'components/field_dialog/validations/RegExpValidation';
+import * as UserLink from 'app/widgets/link/UserLink';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -305,7 +306,8 @@ function getModule(name) {
     'components/field_dialog/validations/AssetFileSizeValidation': AssetFileSizeValidation,
     'components/field_dialog/validations/AssetImageDimensionsValidations': AssetImageDimensionsValidations,
     'ui/Loader': Loader,
-    'components/field_dialog/validations/RegExpValidation': RegExpValidation
+    'components/field_dialog/validations/RegExpValidation': RegExpValidation,
+    'app/widgets/link/UserLink': UserLink
   };
 
   return get(allowedModules, name, null);
