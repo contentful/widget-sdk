@@ -18,7 +18,7 @@
         "id": "2fPbSMx3baxlwZoCyXC7F1",
         "type": "Entry",
         "createdAt": "2019-10-02T14:57:50.083Z",
-        "updatedAt": "2019-11-19T09:13:42.093Z",
+        "updatedAt": "2020-01-15T09:53:23.942Z",
         "environment": {
           "sys": {
             "id": "master",
@@ -26,7 +26,7 @@
             "linkType": "Environment"
           }
         },
-        "revision": 27,
+        "revision": 29,
         "contentType": {
           "sys": {
             "type": "Link",
@@ -51,6 +51,13 @@
               "type": "Link",
               "linkType": "Entry",
               "id": "2t7RmuPtaiBrZBMF03OG6F"
+            }
+          },
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "6o5EowZUpn0OZz8uov6lAW"
             }
           },
           {
@@ -141,7 +148,7 @@
           "id": "1IOh4r7oQ9IsWomUj2df76",
           "type": "Entry",
           "createdAt": "2019-08-09T11:32:44.920Z",
-          "updatedAt": "2019-11-26T10:02:50.560Z",
+          "updatedAt": "2020-02-12T11:14:04.288Z",
           "environment": {
             "sys": {
               "id": "master",
@@ -149,7 +156,7 @@
               "linkType": "Environment"
             }
           },
-          "revision": 25,
+          "revision": 27,
           "contentType": {
             "sys": {
               "type": "Link",
@@ -202,15 +209,8 @@
               }
             }
           ],
-          "description": "### About the Bynder app \n\nAfter you’ve installed the Bynder app, you can easily reference assets hosted on Bynder directly inside the Contentful web app.\n\nThe app is a widget that allows editors to select media from their Bynder account. Simply click __Select or upload a file on Bynder__ and select the assets you want to be referenced from your entry.\n\n---\n\n### Features:\n- Directly link your assets on Bynder from your Contentful entries\n- Browse your collection on Bynder\n- Preview selected assets in Contentful\n- Standard JSON based asset reference format\n\n---\n\n### Requirements:\n\nTo use this app, you will need:\n\n- An account with [Bynder](https://www.bynder.com)\n- The URL of your Bynder account\n- A content type with a field of type JSON object to hold the references to Bynder\n\n\n---\n\n### Screenshots:\n![apps-bynder-dialog](//images.ctfassets.net/lpjm8d10rkpy/36TMeTeEpwqraMSTldDeVH/3ed9980af3eb5318d5631c3c6ef3e5f3/apps-bynder-dialog.png)",
-          "tagLine": "Reference assets from Bynder's digital asset management systems",
-          "permissions": {
-            "sys": {
-              "type": "Link",
-              "linkType": "Entry",
-              "id": "6ewjUhTBPGwQGoY6pguFTA"
-            }
-          }
+          "description": "### About the Bynder app \n\nThe Bynder app allows editors to select media from their Bynder account without leaving Contentful. Design and marketing teams can easily access their most recent assets. \n\nSimply click __Select__ or __Upload__ a file on Bynder and select the assets you want to be referenced in your entry.\n\n---\n\n### Features:\n\n- Link your assets on Bynder from your Contentful entries\n- Browse your asset collection on Bynder\n- Preview selected assets in Contentful\n\n---\n\n### Requirements:\n\nTo use this app, you will need:\n\n- An account with Bynder\n- The URL of your Bynder account\n- A content type with a field of type JSON object to hold the references to Bynder\n\n---\n\n### Screenshots:\n![apps-bynder-dialog](//images.ctfassets.net/lpjm8d10rkpy/36TMeTeEpwqraMSTldDeVH/3ed9980af3eb5318d5631c3c6ef3e5f3/apps-bynder-dialog.png)",
+          "tagLine": "Find and use brand, marketing and product assets from your Bynder library "
         }
       },
       {
@@ -260,7 +260,7 @@
           "id": "1NIoC98vO7Py7mDPeIg1p4",
           "type": "Entry",
           "createdAt": "2019-10-02T11:25:44.273Z",
-          "updatedAt": "2019-11-26T10:02:24.545Z",
+          "updatedAt": "2020-02-12T10:15:00.093Z",
           "environment": {
             "sys": {
               "id": "master",
@@ -268,7 +268,7 @@
               "linkType": "Environment"
             }
           },
-          "revision": 3,
+          "revision": 6,
           "contentType": {
             "sys": {
               "type": "Link",
@@ -303,6 +303,13 @@
                 "linkType": "Entry",
                 "id": "qYTN9WyCKNTJrX7kpL2eO"
               }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "5l920nCeBNute7n74QpP9y"
+              }
             }
           ],
           "links": [
@@ -314,8 +321,8 @@
               }
             }
           ],
-          "description": "### About the Image Focal Point app \n\nThe Image Focal Point app allows you to set a focal point for an image, which you can use to achieve better cropping amongst different devices and screen sizes.\n\nDuring the installation the app sets up a content type you can use for your images with focal point data and provides you with a widget to set the focal point.\n\n---\n\n### Screenshots:\n![apps-image-focal-point-dialog](//images.ctfassets.net/lpjm8d10rkpy/2TuSk1vWvUU0SJ8O5Qsz9a/51ce3e4c6b1d8fab44171ebd22efbdfa/Optimized-apps-image-focal-point-cover.png)",
-          "tagLine": "Set a focal point on your images to achieve better cropping amongst different screen sizes",
+          "description": "### About the Image Focal Point app \n\nThe Image Focal Point app allows you to set a focal point for an image, helping content editors center an image and crop it effectively for different devices and screen sizes. \n\nDuring the installation, the app sets up a content type you can use for your images with focal point data and provides you with a widget to set the focal point.\n\n### Features:\n\n- Visually define the crop area on an image \n\n---\n\n### Screenshots:\n![apps-image-focal-point-dialog](//images.ctfassets.net/lpjm8d10rkpy/2TuSk1vWvUU0SJ8O5Qsz9a/51ce3e4c6b1d8fab44171ebd22efbdfa/Optimized-apps-image-focal-point-cover.png)",
+          "tagLine": "Optimally crop images for different screen sizes with the Image Focal Point app",
           "uninstallMessages": [
             {
               "sys": {
@@ -331,14 +338,7 @@
                 "id": "1BXEviTUPYGYdZ55zroLDT"
               }
             }
-          ],
-          "permissions": {
-            "sys": {
-              "type": "Link",
-              "linkType": "Entry",
-              "id": "6ewjUhTBPGwQGoY6pguFTA"
-            }
-          }
+          ]
         }
       },
       {
@@ -374,6 +374,41 @@
         "fields": {
           "title": "Dropbox website",
           "url": "https://www.dropbox.com"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "1ocmIuES8A6d9CMF0dyWcg",
+          "type": "Entry",
+          "createdAt": "2019-08-09T13:06:30.819Z",
+          "updatedAt": "2020-01-14T13:43:03.466Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "appLink"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Gatsby Cloud",
+          "url": "https://www.gatsbyjs.com"
         }
       },
       {
@@ -509,7 +544,7 @@
           "id": "2t7RmuPtaiBrZBMF03OG6F",
           "type": "Entry",
           "createdAt": "2019-08-09T11:12:43.847Z",
-          "updatedAt": "2019-11-26T10:02:22.092Z",
+          "updatedAt": "2020-02-12T11:12:35.248Z",
           "environment": {
             "sys": {
               "id": "master",
@@ -517,7 +552,7 @@
               "linkType": "Environment"
             }
           },
-          "revision": 85,
+          "revision": 89,
           "contentType": {
             "sys": {
               "type": "Link",
@@ -584,8 +619,8 @@
               }
             }
           ],
-          "description": "### About the Optimizely app\n\n⭐️This app is available to customers on an enterprise plan.⭐️\n\nThe Optimizely app is a new and simple way to run experiments inside Contentful. It connects your content in Contentful with experiments in Optimizely. Marketers can run more experiments and obtain better insights faster.\n\n---\n\n### Features:\n\n- Run A/B tests or multivariate tests  on structured content (copy, components, layouts and pages)\n- Allow marketers to be more independent from developers\n- Enable marketers to act on results and make a winning variation the new default\n- Reduce the amount of manual work needed to set up experiments\n\n---\n\n### Installation:\n\nInstalling this app will:\n\n- Create a new content type called \"Variation Container\" \n- Create \"Variation Container\" entries\n- Read your projects, experiments and variations from Optimizely\n\n---\n\n### Requirements:\n\n- A __Contentful enterprise plan__ with a space\n- An __Optimizely Full Stack__ plan with access to the REST API\n- A small proxy that combines data from Contentful and Optimizely [(view docs)](https://www.contentful.com/developers/docs/extensibility/apps/optimizely/)\n- A content type with a reference field\n\n---\n\n### Screenshots:\n\n![Optimizely editor](//images.ctfassets.net/lpjm8d10rkpy/6BKTGsRNAzlQgllHDclqYe/ad9bad07083d102d1deff54a6a62e57f/optimizely-editor.png)",
-          "tagLine": "Enable experimentation of structured content with Optimizely",
+          "description": "### About the Optimizely app\n\nOptimizely is a leading feature flagging and experimentation platform. The Optimizely app offers a simple way to run experiments with content, helping you make smarter data-backed decisions. Marketers can optimize content, obtain better insights, and iterate continuously without leaving Contentful. \n\n\n---\n\n### Features:\n\n- Run A/B tests or multivariate tests on structured content (copy, components, layouts and pages)\n- Marketers don’t have to be dependent on developers to lead experimentation \n- Reduce the amount of manual work needed to set up experiments\n\n\n---\n\n### Installation:\n\nInstalling this app will:\n\n- Create a new content type called \"Variation Container\" \n- Create \"Variation Container\" entries\n- Read your projects, experiments and variations from Optimizely\n\n---\n\n### Requirements:\n\n- An Optimizely full stack plan with access to the REST API\n\n---\n\n### Screenshots:\n\n![Optimizely editor](//images.ctfassets.net/lpjm8d10rkpy/6BKTGsRNAzlQgllHDclqYe/ad9bad07083d102d1deff54a6a62e57f/optimizely-editor.png)",
+          "tagLine": "Enable experimentation at scale with the Optimizely app",
           "uninstallMessages": [
             {
               "sys": {
@@ -594,14 +629,7 @@
                 "id": "4QCalRSs6Gfy2fDDGNs5cP"
               }
             }
-          ],
-          "permissions": {
-            "sys": {
-              "type": "Link",
-              "linkType": "Entry",
-              "id": "6ewjUhTBPGwQGoY6pguFTA"
-            }
-          }
+          ]
         }
       },
       {
@@ -791,7 +819,7 @@
           "id": "4G5XR4RY5wufPETJcBloQW",
           "type": "Entry",
           "createdAt": "2019-08-09T11:28:16.630Z",
-          "updatedAt": "2019-11-26T10:02:39.727Z",
+          "updatedAt": "2020-02-12T11:13:20.280Z",
           "environment": {
             "sys": {
               "id": "master",
@@ -799,7 +827,7 @@
               "linkType": "Environment"
             }
           },
-          "revision": 26,
+          "revision": 28,
           "contentType": {
             "sys": {
               "type": "Link",
@@ -859,15 +887,43 @@
               }
             }
           ],
-          "description": "### About the Cloudinary app \n\nAfter you’ve installed the Cloudinary app, you can easily reference assets hosted on Cloudinary directly inside the Contentful web app.\n\nThe app is a widget that allows editors to select media from their Cloudinary account. Simply click __Select or upload a file on Cloudinary__ and select the assets you want to be referenced from your entry.\n\n---\n\n### Features:\n- Directly link your assets on Cloudinary from your Contentful entries\n- Browse your collection on Cloudinary\n- Preview selected assets in Contentful\n- Standard JSON based asset reference format\n\n---\n\n### Requirements:\n\nTo use this app, you will need:\n\n- An account with [Cloudinary](https://cloudinary.com)\n- The __cloud name__ of your Cloudinary account\n- The __API key__ of your Cloudinary account\n- A content type with a field of type Object to hold the references to Cloudinary\n\nYou can find both cloud name and API key on your [Cloudinary dashboard](https://cloudinary.com/console).\n\n\n---\n\n### Screenshots:\n\n![Cloudinary dialog](//images.ctfassets.net/lpjm8d10rkpy/4QAxpe5mbLZWkTAWucplJ4/1155818e1422f30fac24a51aab302670/apps-cloudinary-dialog.png)",
-          "tagLine": "Reference assets from Cloudinary's digital asset management systems",
-          "permissions": {
+          "description": "### About the Cloudinary app \n\nLink your Cloudinary asset library with Contentful to make the publishing process quick and seamless for your content editors. \n\nThe Cloudinary widget allows editors to easily select digital media from their Cloudinary account without leaving the Contentful web app. \n\n---\n\n### Features:\n\n- Directly link your assets on Cloudinary in your Contentful entries\n- Browse your asset collection on Cloudinary\n- Preview selected assets in Contentful\n- Standard JSON based asset reference format\n\n---\n\n### Requirements:\n\nTo use this app, you will need:\n\n- An account with Cloudinary\n- Your Cloudinary account cloud name \n\n---\n\n### Screenshots:\n\n![Cloudinary dialog](//images.ctfassets.net/lpjm8d10rkpy/4QAxpe5mbLZWkTAWucplJ4/1155818e1422f30fac24a51aab302670/apps-cloudinary-dialog.png)",
+          "tagLine": "Seamlessly deliver images and videos with the Cloudinary app"
+        }
+      },
+      {
+        "sys": {
+          "space": {
             "sys": {
               "type": "Link",
-              "linkType": "Entry",
-              "id": "6ewjUhTBPGwQGoY6pguFTA"
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
             }
-          }
+          },
+          "id": "4MxAGcqafJmKwWtpZ97rzR",
+          "type": "Entry",
+          "createdAt": "2020-01-14T12:13:19.124Z",
+          "updatedAt": "2020-01-14T12:13:19.124Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "uninstallMessages"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "negative": true,
+          "info": "This will not delete your Gatsby Cloud instance"
         }
       },
       {
@@ -949,6 +1005,84 @@
               "id": "lpjm8d10rkpy"
             }
           },
+          "id": "5B7chSl2L85IHQTNBwYyK0",
+          "type": "Entry",
+          "createdAt": "2020-01-14T13:44:55.360Z",
+          "updatedAt": "2020-01-14T13:44:55.360Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "developer"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "name": "Gatsby and Contentful",
+          "slug": "gatsby-and-contentful",
+          "icon": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "4DxiiBjixHZVjc69WpJX95"
+            }
+          },
+          "websiteUrl": "https://www.contentful.com"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "5JNRacNloaMmwVqjFn1rAB",
+          "type": "Entry",
+          "createdAt": "2020-01-21T08:03:24.973Z",
+          "updatedAt": "2020-01-21T08:04:33.343Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 3,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "appLink"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Documentation for the Gatsby App",
+          "url": "https://www.contentful.com/developers/docs/extensibility/apps/gatsby/"
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
           "id": "5NQ0Gmf6lZyKdvByYsw9gm",
           "type": "Entry",
           "createdAt": "2019-10-02T11:23:25.078Z",
@@ -987,7 +1121,7 @@
           "id": "5ZSCLEfnoPdTF3agzaGGRb",
           "type": "Entry",
           "createdAt": "2019-08-09T11:39:29.930Z",
-          "updatedAt": "2019-11-26T10:01:54.021Z",
+          "updatedAt": "2020-02-12T10:18:40.359Z",
           "environment": {
             "sys": {
               "id": "master",
@@ -995,7 +1129,7 @@
               "linkType": "Environment"
             }
           },
-          "revision": 43,
+          "revision": 46,
           "contentType": {
             "sys": {
               "type": "Link",
@@ -1055,10 +1189,8 @@
               }
             }
           ],
-          "description": "### About the app\n\nThe Netlify App gives content editors control over static site builds and makes the process more transparent.\n\n---\n\n### This app provides the following functionality:\n\n- triggers Netlify builds with a simple click in the sidebar\n- displays build status so editors don't preview outdated sites\n- brings Netlify functionality into the Contentful web app\n- makes it possible to configure on a per-content-type level\n\n---\n\n### To use this app, you need:\n\n- a static site based on a service such as Gatsby, Middleman or Hugo\n- your site configured to load content from Contentful and its code pushed to a remote repository, such as GitHub or Gitlab\n- a Netlify setup where the site is connected to the remote repository and enabled for continuous deployment\n\n---\n\n### Screenshots\n\n![Netlify config](//images.ctfassets.net/lpjm8d10rkpy/4Rf8yoGPw4AQwdMboiVwhF/a0a9a8b8e73a5ace1fdf78adebc24a49/apps-netlify-site-setup.b4a24a69c0.png)\n\n![Netlify sidebar](//images.ctfassets.net/lpjm8d10rkpy/RrSqXTcdlpfkPt7sJzkEb/57172d0fd3eaa36a5ab90e7d183ed171/apps-netlify-sidebar.0ffd73e12b.png) ",
-          "tagLine": "Easily build and preview Netlify sites directly from Contentful ",
-          "eula": "https://www.EULA.com",
-          "privacyPolicy": "https://www.privacy.com",
+          "description": "### About the app\n\nThe Netlify app makes creating and updating content on your site easier. The app removes the need to navigate between platforms, giving editors full control of everything from previewing to deploying changes. Content writers and editors can trigger Netlify builds with one click in the sidebar. \n\nSee build status in real-time, track progress and view recent changes all from within the web app. \n\n\n---\n\n### What you can do with the Netlify app: \n\n- Trigger Netlify builds with one click in the sidebar\n- Display build status so editors don't preview outdated sites\n- Bring Netlify functionality into the Contentful web app\n- Configure on a per-content-type level \n\n### Requirements:\n\n- A static site based on a static site generator such as Gatsby, Middleman or Hugo\n- Your site configured to load content from Contentful and its code pushed to a remote repository, such as GitHub or Gitlab\n- A Netlify setup where the site is connected to the remote repository and enabled for continuous deployment\n\n---\n\n### Screenshots\n\n![Netlify config](//images.ctfassets.net/lpjm8d10rkpy/4Rf8yoGPw4AQwdMboiVwhF/a0a9a8b8e73a5ace1fdf78adebc24a49/apps-netlify-site-setup.b4a24a69c0.png)\n\n![Netlify sidebar](//images.ctfassets.net/lpjm8d10rkpy/RrSqXTcdlpfkPt7sJzkEb/57172d0fd3eaa36a5ab90e7d183ed171/apps-netlify-sidebar.0ffd73e12b.png) ",
+          "tagLine": "Easily build and preview sites with the Netlify app ",
           "uninstallMessages": [
             {
               "sys": {
@@ -1074,14 +1206,42 @@
                 "id": "6yWHAPUwwUw4B9GMQqk6wp"
               }
             }
-          ],
-          "permissions": {
+          ]
+        }
+      },
+      {
+        "sys": {
+          "space": {
             "sys": {
               "type": "Link",
-              "linkType": "Entry",
-              "id": "6ewjUhTBPGwQGoY6pguFTA"
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
             }
-          }
+          },
+          "id": "5l920nCeBNute7n74QpP9y",
+          "type": "Entry",
+          "createdAt": "2020-01-23T09:54:07.077Z",
+          "updatedAt": "2020-01-23T09:54:07.077Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "category"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "name": "Editor Productivity",
+          "slug": "editor-productivity"
         }
       },
       {
@@ -1167,43 +1327,7 @@
           "id": "6dW0gbwnMQc72Ids7LWdY5",
           "type": "Entry",
           "createdAt": "2019-08-09T11:36:19.327Z",
-          "updatedAt": "2019-08-09T11:36:19.327Z",
-          "environment": {
-            "sys": {
-              "id": "master",
-              "type": "Link",
-              "linkType": "Environment"
-            }
-          },
-          "revision": 1,
-          "contentType": {
-            "sys": {
-              "type": "Link",
-              "linkType": "ContentType",
-              "id": "category"
-            }
-          },
-          "locale": "en-US"
-        },
-        "fields": {
-          "name": "Website Hosting",
-          "slug": "website-hosting",
-          "description": "Website Hosting apps enable tighter integration with the presentation layer of your content."
-        }
-      },
-      {
-        "sys": {
-          "space": {
-            "sys": {
-              "type": "Link",
-              "linkType": "Space",
-              "id": "lpjm8d10rkpy"
-            }
-          },
-          "id": "6ewjUhTBPGwQGoY6pguFTA",
-          "type": "Entry",
-          "createdAt": "2019-09-04T09:13:32.530Z",
-          "updatedAt": "2019-09-05T12:28:13.464Z",
+          "updatedAt": "2020-01-23T09:51:13.302Z",
           "environment": {
             "sys": {
               "id": "master",
@@ -1216,13 +1340,15 @@
             "sys": {
               "type": "Link",
               "linkType": "ContentType",
-              "id": "permissionExplanation"
+              "id": "category"
             }
           },
           "locale": "en-US"
         },
         "fields": {
-          "text": "is asking for permissions to access this Contentful environment.\n\nThe app will be able to manage this environment and any content in it.\n\nYou can revoke access at any time by uninstalling the app."
+          "name": "Deployment & Delivery",
+          "slug": "deployment-delivery",
+          "description": "Deployment & Delivery apps enable tighter integration with the presentation layer of your content."
         }
       },
       {
@@ -1269,10 +1395,10 @@
               "id": "lpjm8d10rkpy"
             }
           },
-          "id": "6odf1TUrIXzZ7e5HaKTwJv",
+          "id": "6o5EowZUpn0OZz8uov6lAW",
           "type": "Entry",
-          "createdAt": "2019-11-13T21:01:06.312Z",
-          "updatedAt": "2019-11-26T10:00:38.922Z",
+          "createdAt": "2019-08-09T13:17:46.622Z",
+          "updatedAt": "2020-02-12T10:12:56.515Z",
           "environment": {
             "sys": {
               "id": "master",
@@ -1280,7 +1406,100 @@
               "linkType": "Environment"
             }
           },
-          "revision": 4,
+          "revision": 11,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "app"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Gatsby Cloud",
+          "slug": "gatsby",
+          "appDefinitionId": "35f8xJFaJpOUFAKepAWiUj",
+          "icon": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Asset",
+              "id": "1o6HKvOxxumeW64hv6ANMw"
+            }
+          },
+          "developer": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "5B7chSl2L85IHQTNBwYyK0"
+            }
+          },
+          "categories": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "6dW0gbwnMQc72Ids7LWdY5"
+              }
+            }
+          ],
+          "links": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "1ocmIuES8A6d9CMF0dyWcg"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "5JNRacNloaMmwVqjFn1rAB"
+              }
+            }
+          ],
+          "description": "### About the app\nThe Gatsby app offers a fast and easy way to preview content changes on your website directly from Contentful. Editors can feel confident about their changes before they are live. \n\n---\n\n### What you can do with the Gatsby app: \n\n- Preview a build of a Gatsby site\n- Trigger a manual build of a Gatsby site\n\n\n---\n\n### Screenshots\n![Gatsby cloud](//images.ctfassets.net/lpjm8d10rkpy/1zISSOxs4Cm0cIDPsbf1FV/7815345d53a95a0934c9bcc39829f9c5/gatsby-preview.png)\n\n",
+          "tagLine": "Instantly see content changes on your website with the Gatsby app",
+          "uninstallMessages": [
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "PpIvguvkIkLeBWU4KFS3f"
+              }
+            },
+            {
+              "sys": {
+                "type": "Link",
+                "linkType": "Entry",
+                "id": "4MxAGcqafJmKwWtpZ97rzR"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "6odf1TUrIXzZ7e5HaKTwJv",
+          "type": "Entry",
+          "createdAt": "2019-11-13T21:01:06.312Z",
+          "updatedAt": "2020-02-12T11:11:54.301Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 6,
           "contentType": {
             "sys": {
               "type": "Link",
@@ -1333,15 +1552,8 @@
               }
             }
           ],
-          "description": "### About the Dropbox app \n\nAfter you’ve installed the Dropbox app, you can easily reference assets stored in your Dropbox account directly inside the Contentful web app.\nSimply click __Select or upload a file on Dropbox__ and select the assets you want to be referenced from your entry.\n\n---\n\n### Features:\n- Directly link your assets in Dropbox from your Contentful entries\n- Browse your Dropbox account\n- Preview selected assets in Contentful\n- Standard JSON based asset reference format\n\n---\n\n### Requirements:\n\nTo use this app, you will need:\n\n- An account with [Dropbox](https://www.dropbox.com)\n- A content type with a field of type JSON object to hold the references to Dropbox assets\n\n\n---\n\n### Screenshots:\n\n![Dropbox screenshot](//images.ctfassets.net/lpjm8d10rkpy/5uQPU1n35hheQmxg7CeMfx/95355daf5e17e7384e45ca37923722e3/Screen_Shot_2019-11-13_at_15.04.34.png?w=1000)",
-          "tagLine": "Reference assets from your Dropbox account",
-          "permissions": {
-            "sys": {
-              "type": "Link",
-              "linkType": "Entry",
-              "id": "6ewjUhTBPGwQGoY6pguFTA"
-            }
-          }
+          "description": "### About the Dropbox app \n\nThe Dropbox app lets users select any media or file from a personal or shared Dropbox account and attach it to an entry in Contentful.  \n\nSimply click __Select__ or __Upload__ a file on Dropbox and select the assets you want to be referenced from your entry. \n\n---\n\n### Features:\n\n- Link your assets in Dropbox to your Contentful entries \n- Browse your Dropbox account\n- Preview selected assets in Contentful\n\n---\n\n### Requirements:\n\nTo use this app, you will need:\n\n- An account with [Dropbox](https://www.dropbox.com)\n\n---\n\n### Screenshots:\n\n![Dropbox screenshot](//images.ctfassets.net/lpjm8d10rkpy/5uQPU1n35hheQmxg7CeMfx/95355daf5e17e7384e45ca37923722e3/Screen_Shot_2019-11-13_at_15.04.34.png?w=1000)",
+          "tagLine": "Connect Contentful and Dropbox to easily share content "
         }
       },
       {
@@ -1356,7 +1568,7 @@
           "id": "6sEFitPSgteJDAg37d3EA6",
           "type": "Entry",
           "createdAt": "2019-08-09T11:07:00.821Z",
-          "updatedAt": "2019-09-03T08:50:54.181Z",
+          "updatedAt": "2020-01-23T09:48:39.443Z",
           "environment": {
             "sys": {
               "id": "master",
@@ -1364,7 +1576,7 @@
               "linkType": "Environment"
             }
           },
-          "revision": 4,
+          "revision": 5,
           "contentType": {
             "sys": {
               "type": "Link",
@@ -1375,8 +1587,8 @@
           "locale": "en-US"
         },
         "fields": {
-          "name": "Experimentation and Personalization",
-          "slug": "personalization",
+          "name": "Optimization & Personalization",
+          "slug": "optimization-personalization",
           "description": "Experimentation and personalization apps allow the editor to customise content based on the audience viewing it."
         }
       },
@@ -1532,7 +1744,7 @@
           "id": "7xslj4dVQa3HqMZWNm80RA",
           "type": "Entry",
           "createdAt": "2019-11-13T20:06:47.106Z",
-          "updatedAt": "2019-11-26T10:00:27.433Z",
+          "updatedAt": "2020-02-12T11:11:15.119Z",
           "environment": {
             "sys": {
               "id": "master",
@@ -1540,7 +1752,7 @@
               "linkType": "Environment"
             }
           },
-          "revision": 4,
+          "revision": 9,
           "contentType": {
             "sys": {
               "type": "Link",
@@ -1593,15 +1805,45 @@
               }
             }
           ],
-          "description": "### About the Frontify app:\n\nWith the Frontify app, you can simplify your workflow by accessing your brand assets from within the Contentful web app.\nSimply click Select files from Frontify to select the assets you want to reference from your entry.\n\n### Features:\n\n* Directly link your assets on Frontify from your Contentful entries\n* Browse your assets on Frontify\n* Preview selected assets in Contentful\n* Standard JSON based asset reference format\n\n### Requirements:\n\nTo use this app, you will need:\n* An existing [Frontify](https://www.frontify.com/) enterprise account\n* The URL of your Frontify account\n* A content type with a field of type JSON object to hold the references to Frontify\n\n### Screenshots:\n\n![contentful-frontify](//images.ctfassets.net/lpjm8d10rkpy/5onQHIH2JzKegzYZs2bWME/6f80663fdd4b801f5f3185798741e898/contentful-frontify.png?w=1000)",
-          "tagLine": "Reference assets from Frontify collections",
-          "permissions": {
+          "description": "### About the Frontify app:\n\nFrontify is a brand management platform. With the Frontify app in Contentful, you can access your brand assets, ensuring all your content is brand compliant across all digital touchpoints. \n\nSimply click __Select__ files from Frontify to select the assets you want to reference from your entry.\n\n---\n\n### Features:\n\n- Directly link your assets on Frontify from your Contentful entries\n- Browse your assets on Frontify\n- Preview selected assets in Contentful\n\n---\n\n### Requirements:\n\nTo use this app, you will need:\n\n- An existing Frontify enterprise account\n- The URL of your Frontify account\n\n---\n\n### Screenshots:\n\n![contentful-frontify](//images.ctfassets.net/lpjm8d10rkpy/5onQHIH2JzKegzYZs2bWME/6f80663fdd4b801f5f3185798741e898/contentful-frontify.png?w=1000)",
+          "tagLine": "Connect with Frontify to access brand style guides, pattern libraries and design systems",
+          "eula": "https://www.frontify.com/en/general-terms-and-conditions/",
+          "privacyPolicy": "https://www.frontify.com/en/privacy/"
+        }
+      },
+      {
+        "sys": {
+          "space": {
             "sys": {
               "type": "Link",
-              "linkType": "Entry",
-              "id": "6ewjUhTBPGwQGoY6pguFTA"
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
             }
-          }
+          },
+          "id": "PpIvguvkIkLeBWU4KFS3f",
+          "type": "Entry",
+          "createdAt": "2020-01-14T12:12:11.037Z",
+          "updatedAt": "2020-01-14T13:46:30.353Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 2,
+          "contentType": {
+            "sys": {
+              "type": "Link",
+              "linkType": "ContentType",
+              "id": "uninstallMessages"
+            }
+          },
+          "locale": "en-US"
+        },
+        "fields": {
+          "negative": false,
+          "info": "This will remove the Gatsby Cloud widget from the sidebar"
         }
       },
       {
@@ -1729,7 +1971,7 @@
           "id": "qYTN9WyCKNTJrX7kpL2eO",
           "type": "Entry",
           "createdAt": "2019-08-09T11:22:27.963Z",
-          "updatedAt": "2019-08-09T11:22:27.963Z",
+          "updatedAt": "2020-01-23T09:52:44.647Z",
           "environment": {
             "sys": {
               "id": "master",
@@ -1737,7 +1979,7 @@
               "linkType": "Environment"
             }
           },
-          "revision": 1,
+          "revision": 2,
           "contentType": {
             "sys": {
               "type": "Link",
@@ -1750,11 +1992,51 @@
         "fields": {
           "name": "Digital Asset Management",
           "slug": "digital-asset-management",
-          "description": "DAM Apps allow efficient management of digital assets and their usage licences.\n"
+          "description": "Digital Asset Management (DAM) Apps allow efficient management of digital assets and their usage licenses.\n"
         }
       }
     ],
     "Asset": [
+      {
+        "sys": {
+          "space": {
+            "sys": {
+              "type": "Link",
+              "linkType": "Space",
+              "id": "lpjm8d10rkpy"
+            }
+          },
+          "id": "1o6HKvOxxumeW64hv6ANMw",
+          "type": "Asset",
+          "createdAt": "2019-08-09T13:04:45.914Z",
+          "updatedAt": "2019-08-09T13:04:45.914Z",
+          "environment": {
+            "sys": {
+              "id": "master",
+              "type": "Link",
+              "linkType": "Environment"
+            }
+          },
+          "revision": 1,
+          "locale": "en-US"
+        },
+        "fields": {
+          "title": "Gatsby Logo",
+          "description": "Gatsby Monogram",
+          "file": {
+            "url": "//images.ctfassets.net/lpjm8d10rkpy/1o6HKvOxxumeW64hv6ANMw/b1c5308bcd4e48cfaafc185c0b12aa36/Gatsby_Monogram.svg",
+            "details": {
+              "size": 810,
+              "image": {
+                "width": 28,
+                "height": 28
+              }
+            },
+            "fileName": "Gatsby_Monogram.svg",
+            "contentType": "image/svg+xml"
+          }
+        }
+      },
       {
         "sys": {
           "space": {
