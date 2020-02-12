@@ -309,6 +309,7 @@ module.exports = () => {
         }),
         new OptimizeCSSAssetsPlugin({})
       ],
+      moduleIds: 'hashed',
       chunkIds: isTest || isDev ? 'named' : false,
       splitChunks: {
         cacheGroups: !isTest
