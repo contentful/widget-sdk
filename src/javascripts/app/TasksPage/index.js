@@ -76,6 +76,7 @@ export default class TasksPage extends Component {
         body: task.body,
         createdBy: spaceUsers.find(user => user.sys.id === task.sys.createdBy.sys.id),
         createdAt: task.sys.createdAt,
+        enviromentId: task.sys.environment.sys.id,
         entryId: task.sys.parentEntity.sys.id,
         entryTitle: entryTitles[task.sys.parentEntity.sys.id]
       };
@@ -143,7 +144,9 @@ export default class TasksPage extends Component {
               <RelativeDateTime value={task.createdAt} />
             </TableCell>
             <TableCell className={styles.entryColumn}>
-              <StateLink path="spaces.detail.entries.detail" params={{ entryId: task.entryId }}>
+              <StateLink
+                path="spaces.detail.environment.entries.detail"
+                params={{ entryId: task.entryId, environmentId: task.enviromentId }}>
                 {({ getHref, onClick }) => (
                   <TextLink icon="Entry" href={getHref()} onClick={onClick}>
                     {task.entryTitle}
