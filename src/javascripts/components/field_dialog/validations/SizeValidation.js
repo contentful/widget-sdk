@@ -135,7 +135,7 @@ const SizeValidation = ({
       </div>
       {errorMessages[0] && <ValidationMessage>{errorMessages[0]}</ValidationMessage>}
       <TextField
-        className={styles.errorMessage}
+        className={styles.marginTopS}
         name="Custom error message"
         id="customErrorMessage"
         labelText="Custom error message"

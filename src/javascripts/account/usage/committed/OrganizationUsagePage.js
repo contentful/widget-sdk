@@ -30,7 +30,8 @@ export default class OrganizationUsagePage extends React.Component {
       apis: PropTypes.shape({
         cma: apiUsagePropType,
         cda: apiUsagePropType,
-        cpa: apiUsagePropType
+        cpa: apiUsagePropType,
+        gql: apiUsagePropType
       })
     }).isRequired,
     period: periodPropType,

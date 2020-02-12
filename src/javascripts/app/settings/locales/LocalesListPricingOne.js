@@ -1,9 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Icon from 'ui/Components/Icon';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import _ from 'lodash';
-import { Button, Notification, Heading, Paragraph } from '@contentful/forma-36-react-components';
+import {
+  Button,
+  Notification,
+  Heading,
+  Paragraph,
+  Workbench
+} from '@contentful/forma-36-react-components';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import LocalesTable from './LocalesTable';
 import StateLink from 'app/common/StateLink';

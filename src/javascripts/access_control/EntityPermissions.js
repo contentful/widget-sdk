@@ -58,11 +58,10 @@ function canEditFieldLocale(entitySys, fieldId, localeCode) {
     return false;
   }
 
-  const ctId = entitySys.type === 'Entry' ? entitySys.contentType.sys.id : null;
   const field = { apiName: fieldId };
   const locale = { code: localeCode };
   if (field) {
-    return accessChecker.canEditFieldLocale(ctId, field, locale);
+    return accessChecker.canEditFieldLocale(entitySys, field, locale);
   } else {
     return false;
   }

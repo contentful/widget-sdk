@@ -10,9 +10,9 @@ import {
   TableBody,
   TextLink,
   Button,
-  Notification
+  Notification,
+  Workbench
 } from '@contentful/forma-36-react-components';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import {
   removeMembership,
   removeInvitation

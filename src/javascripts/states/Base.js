@@ -10,7 +10,7 @@ import { h } from 'utils/legacy-html-hyperscript';
  * - show a “permission denied” message if `$scope.context.forbidden`
  *   is true
  * - show a loader if a state change is in progress (using the
- *   `cfLoader` directive)
+ *   `ui/Loader` component)
  * - show the original template otherwise.
  */
 export default function makeBase(stateDefinition) {
@@ -25,7 +25,6 @@ export default function makeBase(stateDefinition) {
 }
 
 function wrapTemplate(stateDefinition) {
-  const loadingText = stateDefinition.loadingText || 'Please hold on…';
   let template = stateDefinition.template;
   if (typeof template === 'undefined') {
     template = [];
@@ -42,15 +41,17 @@ function wrapTemplate(stateDefinition) {
         ngShow: 'context.ready && !context.forbidden'
       },
       [
-        h('cf-loader', {
-          watchStateChange: 'true'
+        h('react-component', {
+          name: 'ui/Loader',
+          props: `{watchStateChange: true, message: '${stateDefinition.loadingText}'}`
         }),
         ...template
       ]
     ),
-    h('cf-loader', {
-      isShown: '!context.ready && !context.forbidden',
-      loaderMsg: loadingText
+    h('react-component', {
+      ngIf: '!context.ready && !context.forbidden',
+      name: 'ui/Loader',
+      props: `{isShown: true, message: '${stateDefinition.loadingText}' }`
     }),
     h(
       'div.workbench.workbench-forbidden.x--center',

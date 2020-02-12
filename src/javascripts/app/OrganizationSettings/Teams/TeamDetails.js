@@ -11,9 +11,9 @@ import {
   TabPanel,
   Heading,
   Paragraph,
-  Subheading
+  Subheading,
+  Workbench
 } from '@contentful/forma-36-react-components';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes';

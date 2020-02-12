@@ -1,9 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
 import { IdentityProviderStatePropType } from './PropTypes';
-import { Button, TextLink, Heading, Paragraph } from '@contentful/forma-36-react-components';
+import {
+  Button,
+  TextLink,
+  Heading,
+  Paragraph,
+  Workbench
+} from '@contentful/forma-36-react-components';
 import { FetcherLoading } from 'app/common/createFetcherComponent';
 import IDPSetupForm from './IDPSetupForm';
 import SSOEnabled from './SSOEnabled';

@@ -429,9 +429,10 @@ describe('Policy Access Checker', () => {
       };
     }
 
-    function test(field, locale, expectation) {
-      const ctId = arguments.length === 4 ? arguments[3] : 'ctid';
-      expect(pac.canEditFieldLocale(ctId, field, locale)).toBe(expectation);
+    function test(field, locale, expectation, id = 'id', ctId = 'ctid', type = 'Entry') {
+      expect(
+        pac.canEditFieldLocale({ id, type, contentType: { sys: { id: ctId } } }, field, locale)
+      ).toBe(expectation);
     }
 
     it('returns false by default', () => {
@@ -473,7 +474,7 @@ describe('Policy Access Checker', () => {
       test({ apiName: 'somefield' }, { code: 'en' }, true);
     });
 
-    it('returns true if policy states: field - give, locale - given', () => {
+    it('returns true if policy states: field - given, locale - given', () => {
       setRole(pathPolicy('fields.test.pl'));
       test({ apiName: 'test' }, { code: 'pl' }, true);
     });
@@ -499,17 +500,17 @@ describe('Policy Access Checker', () => {
 
     it('returns false if CT does not match', () => {
       setRole(pathPolicy('fields.test.pl'));
-      test({ apiName: 'test' }, { code: 'pl' }, false, 'x');
+      test({ apiName: 'test' }, { code: 'pl' }, false, undefined, 'x');
     });
 
     it('returns true if entity has been allowed by ID', () => {
       setRole(allowIdPolicy('entry1'));
-      test({ apiName: 'test' }, { code: 'pl' }, true);
+      test({ apiName: 'test' }, { code: 'pl' }, true, 'entry1');
     });
 
     it('returns false if entity has been denied by ID', () => {
       setRole(denyIdPolicy('entry1'));
-      test({ apiName: 'test' }, { code: 'pl' }, false);
+      test({ apiName: 'test' }, { code: 'pl' }, false, 'entry1');
     });
 
     it('returns false for asset field w/o allow policies', () => {
@@ -518,12 +519,12 @@ describe('Policy Access Checker', () => {
 
     it('returns false for asset with policy allowing editing other locale', () => {
       setRole(assetPathPolicy('fields.%.en'));
-      test({}, { code: 'pl' }, false, undefined);
+      test({}, { code: 'pl' }, false, undefined, undefined, 'Asset');
     });
 
     it('returns true for asset with allowing policy', () => {
       setRole(assetPathPolicy('fields.%.en'));
-      test({}, { code: 'en' }, true, undefined);
+      test({}, { code: 'en' }, true, undefined, undefined, 'Asset');
     });
 
     it('merges policies from two roles in a master environment', () => {

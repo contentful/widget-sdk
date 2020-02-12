@@ -20,7 +20,8 @@ const status = {
         sys: { type: 'Link', linkType: 'AppDefinition', id: APP_ID }
       }
     }
-  }
+  },
+  isMarketplaceInstallation: false
 };
 
 describe('AppOperations', () => {
@@ -61,7 +62,7 @@ describe('AppOperations', () => {
       });
 
       expect(cma.updateAppInstallation).toBeCalledTimes(1);
-      expect(cma.updateAppInstallation).toBeCalledWith('some-app', { test: true });
+      expect(cma.updateAppInstallation).toBeCalledWith('some-app', { test: true }, false);
       expect(evictWidget).toBeCalledTimes(1);
       expect(evictWidget).toBeCalledWith({
         sys: status.appInstallation.sys,

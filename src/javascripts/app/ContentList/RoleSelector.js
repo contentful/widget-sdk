@@ -1,35 +1,24 @@
-/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import { includes } from 'lodash';
-import { unshift, assign, update, set } from 'utils/Collections';
-import * as K from 'utils/kefir';
-import { caseof } from 'sum-types';
+import PropTypes from 'prop-types';
 import { css, cx } from 'emotion';
-import { makeCtor } from 'utils/TaggedValues';
 
-import React from 'react';
-import { createStore, makeReducer } from 'ui/Framework/Store';
+import { createImmerReducer } from 'redux/utils/createImmerReducer';
+import React, { useReducer, useEffect } from 'react';
+import ModalLauncher from 'app/common/ModalLauncher';
 import tokens from '@contentful/forma-36-tokens';
 import {
   Notification,
-  Heading,
+  SkeletonContainer,
+  SkeletonBodyText,
   Button,
   Paragraph,
   TextLink,
-  Note
+  Note,
+  Modal
 } from '@contentful/forma-36-react-components';
 import { fetchAll } from 'data/CMA/FetchAll';
-import { getModule } from 'NgRegistry';
 
 /**
- * @ngdoc service
- * @name app/ContentList/RoleSelector
- * @description
- * Exports the role selection dialog for the saved views visibility setting.
- */
-
-/**
- * @ngdoc method
- * @name app/ContentList/RoleSelector#open
  * @description
  * Opens a dialog that allows the user to select which roles to display
  * a view for. Receives the inital list of role IDs and returns the new
@@ -41,39 +30,33 @@ import { getModule } from 'NgRegistry';
  * @returns {Promise<undefined|string[]>}
  */
 
-export default function open(spaceEndpoint, assignedRoles) {
-  const { open: openDialog } = getModule('modalDialog');
-  return openDialog({
-    template: '<cf-component-store-bridge class="modal-background" component="component">',
-    controller: function($scope) {
-      // $scope.dialog is not defined when this is run but we want to
-      // pass it to the role selector factory.
-      const dialog = {
-        confirm: value => $scope.dialog.confirm(value),
-        cancel: () => $scope.dialog.cancel()
-      };
-      $scope.component = createRoleSelector(dialog, spaceEndpoint, assignedRoles);
-    }
-  }).promise;
+export function openRoleSelector(spaceEndpoint, assignedRoles) {
+  return ModalLauncher.open(({ onClose, isShown }) => (
+    <Modal
+      size="large"
+      title="Share this view"
+      isShown={isShown}
+      onClose={() => {
+        onClose(false);
+      }}>
+      <RoleSelectorContainer
+        spaceEndpoint={spaceEndpoint}
+        initialAssignedRoles={assignedRoles}
+        onClose={onClose}
+      />
+    </Modal>
+  ));
 }
 
-const CancelSelection = makeCtor('CancelSelection');
-const ConfirmSelection = makeCtor('ConfirmSelection');
-const ToggleRoleSelection = makeCtor('ToggleRoleSelection');
-const SelectAll = makeCtor('SelectAll');
-const UnselectAll = makeCtor('UnselectAll');
-
-// Emitted with the PromiseStatus response of the role fetch
-const RespondFetch = makeCtor('RespondFetch');
-
 const styles = {
-  modalDialog: css({
-    maxWidth: '42em'
-  }),
   selectAllWrapper: css({
     display: 'flex',
     marginTop: tokens.spacingM,
     marginBottom: tokens.spacingM
+  }),
+  buttonsWrapper: css({
+    display: 'flex',
+    marginTop: tokens.spacingL
   }),
   shareButton: css({
     marginRight: tokens.spacingM
@@ -82,22 +65,27 @@ const styles = {
     marginTop: tokens.spacingM,
     marginBottom: tokens.spacingM
   }),
-  rolesWrapper: css({
-    marginTop: tokens.spacingM,
-    marginBottom: tokens.spacingM
-  }),
-  errorNote: css({
-    padding: '80px 25px',
-    textAlign: 'center'
-  }),
   rolesContainer: css({
-    border: `1px solid ${tokens.colorIceDark}`,
-    backgroundColor: tokens.colorElementLightest,
     // We want to show half of a role if the container scrolls
     maxHeight: '157px',
     position: 'relative',
     overflowX: 'hidden',
-    overflowY: 'auto'
+    overflowY: 'auto',
+    marginTop: tokens.spacingM,
+    marginBottom: tokens.spacingM
+  }),
+  role: css({
+    display: 'flex',
+    padding: `${tokens.spacingS} ${tokens.spacingM}`,
+    userSelect: 'none',
+    cursor: 'pointer'
+  }),
+  roleDisabled: css({
+    cursor: 'not-allowed',
+    color: tokens.colorTextLight
+  }),
+  roleSelected: css({
+    backgroundColor: tokens.colorElementLightest
   }),
   viewWrapper: css({
     maxWidth: '42em'
@@ -120,112 +108,105 @@ const styles = {
   })
 };
 
-function createRoleSelector(dialog, spaceEndpoint, initialAssignedRoles) {
-  const reduce = makeReducer({
-    [CancelSelection](state) {
-      dialog.cancel();
-      return state;
+const reducer = createImmerReducer({
+  SelectAll: state => {
+    state.roles = state.roles.map(role => {
+      if (role.disabled) {
+        return role;
+      }
+      return {
+        ...role,
+        selected: true
+      };
+    });
+  },
+  UnselectAll: state => {
+    state.roles = state.roles.map(role => {
+      if (role.disabled) {
+        return role;
+      }
+      return {
+        ...role,
+        selected: false
+      };
+    });
+  },
+  ToggleRoleSelection: (state, action) => {
+    const { index } = action.payload;
+    state.roles[index].selected = !state.roles[index].selected;
+  },
+  FetchSuccess: (state, action) => {
+    const customRoles = action.payload.map(role => ({
+      id: role.sys.id,
+      name: role.name,
+      disabled: false,
+      selected: includes(state.initialAssignedRoles, role.sys.id)
+    }));
+    const roles = [
+      {
+        id: '__admin',
+        name: 'Administrator (built-in)',
+        disabled: true,
+        selected: true
+      },
+      ...customRoles
+    ];
+    state.roles = roles;
+    state.rolesFetchStatus = 'success';
+  },
+  FetchFailure: state => {
+    state.rolesFetchStatus = 'failure';
+  }
+});
+
+function RoleSelectorContainer({ spaceEndpoint, initialAssignedRoles, onClose }) {
+  const [state, dispatch] = useReducer(reducer, {
+    initialAssignedRoles: initialAssignedRoles || [],
+    roles: null,
+    rolesFetchStatus: 'pending'
+  });
+
+  useEffect(() => {
+    fetchAll(spaceEndpoint, ['roles'], 100).then(
+      data => {
+        dispatch({ type: 'FetchSuccess', payload: data });
+      },
+      () => {
+        dispatch({ type: 'FetchFailure' });
+      }
+    );
+  }, [spaceEndpoint]);
+
+  const actions = {
+    CancelSelection: () => {
+      onClose(false);
     },
-    [ConfirmSelection](state) {
+    ConfirmSelection: () => {
       // Drop the builtin admin role
       const customRoles = state.roles.slice(1);
       const selectedIDs = customRoles.filter(r => r.selected).map(r => r.id);
-      if (selectedIDs.length === customRoles.length) {
-        dialog.confirm(undefined);
-      } else {
-        dialog.confirm(selectedIDs);
-      }
+      onClose(selectedIDs);
       Notification.success('View successfully shared');
-      return state;
     },
-
-    [ToggleRoleSelection](state, index) {
-      return update(state, ['roles', index, 'selected'], x => !x);
+    ToggleRoleSelection: index => {
+      dispatch({ type: 'ToggleRoleSelection', payload: { index } });
     },
-    [SelectAll](state) {
-      return setAllSelected(state, true);
+    SelectAll: () => {
+      dispatch({ type: 'SelectAll' });
     },
-    [UnselectAll](state) {
-      return setAllSelected(state, false);
-    },
-
-    [RespondFetch]: (state, status) => {
-      return caseof(status, [
-        [
-          K.PromiseStatus.Resolved,
-          ({ value }) => {
-            const customRoles = value.map(role => ({
-              id: role.sys.id,
-              name: role.name,
-              disabled: false,
-              selected: !initialAssignedRoles || includes(initialAssignedRoles, role.sys.id)
-            }));
-            const roles = unshift(customRoles, {
-              id: '__admin',
-              name: 'Administrator (built-in)',
-              disabled: true,
-              selected: true
-            });
-            return assign(state, {
-              roles,
-              rolesFetchStatus: status
-            });
-          }
-        ],
-        [
-          K.PromiseStatus.Rejected,
-          () => {
-            return assign(state, { rolesFetchStatus: status });
-          }
-        ]
-      ]);
+    UnselectAll: () => {
+      dispatch({ type: 'UnselectAll' });
     }
-  });
-
-  const store = createStore(
-    {
-      roles: null,
-      rolesFetchStatus: K.PromiseStatus.Pending()
-    },
-    reduce
-  );
-
-  const actions = {
-    CancelSelection,
-    ConfirmSelection,
-    ToggleRoleSelection,
-    SelectAll,
-    UnselectAll
   };
 
-  fetchAll(spaceEndpoint, ['roles'], 100).then(
-    data => {
-      store.dispatch(RespondFetch, K.PromiseStatus.Resolved(data));
-    },
-    err => {
-      store.dispatch(RespondFetch, K.PromiseStatus.Rejected(err));
-    }
-  );
-
-  return { store, render, actions };
+  return <RoleSelector state={state} actions={actions} />;
 }
 
-// Updates the state so that all roles are either selected or
-// unselected, excluding the admin role.
-function setAllSelected(state, value) {
-  return update(state, ['roles'], roles => {
-    if (roles) {
-      return roles.map(role => {
-        if (role.disabled) {
-          // Ignore admin role
-          return role;
-        } else {
-          return set(role, 'selected', value);
-        }
-      });
-    }
-  });
-}
+RoleSelectorContainer.propTypes = {
+  spaceEndpoint: PropTypes.any,
+  initialAssignedRoles: PropTypes.any,
+  onClose: PropTypes.func.isRequired
+};
 
 function selectAllButton(state, actions) {
   const disabled = !state.roles;
@@ -253,104 +234,98 @@ function selectAllButton(state, actions) {
   }
 }
 
-function render(state, actions) {
-  return (
-    <div
-      data-test-id={testId()}
-      className={cx(styles.modalDialog, styles.viewWrapper, 'modal-dialog')}>
-      <header className="modal-dialog__header">
-        <Heading>Share this view</Heading>
-        <Button onClick={actions.CancelSelection} className="modal-dialog__close" />
-      </header>
-      <div className="modal-dialog__only-content">
-        <Paragraph>
-          A view displays a list of entries you searched for. By sharing this view with people with
-          other roles, you are granting them access to view it.
-        </Paragraph>
-        <div className={styles.selectAllWrapper}>
-          <strong key="select-roles">Select role(s)</strong>
-          {selectAllButton(state, actions)}
-        </div>
-        {renderRolesContainer(state, actions)}
-        <Note noteType="primary" className={styles.note}>
-          This view might display different content depending on the role, because different roles
-          might have access to different content types. Administrators have access to all shared
-          views.
-        </Note>
-        <div className={styles.selectAllWrapper}>
-          <Button
-            className={styles.shareButton}
-            key="share-this-view"
-            testId={testId('apply-selection')}
-            onClick={actions.ConfirmSelection}
-            buttonType="positive">
-            Share this view
-          </Button>
-          <Button key="cancel" buttonType="muted" onClick={actions.CancelSelection}>
-            Cancel
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function renderRolesContainer(state, actions) {
-  return (
-    <div className={styles.rolesContainer}>
-      {caseof(state.rolesFetchStatus, [
-        [K.PromiseStatus.Pending, () => [loader()]],
-        [K.PromiseStatus.Resolved, () => renderRoles(state.roles, actions.ToggleRoleSelection)],
-        [K.PromiseStatus.Rejected, () => [fetchError()]]
-      ])}
-    </div>
-  );
-}
-
-function fetchError() {
-  return (
-    <Paragraph className={styles.errorNote}>There was an error while fetching the roles.</Paragraph>
-  );
-}
-
-function loader() {
-  return (
-    <div className="loading-box--stretched">
-      <div className="loading-box__spinner" />
-    </div>
-  );
-}
-
-function renderRoles(roles, toggleSelection) {
+function RoleSelector({ state, actions }) {
   return (
     <React.Fragment>
-      <div className={styles.rolesWrapper}>
-        {roles.map(({ id, name, selected, disabled }, i) => {
-          return (
-            <div
-              key={`role-${id}`}
-              className={[
-                'view-role-selector__role',
-                selected ? 'x--selected' : '',
-                disabled ? 'x--disabled' : ''
-              ].join(' ')}
-              data-test-id={testId(`roles.${id}`)}
-              role="button"
-              aria-disabled={String(!!disabled)}
-              aria-checked={String(!!selected)}
-              onClick={() => !disabled && toggleSelection(i)}>
-              {name}
-              <div className={styles.selectWrapper} />
-              <div className={cx(styles.selection, selected && styles.selected)}>
-                {selected ? '\uf058' : '\uf055'}
-              </div>
-            </div>
-          );
-        })}
+      <Paragraph>
+        A view displays a list of entries you searched for. By sharing this view with people with
+        other roles, you are granting them access to view it.
+      </Paragraph>
+      <div className={styles.selectAllWrapper}>
+        <strong key="select-roles">Select role(s)</strong>
+        {selectAllButton(state, actions)}
+      </div>
+      {renderRolesContainer(state, actions)}
+      <Note noteType="primary" className={styles.note}>
+        This view might display different content depending on the role, because different roles
+        might have access to different content types. Administrators have access to all shared
+        views.
+      </Note>
+      <div className={styles.buttonsWrapper}>
+        <Button
+          className={styles.shareButton}
+          key="share-this-view"
+          testId={testId('apply-selection')}
+          onClick={actions.ConfirmSelection}
+          buttonType="positive">
+          Share this view
+        </Button>
+        <Button key="cancel" buttonType="muted" onClick={actions.CancelSelection}>
+          Cancel
+        </Button>
       </div>
     </React.Fragment>
   );
 }
+
+RoleSelector.propTypes = {
+  actions: PropTypes.any,
+  state: PropTypes.any
+};
+
+function renderRolesContainer(state, actions) {
+  return (
+    <React.Fragment>
+      {state.rolesFetchStatus === 'pending' && (
+        <SkeletonContainer clipId="roles-loading" ariaLabel="Loading roles...">
+          <SkeletonBodyText numberOfLines={3} />
+        </SkeletonContainer>
+      )}
+      {state.rolesFetchStatus === 'success' && (
+        <RolesList roles={state.roles} toggleSelection={actions.ToggleRoleSelection} />
+      )}
+      {state.rolesFetchStatus === 'failure' && (
+        <Note noteType="warning" className={styles.note}>
+          There was an error while fetching the roles.
+        </Note>
+      )}
+    </React.Fragment>
+  );
+}
+
+function RolesList({ roles, toggleSelection }) {
+  return (
+    <div className={styles.rolesContainer}>
+      {roles.map(({ id, name, selected, disabled }, i) => {
+        return (
+          <div
+            key={`role-${id}`}
+            className={[
+              styles.role,
+              selected ? styles.roleSelected : '',
+              disabled ? styles.roleDisabled : ''
+            ].join(' ')}
+            data-test-id={testId(`roles.${id}`)}
+            role="button"
+            aria-disabled={String(!!disabled)}
+            aria-checked={String(!!selected)}
+            onClick={() => !disabled && toggleSelection(i)}>
+            {name}
+            <div className={styles.selectWrapper} />
+            <div className={cx(styles.selection, selected && styles.selected)}>
+              {selected ? '\uf058' : '\uf055'}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+RolesList.propTypes = {
+  roles: PropTypes.array,
+  toggleSelection: PropTypes.func.isRequired
+};
 
 function testId(id) {
   if (id) {

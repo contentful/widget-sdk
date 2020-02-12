@@ -28,7 +28,6 @@ export const angularInitRun = [
 
     const modules = await Promise.all([
       import('access_control/UserSpaceInvitationController'),
-      import('account/cfNewOrganizationMembership'),
       import('analytics/analyticsConsoleDirective'),
       import('app/ContentModel/Editor/addFieldDialogController'),
       import('services/modalDialogService'),
@@ -55,7 +54,6 @@ export const angularInitRun = [
       import('components/client/dialogsInitController'),
       import('components/field_dialog/cfValidationDateSelectDirective'),
       import('components/field_dialog/cfValidationSettingsDirective'),
-      import('components/field_dialog/imageDimensionsValidationController'),
       import('components/field_dialog/validationAssetTypesController'),
       import('components/field_dialog/validationLinkTypeController'),
       import('components/forms/datetime_editor/cfDatetimeEditorDirective'),
@@ -79,12 +77,10 @@ export const angularInitRun = [
       import('components/tabs/entry_list/entryListColumnsController'),
       import('components/tabs/entry_list/entryListController'),
       import('components/tabs/entry_list/entryListDirective'),
-      import('utils/overridingRequestQueue'),
       import('components/tabs/entry_list/entryListSearchController'),
       import('services/batchPerformer'),
       import('components/tabs/listActionsController'),
       import('directives/bindHtmlCompileDirective'),
-      import('directives/cfFocusOnRenderDirective'),
       import('directives/cfFocusOtInputDirective'),
       import('directives/cfSchemaDirectives'),
       import('directives/cfValidateDirective'),
@@ -99,9 +95,8 @@ export const angularInitRun = [
       import('services/exceptionHandler'),
       import('states/cfSrefDirective'),
       import('ui/Framework/ReactDirective'),
-      import('ui/cfIconDirective'),
-      import('ui/cfUiTab'),
-      import('ui/loader')
+      import('directives/cfIconDirective'),
+      import('directives/cfUiTab')
     ]);
     modules.forEach(module => module.default());
 

@@ -4,9 +4,9 @@ import {
   Heading,
   SkeletonContainer,
   SkeletonDisplayText,
-  SkeletonBodyText
+  SkeletonBodyText,
+  Workbench
 } from '@contentful/forma-36-react-components';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import Icon from 'ui/Components/Icon';
 import * as Navigator from 'states/Navigator';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';

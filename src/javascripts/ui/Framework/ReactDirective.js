@@ -16,7 +16,6 @@ import * as componentsSharedKnowledgeBaseIconKnowledgeBaseEs6 from 'components/s
 import * as uiComponentsContactUsButtonEs6 from 'ui/Components/ContactUsButton';
 import * as appContentListSaveViewDialogComponentEs6 from 'app/ContentList/SaveViewDialogComponent';
 import * as uiComponentsIconEs6 from 'ui/Components/Icon';
-import * as componentsSharedIe11DeprecationBannerEs6 from 'components/shared/IE11DeprecationBanner';
 import * as componentsSharedDocumentTitleEs6 from 'components/shared/DocumentTitle';
 import * as componentsSharedWorkbenchTitleEs6 from 'components/shared/WorkbenchTitle';
 import * as appEntityEditorComponentsBackNavIndexEs6 from 'app/entity_editor/Components/BackNav';
@@ -47,7 +46,6 @@ import * as componentsTabsEntryListEmptyStatesIndexEs6 from 'components/tabs/ent
 import * as searchEntitySelectorCreateEntityIndexEs6 from 'search/EntitySelector/CreateEntity';
 import * as componentsSharedEnterpriseSpaceWizardEnterpriseSpaceWizardEs6 from 'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard';
 import * as navigationModernStackOnboardingRelaunchEs6 from 'navigation/modernStackOnboardingRelaunch';
-import * as componentsIe11DeprecationNoticeIndexEs6 from 'components/Ie11DeprecationNotice';
 import * as appEntityEditorBulkEditorTitleEs6 from 'app/entity_editor/bulk_editor/BulkEditorTitle';
 import * as embedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
 import * as FieldDialogSettingsComponent from 'components/field_dialog/components/FieldDialogSettingsComponent';
@@ -58,6 +56,9 @@ import * as LinkedEntitiesValidation from 'components/field_dialog/validations/L
 import * as CreateEntryButton from 'components/CreateEntryButton/CreateEntryButton';
 import * as CreateEntryLinkButton from 'components/CreateEntryButton/CreateEntryLinkButton';
 import * as AssetFileSizeValidation from 'components/field_dialog/validations/AssetFileSizeValidation';
+import * as AssetImageDimensionsValidations from 'components/field_dialog/validations/AssetImageDimensionsValidations';
+import * as Loader from 'ui/Loader';
+import * as RegExpValidation from 'components/field_dialog/validations/RegExpValidation';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -262,7 +263,6 @@ function getModule(name) {
     'ui/Components/ContactUsButton': uiComponentsContactUsButtonEs6,
     'app/ContentList/SaveViewDialogComponent': appContentListSaveViewDialogComponentEs6,
     'ui/Components/Icon': uiComponentsIconEs6,
-    'components/shared/IE11DeprecationBanner': componentsSharedIe11DeprecationBannerEs6,
     'components/shared/DocumentTitle': componentsSharedDocumentTitleEs6,
     'components/shared/WorkbenchTitle': componentsSharedWorkbenchTitleEs6,
     'app/entity_editor/Components/BackNav': appEntityEditorComponentsBackNavIndexEs6,
@@ -293,7 +293,6 @@ function getModule(name) {
     'search/EntitySelector/CreateEntity': searchEntitySelectorCreateEntityIndexEs6,
     'components/shared/enterprise-space-wizard/EnterpriseSpaceWizard': componentsSharedEnterpriseSpaceWizardEnterpriseSpaceWizardEs6,
     'navigation/modernStackOnboardingRelaunch': navigationModernStackOnboardingRelaunchEs6,
-    'components/Ie11DeprecationNotice': componentsIe11DeprecationNoticeIndexEs6,
     'app/entity_editor/bulk_editor/BulkEditorTitle': appEntityEditorBulkEditorTitleEs6,
     'components/forms/embedly_preview/EmbedlyPreview': embedlyPreview,
     'components/field_dialog/components/FieldDialogSettingsComponent': FieldDialogSettingsComponent,
@@ -303,7 +302,10 @@ function getModule(name) {
     'components/field_dialog/validations/LinkedEntitiesValidation': LinkedEntitiesValidation,
     'components/CreateEntryButton/CreateEntryButton': CreateEntryButton,
     'components/CreateEntryButton/CreateEntryLinkButton': CreateEntryLinkButton,
-    'components/field_dialog/validations/AssetFileSizeValidation': AssetFileSizeValidation
+    'components/field_dialog/validations/AssetFileSizeValidation': AssetFileSizeValidation,
+    'components/field_dialog/validations/AssetImageDimensionsValidations': AssetImageDimensionsValidations,
+    'ui/Loader': Loader,
+    'components/field_dialog/validations/RegExpValidation': RegExpValidation
   };
 
   return get(allowedModules, name, null);

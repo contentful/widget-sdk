@@ -2,8 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { mapValues, flow, keyBy, get, eq, isNumber, pick } from 'lodash/fp';
 
-import { Spinner } from '@contentful/forma-36-react-components';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import { Spinner, Workbench } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification';
 
 import OrganizationResourceUsageList from './non_committed/OrganizationResourceUsageList';
@@ -233,7 +232,9 @@ export class OrganizationUsage extends React.Component {
     try {
       const promises = [
         getOrgUsage(this.endpoint, newPeriod.sys.id),
-        ...['cma', 'cda', 'cpa'].map(api => getApiUsage(this.endpoint, newPeriod.sys.id, api))
+        ...['cma', 'cda', 'cpa', 'gql'].map(api =>
+          getApiUsage(this.endpoint, newPeriod.sys.id, api)
+        )
       ];
 
       if (newIndex === 0) {
@@ -247,11 +248,11 @@ export class OrganizationUsage extends React.Component {
         promises.push(Promise.resolve(null));
       }
 
-      const [org, cma, cda, cpa, assetBandwidthData] = await Promise.all(promises);
+      const [org, cma, cda, cpa, gql, assetBandwidthData] = await Promise.all(promises);
 
       this.setState({
         isLoading: false,
-        periodicUsage: { org, apis: { cma, cda, cpa } },
+        periodicUsage: { org, apis: { cma, cda, cpa, gql } },
         selectedPeriodIndex: newIndex,
         assetBandwidthData
       });

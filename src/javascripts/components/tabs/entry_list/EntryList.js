@@ -196,19 +196,26 @@ SortableTableCell.propTypes = {
   onClick: PropTypes.func.isRequired
 };
 
-function DeleteEntryConfirm({ itemsCount, onCancel, onConfirm }) {
+function DeleteEntryConfirm({ itemsCount, onCancel, onConfirm, onSecondary }) {
   return (
     <ModalConfirm
-      title={`Delete ${pluralize('entry', itemsCount, true)}`}
+      title={`Permanently delete ${pluralize('entry', itemsCount, true)}?`}
       isShown={true}
       intent="negative"
-      confirmLabel="Delete"
+      secondaryIntent="muted"
+      confirmLabel="Permanently delete"
+      secondaryLabel="Archive instead"
       cancelLabel="Cancel"
       confirmTestId="delete-entry-confirm"
+      secondaryTestId="delete-entry-secondary"
       cancelTestId="delete-entry-cancel"
       onCancel={onCancel}
-      onConfirm={onConfirm}>
-      <Paragraph>Do you really want to delete {pluralize('entry', itemsCount, true)}?</Paragraph>
+      onConfirm={onConfirm}
+      onSecondary={onSecondary}>
+      <Paragraph>
+        Once you delete an entry, it’s gone for good and cannot be retrieved. We suggest archiving
+        if you need to retrieve it later.
+      </Paragraph>
     </ModalConfirm>
   );
 }
@@ -216,7 +223,8 @@ function DeleteEntryConfirm({ itemsCount, onCancel, onConfirm }) {
 DeleteEntryConfirm.propTypes = {
   itemsCount: PropTypes.number.isRequired,
   onCancel: PropTypes.func.isRequired,
-  onConfirm: PropTypes.func.isRequired
+  onConfirm: PropTypes.func.isRequired,
+  onSecondary: PropTypes.func.isRequired
 };
 
 export class BulkActionsRow extends React.Component {
@@ -225,7 +233,8 @@ export class BulkActionsRow extends React.Component {
   static propTypes = {
     colSpan: PropTypes.number.isRequired,
     actions: PropTypes.object.isRequired,
-    selection: PropTypes.object.isRequired
+    selection: PropTypes.object.isRequired,
+    onActionComplete: PropTypes.func.isRequired
   };
 
   getPendingMessage = pendingAction => {
@@ -236,7 +245,7 @@ export class BulkActionsRow extends React.Component {
   setConfirmVisibility = isConfirmVisible => this.setState({ isConfirmVisible });
 
   fireAction = async actionName => {
-    const { actions } = this.props;
+    const { actions, onActionComplete } = this.props;
     let pendingMessage;
     let action;
 
@@ -271,6 +280,7 @@ export class BulkActionsRow extends React.Component {
     this.setState({ pendingMessage });
     await action();
     this.setState({ pendingMessage: undefined });
+    onActionComplete();
   };
 
   render() {
@@ -312,6 +322,10 @@ export class BulkActionsRow extends React.Component {
                     itemsCount={selection.size()}
                     onConfirm={() => {
                       this.fireAction('delete');
+                      this.setConfirmVisibility(false);
+                    }}
+                    onSecondary={() => {
+                      this.fireAction('archive');
                       this.setConfirmVisibility(false);
                     }}
                     onCancel={() => this.setConfirmVisibility(false)}
@@ -419,18 +433,23 @@ export default function EntryList({
   assetCache,
   jobs = []
 }) {
+  const [hasSelectedAll, setHasSelectedAll] = React.useState(false);
+
   const hasContentTypeSelected = !!context.view.contentTypeId;
 
   // can be undefined
   const displayFieldName = displayFieldForFilteredContentType();
 
   const isContentTypeVisible = !hasContentTypeSelected && !context.view.contentTypeHidden;
+
   const selectAll = (
     <Checkbox
       id="select-all"
       name="select-all"
       className={cn(styles.marginRightS, styles.marginBottomXXS)}
+      checked={hasSelectedAll}
       onChange={e => {
+        setHasSelectedAll(!hasSelectedAll);
         selection.toggleList(entries, e);
       }}
     />
@@ -505,7 +524,12 @@ export default function EntryList({
           </TableCell>
         </TableRow>
         {!selection.isEmpty() && (
-          <BulkActionsRow colSpan={columnLength} actions={actions} selection={selection} />
+          <BulkActionsRow
+            colSpan={columnLength}
+            actions={actions}
+            selection={selection}
+            onActionComplete={() => setHasSelectedAll(false)}
+          />
         )}
       </TableHead>
       <TableBody>

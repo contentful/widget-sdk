@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import escape from 'utils/escape';
 import {
@@ -6,10 +6,19 @@ import {
   ModalConfirm,
   Paragraph,
   Typography,
-  TextInput
+  TextInput,
+  Note
 } from '@contentful/forma-36-react-components';
+import { spacingL } from '@contentful/forma-36-tokens';
 import ModalLauncher from 'app/common/ModalLauncher';
 import * as StateNavigator from 'states/Navigator';
+import { css } from 'emotion';
+
+const styles = {
+  spacer: css({
+    marginBottom: spacingL
+  })
+};
 
 /**
  * @param runDelete
@@ -51,16 +60,19 @@ function SpaceEnvironmentsDeleteDialogContent({ inputValue, setInputValue, confi
   }, []);
 
   return (
-    <>
+    <Fragment>
       <Typography>
-        <Paragraph>
+        <Paragraph className={styles.spacer}>
           You are about to delete the environment <strong>{confirmationId}</strong>. All of the
-          environment data, including the environment itself, will be deleted. This operation cannot
-          be undone.
+          environment data, including the environment itself, will be deleted.
+        </Paragraph>
+        <Paragraph className={styles.spacer}>
+          To confirm, type the name of the environment in the field below:
         </Paragraph>
       </Typography>
       <TextInput
         inputRef={inputRef}
+        className={styles.spacer}
         value={inputValue}
         onChange={e => {
           setInputValue(e.target.value);
@@ -68,7 +80,8 @@ function SpaceEnvironmentsDeleteDialogContent({ inputValue, setInputValue, confi
         testId="confirmId"
         width="full"
       />
-    </>
+      <Note>Note that this operation cannot be undone.</Note>
+    </Fragment>
   );
 }
 

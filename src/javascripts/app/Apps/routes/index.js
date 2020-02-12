@@ -51,7 +51,11 @@ export default {
             repo: getAppsRepo(),
             hasAppsFeature,
             organizationId: spaceContext.organization.sys.id,
-            spaceId: spaceContext.space.data.sys.id,
+            spaceInformation: {
+              spaceId: spaceContext.space.data.sys.id,
+              spaceName: spaceContext.space.data.name,
+              envMeta: spaceContext.space.environmentMeta
+            },
             userId: spaceContext.user.sys.id,
             deeplinkAppId: $stateParams.appId || null,
             deeplinkReferrer: $stateParams.referrer || null

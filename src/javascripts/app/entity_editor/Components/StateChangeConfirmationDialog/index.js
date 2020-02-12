@@ -20,6 +20,7 @@ class StateChangeConfirmation extends React.Component {
   static propTypes = {
     onCancel: PropTypes.func.isRequired,
     onConfirm: PropTypes.func.isRequired,
+    onArchive: PropTypes.func.isRequired,
     action: PropTypes.oneOf([Action.Unpublish(), Action.Delete(), Action.Archive()]).isRequired,
     entityInfo: PropTypes.shape({
       id: PropTypes.string,
@@ -65,6 +66,18 @@ class StateChangeConfirmation extends React.Component {
     });
   };
 
+  handleDialogArchive = incomingLinksCount => {
+    const { dialogSessionId, entityInfo, onArchive } = this.props;
+    onArchive();
+    trackDialogConfirm({
+      entityId: entityInfo.id,
+      entityType: entityInfo.type,
+      dialogAction: Action.Archive(),
+      dialogSessionId,
+      incomingLinksCount
+    });
+  };
+
   render() {
     const { action, entityInfo, onCancel, isShown } = this.props;
 
@@ -73,7 +86,7 @@ class StateChangeConfirmation extends React.Component {
         {...entityInfo}
         origin={IncomingLinksOrigin.DIALOG}
         render={({ links, requestState }) => {
-          const { title, body, confirm } = getMessages({
+          const { title, body, confirm, secondary } = getMessages({
             action,
             entityInfo,
             links
@@ -88,9 +101,14 @@ class StateChangeConfirmation extends React.Component {
               onConfirm={() => this.handleConfirm(links.length)}
               confirmLabel={confirm}
               confirmTestId="confirm"
+              onSecondary={() => this.handleDialogArchive(links.length)}
+              secondaryLabel={secondary}
+              secondaryIntent="muted"
+              secondaryTestId="archive"
               onCancel={() => onCancel()}
               cancelTestId="cancel"
-              isConfirmLoading={requestState === RequestState.PENDING}>
+              isConfirmLoading={requestState === RequestState.PENDING}
+              isSecondaryLoading={requestState === RequestState.PENDING}>
               {requestState === RequestState.PENDING && <Loader />}
               {requestState === RequestState.SUCCESS && (
                 <IncomingLinksList

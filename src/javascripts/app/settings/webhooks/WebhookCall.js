@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import { Workbench } from '@contentful/forma-36-react-components';
 import Icon from 'ui/Components/Icon';
 import { get } from 'lodash';
 

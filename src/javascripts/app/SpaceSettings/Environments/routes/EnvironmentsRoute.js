@@ -7,7 +7,6 @@ import { get } from 'lodash';
 import * as Config from 'Config';
 import { assign } from 'utils/Collections';
 import { caseofEq } from 'sum-types';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import AliasIcon from 'svg/alias.svg';
 import { LinkOpen } from 'ui/Content';
 import {
@@ -23,7 +22,8 @@ import {
   Paragraph,
   Button,
   SkeletonContainer,
-  SkeletonBodyText
+  SkeletonBodyText,
+  Workbench
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 

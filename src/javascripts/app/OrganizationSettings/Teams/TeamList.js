@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import pluralize from 'pluralize';
 import { connect } from 'react-redux';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import {
   Button,
   Table,
@@ -10,7 +9,8 @@ import {
   TableHead,
   TableBody,
   TableCell,
-  Tooltip
+  Tooltip,
+  Workbench
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';

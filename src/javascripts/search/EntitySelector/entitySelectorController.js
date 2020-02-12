@@ -7,6 +7,7 @@ import Paginator from 'classes/Paginator';
 import * as EntityHelpers from 'app/entity_editor/entityHelpers';
 import getAccessibleCTs from 'data/ContentTypeRepo/accessibleCTs';
 import createSearchInput from 'app/ContentList/Search';
+import { createRequestQueue } from 'utils/overridingRequestQueue';
 
 export default function register() {
   /**
@@ -41,8 +42,7 @@ export default function register() {
     '$scope',
     '$timeout',
     'spaceContext',
-    'overridingRequestQueue',
-    function EntitySelectorController($scope, $timeout, spaceContext, createQueue) {
+    function EntitySelectorController($scope, $timeout, spaceContext) {
       const MIN_SEARCH_TRIGGERING_LEN = 1;
       const MODES = { AVAILABLE: 1, SELECTED: 2 };
 
@@ -54,7 +54,7 @@ export default function register() {
 
       initializeSearchUI();
 
-      const load = createQueue(fetch);
+      const load = createRequestQueue(fetch);
 
       // Returns a promise for the content type of the given entry.
       // We cache this by the entry id

@@ -22,9 +22,6 @@ import 'angular-animate';
 import 'angular-sanitize';
 import 'angular-ui-router';
 
-// Polyfill for Element.closest used to support Slatejs in IE.
-import 'element-closest';
-
 // CodeMirror: JSON field editor component
 import 'codemirror/addon/edit/closebrackets';
 import 'codemirror/mode/javascript/javascript';

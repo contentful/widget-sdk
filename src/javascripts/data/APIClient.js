@@ -171,12 +171,27 @@ APIClient.prototype.updateAsset = function(data) {
   return this._updateResource('assets', data);
 };
 
-APIClient.prototype.updateAppInstallation = function(appDefinitionId, parameters = {}) {
-  return this._request({
-    method: 'PUT',
-    path: ['app_installations', appDefinitionId],
-    data: { parameters }
-  });
+APIClient.prototype.updateAppInstallation = function(
+  appDefinitionId,
+  parameters = {},
+  isMarketplaceInstallation = false
+) {
+  return this._request(
+    {
+      method: 'PUT',
+      path: ['app_installations', appDefinitionId],
+      data: { parameters }
+    },
+    isMarketplaceInstallation
+      ? {
+          'X-Contentful-Marketplace': [
+            'i-accept-marketplace-terms-of-service',
+            'i-accept-end-user-license-agreement',
+            'i-accept-privacy-policy'
+          ].join(',')
+        }
+      : {}
+  );
 };
 
 APIClient.prototype._setResourceFlag = function(name, data, flag, version) {

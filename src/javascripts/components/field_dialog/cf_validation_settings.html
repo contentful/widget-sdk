@@ -48,50 +48,10 @@
     </div>
   </div>
   <div ng-switch-when="regexp">
-    <div class="validation-controls__view-select">
-      <select
-        class="cfnext-select-box"
-        aria-label="Select condition"
-        ng-model="validation.currentView"
-        cf-no-form
-        ng-options="v.name as v.label for v in validation.views"
-        ng-change="validator.runLater()"
-      >
-      </select>
-    </div>
-    <input
-      class="form-control validation-controls__re-pattern"
-      type="text"
-      placeholder="foo|bar[baz]"
-      aria-label="Regular Expression pattern"
-      ng-model="validation.settings.pattern"
-      ng-change="setMatchingView()"
-      cf-null-empty-input
+    <react-component
+      name="components/field_dialog/validations/RegExpValidation"
+      props="{validation: validation, updateValidationSettingsValue: updateValidationSettingsValue, updateValidationCurrentView: updateValidationCurrentView, updateValidationMessageValue: updateValidationMessageValue, errorMessages: $form.errorMessages, validate: validate}"
     />
-    <label>
-      <span class="validation-controls__re-flags-label">Flags</span>
-      <input
-        class="form-control validation-controls__re-flags"
-        type="text"
-        aria-label="Regular Expression flags"
-        ng-model="validation.settings.flags"
-        ng-change="setMatchingView()"
-      />
-    </label>
-    <cf-error-list
-      class="form-inline-error"
-      cf-error-messages="$form.errorMessages"
-      aria-label="Errors"
-    ></cf-error-list>
-    <div class="cfnext-form__field validation-controls__error-message-field">
-      <label>Custom error message</label>
-      <input
-        class="cfnext-form__input--full-size"
-        type="text"
-        aria-label="Custom error message"
-        ng-model="validation.message"
-      />
-    </div>
   </div>
   <div ng-switch-when="prohibitRegexp">
     <input
@@ -157,109 +117,9 @@
     ></react-component>
   </div>
   <div ng-switch-when="assetImageDimensions">
-    <div
-      class="validation-controls__setting"
-      ng-repeat="(dimension, label) in {width: 'Width', height: 'Height'}"
-    >
-      <div ng-controller="ImageDimensionsValidationController as dimensions">
-        <label class="validation-controls__setting-toggle">
-          <input
-            aria-label="Enable image {{dimension}} validation"
-            type="checkbox"
-            ng-model="enabled"
-            ng-change="dimensions.update()"
-            cf-no-form
-          />{{label}}
-        </label>
-        <div class="validation-controls__view-select" ng-disabled="!enabled">
-          <select
-            class="cfnext-select-box"
-            aria-label="Select image {{dimension}} condition"
-            ng-model="condition"
-            ng-disabled="!enabled"
-          >
-            <option value="min">At least</option>
-            <option value="max">At most</option>
-            <option value="min-max">Between</option>
-            <option value="exact">Exactly</option>
-          </select>
-        </div>
-        <span ng-switch="condition">
-          <span ng-switch-when="min">
-            <span class="form-control form-control--with-unit">
-              <input
-                type="number"
-                aria-label="Minimum image {{dimension}}"
-                ng-model="bounds.min"
-                ng-disabled="!enabled"
-                ng-change="dimensions.update()"
-              />
-              <span class="form-control__unit">px</span>
-            </span>
-          </span>
-          <span ng-switch-when="max">
-            <span class="form-control form-control--with-unit">
-              <input
-                type="number"
-                aria-label="Maximum image {{dimension}}"
-                ng-model="bounds.max"
-                ng-disabled="!enabled"
-                ng-change="dimensions.update()"
-              />
-              <span class="form-control__unit">px</span>
-            </span>
-          </span>
-          <span ng-switch-when="min-max">
-            <span class="form-control form-control--with-unit">
-              <input
-                type="number"
-                aria-label="Minimum image {{dimension}}"
-                ng-model="bounds.min"
-                ng-disabled="!enabled"
-                ng-change="dimensions.update()"
-              />
-              <span class="form-control__unit">px</span>
-            </span>
-            <span class="validation-controls__input-separator">and</span>
-            <span class="form-control form-control--with-unit">
-              <input
-                type="number"
-                aria-label="Maximum image {{dimension}}"
-                ng-model="bounds.max"
-                ng-disabled="!enabled"
-                ng-change="dimensions.update()"
-              />
-              <span class="form-control__unit">px</span>
-            </span>
-          </span>
-          <span ng-switch-when="exact">
-            <span class="form-control form-control--with-unit">
-              <input
-                type="number"
-                aria-label="Exact image {{dimension}}"
-                ng-model="bounds.exact"
-                ng-disabled="!enabled"
-                ng-change="dimensions.update()"
-              />
-              <span class="form-control__unit">px</span>
-            </span>
-          </span>
-        </span>
-      </div>
-    </div>
-    <cf-error-list
-      class="form-inline-error"
-      cf-error-messages="$form.errorMessages"
-      aria-label="Errors"
-    ></cf-error-list>
-    <div class="cfnext-form__field validation-controls__error-message-field">
-      <label>Custom error message</label>
-      <input
-        class="cfnext-form__input--full-size"
-        type="text"
-        aria-label="Custom error message"
-        ng-model="validation.message"
-      />
-    </div>
+    <react-component
+      name="components/field_dialog/validations/AssetImageDimensionsValidations"
+      props="{ errorMessages: $form.errorMessages, validation: validation, updateValidationSettingsValue: updateValidationSettingsValue, updateValidationMessageValue: updateValidationMessageValue }"
+    ></react-component>
   </div>
 </div>

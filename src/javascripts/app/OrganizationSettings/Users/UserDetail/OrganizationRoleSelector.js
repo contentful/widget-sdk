@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import {
@@ -9,7 +9,6 @@ import {
   Paragraph,
   SectionHeading
 } from '@contentful/forma-36-react-components';
-import { keyBy } from 'lodash';
 
 import { orgRoles } from 'utils/MembershipUtils';
 
@@ -20,45 +19,35 @@ const styles = {
   })
 };
 
-export class OrganizationRoleSelector extends React.Component {
-  static propTypes = {
-    initialRole: PropTypes.string.isRequired,
-    onChange: PropTypes.func.isRequired,
-    isSelf: PropTypes.bool,
-    disableOwnerRole: PropTypes.bool,
-    className: PropTypes.string
+export function OrganizationRoleSelector({
+  isDisabled = false,
+  initialRole,
+  onChange,
+  disableOwnerRole,
+  className
+}) {
+  const [isOpen, setOpen] = useState(false);
+
+  const getOrgRole = () => {
+    return orgRoles.find(role => role.value === initialRole);
   };
 
-  state = {
-    isOpen: false
+  const selectRole = role => {
+    onChange(role.value);
+    setOpen(false);
   };
 
-  getOrgRole() {
-    return orgRoles.find(role => role.value === this.props.initialRole);
-  }
-
-  selectRole(role) {
-    this.props.onChange(role.value);
-    this.toggle();
-  }
-
-  toggle = () => {
-    this.setState({ isOpen: !this.state.isOpen });
+  const toggle = () => {
+    setOpen(!isOpen);
   };
 
-  renderToggle() {
-    return (
-      <Button buttonType="muted" size="small" indicateDropdown onClick={() => this.toggle()}>
-        {this.getOrgRole().name}
-      </Button>
-    );
-  }
-
-  renderOption(role, disabled) {
+  const renderOption = role => {
+    const disabled = role.value === 'owner' && disableOwnerRole;
     return (
       <DropdownListItem
         key={role.value}
-        onClick={() => this.selectRole(role)}
+        testId="org-role-selector.item"
+        onClick={() => selectRole(role)}
         isDisabled={disabled}>
         <div className={styles.optionWrapper}>
           <SectionHeading element="h4">{role.name}</SectionHeading>
@@ -66,24 +55,33 @@ export class OrganizationRoleSelector extends React.Component {
         </div>
       </DropdownListItem>
     );
-  }
+  };
 
-  render() {
-    const roles = keyBy(orgRoles, 'value');
-    const { className } = this.props;
-
-    return (
-      <Dropdown
-        onClose={this.toggle}
-        toggleElement={this.renderToggle()}
-        isOpen={this.state.isOpen}
-        className={className}>
-        <DropdownList>
-          {this.renderOption(roles.owner, this.props.disableOwnerRole)}
-          {this.renderOption(roles.admin)}
-          {this.renderOption(roles.member)}
-        </DropdownList>
-      </Dropdown>
-    );
-  }
+  return (
+    <Dropdown
+      onClose={toggle}
+      toggleElement={
+        <Button
+          buttonType="muted"
+          size="small"
+          indicateDropdown
+          onClick={toggle}
+          disabled={isDisabled}
+          testId="org-role-selector.button">
+          {getOrgRole().name}
+        </Button>
+      }
+      isOpen={isOpen}
+      className={className}>
+      <DropdownList>{orgRoles.map(role => renderOption(role))}</DropdownList>
+    </Dropdown>
+  );
 }
+
+OrganizationRoleSelector.propTypes = {
+  initialRole: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  isDisabled: PropTypes.bool,
+  disableOwnerRole: PropTypes.bool,
+  className: PropTypes.string
+};

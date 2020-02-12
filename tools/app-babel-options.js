@@ -29,7 +29,7 @@ module.exports.createBabelOptions = function createBabelOptions(options = {}) {
         [
           require.resolve('@babel/preset-env'),
           {
-            loose: true,
+            loose: false,
             modules: modules,
             useBuiltIns: false
           }

@@ -1,8 +1,35 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TextLink } from '@contentful/forma-36-react-components';
+import {
+  TextLink,
+  Paragraph,
+  List,
+  ListItem,
+  Typography
+} from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+import { css } from 'emotion';
 import { template } from '../template';
 import { Origin as IncomingLinksOrigin } from 'analytics/events/IncomingLinks';
+
+const styles = {
+  incomingLinksList: css({
+    maxHeight: '143px',
+    overflowYy: 'auto'
+  }),
+  incomingLinksItem: css({
+    marginLeft: tokens.spacingL,
+    listStyleType: 'disc'
+  }),
+  incomingLinksLink: css({
+    display: 'inline-block',
+    maxWidth: tokens.contentWidthFull,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    verticalAlign: 'top'
+  })
+};
 
 class IncomingLinksList extends React.Component {
   static propTypes = {
@@ -36,32 +63,33 @@ class IncomingLinksList extends React.Component {
 
   render() {
     const { links, message } = this.props;
-    return (
-      <div data-test-id="links">
-        <p className="incoming-links__message">
-          {template(message, { numberOfLinks: links.length })}
-        </p>
-        <ul className="incoming-links__list">
-          {links.map(({ id, url, ...link }) => {
-            const title = link.title || 'Untitled';
 
-            return (
-              <li key={url} className="incoming-links__item">
-                <TextLink
-                  className="incoming-links__link"
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title={title}
-                  testId="link"
-                  onClick={() => this.handleClick(id)}>
-                  {title}
-                </TextLink>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
+    return (
+      <Typography>
+        <div data-test-id="links">
+          <Paragraph>{template(message, { numberOfLinks: links.length })}</Paragraph>
+          <List className={styles.incomingLinksList}>
+            {links.map(({ id, url, ...link }) => {
+              const title = link.title || 'Untitled';
+
+              return (
+                <ListItem key={url} className={styles.incomingLinksItem}>
+                  <TextLink
+                    className={styles.incomingLinksLink}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={title}
+                    testId="link"
+                    onClick={() => this.handleClick(id)}>
+                    {title}
+                  </TextLink>
+                </ListItem>
+              );
+            })}
+          </List>
+        </div>
+      </Typography>
     );
   }
 }

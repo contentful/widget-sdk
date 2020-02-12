@@ -4,9 +4,15 @@ import { orderBy } from 'lodash';
 import { Subheading, Form, Paragraph, Typography } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import Icon from 'ui/Components/Icon';
-import { Button, Select, Option, Note, CheckboxField } from '@contentful/forma-36-react-components';
+import {
+  Button,
+  Select,
+  Option,
+  Note,
+  CheckboxField,
+  Workbench
+} from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink';
 import { create as createLocaleList } from './utils/LocaleList';
 

@@ -14,10 +14,10 @@ import {
   Note,
   TextLink,
   Card,
-  Paragraph
+  Paragraph,
+  Workbench
 } from '@contentful/forma-36-react-components';
 
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import Icon from 'ui/Components/Icon';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import ModalLauncher from 'app/common/ModalLauncher';
@@ -62,11 +62,16 @@ const externalLinkProps = {
   rel: 'noopener noreferrer'
 };
 
-const openDetailModal = app => {
+const openDetailModal = spaceInformation => app => {
   AppLifecycleTracking.detailsOpened(app.id);
 
   ModalLauncher.open(({ isShown, onClose }) => (
-    <AppDetailsModal isShown={isShown} onClose={onClose} app={app} />
+    <AppDetailsModal
+      isShown={isShown}
+      onClose={onClose}
+      app={app}
+      spaceInformation={spaceInformation}
+    />
   ));
 };
 
@@ -176,7 +181,15 @@ export default class AppsListPage extends React.Component {
       getApps: PropTypes.func.isRequired
     }).isRequired,
     organizationId: PropTypes.string.isRequired,
-    spaceId: PropTypes.string.isRequired,
+    spaceInformation: PropTypes.shape({
+      spaceId: PropTypes.string.isRequired,
+      spaceName: PropTypes.string.isRequired,
+      envMeta: PropTypes.shape({
+        environmentId: PropTypes.string.isRequired,
+        isMasterEnvironment: PropTypes.bool.isRequired,
+        aliasId: PropTypes.string
+      })
+    }),
     userId: PropTypes.string.isRequired,
     hasAppsFeature: PropTypes.bool.isRequired,
     deeplinkAppId: PropTypes.string,
@@ -199,7 +212,7 @@ export default class AppsListPage extends React.Component {
   }
 
   openDeeplinkedAppDetails() {
-    const { deeplinkAppId, hasAppsFeature } = this.props;
+    const { deeplinkAppId, hasAppsFeature, spaceInformation } = this.props;
 
     if (!hasAppsFeature || !deeplinkAppId) {
       return;
@@ -219,7 +232,7 @@ export default class AppsListPage extends React.Component {
     if (deeplinkedApp && !deeplinkedApp.isPrivateApp) {
       // TODO: we could potentially track the deeplink.
       // Use `this.props.deeplinkReferrer`.
-      openDetailModal(deeplinkedApp);
+      openDetailModal(spaceInformation)(deeplinkedApp);
     }
   }
 
@@ -237,8 +250,9 @@ export default class AppsListPage extends React.Component {
   }
 
   renderList() {
-    const { organizationId, spaceId, userId, hasAppsFeature } = this.props;
+    const { organizationId, spaceInformation, userId, hasAppsFeature } = this.props;
     const { installedApps, availableApps } = this.state;
+    const { spaceId } = spaceInformation;
 
     return (
       <AppsListShell
@@ -251,7 +265,11 @@ export default class AppsListPage extends React.Component {
             <Heading element="h2">Installed</Heading>
             <div data-test-id="installed-list">
               {installedApps.map(app => (
-                <AppListItem key={app.id} app={app} openDetailModal={openDetailModal} />
+                <AppListItem
+                  key={app.id}
+                  app={app}
+                  openDetailModal={openDetailModal(spaceInformation)}
+                />
               ))}
             </div>
           </>
@@ -261,7 +279,11 @@ export default class AppsListPage extends React.Component {
         {availableApps.length > 0 && (
           <div>
             {availableApps.map(app => (
-              <AppListItem key={app.id} app={app} openDetailModal={openDetailModal} />
+              <AppListItem
+                key={app.id}
+                app={app}
+                openDetailModal={openDetailModal(spaceInformation)}
+              />
             ))}
           </div>
         )}

@@ -116,7 +116,10 @@ class WebhookActivityLog extends React.Component {
           <a
             href=""
             className="webhook-calls__paginator-item"
-            onClick={() => this.setState(s => ({ page: s.page - 1 }))}>
+            onClick={event => {
+              event.preventDefault();
+              this.setState(s => ({ page: s.page - 1 }));
+            }}>
             «
           </a>
         )}
@@ -126,7 +129,10 @@ class WebhookActivityLog extends React.Component {
             key={cur}
             href=""
             className={`webhook-calls__paginator-item${page === cur ? ' x--active' : ''}`}
-            onClick={() => this.setState({ page: cur })}>
+            onClick={event => {
+              event.preventDefault();
+              this.setState({ page: cur });
+            }}>
             {cur + 1}
           </a>
         ))}
@@ -135,7 +141,10 @@ class WebhookActivityLog extends React.Component {
           <a
             href=""
             className="webhook-calls__paginator-item"
-            onClick={() => this.setState(s => ({ page: s.page + 1 }))}>
+            onClick={event => {
+              event.preventDefault();
+              this.setState(s => ({ page: s.page + 1 }));
+            }}>
             »
           </a>
         )}

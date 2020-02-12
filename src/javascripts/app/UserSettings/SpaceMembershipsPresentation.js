@@ -7,9 +7,9 @@ import {
   TableCell,
   TableBody,
   Button,
-  TextLink
+  TextLink,
+  Workbench
 } from '@contentful/forma-36-react-components';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import moment from 'moment';
 
 import { Space as SpacePropType } from 'app/OrganizationSettings/PropTypes';

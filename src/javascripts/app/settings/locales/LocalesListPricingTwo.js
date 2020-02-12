@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Icon from 'ui/Components/Icon';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
-import { Heading } from '@contentful/forma-36-react-components';
+import { Heading, Workbench } from '@contentful/forma-36-react-components';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import LocalesListSidebar from './LocalesListSidebar';
 import LocalesTable from './LocalesTable';

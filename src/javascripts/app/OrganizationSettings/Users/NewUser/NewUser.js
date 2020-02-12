@@ -1,4 +1,4 @@
-import React, { useMemo, useReducer, useEffect, useCallback } from 'react';
+import React, { useMemo, useReducer, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import {
   Heading,
@@ -14,19 +14,17 @@ import {
   ModalConfirm,
   Typography
 } from '@contentful/forma-36-react-components';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import pluralize from 'pluralize';
 import { orgRoles } from 'utils/MembershipUtils';
 import { useAddToOrg } from './NewUserHooks';
 import { isValidEmail, parseList } from 'utils/StringUtils';
-import SpaceMembershipList from './SpaceMembershipList';
 import TeamList from './TeamList';
 import NewUserSuccess from './NewUserSuccess';
 import NewUserProgress from './NewUserProgress';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import ModalLauncher from 'app/common/ModalLauncher';
-import Icon from 'ui/Components/Icon';
+import AddToSpaces from '../common/AddToSpaces';
 
 const styles = {
   subheading: css({
@@ -75,7 +73,7 @@ const reducer = (state, action) => {
   }
 };
 
-export default function NewUser({ orgId, onReady, hasSsoEnabled, hasTeamsFeature, isOwner }) {
+export default function NewUser({ orgId, hasSsoEnabled, hasTeamsFeature, isOwner }) {
   const [
     {
       submitted,
@@ -176,11 +174,6 @@ export default function NewUser({ orgId, onReady, hasSsoEnabled, hasTeamsFeature
 
   const availableOrgRoles = isOwner ? orgRoles : orgRoles.filter(role => role.value !== 'owner');
 
-  // dismiss the loading state of the Angular UI router state
-  useEffect(() => {
-    onReady();
-  }, [onReady]);
-
   const handleSpaceSelected = useCallback(spaceMemberships => {
     dispatch({ type: 'SPACE_MEMBERSHIPS_CHANGED', payload: spaceMemberships });
   }, []);
@@ -190,115 +183,110 @@ export default function NewUser({ orgId, onReady, hasSsoEnabled, hasTeamsFeature
   }, []);
 
   return (
-    <Workbench title="Invite users">
-      <Workbench.Header title="Invite users" icon={<Icon name="page-users" scale="0.75" />} />
-      <Workbench.Content type="text">
-        {error && <Paragraph>Something went wrong</Paragraph>}
-        {isLoading && <NewUserProgress progress={progress} emailList={emailList} />}
-        {data && (
-          <NewUserSuccess
-            failures={data.failures}
-            successes={data.successes}
-            onRestart={reset}
-            orgId={orgId}
+    <>
+      {error && <Paragraph>Something went wrong</Paragraph>}
+      {isLoading && <NewUserProgress progress={progress} emailList={emailList} />}
+      {data && (
+        <NewUserSuccess
+          failures={data.failures}
+          successes={data.successes}
+          onRestart={reset}
+          orgId={orgId}
+        />
+      )}
+      {!data && !error && !isLoading && (
+        <Form data-test-id="new-user-invitation-form">
+          <Heading>Invite users to your organization</Heading>
+          <TextField
+            id="emails"
+            name="emails"
+            testId="new-user.emails"
+            disabled={isLoading}
+            textarea
+            required
+            onChange={handleEmailsChange}
+            value={emailsValue}
+            labelText="User email(s)"
+            validationMessage={emailsErrorMessage}
+            helpText="Up to 100 email addresses, separated by comma or line breaks"
           />
-        )}
-        {!data && !error && !isLoading && (
-          <Form>
-            <Heading>Invite users to your organization</Heading>
-            <TextField
-              id="emails"
-              name="emails"
-              testId="new-user.emails"
-              disabled={isLoading}
-              textarea
-              required
-              onChange={handleEmailsChange}
-              value={emailsValue}
-              labelText="User email(s)"
-              validationMessage={emailsErrorMessage}
-              helpText="Up to 100 email addresses, separated by comma or line breaks"
+
+          <fieldset>
+            <Subheading element="h3" className={styles.subheading}>
+              Choose an organization role
+            </Subheading>
+            <FieldGroup>
+              {availableOrgRoles.map(role => (
+                <RadioButtonField
+                  testId="new-user.role"
+                  id={role.value}
+                  disabled={isLoading}
+                  labelText={role.name}
+                  helpText={role.description}
+                  key={role.value}
+                  onChange={handleRoleChange}
+                  checked={orgRole === role.value}
+                  value={role.value}
+                  name="orgRole"
+                />
+              ))}
+            </FieldGroup>
+
+            {orgRoleError && (
+              <ValidationMessage testId="new-user.org-role.error">{orgRoleError}</ValidationMessage>
+            )}
+          </fieldset>
+
+          <fieldset>
+            <Subheading element="h3" className={styles.subheading}>
+              Add to spaces
+            </Subheading>
+            <AddToSpaces
+              orgId={orgId}
+              onChange={handleSpaceSelected}
+              submitted={submitted}
+              inputWidth="large"
             />
-
+            {spaceMembershipsError && (
+              <ValidationMessage testId="new-user.space-memberships.error">
+                {spaceMembershipsError}
+              </ValidationMessage>
+            )}
+          </fieldset>
+          {hasTeamsFeature && (
             <fieldset>
               <Subheading element="h3" className={styles.subheading}>
-                Choose an organization role
+                Add to teams
               </Subheading>
-              <FieldGroup>
-                {availableOrgRoles.map(role => (
-                  <RadioButtonField
-                    testId="new-user.role"
-                    id={role.value}
-                    disabled={isLoading}
-                    labelText={role.name}
-                    helpText={role.description}
-                    key={role.value}
-                    onChange={handleRoleChange}
-                    checked={orgRole === role.value}
-                    value={role.value}
-                    name="orgRole"
-                  />
-                ))}
-              </FieldGroup>
-
-              {orgRoleError && (
-                <ValidationMessage testId="new-user.org-role.error">
-                  {orgRoleError}
-                </ValidationMessage>
-              )}
+              <TeamList orgId={orgId} onChange={handleTeamSelected} />
             </fieldset>
+          )}
+          {hasSsoEnabled && (
+            <CheckboxField
+              id="sendNotifications"
+              checked={!suppressInvitation}
+              onChange={handleNotificationsPreferenceChange}
+              testId="new-user.notifications-checkbox"
+              labelText="Send email notifications"
+              helpText="Leave this unchecked if you want to inform your users yourself"
+            />
+          )}
 
-            <fieldset>
-              <Subheading element="h3" className={styles.subheading}>
-                Add to spaces
-              </Subheading>
-              <SpaceMembershipList
-                orgId={orgId}
-                onChange={handleSpaceSelected}
-                submitted={submitted}
-              />
-              {spaceMembershipsError && (
-                <ValidationMessage testId="new-user.space-memberships.error">
-                  {spaceMembershipsError}
-                </ValidationMessage>
-              )}
-            </fieldset>
-            {hasTeamsFeature && (
-              <fieldset>
-                <Subheading element="h3" className={styles.subheading}>
-                  Add to teams
-                </Subheading>
-                <TeamList orgId={orgId} onChange={handleTeamSelected} />
-              </fieldset>
-            )}
-            {hasSsoEnabled && (
-              <CheckboxField
-                id="sendNotifications"
-                checked={!suppressInvitation}
-                onChange={handleNotificationsPreferenceChange}
-                testId="new-user.notifications-checkbox"
-                labelText="Send email notifications"
-                helpText="Leave this unchecked if you want to inform your users yourself"
-              />
-            )}
-
-            <Button
-              buttonType="positive"
-              testId="new-user.submit"
-              loading={isLoading}
-              onClick={handleSubmit}>
-              Send invitations
-            </Button>
-          </Form>
-        )}
-      </Workbench.Content>
-    </Workbench>
+          <Button
+            buttonType="positive"
+            testId="new-user.submit"
+            loading={isLoading}
+            onClick={handleSubmit}>
+            Send invitations
+          </Button>
+        </Form>
+      )}
+    </>
   );
 }
 
 NewUser.propTypes = {
   orgId: PropTypes.string.isRequired,
-  onReady: PropTypes.func.isRequired,
   hasSsoEnabled: PropTypes.bool,
   hasTeamsFeature: PropTypes.bool,
   isOwner: PropTypes.bool

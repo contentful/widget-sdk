@@ -5,9 +5,9 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import {
   SkeletonContainer,
   SkeletonBodyText,
-  Heading
+  Heading,
+  Workbench
 } from '@contentful/forma-36-react-components';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import Icon from 'ui/Components/Icon';
 import ContentTypeList from './ContentTypeList';
 import NoSearchResultsAdvice from 'components/tabs/NoSearchResultsAdvice';

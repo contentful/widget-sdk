@@ -4,7 +4,7 @@ import { css } from 'emotion';
 import ReloadNotification from 'app/common/ReloadNotification';
 import createResourceService from 'services/ResourceService';
 import { update, add, keyBy, flow, filter } from 'lodash/fp';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import { Workbench } from '@contentful/forma-36-react-components';
 import ResourceUsageList from './ResourceUsageList';
 import SpaceUsageSidebar from './SpaceUsageSidebar';
 import DocumentTitle from 'components/shared/DocumentTitle';

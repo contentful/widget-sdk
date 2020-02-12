@@ -2,9 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { getModule } from 'NgRegistry';
-import { SkeletonContainer, SkeletonBodyText } from '@contentful/forma-36-react-components';
+import {
+  SkeletonContainer,
+  SkeletonBodyText,
+  Workbench
+} from '@contentful/forma-36-react-components';
 import Icon from 'ui/Components/Icon';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import LocalesListPricingOne from '../LocalesListPricingOne';
 import LocalesListPricingTwo from '../LocalesListPricingTwo';
 import createFetcherComponent from 'app/common/createFetcherComponent';

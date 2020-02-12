@@ -15,6 +15,7 @@ describe('StateChangeConfirmationDialog', () => {
     isShown: true,
     onCancel: _.noop,
     onConfirm: _.noop,
+    onArchive: _.noop,
     action: Action.Unpublish(),
     entityInfo: {
       id: 'entry-id-257',

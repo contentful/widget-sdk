@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import ModalLauncher from 'app/common/ModalLauncher';
 import { ModalConfirm } from '@contentful/forma-36-react-components';
 import { assign, filter } from 'utils/Collections';
-import openRoleSelector from './RoleSelector';
+import { openRoleSelector } from './RoleSelector';
 import { openInputDialog } from 'app/InputDialogComponent';
 import * as accessChecker from 'access_control/AccessChecker';
 import { htmlEncode } from 'utils/encoder';
@@ -14,7 +14,9 @@ import { htmlEncode } from 'utils/encoder';
 export default function ViewFolder({ folder, state, actions }) {
   const { canEdit, roleAssignment, tracking } = state;
   const { UpdateFolder, DeleteFolder, UpdateView, DeleteView } = actions;
-  const views = filter(folder.views, view => isViewVisible(view, roleAssignment));
+  const [views, setViews] = React.useState(
+    filter(folder.views, view => isViewVisible(view, roleAssignment))
+  );
 
   // Do not render anything when:
   // - all views in the folder were hidden from you
@@ -58,7 +60,7 @@ export default function ViewFolder({ folder, state, actions }) {
             marginBottom: views.length === 0 ? '0px' : undefined
           }}
           className={classNames('view-folder__list', collapsed)}>
-          {views.map(view => {
+          {views.map((view, index) => {
             return (
               <li
                 key={view.id}
@@ -71,9 +73,20 @@ export default function ViewFolder({ folder, state, actions }) {
                   <div className="view-folder__actions">
                     {roleAssignment && (
                       <i
-                        onClick={doNotPropagate(() =>
-                          editViewRoles(view, roleAssignment.endpoint, tracking, UpdateView)
-                        )}
+                        onClick={doNotPropagate(async () => {
+                          const roles = await openRoleSelector(roleAssignment.endpoint, view.roles);
+                          if (roles !== false) {
+                            const updatedView = {
+                              ...view,
+                              roles
+                            };
+                            tracking.viewRolesEdited(view);
+                            const copyViews = [...views];
+                            copyViews[index] = updatedView;
+                            setViews(copyViews);
+                            UpdateView(updatedView);
+                          }
+                        })}
                         className="fa fa-eye"
                       />
                     )}
@@ -144,14 +157,6 @@ function deleteFolder(folder, DeleteFolder) {
     if (confirmed) {
       DeleteFolder(folder);
     }
-  });
-}
-
-function editViewRoles(view, endpoint, tracking, UpdateView) {
-  openRoleSelector(endpoint, view.roles).then(roles => {
-    view = assign(view, { roles });
-    tracking.viewRolesEdited(view);
-    UpdateView(view);
   });
 }
 

@@ -164,6 +164,23 @@ describe('<ScheduledActionsWidget />', () => {
     expect(renderResult.getByTestId('failed-job-note')).toBeInTheDocument();
   });
 
+  it('does not render the failed note for a failed unpublish job', async () => {
+    const failedJob = createFailedJob({
+      action: 'unpublish',
+      scheduledFor: {
+        datetime: '2019-06-21T05:01:00.000Z'
+      }
+    });
+    getNotCanceledJobsForEntity.mockResolvedValueOnce([failedJob]);
+    const publishedEntry = { sys: { id: 'entryId', publishedAt: '2019-06-21T05:00:00.000Z' } };
+    const [renderResult] = build(publishedEntry);
+
+    await wait();
+    fireEvent.click(renderResult.getByTestId('change-state-menu-trigger'));
+    expect(renderResult.getByTestId('schedule-publication')).toBeInTheDocument();
+    expect(renderResult.queryByTestId('failed-job-note')).toBeNull();
+  });
+
   it('does not rerender if publishedAt date is the same', async () => {
     getNotCanceledJobsForEntity.mockResolvedValueOnce([createPendingJob()]);
     const publishedEntry = createEntry({ sys: { publishedAt: '2019-06-21T05:00:00.000Z' } });

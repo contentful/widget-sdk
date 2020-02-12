@@ -94,3 +94,5 @@ This is a list of all the guides for developing the Contentful web application.
 - How to run tests
 - How to write tests
 - Common patterns for Angular, mocks, etc.
+
+For additional context and documentation (or if you would like to suggest an improvement), checkout: [Enhancement proposals](../enhancement-proposals)

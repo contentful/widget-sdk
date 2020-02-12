@@ -7,9 +7,9 @@ import {
   TableCell,
   TableHead,
   Button,
-  Tooltip
+  Tooltip,
+  Workbench
 } from '@contentful/forma-36-react-components';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 
 import Icon from 'ui/Components/Icon';
 import {

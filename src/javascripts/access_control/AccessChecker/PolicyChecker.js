@@ -42,10 +42,11 @@ export function setMembership(membership, spaceAuthContext) {
 
 // TODO only pass field id and locale code
 // Separate method for assets
-export function canEditFieldLocale(contentTypeId, field, locale) {
+export function canEditFieldLocale(entitySys, field, locale) {
   const fieldId = field.apiName || field.id;
   const localeCode = locale.code;
 
+  const contentTypeId = entitySys.type === 'Entry' ? entitySys.contentType.sys.id : null;
   const cached = getCached(contentTypeId, fieldId, localeCode);
   if (cached !== null) {
     return cached;
@@ -59,11 +60,12 @@ export function canEditFieldLocale(contentTypeId, field, locale) {
     ? getDenied(contentTypeId).concat(getDeniedEntries())
     : policies.asset.denied;
 
-  const hasAllowing = checkPolicyCollectionForPath(allowed, fieldId, localeCode);
-  const hasDenying = checkPolicyCollectionForPath(denied, fieldId, localeCode);
+  const hasAllowing = checkPolicyCollectionForPath(allowed, entitySys, fieldId, localeCode);
+  const hasDenying = checkPolicyCollectionForPath(denied, entitySys, fieldId, localeCode);
 
   const result = isAdmin || isEnvironmentManager || (hasAllowing && !hasDenying);
   cacheResult(contentTypeId, fieldId, localeCode, result);
+
   return result;
 }
 
@@ -175,14 +177,17 @@ function updatePoliciesOnly(collection) {
   return collection.filter(p => ['update', 'all'].includes(p.action));
 }
 
-function checkPolicyCollectionForPath(collection, fieldId, localeCode) {
+function checkPolicyCollectionForPath(collection, entitySys, fieldId, localeCode) {
   return updatePoliciesOnly(collection).some(p => {
     const noPath = !isString(p.field) && !isString(p.locale);
     const fieldOnlyPathMatched = matchField(p.field) && !isString(p.locale);
     const localeOnlyPathMatched = !isString(p.field) && matchLocale(p.locale);
     const bothMatched = matchField(p.field) && matchLocale(p.locale);
+    const pathIsMatched = noPath || fieldOnlyPathMatched || localeOnlyPathMatched || bothMatched;
 
-    return noPath || fieldOnlyPathMatched || localeOnlyPathMatched || bothMatched;
+    const idMatchedIfPresent = !p.entityId || p.entityId === entitySys.id;
+
+    return idMatchedIfPresent && pathIsMatched;
   });
 
   function matchField(field) {

@@ -52,12 +52,19 @@ export const SpaceMembership = PropTypes.shape({
   }).isRequired
 });
 
+export const OrganizationMembershipSSO = PropTypes.shape({
+  isExemptFromRestrictedMode: PropTypes.bool.isRequired,
+  lastSignInAt: PropTypes.string,
+  exemptionReasons: PropTypes.arrayOf(PropTypes.string)
+});
+
 export const OrganizationMembership = PropTypes.shape({
   role: PropTypes.oneOf(orgRoles.map(role => role.value)).isRequired,
   sys: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    user: User.isRequired
-  })
+    user: PropTypes.oneOfType([User, Link]),
+    sso: OrganizationMembershipSSO
+  }).isRequired
 });
 
 export const FilterOption = PropTypes.shape({
@@ -85,7 +92,6 @@ export const Team = PropTypes.shape({
 });
 
 export const TeamMembership = PropTypes.shape({
-  admin: PropTypes.bool.isRequired,
   sys: PropTypes.shape({
     id: PropTypes.string.isRequired,
     user: PropTypes.shape({ id: PropTypes.string })

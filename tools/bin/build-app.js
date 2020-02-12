@@ -11,14 +11,6 @@ const publicAppDir = path.resolve(publicDir, 'app');
 rimrafSync(publicDir);
 
 build().then(() => {
-  // Previously, the manifest files existed in `build`, not `build/app`. We can't directly
-  // do this in Webpack as the output of the webpack-manifest-plugin is tied to the `output.path`
-  // of the Webpack config, so we mimic that behavior manually here.
-  fs.renameSync(
-    path.resolve(publicAppDir, 'manifest.json'),
-    path.resolve(publicDir, 'manifest.json')
-  );
-
   // In Webpack 4, empty chunks are emitted, meaning that `favicon-[hash].js` and
   // `styles-[hash].js` are emitted. We manually remove them here.
   //

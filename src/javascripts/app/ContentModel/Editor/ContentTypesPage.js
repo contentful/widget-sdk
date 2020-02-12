@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { get } from 'lodash';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
+import { Workbench } from '@contentful/forma-36-react-components';
 import ContentTypePageActions from './ContentTypePageActions';
 import {
   FieldsSection,

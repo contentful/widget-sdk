@@ -8,11 +8,11 @@ import {
   SkeletonBodyText,
   SkeletonDisplayText,
   Heading,
-  Button
+  Button,
+  Workbench
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import Icon from 'ui/Components/Icon';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils';
 import getExtensionParameterIds from './getExtensionParameterIds';
 import StateLink from 'app/common/StateLink';

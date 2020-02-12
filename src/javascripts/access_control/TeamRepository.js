@@ -39,15 +39,8 @@ export async function getTeamsSpaceMembershipsOfSpace(spaceEndpoint) {
   return ResolveLinks({ paths: includePaths, items, includes });
 }
 
-export async function getAllTeamsMemberships(orgEndpoint) {
-  const { items } = await fetchAllWithIncludes(
-    orgEndpoint,
-    ['team_memberships'],
-    BATCH_LIMIT,
-    {},
-    alphaHeader
-  );
-  return items;
+export async function getAllTeamMemberships(orgEndpoint, params = {}) {
+  return fetchAllWithIncludes(orgEndpoint, ['team_memberships'], BATCH_LIMIT, params, alphaHeader);
 }
 
 export async function updateTeamSpaceMembership(spaceEndpoint, membership, admin, roles) {

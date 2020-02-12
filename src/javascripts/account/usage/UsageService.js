@@ -42,7 +42,7 @@ export const getOrgUsage = (endpoint, periodId) =>
  * usage for a given API for a given period.
  * @param  {OrganizationEndpoint} endpoint
  * @param  {number} periodId Integer period id
- * @param  {string} api      The API ('cda', 'cma', 'cpa')
+ * @param  {string} api      The API ('cda', 'cma', 'cpa', 'gql')
  * @return {Promise}
  */
 export const getApiUsage = (endpoint, periodId, api) =>

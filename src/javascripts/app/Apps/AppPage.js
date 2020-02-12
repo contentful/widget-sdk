@@ -10,9 +10,9 @@ import {
   Paragraph,
   Heading,
   SkeletonContainer,
-  SkeletonBodyText
+  SkeletonBodyText,
+  Workbench
 } from '@contentful/forma-36-react-components';
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import { get } from 'lodash';
 
 import StateRedirect from 'app/common/StateRedirect';
@@ -157,10 +157,15 @@ export default class AppRoute extends Component {
       return {
         appDefinition,
         // Can throw 404 if the app is not installed yet:
-        appInstallation: await this.props.cma.getAppInstallation(appDefinition.sys.id)
+        appInstallation: await this.props.cma.getAppInstallation(appDefinition.sys.id),
+        isMarketplaceInstallation: false
       };
     } catch (err) {
-      return { appDefinition };
+      return {
+        appDefinition,
+        // There is no installation and the app is not private:
+        isMarketplaceInstallation: !this.props.app.isPrivateApp
+      };
     }
   };
 

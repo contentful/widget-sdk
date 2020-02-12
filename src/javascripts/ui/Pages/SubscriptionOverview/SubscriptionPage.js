@@ -3,9 +3,8 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { css } from 'emotion';
 
-import { Notification } from '@contentful/forma-36-react-components';
+import { Notification, Workbench } from '@contentful/forma-36-react-components';
 
-import { Workbench } from '@contentful/forma-36-react-components/dist/alpha';
 import { showDialog as showCreateSpaceModal } from 'services/CreateSpace';
 import { showDialog as showChangeSpaceModal } from 'services/ChangeSpaceService';
 import { openDeleteSpaceDialog } from 'services/DeleteSpace';

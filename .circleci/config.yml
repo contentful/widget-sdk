@@ -32,9 +32,13 @@ orbs:
                 echo 'export AWS_SECRET_ACCESS_KEY=<<parameters.secret_access_key>>' >> $BASH_ENV
                 echo 'export AWS_REGION=<<parameters.region>>' >> $BASH_ENV
           - aws-s3/copy:
-              from: <<parameters.path>>
-              to: s3://<<parameters.bucket>>
-              arguments: '--acl public-read --recursive'
+              from: <<parameters.path>>/app
+              to: s3://<<parameters.bucket>>/app
+              arguments: --acl public-read --recursive --cache-control "immutable,public,max-age=86400"
+          - aws-s3/copy:
+              from: <<parameters.path>>/archive
+              to: s3://<<parameters.bucket>>/archive
+              arguments: --acl public-read --recursive --cache-control "no-cache"
 
   post-comment:
     commands:
@@ -545,12 +549,6 @@ workflows:
           name: run-ui-extensions-integration
           <<: *run_only_on_master_branch
       - saucelabs/run:
-          name: run-win10-ie-tests
-          browser: 'internet explorer'
-          requires:
-            - deploy-assets-to-staging
-          <<: *run_only_on_master_branch
-      - saucelabs/run:
           name: run-win10-edge-tests
           browser: 'MicrosoftEdge'
           selenium: '3.14.0'
@@ -563,13 +561,14 @@ workflows:
           requires:
             - deploy-assets-to-staging
           <<: *run_only_on_master_branch
-      - saucelabs/run:
-          name: run-osx10-safari-tests
-          platform: 'OS X 10.11'
-          browser: 'safari'
-          requires:
-            - deploy-assets-to-staging
-          <<: *run_only_on_master_branch
+      # # Temporary turned off due to problems with SauceLabs
+      # - saucelabs/run:
+      #     name: run-osx10-safari-tests
+      #     platform: 'macOS 10.13'
+      #     browser: 'safari'
+      #     requires:
+      #       - deploy-assets-to-staging
+      #     <<: *run_only_on_master_branch
 
 notify:
   webhooks:
