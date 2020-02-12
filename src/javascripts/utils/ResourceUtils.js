@@ -8,6 +8,7 @@ export const resourceHumanNameMap = {
   entry: 'Entries',
   locale: 'Locales',
   space_membership: 'Users',
+  space_member: 'Users',
   role: 'Roles',
   space: 'Spaces',
   user: 'Users',
