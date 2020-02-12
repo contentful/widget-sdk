@@ -9,6 +9,54 @@ exports[`AppDetails should pop the app delete definition modal 1`] = `
 />
 `;
 
+exports[`AppDetails should pop the app installation modal 1`] = `
+<AppInstallModal
+  definition={
+    Object {
+      "locations": Array [
+        Object {
+          "location": "app-config",
+        },
+        Object {
+          "location": "entry-sidebar",
+        },
+      ],
+      "name": "Jira",
+      "src": "http://localhost:1234",
+      "sys": Object {
+        "createdAt": "2019-11-24T15:11:07.998Z",
+        "createdBy": Object {
+          "sys": Object {
+            "id": "2jvc3kU4n7OIABiFMTaGyB",
+            "linkType": "User",
+            "type": "Link",
+          },
+        },
+        "id": "2WoMzSs2fRJx79JeVvqdGR",
+        "organization": Object {
+          "sys": Object {
+            "id": "5EJGHo8tYJcjnEhYWDxivp",
+            "linkType": "Organization",
+            "type": "Link",
+          },
+        },
+        "type": "AppDefinition",
+        "updatedAt": "2019-11-24T15:11:07.998Z",
+        "updatedBy": Object {
+          "sys": Object {
+            "id": "2jvc3kU4n7OIABiFMTaGyB",
+            "linkType": "User",
+            "type": "Link",
+          },
+        },
+      },
+    }
+  }
+  isShown={true}
+  onClose={[MockFunction]}
+/>
+`;
+
 exports[`AppDetails should show the details of an app with the provided definition 1`] = `
 Object {
   "asFragment": [Function],
@@ -246,7 +294,7 @@ Object {
           >
             <button
               class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO"
-              data-test-id="cf-ui-button"
+              data-test-id="app-install"
               type="button"
             >
               <span
@@ -1433,7 +1481,7 @@ Object {
         >
           <button
             class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO"
-            data-test-id="cf-ui-button"
+            data-test-id="app-install"
             type="button"
           >
             <span
@@ -2659,7 +2707,7 @@ Object {
           >
             <button
               class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO"
-              data-test-id="cf-ui-button"
+              data-test-id="app-install"
               type="button"
             >
               <span
@@ -3906,7 +3954,7 @@ Object {
         >
           <button
             class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO"
-            data-test-id="cf-ui-button"
+            data-test-id="app-install"
             type="button"
           >
             <span

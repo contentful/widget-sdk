@@ -98,5 +98,21 @@ describe('AppDetails', () => {
     expect(launchDeleteModal).toMatchSnapshot();
   });
 
-  it.todo('should pop the app installation modal');
+  it('should pop the app installation modal', async () => {
+    const definition = mockDefinitions[1];
+    const wrapper = render(<AppDetails definition={definition} goToListView={() => {}} />);
+
+    const installButton = wrapper.getByTestId('app-install');
+
+    installButton.click();
+
+    await wait();
+
+    const launchInstallModal = ModalLauncher.open.mock.calls[0][0]({
+      isShown: true,
+      onClose: jest.fn()
+    });
+
+    expect(launchInstallModal).toMatchSnapshot();
+  });
 });
