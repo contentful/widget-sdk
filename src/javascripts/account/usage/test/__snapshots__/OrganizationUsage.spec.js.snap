@@ -9,7 +9,7 @@ exports[`OrganizationUsage should render page without errors 1`] = `
       <WorkbenchActions
         committed={true}
         hasSpaces={true}
-        isLoading={false}
+        isLoading={true}
         periods={
           Array [
             Object {
@@ -30,7 +30,6 @@ exports[`OrganizationUsage should render page without errors 1`] = `
             },
           ]
         }
-        selectedPeriodIndex={0}
         setPeriodIndex={[Function]}
       />
     }
@@ -49,33 +48,13 @@ exports[`OrganizationUsage should render page without errors 1`] = `
   >
     <WorkbenchContent
       apiRequestIncludedLimit={1000000}
-      assetBandwidthData={
-        Object {
-          "limits": Object {
-            "included": 2000,
-          },
-          "unitOfMeasure": "MB",
-          "usage": 200,
-        }
-      }
       committed={true}
       hasSpaces={true}
-      isLoading={false}
+      isLoading={true}
       isPoC={
         Object {
           "space1": false,
           "space2": false,
-        }
-      }
-      periodicUsage={
-        Object {
-          "apis": Object {
-            "cda": undefined,
-            "cma": undefined,
-            "cpa": undefined,
-            "gql": undefined,
-          },
-          "org": undefined,
         }
       }
       periods={
@@ -98,7 +77,6 @@ exports[`OrganizationUsage should render page without errors 1`] = `
           },
         ]
       }
-      selectedPeriodIndex={0}
       spaceNames={
         Object {
           "test1": "Test1",

@@ -1,17 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { mapValues, flow, keyBy, get, eq, isNumber, pick } from 'lodash/fp';
+import { getVariation } from 'LaunchDarkly';
 
 import { Spinner, Workbench } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification';
 
 import OrganizationResourceUsageList from './non_committed/OrganizationResourceUsageList';
 import OrganizationUsagePage from './committed/OrganizationUsagePage';
-import { getPeriods, getOrgUsage, getApiUsage } from './UsageService';
 import PeriodSelector from './committed/PeriodSelector';
 import NoSpacesPlaceholder from './NoSpacesPlaceholder';
 import * as Analytics from 'analytics/Analytics';
+import * as UsageService from './UsageService';
+import * as UsageServiceGA from './UsageServiceGA';
 
+import { USAGE_API_GA } from 'featureFlags';
 import * as TokenStore from 'services/TokenStore';
 import * as EndpointFactory from 'data/EndpointFactory';
 import * as OrganizationMembershipRepository from 'access_control/OrganizationMembershipRepository';
@@ -133,10 +136,12 @@ export class OrganizationUsage extends React.Component {
   }
 
   async componentDidMount() {
-    const { onForbidden } = this.props;
+    const { onForbidden, orgId } = this.props;
 
     try {
       await this.checkPermissions();
+      const usageApiGa = await getVariation(USAGE_API_GA, { organizationId: orgId });
+      this.usageService = usageApiGa ? UsageServiceGA : UsageService;
       await this.fetchOrgData();
     } catch (ex) {
       onForbidden(ex);
@@ -171,7 +176,7 @@ export class OrganizationUsage extends React.Component {
         ] = await Promise.all([
           OrganizationMembershipRepository.getAllSpaces(this.endpoint),
           PricingDataProvider.getPlansWithSpaces(this.endpoint),
-          getPeriods(this.endpoint),
+          this.usageService.getPeriods(this.endpoint),
           service.get('api_request')
         ]);
         const spaceNames = flow(
@@ -199,7 +204,6 @@ export class OrganizationUsage extends React.Component {
 
         await this.loadPeriodData(0);
       } else {
-        // console.log()
         this.setState({ resources: await service.getAll(), isLoading: false }, onReady);
       }
 
@@ -231,9 +235,18 @@ export class OrganizationUsage extends React.Component {
 
     try {
       const promises = [
-        getOrgUsage(this.endpoint, newPeriod.sys.id),
-        ...['cma', 'cda', 'cpa', 'gql'].map(api =>
-          getApiUsage(this.endpoint, newPeriod.sys.id, api)
+        this.usageService.getOrgUsage(this.endpoint, {
+          startDate: newPeriod.startDate,
+          endDate: newPeriod.endDate,
+          periodId: newPeriod.sys.id
+        }),
+        ...['cma', 'cda', 'cpa', 'gql'].map(apiType =>
+          this.usageService.getApiUsage(this.endpoint, {
+            apiType,
+            startDate: newPeriod.startDate,
+            endDate: newPeriod.endDate,
+            periodId: newPeriod.sys.id
+          })
         )
       ];
 
@@ -250,12 +263,17 @@ export class OrganizationUsage extends React.Component {
 
       const [org, cma, cda, cpa, gql, assetBandwidthData] = await Promise.all(promises);
 
-      this.setState({
-        isLoading: false,
-        periodicUsage: { org, apis: { cma, cda, cpa, gql } },
-        selectedPeriodIndex: newIndex,
-        assetBandwidthData
-      });
+      this.setState(
+        this.usageService.mapResponseToState({
+          org,
+          cma,
+          cda,
+          cpa,
+          gql,
+          assetBandwidthData,
+          newIndex
+        })
+      );
     } catch (e) {
       ReloadNotification.trigger();
     }

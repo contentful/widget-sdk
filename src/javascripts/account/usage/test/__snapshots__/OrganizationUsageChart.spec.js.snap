@@ -2,7 +2,7 @@
 
 exports[`OrganizationUsageChart should render line chart and not throw errors 1`] = `
 <LineChart
-  EmptyPlaceholder={[Function]}
+  EmptyPlaceholder={null}
   className={null}
   empty={false}
   height={300}

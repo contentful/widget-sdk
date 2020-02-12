@@ -24,7 +24,7 @@ export const getPeriods = endpoint =>
  * @param  {number} periodId Integer period id
  * @return {Promise}
  */
-export const getOrgUsage = (endpoint, periodId) =>
+export const getOrgUsage = (endpoint, { periodId }) =>
   endpoint(
     {
       method: 'GET',
@@ -42,16 +42,16 @@ export const getOrgUsage = (endpoint, periodId) =>
  * usage for a given API for a given period.
  * @param  {OrganizationEndpoint} endpoint
  * @param  {number} periodId Integer period id
- * @param  {string} api      The API ('cda', 'cma', 'cpa', 'gql')
+ * @param  {string} apiType - one of ('cda', 'cma', 'cpa', 'gql')
  * @return {Promise}
  */
-export const getApiUsage = (endpoint, periodId, api) =>
+export const getApiUsage = (endpoint, { apiType, periodId }) =>
   endpoint(
     {
       method: 'GET',
       path: ['usages', 'space'],
       query: {
-        'filters[metric]': api,
+        'filters[metric]': apiType,
         'filters[usagePeriod]': periodId,
         'orderBy[metricUsage]': 'desc',
         limit: 3
@@ -59,3 +59,23 @@ export const getApiUsage = (endpoint, periodId, api) =>
     },
     headers
   );
+
+export const mapResponseToState = ({
+  org: {
+    items: [{ usage }]
+  },
+  cma,
+  cda,
+  cpa,
+  gql,
+  assetBandwidthData,
+  newIndex
+}) => ({
+  isLoading: false,
+  periodicUsage: {
+    org: { usage },
+    apis: { cma, cda, cpa, gql }
+  },
+  selectedPeriodIndex: newIndex,
+  assetBandwidthData
+});
