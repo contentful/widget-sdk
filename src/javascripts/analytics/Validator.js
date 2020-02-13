@@ -142,7 +142,8 @@ export const validEvents = {
   teams_in_space: ['teams_added', 'users_added', 'users_to_teams_page_navigation'],
   entity_state: ['revert'],
   asset_list: ['add_asset_single', 'add_asset_multiple'],
-  telemetry: ['measurement']
+  telemetry: ['measurement'],
+  app_management: ['created', 'deleted', 'updated']
 };
 
 export const validateEvent = eventName => {

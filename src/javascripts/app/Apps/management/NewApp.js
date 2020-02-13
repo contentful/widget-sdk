@@ -12,6 +12,7 @@ import {
 import tokens from '@contentful/forma-36-tokens';
 import AppEditor from './AppEditor';
 import * as ManagementApiClient from './ManagementApiClient';
+import { track } from 'analytics/Analytics';
 
 const styles = {
   spacerM: css({
@@ -41,6 +42,9 @@ export default class NewApp extends React.Component {
     try {
       const saved = await ManagementApiClient.save(this.state.definition);
       Notification.success('App created successfully.');
+      track('app_management:created', {
+        definitionId: saved.sys.id
+      });
       this.props.goToDefinition(saved.sys.id);
     } catch (err) {
       Notification.error(
