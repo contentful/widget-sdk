@@ -10,7 +10,9 @@ import {
   Button,
   Dropdown,
   DropdownList,
-  DropdownListItem
+  DropdownListItem,
+  SkeletonDisplayText,
+  SkeletonContainer
 } from '@contentful/forma-36-react-components';
 import { scheduleStyles as styles } from './styles';
 import CancellationModal from './CancellationModal';
@@ -35,19 +37,25 @@ function ScheduledByDropdownList({ userId }) {
       {currentUser => (
         <UserFetcher userId={userId}>
           {({ isLoading, isError, data: user }) => {
-            if (isLoading) {
-              return null;
-            }
             if (isError) {
               return null;
             }
 
             return (
               <DropdownList border="top">
-                <DropdownListItem testId="scheduled-by">
-                  <span className={cn(styles.scheduleDropdownScheduledBy)}>
-                    Scheduled by <UserNameFormatter user={user} currentUser={currentUser} />
-                  </span>
+                <DropdownListItem
+                  className={cn(styles.scheduleDropdownScheduledBy)}
+                  testId="scheduled-by">
+                  {isLoading ? (
+                    <SkeletonContainer>
+                      <SkeletonDisplayText numberOfLines={1} />
+                    </SkeletonContainer>
+                  ) : (
+                    <span>
+                      Scheduled by{' '}
+                      <UserNameFormatter user={user} currentUser={{ ...currentUser, sys: {} }} />
+                    </span>
+                  )}
                 </DropdownListItem>
               </DropdownList>
             );
@@ -76,13 +84,19 @@ class Job extends Component {
   };
 
   renderDropdown = () => {
-    const { isReadOnly, job, onCancel } = this.props;
+    const { size, isReadOnly, job, onCancel } = this.props;
     const {
       sys: { id },
       action,
       scheduledFor: { datetime: scheduledAt }
     } = job;
     const scheduledById = _.get(job, 'sys.createdBy.sys.id');
+
+    // Do not render the dropdown for the read only small view (e.g. in the Schedule Action dialog)
+    if (isReadOnly && size === 'small') {
+      return null;
+    }
+
     const showDropdown = !isReadOnly || scheduledById;
 
     if (!showDropdown) {

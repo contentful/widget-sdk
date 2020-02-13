@@ -33,7 +33,11 @@ export const scheduleStyles = {
   }),
   scheduleDropdownScheduledBy: css({
     fontStyle: 'italic',
-    color: tokens.colorTextLight
+    color: tokens.colorTextLight,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    width: '230px'
   }),
   actionType: css({
     display: 'block',
