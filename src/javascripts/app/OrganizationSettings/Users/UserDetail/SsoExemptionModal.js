@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Modal,
-  Icon,
   Paragraph,
   TextLink,
   List,
@@ -11,13 +10,8 @@ import {
 } from '@contentful/forma-36-react-components';
 
 import { OrganizationMembership as OrganizationMembershipPropType } from 'app/OrganizationSettings/PropTypes';
-import { css } from 'emotion';
 
-const styles = {
-  faded: css({ opacity: 0.5 })
-};
-
-export default class SseExemptionModal extends React.Component {
+export default class SsoExemptionModal extends React.Component {
   static propTypes = {
     membership: OrganizationMembershipPropType.isRequired,
     onClose: PropTypes.func.isRequired,
@@ -26,15 +20,11 @@ export default class SseExemptionModal extends React.Component {
 
   render() {
     const { membership, isShown, onClose } = this.props;
-    const { exemptionReasons } = membership.sys.sso;
     const user = membership.sys.user;
     const exemptionReasonsMap = {
       userIsOwner: `The user is an owner of the organization`,
-      other: `Other`,
-      userIsManuallyExempt: `The user is explicitly marked as exempt from Restricted Mode`
-    };
-    const includesReason = reason => {
-      return exemptionReasons.includes(reason);
+      userIsManuallyExempt: `The user is explicitly marked as exempt from Restricted Mode`,
+      other: `Other`
     };
 
     return (
@@ -55,13 +45,9 @@ export default class SseExemptionModal extends React.Component {
           </Paragraph>
           <List>
             {Object.keys(exemptionReasonsMap)
-              .sort((a, b) => {
-                return exemptionReasons.indexOf(b) - exemptionReasons.indexOf(a);
-              })
               .map(reason => (
-                <ListItem key={reason} className={includesReason(reason) ? null : styles.faded}>
+                <ListItem key={reason}>
                   {exemptionReasonsMap[reason]}{' '}
-                  {includesReason(reason) && <Icon icon="CheckCircle" color="positive" />}
                 </ListItem>
               ))}
           </List>
