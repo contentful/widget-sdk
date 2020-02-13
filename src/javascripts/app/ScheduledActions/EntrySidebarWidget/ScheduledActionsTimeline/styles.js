@@ -31,6 +31,10 @@ export const scheduleStyles = {
       padding: '0px'
     }
   }),
+  scheduleDropdownScheduledBy: css({
+    fontStyle: 'italic',
+    color: tokens.colorTextLight
+  }),
   actionType: css({
     display: 'block',
     width: '100%'

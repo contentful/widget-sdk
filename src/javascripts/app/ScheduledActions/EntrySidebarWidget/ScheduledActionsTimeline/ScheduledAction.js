@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
+import _ from 'lodash';
 
 import {
   Tag,
@@ -15,10 +16,50 @@ import { scheduleStyles as styles } from './styles';
 import CancellationModal from './CancellationModal';
 import { DateTime } from 'app/ScheduledActions/FormattedDateAndTime';
 import ScheduledActionAction from 'app/ScheduledActions/ScheduledActionAction';
+import UserFetcher from 'components/shared/UserFetcher';
+import CurrentUserFetcher from 'components/shared/UserFetcher/CurrentUserFetcher';
+import { UserNameFormatter } from 'components/shared/UserNameFormatter';
 
 const tagTypeForAction = {
   [ScheduledActionAction.Publish]: 'positive',
   [ScheduledActionAction.Unpublish]: 'secondary'
+};
+
+function ScheduledByDropdownList({ userId }) {
+  if (!userId) {
+    return null;
+  }
+
+  return (
+    <CurrentUserFetcher>
+      {currentUser => (
+        <UserFetcher userId={userId}>
+          {({ isLoading, isError, data: user }) => {
+            if (isLoading) {
+              return null;
+            }
+            if (isError) {
+              return null;
+            }
+
+            return (
+              <DropdownList border="top">
+                <DropdownListItem testId="scheduled-by">
+                  <span className={cn(styles.scheduleDropdownScheduledBy)}>
+                    Scheduled by <UserNameFormatter user={user} currentUser={currentUser} />
+                  </span>
+                </DropdownListItem>
+              </DropdownList>
+            );
+          }}
+        </UserFetcher>
+      )}
+    </CurrentUserFetcher>
+  );
+}
+
+ScheduledByDropdownList.propTypes = {
+  userId: PropTypes.string
 };
 
 class Job extends Component {
@@ -34,8 +75,67 @@ class Job extends Component {
     });
   };
 
+  renderDropdown = () => {
+    const { isReadOnly, job, onCancel } = this.props;
+    const {
+      sys: { id },
+      action,
+      scheduledFor: { datetime: scheduledAt }
+    } = job;
+    const scheduledById = _.get(job, 'sys.createdBy.sys.id');
+    const showDropdown = !isReadOnly || scheduledById;
+
+    if (!showDropdown) {
+      return null;
+    }
+
+    return (
+      <>
+        <Dropdown
+          isOpen={this.state.isDropdownOpen}
+          onClose={() => this.setState({ isDropdownOpen: false })}
+          toggleElement={
+            <Button
+              className={styles.scheduleDropdownToggle}
+              buttonType="naked"
+              data-test-id="cancel-job-ddl"
+              icon="MoreHorizontal"
+              onClick={() => this.setState({ isDropdownOpen: !this.state.isDropdownOpen })}
+            />
+          }>
+          {!isReadOnly && (
+            <DropdownList>
+              <DropdownListItem testId="cancel-job" onClick={this.toggleCancelDialog}>
+                Cancel Schedule
+              </DropdownListItem>
+            </DropdownList>
+          )}
+          <ScheduledByDropdownList userId={scheduledById} />
+        </Dropdown>
+
+        {!isReadOnly && (
+          <CancellationModal
+            isShown={this.state.isCancellationDialogOpen}
+            onClose={this.toggleCancelDialog}
+            onConfirm={() => {
+              this.toggleCancelDialog();
+              onCancel(id);
+            }}>
+            This entry is scheduled to {action} on <DateTime date={scheduledAt} />. <br />
+            Are you sure you want to cancel?
+          </CancellationModal>
+        )}
+      </>
+    );
+  };
+
   render() {
-    const { scheduledAt, action, id, onCancel, isReadOnly, size } = this.props;
+    const { job, size } = this.props;
+    const {
+      action,
+      scheduledFor: { datetime: scheduledAt }
+    } = job;
+
     return (
       <Card className={cn(styles.schedule, size === 'small' ? styles.scheduleSmall : '')}>
         <div
@@ -47,39 +147,7 @@ class Job extends Component {
             testId="scheduled-item">
             {action}
           </Tag>
-          {!isReadOnly && (
-            <>
-              <Dropdown
-                isOpen={this.state.isDropdownOpen}
-                onClose={() => this.setState({ isDropdownOpen: false })}
-                toggleElement={
-                  <Button
-                    className={styles.scheduleDropdownToggle}
-                    buttonType="naked"
-                    data-test-id="cancel-job-ddl"
-                    icon="MoreHorizontal"
-                    onClick={() => this.setState({ isDropdownOpen: !this.state.isDropdownOpen })}
-                  />
-                }>
-                <DropdownList>
-                  <DropdownListItem testId="cancel-job" onClick={this.toggleCancelDialog}>
-                    Cancel Schedule
-                  </DropdownListItem>
-                </DropdownList>
-              </Dropdown>
-
-              <CancellationModal
-                isShown={this.state.isCancellationDialogOpen}
-                onClose={this.toggleCancelDialog}
-                onConfirm={() => {
-                  this.toggleCancelDialog();
-                  onCancel(id);
-                }}>
-                This entry is scheduled to {action} on <DateTime date={scheduledAt} />. <br />
-                Are you sure you want to cancel?
-              </CancellationModal>
-            </>
-          )}
+          {this.renderDropdown()}
         </div>
         <DateTime
           date={scheduledAt}
@@ -92,10 +160,7 @@ class Job extends Component {
 }
 
 export const propTypes = {
-  scheduledAt: PropTypes.string.isRequired,
-  action: PropTypes.string.isRequired,
-  status: PropTypes.oneOf(['scheduled', 'canceled', 'succeeded', 'failed']),
-  id: PropTypes.string.isRequired,
+  job: PropTypes.object.isRequired,
   onCancel: PropTypes.func.isRequired,
   isReadOnly: PropTypes.bool.isRequired,
   size: PropTypes.oneOf(['default', 'small']).isRequired

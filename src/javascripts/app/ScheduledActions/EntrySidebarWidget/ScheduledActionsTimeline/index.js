@@ -164,15 +164,7 @@ const JobsTimeline = ({
         <List className={cn(styles.jobList, size === 'small' ? styles.jobListSmall : '')}>
           {jobsSortedByScheduledFor.map((job, index) => (
             <li key={`${job.action}-${job.scheduledFor.datetime}-${index}`}>
-              <Job
-                id={job.sys.id}
-                action={job.action}
-                scheduledAt={job.scheduledFor.datetime}
-                status={job.status}
-                onCancel={onCancel}
-                isReadOnly={isReadOnly}
-                size={size}
-              />
+              <Job job={job} onCancel={onCancel} isReadOnly={isReadOnly} size={size} />
               {size === 'default' && (
                 <Divider currentJob={job} nextJob={jobsSortedByScheduledFor[index + 1]} />
               )}
