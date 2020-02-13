@@ -17,6 +17,7 @@ import * as ManagementApiClient from './ManagementApiClient';
 import * as ModalLauncher from 'app/common/ModalLauncher';
 import AppInstallModal from './AppInstallModal';
 import DeleteAppModal from './DeleteAppDialog';
+import SaveConfirmModal from './SaveConfirmModal';
 
 const fadeIn = keyframes({
   from: {
@@ -151,6 +152,20 @@ export default class AppDetails extends React.Component {
     }
   };
 
+  openSaveConfirmModal = () => {
+    ModalLauncher.open(({ isShown, onClose }) => (
+      <SaveConfirmModal
+        isShown={isShown}
+        name={this.state.definition.name}
+        onConfirm={() => {
+          this.save();
+          onClose();
+        }}
+        onClose={onClose}
+      />
+    ));
+  };
+
   openInstallModal = () => {
     ModalLauncher.open(({ isShown, onClose }) => (
       <AppInstallModal definition={this.state.definition} isShown={isShown} onClose={onClose} />
@@ -213,7 +228,11 @@ export default class AppDetails extends React.Component {
             />
           </div>
           <div className={styles.formActions}>
-            <Button loading={busy} disabled={busy} onClick={this.save} testId="app-save">
+            <Button
+              loading={busy}
+              disabled={busy}
+              onClick={this.openSaveConfirmModal}
+              testId="app-save">
               Update app
             </Button>
             <TextLink

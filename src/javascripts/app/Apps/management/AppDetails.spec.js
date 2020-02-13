@@ -62,6 +62,10 @@ describe('AppDetails', () => {
     // click save without changes
     // should send over the unchanged definition data
     saveButton.click();
+
+    // open the confirm modal and fire the confirm function
+    const confirmModal = ModalLauncher.open.mock.calls[0][0]({ isShown: true, onClose: jest.fn() });
+    confirmModal.props.onConfirm();
     expect(ManagementApiClient.save.mock.calls[0][0]).toEqual(definition);
 
     await wait();
@@ -76,6 +80,13 @@ describe('AppDetails', () => {
     await wait();
 
     saveButton.click();
+
+    // open the confirm modal and fire the confirm function
+    const confirmModal2 = ModalLauncher.open.mock.calls[1][0]({
+      isShown: true,
+      onClose: jest.fn()
+    });
+    confirmModal2.props.onConfirm();
 
     // should send over the updated definition data
     expect(ManagementApiClient.save.mock.calls[1][0]).toMatchSnapshot();
