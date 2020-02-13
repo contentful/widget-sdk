@@ -83,7 +83,7 @@ function UserProvisioningConfiguration({ orgId }) {
         </Note>
       </div>
       <Heading element="h1">SCIM configuration details</Heading>
-      SCIM URL
+      <div className={styles.bold}>SCIM URL</div>
       <div className={styles.input}>
         <TextInput
           name="scim-url"

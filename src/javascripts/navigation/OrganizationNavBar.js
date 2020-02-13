@@ -11,13 +11,14 @@ import createLegacyFeatureService from 'services/LegacyFeatureService';
 import { getVariation } from 'LaunchDarkly';
 
 function getItems(params, { orgId }) {
+  const shouldDisplayEnterpriseTools =
+    params.isOwnerOrAdmin && (params.ssoEnabled || params.userProvisioningEnabled);
   const enterpriseToolsDropdownItems = [
     {
       if: params.ssoEnabled,
       title: 'Single Sign-On (SSO)',
-      sref: 'account.organizations.sso',
+      sref: 'account.organizations.enterprise-tools.sso',
       srefParams: { orgId },
-      rootSref: 'account.organizations.sso',
       srefOptions: {
         inherit: false
       },
@@ -26,15 +27,14 @@ function getItems(params, { orgId }) {
     {
       if: params.userProvisioningEnabled,
       title: 'User provisioning',
-      sref: 'account.organizations.user-provisioning',
+      sref: 'account.organizations.enterprise-tools.user-provisioning',
       srefParams: { orgId },
-      rootSref: 'account.organizations.user-provisioning',
       srefOptions: {
         inherit: false
       },
       dataViewType: 'organization-user-provisioning'
     }
-  ].filter(item => item.if !== false);
+  ];
 
   return [
     {
@@ -145,9 +145,9 @@ function getItems(params, { orgId }) {
       dataViewType: 'offsite-backup'
     },
     {
-      if: params.isOwnerOrAdmin && enterpriseToolsDropdownItems.length > 0,
+      if: shouldDisplayEnterpriseTools,
       title: 'Enterprise Tools',
-      rootSref: 'organization-enterprise-tools',
+      rootSref: 'account.organizations.enterprise-tools',
       icon: 'nav-organization-sso',
       dataViewType: 'organization-enterprise-tools',
       children: enterpriseToolsDropdownItems
