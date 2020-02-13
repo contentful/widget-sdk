@@ -21,11 +21,11 @@ const IconWrappedIntoScheduledTooltip = memo(({ referencedEntityId }) => {
 
   const jobs = widgetAPI.jobs
     .getPendingJobs()
-    .filter(job => job.entity.sys.id === referencedEntityId)
-    .sort((a, b) => new Date(a.scheduledFor.datetime) > new Date(b.scheduledFor.datetime));
+    .filter(job => job.entity.sys.id === referencedEntityId);
+  const sortedJobs = _.orderBy(jobs, ['scheduledFor.datetime'], ['asc']);
 
   return (
-    <SheduleTooltip job={jobs[0]} jobsCount={jobs.length}>
+    <SheduleTooltip job={sortedJobs[0]} jobsCount={sortedJobs.length}>
       <Icon icon="Clock" className={styles.marginRightXS} size="small" color="muted" />
     </SheduleTooltip>
   );

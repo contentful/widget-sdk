@@ -1,6 +1,6 @@
 import React from 'react';
 import isHotkey from 'is-hotkey';
-import _ from 'lodash';
+import { get, orderBy } from 'lodash';
 import { INLINES } from '@contentful/rich-text-types';
 import ToolbarIcon from './ToolbarIcon';
 import Hyperlink from './Hyperlink';
@@ -24,22 +24,22 @@ export default ToolbarIcon;
 export const getScheduledJobsTooltip = (entityType, node, widgetAPI) => {
   if (
     entityType !== 'Entry' ||
-    typeof _.get(node, 'data.get') !== 'function' ||
-    typeof _.get(widgetAPI, 'jobs.getPendingJobs') !== 'function'
+    typeof get(node, 'data.get') !== 'function' ||
+    typeof get(widgetAPI, 'jobs.getPendingJobs') !== 'function'
   ) {
     return null;
   }
 
   const target = node.data.get('target');
-  const referencedEntityId = _.get(target, 'sys.id', undefined);
+  const referencedEntityId = get(target, 'sys.id', undefined);
   const jobs = widgetAPI.jobs
     .getPendingJobs()
-    .filter(job => job.entity.sys.id === referencedEntityId)
-    .sort((a, b) => new Date(a.scheduledFor.datetime) > new Date(b.scheduledFor.datetime));
-  return jobs.length ? (
+    .filter(job => job.entity.sys.id === referencedEntityId);
+  const sortedJobs = orderBy(jobs, ['scheduledFor.datetime'], ['asc']);
+  return sortedJobs.length ? (
     <>
       <hr className={styles.tooltipSeparator} />
-      <ScheduleTooltipContent job={jobs[0]} jobsCount={jobs.length} />
+      <ScheduleTooltipContent job={sortedJobs[0]} jobsCount={sortedJobs.length} />
     </>
   ) : null;
 };

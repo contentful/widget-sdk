@@ -3,23 +3,26 @@ import PropTypes from 'prop-types';
 import {
   InlineEntryCard,
   DropdownListItem,
-  DropdownList
+  DropdownList,
+  Icon
 } from '@contentful/forma-36-react-components';
+import { orderBy } from 'lodash';
 
 import { default as FetchEntity, RequestStatus } from 'app/widgets/shared/FetchEntity';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';
 import { INLINES } from '@contentful/rich-text-types';
+import ScheduleTooltip from 'app/ScheduledActions/EntrySidebarWidget/ScheduledActionsTimeline/ScheduleTooltip';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
+
+const styles = {
+  scheduledIcon: css({
+    verticalAlign: 'text-bottom',
+    marginRight: tokens.spacing2Xs
+  })
+};
 
 class EmbeddedEntryInline extends React.Component {
-  static propTypes = {
-    widgetAPI: PropTypes.object.isRequired,
-    isSelected: PropTypes.bool.isRequired,
-    attributes: PropTypes.object.isRequired,
-    editor: PropTypes.object.isRequired,
-    node: PropTypes.object.isRequired,
-    onEntityFetchComplete: PropTypes.func
-  };
-
   handleEditClick = entry => {
     this.props.widgetAPI.navigator.openEntry(entry.sys.id, { slideIn: true });
   };
@@ -39,7 +42,10 @@ class EmbeddedEntryInline extends React.Component {
     );
   }
 
-  renderNode({ requestStatus, contentTypeName, entity, entityTitle, entityStatus }) {
+  renderNode(
+    { requestStatus, contentTypeName, entity, entityTitle, entityStatus },
+    { job, jobsCount }
+  ) {
     const isLoading = requestStatus === RequestStatus.Pending && !entity;
     return (
       <InlineEntryCard
@@ -61,6 +67,16 @@ class EmbeddedEntryInline extends React.Component {
             </DropdownList>
           ) : null
         }>
+        {job && (
+          <ScheduleTooltip job={job} jobsCount={jobsCount}>
+            <Icon
+              className={styles.scheduledIcon}
+              icon="Clock"
+              color="muted"
+              testId="scheduled-icon"
+            />
+          </ScheduleTooltip>
+        )}
         {entityTitle || 'Untitled'}
       </InlineEntryCard>
     );
@@ -85,7 +101,15 @@ class EmbeddedEntryInline extends React.Component {
               if (fetchEntityResult.requestStatus === RequestStatus.Error) {
                 return this.renderMissingNode();
               } else {
-                return this.renderNode(fetchEntityResult);
+                const jobs = widgetAPI.jobs
+                  .getPendingJobs()
+                  .filter(job => job.entity.sys.id === entryId);
+                const sortedJobs = orderBy(jobs, ['scheduledFor.datetime'], ['asc']);
+                const scheduledInfo = {
+                  job: sortedJobs[0],
+                  jobsCount: sortedJobs.length
+                };
+                return this.renderNode(fetchEntityResult, scheduledInfo);
               }
             }}
           />
@@ -94,5 +118,13 @@ class EmbeddedEntryInline extends React.Component {
     );
   }
 }
+
+EmbeddedEntryInline.propTypes = {
+  widgetAPI: PropTypes.object.isRequired,
+  isSelected: PropTypes.bool.isRequired,
+  editor: PropTypes.object.isRequired,
+  node: PropTypes.object.isRequired,
+  onEntityFetchComplete: PropTypes.func
+};
 
 export default EmbeddedEntryInline;
