@@ -84,15 +84,14 @@ function UserProvisioningConfiguration({ orgId }) {
       </div>
       <Heading element="h1">SCIM configuration details</Heading>
       <div className={styles.bold}>SCIM URL</div>
-      <div className={styles.input}>
-        <TextInput
-          name="scim-url"
-          testId="scim-url"
-          disabled
-          withCopyButton
-          value={`${SCIM_BASE}${orgId}`}
-        />
-      </div>
+      <TextInput
+        name="scim-url"
+        testId="scim-url"
+        disabled
+        withCopyButton
+        className={styles.input}
+        value={`${SCIM_BASE}${orgId}`}
+      />
       <div className={styles.bold}>Personal Access Token</div>
       <Paragraph>
         As an alternative to OAuth applications, you can also leverage Personal Access Tokens to use
