@@ -3,7 +3,11 @@
 exports[`AppInstallModal should render the last used space and first env on load and be able to install right away 1`] = `
 Object {
   "asFragment": [Function],
-  "baseElement": <body
+  "baseElement": .emotion-0 > div:first-child {
+  margin-bottom: 1.5rem;
+}
+
+<body
     class="Modal__body--open"
   >
     <div />
@@ -38,161 +42,138 @@ Object {
               class="ModalContent__ModalContent___2mf3h"
               data-test-id="cf-ui-modal-content"
             >
-              <form
-                class="Form__Form___3GdsQ"
-                data-test-id="cf-ui-form"
+              <div
+                class="emotion-0"
               >
                 <div
-                  class="Form__Form__item___1jUW6 Form__Form__item--default___NfDvJ"
+                  class="SelectField__SelectField___kbQlf"
+                  data-test-id="cf-ui-select-field"
                 >
                   <div
-                    class="SelectField__SelectField___kbQlf"
-                    data-test-id="cf-ui-select-field"
+                    class="SelectField__SelectField__label-wrapper___3jGwo"
                   >
-                    <div
-                      class="SelectField__SelectField__label-wrapper___3jGwo"
+                    <label
+                      class="FormLabel__FormLabel___3d6zQ"
+                      data-test-id="cf-ui-form-label"
+                      for="spaceSelection"
                     >
-                      <label
-                        class="FormLabel__FormLabel___3d6zQ"
-                        data-test-id="cf-ui-form-label"
-                        for="spaceSelection"
+                      Select a space
+                      <span
+                        class="FormLabel__FormLabel__required-text___3mvdm"
                       >
-                        Select a space
-                        <span
-                          class="FormLabel__FormLabel__required-text___3mvdm"
-                        >
-                          (
-                          required
-                          )
-                        </span>
-                      </label>
-                    </div>
-                    <div
-                      class="Select__Select__wrapper___2pBIz Select__Select--full___7ei7d"
+                        (
+                        required
+                        )
+                      </span>
+                    </label>
+                  </div>
+                  <div
+                    class="Select__Select__wrapper___2pBIz Select__Select--full___7ei7d"
+                  >
+                    <select
+                      aria-label="spaceSelection"
+                      class="Select__Select___31Z46 a11y__focus-border--default___60AXp"
+                      data-test-id="cf-ui-select"
+                      id="spaceSelection"
+                      name="spaceSelection"
+                      required=""
                     >
-                      <select
-                        aria-label="spaceSelection"
-                        class="Select__Select___31Z46 a11y__focus-border--default___60AXp"
-                        data-test-id="cf-ui-select"
-                        id="spaceSelection"
-                        name="spaceSelection"
-                        required=""
+                      <option
+                        data-test-id="cf-ui-select-option"
+                        value="my-space-123"
                       >
-                        <option
-                          data-test-id="cf-ui-select-option"
-                          disabled=""
-                          value=""
-                        >
-                          Select a space
-                        </option>
-                        <option
-                          data-test-id="cf-ui-select-option"
-                          value="my-space-123"
-                        >
-                          mySpace
-                        </option>
-                        <option
-                          data-test-id="cf-ui-select-option"
-                          value="my-other-space-123"
-                        >
-                          myOtherSpace
-                        </option>
-                      </select>
-                      <svg
-                        class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--muted___3egnD Select__Select__icon___boRAZ"
-                        data-test-id="cf-ui-icon"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        width="24"
-                        xmlns="http://www.w3.org/2000/svg"
+                        mySpace
+                      </option>
+                      <option
+                        data-test-id="cf-ui-select-option"
+                        value="my-other-space-123"
                       >
-                        <path
-                          d="M7 10l5 5 5-5z"
-                        />
-                        <path
-                          d="M0 0h24v24H0z"
-                          fill="none"
-                        />
-                      </svg>
-                    </div>
+                        myOtherSpace
+                      </option>
+                    </select>
+                    <svg
+                      class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--muted___3egnD Select__Select__icon___boRAZ"
+                      data-test-id="cf-ui-icon"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      width="24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M7 10l5 5 5-5z"
+                      />
+                      <path
+                        d="M0 0h24v24H0z"
+                        fill="none"
+                      />
+                    </svg>
                   </div>
                 </div>
                 <div
-                  class="Form__Form__item___1jUW6 Form__Form__item--default___NfDvJ"
+                  class="SelectField__SelectField___kbQlf"
+                  data-test-id="cf-ui-select-field"
                 >
                   <div
-                    class="SelectField__SelectField___kbQlf"
-                    data-test-id="cf-ui-select-field"
+                    class="SelectField__SelectField__label-wrapper___3jGwo"
                   >
-                    <div
-                      class="SelectField__SelectField__label-wrapper___3jGwo"
+                    <label
+                      class="FormLabel__FormLabel___3d6zQ"
+                      data-test-id="cf-ui-form-label"
+                      for="envSelection"
                     >
-                      <label
-                        class="FormLabel__FormLabel___3d6zQ"
-                        data-test-id="cf-ui-form-label"
-                        for="envSelection"
+                      Select an environment
+                      <span
+                        class="FormLabel__FormLabel__required-text___3mvdm"
                       >
-                        Select an environment
-                        <span
-                          class="FormLabel__FormLabel__required-text___3mvdm"
-                        >
-                          (
-                          required
-                          )
-                        </span>
-                      </label>
-                    </div>
-                    <div
-                      class="Select__Select__wrapper___2pBIz Select__Select--full___7ei7d"
+                        (
+                        required
+                        )
+                      </span>
+                    </label>
+                  </div>
+                  <div
+                    class="Select__Select__wrapper___2pBIz Select__Select--full___7ei7d"
+                  >
+                    <select
+                      aria-label="envSelection"
+                      class="Select__Select___31Z46 a11y__focus-border--default___60AXp"
+                      data-test-id="cf-ui-select"
+                      id="envSelection"
+                      name="envSelection"
+                      required=""
                     >
-                      <select
-                        aria-label="envSelection"
-                        class="Select__Select___31Z46 a11y__focus-border--default___60AXp"
-                        data-test-id="cf-ui-select"
-                        id="envSelection"
-                        name="envSelection"
-                        required=""
+                      <option
+                        data-test-id="cf-ui-select-option"
+                        value="my-env-123"
                       >
-                        <option
-                          data-test-id="cf-ui-select-option"
-                          disabled=""
-                          value=""
-                        >
-                          Select an environment
-                        </option>
-                        <option
-                          data-test-id="cf-ui-select-option"
-                          value="my-env-123"
-                        >
-                          my-env
-                        </option>
-                        <option
-                          data-test-id="cf-ui-select-option"
-                          value="my-other-env-123"
-                        >
-                          my-other-env
-                        </option>
-                      </select>
-                      <svg
-                        class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--muted___3egnD Select__Select__icon___boRAZ"
-                        data-test-id="cf-ui-icon"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        width="24"
-                        xmlns="http://www.w3.org/2000/svg"
+                        my-env
+                      </option>
+                      <option
+                        data-test-id="cf-ui-select-option"
+                        value="my-other-env-123"
                       >
-                        <path
-                          d="M7 10l5 5 5-5z"
-                        />
-                        <path
-                          d="M0 0h24v24H0z"
-                          fill="none"
-                        />
-                      </svg>
-                    </div>
+                        my-other-env
+                      </option>
+                    </select>
+                    <svg
+                      class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--muted___3egnD Select__Select__icon___boRAZ"
+                      data-test-id="cf-ui-icon"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      width="24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M7 10l5 5 5-5z"
+                      />
+                      <path
+                        d="M0 0h24v24H0z"
+                        fill="none"
+                      />
+                    </svg>
                   </div>
                 </div>
-              </form>
+              </div>
             </div>
             <div
               class="ModalControls__ModalControls___2bTQx"

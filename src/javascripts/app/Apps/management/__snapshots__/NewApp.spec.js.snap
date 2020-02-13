@@ -1140,7 +1140,7 @@ Object {
                   <div
                     class="NotificationItem__NotificationItem__text___1-1Up"
                   >
-                    Validation failed.
+                    Validation failed. Please check that you have provided an app Name, valid Source URL and/or Entry field types.
                   </div>
                   <button
                     class="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 NotificationItem__NotificationItem__dismiss___1Z6Df IconButton__IconButton--white___3GUQP"

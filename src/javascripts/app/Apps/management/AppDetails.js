@@ -131,7 +131,7 @@ export default class AppDetails extends React.Component {
       Notification.success('App updated successfully.');
     } catch (err) {
       Notification.error(
-        'Validation failed. Please check that you have provided a app Name and valid Source URL.'
+        'Validation failed. Please check that you have provided an app Name, valid Source URL and/or Entry field types.'
       );
     }
 

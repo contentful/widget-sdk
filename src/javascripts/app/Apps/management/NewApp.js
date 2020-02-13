@@ -43,7 +43,9 @@ export default class NewApp extends React.Component {
       Notification.success('App created successfully.');
       this.props.goToDefinition(saved.sys.id);
     } catch (err) {
-      Notification.error('Validation failed.');
+      Notification.error(
+        'Validation failed. Please check that you have provided an app Name, valid Source URL and/or Entry field types.'
+      );
     }
 
     this.setState({ busy: false });
