@@ -78,7 +78,7 @@ function UserProvisioningConfiguration({ orgId }) {
             testId="faq-url"
             href="https://www.contentful.com/faq/" //TODO set correct scim anchor url
             target="_blank">
-            Here is why.
+            Learn why.
           </TextLink>
         </Note>
       </div>
