@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Modal, Form, SelectField, Option } from '@contentful/forma-36-react-components';
+import { Button, Modal, SelectField, Option } from '@contentful/forma-36-react-components';
 import * as Navigator from 'states/Navigator';
-import { getOrgSpacesFor, getEnvsFor, getLastUsedSpace } from './util';
+import { getOrgSpacesFor, getEnvsFor } from './util';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 
 function goToInstallation(spaceId, environmentId, appId, onClose) {
   Navigator.go({
@@ -19,11 +21,19 @@ function goToInstallation(spaceId, environmentId, appId, onClose) {
   }).then(() => onClose());
 }
 
+const styles = {
+  form: css({
+    '> div:first-child': css({
+      marginBottom: tokens.spacingS
+    })
+  })
+};
+
 export default function AppInstallModal({ isShown, definition, onClose }) {
   const [redirecting, setRedirecting] = useState(false);
   const [spaces, setSpaces] = useState([]);
   const [spaceEnvs, setSpaceEnvs] = useState([]);
-  const [selectedSpace, setSelectedSpace] = useState(getLastUsedSpace());
+  const [selectedSpace, setSelectedSpace] = useState('');
   const [selectedEnv, setSelectedEnv] = useState('');
 
   useEffect(() => {
@@ -31,6 +41,7 @@ export default function AppInstallModal({ isShown, definition, onClose }) {
       const spaces = await getOrgSpacesFor(definition.sys.organization.sys.id);
 
       setSpaces(spaces);
+      setSelectedSpace(spaces[0].sys.id);
     }
 
     if (definition) {
@@ -67,7 +78,7 @@ export default function AppInstallModal({ isShown, definition, onClose }) {
         <>
           <Modal.Header title={title} />
           <Modal.Content>
-            <Form>
+            <div className={styles.form}>
               <SelectField
                 labelText="Select a space"
                 id="spaceSelection"
@@ -75,9 +86,6 @@ export default function AppInstallModal({ isShown, definition, onClose }) {
                 required
                 value={selectedSpace}
                 onChange={e => setSelectedSpace(e.target.value)}>
-                <Option value="" disabled>
-                  Select a space
-                </Option>
                 {spaces.map(space => (
                   <Option key={space.sys.id} value={space.sys.id}>
                     {space.name}
@@ -91,16 +99,13 @@ export default function AppInstallModal({ isShown, definition, onClose }) {
                 required
                 onChange={e => setSelectedEnv(e.target.value)}
                 value={selectedEnv}>
-                <Option value="" disabled>
-                  Select an environment
-                </Option>
                 {spaceEnvs.map(env => (
                   <Option key={env.sys.id} value={env.sys.id}>
                     {env.name}
                   </Option>
                 ))}
               </SelectField>
-            </Form>
+            </div>
           </Modal.Content>
           <Modal.Controls>
             <Button
