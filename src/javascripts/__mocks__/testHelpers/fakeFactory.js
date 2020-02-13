@@ -1,7 +1,16 @@
 import { uniqueId } from 'lodash';
 
+const USER = 'User';
+const YEAR = '2020';
+const DAY = '20';
+const MONTH = '01';
+const CREATED_AT_TIME_ISO = new Date(YEAR, MONTH, DAY).toISOString();
+const CREATED_BY = Link(USER, uniqueId(USER));
+
+export const CREATED_AT_TIME_DAY_MONTH_YEAR = `${YEAR}/${MONTH}/${DAY}`;
+
 const types = {
-  USER: 'User',
+  USER: USER,
   SPACE: 'Space',
   ORGANIZATION: 'Organization',
   ROLE: 'Role',
@@ -11,10 +20,11 @@ const types = {
   TEAM_MEMBERSHIP: 'TeamMembership'
 };
 
-export function sys(type = '', id) {
+export function sys(type = '', id, ...rest) {
   return {
     type,
-    id: id || uniqueId(type.toLowerCase())
+    id: id || uniqueId(type.toLowerCase()),
+    ...rest
   };
 }
 
@@ -29,9 +39,11 @@ export function Link(linkType = '', id) {
 }
 
 export function Space(name = '') {
+  const uniqueSpaceId = uniqueId('SpaceId');
+
   return {
-    name: name || uniqueId('Space'),
-    sys: sys(types.SPACE)
+    name: name || uniqueSpaceId,
+    sys: sys(types.SPACE, uniqueSpaceId, CREATED_AT_TIME_ISO, CREATED_BY)
   };
 }
 
@@ -117,4 +129,9 @@ export function TeamMembership(
       user
     }
   };
+}
+
+// Please add to this as needed
+export function BasePlan() {
+  return { sys: sys('Plan') };
 }

@@ -78,39 +78,48 @@ function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }
   const className = upgraded ? 'x--success' : '';
 
   return (
-    <TableRow className={className} key={key}>
-      <TableCell>
+    <TableRow testId="subscription-page.spaces-list.table-row" className={className} key={key}>
+      <TableCell testId="subscription-page.spaces-list.space-name">
         <span className={styles.spaceName}>
           <strong>{get(space, 'name', '-')}</strong>
         </span>
         {plan.committed && (
-          <Tooltip content="This space is part of your Enterprise deal with Contentful">
+          <Tooltip
+            testId="subscription-page.spaces-list.enterprise-tool-tip"
+            content="This space is part of your Enterprise deal with Contentful">
             <span className={styles.star}>★</span>
           </Tooltip>
         )}
       </TableCell>
-      <TableCell>
+      <TableCell testId="subscription-page.spaces-list.space-type">
         <strong>{plan.name}</strong>
         {hasAnyFeatures && (
           <div className={styles.helpIcon}>
             <Tooltip
+              testId="subscription-page.spaces-list.features-tool-tip"
               content={`This space includes ${joinAnd(enabledFeatures.map(({ name }) => name))}`}>
               <QuestionMarkIcon color={tokens.colorTextLight} />
             </Tooltip>
           </div>
         )}
         <br />
-        {!isEnterprisePlan(basePlan) && <Price value={plan.price} unit="month" />}
+        {!isEnterprisePlan(basePlan) && (
+          <Price
+            testId="subscription-page.spaces-list.plan-price"
+            value={plan.price}
+            unit="month"
+          />
+        )}
       </TableCell>
-      <TableCell>{createdBy}</TableCell>
-      <TableCell>{createdAt}</TableCell>
-      <TableCell className={styles.dotsRow}>
+      <TableCell testId="subscription-page.spaces-list.created-by">{createdBy}</TableCell>
+      <TableCell testId="subscription-page.spaces-list.created-on">{createdAt}</TableCell>
+      <TableCell testId="subscription-page.spaces-list.option-dots" className={styles.dotsRow}>
         <CardActions
           iconButtonProps={{
             buttonType: 'primary',
-            testId: 'subscription-page.spaces-list.space-context-menu.trigger'
+            testId: 'subscription-page.spaces-list.dropdown-menu.trigger'
           }}
-          data-test-id="subscription-page.spaces-list.space-context-menu">
+          data-test-id="subscription-page.spaces-list.dropdown-menu">
           <DropdownList>
             <DropdownListItem
               onClick={onChangeSpace(space, 'change')}
@@ -146,7 +155,6 @@ SpacePlanRow.propTypes = {
   plan: PropTypes.object.isRequired,
   onChangeSpace: PropTypes.func.isRequired,
   onDeleteSpace: PropTypes.func.isRequired,
-  isOrgOwner: PropTypes.bool.isRequired,
   upgraded: PropTypes.bool
 };
 
