@@ -27,7 +27,7 @@ const ResourceUsageList = ({ spaceResources, environmentResources, environmentMe
   return (
     <div className="resource-list">
       <section className="resource-list__highlights">
-        <ResourceUsageHighlight resource={spaceResources['space_member']} />
+        <ResourceUsageHighlight resource={spaceResources['space_membership']} />
         <ResourceUsageHighlight resource={spaceResources['api_key']} />
         <ResourceUsageHighlight resource={spaceResources['webhook_definition']} />
       </section>
