@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { Workbench } from '@contentful/forma-36-react-components';
-import Icon from 'ui/Components/Icon';
+// import Icon from 'ui/Components/Icon';
 
 import * as Auth from 'Authentication';
 import * as TokenResourceManager from '../settings/api/cma-tokens/TokenResourceManager';
@@ -20,7 +20,7 @@ const UserCMATokens = ({ onReady }) => {
     <Workbench>
       <Workbench.Header
         // As soon as it's ready we will add it here
-        icon={<Icon name="page-user-tokens" />}
+        // icon={<Icon name="page-user-tokens" />}
         title={'Personal Access Tokens'}
       />
       <Workbench.Content type="default">
