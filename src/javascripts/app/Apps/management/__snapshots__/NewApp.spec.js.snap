@@ -34,7 +34,7 @@ Object {
   margin-bottom: 1.5rem;
 }
 
-.emotion-7 {
+.emotion-8 {
   margin-bottom: 0.5rem;
 }
 
@@ -42,25 +42,25 @@ Object {
   margin-bottom: 1.5rem;
 }
 
-.emotion-6 {
+.emotion-7 {
   width: 100%;
   padding: 0.25rem 0;
 }
 
-.emotion-6 label ~ p {
+.emotion-7 label ~ p {
   display: inline;
   margin-left: 0.5rem;
   color: #b4c3ca;
   font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
 }
 
-.emotion-6 svg {
+.emotion-7 svg {
   position: absolute;
   right: 0.75rem;
   top: calc(50% - 9px);
 }
 
-.emotion-24 {
+.emotion-26 {
   opacity: 0;
   height: 0px;
   border-radius: 2px;
@@ -72,17 +72,53 @@ Object {
   overflow: hidden;
 }
 
-.emotion-24 p {
+.emotion-26 p {
   color: #536171;
 }
 
-.emotion-23 {
+.emotion-25 {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
 }
 
-.emotion-9 {
+.emotion-11 {
   margin-top: 0.75rem;
+}
+
+.emotion-6 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.emotion-6 input {
+  vertical-align: text-top;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.emotion-6 label {
+  font-weight: 600;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.emotion-6 span {
+  color: #b4c3ca;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
 }
 
 .emotion-0 {
@@ -304,10 +340,10 @@ Object {
                     </p>
                   </div>
                   <div
-                    class="emotion-7"
+                    class="emotion-8"
                   >
                     <div
-                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-6 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf Card__Card--is-selected___3zM50"
+                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf Card__Card--is-selected___3zM50"
                       data-test-id="app-location-app-config"
                     >
                       <button
@@ -324,31 +360,27 @@ Object {
                             class="ToggleButton__Toggle__content-wrapper___1VoAt"
                           >
                             <div
-                              class="ControlledInputField__ControlledInputField___2uIG9"
-                              data-test-id="cf-ui-checkbox-field"
+                              class="emotion-6"
                             >
-                              <input
-                                aria-label="App configuration screen"
-                                class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                                data-test-id="cf-ui-controlled-input"
-                                id="app-location-app-config"
-                                type="checkbox"
-                                value=""
-                              />
+                              <div>
+                                <input
+                                  name="location-check-App configuration screen"
+                                  type="checkbox"
+                                />
+                              </div>
                               <div>
                                 <label
-                                  class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                                  data-test-id="cf-ui-form-label"
-                                  for="app-location-app-config"
+                                  for="location-checkApp configuration screen"
                                 >
                                   App configuration screen
                                 </label>
-                                <p
-                                  class="HelpText__HelpText___uWbja"
-                                  data-test-id="cf-ui-help-text"
-                                >
-                                  (app-config)
-                                </p>
+                              </div>
+                              <div>
+                                <span>
+                                  (
+                                  app-config
+                                  )
+                                </span>
                               </div>
                             </div>
                           </span>
@@ -357,10 +389,10 @@ Object {
                     </div>
                   </div>
                   <div
-                    class="emotion-7"
+                    class="emotion-8"
                   >
                     <div
-                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-6 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
                       data-test-id="app-location-entry-field"
                     >
                       <button
@@ -377,31 +409,27 @@ Object {
                             class="ToggleButton__Toggle__content-wrapper___1VoAt"
                           >
                             <div
-                              class="ControlledInputField__ControlledInputField___2uIG9"
-                              data-test-id="cf-ui-checkbox-field"
+                              class="emotion-6"
                             >
-                              <input
-                                aria-label="Entry field"
-                                class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                                data-test-id="cf-ui-controlled-input"
-                                id="app-location-entry-field"
-                                type="checkbox"
-                                value=""
-                              />
+                              <div>
+                                <input
+                                  name="location-check-Entry field"
+                                  type="checkbox"
+                                />
+                              </div>
                               <div>
                                 <label
-                                  class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                                  data-test-id="cf-ui-form-label"
-                                  for="app-location-entry-field"
+                                  for="location-checkEntry field"
                                 >
                                   Entry field
                                 </label>
-                                <p
-                                  class="HelpText__HelpText___uWbja"
-                                  data-test-id="cf-ui-help-text"
-                                >
-                                  (entry-field)
-                                </p>
+                              </div>
+                              <div>
+                                <span>
+                                  (
+                                  entry-field
+                                  )
+                                </span>
                               </div>
                             </div>
                             <svg
@@ -425,7 +453,7 @@ Object {
                       </button>
                     </div>
                     <div
-                      class="emotion-24"
+                      class="emotion-26"
                     >
                       <p
                         class="Paragraph__Paragraph___2aO-9"
@@ -434,10 +462,10 @@ Object {
                         Select the field types the app can be rendered in.
                       </p>
                       <div
-                        class="emotion-23"
+                        class="emotion-25"
                       >
                         <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
                           data-test-id="cf-ui-checkbox-field"
                         >
                           <input
@@ -459,95 +487,7 @@ Object {
                           </div>
                         </div>
                         <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
-                          data-test-id="cf-ui-checkbox-field"
-                        >
-                          <input
-                            aria-label="Short text, list"
-                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                            data-test-id="cf-ui-controlled-input"
-                            id="app-entry-field-type-Symbols"
-                            type="checkbox"
-                            value=""
-                          />
-                          <div>
-                            <label
-                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                              data-test-id="cf-ui-form-label"
-                              for="app-entry-field-type-Symbols"
-                            >
-                              Short text, list
-                            </label>
-                          </div>
-                        </div>
-                        <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
-                          data-test-id="cf-ui-checkbox-field"
-                        >
-                          <input
-                            aria-label="Long text"
-                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                            data-test-id="cf-ui-controlled-input"
-                            id="app-entry-field-type-Text"
-                            type="checkbox"
-                            value=""
-                          />
-                          <div>
-                            <label
-                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                              data-test-id="cf-ui-form-label"
-                              for="app-entry-field-type-Text"
-                            >
-                              Long text
-                            </label>
-                          </div>
-                        </div>
-                        <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
-                          data-test-id="cf-ui-checkbox-field"
-                        >
-                          <input
-                            aria-label="Rich text"
-                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                            data-test-id="cf-ui-controlled-input"
-                            id="app-entry-field-type-RichText"
-                            type="checkbox"
-                            value=""
-                          />
-                          <div>
-                            <label
-                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                              data-test-id="cf-ui-form-label"
-                              for="app-entry-field-type-RichText"
-                            >
-                              Rich text
-                            </label>
-                          </div>
-                        </div>
-                        <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
-                          data-test-id="cf-ui-checkbox-field"
-                        >
-                          <input
-                            aria-label="Number, integer"
-                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                            data-test-id="cf-ui-controlled-input"
-                            id="app-entry-field-type-Integer"
-                            type="checkbox"
-                            value=""
-                          />
-                          <div>
-                            <label
-                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                              data-test-id="cf-ui-form-label"
-                              for="app-entry-field-type-Integer"
-                            >
-                              Number, integer
-                            </label>
-                          </div>
-                        </div>
-                        <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
                           data-test-id="cf-ui-checkbox-field"
                         >
                           <input
@@ -569,95 +509,7 @@ Object {
                           </div>
                         </div>
                         <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
-                          data-test-id="cf-ui-checkbox-field"
-                        >
-                          <input
-                            aria-label="Boolean"
-                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                            data-test-id="cf-ui-controlled-input"
-                            id="app-entry-field-type-Boolean"
-                            type="checkbox"
-                            value=""
-                          />
-                          <div>
-                            <label
-                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                              data-test-id="cf-ui-form-label"
-                              for="app-entry-field-type-Boolean"
-                            >
-                              Boolean
-                            </label>
-                          </div>
-                        </div>
-                        <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
-                          data-test-id="cf-ui-checkbox-field"
-                        >
-                          <input
-                            aria-label="Date and time"
-                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                            data-test-id="cf-ui-controlled-input"
-                            id="app-entry-field-type-Date"
-                            type="checkbox"
-                            value=""
-                          />
-                          <div>
-                            <label
-                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                              data-test-id="cf-ui-form-label"
-                              for="app-entry-field-type-Date"
-                            >
-                              Date and time
-                            </label>
-                          </div>
-                        </div>
-                        <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
-                          data-test-id="cf-ui-checkbox-field"
-                        >
-                          <input
-                            aria-label="Location"
-                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                            data-test-id="cf-ui-controlled-input"
-                            id="app-entry-field-type-Location"
-                            type="checkbox"
-                            value=""
-                          />
-                          <div>
-                            <label
-                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                              data-test-id="cf-ui-form-label"
-                              for="app-entry-field-type-Location"
-                            >
-                              Location
-                            </label>
-                          </div>
-                        </div>
-                        <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
-                          data-test-id="cf-ui-checkbox-field"
-                        >
-                          <input
-                            aria-label="JSON object"
-                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                            data-test-id="cf-ui-controlled-input"
-                            id="app-entry-field-type-Object"
-                            type="checkbox"
-                            value=""
-                          />
-                          <div>
-                            <label
-                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                              data-test-id="cf-ui-form-label"
-                              for="app-entry-field-type-Object"
-                            >
-                              JSON object
-                            </label>
-                          </div>
-                        </div>
-                        <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
                           data-test-id="cf-ui-checkbox-field"
                         >
                           <input
@@ -679,7 +531,51 @@ Object {
                           </div>
                         </div>
                         <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          data-test-id="cf-ui-checkbox-field"
+                        >
+                          <input
+                            aria-label="Short text, list"
+                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                            data-test-id="cf-ui-controlled-input"
+                            id="app-entry-field-type-Symbols"
+                            type="checkbox"
+                            value=""
+                          />
+                          <div>
+                            <label
+                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                              data-test-id="cf-ui-form-label"
+                              for="app-entry-field-type-Symbols"
+                            >
+                              Short text, list
+                            </label>
+                          </div>
+                        </div>
+                        <div
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          data-test-id="cf-ui-checkbox-field"
+                        >
+                          <input
+                            aria-label="Date and time"
+                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                            data-test-id="cf-ui-controlled-input"
+                            id="app-entry-field-type-Date"
+                            type="checkbox"
+                            value=""
+                          />
+                          <div>
+                            <label
+                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                              data-test-id="cf-ui-form-label"
+                              for="app-entry-field-type-Date"
+                            >
+                              Date and time
+                            </label>
+                          </div>
+                        </div>
+                        <div
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
                           data-test-id="cf-ui-checkbox-field"
                         >
                           <input
@@ -701,7 +597,51 @@ Object {
                           </div>
                         </div>
                         <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          data-test-id="cf-ui-checkbox-field"
+                        >
+                          <input
+                            aria-label="Long text"
+                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                            data-test-id="cf-ui-controlled-input"
+                            id="app-entry-field-type-Text"
+                            type="checkbox"
+                            value=""
+                          />
+                          <div>
+                            <label
+                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                              data-test-id="cf-ui-form-label"
+                              for="app-entry-field-type-Text"
+                            >
+                              Long text
+                            </label>
+                          </div>
+                        </div>
+                        <div
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          data-test-id="cf-ui-checkbox-field"
+                        >
+                          <input
+                            aria-label="Location"
+                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                            data-test-id="cf-ui-controlled-input"
+                            id="app-entry-field-type-Location"
+                            type="checkbox"
+                            value=""
+                          />
+                          <div>
+                            <label
+                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                              data-test-id="cf-ui-form-label"
+                              for="app-entry-field-type-Location"
+                            >
+                              Location
+                            </label>
+                          </div>
+                        </div>
+                        <div
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
                           data-test-id="cf-ui-checkbox-field"
                         >
                           <input
@@ -723,7 +663,51 @@ Object {
                           </div>
                         </div>
                         <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          data-test-id="cf-ui-checkbox-field"
+                        >
+                          <input
+                            aria-label="Rich text"
+                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                            data-test-id="cf-ui-controlled-input"
+                            id="app-entry-field-type-RichText"
+                            type="checkbox"
+                            value=""
+                          />
+                          <div>
+                            <label
+                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                              data-test-id="cf-ui-form-label"
+                              for="app-entry-field-type-RichText"
+                            >
+                              Rich text
+                            </label>
+                          </div>
+                        </div>
+                        <div
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          data-test-id="cf-ui-checkbox-field"
+                        >
+                          <input
+                            aria-label="Boolean"
+                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                            data-test-id="cf-ui-controlled-input"
+                            id="app-entry-field-type-Boolean"
+                            type="checkbox"
+                            value=""
+                          />
+                          <div>
+                            <label
+                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                              data-test-id="cf-ui-form-label"
+                              for="app-entry-field-type-Boolean"
+                            >
+                              Boolean
+                            </label>
+                          </div>
+                        </div>
+                        <div
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
                           data-test-id="cf-ui-checkbox-field"
                         >
                           <input
@@ -744,14 +728,58 @@ Object {
                             </label>
                           </div>
                         </div>
+                        <div
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          data-test-id="cf-ui-checkbox-field"
+                        >
+                          <input
+                            aria-label="Number, integer"
+                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                            data-test-id="cf-ui-controlled-input"
+                            id="app-entry-field-type-Integer"
+                            type="checkbox"
+                            value=""
+                          />
+                          <div>
+                            <label
+                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                              data-test-id="cf-ui-form-label"
+                              for="app-entry-field-type-Integer"
+                            >
+                              Number, integer
+                            </label>
+                          </div>
+                        </div>
+                        <div
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          data-test-id="cf-ui-checkbox-field"
+                        >
+                          <input
+                            aria-label="JSON object"
+                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                            data-test-id="cf-ui-controlled-input"
+                            id="app-entry-field-type-Object"
+                            type="checkbox"
+                            value=""
+                          />
+                          <div>
+                            <label
+                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                              data-test-id="cf-ui-form-label"
+                              for="app-entry-field-type-Object"
+                            >
+                              JSON object
+                            </label>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                   <div
-                    class="emotion-7"
+                    class="emotion-8"
                   >
                     <div
-                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-6 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
                       data-test-id="app-location-entry-sidebar"
                     >
                       <button
@@ -768,31 +796,27 @@ Object {
                             class="ToggleButton__Toggle__content-wrapper___1VoAt"
                           >
                             <div
-                              class="ControlledInputField__ControlledInputField___2uIG9"
-                              data-test-id="cf-ui-checkbox-field"
+                              class="emotion-6"
                             >
-                              <input
-                                aria-label="Entry sidebar"
-                                class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                                data-test-id="cf-ui-controlled-input"
-                                id="app-location-entry-sidebar"
-                                type="checkbox"
-                                value=""
-                              />
+                              <div>
+                                <input
+                                  name="location-check-Entry sidebar"
+                                  type="checkbox"
+                                />
+                              </div>
                               <div>
                                 <label
-                                  class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                                  data-test-id="cf-ui-form-label"
-                                  for="app-location-entry-sidebar"
+                                  for="location-checkEntry sidebar"
                                 >
                                   Entry sidebar
                                 </label>
-                                <p
-                                  class="HelpText__HelpText___uWbja"
-                                  data-test-id="cf-ui-help-text"
-                                >
-                                  (entry-sidebar)
-                                </p>
+                              </div>
+                              <div>
+                                <span>
+                                  (
+                                  entry-sidebar
+                                  )
+                                </span>
                               </div>
                             </div>
                           </span>
@@ -801,10 +825,10 @@ Object {
                     </div>
                   </div>
                   <div
-                    class="emotion-7"
+                    class="emotion-8"
                   >
                     <div
-                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-6 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
                       data-test-id="app-location-entry-editor"
                     >
                       <button
@@ -821,31 +845,27 @@ Object {
                             class="ToggleButton__Toggle__content-wrapper___1VoAt"
                           >
                             <div
-                              class="ControlledInputField__ControlledInputField___2uIG9"
-                              data-test-id="cf-ui-checkbox-field"
+                              class="emotion-6"
                             >
-                              <input
-                                aria-label="Entry editor"
-                                class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                                data-test-id="cf-ui-controlled-input"
-                                id="app-location-entry-editor"
-                                type="checkbox"
-                                value=""
-                              />
+                              <div>
+                                <input
+                                  name="location-check-Entry editor"
+                                  type="checkbox"
+                                />
+                              </div>
                               <div>
                                 <label
-                                  class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                                  data-test-id="cf-ui-form-label"
-                                  for="app-location-entry-editor"
+                                  for="location-checkEntry editor"
                                 >
                                   Entry editor
                                 </label>
-                                <p
-                                  class="HelpText__HelpText___uWbja"
-                                  data-test-id="cf-ui-help-text"
-                                >
-                                  (entry-editor)
-                                </p>
+                              </div>
+                              <div>
+                                <span>
+                                  (
+                                  entry-editor
+                                  )
+                                </span>
                               </div>
                             </div>
                           </span>
@@ -854,10 +874,10 @@ Object {
                     </div>
                   </div>
                   <div
-                    class="emotion-7"
+                    class="emotion-8"
                   >
                     <div
-                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-6 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
                       data-test-id="app-location-dialog"
                     >
                       <button
@@ -874,31 +894,27 @@ Object {
                             class="ToggleButton__Toggle__content-wrapper___1VoAt"
                           >
                             <div
-                              class="ControlledInputField__ControlledInputField___2uIG9"
-                              data-test-id="cf-ui-checkbox-field"
+                              class="emotion-6"
                             >
-                              <input
-                                aria-label="Dialog"
-                                class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                                data-test-id="cf-ui-controlled-input"
-                                id="app-location-dialog"
-                                type="checkbox"
-                                value=""
-                              />
+                              <div>
+                                <input
+                                  name="location-check-Dialog"
+                                  type="checkbox"
+                                />
+                              </div>
                               <div>
                                 <label
-                                  class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                                  data-test-id="cf-ui-form-label"
-                                  for="app-location-dialog"
+                                  for="location-checkDialog"
                                 >
                                   Dialog
                                 </label>
-                                <p
-                                  class="HelpText__HelpText___uWbja"
-                                  data-test-id="cf-ui-help-text"
-                                >
-                                  (dialog)
-                                </p>
+                              </div>
+                              <div>
+                                <span>
+                                  (
+                                  dialog
+                                  )
+                                </span>
                               </div>
                             </div>
                           </span>
@@ -907,10 +923,10 @@ Object {
                     </div>
                   </div>
                   <div
-                    class="emotion-7"
+                    class="emotion-8"
                   >
                     <div
-                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-6 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
                       data-test-id="app-location-page"
                     >
                       <button
@@ -927,31 +943,27 @@ Object {
                             class="ToggleButton__Toggle__content-wrapper___1VoAt"
                           >
                             <div
-                              class="ControlledInputField__ControlledInputField___2uIG9"
-                              data-test-id="cf-ui-checkbox-field"
+                              class="emotion-6"
                             >
-                              <input
-                                aria-label="Page"
-                                class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                                data-test-id="cf-ui-controlled-input"
-                                id="app-location-page"
-                                type="checkbox"
-                                value=""
-                              />
+                              <div>
+                                <input
+                                  name="location-check-Page"
+                                  type="checkbox"
+                                />
+                              </div>
                               <div>
                                 <label
-                                  class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                                  data-test-id="cf-ui-form-label"
-                                  for="app-location-page"
+                                  for="location-checkPage"
                                 >
                                   Page
                                 </label>
-                                <p
-                                  class="HelpText__HelpText___uWbja"
-                                  data-test-id="cf-ui-help-text"
-                                >
-                                  (page)
-                                </p>
+                              </div>
+                              <div>
+                                <span>
+                                  (
+                                  page
+                                  )
+                                </span>
                               </div>
                             </div>
                           </span>
@@ -1190,7 +1202,7 @@ Object {
   margin-bottom: 1.5rem;
 }
 
-.emotion-7 {
+.emotion-8 {
   margin-bottom: 0.5rem;
 }
 
@@ -1198,25 +1210,25 @@ Object {
   margin-bottom: 1.5rem;
 }
 
-.emotion-6 {
+.emotion-7 {
   width: 100%;
   padding: 0.25rem 0;
 }
 
-.emotion-6 label ~ p {
+.emotion-7 label ~ p {
   display: inline;
   margin-left: 0.5rem;
   color: #b4c3ca;
   font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
 }
 
-.emotion-6 svg {
+.emotion-7 svg {
   position: absolute;
   right: 0.75rem;
   top: calc(50% - 9px);
 }
 
-.emotion-24 {
+.emotion-26 {
   opacity: 0;
   height: 0px;
   border-radius: 2px;
@@ -1228,17 +1240,53 @@ Object {
   overflow: hidden;
 }
 
-.emotion-24 p {
+.emotion-26 p {
   color: #536171;
 }
 
-.emotion-23 {
+.emotion-25 {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
 }
 
-.emotion-9 {
+.emotion-11 {
   margin-top: 0.75rem;
+}
+
+.emotion-6 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.emotion-6 input {
+  vertical-align: text-top;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.emotion-6 label {
+  font-weight: 600;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.emotion-6 span {
+  color: #b4c3ca;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
 }
 
 .emotion-0 {
@@ -1459,10 +1507,10 @@ Object {
                   </p>
                 </div>
                 <div
-                  class="emotion-7"
+                  class="emotion-8"
                 >
                   <div
-                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-6 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf Card__Card--is-selected___3zM50"
+                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf Card__Card--is-selected___3zM50"
                     data-test-id="app-location-app-config"
                   >
                     <button
@@ -1479,31 +1527,27 @@ Object {
                           class="ToggleButton__Toggle__content-wrapper___1VoAt"
                         >
                           <div
-                            class="ControlledInputField__ControlledInputField___2uIG9"
-                            data-test-id="cf-ui-checkbox-field"
+                            class="emotion-6"
                           >
-                            <input
-                              aria-label="App configuration screen"
-                              class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                              data-test-id="cf-ui-controlled-input"
-                              id="app-location-app-config"
-                              type="checkbox"
-                              value=""
-                            />
+                            <div>
+                              <input
+                                name="location-check-App configuration screen"
+                                type="checkbox"
+                              />
+                            </div>
                             <div>
                               <label
-                                class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                                data-test-id="cf-ui-form-label"
-                                for="app-location-app-config"
+                                for="location-checkApp configuration screen"
                               >
                                 App configuration screen
                               </label>
-                              <p
-                                class="HelpText__HelpText___uWbja"
-                                data-test-id="cf-ui-help-text"
-                              >
-                                (app-config)
-                              </p>
+                            </div>
+                            <div>
+                              <span>
+                                (
+                                app-config
+                                )
+                              </span>
                             </div>
                           </div>
                         </span>
@@ -1512,10 +1556,10 @@ Object {
                   </div>
                 </div>
                 <div
-                  class="emotion-7"
+                  class="emotion-8"
                 >
                   <div
-                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-6 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
                     data-test-id="app-location-entry-field"
                   >
                     <button
@@ -1532,31 +1576,27 @@ Object {
                           class="ToggleButton__Toggle__content-wrapper___1VoAt"
                         >
                           <div
-                            class="ControlledInputField__ControlledInputField___2uIG9"
-                            data-test-id="cf-ui-checkbox-field"
+                            class="emotion-6"
                           >
-                            <input
-                              aria-label="Entry field"
-                              class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                              data-test-id="cf-ui-controlled-input"
-                              id="app-location-entry-field"
-                              type="checkbox"
-                              value=""
-                            />
+                            <div>
+                              <input
+                                name="location-check-Entry field"
+                                type="checkbox"
+                              />
+                            </div>
                             <div>
                               <label
-                                class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                                data-test-id="cf-ui-form-label"
-                                for="app-location-entry-field"
+                                for="location-checkEntry field"
                               >
                                 Entry field
                               </label>
-                              <p
-                                class="HelpText__HelpText___uWbja"
-                                data-test-id="cf-ui-help-text"
-                              >
-                                (entry-field)
-                              </p>
+                            </div>
+                            <div>
+                              <span>
+                                (
+                                entry-field
+                                )
+                              </span>
                             </div>
                           </div>
                           <svg
@@ -1580,7 +1620,7 @@ Object {
                     </button>
                   </div>
                   <div
-                    class="emotion-24"
+                    class="emotion-26"
                   >
                     <p
                       class="Paragraph__Paragraph___2aO-9"
@@ -1589,10 +1629,10 @@ Object {
                       Select the field types the app can be rendered in.
                     </p>
                     <div
-                      class="emotion-23"
+                      class="emotion-25"
                     >
                       <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
                         data-test-id="cf-ui-checkbox-field"
                       >
                         <input
@@ -1614,95 +1654,7 @@ Object {
                         </div>
                       </div>
                       <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
-                        data-test-id="cf-ui-checkbox-field"
-                      >
-                        <input
-                          aria-label="Short text, list"
-                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                          data-test-id="cf-ui-controlled-input"
-                          id="app-entry-field-type-Symbols"
-                          type="checkbox"
-                          value=""
-                        />
-                        <div>
-                          <label
-                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                            data-test-id="cf-ui-form-label"
-                            for="app-entry-field-type-Symbols"
-                          >
-                            Short text, list
-                          </label>
-                        </div>
-                      </div>
-                      <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
-                        data-test-id="cf-ui-checkbox-field"
-                      >
-                        <input
-                          aria-label="Long text"
-                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                          data-test-id="cf-ui-controlled-input"
-                          id="app-entry-field-type-Text"
-                          type="checkbox"
-                          value=""
-                        />
-                        <div>
-                          <label
-                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                            data-test-id="cf-ui-form-label"
-                            for="app-entry-field-type-Text"
-                          >
-                            Long text
-                          </label>
-                        </div>
-                      </div>
-                      <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
-                        data-test-id="cf-ui-checkbox-field"
-                      >
-                        <input
-                          aria-label="Rich text"
-                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                          data-test-id="cf-ui-controlled-input"
-                          id="app-entry-field-type-RichText"
-                          type="checkbox"
-                          value=""
-                        />
-                        <div>
-                          <label
-                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                            data-test-id="cf-ui-form-label"
-                            for="app-entry-field-type-RichText"
-                          >
-                            Rich text
-                          </label>
-                        </div>
-                      </div>
-                      <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
-                        data-test-id="cf-ui-checkbox-field"
-                      >
-                        <input
-                          aria-label="Number, integer"
-                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                          data-test-id="cf-ui-controlled-input"
-                          id="app-entry-field-type-Integer"
-                          type="checkbox"
-                          value=""
-                        />
-                        <div>
-                          <label
-                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                            data-test-id="cf-ui-form-label"
-                            for="app-entry-field-type-Integer"
-                          >
-                            Number, integer
-                          </label>
-                        </div>
-                      </div>
-                      <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
                         data-test-id="cf-ui-checkbox-field"
                       >
                         <input
@@ -1724,95 +1676,7 @@ Object {
                         </div>
                       </div>
                       <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
-                        data-test-id="cf-ui-checkbox-field"
-                      >
-                        <input
-                          aria-label="Boolean"
-                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                          data-test-id="cf-ui-controlled-input"
-                          id="app-entry-field-type-Boolean"
-                          type="checkbox"
-                          value=""
-                        />
-                        <div>
-                          <label
-                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                            data-test-id="cf-ui-form-label"
-                            for="app-entry-field-type-Boolean"
-                          >
-                            Boolean
-                          </label>
-                        </div>
-                      </div>
-                      <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
-                        data-test-id="cf-ui-checkbox-field"
-                      >
-                        <input
-                          aria-label="Date and time"
-                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                          data-test-id="cf-ui-controlled-input"
-                          id="app-entry-field-type-Date"
-                          type="checkbox"
-                          value=""
-                        />
-                        <div>
-                          <label
-                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                            data-test-id="cf-ui-form-label"
-                            for="app-entry-field-type-Date"
-                          >
-                            Date and time
-                          </label>
-                        </div>
-                      </div>
-                      <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
-                        data-test-id="cf-ui-checkbox-field"
-                      >
-                        <input
-                          aria-label="Location"
-                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                          data-test-id="cf-ui-controlled-input"
-                          id="app-entry-field-type-Location"
-                          type="checkbox"
-                          value=""
-                        />
-                        <div>
-                          <label
-                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                            data-test-id="cf-ui-form-label"
-                            for="app-entry-field-type-Location"
-                          >
-                            Location
-                          </label>
-                        </div>
-                      </div>
-                      <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
-                        data-test-id="cf-ui-checkbox-field"
-                      >
-                        <input
-                          aria-label="JSON object"
-                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                          data-test-id="cf-ui-controlled-input"
-                          id="app-entry-field-type-Object"
-                          type="checkbox"
-                          value=""
-                        />
-                        <div>
-                          <label
-                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                            data-test-id="cf-ui-form-label"
-                            for="app-entry-field-type-Object"
-                          >
-                            JSON object
-                          </label>
-                        </div>
-                      </div>
-                      <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
                         data-test-id="cf-ui-checkbox-field"
                       >
                         <input
@@ -1834,7 +1698,51 @@ Object {
                         </div>
                       </div>
                       <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        data-test-id="cf-ui-checkbox-field"
+                      >
+                        <input
+                          aria-label="Short text, list"
+                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                          data-test-id="cf-ui-controlled-input"
+                          id="app-entry-field-type-Symbols"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div>
+                          <label
+                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                            data-test-id="cf-ui-form-label"
+                            for="app-entry-field-type-Symbols"
+                          >
+                            Short text, list
+                          </label>
+                        </div>
+                      </div>
+                      <div
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        data-test-id="cf-ui-checkbox-field"
+                      >
+                        <input
+                          aria-label="Date and time"
+                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                          data-test-id="cf-ui-controlled-input"
+                          id="app-entry-field-type-Date"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div>
+                          <label
+                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                            data-test-id="cf-ui-form-label"
+                            for="app-entry-field-type-Date"
+                          >
+                            Date and time
+                          </label>
+                        </div>
+                      </div>
+                      <div
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
                         data-test-id="cf-ui-checkbox-field"
                       >
                         <input
@@ -1856,7 +1764,51 @@ Object {
                         </div>
                       </div>
                       <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        data-test-id="cf-ui-checkbox-field"
+                      >
+                        <input
+                          aria-label="Long text"
+                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                          data-test-id="cf-ui-controlled-input"
+                          id="app-entry-field-type-Text"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div>
+                          <label
+                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                            data-test-id="cf-ui-form-label"
+                            for="app-entry-field-type-Text"
+                          >
+                            Long text
+                          </label>
+                        </div>
+                      </div>
+                      <div
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        data-test-id="cf-ui-checkbox-field"
+                      >
+                        <input
+                          aria-label="Location"
+                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                          data-test-id="cf-ui-controlled-input"
+                          id="app-entry-field-type-Location"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div>
+                          <label
+                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                            data-test-id="cf-ui-form-label"
+                            for="app-entry-field-type-Location"
+                          >
+                            Location
+                          </label>
+                        </div>
+                      </div>
+                      <div
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
                         data-test-id="cf-ui-checkbox-field"
                       >
                         <input
@@ -1878,7 +1830,51 @@ Object {
                         </div>
                       </div>
                       <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-9"
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        data-test-id="cf-ui-checkbox-field"
+                      >
+                        <input
+                          aria-label="Rich text"
+                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                          data-test-id="cf-ui-controlled-input"
+                          id="app-entry-field-type-RichText"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div>
+                          <label
+                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                            data-test-id="cf-ui-form-label"
+                            for="app-entry-field-type-RichText"
+                          >
+                            Rich text
+                          </label>
+                        </div>
+                      </div>
+                      <div
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        data-test-id="cf-ui-checkbox-field"
+                      >
+                        <input
+                          aria-label="Boolean"
+                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                          data-test-id="cf-ui-controlled-input"
+                          id="app-entry-field-type-Boolean"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div>
+                          <label
+                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                            data-test-id="cf-ui-form-label"
+                            for="app-entry-field-type-Boolean"
+                          >
+                            Boolean
+                          </label>
+                        </div>
+                      </div>
+                      <div
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
                         data-test-id="cf-ui-checkbox-field"
                       >
                         <input
@@ -1899,14 +1895,58 @@ Object {
                           </label>
                         </div>
                       </div>
+                      <div
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        data-test-id="cf-ui-checkbox-field"
+                      >
+                        <input
+                          aria-label="Number, integer"
+                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                          data-test-id="cf-ui-controlled-input"
+                          id="app-entry-field-type-Integer"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div>
+                          <label
+                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                            data-test-id="cf-ui-form-label"
+                            for="app-entry-field-type-Integer"
+                          >
+                            Number, integer
+                          </label>
+                        </div>
+                      </div>
+                      <div
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        data-test-id="cf-ui-checkbox-field"
+                      >
+                        <input
+                          aria-label="JSON object"
+                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                          data-test-id="cf-ui-controlled-input"
+                          id="app-entry-field-type-Object"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div>
+                          <label
+                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                            data-test-id="cf-ui-form-label"
+                            for="app-entry-field-type-Object"
+                          >
+                            JSON object
+                          </label>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
                 <div
-                  class="emotion-7"
+                  class="emotion-8"
                 >
                   <div
-                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-6 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
                     data-test-id="app-location-entry-sidebar"
                   >
                     <button
@@ -1923,31 +1963,27 @@ Object {
                           class="ToggleButton__Toggle__content-wrapper___1VoAt"
                         >
                           <div
-                            class="ControlledInputField__ControlledInputField___2uIG9"
-                            data-test-id="cf-ui-checkbox-field"
+                            class="emotion-6"
                           >
-                            <input
-                              aria-label="Entry sidebar"
-                              class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                              data-test-id="cf-ui-controlled-input"
-                              id="app-location-entry-sidebar"
-                              type="checkbox"
-                              value=""
-                            />
+                            <div>
+                              <input
+                                name="location-check-Entry sidebar"
+                                type="checkbox"
+                              />
+                            </div>
                             <div>
                               <label
-                                class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                                data-test-id="cf-ui-form-label"
-                                for="app-location-entry-sidebar"
+                                for="location-checkEntry sidebar"
                               >
                                 Entry sidebar
                               </label>
-                              <p
-                                class="HelpText__HelpText___uWbja"
-                                data-test-id="cf-ui-help-text"
-                              >
-                                (entry-sidebar)
-                              </p>
+                            </div>
+                            <div>
+                              <span>
+                                (
+                                entry-sidebar
+                                )
+                              </span>
                             </div>
                           </div>
                         </span>
@@ -1956,10 +1992,10 @@ Object {
                   </div>
                 </div>
                 <div
-                  class="emotion-7"
+                  class="emotion-8"
                 >
                   <div
-                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-6 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
                     data-test-id="app-location-entry-editor"
                   >
                     <button
@@ -1976,31 +2012,27 @@ Object {
                           class="ToggleButton__Toggle__content-wrapper___1VoAt"
                         >
                           <div
-                            class="ControlledInputField__ControlledInputField___2uIG9"
-                            data-test-id="cf-ui-checkbox-field"
+                            class="emotion-6"
                           >
-                            <input
-                              aria-label="Entry editor"
-                              class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                              data-test-id="cf-ui-controlled-input"
-                              id="app-location-entry-editor"
-                              type="checkbox"
-                              value=""
-                            />
+                            <div>
+                              <input
+                                name="location-check-Entry editor"
+                                type="checkbox"
+                              />
+                            </div>
                             <div>
                               <label
-                                class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                                data-test-id="cf-ui-form-label"
-                                for="app-location-entry-editor"
+                                for="location-checkEntry editor"
                               >
                                 Entry editor
                               </label>
-                              <p
-                                class="HelpText__HelpText___uWbja"
-                                data-test-id="cf-ui-help-text"
-                              >
-                                (entry-editor)
-                              </p>
+                            </div>
+                            <div>
+                              <span>
+                                (
+                                entry-editor
+                                )
+                              </span>
                             </div>
                           </div>
                         </span>
@@ -2009,10 +2041,10 @@ Object {
                   </div>
                 </div>
                 <div
-                  class="emotion-7"
+                  class="emotion-8"
                 >
                   <div
-                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-6 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
                     data-test-id="app-location-dialog"
                   >
                     <button
@@ -2029,31 +2061,27 @@ Object {
                           class="ToggleButton__Toggle__content-wrapper___1VoAt"
                         >
                           <div
-                            class="ControlledInputField__ControlledInputField___2uIG9"
-                            data-test-id="cf-ui-checkbox-field"
+                            class="emotion-6"
                           >
-                            <input
-                              aria-label="Dialog"
-                              class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                              data-test-id="cf-ui-controlled-input"
-                              id="app-location-dialog"
-                              type="checkbox"
-                              value=""
-                            />
+                            <div>
+                              <input
+                                name="location-check-Dialog"
+                                type="checkbox"
+                              />
+                            </div>
                             <div>
                               <label
-                                class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                                data-test-id="cf-ui-form-label"
-                                for="app-location-dialog"
+                                for="location-checkDialog"
                               >
                                 Dialog
                               </label>
-                              <p
-                                class="HelpText__HelpText___uWbja"
-                                data-test-id="cf-ui-help-text"
-                              >
-                                (dialog)
-                              </p>
+                            </div>
+                            <div>
+                              <span>
+                                (
+                                dialog
+                                )
+                              </span>
                             </div>
                           </div>
                         </span>
@@ -2062,10 +2090,10 @@ Object {
                   </div>
                 </div>
                 <div
-                  class="emotion-7"
+                  class="emotion-8"
                 >
                   <div
-                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-6 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
                     data-test-id="app-location-page"
                   >
                     <button
@@ -2082,31 +2110,27 @@ Object {
                           class="ToggleButton__Toggle__content-wrapper___1VoAt"
                         >
                           <div
-                            class="ControlledInputField__ControlledInputField___2uIG9"
-                            data-test-id="cf-ui-checkbox-field"
+                            class="emotion-6"
                           >
-                            <input
-                              aria-label="Page"
-                              class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
-                              data-test-id="cf-ui-controlled-input"
-                              id="app-location-page"
-                              type="checkbox"
-                              value=""
-                            />
+                            <div>
+                              <input
+                                name="location-check-Page"
+                                type="checkbox"
+                              />
+                            </div>
                             <div>
                               <label
-                                class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
-                                data-test-id="cf-ui-form-label"
-                                for="app-location-page"
+                                for="location-checkPage"
                               >
                                 Page
                               </label>
-                              <p
-                                class="HelpText__HelpText___uWbja"
-                                data-test-id="cf-ui-help-text"
-                              >
-                                (page)
-                              </p>
+                            </div>
+                            <div>
+                              <span>
+                                (
+                                page
+                                )
+                              </span>
                             </div>
                           </div>
                         </span>
