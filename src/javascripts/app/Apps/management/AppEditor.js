@@ -72,6 +72,27 @@ const styles = {
   }),
   publicSwitch: css({
     marginTop: tokens.spacingL
+  }),
+  checkbox: css({
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    cursor: 'pointer',
+    '& input': css({
+      verticalAlign: 'text-top',
+      marginRight: tokens.spacingXs,
+      cursor: 'pointer'
+    }),
+    '& label': css({
+      fontWeight: tokens.fontWeightMedium,
+      marginRight: tokens.spacingXs,
+      cursor: 'pointer'
+    }),
+    '& span': css({
+      color: tokens.colorElementDarkest,
+      fontFamily: tokens.fontStackMonospace
+    })
   })
 };
 
@@ -88,19 +109,19 @@ const LOCATION_ORDER = [
 
 const FIELD_TYPES_ORDER = [
   ['Short text', 'Symbol'],
-  ['Short text, list', 'Symbols'],
-  ['Long text', 'Text'],
-  ['Rich text', 'RichText'],
-  ['Number, integer', 'Integer'],
   ['Number, decimal', 'Number'],
-  ['Boolean', 'Boolean'],
-  ['Date and time', 'Date'],
-  ['Location', 'Location'],
-  ['JSON object', 'Object'],
   ['Entry reference', 'Entry'],
+  ['Short text, list', 'Symbols'],
+  ['Date and time', 'Date'],
   ['Entry reference, list', 'Entries'],
+  ['Long text', 'Text'],
+  ['Location', 'Location'],
   ['Media reference', 'Asset'],
-  ['Media reference, list', 'Assets']
+  ['Rich text', 'RichText'],
+  ['Boolean', 'Boolean'],
+  ['Media reference, list', 'Assets'],
+  ['Number, integer', 'Integer'],
+  ['JSON object', 'Object']
 ];
 
 export default function AppEditor({ definition, onChange }) {
@@ -204,13 +225,23 @@ export default function AppEditor({ definition, onChange }) {
                 className={styles.locationToggle}
                 isActive={hasLocation(locationValue)}
                 onClick={() => toggleLocation(locationValue)}>
-                <CheckboxField
-                  labelText={name}
-                  onChange={() => toggleLocation(locationValue)}
-                  checked={hasLocation(locationValue)}
-                  helpText={`(${locationValue})`}
-                  id={`app-location-${locationValue}`}
-                />
+                <div className={styles.checkbox}>
+                  <div>
+                    {/* eslint-disable-next-line rulesdir/restrict-non-f36-components */}
+                    <input
+                      onChange={() => {}}
+                      name={`location-check-${name}`}
+                      type="checkbox"
+                      checked={hasLocation(locationValue)}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor={`location-check${name}`}>{name}</label>
+                  </div>
+                  <div>
+                    <span>({locationValue})</span>
+                  </div>
+                </div>
                 {locationValue === WidgetLocations.LOCATION_ENTRY_FIELD && (
                   <Icon icon="ListBulleted" color="secondary" />
                 )}
