@@ -30,7 +30,7 @@ export default class SseExemptionModal extends React.Component {
     const user = membership.sys.user;
     const exemptionReasonsMap = {
       userIsOwner: `The user is an owner of the organization`,
-      userHasMultipleOrganizationMemberships: `The user belongs to more than one Contentful organization`,
+      other: `Other`,
       userIsManuallyExempt: `The user is explicitly marked as exempt from Restricted Mode`
     };
     const includesReason = reason => {
