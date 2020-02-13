@@ -24,7 +24,7 @@ function goToInstallation(spaceId, environmentId, appId, onClose) {
 const styles = {
   form: css({
     '> div:first-child': css({
-      marginBottom: tokens.spacingS
+      marginBottom: tokens.spacingL
     })
   })
 };
