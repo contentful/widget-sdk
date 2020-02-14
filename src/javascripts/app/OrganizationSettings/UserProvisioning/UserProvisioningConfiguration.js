@@ -115,7 +115,7 @@ export default function UserProvisioningConfiguration({ orgId }) {
             testId="scim-token"
             disabled
             withCopyButton
-            value="Bearer ${personalAccessToken.token}"
+            value={`Bearer ${personalAccessToken.token}`}
           />
         </>
       )}
