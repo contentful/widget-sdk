@@ -75,7 +75,8 @@ const styles = {
   formActions: css({
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginBottom: tokens.spacing4Xl
   }),
   creator: css({
     animation: `${fadeIn} .2s ease`

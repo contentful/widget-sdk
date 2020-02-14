@@ -129,6 +129,10 @@ Object {
   margin-bottom: 2rem;
 }
 
+.emotion-41 {
+  margin-bottom: 5rem;
+}
+
 <body>
     <div>
       <div
@@ -974,7 +978,7 @@ Object {
                 </div>
               </div>
               <button
-                class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO"
+                class="Button__Button___1ZfFj a11y__focus-border--default___60AXp emotion-41 Button__Button--primary___JImeO"
                 data-test-id="app-create"
                 type="button"
               >
@@ -1295,6 +1299,10 @@ Object {
 
 .emotion-1 {
   margin-bottom: 2rem;
+}
+
+.emotion-41 {
+  margin-bottom: 5rem;
 }
 
 <div>
@@ -2141,7 +2149,7 @@ Object {
               </div>
             </div>
             <button
-              class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO"
+              class="Button__Button___1ZfFj a11y__focus-border--default___60AXp emotion-41 Button__Button--primary___JImeO"
               data-test-id="app-create"
               type="button"
             >

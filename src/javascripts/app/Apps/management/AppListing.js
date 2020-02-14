@@ -20,7 +20,6 @@ import {
   Typography,
   CopyButton,
   SectionHeading,
-  EmptyState,
   Workbench
 } from '@contentful/forma-36-react-components';
 
@@ -80,13 +79,22 @@ const styles = {
     marginTop: '100px',
     textAlign: 'center'
   }),
+  emptyWorkbench: css({
+    '> div': css({
+      height: '100%'
+    })
+  }),
   emptyState: css({
     maxWidth: '768px',
     margin: '0 auto',
-    marginTop: tokens.spacing4Xl,
     textAlign: 'center',
+    marginTop: tokens.spacingL,
+    marginBottom: tokens.spacingS,
     '& svg': css({
-      width: '100%'
+      width: '80%'
+    }),
+    button: css({
+      marginBottom: tokens.spacingL
     })
   }),
   menuCell: css({
@@ -127,12 +135,11 @@ export default function AppListing({ definitions }) {
 
   if (definitions.length < 1) {
     return (
-      <div className={styles.emptyState}>
-        <AppsPrivateFrameworkIllustration />
-        <EmptyState
-          headingProps={{ text: 'Build apps for Contentful' }}
-          descriptionProps={{ text: '' }}>
+      <Workbench className={styles.emptyWorkbench}>
+        <div className={styles.emptyState}>
+          <AppsPrivateFrameworkIllustration />
           <Typography>
+            <Heading>Build apps for Contentful</Heading>
             <Paragraph>
               Contentful apps extend and expand the capabilities of the Contentful web app and the
               editors who use it. Apps empower you to integrate third-party services, build
@@ -143,8 +150,8 @@ export default function AppListing({ definitions }) {
           <StateLink path="^.new_definition">
             {({ onClick }) => <Button onClick={onClick}>Create an app</Button>}
           </StateLink>
-        </EmptyState>
-      </div>
+        </div>
+      </Workbench>
     );
   }
 
