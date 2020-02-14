@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import UserProvisioningConfiguration from './UserProvisioningConfiguration';
-import ModalLauncher from '__mocks__/app/common/ModalLauncher';
+import ModalLauncher from 'app/common/ModalLauncher';
 
 jest.mock('app/settings/api/cma-tokens/TokenResourceManager', () => ({
   create: jest.fn()
@@ -14,8 +14,8 @@ const renderComponent = () => {
 
 describe('UserProvisioningConfiguration', () => {
   it('should render scim setup page, with scim url and generate button', () => {
-    const { getByTestId } = renderComponent();
-    expect(getByTestId('scim-url')).toHaveValue(
+    const { getByTestId, getByLabelText } = renderComponent();
+    expect(getByLabelText('SCIM URL')).toHaveValue(
       'https://api.contentful.com/scim/v2/organizations/testOrgId'
     );
     expect(getByTestId('generate-btn')).toBeInTheDocument();

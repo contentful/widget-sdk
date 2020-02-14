@@ -14,11 +14,6 @@ const FeatureFetcher = createFetcherComponent(async ({ orgId }) => {
   return { featureEnabled: featureEnabled };
 });
 
-UserProvisioning.propTypes = {
-  orgId: PropTypes.string.isRequired,
-  onReady: PropTypes.func.isRequired
-};
-
 export default function UserProvisioning({ orgId, onReady }) {
   useEffect(onReady, [onReady]);
 
@@ -42,7 +37,7 @@ export default function UserProvisioning({ orgId, onReady }) {
                 icon={<Icon name="page-sso" scale="0.75" />}
                 title="User Provisioning"
               />
-              <Workbench.Content>
+              <Workbench.Content type="text">
                 <UserProvisioningConfiguration orgId={orgId} />
               </Workbench.Content>
             </Workbench>
@@ -52,3 +47,8 @@ export default function UserProvisioning({ orgId, onReady }) {
     </OrgAdminOnly>
   );
 }
+
+UserProvisioning.propTypes = {
+  orgId: PropTypes.string.isRequired,
+  onReady: PropTypes.func.isRequired
+};

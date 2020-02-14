@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
+  TextField,
   TextLink,
   TextInput,
   Heading,
@@ -18,8 +19,7 @@ import * as TokenResourceManager from 'app/settings/api/cma-tokens/TokenResource
 
 const styles = {
   content: css({
-    width: '700px',
-    margin: '0 280px',
+    margin: '0 auto',
     marginTop: tokens.spacing2Xl
   }),
   intro: css({
@@ -37,7 +37,7 @@ const styles = {
 
 const SCIM_BASE = 'https://api.contentful.com/scim/v2/organizations/';
 
-function UserProvisioningConfiguration({ orgId }) {
+export default function UserProvisioningConfiguration({ orgId }) {
   const [personalAccessToken, setPersonalAccessToken] = useState(null);
   const tokenResourceManager = TokenResourceManager.create(Auth);
 
@@ -83,13 +83,17 @@ function UserProvisioningConfiguration({ orgId }) {
         </Note>
       </div>
       <Heading element="h1">SCIM configuration details</Heading>
-      <div className={styles.bold}>SCIM URL</div>
-      <TextInput
+      <TextField
+        labelText="SCIM URL"
         name="scim-url"
         testId="scim-url"
-        disabled
-        withCopyButton
+        id="scim-url"
         className={styles.input}
+        textInputProps={{
+          withCopyButton: true,
+          disabled: true,
+          width: 'large'
+        }}
         value={`${SCIM_BASE}${orgId}`}
       />
       <div className={styles.bold}>Personal Access Token</div>
@@ -98,12 +102,12 @@ function UserProvisioningConfiguration({ orgId }) {
         the Content Management API. These tokens are always bound to your individual account, with
         the same permissions you have on all of your spaces and organizations.
       </Paragraph>
-      {personalAccessToken ? (
+      {personalAccessToken && (
         <>
           <div className={styles.input}>
             <Note noteType="positive" title={`"${personalAccessToken.name}" is ready!`}>
-              {`Make sure to immediately copy your new Personal Access Token. You won't be
-                        able to see it again.`}
+              Make sure to immediately copy your new Personal Access Token. You won’t be able to see
+              it again.
             </Note>
           </div>
           <TextInput
@@ -111,10 +115,11 @@ function UserProvisioningConfiguration({ orgId }) {
             testId="scim-token"
             disabled
             withCopyButton
-            value={`Bearer ${personalAccessToken.token}`}
+            value="Bearer ${personalAccessToken.token}"
           />
         </>
-      ) : (
+      )}
+      {!personalAccessToken && (
         <Button testId="generate-btn" onClick={openGenerateDialog}>
           Generate personal access token
         </Button>
@@ -126,5 +131,3 @@ function UserProvisioningConfiguration({ orgId }) {
 UserProvisioningConfiguration.propTypes = {
   orgId: PropTypes.string.isRequired
 };
-
-export default UserProvisioningConfiguration;
