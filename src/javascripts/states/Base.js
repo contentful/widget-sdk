@@ -43,7 +43,7 @@ function wrapTemplate(stateDefinition) {
       [
         h('react-component', {
           name: 'ui/Loader',
-          props: `{watchStateChange: true, message: '${stateDefinition.loadingText}'}`
+          props: `{watchStateChange: true, message: ${stateDefinition.loadingText}}`
         }),
         ...template
       ]
@@ -51,7 +51,7 @@ function wrapTemplate(stateDefinition) {
     h('react-component', {
       ngIf: '!context.ready && !context.forbidden',
       name: 'ui/Loader',
-      props: `{isShown: true, message: '${stateDefinition.loadingText}' }`
+      props: `{isShown: true, message: ${stateDefinition.loadingText} }`
     }),
     h(
       'div.workbench.workbench-forbidden.x--center',
