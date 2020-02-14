@@ -32,6 +32,16 @@ export const isOwner = createRoleChecker('owner');
 
 /**
  * @ngdoc method
+ * @name OrganizationRoles#isDeveloper
+ * @param {object} organization
+ * @returns {boolean}
+ * @description
+ * Checks if user is a developer in a given organization.
+ */
+export const isDeveloper = createRoleChecker('developer');
+
+/**
+ * @ngdoc method
  * @name OrganizationRoles#setUser
  * @param {API.User} user
  */

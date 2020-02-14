@@ -1,0 +1,119 @@
+[
+  {
+    "sys": {
+      "id": "3AjEyjWz5tRouW4cVOF9la",
+      "type": "AppDefinition",
+      "organization": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Organization",
+          "id": "2b5UqceLpT58d9tat2os42"
+        }
+      },
+      "createdAt": "2020-01-17T12:15:36.351Z",
+      "updatedAt": "2020-01-17T12:27:53.592Z",
+      "createdBy": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "5NY5T2MqqnqTlRlJ022S9m"
+        }
+      },
+      "updatedBy": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "5NY5T2MqqnqTlRlJ022S9m"
+        }
+      }
+    },
+    "name": "Google Analytics",
+    "src": "http://localhost:1234",
+    "locations": [
+      {
+        "location": "app-config"
+      },
+      {
+        "location": "entry-sidebar"
+      }
+    ]
+  },
+  {
+    "sys": {
+      "id": "2WoMzSs2fRJx79JeVvqdGR",
+      "type": "AppDefinition",
+      "organization": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Organization",
+          "id": "5EJGHo8tYJcjnEhYWDxivp"
+        }
+      },
+      "createdAt": "2019-11-24T15:11:07.998Z",
+      "updatedAt": "2019-11-24T15:11:07.998Z",
+      "createdBy": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "2jvc3kU4n7OIABiFMTaGyB"
+        }
+      },
+      "updatedBy": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "2jvc3kU4n7OIABiFMTaGyB"
+        }
+      }
+    },
+    "name": "Jira",
+    "src": "http://localhost:1234",
+    "locations": [
+      {
+        "location": "app-config"
+      },
+      {
+        "location": "entry-sidebar"
+      }
+    ]
+  },
+  {
+    "sys": {
+      "id": "3cG9ueyzkY0GCndLiQzmZ0",
+      "type": "AppDefinition",
+      "organization": {
+        "sys": {
+          "type": "Link",
+          "linkType": "Organization",
+          "id": "2b5UqceLpT58d9tat2os42"
+        }
+      },
+      "createdAt": "2020-01-17T13:40:14.180Z",
+      "updatedAt": "2020-01-28T09:44:03.251Z",
+      "createdBy": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "2jvc3kU4n7OIABiFMTaGyB"
+        }
+      },
+      "updatedBy": {
+        "sys": {
+          "type": "Link",
+          "linkType": "User",
+          "id": "2jvc3kU4n7OIABiFMTaGyB"
+        }
+      }
+    },
+    "name": "Smartling",
+    "src": "http://localhost:8080/frontend",
+    "locations": [
+      {
+        "location": "app-config"
+      },
+      {
+        "location": "entry-sidebar"
+      }
+    ]
+  }
+]

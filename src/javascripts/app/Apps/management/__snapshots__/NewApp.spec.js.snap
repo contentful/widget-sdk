@@ -1,0 +1,2233 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NewApp should allow for new app creation 1`] = `
+Array [
+  Object {
+    "locations": Array [
+      Object {
+        "location": "app-config",
+      },
+    ],
+    "name": "my first test app",
+    "src": "http://localhost:1234",
+    "sys": Object {
+      "organization": Object {
+        "sys": Object {
+          "id": "org-123",
+          "linkType": "Organization",
+          "type": "Link",
+        },
+      },
+    },
+  },
+]
+`;
+
+exports[`NewApp should allow for new app creation 2`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": .emotion-4 {
+  color: #8091a5;
+}
+
+.emotion-2 {
+  margin-bottom: 1.5rem;
+}
+
+.emotion-8 {
+  margin-bottom: 0.5rem;
+}
+
+.emotion-5 {
+  margin-bottom: 1.5rem;
+}
+
+.emotion-7 {
+  width: 100%;
+  padding: 0.25rem 0;
+}
+
+.emotion-7 label ~ p {
+  display: inline;
+  margin-left: 0.5rem;
+  color: #b4c3ca;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+}
+
+.emotion-7 svg {
+  position: absolute;
+  right: 0.75rem;
+  top: calc(50% - 9px);
+}
+
+.emotion-26 {
+  opacity: 0;
+  height: 0px;
+  border-radius: 2px;
+  padding: 0;
+  background-color: #f7f9fa;
+  border: 1px solid #e5ebed;
+  -webkit-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+  overflow: hidden;
+}
+
+.emotion-26 p {
+  color: #536171;
+}
+
+.emotion-25 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.emotion-11 {
+  margin-top: 0.75rem;
+}
+
+.emotion-6 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.emotion-6 input {
+  vertical-align: text-top;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.emotion-6 label {
+  font-weight: 600;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.emotion-6 span {
+  color: #b4c3ca;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+}
+
+.emotion-0 {
+  margin-bottom: 1rem;
+}
+
+.emotion-1 {
+  margin-bottom: 2rem;
+}
+
+<body>
+    <div>
+      <div
+        class="Workbench__Workbench___THi9K"
+        data-test-id="cf-ui-workbench"
+      >
+        <div
+          class="Workbench__Workbench__header___2wo2E"
+          data-test-id="cf-ui-workbench-header"
+        >
+          <div
+            class="Workbench__Workbench__header-back___3qZkM"
+          >
+            <button
+              class="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 Workbench__Workbench__header-back-button___1G3-G IconButton__IconButton--muted___22_IZ"
+              data-test-id="workbench-back-btn"
+              type="button"
+            >
+              <span
+                class="TabFocusTrap__TabFocusTrap___39Vty IconButton__IconButton__inner___3fnmT"
+                tabindex="-1"
+              >
+                <svg
+                  class="Icon__Icon___38Epv Icon__Icon--large___215R6 undefined IconButton__IconButton__icon___3yZQN"
+                  data-test-id="cf-ui-icon"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  width="18"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"
+                  />
+                  <path
+                    d="M0 0h24v24H0z"
+                    fill="none"
+                  />
+                </svg>
+                <span
+                  class="IconButton__IconButton__label___1kp5y helpers__sr-only___3Kv3z"
+                >
+                  Back
+                </span>
+              </span>
+            </button>
+          </div>
+          <div
+            class="Workbench__Workbench__header-icon___1kJlL"
+          >
+            <span
+              class="icon-component"
+              data-icon-name="page-apps"
+            >
+              <page-apps.svg />
+            </span>
+          </div>
+          <div
+            class="Workbench__Workbench__header-title___3xp7b"
+            data-test-id="workbench-title"
+          >
+            <h1
+              class="Heading__Heading___83D3K Workbench__Workbench__header-title__heading___1Pe5h"
+              data-test-id="cf-ui-heading"
+            >
+              Create app
+            </h1>
+          </div>
+        </div>
+        <div
+          class="Workbench__Workbench__content-wrapper___3yWKi"
+        >
+          <div
+            class="Workbench__Workbench__content___1U8bV"
+            data-test-id="cf-ui-workbench-content"
+          >
+            <div
+              class="Workbench__Workbench__content-inner___36_Hx Workbench__Workbench__content-inner--text___7nfTX"
+            >
+              <p
+                class="Paragraph__Paragraph___2aO-9 emotion-0"
+                data-test-id="cf-ui-paragraph"
+              >
+                Build apps for Contentful to extend the core functionality of the web app and optimize the workflow of editors.
+              </p>
+              <p
+                class="Paragraph__Paragraph___2aO-9 emotion-1"
+                data-test-id="cf-ui-paragraph"
+              >
+                Learn more about
+                 
+                <a
+                  class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                  data-test-id="cf-ui-text-link"
+                  href="https://www.contentful.com/developers/docs/extensibility/apps/building-apps/"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  <span
+                    class="TabFocusTrap__TabFocusTrap___39Vty"
+                    tabindex="-1"
+                  >
+                    building Contentful apps
+                  </span>
+                </a>
+                 
+                to get started.
+              </p>
+              <div
+                class="emotion-1"
+              >
+                <div>
+                  <div
+                    class="TextField__TextField___Sf6eo TextField__TextField--full___11DBK emotion-2"
+                    data-test-id="app-name-input"
+                  >
+                    <div
+                      class="TextField__TextField__label-wrapper___2-MJT"
+                    >
+                      <label
+                        class="FormLabel__FormLabel___3d6zQ"
+                        data-test-id="cf-ui-form-label"
+                        for="app-name"
+                      >
+                        Name
+                        <span
+                          class="FormLabel__FormLabel__required-text___3mvdm"
+                        >
+                          (
+                          required
+                          )
+                        </span>
+                      </label>
+                    </div>
+                    <div
+                      class="TextInput__TextInput___36-K- TextInput__TextInput--full___1EJEW"
+                    >
+                      <input
+                        aria-label="app-name"
+                        class="TextInput__TextInput__input___27vDB a11y__focus-border--default___60AXp"
+                        data-test-id="cf-ui-text-input"
+                        id="app-name"
+                        name="app-name"
+                        required=""
+                        value="my first test app"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="TextField__TextField___Sf6eo TextField__TextField--full___11DBK emotion-2"
+                    data-test-id="app-src-input"
+                  >
+                    <div
+                      class="TextField__TextField__label-wrapper___2-MJT"
+                    >
+                      <label
+                        class="FormLabel__FormLabel___3d6zQ"
+                        data-test-id="cf-ui-form-label"
+                        for="app-src"
+                      >
+                        Source URL
+                        <span
+                          class="FormLabel__FormLabel__required-text___3mvdm"
+                        >
+                          (
+                          required
+                          )
+                        </span>
+                      </label>
+                    </div>
+                    <div
+                      class="TextInput__TextInput___36-K- TextInput__TextInput--full___1EJEW"
+                    >
+                      <input
+                        aria-label="app-src"
+                        class="TextInput__TextInput__input___27vDB a11y__focus-border--default___60AXp"
+                        data-test-id="cf-ui-text-input"
+                        id="app-src"
+                        name="app-src"
+                        required=""
+                        value="http://localhost:1234"
+                      />
+                    </div>
+                    <div
+                      class="TextField__TextField__hints___3Di2P"
+                    >
+                      <p
+                        class="HelpText__HelpText___uWbja TextField__TextField__help-text___p4rVf"
+                        data-test-id="cf-ui-help-text"
+                      >
+                        Valid URLs use HTTPS. Only localhost can use HTTP.
+                      </p>
+                    </div>
+                  </div>
+                  <div
+                    class="emotion-5"
+                  >
+                    <label
+                      class="FormLabel__FormLabel___3d6zQ"
+                      data-test-id="cf-ui-form-label"
+                      for=""
+                    >
+                      Locations
+                    </label>
+                    <p
+                      class="Paragraph__Paragraph___2aO-9 emotion-4"
+                      data-test-id="cf-ui-paragraph"
+                    >
+                      Specify where the app can be rendered. Check out the documentation for more details.
+                    </p>
+                  </div>
+                  <div
+                    class="emotion-8"
+                  >
+                    <div
+                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf Card__Card--is-selected___3zM50"
+                      data-test-id="app-location-app-config"
+                    >
+                      <button
+                        aria-pressed="true"
+                        class="ToggleButton__Toggle__button___g0Ntb a11y__focus-outline--default___2hwb1"
+                        data-test-id="button"
+                        type="button"
+                      >
+                        <span
+                          class="TabFocusTrap__TabFocusTrap___39Vty ToggleButton__Toggle__button__inner-wrapper___1MGKY"
+                          tabindex="-1"
+                        >
+                          <span
+                            class="ToggleButton__Toggle__content-wrapper___1VoAt"
+                          >
+                            <div
+                              class="emotion-6"
+                            >
+                              <div>
+                                <input
+                                  name="location-check-App configuration screen"
+                                  type="checkbox"
+                                />
+                              </div>
+                              <div>
+                                <label
+                                  for="location-checkApp configuration screen"
+                                >
+                                  App configuration screen
+                                </label>
+                              </div>
+                              <div>
+                                <span>
+                                  (
+                                  app-config
+                                  )
+                                </span>
+                              </div>
+                            </div>
+                          </span>
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                  <div
+                    class="emotion-8"
+                  >
+                    <div
+                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                      data-test-id="app-location-entry-field"
+                    >
+                      <button
+                        aria-pressed="false"
+                        class="ToggleButton__Toggle__button___g0Ntb a11y__focus-outline--default___2hwb1"
+                        data-test-id="button"
+                        type="button"
+                      >
+                        <span
+                          class="TabFocusTrap__TabFocusTrap___39Vty ToggleButton__Toggle__button__inner-wrapper___1MGKY"
+                          tabindex="-1"
+                        >
+                          <span
+                            class="ToggleButton__Toggle__content-wrapper___1VoAt"
+                          >
+                            <div
+                              class="emotion-6"
+                            >
+                              <div>
+                                <input
+                                  name="location-check-Entry field"
+                                  type="checkbox"
+                                />
+                              </div>
+                              <div>
+                                <label
+                                  for="location-checkEntry field"
+                                >
+                                  Entry field
+                                </label>
+                              </div>
+                              <div>
+                                <span>
+                                  (
+                                  entry-field
+                                  )
+                                </span>
+                              </div>
+                            </div>
+                            <svg
+                              class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
+                              data-test-id="cf-ui-icon"
+                              height="18"
+                              viewBox="0 0 24 24"
+                              width="18"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M4 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zm0-6c-.83 0-1.5.67-1.5 1.5S3.17 7.5 4 7.5 5.5 6.83 5.5 6 4.83 4.5 4 4.5zm0 12c-.83 0-1.5.68-1.5 1.5s.68 1.5 1.5 1.5 1.5-.68 1.5-1.5-.67-1.5-1.5-1.5zM7 19h14v-2H7v2zm0-6h14v-2H7v2zm0-8v2h14V5H7z"
+                              />
+                              <path
+                                d="M0 0h24v24H0V0z"
+                                fill="none"
+                              />
+                            </svg>
+                          </span>
+                        </span>
+                      </button>
+                    </div>
+                    <div
+                      class="emotion-26"
+                    >
+                      <p
+                        class="Paragraph__Paragraph___2aO-9"
+                        data-test-id="cf-ui-paragraph"
+                      >
+                        Select the field types the app can be rendered in.
+                      </p>
+                      <div
+                        class="emotion-25"
+                      >
+                        <div
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          data-test-id="cf-ui-checkbox-field"
+                        >
+                          <input
+                            aria-label="Short text"
+                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                            data-test-id="cf-ui-controlled-input"
+                            id="app-entry-field-type-Symbol"
+                            type="checkbox"
+                            value=""
+                          />
+                          <div>
+                            <label
+                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                              data-test-id="cf-ui-form-label"
+                              for="app-entry-field-type-Symbol"
+                            >
+                              Short text
+                            </label>
+                          </div>
+                        </div>
+                        <div
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          data-test-id="cf-ui-checkbox-field"
+                        >
+                          <input
+                            aria-label="Number, decimal"
+                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                            data-test-id="cf-ui-controlled-input"
+                            id="app-entry-field-type-Number"
+                            type="checkbox"
+                            value=""
+                          />
+                          <div>
+                            <label
+                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                              data-test-id="cf-ui-form-label"
+                              for="app-entry-field-type-Number"
+                            >
+                              Number, decimal
+                            </label>
+                          </div>
+                        </div>
+                        <div
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          data-test-id="cf-ui-checkbox-field"
+                        >
+                          <input
+                            aria-label="Entry reference"
+                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                            data-test-id="cf-ui-controlled-input"
+                            id="app-entry-field-type-Entry"
+                            type="checkbox"
+                            value=""
+                          />
+                          <div>
+                            <label
+                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                              data-test-id="cf-ui-form-label"
+                              for="app-entry-field-type-Entry"
+                            >
+                              Entry reference
+                            </label>
+                          </div>
+                        </div>
+                        <div
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          data-test-id="cf-ui-checkbox-field"
+                        >
+                          <input
+                            aria-label="Short text, list"
+                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                            data-test-id="cf-ui-controlled-input"
+                            id="app-entry-field-type-Symbols"
+                            type="checkbox"
+                            value=""
+                          />
+                          <div>
+                            <label
+                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                              data-test-id="cf-ui-form-label"
+                              for="app-entry-field-type-Symbols"
+                            >
+                              Short text, list
+                            </label>
+                          </div>
+                        </div>
+                        <div
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          data-test-id="cf-ui-checkbox-field"
+                        >
+                          <input
+                            aria-label="Date and time"
+                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                            data-test-id="cf-ui-controlled-input"
+                            id="app-entry-field-type-Date"
+                            type="checkbox"
+                            value=""
+                          />
+                          <div>
+                            <label
+                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                              data-test-id="cf-ui-form-label"
+                              for="app-entry-field-type-Date"
+                            >
+                              Date and time
+                            </label>
+                          </div>
+                        </div>
+                        <div
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          data-test-id="cf-ui-checkbox-field"
+                        >
+                          <input
+                            aria-label="Entry reference, list"
+                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                            data-test-id="cf-ui-controlled-input"
+                            id="app-entry-field-type-Entries"
+                            type="checkbox"
+                            value=""
+                          />
+                          <div>
+                            <label
+                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                              data-test-id="cf-ui-form-label"
+                              for="app-entry-field-type-Entries"
+                            >
+                              Entry reference, list
+                            </label>
+                          </div>
+                        </div>
+                        <div
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          data-test-id="cf-ui-checkbox-field"
+                        >
+                          <input
+                            aria-label="Long text"
+                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                            data-test-id="cf-ui-controlled-input"
+                            id="app-entry-field-type-Text"
+                            type="checkbox"
+                            value=""
+                          />
+                          <div>
+                            <label
+                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                              data-test-id="cf-ui-form-label"
+                              for="app-entry-field-type-Text"
+                            >
+                              Long text
+                            </label>
+                          </div>
+                        </div>
+                        <div
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          data-test-id="cf-ui-checkbox-field"
+                        >
+                          <input
+                            aria-label="Location"
+                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                            data-test-id="cf-ui-controlled-input"
+                            id="app-entry-field-type-Location"
+                            type="checkbox"
+                            value=""
+                          />
+                          <div>
+                            <label
+                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                              data-test-id="cf-ui-form-label"
+                              for="app-entry-field-type-Location"
+                            >
+                              Location
+                            </label>
+                          </div>
+                        </div>
+                        <div
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          data-test-id="cf-ui-checkbox-field"
+                        >
+                          <input
+                            aria-label="Media reference"
+                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                            data-test-id="cf-ui-controlled-input"
+                            id="app-entry-field-type-Asset"
+                            type="checkbox"
+                            value=""
+                          />
+                          <div>
+                            <label
+                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                              data-test-id="cf-ui-form-label"
+                              for="app-entry-field-type-Asset"
+                            >
+                              Media reference
+                            </label>
+                          </div>
+                        </div>
+                        <div
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          data-test-id="cf-ui-checkbox-field"
+                        >
+                          <input
+                            aria-label="Rich text"
+                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                            data-test-id="cf-ui-controlled-input"
+                            id="app-entry-field-type-RichText"
+                            type="checkbox"
+                            value=""
+                          />
+                          <div>
+                            <label
+                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                              data-test-id="cf-ui-form-label"
+                              for="app-entry-field-type-RichText"
+                            >
+                              Rich text
+                            </label>
+                          </div>
+                        </div>
+                        <div
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          data-test-id="cf-ui-checkbox-field"
+                        >
+                          <input
+                            aria-label="Boolean"
+                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                            data-test-id="cf-ui-controlled-input"
+                            id="app-entry-field-type-Boolean"
+                            type="checkbox"
+                            value=""
+                          />
+                          <div>
+                            <label
+                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                              data-test-id="cf-ui-form-label"
+                              for="app-entry-field-type-Boolean"
+                            >
+                              Boolean
+                            </label>
+                          </div>
+                        </div>
+                        <div
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          data-test-id="cf-ui-checkbox-field"
+                        >
+                          <input
+                            aria-label="Media reference, list"
+                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                            data-test-id="cf-ui-controlled-input"
+                            id="app-entry-field-type-Assets"
+                            type="checkbox"
+                            value=""
+                          />
+                          <div>
+                            <label
+                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                              data-test-id="cf-ui-form-label"
+                              for="app-entry-field-type-Assets"
+                            >
+                              Media reference, list
+                            </label>
+                          </div>
+                        </div>
+                        <div
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          data-test-id="cf-ui-checkbox-field"
+                        >
+                          <input
+                            aria-label="Number, integer"
+                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                            data-test-id="cf-ui-controlled-input"
+                            id="app-entry-field-type-Integer"
+                            type="checkbox"
+                            value=""
+                          />
+                          <div>
+                            <label
+                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                              data-test-id="cf-ui-form-label"
+                              for="app-entry-field-type-Integer"
+                            >
+                              Number, integer
+                            </label>
+                          </div>
+                        </div>
+                        <div
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          data-test-id="cf-ui-checkbox-field"
+                        >
+                          <input
+                            aria-label="JSON object"
+                            class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                            data-test-id="cf-ui-controlled-input"
+                            id="app-entry-field-type-Object"
+                            type="checkbox"
+                            value=""
+                          />
+                          <div>
+                            <label
+                              class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                              data-test-id="cf-ui-form-label"
+                              for="app-entry-field-type-Object"
+                            >
+                              JSON object
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="emotion-8"
+                  >
+                    <div
+                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                      data-test-id="app-location-entry-sidebar"
+                    >
+                      <button
+                        aria-pressed="false"
+                        class="ToggleButton__Toggle__button___g0Ntb a11y__focus-outline--default___2hwb1"
+                        data-test-id="button"
+                        type="button"
+                      >
+                        <span
+                          class="TabFocusTrap__TabFocusTrap___39Vty ToggleButton__Toggle__button__inner-wrapper___1MGKY"
+                          tabindex="-1"
+                        >
+                          <span
+                            class="ToggleButton__Toggle__content-wrapper___1VoAt"
+                          >
+                            <div
+                              class="emotion-6"
+                            >
+                              <div>
+                                <input
+                                  name="location-check-Entry sidebar"
+                                  type="checkbox"
+                                />
+                              </div>
+                              <div>
+                                <label
+                                  for="location-checkEntry sidebar"
+                                >
+                                  Entry sidebar
+                                </label>
+                              </div>
+                              <div>
+                                <span>
+                                  (
+                                  entry-sidebar
+                                  )
+                                </span>
+                              </div>
+                            </div>
+                          </span>
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                  <div
+                    class="emotion-8"
+                  >
+                    <div
+                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                      data-test-id="app-location-entry-editor"
+                    >
+                      <button
+                        aria-pressed="false"
+                        class="ToggleButton__Toggle__button___g0Ntb a11y__focus-outline--default___2hwb1"
+                        data-test-id="button"
+                        type="button"
+                      >
+                        <span
+                          class="TabFocusTrap__TabFocusTrap___39Vty ToggleButton__Toggle__button__inner-wrapper___1MGKY"
+                          tabindex="-1"
+                        >
+                          <span
+                            class="ToggleButton__Toggle__content-wrapper___1VoAt"
+                          >
+                            <div
+                              class="emotion-6"
+                            >
+                              <div>
+                                <input
+                                  name="location-check-Entry editor"
+                                  type="checkbox"
+                                />
+                              </div>
+                              <div>
+                                <label
+                                  for="location-checkEntry editor"
+                                >
+                                  Entry editor
+                                </label>
+                              </div>
+                              <div>
+                                <span>
+                                  (
+                                  entry-editor
+                                  )
+                                </span>
+                              </div>
+                            </div>
+                          </span>
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                  <div
+                    class="emotion-8"
+                  >
+                    <div
+                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                      data-test-id="app-location-dialog"
+                    >
+                      <button
+                        aria-pressed="false"
+                        class="ToggleButton__Toggle__button___g0Ntb a11y__focus-outline--default___2hwb1"
+                        data-test-id="button"
+                        type="button"
+                      >
+                        <span
+                          class="TabFocusTrap__TabFocusTrap___39Vty ToggleButton__Toggle__button__inner-wrapper___1MGKY"
+                          tabindex="-1"
+                        >
+                          <span
+                            class="ToggleButton__Toggle__content-wrapper___1VoAt"
+                          >
+                            <div
+                              class="emotion-6"
+                            >
+                              <div>
+                                <input
+                                  name="location-check-Dialog"
+                                  type="checkbox"
+                                />
+                              </div>
+                              <div>
+                                <label
+                                  for="location-checkDialog"
+                                >
+                                  Dialog
+                                </label>
+                              </div>
+                              <div>
+                                <span>
+                                  (
+                                  dialog
+                                  )
+                                </span>
+                              </div>
+                            </div>
+                          </span>
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                  <div
+                    class="emotion-8"
+                  >
+                    <div
+                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                      data-test-id="app-location-page"
+                    >
+                      <button
+                        aria-pressed="false"
+                        class="ToggleButton__Toggle__button___g0Ntb a11y__focus-outline--default___2hwb1"
+                        data-test-id="button"
+                        type="button"
+                      >
+                        <span
+                          class="TabFocusTrap__TabFocusTrap___39Vty ToggleButton__Toggle__button__inner-wrapper___1MGKY"
+                          tabindex="-1"
+                        >
+                          <span
+                            class="ToggleButton__Toggle__content-wrapper___1VoAt"
+                          >
+                            <div
+                              class="emotion-6"
+                            >
+                              <div>
+                                <input
+                                  name="location-check-Page"
+                                  type="checkbox"
+                                />
+                              </div>
+                              <div>
+                                <label
+                                  for="location-checkPage"
+                                >
+                                  Page
+                                </label>
+                              </div>
+                              <div>
+                                <span>
+                                  (
+                                  page
+                                  )
+                                </span>
+                              </div>
+                            </div>
+                          </span>
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button
+                class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO"
+                data-test-id="app-create"
+                type="button"
+              >
+                <span
+                  class="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+                  tabindex="-1"
+                >
+                  <span
+                    class="Button__Button__label___3tcOj"
+                  >
+                    Create app
+                  </span>
+                  <svg
+                    class="Spinner__Spinner___32lpa Button__Button__spinner___3j8Aj Spinner__Spinner--small___2hyo0 Spinner__Spinner--white___3Hsq3 Button__Button--spinner--exit___2RUI- Button__Button--spinner-exit-active___3HXa7"
+                    data-test-id="cf-ui-spinner"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <title>
+                      Loading…
+                    </title>
+                    <path
+                      d="M2,10a8,8,0,0,1,8-8V0a10,10,0,0,0,0,20V18A8,8,0,0,1,2,10Z"
+                    />
+                    <path
+                      d="M10,0V2a8,8,0,0,1,0,16v2A10,10,0,0,0,10,0Z"
+                      style="opacity: 0.4;"
+                    />
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div
+        class="NotificationsManager__NotificationsManager___1uvY2"
+        data-test-id="cf-notification-container"
+        style="bottom: 20px;"
+      >
+        <div
+          class="NotificationsManager__NotificationsManager__container___3U0e9"
+        >
+          <div
+            aria-hidden="true"
+            class="rah-animating rah-animating--down rah-animating--to-height-auto"
+            style="height: 0px; overflow: hidden; transition: height 200ms ease-in-out 0ms;"
+          >
+            <div
+              style="transition: opacity 200ms ease-in-out 0ms; opacity: 0;"
+            >
+              <div
+                style="pointer-events: all;"
+              >
+                <div
+                  aria-live="polite"
+                  class="NotificationItem__NotificationItem___22iZo NotificationItem__NotificationItem--success___1CO7O"
+                  data-intent="success"
+                  data-test-id="cf-ui-notification"
+                  role="alert"
+                >
+                  <div
+                    class="NotificationItem__NotificationItem__intent___cC494 helpers__sr-only___3Kv3z"
+                  >
+                    success
+                  </div>
+                  <div
+                    aria-hidden="true"
+                    class="NotificationItem__NotificationItem__icon___3gdKj"
+                  >
+                    <svg
+                      class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--white___3GVPJ"
+                      data-test-id="cf-ui-icon"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      width="18"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M0 0h24v24H0z"
+                        fill="none"
+                      />
+                      <path
+                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                      />
+                    </svg>
+                  </div>
+                  <div
+                    class="NotificationItem__NotificationItem__text___1-1Up"
+                  >
+                    App created successfully.
+                  </div>
+                  <button
+                    class="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 NotificationItem__NotificationItem__dismiss___1Z6Df IconButton__IconButton--white___3GUQP"
+                    data-test-id="cf-ui-notification-close"
+                    type="button"
+                  >
+                    <span
+                      class="TabFocusTrap__TabFocusTrap___39Vty IconButton__IconButton__inner___3fnmT"
+                      tabindex="-1"
+                    >
+                      <svg
+                        class="Icon__Icon___38Epv Icon__Icon--small___1yGZK undefined IconButton__IconButton__icon___3yZQN"
+                        data-test-id="cf-ui-icon"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        width="24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                        />
+                        <path
+                          d="M0 0h24v24H0z"
+                          fill="none"
+                        />
+                      </svg>
+                      <span
+                        class="IconButton__IconButton__label___1kp5y helpers__sr-only___3Kv3z"
+                      >
+                        Dismiss
+                      </span>
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="rah-animating rah-animating--down rah-animating--to-height-auto"
+            style="height: 0px; overflow: hidden; transition: height 200ms ease-in-out 0ms;"
+          >
+            <div
+              style="transition: opacity 200ms ease-in-out 0ms; opacity: 0;"
+            >
+              <div
+                style="pointer-events: all;"
+              >
+                <div
+                  aria-live="assertive"
+                  class="NotificationItem__NotificationItem___22iZo NotificationItem__NotificationItem--error___19wsc"
+                  data-intent="error"
+                  data-test-id="cf-ui-notification"
+                  role="alert"
+                >
+                  <div
+                    class="NotificationItem__NotificationItem__intent___cC494 helpers__sr-only___3Kv3z"
+                  >
+                    error
+                  </div>
+                  <div
+                    aria-hidden="true"
+                    class="NotificationItem__NotificationItem__icon___3gdKj"
+                  >
+                    <svg
+                      class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--white___3GVPJ"
+                      data-test-id="cf-ui-icon"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      width="18"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M0 0h24v24H0z"
+                        fill="none"
+                      />
+                      <path
+                        d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"
+                      />
+                    </svg>
+                  </div>
+                  <div
+                    class="NotificationItem__NotificationItem__text___1-1Up"
+                  >
+                    Validation failed. Please check that you have provided an app Name, valid Source URL and/or Entry field types.
+                  </div>
+                  <button
+                    class="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 NotificationItem__NotificationItem__dismiss___1Z6Df IconButton__IconButton--white___3GUQP"
+                    data-test-id="cf-ui-notification-close"
+                    type="button"
+                  >
+                    <span
+                      class="TabFocusTrap__TabFocusTrap___39Vty IconButton__IconButton__inner___3fnmT"
+                      tabindex="-1"
+                    >
+                      <svg
+                        class="Icon__Icon___38Epv Icon__Icon--small___1yGZK undefined IconButton__IconButton__icon___3yZQN"
+                        data-test-id="cf-ui-icon"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        width="24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                        />
+                        <path
+                          d="M0 0h24v24H0z"
+                          fill="none"
+                        />
+                      </svg>
+                      <span
+                        class="IconButton__IconButton__label___1kp5y helpers__sr-only___3Kv3z"
+                      >
+                        Dismiss
+                      </span>
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": .emotion-4 {
+  color: #8091a5;
+}
+
+.emotion-2 {
+  margin-bottom: 1.5rem;
+}
+
+.emotion-8 {
+  margin-bottom: 0.5rem;
+}
+
+.emotion-5 {
+  margin-bottom: 1.5rem;
+}
+
+.emotion-7 {
+  width: 100%;
+  padding: 0.25rem 0;
+}
+
+.emotion-7 label ~ p {
+  display: inline;
+  margin-left: 0.5rem;
+  color: #b4c3ca;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+}
+
+.emotion-7 svg {
+  position: absolute;
+  right: 0.75rem;
+  top: calc(50% - 9px);
+}
+
+.emotion-26 {
+  opacity: 0;
+  height: 0px;
+  border-radius: 2px;
+  padding: 0;
+  background-color: #f7f9fa;
+  border: 1px solid #e5ebed;
+  -webkit-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+  overflow: hidden;
+}
+
+.emotion-26 p {
+  color: #536171;
+}
+
+.emotion-25 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.emotion-11 {
+  margin-top: 0.75rem;
+}
+
+.emotion-6 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.emotion-6 input {
+  vertical-align: text-top;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.emotion-6 label {
+  font-weight: 600;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.emotion-6 span {
+  color: #b4c3ca;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
+}
+
+.emotion-0 {
+  margin-bottom: 1rem;
+}
+
+.emotion-1 {
+  margin-bottom: 2rem;
+}
+
+<div>
+    <div
+      class="Workbench__Workbench___THi9K"
+      data-test-id="cf-ui-workbench"
+    >
+      <div
+        class="Workbench__Workbench__header___2wo2E"
+        data-test-id="cf-ui-workbench-header"
+      >
+        <div
+          class="Workbench__Workbench__header-back___3qZkM"
+        >
+          <button
+            class="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 Workbench__Workbench__header-back-button___1G3-G IconButton__IconButton--muted___22_IZ"
+            data-test-id="workbench-back-btn"
+            type="button"
+          >
+            <span
+              class="TabFocusTrap__TabFocusTrap___39Vty IconButton__IconButton__inner___3fnmT"
+              tabindex="-1"
+            >
+              <svg
+                class="Icon__Icon___38Epv Icon__Icon--large___215R6 undefined IconButton__IconButton__icon___3yZQN"
+                data-test-id="cf-ui-icon"
+                height="18"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"
+                />
+                <path
+                  d="M0 0h24v24H0z"
+                  fill="none"
+                />
+              </svg>
+              <span
+                class="IconButton__IconButton__label___1kp5y helpers__sr-only___3Kv3z"
+              >
+                Back
+              </span>
+            </span>
+          </button>
+        </div>
+        <div
+          class="Workbench__Workbench__header-icon___1kJlL"
+        >
+          <span
+            class="icon-component"
+            data-icon-name="page-apps"
+          >
+            <page-apps.svg />
+          </span>
+        </div>
+        <div
+          class="Workbench__Workbench__header-title___3xp7b"
+          data-test-id="workbench-title"
+        >
+          <h1
+            class="Heading__Heading___83D3K Workbench__Workbench__header-title__heading___1Pe5h"
+            data-test-id="cf-ui-heading"
+          >
+            Create app
+          </h1>
+        </div>
+      </div>
+      <div
+        class="Workbench__Workbench__content-wrapper___3yWKi"
+      >
+        <div
+          class="Workbench__Workbench__content___1U8bV"
+          data-test-id="cf-ui-workbench-content"
+        >
+          <div
+            class="Workbench__Workbench__content-inner___36_Hx Workbench__Workbench__content-inner--text___7nfTX"
+          >
+            <p
+              class="Paragraph__Paragraph___2aO-9 emotion-0"
+              data-test-id="cf-ui-paragraph"
+            >
+              Build apps for Contentful to extend the core functionality of the web app and optimize the workflow of editors.
+            </p>
+            <p
+              class="Paragraph__Paragraph___2aO-9 emotion-1"
+              data-test-id="cf-ui-paragraph"
+            >
+              Learn more about
+               
+              <a
+                class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                data-test-id="cf-ui-text-link"
+                href="https://www.contentful.com/developers/docs/extensibility/apps/building-apps/"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <span
+                  class="TabFocusTrap__TabFocusTrap___39Vty"
+                  tabindex="-1"
+                >
+                  building Contentful apps
+                </span>
+              </a>
+               
+              to get started.
+            </p>
+            <div
+              class="emotion-1"
+            >
+              <div>
+                <div
+                  class="TextField__TextField___Sf6eo TextField__TextField--full___11DBK emotion-2"
+                  data-test-id="app-name-input"
+                >
+                  <div
+                    class="TextField__TextField__label-wrapper___2-MJT"
+                  >
+                    <label
+                      class="FormLabel__FormLabel___3d6zQ"
+                      data-test-id="cf-ui-form-label"
+                      for="app-name"
+                    >
+                      Name
+                      <span
+                        class="FormLabel__FormLabel__required-text___3mvdm"
+                      >
+                        (
+                        required
+                        )
+                      </span>
+                    </label>
+                  </div>
+                  <div
+                    class="TextInput__TextInput___36-K- TextInput__TextInput--full___1EJEW"
+                  >
+                    <input
+                      aria-label="app-name"
+                      class="TextInput__TextInput__input___27vDB a11y__focus-border--default___60AXp"
+                      data-test-id="cf-ui-text-input"
+                      id="app-name"
+                      name="app-name"
+                      required=""
+                      value="my first test app"
+                    />
+                  </div>
+                </div>
+                <div
+                  class="TextField__TextField___Sf6eo TextField__TextField--full___11DBK emotion-2"
+                  data-test-id="app-src-input"
+                >
+                  <div
+                    class="TextField__TextField__label-wrapper___2-MJT"
+                  >
+                    <label
+                      class="FormLabel__FormLabel___3d6zQ"
+                      data-test-id="cf-ui-form-label"
+                      for="app-src"
+                    >
+                      Source URL
+                      <span
+                        class="FormLabel__FormLabel__required-text___3mvdm"
+                      >
+                        (
+                        required
+                        )
+                      </span>
+                    </label>
+                  </div>
+                  <div
+                    class="TextInput__TextInput___36-K- TextInput__TextInput--full___1EJEW"
+                  >
+                    <input
+                      aria-label="app-src"
+                      class="TextInput__TextInput__input___27vDB a11y__focus-border--default___60AXp"
+                      data-test-id="cf-ui-text-input"
+                      id="app-src"
+                      name="app-src"
+                      required=""
+                      value="http://localhost:1234"
+                    />
+                  </div>
+                  <div
+                    class="TextField__TextField__hints___3Di2P"
+                  >
+                    <p
+                      class="HelpText__HelpText___uWbja TextField__TextField__help-text___p4rVf"
+                      data-test-id="cf-ui-help-text"
+                    >
+                      Valid URLs use HTTPS. Only localhost can use HTTP.
+                    </p>
+                  </div>
+                </div>
+                <div
+                  class="emotion-5"
+                >
+                  <label
+                    class="FormLabel__FormLabel___3d6zQ"
+                    data-test-id="cf-ui-form-label"
+                    for=""
+                  >
+                    Locations
+                  </label>
+                  <p
+                    class="Paragraph__Paragraph___2aO-9 emotion-4"
+                    data-test-id="cf-ui-paragraph"
+                  >
+                    Specify where the app can be rendered. Check out the documentation for more details.
+                  </p>
+                </div>
+                <div
+                  class="emotion-8"
+                >
+                  <div
+                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf Card__Card--is-selected___3zM50"
+                    data-test-id="app-location-app-config"
+                  >
+                    <button
+                      aria-pressed="true"
+                      class="ToggleButton__Toggle__button___g0Ntb a11y__focus-outline--default___2hwb1"
+                      data-test-id="button"
+                      type="button"
+                    >
+                      <span
+                        class="TabFocusTrap__TabFocusTrap___39Vty ToggleButton__Toggle__button__inner-wrapper___1MGKY"
+                        tabindex="-1"
+                      >
+                        <span
+                          class="ToggleButton__Toggle__content-wrapper___1VoAt"
+                        >
+                          <div
+                            class="emotion-6"
+                          >
+                            <div>
+                              <input
+                                name="location-check-App configuration screen"
+                                type="checkbox"
+                              />
+                            </div>
+                            <div>
+                              <label
+                                for="location-checkApp configuration screen"
+                              >
+                                App configuration screen
+                              </label>
+                            </div>
+                            <div>
+                              <span>
+                                (
+                                app-config
+                                )
+                              </span>
+                            </div>
+                          </div>
+                        </span>
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                <div
+                  class="emotion-8"
+                >
+                  <div
+                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                    data-test-id="app-location-entry-field"
+                  >
+                    <button
+                      aria-pressed="false"
+                      class="ToggleButton__Toggle__button___g0Ntb a11y__focus-outline--default___2hwb1"
+                      data-test-id="button"
+                      type="button"
+                    >
+                      <span
+                        class="TabFocusTrap__TabFocusTrap___39Vty ToggleButton__Toggle__button__inner-wrapper___1MGKY"
+                        tabindex="-1"
+                      >
+                        <span
+                          class="ToggleButton__Toggle__content-wrapper___1VoAt"
+                        >
+                          <div
+                            class="emotion-6"
+                          >
+                            <div>
+                              <input
+                                name="location-check-Entry field"
+                                type="checkbox"
+                              />
+                            </div>
+                            <div>
+                              <label
+                                for="location-checkEntry field"
+                              >
+                                Entry field
+                              </label>
+                            </div>
+                            <div>
+                              <span>
+                                (
+                                entry-field
+                                )
+                              </span>
+                            </div>
+                          </div>
+                          <svg
+                            class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--secondary___1ztcw"
+                            data-test-id="cf-ui-icon"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            width="18"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M4 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zm0-6c-.83 0-1.5.67-1.5 1.5S3.17 7.5 4 7.5 5.5 6.83 5.5 6 4.83 4.5 4 4.5zm0 12c-.83 0-1.5.68-1.5 1.5s.68 1.5 1.5 1.5 1.5-.68 1.5-1.5-.67-1.5-1.5-1.5zM7 19h14v-2H7v2zm0-6h14v-2H7v2zm0-8v2h14V5H7z"
+                            />
+                            <path
+                              d="M0 0h24v24H0V0z"
+                              fill="none"
+                            />
+                          </svg>
+                        </span>
+                      </span>
+                    </button>
+                  </div>
+                  <div
+                    class="emotion-26"
+                  >
+                    <p
+                      class="Paragraph__Paragraph___2aO-9"
+                      data-test-id="cf-ui-paragraph"
+                    >
+                      Select the field types the app can be rendered in.
+                    </p>
+                    <div
+                      class="emotion-25"
+                    >
+                      <div
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        data-test-id="cf-ui-checkbox-field"
+                      >
+                        <input
+                          aria-label="Short text"
+                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                          data-test-id="cf-ui-controlled-input"
+                          id="app-entry-field-type-Symbol"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div>
+                          <label
+                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                            data-test-id="cf-ui-form-label"
+                            for="app-entry-field-type-Symbol"
+                          >
+                            Short text
+                          </label>
+                        </div>
+                      </div>
+                      <div
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        data-test-id="cf-ui-checkbox-field"
+                      >
+                        <input
+                          aria-label="Number, decimal"
+                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                          data-test-id="cf-ui-controlled-input"
+                          id="app-entry-field-type-Number"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div>
+                          <label
+                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                            data-test-id="cf-ui-form-label"
+                            for="app-entry-field-type-Number"
+                          >
+                            Number, decimal
+                          </label>
+                        </div>
+                      </div>
+                      <div
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        data-test-id="cf-ui-checkbox-field"
+                      >
+                        <input
+                          aria-label="Entry reference"
+                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                          data-test-id="cf-ui-controlled-input"
+                          id="app-entry-field-type-Entry"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div>
+                          <label
+                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                            data-test-id="cf-ui-form-label"
+                            for="app-entry-field-type-Entry"
+                          >
+                            Entry reference
+                          </label>
+                        </div>
+                      </div>
+                      <div
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        data-test-id="cf-ui-checkbox-field"
+                      >
+                        <input
+                          aria-label="Short text, list"
+                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                          data-test-id="cf-ui-controlled-input"
+                          id="app-entry-field-type-Symbols"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div>
+                          <label
+                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                            data-test-id="cf-ui-form-label"
+                            for="app-entry-field-type-Symbols"
+                          >
+                            Short text, list
+                          </label>
+                        </div>
+                      </div>
+                      <div
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        data-test-id="cf-ui-checkbox-field"
+                      >
+                        <input
+                          aria-label="Date and time"
+                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                          data-test-id="cf-ui-controlled-input"
+                          id="app-entry-field-type-Date"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div>
+                          <label
+                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                            data-test-id="cf-ui-form-label"
+                            for="app-entry-field-type-Date"
+                          >
+                            Date and time
+                          </label>
+                        </div>
+                      </div>
+                      <div
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        data-test-id="cf-ui-checkbox-field"
+                      >
+                        <input
+                          aria-label="Entry reference, list"
+                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                          data-test-id="cf-ui-controlled-input"
+                          id="app-entry-field-type-Entries"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div>
+                          <label
+                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                            data-test-id="cf-ui-form-label"
+                            for="app-entry-field-type-Entries"
+                          >
+                            Entry reference, list
+                          </label>
+                        </div>
+                      </div>
+                      <div
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        data-test-id="cf-ui-checkbox-field"
+                      >
+                        <input
+                          aria-label="Long text"
+                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                          data-test-id="cf-ui-controlled-input"
+                          id="app-entry-field-type-Text"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div>
+                          <label
+                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                            data-test-id="cf-ui-form-label"
+                            for="app-entry-field-type-Text"
+                          >
+                            Long text
+                          </label>
+                        </div>
+                      </div>
+                      <div
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        data-test-id="cf-ui-checkbox-field"
+                      >
+                        <input
+                          aria-label="Location"
+                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                          data-test-id="cf-ui-controlled-input"
+                          id="app-entry-field-type-Location"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div>
+                          <label
+                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                            data-test-id="cf-ui-form-label"
+                            for="app-entry-field-type-Location"
+                          >
+                            Location
+                          </label>
+                        </div>
+                      </div>
+                      <div
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        data-test-id="cf-ui-checkbox-field"
+                      >
+                        <input
+                          aria-label="Media reference"
+                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                          data-test-id="cf-ui-controlled-input"
+                          id="app-entry-field-type-Asset"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div>
+                          <label
+                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                            data-test-id="cf-ui-form-label"
+                            for="app-entry-field-type-Asset"
+                          >
+                            Media reference
+                          </label>
+                        </div>
+                      </div>
+                      <div
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        data-test-id="cf-ui-checkbox-field"
+                      >
+                        <input
+                          aria-label="Rich text"
+                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                          data-test-id="cf-ui-controlled-input"
+                          id="app-entry-field-type-RichText"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div>
+                          <label
+                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                            data-test-id="cf-ui-form-label"
+                            for="app-entry-field-type-RichText"
+                          >
+                            Rich text
+                          </label>
+                        </div>
+                      </div>
+                      <div
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        data-test-id="cf-ui-checkbox-field"
+                      >
+                        <input
+                          aria-label="Boolean"
+                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                          data-test-id="cf-ui-controlled-input"
+                          id="app-entry-field-type-Boolean"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div>
+                          <label
+                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                            data-test-id="cf-ui-form-label"
+                            for="app-entry-field-type-Boolean"
+                          >
+                            Boolean
+                          </label>
+                        </div>
+                      </div>
+                      <div
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        data-test-id="cf-ui-checkbox-field"
+                      >
+                        <input
+                          aria-label="Media reference, list"
+                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                          data-test-id="cf-ui-controlled-input"
+                          id="app-entry-field-type-Assets"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div>
+                          <label
+                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                            data-test-id="cf-ui-form-label"
+                            for="app-entry-field-type-Assets"
+                          >
+                            Media reference, list
+                          </label>
+                        </div>
+                      </div>
+                      <div
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        data-test-id="cf-ui-checkbox-field"
+                      >
+                        <input
+                          aria-label="Number, integer"
+                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                          data-test-id="cf-ui-controlled-input"
+                          id="app-entry-field-type-Integer"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div>
+                          <label
+                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                            data-test-id="cf-ui-form-label"
+                            for="app-entry-field-type-Integer"
+                          >
+                            Number, integer
+                          </label>
+                        </div>
+                      </div>
+                      <div
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        data-test-id="cf-ui-checkbox-field"
+                      >
+                        <input
+                          aria-label="JSON object"
+                          class="ControlledInput__ControlledInput___2XK3j ControlledInputField__ControlledInputField__input___3OMYB"
+                          data-test-id="cf-ui-controlled-input"
+                          id="app-entry-field-type-Object"
+                          type="checkbox"
+                          value=""
+                        />
+                        <div>
+                          <label
+                            class="FormLabel__FormLabel___3d6zQ ControlledInputField__ControlledInputField__label___a9J52"
+                            data-test-id="cf-ui-form-label"
+                            for="app-entry-field-type-Object"
+                          >
+                            JSON object
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="emotion-8"
+                >
+                  <div
+                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                    data-test-id="app-location-entry-sidebar"
+                  >
+                    <button
+                      aria-pressed="false"
+                      class="ToggleButton__Toggle__button___g0Ntb a11y__focus-outline--default___2hwb1"
+                      data-test-id="button"
+                      type="button"
+                    >
+                      <span
+                        class="TabFocusTrap__TabFocusTrap___39Vty ToggleButton__Toggle__button__inner-wrapper___1MGKY"
+                        tabindex="-1"
+                      >
+                        <span
+                          class="ToggleButton__Toggle__content-wrapper___1VoAt"
+                        >
+                          <div
+                            class="emotion-6"
+                          >
+                            <div>
+                              <input
+                                name="location-check-Entry sidebar"
+                                type="checkbox"
+                              />
+                            </div>
+                            <div>
+                              <label
+                                for="location-checkEntry sidebar"
+                              >
+                                Entry sidebar
+                              </label>
+                            </div>
+                            <div>
+                              <span>
+                                (
+                                entry-sidebar
+                                )
+                              </span>
+                            </div>
+                          </div>
+                        </span>
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                <div
+                  class="emotion-8"
+                >
+                  <div
+                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                    data-test-id="app-location-entry-editor"
+                  >
+                    <button
+                      aria-pressed="false"
+                      class="ToggleButton__Toggle__button___g0Ntb a11y__focus-outline--default___2hwb1"
+                      data-test-id="button"
+                      type="button"
+                    >
+                      <span
+                        class="TabFocusTrap__TabFocusTrap___39Vty ToggleButton__Toggle__button__inner-wrapper___1MGKY"
+                        tabindex="-1"
+                      >
+                        <span
+                          class="ToggleButton__Toggle__content-wrapper___1VoAt"
+                        >
+                          <div
+                            class="emotion-6"
+                          >
+                            <div>
+                              <input
+                                name="location-check-Entry editor"
+                                type="checkbox"
+                              />
+                            </div>
+                            <div>
+                              <label
+                                for="location-checkEntry editor"
+                              >
+                                Entry editor
+                              </label>
+                            </div>
+                            <div>
+                              <span>
+                                (
+                                entry-editor
+                                )
+                              </span>
+                            </div>
+                          </div>
+                        </span>
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                <div
+                  class="emotion-8"
+                >
+                  <div
+                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                    data-test-id="app-location-dialog"
+                  >
+                    <button
+                      aria-pressed="false"
+                      class="ToggleButton__Toggle__button___g0Ntb a11y__focus-outline--default___2hwb1"
+                      data-test-id="button"
+                      type="button"
+                    >
+                      <span
+                        class="TabFocusTrap__TabFocusTrap___39Vty ToggleButton__Toggle__button__inner-wrapper___1MGKY"
+                        tabindex="-1"
+                      >
+                        <span
+                          class="ToggleButton__Toggle__content-wrapper___1VoAt"
+                        >
+                          <div
+                            class="emotion-6"
+                          >
+                            <div>
+                              <input
+                                name="location-check-Dialog"
+                                type="checkbox"
+                              />
+                            </div>
+                            <div>
+                              <label
+                                for="location-checkDialog"
+                              >
+                                Dialog
+                              </label>
+                            </div>
+                            <div>
+                              <span>
+                                (
+                                dialog
+                                )
+                              </span>
+                            </div>
+                          </div>
+                        </span>
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                <div
+                  class="emotion-8"
+                >
+                  <div
+                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                    data-test-id="app-location-page"
+                  >
+                    <button
+                      aria-pressed="false"
+                      class="ToggleButton__Toggle__button___g0Ntb a11y__focus-outline--default___2hwb1"
+                      data-test-id="button"
+                      type="button"
+                    >
+                      <span
+                        class="TabFocusTrap__TabFocusTrap___39Vty ToggleButton__Toggle__button__inner-wrapper___1MGKY"
+                        tabindex="-1"
+                      >
+                        <span
+                          class="ToggleButton__Toggle__content-wrapper___1VoAt"
+                        >
+                          <div
+                            class="emotion-6"
+                          >
+                            <div>
+                              <input
+                                name="location-check-Page"
+                                type="checkbox"
+                              />
+                            </div>
+                            <div>
+                              <label
+                                for="location-checkPage"
+                              >
+                                Page
+                              </label>
+                            </div>
+                            <div>
+                              <span>
+                                (
+                                page
+                                )
+                              </span>
+                            </div>
+                          </div>
+                        </span>
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button
+              class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO"
+              data-test-id="app-create"
+              type="button"
+            >
+              <span
+                class="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+                tabindex="-1"
+              >
+                <span
+                  class="Button__Button__label___3tcOj"
+                >
+                  Create app
+                </span>
+                <svg
+                  class="Spinner__Spinner___32lpa Button__Button__spinner___3j8Aj Spinner__Spinner--small___2hyo0 Spinner__Spinner--white___3Hsq3 Button__Button--spinner--exit___2RUI- Button__Button--spinner-exit-active___3HXa7"
+                  data-test-id="cf-ui-spinner"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <title>
+                    Loading…
+                  </title>
+                  <path
+                    d="M2,10a8,8,0,0,1,8-8V0a10,10,0,0,0,0,20V18A8,8,0,0,1,2,10Z"
+                  />
+                  <path
+                    d="M10,0V2a8,8,0,0,1,0,16v2A10,10,0,0,0,10,0Z"
+                    style="opacity: 0.4;"
+                  />
+                </svg>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
