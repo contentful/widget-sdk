@@ -1,18 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 import { h } from 'utils/legacy-html-hyperscript';
 import { shorten } from 'utils/NumberUtils';
 import { orderBy } from 'lodash';
 
 import { organizationResourceUsagePropType, periodPropType } from '../propTypes';
 import periodToDates from './periodToDates';
-import EmptyChartPlaceholder from './EmptyChartPlaceholder';
 import LineChart from './LineChart';
 import { seriesAppearance } from './constants';
 
 const ApiUsageChart = ({ usage, period, spaceNames, isLoading }) => {
-  const { startDate, endDate } = period;
   const options = {
     xAxis: {
       data: periodToDates(period)
@@ -37,17 +34,7 @@ const ApiUsageChart = ({ usage, period, spaceNames, isLoading }) => {
       }
     }))
   };
-
-  return (
-    <LineChart
-      options={options}
-      empty={endDate === null && moment().diff(startDate, 'days') < 3}
-      EmptyPlaceholder={EmptyChartPlaceholder}
-      loading={isLoading}
-      width={700}
-      height={300}
-    />
-  );
+  return <LineChart options={options} loading={isLoading} width={700} height={300} />;
 };
 
 ApiUsageChart.propTypes = {

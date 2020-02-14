@@ -18,15 +18,13 @@ const periodPropType = PropTypes.shape({
   endDate: PropTypes.string
 });
 
-const organizationUsagePropType = arrayPropType(
-  PropTypes.shape({
-    usage: PropTypes.arrayOf(PropTypes.number).isRequired
-  })
-);
+const organizationUsagePropType = PropTypes.shape({
+  usage: PropTypes.arrayOf(PropTypes.number).isRequired
+});
 
 const organizationResourceUsagePropType = PropTypes.shape({
   sys: PropTypes.shape({
-    type: PropTypes.oneOf(['ApiUsage']).isRequired,
+    type: PropTypes.oneOf(['ApiUsage', 'SpacePeriodicUsage']).isRequired,
     id: PropTypes.string.isRequired,
     space: PropTypes.shape({ sys: PropTypes.shape({ id: PropTypes.string.isRequired }) }).isRequired
   }),

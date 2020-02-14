@@ -6,7 +6,6 @@ import { shorten } from 'utils/NumberUtils';
 
 import LineChart from '../committed/charts/LineChart';
 import OrganisationUsageChart from '../committed/charts/OrganisationUsageChart';
-import EmptyChartPlaceholder from '../committed/charts/EmptyChartPlaceholder';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
@@ -50,14 +49,6 @@ describe('OrganizationUsageChart', () => {
       renderChart()
         .find(LineChart)
         .prop('loading')
-    ).toBe(false);
-  });
-
-  it('should not show empty placeholder in chart', () => {
-    expect(
-      renderChart()
-        .find(LineChart)
-        .prop('empty')
     ).toBe(false);
   });
 
@@ -107,36 +98,6 @@ describe('OrganizationUsageChart', () => {
           .find(LineChart)
           .prop('options').yAxis.max
       ).toBe(6);
-    });
-  });
-
-  describe('is current period and less than three days old', () => {
-    const renderChart = () =>
-      shallow(
-        <OrganisationUsageChart
-          period={{
-            startDate: moment()
-              .subtract(2, 'days')
-              .format(DATE_FORMAT),
-            endDate: null
-          }}
-          usage={[]}
-          includedLimit={0}
-          isLoading={false}
-        />
-      );
-
-    it('should show empty placeholder in chart', () => {
-      expect(
-        renderChart()
-          .find(LineChart)
-          .prop('empty')
-      ).toBe(true);
-      expect(
-        renderChart()
-          .find(LineChart)
-          .prop('EmptyPlaceholder')
-      ).toBe(EmptyChartPlaceholder);
     });
   });
 

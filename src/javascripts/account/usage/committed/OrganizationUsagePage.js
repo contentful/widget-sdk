@@ -58,9 +58,7 @@ export default class OrganizationUsagePage extends React.Component {
   render() {
     const {
       periodicUsage: {
-        org: {
-          items: [{ usage: orgUsage }]
-        },
+        org: { usage: orgUsage },
         apis
       },
       apiRequestIncludedLimit,
