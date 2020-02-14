@@ -20,6 +20,9 @@ const styles = {
   }),
   spacerXl: css({
     marginBottom: tokens.spacingXl
+  }),
+  createButton: css({
+    marginBottom: tokens.spacing4Xl
   })
 };
 
@@ -76,15 +79,18 @@ export default class NewApp extends React.Component {
             </TextLink>{' '}
             to get started.
           </Paragraph>
-
           <div className={styles.spacerXl}>
             <AppEditor
               definition={definition}
               onChange={definition => this.setState({ definition })}
             />
           </div>
-
-          <Button loading={busy} disabled={busy} onClick={this.save} testId="app-create">
+          <Button
+            className={styles.createButton}
+            loading={busy}
+            disabled={busy}
+            onClick={this.save}
+            testId="app-create">
             Create app
           </Button>
         </Workbench.Content>

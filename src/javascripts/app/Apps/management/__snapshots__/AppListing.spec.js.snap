@@ -1286,47 +1286,49 @@ Object {
 exports[`AppListing should show the empty state when no definitions are passed 1`] = `
 Object {
   "asFragment": [Function],
-  "baseElement": .emotion-0 {
+  "baseElement": .emotion-1 > div {
+  height: 100%;
+}
+
+.emotion-0 {
   max-width: 768px;
   margin: 0 auto;
-  margin-top: 5rem;
   text-align: center;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .emotion-0 svg {
-  width: 100%;
+  width: 80%;
+}
+
+.emotion-0 button {
+  margin-bottom: 1.5rem;
 }
 
 <body>
     <div>
       <div
-        class="emotion-0"
+        class="Workbench__Workbench___THi9K emotion-1"
+        data-test-id="cf-ui-workbench"
       >
-        <apps-private-framework.svg />
         <div
-          class="EmptyState__EmptyState___35Xbk"
-          data-test-id="cf-ui-empty-state"
+          class="Workbench__Workbench__content-wrapper___3yWKi"
         >
           <div
-            class="EmptyState__EmptyState_container___34eoG"
+            class="emotion-0"
           >
-            <div
-              class="EmptyState__EmptyState_element___1cYfd"
-            />
-            <h1
-              class="Heading__Heading___83D3K EmptyState__EmptyState_element___1cYfd"
-              data-test-id="cf-ui-heading"
-            >
-              Build apps for Contentful
-            </h1>
-            <p
-              class="Paragraph__Paragraph___2aO-9 EmptyState__EmptyState_paragraph___KTUQq EmptyState__EmptyState_element___1cYfd"
-              data-test-id="cf-ui-paragraph"
-            />
+            <apps-private-framework.svg />
             <div
               class="Typography__Typography___1ZUfE"
               data-test-id="cf-ui-text-container"
             >
+              <h1
+                class="Heading__Heading___83D3K f36-margin-bottom--m"
+                data-test-id="cf-ui-heading"
+              >
+                Build apps for Contentful
+              </h1>
               <p
                 class="Paragraph__Paragraph___2aO-9 f36-margin-bottom--m"
                 data-test-id="cf-ui-paragraph"
@@ -1389,46 +1391,48 @@ Object {
       </div>
     </div>
   </body>,
-  "container": .emotion-0 {
+  "container": .emotion-1 > div {
+  height: 100%;
+}
+
+.emotion-0 {
   max-width: 768px;
   margin: 0 auto;
-  margin-top: 5rem;
   text-align: center;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .emotion-0 svg {
-  width: 100%;
+  width: 80%;
+}
+
+.emotion-0 button {
+  margin-bottom: 1.5rem;
 }
 
 <div>
     <div
-      class="emotion-0"
+      class="Workbench__Workbench___THi9K emotion-1"
+      data-test-id="cf-ui-workbench"
     >
-      <apps-private-framework.svg />
       <div
-        class="EmptyState__EmptyState___35Xbk"
-        data-test-id="cf-ui-empty-state"
+        class="Workbench__Workbench__content-wrapper___3yWKi"
       >
         <div
-          class="EmptyState__EmptyState_container___34eoG"
+          class="emotion-0"
         >
-          <div
-            class="EmptyState__EmptyState_element___1cYfd"
-          />
-          <h1
-            class="Heading__Heading___83D3K EmptyState__EmptyState_element___1cYfd"
-            data-test-id="cf-ui-heading"
-          >
-            Build apps for Contentful
-          </h1>
-          <p
-            class="Paragraph__Paragraph___2aO-9 EmptyState__EmptyState_paragraph___KTUQq EmptyState__EmptyState_element___1cYfd"
-            data-test-id="cf-ui-paragraph"
-          />
+          <apps-private-framework.svg />
           <div
             class="Typography__Typography___1ZUfE"
             data-test-id="cf-ui-text-container"
           >
+            <h1
+              class="Heading__Heading___83D3K f36-margin-bottom--m"
+              data-test-id="cf-ui-heading"
+            >
+              Build apps for Contentful
+            </h1>
             <p
               class="Paragraph__Paragraph___2aO-9 f36-margin-bottom--m"
               data-test-id="cf-ui-paragraph"
