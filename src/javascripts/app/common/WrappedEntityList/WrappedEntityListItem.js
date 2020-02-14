@@ -41,7 +41,8 @@ export default function WrappedEntityListItem({
   entity,
   internalLocaleCode,
   onClick,
-  contentType
+  contentType,
+  renderDropdown
 }) {
   const getEntityDataFn = useCallback(() => {
     return getEntityData(entity, internalLocaleCode);
@@ -60,6 +61,7 @@ export default function WrappedEntityListItem({
             key={entity.sys.id}
             title={entityData.title || 'Untitled'}
             contentType={contentType}
+            dropdownListElements={renderDropdown && renderDropdown({ entity })}
             entityType={entity.sys.type && entity.sys.type.toLowerCase()}
             thumbnailUrl={
               entityData.file && entityData.status !== 'archived'
@@ -81,7 +83,14 @@ WrappedEntityListItem.propTypes = {
   entity: PropTypes.object.isRequired,
   onClick: PropTypes.func,
   internalLocaleCode: PropTypes.string,
-  contentType: PropTypes.string
+  contentType: PropTypes.string,
+  /**
+   * Optional function to render a list of dropdown elements
+   *
+   * @param {object} props
+   * @param {object} props.entity The fetched entity for this list item
+   */
+  renderDropdown: PropTypes.func
 };
 
 function EntityListItemSkeleton() {

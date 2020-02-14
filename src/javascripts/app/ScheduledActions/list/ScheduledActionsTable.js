@@ -20,6 +20,7 @@ import { getEntryTitle } from 'classes/EntityFieldValueHelpers';
 
 import SecretiveLink from 'components/shared/SecretiveLink';
 import EntityStateLink from 'app/common/EntityStateLink';
+import UserDisplayName from 'app/UserProfile/components/UserDisplayName';
 
 const styles = {
   jobRow: css({
@@ -150,7 +151,7 @@ function ScheduledActionWithExsitingEntryRow({
           </TableCell>
           <TableCell>{contentType.name}</TableCell>
           <TableCell>
-            <UserInfo user={user} />
+            <UserDisplayName user={user} />
           </TableCell>
           <TableCell>
             {showStatusTransition ? <StatusTransition entry={entry} /> : <StatusTag job={job} />}
