@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import tokens from '@contentful/forma-36-tokens';
 import {
   Modal,
   Paragraph,
@@ -10,6 +11,14 @@ import {
 } from '@contentful/forma-36-react-components';
 
 import { OrganizationMembership as OrganizationMembershipPropType } from 'app/OrganizationSettings/PropTypes';
+import { css } from 'emotion';
+
+const styles = {
+  listStyle: css({
+    marginLeft: tokens.spacingL,
+    listStyleType: 'disc'
+  })
+};
 
 export default class SsoExemptionModal extends React.Component {
   static propTypes = {
@@ -26,6 +35,8 @@ export default class SsoExemptionModal extends React.Component {
       userIsManuallyExempt: `The user is explicitly marked as exempt from Restricted Mode`,
       other: `Other`
     };
+
+  
 
     return (
       <Modal isShown={isShown} onClose={onClose} title="SSO exemption">
@@ -46,7 +57,7 @@ export default class SsoExemptionModal extends React.Component {
           <List>
             {Object.keys(exemptionReasonsMap)
               .map(reason => (
-                <ListItem key={reason}>
+                <ListItem key={reason} className={styles.listStyle}>
                   {exemptionReasonsMap[reason]}{' '}
                 </ListItem>
               ))}
