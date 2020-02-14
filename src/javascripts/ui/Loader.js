@@ -19,6 +19,8 @@ const styles = {
 const Loader = function({ isShown, message, watchStateChange, testId }) {
   const [isOpen, setLoaderIsOpen] = useState(isShown);
 
+  const loaderMessage = ['undefined', 'null'].includes(message) ? 'Please hold on...' : message;
+
   useEffect(() => {
     let unsubscribe;
 
@@ -76,7 +78,7 @@ const Loader = function({ isShown, message, watchStateChange, testId }) {
       <div className="loader__container">
         <Spinner size="large" className={styles.spinner} />
         <div className={styles.spinnerText} data-test-id={messageTestId}>
-          {message}
+          {loaderMessage}
         </div>
       </div>
     </div>
