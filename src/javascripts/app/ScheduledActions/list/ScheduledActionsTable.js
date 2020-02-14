@@ -183,7 +183,7 @@ function ScheduledActionWithMissingEntryRow({ job, user }) {
       <TableCell>Entry missing or inaccessible</TableCell>
       <TableCell />
       <TableCell>
-        <UserInfo user={user} />
+        <UserDisplayName user={user} />
       </TableCell>
       <TableCell />
     </TableRow>
@@ -259,7 +259,4 @@ export default class ScheduledActionsTable extends Component {
       </div>
     );
   }
-}
-function UserInfo({ user }) {
-  return user && user.firstName;
 }
