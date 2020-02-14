@@ -6,7 +6,7 @@ import {
   DropdownList,
   Icon
 } from '@contentful/forma-36-react-components';
-import { orderBy } from 'lodash';
+import { orderBy, get } from 'lodash';
 
 import { default as FetchEntity, RequestStatus } from 'app/widgets/shared/FetchEntity';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';
@@ -101,14 +101,18 @@ class EmbeddedEntryInline extends React.Component {
               if (fetchEntityResult.requestStatus === RequestStatus.Error) {
                 return this.renderMissingNode();
               } else {
-                const jobs = widgetAPI.jobs
-                  .getPendingJobs()
-                  .filter(job => job.entity.sys.id === entryId);
-                const sortedJobs = orderBy(jobs, ['scheduledFor.datetime'], ['asc']);
                 const scheduledInfo = {
-                  job: sortedJobs[0],
-                  jobsCount: sortedJobs.length
+                  job: undefined,
+                  jobsCount: 0
                 };
+                if (typeof get(widgetAPI, 'jobs.getPendingJobs') === 'function') {
+                  const jobs = widgetAPI.jobs
+                    .getPendingJobs()
+                    .filter(job => job.entity.sys.id === entryId);
+                  const sortedJobs = orderBy(jobs, ['scheduledFor.datetime'], ['asc']);
+                  scheduledInfo.job = sortedJobs[0];
+                  scheduledInfo.jobsCount = sortedJobs.length;
+                }
                 return this.renderNode(fetchEntityResult, scheduledInfo);
               }
             }}
