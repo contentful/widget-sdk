@@ -85,7 +85,7 @@ function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }
         </span>
         {plan.committed && (
           <Tooltip
-            testId="subscription-page.spaces-list.enterprise-tool-tip"
+            testId="subscription-page.spaces-list.enterprise-toolitp"
             content="This space is part of your Enterprise deal with Contentful">
             <span className={styles.star}>★</span>
           </Tooltip>
@@ -96,7 +96,7 @@ function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }
         {hasAnyFeatures && (
           <div className={styles.helpIcon}>
             <Tooltip
-              testId="subscription-page.spaces-list.features-tool-tip"
+              testId="subscription-page.spaces-list.features-toolitp"
               content={`This space includes ${joinAnd(enabledFeatures.map(({ name }) => name))}`}>
               <QuestionMarkIcon color={tokens.colorTextLight} />
             </Tooltip>

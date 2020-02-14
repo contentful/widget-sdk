@@ -1,16 +1,12 @@
 import { uniqueId } from 'lodash';
 
-const USER = 'User';
-const YEAR = '2020';
-const DAY = '20';
-const MONTH = '01';
-const CREATED_AT_TIME_ISO = new Date(YEAR, MONTH, DAY).toISOString();
-const CREATED_BY = Link(USER, uniqueId(USER));
+const CREATED_AT_TIME_ISO = new Date('2020', '01', '20').toISOString();
+const CREATED_BY = Link('User', uniqueId('User'));
 
-export const CREATED_AT_TIME_DAY_MONTH_YEAR = `${YEAR}/${MONTH}/${DAY}`;
+export const CREATED_AT_TIME_DAY_MONTH_YEAR = '2020/01/20';
 
 const types = {
-  USER: USER,
+  USER: 'User',
   SPACE: 'Space',
   ORGANIZATION: 'Organization',
   ROLE: 'Role',
@@ -20,11 +16,11 @@ const types = {
   TEAM_MEMBERSHIP: 'TeamMembership'
 };
 
-export function sys(type = '', id, ...rest) {
+export function sys(type = '', id, options) {
   return {
     type,
     id: id || uniqueId(type.toLowerCase()),
-    ...rest
+    ...options
   };
 }
 
@@ -43,7 +39,7 @@ export function Space(name = '') {
 
   return {
     name: name || uniqueSpaceId,
-    sys: sys(types.SPACE, uniqueSpaceId, CREATED_AT_TIME_ISO, CREATED_BY)
+    sys: sys(types.SPACE, uniqueSpaceId, { createAt: CREATED_AT_TIME_ISO, createdBY: CREATED_BY })
   };
 }
 

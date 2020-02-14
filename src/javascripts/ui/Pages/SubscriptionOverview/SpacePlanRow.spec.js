@@ -7,16 +7,15 @@ import { getEnabledFeatures } from 'utils/SubscriptionUtils';
 
 import * as fake from 'testHelpers/fakeFactory';
 
-const FAKE_ID_NAME = 'free-space-plan-2';
 const MOCK_USER_NAME = 'John Doe';
-const MOCK_CREATED_AT_TIME_DAY_MONTH_YEAR = fake.CREATED_AT_TIME_DAY_MONTH_YEAR;
-
 const SPACE_NAME = 'SPACE_NAME';
-// This is because of the amount of times uniqueId is called in fakeFactory. This is brittle, not sure how best to change
+const MOCK_CREATED_AT_TIME_DAY_MONTH_YEAR = fake.CREATED_AT_TIME_DAY_MONTH_YEAR;
+// SpaceId3, the 3 is because of the amount of times uniqueId is called in fakeFactory. This is brittle, will be update in a following PR. See https://contentful.atlassian.net/browse/AHOY-14 for more details.
 const UNIQUE_SPACE_ID = 'SpaceId3';
+
 const mockBasePlan = fake.BasePlan();
 const mockPlan = {
-  sys: { id: FAKE_ID_NAME },
+  sys: { id: 'random_id' },
   name: SPACE_NAME,
   planType: 'free_space',
   space: fake.Space(),
@@ -42,12 +41,10 @@ isEnterprisePlan.mockImplementation(() => {
 });
 
 jest.mock('utils/SubscriptionUtils', () => ({
-  getEnabledFeatures: jest.fn()
+  getEnabledFeatures: jest.fn().mockImplementation(() => {
+    return false;
+  })
 }));
-
-getEnabledFeatures.mockImplementation(() => {
-  return false;
-});
 
 jest.mock('moment', () => ({
   utc: jest.fn(() => {
@@ -63,8 +60,6 @@ const mockOnChangeSpace = jest.fn();
 const mockOnDeleteSpace = jest.fn();
 
 describe('Space Plan Row', () => {
-  beforeEach(() => {});
-
   describe('basic plan information', () => {
     it('should display the name of the plan', async () => {
       await build();
@@ -121,21 +116,21 @@ describe('Space Plan Row', () => {
       await build();
 
       expect(() => {
-        screen.getByTestId('subscription-page.spaces-list.enterprise-tool-tip');
+        screen.getByTestId('subscription-page.spaces-list.enterprise-toolitp');
       }).toThrow();
     });
 
     it('shows enterprise tooltip when plan is committed', async () => {
       await build({ basePlan: mockBasePlan, plan: mockPlan, committed: true });
 
-      expect(screen.getByTestId('subscription-page.spaces-list.enterprise-tool-tip')).toBeDefined();
+      expect(screen.getByTestId('subscription-page.spaces-list.enterprise-toolitp')).toBeDefined();
     });
 
     it('hides feature tooltips when the plan does not have enabled features', async () => {
       await build();
 
       expect(() => {
-        screen.getByTestId('subscription-page.spaces-list.features-tool-tip');
+        screen.getByTestId('subscription-page.spaces-list.features-toolitp');
       }).toThrow();
     });
 
@@ -146,7 +141,7 @@ describe('Space Plan Row', () => {
       });
       await build();
 
-      expect(screen.getByTestId('subscription-page.spaces-list.features-tool-tip')).toBeDefined();
+      expect(screen.getByTestId('subscription-page.spaces-list.features-toolitp')).toBeDefined();
     });
 
     it('does not special className when not upgraded', async () => {
