@@ -42,9 +42,7 @@ export function ScheduledByDropdownList({ job, border }) {
 
         return (
           <DropdownList border={border}>
-            <DropdownListItem
-              className={cn(styles.scheduleDropdownScheduledBy)}
-              testId="scheduled-by">
+            <DropdownListItem className={styles.scheduleDropdownScheduledBy} testId="scheduled-by">
               {isLoading ? (
                 <SkeletonContainer>
                   <SkeletonDisplayText numberOfLines={1} />
@@ -152,7 +150,7 @@ class Job extends Component {
           className={cn(styles.scheduleHeader, size === 'small' ? styles.scheduleHeaderSmall : '')}>
           <Icon icon="Clock" color="secondary" className={styles.scheduleIcon} />
           <Tag
-            className={cn(styles.actionType)}
+            className={styles.actionType}
             tagType={tagTypeForAction[action]}
             testId="scheduled-item">
             {action}

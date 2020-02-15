@@ -63,8 +63,7 @@ export default function ConnectedUserDisplayName(props) {
   const { userId, user, className } = props;
 
   if (!userId && !user) {
-    // One of these two must be present
-    // TODO log or do something meaningful
+    // One of these two must be present to render
     return null;
   }
 
@@ -94,7 +93,18 @@ export default function ConnectedUserDisplayName(props) {
 }
 
 ConnectedUserDisplayName.propTypes = {
+  userXor: (props, _propName, componentName) => {
+    if (!props.userId && !props.user) {
+      return new Error(`One of props 'userId' or 'user' was not specified in '${componentName}'.`);
+    }
+
+    if (props.userId && props.user) {
+      return new Error(
+        `Only one of props 'userId' or 'user' may be specified in '${componentName}'.`
+      );
+    }
+  },
   userId: PropTypes.number,
-  user: PropTypes.object,
+  user: userShape,
   className: PropTypes.string
 };
