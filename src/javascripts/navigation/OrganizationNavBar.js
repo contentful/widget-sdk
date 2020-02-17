@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import NavBar from './NavBar/NavBar';
-import { isOwner, isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
+import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
 import { getOrgFeature } from '../data/CMA/ProductCatalog';
 import SidepanelContainer from './Sidepanel/SidepanelContainer';
@@ -96,7 +96,7 @@ function getItems(params, { orgId }) {
       dataViewType: 'organization-teams'
     },
     {
-      if: params.canManageApps,
+      if: params.hasAdvancedExtensibility,
       title: 'Apps',
       sref: 'account.organizations.apps.list',
       srefParams: { orgId },
@@ -183,14 +183,11 @@ export default class OrganizationNavigationBar extends React.Component {
       AdvancedExtensibilityFeature.isEnabled()
     ]);
 
-    const canManageApps =
-      hasAdvancedExtensibility && (isOwnerOrAdmin(organization) || isDeveloper(organization));
-
     const params = {
       ssoEnabled: ssoFeatureEnabled,
       pricingVersion: organization.pricingVersion,
       isOwnerOrAdmin: isOwnerOrAdmin(organization),
-      canManageApps,
+      hasAdvancedExtensibility,
       hasOffsiteBackup,
       hasBillingTab: organization.isBillable && isOwner(organization),
       hasSettingsTab: isOwner(organization)

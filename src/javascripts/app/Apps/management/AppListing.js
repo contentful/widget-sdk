@@ -20,7 +20,8 @@ import {
   Typography,
   CopyButton,
   SectionHeading,
-  Workbench
+  Workbench,
+  Note
 } from '@contentful/forma-36-react-components';
 
 import StateLink from 'app/common/StateLink';
@@ -81,7 +82,11 @@ const styles = {
   }),
   emptyWorkbench: css({
     '> div': css({
-      height: '100%'
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100%',
+      maxWidth: '768px',
+      margin: '0 auto'
     })
   }),
   emptyState: css({
@@ -122,7 +127,7 @@ function openInstallModal(definition) {
   ));
 }
 
-export default function AppListing({ definitions }) {
+export default function AppListing({ definitions, canManageApps }) {
   const learnMoreParagraph = (
     <Paragraph>
       Learn more about{' '}
@@ -133,7 +138,7 @@ export default function AppListing({ definitions }) {
     </Paragraph>
   );
 
-  if (definitions.length < 1) {
+  if (!canManageApps || definitions.length < 1) {
     return (
       <Workbench className={styles.emptyWorkbench}>
         <div className={styles.emptyState}>
@@ -148,9 +153,23 @@ export default function AppListing({ definitions }) {
             {learnMoreParagraph}
           </Typography>
           <StateLink path="^.new_definition">
-            {({ onClick }) => <Button onClick={onClick}>Create an app</Button>}
+            {({ onClick }) => (
+              <Button disabled={!canManageApps} onClick={onClick}>
+                Create an app
+              </Button>
+            )}
           </StateLink>
         </div>
+        {!canManageApps && (
+          <Note noteType="primary">
+            To start building apps for this organization, ask your admin to upgrade your account to
+            the{' '}
+            <TextLink href="" target="_blank" rel="noopener noreferrer">
+              developer role
+            </TextLink>
+            .
+          </Note>
+        )}
       </Workbench>
     );
   }
@@ -228,5 +247,6 @@ export default function AppListing({ definitions }) {
 }
 
 AppListing.propTypes = {
-  definitions: PropTypes.arrayOf(PropTypes.object).isRequired
+  definitions: PropTypes.arrayOf(PropTypes.object).isRequired,
+  canManageApps: PropTypes.bool.isRequired
 };
