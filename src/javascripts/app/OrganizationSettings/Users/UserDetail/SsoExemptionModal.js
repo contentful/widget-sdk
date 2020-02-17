@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import tokens from '@contentful/forma-36-tokens';
 import {
   Modal,
-  Icon,
   Paragraph,
   TextLink,
   List,
@@ -14,10 +14,13 @@ import { OrganizationMembership as OrganizationMembershipPropType } from 'app/Or
 import { css } from 'emotion';
 
 const styles = {
-  faded: css({ opacity: 0.5 })
+  listStyle: css({
+    marginLeft: tokens.spacingL,
+    listStyleType: 'disc'
+  })
 };
 
-export default class SseExemptionModal extends React.Component {
+export default class SsoExemptionModal extends React.Component {
   static propTypes = {
     membership: OrganizationMembershipPropType.isRequired,
     onClose: PropTypes.func.isRequired,
@@ -26,16 +29,14 @@ export default class SseExemptionModal extends React.Component {
 
   render() {
     const { membership, isShown, onClose } = this.props;
-    const { exemptionReasons } = membership.sys.sso;
     const user = membership.sys.user;
     const exemptionReasonsMap = {
       userIsOwner: `The user is an owner of the organization`,
-      userHasMultipleOrganizationMemberships: `The user belongs to more than one Contentful organization`,
-      userIsManuallyExempt: `The user is explicitly marked as exempt from Restricted Mode`
+      userIsManuallyExempt: `The user is explicitly marked as exempt from Restricted Mode`,
+      other: `Other`
     };
-    const includesReason = reason => {
-      return exemptionReasons.includes(reason);
-    };
+
+  
 
     return (
       <Modal isShown={isShown} onClose={onClose} title="SSO exemption">
@@ -55,13 +56,9 @@ export default class SseExemptionModal extends React.Component {
           </Paragraph>
           <List>
             {Object.keys(exemptionReasonsMap)
-              .sort((a, b) => {
-                return exemptionReasons.indexOf(b) - exemptionReasons.indexOf(a);
-              })
               .map(reason => (
-                <ListItem key={reason} className={includesReason(reason) ? null : styles.faded}>
+                <ListItem key={reason} className={styles.listStyle}>
                   {exemptionReasonsMap[reason]}{' '}
-                  {includesReason(reason) && <Icon icon="CheckCircle" color="positive" />}
                 </ListItem>
               ))}
           </List>
