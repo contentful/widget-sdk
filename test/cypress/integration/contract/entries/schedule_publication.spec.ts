@@ -75,7 +75,7 @@ describe('Schedule Publication', () => {
       cy.wait(500); // extra wait for notification animation 500ms
       cy.getAllByTestId('cf-ui-notification')
         // .should('be.visible') // This is hidden by the modal
-        .should('contain', 'There is a limit of 100 scheduled entries');
+        .should('contain', 'There is a limit of 200 scheduled entries');
     });
   });
 
