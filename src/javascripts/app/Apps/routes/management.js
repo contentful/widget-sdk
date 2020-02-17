@@ -18,7 +18,7 @@ const canManageAppsResolver = [
   async ({ orgId }) => {
     const organization = await TokenStore.getOrganization(orgId);
 
-    return (false && isOwnerOrAdmin(organization)) || isDeveloper(organization);
+    return isOwnerOrAdmin(organization) || isDeveloper(organization);
   }
 ];
 
