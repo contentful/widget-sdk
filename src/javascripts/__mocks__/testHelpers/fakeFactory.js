@@ -141,7 +141,7 @@ export function TeamMembership(
 export function BasePlan() {
   return { sys: sys({ id: 'Plan' }) };
 }
-  
+
 export function SpaceRole(name = '') {
   return {
     name: name,
@@ -150,3 +150,4 @@ export function SpaceRole(name = '') {
     policies: [],
     sys: sys()
   };
+}
