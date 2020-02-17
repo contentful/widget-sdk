@@ -22,6 +22,16 @@ const canManageAppsResolver = [
   }
 ];
 
+const redirectIfCannotManage = [
+  '$state',
+  'canManageApps',
+  ($state, canManageApps) => {
+    if (!canManageApps) {
+      $state.go('^.list');
+    }
+  }
+];
+
 export default {
   name: 'apps',
   url: '/apps',
@@ -47,15 +57,7 @@ export default {
       resolve: {
         canManageApps: canManageAppsResolver
       },
-      onEnter: [
-        '$state',
-        'canManageApps',
-        ($state, canManageApps) => {
-          if (!canManageApps) {
-            $state.go('^.list');
-          }
-        }
-      ],
+      onEnter: redirectIfCannotManage,
       mapInjectedToProps: [
         '$state',
         '$stateParams',
@@ -89,15 +91,7 @@ export default {
           }
         ]
       },
-      onEnter: [
-        '$state',
-        'canManageApps',
-        ($state, canManageApps) => {
-          if (!canManageApps) {
-            $state.go('^.list');
-          }
-        }
-      ],
+      onEnter: redirectIfCannotManage,
       mapInjectedToProps: [
         '$state',
         'definition',
