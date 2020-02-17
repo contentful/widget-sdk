@@ -63,9 +63,8 @@ describe('Space Plan Row', () => {
   describe('basic plan information', () => {
     it('should display the name of the plan', async () => {
       await build();
-      // "SpaceId3" comes from calling uniqueId('SpaceId'); in Space() function in the fakeFactory, it's the third time it's being called in this test? I don't like this, this seems V brittle
       expect(screen.getByTestId('subscription-page.spaces-list.space-name')).toHaveTextContent(
-        UNIQUE_SPACE_ID
+        mockPlan.space.sys.id
       );
     });
 
