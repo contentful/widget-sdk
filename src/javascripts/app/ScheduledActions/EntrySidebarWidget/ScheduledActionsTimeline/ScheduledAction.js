@@ -19,55 +19,50 @@ import CancellationModal from './CancellationModal';
 import { DateTime } from 'app/ScheduledActions/FormattedDateAndTime';
 import ScheduledActionAction from 'app/ScheduledActions/ScheduledActionAction';
 import UserFetcher from 'components/shared/UserFetcher';
-import CurrentUserFetcher from 'components/shared/UserFetcher/CurrentUserFetcher';
-import { UserNameFormatter } from 'components/shared/UserNameFormatter';
+import UserDisplayName from 'app/UserProfile/components/UserDisplayName';
 
 const tagTypeForAction = {
   [ScheduledActionAction.Publish]: 'positive',
   [ScheduledActionAction.Unpublish]: 'secondary'
 };
 
-function ScheduledByDropdownList({ userId }) {
+export function ScheduledByDropdownList({ job, border }) {
+  const userId = _.get(job, 'sys.createdBy.sys.id');
+
   if (!userId) {
     return null;
   }
 
   return (
-    <CurrentUserFetcher>
-      {currentUser => (
-        <UserFetcher userId={userId}>
-          {({ isLoading, isError, data: user }) => {
-            if (isError) {
-              return null;
-            }
+    <UserFetcher userId={userId}>
+      {({ isLoading, isError, data: user }) => {
+        if (isError) {
+          return null;
+        }
 
-            return (
-              <DropdownList border="top">
-                <DropdownListItem
-                  className={cn(styles.scheduleDropdownScheduledBy)}
-                  testId="scheduled-by">
-                  {isLoading ? (
-                    <SkeletonContainer>
-                      <SkeletonDisplayText numberOfLines={1} />
-                    </SkeletonContainer>
-                  ) : (
-                    <span>
-                      Scheduled by{' '}
-                      <UserNameFormatter user={user} currentUser={{ ...currentUser, sys: {} }} />
-                    </span>
-                  )}
-                </DropdownListItem>
-              </DropdownList>
-            );
-          }}
-        </UserFetcher>
-      )}
-    </CurrentUserFetcher>
+        return (
+          <DropdownList border={border}>
+            <DropdownListItem className={styles.scheduleDropdownScheduledBy} testId="scheduled-by">
+              {isLoading ? (
+                <SkeletonContainer>
+                  <SkeletonDisplayText numberOfLines={1} />
+                </SkeletonContainer>
+              ) : (
+                <span>
+                  Scheduled by <UserDisplayName user={user} />
+                </span>
+              )}
+            </DropdownListItem>
+          </DropdownList>
+        );
+      }}
+    </UserFetcher>
   );
 }
 
 ScheduledByDropdownList.propTypes = {
-  userId: PropTypes.string
+  job: PropTypes.object,
+  border: PropTypes.string
 };
 
 class Job extends Component {
@@ -90,14 +85,13 @@ class Job extends Component {
       action,
       scheduledFor: { datetime: scheduledAt }
     } = job;
-    const scheduledById = _.get(job, 'sys.createdBy.sys.id');
 
     // Do not render the dropdown for the read only small view (e.g. in the Schedule Action dialog)
     if (isReadOnly && size === 'small') {
       return null;
     }
 
-    const showDropdown = !isReadOnly || scheduledById;
+    const showDropdown = !isReadOnly || job.sys.createdBy;
 
     if (!showDropdown) {
       return null;
@@ -124,7 +118,7 @@ class Job extends Component {
               </DropdownListItem>
             </DropdownList>
           )}
-          <ScheduledByDropdownList userId={scheduledById} />
+          <ScheduledByDropdownList job={job} border="top" />
         </Dropdown>
 
         {!isReadOnly && (
@@ -156,7 +150,7 @@ class Job extends Component {
           className={cn(styles.scheduleHeader, size === 'small' ? styles.scheduleHeaderSmall : '')}>
           <Icon icon="Clock" color="secondary" className={styles.scheduleIcon} />
           <Tag
-            className={cn(styles.actionType)}
+            className={styles.actionType}
             tagType={tagTypeForAction[action]}
             testId="scheduled-item">
             {action}

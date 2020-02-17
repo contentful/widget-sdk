@@ -10,6 +10,7 @@ import ScheduledActionsEmptyStateMessage from './ScheduledActionsEmptyStateMessa
 import WrappedEntityList from 'app/common/WrappedEntityList';
 import ScheduledActionAction from '../ScheduledActionAction';
 import { formatDate } from 'app/ScheduledActions/FormattedDateAndTime';
+import { ScheduledByDropdownList } from 'app/ScheduledActions/EntrySidebarWidget/ScheduledActionsTimeline/ScheduledAction';
 
 const styles = {
   jobsSchedule: css({}),
@@ -57,6 +58,7 @@ const TimeGroup = ({ jobs, entriesData, contentTypesData }) => {
         <WrappedEntityList
           entities={jobs.map(job => entriesData[job.entity.sys.id])}
           contentTypes={contentTypesData}
+          renderDropdown={({ entity }) => <ScheduledByDropdownList job={entity} />}
         />
       </div>
     </div>
