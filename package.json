@@ -167,7 +167,6 @@
     "browserchannel": "1.2.0",
     "browserslist": "4.8.6",
     "caniuse-lite": "^1.0.30001025",
-    "cache-loader": "^4.1.0",
     "canonical-path": "0.0.2",
     "chalk": "^2.4.2",
     "chokidar": "^1.4.3",
@@ -310,7 +309,8 @@
   "homepage": "https://github.com/contentful/user_interface",
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged",
+      "post-checkout": "node ./tools/bin/cond-drop-cache.js"
     }
   },
   "config": {
