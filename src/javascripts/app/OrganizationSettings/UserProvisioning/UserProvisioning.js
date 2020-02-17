@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Workbench } from '@contentful/forma-36-react-components';
-import Icon from 'ui/Components/Icon';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import OrgAdminOnly from 'app/common/OrgAdminOnly';
 import StateRedirect from 'app/common/StateRedirect';
@@ -31,17 +29,7 @@ export default function UserProvisioning({ orgId, onReady }) {
             return <ForbiddenState />;
           }
 
-          return (
-            <Workbench>
-              <Workbench.Header
-                icon={<Icon name="page-sso" scale="0.75" />}
-                title="User Provisioning"
-              />
-              <Workbench.Content type="text">
-                <UserProvisioningConfiguration orgId={orgId} />
-              </Workbench.Content>
-            </Workbench>
-          );
+          return <UserProvisioningConfiguration orgId={orgId} />;
         }}
       </FeatureFetcher>
     </OrgAdminOnly>

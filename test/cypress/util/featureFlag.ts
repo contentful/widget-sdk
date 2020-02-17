@@ -9,5 +9,6 @@ export enum FeatureFlag {
   TEAMS_SPACE_MEMBERSHIP = 'feature-bv-01-2019-team-space-memberships',
   QUICK_NAVIGATION = 'feature-ht-04-2019-quick-navigation',
   DEFAULT = ENVIRONMENTS,
-  TWO_FA = 'feature-ogg-10-2019-2fa'
+  TWO_FA = 'feature-ogg-10-2019-2fa',
+  ACCESS_TOOLS = 'feature-ogg-02-2020-access-tools'
 }

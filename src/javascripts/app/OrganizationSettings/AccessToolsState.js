@@ -4,8 +4,8 @@ import userProvisioningState from './UserProvisioning/UserProvisioningState';
 import OrganizationNavBar from 'navigation/OrganizationNavBar';
 
 export default organizationBase({
-  name: 'enterprise-tools',
-  url: '/enterprise_tools',
+  name: 'access-tools',
+  url: '/access_tools',
   abstract: true,
   navComponent: OrganizationNavBar,
   children: [ssoRoutingState, userProvisioningState]

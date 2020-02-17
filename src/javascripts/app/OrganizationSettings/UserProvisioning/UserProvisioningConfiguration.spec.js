@@ -13,11 +13,17 @@ const renderComponent = () => {
 };
 
 describe('UserProvisioningConfiguration', () => {
-  it('should render scim setup page, with scim url and generate button', () => {
+  it('should render scim url in a disabled text input with copy button', () => {
     const { getByTestId, getByLabelText } = renderComponent();
     expect(getByLabelText('SCIM URL')).toHaveValue(
       'https://api.contentful.com/scim/v2/organizations/testOrgId'
     );
+    expect(getByLabelText('SCIM URL')).toHaveProperty('disabled');
+    expect(getByTestId('cf-ui-copy-button')).toBeInTheDocument();
+  });
+
+  it('should render page with a generate token button', () => {
+    const { getByTestId } = renderComponent();
     expect(getByTestId('generate-btn')).toBeInTheDocument();
   });
 

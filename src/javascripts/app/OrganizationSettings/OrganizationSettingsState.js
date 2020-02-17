@@ -7,7 +7,8 @@ import teamsState from './Teams/TeamsState';
 import { inviteUsersState, userDetailState, usersListState } from './Users/UsersState';
 import userInvitationsState from './UserInvitations/UserInvitationsList/UserInvitationsListRoutingState';
 import userInvitationDetailState from './UserInvitations/UserInvitationDetail/UserInvitationDetailRoutingState';
-import enterpriseToolsState from './EnterpriseToolsState';
+import accessToolsState from './AccessToolsState';
+import ssoRoutingState from './SSO/SSOSetupRoutingState';
 import gatekeeperStates from './OrganizationSettingsGatekeeperStates';
 import OrganizationNavBar from 'navigation/OrganizationNavBar';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
@@ -44,7 +45,8 @@ export default [
       usersAndInvitationsState,
       subscriptionState,
       teamsState,
-      enterpriseToolsState,
+      ssoRoutingState,
+      accessToolsState,
       ...gatekeeperStates
     ]
   })

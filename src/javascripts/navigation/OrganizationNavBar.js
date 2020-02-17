@@ -3,21 +3,22 @@ import PropTypes from 'prop-types';
 import NavBar from './NavBar/NavBar';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
-import { SSO_SELF_CONFIG_FLAG } from 'featureFlags';
+import { SSO_SELF_CONFIG_FLAG, ACCESS_TOOLS } from 'featureFlags';
 import { getOrgFeature } from '../data/CMA/ProductCatalog';
 import SidepanelContainer from './Sidepanel/SidepanelContainer';
 import createLegacyFeatureService from 'services/LegacyFeatureService';
-
 import { getVariation } from 'LaunchDarkly';
 
 function getItems(params, { orgId }) {
-  const shouldDisplayEnterpriseTools =
-    params.isOwnerOrAdmin && (params.ssoEnabled || params.userProvisioningEnabled);
-  const enterpriseToolsDropdownItems = [
+  const shouldDisplayAccessTools =
+    params.accessToolsFeatureEnabled &&
+    params.isOwnerOrAdmin &&
+    (params.ssoEnabled || params.userProvisioningEnabled);
+  const accessToolsDropdownItems = [
     {
       if: params.ssoEnabled,
       title: 'Single Sign-On (SSO)',
-      sref: 'account.organizations.enterprise-tools.sso',
+      sref: 'account.organizations.access-tools.sso',
       srefParams: { orgId },
       srefOptions: {
         inherit: false
@@ -27,7 +28,7 @@ function getItems(params, { orgId }) {
     {
       if: params.userProvisioningEnabled,
       title: 'User provisioning',
-      sref: 'account.organizations.enterprise-tools.user-provisioning',
+      sref: 'account.organizations.access-tools.user-provisioning',
       srefParams: { orgId },
       srefOptions: {
         inherit: false
@@ -145,12 +146,21 @@ function getItems(params, { orgId }) {
       dataViewType: 'offsite-backup'
     },
     {
-      if: shouldDisplayEnterpriseTools,
-      title: 'Enterprise Tools',
-      rootSref: 'account.organizations.enterprise-tools',
+      if: shouldDisplayAccessTools,
+      title: 'Access Tools',
+      rootSref: 'account.organizations.access-tools',
       icon: 'nav-organization-sso',
-      dataViewType: 'organization-enterprise-tools',
-      children: enterpriseToolsDropdownItems
+      dataViewType: 'organization-access-tools',
+      children: accessToolsDropdownItems
+    },
+    {
+      if: !params.accessToolsFeatureEnabled,
+      title: 'SSO',
+      sref: 'account.organizations.sso',
+      srefParams: { orgId },
+      rootSref: 'account.organizations.sso',
+      icon: 'nav-organization-sso',
+      dataViewType: 'organization-sso'
     }
   ].filter(item => item.if !== false);
 }
@@ -184,12 +194,16 @@ export default class OrganizationNavigationBar extends React.Component {
       variation,
       ssoFeatureEnabled,
       scimFeatureEnabled,
+      accessToolsFeatureEnabled,
       organization,
       hasOffsiteBackup
     ] = await Promise.all([
       getVariation(SSO_SELF_CONFIG_FLAG, { organizationId: orgId }),
       getOrgFeature(orgId, 'self_configure_sso'),
       getOrgFeature(orgId, 'scim'),
+      getVariation(ACCESS_TOOLS, {
+        organizationId: orgId
+      }),
       TokenStore.getOrganization(orgId),
       FeatureService.get('offsiteBackup')
     ]);
@@ -197,6 +211,7 @@ export default class OrganizationNavigationBar extends React.Component {
     const params = {
       ssoEnabled: variation && ssoFeatureEnabled,
       userProvisioningEnabled: scimFeatureEnabled,
+      accessToolsFeatureEnabled: accessToolsFeatureEnabled,
       pricingVersion: organization.pricingVersion,
       isOwnerOrAdmin: isOwnerOrAdmin(organization),
       hasOffsiteBackup,
