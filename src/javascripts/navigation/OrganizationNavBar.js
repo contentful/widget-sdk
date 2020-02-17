@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import NavBar from './NavBar/NavBar';
 import { isOwner, isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
-import { SSO_SELF_CONFIG_FLAG, ACCESS_TOOLS } from 'featureFlags';
+import { ACCESS_TOOLS } from 'featureFlags';
 import { getOrgFeature } from '../data/CMA/ProductCatalog';
 import SidepanelContainer from './Sidepanel/SidepanelContainer';
 import createLegacyFeatureService from 'services/LegacyFeatureService';
@@ -136,7 +136,15 @@ function getItems(params, { orgId }) {
       dataViewType: 'organization-apps'
     },
     {
-      if: params.ssoEnabled && params.isOwnerOrAdmin,
+      if: shouldDisplayAccessTools,
+      title: 'Access Tools',
+      rootSref: 'account.organizations.access-tools',
+      icon: 'nav-organization-sso',
+      dataViewType: 'organization-access-tools',
+      children: accessToolsDropdownItems
+    },
+    {
+      if: !params.accessToolsFeatureEnabled && params.ssoEnabled && params.isOwnerOrAdmin,
       title: 'SSO',
       sref: 'account.organizations.sso',
       srefParams: { orgId },
@@ -147,7 +155,6 @@ function getItems(params, { orgId }) {
       icon: 'nav-organization-sso',
       dataViewType: 'organization-sso'
     },
-
     {
       if: params.pricingVersion == 'pricing_version_1' && params.isOwnerOrAdmin,
       title: 'Spaces',
@@ -170,23 +177,6 @@ function getItems(params, { orgId }) {
         inherit: false
       },
       dataViewType: 'offsite-backup'
-    },
-    {
-      if: shouldDisplayAccessTools,
-      title: 'Access Tools',
-      rootSref: 'account.organizations.access-tools',
-      icon: 'nav-organization-sso',
-      dataViewType: 'organization-access-tools',
-      children: accessToolsDropdownItems
-    },
-    {
-      if: !params.accessToolsFeatureEnabled,
-      title: 'SSO',
-      sref: 'account.organizations.sso',
-      srefParams: { orgId },
-      rootSref: 'account.organizations.sso',
-      icon: 'nav-organization-sso',
-      dataViewType: 'organization-sso'
     }
   ].filter(item => item.if !== false);
 }
@@ -217,7 +207,6 @@ export default class OrganizationNavigationBar extends React.Component {
     const { orgId } = this.props.stateParams;
     const FeatureService = createLegacyFeatureService(orgId, 'organization');
     const [
-      variation,
       ssoFeatureEnabled,
       scimFeatureEnabled,
       accessToolsFeatureEnabled,
@@ -239,7 +228,7 @@ export default class OrganizationNavigationBar extends React.Component {
       hasAdvancedExtensibility && (isOwnerOrAdmin(organization) || isDeveloper(organization));
 
     const params = {
-      ssoEnabled: variation && ssoFeatureEnabled,
+      ssoEnabled: ssoFeatureEnabled,
       userProvisioningEnabled: scimFeatureEnabled,
       accessToolsFeatureEnabled: accessToolsFeatureEnabled,
       pricingVersion: organization.pricingVersion,
