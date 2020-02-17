@@ -60,11 +60,11 @@ export function Organization(name = '') {
   };
 }
 
-export function User(firstName = 'John', lastName = 'Doe') {
+export function User(options = { firstName: 'John', lastName: 'Doe', activated: true }) {
   return {
-    firstName: firstName,
-    lastName: lastName,
-    email: `${firstName}@enterprise.com`,
+    firstName: options.firstName,
+    lastName: options.lastName,
+    email: `${options.firstName}@enterprise.com`,
     avatarUrl: 'avatar.jpg',
     sys: sys({ type: types.USER })
   };
@@ -90,7 +90,7 @@ export function Role(name = '', space = Link(types.SPACE)) {
 
 export function SpaceMembership(
   space = Link(types.SPACE),
-  user = Link(types.USER),
+  user = User(),
   admin = true,
   roles = []
 ) {
@@ -141,3 +141,12 @@ export function TeamMembership(
 export function BasePlan() {
   return { sys: sys({ id: 'Plan' }) };
 }
+  
+export function SpaceRole(name = '') {
+  return {
+    name: name,
+    description: 'description',
+    permissions: {},
+    policies: [],
+    sys: sys()
+  };

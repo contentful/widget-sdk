@@ -1,18 +1,16 @@
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { SectionHeading, Button, Tooltip, Workbench } from '@contentful/forma-36-react-components';
+import { SectionHeading, Button, Workbench } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
-import pluralize from 'pluralize';
-import { map, isEmpty } from 'lodash';
+import { map } from 'lodash';
 
 import { SpaceMember as SpaceMemberPropType } from 'app/OrganizationSettings/PropTypes';
 import Icon from 'ui/Components/Icon';
-import ContextMenu from 'ui/Components/ContextMenu';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import FilterPill from 'app/ContentList/Search/FilterPill';
 import ValueInput from 'app/ContentList/Search/FilterValueInputs';
-import { joinAnd } from 'utils/StringUtils';
+import UserListRow from './UserListRow';
 
 import AddUsersToSpaceNote from './AddUsersToSpaceNote';
 import { VIEW_LABELS } from './constants';
@@ -54,27 +52,6 @@ const styles = {
       padding: `0 ${tokens.spacingS}`,
       minWidth: '40px'
     }
-  }),
-  user: css({
-    display: 'flex',
-    marginTop: tokens.spacingL,
-    paddingLeft: '67px',
-    paddingRight: tokens.spacingXl
-  }),
-  userName: css({
-    display: 'block',
-    margin: `${tokens.spacing2Xs} 0`
-  }),
-  notConfirmed: css({
-    fontSize: tokens.fontSizeM,
-    color: tokens.colorTextLightest
-  }),
-  userAvatar: css({
-    marginRight: tokens.spacingM
-  }),
-  userMenu: css({
-    marginLeft: 'auto',
-    height: 'fit-content'
   })
 };
 
@@ -140,71 +117,21 @@ const UserListPresentation = ({
             <div key={label} className={styles.userListGroup}>
               <span id="scroll-to-anchor" ref={label === jumpToRole ? roleAnchorEl : null} />
               <SectionHeading element="h3">{label}</SectionHeading>
-              {members.map(member => {
-                const {
-                  sys: {
-                    id,
-                    user: { avatarUrl, firstName, lastName, email, activated }
-                  },
-                  roles
-                } = member;
-                const displayName = firstName || lastName ? `${firstName} ${lastName}` : email;
-                const displayRoles = isEmpty(roles) ? 'Administrator' : joinAnd(map(roles, 'name'));
 
+              {members.map(member => {
                 return (
-                  <div key={id} data-test-id="user-list.item" className={styles.user}>
-                    <img
-                      className={styles.userAvatar}
-                      src={avatarUrl}
-                      width="50"
-                      height="50"
-                      alt="user avatar"
-                    />
-                    <div>
-                      <strong data-test-id="user-list.name" className={styles.userName}>
-                        {displayName}
-                      </strong>
-                      {!activated && (
-                        <small className={styles.notConfirmed}>This account is not confirmed</small>
-                      )}
-                      <div data-test-id="user-list.roles">{displayRoles}</div>
-                    </div>
-                    <Tooltip
-                      targetWrapperClassName={styles.userMenu}
-                      place="left"
-                      content={
-                        numberOfTeamMemberships[id] > 0
-                          ? `This user has space access through ${pluralize(
-                              'team',
-                              numberOfTeamMemberships[id],
-                              true
-                            )}`
-                          : ''
-                      }>
-                      <ContextMenu
-                        buttonProps={{
-                          'data-test-id': 'user-list.actions'
-                        }}
-                        isDisabled={!canModifyUsers || numberOfTeamMemberships[id] > 0}
-                        items={[
-                          {
-                            label: 'Change role',
-                            action: () => openRoleChangeDialog(member, adminCount),
-                            otherProps: {
-                              'data-test-id': 'user-change-role'
-                            }
-                          },
-                          {
-                            label: 'Remove from this space',
-                            action: () => openRemovalConfirmationDialog(member, adminCount),
-                            otherProps: {
-                              'data-test-id': 'user-remove-from-space'
-                            }
-                          }
-                        ]}
-                      />
-                    </Tooltip>
-                  </div>
+                  <>
+                    <UserListRow
+                      member={member}
+                      openRoleChangeDialog={() => {
+                        openRoleChangeDialog(member, adminCount);
+                      }}
+                      openRemovalConfirmationDialog={() =>
+                        openRemovalConfirmationDialog(member, adminCount)
+                      }
+                      numberOfTeamMemberships={numberOfTeamMemberships}
+                      canModifyUsers={canModifyUsers}></UserListRow>
+                  </>
                 );
               })}
             </div>

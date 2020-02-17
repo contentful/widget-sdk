@@ -5,8 +5,8 @@ import UserDetails from './UserDetails';
 import * as fake from 'testHelpers/fakeFactory';
 import ModalLauncher from '__mocks__/app/common/ModalLauncher';
 
-const membershipUser = fake.User('John', 'Doe');
-const createdByUser = fake.User('Jane', 'Doe');
+const membershipUser = fake.User({ firstName: 'John', lastName: 'Doe' });
+const createdByUser = fake.User({ firstName: 'Jane', lastName: 'Smith' });
 
 const mockOrgMembership = fake.OrganizationMembership('member', 'active', membershipUser);
 mockOrgMembership.sys.createdBy = createdByUser;
@@ -68,7 +68,7 @@ describe('User Details', () => {
         expect(screen.getByTestId('user-attributes.member-since').textContent).toEqual(
           'December 01, 2019'
         );
-        expect(screen.getByTestId('user-attributes.invited-by').textContent).toEqual('Jane Doe');
+        expect(screen.getByTestId('user-attributes.invited-by').textContent).toEqual('Jane Smith');
         // Not testing for precise string since we use relative dates from moment
         expect(screen.getByTestId('user-attributes.last-active-at').textContent).toEqual(
           expect.stringContaining('ago')
