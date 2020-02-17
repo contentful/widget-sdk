@@ -8,15 +8,19 @@ import { createOrganizationEndpoint, createAppDefinitionsEndpoint } from 'data/E
 // we cache loaders per organization.
 const perOrgCache = {};
 
-export function getAppDefinitionLoader() {
+function currentSpaceOrgId() {
   const spaceContext = getModule('spaceContext');
-  const orgId = spaceContext.getData(['organization', 'sys', 'id']);
-  const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
 
+  return spaceContext.getData(['organization', 'sys', 'id']);
+}
+
+export function getAppDefinitionLoader(orgId) {
+  orgId = orgId || currentSpaceOrgId();
   let loader = perOrgCache[orgId];
 
   if (!loader) {
     const appDefinitionsEndpoint = createAppDefinitionsEndpoint(Config.apiUrl(), Auth);
+    const orgEndpoint = createOrganizationEndpoint(Config.apiUrl(), orgId, Auth);
     loader = createAppDefinitionLoader(appDefinitionsEndpoint, orgEndpoint);
     perOrgCache[orgId] = loader;
   }

@@ -226,6 +226,10 @@ registerEvent('jobs:cancel', 'jobs_cancel', JobsCancelTransformer);
 
 registerGenericEvent('telemetry:measurement');
 
+registerGenericEvent('app_management:created');
+registerGenericEvent('app_management:deleted');
+registerGenericEvent('app_management:updated');
+
 /**
  * Registers an event to be tracked by snowplow.
  * @param {string} event

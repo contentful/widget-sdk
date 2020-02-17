@@ -1,11 +1,17 @@
 import { Matchers } from '@pact-foundation/pact-web';
-import { defaultSpaceId, defaultUserId, defaultJobId, defaultEnvironmentId } from '../../util/requests';
+import {
+  defaultSpaceId,
+  defaultUserId,
+  defaultJobId,
+  defaultEnvironmentId
+} from '../../util/requests';
 
 export const severalPendingJobsResponse = {
   sys: {
     type: 'Array'
   },
   limit: 100,
+  pages: {},
   items: [
     job({ sys: { id: Matchers.somethingLike(defaultJobId) } }),
     job({ sys: { id: Matchers.somethingLike('jobID2') } }),
@@ -18,6 +24,7 @@ export const severalCompletedJobsResponse = {
     type: 'Array'
   },
   limit: 100,
+  pages: {},
   items: [
     job({ sys: { id: Matchers.somethingLike('jobID3'), status: 'succeeded' } }),
     job({ sys: { id: Matchers.somethingLike('jobID4'), status: 'succeeded' } })
@@ -28,6 +35,7 @@ export const severalFailedJobsResponse = {
     type: 'Array'
   },
   limit: 100,
+  pages: {},
   items: [
     job({ sys: { id: Matchers.somethingLike('jobID5'), status: 'failed' } }),
     job({ sys: { id: Matchers.somethingLike('jobID6'), status: 'failed' } })
@@ -39,6 +47,7 @@ export const onePendingJobResponse = {
     type: 'Array'
   },
   limit: 100,
+  pages: {},
   items: [job({ sys: { id: Matchers.somethingLike(defaultJobId) } })]
 };
 
@@ -47,6 +56,7 @@ export const oneFailedJobResponse = {
     type: 'Array'
   },
   limit: 100,
+  pages: {},
   items: [job({ sys: { id: Matchers.somethingLike(defaultJobId), status: 'failed' } })]
 };
 

@@ -3,7 +3,6 @@ export const WALK_FOR_ME = 'feature-fe-10-2017-walkme-integration-eli-lilly';
 export const CONTACT_US_SPACE_HOME = 'feature-ps-10-2017-contact-us-space-home';
 export const ENVIRONMENTS_FLAG = 'feature-dv-11-2017-environments';
 export const UPGRADE_PRICING_FLAG = 'feature-dl-09-2018-upgrade-pricing-space-home';
-export const SSO_SELF_CONFIG_FLAG = 'feature-bv-2019-01-sso-self-config';
 export const ENTRY_COMMENTS = 'feature-04-2019-entry-comments';
 export const TEAMS_IN_SPACES = 'feature-bv-04-2019-teams-iteration-2';
 export const ENTITY_EDITOR_CMA_EXPERIMENT =
@@ -12,6 +11,7 @@ export const PENDING_ORG_MEMBERSHIPS = 'feature-bv-09-2019-new-invitation-flow-n
 export const NEW_INVITATION_FORM = 'feature-bv-05-2019-new-invitation-flow';
 export const TWO_FA = 'feature-ogg-10-2019-2fa';
 export const ACCESS_TOOLS = 'feature-ogg-02-2020-access-tools';
+export const USAGE_API_GA = 'feature-ogg-2020-02-usage-api-ga';
 
 // Gatekeeper Product Catalog Flags
 export const ENVIRONMENT_USAGE_ENFORCEMENT = 'environment_usage_enforcements';

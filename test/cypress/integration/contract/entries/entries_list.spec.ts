@@ -12,7 +12,7 @@ import {
   createAnEntryInDefaultSpace
 } from '../../../interactions/entries';
 import {
-  queryPendingJobsForDefaultSpace,
+  queryPendingJobsForDefaultSpaceWithoutLimit,
   queryAllScheduledJobsForDefaultEntry
 } from '../../../interactions/jobs';
 import {
@@ -76,7 +76,7 @@ describe('Entries list page', () => {
         '@queryNonArchivedEntries',
         ...defaultRequestsMock({}),
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
-        queryPendingJobsForDefaultSpace.willFindSeveral(),
+        queryPendingJobsForDefaultSpaceWithoutLimit.willFindSeveral(),
         queryForTasksAndScheduledPublishingInDefaultSpace.willFindBothEnabled(),
         queryForEnvironmentUsageAndAppsInDefaultSpace.willFindSeveral()
       ];
@@ -123,7 +123,7 @@ describe('Entries list page', () => {
           publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
         }),
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
-        queryPendingJobsForDefaultSpace.willFindSeveral(),
+        queryPendingJobsForDefaultSpaceWithoutLimit.willFindSeveral(),
         queryForTasksAndScheduledPublishingInDefaultSpace.willFindBothEnabled(),
         queryForEnvironmentUsageAndAppsInDefaultSpace.willFindSeveral()
       ];
@@ -148,7 +148,7 @@ describe('Entries list page', () => {
         queryLinksToDefaultEntry.willReturnNone(),
         getFirst7SnapshotsOfDefaultEntry.willReturnNone(),
         getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
-        queryAllScheduledJobsForDefaultEntry.willFindOnePendingJob(),
+        queryAllScheduledJobsForDefaultEntry.willFindOnePendingJob()
       ];
 
       cy.getByTestId('create-entry-button-menu-trigger').click();
@@ -178,7 +178,7 @@ describe('Entries list page', () => {
         '@queryNonArchivedEntries',
         ...defaultRequestsMock({}),
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
-        queryPendingJobsForDefaultSpace.willFindSeveral(),
+        queryPendingJobsForDefaultSpaceWithoutLimit.willFindSeveral(),
         queryForTasksAndScheduledPublishingInDefaultSpace.willFindBothEnabled(),
         queryForEnvironmentUsageAndAppsInDefaultSpace.willFindSeveral()
       ];
@@ -233,7 +233,7 @@ describe('Entries list page', () => {
         ...defaultRequestsMock({}),
         '@queryNonArchivedEntries',
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
-        queryPendingJobsForDefaultSpace.willFindSeveral(),
+        queryPendingJobsForDefaultSpaceWithoutLimit.willFindSeveral(),
         queryForTasksAndScheduledPublishingInDefaultSpace.willFindBothEnabled(),
         queryForEnvironmentUsageAndAppsInDefaultSpace.willFindSeveral()
       ];

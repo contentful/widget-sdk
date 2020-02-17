@@ -150,7 +150,7 @@ export default function ScheduledActionsWidget({
     } catch (error) {
       if (400 === error.status) {
         Notification.error(
-          `Unable to schedule ${entryTitle}. There is a limit of 100 scheduled entries at any one time.`
+          `Unable to schedule ${entryTitle}. There is a limit of 200 scheduled entries at any one time.`
         );
       } else {
         Notification.error(`${entryTitle} failed to schedule`);

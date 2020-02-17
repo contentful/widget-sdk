@@ -10,6 +10,7 @@ import ScheduledActionsEmptyStateMessage from './ScheduledActionsEmptyStateMessa
 import WrappedEntityList from 'app/common/WrappedEntityList';
 import ScheduledActionAction from '../ScheduledActionAction';
 import { formatDate } from 'app/ScheduledActions/FormattedDateAndTime';
+import { ScheduledByDropdownList } from 'app/ScheduledActions/EntrySidebarWidget/ScheduledActionsTimeline/ScheduledAction';
 
 const styles = {
   jobsSchedule: css({}),
@@ -57,6 +58,7 @@ const TimeGroup = ({ jobs, entriesData, contentTypesData }) => {
         <WrappedEntityList
           entities={jobs.map(job => entriesData[job.entity.sys.id])}
           contentTypes={contentTypesData}
+          renderDropdown={({ entity }) => <ScheduledByDropdownList job={entity} />}
         />
       </div>
     </div>
@@ -79,10 +81,10 @@ const DateGroup = ({ jobs, entriesData, contentTypesData }) => {
       <SectionHeading className={styles.dateGroupHeader}>
         {formatDate(jobs[0].scheduledFor.datetime)}
       </SectionHeading>
-      {timeGroups.map((jobs, index) => (
+      {timeGroups.map(jobs => (
         <TimeGroup
           jobs={jobs}
-          key={`${jobs[0].scheduledFor.datetime}-${index}`}
+          key={`${jobs[0].sys.id}-timeGroup`}
           entriesData={entriesData}
           contentTypesData={contentTypesData}
         />
@@ -119,10 +121,10 @@ export default class JobsSchedule extends React.Component {
     return (
       <div>
         {groupedJobs && groupedJobs.length > 0 ? (
-          groupedJobs.map((jobsGroup, index) => (
+          groupedJobs.map(jobsGroup => (
             <DateGroup
               jobs={jobsGroup}
-              key={`${jobsGroup[0].scheduledFor.datetime}-${index}`}
+              key={`${jobsGroup[0].sys.id}-dateGroup`}
               entriesData={entriesData}
               contentTypesData={contentTypesData}
             />

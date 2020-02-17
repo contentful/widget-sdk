@@ -12,6 +12,7 @@ import ssoRoutingState from './SSO/SSOSetupRoutingState';
 import gatekeeperStates from './OrganizationSettingsGatekeeperStates';
 import OrganizationNavBar from 'navigation/OrganizationNavBar';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
+import appsState from 'app/Apps/routes/management';
 
 const usersAndInvitationsState = base({
   name: 'users',
@@ -45,6 +46,7 @@ export default [
       usersAndInvitationsState,
       subscriptionState,
       teamsState,
+      appsState,
       ssoRoutingState,
       accessToolsState,
       ...gatekeeperStates

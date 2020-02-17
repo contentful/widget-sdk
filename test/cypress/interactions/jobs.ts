@@ -1,4 +1,10 @@
-import { defaultSpaceId, defaultEntryId, defaultJobId, defaultHeader, defaultEnvironmentId } from '../util/requests';
+import {
+  defaultSpaceId,
+  defaultEntryId,
+  defaultJobId,
+  defaultHeader,
+  defaultEnvironmentId
+} from '../util/requests';
 import { Query, RequestOptions } from '@pact-foundation/pact-web';
 
 const empty = require('../fixtures/responses/empty.json');
@@ -14,16 +20,24 @@ import {
 import { createJobRequest } from '../fixtures/requests/jobs';
 const pendingJobsQuery = {
   'environment.sys.id': 'master',
+  limit: '100',
+  order: 'scheduledFor.datetime',
+  'sys.status': 'scheduled'
+};
+const pendingJobsQueryWithoutLimit = {
+  'environment.sys.id': 'master',
   order: 'scheduledFor.datetime',
   'sys.status': 'scheduled'
 };
 const completedJobsQuery = {
   'environment.sys.id': 'master',
+  limit: '100',
   order: '-scheduledFor.datetime',
   'sys.status': 'succeeded'
 };
 const failedJobsQuery = {
   'environment.sys.id': 'master',
+  limit: '100',
   order: '-scheduledFor.datetime',
   'sys.status': 'failed'
 };
@@ -53,12 +67,43 @@ function queryJobsForDefaultSpaceRequest(query: Query): RequestOptions {
   };
 }
 
+export const queryPendingJobsForDefaultSpaceWithoutLimit = {
+  willFindNone() {
+    cy.addInteraction({
+      provider: 'jobs',
+      state: States.NO_JOBS_FOR_DEFAULT_SPACE,
+      uponReceiving: `a query without limit for pending jobs in space "${defaultSpaceId}"`,
+      withRequest: queryJobsForDefaultSpaceRequest(pendingJobsQueryWithoutLimit),
+      willRespondWith: {
+        status: 200,
+        body: empty
+      }
+    }).as('queryPendingJobsForDefaultSpace');
+
+    return '@queryPendingJobsForDefaultSpace';
+  },
+  willFindSeveral() {
+    cy.addInteraction({
+      provider: 'jobs',
+      state: States.SEVERAL_JOBS_FOR_DEFAULT_SPACE,
+      uponReceiving: `a query without a limit for pending jobs in space "${defaultSpaceId}"`,
+      withRequest: queryJobsForDefaultSpaceRequest(pendingJobsQueryWithoutLimit),
+      willRespondWith: {
+        status: 200,
+        body: severalPendingJobsResponse
+      }
+    }).as('queryPendingJobsForDefaultSpace');
+
+    return '@queryPendingJobsForDefaultSpace';
+  }
+};
+
 export const queryPendingJobsForDefaultSpace = {
   willFindNone() {
     cy.addInteraction({
       provider: 'jobs',
       state: States.NO_JOBS_FOR_DEFAULT_SPACE,
-      uponReceiving: `a query for pending jobs in space "${defaultSpaceId}"`,
+      uponReceiving: `a query with limit for pending jobs in space "${defaultSpaceId}"`,
       withRequest: queryJobsForDefaultSpaceRequest(pendingJobsQuery),
       willRespondWith: {
         status: 200,
@@ -72,7 +117,7 @@ export const queryPendingJobsForDefaultSpace = {
     cy.addInteraction({
       provider: 'jobs',
       state: States.SEVERAL_JOBS_FOR_DEFAULT_SPACE,
-      uponReceiving: `a query for pending jobs in space "${defaultSpaceId}"`,
+      uponReceiving: `a query with limit for pending jobs in space "${defaultSpaceId}"`,
       withRequest: queryJobsForDefaultSpaceRequest(pendingJobsQuery),
       willRespondWith: {
         status: 200,
@@ -86,7 +131,7 @@ export const queryPendingJobsForDefaultSpace = {
     cy.addInteraction({
       provider: 'jobs',
       state: States.INTERNAL_SERVER_ERROR,
-      uponReceiving: `a query for pending jobs in space "${defaultSpaceId}"`,
+      uponReceiving: `a query with limit for pending jobs in space "${defaultSpaceId}"`,
       withRequest: queryJobsForDefaultSpaceRequest(pendingJobsQuery),
       willRespondWith: {
         status: 500,
@@ -257,11 +302,11 @@ export const cancelDefaultJobInDefaultSpace = {
         method: 'DELETE',
         path: `/spaces/${defaultSpaceId}/scheduled_actions/${defaultJobId}`,
         headers: {
-          ...defaultHeader,
+          ...defaultHeader
         },
         query: {
           'environment.sys.id': defaultEnvironmentId
-        },
+        }
       },
       willRespondWith: {
         status: 200

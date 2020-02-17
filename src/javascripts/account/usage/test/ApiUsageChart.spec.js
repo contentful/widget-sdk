@@ -6,7 +6,6 @@ import { shorten } from 'utils/NumberUtils';
 
 import LineChart from '../committed/charts/LineChart';
 import ApiUsageChart from '../committed/charts/ApiUsageChart';
-import EmptyChartPlaceholder from '../committed/charts/EmptyChartPlaceholder';
 import { seriesAppearance } from '../committed/charts/constants';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -108,14 +107,6 @@ describe('ApiUsageChart', () => {
         .find(LineChart)
         .prop('options').yAxis.axisLabel.formatter
     ).toBe(shorten);
-  });
-
-  describe('is current period and less than three days old', () => {
-    it('should show empty placeholder in chart', () => {
-      const chart = renderChart(moment().subtract(2, 'days'));
-      expect(chart.find(LineChart).prop('empty')).toBe(true);
-      expect(chart.find(LineChart).prop('EmptyPlaceholder')).toBe(EmptyChartPlaceholder);
-    });
   });
 
   describe('is loading', () => {

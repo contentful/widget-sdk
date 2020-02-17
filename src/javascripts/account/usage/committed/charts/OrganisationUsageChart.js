@@ -1,13 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { last } from 'lodash';
-import moment from 'moment';
 
 import { shorten } from 'utils/NumberUtils';
 
 import { periodPropType } from '../propTypes';
 import periodToDates from './periodToDates';
-import EmptyChartPlaceholder from './EmptyChartPlaceholder';
 import LineChart from './LineChart';
 
 const accumulateUsage = usage =>
@@ -26,7 +24,6 @@ export default class OrganisationUsageChart extends React.Component {
 
   render() {
     const { includedLimit, usage, period, isLoading } = this.props;
-    const { startDate, endDate } = period;
     const accumulatedUsage = accumulateUsage(usage);
     const maxValue = last(accumulatedUsage);
     const options = {
@@ -87,15 +84,6 @@ export default class OrganisationUsageChart extends React.Component {
       }
     };
 
-    return (
-      <LineChart
-        options={options}
-        empty={endDate === null && moment().diff(startDate, 'days') < 3}
-        EmptyPlaceholder={EmptyChartPlaceholder}
-        loading={isLoading}
-        width={700}
-        height={300}
-      />
-    );
+    return <LineChart options={options} loading={isLoading} width={700} height={300} />;
   }
 }
