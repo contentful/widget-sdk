@@ -15,7 +15,7 @@ import {
   createScheduledPublicationForDefaultSpace,
   cancelDefaultJobInDefaultSpace,
   queryAllScheduledJobsForDefaultEntry,
-  queryPendingJobsForDefaultSpace
+  queryPendingJobsForDefaultSpaceWithoutLimit
 } from '../../../interactions/jobs';
 import { FeatureFlag } from '../../../util/featureFlag';
 import {
@@ -157,7 +157,7 @@ function basicServerSetUp(): string[] {
     queryLinksToDefaultEntry.willReturnNone(),
     getFirst7SnapshotsOfDefaultEntry.willReturnNone(),
     getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
-    queryPendingJobsForDefaultSpace.willFindNone(),
+    queryPendingJobsForDefaultSpaceWithoutLimit.willFindNone(),
     queryForTasksAndAppsInDefaultSpace.willFindBothEnabled(),
     queryForScheduledPublishingOnEntryPage.willFindFeatureEnabled()
   ];
