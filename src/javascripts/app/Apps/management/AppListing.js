@@ -164,7 +164,10 @@ export default function AppListing({ definitions, canManageApps }) {
           <Note noteType="primary">
             To start building apps for this organization, ask your admin to upgrade your account to
             the{' '}
-            <TextLink href="" target="_blank" rel="noopener noreferrer">
+            <TextLink
+              href="https://www.contentful.com/r/knowledgebase/spaces-and-organizations/#belonging-to-an-organization"
+              target="_blank"
+              rel="noopener noreferrer">
               developer role
             </TextLink>
             .
