@@ -66,6 +66,7 @@ export function User(options = { firstName: 'John', lastName: 'Doe', activated: 
     lastName: options.lastName,
     email: `${options.firstName}@enterprise.com`,
     avatarUrl: 'avatar.jpg',
+    activated: options.activated,
     sys: sys({ type: types.USER })
   };
 }
