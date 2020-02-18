@@ -18,7 +18,7 @@ import { get } from 'lodash';
 import { go } from 'states/Navigator';
 
 import { getEnabledFeatures } from 'utils/SubscriptionUtils';
-import { getUserName } from 'utils/UserUtils';
+import { getUserName } from 'app/OrganizationSettings/Users/UserUtils';
 
 import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import Price from 'ui/Components/Price';
