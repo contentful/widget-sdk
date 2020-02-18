@@ -1,5 +1,8 @@
 import { uniqueId } from 'lodash';
 
+const DEFAULT_CREATED_AT_TIME_ISO = new Date('2020', '01', '20').toISOString();
+export const CREATED_AT_TIME_DAY_MONTH_YEAR = '2020/01/20';
+
 const types = {
   USER: 'User',
   SPACE: 'Space',
@@ -11,10 +14,11 @@ const types = {
   TEAM_MEMBERSHIP: 'TeamMembership'
 };
 
-export function sys(type = '', id) {
+export function sys(type = '', id, options) {
   return {
     type,
-    id: id || uniqueId(type.toLowerCase())
+    id: id || uniqueId(type.toLowerCase()),
+    ...options
   };
 }
 
@@ -29,9 +33,14 @@ export function Link(linkType = '', id) {
 }
 
 export function Space(name = '') {
+  const uniqueSpaceId = uniqueId('SpaceId');
+
   return {
-    name: name || uniqueId('Space'),
-    sys: sys(types.SPACE)
+    name: name || uniqueSpaceId,
+    sys: sys(types.SPACE, uniqueSpaceId, {
+      createAt: DEFAULT_CREATED_AT_TIME_ISO,
+      createdBy: User()
+    })
   };
 }
 
@@ -117,4 +126,9 @@ export function TeamMembership(
       user
     }
   };
+}
+
+// Please add to this as needed
+export function BasePlan() {
+  return { sys: sys('Plan') };
 }
