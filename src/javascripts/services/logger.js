@@ -273,6 +273,15 @@ function _log(type, severity, message, metadata) {
   if (env !== 'production' && env !== 'unittest') {
     logToConsole(type, severity, message, augmentedMetadata);
   }
+
+  // Items without a message logged to Bugsnag are essentially noise (it's really hard to act on them)
+  // and therefore useless, so we ignore those
+  //
+  // This happens here rather than at the top so that errors are still logged locally
+  if (!message) {
+    return;
+  }
+
   Bugsnag.notify(type, message, augmentedMetadata, severity);
 }
 
