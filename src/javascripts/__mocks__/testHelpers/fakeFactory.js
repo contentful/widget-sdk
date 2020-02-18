@@ -14,12 +14,17 @@ const types = {
   TEAM_MEMBERSHIP: 'TeamMembership'
 };
 
-export function sys(options = { type: '' }) {
-  if (!options.id) {
-    options.id = uniqueId(options.type.toLowerCase());
-  }
+export function sys(options = {}) {
+  /**
+   * Note: if type or id are defined in options, these default values are overwritten by the values in option.
+   * For example, the returned object of calling sys({type: "TestType", id: "123"}) is: {type: "TestType", id: "123"}.
+   * Not {type: '', id: 'uniqueId123'}
+   * This is only true provided that `...options` is the last arguement in the returned object. Please keep it at the end.
+   */
 
   return {
+    type: '',
+    id: options.type ? uniqueId(options.type) : '',
     ...options
   };
 }
