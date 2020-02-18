@@ -10,8 +10,6 @@ import * as fake from 'testHelpers/fakeFactory';
 const MOCK_USER_NAME = 'John Doe';
 const SPACE_NAME = 'SPACE_NAME';
 const MOCK_CREATED_AT_TIME_DAY_MONTH_YEAR = fake.CREATED_AT_TIME_DAY_MONTH_YEAR;
-// SpaceId3, the 3 is because of the amount of times uniqueId is called in fakeFactory. This is brittle, will be update in a following PR. See https://contentful.atlassian.net/browse/AHOY-14 for more details.
-const UNIQUE_SPACE_ID = 'SpaceId3';
 
 const mockBasePlan = fake.BasePlan();
 const mockPlan = {
@@ -231,7 +229,7 @@ describe('Space Plan Row', () => {
 
       expect(go).toHaveBeenCalledWith({
         path: ['spaces', 'detail', 'home'],
-        params: { spaceId: UNIQUE_SPACE_ID },
+        params: { spaceId: mockPlan.space.sys.id },
         options: { reload: true }
       });
     });
@@ -250,7 +248,7 @@ describe('Space Plan Row', () => {
 
       expect(go).toHaveBeenCalledWith({
         path: ['spaces', 'detail', 'settings', 'usage'],
-        params: { spaceId: UNIQUE_SPACE_ID },
+        params: { spaceId: mockPlan.space.sys.id },
         options: { reload: true }
       });
     });

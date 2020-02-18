@@ -1,8 +1,6 @@
 import { uniqueId } from 'lodash';
 
 const DEFAULT_CREATED_AT_TIME_ISO = new Date('2020', '01', '20').toISOString();
-const DEFAULT_CREATED_BY = Link('User', uniqueId('User'));
-
 export const CREATED_AT_TIME_DAY_MONTH_YEAR = '2020/01/20';
 
 const types = {
@@ -41,7 +39,7 @@ export function Space(name = '') {
     name: name || uniqueSpaceId,
     sys: sys(types.SPACE, uniqueSpaceId, {
       createAt: DEFAULT_CREATED_AT_TIME_ISO,
-      createdBY: DEFAULT_CREATED_BY
+      createdBy: User()
     })
   };
 }
