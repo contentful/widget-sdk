@@ -62,13 +62,12 @@
         entity-helpers="helpers"
         config="{showDetails: true}"
       ></cf-entity-link>
-      <cf-asset-card
+      <react-component
         ng-if="config.entityType === 'Asset'"
+        name="app/widgets/link/AssetLink"
         ng-click="toggleSelection(entity, $event)"
-        entity="entity"
-        entity-helpers="helpers"
-        config="{asThumb: true, disableTooltip: true}"
-      ></cf-asset-card>
+        props="{asset: entity, entityHelpers: helpers}"
+      ></react-component>
       <react-component
         name="app/widgets/link/UserLink"
         ng-if="config.entityType === 'User'"
@@ -82,7 +81,7 @@
     class="entity-selector__item-list"
     ng-if="view.mode === SELECTED"
     ng-style="{height: listHeight}"
-    ng-class="{'entity-selector__thumbnails': config.linksAsset &amp;&amp; selected.length &gt; 0}"
+    ng-class="{'entity-selector__thumbnails': selected.length &gt; 0}"
   >
     <div class="entity-selector__item-list-placeholder" ng-if="selected.length &lt; 1">
       {{ labels.empty }} selected yet
@@ -99,13 +98,11 @@
         entity-helpers="helpers"
         config="{showDetails: true}"
       ></cf-entity-link>
-      <cf-asset-card
-        ng-if="config.entityType === 'Asset'"
+      <react-component
+        name="app/widgets/link/AssetLink"
         ng-click="toggleSelection(entity, $event)"
-        entity="entity"
-        entity-helpers="helpers"
-        config="{asThumb: true, disableTooltip: true}"
-      ></cf-asset-card>
+        props="{asset: entity, entityHelpers: helpers}"
+      ></react-component>
       <react-component
         name="app/widgets/link/UserLink"
         ng-if="config.entityType === 'User'"

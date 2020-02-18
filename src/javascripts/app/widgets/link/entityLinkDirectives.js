@@ -2,7 +2,6 @@ import { registerDirective, registerController } from 'NgRegistry';
 import _ from 'lodash';
 import { caseofEq } from 'sum-types';
 import tokens from '@contentful/forma-36-tokens';
-import assetCardTemplateDef from 'app/widgets/link/AssetCardTemplate';
 import entityLinkTemplateDef from 'app/widgets/link/EntityLinkTemplate';
 import { makeEntityRef } from 'states/Navigator';
 import * as EntityState from 'data/CMA/EntityState';
@@ -50,8 +49,6 @@ export default function register() {
       template: template
     };
   }
-
-  registerDirective('cfAssetCard', [() => createEntityLinkDirective(assetCardTemplateDef())]);
 
   registerDirective('cfEntityLink', [() => createEntityLinkDirective(entityLinkTemplateDef())]);
 

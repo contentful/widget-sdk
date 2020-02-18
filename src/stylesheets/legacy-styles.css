@@ -7260,11 +7260,10 @@ pre,
             align-items: flex-start;
     -ms-flex-line-pack: start;
     align-content: flex-start;
-    left: -10px;
     top: -10px;
   }
   .entity-selector__thumbnails .entity-selector__item {
-    margin-left: 10px;
+    margin-right: 9px;
     margin-top: 10px;
     border: 1px solid #a9b9c0;
     padding: 5px;

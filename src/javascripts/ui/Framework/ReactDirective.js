@@ -61,6 +61,7 @@ import * as Loader from 'ui/Loader';
 import * as RegExpValidation from 'components/field_dialog/validations/RegExpValidation';
 import * as UserLink from 'app/widgets/link/UserLink';
 import * as ProhibitRegExpValidation from 'components/field_dialog/validations/ProhibitRegExpValidation';
+import * as AssetLink from 'app/widgets/link/AssetLink';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -309,7 +310,8 @@ function getModule(name) {
     'ui/Loader': Loader,
     'components/field_dialog/validations/RegExpValidation': RegExpValidation,
     'app/widgets/link/UserLink': UserLink,
-    'components/field_dialog/validations/ProhibitRegExpValidation': ProhibitRegExpValidation
+    'components/field_dialog/validations/ProhibitRegExpValidation': ProhibitRegExpValidation,
+    'app/widgets/link/AssetLink': AssetLink
   };
 
   return get(allowedModules, name, null);
