@@ -96,13 +96,11 @@ module.exports = () => {
           // All JS files
           test: /\.js$/,
           use: [
-            // Disable `cache-loader` until a more stable solution (i.e. one that doesn't cause
-            // out of memory exceptions) is found.
-            // 'cache-loader',
             {
               loader: 'babel-loader',
               options: createBabelOptions({
-                compact: isProd
+                compact: isProd,
+                cacheDirectory: isDev
               })
             }
           ]
