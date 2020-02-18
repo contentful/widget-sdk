@@ -7,7 +7,7 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getMembership, getUser } from 'access_control/OrganizationMembershipRepository';
-import { getUserName } from 'utils/UserUtils';
+import { getUserName } from 'app/OrganizationSettings/Users/UserUtils';
 import { getUserSync, getOrganization } from 'services/TokenStore';
 
 import { logError } from 'services/logger';
