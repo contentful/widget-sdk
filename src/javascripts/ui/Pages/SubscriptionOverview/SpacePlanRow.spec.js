@@ -20,12 +20,6 @@ const mockPlan = {
   price: 1337
 };
 
-jest.mock('utils/UserUtils', () => ({
-  getUserName: jest.fn(() => {
-    return MOCK_USER_NAME;
-  })
-}));
-
 jest.mock('states/Navigator', () => ({
   go: jest.fn()
 }));
