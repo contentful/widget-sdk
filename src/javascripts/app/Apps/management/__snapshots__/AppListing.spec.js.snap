@@ -1283,11 +1283,397 @@ Object {
 }
 `;
 
+exports[`AppListing should show a warning when a user cant manage apps 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": .emotion-1 > div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  height: 100%;
+  max-width: 768px;
+  margin: 0 auto;
+}
+
+.emotion-0 {
+  max-width: 768px;
+  margin: 0 auto;
+  text-align: center;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.emotion-0 svg {
+  width: 80%;
+}
+
+.emotion-0 button {
+  margin-bottom: 1.5rem;
+}
+
+<body>
+    <div>
+      <div
+        class="Workbench__Workbench___THi9K emotion-1"
+        data-test-id="cf-ui-workbench"
+      >
+        <div
+          class="Workbench__Workbench__content-wrapper___3yWKi"
+        >
+          <div
+            class="emotion-0"
+          >
+            <apps-private-framework.svg />
+            <div
+              class="Typography__Typography___1ZUfE"
+              data-test-id="cf-ui-text-container"
+            >
+              <h1
+                class="Heading__Heading___83D3K f36-margin-bottom--m"
+                data-test-id="cf-ui-heading"
+              >
+                Build apps for Contentful
+              </h1>
+              <p
+                class="Paragraph__Paragraph___2aO-9 f36-margin-bottom--m"
+                data-test-id="cf-ui-paragraph"
+              >
+                Contentful apps extend and expand the capabilities of the Contentful web app and the editors who use it. Apps empower you to integrate third-party services, build extraordinary workflows and customize the functionality of the Contentful web app.
+              </p>
+              <p
+                class="Paragraph__Paragraph___2aO-9 f36-margin-bottom--m"
+                data-test-id="cf-ui-paragraph"
+              >
+                Learn more about
+                 
+                <a
+                  class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                  data-test-id="cf-ui-text-link"
+                  href="https://www.contentful.com/developers/docs/extensibility/apps/building-apps/"
+                >
+                  <span
+                    class="TabFocusTrap__TabFocusTrap___39Vty"
+                    tabindex="-1"
+                  >
+                    building Contentful apps
+                  </span>
+                </a>
+                 
+                or check out our 
+                <a
+                  class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                  data-test-id="cf-ui-text-link"
+                  href="https://contentful.com/marketplace"
+                >
+                  <span
+                    class="TabFocusTrap__TabFocusTrap___39Vty"
+                    tabindex="-1"
+                  >
+                    Marketplace
+                  </span>
+                </a>
+                .
+              </p>
+            </div>
+            <button
+              class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO Button__Button--disabled___1E20M"
+              data-test-id="cf-ui-button"
+              disabled=""
+              type="button"
+            >
+              <span
+                class="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+                tabindex="-1"
+              >
+                <span
+                  class="Button__Button__label___3tcOj"
+                >
+                  Create an app
+                </span>
+              </span>
+            </button>
+          </div>
+          <div
+            class="Note__Note___2eSKN Note__Note--primary___-8-7D"
+            data-test-id="cf-ui-note"
+          >
+            <div
+              class="Note__Note__icon___20RqC"
+            >
+              <svg
+                class="Icon__Icon___38Epv Icon__Icon--small___1yGZK undefined"
+                data-test-id="cf-ui-icon"
+                height="18"
+                viewBox="0 0 24 24"
+                width="18"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M0 0h24v24H0z"
+                  fill="none"
+                />
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
+                />
+              </svg>
+            </div>
+            <div>
+              <div>
+                To start building apps for this organization, ask your admin to upgrade your account to the
+                 
+                <a
+                  class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                  data-test-id="cf-ui-text-link"
+                  href="https://www.contentful.com/r/knowledgebase/spaces-and-organizations/#belonging-to-an-organization"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  <span
+                    class="TabFocusTrap__TabFocusTrap___39Vty"
+                    tabindex="-1"
+                  >
+                    developer role
+                  </span>
+                </a>
+                .
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": .emotion-1 > div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  height: 100%;
+  max-width: 768px;
+  margin: 0 auto;
+}
+
+.emotion-0 {
+  max-width: 768px;
+  margin: 0 auto;
+  text-align: center;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.emotion-0 svg {
+  width: 80%;
+}
+
+.emotion-0 button {
+  margin-bottom: 1.5rem;
+}
+
+<div>
+    <div
+      class="Workbench__Workbench___THi9K emotion-1"
+      data-test-id="cf-ui-workbench"
+    >
+      <div
+        class="Workbench__Workbench__content-wrapper___3yWKi"
+      >
+        <div
+          class="emotion-0"
+        >
+          <apps-private-framework.svg />
+          <div
+            class="Typography__Typography___1ZUfE"
+            data-test-id="cf-ui-text-container"
+          >
+            <h1
+              class="Heading__Heading___83D3K f36-margin-bottom--m"
+              data-test-id="cf-ui-heading"
+            >
+              Build apps for Contentful
+            </h1>
+            <p
+              class="Paragraph__Paragraph___2aO-9 f36-margin-bottom--m"
+              data-test-id="cf-ui-paragraph"
+            >
+              Contentful apps extend and expand the capabilities of the Contentful web app and the editors who use it. Apps empower you to integrate third-party services, build extraordinary workflows and customize the functionality of the Contentful web app.
+            </p>
+            <p
+              class="Paragraph__Paragraph___2aO-9 f36-margin-bottom--m"
+              data-test-id="cf-ui-paragraph"
+            >
+              Learn more about
+               
+              <a
+                class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                data-test-id="cf-ui-text-link"
+                href="https://www.contentful.com/developers/docs/extensibility/apps/building-apps/"
+              >
+                <span
+                  class="TabFocusTrap__TabFocusTrap___39Vty"
+                  tabindex="-1"
+                >
+                  building Contentful apps
+                </span>
+              </a>
+               
+              or check out our 
+              <a
+                class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                data-test-id="cf-ui-text-link"
+                href="https://contentful.com/marketplace"
+              >
+                <span
+                  class="TabFocusTrap__TabFocusTrap___39Vty"
+                  tabindex="-1"
+                >
+                  Marketplace
+                </span>
+              </a>
+              .
+            </p>
+          </div>
+          <button
+            class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO Button__Button--disabled___1E20M"
+            data-test-id="cf-ui-button"
+            disabled=""
+            type="button"
+          >
+            <span
+              class="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+              tabindex="-1"
+            >
+              <span
+                class="Button__Button__label___3tcOj"
+              >
+                Create an app
+              </span>
+            </span>
+          </button>
+        </div>
+        <div
+          class="Note__Note___2eSKN Note__Note--primary___-8-7D"
+          data-test-id="cf-ui-note"
+        >
+          <div
+            class="Note__Note__icon___20RqC"
+          >
+            <svg
+              class="Icon__Icon___38Epv Icon__Icon--small___1yGZK undefined"
+              data-test-id="cf-ui-icon"
+              height="18"
+              viewBox="0 0 24 24"
+              width="18"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M0 0h24v24H0z"
+                fill="none"
+              />
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
+              />
+            </svg>
+          </div>
+          <div>
+            <div>
+              To start building apps for this organization, ask your admin to upgrade your account to the
+               
+              <a
+                class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                data-test-id="cf-ui-text-link"
+                href="https://www.contentful.com/r/knowledgebase/spaces-and-organizations/#belonging-to-an-organization"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <span
+                  class="TabFocusTrap__TabFocusTrap___39Vty"
+                  tabindex="-1"
+                >
+                  developer role
+                </span>
+              </a>
+              .
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
+
 exports[`AppListing should show the empty state when no definitions are passed 1`] = `
 Object {
   "asFragment": [Function],
   "baseElement": .emotion-1 > div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
   height: 100%;
+  max-width: 768px;
+  margin: 0 auto;
 }
 
 .emotion-0 {
@@ -1392,7 +1778,16 @@ Object {
     </div>
   </body>,
   "container": .emotion-1 > div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
   height: 100%;
+  max-width: 768px;
+  margin: 0 auto;
 }
 
 .emotion-0 {

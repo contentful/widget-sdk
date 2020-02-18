@@ -1,6 +1,8 @@
 import AppListing from '../management/AppListing';
 import AppDetails from '../management/AppDetails';
 import NewApp from '../management/NewApp';
+import * as TokenStore from 'services/TokenStore';
+import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
 
 import { getAppDefinitionLoader } from '../AppDefinitionLoaderInstance';
 
@@ -8,6 +10,26 @@ const definitionsResolver = [
   '$stateParams',
   ({ orgId }) => {
     return getAppDefinitionLoader(orgId).getAllForCurrentOrganization();
+  }
+];
+
+const canManageAppsResolver = [
+  '$stateParams',
+  async ({ orgId }) => {
+    const organization = await TokenStore.getOrganization(orgId);
+
+    return isOwnerOrAdmin(organization) || isDeveloper(organization);
+  }
+];
+
+const redirectIfCannotManage = [
+  '$state',
+  '$stateParams',
+  'canManageApps',
+  ($state, { orgId }, canManageApps) => {
+    if (!canManageApps) {
+      $state.go('account.organizations.apps.list', { orgId });
+    }
   }
 ];
 
@@ -20,14 +42,23 @@ export default {
       name: 'list',
       url: '',
       resolve: {
-        definitions: definitionsResolver
+        definitions: definitionsResolver,
+        canManageApps: canManageAppsResolver
       },
-      mapInjectedToProps: ['definitions', definitions => ({ definitions })],
+      mapInjectedToProps: [
+        'definitions',
+        'canManageApps',
+        (definitions, canManageApps) => ({ definitions, canManageApps })
+      ],
       component: AppListing
     },
     {
       name: 'new_definition',
       url: '/new_definition',
+      resolve: {
+        canManageApps: canManageAppsResolver
+      },
+      onEnter: redirectIfCannotManage,
       mapInjectedToProps: [
         '$state',
         '$stateParams',
@@ -46,6 +77,7 @@ export default {
       url: '/definitions/:definitionId',
       resolve: {
         definitions: definitionsResolver,
+        canManageApps: canManageAppsResolver,
         definition: [
           '$stateParams',
           'definitions',
@@ -60,6 +92,7 @@ export default {
           }
         ]
       },
+      onEnter: redirectIfCannotManage,
       mapInjectedToProps: [
         '$state',
         'definition',
