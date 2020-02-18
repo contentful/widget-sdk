@@ -3,12 +3,41 @@ import PropTypes from 'prop-types';
 import NavBar from './NavBar/NavBar';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
+import { ACCESS_TOOLS } from 'featureFlags';
 import { getOrgFeature } from '../data/CMA/ProductCatalog';
 import SidepanelContainer from './Sidepanel/SidepanelContainer';
 import createLegacyFeatureService from 'services/LegacyFeatureService';
+import { getVariation } from 'LaunchDarkly';
 import * as AdvancedExtensibilityFeature from 'app/settings/extensions/services/AdvancedExtensibilityFeature';
 
 function getItems(params, { orgId }) {
+  const shouldDisplayAccessTools =
+    params.accessToolsFeatureEnabled &&
+    params.isOwnerOrAdmin &&
+    (params.ssoEnabled || params.userProvisioningEnabled);
+  const accessToolsDropdownItems = [
+    {
+      if: params.ssoEnabled,
+      title: 'Single Sign-On (SSO)',
+      sref: 'account.organizations.access-tools.sso',
+      srefParams: { orgId },
+      srefOptions: {
+        inherit: false
+      },
+      dataViewType: 'organization-sso'
+    },
+    {
+      if: params.userProvisioningEnabled,
+      title: 'User provisioning',
+      sref: 'account.organizations.access-tools.user-provisioning',
+      srefParams: { orgId },
+      srefOptions: {
+        inherit: false
+      },
+      dataViewType: 'organization-user-provisioning'
+    }
+  ];
+
   return [
     {
       if: params.hasSettingsTab,
@@ -22,7 +51,6 @@ function getItems(params, { orgId }) {
       icon: 'nav-organization-information',
       dataViewType: 'organization-information'
     },
-
     {
       if: params.pricingVersion == 'pricing_version_1' && params.isOwnerOrAdmin,
       title: 'Subscription',
@@ -108,7 +136,15 @@ function getItems(params, { orgId }) {
       dataViewType: 'organization-apps'
     },
     {
-      if: params.ssoEnabled && params.isOwnerOrAdmin,
+      if: shouldDisplayAccessTools,
+      title: 'Access Tools',
+      rootSref: 'account.organizations.access-tools',
+      icon: 'nav-organization-sso',
+      dataViewType: 'organization-access-tools',
+      children: accessToolsDropdownItems
+    },
+    {
+      if: !params.accessToolsFeatureEnabled && params.ssoEnabled && params.isOwnerOrAdmin,
       title: 'SSO',
       sref: 'account.organizations.sso',
       srefParams: { orgId },
@@ -119,7 +155,6 @@ function getItems(params, { orgId }) {
       icon: 'nav-organization-sso',
       dataViewType: 'organization-sso'
     },
-
     {
       if: params.pricingVersion == 'pricing_version_1' && params.isOwnerOrAdmin,
       title: 'Spaces',
@@ -173,11 +208,17 @@ export default class OrganizationNavigationBar extends React.Component {
     const FeatureService = createLegacyFeatureService(orgId, 'organization');
     const [
       ssoFeatureEnabled,
+      scimFeatureEnabled,
+      accessToolsFeatureEnabled,
       organization,
       hasOffsiteBackup,
       hasAdvancedExtensibility
     ] = await Promise.all([
       getOrgFeature(orgId, 'self_configure_sso'),
+      getOrgFeature(orgId, 'scim'),
+      getVariation(ACCESS_TOOLS, {
+        organizationId: orgId
+      }),
       TokenStore.getOrganization(orgId),
       FeatureService.get('offsiteBackup'),
       AdvancedExtensibilityFeature.isEnabled()
@@ -185,6 +226,8 @@ export default class OrganizationNavigationBar extends React.Component {
 
     const params = {
       ssoEnabled: ssoFeatureEnabled,
+      userProvisioningEnabled: scimFeatureEnabled,
+      accessToolsFeatureEnabled: accessToolsFeatureEnabled,
       pricingVersion: organization.pricingVersion,
       isOwnerOrAdmin: isOwnerOrAdmin(organization),
       hasAdvancedExtensibility,
