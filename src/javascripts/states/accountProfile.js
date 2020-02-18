@@ -40,6 +40,7 @@ const cmaTokens = reactStateWrapper({
 const accessGrants = userBase({
   name: 'access_grants',
   title: 'OAuth tokens',
+  icon: 'settings',
   url: '/access_grants{pathSuffix:PathSuffix}'
 });
 
