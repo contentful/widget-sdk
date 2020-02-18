@@ -36,11 +36,6 @@ export function create(sys$, docError$, canUpdate, statusError$) {
       if (docError === 'forbidden') {
         return DocumentStatusCode.NOT_ALLOWED;
       } else if (docError === 'disconnected') {
-        logger.logSharejsError('ShareJS connection error', {
-          error: {
-            error: docError
-          }
-        });
         return DocumentStatusCode.CONNECTION_ERROR;
       } else if (docError) {
         logger.logSharejsError('Unknown ShareJS document error', {
