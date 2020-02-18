@@ -11,13 +11,9 @@ import { getVariation } from 'LaunchDarkly';
 import * as AdvancedExtensibilityFeature from 'app/settings/extensions/services/AdvancedExtensibilityFeature';
 
 function getItems(params, { orgId }) {
-  const shouldDisplayAccessTools =
-    params.accessToolsFeatureEnabled &&
-    params.isOwnerOrAdmin &&
-    (params.ssoEnabled || params.userProvisioningEnabled);
+  const shouldDisplayAccessTools = params.accessToolsFeatureEnabled && params.isOwnerOrAdmin;
   const accessToolsDropdownItems = [
     {
-      if: params.ssoEnabled,
       title: 'Single Sign-On (SSO)',
       sref: 'account.organizations.access-tools.sso',
       srefParams: { orgId },
@@ -27,7 +23,6 @@ function getItems(params, { orgId }) {
       dataViewType: 'organization-sso'
     },
     {
-      if: params.userProvisioningEnabled,
       title: 'User provisioning',
       sref: 'account.organizations.access-tools.user-provisioning',
       srefParams: { orgId },

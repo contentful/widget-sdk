@@ -74,8 +74,7 @@ export default function UserProvisioningConfiguration({ orgId }) {
           <div className={styles.intro}>
             <Heading>Set up user provisioning with SCIM 2.0</Heading>
             <Paragraph>
-              Set up user provisioning for your organization in Contentful in a few
-              steps.&nbsp;&nbsp;
+              Set up user provisioning for your organization in Contentful in a few steps.{' '}
               <TextLink href="https://www.contentful.com/faq/" target="_blank">
                 Check out the FAQs.
               </TextLink>
