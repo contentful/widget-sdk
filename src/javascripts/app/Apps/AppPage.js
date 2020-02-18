@@ -26,6 +26,7 @@ import UninstallModal from './UninstallModal';
 import ModalLauncher from 'app/common/ModalLauncher';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
 import { getSectionVisibility } from 'access_control/AccessChecker';
+import { isUsageExceededErrorResponse, USAGE_EXCEEDED_MESSAGE } from './isUsageExceeded';
 
 const BUSY_STATE_INSTALLATION = 'installation';
 const BUSY_STATE_UPDATE = 'update';
@@ -232,7 +233,10 @@ export default class AppRoute extends Component {
       appHookBus.setInstallation(appInstallation);
       appHookBus.emit(APP_EVENTS_OUT.SUCCEEDED, { installationRequestId });
     } catch (err) {
-      if (this.state.busyWith === BUSY_STATE_UPDATE) {
+      if (isUsageExceededErrorResponse(err)) {
+        Notification.error(USAGE_EXCEEDED_MESSAGE);
+        AppLifecycleTracking.installationFailed(app.id);
+      } else if (this.state.busyWith === BUSY_STATE_UPDATE) {
         Notification.error('Failed to update app configuration.');
         AppLifecycleTracking.configurationUpdateFailed(app.id);
       } else {

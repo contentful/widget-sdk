@@ -30,6 +30,7 @@ import { getSectionVisibility } from 'access_control/AccessChecker';
 import AppListItem from './AppListItem';
 import AppDetailsModal from './AppDetailsModal';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
+import { isUsageExceeded } from './isUsageExceeded';
 
 const styles = {
   intro: css({
@@ -62,7 +63,7 @@ const externalLinkProps = {
   rel: 'noopener noreferrer'
 };
 
-const openDetailModal = spaceInformation => app => {
+const openDetailModal = ({ spaceInformation, usageExceeded }) => app => {
   AppLifecycleTracking.detailsOpened(app.id);
 
   ModalLauncher.open(({ isShown, onClose }) => (
@@ -71,6 +72,7 @@ const openDetailModal = spaceInformation => app => {
       onClose={onClose}
       app={app}
       spaceInformation={spaceInformation}
+      usageExceeded={usageExceeded}
     />
   ));
 };
@@ -218,8 +220,9 @@ export default class AppsListPage extends React.Component {
       return;
     }
 
-    const apps = this.state.installedApps.concat(this.state.availableApps);
-    const deeplinkedApp = apps.find(app => {
+    const { installedApps, availableApps } = this.state;
+
+    const deeplinkedApp = installedApps.concat(availableApps).find(app => {
       // Find either by marketplace ID ("slug", pretty)
       // or definition ID (Contentful UUID, ugly).
       const byMarketplaceId = app.id === deeplinkAppId;
@@ -232,7 +235,10 @@ export default class AppsListPage extends React.Component {
     if (deeplinkedApp && !deeplinkedApp.isPrivateApp) {
       // TODO: we could potentially track the deeplink.
       // Use `this.props.deeplinkReferrer`.
-      openDetailModal(spaceInformation)(deeplinkedApp);
+      openDetailModal({
+        spaceInformation,
+        usageExceeded: isUsageExceeded(installedApps)
+      })(deeplinkedApp);
     }
   }
 
@@ -253,6 +259,7 @@ export default class AppsListPage extends React.Component {
     const { organizationId, spaceInformation, userId, hasAppsFeature } = this.props;
     const { installedApps, availableApps } = this.state;
     const { spaceId } = spaceInformation;
+    const usageExceeded = isUsageExceeded(installedApps);
 
     return (
       <AppsListShell
@@ -268,7 +275,7 @@ export default class AppsListPage extends React.Component {
                 <AppListItem
                   key={app.id}
                   app={app}
-                  openDetailModal={openDetailModal(spaceInformation)}
+                  openDetailModal={openDetailModal({ spaceInformation })}
                 />
               ))}
             </div>
@@ -282,7 +289,7 @@ export default class AppsListPage extends React.Component {
               <AppListItem
                 key={app.id}
                 app={app}
-                openDetailModal={openDetailModal(spaceInformation)}
+                openDetailModal={openDetailModal({ spaceInformation, usageExceeded })}
               />
             ))}
           </div>

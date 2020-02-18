@@ -9,12 +9,14 @@ import {
   Subheading,
   TextLink,
   Paragraph,
-  Heading
+  Heading,
+  HelpText
 } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink';
 import AppPermissions from './AppPermissions';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
 import MarkdownRenderer from 'app/common/MarkdownRenderer';
+import { USAGE_EXCEEDED_MESSAGE } from './isUsageExceeded';
 
 const styles = {
   root: css({
@@ -33,6 +35,9 @@ const styles = {
   }),
   sidebarSpacing: css({
     marginBottom: tokens.spacingL
+  }),
+  sidebarSpacingM: css({
+    marginBottom: tokens.spacingM
   }),
   sidebarSubheading: css({
     marginBottom: tokens.spacingXs
@@ -169,7 +174,14 @@ function determineOnClick(installed = false, onClick, onClose, setShowPermission
 }
 
 export function AppDetails(props) {
-  const { app, onClose, showPermissions, setShowPermissions, spaceInformation } = props;
+  const {
+    app,
+    onClose,
+    showPermissions,
+    setShowPermissions,
+    spaceInformation,
+    usageExceeded
+  } = props;
 
   if (showPermissions) {
     return (
@@ -201,11 +213,18 @@ export function AppDetails(props) {
             <Button
               onClick={determineOnClick(installed, onClick, onClose, setShowPermissions)}
               isFullWidth
-              buttonType="primary">
+              buttonType="primary"
+              disabled={usageExceeded}>
               {installed ? 'Configure' : 'Install'}
             </Button>
           )}
         </StateLink>
+        {!installed && usageExceeded && (
+          <>
+            <div className={styles.sidebarSpacingM} />
+            <HelpText>{USAGE_EXCEEDED_MESSAGE}</HelpText>
+          </>
+        )}
         <div className={styles.sidebarSpacing} />
         {app.links.length > 0 && (
           <>
@@ -257,7 +276,8 @@ AppDetails.propTypes = {
   }),
   onClose: PropTypes.func.isRequired,
   showPermissions: PropTypes.bool,
-  setShowPermissions: PropTypes.func
+  setShowPermissions: PropTypes.func,
+  usageExceeded: PropTypes.bool
 };
 
 export default function AppDetailsModal(props) {
@@ -280,6 +300,7 @@ export default function AppDetailsModal(props) {
         onClose={props.onClose}
         showPermissions={showPermissions}
         setShowPermissions={setShowPermissions}
+        usageExceeded={props.usageExceeded}
       />
     </Modal>
   );
@@ -294,5 +315,6 @@ AppDetailsModal.propTypes = {
     spaceName: PropTypes.string.isRequired,
     envName: PropTypes.string.isRequired,
     envIsMaster: PropTypes.bool.isRequired
-  })
+  }),
+  usageExceeded: PropTypes.bool
 };
