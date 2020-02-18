@@ -16,6 +16,7 @@ import StateLink from 'app/common/StateLink';
 import AppPermissions from './AppPermissions';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
 import MarkdownRenderer from 'app/common/MarkdownRenderer';
+import { USAGE_EXCEEDED_MESSAGE } from './isUsageExceeded';
 
 const styles = {
   root: css({
@@ -221,7 +222,7 @@ export function AppDetails(props) {
         {!installed && usageExceeded && (
           <>
             <div className={styles.sidebarSpacingM} />
-            <HelpText>You’ve reached the limit of 10 installed apps in this environment.</HelpText>
+            <HelpText>{USAGE_EXCEEDED_MESSAGE}</HelpText>
           </>
         )}
         <div className={styles.sidebarSpacing} />
