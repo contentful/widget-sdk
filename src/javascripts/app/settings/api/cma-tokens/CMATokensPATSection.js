@@ -11,14 +11,14 @@ const styles = {
   })
 };
 
-const CMATokensPATSection = ({ state, actions }) => {
+const CMATokensPATSection = ({ state, actions, subheading }) => {
   const { loadingTokens, loadingTokensError, tokens, currentPage, totalPages } = state;
   const { Revoke, SelectPage } = actions;
 
   return (
     <div className={styles.pageSection}>
       <Typography>
-        <Subheading element="h2">Personal Access Tokens</Subheading>
+        {subheading && <Subheading element="h2">Personal Access Tokens</Subheading>}
         <Paragraph>
           As an alternative to OAuth applications, you can also leverage Personal Access Tokens to
           use the Content Management API. These tokens are always bound to your individual account,
@@ -45,7 +45,8 @@ const CMATokensPATSection = ({ state, actions }) => {
 
 CMATokensPATSection.propTypes = {
   state: PropTypes.object,
-  actions: PropTypes.object
+  actions: PropTypes.object,
+  subheading: PropTypes.bool
 };
 
 export default CMATokensPATSection;

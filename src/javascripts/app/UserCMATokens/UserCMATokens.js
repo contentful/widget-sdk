@@ -21,7 +21,7 @@ const UserCMATokens = ({ onReady }) => {
       <Workbench.Header
         // As soon as it's ready we will add it here
         // icon={<Icon name="page-user-tokens" />}
-        title={'Personal Access Tokens'}
+        title={'Personal access tokens'}
       />
       <Workbench.Content type="default">
         <CMATokensPATSection state={state} actions={actions} />

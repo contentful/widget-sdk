@@ -13,7 +13,7 @@ export function CMATokensView() {
   return (
     <React.Fragment>
       <CMATokensOauthSection />
-      <CMATokensPATSection state={state} actions={actions} />
+      <CMATokensPATSection state={state} actions={actions} subheading />
     </React.Fragment>
   );
 }
