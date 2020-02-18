@@ -10,7 +10,9 @@ const emotionStyles = {
     top: '30px'
   })
 };
-
+/**
+ * @deprecated Please use Forma36 Dropdown component instead: https://github.com/contentful/forma-36/blob/master/packages/forma-36-website/src/pages/components/dropdown/index.mdx
+ */
 class ContextMenu extends React.Component {
   static propTypes = {
     items: PropTypes.arrayOf(
