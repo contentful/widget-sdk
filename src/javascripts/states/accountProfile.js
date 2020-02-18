@@ -45,7 +45,7 @@ const accessGrants = userBase({
 
 const applications = userBase({
   name: 'applications',
-  title: 'Applications',
+  title: 'OAuth applications',
   url: '/developers/applications{pathSuffix:PathSuffix}'
 });
 

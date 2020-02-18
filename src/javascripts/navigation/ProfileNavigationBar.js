@@ -14,7 +14,7 @@ export default function ProfileNavigationBar() {
       dataViewType: 'profile-tokens'
     },
     {
-      title: 'OAuth Tokens',
+      title: 'OAuth tokens',
       icon: 'nav-user-oauth',
       sref: 'account.profile.access_grants',
       srefOptions: {
@@ -69,7 +69,7 @@ export default function ProfileNavigationBar() {
               children: accessTokensDropdownItems
             },
             {
-              title: 'Applications',
+              title: 'OAuth applications',
               icon: 'nav-user-applications',
               sref: 'account.profile.applications',
               srefOptions: {
