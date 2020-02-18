@@ -31,7 +31,10 @@ export default async function create({ $scope, spaceContext, entityInfo }) {
       method: 'GET',
       // .php will result in the request being rejected so it won't count towards rate limiting.
       path: [PATH[entityInfo.type], entityInfo.id, 'edit.php'],
-      query: { throttle: throttleMs }
+      query: {
+        user: spaceContext.user.sys.id,
+        throttle: throttleMs
+      }
     });
 
     const throttledRelevantChanges$ = $scope.otDoc.docLocalChanges$
