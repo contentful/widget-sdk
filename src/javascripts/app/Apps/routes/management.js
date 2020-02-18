@@ -24,10 +24,11 @@ const canManageAppsResolver = [
 
 const redirectIfCannotManage = [
   '$state',
+  '$stateParams',
   'canManageApps',
-  ($state, canManageApps) => {
+  ($state, { orgId }, canManageApps) => {
     if (!canManageApps) {
-      $state.go('^.list');
+      $state.go('account.organizations.apps.list', { orgId });
     }
   }
 ];
