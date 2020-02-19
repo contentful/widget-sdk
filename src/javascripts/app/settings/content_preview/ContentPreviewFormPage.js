@@ -21,7 +21,7 @@ import tokens from '@contentful/forma-36-tokens';
 import Icon from 'ui/Components/Icon';
 import validate from './ContentPreviewFormValidation';
 import ModalLauncher from 'app/common/ModalLauncher';
-import { slugify } from 'services/slug';
+import { slugify } from '@contentful/field-editor-slug';
 import { getContentPreview } from 'services/contentPreview';
 import {
   WhatIsContentPreview,

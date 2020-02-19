@@ -18,6 +18,9 @@ export function createEntryApi({ $scope }) {
     getSys: () => {
       return K.getValue($scope.otDoc.sysProperty);
     },
+    onSysChanged: cb => {
+      return K.onValueScope($scope, $scope.fieldLocale.doc.sys, cb);
+    },
     fields: fields.reduce((acc, field) => {
       return {
         ...acc,

@@ -68,9 +68,7 @@ export default function register() {
       // Determines if the widget should be rendered, either visible
       // or hidden in the background, depending on `isVisible`.
       function shouldRender(widget) {
-        if (widget.isBackground) {
-          return true;
-        } else if (widget.sidebar) {
+        if (widget.sidebar) {
           return false;
         } else {
           return widget.isVisible;

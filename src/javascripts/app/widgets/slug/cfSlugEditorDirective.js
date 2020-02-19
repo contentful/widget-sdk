@@ -4,7 +4,7 @@ import debounce from 'lodash/debounce';
 import moment from 'moment';
 import * as K from 'utils/kefir';
 import createInputUpdater from 'ui/inputUpdater';
-import { slugify } from 'services/slug';
+import { slugify } from '@contentful/field-editor-slug';
 import TheLocaleStore from 'services/localeStore';
 import slugEditorTemplate from './cf_slug_editor.html';
 

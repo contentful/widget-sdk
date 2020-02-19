@@ -10,6 +10,9 @@ import { waitUntilAssetProcessed } from 'widgets/bridges/makeExtensionSpaceMetho
  */
 export function createSpaceApi({ spaceContext }) {
   return {
+    getEntries: (...args) => {
+      return spaceContext.cma.getEntries(...args);
+    },
     getAsset: (...args) => {
       return spaceContext.cma.getAsset(...args);
     },

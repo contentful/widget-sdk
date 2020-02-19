@@ -65,7 +65,6 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
       'slate-html-serializer',
       'slate-plain-serializer',
       'sortablejs',
-      'speakingurl',
       'json-stringify-safe',
       'sum-types',
       'sum-types/caseof-eq',

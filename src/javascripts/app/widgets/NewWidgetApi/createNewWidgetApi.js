@@ -5,6 +5,7 @@ import { createLocalesApi } from './createLocalesApi';
 import { createDialogsApi } from './createDialogsApi';
 import { createEntryApi } from './createEntryApi';
 import { createSpaceApi } from './createSpaceApi';
+import { createContentTypeApi } from './createContentTypeApi';
 import checkDependencies from 'widgets/bridges/checkDependencies';
 
 const noop = () => {};
@@ -18,6 +19,7 @@ const noop = () => {};
  * @typedef { import("contentful-ui-extensions-sdk").LocalesAPI } LocalesAPI
  * @typedef { import("contentful-ui-extensions-sdk").EntryAPI } EntryAPI
  * @typedef { import("contentful-ui-extensions-sdk").SpaceAPI } SpaceAPI
+ * @typedef { import("contentful-ui-extensions-sdk").ContentType } ContentType
  */
 
 /**
@@ -32,6 +34,7 @@ const noop = () => {};
  * @returns {{
  *  field: FieldAPI,
  *  space: SpaceAPI,
+ *  contentType: ContentType,
  *  locales: LocalesAPI,
  *  window: WindowAPI,
  *  entry: EntryAPI,
@@ -52,6 +55,7 @@ export default function createNewWidgetApi(dependencies) {
   const navigator = createNavigatorApi({ spaceContext });
   const locales = createLocalesApi();
   const dialogs = createDialogsApi();
+  const contentType = createContentTypeApi({ $scope });
 
   const parameters = {
     installation: {},
@@ -62,6 +66,7 @@ export default function createNewWidgetApi(dependencies) {
     entry,
     space,
     field,
+    contentType,
     navigator,
     locales,
     dialogs,

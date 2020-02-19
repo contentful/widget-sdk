@@ -52,12 +52,25 @@ export function createInternalFieldApi({ locale, field, $scope }) {
         throw makeShareJSError(err, ERROR_MESSAGES.MFAILREMOVAL);
       }
     },
-    onValueChanged: cb => {
+    /*
+      can be: onValueChanged(cb) or onValueChanged(locale, cb)
+    */
+    onValueChanged: (...args) => {
+      let cb;
+      let trackingPath = currentPath;
+
+      if (args.length === 1) {
+        cb = args[0];
+      } else if (args.length === 2) {
+        trackingPath = ['fields', field.id, args[0]];
+        cb = args[1];
+      }
+
       return K.onValueScope(
         $scope,
-        $scope.otDoc.changes.filter(path => PathUtils.isAffecting(path, currentPath)),
+        $scope.otDoc.changes.filter(path => PathUtils.isAffecting(path, trackingPath)),
         () => {
-          cb(get($scope.otDoc.getValueAt([]), currentPath));
+          cb(get($scope.otDoc.getValueAt([]), trackingPath));
         }
       );
     },
