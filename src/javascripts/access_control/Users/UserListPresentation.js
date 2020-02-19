@@ -5,6 +5,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { map } from 'lodash';
 
+import { List } from '@contentful/forma-36-react-components';
 import { SpaceMember as SpaceMemberPropType } from 'app/OrganizationSettings/PropTypes';
 import Icon from 'ui/Components/Icon';
 import DocumentTitle from 'components/shared/DocumentTitle';
@@ -118,22 +119,21 @@ const UserListPresentation = ({
               <span id="scroll-to-anchor" ref={label === jumpToRole ? roleAnchorEl : null} />
               <SectionHeading element="h3">{label}</SectionHeading>
 
-              {members.map(member => {
-                return (
-                  <>
-                    <UserListRow
-                      member={member}
-                      openRoleChangeDialog={() => {
-                        openRoleChangeDialog(member, adminCount);
-                      }}
-                      openRemovalConfirmationDialog={() =>
-                        openRemovalConfirmationDialog(member, adminCount)
-                      }
-                      numberOfTeamMemberships={numberOfTeamMemberships}
-                      canModifyUsers={canModifyUsers}></UserListRow>
-                  </>
-                );
-              })}
+              <List>
+                {members.map(member => (
+                  <UserListRow
+                    key={member.sys.id}
+                    member={member}
+                    openRoleChangeDialog={() => {
+                      openRoleChangeDialog(member, adminCount);
+                    }}
+                    openRemovalConfirmationDialog={() =>
+                      openRemovalConfirmationDialog(member, adminCount)
+                    }
+                    numberOfTeamMemberships={numberOfTeamMemberships}
+                    canModifyUsers={canModifyUsers}></UserListRow>
+                ))}
+              </List>
             </div>
           ))}
         </Workbench.Content>

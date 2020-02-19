@@ -62,7 +62,7 @@ const UserListRow = ({
       : '';
 
   return (
-    <div key={id} data-test-id="user-list.item" className={styles.user}>
+    <li data-test-id="user-list.item" className={styles.user}>
       <img
         className={styles.userAvatar}
         data-test-id="user-list.avatar"
@@ -99,7 +99,7 @@ const UserListRow = ({
           </DropdownList>
         </CardActions>
       </Tooltip>
-    </div>
+    </li>
   );
 };
 
