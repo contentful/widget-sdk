@@ -50,6 +50,20 @@ describe('logger service', () => {
     );
   });
 
+  it('does not log errors with empty messages', function() {
+    this.logger.logError();
+
+    sinon.assert.notCalled(this.bugsnag.notify);
+
+    this.logger.logError(null, { meta: 'Something' });
+
+    sinon.assert.notCalled(this.bugsnag.notify);
+
+    this.logger.logError('', { meta: 'Something else' });
+
+    sinon.assert.notCalled(this.bugsnag.notify);
+  });
+
   it('logs warnings', function() {
     this.logger.logWarn('test', { meta: 'Data' });
     sinon.assert.calledWith(
