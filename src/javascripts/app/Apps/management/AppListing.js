@@ -6,6 +6,7 @@ import ContextMenu from 'ui/Components/ContextMenu';
 import AppsPrivateFrameworkIllustration from 'svg/apps-private-framework.svg';
 import tokens from '@contentful/forma-36-tokens';
 import * as ModalLauncher from 'app/common/ModalLauncher';
+import DocumentTitle from 'components/shared/DocumentTitle';
 
 import {
   Heading,
@@ -141,6 +142,7 @@ export default function AppListing({ definitions, canManageApps }) {
   if (!canManageApps || definitions.length < 1) {
     return (
       <Workbench className={styles.emptyWorkbench}>
+        <DocumentTitle title="Apps" />
         <div className={styles.emptyState}>
           <AppsPrivateFrameworkIllustration />
           <Typography>
@@ -179,6 +181,7 @@ export default function AppListing({ definitions, canManageApps }) {
 
   return (
     <Workbench>
+      <DocumentTitle title="Apps" />
       <Workbench.Header
         title={<Heading>Apps</Heading>}
         icon={<Icon name="page-apps" scale="1" />}
