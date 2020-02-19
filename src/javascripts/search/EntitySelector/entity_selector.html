@@ -99,6 +99,7 @@
         config="{showDetails: true}"
       ></cf-entity-link>
       <react-component
+        ng-if="config.entityType === 'Asset'"
         name="app/widgets/link/AssetLink"
         ng-click="toggleSelection(entity, $event)"
         props="{asset: entity, entityHelpers: helpers}"
