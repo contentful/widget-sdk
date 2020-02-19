@@ -9,6 +9,7 @@ import LinkEditor, {
   SingleLinkEditor,
   withCfWebApp as linkEditorWithCfWebApp
 } from 'app/widgets/LinkEditor';
+import { getModule } from 'NgRegistry';
 import EmbedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
 import { TagsEditor } from '@contentful/field-editor-tags';
 import { SingleLineEditor } from '@contentful/field-editor-single-line';
@@ -26,7 +27,10 @@ import { LocationEditor } from '@contentful/field-editor-location';
 import { DateEditor } from '@contentful/field-editor-date';
 import { MarkdownEditor, openMarkdownDialog } from '@contentful/field-editor-markdown';
 import FileEditor from 'app/widgets/FileEditor';
+import { SlugEditor } from '@contentful/field-editor-slug';
 import { canUploadMultipleAssets } from 'access_control/AccessChecker';
+import { NEW_SLUG_EDITOR } from 'featureFlags';
+import { getVariation } from 'LaunchDarkly';
 
 const CfLinkEditor = linkEditorWithCfWebApp(LinkEditor);
 const CfSingleLinkEditor = linkEditorWithCfWebApp(SingleLinkEditor);
@@ -95,30 +99,26 @@ export function create() {
     fieldTypes: ['Text'],
     name: 'Markdown',
     icon: 'markdown',
-    renderWhen: async () => {
-      return {
-        renderFieldEditor: ({ widgetApi }) => {
-          const sdk = Object.assign({}, widgetApi);
+    renderFieldEditor: ({ widgetApi }) => {
+      const sdk = Object.assign({}, widgetApi);
 
-          const previewComponents = {
-            embedly: ({ url }) => <EmbedlyPreview previewUrl={url} delay={100} />
-          };
-
-          sdk.dialogs.openExtension = openMarkdownDialog(sdk, previewComponents);
-
-          return (
-            <MarkdownEditor
-              sdk={sdk}
-              parameters={Object.assign({}, widgetApi.parameters, {
-                instance: {
-                  canUploadAssets: canUploadMultipleAssets()
-                }
-              })}
-              previewComponents={previewComponents}
-            />
-          );
-        }
+      const previewComponents = {
+        embedly: ({ url }) => <EmbedlyPreview previewUrl={url} delay={100} />
       };
+
+      sdk.dialogs.openExtension = openMarkdownDialog(sdk, previewComponents);
+
+      return (
+        <MarkdownEditor
+          sdk={sdk}
+          parameters={Object.assign({}, widgetApi.parameters, {
+            instance: {
+              canUploadAssets: canUploadMultipleAssets()
+            }
+          })}
+          previewComponents={previewComponents}
+        />
+      );
     }
   });
 
@@ -369,7 +369,28 @@ export function create() {
     fieldTypes: ['Symbol'],
     name: 'Slug',
     icon: 'slug',
-    template: '<cf-slug-editor />'
+    renderWhen: async () => {
+      const spaceContext = getModule('spaceContext');
+      const organizationId = spaceContext.getData('organization.sys.id');
+      const spaceId = spaceContext.space.getId();
+
+      const isNewSlugEnabled = await getVariation(NEW_SLUG_EDITOR, {
+        spaceId,
+        organizationId
+      });
+
+      if (isNewSlugEnabled) {
+        return {
+          renderFieldEditor: ({ widgetApi }) => {
+            return <SlugEditor field={widgetApi.field} baseSdk={widgetApi} />;
+          }
+        };
+      }
+
+      return {
+        template: '<cf-slug-editor />'
+      };
+    }
   });
 
   return widgets;

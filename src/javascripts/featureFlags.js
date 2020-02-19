@@ -12,6 +12,7 @@ export const NEW_INVITATION_FORM = 'feature-bv-05-2019-new-invitation-flow';
 export const TWO_FA = 'feature-ogg-10-2019-2fa';
 export const ACCESS_TOOLS = 'feature-ogg-02-2020-access-tools';
 export const USAGE_API_GA = 'feature-ogg-2020-02-usage-api-ga';
+export const NEW_SLUG_EDITOR = 'new-slug-editor';
 
 // Gatekeeper Product Catalog Flags
 export const ENVIRONMENT_USAGE_ENFORCEMENT = 'environment_usage_enforcements';
