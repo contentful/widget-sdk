@@ -14,10 +14,17 @@ const types = {
   TEAM_MEMBERSHIP: 'TeamMembership'
 };
 
-export function sys(type = '', id, options) {
+export function sys(options = {}) {
+  /**
+   * Note: if type or id are defined in options, these default values are overwritten by the values in option.
+   * For example, the returned object of calling sys({type: "TestType", id: "123"}) is: {type: "TestType", id: "123"}.
+   * Not {type: '', id: 'uniqueId123'}
+   * This is only true provided that `...options` is the last arguement in the returned object. Please keep it at the end.
+   */
+
   return {
-    type,
-    id: id || uniqueId(type.toLowerCase()),
+    type: '',
+    id: uniqueId(options.type || ''),
     ...options
   };
 }
@@ -37,7 +44,9 @@ export function Space(name = '') {
 
   return {
     name: name || uniqueSpaceId,
-    sys: sys(types.SPACE, uniqueSpaceId, {
+    sys: sys({
+      type: types.SPACE,
+      id: uniqueSpaceId,
       createAt: DEFAULT_CREATED_AT_TIME_ISO,
       createdBy: User()
     })
@@ -47,7 +56,7 @@ export function Space(name = '') {
 export function Organization(name = '') {
   return {
     name: name || uniqueId('Organization'),
-    sys: sys(types.ORGANIZATION)
+    sys: sys({ type: types.ORGANIZATION })
   };
 }
 
@@ -57,7 +66,7 @@ export function User(firstName = 'John', lastName = 'Doe') {
     lastName: lastName,
     email: `${firstName}@enterprise.com`,
     avatarUrl: 'avatar.jpg',
-    sys: sys(types.USER)
+    sys: sys({ type: types.USER })
   };
 }
 
@@ -65,7 +74,7 @@ export function Team(name = '', description = '') {
   return {
     name,
     description,
-    sys: sys(types.TEAM)
+    sys: sys({ type: types.TEAM })
   };
 }
 
@@ -73,7 +82,7 @@ export function Role(name = '', space = Link(types.SPACE)) {
   return {
     name,
     sys: {
-      ...sys(types.ROLE),
+      ...sys({ type: types.ROLE }),
       space
     }
   };
@@ -89,7 +98,7 @@ export function SpaceMembership(
     admin: admin,
     roles: roles,
     sys: {
-      ...sys(types.SPACE_MEMBERSHIP),
+      ...sys({ type: types.SPACE_MEMBERSHIP }),
       user: user,
       space: space,
       createdBy: Link(types.USER)
@@ -106,7 +115,7 @@ export function OrganizationMembership(
     role,
     status,
     sys: {
-      ...sys(types.ORGANIZATION_MEMBERSHIP),
+      ...sys({ type: types.ORGANIZATION_MEMBERSHIP }),
       user: user,
       createdBy: Link(types.USER)
     }
@@ -120,7 +129,7 @@ export function TeamMembership(
 ) {
   return {
     sys: {
-      ...sys(types.TEAM_MEMBERSHIP),
+      ...sys({ type: types.TEAM_MEMBERSHIP }),
       team,
       organizationMembership,
       user
@@ -130,5 +139,5 @@ export function TeamMembership(
 
 // Please add to this as needed
 export function BasePlan() {
-  return { sys: sys('Plan') };
+  return { sys: sys({ id: 'Plan' }) };
 }
