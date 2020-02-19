@@ -124,9 +124,7 @@ const UserListPresentation = ({
                   <UserListRow
                     key={member.sys.id}
                     member={member}
-                    openRoleChangeDialog={() => {
-                      openRoleChangeDialog(member, adminCount);
-                    }}
+                    openRoleChangeDialog={() => openRoleChangeDialog(member, adminCount)}
                     openRemovalConfirmationDialog={() =>
                       openRemovalConfirmationDialog(member, adminCount)
                     }

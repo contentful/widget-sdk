@@ -143,6 +143,7 @@ export function BasePlan() {
   return { sys: sys({ id: 'Plan' }) };
 }
 
+// Please add to this as needed
 export function SpaceRole(name = '') {
   return {
     name: name,
