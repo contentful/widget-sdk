@@ -109,27 +109,32 @@ module.exports = {
 
     const result = await compareBuilds([meta.parentRevision, meta.revision]);
 
+    function getMessage(str) {
+      return [
+        '## Build Tracker',
+        str,
+        `[See details](https://contentful-sniffer.netlify.com/build-tracker#revs=${meta.parentRevision}&revs=${meta.revision})`
+      ].join('\n\n');
+    }
+
     if (!result.hasImpact) {
       console.log(
         `This PR has no impact on bundle size. Not posting a comment to PR#${pr} and moving on.`
       );
+      console.log();
+      // posting all results to CI logs
+      console.log(getMessage(result.markdownAll));
       return true;
     }
 
     console.log('Build compare result ->', result);
-
-    const postMessage = [
-      '## Build Tracker',
-      result.markdown,
-      '[Build Tracker UI](https://contentful-sniffer.netlify.com/build-tracker)'
-    ].join('\n\n');
 
     try {
       const { requestId, statusCode, message } = await fetch(process.env.COMMENT_LAMBDA_URL, {
         method: 'post',
         body: JSON.stringify({
           issue: Number.parseInt(pr, 10),
-          message: postMessage,
+          message: getMessage(result.markdown),
           type: 'bundlesize'
         }),
         headers: {
