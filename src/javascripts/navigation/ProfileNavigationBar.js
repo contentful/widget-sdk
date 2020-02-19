@@ -33,7 +33,7 @@ export default function ProfileNavigationBar() {
           showModernStackOnboardingRelaunch={false}
           listItems={[
             {
-              title: 'Settings',
+              title: 'User profile',
               icon: 'nav-user-settings',
               sref: 'account.profile.user',
               srefOptions: {
