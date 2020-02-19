@@ -1,6 +1,6 @@
 import { BLOCKS, EMPTY_DOCUMENT } from '@contentful/rich-text-types';
 import * as RichTextFieldSetter from './RichTextFieldSetter';
-import { document, block, mark, text } from 'app/widgets/rich_text/helpers/nodeFactory';
+import { document, block, mark, text } from 'app/widgets/RichText/helpers/nodeFactory';
 
 const mocks = {
   ShareJS: {

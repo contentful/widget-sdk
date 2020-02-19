@@ -136,7 +136,8 @@ export default function withCfWebApp(LinkEditor) {
 function selectEntities(widgetAPI) {
   const value = widgetAPI.field.getValue();
   const linkCount = Array.isArray(value) ? value.length : value ? 1 : 0;
-  return newConfigFromField(widgetAPI.field, linkCount).then(widgetAPI.dialogs.selectEntities);
+  const config = newConfigFromField(widgetAPI.field, linkCount);
+  return widgetAPI.dialogs.selectEntities(config);
 }
 
 async function createEntityOfType(type, contentType = null) {

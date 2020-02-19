@@ -120,6 +120,7 @@ export default function register() {
               renderJsxTemplate(
                 renderFieldEditor({
                   $scope: scope,
+                  loadEvents: loadEvents || newNoopLoadEvents(),
                   widgetApi: createNewWidgetApi({
                     $scope: scope,
                     spaceContext

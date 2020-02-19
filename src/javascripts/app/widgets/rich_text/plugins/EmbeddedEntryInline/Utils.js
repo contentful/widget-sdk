@@ -1,6 +1,7 @@
 import { INLINES } from '@contentful/rich-text-types';
 import { haveAnyInlines, haveEveryInlineOfType, haveInlines } from '../shared/UtilHave';
-import { newConfigFromRichTextField } from 'search/EntitySelector/Config';
+import { newConfigFromExtension } from 'search/EntitySelector/Config';
+import { newEntitySelectorConfigFromRichTextField } from '@contentful/field-editor-rich-text';
 
 const createInlineNode = id => ({
   type: INLINES.EMBEDDED_ENTRY,
@@ -44,7 +45,9 @@ export const selectEntryAndInsert = async (widgetAPI, editor, logAction) => {
   const nodeType = INLINES.EMBEDDED_ENTRY;
   logAction('openCreateEmbedDialog', { nodeType });
 
-  const baseConfig = await newConfigFromRichTextField(widgetAPI.field, nodeType);
+  const baseConfig = newConfigFromExtension(
+    newEntitySelectorConfigFromRichTextField(widgetAPI.field, nodeType)
+  );
   const config = { ...baseConfig, max: 1, withCreate: true };
   try {
     const [entry] = await widgetAPI.dialogs.selectEntities(config);

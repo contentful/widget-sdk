@@ -1,14 +1,14 @@
 import React, { memo, useContext } from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import { EntryCard, Icon } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import SheduleTooltip from 'app/ScheduledActions/EntrySidebarWidget/ScheduledActionsTimeline/ScheduleTooltip';
+import { ScheduleTooltip } from 'app/ScheduledActions';
 import { css } from 'emotion';
 import WidgetApiContext from 'app/widgets/WidgetApi/WidgetApiContext';
 
 import Thumbnail from './Thumbnail';
 import { EntryActions, AssetActions } from './CardActions';
+import { filterRelevantJobsForEntity, sortJobsByRelevance } from 'app/ScheduledActions/utils';
 
 const styles = {
   marginRightXS: css({
@@ -16,30 +16,25 @@ const styles = {
   })
 };
 
-const IconWrappedIntoScheduledTooltip = memo(({ referencedEntityId }) => {
+const IconWrappedIntoScheduledTooltip = memo(({ entityType, entityId }) => {
   const { widgetAPI } = useContext(WidgetApiContext);
-
-  if (typeof _.get(widgetAPI, 'jobs.getPendingJobs') !== 'function') {
+  if (!widgetAPI.jobs) {
     return null;
   }
-
-  const jobs = widgetAPI.jobs
-    .getPendingJobs()
-    .filter(job => job.entity.sys.id === referencedEntityId);
-  const sortedJobs = _.orderBy(jobs, ['scheduledFor.datetime'], ['asc']);
-
+  const jobs = widgetAPI.jobs.getPendingJobs();
+  const relevantJobs = filterRelevantJobsForEntity(jobs, entityType, entityId);
+  const mostRelevantJob = sortJobsByRelevance(relevantJobs)[0];
   return (
-    <SheduleTooltip job={sortedJobs[0]} jobsCount={sortedJobs.length}>
+    <ScheduleTooltip job={mostRelevantJob} jobsCount={relevantJobs.length}>
       <Icon icon="Clock" className={styles.marginRightXS} size="small" color="muted" />
-    </SheduleTooltip>
+    </ScheduleTooltip>
   );
 });
 
 IconWrappedIntoScheduledTooltip.propTypes = {
-  referencedEntityId: PropTypes.string
+  entityType: PropTypes.string.isRequired,
+  entityId: PropTypes.string.isRequired
 };
-
-export { IconWrappedIntoScheduledTooltip };
 
 /**
  * Wrapper around Forma 36 EntryCard. Can be used with entries but works
@@ -47,12 +42,8 @@ export { IconWrappedIntoScheduledTooltip };
  */
 export default class WrappedEntityCard extends React.Component {
   static propTypes = {
-    entity: PropTypes.shape({
-      sys: PropTypes.shape({
-        id: PropTypes.string.isRequired
-      })
-    }),
-    entityType: PropTypes.string,
+    entityType: PropTypes.string.isRequired,
+    entityId: PropTypes.string.isRequired,
     contentTypeName: PropTypes.string,
     entityDescription: PropTypes.string,
     entityFile: PropTypes.object,
@@ -92,6 +83,7 @@ export default class WrappedEntityCard extends React.Component {
   render() {
     const {
       entityType,
+      entityId,
       contentTypeName,
       entityDescription,
       entityFile,
@@ -103,10 +95,8 @@ export default class WrappedEntityCard extends React.Component {
       isLoading,
       onClick,
       href,
-      cardDragHandleComponent,
-      entity
+      cardDragHandleComponent
     } = this.props;
-
     return (
       <EntryCard
         title={entityTitle || 'Untitled'}
@@ -119,11 +109,7 @@ export default class WrappedEntityCard extends React.Component {
         size={size}
         selected={selected}
         status={entityStatus}
-        statusIcon={
-          <IconWrappedIntoScheduledTooltip
-            referencedEntityId={_.get(entity, 'sys.id', undefined)}
-          />
-        }
+        statusIcon={<IconWrappedIntoScheduledTooltip entityType={entityType} entityId={entityId} />}
         thumbnailElement={entityFile && <Thumbnail thumbnail={entityFile} />}
         loading={isLoading}
         dropdownListElements={this.renderActions()}

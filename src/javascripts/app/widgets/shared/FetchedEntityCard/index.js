@@ -63,6 +63,7 @@ class FetchedEntityCard extends React.Component {
           cardDragHandleComponent && `${className}--has-drag-handle`
         ])}>
         <div style={{ display: 'flex' }}>
+          {/* eslint-disable-next-line rulesdir/restrict-non-f36-components */}
           <h1
             className={`${className}__title`}
             style={{
@@ -127,6 +128,7 @@ class FetchedEntityCard extends React.Component {
 
                 const cardProps = {
                   entityType,
+                  entityId,
                   ...fetchEntityResult,
                   readOnly,
                   size,
@@ -150,14 +152,7 @@ class FetchedEntityCard extends React.Component {
                         id: entityId
                       }
                     }}>
-                    {({ getHref }) => (
-                      <WrapperComponent
-                        {...{
-                          ...cardProps,
-                          href: getHref()
-                        }}
-                      />
-                    )}
+                    {({ getHref }) => <WrapperComponent {...cardProps} href={getHref()} />}
                   </EntityStateLink>
                 );
               }

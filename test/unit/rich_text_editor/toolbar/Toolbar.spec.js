@@ -5,7 +5,7 @@ import { mapValues, forEach, upperFirst, identity } from 'lodash';
 
 import { BLOCKS, INLINES, MARKS } from '@contentful/rich-text-types';
 import { actionOrigin } from 'app/widgets/rich_text/plugins/shared/PluginApi';
-import { document, block, inline, text } from 'app/widgets/rich_text/helpers/nodeFactory';
+import { document, block, inline, text } from 'app/widgets/RichText/helpers/nodeFactory';
 
 import sinon from 'sinon';
 import { $initialize, $inject } from 'test/utils/ng';
@@ -30,9 +30,6 @@ const getWithId = (wrapper, testId) => wrapper.find(`[data-test-id="${testId}"]`
 const stubAll = async ({ isolatedSystem }) => {
   // TODO: Instead of stubbing all kind of services, stub `buildWidgetApi`!
   isolatedSystem.set('directives/thumbnailHelpers', {});
-  isolatedSystem.set('search/EntitySelector/Config', {
-    newConfigFromRichTextField: sinon.stub().returns({})
-  });
   isolatedSystem.set('app/widgets/WidgetApi/dialogs/HyperlinkDialog', {
     LINK_TYPES: {}
   });

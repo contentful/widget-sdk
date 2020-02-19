@@ -3,8 +3,9 @@ import { INLINES } from '@contentful/rich-text-types';
 import HyperlinkDialog, { LINK_TYPES } from 'app/widgets/WidgetApi/dialogs/HyperlinkDialog';
 import WidgetAPIContext from '../WidgetApiContext';
 import ModalLauncher from 'app/common/ModalLauncher';
-import { newConfigFromRichTextField } from 'search/EntitySelector/Config';
-import { isNodeTypeEnabled } from 'app/widgets/rich_text/validations';
+import { newConfigFromExtension } from 'search/EntitySelector/Config';
+import { newEntitySelectorConfigFromRichTextField } from '@contentful/field-editor-rich-text';
+import { isNodeTypeEnabled } from '@contentful/field-editor-rich-text';
 
 const nodeToHyperlinkType = {
   [INLINES.ENTRY_HYPERLINK]: LINK_TYPES.ENTRY,
@@ -27,7 +28,7 @@ const nodeToHyperlinkType = {
  * @returns {Promise<{uri: string?, target: object?, text: string?}>}
  */
 export default async function({ value = {}, showTextInput, widgetAPI }) {
-  const entitySelectorConfigs = await newConfigsForField(widgetAPI.field);
+  const entitySelectorConfigs = newConfigsForField(widgetAPI.field);
   const isNew = !(value.uri || value.target);
   const props = {
     labels: {
@@ -64,15 +65,17 @@ export default async function({ value = {}, showTextInput, widgetAPI }) {
   });
 }
 
-async function newConfigsForField(field) {
+function newConfigsForField(field) {
   const config = {};
+  const newConfig = (...args) =>
+    newConfigFromExtension(newEntitySelectorConfigFromRichTextField(...args));
   if (field.type === 'RichText') {
     // TODO: Don't pass specific key if CT validation prohibits its type:
     if (isNodeTypeEnabled(field, INLINES.ENTRY_HYPERLINK)) {
-      config.Entry = await newConfigFromRichTextField(field, 'entry-hyperlink');
+      config.Entry = newConfig(field, 'entry-hyperlink');
     }
     if (isNodeTypeEnabled(field, INLINES.ASSET_HYPERLINK)) {
-      config.Asset = await newConfigFromRichTextField(field, 'asset-hyperlink');
+      config.Asset = newConfig(field, 'asset-hyperlink');
     }
   }
   return config;

@@ -6,7 +6,7 @@ import {
   DropdownList,
   Icon
 } from '@contentful/forma-36-react-components';
-import { orderBy, get } from 'lodash';
+import { orderBy } from 'lodash';
 
 import { default as FetchEntity, RequestStatus } from 'app/widgets/shared/FetchEntity';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';
@@ -83,40 +83,40 @@ class EmbeddedEntryInline extends React.Component {
   }
 
   render() {
-    const { onEntityFetchComplete } = this.props;
+    const { attributes, onEntityFetchComplete } = this.props;
     const entryId = this.props.node.data.get('target').sys.id;
 
     return (
+      // TODO: WidgetAPIContext.Consumer here seems only necessary for .currentUrl updates so that
+      //  the card updates after navigating to it and changing the title.
       <WidgetAPIContext.Consumer>
         {({ widgetAPI }) => (
-          <FetchEntity
-            widgetAPI={widgetAPI}
-            entityId={entryId}
-            entityType="Entry"
-            localeCode={widgetAPI.field.locale}
-            render={fetchEntityResult => {
-              if (fetchEntityResult.requestStatus !== RequestStatus.Pending) {
-                onEntityFetchComplete && onEntityFetchComplete();
-              }
-              if (fetchEntityResult.requestStatus === RequestStatus.Error) {
-                return this.renderMissingNode();
-              } else {
-                const scheduledInfo = {
-                  job: undefined,
-                  jobsCount: 0
-                };
-                if (typeof get(widgetAPI, 'jobs.getPendingJobs') === 'function') {
-                  const jobs = widgetAPI.jobs
-                    .getPendingJobs()
-                    .filter(job => job.entity.sys.id === entryId);
-                  const sortedJobs = orderBy(jobs, ['scheduledFor.datetime'], ['asc']);
-                  scheduledInfo.job = sortedJobs[0];
-                  scheduledInfo.jobsCount = sortedJobs.length;
+          <span {...attributes}>
+            <FetchEntity
+              widgetAPI={widgetAPI}
+              entityId={entryId}
+              entityType="Entry"
+              localeCode={widgetAPI.field.locale}
+              render={fetchEntityResult => {
+                if (fetchEntityResult.requestStatus !== RequestStatus.Pending) {
+                  onEntityFetchComplete && onEntityFetchComplete();
                 }
-                return this.renderNode(fetchEntityResult, scheduledInfo);
-              }
-            }}
-          />
+                if (fetchEntityResult.requestStatus === RequestStatus.Error) {
+                  return this.renderMissingNode();
+                } else {
+                  const jobs = widgetAPI.jobs
+                    ? widgetAPI.jobs.getPendingJobs().filter(job => job.entity.sys.id === entryId)
+                    : [];
+                  const sortedJobs = orderBy(jobs, ['scheduledFor.datetime'], ['asc']);
+                  const scheduledInfo = {
+                    job: sortedJobs[0],
+                    jobsCount: sortedJobs.length
+                  };
+                  return this.renderNode(fetchEntityResult, scheduledInfo);
+                }
+              }}
+            />
+          </span>
         )}
       </WidgetAPIContext.Consumer>
     );
@@ -124,6 +124,7 @@ class EmbeddedEntryInline extends React.Component {
 }
 
 EmbeddedEntryInline.propTypes = {
+  attributes: PropTypes.object,
   widgetAPI: PropTypes.object.isRequired,
   isSelected: PropTypes.bool.isRequired,
   editor: PropTypes.object.isRequired,

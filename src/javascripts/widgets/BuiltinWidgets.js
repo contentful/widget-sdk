@@ -4,13 +4,15 @@ import { range } from 'lodash';
 import React from 'react';
 import * as Config from 'Config';
 import { NAMESPACE_BUILTIN } from './WidgetNamespaces';
-import { default as RichTextEditor } from 'app/widgets/rich_text';
+
 import LinkEditor, {
   SingleLinkEditor,
   withCfWebApp as linkEditorWithCfWebApp
 } from 'app/widgets/LinkEditor';
 import { getModule } from 'NgRegistry';
 import EmbedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
+import { default as RichTextEditor } from 'app/widgets/rich_text';
+import { renderRichTextEditor } from 'app/widgets/RichText';
 import { TagsEditor } from '@contentful/field-editor-tags';
 import { SingleLineEditor } from '@contentful/field-editor-single-line';
 import { MultipleLineEditor } from '@contentful/field-editor-multiple-line';
@@ -29,7 +31,7 @@ import { MarkdownEditor, openMarkdownDialog } from '@contentful/field-editor-mar
 import FileEditor from 'app/widgets/FileEditor';
 import { SlugEditor } from '@contentful/field-editor-slug';
 import { canUploadMultipleAssets } from 'access_control/AccessChecker';
-import { NEW_SLUG_EDITOR } from 'featureFlags';
+import { NEW_SLUG_EDITOR, NEW_RICH_TEXT } from 'featureFlags';
 import { getVariation } from 'LaunchDarkly';
 
 const CfLinkEditor = linkEditorWithCfWebApp(LinkEditor);
@@ -238,16 +240,27 @@ export function create() {
     )
   });
 
+  const newRichText = {
+    renderFieldEditor: ({ widgetApi, $scope, loadEvents }) => {
+      return renderRichTextEditor({ widgetApi, $scope, loadEvents });
+    }
+  };
+  const legacyRichText = {
+    buildTemplate: ({ widgetApi, loadEvents }) => {
+      return <RichTextEditor widgetApi={widgetApi} loadEvents={loadEvents} />;
+    }
+  };
+
   registerWidget('richTextEditor', {
     fieldTypes: ['RichText'],
     name: 'RichText',
     icon: 'wysiwig',
-    buildTemplate: ({ widgetApi, loadEvents }) => {
-      // TODO: Just provide `widgetApi` via `WidgetApiContext`
-      //  directly in `cfWidgetRendererDirective` and merge
-      //  app/widgets/WidgetApi/buildWidgetApi.js
-      //  with `cfWidgetApiDirective`.
-      return <RichTextEditor widgetApi={widgetApi} loadEvents={loadEvents} />;
+    renderWhen: async () => {
+      const spaceContext = getModule('spaceContext');
+      const organizationId = spaceContext.getData('organization.sys.id');
+      const spaceId = spaceContext.space.getId();
+      const isEnabled = await getVariation(NEW_RICH_TEXT, { organizationId, spaceId });
+      return isEnabled ? newRichText : legacyRichText;
     }
   });
 
@@ -373,7 +386,6 @@ export function create() {
       const spaceContext = getModule('spaceContext');
       const organizationId = spaceContext.getData('organization.sys.id');
       const spaceId = spaceContext.space.getId();
-
       const isNewSlugEnabled = await getVariation(NEW_SLUG_EDITOR, {
         spaceId,
         organizationId

@@ -3,7 +3,8 @@
     "incremental": true,
     "module": "commonjs",
     "baseUrl": "./src/javascripts",
-    "allowJs": true
+    "allowJs": true,
+    "jsx": "react"
   },
   "include": ["./src/javascripts/**/*"]
 }

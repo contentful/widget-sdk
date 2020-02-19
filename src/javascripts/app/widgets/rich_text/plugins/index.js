@@ -16,10 +16,7 @@ import {
 
 import NewLinePlugin from './NewLinePlugin';
 import { ParagraphPlugin } from './Paragraph';
-import {
-  EmbeddedAssetBlockPlugin,
-  EmbeddedEntryBlockPlugin
-} from './EmbeddedEntityBlock';
+import { EmbeddedAssetBlockPlugin, EmbeddedEntryBlockPlugin } from './EmbeddedEntityBlock';
 import { EmbeddedEntryInlinePlugin } from './EmbeddedEntryInline';
 
 import { ListPlugin } from './List';

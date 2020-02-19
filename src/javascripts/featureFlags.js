@@ -19,3 +19,4 @@ export const ENVIRONMENT_USAGE_ENFORCEMENT = 'environment_usage_enforcements';
 export const ENVIRONMENT_ALIASING = 'environment_aliasing';
 export const CONTENT_WORKFLOW_TASKS = 'tasks';
 export const SCHEDULED_PUBLISHING = 'scheduled_publishing';
+export const NEW_RICH_TEXT = 'feature-pen-02-2020-open-source-rich-text';

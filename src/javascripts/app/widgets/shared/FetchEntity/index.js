@@ -19,9 +19,17 @@ export default class FetchEntity extends React.PureComponent {
   static defaultProps = {
     fetchFile: true
   };
-  state = {
-    requestStatus: RequestStatus.Pending
-  };
+  constructor(props) {
+    const { entityId, entityType } = props;
+
+    super(props);
+
+    this.state = {
+      entityId,
+      entityType,
+      requestStatus: RequestStatus.Pending
+    };
+  }
   componentDidMount() {
     this.fetchEntity();
   }
@@ -56,12 +64,8 @@ export default class FetchEntity extends React.PureComponent {
 
     let entity, contentType;
     try {
-      let getEntity;
-      if (entityType === 'Entry') {
-        getEntity = id => widgetAPI.space.getEntry(id);
-      } else {
-        getEntity = id => widgetAPI.space.getAsset(id);
-      }
+      const getEntity =
+        entityType === 'Entry' ? widgetAPI.space.getEntry : widgetAPI.space.getAsset;
       entity = await getEntity(entityId);
       if (entity.sys.contentType) {
         const contentTypeId = entity.sys.contentType.sys.id;

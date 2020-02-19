@@ -257,8 +257,6 @@ export default function register() {
        *
        * TODO this code is duplicated in the asset list controller
        *
-       * TODO:xxx Rename!
-       *
        * @return {boolean}
        */
       $scope.showNoEntriesAdvice = () => {

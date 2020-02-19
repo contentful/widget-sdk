@@ -1,4 +1,4 @@
-import { toPlainObject, memoize } from 'lodash';
+import { mapValues, memoize, toPlainObject } from 'lodash';
 import newBatchEntityFetcher from './newBatchEntityFetcher';
 
 /**
@@ -13,8 +13,12 @@ import newBatchEntityFetcher from './newBatchEntityFetcher';
 export const getBatchingApiClient = memoize(cma => {
   const { spaceId, envId } = cma;
   const newResourceContext = type => ({ type, spaceId, envId });
+  // Allow to call all - not just overwritten - functions directly, out of context:
+  const cmaFunctions = mapValues(toPlainObject(cma), (_fn, name) => (...args) =>
+    cma[name](...args)
+  );
   return {
-    ...toPlainObject(cma),
+    ...cmaFunctions,
 
     getContentType: newBatchEntityFetcher({
       getResources: query => cma.getContentTypes(query),

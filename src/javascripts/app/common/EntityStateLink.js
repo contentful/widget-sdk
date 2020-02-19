@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import StateLink from './StateLink';
 import { getModule } from 'NgRegistry';
 
+// TODO: Pass `entityId` and `entityType` as separate props as this is not a whole entity.
+
 export default function EntityStateLink({ entity, children }) {
   const spaceContext = getModule('spaceContext');
   const { id, type } = entity.sys;

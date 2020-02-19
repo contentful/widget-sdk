@@ -32,7 +32,6 @@ export const getScheduledJobsTooltip = (entityType, node, widgetAPI) => {
 
   const target = node.data.get('target');
   const referencedEntityId = get(target, 'sys.id', undefined);
-
   const jobs = widgetAPI.jobs
     .getPendingJobs()
     .filter(job => job.entity.sys.id === referencedEntityId);

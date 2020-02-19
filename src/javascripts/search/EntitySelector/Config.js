@@ -1,6 +1,5 @@
 import { clone, find, isObject, isString, pick } from 'lodash';
 import mimetype from '@contentful/mimetype';
-import getLinkedContentTypeIdsForNodeType from 'app/widgets/rich_text/plugins/shared/GetLinkedContentTypeIdsForNodeType';
 import { getModule } from 'NgRegistry';
 import TheLocaleStore from 'services/localeStore';
 import * as ListQuery from 'search/listQuery';
@@ -61,16 +60,16 @@ export function getLabels({ entityType = '', multiple }) {
 }
 
 /**
- * Builds a config for #openFromField
+ * Builds a config for entitySelector.openFromField()
  *
  * TODO: Rename to `newConfigFromLinkField` and remove deprecation note.
  *
- * @deprecated This does not work for `RichText` type fields, use
- * `newConfigFromRichTextField` instead.
+ * @deprecated This does not work for `RichText` type fields as config depends
+ *  on node type in rich text (as there are validations per node type).
  *
  * @param {API.Field} field
  * @param {number?} currentSize
- * @returns Promise<config> for #open
+ * @returns config for entitySelector.open()
  */
 export function newConfigFromField(field = {}, currentSize = 0) {
   const entityType = field.linkType || field.itemLinkType;
@@ -97,50 +96,24 @@ export function newConfigFromField(field = {}, currentSize = 0) {
     // linkedImageDimensions: findValidation(field, 'assetImageDimensions', {})
   };
   config.fetch = makeFetch(config);
-  return Promise.resolve(config); // TODO: No need for promise anymore.
-}
-
-export function newConfigFromRichTextField(field, nodeType) {
-  const entityType = getEntityTypeFromRichTextNode(nodeType);
-  const config = {
-    entityType,
-    local: field.locale || getDefaultLocaleCode(),
-    multiple: false,
-    min: 1,
-    max: Infinity,
-    linkedContentTypeIds: getLinkedContentTypeIdsForNodeType(field, nodeType),
-    linkedMimetypeGroups: []
-  };
-  config.fetch = makeFetch(config);
-  return Promise.resolve(config);
-}
-
-function getEntityTypeFromRichTextNode(nodeType) {
-  const words = nodeType.split('-');
-  if (words.indexOf('entry') !== -1) {
-    return 'Entry';
-  }
-  if (words.indexOf('asset') !== -1) {
-    return 'Asset';
-  }
-  throw new Error(`RichText node type \`${nodeType}\` has no associated \`entityType\``);
+  return config;
 }
 
 /**
  * Builds a config for entitySelector.openFromExtension()
  *
  * @param {object} options
- * @returns Promise<object> resolves with config for #open
+ * @returns {object} config for the entity selector.
  */
 export function newConfigFromExtension(options = {}) {
   const config = {
-    ...pick(options, ['multiple', 'min', 'max', 'entityType']),
+    ...pick(options, ['multiple', 'min', 'max', 'entityType', 'withCreate']),
     locale: options.locale || getDefaultLocaleCode(),
     linkedContentTypeIds: options.contentTypes || [],
     linkedMimetypeGroups: []
   };
   config.fetch = makeFetch(config);
-  return Promise.resolve(config);
+  return config;
 }
 
 /**

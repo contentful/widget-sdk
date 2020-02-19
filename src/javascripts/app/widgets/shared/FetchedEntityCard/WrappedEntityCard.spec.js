@@ -13,17 +13,12 @@ jest.mock('react', () => {
 });
 
 describe('WrappedEntityCard', () => {
-  let entity;
+  const JOB_ENTITY_ID = 'entity-id';
+  const JOB_ENTITY_TYPE = 'Entry';
   let jobs;
   let widgetAPIMock;
 
   beforeEach(() => {
-    entity = {
-      sys: {
-        id: 'entityId'
-      }
-    };
-
     jobs = [
       {
         action: ScheduledActionActions.Publish,
@@ -32,7 +27,9 @@ describe('WrappedEntityCard', () => {
         },
         entity: {
           sys: {
-            id: entity.sys.id
+            id: JOB_ENTITY_ID,
+            linkType: JOB_ENTITY_TYPE,
+            type: 'Link'
           }
         },
         sys: {
@@ -52,9 +49,9 @@ describe('WrappedEntityCard', () => {
     const wrapper = mount(
       <WidgetAPIContext.Provider value={{ widgetAPI: widgetAPIMock }}>
         <EntityCard
-          entity={entity}
-          entityType="Entry"
-          contentTypeName="Entry"
+          entityId={JOB_ENTITY_ID}
+          entityType={JOB_ENTITY_TYPE}
+          contentTypeName="SomeEntry"
           entityDescription="Test"
           entityTitle="Hello world"
           statusIcon="Clock"
@@ -72,14 +69,12 @@ describe('WrappedEntityCard', () => {
   });
 
   it('should not display the tooltip with an icon for an entry that was not scheduled', () => {
-    entity.sys.id = 'nonexistent';
-
     const wrapper = mount(
       <WidgetAPIContext.Provider value={{ widgetAPI: widgetAPIMock }}>
         <EntityCard
-          entity={entity}
+          entityId="another-entity-not-scheduled"
           entityType="Entry"
-          contentTypeName="Entry"
+          contentTypeName="SomeEntry"
           entityDescription="Test"
           entityTitle="Hello world"
           statusIcon="Clock"

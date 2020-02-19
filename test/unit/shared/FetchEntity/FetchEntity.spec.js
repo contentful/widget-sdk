@@ -113,12 +113,16 @@ describe('FetchEntity', () => {
 
     it('is called initially, while fetching entity', function() {
       expect(this.props.render.args[0][0]).toEqual({
+        entityId: 'ENTRY-ID',
+        entityType: 'Entry',
         requestStatus: RequestStatus.Pending
       });
     });
 
     it('is called with `requestStatus: "error"`', function() {
       expect(this.props.render.args[1][0]).toEqual({
+        entityId: 'ENTRY-ID',
+        entityType: 'Entry',
         requestStatus: RequestStatus.Error
       });
     });
@@ -134,6 +138,8 @@ describe('FetchEntity', () => {
 
     it('is called initially, while fetching entity', function() {
       expect(this.props.render.args[0][0]).toEqual({
+        entityId: 'ENTRY-ID',
+        entityType: 'Entry',
         requestStatus: RequestStatus.Pending
       });
     });
@@ -141,6 +147,8 @@ describe('FetchEntity', () => {
     it('is called after entity got fetched, while waiting for `entityFile`', function() {
       expect(this.props.render.args[1][0]).toEqual({
         entity: this.entity,
+        entityId: 'ENTRY-ID',
+        entityType: 'Entry',
         contentTypeName: 'CONTENT-TYPE-NAME',
         entityTitle: 'TITLE',
         entityDescription: 'DESCRIPTION',
@@ -153,6 +161,8 @@ describe('FetchEntity', () => {
     it('is called with fetched entity and `entityFile`', function() {
       expect(this.props.render.args[2][0]).toEqual({
         entity: this.entity,
+        entityId: 'ENTRY-ID',
+        entityType: 'Entry',
         contentTypeName: 'CONTENT-TYPE-NAME',
         entityTitle: 'TITLE',
         entityDescription: 'DESCRIPTION',

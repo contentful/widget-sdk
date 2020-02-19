@@ -93,7 +93,8 @@ export function open(options) {
  * field and optional list of existing links.
  */
 export function openFromField(field, currentSize) {
-  return newConfigFromField(field, currentSize || 0).then(open);
+  const config = newConfigFromField(field, currentSize || 0);
+  return open(config);
 }
 
 /**
@@ -110,27 +111,25 @@ export function openFromField(field, currentSize) {
  * namespace.
  */
 export function openFromExtension(options) {
-  return newConfigFromExtension(options)
-    .then(open)
-    .then(
-      (
-        selected // resolve with a single object if selecting only
-      ) =>
-        // one entity, resolve with an array otherwise
-        options.multiple ? selected : selected[0],
-      (
-        err // resolve with `null` if a user skipped selection,
-      ) =>
-        // reject with an error otherwise
-        err ? Promise.reject(err) : null
-    );
+  const config = newConfigFromExtension(options);
+  return open(config).then(
+    (
+      selected // resolve with a single object if selecting only
+    ) =>
+      // one entity, resolve with an array otherwise
+      options.multiple ? selected : selected[0],
+    (
+      err // resolve with `null` if a user skipped selection,
+    ) =>
+      // reject with an error otherwise
+      err ? Promise.reject(err) : null
+  );
 }
 
 /**
  * @param {string}   options.entityType    "Entry" or "Asset"
  */
 export function openFromRolesAndPermissions(entityType) {
-  return newConfigFromExtension({ entityType, multiple: false })
-    .then(open)
-    .then(selected => selected[0]);
+  const config = newConfigFromExtension({ entityType, multiple: false });
+  return open(config).then(selected => selected[0]);
 }

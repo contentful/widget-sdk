@@ -2,6 +2,7 @@
  * @typedef { import("contentful-ui-extensions-sdk").SpaceAPI } SpaceAPI
  */
 
+import { getBatchingApiClient } from '../WidgetApi/BatchingApiClient';
 import { waitUntilAssetProcessed } from 'widgets/bridges/makeExtensionSpaceMethodsHandlers';
 
 /**
@@ -9,13 +10,24 @@ import { waitUntilAssetProcessed } from 'widgets/bridges/makeExtensionSpaceMetho
  * @return {SpaceAPI}
  */
 export function createSpaceApi({ spaceContext }) {
+  const optimizedApiClient = getBatchingApiClient(spaceContext.cma);
+
+  const {
+    getAsset,
+    getAssets,
+    getEntry,
+    getEntries,
+    getContentType,
+    getContentTypes
+  } = optimizedApiClient;
+
   return {
-    getEntries: (...args) => {
-      return spaceContext.cma.getEntries(...args);
-    },
-    getAsset: (...args) => {
-      return spaceContext.cma.getAsset(...args);
-    },
+    getEntries,
+    getAsset,
+    getAssets,
+    getEntry,
+    getContentType,
+    getContentTypes,
     waitUntilAssetProcessed: (assetId, locale) => {
       return waitUntilAssetProcessed(spaceContext.cma, assetId, locale);
     },
