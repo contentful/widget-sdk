@@ -171,7 +171,7 @@
     "canonical-path": "0.0.2",
     "chalk": "^2.4.2",
     "chokidar": "^1.4.3",
-    "codecov": "^3.5.0",
+    "codecov": "^3.6.5",
     "contentful-ui-extensions-sdk": "^3.9.1",
     "css-loader": "^3.4.0",
     "cypress": "^3.4.0",
