@@ -19,6 +19,7 @@ import AppInstallModal from './AppInstallModal';
 import DeleteAppModal from './DeleteAppDialog';
 import SaveConfirmModal from './SaveConfirmModal';
 import { track } from 'analytics/Analytics';
+import DocumentTitle from 'components/shared/DocumentTitle';
 
 const fadeIn = keyframes({
   from: {
@@ -199,6 +200,7 @@ export default class AppDetails extends React.Component {
 
     return (
       <Workbench>
+        <DocumentTitle title="Apps" />
         <Workbench.Header
           title="App details"
           actions={

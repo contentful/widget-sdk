@@ -13,6 +13,7 @@ import tokens from '@contentful/forma-36-tokens';
 import AppEditor from './AppEditor';
 import * as ManagementApiClient from './ManagementApiClient';
 import { track } from 'analytics/Analytics';
+import DocumentTitle from 'components/shared/DocumentTitle';
 
 const styles = {
   spacerM: css({
@@ -63,6 +64,7 @@ export default class NewApp extends React.Component {
 
     return (
       <Workbench>
+        <DocumentTitle title="Apps" />
         <Workbench.Header
           title="Create app"
           onBack={this.props.goToListView}
