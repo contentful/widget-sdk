@@ -220,7 +220,7 @@ export default class AccountDropdown extends Component {
                   this.handleDropdownListItemClick();
                 }}
                 href={getHref()}>
-                User Profile
+                Account settings
               </DropdownListItem>
             )}
           </StateLink>
