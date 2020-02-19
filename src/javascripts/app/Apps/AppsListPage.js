@@ -44,7 +44,8 @@ const styles = {
     backgroundColor: tokens.colorElementLightest
   }),
   appListCard: css({
-    position: 'relative'
+    position: 'relative',
+    marginBottom: tokens.spacingL
   }),
   overlay: css({
     position: 'absolute',
@@ -108,31 +109,10 @@ const AppsListShell = props => (
     <Workbench.Header
       title={<Header />}
       icon={<Icon name="page-apps" scale="1" />}
-      actions={
-        <TextLink
-          href={websiteUrl('/developers/docs/extensibility/apps/')}
-          target="_blank"
-          rel="noopener noreferrer">
-          View documentation
-        </TextLink>
-      }
+      actions={<FeedbackButton target="extensibility" about="Apps" label="Give your feedback" />}
     />
     <Workbench.Content type="text">
-      {props.appsFeatureDisabled ? (
-        <PricingInfo />
-      ) : (
-        <Note className={styles.intro}>
-          Let us know if you want to{' '}
-          <TextLink
-            href="https://forms.gle/3U15mGcRMy4NkcCg6"
-            target="_blank"
-            rel="noopener noreferrer">
-            build an app
-          </TextLink>
-          , or <FeedbackButton target="extensibility" about="Apps" label="share your feedback" />{' '}
-          about apps.
-        </Note>
-      )}
+      {props.appsFeatureDisabled && <PricingInfo />}
       <Card padding="large" className={styles.appListCard}>
         {props.appsFeatureDisabled && (
           <div className={styles.overlay} data-test-id="disabled-beta-apps" />

@@ -5,17 +5,18 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
   margin-bottom: 1.5rem;
 }
 
-.emotion-3 {
+.emotion-2 {
   background-color: #f7f9fa;
 }
 
-.emotion-2 {
+.emotion-1 {
   position: relative;
+  margin-bottom: 1.5rem;
 }
 
 <div>
   <div
-    class="Workbench__Workbench___THi9K emotion-3"
+    class="Workbench__Workbench___THi9K emotion-2"
     data-test-id="cf-ui-workbench"
   >
     <div
@@ -46,20 +47,18 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
       <div
         class="Workbench__Workbench__header-actions___mJoSR"
       >
-        <a
+        <button
           class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
           data-test-id="cf-ui-text-link"
-          href="https://www.contentful.com/developers/docs/extensibility/apps/"
-          rel="noopener noreferrer"
-          target="_blank"
+          type="button"
         >
           <span
             class="TabFocusTrap__TabFocusTrap___39Vty"
             tabindex="-1"
           >
-            View documentation
+            Give your feedback
           </span>
-        </a>
+        </button>
       </div>
     </div>
     <div
@@ -73,67 +72,7 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
           class="Workbench__Workbench__content-inner___36_Hx Workbench__Workbench__content-inner--text___7nfTX"
         >
           <div
-            class="Note__Note___2eSKN emotion-0 Note__Note--primary___-8-7D"
-            data-test-id="cf-ui-note"
-          >
-            <div
-              class="Note__Note__icon___20RqC"
-            >
-              <svg
-                class="Icon__Icon___38Epv Icon__Icon--small___1yGZK undefined"
-                data-test-id="cf-ui-icon"
-                height="18"
-                viewBox="0 0 24 24"
-                width="18"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M0 0h24v24H0z"
-                  fill="none"
-                />
-                <path
-                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
-                />
-              </svg>
-            </div>
-            <div>
-              <div>
-                Let us know if you want to
-                 
-                <a
-                  class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
-                  data-test-id="cf-ui-text-link"
-                  href="https://forms.gle/3U15mGcRMy4NkcCg6"
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
-                  <span
-                    class="TabFocusTrap__TabFocusTrap___39Vty"
-                    tabindex="-1"
-                  >
-                    build an app
-                  </span>
-                </a>
-                , or 
-                <button
-                  class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
-                  data-test-id="cf-ui-text-link"
-                  type="button"
-                >
-                  <span
-                    class="TabFocusTrap__TabFocusTrap___39Vty"
-                    tabindex="-1"
-                  >
-                    share your feedback
-                  </span>
-                </button>
-                 
-                about apps.
-              </div>
-            </div>
-          </div>
-          <div
-            class="Card__Card___xXJsT emotion-2 Card__Card--padding-large___3Fgal"
+            class="Card__Card___xXJsT emotion-1 Card__Card--padding-large___3Fgal"
             data-test-id="cf-ui-card"
           >
             <p
@@ -300,7 +239,7 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
 `;
 
 exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
-.emotion-8 {
+.emotion-7 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -316,11 +255,12 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
   border-bottom: 1px solid #e5ebed;
 }
 
-.emotion-8:last-child {
+.emotion-7:last-child {
   border-bottom: none;
+  padding-bottom: 0;
 }
 
-.emotion-6 {
+.emotion-5 {
   -webkit-box-flex: 1;
   -webkit-flex-grow: 1;
   -ms-flex-positive: 1;
@@ -328,25 +268,25 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
   display: block;
 }
 
-.emotion-3 {
+.emotion-2 {
   font-size: 0.75rem;
   color: #b4c3ca;
 }
 
-.emotion-5 {
+.emotion-4 {
   font-size: 1rem;
   font-weight: 500;
 }
 
-.emotion-7 {
+.emotion-6 {
   display: block;
 }
 
-.emotion-7 button {
+.emotion-6 button {
   margin-left: 1rem;
 }
 
-.emotion-2 {
+.emotion-1 {
   border-radius: 5px;
   background-color: #fff;
   box-shadow: 0 2px 3px 0 rgba(0,0,0,0.08);
@@ -356,7 +296,7 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
   height: 35px;
 }
 
-.emotion-4 {
+.emotion-3 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -372,17 +312,18 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
   margin-bottom: 1.5rem;
 }
 
-.emotion-45 {
+.emotion-44 {
   background-color: #f7f9fa;
 }
 
-.emotion-44 {
+.emotion-43 {
   position: relative;
+  margin-bottom: 1.5rem;
 }
 
 <div>
   <div
-    class="Workbench__Workbench___THi9K emotion-45"
+    class="Workbench__Workbench___THi9K emotion-44"
     data-test-id="cf-ui-workbench"
   >
     <div
@@ -413,20 +354,18 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
       <div
         class="Workbench__Workbench__header-actions___mJoSR"
       >
-        <a
+        <button
           class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
           data-test-id="cf-ui-text-link"
-          href="https://www.contentful.com/developers/docs/extensibility/apps/"
-          rel="noopener noreferrer"
-          target="_blank"
+          type="button"
         >
           <span
             class="TabFocusTrap__TabFocusTrap___39Vty"
             tabindex="-1"
           >
-            View documentation
+            Give your feedback
           </span>
-        </a>
+        </button>
       </div>
     </div>
     <div
@@ -440,67 +379,7 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
           class="Workbench__Workbench__content-inner___36_Hx Workbench__Workbench__content-inner--text___7nfTX"
         >
           <div
-            class="Note__Note___2eSKN emotion-0 Note__Note--primary___-8-7D"
-            data-test-id="cf-ui-note"
-          >
-            <div
-              class="Note__Note__icon___20RqC"
-            >
-              <svg
-                class="Icon__Icon___38Epv Icon__Icon--small___1yGZK undefined"
-                data-test-id="cf-ui-icon"
-                height="18"
-                viewBox="0 0 24 24"
-                width="18"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M0 0h24v24H0z"
-                  fill="none"
-                />
-                <path
-                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
-                />
-              </svg>
-            </div>
-            <div>
-              <div>
-                Let us know if you want to
-                 
-                <a
-                  class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
-                  data-test-id="cf-ui-text-link"
-                  href="https://forms.gle/3U15mGcRMy4NkcCg6"
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
-                  <span
-                    class="TabFocusTrap__TabFocusTrap___39Vty"
-                    tabindex="-1"
-                  >
-                    build an app
-                  </span>
-                </a>
-                , or 
-                <button
-                  class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
-                  data-test-id="cf-ui-text-link"
-                  type="button"
-                >
-                  <span
-                    class="TabFocusTrap__TabFocusTrap___39Vty"
-                    tabindex="-1"
-                  >
-                    share your feedback
-                  </span>
-                </button>
-                 
-                about apps.
-              </div>
-            </div>
-          </div>
-          <div
-            class="Card__Card___xXJsT emotion-44 Card__Card--padding-large___3Fgal"
+            class="Card__Card___xXJsT emotion-43 Card__Card--padding-large___3Fgal"
             data-test-id="cf-ui-card"
           >
             <p
@@ -519,28 +398,28 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
               </h2>
               <div>
                 <div
-                  class="emotion-8"
+                  class="emotion-7"
                 >
                   <div
-                    class="emotion-6"
+                    class="emotion-5"
                     data-test-id="app-title"
                   >
                     <h3
-                      class="Heading__Heading___83D3K emotion-5"
+                      class="Heading__Heading___83D3K emotion-4"
                       data-test-id="cf-ui-heading"
                     >
                       <div
-                        class="emotion-4"
+                        class="emotion-3"
                         data-test-id="app-details"
                       >
                         <img
-                          class="emotion-2"
+                          class="emotion-1"
                           src="//images.ctfassets.net/lpjm8d10rkpy/2dYQ3x6VMNZJgDXYmMzLBx/b338ad4b50cd0ff31e7157671b801b4d/logomark.svg"
                         />
                         <div>
                           Netlify
                           <div
-                            class="emotion-3"
+                            class="emotion-2"
                           >
                             Easily build and preview sites with the Netlify app 
                           </div>
@@ -549,7 +428,7 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
                     </h3>
                   </div>
                   <div
-                    class="emotion-7"
+                    class="emotion-6"
                   >
                     <button
                       class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
@@ -566,28 +445,28 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
                   </div>
                 </div>
                 <div
-                  class="emotion-8"
+                  class="emotion-7"
                 >
                   <div
-                    class="emotion-6"
+                    class="emotion-5"
                     data-test-id="app-title"
                   >
                     <h3
-                      class="Heading__Heading___83D3K emotion-5"
+                      class="Heading__Heading___83D3K emotion-4"
                       data-test-id="cf-ui-heading"
                     >
                       <div
-                        class="emotion-4"
+                        class="emotion-3"
                         data-test-id="app-details"
                       >
                         <img
-                          class="emotion-2"
+                          class="emotion-1"
                           src="//images.ctfassets.net/lpjm8d10rkpy/4X7O4Q0pIgQZNcONoQrQlp/9262ad9a935fa92e9cacd9207ae0a401/optimizely-logo.svg"
                         />
                         <div>
                           Optimizely
                           <div
-                            class="emotion-3"
+                            class="emotion-2"
                           >
                             Enable experimentation at scale with the Optimizely app
                           </div>
@@ -596,7 +475,7 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
                     </h3>
                   </div>
                   <div
-                    class="emotion-7"
+                    class="emotion-6"
                   >
                     <button
                       class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
@@ -613,28 +492,28 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
                   </div>
                 </div>
                 <div
-                  class="emotion-8"
+                  class="emotion-7"
                 >
                   <div
-                    class="emotion-6"
+                    class="emotion-5"
                     data-test-id="app-title"
                   >
                     <h3
-                      class="Heading__Heading___83D3K emotion-5"
+                      class="Heading__Heading___83D3K emotion-4"
                       data-test-id="cf-ui-heading"
                     >
                       <div
-                        class="emotion-4"
+                        class="emotion-3"
                         data-test-id="app-details"
                       >
                         <img
-                          class="emotion-2"
+                          class="emotion-1"
                           src="//images.ctfassets.net/lpjm8d10rkpy/1o6HKvOxxumeW64hv6ANMw/b1c5308bcd4e48cfaafc185c0b12aa36/Gatsby_Monogram.svg"
                         />
                         <div>
                           Gatsby Cloud
                           <div
-                            class="emotion-3"
+                            class="emotion-2"
                           >
                             Instantly see content changes on your website with the Gatsby app
                           </div>
@@ -643,7 +522,7 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
                     </h3>
                   </div>
                   <div
-                    class="emotion-7"
+                    class="emotion-6"
                   >
                     <button
                       class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
@@ -660,28 +539,28 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
                   </div>
                 </div>
                 <div
-                  class="emotion-8"
+                  class="emotion-7"
                 >
                   <div
-                    class="emotion-6"
+                    class="emotion-5"
                     data-test-id="app-title"
                   >
                     <h3
-                      class="Heading__Heading___83D3K emotion-5"
+                      class="Heading__Heading___83D3K emotion-4"
                       data-test-id="cf-ui-heading"
                     >
                       <div
-                        class="emotion-4"
+                        class="emotion-3"
                         data-test-id="app-details"
                       >
                         <img
-                          class="emotion-2"
+                          class="emotion-1"
                           src="//images.ctfassets.net/lpjm8d10rkpy/3ZH89y9VHHd53v4OQ3BG0V/cc62043a88cd5fb80719687f299e7351/cloudinary_icon_for_white_bg.svg"
                         />
                         <div>
                           Cloudinary
                           <div
-                            class="emotion-3"
+                            class="emotion-2"
                           >
                             Seamlessly deliver images and videos with the Cloudinary app
                           </div>
@@ -690,7 +569,7 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
                     </h3>
                   </div>
                   <div
-                    class="emotion-7"
+                    class="emotion-6"
                   >
                     <button
                       class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
@@ -707,28 +586,28 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
                   </div>
                 </div>
                 <div
-                  class="emotion-8"
+                  class="emotion-7"
                 >
                   <div
-                    class="emotion-6"
+                    class="emotion-5"
                     data-test-id="app-title"
                   >
                     <h3
-                      class="Heading__Heading___83D3K emotion-5"
+                      class="Heading__Heading___83D3K emotion-4"
                       data-test-id="cf-ui-heading"
                     >
                       <div
-                        class="emotion-4"
+                        class="emotion-3"
                         data-test-id="app-details"
                       >
                         <img
-                          class="emotion-2"
+                          class="emotion-1"
                           src="//images.ctfassets.net/lpjm8d10rkpy/3vNJZRjthatucy2mBJMy1u/0e5d501207427780021e7580cc384761/bynder.5e9e457b9d.svg"
                         />
                         <div>
                           Bynder
                           <div
-                            class="emotion-3"
+                            class="emotion-2"
                           >
                             Find and use brand, marketing and product assets from your Bynder library 
                           </div>
@@ -737,7 +616,7 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
                     </h3>
                   </div>
                   <div
-                    class="emotion-7"
+                    class="emotion-6"
                   >
                     <button
                       class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
@@ -754,28 +633,28 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
                   </div>
                 </div>
                 <div
-                  class="emotion-8"
+                  class="emotion-7"
                 >
                   <div
-                    class="emotion-6"
+                    class="emotion-5"
                     data-test-id="app-title"
                   >
                     <h3
-                      class="Heading__Heading___83D3K emotion-5"
+                      class="Heading__Heading___83D3K emotion-4"
                       data-test-id="cf-ui-heading"
                     >
                       <div
-                        class="emotion-4"
+                        class="emotion-3"
                         data-test-id="app-details"
                       >
                         <img
-                          class="emotion-2"
+                          class="emotion-1"
                           src="//images.ctfassets.net/lpjm8d10rkpy/7KdyOX9FlBz0SX5QyaLFaF/6ee4f786204d6f80b096fb73584dbcf7/logo.svg"
                         />
                         <div>
                           Dropbox
                           <div
-                            class="emotion-3"
+                            class="emotion-2"
                           >
                             Connect Contentful and Dropbox to easily share content 
                           </div>
@@ -784,7 +663,7 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
                     </h3>
                   </div>
                   <div
-                    class="emotion-7"
+                    class="emotion-6"
                   >
                     <button
                       class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"

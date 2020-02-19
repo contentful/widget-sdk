@@ -14,7 +14,8 @@ const styles = {
     padding: `${tokens.spacingM} 0`,
     borderBottom: `1px solid ${tokens.colorElementLight}`,
     '&:last-child': {
-      borderBottom: 'none'
+      borderBottom: 'none',
+      paddingBottom: '0'
     }
   }),
   title: css({
