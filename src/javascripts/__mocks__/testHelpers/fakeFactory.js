@@ -24,7 +24,7 @@ export function sys(options = {}) {
 
   return {
     type: '',
-    id: options.type ? uniqueId(options.type) : '',
+    id: uniqueId(options.type || ''),
     ...options
   };
 }
