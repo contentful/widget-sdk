@@ -134,8 +134,9 @@ export class SSOSetup extends React.Component {
     if (!isAllowed) {
       if (showUpsellState) {
         return <SSOUpsellState />;
+      } else {
+        return <ForbiddenPage />;
       }
-      return <ForbiddenPage />;
     }
 
     if (!identityProvider) {

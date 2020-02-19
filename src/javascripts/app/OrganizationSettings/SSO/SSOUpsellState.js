@@ -6,10 +6,12 @@ import {
   Typography,
   Paragraph,
   TextLink,
-  Button
+  Button,
+  Workbench,
+  Icon
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { supportUrl } from 'Config';
+import { salesUrl } from 'Config';
 import EmptyStateContainer, {
   defaultSVGStyle
 } from 'components/EmptyStateContainer/EmptyStateContainer';
@@ -21,34 +23,37 @@ const styles = {
 
 function SSOUpsellState() {
   return (
-    <div className={styles.pageWrapper}>
-      <EmptyStateContainer>
-        <div className={defaultSVGStyle}>
-          <SSOUpsellStateImage />
-        </div>
-        <Typography>
-          <Heading>Provision users in Contentful using SSO</Heading>
-          <Paragraph>
-            You can manage users and teams within your organization in Contentful directly from your
-            identity provider. We support SCIM 2.0 for user provisiong.{' '}
-            <TextLink href="https://www.contentful.com/faq/" target="_blank">
-              Read our FAQs for more information.
-            </TextLink>
-          </Paragraph>
-          <Paragraph>
-            The user provisiong feature is available on selected Enterprise-grade platform plans. To
-            add user provisioning to your plan, please contact us directly.
-          </Paragraph>
-        </Typography>
-        <Button
-          testId="get-in-touch-button"
-          className={styles.topMargin}
-          href={supportUrl}
-          target="_blank">
-          Get in touch with us
-        </Button>
-      </EmptyStateContainer>
-    </div>
+    <Workbench className="sso-setup">
+      <Workbench.Header icon={<Icon name="page-sso" scale="0.75" />} title="Single Sign-On (SSO)" />
+      <Workbench.Content>
+        <EmptyStateContainer>
+          <div className={defaultSVGStyle}>
+            <SSOUpsellStateImage />
+          </div>
+          <Typography>
+            <Heading> Authorize users in Contentful using your identity provider</Heading>
+            <Paragraph>
+              You can authorie users within your organization in Contentful directly from your
+              identity provider. We support SAML 2.0 for user authorization.{' '}
+              <TextLink href="https://www.contentful.com/faq/sso" target="_blank">
+                Read our FAQs for more information.
+              </TextLink>
+            </Paragraph>
+            <Paragraph>
+              The single sign-on feature is available only on Enterprise-grade platform plans. To
+              add single sign-on to your plan, please contact us directly.
+            </Paragraph>
+          </Typography>
+          <Button
+            testId="get-in-touch-button"
+            className={styles.topMargin}
+            href={salesUrl}
+            target="_blank">
+            Get in touch with us
+          </Button>
+        </EmptyStateContainer>
+      </Workbench.Content>
+    </Workbench>
   );
 }
 
