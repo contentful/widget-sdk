@@ -6,6 +6,7 @@ import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import { getEnabledFeatures } from 'utils/SubscriptionUtils';
 
 import * as fake from 'testHelpers/fakeFactory';
+import * as FORMA_CONSTANTS from 'testHelpers/Forma36Constants';
 
 const MOCK_USER_NAME = 'John Doe';
 const SPACE_NAME = 'SPACE_NAME';
@@ -182,7 +183,7 @@ describe('Space Plan Row', () => {
         'subscription-page.spaces-list.space-link'
       );
       const spaceLinkButton = spaceLinkButtonContainer.querySelector(
-        '[data-test-id="cf-ui-dropdown-list-item-button"]'
+        FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID
       );
 
       expect(spaceLinkButton.hasAttribute('disabled')).toBeTruthy();
@@ -196,7 +197,7 @@ describe('Space Plan Row', () => {
         'subscription-page.spaces-list.space-usage-link'
       );
       const spaceUsageLinkButton = spaceUsageLinkButtonContainer.querySelector(
-        '[data-test-id="cf-ui-dropdown-list-item-button"]'
+        FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID
       );
 
       expect(spaceUsageLinkButton.hasAttribute('disabled')).toBeTruthy();
@@ -218,7 +219,7 @@ describe('Space Plan Row', () => {
         'subscription-page.spaces-list.space-link'
       );
       fireEvent.click(
-        spaceLinkButtonContainer.querySelector('[data-test-id="cf-ui-dropdown-list-item-button"]')
+        spaceLinkButtonContainer.querySelector(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
       );
 
       expect(go).toHaveBeenCalledWith({
@@ -235,9 +236,7 @@ describe('Space Plan Row', () => {
         'subscription-page.spaces-list.space-usage-link'
       );
       fireEvent.click(
-        spaceUsageLinkButtonContainer.querySelector(
-          '[data-test-id="cf-ui-dropdown-list-item-button"]'
-        )
+        spaceUsageLinkButtonContainer.querySelector(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
       );
 
       expect(go).toHaveBeenCalledWith({

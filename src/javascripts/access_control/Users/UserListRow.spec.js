@@ -3,6 +3,7 @@ import { render, screen, wait, fireEvent } from '@testing-library/react';
 import UserListRow from './UserListRow';
 
 import * as fake from 'testHelpers/fakeFactory';
+import * as FORMA_CONSTANTS from 'testHelpers/Forma36Constants';
 
 const openRoleChangeDialog = jest.fn();
 const openRemovalConfirmationDialog = jest.fn();
@@ -107,9 +108,7 @@ describe('User List Row', () => {
 
         const editUserRoleButtonContainer = screen.getByTestId('user-change-role');
         fireEvent.click(
-          editUserRoleButtonContainer.querySelector(
-            '[data-test-id="cf-ui-dropdown-list-item-button"]'
-          )
+          editUserRoleButtonContainer.querySelector(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
         );
 
         expect(openRoleChangeDialog).toHaveBeenCalled();
@@ -120,9 +119,7 @@ describe('User List Row', () => {
 
         const editUserRoleButtonContainer = screen.getByTestId('user-remove-from-space');
         fireEvent.click(
-          editUserRoleButtonContainer.querySelector(
-            '[data-test-id="cf-ui-dropdown-list-item-button"]'
-          )
+          editUserRoleButtonContainer.querySelector(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
         );
 
         expect(openRemovalConfirmationDialog).toHaveBeenCalled();
