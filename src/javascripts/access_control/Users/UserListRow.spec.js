@@ -8,8 +8,8 @@ import * as FORMA_CONSTANTS from 'testHelpers/Forma36Constants';
 const openRoleChangeDialog = jest.fn();
 const openRemovalConfirmationDialog = jest.fn();
 
-const defaultUser = fake.User({ firstName: 'John', lastName: 'Doe', activated: true });
-const nonActivedUser = fake.User({ firstName: 'John', lastName: 'Doe', activated: false });
+const defaultUser = fake.User();
+const nonActivedUser = fake.User({ activated: false });
 const defaultSpace = fake.Link('Space');
 const defaultSpaceMembership = fake.SpaceMembership(defaultSpace, defaultUser);
 

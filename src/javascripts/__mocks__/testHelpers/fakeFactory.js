@@ -60,14 +60,15 @@ export function Organization(name = '') {
   };
 }
 
-export function User(options = { firstName: 'John', lastName: 'Doe', activated: true }) {
+export function User(options = {}) {
   return {
-    firstName: options.firstName,
-    lastName: options.lastName,
-    email: `${options.firstName}@enterprise.com`,
+    firstName: 'John',
+    lastName: 'Doe',
+    email: `${options.firstName || 'John'}@enterprise.com`,
     avatarUrl: 'avatar.jpg',
-    activated: options.activated,
-    sys: sys({ type: types.USER })
+    activated: true,
+    sys: sys({ type: types.USER }),
+    ...options
   };
 }
 
