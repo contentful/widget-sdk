@@ -65,11 +65,13 @@ const compareBuilds = async commits => {
   const response = await apolloFetch({
     query: `query Compare(
       $project: String!,
-      $commits: [String!]!
+      $commits: [String!]!,
+      $groups: [CompareGroup!]
     ) {
       compareBuilds(
         project: $project,
-        commits: $commits
+        commits: $commits,
+        groups: $groups
       ) {
         markdown
         markdownAll
@@ -78,7 +80,10 @@ const compareBuilds = async commits => {
     }`,
     variables: {
       project: 'user_interface',
-      commits: commits
+      commits: commits,
+      groups: [
+        { name: 'Initial rendering', artifactNames: ['vendors~app.js', 'app.js', 'styles.css'] }
+      ]
     }
   });
   if (response.data && response.data.compareBuilds) {
