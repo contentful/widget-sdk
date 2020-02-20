@@ -2,10 +2,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import StateLink from 'app/common/StateLink';
-import { Button, Tag } from '@contentful/forma-36-react-components';
+import { Button, Tag, Tooltip } from '@contentful/forma-36-react-components';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
 import * as SnapshotStatus from 'app/snapshots/helpers/SnapshotStatus';
 import EntrySidebarWidget from '../EntrySidebarWidget';
+import FetchAndFormatUserName from 'components/shared/UserNameFormatter/FetchAndFormatUserName';
 
 const styles = {
   table: {
@@ -16,6 +17,10 @@ const styles = {
   },
   cell: {
     padding: '0.375em 0'
+  },
+  dateCell: {
+    padding: '0.375em 0',
+    width: '100%'
   },
   radio: {
     verticalAlign: 'baseline'
@@ -79,15 +84,29 @@ export default class VersionsWidget extends Component {
             }}
           />
         </td>
-        <td
-          style={{
-            width: '100%',
-            ...styles.cell
-          }}>
-          <RelativeDateTime value={version.sys.createdAt} className="radio-editor__label" />
+        <td style={styles.dateCell}>
+          <Tooltip
+            content={
+              version.sys.createdBy && (
+                <React.Fragment>
+                  Edited by <FetchAndFormatUserName userId={version.sys.createdBy.sys.id} />
+                </React.Fragment>
+              )
+            }>
+            <RelativeDateTime value={version.sys.createdAt} className="radio-editor__label" />
+          </Tooltip>
         </td>
         <td style={styles.cell}>
-          <Tag {...SnapshotStatus.getProps(version)} />
+          <Tooltip
+            content={
+              version.sys.createdBy && (
+                <React.Fragment>
+                  Edited by <FetchAndFormatUserName userId={version.sys.createdBy.sys.id} />
+                </React.Fragment>
+              )
+            }>
+            <Tag {...SnapshotStatus.getProps(version)} />
+          </Tooltip>
         </td>
       </tr>
     ));
