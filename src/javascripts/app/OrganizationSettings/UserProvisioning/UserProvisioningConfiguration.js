@@ -18,6 +18,7 @@ import GenerateCMATokenDialog from 'app/common/ApiTokens/GenerateCMATokenDialog'
 import * as Auth from 'Authentication';
 import * as TokenResourceManager from 'app/settings/api/cma-tokens/TokenResourceManager';
 import UserProvisioningToken from './UserProvisioningToken';
+import StateLink from 'app/common/StateLink';
 
 const styles = {
   content: css({
@@ -108,7 +109,10 @@ export default function UserProvisioningConfiguration({ orgId }) {
           <Paragraph>
             As an alternative to OAuth applications, you can also leverage Personal Access Tokens to
             use the Content Management API. These tokens are always bound to your individual
-            account, with the same permissions you have on all of your spaces and organizations.
+            account, with the same permissions you have on all of your spaces and organizations.{' '}
+            <StateLink path="account.profile.cma_tokens" data-test-id="tokens-url" target="_blank">
+              See created tokens.
+            </StateLink>
           </Paragraph>
           {personalAccessToken ? (
             <UserProvisioningToken personalAccessToken={personalAccessToken} />
