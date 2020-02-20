@@ -35,9 +35,9 @@ const AppsFrameworkIntroBanner = () => (
     <div>
       <Heading className={styles.heading}>Introducing Contentful Apps</Heading>
       <Paragraph className={styles.description}>
-        Contentful apps extend and expand the capabilities of the Contentful web app and the editors
-        who use it. Apps empower you to integrate third-party services, build extraordinary
-        workflows and customize the functionality of the Contentful web app.
+        Contentful apps extend the capabilities of the Contentful web app and the editors who use
+        it. Apps empower you to integrate third-party services, build efficient workflows and
+        customize the functionality of the Contentful web app.
       </Paragraph>
       <Button
         className={styles.button}
@@ -50,7 +50,7 @@ const AppsFrameworkIntroBanner = () => (
         }
         target="_blank"
         rel="noopener noreferrer"
-        href={'https://www.contentful.com/developers/docs/extensibility/app-framework/'}>
+        href="https://www.contentful.com/developers/docs/extensibility/app-framework/">
         Learn how to build your own app
       </Button>
     </div>

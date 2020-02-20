@@ -8,10 +8,10 @@ const AppsCTA = () => {
   return (
     <CTACardComponent
       heading="Connect your space with an app"
-      description=" To add functionality and integrate with outside services, install a Contentful app."
+      description="To add functionality and integrate with outside services, install a Contentful app."
       ctaLabel="Learn about Contentful apps"
       onClick={() => trackClickCTA('apps_documentation_link')}
-      href={'https://www.contentful.com/developers/docs/extensibility/app-framework'}
+      href="https://www.contentful.com/developers/docs/extensibility/app-framework/"
       illustration={<ConnectWithAppIllustration className={styles.svgContainerExtension} />}
       isExternal
     />
