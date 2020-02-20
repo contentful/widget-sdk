@@ -1,40 +1,50 @@
 import React from 'react';
-import { render, screen, wait, fireEvent } from '@testing-library/react';
+import { render, screen, wait, fireEvent, getByTestId } from '@testing-library/react';
 import UserListRow from './UserListRow';
 
 import * as fake from 'testHelpers/fakeFactory';
 import * as FORMA_CONSTANTS from 'testHelpers/Forma36Constants';
 
-const openRoleChangeDialog = jest.fn();
-const openRemovalConfirmationDialog = jest.fn();
-
-const defaultUser = fake.User();
-const nonActivedUser = fake.User({ activated: false });
-const defaultSpace = fake.Link('Space');
-const defaultSpaceMembership = fake.SpaceMembership(defaultSpace, defaultUser);
-
-const FakeSpaceRoleOne = fake.SpaceRole('Role 1');
-const FakeSpaceRoleTwo = fake.SpaceRole('Role 2');
-const oneRoleSpaceMembership = fake.SpaceMembership(defaultSpace, defaultUser, false, [
-  FakeSpaceRoleOne
-]);
-const twoRoleSpaceMembership = fake.SpaceMembership(defaultSpace, defaultUser, false, [
-  FakeSpaceRoleOne,
-  FakeSpaceRoleTwo
-]);
-
-const defaultOptions = {
-  member: defaultSpaceMembership,
-  canModifyUsers: false,
-  openRoleChangeDialog: jest.fn(),
-  openRemovalConfirmationDialog: jest.fn(),
-  numberOfTeamMemberships: { 'random id': 4 },
-  adminCount: 1
-};
-
 describe('User List Row', () => {
+  const openRoleChangeDialog = jest.fn();
+  const openRemovalConfirmationDialog = jest.fn();
+
+  const defaultUser = fake.User();
+  const nonActivedUser = fake.User({ activated: false });
+  const defaultSpace = fake.Link('Space');
+  const defaultSpaceMembership = fake.SpaceMembership(defaultSpace, defaultUser);
+  const nonActivedUserSpaceMembership = fake.SpaceMembership(defaultSpace, nonActivedUser);
+
+  const fakeSpaceRoleOne = fake.SpaceRole('Role 1');
+  const fakeSpaceRoleTwo = fake.SpaceRole('Role 2');
+  const oneRoleSpaceMembership = fake.SpaceMembership(defaultSpace, defaultUser, false, [
+    fakeSpaceRoleOne
+  ]);
+  const twoRoleSpaceMembership = fake.SpaceMembership(defaultSpace, defaultUser, false, [
+    fakeSpaceRoleOne,
+    fakeSpaceRoleTwo
+  ]);
+
+  const build = custom => {
+    const props = Object.assign(
+      {
+        member: defaultSpaceMembership,
+        canModifyUsers: false,
+        openRoleChangeDialog: openRoleChangeDialog,
+        openRemovalConfirmationDialog: openRemovalConfirmationDialog,
+        numberOfTeamMemberships: { 'random id': 4 },
+        adminCount: 1
+      },
+      custom
+    );
+
+    render(<UserListRow {...props} />);
+
+    return wait();
+  };
+
   describe('renders correctly', () => {
-    it('The User Avatar renders', async () => {
+    it('should render the user avatar properly', async () => {
       await build();
 
       const imgTag = screen.getByTestId('user-list.avatar');
@@ -46,22 +56,20 @@ describe('User List Row', () => {
       expect(imgTag.height).toEqual(50);
     });
 
-    it('The display name is correct', async () => {
+    it('should display the name correctly', async () => {
       await build();
 
       expect(screen.getByTestId('user-list.name')).toHaveTextContent('John Doe');
     });
 
-    it('Displays correctly if the account is activated', async () => {
+    it('should correctly display if the account is activated', async () => {
       await build();
 
-      expect(() => {
-        screen.getByTestId('user-list.not-confirmed');
-      }).toThrow();
+      expect(screen.queryByTestId('user-list.not-confirmed')).not.toBeInTheDocument();
     });
 
-    it('Displays correctly if the account is not activated', async () => {
-      buildWithNonActivedUser();
+    it('should correctly display if the account is not activated', async () => {
+      build({ member: nonActivedUserSpaceMembership });
 
       expect(screen.getByTestId('user-list.not-confirmed')).toHaveTextContent(
         'This account is not confirmed'
@@ -69,57 +77,57 @@ describe('User List Row', () => {
     });
 
     describe('Displays users role(s) correctly', () => {
-      it('Displays Admin role correctly', async () => {
+      it('should display admin role correctly', async () => {
         await build();
 
         expect(screen.getByTestId('user-list.roles')).toHaveTextContent('Administrator');
       });
 
-      it('Displays User with one role correctly', async () => {
-        buildWithOneRoleUser();
+      it('should display a user with one role correctly', async () => {
+        build({ member: oneRoleSpaceMembership });
 
         expect(screen.getByTestId('user-list.roles')).toHaveTextContent('Role 1');
       });
 
-      it('Displays User with more than one role correctly', async () => {
-        buildWithTwoRoleUser();
+      it('should display a user with more than one role correctly', async () => {
+        build({ member: twoRoleSpaceMembership });
 
         expect(screen.getByTestId('user-list.roles')).toHaveTextContent('Role 1 and Role 2');
       });
     });
 
     describe('Edit user dropdown', () => {
-      it('is disabled if the user cannot modify users', async () => {
+      it('should be disabled if the user cannot modify users', async () => {
         await build();
 
         expect(screen.getByTestId('user-list.actions').hasAttribute('disabled')).toBeTruthy();
       });
 
-      it('drops down when clicked', async () => {
-        buildWithCanModifyUser();
+      it('should drop down when clicked', async () => {
+        build({ canModifyUsers: true });
         fireEvent.click(screen.getByTestId('user-list.actions'));
 
         expect(screen.getByTestId('user-change-role')).toBeDefined();
       });
 
-      it('it calls openRoleChangeDialog when that is clicked', async () => {
-        buildWithCanModifyUser();
+      it('should call openRoleChangeDialog when that is clicked', async () => {
+        build({ canModifyUsers: true });
         fireEvent.click(screen.getByTestId('user-list.actions'));
 
         const editUserRoleButtonContainer = screen.getByTestId('user-change-role');
         fireEvent.click(
-          editUserRoleButtonContainer.querySelector(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
+          getByTestId(editUserRoleButtonContainer, FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
         );
 
         expect(openRoleChangeDialog).toHaveBeenCalled();
       });
-      it('it calls openRemovalConfirmationDialog when that is clicked', async () => {
-        buildWithCanModifyUser();
+      it('should call openRemovalConfirmationDialog when that is clicked', async () => {
+        build({ canModifyUsers: true });
         fireEvent.click(screen.getByTestId('user-list.actions'));
 
         const editUserRoleButtonContainer = screen.getByTestId('user-remove-from-space');
         fireEvent.click(
-          editUserRoleButtonContainer.querySelector(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
+          getByTestId(editUserRoleButtonContainer, FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
         );
 
         expect(openRemovalConfirmationDialog).toHaveBeenCalled();
@@ -127,52 +135,3 @@ describe('User List Row', () => {
     });
   });
 });
-
-async function buildWithNonActivedUser() {
-  const updatedOptions = Object.assign({}, defaultOptions);
-
-  updatedOptions.member = fake.SpaceMembership(defaultSpace, nonActivedUser);
-
-  await build(updatedOptions);
-}
-
-async function buildWithOneRoleUser() {
-  const updatedOptions = Object.assign({}, defaultOptions);
-
-  updatedOptions.member = oneRoleSpaceMembership;
-
-  await build(updatedOptions);
-}
-
-async function buildWithTwoRoleUser() {
-  const updatedOptions = Object.assign({}, defaultOptions);
-
-  updatedOptions.member = twoRoleSpaceMembership;
-
-  await build(updatedOptions);
-}
-
-async function buildWithCanModifyUser() {
-  const updatedOptions = Object.assign({}, defaultOptions);
-
-  updatedOptions.canModifyUsers = true;
-
-  await build(updatedOptions);
-}
-
-function build(options = defaultOptions) {
-  render(
-    <UserListRow
-      member={options.member}
-      canModifyUsers={options.canModifyUsers}
-      openRoleChangeDialog={openRoleChangeDialog}
-      openRemovalConfirmationDialog={openRemovalConfirmationDialog}
-      numberOfTeamMemberships={options.numberOfTeamMemberships}
-      adminCount={options.adminCount}
-    />
-  );
-
-  // the component makes requests on mount.
-  // wait until there are changes as effect of the calls.
-  return wait();
-}

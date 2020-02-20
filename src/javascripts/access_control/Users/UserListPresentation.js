@@ -129,7 +129,8 @@ const UserListPresentation = ({
                       openRemovalConfirmationDialog(member, adminCount)
                     }
                     numberOfTeamMemberships={numberOfTeamMemberships}
-                    canModifyUsers={canModifyUsers}></UserListRow>
+                    canModifyUsers={canModifyUsers}
+                  />
                 ))}
               </List>
             </div>

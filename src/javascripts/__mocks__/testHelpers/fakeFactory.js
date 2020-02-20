@@ -64,7 +64,7 @@ export function User(options = {}) {
   return {
     firstName: 'John',
     lastName: 'Doe',
-    email: `${options.firstName || 'John'}@enterprise.com`,
+    email: `${options.firstName || 'John'}@example.com`,
     avatarUrl: 'avatar.jpg',
     activated: true,
     sys: sys({ type: types.USER }),
@@ -144,7 +144,6 @@ export function BasePlan() {
   return { sys: sys({ id: 'Plan' }) };
 }
 
-// Please add to this as needed
 export function SpaceRole(name = '') {
   return {
     name: name,

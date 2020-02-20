@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import { map, isEmpty } from 'lodash';
 import { joinAnd } from 'utils/StringUtils';
+import { getUserName } from 'app/OrganizationSettings/Users/UserUtils';
 
 import tokens from '@contentful/forma-36-tokens';
 
@@ -50,11 +51,12 @@ const UserListRow = ({
   const {
     sys: {
       id,
-      user: { avatarUrl, firstName, lastName, email, activated }
+      user: { avatarUrl, activated }
     },
     roles
   } = member;
-  const displayName = firstName || lastName ? `${firstName} ${lastName}` : email;
+
+  const displayName = getUserName(member.sys.user);
   const displayRoles = isEmpty(roles) ? 'Administrator' : joinAnd(map(roles, 'name'));
   const toolTipContent =
     numberOfTeamMemberships[id] > 0
@@ -103,8 +105,6 @@ const UserListRow = ({
   );
 };
 
-export default UserListRow;
-
 UserListRow.propTypes = {
   member: SpaceMemberPropType.isRequired,
   canModifyUsers: PropTypes.bool.isRequired,
@@ -112,3 +112,5 @@ UserListRow.propTypes = {
   numberOfTeamMemberships: PropTypes.objectOf(PropTypes.number).isRequired,
   openRemovalConfirmationDialog: PropTypes.func.isRequired
 };
+
+export default UserListRow;
