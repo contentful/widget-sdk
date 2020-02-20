@@ -221,11 +221,11 @@ Object {
   margin-right: 0.25rem;
 }
 
-.emotion-43 {
+.emotion-40 {
   padding: 1.5rem 0;
 }
 
-.emotion-44 {
+.emotion-41 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -460,7 +460,7 @@ Object {
                 </p>
               </div>
               <div
-                class="emotion-43"
+                class="emotion-40"
               >
                 <div>
                   <div
@@ -1147,59 +1147,10 @@ Object {
                       </button>
                     </div>
                   </div>
-                  <div
-                    class="emotion-11"
-                  >
-                    <div
-                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
-                      data-test-id="app-location-page"
-                    >
-                      <button
-                        aria-pressed="false"
-                        class="ToggleButton__Toggle__button___g0Ntb a11y__focus-outline--default___2hwb1"
-                        data-test-id="button"
-                        type="button"
-                      >
-                        <span
-                          class="TabFocusTrap__TabFocusTrap___39Vty ToggleButton__Toggle__button__inner-wrapper___1MGKY"
-                          tabindex="-1"
-                        >
-                          <span
-                            class="ToggleButton__Toggle__content-wrapper___1VoAt"
-                          >
-                            <div
-                              class="emotion-9"
-                            >
-                              <div>
-                                <input
-                                  name="location-check-Page"
-                                  type="checkbox"
-                                />
-                              </div>
-                              <div>
-                                <label
-                                  for="location-checkPage"
-                                >
-                                  Page
-                                </label>
-                              </div>
-                              <div>
-                                <span>
-                                  (
-                                  page
-                                  )
-                                </span>
-                              </div>
-                            </div>
-                          </span>
-                        </span>
-                      </button>
-                    </div>
-                  </div>
                 </div>
               </div>
               <div
-                class="emotion-44"
+                class="emotion-41"
               >
                 <button
                   class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO"
@@ -1420,11 +1371,11 @@ Object {
   margin-right: 0.25rem;
 }
 
-.emotion-43 {
+.emotion-40 {
   padding: 1.5rem 0;
 }
 
-.emotion-44 {
+.emotion-41 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -1658,7 +1609,7 @@ Object {
               </p>
             </div>
             <div
-              class="emotion-43"
+              class="emotion-40"
             >
               <div>
                 <div
@@ -2345,59 +2296,10 @@ Object {
                     </button>
                   </div>
                 </div>
-                <div
-                  class="emotion-11"
-                >
-                  <div
-                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
-                    data-test-id="app-location-page"
-                  >
-                    <button
-                      aria-pressed="false"
-                      class="ToggleButton__Toggle__button___g0Ntb a11y__focus-outline--default___2hwb1"
-                      data-test-id="button"
-                      type="button"
-                    >
-                      <span
-                        class="TabFocusTrap__TabFocusTrap___39Vty ToggleButton__Toggle__button__inner-wrapper___1MGKY"
-                        tabindex="-1"
-                      >
-                        <span
-                          class="ToggleButton__Toggle__content-wrapper___1VoAt"
-                        >
-                          <div
-                            class="emotion-9"
-                          >
-                            <div>
-                              <input
-                                name="location-check-Page"
-                                type="checkbox"
-                              />
-                            </div>
-                            <div>
-                              <label
-                                for="location-checkPage"
-                              >
-                                Page
-                              </label>
-                            </div>
-                            <div>
-                              <span>
-                                (
-                                page
-                                )
-                              </span>
-                            </div>
-                          </div>
-                        </span>
-                      </span>
-                    </button>
-                  </div>
-                </div>
               </div>
             </div>
             <div
-              class="emotion-44"
+              class="emotion-41"
             >
               <button
                 class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO"
@@ -2560,7 +2462,7 @@ Object {
   margin-top: 0.75rem;
 }
 
-.emotion-43 {
+.emotion-40 {
   margin-top: 1.5rem;
 }
 
@@ -2656,11 +2558,11 @@ Object {
   margin-right: 0.25rem;
 }
 
-.emotion-44 {
+.emotion-41 {
   padding: 1.5rem 0;
 }
 
-.emotion-45 {
+.emotion-42 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -2895,7 +2797,7 @@ Object {
                 </p>
               </div>
               <div
-                class="emotion-44"
+                class="emotion-41"
               >
                 <div>
                   <div
@@ -3583,56 +3485,7 @@ Object {
                     </div>
                   </div>
                   <div
-                    class="emotion-11"
-                  >
-                    <div
-                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
-                      data-test-id="app-location-page"
-                    >
-                      <button
-                        aria-pressed="false"
-                        class="ToggleButton__Toggle__button___g0Ntb a11y__focus-outline--default___2hwb1"
-                        data-test-id="button"
-                        type="button"
-                      >
-                        <span
-                          class="TabFocusTrap__TabFocusTrap___39Vty ToggleButton__Toggle__button__inner-wrapper___1MGKY"
-                          tabindex="-1"
-                        >
-                          <span
-                            class="ToggleButton__Toggle__content-wrapper___1VoAt"
-                          >
-                            <div
-                              class="emotion-9"
-                            >
-                              <div>
-                                <input
-                                  name="location-check-Page"
-                                  type="checkbox"
-                                />
-                              </div>
-                              <div>
-                                <label
-                                  for="location-checkPage"
-                                >
-                                  Page
-                                </label>
-                              </div>
-                              <div>
-                                <span>
-                                  (
-                                  page
-                                  )
-                                </span>
-                              </div>
-                            </div>
-                          </span>
-                        </span>
-                      </button>
-                    </div>
-                  </div>
-                  <div
-                    class="emotion-43"
+                    class="emotion-40"
                   >
                     <div
                       class="Switch__Switch__wrapper___1kkJg"
@@ -3690,7 +3543,7 @@ Object {
                 </div>
               </div>
               <div
-                class="emotion-45"
+                class="emotion-42"
               >
                 <button
                   class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO"
@@ -3819,7 +3672,7 @@ Object {
   margin-top: 0.75rem;
 }
 
-.emotion-43 {
+.emotion-40 {
   margin-top: 1.5rem;
 }
 
@@ -3915,11 +3768,11 @@ Object {
   margin-right: 0.25rem;
 }
 
-.emotion-44 {
+.emotion-41 {
   padding: 1.5rem 0;
 }
 
-.emotion-45 {
+.emotion-42 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -4153,7 +4006,7 @@ Object {
               </p>
             </div>
             <div
-              class="emotion-44"
+              class="emotion-41"
             >
               <div>
                 <div
@@ -4841,56 +4694,7 @@ Object {
                   </div>
                 </div>
                 <div
-                  class="emotion-11"
-                >
-                  <div
-                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
-                    data-test-id="app-location-page"
-                  >
-                    <button
-                      aria-pressed="false"
-                      class="ToggleButton__Toggle__button___g0Ntb a11y__focus-outline--default___2hwb1"
-                      data-test-id="button"
-                      type="button"
-                    >
-                      <span
-                        class="TabFocusTrap__TabFocusTrap___39Vty ToggleButton__Toggle__button__inner-wrapper___1MGKY"
-                        tabindex="-1"
-                      >
-                        <span
-                          class="ToggleButton__Toggle__content-wrapper___1VoAt"
-                        >
-                          <div
-                            class="emotion-9"
-                          >
-                            <div>
-                              <input
-                                name="location-check-Page"
-                                type="checkbox"
-                              />
-                            </div>
-                            <div>
-                              <label
-                                for="location-checkPage"
-                              >
-                                Page
-                              </label>
-                            </div>
-                            <div>
-                              <span>
-                                (
-                                page
-                                )
-                              </span>
-                            </div>
-                          </div>
-                        </span>
-                      </span>
-                    </button>
-                  </div>
-                </div>
-                <div
-                  class="emotion-43"
+                  class="emotion-40"
                 >
                   <div
                     class="Switch__Switch__wrapper___1kkJg"
@@ -4948,7 +4752,7 @@ Object {
               </div>
             </div>
             <div
-              class="emotion-45"
+              class="emotion-42"
             >
               <button
                 class="Button__Button___1ZfFj a11y__focus-border--default___60AXp Button__Button--primary___JImeO"
