@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, wait, fireEvent, getByTestId } from '@testing-library/react';
+import { render, screen, wait, fireEvent, within } from '@testing-library/react';
 import UserListRow from './UserListRow';
 
 import * as fake from 'testHelpers/fakeFactory';
@@ -116,7 +116,7 @@ describe('User List Row', () => {
 
         const editUserRoleButtonContainer = screen.getByTestId('user-change-role');
         fireEvent.click(
-          getByTestId(editUserRoleButtonContainer, FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
+          within(editUserRoleButtonContainer).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
         );
 
         expect(openRoleChangeDialog).toHaveBeenCalled();
@@ -127,7 +127,7 @@ describe('User List Row', () => {
 
         const editUserRoleButtonContainer = screen.getByTestId('user-remove-from-space');
         fireEvent.click(
-          getByTestId(editUserRoleButtonContainer, FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
+          within(editUserRoleButtonContainer).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
         );
 
         expect(openRemovalConfirmationDialog).toHaveBeenCalled();

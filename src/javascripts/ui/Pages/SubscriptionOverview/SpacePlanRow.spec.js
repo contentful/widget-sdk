@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, wait, fireEvent, getByTestId } from '@testing-library/react';
+import { render, screen, wait, fireEvent, within } from '@testing-library/react';
 import SpacePlanRow from './SpacePlanRow';
 import { go } from 'states/Navigator';
 import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
@@ -182,8 +182,7 @@ describe('Space Plan Row', () => {
       const spaceLinkButtonContainer = screen.getByTestId(
         'subscription-page.spaces-list.space-link'
       );
-      const spaceLinkButton = getByTestId(
-        spaceLinkButtonContainer,
+      const spaceLinkButton = within(spaceLinkButtonContainer).getByTestId(
         FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID
       );
 
@@ -197,8 +196,7 @@ describe('Space Plan Row', () => {
       const spaceUsageLinkButtonContainer = screen.getByTestId(
         'subscription-page.spaces-list.space-usage-link'
       );
-      const spaceUsageLinkButton = getByTestId(
-        spaceUsageLinkButtonContainer,
+      const spaceUsageLinkButton = within(spaceUsageLinkButtonContainer).getByTestId(
         FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID
       );
 
@@ -221,7 +219,7 @@ describe('Space Plan Row', () => {
         'subscription-page.spaces-list.space-link'
       );
       fireEvent.click(
-        getByTestId(spaceLinkButtonContainer, FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
+        within(spaceLinkButtonContainer).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
       );
 
       expect(go).toHaveBeenCalledWith({
@@ -238,7 +236,7 @@ describe('Space Plan Row', () => {
         'subscription-page.spaces-list.space-usage-link'
       );
       fireEvent.click(
-        getByTestId(spaceUsageLinkButtonContainer, FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
+        within(spaceUsageLinkButtonContainer).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
       );
 
       expect(go).toHaveBeenCalledWith({
