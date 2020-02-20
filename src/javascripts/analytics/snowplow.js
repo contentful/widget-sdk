@@ -1,6 +1,6 @@
 import { once } from 'lodash';
 import { snowplow as snowplowConfig, domain } from 'Config';
-import { getSchemaForEvent, transformEvent } from 'analytics/transform';
+import { getSchemaForEvent } from 'analytics/transform';
 import * as LazyLoader from 'utils/LazyLoader';
 import window from 'utils/ngCompat/window';
 
@@ -76,13 +76,13 @@ export function identify(userId) {
  * @ngdoc method
  * @name analytics/snowplow#track
  * @param {string} eventName
- * @param {object} data
+ * @param {object} rawData
  *
  * @description
  * Tracks an event in Snowplow if it is registered in the snowplow events service
  */
-export function track(eventName, data) {
-  const eventData = buildUnstructEventData(eventName, data);
+export function track(eventName, rawData) {
+  const eventData = buildUnstructEventData(eventName, rawData);
 
   if (eventData) {
     snowplowSend(...eventData);
@@ -105,15 +105,13 @@ export function buildUnstructEventData(eventName, data) {
   const schema = getSchemaForEvent(eventName);
 
   if (schema) {
-    const transformedData = transformEvent(eventName, data);
-
     return [
       'trackUnstructEvent',
       {
         schema: schema.path,
-        data: transformedData.data
+        data: data.data
       },
-      transformedData.contexts
+      data.contexts
     ];
   }
 }

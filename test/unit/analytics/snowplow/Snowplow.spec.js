@@ -63,27 +63,29 @@ describe('Snowplow service', () => {
   });
 
   describe('#track', () => {
-    it('sends transformed data to snowplow queue', function() {
-      this.Events.transformEvent.returns({
-        data: { something: 'someValue' },
+    it('sends data transformed for Snowplow to queue', function() {
+      const trackingData = {
+        data: {
+          actionData: { action: 'update' },
+          response: { data: { sys: { id: 'entity-id-1' } } },
+          userId: 'user-1',
+          spaceId: 's1',
+          organizationId: 'org'
+        },
         contexts: ['ctx']
-      });
+      };
+
       this.Events.getSchemaForEvent.returns({
         name: 'some_entity_update',
         path: 'main/schema/path'
       });
       this.Snowplow.enable();
-      this.Snowplow.track('some_entity:update', {
-        actionData: { action: 'update' },
-        response: { data: { sys: { id: 'entity-id-1' } } },
-        userId: 'user-1',
-        spaceId: 's1',
-        organizationId: 'org'
-      });
+      this.Snowplow.track('some_entity:update', trackingData);
+
       expect(this.getLastEvent()[0]).toBe('trackUnstructEvent');
       expect(this.getLastEvent()[1].schema).toBe('main/schema/path');
-      expect(this.getLastEvent()[1].data).toEqual({ something: 'someValue' });
-      expect(this.getLastEvent()[2]).toEqual(['ctx']);
+      expect(this.getLastEvent()[1].data).toEqual(trackingData.data);
+      expect(this.getLastEvent()[2]).toEqual(trackingData.contexts);
     });
   });
 
@@ -94,17 +96,16 @@ describe('Snowplow service', () => {
         path: 'schema/xyz/path'
       });
 
-      this.Events.transformEvent.returns({
+      this.unstructData = this.Snowplow.buildUnstructEventData('a', {
         data: { key: 'val' },
         contexts: ['ctx']
       });
-
-      this.unstructData = this.Snowplow.buildUnstructEventData('a', {});
     });
 
     it('should return an array', function() {
       expect(Array.isArray(this.unstructData)).toBe(true);
     });
+
     describe('has following data', () => {
       it('should be an unstructured event', function() {
         expect(this.unstructData[0]).toBe('trackUnstructEvent');
@@ -117,14 +118,12 @@ describe('Snowplow service', () => {
         });
       });
 
-      it('can have a contexts array', function() {
+      it('can have a contexts array if given', function() {
         expect(this.unstructData[2]).toEqual(['ctx']);
 
-        this.Events.transformEvent.returns({
+        this.unstructData = this.Snowplow.buildUnstructEventData('a', {
           data: { key: 'val' }
         });
-
-        this.unstructData = this.Snowplow.buildUnstructEventData('a', {});
 
         expect(this.unstructData[2]).toEqual(undefined);
       });
