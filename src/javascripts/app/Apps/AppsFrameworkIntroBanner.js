@@ -50,7 +50,7 @@ const AppsFrameworkIntroBanner = () => (
         }
         target="_blank"
         rel="noopener noreferrer"
-        href={'https://www.contentful.com/developers/docs/extensibility/apps-framework'}>
+        href={'https://www.contentful.com/developers/docs/extensibility/app-framework'}>
         Learn how to build your own app
       </Button>
     </div>
