@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import AppsFrameworkIntroBanner from './AppsFrameworkIntroBanner';
 import { css } from 'emotion';
 import { get, partition } from 'lodash';
 
@@ -112,6 +113,7 @@ const AppsListShell = props => (
       actions={<FeedbackButton target="extensibility" about="Apps" label="Give your feedback" />}
     />
     <Workbench.Content type="text">
+      <AppsFrameworkIntroBanner />
       {props.appsFeatureDisabled && <PricingInfo />}
       <Card padding="large" className={styles.appListCard}>
         {props.appsFeatureDisabled && (
