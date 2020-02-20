@@ -7,10 +7,10 @@ import {
   Paragraph,
   TextLink,
   Button,
-  Workbench,
-  Icon
+  Workbench
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
+import Icon from 'ui/Components/Icon';
 import { salesUrl } from 'Config';
 import EmptyStateContainer, {
   defaultSVGStyle
@@ -45,11 +45,11 @@ function UserProvisioningUpsellState() {
             </Paragraph>
           </Typography>
           <Button
-            testId="get-in-touch-button"
+            testId="get-in-touch-btn"
             className={styles.topMargin}
             href={salesUrl}
             target="_blank">
-            Get in touch with us
+            Get in touch
           </Button>
         </EmptyStateContainer>
       </Workbench.Content>
