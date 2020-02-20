@@ -8,7 +8,7 @@ import * as Auth from 'Authentication';
 import * as TokenResourceManager from '../settings/api/cma-tokens/TokenResourceManager';
 import { useTokensState } from '../settings/api/cma-tokens/CMATokensViewReducer';
 
-import CMATokensPATSection from '../settings/api/cma-tokens/CMATokensPATSection';
+import PersonalAccessTokenSection from 'app/common/ApiTokens/PersonalAccessTokenSection';
 
 const UserCMATokens = ({ onReady }) => {
   const tokenResourceManager = TokenResourceManager.create(Auth);
@@ -21,10 +21,10 @@ const UserCMATokens = ({ onReady }) => {
       <Workbench.Header
         // As soon as it's ready we will add it here
         // icon={<Icon name="page-user-tokens" />}
-        title={'Personal Access Tokens'}
+        title={'Personal access tokens'}
       />
       <Workbench.Content type="default">
-        <CMATokensPATSection state={state} actions={actions} />
+        <PersonalAccessTokenSection state={state} actions={actions} />
       </Workbench.Content>
     </Workbench>
   );

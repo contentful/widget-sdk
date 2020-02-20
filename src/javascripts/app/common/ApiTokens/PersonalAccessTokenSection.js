@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Paragraph, Typography, Subheading } from '@contentful/forma-36-react-components';
+import { Button, Paragraph, Typography } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import TokenList from 'app/common/ApiTokens/TokenList';
@@ -11,14 +11,13 @@ const styles = {
   })
 };
 
-const CMATokensPATSection = ({ state, actions }) => {
+const PersonalAccessTokenSection = ({ state, actions }) => {
   const { loadingTokens, loadingTokensError, tokens, currentPage, totalPages } = state;
   const { Revoke, SelectPage } = actions;
 
   return (
     <div className={styles.pageSection}>
       <Typography>
-        <Subheading element="h2">Personal Access Tokens</Subheading>
         <Paragraph>
           As an alternative to OAuth applications, you can also leverage Personal Access Tokens to
           use the Content Management API. These tokens are always bound to your individual account,
@@ -43,9 +42,9 @@ const CMATokensPATSection = ({ state, actions }) => {
   );
 };
 
-CMATokensPATSection.propTypes = {
+PersonalAccessTokenSection.propTypes = {
   state: PropTypes.object,
   actions: PropTypes.object
 };
 
-export default CMATokensPATSection;
+export default PersonalAccessTokenSection;
