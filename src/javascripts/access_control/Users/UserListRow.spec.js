@@ -69,7 +69,7 @@ describe('User List Row', () => {
     });
 
     it('should correctly display if the account is not activated', async () => {
-      build({ member: nonActivedUserSpaceMembership });
+      await build({ member: nonActivedUserSpaceMembership });
 
       expect(screen.getByTestId('user-list.not-confirmed')).toHaveTextContent(
         'This account is not confirmed'
@@ -84,13 +84,13 @@ describe('User List Row', () => {
       });
 
       it('should display a user with one role correctly', async () => {
-        build({ member: oneRoleSpaceMembership });
+        await build({ member: oneRoleSpaceMembership });
 
         expect(screen.getByTestId('user-list.roles')).toHaveTextContent('Role 1');
       });
 
       it('should display a user with more than one role correctly', async () => {
-        build({ member: twoRoleSpaceMembership });
+        await build({ member: twoRoleSpaceMembership });
 
         expect(screen.getByTestId('user-list.roles')).toHaveTextContent('Role 1 and Role 2');
       });
@@ -104,14 +104,14 @@ describe('User List Row', () => {
       });
 
       it('should drop down when clicked', async () => {
-        build({ canModifyUsers: true });
+        await build({ canModifyUsers: true });
         fireEvent.click(screen.getByTestId('user-list.actions'));
 
         expect(screen.getByTestId('user-change-role')).toBeDefined();
       });
 
       it('should call openRoleChangeDialog when that is clicked', async () => {
-        build({ canModifyUsers: true });
+        await build({ canModifyUsers: true });
         fireEvent.click(screen.getByTestId('user-list.actions'));
 
         const editUserRoleButtonContainer = screen.getByTestId('user-change-role');
@@ -122,7 +122,7 @@ describe('User List Row', () => {
         expect(openRoleChangeDialog).toHaveBeenCalled();
       });
       it('should call openRemovalConfirmationDialog when that is clicked', async () => {
-        build({ canModifyUsers: true });
+        await build({ canModifyUsers: true });
         fireEvent.click(screen.getByTestId('user-list.actions'));
 
         const editUserRoleButtonContainer = screen.getByTestId('user-remove-from-space');
