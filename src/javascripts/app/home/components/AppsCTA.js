@@ -7,7 +7,7 @@ import { trackClickCTA } from '../tracking';
 const AppsCTA = () => {
   return (
     <CTACardComponent
-      heading="Connect your space with an app"
+      heading="Integrate third-party services in your space"
       description="To add functionality and integrate with outside services, install a Contentful app."
       ctaLabel="Learn about Contentful apps"
       onClick={() => trackClickCTA('apps_documentation_link')}
