@@ -1,11 +1,11 @@
-import * as UsageServiceGA from '../UsageServiceGA';
+import * as UsageService from '../UsageService';
 
 describe('Usage API transformations', () => {
   it('Empty usagePerDay should map to an empty usage array', () => {
     const api = {
       usagePerDay: {}
     };
-    const res = UsageServiceGA.extractValues(api);
+    const res = UsageService.extractValues(api);
     expect(res.usage).toEqual([]);
   });
 
@@ -15,7 +15,7 @@ describe('Usage API transformations', () => {
         foo: 444
       }
     };
-    const res = UsageServiceGA.extractValues(api);
+    const res = UsageService.extractValues(api);
     expect(res.usage[0]).toEqual(444);
   });
 
@@ -31,7 +31,7 @@ describe('Usage API transformations', () => {
       { type: 'gql', api }
     ];
 
-    const res = UsageServiceGA.transformApi(apis);
+    const res = UsageService.transformApi(apis);
 
     expect(res).toEqual({
       cma: { items: [] },
@@ -72,7 +72,7 @@ describe('Usage API transformations', () => {
       { type: 'gql', api }
     ];
 
-    const res = UsageServiceGA.transformApi(apis);
+    const res = UsageService.transformApi(apis);
 
     expect(res).toEqual({
       cma: newAPIShape,
@@ -92,7 +92,7 @@ describe('Usage API transformations', () => {
       ]
     };
 
-    const res = UsageServiceGA.transformOrg(org);
+    const res = UsageService.transformOrg(org);
     expect(res).toEqual([3, 4, 4]);
   });
 });
