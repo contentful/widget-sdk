@@ -13,8 +13,10 @@
       <cf-snapshot-presenter-markdown></cf-snapshot-presenter-markdown>
     </div>
     <div class="x--directed" ng-switch-when="RichText">
-      <react-component name="app/widgets/rich_text/ReadOnlyRichTextEditor" props="{value, entry:
-      entity}"" />
+      <react-component
+        name="app/widgets/rich_text/ReadOnlyRichTextEditor"
+        props="{value, locale: locale.code}"
+      />
     </div>
     <div ng-switch-when="Boolean">
       <span ng-if="value === true">{{ widget.settings.trueLabel || 'Yes' }}</span
