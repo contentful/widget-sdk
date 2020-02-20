@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { mapValues, flow, keyBy, get, eq, isNumber, pick } from 'lodash/fp';
-import { getVariation } from 'LaunchDarkly';
 
 import { Spinner, Workbench } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification';
@@ -11,10 +10,8 @@ import OrganizationUsagePage from './committed/OrganizationUsagePage';
 import PeriodSelector from './committed/PeriodSelector';
 import NoSpacesPlaceholder from './NoSpacesPlaceholder';
 import * as Analytics from 'analytics/Analytics';
-import * as UsageService from './UsageService';
-import * as UsageServiceGA from './UsageServiceGA';
+import * as UsageService from '././UsageService';
 
-import { USAGE_API_GA } from 'featureFlags';
 import * as TokenStore from 'services/TokenStore';
 import * as EndpointFactory from 'data/EndpointFactory';
 import * as OrganizationMembershipRepository from 'access_control/OrganizationMembershipRepository';
@@ -136,12 +133,10 @@ export class OrganizationUsage extends React.Component {
   }
 
   async componentDidMount() {
-    const { onForbidden, orgId } = this.props;
+    const { onForbidden } = this.props;
 
     try {
       await this.checkPermissions();
-      const usageApiGa = await getVariation(USAGE_API_GA, { organizationId: orgId });
-      this.usageService = usageApiGa ? UsageServiceGA : UsageService;
       await this.fetchOrgData();
     } catch (ex) {
       onForbidden(ex);
@@ -176,7 +171,7 @@ export class OrganizationUsage extends React.Component {
         ] = await Promise.all([
           OrganizationMembershipRepository.getAllSpaces(this.endpoint),
           PricingDataProvider.getPlansWithSpaces(this.endpoint),
-          this.usageService.getPeriods(this.endpoint),
+          UsageService.getPeriods(this.endpoint),
           service.get('api_request')
         ]);
         const spaceNames = flow(
@@ -235,13 +230,13 @@ export class OrganizationUsage extends React.Component {
 
     try {
       const promises = [
-        this.usageService.getOrgUsage(this.endpoint, {
+        UsageService.getOrgUsage(this.endpoint, {
           startDate: newPeriod.startDate,
           endDate: newPeriod.endDate,
           periodId: newPeriod.sys.id
         }),
         ...['cma', 'cda', 'cpa', 'gql'].map(apiType =>
-          this.usageService.getApiUsage(this.endpoint, {
+          UsageService.getApiUsage(this.endpoint, {
             apiType,
             startDate: newPeriod.startDate,
             endDate: newPeriod.endDate,
@@ -264,7 +259,7 @@ export class OrganizationUsage extends React.Component {
       const [org, cma, cda, cpa, gql, assetBandwidthData] = await Promise.all(promises);
 
       this.setState(
-        this.usageService.mapResponseToState({
+        UsageService.mapResponseToState({
           org,
           cma,
           cda,
