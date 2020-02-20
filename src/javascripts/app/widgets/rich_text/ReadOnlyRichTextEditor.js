@@ -7,23 +7,26 @@ import RichTextEditor from './RichTextEditor';
 
 export default class ReadOnlyRichTextEditor extends React.Component {
   static propTypes = {
-    value: PropTypes.object
+    value: PropTypes.object.isRequired,
+    locale: PropTypes.string.isRequired
   };
 
   render() {
+    const { value, locale } = this.props;
     const widgetAPI = buildWidgetApi({
-      field: this.props.value,
+      field: {
+        locale
+      },
       currentUrl: window.location
     });
     return (
       <WidgetAPIContext.Provider value={{ widgetAPI }}>
         <RichTextEditor
-          {...this.props}
           isToolbarHidden
           actionsDisabled
           readOnly
           widgetAPI={widgetAPI}
-          value={this.props.value}
+          value={value}
           isDisabled={true}
         />
       </WidgetAPIContext.Provider>
