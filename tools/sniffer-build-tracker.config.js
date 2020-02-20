@@ -75,7 +75,6 @@ const compareBuilds = async commits => {
       ) {
         markdown
         markdownAll
-        hasImpact
       }
     }`,
     variables: {
@@ -120,16 +119,6 @@ module.exports = {
         str,
         `[See details](https://contentful-sniffer.netlify.com/build-tracker#revs=${meta.parentRevision}&revs=${meta.revision})`
       ].join('\n\n');
-    }
-
-    if (!result.hasImpact) {
-      console.log(
-        `This PR has no impact on bundle size. Not posting a comment to PR#${pr} and moving on.`
-      );
-      console.log();
-      // posting all results to CI logs
-      console.log(getMessage(result.markdownAll));
-      return true;
     }
 
     console.log('Build compare result ->', result);
