@@ -1,5 +1,5 @@
 import { get as getAtPath, snakeCase } from 'lodash';
-import { getSchema as fetchSchema } from './Schemas';
+import { getSchema } from './Schemas';
 
 import EntityAction from './transformers/EntityAction';
 import EntryActionV2 from './transformers/EntryActionV2';
@@ -39,7 +39,7 @@ import EnvironmentAliases from './transformers/EnvironmentAliases';
 
 /**
  * @ngdoc module
- * @name analytics/snowplow/Events
+ * @name analytics/transform
  * @description
  * Registers each analytics event which should be sent to Snowplow with a
  * corresponding schema and transformer name. Exports functions to obtain the
@@ -295,27 +295,27 @@ function registerEnvironmentAliasesEvent(event) {
 
 /**
  * @ngdoc method
- * @name analytics/snowplow/Events#transform
+ * @name analytics/transform#transformEvent
  * @param {string} eventName
  * @param {object} data
  * @returns {object} transformedData
  * @description
  * Returns data transformed for Snowplow
  */
-export function transform(event, data) {
+export function transformEvent(event, data) {
   const transformer = getAtPath(_events, [event, 'transformer']);
   return transformer(event, data);
 }
 
 /**
  * @ngdoc method
- * @name analytics/snowplow/Events#getSchema
+ * @name analytics/transform#getSchemaForEvent
  * @param {string} eventName
  * @returns {object} schema
  * @description
  * Returns schema for provided event
  */
-export function getSchema(eventName) {
-  const name = getAtPath(_events, [eventName, 'schema']);
-  return fetchSchema(name);
+export function getSchemaForEvent(eventName) {
+  const schemaName = getAtPath(_events, [eventName, 'schema']);
+  return getSchema(schemaName);
 }

@@ -4,17 +4,17 @@ import sinon from 'sinon';
 describe('Snowplow service', () => {
   beforeEach(async function() {
     this.LazyLoader = { get: sinon.stub() };
-    this.Events = { getSchema: sinon.stub(), transform: sinon.stub() };
+    this.Events = { getSchemaForEvent: sinon.stub(), transformEvent: sinon.stub() };
     this.window = {};
 
     this.system.set('utils/LazyLoader', this.LazyLoader);
-    this.system.set('analytics/snowplow/Events', this.Events);
+    this.system.set('analytics/transform', this.Events);
 
     this.system.set('utils/ngCompat/window', {
       default: this.window
     });
 
-    this.Snowplow = await this.system.import('analytics/snowplow/Snowplow');
+    this.Snowplow = await this.system.import('analytics/snowplow');
 
     this.getLastEvent = function() {
       return _.last(this.window.snowplow.q);
@@ -64,11 +64,11 @@ describe('Snowplow service', () => {
 
   describe('#track', () => {
     it('sends transformed data to snowplow queue', function() {
-      this.Events.transform.returns({
+      this.Events.transformEvent.returns({
         data: { something: 'someValue' },
         contexts: ['ctx']
       });
-      this.Events.getSchema.returns({
+      this.Events.getSchemaForEvent.returns({
         name: 'some_entity_update',
         path: 'main/schema/path'
       });
@@ -89,12 +89,12 @@ describe('Snowplow service', () => {
 
   describe('#buildUnstructEventData', () => {
     beforeEach(function() {
-      this.Events.getSchema.returns({
+      this.Events.getSchemaForEvent.returns({
         name: 'xyz',
         path: 'schema/xyz/path'
       });
 
-      this.Events.transform.returns({
+      this.Events.transformEvent.returns({
         data: { key: 'val' },
         contexts: ['ctx']
       });
@@ -120,7 +120,7 @@ describe('Snowplow service', () => {
       it('can have a contexts array', function() {
         expect(this.unstructData[2]).toEqual(['ctx']);
 
-        this.Events.transform.returns({
+        this.Events.transformEvent.returns({
           data: { key: 'val' }
         });
 

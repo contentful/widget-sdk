@@ -1,5 +1,5 @@
 import * as Config from 'Config';
-import * as Snowplow from 'analytics/snowplow/Snowplow';
+import * as Snowplow from 'analytics/snowplow';
 import stringifySafe from 'json-stringify-safe';
 import { prepareUserData } from 'analytics/UserData';
 import _ from 'lodash';

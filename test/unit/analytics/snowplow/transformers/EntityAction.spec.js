@@ -1,8 +1,6 @@
 describe('analytics/snowplow/transformers/EntityAction', () => {
   beforeEach(async function() {
-    this.transform = (await this.system.import(
-      'analytics/snowplow/transformers/EntityAction'
-    )).default;
+    this.transform = (await this.system.import('analytics/transformers/EntityAction')).default;
   });
 
   it('transforms `content_type_create`', function() {

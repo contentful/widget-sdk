@@ -1,5 +1,5 @@
 import { pick } from 'lodash';
-import { getSchema } from 'analytics/snowplow/Schemas';
+import { getSchema } from 'analytics/Schemas';
 import { addUserOrgSpace } from './Decorators';
 
 export default addUserOrgSpace((_, segmentData) => {

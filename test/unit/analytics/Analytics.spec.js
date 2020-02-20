@@ -11,7 +11,7 @@ describe('Analytics', () => {
     this.system.set('analytics/segment', {
       default: this.segment
     });
-    this.system.set('analytics/snowplow/Snowplow', this.Snowplow);
+    this.system.set('analytics/snowplow', this.Snowplow);
     this.system.set('analytics/analyticsConsole', makeMock(['setSessionData', 'add']));
 
     this.analytics = await this.system.import('analytics/Analytics');
