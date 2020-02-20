@@ -33,15 +33,15 @@ function SSOUpsellState() {
           <Typography>
             <Heading>Authorize users in Contentful using your identity provider</Heading>
             <Paragraph>
-              You can authorie users within your organization in Contentful directly from your
+              You can authorize users within your organization in Contentful directly from your
               identity provider. We support SAML 2.0 for user authorization.{' '}
               <TextLink href="https://www.contentful.com/faq/sso" target="_blank">
                 Read our FAQs for more information.
               </TextLink>
             </Paragraph>
             <Paragraph>
-              The single sign-on feature is available only on Enterprise-grade platform plans. To
-              add single sign-on to your plan, please contact us directly.
+              The single sign-on feature is available only on enterprise-grade platform plans. To
+              add single sign-on to your plan, contact us directly.
             </Paragraph>
           </Typography>
           <Button

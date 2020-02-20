@@ -34,14 +34,14 @@ function UserProvisioningUpsellState() {
             <Heading>Provision users in Contentful using your identity provider</Heading>
             <Paragraph>
               You can manage users and teams within your organization in Contentful directly from
-              your identity provider. We support SCIM 2.0 for user provisiong.{' '}
+              your identity provider. We support SCIM 2.0 for user provisioning.{' '}
               <TextLink href="https://www.contentful.com/faq/" target="_blank">
                 Read our FAQs for more information.
               </TextLink>
             </Paragraph>
             <Paragraph>
-              The user provisiong feature is available on selected Enterprise-grade platform plans.
-              To add user provisioning to your plan, please contact us directly.
+              The user provisioning feature is available on selected enterprise-grade platform
+              plans. To add user provisioning to your plan, contact us directly.
             </Paragraph>
           </Typography>
           <Button
