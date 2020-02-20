@@ -20,7 +20,7 @@ import {
 import { createJobRequest } from '../fixtures/requests/jobs';
 const pendingJobsQuery = {
   'environment.sys.id': 'master',
-  limit: '100',
+  limit: '40',
   order: 'scheduledFor.datetime',
   'sys.status': 'scheduled'
 };
@@ -31,13 +31,13 @@ const pendingJobsQueryWithoutLimit = {
 };
 const completedJobsQuery = {
   'environment.sys.id': 'master',
-  limit: '100',
+  limit: '40',
   order: '-scheduledFor.datetime',
   'sys.status': 'succeeded'
 };
 const failedJobsQuery = {
   'environment.sys.id': 'master',
-  limit: '100',
+  limit: '40',
   order: '-scheduledFor.datetime',
   'sys.status': 'failed'
 };

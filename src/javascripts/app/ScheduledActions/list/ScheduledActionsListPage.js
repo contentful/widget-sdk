@@ -88,7 +88,7 @@ const TabsData = {
     query: {
       'sys.status': 'scheduled',
       order: 'scheduledFor.datetime',
-      limit: 100
+      limit: 40
     }
   },
   [TabTypes.CompletedJobs]: {
@@ -101,7 +101,7 @@ const TabsData = {
     query: {
       'sys.status': 'succeeded',
       order: '-scheduledFor.datetime',
-      limit: 100
+      limit: 40
     }
   },
   [TabTypes.ErroredJobs]: {
@@ -114,7 +114,7 @@ const TabsData = {
     query: {
       'sys.status': 'failed',
       order: '-scheduledFor.datetime',
-      limit: 100
+      limit: 40
     }
   }
 };
