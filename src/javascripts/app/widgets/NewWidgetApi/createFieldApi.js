@@ -1,5 +1,6 @@
 import * as K from 'utils/kefir';
 import * as PathUtils from 'utils/Path';
+import localeStore from 'services/localeStore';
 import { get } from 'lodash';
 
 /**
@@ -62,7 +63,7 @@ export function createInternalFieldApi({ locale, field, $scope }) {
       if (args.length === 1) {
         cb = args[0];
       } else if (args.length === 2) {
-        trackingPath = ['fields', field.id, args[0]];
+        trackingPath = ['fields', field.id, localeStore.toInternalCode(args[0]) || args[0]];
         cb = args[1];
       }
 
