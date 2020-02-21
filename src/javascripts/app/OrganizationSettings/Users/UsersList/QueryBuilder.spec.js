@@ -3,19 +3,24 @@ import { formatQuery } from './QueryBuilder';
 describe('QueryBuilder', () => {
   const filterA = {
     key: 'sys.space.sys.id',
-    operator: null,
     value: 'pizzaspace'
   };
   const filterB = {
     key: 'roles.name',
-    operator: 'matches',
+    operator: jest.fn(() => 'matches'),
     value: 'editor'
   };
   const filterC = {
     key: 'sys.user.firstName',
-    operator: null,
     value: ''
   };
+
+  it('operator return value', () => {
+    formatQuery([filterB]);
+
+    expect(filterB.operator).toHaveBeenCalledWith(filterB.value);
+    expect(filterB.operator).toHaveBeenCalledTimes(1);
+  });
 
   it('does not break if no filters are given', () => {
     expect(formatQuery()).toEqual({});
@@ -26,7 +31,7 @@ describe('QueryBuilder', () => {
     expect(query).toEqual({ 'sys.space.sys.id': 'pizzaspace' });
   });
 
-  it('formats a with an operator', () => {
+  it('formats a filter with an operator', () => {
     const query = formatQuery([filterB]);
     expect(query).toEqual({ 'roles.name[matches]': 'editor' });
   });
@@ -40,7 +45,7 @@ describe('QueryBuilder', () => {
     const query = formatQuery([
       {
         key: 'sys.user.firstName',
-        operator: 'exists',
+        operator: jest.fn(() => 'exists'),
         value: false
       }
     ]);
