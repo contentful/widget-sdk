@@ -109,15 +109,18 @@ export default function register() {
     spaceContext => ({
       restrict: 'E',
 
-      template:
-        '<cf-entity-link ' +
-        [
-          'ng-repeat="model in models"',
-          'entity="model.entity"',
-          'entity-helpers="helper"',
-          'config="config"'
-        ].join(' ') +
-        ' />',
+      template: `<div ng-repeat="model in models" ng-style='model.entity.sys.type === "Asset" ? {"display": "inline-block", "margin": "0px 10px 10px 0px"} : {}'>
+          <react-component
+            ng-if="model.entity.sys.type === 'Entry'"
+            name="app/widgets/link/EntryLink"
+            props="{entry:model.entity, entityHelpers:helper, getContentType}"
+          />
+          <react-component
+            ng-if="model.entity.sys.type === 'Asset'"
+            name="app/widgets/link/AssetLink"
+            props="{asset:model.entity, entityHelpers:helper}"
+          />
+        </div>`,
 
       controller: [
         '$scope',
@@ -133,6 +136,11 @@ export default function register() {
 
           $scope.helper = EntityHelpers.newForLocale($scope.locale.code);
           $scope.config = { minimized: true };
+          const getContentType = _.memoize(
+            entity => spaceContext.publishedCTs.fetch(entity.sys.contentType.sys.id),
+            entity => entity.sys.id
+          );
+          $scope.getContentType = getContentType;
         }
       ]
     })

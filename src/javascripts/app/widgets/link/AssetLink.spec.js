@@ -50,4 +50,16 @@ describe('AssetLink', () => {
       { timeout: 500 }
     );
   });
+
+  it('Falls back to Untitled if entry title was not provided', async () => {
+    const propsOverrides = {
+      ...props,
+      entityHelpers: {
+        ...props.entityHelpers,
+        entityTitle: jest.fn().mockResolvedValue(undefined)
+      }
+    };
+    const { getByText } = render(<AssetLink {...propsOverrides} />);
+    await waitForElement(() => getByText('Untitled'));
+  });
 });

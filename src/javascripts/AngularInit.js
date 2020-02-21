@@ -36,7 +36,9 @@ export const angularInitRun = [
       import(/* webpackMode: "eager" */ 'app/ContentModel/Editor/contentTypeEditorController'),
       import(/* webpackMode: "eager" */ 'app/asset_editor/cfAssetEditorDirective'),
       import(/* webpackMode: "eager" */ 'app/entity_editor/bulk_editor/cfBulkEditorDirective'),
-      import(/* webpackMode: "eager" */ 'app/entity_editor/bulk_editor/cfBulkEntityEditorDirective'),
+      import(
+        /* webpackMode: "eager" */ 'app/entity_editor/bulk_editor/cfBulkEntityEditorDirective'
+      ),
       import(/* webpackMode: "eager" */ 'app/entity_editor/cfEntityFieldDirective'),
       import(/* webpackMode: "eager" */ 'app/entity_editor/cfWidgetRendererDirective'),
       import(/* webpackMode: "eager" */ 'app/entity_editor/fieldLocaleController'),
@@ -48,7 +50,6 @@ export const angularInitRun = [
       import(/* webpackMode: "eager" */ 'app/snapshots/cfSnapshotPresenter'),
       import(/* webpackMode: "eager" */ 'app/snapshots/cfSnapshotSelector'),
       import(/* webpackMode: "eager" */ 'app/snapshots/snapshotComparator'),
-      import(/* webpackMode: "eager" */ 'app/widgets/link/entityLinkDirectives'),
       import(/* webpackMode: "eager" */ 'app/widgets/slug/cfSlugEditorDirective'),
       import(/* webpackMode: "eager" */ 'components/client/activationEmailResendController'),
       import(/* webpackMode: "eager" */ 'components/client/dialogsInitController'),
@@ -56,16 +57,28 @@ export const angularInitRun = [
       import(/* webpackMode: "eager" */ 'components/field_dialog/cfValidationSettingsDirective'),
       import(/* webpackMode: "eager" */ 'components/field_dialog/validationAssetTypesController'),
       import(/* webpackMode: "eager" */ 'components/field_dialog/validationLinkTypeController'),
-      import(/* webpackMode: "eager" */ 'components/forms/datetime_editor/cfDatetimeEditorDirective'),
+      import(
+        /* webpackMode: "eager" */ 'components/forms/datetime_editor/cfDatetimeEditorDirective'
+      ),
       import(/* webpackMode: "eager" */ 'components/shared/cfSelectionDirective'),
-      import(/* webpackMode: "eager" */ 'components/shared/create_new_space/createNewSpaceDirective'),
+      import(
+        /* webpackMode: "eager" */ 'components/shared/create_new_space/createNewSpaceDirective'
+      ),
       import(/* webpackMode: "eager" */ 'components/shared/endlessContainerDirective'),
       import(/* webpackMode: "eager" */ 'components/shared/listViewsController'),
       import(/* webpackMode: "eager" */ 'components/shared/space-wizard/SpaceWizardDirective'),
-      import(/* webpackMode: "eager" */ 'components/shared/validation_error_display/cfErrorListDirective'),
-      import(/* webpackMode: "eager" */ 'components/shared/validation_error_display/cfErrorMessagesDirective'),
-      import(/* webpackMode: "eager" */ 'components/shared/validation_error_display/cfErrorPathDirective'),
-      import(/* webpackMode: "eager" */ 'components/shared/validation_error_display/errorPathController'),
+      import(
+        /* webpackMode: "eager" */ 'components/shared/validation_error_display/cfErrorListDirective'
+      ),
+      import(
+        /* webpackMode: "eager" */ 'components/shared/validation_error_display/cfErrorMessagesDirective'
+      ),
+      import(
+        /* webpackMode: "eager" */ 'components/shared/validation_error_display/cfErrorPathDirective'
+      ),
+      import(
+        /* webpackMode: "eager" */ 'components/shared/validation_error_display/errorPathController'
+      ),
       import(/* webpackMode: "eager" */ 'components/shared/viewStateController'),
       import(/* webpackMode: "eager" */ 'components/tabs/asset_list/assetListActionsController'),
       import(/* webpackMode: "eager" */ 'components/tabs/asset_list/assetListController'),

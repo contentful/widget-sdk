@@ -54,14 +54,12 @@
       ng-repeat="entity in items track by entity.sys.id"
       ng-class="{'x--selected': selectedIds[entity.sys.id],'entity-selector__last-item': $last &amp;&amp; paginator.atLast()}"
     >
-      <cf-entity-link
+      <react-component
+        name="app/widgets/link/EntryLink"
+        props="{entry: entity, entityHelpers: helpers, isSelected: !!selectedIds[entity.sys.id], getContentType}"
         ng-if="config.entityType === 'Entry'"
         ng-click="toggleSelection(entity, $event)"
-        entity="entity"
-        content-type="getContentType(entity)"
-        entity-helpers="helpers"
-        config="{showDetails: true}"
-      ></cf-entity-link>
+      ></react-component>
       <react-component
         ng-if="config.entityType === 'Asset'"
         name="app/widgets/link/AssetLink"
@@ -89,18 +87,18 @@
     <div
       class="entity-selector__item x--selected"
       ng-repeat="entity in selected track by entity.sys.id"
+      ng-style="config.entityType === 'Entry' ? {'width': '100%'} : {}"
     >
-      <cf-entity-link
+      <react-component
+        name="app/widgets/link/EntryLink"
+        props="{entry:entity, entityHelpers: helpers, getContentType, isSelected: true}"
         ng-if="config.entityType === 'Entry'"
         ng-click="toggleSelection(entity, $event)"
-        entity="entity"
-        content-type="getContentType(entity)"
-        entity-helpers="helpers"
-        config="{showDetails: true}"
-      ></cf-entity-link>
+      ></react-component>
       <react-component
         ng-if="config.entityType === 'Asset'"
         name="app/widgets/link/AssetLink"
+        ng-if="config.entityType === 'Asset'"
         ng-click="toggleSelection(entity, $event)"
         props="{asset: entity, entityHelpers: helpers}"
       ></react-component>

@@ -5,7 +5,7 @@ import { getState, stateName } from 'data/CMA/EntityState';
 
 // TODO: Pass onClick from entitySelectorController here as a prop
 
-const AssetLink = ({ asset, entityHelpers }) => {
+const AssetLink = ({ asset, entityHelpers, size }) => {
   const state = asset ? getState(asset.sys) : undefined;
   const entityState = state ? stateName(state) : undefined;
   const [{ title, file }, setEntityInfo] = useState({});
@@ -38,7 +38,7 @@ const AssetLink = ({ asset, entityHelpers }) => {
       entityStatus={entityState}
       isLoading={isLoading}
       readOnly={true}
-      size="small"
+      size={size}
     />
   ) : null;
 };
@@ -53,7 +53,12 @@ AssetLink.propTypes = {
   entityHelpers: PropTypes.shape({
     entityTitle: PropTypes.func.isRequired,
     assetFile: PropTypes.func.isRequired
-  }).isRequired
+  }).isRequired,
+  size: PropTypes.oneOf(['default', 'small'])
+};
+
+AssetLink.defaultProps = {
+  size: 'small'
 };
 
 export default AssetLink;
