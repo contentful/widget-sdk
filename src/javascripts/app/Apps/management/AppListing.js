@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import Icon from 'ui/Components/Icon';
-import ContextMenu from 'ui/Components/ContextMenu';
+import { CardActions, DropdownList, DropdownListItem } from '@contentful/forma-36-react-components';
 import AppsPrivateFrameworkIllustration from 'svg/apps-private-framework.svg';
 import tokens from '@contentful/forma-36-tokens';
 import * as ModalLauncher from 'app/common/ModalLauncher';
@@ -42,9 +42,7 @@ const styles = {
     marginLeft: tokens.spacing4Xl
   }),
   appActions: css({
-    'button:first-child': css({
-      marginRight: tokens.spacingS
-    })
+    verticalAlign: 'middle'
   }),
   copyButton: css({
     button: css({
@@ -222,12 +220,16 @@ export default function AppListing({ definitions, canManageApps }) {
                     <div className={styles.menuCell}>
                       <StateLink path="^.definitions" params={{ definitionId: def.sys.id }}>
                         {({ onClick }) => (
-                          <ContextMenu
-                            items={[
-                              { label: 'Edit', action: onClick },
-                              { label: 'Install to space', action: () => openInstallModal(def) }
-                            ]}
-                          />
+                          <CardActions iconButtonProps={{ buttonType: 'primary' }}>
+                            <DropdownList>
+                              <DropdownListItem onClick={onClick}>Edit</DropdownListItem>
+                              <DropdownListItem
+                                onClick={() => openInstallModal(def)}
+                                testId="user-remove-from-space">
+                                Install to space
+                              </DropdownListItem>
+                            </DropdownList>
+                          </CardActions>
                         )}
                       </StateLink>
                     </div>
