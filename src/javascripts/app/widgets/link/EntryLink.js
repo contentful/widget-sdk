@@ -39,6 +39,8 @@ const EntryLink = ({ entry, entityHelpers, getContentType, isSelected, size }) =
   return entry ? (
     <WrappedEntityCard
       entity={entry}
+      entityType={get(entry, 'sys.type', 'Entry')}
+      entityId={get(entry, 'sys.id')}
       entityDescription={description}
       entityTitle={getEntryTitle()}
       entityStatus={entityStatus}
