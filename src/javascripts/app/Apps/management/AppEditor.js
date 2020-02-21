@@ -9,7 +9,8 @@ import {
   FormLabel,
   Icon,
   Switch,
-  Note
+  Note,
+  TextLink
 } from '@contentful/forma-36-react-components';
 import * as WidgetLocations from 'widgets/WidgetLocations';
 import { toInternalFieldType, toApiFieldType } from 'widgets/FieldTypes';
@@ -213,7 +214,14 @@ export default function AppEditor({ definition, onChange }) {
         <div className={styles.locationP}>
           <FormLabel htmlFor="">Locations</FormLabel>
           <Paragraph className={styles.helpParagraph}>
-            Specify where the app can be rendered. Check out the documentation for more details.
+            Specify where the app can be rendered. Check out the{' '}
+            <TextLink
+              href="https://contentful.com/developers/docs/references/content-management-api/#/reference/app-definitions"
+              target="_blank"
+              rel="noopener noreferrer">
+              documentation
+            </TextLink>{' '}
+            for more details.
           </Paragraph>
         </div>
         {LOCATION_ORDER.map(([name, locationValue]) => {
