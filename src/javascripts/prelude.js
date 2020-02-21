@@ -268,9 +268,6 @@ angular
         /* webpackMode: "eager" */
         'components/shared/auto_create_new_space'
       );
-      const { default: initContextMenuHandler } = await import(
-        /* webpackMode: "eager" */ 'ui/ContextMenuHandler'
-      );
       const Telemetry = await import(/* webpackMode: "eager" */ 'i13n/Telemetry');
       const { loadAll: loadAllStates } = await import(/* webpackMode: "eager" */ 'states/states');
       const { go } = await import(/* webpackMode: "eager" */ 'states/Navigator');
@@ -297,7 +294,6 @@ angular
       initTokenStore();
       initLD();
       initAutoCreateNewSpace();
-      initContextMenuHandler();
       initExtentionActivationTracking();
       initRolesForWalkMe();
 
