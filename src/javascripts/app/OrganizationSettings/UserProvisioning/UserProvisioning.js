@@ -13,7 +13,7 @@ import UserProvisioningUpsellState from './UserProvisioningUpsellState';
 const FeatureFetcher = createFetcherComponent(async ({ orgId }) => {
   const featureEnabled = await getOrgFeature(orgId, 'scim');
   const accessToolsEnabled = await getVariation(ACCESS_TOOLS, { organizationId: orgId });
-  return { featureEnabled: featureEnabled, accessToolsEnabled: accessToolsEnabled };
+  return { featureEnabled, accessToolsEnabled };
 });
 
 export default function UserProvisioning({ orgId, onReady }) {

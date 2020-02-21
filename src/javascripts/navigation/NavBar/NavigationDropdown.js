@@ -17,8 +17,8 @@ import NavigationItemTag from './NavigationItemTag';
 import Icon from 'ui/Components/Icon';
 
 const styles = {
-  triangleArrow: css({
-    margin: '2px 0 0 12px'
+  dropdown: css({
+    paddingLeft: '0 !important'
   }),
   dropdownList: css({
     minWidth: 250
@@ -65,7 +65,7 @@ export default function NavigationDropdown(props) {
         isOpen={isOpen}
         onClose={onClose}
         isAutoalignmentEnabled={false}
-        className="app-top-bar__action"
+        className={cn('app-top-bar__action', styles.dropdown)}
         position="bottom-left"
         toggleElement={
           <a
