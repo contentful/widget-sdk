@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 const styles = {
   tag: css({
     position: 'absolute',
-    top: `-${tokens.spacingS}`,
+    top: tokens.spacingXs,
     right: `-${tokens.spacing2Xs}`,
     background: tokens.colorBlueDark,
     color: tokens.colorWhite,
