@@ -23,6 +23,7 @@ describe('EntryLink component', () => {
     getContentType: jest.fn().mockResolvedValue(contentType),
     entityHelpers: {
       entityTitle: jest.fn().mockResolvedValue(entryTitle),
+      entityFile: jest.fn().mockResolvedValue(undefined),
       entityDescription: jest.fn().mockResolvedValue('Some lorem ipsum stuff')
     }
   };
@@ -63,5 +64,29 @@ describe('EntryLink component', () => {
     const { getByTestId } = render(<EntryLink {...propsOverrides} />);
     await waitForElement(() => getByTestId('title'));
     expect(getByTestId('title').textContent).toBe('Untitled');
+  });
+
+  it('should set size to default if given a file', async () => {
+    const propsOverrides = {
+      ...props,
+      entityHelpers: {
+        ...props.entityHelpers,
+        entityFile: jest.fn().mockResolvedValue({
+          contentType: 'image/jpeg',
+          details: {
+            image: {
+              height: 400,
+              width: 400
+            }
+          },
+          fileName: 'dog-in-a-house-on-fire',
+          url: '//google.com/dog-in-a-house-on-fire.jpg'
+        })
+      }
+    };
+    render(<EntryLink {...propsOverrides} />);
+    await waitForElement(() =>
+      document.querySelector(`img[src*="//google.com/dog-in-a-house-on-fire.jpg"]`)
+    );
   });
 });
