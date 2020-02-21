@@ -3,22 +3,35 @@ import PropTypes from 'prop-types';
 import { cx, css } from 'emotion';
 // import tokens from '@contentful/forma-36-tokens';
 
+// account settings
 import settingsFilled from 'svg/icons/settings-filled.svg';
 import settingsMono from 'svg/icons/settings-mono.svg';
-import tokensFilled from 'svg/icons/tokens-filled.svg';
-import tokensMono from 'svg/icons/tokens-mono.svg';
+import spacesFilled from 'svg/icons/spaces-filled.svg';
+import spacesMono from 'svg/icons/spaces-mono.svg';
+import organizationsFilled from 'svg/icons/organizations-filled.svg';
+import organizationsMono from 'svg/icons/organizations-mono.svg';
+import tokenFilled from 'svg/icons/token-filled.svg';
+import tokenMono from 'svg/icons/token-mono.svg';
+import oauthFilled from 'svg/icons/oauth-filled.svg';
+import oauthMono from 'svg/icons/oauth-mono.svg';
+// organization settings
 
 const SVGs = {
   'settings-filled': settingsFilled,
   'settings-mono': settingsMono,
-  'tokens-filled': tokensFilled,
-  'tokens-mono': tokensMono
+  'spaces-mono': spacesMono,
+  'spaces-filled': spacesFilled,
+  'organizations-filled': organizationsFilled,
+  'organizations-mono': organizationsMono,
+  'token-filled': tokenFilled,
+  'token-mono': tokenMono,
+  'oauth-filled': oauthFilled,
+  'oauth-mono': oauthMono
 };
 
 const sizes = {
-  small: '18px',
   medium: '24px',
-  large: '36px'
+  large: '32px'
 };
 
 const styles = {
@@ -31,12 +44,6 @@ const styles = {
   },
   flexShrink: 0,
   sizes: {
-    small: css({
-      width: sizes.small,
-      height: sizes.small,
-      maxWidth: sizes.small,
-      maxHeight: sizes.small
-    }),
     medium: css({
       width: sizes.medium,
       height: sizes.medium,
@@ -67,7 +74,8 @@ const IconPoc = ({ className, size, name, filled, style, color }) => {
 
   return (
     <div
-      data-icon-name={name}
+      data-test-id="product-icon"
+      data-icon-name={!filled ? `nav-name` : null}
       className={cx('icon-component', className, styles.flexShrink, styles.pocIcon.svg, {
         [`${styles.sizes[size]}`]: size
       })}

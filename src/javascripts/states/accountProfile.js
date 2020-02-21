@@ -26,6 +26,7 @@ const spaceMemberships = reactStateWrapper({
 const organizationMemberships = userBase({
   name: 'organization_memberships',
   title: 'Organization memberships',
+  icon: 'organizations',
   url: '/organization_memberships{pathSuffix:PathSuffix}'
 });
 
@@ -40,13 +41,14 @@ const cmaTokens = reactStateWrapper({
 const accessGrants = userBase({
   name: 'access_grants',
   title: 'OAuth tokens',
-  icon: 'settings',
+  icon: 'token',
   url: '/access_grants{pathSuffix:PathSuffix}'
 });
 
 const applications = userBase({
   name: 'applications',
   title: 'OAuth applications',
+  icon: 'oauth',
   url: '/developers/applications{pathSuffix:PathSuffix}'
 });
 

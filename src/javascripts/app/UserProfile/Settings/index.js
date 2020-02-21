@@ -17,6 +17,7 @@ import ErrorState from 'app/common/ErrorState';
 import LoadingState from 'app/common/LoadingState';
 import { getOrganizations } from 'services/TokenStore';
 import { OrgMembershipsSection } from './OrgMembershipsSection';
+import IconPoc from 'ui/Components/IconPoc';
 
 const styles = {
   content: css({
@@ -56,7 +57,7 @@ export default function IndexPage({ title, onReady }) {
     <>
       <DocumentTitle title={title} />
       <Workbench>
-        <Workbench.Header title={title} />
+        <Workbench.Header title={title} icon={<IconPoc name="settings" size="large" filled />} />
         <Workbench.Content className={styles.content}>
           {isLoading && <LoadingState loadingText="Loading your account…" />}
           {!isLoading && error && <ErrorState />}

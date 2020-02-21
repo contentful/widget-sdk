@@ -6,7 +6,8 @@ export default function ProfileNavigationBar() {
   const accessTokensDropdownItems = [
     {
       title: 'Personal access tokens',
-      icon: 'nav-user-oauth',
+      iconPoc: 'token',
+      // icon: 'nav-user-oauth',
       sref: 'account.profile.cma_tokens',
       srefOptions: {
         inherit: false
@@ -15,7 +16,8 @@ export default function ProfileNavigationBar() {
     },
     {
       title: 'OAuth tokens',
-      icon: 'nav-user-oauth',
+      iconPoc: 'token',
+      // icon: 'nav-user-oauth',
       sref: 'account.profile.access_grants',
       srefOptions: {
         inherit: false
@@ -34,7 +36,8 @@ export default function ProfileNavigationBar() {
           listItems={[
             {
               title: 'User profile',
-              icon: 'nav-user-settings',
+              iconPoc: 'settings',
+              // icon: 'nav-user-settings',
               sref: 'account.profile.user',
               srefOptions: {
                 inherit: false
@@ -43,7 +46,8 @@ export default function ProfileNavigationBar() {
             },
             {
               title: 'Spaces',
-              icon: 'nav-spaces',
+              iconPoc: 'spaces',
+              // icon: 'nav-spaces',
               sref: 'account.profile.space_memberships',
               srefOptions: {
                 inherit: false
@@ -52,7 +56,8 @@ export default function ProfileNavigationBar() {
             },
             {
               title: 'Organizations',
-              icon: 'nav-user-organizations',
+              iconPoc: 'organizations',
+              // icon: 'nav-user-organizations',
               sref: 'account.profile.organization_memberships',
               srefOptions: {
                 inherit: false
@@ -61,7 +66,8 @@ export default function ProfileNavigationBar() {
             },
             {
               title: 'Tokens',
-              icon: 'nav-user-oauth',
+              iconPoc: 'token',
+              // icon: 'nav-user-oauth',
               srefOptions: {
                 inherit: false
               },
@@ -70,6 +76,7 @@ export default function ProfileNavigationBar() {
             },
             {
               title: 'OAuth applications',
+              iconPoc: 'oauth',
               icon: 'nav-user-applications',
               sref: 'account.profile.applications',
               srefOptions: {
