@@ -20,6 +20,9 @@ const styles = {
   dropdown: css({
     paddingLeft: '0 !important'
   }),
+  triangleArrow: css({
+    margin: '2px 0 0 12px'
+  }),
   dropdownList: css({
     minWidth: 250
   }),

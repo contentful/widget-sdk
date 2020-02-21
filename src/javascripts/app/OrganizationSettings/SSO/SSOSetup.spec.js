@@ -104,9 +104,6 @@ describe('SSOSetup', () => {
     expect(retrieveIdp.mock.calls).toHaveLength(0);
   });
 
-  /*
-    Should call `getOrgStatus`, should show ForbiddenPage, should not call `retrieveIdp`
-   */
   it('should show the SSO upsell state if the sso feature is not enabled and the access tools feature is enabled', async () => {
     const retrieveIdp = jest.fn();
 
