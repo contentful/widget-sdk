@@ -26,7 +26,7 @@ export default function UserProvisioningToken({ personalAccessToken }) {
         testId="scim-token"
         disabled
         withCopyButton
-        value={`Bearer ${personalAccessToken.token}`}
+        value={personalAccessToken.token}
       />
     </>
   );
