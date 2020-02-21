@@ -12,6 +12,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import Icon from 'ui/Components/Icon';
 import { css } from 'emotion';
+import { apiUrl } from 'Config';
 import tokens from '@contentful/forma-36-tokens';
 import ModalLauncher from 'app/common/ModalLauncher';
 import GenerateCMATokenDialog from 'app/common/ApiTokens/GenerateCMATokenDialog';
@@ -41,9 +42,8 @@ const styles = {
   })
 };
 
-const SCIM_BASE = 'https://api.contentful.com/scim/v2/organizations/';
-
 export default function UserProvisioningConfiguration({ orgId }) {
+  const SCIM_BASE = apiUrl(`scim/v2/organizations/${orgId}`);
   const [personalAccessToken, setPersonalAccessToken] = useState(null);
   const tokenResourceManager = TokenResourceManager.create(Auth);
 
@@ -75,8 +75,7 @@ export default function UserProvisioningConfiguration({ orgId }) {
           <div className={styles.intro}>
             <Heading>Set up user provisioning with SCIM 2.0</Heading>
             <Paragraph>
-              Set up user provisioning for your organization in Contentful in a few
-              steps.&nbsp;&nbsp;
+              Set up user provisioning for your organization in Contentful in a few steps.{' '}
               <TextLink href="https://www.contentful.com/faq/" target="_blank">
                 Check out the FAQs.
               </TextLink>
@@ -103,7 +102,7 @@ export default function UserProvisioningConfiguration({ orgId }) {
               disabled: true,
               width: 'large'
             }}
-            value={`${SCIM_BASE}${orgId}`}
+            value={SCIM_BASE}
           />
           <div className={styles.bold}>Personal Access Token</div>
           <Paragraph>

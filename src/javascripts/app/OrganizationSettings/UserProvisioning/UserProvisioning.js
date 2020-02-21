@@ -1,15 +1,19 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
+import { ACCESS_TOOLS } from 'featureFlags';
+import { getVariation } from 'LaunchDarkly';
 import OrgAdminOnly from 'app/common/OrgAdminOnly';
 import StateRedirect from 'app/common/StateRedirect';
 import ForbiddenState from 'app/common/ForbiddenState';
 import UserProvisioningConfiguration from './UserProvisioningConfiguration';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent';
+import UserProvisioningUpsellState from './UserProvisioningUpsellState';
 
 const FeatureFetcher = createFetcherComponent(async ({ orgId }) => {
   const featureEnabled = await getOrgFeature(orgId, 'scim');
-  return { featureEnabled: featureEnabled };
+  const accessToolsEnabled = await getVariation(ACCESS_TOOLS, { organizationId: orgId });
+  return { featureEnabled, accessToolsEnabled };
 });
 
 export default function UserProvisioning({ orgId, onReady }) {
@@ -26,6 +30,9 @@ export default function UserProvisioning({ orgId, onReady }) {
             return <StateRedirect path="home" />;
           }
           if (!data.featureEnabled) {
+            if (data.accessToolsEnabled) {
+              return <UserProvisioningUpsellState />;
+            }
             return <ForbiddenState />;
           }
 

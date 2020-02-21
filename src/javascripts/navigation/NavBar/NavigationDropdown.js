@@ -13,9 +13,13 @@ import {
 } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
 import * as Navigator from 'states/Navigator';
+import NavigationItemTag from './NavigationItemTag';
 import Icon from 'ui/Components/Icon';
 
 const styles = {
+  dropdown: css({
+    paddingLeft: '0 !important'
+  }),
   triangleArrow: css({
     margin: '2px 0 0 12px'
   }),
@@ -64,7 +68,7 @@ export default function NavigationDropdown(props) {
         isOpen={isOpen}
         onClose={onClose}
         isAutoalignmentEnabled={false}
-        className="app-top-bar__action"
+        className={cn('app-top-bar__action', styles.dropdown)}
         position="bottom-left"
         toggleElement={
           <a
@@ -83,6 +87,7 @@ export default function NavigationDropdown(props) {
             <span className="nav-bar__list-label">
               {item.icon && <Icon name={item.icon} />}
               {item.title}
+              {item.tagLabel && <NavigationItemTag label={item.tagLabel} />}
             </span>
             <span className={cn('triangle-down', styles.triangleArrow)} />
           </a>
@@ -132,6 +137,7 @@ NavigationDropdown.propTypes = {
   item: PropTypes.shape({
     title: PropTypes.string.isRequired,
     icon: PropTypes.string.isRequired,
+    tagLabel: PropTypes.string,
     rootSref: PropTypes.string,
     sref: PropTypes.string,
     srefParams: PropTypes.object,

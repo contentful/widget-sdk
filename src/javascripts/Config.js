@@ -104,6 +104,13 @@ export const otUrl = sample(settings.otUrl);
 export const supportUrl = websiteUrl('support');
 
 /**
+ * URL which allows the user to get in touch with sales team.
+ *
+ * In production this is `//www.contentful.com/contact/sales`.
+ */
+export const salesUrl = websiteUrl('contact/sales');
+
+/**
  * Environment - e.g. production, staging, development, unittest
  */
 export const env = settings.environment;

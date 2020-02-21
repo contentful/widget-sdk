@@ -16,7 +16,7 @@ describe('UserProvisioningConfiguration', () => {
   it('should render scim url in a disabled text input, with copy button', () => {
     const { getByTestId, getByLabelText } = renderComponent();
     expect(getByLabelText('SCIM URL')).toHaveValue(
-      'https://api.contentful.com/scim/v2/organizations/testOrgId'
+      '//api.test.com/scim/v2/organizations/testOrgId'
     );
     expect(getByLabelText('SCIM URL')).toHaveProperty('disabled');
     expect(getByTestId('cf-ui-copy-button')).toBeInTheDocument();
