@@ -42,9 +42,7 @@ const styles = {
     marginLeft: tokens.spacing4Xl
   }),
   appActions: css({
-    'button:first-child': css({
-      marginRight: tokens.spacingS
-    })
+    verticalAlign: 'middle'
   }),
   copyButton: css({
     button: css({
