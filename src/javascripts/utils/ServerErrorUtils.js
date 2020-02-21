@@ -10,3 +10,15 @@ export function isTaken(error) {
 export function isForbidden(error) {
   return error.statusCode === 403;
 }
+
+export function isEntityUnprocessable(error) {
+  return error.statusCode === 422;
+}
+
+// temporary helper function to get error message
+export function getErrorBaseMessage(data) {
+  // temporary solution to display backend error message
+  const errorDetails = data.details.errors.map(item => item.value.errors)[0].base;
+
+  return errorDetails;
+}
