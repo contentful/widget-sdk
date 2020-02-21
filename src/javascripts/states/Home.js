@@ -1,7 +1,6 @@
 import { find } from 'lodash';
 import makeState from 'states/Base';
 import { getStore } from 'browserStorage';
-import template from 'app/home/HomeTemplate';
 import { go } from 'states/Navigator';
 import { getSpaces, user$ } from 'services/TokenStore';
 import { getValue } from 'utils/kefir';
@@ -34,7 +33,6 @@ function getCurrentOrg(user) {
 export default makeState({
   name: 'home',
   url: '/',
-  template: template(),
   params: {
     orgId: null,
     orgOwnerOrAdmin: null
@@ -60,6 +58,8 @@ export default makeState({
       });
     }
   },
+  // todo: use component directly
+  template: `<react-component name="app/home/SpaceHomePage" props="{spaceTemplateCreated: spaceTemplateCreated, orgId: orgId, orgOwnerOrAdmin: orgOwnerOrAdmin}"></react-component>`,
   controller: [
     '$scope',
     '$stateParams',

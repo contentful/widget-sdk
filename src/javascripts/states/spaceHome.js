@@ -1,5 +1,4 @@
 import base from 'states/Base';
-import homeTemplateDef from 'app/home/HomeTemplate';
 import { spaceResolver } from 'states/Resolvers';
 
 export default base({
@@ -8,7 +7,8 @@ export default base({
   resolve: {
     space: spaceResolver
   },
-  template: homeTemplateDef(),
+  // todo: use component directly
+  template: `<react-component name="app/home/SpaceHomePage" props="{spaceTemplateCreated: spaceTemplateCreated, orgId: orgId, orgOwnerOrAdmin: orgOwnerOrAdmin}"></react-component>`,
   loadingText: 'Loading…',
   controller: [
     '$scope',
