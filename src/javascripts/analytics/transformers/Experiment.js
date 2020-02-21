@@ -1,6 +1,6 @@
 import { omitBy } from 'lodash';
 import { addUserOrgSpace } from './Decorators';
-import { getSchema } from 'analytics/snowplow/Schemas';
+import { getSchema } from 'analytics/Schemas';
 
 export default function(action) {
   return (_, data) => {

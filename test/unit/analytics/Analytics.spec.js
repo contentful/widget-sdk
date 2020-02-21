@@ -7,12 +7,16 @@ describe('Analytics', () => {
   beforeEach(async function() {
     this.segment = makeMock(['enable', 'disable', 'identify', 'track', 'page']);
     this.Snowplow = makeMock(['enable', 'disable', 'identify', 'track', 'buildUnstructEventData']);
+    this.transform = {
+      transformEvent: sinon.stub().callsFake((_, data) => data)
+    };
 
     this.system.set('analytics/segment', {
       default: this.segment
     });
-    this.system.set('analytics/snowplow/Snowplow', this.Snowplow);
+    this.system.set('analytics/snowplow', this.Snowplow);
     this.system.set('analytics/analyticsConsole', makeMock(['setSessionData', 'add']));
+    this.system.set('analytics/transform', this.transform);
 
     this.analytics = await this.system.import('analytics/Analytics');
 
@@ -130,6 +134,11 @@ describe('Analytics', () => {
       this.analytics.track('Event', { data: 'foobar' });
       sinon.assert.calledWith(this.segment.track, 'Event', { data: 'foobar' });
       sinon.assert.calledWith(this.Snowplow.track, 'Event', { data: 'foobar' });
+    });
+
+    it('should transform the event when tracking', function() {
+      this.analytics.track('EventName', { data: 'some data' });
+      sinon.assert.calledWith(this.transform.transformEvent, 'EventName', { data: 'some data' });
     });
   });
 

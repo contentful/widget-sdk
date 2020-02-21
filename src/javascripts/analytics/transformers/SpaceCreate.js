@@ -1,4 +1,4 @@
-import { getSchema } from 'analytics/snowplow/Schemas';
+import { getSchema } from 'analytics/Schemas';
 import { getSpaceWizardData } from './SpaceWizard';
 
 /**

@@ -1,8 +1,6 @@
 describe('App open transformer', () => {
   beforeEach(async function() {
-    this.transformer = (await this.system.import(
-      'analytics/snowplow/transformers/AppOpen'
-    )).default;
+    this.transformer = (await this.system.import('analytics/transformers/AppOpen')).default;
   });
 
   it('transforms data', function() {

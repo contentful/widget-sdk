@@ -1,5 +1,5 @@
 import { get, identity } from 'lodash';
-import { getSchema } from 'analytics/snowplow/Schemas';
+import { getSchema } from 'analytics/Schemas';
 import { NAMESPACE_EXTENSION } from './WidgetNamespaces';
 import * as WidgetLocations from './WidgetLocations';
 import { makeEventFromWidget } from './TrackExtensionRender';

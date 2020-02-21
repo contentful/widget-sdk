@@ -1,12 +1,12 @@
 import { once } from 'lodash';
 import { snowplow as snowplowConfig, domain } from 'Config';
-import { getSchema as getSchemaForEvent, transform } from 'analytics/snowplow/Events';
+import { getSchemaForEvent } from 'analytics/transform';
 import * as LazyLoader from 'utils/LazyLoader';
 import window from 'utils/ngCompat/window';
 
 /**
  * @ngdoc service
- * @name analytics/snowplow/Snowplow
+ * @name analytics/snowplow
  * @description
  * Snowplow service. Enables, disables and sends tracked events to Snowplow.
  * Cannot be re-enabled once the service is disabled.
@@ -44,7 +44,7 @@ function initSnowplow() {
 
 /**
  * @ngdoc method
- * @name analytics/snowplow/Snowplow#enable
+ * @name analytics/snowplow#enable
  * @description
  * Initialize tracker and load Snowplow script asynchonously
  */
@@ -52,7 +52,7 @@ export const enable = once(initSnowplow);
 
 /**
  * @ngdoc method
- * @name analytics/snowplow/Snowplow#disable
+ * @name analytics/snowplow#disable
  * @description
  * Prevent further calls to `track` from being added to the queue
  */
@@ -62,7 +62,7 @@ export function disable() {
 
 /**
  * @ngdoc method
- * @name analytics/snowplow/Snowplow#identify
+ * @name analytics/snowplow#identify
  * @param {string} userId
  *
  * @description
@@ -74,15 +74,15 @@ export function identify(userId) {
 
 /**
  * @ngdoc method
- * @name analytics/snowplow/Snowplow#track
+ * @name analytics/snowplow#track
  * @param {string} eventName
- * @param {object} data
+ * @param {object} rawData
  *
  * @description
  * Tracks an event in Snowplow if it is registered in the snowplow events service
  */
-export function track(eventName, data) {
-  const eventData = buildUnstructEventData(eventName, data);
+export function track(eventName, rawData) {
+  const eventData = buildUnstructEventData(eventName, rawData);
 
   if (eventData) {
     snowplowSend(...eventData);
@@ -91,7 +91,7 @@ export function track(eventName, data) {
 
 /**
  * @ngdoc method
- * @name analytics/snowplow/Snowplow#buildUnstructEventData
+ * @name analytics/snowplow#buildUnstructEventData
  * @param {string} eventName
  * @param {object} data
  * @returns {object[]|undefined}
@@ -105,15 +105,13 @@ export function buildUnstructEventData(eventName, data) {
   const schema = getSchemaForEvent(eventName);
 
   if (schema) {
-    const transformedData = transform(eventName, data);
-
     return [
       'trackUnstructEvent',
       {
         schema: schema.path,
-        data: transformedData.data
+        data: data.data
       },
-      transformedData.contexts
+      data.contexts
     ];
   }
 }
