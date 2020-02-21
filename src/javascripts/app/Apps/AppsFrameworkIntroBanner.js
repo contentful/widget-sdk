@@ -15,7 +15,7 @@ const styles = {
     marginBottom: tokens.spacingL
   }),
   button: css({
-    marginTop: tokens.spacingM
+    marginTop: tokens.spacingL
   }),
   illustrationContainer: css({
     alignSelf: 'flex-start'
@@ -26,14 +26,14 @@ const styles = {
   }),
   description: css({
     fontSize: tokens.fontSizeM,
-    marginBottom: tokens.spacingS
+    paddingRight: tokens.spacingL
   })
 };
 
 const AppsFrameworkIntroBanner = () => (
   <Card className={styles.flexContainer} padding="large">
     <div>
-      <Heading className={styles.heading}>Introducing Contentful Apps</Heading>
+      <Heading className={styles.heading}>Introducing Contentful apps</Heading>
       <Paragraph className={styles.description}>
         Contentful apps extend the capabilities of the Contentful web app and the editors who use
         it. Apps empower you to integrate third-party services, build efficient workflows and
