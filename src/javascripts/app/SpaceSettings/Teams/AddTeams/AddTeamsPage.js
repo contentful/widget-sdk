@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect } from 'react';
+import React, { useReducer, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Typography,
@@ -86,7 +86,7 @@ const styles = {
       marginBottom: tokens.spacingM,
 
       color: tokens.colorTextMid,
-      '&:hover': {
+      '&:hover, &.is-focused': {
         backgroundColor: tokens.colorElementLightest,
         '& .team-info__close-button': {
           opacity: 1
@@ -106,7 +106,10 @@ const styles = {
       position: 'absolute',
       right: `10px`,
       top: '10px',
-      opacity: 0
+      opacity: 0,
+      '&:focus': {
+        opacity: 1
+      }
     })
   },
 
@@ -389,8 +392,14 @@ AddTeamsPage.propTypes = {
 };
 
 function TeamInfo({ team, onCloseClick }) {
+  const [isCloseBtnFocused, setIsCloseBtnFocused] = useState(false);
+
   return (
-    <div className={styles.teamInfo.container} data-test-id="team-in-list">
+    <div
+      className={
+        isCloseBtnFocused ? `${styles.teamInfo.container} is-focused` : styles.teamInfo.container
+      }
+      data-test-id="team-in-list">
       <div className={styles.teamInfo.title}>
         <strong className={styles.teamInfo.name}>{_.truncate(team.name, { length: 25 })}</strong>{' '}
         {pluralize('member', team.memberCount, true)}
@@ -400,11 +409,13 @@ function TeamInfo({ team, onCloseClick }) {
         iconProps={{
           icon: 'Close'
         }}
-        label="close"
+        label="remove team"
         testId="team-in-list.close"
         className={cx(styles.teamInfo.close, 'team-info__close-button')}
         onClick={onCloseClick}
         buttonType="secondary"
+        onFocus={() => setIsCloseBtnFocused(true)}
+        onBlur={() => setIsCloseBtnFocused(false)}
       />
     </div>
   );
