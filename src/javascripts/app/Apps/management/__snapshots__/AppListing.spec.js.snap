@@ -3,7 +3,11 @@
 exports[`AppListing should render the app listing when definitions are present 1`] = `
 Object {
   "asFragment": [Function],
-  "baseElement": .emotion-3 button {
+  "baseElement": .emotion-6 {
+  vertical-align: middle;
+}
+
+.emotion-3 button {
   height: 20px;
   border: none;
   background-color: transparent;
@@ -44,10 +48,6 @@ Object {
 .emotion-0 {
   margin-right: 0.75rem;
   vertical-align: sub;
-}
-
-.emotion-6 {
-  vertical-align: middle;
 }
 
 .emotion-5 {
@@ -740,7 +740,11 @@ Object {
       </div>
     </div>
   </body>,
-  "container": .emotion-3 button {
+  "container": .emotion-6 {
+  vertical-align: middle;
+}
+
+.emotion-3 button {
   height: 20px;
   border: none;
   background-color: transparent;
@@ -781,10 +785,6 @@ Object {
 .emotion-0 {
   margin-right: 0.75rem;
   vertical-align: sub;
-}
-
-.emotion-6 {
-  vertical-align: middle;
 }
 
 .emotion-5 {
