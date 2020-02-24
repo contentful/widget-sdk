@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { mapValues, flow, keyBy, get, eq, isNumber, pick } from 'lodash/fp';
 
@@ -7,6 +7,9 @@ import ReloadNotification from 'app/common/ReloadNotification';
 
 import OrganizationResourceUsageList from './non_committed/OrganizationResourceUsageList';
 import OrganizationUsagePage from './committed/OrganizationUsagePage';
+import OrganizationUsagePageNew from './committed/OrganisationUsagePageNew';
+import { getVariation } from 'LaunchDarkly';
+import { USAGE_API_UX } from 'featureFlags';
 import PeriodSelector from './committed/PeriodSelector';
 import NoSpacesPlaceholder from './NoSpacesPlaceholder';
 import * as Analytics from 'analytics/Analytics';
@@ -21,75 +24,86 @@ import * as OrganizationRoles from 'services/OrganizationRoles';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import ErrorState from 'app/common/ErrorState';
 
-export class WorkbenchContent extends React.Component {
-  static propTypes = {
-    committed: PropTypes.bool,
-    hasSpaces: PropTypes.bool,
-    selectedPeriodIndex: PropTypes.number,
-    spaceNames: PropTypes.objectOf(PropTypes.string),
-    isPoC: PropTypes.objectOf(PropTypes.bool),
-    periodicUsage: PropTypes.object,
-    apiRequestIncludedLimit: PropTypes.number,
-    assetBandwidthData: PropTypes.shape({
-      usage: PropTypes.number,
-      unitOfMeasure: PropTypes.string,
-      limits: PropTypes.shape({
-        included: PropTypes.number
-      })
-    }),
-    isLoading: PropTypes.bool,
-    error: PropTypes.string,
-    periods: PropTypes.arrayOf(PropTypes.object),
-    resources: PropTypes.arrayOf(PropTypes.object)
-  };
 
-  render() {
-    const {
-      committed,
-      hasSpaces,
-      selectedPeriodIndex,
-      spaceNames,
-      isPoC,
-      periodicUsage,
-      apiRequestIncludedLimit,
-      assetBandwidthData,
-      isLoading,
-      error,
-      periods,
-      resources
-    } = this.props;
+const WorkbenchContent = (props) => {
+  const {
+    committed,
+    hasSpaces,
+    selectedPeriodIndex,
+    spaceNames,
+    isPoC,
+    periodicUsage,
+    apiRequestIncludedLimit,
+    assetBandwidthData,
+    isLoading,
+    error,
+    periods,
+    resources,
+    orgId
+  } = props;
 
-    if (error) {
-      return <ErrorState />;
-    }
+  const [newOrgEnabled, setNewOrgEnabled] = useState(false);
 
-    if (committed) {
-      if (!hasSpaces) {
-        return <NoSpacesPlaceholder />;
-      }
-      if (typeof selectedPeriodIndex !== 'undefined') {
-        return (
-          <OrganizationUsagePage
-            {...{
-              period: periods[selectedPeriodIndex],
-              spaceNames,
-              isPoC,
-              periodicUsage,
-              apiRequestIncludedLimit,
-              assetBandwidthData,
-              isLoading
-            }}
-          />
-        );
-      }
-    } else {
-      if (typeof resources !== 'undefined') {
-        return <OrganizationResourceUsageList resources={resources} />;
-      }
-    }
-    return <div />;
+  (async function(){
+    const featureFlag = await getVariation(USAGE_API_UX, {organizationId: orgId});
+    setNewOrgEnabled(featureFlag);
+  })();
+
+  if (error) {
+    return <ErrorState />;
   }
+
+  if (committed) {
+    if (!hasSpaces) {
+      return <NoSpacesPlaceholder />;
+    }
+    if (typeof selectedPeriodIndex !== 'undefined') {
+      if (newOrgEnabled) {
+        return <OrganizationUsagePageNew />
+      }
+      return (
+        <OrganizationUsagePage
+          {...{
+            period: periods[selectedPeriodIndex],
+            spaceNames,
+            isPoC,
+            periodicUsage,
+            apiRequestIncludedLimit,
+            assetBandwidthData,
+            isLoading
+          }}
+        />
+      );
+    }
+  } else {
+    if (typeof resources !== 'undefined') {
+      return <OrganizationResourceUsageList resources={resources} />;
+    }
+  }
+  return <div />;
 }
+
+WorkbenchContent.propTypes = {
+  committed: PropTypes.bool,
+  hasSpaces: PropTypes.bool,
+  selectedPeriodIndex: PropTypes.number,
+  spaceNames: PropTypes.objectOf(PropTypes.string),
+  isPoC: PropTypes.objectOf(PropTypes.bool),
+  periodicUsage: PropTypes.object,
+  apiRequestIncludedLimit: PropTypes.number,
+  assetBandwidthData: PropTypes.shape({
+    usage: PropTypes.number,
+    unitOfMeasure: PropTypes.string,
+    limits: PropTypes.shape({
+      included: PropTypes.number
+    })
+  }),
+  isLoading: PropTypes.bool,
+  error: PropTypes.string,
+  periods: PropTypes.arrayOf(PropTypes.object),
+  resources: PropTypes.arrayOf(PropTypes.object)
+};
+
 
 export class WorkbenchActions extends React.Component {
   static propTypes = {
@@ -309,6 +323,7 @@ export class OrganizationUsage extends React.Component {
       resources,
       hasSpaces
     } = this.state;
+    const { orgId } = this.props;
     return (
       <Workbench testId="organization.usage">
         <Workbench.Header
@@ -341,7 +356,8 @@ export class OrganizationUsage extends React.Component {
               isLoading,
               error,
               periods,
-              resources
+              resources,
+              orgId
             }}
           />
         </Workbench.Content>
