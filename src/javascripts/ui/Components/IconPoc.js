@@ -99,7 +99,7 @@ const IconPoc = ({ className, size, name, style, color, inNavigation }) => {
   return (
     <div
       data-test-id="product-icon"
-      data-icon-name={inNavigation ? `nav-name` : null} // temporary, CSS for navigation will be refactored
+      data-icon-name={inNavigation ? `nav-${name}` : `headline-${name}`} // temporary, CSS for navigation will be refactored
       className={cx('icon-component', className, styles.flexShrink, styles.pocIcon.svg, {
         [`${styles.sizes[size]}`]: size
       })}
