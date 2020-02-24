@@ -7,7 +7,7 @@ export default function ProfileNavigationBar() {
     {
       title: 'Personal access tokens',
       iconPoc: 'token',
-      // icon: 'nav-user-oauth',
+      icon: 'nav-user-oauth',
       sref: 'account.profile.cma_tokens',
       srefOptions: {
         inherit: false
@@ -17,7 +17,7 @@ export default function ProfileNavigationBar() {
     {
       title: 'OAuth tokens',
       iconPoc: 'token',
-      // icon: 'nav-user-oauth',
+      icon: 'nav-user-oauth',
       sref: 'account.profile.access_grants',
       srefOptions: {
         inherit: false
