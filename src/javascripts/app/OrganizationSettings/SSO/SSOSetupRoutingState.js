@@ -10,8 +10,9 @@ const SSOSetupImporter = async () =>
 export default reactStateWrapper({
   name: 'sso',
   url: '/sso',
-  component: props => (
-    <LazyLoadedComponent importer={SSOSetupImporter}>
+  // eslint-disable-next-line
+  component: ({ onReady, ...props }) => (
+    <LazyLoadedComponent onReady={onReady} importer={SSOSetupImporter}>
       {SSOSetup => {
         return <SSOSetup {...props} />;
       }}
