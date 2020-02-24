@@ -1,7 +1,7 @@
 import * as K from 'utils/kefir';
 import * as PathUtils from 'utils/Path';
 import localeStore from 'services/localeStore';
-import { get } from 'lodash';
+import { get, noop } from 'lodash';
 
 /**
  * @typedef { import("contentful-ui-extensions-sdk").FieldAPI } FieldAPI
@@ -24,9 +24,10 @@ function makeShareJSError(shareJSError, message) {
   return Object.assign(error, { code: ERROR_CODES.EBADUPDATE, data });
 }
 
-export function createInternalFieldApi({ locale, field, $scope }) {
-  const currentPath = ['fields', field.id, locale.internal_code];
-
+/**
+ * @return {FieldAPI}
+ */
+export function createReadOnlyFieldApi({ field, locale, getValue = noop }) {
   return {
     locale: locale.code,
     id: field.apiName || field.id,
@@ -34,13 +35,28 @@ export function createInternalFieldApi({ locale, field, $scope }) {
     required: !!field.required,
     validations: field.validations || [],
     items: field.items || [],
+    getValue,
+    setValue: noop,
+    removeValue: noop,
+    onValueChanged: noop,
+    setInvalid: noop,
+    onIsDisabledChanged: noop,
+    onSchemaErrorsChanged: noop
+  };
+}
+
+export function createInternalFieldApi({ field, locale, otDoc }) {
+  const currentPath = ['fields', field.id, locale.internal_code];
+
+  return {
+    ...createReadOnlyFieldApi({ locale, field }),
 
     getValue: () => {
-      return get($scope.otDoc.getValueAt([]), currentPath);
+      return get(otDoc.getValueAt([]), currentPath);
     },
     setValue: async function setValue(value) {
       try {
-        await $scope.otDoc.setValueAt(currentPath, value);
+        await otDoc.setValueAt(currentPath, value);
         return value;
       } catch (err) {
         throw makeShareJSError(err, ERROR_MESSAGES.MFAILUPDATE);
@@ -48,7 +64,7 @@ export function createInternalFieldApi({ locale, field, $scope }) {
     },
     removeValue: async function removeValue() {
       try {
-        await $scope.otDoc.removeValueAt(currentPath);
+        await otDoc.removeValueAt(currentPath);
       } catch (err) {
         throw makeShareJSError(err, ERROR_MESSAGES.MFAILREMOVAL);
       }
@@ -67,17 +83,14 @@ export function createInternalFieldApi({ locale, field, $scope }) {
         cb = args[1];
       }
 
-      return K.onValueScope(
-        $scope,
-        $scope.otDoc.changes.filter(path => PathUtils.isAffecting(path, trackingPath)),
+      return K.onValueWhile(
+        otDoc.changes,
+        otDoc.changes.filter(path => PathUtils.isAffecting(path, trackingPath)),
         () => {
-          cb(get($scope.otDoc.getValueAt([]), trackingPath));
+          cb(get(otDoc.getValueAt([]), trackingPath));
         }
       );
-    },
-    setInvalid: () => {},
-    onIsDisabledChanged: () => {},
-    onSchemaErrorsChanged: () => {}
+    }
   };
 }
 
@@ -86,19 +99,17 @@ export function createInternalFieldApi({ locale, field, $scope }) {
  * @return {FieldAPI}
  */
 export function createFieldApi({ $scope }) {
-  const current = {
-    field: $scope.widget.field,
-    locale: $scope.locale
-  };
+  const field = $scope.widget.field;
+  const { locale, otDoc } = $scope;
 
   return {
     ...createInternalFieldApi({
-      locale: current.locale,
-      field: current.field,
-      $scope
+      locale,
+      field,
+      otDoc
     }),
     setInvalid: isInvalid => {
-      $scope.fieldController.setInvalid(current.locale.code, isInvalid);
+      $scope.fieldController.setInvalid(locale.code, isInvalid);
     },
     onIsDisabledChanged: cb => {
       return K.onValueScope($scope, $scope.fieldLocale.access$, access => {

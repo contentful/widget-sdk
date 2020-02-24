@@ -14,8 +14,8 @@
     </div>
     <div class="x--directed" ng-switch-when="RichText">
       <react-component
-        name="app/widgets/rich_text/ReadOnlyRichTextEditor"
-        props="{value, locale: locale.code}"
+        name="app/widgets/RichText/ReadOnlyRichTextEditor"
+        props="{value, widgetApi: createReadOnlyWidgetAPI() }"
       />
     </div>
     <div ng-switch-when="Boolean">
