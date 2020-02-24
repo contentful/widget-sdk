@@ -82,16 +82,11 @@ export default function NavigationItem(props) {
         }}>
         <Label hasTooptip={Boolean(item.tooltip)} content={item.tooltip} placement="bottom">
           {item.iconPoc ? (
-            <>
-              <IconPoc name={item.iconPoc} size="medium" mono color="white" inNavigation />
-              {item.tagLabel && <NavigationItemTag label={item.tagLabel} />}
-            </>
+            <IconPoc name={item.iconPoc} size="medium" mono color="white" inNavigation />
           ) : (
-            <>
-              <Icon name={item.icon} />
-              {item.tagLabel && <NavigationItemTag label={item.tagLabel} />}
-            </>
+            <Icon name={item.icon} />
           )}
+          {item.tagLabel && <NavigationItemTag label={item.tagLabel} />}
           {item.title}
         </Label>
       </a>
