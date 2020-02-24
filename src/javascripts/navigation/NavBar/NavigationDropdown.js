@@ -33,9 +33,6 @@ const styles = {
   }),
   separator: css({
     marginTop: tokens.spacingM
-  }),
-  tooltip: css({
-    zIndex: 999
   })
 };
 
