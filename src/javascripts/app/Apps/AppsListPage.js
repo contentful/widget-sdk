@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import AppsFrameworkIntroBanner from './AppsFrameworkIntroBanner';
 import { css } from 'emotion';
 import { get, partition } from 'lodash';
 
@@ -33,9 +34,6 @@ import * as AppLifecycleTracking from './AppLifecycleTracking';
 import { isUsageExceeded } from './isUsageExceeded';
 
 const styles = {
-  intro: css({
-    marginBottom: tokens.spacingL
-  }),
   pricingInfo: css({
     marginBottom: tokens.spacingL,
     zIndex: 3
@@ -56,6 +54,9 @@ const styles = {
     height: '100%',
     backgroundColor: tokens.colorWhite,
     opacity: 0.8
+  }),
+  installedList: css({
+    marginBottom: tokens.spacing2Xl
   })
 };
 
@@ -112,16 +113,12 @@ const AppsListShell = props => (
       actions={<FeedbackButton target="extensibility" about="Apps" label="Give your feedback" />}
     />
     <Workbench.Content type="text">
+      <AppsFrameworkIntroBanner />
       {props.appsFeatureDisabled && <PricingInfo />}
       <Card padding="large" className={styles.appListCard}>
         {props.appsFeatureDisabled && (
           <div className={styles.overlay} data-test-id="disabled-beta-apps" />
         )}
-        <Paragraph className={styles.intro}>
-          Contentful apps extend and expand the capabilities of the Contentful web app. You can
-          integrate your favorite third-party services, build better workflows and customize what
-          you can do with Contentful.
-        </Paragraph>
         <div>{props.children}</div>
       </Card>
     </Workbench.Content>
@@ -250,7 +247,7 @@ export default class AppsListPage extends React.Component {
         {installedApps.length > 0 && (
           <>
             <Heading element="h2">Installed</Heading>
-            <div data-test-id="installed-list">
+            <div data-test-id="installed-list" className={styles.installedList}>
               {installedApps.map(app => (
                 <AppListItem
                   key={app.id}
@@ -261,7 +258,6 @@ export default class AppsListPage extends React.Component {
             </div>
           </>
         )}
-        <hr />
         <Heading element="h2">Available</Heading>
         {availableApps.length > 0 && (
           <div>

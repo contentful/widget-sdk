@@ -8,7 +8,7 @@ import GetSdkSection from './components/GetSdkSection';
 import UpgradePricing from './UpgradePricing';
 import LearnAboutContentful from './components/LearnAboutContentful';
 import ContactAnExpertCTA from './components/ContactAnExpertCTA';
-import ExtensionsCTA from './components/ExtensionsCTA';
+import AppsCTA from './components/AppsCTA';
 import AddCoworkerCTA from './components/AddCoworkerCTA';
 
 const AdminSpaceHome = ({ spaceName, spaceId, orgId, isSupportEnabled, hasTeamsEnabled }) => {
@@ -67,7 +67,7 @@ const AdminSpaceHome = ({ spaceName, spaceId, orgId, isSupportEnabled, hasTeamsE
 
       <WidgetContainer.Row>
         <WidgetContainer.Col>
-          <ExtensionsCTA />
+          <AppsCTA />
         </WidgetContainer.Col>
       </WidgetContainer.Row>
     </WidgetContainer>
