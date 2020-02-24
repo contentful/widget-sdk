@@ -88,7 +88,7 @@ const styles = {
       color: tokens.colorTextMid,
       '&:hover, &.is-focused': {
         backgroundColor: tokens.colorElementLightest,
-        '& .team-info__close-button': {
+        '.team-info__close-button': {
           opacity: 1
         }
       },
@@ -106,10 +106,7 @@ const styles = {
       position: 'absolute',
       right: `10px`,
       top: '10px',
-      opacity: 0,
-      '&:focus': {
-        opacity: 1
-      }
+      opacity: 0
     })
   },
 
@@ -396,9 +393,7 @@ function TeamInfo({ team, onCloseClick }) {
 
   return (
     <div
-      className={
-        isCloseBtnFocused ? `${styles.teamInfo.container} is-focused` : styles.teamInfo.container
-      }
+      className={cx(styles.teamInfo.container, isCloseBtnFocused && 'is-focused')}
       data-test-id="team-in-list">
       <div className={styles.teamInfo.title}>
         <strong className={styles.teamInfo.name}>{_.truncate(team.name, { length: 25 })}</strong>{' '}
@@ -409,7 +404,7 @@ function TeamInfo({ team, onCloseClick }) {
         iconProps={{
           icon: 'Close'
         }}
-        label="remove team"
+        label="Remove team"
         testId="team-in-list.close"
         className={cx(styles.teamInfo.close, 'team-info__close-button')}
         onClick={onCloseClick}

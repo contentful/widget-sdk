@@ -49,7 +49,7 @@ export default function RoleSelector({
           <RadioButtonField
             labelIsLight
             labelText="Other roles"
-            name="other-roles"
+            name="other_roles"
             id="admin_false"
             value="false"
             className={styles.otherRoles}
