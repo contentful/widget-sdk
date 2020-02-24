@@ -37,7 +37,7 @@ export default function ProfileNavigationBar() {
             {
               title: 'User profile',
               iconPoc: 'user-profile',
-              // icon: 'nav-user-settings',
+              icon: 'nav-user-settings',
               sref: 'account.profile.user',
               srefOptions: {
                 inherit: false
@@ -47,7 +47,7 @@ export default function ProfileNavigationBar() {
             {
               title: 'Spaces',
               iconPoc: 'spaces',
-              // icon: 'nav-spaces',
+              icon: 'nav-spaces',
               sref: 'account.profile.space_memberships',
               srefOptions: {
                 inherit: false
@@ -57,7 +57,7 @@ export default function ProfileNavigationBar() {
             {
               title: 'Organizations',
               iconPoc: 'organizations',
-              // icon: 'nav-user-organizations',
+              icon: 'nav-user-organizations',
               sref: 'account.profile.organization_memberships',
               srefOptions: {
                 inherit: false
@@ -67,7 +67,7 @@ export default function ProfileNavigationBar() {
             {
               title: 'Tokens',
               iconPoc: 'token',
-              // icon: 'nav-user-oauth',
+              icon: 'nav-user-oauth',
               srefOptions: {
                 inherit: false
               },
