@@ -89,4 +89,16 @@ describe('EntryLink component', () => {
       document.querySelector(`img[src*="//google.com/dog-in-a-house-on-fire.jpg"]`)
     );
   });
+
+  it('should set size to default if given a description', async () => {
+    const propsOverrides = {
+      ...props,
+      entityHelpers: {
+        ...props.entityHelpers,
+        entityDescription: jest.fn().mockResolvedValue('Awesome stuff')
+      }
+    };
+    const { queryByText } = render(<EntryLink {...propsOverrides} />);
+    await waitForElement(() => queryByText('Awesome stuff'));
+  });
 });

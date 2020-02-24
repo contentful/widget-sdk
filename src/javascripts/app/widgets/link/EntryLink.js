@@ -22,7 +22,12 @@ const EntryLink = ({ entry, entityHelpers, getContentType, isSelected, size }) =
         const title = await entityHelpers.entityTitle(entry);
         const file = await entityHelpers.entityFile(entry);
         const description = await entityHelpers.entityDescription(entry);
-        setEntityInfo({ title, description, contentTypeName: get(contentType, 'data.name'), file });
+        setEntityInfo({
+          title,
+          description,
+          contentTypeName: get(contentType, 'data.name'),
+          file
+        });
         setLoading(false);
       }
     };
@@ -37,7 +42,8 @@ const EntryLink = ({ entry, entityHelpers, getContentType, isSelected, size }) =
     return title ? title : 'Untitled';
   };
 
-  const cardSize = size || file ? 'default' : 'small';
+  const shouldSizeBeDefault = !!(file || description);
+  const cardSize = size || shouldSizeBeDefault ? 'default' : 'small';
 
   return entry ? (
     <WrappedEntityCard
