@@ -24,8 +24,7 @@ import * as OrganizationRoles from 'services/OrganizationRoles';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import ErrorState from 'app/common/ErrorState';
 
-
-const WorkbenchContent = (props) => {
+const WorkbenchContent = props => {
   const {
     committed,
     hasSpaces,
@@ -44,8 +43,8 @@ const WorkbenchContent = (props) => {
 
   const [newOrgEnabled, setNewOrgEnabled] = useState(false);
 
-  (async function(){
-    const featureFlag = await getVariation(USAGE_API_UX, {organizationId: orgId});
+  (async function() {
+    const featureFlag = await getVariation(USAGE_API_UX, { organizationId: orgId });
     setNewOrgEnabled(featureFlag);
   })();
 
@@ -59,7 +58,7 @@ const WorkbenchContent = (props) => {
     }
     if (typeof selectedPeriodIndex !== 'undefined') {
       if (newOrgEnabled) {
-        return <OrganizationUsagePageNew />
+        return <OrganizationUsagePageNew />;
       }
       return (
         <OrganizationUsagePage
@@ -81,7 +80,7 @@ const WorkbenchContent = (props) => {
     }
   }
   return <div />;
-}
+};
 
 WorkbenchContent.propTypes = {
   committed: PropTypes.bool,
@@ -103,7 +102,6 @@ WorkbenchContent.propTypes = {
   periods: PropTypes.arrayOf(PropTypes.object),
   resources: PropTypes.arrayOf(PropTypes.object)
 };
-
 
 export class WorkbenchActions extends React.Component {
   static propTypes = {
