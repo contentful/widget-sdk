@@ -84,7 +84,7 @@ export default function NavigationDropdown(props) {
             }}>
             <span className="nav-bar__list-label">
               {item.iconPoc ? (
-                <IconPoc name={item.iconPoc} size="medium" color="white" />
+                <IconPoc name={item.iconPoc} size="medium" color="white" inNavigation />
               ) : (
                 <Icon name={item.icon} />
               )}

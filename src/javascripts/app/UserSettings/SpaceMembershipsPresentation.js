@@ -19,7 +19,7 @@ import IconPoc from 'ui/Components/IconPoc';
 const SpaceMembershipsPresentation = ({ spaces, onLeave }) => (
   <Workbench>
     <Workbench.Header
-      icon={<IconPoc name="spaces" size="large" filled />}
+      icon={<IconPoc name="spaces" size="large" color="green" />}
       title={`Space memberships (${(spaces || []).length})`}
     />
     <Workbench.Content type="default">

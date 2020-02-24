@@ -57,7 +57,10 @@ export default function IndexPage({ title, onReady }) {
     <>
       <DocumentTitle title={title} />
       <Workbench>
-        <Workbench.Header title={title} icon={<IconPoc name="settings" size="large" filled />} />
+        <Workbench.Header
+          title={title}
+          icon={<IconPoc name="user-profile" size="large" color="green" />}
+        />
         <Workbench.Content className={styles.content}>
           {isLoading && <LoadingState loadingText="Loading your account…" />}
           {!isLoading && error && <ErrorState />}

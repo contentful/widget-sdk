@@ -36,7 +36,7 @@ export default function ProfileNavigationBar() {
           listItems={[
             {
               title: 'User profile',
-              iconPoc: 'settings',
+              iconPoc: 'user-profile',
               // icon: 'nav-user-settings',
               sref: 'account.profile.user',
               srefOptions: {

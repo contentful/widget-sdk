@@ -1,35 +1,60 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { cx, css } from 'emotion';
-// import tokens from '@contentful/forma-36-tokens';
+import tokens from '@contentful/forma-36-tokens';
 
 // account settings
-import settingsFilled from 'svg/icons/settings-filled.svg';
-import settingsMono from 'svg/icons/settings-mono.svg';
-import spacesFilled from 'svg/icons/spaces-filled.svg';
-import spacesMono from 'svg/icons/spaces-mono.svg';
-import organizationsFilled from 'svg/icons/organizations-filled.svg';
-import organizationsMono from 'svg/icons/organizations-mono.svg';
-import tokenFilled from 'svg/icons/token-filled.svg';
-import tokenMono from 'svg/icons/token-mono.svg';
-import oauthFilled from 'svg/icons/oauth-filled.svg';
-import oauthMono from 'svg/icons/oauth-mono.svg';
+import userProfile from 'svg/icons/user-profile.svg';
+import spaces from 'svg/icons/spaces.svg';
+import organizationsMono from 'svg/icons/organizations.svg';
+import tokenMono from 'svg/icons/token.svg';
+import oauthMono from 'svg/icons/oauth.svg';
 // organization settings
+import orgInfo from 'svg/icons/org-info.svg';
+import subscription from 'svg/icons/subscription.svg';
+import usage from 'svg/icons/usage.svg';
+import users from 'svg/icons/users.svg';
+import teams from 'svg/icons/teams.svg';
+import apps from 'svg/icons/apps.svg';
+import sso from 'svg/icons/sso.svg';
+// space settings
+import home from 'svg/icons/home.svg';
+import contentModel from 'svg/icons/content-model.svg';
+import content from 'svg/icons/content.svg';
+import media from 'svg/icons/media.svg';
+import settings from 'svg/icons/settings.svg';
+import apis from 'svg/icons/apis.svg';
+import billing from 'svg/icons/billing.svg';
 
 const SVGs = {
-  'settings-filled': settingsFilled,
-  'settings-mono': settingsMono,
-  'spaces-mono': spacesMono,
-  'spaces-filled': spacesFilled,
-  'organizations-filled': organizationsFilled,
-  'organizations-mono': organizationsMono,
-  'token-filled': tokenFilled,
-  'token-mono': tokenMono,
-  'oauth-filled': oauthFilled,
-  'oauth-mono': oauthMono
+  'user-profile': userProfile,
+  spaces: spaces,
+  organizations: organizationsMono,
+  token: tokenMono,
+  oauth: oauthMono,
+  'org-info': orgInfo,
+  subscription: subscription,
+  usage: usage,
+  users: users,
+  teams: teams,
+  apps: apps,
+  sso: sso,
+  home: home,
+  'content-model': contentModel,
+  content: content,
+  media: media,
+  settings: settings,
+  apis: apis,
+  billing: billing
 };
 
-const sizes = {
+const colorsConfig = {
+  white: tokens.colorWhite,
+  gray: '#6A7889', // gray from the new palette, it will be taken from Forma, as soon as palette is final
+  green: tokens.colorGreenBase
+};
+
+const sizesConfig = {
   medium: '24px',
   large: '32px'
 };
@@ -45,26 +70,25 @@ const styles = {
   flexShrink: 0,
   sizes: {
     medium: css({
-      width: sizes.medium,
-      height: sizes.medium,
-      maxWidth: sizes.medium,
-      maxHeight: sizes.medium
+      width: sizesConfig.medium,
+      height: sizesConfig.medium,
+      maxWidth: sizesConfig.medium,
+      maxHeight: sizesConfig.medium
     }),
     large: css({
-      width: sizes.large,
-      height: sizes.large,
-      maxWidth: sizes.large,
-      maxHeight: sizes.large
+      width: sizesConfig.large,
+      height: sizesConfig.large,
+      maxWidth: sizesConfig.large,
+      maxHeight: sizesConfig.large
     })
   }
 };
 
-const IconPoc = ({ className, size, name, filled, style, color }) => {
-  const IconComponent = SVGs[filled ? `${name}-filled` : `${name}-mono`];
+const IconPoc = ({ className, size, name, style, color, inNavigation }) => {
+  const IconComponent = SVGs[name];
 
   const iconSvgStyle = css({
-    flexShrink: 0,
-    fill: !filled ? color : null
+    fill: colorsConfig[color]
   });
 
   if (!IconComponent) {
@@ -75,7 +99,7 @@ const IconPoc = ({ className, size, name, filled, style, color }) => {
   return (
     <div
       data-test-id="product-icon"
-      data-icon-name={!filled ? `nav-name` : null}
+      data-icon-name={inNavigation ? `nav-name` : null} // temporary, CSS for navigation will be refactored
       className={cx('icon-component', className, styles.flexShrink, styles.pocIcon.svg, {
         [`${styles.sizes[size]}`]: size
       })}
@@ -86,12 +110,12 @@ const IconPoc = ({ className, size, name, filled, style, color }) => {
 };
 
 IconPoc.propTypes = {
-  size: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  filled: PropTypes.bool,
+  size: PropTypes.oneOf(Object.keys(sizesConfig)).isRequired,
+  name: PropTypes.oneOf(Object.keys(SVGs)).isRequired,
+  color: PropTypes.oneOf(Object.keys(colorsConfig)).isRequired,
+  className: PropTypes.string,
   style: PropTypes.object,
-  color: PropTypes.string,
-  className: PropTypes.string
+  inNavigation: PropTypes.bool // this is just temporary, will be removed as soon as navigation styles will be refactored
 };
 
 export default IconPoc;
