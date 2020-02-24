@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import StateLink from 'app/common/StateLink';
-import Icon from 'ui/Components/Icon';
+import { WebhookListShell } from './routes/skeletons/WebhookListRouteSkeleton';
 import {
   Table,
   TableHead,
@@ -10,7 +10,6 @@ import {
   TableRow,
   TableBody,
   Button,
-  Workbench,
   TextLink
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
@@ -34,30 +33,6 @@ const styles = {
   row: css({
     cursor: 'pointer'
   })
-};
-
-export function WebhookListShell(props) {
-  return (
-    <Workbench testId="webhooks.list">
-      <Workbench.Header
-        icon={<Icon name="page-settings" scale="0.8" />}
-        title={props.title}
-        actions={props.actions}
-      />
-      <Workbench.Content type="full">{props.children}</Workbench.Content>
-      <Workbench.Sidebar position="right">{props.sidebar || <div />}</Workbench.Sidebar>
-    </Workbench>
-  );
-}
-
-WebhookListShell.propTypes = {
-  sidebar: PropTypes.any,
-  actions: PropTypes.any,
-  title: PropTypes.string
-};
-
-WebhookListShell.defaultProps = {
-  title: 'Webhooks'
 };
 
 export class WebhookList extends React.Component {

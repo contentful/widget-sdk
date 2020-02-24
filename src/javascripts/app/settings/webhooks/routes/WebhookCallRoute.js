@@ -2,8 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import WebhookCall from '../WebhookCall';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
+import { WebhookLoadingSkeleton } from './skeletons/WebhookListRouteSkeleton';
 import { getSectionVisibility } from 'access_control/AccessChecker';
-import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent';
+import createFetcherComponent from 'app/common/createFetcherComponent';
 import StateRedirect from 'app/common/StateRedirect';
 import { getWebhookRepo } from 'app/settings/webhooks/services/WebhookRepoInstance';
 
@@ -29,7 +30,7 @@ export class WebhookCallRoute extends React.Component {
       <WebhookCallFetcher {...this.props}>
         {({ isLoading, isError, data }) => {
           if (isLoading) {
-            return <FetcherLoading message="Loading webhook call..." />;
+            return <WebhookLoadingSkeleton />;
           }
           if (isError) {
             return <StateRedirect path="^.^.detail" />;

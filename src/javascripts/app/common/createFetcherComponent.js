@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-class Delayed extends React.Component {
+export class DelayedLoading extends React.Component {
   static propTypes = {
     delay: PropTypes.number.isRequired,
     children: PropTypes.node
@@ -38,12 +38,12 @@ class Delayed extends React.Component {
 }
 
 export const FetcherLoading = ({ message }) => (
-  <Delayed>
+  <DelayedLoading>
     <div className="loading-box--stretched">
       <div className="loading-box__spinner" />
       <div className="loading-box__message">{message || 'Loading...'}</div>
     </div>
-  </Delayed>
+  </DelayedLoading>
 );
 
 FetcherLoading.propTypes = {
