@@ -291,11 +291,15 @@ module.exports = () => {
 
     // For development and testing, we're using `cheap-module-source-map` as this allows
     // us to see errors and stack traces with Karma rather than just "Script error".
-    devtool: isTest || isDev ? 'cheap-module-source-map' : false,
+    //
+    // In production we generate source maps for Bugsnag and use `hidden-source-map`
+    // to avoid annotating the bundle generated bundle with the sourcemap name.
+    devtool: isTest || isDev ? 'cheap-module-source-map' : 'hidden-source-map',
     optimization: {
       minimize: isProd,
       minimizer: [
         new TerserJSPlugin({
+          sourceMap: true,
           terserOptions: {
             // fix wrong minification for Safari
             // https://github.com/terser/terser/issues/117,
