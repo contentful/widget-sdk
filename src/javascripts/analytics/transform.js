@@ -53,6 +53,9 @@ const _events = {};
 registerEvent('element:click', 'element_click', ElementClickTransform);
 registerEvent('global:state_changed', 'page_view', PageViewTransform);
 
+registerGenericEvent('global:space_changed');
+registerGenericEvent('global:space_left');
+
 registerEvent('extension:save', 'ui_extension_save', ExtensionSaveTransform);
 registerEvent('extension:install', 'ui_extension_install', ExtensionInstallTransform);
 registerEvent('extension:render', 'generic', ExtensionRenderTransformer);
