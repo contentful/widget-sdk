@@ -41,7 +41,7 @@ export default function createPageExtensionBridge(dependencies, currentExtension
 
     api.registerHandler(
       'navigateToContentEntity',
-      makeExtensionNavigationHandlers(dependencies, { disableSlideIn: true })
+      makeExtensionNavigationHandlers(dependencies.spaceContext, { disableSlideIn: true })
     );
 
     api.registerHandler(

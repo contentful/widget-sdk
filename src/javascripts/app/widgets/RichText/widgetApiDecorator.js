@@ -12,7 +12,7 @@ import openHyperlinkDialog from 'app/widgets/WidgetApi/dialogs/openHyperlinkDial
  * @returns {Object}
  */
 export default function(widgetAPI, $scope) {
-  const jobs = $scope.jobsStore;
+  const jobs = $scope && $scope.jobsStore;
 
   const rtWidgetAPI = {
     ...widgetAPI,

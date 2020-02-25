@@ -117,14 +117,15 @@ export default function register() {
                 </WidgetAPIContext.Provider>
               );
             } else if (widgetNamespace === NAMESPACE_BUILTIN && renderFieldEditor) {
+              const widgetApi = createNewWidgetApi({
+                $scope: scope,
+                spaceContext
+              });
               renderJsxTemplate(
                 renderFieldEditor({
                   $scope: scope,
                   loadEvents: loadEvents || newNoopLoadEvents(),
-                  widgetApi: createNewWidgetApi({
-                    $scope: scope,
-                    spaceContext
-                  })
+                  widgetApi
                 })
               );
               handleWidgetLinkRenderEvents();
