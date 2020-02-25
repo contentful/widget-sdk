@@ -4,8 +4,10 @@ import { orgRoles } from 'utils/MembershipUtils';
 export const Organization = PropTypes.shape({
   name: PropTypes.string.isRequired,
   sys: PropTypes.shape({
-    id: PropTypes.string.isRequired
-  })
+    type: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired,
+    createdAt: PropTypes.string.isRequired
+  }).isRequired
 });
 
 export const User = PropTypes.shape({

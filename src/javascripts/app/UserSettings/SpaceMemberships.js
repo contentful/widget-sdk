@@ -1,10 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
+<<<<<<< HEAD
 import {
   Notification,
   ModalConfirm,
   Paragraph,
   Typography
 } from '@contentful/forma-36-react-components';
+=======
+import PropTypes from 'prop-types';
+import { Notification, ModalConfirm, Paragraph } from '@contentful/forma-36-react-components';
+>>>>>>> Add Oragnization Row and partial testing
 import { without } from 'lodash';
 
 import * as TokenStore from 'services/TokenStore';
@@ -33,10 +38,15 @@ const SpaceMemberships = () => {
             onConfirm={() => onClose(true)}
             onCancel={() => onClose(false)}>
             <React.Fragment>
+<<<<<<< HEAD
               <Typography>
                 <Paragraph>You are about to leave space {space.name}.</Paragraph>
                 <Paragraph>Do you want to proceed?</Paragraph>
               </Typography>
+=======
+              <Paragraph>You are about to leave space {space.name}.</Paragraph>
+              <Paragraph>Do you want to proceed?</Paragraph>
+>>>>>>> Add Oragnization Row and partial testing
             </React.Fragment>
           </ModalConfirm>
         ));

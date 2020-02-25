@@ -4,6 +4,7 @@ import { noop } from 'lodash';
 import ProfileNavigationBar from 'navigation/ProfileNavigationBar';
 import Settings from 'app/UserProfile/Settings';
 import SpaceMemberships from 'app/UserSettings/SpaceMemberships';
+import OrganizationMembershipsRoute from 'app/UserSettings/OrganizationsRoute';
 import UserCMATokens from 'app/UserCMATokens/UserCMATokens';
 
 const user = {
@@ -18,11 +19,11 @@ const spaceMemberships = {
   component: SpaceMemberships
 };
 
-const organizationMemberships = userBase({
+const organizationMemberships = reactStateWrapper({
   name: 'organization_memberships',
-  title: 'Organization memberships',
-  icon: 'organizations',
-  url: '/organization_memberships{pathSuffix:PathSuffix}'
+  title: 'Organizations',
+  url: '/organization_memberships',
+  component: OrganizationMembershipsRoute
 });
 
 const cmaTokens = {
