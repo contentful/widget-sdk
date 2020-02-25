@@ -15,7 +15,7 @@ describe('QueryBuilder', () => {
     value: ''
   };
 
-  it('operator return value', () => {
+  it('should call the operator with the filter value', () => {
     formatQuery([filterB]);
 
     expect(filterB.operator).toHaveBeenCalledWith(filterB.value);
