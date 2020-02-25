@@ -44,7 +44,7 @@ export default function createDialogExtensionBridge(dependencies, openDialog, on
 
     api.registerHandler(
       'navigateToContentEntity',
-      makeExtensionNavigationHandlers(dependencies, { disableSlideIn: true })
+      makeExtensionNavigationHandlers(dependencies.spaceContext, { disableSlideIn: true })
     );
   }
 }
