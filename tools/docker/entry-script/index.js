@@ -2,6 +2,7 @@ const kexec = require('kexec');
 const yargs = require('yargs');
 
 const configureFileDistribution = require('./configure-file-dist');
+const uploadSourcemapsToBugsnag = require('./upload-sourcemaps-to-bugsnag');
 
 /**
  * This module exports the main function for the entry script of the
@@ -14,6 +15,8 @@ module.exports = async function main(argv) {
     await configureFileDistribution(options);
   } else if (command === 'test') {
     kexec('./bin/test');
+  } else if (command === 'upload-sourcemaps-to-bugsnag') {
+    await uploadSourcemapsToBugsnag(options);
   } else {
     throw new Error(`Unknown command "${command}"`);
   }
@@ -26,11 +29,17 @@ const TRAVIS_DESC =
 
 const TEST_DESC = 'Run the karma and jest test suite.';
 
+const SOURCEMAPS_DESC = 'Upload sourcemaps to Bugsnag. The version must be provided.';
+
 function parseArgs(argv) {
   const args = yargs(argv)
     .strict()
     .usage(
-      'Usage: ... configure-file-dist --branch BRANCH --version VERSION\n' + '           test\n'
+      `
+Usage: ... configure-file-dist --branch BRANCH --version VERSION
+           test
+           upload-sourcemaps-to-bugsnag --version VERSION
+`
     )
     .group('help', 'Global options:')
     .help('help')
@@ -50,6 +59,20 @@ function parseArgs(argv) {
             requiresArgs: true,
             required: true
           },
+          version: {
+            type: 'string',
+            alias: 'v',
+            description: 'Set the version identifier',
+            requiresArg: true,
+            required: true
+          }
+        });
+    })
+    .command('upload-sourcemaps-to-bugsnag', SOURCEMAPS_DESC, yargs => {
+      return yargs
+        .strict()
+        .usage(`Usage: ... upload-sourcemaps-to-bugsnag [options]\n\n${SOURCEMAPS_DESC}`)
+        .options({
           version: {
             type: 'string',
             alias: 'v',

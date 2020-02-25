@@ -167,6 +167,7 @@
     "bluebird": "^3.5.5",
     "browserchannel": "1.2.0",
     "browserslist": "4.8.6",
+    "bugsnag-sourcemaps": "^1.2.2",
     "caniuse-lite": "^1.0.30001025",
     "canonical-path": "0.0.2",
     "chalk": "^2.4.2",
