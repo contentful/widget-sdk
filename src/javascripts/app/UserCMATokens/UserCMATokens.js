@@ -20,7 +20,7 @@ const UserCMATokens = ({ onReady }) => {
     <Workbench>
       <Workbench.Header
         icon={<IconPoc name="token" size="large" color="green" />}
-        title={'Personal Access Tokens'}
+        title={'Personal access tokens'}
       />
       <Workbench.Content type="default">
         <PersonalAccessTokenSection state={state} actions={actions} />
