@@ -58,7 +58,19 @@ const WorkbenchContent = props => {
     }
     if (typeof selectedPeriodIndex !== 'undefined') {
       if (newOrgEnabled) {
-        return <OrganizationUsagePageNew />;
+        return (
+          <OrganizationUsagePageNew
+            {...{
+              period: periods[selectedPeriodIndex],
+              spaceNames,
+              isPoC,
+              periodicUsage,
+              apiRequestIncludedLimit,
+              assetBandwidthData,
+              isLoading
+            }}
+          />
+        );
       }
       return (
         <OrganizationUsagePage

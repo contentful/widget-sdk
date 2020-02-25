@@ -17,37 +17,41 @@ const styles = {
   })
 };
 
-const OrgTabs = props => (
-  <>
-    <UsageTabs
-      tabsData={[
-        {
-          id: 'apiRequest',
-          title: 'API Requests',
-          defaultActive: true,
-          leftComponent: (
-            <Heading element="h2" className={styles.panelHeading}>
-              Total API requests
-            </Heading>
-          ),
-          rightComponent: <div>API Requests</div>
-        },
-        {
-          id: 'assetBandwidth',
-          title: 'Asset Bandwidth',
-          leftComponent: (
-            <Heading element="h2" className={styles.panelHeading}>
-              Total API requests
-            </Heading>
-          ),
-          rightComponent: <div>Asset Bandwidth</div>
-        }
-      ]}
-    />
-  </>
-);
+const OrgTabs = props => {
+  console.log('Org', props);
+  return (
+    <>
+      <UsageTabs
+        tabsData={[
+          {
+            id: 'apiRequest',
+            title: 'API Requests',
+            defaultActive: true,
+            leftComponent: (
+              <Heading element="h2" className={styles.panelHeading}>
+                Total API requests
+              </Heading>
+            ),
+            rightComponent: <div>API Requests</div>
+          },
+          {
+            id: 'assetBandwidth',
+            title: 'Asset Bandwidth',
+            leftComponent: (
+              <Heading element="h2" className={styles.panelHeading}>
+                Total API requests
+              </Heading>
+            ),
+            rightComponent: <div>Asset Bandwidth</div>
+          }
+        ]}
+      />
+    </>
+  );
+};
 
 const SpacesTabs = props => {
+  console.log('Spaces', props);
   return (
     <>
       <Heading element="h2" className={styles.spacesHeading}>
@@ -91,8 +95,8 @@ const SpacesTabs = props => {
 const OrganizationUsagePageNew = props => {
   return (
     <>
-      <OrgTabs />
-      <SpacesTabs />
+      <OrgTabs {...props} />
+      <SpacesTabs {...props} />
     </>
   );
 };
