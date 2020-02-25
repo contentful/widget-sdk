@@ -50,7 +50,7 @@ const LinkedEntitiesValidation = ({
           <ListItem className={styles.inlineListItems} key={index}>
             <CheckboxField
               name={item.label || item.name}
-              id={item.id || item.name}
+              id={item.id ? `${item.id}-${validation.nodeType}` : `${item.name}`}
               labelText={item.label || item.name}
               checked={item.selected}
               onChange={() => onCheckboxChange(item)}
@@ -63,7 +63,7 @@ const LinkedEntitiesValidation = ({
       <TextField
         className={styles.marginTopS}
         name="Custom error message"
-        id="customErrorMessage"
+        id={`custom-error-message-${validation.nodeType}`}
         labelText="Custom error message"
         value={toString(message)}
         textInputProps={{ type: 'text' }}
