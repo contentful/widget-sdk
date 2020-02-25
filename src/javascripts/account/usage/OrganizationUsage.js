@@ -112,7 +112,8 @@ WorkbenchContent.propTypes = {
   isLoading: PropTypes.bool,
   error: PropTypes.string,
   periods: PropTypes.arrayOf(PropTypes.object),
-  resources: PropTypes.arrayOf(PropTypes.object)
+  resources: PropTypes.arrayOf(PropTypes.object),
+  orgId: PropTypes.string
 };
 
 export class WorkbenchActions extends React.Component {
