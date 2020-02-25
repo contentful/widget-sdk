@@ -1,12 +1,14 @@
+import React from 'react';
 import _ from 'lodash';
 import * as ChangeSpaceService from 'services/ChangeSpaceService';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
-import LocalesListRoute from 'app/settings/locales/routes/LocalesListRoute';
-import LocalesNewRoute from 'app/settings/locales/routes/LocalesNewRoute';
-import LocalesEditRoute from 'app/settings/locales/routes/LocalesEditRoute';
-
+import { LocalesListSkeleton } from '../skeletons/LocalesListSkeleton';
+import { LocalesFormSkeleton } from '../skeletons/LocalesFormSkeleton';
 import createResourceService from 'services/ResourceService';
 import { generateMessage } from 'utils/ResourceUtils';
+import { SettingsImporter } from 'app/settings/SettingsImporter';
+
+import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
 
 export default {
   name: 'locales',
@@ -16,7 +18,11 @@ export default {
     {
       name: 'list',
       url: '',
-      component: LocalesListRoute,
+      component: props => (
+        <LazyLoadedComponent fallback={LocalesListSkeleton} importer={SettingsImporter}>
+          {({ LocalesListRoute }) => <LocalesListRoute {...props} />}
+        </LazyLoadedComponent>
+      ),
       resolve: {
         localeResource: [
           '$stateParams',
@@ -63,7 +69,11 @@ export default {
     {
       name: 'new',
       url: '_new',
-      component: LocalesNewRoute,
+      component: props => (
+        <LazyLoadedComponent fallback={LocalesFormSkeleton} importer={SettingsImporter}>
+          {({ LocalesNewRoute }) => <LocalesNewRoute {...props} />}
+        </LazyLoadedComponent>
+      ),
       mapInjectedToProps: [
         '$scope',
         '$state',
@@ -85,7 +95,11 @@ export default {
     {
       name: 'detail',
       url: '/:localeId',
-      component: LocalesEditRoute,
+      component: props => (
+        <LazyLoadedComponent fallback={LocalesFormSkeleton} importer={SettingsImporter}>
+          {({ LocalesEditRoute }) => <LocalesEditRoute {...props} />}
+        </LazyLoadedComponent>
+      ),
       mapInjectedToProps: [
         '$scope',
         '$stateParams',

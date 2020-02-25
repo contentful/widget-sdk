@@ -16,8 +16,8 @@ import ApiKeysWorkbench from '../ApiKeysWorkbench';
 import ApiKeysNavigation from '../ApiKeysNavigation';
 import WorkbenchSidebarItem from 'app/common/WorkbenchSidebarItem';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
-import ApiKeyList from './ApiKeyList';
-import { useApiKeysState } from './ApiKeyListState';
+import ApiKeyList from '../api-keys-list/ApiKeyList';
+import { useApiKeysState } from '../api-keys-list/ApiKeyListState';
 import * as Navigator from 'states/Navigator';
 import EmptyStateContainer, {
   defaultSVGStyle

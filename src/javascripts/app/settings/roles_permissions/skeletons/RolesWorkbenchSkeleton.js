@@ -8,7 +8,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import Icon from 'ui/Components/Icon';
 
-export default function RolesWorkbenchShell(props) {
+export function RolesWorkbenchSkeleton(props) {
   return (
     <Workbench className={props.className}>
       <Workbench.Header
@@ -44,7 +44,7 @@ export default function RolesWorkbenchShell(props) {
   );
 }
 
-RolesWorkbenchShell.propTypes = {
+RolesWorkbenchSkeleton.propTypes = {
   className: PropTypes.string,
   onBack: PropTypes.func,
   actions: PropTypes.node,

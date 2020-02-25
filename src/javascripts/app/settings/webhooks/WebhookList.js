@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import StateLink from 'app/common/StateLink';
-import { WebhookListShell } from './routes/skeletons/WebhookListRouteSkeleton';
+import { WebhookListShell } from './skeletons/WebhookListRouteSkeleton';
 import {
   Table,
   TableHead,

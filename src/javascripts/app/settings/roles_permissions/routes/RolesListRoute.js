@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { sortBy } from 'lodash';
 import StateRedirect from 'app/common/StateRedirect';
-import RolesWorkbenchShell from './RolesWorkbenchShell';
+import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import createResourceService from 'services/ResourceService';
 import * as accessChecker from 'access_control/AccessChecker';
@@ -40,7 +40,7 @@ export default function RolesListRoute(props) {
       <RolesFetcher spaceId={props.spaceId}>
         {({ isLoading, isError, data, fetch }) => {
           if (isLoading) {
-            return <RolesWorkbenchShell title="Roles" />;
+            return <RolesWorkbenchSkeleton title="Roles" />;
           }
           if (isError) {
             return <StateRedirect path="spaces.detail.entries.list" />;

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import WebhookEditor from '../WebhookEditor';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
-import { WebhookLoadingSkeleton } from './skeletons/WebhookListRouteSkeleton';
+import { WebhookLoadingSkeleton } from '../skeletons/WebhookListRouteSkeleton';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import StateRedirect from 'app/common/StateRedirect';
 import DocumentTitle from 'components/shared/DocumentTitle';

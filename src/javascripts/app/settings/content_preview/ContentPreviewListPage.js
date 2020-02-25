@@ -1,35 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Icon from 'ui/Components/Icon';
-import {
-  SkeletonContainer,
-  SkeletonBodyText,
-  Workbench
-} from '@contentful/forma-36-react-components';
+import { Workbench } from '@contentful/forma-36-react-components';
 import { WhatIsContentPreview } from './ContentPreviewSidebar';
 import CreatePreviewButton from './CreatePreviewButton';
 import ContentPreviewList from './ContentPreviewList';
-
-export const ContentPreviewListPageSkeleton = () => (
-  <Workbench>
-    <Workbench.Header>
-      <Workbench.Icon icon="page-settings" />
-      <Workbench.Title>Content preview</Workbench.Title>
-    </Workbench.Header>
-    <Workbench.Content type="full">
-      <SkeletonContainer
-        svgWidth={600}
-        svgHeight={300}
-        ariaLabel="Loading content preview..."
-        clipId="loading-content-preview">
-        <SkeletonBodyText numberOfLines={5} offsetLeft={20} marginBottom={15} offsetTop={20} />
-      </SkeletonContainer>
-    </Workbench.Content>
-    <Workbench.Sidebar position="right">
-      <WhatIsContentPreview />
-    </Workbench.Sidebar>
-  </Workbench>
-);
 
 export default class ContentPreviewListPage extends Component {
   static propTypes = {

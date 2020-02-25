@@ -1,11 +1,12 @@
+import React from 'react';
 import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo';
 import * as SpaceAliasesRepo from 'data/CMA/SpaceAliasesRepo';
 import { redirectReadOnlySpace } from 'states/SpaceSettingsBase';
 import { spaceResolver } from 'states/Resolvers';
-import ApiKeyListRoute from '../api-keys-list/ApiKeyListRoute';
-import CMATokensRoute from '../cma-tokens/CMATokensRoute';
-import KeyEditorRoute from '../api-key-editor/KeyEditorRoute';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
+import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
+import { SettingsImporter } from 'app/settings/SettingsImporter';
+import KeyEditorWorkbench from '../api-key-editor/KeyEditorWorkbench';
 
 /**
  * This module export the API section state.
@@ -39,12 +40,20 @@ export default {
         {
           name: 'list',
           url: '',
-          component: ApiKeyListRoute
+          component: props => (
+            <LazyLoadedComponent importer={SettingsImporter} fallback={() => null}>
+              {({ ApiKeyListRoute }) => <ApiKeyListRoute {...props} />}
+            </LazyLoadedComponent>
+          )
         },
         {
           name: 'detail',
           url: '/:apiKeyId',
-          component: KeyEditorRoute,
+          component: props => (
+            <LazyLoadedComponent importer={SettingsImporter} fallback={KeyEditorWorkbench}>
+              {({ KeyEditorRoute }) => <KeyEditorRoute {...props} />}
+            </LazyLoadedComponent>
+          ),
           mapInjectedToProps: [
             '$scope',
             '$stateParams',
@@ -69,17 +78,22 @@ export default {
       ]
     },
     {
+      name: 'cma_tokens',
+      url: '/cma_tokens',
+      component: props => (
+        <LazyLoadedComponent importer={SettingsImporter} fallback={KeyEditorWorkbench}>
+          {({ CMATokensRoute }) => <CMATokensRoute {...props} />}
+        </LazyLoadedComponent>
+      )
+    },
+    {
       // Legacy path
       name: 'cma_keys',
       url: '/cma_keys',
       redirectTo: 'spaces.detail.api.cma_tokens'
     },
     {
-      name: 'cma_tokens',
-      url: '/cma_tokens',
-      component: CMATokensRoute
-    },
-    {
+      // Legacy path
       name: 'content_model',
       url: '/content_model',
       redirectTo: 'spaces.detail.content_types.list'

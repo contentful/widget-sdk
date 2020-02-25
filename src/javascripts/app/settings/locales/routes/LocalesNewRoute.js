@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import LocaleEditForm from '../LocaleEditForm';
-import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent';
+import createFetcherComponent from 'app/common/createFetcherComponent';
+import { LocalesFormSkeleton } from '../skeletons/LocalesFormSkeleton';
 import StateRedirect from 'app/common/StateRedirect';
 import LocaleNotifications from '../utils/LocaleNotifications';
 import { getModule } from 'NgRegistry';
@@ -106,7 +107,7 @@ export default class LocalesNewRoute extends React.Component {
         <LocalesFetcher>
           {({ isLoading, isError, data }) => {
             if (isLoading) {
-              return <FetcherLoading message="Loading locale..." />;
+              return <LocalesFormSkeleton />;
             }
             if (isError) {
               return <StateRedirect path="^.list" />;

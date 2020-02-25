@@ -3,10 +3,9 @@ import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
 import {
   WebhooksListLoadingSkeleton,
   WebhookLoadingSkeleton
-} from './skeletons/WebhookListRouteSkeleton';
+} from '../skeletons/WebhookListRouteSkeleton';
 import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
-
-const WebhooksImporter = () => import(/* webpackChunkName: "SettingsWebhooks" */ './loader');
+import { SettingsImporter } from 'app/settings/SettingsImporter';
 
 const mapInjectedToEditorProps = [
   '$scope',
@@ -39,7 +38,7 @@ export default {
         referrer: null
       },
       component: props => (
-        <LazyLoadedComponent fallback={WebhooksListLoadingSkeleton} importer={WebhooksImporter}>
+        <LazyLoadedComponent fallback={WebhooksListLoadingSkeleton} importer={SettingsImporter}>
           {({ WebhookListRoute }) => {
             return <WebhookListRoute {...props} />;
           }}
@@ -59,7 +58,7 @@ export default {
       name: 'new',
       url: '/new',
       component: props => (
-        <LazyLoadedComponent fallback={WebhookLoadingSkeleton} importer={WebhooksImporter}>
+        <LazyLoadedComponent fallback={WebhookLoadingSkeleton} importer={SettingsImporter}>
           {({ WebhookNewRoute }) => {
             return <WebhookNewRoute {...props} />;
           }}
@@ -71,7 +70,7 @@ export default {
       name: 'detail',
       url: '/:webhookId',
       component: props => (
-        <LazyLoadedComponent fallback={WebhookLoadingSkeleton} importer={WebhooksImporter}>
+        <LazyLoadedComponent fallback={WebhookLoadingSkeleton} importer={SettingsImporter}>
           {({ WebhookEditRoute }) => {
             return <WebhookEditRoute {...props} />;
           }}
@@ -83,7 +82,7 @@ export default {
           name: 'call',
           url: '/call/:callId',
           component: props => (
-            <LazyLoadedComponent fallback={WebhookLoadingSkeleton} importer={WebhooksImporter}>
+            <LazyLoadedComponent fallback={WebhookLoadingSkeleton} importer={SettingsImporter}>
               {({ WebhookCallRoute }) => {
                 return <WebhookCallRoute {...props} />;
               }}

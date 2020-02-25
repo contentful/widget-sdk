@@ -4,7 +4,8 @@ import { values } from 'lodash';
 import * as AccessChecker from 'access_control/AccessChecker';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import StateRedirect from 'app/common/StateRedirect';
-import ContentPreviewListPage, { ContentPreviewListPageSkeleton } from '../ContentPreviewListPage';
+import ContentPreviewListPage from '../ContentPreviewListPage';
+import { ContentPreviewListSkeleton } from '../skeletons/ContentPreviewListSkeleton';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { getContentPreview } from 'services/contentPreview';
 
@@ -24,7 +25,7 @@ export default class ContentPreviewListRoute extends Component {
       <ContentPreviewsFetcher>
         {({ isLoading, isError, data }) => {
           if (isLoading) {
-            return <ContentPreviewListPageSkeleton />;
+            return <ContentPreviewListSkeleton />;
           }
           if (isError) {
             return <StateRedirect path="spaces.detail.entries.list" />;

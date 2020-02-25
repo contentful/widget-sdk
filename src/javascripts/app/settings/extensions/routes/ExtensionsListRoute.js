@@ -5,7 +5,8 @@ import { get } from 'lodash';
 import StateRedirect from 'app/common/StateRedirect';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import ExtensionsForbiddenPage from '../ExtensionsForbiddenPage';
-import ExtensionsList, { ExtensionListShell } from '../ExtensionsList';
+import ExtensionsList from '../ExtensionsList';
+import { ExtensionListSkeleton } from '../skeletons/ExtensionListSkeleton';
 import { toInternalFieldType } from 'widgets/FieldTypes';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
@@ -55,7 +56,7 @@ class ExtensionsListRoute extends React.Component {
       <ExtensionsFetcher cma={this.props.cma}>
         {({ isLoading, isError, data, fetch }) => {
           if (isLoading) {
-            return <ExtensionListShell />;
+            return <ExtensionListSkeleton />;
           }
           if (isError) {
             return <StateRedirect path="spaces.detail.entries.list" />;

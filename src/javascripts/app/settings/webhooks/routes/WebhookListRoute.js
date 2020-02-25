@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import WebhookForbiddenPage from '../WebhookForbiddenPage';
 import WebhookList from '../WebhookList';
-import { WebhooksListLoadingSkeleton } from './skeletons/WebhookListRouteSkeleton';
+import { WebhooksListLoadingSkeleton } from '../skeletons/WebhookListRouteSkeleton';
 import createWebhookTemplateDialogOpener from '../createWebhookTemplateDialogOpener';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import { getSectionVisibility } from 'access_control/AccessChecker';

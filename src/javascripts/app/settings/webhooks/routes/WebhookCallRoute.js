@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import WebhookCall from '../WebhookCall';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
-import { WebhookLoadingSkeleton } from './skeletons/WebhookListRouteSkeleton';
+import { WebhookLoadingSkeleton } from '../skeletons/WebhookListRouteSkeleton';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import StateRedirect from 'app/common/StateRedirect';

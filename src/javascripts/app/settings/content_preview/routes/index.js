@@ -1,7 +1,9 @@
+import React from 'react';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
-import ContentPreviewListRoute from './ContentPreviewListRoute';
-import ContentPreviewNewRoute from './ContentPreviewNewRoute';
-import ContentPreviewEditRoute from './ContentPreviewEditRoute';
+import { ContentPreviewListSkeleton } from '../skeletons/ContentPreviewListSkeleton';
+import { ContentPreviewFormSkeleton } from '../skeletons/ContentPreviewFormSkeleton';
+import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
+import { SettingsImporter } from 'app/settings/SettingsImporter';
 
 export default {
   name: 'content_preview',
@@ -11,12 +13,24 @@ export default {
     {
       name: 'list',
       url: '',
-      component: ContentPreviewListRoute
+      component: props => (
+        <LazyLoadedComponent fallback={ContentPreviewListSkeleton} importer={SettingsImporter}>
+          {({ ContentPreviewListRoute }) => {
+            return <ContentPreviewListRoute {...props} />;
+          }}
+        </LazyLoadedComponent>
+      )
     },
     {
       name: 'new',
       url: '/new',
-      component: ContentPreviewNewRoute,
+      component: props => (
+        <LazyLoadedComponent fallback={ContentPreviewFormSkeleton} importer={SettingsImporter}>
+          {({ ContentPreviewNewRoute }) => {
+            return <ContentPreviewNewRoute {...props} />;
+          }}
+        </LazyLoadedComponent>
+      ),
       mapInjectedToProps: [
         '$scope',
         $scope => {
@@ -36,7 +50,13 @@ export default {
     {
       name: 'detail',
       url: '/:contentPreviewId',
-      component: ContentPreviewEditRoute,
+      component: props => (
+        <LazyLoadedComponent fallback={ContentPreviewFormSkeleton} importer={SettingsImporter}>
+          {({ ContentPreviewEditRoute }) => {
+            return <ContentPreviewEditRoute {...props} />;
+          }}
+        </LazyLoadedComponent>
+      ),
       mapInjectedToProps: [
         '$scope',
         '$stateParams',

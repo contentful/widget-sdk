@@ -6,8 +6,6 @@ import {
   Dropdown,
   DropdownList,
   Notification,
-  SkeletonContainer,
-  SkeletonBodyText,
   TextLink,
   Typography,
   Paragraph,
@@ -16,10 +14,8 @@ import {
   TableHead,
   TableBody,
   TableCell,
-  TableRow,
-  Workbench
+  TableRow
 } from '@contentful/forma-36-react-components';
-import Icon from 'ui/Components/Icon';
 import tokens from '@contentful/forma-36-tokens';
 import StateLink from 'app/common/StateLink';
 import EmptyStateContainer, {
@@ -29,8 +25,9 @@ import EmptyStateIllustration from 'svg/connected-forms-illustration.svg';
 import { websiteUrl } from 'Config';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
+import { ExtensionListSkeleton } from './skeletons/ExtensionListSkeleton';
 
-import ExtensionsSidebar, { DocsLink } from './ExtensionsSidebar';
+import { DocsLink } from './ExtensionsSidebar';
 import ExtensionsActions from './ExtensionsActions';
 import { openGitHubInstaller } from './ExtensionsActions';
 
@@ -128,37 +125,6 @@ const EmptyState = () => (
   </EmptyStateContainer>
 );
 
-export const ExtensionListShell = props => (
-  <Workbench>
-    <Workbench.Header
-      title={props.title || 'Extensions'}
-      icon={<Icon name="page-settings" scale="0.8" />}
-      actions={props.actions}
-    />
-    <Workbench.Content type="full">
-      {props.children || (
-        <React.Fragment>
-          <SkeletonContainer
-            svgWidth={600}
-            svgHeight={300}
-            ariaLabel="Loading extensions list..."
-            clipId="extesions-loading-list">
-            <SkeletonBodyText numberOfLines={5} offsetLeft={20} marginBottom={15} offsetTop={20} />
-          </SkeletonContainer>
-        </React.Fragment>
-      )}
-    </Workbench.Content>
-    <Workbench.Sidebar position="right">
-      <ExtensionsSidebar />
-    </Workbench.Sidebar>
-  </Workbench>
-);
-
-ExtensionListShell.propTypes = {
-  title: PropTypes.string,
-  actions: PropTypes.node
-};
-
 const ExtensionsTable = props => (
   <Table>
     <TableHead>
@@ -254,11 +220,11 @@ export class ExtensionsList extends React.Component {
 
   render() {
     return (
-      <ExtensionListShell
+      <ExtensionListSkeleton
         title={`Extensions (${this.props.extensions.length})`}
         actions={<ExtensionsActions />}>
         {this.renderList()}
-      </ExtensionListShell>
+      </ExtensionListSkeleton>
     );
   }
 }

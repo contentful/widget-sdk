@@ -47,7 +47,7 @@ LazyLoadedComponent.propTypes = {
   fallback: PropTypes.func,
   error: PropTypes.func,
   delay: PropTypes.number,
-  children: PropTypes.func
+  children: PropTypes.func.isRequired
 };
 
 LazyLoadedComponent.defaultProps = {

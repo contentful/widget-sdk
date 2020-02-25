@@ -4,8 +4,8 @@ import { getApiKeyRepo } from 'app/settings/api/services/ApiKeyRepoInstance';
 import StateRedirect from 'app/common/StateRedirect';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import * as accessChecker from 'access_control/AccessChecker';
-import KeyEditorWorkbench from './KeyEditorWorkbench';
-import KeyEditor from './KeyEditor';
+import KeyEditorWorkbench from '../api-key-editor/KeyEditorWorkbench';
+import KeyEditor from '../api-key-editor/KeyEditor';
 import { getCurrentVariation } from 'utils/LaunchDarkly';
 
 import { ENVIRONMENTS_FLAG } from 'featureFlags';

@@ -9,82 +9,18 @@ import {
   CheckboxField,
   Notification,
   ModalConfirm,
-  SkeletonContainer,
-  SkeletonBodyText,
-  SkeletonDisplayText,
   Heading,
-  Workbench,
   Paragraph
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import Icon from 'ui/Components/Icon';
+import { ContentPreviewFormSkeleton } from './skeletons/ContentPreviewFormSkeleton';
 import validate from './ContentPreviewFormValidation';
 import ModalLauncher from 'app/common/ModalLauncher';
 import { slugify } from '@contentful/field-editor-slug';
 import { getContentPreview } from 'services/contentPreview';
-import {
-  WhatIsContentPreview,
-  TokensForContentPreview,
-  LinkedEntries,
-  LegacyTokens
-} from './ContentPreviewSidebar';
 import * as Navigator from 'states/Navigator';
 import * as Analytics from 'analytics/Analytics';
-
-export const ContentPreviewFormPageSkeleton = props => {
-  return (
-    <Workbench>
-      <Workbench.Header
-        onBack={() => {
-          Navigator.go({ path: '^.list' });
-        }}
-        icon={<Icon name="page-settings" scale="0.8" />}
-        title={
-          <>
-            {props.title && <Heading>{props.title}</Heading>}
-            {!props.title && (
-              <SkeletonContainer svgHeight={21} clipId="title">
-                <SkeletonDisplayText lineHeight={21} />
-              </SkeletonContainer>
-            )}
-          </>
-        }
-        actions={
-          props.actions || (
-            <SkeletonContainer svgHeight={21} svgWidth={100} clipId="actions">
-              <SkeletonDisplayText lineHeight={21} />
-            </SkeletonContainer>
-          )
-        }
-      />
-      <Workbench.Content>
-        {props.children || (
-          <Form className="content-preview-editor">
-            <Heading className="section-title" element="h3">
-              General information
-            </Heading>
-            <SkeletonContainer svgWidth={600} ariaLabel="Loading content type..." clipId="content">
-              <SkeletonBodyText numberOfLines={5} marginBottom={15} />
-            </SkeletonContainer>
-          </Form>
-        )}
-      </Workbench.Content>
-      <Workbench.Sidebar position="right">
-        <WhatIsContentPreview />
-        <TokensForContentPreview />
-        <LinkedEntries />
-        <LegacyTokens />
-      </Workbench.Sidebar>
-    </Workbench>
-  );
-};
-
-ContentPreviewFormPageSkeleton.propTypes = {
-  title: PropTypes.node,
-  actions: PropTypes.node,
-  children: PropTypes.node
-};
 
 const styles = {
   removeButton: css({
@@ -309,7 +245,7 @@ export default class ContentPreviewFormPage extends Component {
 
   render() {
     return (
-      <ContentPreviewFormPageSkeleton
+      <ContentPreviewFormSkeleton
         title={this.state.preview.name || 'Untitled'}
         actions={
           <React.Fragment>
@@ -414,7 +350,7 @@ export default class ContentPreviewFormPage extends Component {
             })}
           </FieldGroup>
         </Form>
-      </ContentPreviewFormPageSkeleton>
+      </ContentPreviewFormSkeleton>
     );
   }
 }

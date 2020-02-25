@@ -4,7 +4,7 @@ import ApiKeysWorkbench from '../ApiKeysWorkbench';
 import ApiKeysNavigation from '../ApiKeysNavigation';
 import WorkbenchSidebarItem from 'app/common/WorkbenchSidebarItem';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
-import { CMATokensView } from './CMATokensView';
+import { CMATokensView } from '../cma-tokens/CMATokensView';
 
 export default function CMATokensRoute() {
   return (
