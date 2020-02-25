@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { Tabs, Tab, TabPanel, Heading } from '@contentful/forma-36-react-components';
+import React from 'react';
+import { Heading } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
-import { Grid, GridItem } from './common/Grid';
 import UsageTabs from './common/UsageTabs';
 
 const styles = {
@@ -18,6 +17,7 @@ const styles = {
 };
 
 const OrgTabs = props => {
+  // eslint-disable-next-line
   console.log('Org', props);
   return (
     <>
@@ -51,6 +51,7 @@ const OrgTabs = props => {
 };
 
 const SpacesTabs = props => {
+  // eslint-disable-next-line
   console.log('Spaces', props);
   return (
     <>

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
 const handleColumnsRows = val => {
@@ -43,6 +44,16 @@ export const Grid = props => {
   );
 };
 
+Grid.propTypes = {
+  rows: PropTypes.number || PropTypes.string,
+  columns: PropTypes.number || PropTypes.string,
+  inline: PropTypes.boolean,
+  columnGap: PropTypes.string,
+  rowGap: PropTypes.string,
+  justifyContent: PropTypes.string,
+  alignContent: PropTypes.string
+};
+
 export const GridItem = props => {
   const { children, columnStart, columnEnd, rowStart, rowEnd, area, order, ...rest } = props;
 
@@ -62,4 +73,13 @@ export const GridItem = props => {
       {children}
     </div>
   );
+};
+
+GridItem.propTypes = {
+  columnStart: PropTypes.number || PropTypes.string,
+  columnEnd: PropTypes.number || PropTypes.string,
+  rowStart: PropTypes.number || PropTypes.string,
+  rowEnd: PropTypes.number || PropTypes.string,
+  area: PropTypes.number || PropTypes.string,
+  order: PropTypes.number
 };

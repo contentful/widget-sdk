@@ -12,7 +12,7 @@ const styles = {
   })
 };
 
-const UsageTabs = (props) => {
+const UsageTabs = props => {
   const { tabsData } = props;
   const defaultActiveTab = tabsData && tabsData.find(item => item.defaultActive);
   const [selected, setSelected] = useState(
@@ -58,7 +58,7 @@ const UsageTabs = (props) => {
   );
 };
 
-UsageTabs.prototype = {
+UsageTabs.propTypes = {
   tabsData: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
