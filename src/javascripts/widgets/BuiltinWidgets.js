@@ -240,11 +240,11 @@ export function create() {
     )
   });
 
-  const newRichText = {
+  const newRichText = (spaceContext) => ({
     renderFieldEditor: ({ widgetApi, $scope, loadEvents }) => {
-      return renderRichTextEditor({ widgetApi, $scope, loadEvents });
+      return renderRichTextEditor({ widgetApi, $scope, spaceContext, loadEvents });
     }
-  };
+  });
   const legacyRichText = {
     buildTemplate: ({ widgetApi, loadEvents }) => {
       return <RichTextEditor widgetApi={widgetApi} loadEvents={loadEvents} />;
@@ -260,7 +260,7 @@ export function create() {
       const organizationId = spaceContext.getData('organization.sys.id');
       const spaceId = spaceContext.space.getId();
       const isEnabled = await getVariation(NEW_RICH_TEXT, { organizationId, spaceId });
-      return isEnabled ? newRichText : legacyRichText;
+      return isEnabled ? newRichText(spaceContext) : legacyRichText;
     }
   });
 

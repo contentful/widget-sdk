@@ -9,7 +9,7 @@ import { waitUntilAssetProcessed } from 'widgets/bridges/makeExtensionSpaceMetho
  * @return {SpaceAPI}
  */
 export function createSpaceApi({ cma }) {
-  const { getAsset, getAssets, getEntry, getEntries, getContentType, getContentTypes } = cma;
+  const { getAsset, getAssets, getEntry, getEntries, getContentType, getContentTypes, createEntry, createAsset } = cma;
 
   return {
     getEntries,
@@ -18,6 +18,8 @@ export function createSpaceApi({ cma }) {
     getEntry,
     getContentType,
     getContentTypes,
+    createEntry,
+    createAsset,
     waitUntilAssetProcessed: (assetId, locale) => {
       return waitUntilAssetProcessed(cma, assetId, locale);
     },
