@@ -9,7 +9,7 @@ export default class SearchFilter extends React.Component {
     filter: PropTypes.shape({
       key: PropTypes.string.isRequired,
       value: PropTypes.any,
-      operator: PropTypes.string
+      operator: PropTypes.function
     }).isRequired,
     options: PropTypes.arrayOf(
       PropTypes.shape({

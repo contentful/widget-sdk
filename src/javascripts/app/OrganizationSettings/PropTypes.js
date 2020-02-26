@@ -78,7 +78,7 @@ export const Filter = PropTypes.shape({
   label: PropTypes.string.isRequired,
   filter: PropTypes.shape({
     key: PropTypes.string.isRequired,
-    operator: PropTypes.string,
+    operator: PropTypes.function,
     value: PropTypes.any
   }).isRequired,
   options: PropTypes.arrayOf(FilterOption)

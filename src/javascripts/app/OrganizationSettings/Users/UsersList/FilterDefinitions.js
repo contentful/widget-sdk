@@ -22,6 +22,8 @@ const idMap = {
   team: ['sys.teamMemberships.sys.team.sys.id']
 };
 
+// The operator function always passes string as a value
+
 const defaultFiltersById = {
   sort: {
     key: 'order',
@@ -37,7 +39,7 @@ const defaultFiltersById = {
   },
   ssoLogin: {
     key: 'sys.sso.lastSignInAt',
-    operator: 'exists',
+    operator: () => 'exists',
     value: ''
   },
   space: {
@@ -50,6 +52,13 @@ const defaultFiltersById = {
   },
   team: {
     key: 'sys.teamMemberships.sys.team.sys.id',
+    operator: value => {
+      if (['true', 'false'].includes(value)) {
+        return 'exists';
+      }
+
+      return 'eq';
+    },
     value: ''
   }
 };
@@ -172,6 +181,7 @@ export function generateFilterDefinitions({
     filter: normalized.team,
     options: [
       { label: 'Any', value: '' },
+      { label: 'None', value: 'false' },
       ...teams
         .sort((a, b) => a.name.localeCompare(b.name))
         .map(team => ({ label: team.name, value: team.sys.id }))
