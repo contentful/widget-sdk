@@ -7,7 +7,7 @@ import { Tooltip } from '@contentful/forma-36-react-components';
 import * as Navigator from 'states/Navigator';
 import NavigationItemTag from './NavigationItemTag';
 import Icon from 'ui/Components/Icon';
-import NavigationIcon from 'ui/Components/NavigationIcon/NavigationIcon';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 
 import keycodes from 'utils/keycodes';
 

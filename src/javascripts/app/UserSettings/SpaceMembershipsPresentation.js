@@ -13,7 +13,7 @@ import {
 import moment from 'moment';
 
 import { Space as SpacePropType } from 'app/OrganizationSettings/PropTypes';
-import NavigationIcon from 'ui/Components/NavigationIcon/NavigationIcon';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 
 const SpaceMembershipsPresentation = ({ spaces, onLeave }) => (
   <Workbench>

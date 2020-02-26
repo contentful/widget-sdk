@@ -15,7 +15,7 @@ import PropTypes from 'prop-types';
 import * as Navigator from 'states/Navigator';
 import NavigationItemTag from './NavigationItemTag';
 import Icon from 'ui/Components/Icon';
-import NavigationIcon from 'ui/Components/NavigationIcon/NavigationIcon';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 
 const styles = {
   dropdown: css({

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { Workbench } from '@contentful/forma-36-react-components';
-import NavigationIcon from 'ui/Components/NavigationIcon/NavigationIcon';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 
 import * as Auth from 'Authentication';
 import * as TokenResourceManager from '../settings/api/cma-tokens/TokenResourceManager';

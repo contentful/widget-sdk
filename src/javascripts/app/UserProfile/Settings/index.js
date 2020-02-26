@@ -17,7 +17,7 @@ import ErrorState from 'app/common/ErrorState';
 import LoadingState from 'app/common/LoadingState';
 import { getOrganizations } from 'services/TokenStore';
 import { OrgMembershipsSection } from './OrgMembershipsSection';
-import NavigationIcon from 'ui/Components/NavigationIcon/NavigationIcon';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 
 const styles = {
   content: css({
