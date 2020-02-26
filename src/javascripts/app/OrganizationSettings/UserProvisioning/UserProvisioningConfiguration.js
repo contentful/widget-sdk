@@ -26,19 +26,20 @@ const styles = {
     margin: '0 auto',
     marginTop: tokens.spacing2Xl
   }),
-  intro: css({
-    marginBottom: tokens.spacing3Xl
-  }),
-  bold: css({
+  subheading: css({
     marginBottom: tokens.spacingXs,
     fontWeight: tokens.fontWeightMedium
   }),
   input: css({
-    marginTop: tokens.spacingXs,
+    marginTop: tokens.spacingL,
     marginBottom: tokens.spacingL
   }),
-  listStyle: css({
-    listStyleType: 'disc'
+  paragraph: css({
+    marginTop: tokens.spacingM,
+    marginBottom: tokens.spacingL
+  }),
+  cta: css({
+    marginRight: tokens.spacingM
   })
 };
 
@@ -72,26 +73,13 @@ export default function UserProvisioningConfiguration({ orgId }) {
       <Workbench.Header icon={<Icon name="page-sso" scale="0.75" />} title="User Provisioning" />
       <Workbench.Content type="text">
         <Typography className={styles.content}>
-          <div className={styles.intro}>
-            <Heading>Set up user provisioning with SCIM 2.0</Heading>
-            <Paragraph>
-              Set up user provisioning for your organization in Contentful in a few steps.{' '}
-              <TextLink href="https://www.contentful.com/faq/" target="_blank">
-                Check out the FAQs.
-              </TextLink>
-            </Paragraph>
-            <Note noteType="primary">
-              We strongly recommend using a service account for setting up user provisioning in
-              Contentful.{' '}
-              <TextLink
-                testId="faq-url"
-                href="https://www.contentful.com/faq/" //TODO set correct scim anchor url
-                target="_blank">
-                Learn why.
-              </TextLink>
-            </Note>
-          </div>
-          <Heading element="h1">SCIM configuration details</Heading>
+          <Heading>Set up user provisioning with SCIM 2.0</Heading>
+          <Paragraph className={styles.paragraph}>
+            Set up user provisioning for your organization in Contentful in a few steps.{' '}
+            <TextLink href="https://www.contentful.com/faq/" target="_blank">
+              Check out the FAQs.
+            </TextLink>
+          </Paragraph>
           <TextField
             labelText="SCIM URL"
             name="scim-url"
@@ -104,21 +92,37 @@ export default function UserProvisioningConfiguration({ orgId }) {
             }}
             value={`https:${SCIM_BASE}`}
           />
-          <div className={styles.bold}>Personal Access Token</div>
-          <Paragraph>
-            As an alternative to OAuth applications, you can also leverage Personal Access Tokens to
-            use the Content Management API. These tokens are always bound to your individual
-            account, with the same permissions you have on all of your spaces and organizations.{' '}
-            <StateLink path="account.profile.cma_tokens" data-test-id="tokens-url" target="_blank">
-              See created tokens.
-            </StateLink>
+          <div className={styles.subheading}>Personal access token</div>
+          <Note noteType="primary">
+            We strongly recommend logging into a service account, with the organization role set to
+            owner, for setting up user provisioning in Contentful.{' '}
+            {/* TODO uncomment when page is available
+              <TextLink
+                testId="faq-url"
+                href="https://www.contentful.com/faq/SSO-Groups-Provisioning/"
+                target="_blank">
+                Learn why.
+              </TextLink> */}
+          </Note>
+          <Paragraph className={styles.paragraph}>
+            We advise using a personal access token to manage SCIM API access. These tokens are
+            always bound to your individual account, with the same permissions you have on all of
+            your spaces and organizations.{' '}
           </Paragraph>
           {personalAccessToken ? (
             <UserProvisioningToken personalAccessToken={personalAccessToken} />
           ) : (
-            <Button testId="generate-btn" onClick={openGenerateDialog}>
-              Generate personal access token
-            </Button>
+            <>
+              <Button testId="generate-btn" onClick={openGenerateDialog} className={styles.cta}>
+                Generate personal access token
+              </Button>
+              <StateLink
+                path="account.profile.cma_tokens"
+                data-test-id="tokens-url"
+                target="_blank">
+                Manage your tokens
+              </StateLink>
+            </>
           )}
         </Typography>
       </Workbench.Content>

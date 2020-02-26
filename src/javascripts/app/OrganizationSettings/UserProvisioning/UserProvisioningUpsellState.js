@@ -5,7 +5,6 @@ import {
   Heading,
   Typography,
   Paragraph,
-  TextLink,
   Button,
   Workbench
 } from '@contentful/forma-36-react-components';
@@ -35,9 +34,13 @@ function UserProvisioningUpsellState() {
             <Paragraph>
               You can manage users and teams within your organization in Contentful directly from
               your identity provider. We support SCIM 2.0 for user provisioning.{' '}
-              <TextLink href="https://www.contentful.com/faq/" target="_blank">
+              {/* TODO uncomment when page is available
+              <TextLink
+                href="https://www.contentful.com/faq/SSO-Groups-Provisioning/
+                "
+                target="_blank">
                 Read our FAQs for more information.
-              </TextLink>
+              </TextLink> */}
             </Paragraph>
             <Paragraph>
               The user provisioning feature is available on selected enterprise-grade platform
