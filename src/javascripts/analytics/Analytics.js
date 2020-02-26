@@ -4,7 +4,7 @@ import stringifySafe from 'json-stringify-safe';
 import { prepareUserData } from 'analytics/UserData';
 import _ from 'lodash';
 import segment from 'analytics/segment';
-import { transformEvent } from 'analytics/transform';
+import { transformEvent, eventExists } from 'analytics/transform';
 import * as logger from 'services/logger';
 import * as analyticsConsole from 'analytics/analyticsConsole';
 
@@ -108,6 +108,14 @@ export function getSessionData(path, defaultValue) {
  * if it is on the valid events list.
  */
 export function track(event, data) {
+  if (!eventExists(event)) {
+    track('tracking:invalid_event', {
+      event
+    });
+
+    return;
+  }
+
   try {
     data = _.isObject(data) ? _.cloneDeep(data) : {};
     data = removeCircularRefs(Object.assign({}, getBasicPayload(), data));
