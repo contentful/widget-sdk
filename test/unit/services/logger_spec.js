@@ -64,6 +64,29 @@ describe('logger service', () => {
     sinon.assert.notCalled(this.bugsnag.notify);
   });
 
+  it('handles messages that are of type Error as well as String', function() {
+    const err = new Error('Oops something went wrong');
+    const errMsg = 'Wowzers this is messed up';
+
+    this.logger.logError(errMsg);
+    sinon.assert.calledWith(
+      this.bugsnag.notify,
+      'Logged Error',
+      errMsg,
+      sinon.match.object,
+      'error'
+    );
+
+    this.logger.logError(err);
+    sinon.assert.calledWith(
+      this.bugsnag.notify,
+      'Logged Error',
+      err.message,
+      sinon.match.object,
+      'error'
+    );
+  });
+
   it('logs warnings', function() {
     this.logger.logWarn('test', { meta: 'Data' });
     sinon.assert.calledWith(
