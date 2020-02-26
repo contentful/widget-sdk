@@ -4,7 +4,7 @@ import { getGatekeeperUrl } from 'account/UrlSyncHelper';
 import { css } from 'emotion';
 
 import { Workbench } from '@contentful/forma-36-react-components';
-import IconPoc from 'ui/Components/IconPoc';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 
 const wrapperStyle = css({
   position: 'absolute',
@@ -21,7 +21,7 @@ export default function AccountView({ title, icon, onReady }) {
     <Workbench testId="account-iframe-page">
       <Workbench.Header
         title={title}
-        icon={icon ? <IconPoc name={icon} size="large" color="green" /> : null}
+        icon={icon ? <NavigationIcon name={icon} size="large" color="green" /> : null}
       />
       <Workbench.Content>
         <div className={wrapperStyle}>

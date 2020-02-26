@@ -6,7 +6,7 @@ export default function ProfileNavigationBar() {
   const accessTokensDropdownItems = [
     {
       title: 'Personal access tokens',
-      iconPoc: 'token',
+      navIcon: 'token',
       icon: 'nav-user-oauth',
       sref: 'account.profile.cma_tokens',
       srefOptions: {
@@ -16,7 +16,7 @@ export default function ProfileNavigationBar() {
     },
     {
       title: 'OAuth tokens',
-      iconPoc: 'token',
+      navIcon: 'token',
       icon: 'nav-user-oauth',
       sref: 'account.profile.access_grants',
       srefOptions: {
@@ -36,7 +36,7 @@ export default function ProfileNavigationBar() {
           listItems={[
             {
               title: 'User profile',
-              iconPoc: 'user-profile',
+              navIcon: 'user-profile',
               icon: 'nav-user-settings',
               sref: 'account.profile.user',
               srefOptions: {
@@ -46,7 +46,7 @@ export default function ProfileNavigationBar() {
             },
             {
               title: 'Spaces',
-              iconPoc: 'spaces',
+              navIcon: 'spaces',
               icon: 'nav-spaces',
               sref: 'account.profile.space_memberships',
               srefOptions: {
@@ -56,7 +56,7 @@ export default function ProfileNavigationBar() {
             },
             {
               title: 'Organizations',
-              iconPoc: 'organizations',
+              navIcon: 'organizations',
               icon: 'nav-user-organizations',
               sref: 'account.profile.organization_memberships',
               srefOptions: {
@@ -66,7 +66,7 @@ export default function ProfileNavigationBar() {
             },
             {
               title: 'Tokens',
-              iconPoc: 'token',
+              navIcon: 'token',
               icon: 'nav-user-oauth',
               srefOptions: {
                 inherit: false
@@ -76,7 +76,7 @@ export default function ProfileNavigationBar() {
             },
             {
               title: 'OAuth applications',
-              iconPoc: 'oauth',
+              navIcon: 'oauth',
               icon: 'nav-user-applications',
               sref: 'account.profile.applications',
               srefOptions: {

@@ -15,7 +15,7 @@ import PropTypes from 'prop-types';
 import * as Navigator from 'states/Navigator';
 import NavigationItemTag from './NavigationItemTag';
 import Icon from 'ui/Components/Icon';
-import IconPoc from 'ui/Components/IconPoc';
+import NavigationIcon from 'ui/Components/NavigationIcon/NavigationIcon';
 
 const styles = {
   dropdown: css({
@@ -83,8 +83,8 @@ export default function NavigationDropdown(props) {
               }
             }}>
             <span className="nav-bar__list-label">
-              {item.iconPoc ? (
-                <IconPoc name={item.iconPoc} size="medium" color="white" inNavigation />
+              {item.navIcon ? (
+                <NavigationIcon name={item.navIcon} size="medium" color="white" inNavigation />
               ) : (
                 <Icon name={item.icon} />
               )}
@@ -140,7 +140,7 @@ NavigationDropdown.propTypes = {
     title: PropTypes.string.isRequired,
     icon: PropTypes.string.isRequired,
     tagLabel: PropTypes.string,
-    iconPoc: PropTypes.string,
+    navIcon: PropTypes.string,
     rootSref: PropTypes.string,
     sref: PropTypes.string,
     srefParams: PropTypes.object,

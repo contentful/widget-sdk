@@ -13,13 +13,12 @@ import {
 import moment from 'moment';
 
 import { Space as SpacePropType } from 'app/OrganizationSettings/PropTypes';
-// import Icon from 'ui/Components/Icon';
-import IconPoc from 'ui/Components/IconPoc';
+import NavigationIcon from 'ui/Components/NavigationIcon/NavigationIcon';
 
 const SpaceMembershipsPresentation = ({ spaces, onLeave }) => (
   <Workbench>
     <Workbench.Header
-      icon={<IconPoc name="spaces" size="large" color="green" />}
+      icon={<NavigationIcon name="spaces" size="large" color="green" />}
       title={`Space memberships (${(spaces || []).length})`}
     />
     <Workbench.Content type="default">

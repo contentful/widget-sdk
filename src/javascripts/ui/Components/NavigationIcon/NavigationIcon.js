@@ -4,27 +4,27 @@ import { cx, css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 
 // account settings
-import userProfile from 'svg/icons/user-profile.svg';
-import spaces from 'svg/icons/spaces.svg';
-import organizationsMono from 'svg/icons/organizations.svg';
-import tokenMono from 'svg/icons/token.svg';
-import oauthMono from 'svg/icons/oauth.svg';
+import userProfile from './icons/user-profile.svg';
+import spaces from './icons/spaces.svg';
+import organizationsMono from './icons/organizations.svg';
+import tokenMono from './icons/token.svg';
+import oauthMono from './icons/oauth.svg';
 // organization settings
-import orgInfo from 'svg/icons/org-info.svg';
-import subscription from 'svg/icons/subscription.svg';
-import usage from 'svg/icons/usage.svg';
-import users from 'svg/icons/users.svg';
-import teams from 'svg/icons/teams.svg';
-import apps from 'svg/icons/apps.svg';
-import sso from 'svg/icons/sso.svg';
+import orgInfo from './icons/org-info.svg';
+import subscription from './icons/subscription.svg';
+import usage from './icons/usage.svg';
+import users from './icons/users.svg';
+import teams from './icons/teams.svg';
+import apps from './icons/apps.svg';
+import sso from './icons/sso.svg';
 // space settings
-import home from 'svg/icons/home.svg';
-import contentModel from 'svg/icons/content-model.svg';
-import content from 'svg/icons/content.svg';
-import media from 'svg/icons/media.svg';
-import settings from 'svg/icons/settings.svg';
-import apis from 'svg/icons/apis.svg';
-import billing from 'svg/icons/billing.svg';
+import home from './icons/home.svg';
+import contentModel from './icons/content-model.svg';
+import content from './icons/content.svg';
+import media from './icons/media.svg';
+import settings from './icons/settings.svg';
+import apis from './icons/apis.svg';
+import billing from './icons/billing.svg';
 
 const SVGs = {
   'user-profile': userProfile,
@@ -50,7 +50,6 @@ const SVGs = {
 
 const colorsConfig = {
   white: tokens.colorWhite,
-  gray: '#6A7889', // gray from the new palette, it will be taken from Forma, as soon as palette is final
   green: tokens.colorGreenBase
 };
 
@@ -84,7 +83,7 @@ const styles = {
   }
 };
 
-const IconPoc = ({ className, size, name, style, color, inNavigation }) => {
+const NavigationIcon = ({ className, size, name, style, color, inNavigation }) => {
   const IconComponent = SVGs[name];
 
   const iconSvgStyle = css({
@@ -109,7 +108,7 @@ const IconPoc = ({ className, size, name, style, color, inNavigation }) => {
   );
 };
 
-IconPoc.propTypes = {
+NavigationIcon.propTypes = {
   size: PropTypes.oneOf(Object.keys(sizesConfig)).isRequired,
   name: PropTypes.oneOf(Object.keys(SVGs)).isRequired,
   color: PropTypes.oneOf(Object.keys(colorsConfig)).isRequired,
@@ -118,4 +117,4 @@ IconPoc.propTypes = {
   inNavigation: PropTypes.bool // this is just temporary, will be removed as soon as navigation styles will be refactored
 };
 
-export default IconPoc;
+export default NavigationIcon;

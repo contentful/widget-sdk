@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { Workbench } from '@contentful/forma-36-react-components';
-import IconPoc from 'ui/Components/IconPoc';
+import NavigationIcon from 'ui/Components/NavigationIcon/NavigationIcon';
 
 import * as Auth from 'Authentication';
 import * as TokenResourceManager from '../settings/api/cma-tokens/TokenResourceManager';
@@ -19,7 +19,7 @@ const UserCMATokens = ({ onReady }) => {
   return (
     <Workbench>
       <Workbench.Header
-        icon={<IconPoc name="token" size="large" color="green" />}
+        icon={<NavigationIcon name="token" size="large" color="green" />}
         title={'Personal access tokens'}
       />
       <Workbench.Content type="default">
