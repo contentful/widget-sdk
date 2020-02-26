@@ -45,8 +45,8 @@ export const Grid = props => {
 };
 
 Grid.propTypes = {
-  rows: PropTypes.number || PropTypes.string,
-  columns: PropTypes.number || PropTypes.string,
+  rows: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  columns: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   inline: PropTypes.boolean,
   columnGap: PropTypes.string,
   rowGap: PropTypes.string,
@@ -76,10 +76,10 @@ export const GridItem = props => {
 };
 
 GridItem.propTypes = {
-  columnStart: PropTypes.number || PropTypes.string,
-  columnEnd: PropTypes.number || PropTypes.string,
-  rowStart: PropTypes.number || PropTypes.string,
-  rowEnd: PropTypes.number || PropTypes.string,
-  area: PropTypes.number || PropTypes.string,
+  columnStart: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  columnEnd: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  rowStart: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  rowEnd: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  area: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   order: PropTypes.number
 };

@@ -1,97 +1,20 @@
 import React from 'react';
-import { Heading } from '@contentful/forma-36-react-components';
-import tokens from '@contentful/forma-36-tokens';
-import { css } from 'emotion';
-import UsageTabs from './common/UsageTabs';
+// import tokens from '@contentful/forma-36-tokens';
+// import { css } from 'emotion';
+import OrgTabs from './tabs/OrgTabs';
+import SpacesTabs from './tabs/SpacesTabs';
 
-const styles = {
-  panelHeading: css({
-    fontWeight: tokens.fontWeightMedium,
-    color: '#536171'
-  }),
-  spacesHeading: css({
-    fontWeight: tokens.fontWeightMedium,
-    color: '#6A7889',
-    marginBottom: tokens.spacingXl
-  })
-};
-
-const OrgTabs = props => {
-  // eslint-disable-next-line
-  console.log('Org', props);
-  return (
-    <>
-      <UsageTabs
-        tabsData={[
-          {
-            id: 'apiRequest',
-            title: 'API Requests',
-            defaultActive: true,
-            leftComponent: (
-              <Heading element="h2" className={styles.panelHeading}>
-                Total API requests
-              </Heading>
-            ),
-            rightComponent: <div>API Requests</div>
-          },
-          {
-            id: 'assetBandwidth',
-            title: 'Asset Bandwidth',
-            leftComponent: (
-              <Heading element="h2" className={styles.panelHeading}>
-                Total API requests
-              </Heading>
-            ),
-            rightComponent: <div>Asset Bandwidth</div>
-          }
-        ]}
-      />
-    </>
-  );
-};
-
-const SpacesTabs = props => {
-  // eslint-disable-next-line
-  console.log('Spaces', props);
-  return (
-    <>
-      <Heading element="h2" className={styles.spacesHeading}>
-        View API requests by type and space
-      </Heading>
-
-      <UsageTabs
-        tabsData={[
-          {
-            id: 'cmaRequests',
-            title: 'CMA Request',
-            defaultActive: true,
-            leftComponent: <div>Table</div>,
-            rightComponent: <div>CMA Chart</div>
-          },
-          {
-            id: 'cdaRequests',
-            title: 'CDA Request',
-            leftComponent: <div>Table</div>,
-            rightComponent: <div>CDA Chart</div>
-          },
-          {
-            id: 'cpaRequests',
-            title: 'CPA Request',
-            leftComponent: <div>Table</div>,
-            rightComponent: <div>CPA Chart</div>
-          },
-          {
-            id: 'gqlRequests',
-            title: 'GraphQL Request',
-            defaultActive: true,
-            leftComponent: <div>Table</div>,
-            rightComponent: <div>GraphQL Chart</div>
-          }
-        ]}
-      />
-    </>
-  );
-};
+// const styles = {
+//   panelHeading: css({
+//     fontWeight: tokens.fontWeightMedium,
+//     color: '#536171'
+//   }),
+//   spacesHeading: css({
+//     fontWeight: tokens.fontWeightMedium,
+//     color: '#6A7889',
+//     marginBottom: tokens.spacingXl
+//   })
+// };
 
 const OrganizationUsagePageNew = props => {
   return (
