@@ -382,6 +382,7 @@ export function create() {
     fieldTypes: ['Symbol'],
     name: 'Slug',
     icon: 'slug',
+    isBackground: true,
     renderWhen: async () => {
       const spaceContext = getModule('spaceContext');
       const organizationId = spaceContext.getData('organization.sys.id');

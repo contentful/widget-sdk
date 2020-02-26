@@ -65,6 +65,7 @@ function buildOneRenderable(control, widgets) {
       renderFieldEditor: descriptor.renderFieldEditor,
       renderWhen: descriptor.renderWhen,
       isFocusable: !descriptor.notFocusable,
+      isBackground: descriptor.isBackground,
       sidebar: !!descriptor.sidebar
     })
   );
