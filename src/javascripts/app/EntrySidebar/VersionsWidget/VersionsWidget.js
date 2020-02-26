@@ -2,7 +2,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import StateLink from 'app/common/StateLink';
-import { Button, Tag, Tooltip } from '@contentful/forma-36-react-components';
+import { Button, Tag, Tooltip, RadioButton } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
 import * as SnapshotStatus from 'app/snapshots/helpers/SnapshotStatus';
 import EntrySidebarWidget from '../EntrySidebarWidget';
@@ -12,18 +13,18 @@ const styles = {
   table: {
     width: '100%',
     lineHeight: '1.5',
-    // @todo get rhythm helpers from [stylesheets/mixins/typography.styl] for inline styles
-    margin: ' 0 0 1.28em'
+    margin: `0 0 ${tokens.spacingM}`
   },
   cell: {
-    padding: '0.375em 0'
+    padding: `${tokens.spacingXs} 0`
   },
   dateCell: {
-    padding: '0.375em 0',
+    padding: `${tokens.spacingXs} 0`,
     width: '100%'
   },
   radio: {
-    verticalAlign: 'baseline'
+    verticalAlign: 'baseline',
+    marginRight: tokens.spacingXs
   }
 };
 
@@ -69,8 +70,8 @@ export default class VersionsWidget extends Component {
     return versions.map(version => (
       <tr key={version.sys.id}>
         <td style={styles.cell}>
-          <input
-            className="radio-editor__input"
+          <RadioButton
+            labelText="Select version"
             type="radio"
             id={`selected-${version.sys.id}`}
             style={styles.radio}
@@ -119,6 +120,7 @@ export default class VersionsWidget extends Component {
         <div className="snapshot-sidebar">
           {error && <div className="snapshot-sidebar__warning">{error}</div>}
           {isLoaded && !error && versions.length === 0 && (
+            /* eslint-disable-next-line rulesdir/restrict-non-f36-components */
             <p className="entity-sidebar__help-text" role="note">
               {noSnapshotsText}
             </p>
@@ -129,6 +131,7 @@ export default class VersionsWidget extends Component {
                 <tbody>{this.renderList(versions)}</tbody>
               </table>
               <CompareButton selectedId={this.state.selectedId} entryId={this.props.entryId} />
+              {/* eslint-disable-next-line rulesdir/restrict-non-f36-components */}
               <p className="entity-sidebar__help-text" role="note" aria-multiselectable="false">
                 {compareHelpText}
               </p>
