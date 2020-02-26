@@ -1,5 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback } from 'react';
 import _ from 'lodash';
 
 import { get, isUndefined } from 'lodash';
@@ -7,7 +6,7 @@ import { get, isUndefined } from 'lodash';
 import { getPlansWithSpaces, getRatePlans } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import createResourceService from 'services/ResourceService';
-import { getSpaces, getOrganization } from 'services/TokenStore';
+import { getSpaces } from 'services/TokenStore';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { calcUsersMeta, calculateTotalPrice } from 'utils/SubscriptionUtils';
 
@@ -17,6 +16,7 @@ import SubscriptionPage from './SubscriptionPage';
 
 import useAsync from 'app/common/hooks/useAsync';
 import { FetcherLoading } from 'app/common/createFetcherComponent';
+import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 
 const getBasePlan = plans => plans.items.find(({ planType }) => planType === 'base');
@@ -50,12 +50,12 @@ async function fetchNumMemberships(organizationId) {
   return membershipsResource.usage;
 }
 
-const fetch = organizationId => async () => {
-  const organization = await getOrganization(organizationId);
-
+const fetch = organization => async () => {
   if (!isOwnerOrAdmin(organization)) {
     throw new Error();
   }
+
+  const organizationId = organization.sys.id;
 
   const endpoint = createOrganizationEndpoint(organizationId);
 
@@ -84,10 +84,8 @@ const fetch = organizationId => async () => {
   return { basePlan, spacePlans, grandTotal, usersMeta, organization, productRatePlans };
 };
 
-export default function SubscriptionPageRouter({ onReady, orgId }) {
-  const { isLoading, error, data } = useAsync(useCallback(fetch(orgId), [orgId]));
-
-  useEffect(onReady, [orgId]);
+export default function SubscriptionPageRouter({ organization }) {
+  const { isLoading, error, data } = useAsync(useCallback(fetch(organization), []));
 
   if (isLoading || !data) {
     return <FetcherLoading message="Loading subscription" />;
@@ -100,12 +98,11 @@ export default function SubscriptionPageRouter({ onReady, orgId }) {
   return (
     <>
       <DocumentTitle title="Subscription" />
-      <SubscriptionPage organizationId={orgId} data={data} />
+      <SubscriptionPage organizationId={organization.sys.id} data={data} />
     </>
   );
 }
 
 SubscriptionPageRouter.propTypes = {
-  onReady: PropTypes.func.isRequired,
-  orgId: PropTypes.string.isRequired
+  organization: OrganizationPropType.isRequired
 };

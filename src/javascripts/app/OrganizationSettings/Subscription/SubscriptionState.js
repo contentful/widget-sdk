@@ -1,9 +1,9 @@
 import { reactStateWrapper } from 'states/utils';
-import SubscriptionOverview from 'ui/Pages/SubscriptionOverview';
+import SubscriptionPageRouter from './SubscriptionPageRouter';
 
 export default reactStateWrapper({
   name: 'subscription_new',
   url: '/subscription_overview',
   loadingText: 'Loading your subscription…',
-  component: SubscriptionOverview
+  component: SubscriptionPageRouter
 });

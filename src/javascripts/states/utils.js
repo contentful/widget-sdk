@@ -1,27 +1,12 @@
-import { get, find } from 'lodash';
-
-import { getCurrentVariation } from 'utils/LaunchDarkly';
-import { isLegacyOrganization } from 'utils/ResourceUtils';
-import { getStore } from 'browserStorage';
-import * as accessChecker from 'access_control/AccessChecker';
 import * as TokenStore from 'services/TokenStore';
+import * as accessChecker from 'access_control/AccessChecker';
+import { getStore } from 'browserStorage';
+
 import AccountView from 'account/AccountView';
 
 import Base from './Base';
-import { go } from './Navigator';
 
 const store = getStore();
-
-// A list of states that have been changed
-// to be adapted to the new pricing model (V2).
-// Orgs that are still in the old pricing model
-// still access the V1 state
-const migratedStates = [
-  {
-    v1: 'account.organizations.subscription',
-    v2: 'account.organizations.subscription_new'
-  }
-];
 
 /**
  * Define a state for an old GK iframe view
@@ -31,9 +16,6 @@ export function iframeStateWrapper(definition = {}) {
   const defaults = {
     params: {
       pathSuffix: ''
-    },
-    resolve: {
-      useNewView: () => false
     },
     controller: getController(title, icon, AccountView),
     template: '<react-component component="component" props="props"></react-component>'
@@ -50,31 +32,6 @@ export function reactStateWrapper(definition = {}) {
   const { component } = definition;
   const defaults = {
     controller: getController(definition.title, definition.icon, component),
-    resolve: {
-      useNewView: () => true
-    },
-    template: '<react-component component="component" props="props"></react-component>'
-  };
-
-  return organizationBase(Object.assign(defaults, definition));
-}
-
-/**
- * Define a state for a view that can be both iframe or react,
- * depending on the value of a feature flag.
- * This is used when migrating old iframe views to React
- *
- * @param {string} definition.featureFlag Feature flag key in LaunchDarkly
- * @param {string} definition.component  React component
- */
-export function conditionalIframeWrapper(definition = {}) {
-  const { title, icon, component, featureFlag } = definition;
-
-  const defaults = {
-    controller: getController(title, icon, component),
-    resolve: {
-      useNewView: () => (featureFlag ? getCurrentVariation(featureFlag) : false)
-    },
     template: '<react-component component="component" props="props"></react-component>'
   };
 
@@ -85,9 +42,8 @@ function getController(title = '', icon = '', component) {
   return [
     '$scope',
     '$stateParams',
-    'useNewView',
-    function($scope, $stateParams, useNewView) {
-      $scope.component = useNewView === false ? AccountView : component;
+    function($scope, $stateParams) {
+      $scope.component = component;
       $scope.props = {
         ...$stateParams,
         title,
@@ -110,44 +66,18 @@ export function organizationBase(definition) {
   const defaults = {
     loadingText: 'Loading…',
     onEnter: [
-      '$state',
       '$stateParams',
-      async ($state, $stateParams) => {
-        let orgId;
-        let org;
-        let space;
+      async $stateParams => {
+        // This function is currently being used in non-org routes since it's used for all `reactStateWrapper` usages,
+        // so we have to have this check
         if ($stateParams.orgId) {
-          orgId = $stateParams.orgId;
-        } else if ($stateParams.spaceId) {
-          const spaces = await TokenStore.getSpaces();
-          space = find(spaces, { sys: { id: $stateParams.spaceId } });
-          orgId = get(space, 'organization.sys.id');
-        }
-        if (orgId) {
-          org = await TokenStore.getOrganization(orgId);
-        }
+          const { orgId: organizationId } = $stateParams;
 
-        const migration = migratedStates.find(state => $state.is(state.v1));
-        if (space) {
-          accessChecker.setSpace(space);
-        } else if (org) {
-          accessChecker.setOrganization(org);
-        }
-        store.set('lastUsedOrg', orgId);
+          const organization = await TokenStore.getOrganization(organizationId);
 
-        const isLegacy = org && isLegacyOrganization(org);
+          accessChecker.setOrganization(organization);
 
-        if (isLegacy) {
-          const shouldRedirectToV2 = !isLegacy && Boolean(migration);
-          // redirect old v1 state to the new v2 state
-          // in case a user from a previously v1 org has
-          // the URL bookmarked
-          if (shouldRedirectToV2) {
-            go({
-              path: migration.v2.split('.'),
-              params: { orgId }
-            });
-          }
+          store.set('lastUsedOrg', organizationId);
         }
       }
     ]
