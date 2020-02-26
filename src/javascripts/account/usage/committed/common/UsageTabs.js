@@ -42,13 +42,9 @@ const UsageTabs = props => {
           <>
             {selected === item.id && (
               <TabPanel key={`${item.id}${idx}`} id={item.id} className={styles.tabPanel}>
-                <Grid columns={'repeat(auto-fill, minmax(100px, 1fr))'}>
-                  <GridItem columnStart={1} columnEnd={5}>
-                    {item.leftComponent}
-                  </GridItem>
-                  <GridItem columnStart={5} columnEnd={12}>
-                    {item.rightComponent}
-                  </GridItem>
+                <Grid columns={'repeat(12, 1fr)'}>
+                  <GridItem columnStart={'span 4'}>{item.leftComponent}</GridItem>
+                  <GridItem columnStart={'span 8'}>{item.rightComponent}</GridItem>
                 </Grid>
               </TabPanel>
             )}
