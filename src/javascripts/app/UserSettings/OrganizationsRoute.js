@@ -26,7 +26,7 @@ import OrganizationRow from './OrganizationRow';
 import ModalLauncher from 'app/common/ModalLauncher';
 import { without } from 'lodash';
 
-import * as TokenStore from 'services/TokenStore';
+import { getOrganizations } from 'services/TokenStore';
 
 const styles = {
   content: css({
@@ -38,13 +38,13 @@ const styles = {
 };
 
 const OrganizationsRoute = ({ onReady, title }) => {
-  const [organizations, setOrganizations] = useState(null);
+  const [organizations, setOrganizations] = useState([]);
 
   useEffect(onReady, [onReady]);
 
   const { isLoading, error } = useAsync(
     useCallback(async () => {
-      const organizations = await TokenStore.getOrganizations();
+      const organizations = await getOrganizations();
       setOrganizations(organizations);
     }, [])
   );
@@ -77,13 +77,14 @@ const OrganizationsRoute = ({ onReady, title }) => {
           createOrganizationEndpoint(organization.sys.id),
           organization
         );
-
-        setOrganizations(without(organizations, organization));
-        Notification.success(`Successfully left space ${organization.name}`);
       } catch (e) {
-        Notification.error(`Could not leave space ${organization.name}`);
-        throw e;
+        // should we have a more actionable error?
+        Notification.error(`Could not leave organization ${organization.name}`);
+        return;
       }
+
+      setOrganizations(without(organizations, organization));
+      Notification.success(`Successfully left organization ${organization.name}`);
     },
     [organizations]
   );
@@ -93,10 +94,13 @@ const OrganizationsRoute = ({ onReady, title }) => {
       <DocumentTitle title={title} />
       <Workbench>
         <Workbench.Header
+          testId="organizations-list.title"
           title={title}
           actions={
-            <StateLink component={Button} path="account.new_organization">
-              New Organization
+            <StateLink path="account.new_organization">
+              <Button buttonType="primary" testId="organizations-list.new-org-button">
+                New Organization
+              </Button>
             </StateLink>
           }
         />
@@ -107,13 +111,13 @@ const OrganizationsRoute = ({ onReady, title }) => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Invited at</TableCell>
-                  <TableCell></TableCell>
+                  <TableCell testId="organizations-list.name-header">Name</TableCell>
+                  <TableCell testId="organizations-list.invited-at-header">Invited at</TableCell>
+                  <TableCell testId="organizations-list.action-header"></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {(organizations || []).map(organization => {
+                {organizations.map(organization => {
                   return (
                     <OrganizationRow
                       key={organization.sys.id}

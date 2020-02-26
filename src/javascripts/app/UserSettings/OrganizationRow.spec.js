@@ -27,8 +27,8 @@ jest.mock('states/Navigator', () => ({
   go: jest.fn()
 }));
 
-const build = (props = {}) => {
-  render(
+const buildWithoutWaiting = props => {
+  return render(
     <OrganizationRow
       {...{
         organization: fakeOrganization,
@@ -37,7 +37,10 @@ const build = (props = {}) => {
       }}
     />
   );
+};
 
+const build = (props = {}) => {
+  buildWithoutWaiting(props);
   // the component makes requests on mount.
   // wait until there are changes as effect of the calls.
   return wait();
@@ -64,23 +67,26 @@ describe('OrganizationRow', () => {
     it('should display the organization option dots', async () => {
       await build();
 
-      expect(screen.getByTestId('organization-row.option-dots')).toBeDefined();
+      expect(screen.getByTestId('organization-row.option-dots')).toBeVisible();
     });
   });
 
   describe('test canUserLeaveOrg default behavoir ', () => {
     it('should default to allow the user to leave the org, this should be caught on the backend if not valid', async () => {
-      //   Unsure how to write this test at the moment, will come back to it.
-      //   fetchCanLeaveOrg.mockImplementation(() => {
-      //       return false;
-      //     });
-      //     await build();
-      //     fireEvent.click(screen.getByTestId('organization-row.dropdown-menu.trigger'));
-      //     const leaveButtonContainer = screen.getByTestId('organization-row.leave-org-button');
-      //     const leaveButton = within(leaveButtonContainer).getByTestId(
-      //       FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID
-      //     );
-      //     expect(leaveButton.hasAttribute('disabled')).toBeFalsy();
+      fetchCanLeaveOrg.mockImplementation(() => {
+        return false;
+      });
+
+      buildWithoutWaiting();
+
+      fireEvent.click(screen.getByTestId('organization-row.dropdown-menu.trigger'));
+      const leaveButtonContainer = screen.getByTestId('organization-row.leave-org-button');
+      const leaveButton = within(leaveButtonContainer).getByTestId(
+        FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID
+      );
+      expect(leaveButton.hasAttribute('disabled')).toBeFalsy();
+
+      await wait();
     });
   });
 
@@ -89,8 +95,8 @@ describe('OrganizationRow', () => {
       await build();
       fireEvent.click(screen.getByTestId('organization-row.dropdown-menu.trigger'));
 
-      expect(screen.getByTestId('organization-row.go-to-org-link')).toBeDefined();
-      expect(screen.getByTestId('organization-row.leave-org-button')).toBeDefined();
+      expect(screen.getByTestId('organization-row.go-to-org-link')).toBeVisible();
+      expect(screen.getByTestId('organization-row.leave-org-button')).toBeVisible();
     });
 
     it('should display a tooltip which explains why the user cannot leave the org', async () => {
