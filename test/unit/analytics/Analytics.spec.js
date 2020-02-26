@@ -8,7 +8,8 @@ describe('Analytics', () => {
     this.segment = makeMock(['enable', 'disable', 'identify', 'track', 'page']);
     this.Snowplow = makeMock(['enable', 'disable', 'identify', 'track', 'buildUnstructEventData']);
     this.transform = {
-      transformEvent: sinon.stub().callsFake((_, data) => data)
+      transformEvent: sinon.stub().callsFake((_, data) => data),
+      eventExists: sinon.stub().returns(true)
     };
 
     this.system.set('analytics/segment', {
@@ -134,6 +135,22 @@ describe('Analytics', () => {
       this.analytics.track('Event', { data: 'foobar' });
       sinon.assert.calledWith(this.segment.track, 'Event', { data: 'foobar' });
       sinon.assert.calledWith(this.Snowplow.track, 'Event', { data: 'foobar' });
+    });
+
+    it('sends `tracking:invalid_event` event is given an invalid event and does not track the original event', function() {
+      this.transform.eventExists
+        .onFirstCall()
+        .returns(false)
+        .onSecondCall()
+        .returns(true);
+
+      this.analytics.track('Event', { data: 'foobar' });
+
+      sinon.assert.calledWith(this.segment.track, 'tracking:invalid_event');
+      sinon.assert.calledWith(this.Snowplow.track, 'tracking:invalid_event');
+
+      sinon.assert.neverCalledWith(this.segment.track, 'Event', { data: 'foobar' });
+      sinon.assert.neverCalledWith(this.Snowplow.track, 'Event', { data: 'foobar' });
     });
 
     it('should transform the event when tracking', function() {
