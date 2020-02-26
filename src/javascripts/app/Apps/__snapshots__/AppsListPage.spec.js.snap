@@ -101,7 +101,7 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
           class="Workbench__Workbench__content-inner___36_Hx Workbench__Workbench__content-inner--text___7nfTX"
         >
           <div
-            class="Card__Card___xXJsT emotion-4 Card__Card--padding-large___3Fgal"
+            class="Card__Card___1_26G emotion-4 Card__Card--padding-large___2KzUK"
             data-test-id="cf-ui-card"
           >
             <div>
@@ -146,7 +146,7 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
             </div>
           </div>
           <div
-            class="Card__Card___xXJsT emotion-5 Card__Card--padding-large___3Fgal"
+            class="Card__Card___1_26G emotion-5 Card__Card--padding-large___2KzUK"
             data-test-id="cf-ui-card"
           >
             <div>
@@ -476,7 +476,7 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
           class="Workbench__Workbench__content-inner___36_Hx Workbench__Workbench__content-inner--text___7nfTX"
         >
           <div
-            class="Card__Card___xXJsT emotion-4 Card__Card--padding-large___3Fgal"
+            class="Card__Card___1_26G emotion-4 Card__Card--padding-large___2KzUK"
             data-test-id="cf-ui-card"
           >
             <div>
@@ -521,7 +521,7 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
             </div>
           </div>
           <div
-            class="Card__Card___xXJsT emotion-47 Card__Card--padding-large___3Fgal"
+            class="Card__Card___1_26G emotion-47 Card__Card--padding-large___2KzUK"
             data-test-id="cf-ui-card"
           >
             <div>

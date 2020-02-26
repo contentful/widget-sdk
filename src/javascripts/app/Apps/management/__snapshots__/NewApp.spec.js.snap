@@ -364,7 +364,7 @@ Object {
                     class="emotion-8"
                   >
                     <div
-                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf Card__Card--is-selected___3zM50"
+                      class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-7 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr Card__Card--is-selected___IBDSP"
                       data-test-id="app-location-app-config"
                     >
                       <button
@@ -413,7 +413,7 @@ Object {
                     class="emotion-8"
                   >
                     <div
-                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                      class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                       data-test-id="app-location-entry-field"
                     >
                       <button
@@ -800,7 +800,7 @@ Object {
                     class="emotion-8"
                   >
                     <div
-                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                      class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                       data-test-id="app-location-entry-sidebar"
                     >
                       <button
@@ -849,7 +849,7 @@ Object {
                     class="emotion-8"
                   >
                     <div
-                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                      class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                       data-test-id="app-location-entry-editor"
                     >
                       <button
@@ -898,7 +898,7 @@ Object {
                     class="emotion-8"
                   >
                     <div
-                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                      class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                       data-test-id="app-location-dialog"
                     >
                       <button
@@ -1503,7 +1503,7 @@ Object {
                   class="emotion-8"
                 >
                   <div
-                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf Card__Card--is-selected___3zM50"
+                    class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-7 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr Card__Card--is-selected___IBDSP"
                     data-test-id="app-location-app-config"
                   >
                     <button
@@ -1552,7 +1552,7 @@ Object {
                   class="emotion-8"
                 >
                   <div
-                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                    class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                     data-test-id="app-location-entry-field"
                   >
                     <button
@@ -1939,7 +1939,7 @@ Object {
                   class="emotion-8"
                 >
                   <div
-                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                    class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                     data-test-id="app-location-entry-sidebar"
                   >
                     <button
@@ -1988,7 +1988,7 @@ Object {
                   class="emotion-8"
                 >
                   <div
-                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                    class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                     data-test-id="app-location-entry-editor"
                   >
                     <button
@@ -2037,7 +2037,7 @@ Object {
                   class="emotion-8"
                 >
                   <div
-                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                    class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                     data-test-id="app-location-dialog"
                   >
                     <button
