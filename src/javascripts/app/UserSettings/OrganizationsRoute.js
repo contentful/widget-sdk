@@ -37,21 +37,20 @@ const styles = {
   })
 };
 
-// Can emuliate this file.
-const OrganizationMembershipsRoute = ({ onReady, title }) => {
-  const [orgMemberships, setOrgMemberships] = useState(null);
+const OrganizationsRoute = ({ onReady, title }) => {
+  const [organizations, setOrganizations] = useState(null);
 
   useEffect(onReady, [onReady]);
 
   const { isLoading, error } = useAsync(
     useCallback(async () => {
-      const orgMemberships = await TokenStore.getOrganizations();
-      setOrgMemberships(orgMemberships);
+      const organizations = await TokenStore.getOrganizations();
+      setOrganizations(organizations);
     }, [])
   );
 
   const onLeave = useCallback(
-    async orgMembership => {
+    async organization => {
       const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
         <ModalConfirm
           title="Leave organization"
@@ -62,7 +61,7 @@ const OrganizationMembershipsRoute = ({ onReady, title }) => {
           onCancel={() => onClose(false)}>
           <React.Fragment>
             <Paragraph>
-              You are about to leave organization <b>{orgMembership.name}.</b>
+              You are about to leave organization <b>{organization.name}.</b>
             </Paragraph>
             <Paragraph>Do you want to proceed?</Paragraph>
           </React.Fragment>
@@ -75,18 +74,18 @@ const OrganizationMembershipsRoute = ({ onReady, title }) => {
 
       try {
         await OrganizationMembershipRepository.removeMembership(
-          createOrganizationEndpoint(orgMembership.sys.id),
-          orgMembership
+          createOrganizationEndpoint(organization.sys.id),
+          organization
         );
 
-        setOrgMemberships(without(orgMemberships, orgMembership));
-        Notification.success(`Successfully left space ${orgMembership.name}`);
+        setOrganizations(without(organizations, organization));
+        Notification.success(`Successfully left space ${organization.name}`);
       } catch (e) {
-        Notification.error(`Could not leave space ${orgMembership.name}`);
+        Notification.error(`Could not leave space ${organization.name}`);
         throw e;
       }
     },
-    [orgMemberships]
+    [organizations]
   );
 
   return (
@@ -114,11 +113,11 @@ const OrganizationMembershipsRoute = ({ onReady, title }) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {(orgMemberships || []).map(orgMembership => {
+                {(organizations || []).map(organization => {
                   return (
                     <OrganizationRow
-                      key={orgMembership.sys.id}
-                      orgMembership={orgMembership}
+                      key={organization.sys.id}
+                      organization={organization}
                       onLeave={onLeave}
                     />
                   );
@@ -132,9 +131,9 @@ const OrganizationMembershipsRoute = ({ onReady, title }) => {
   );
 };
 
-OrganizationMembershipsRoute.propTypes = {
+OrganizationsRoute.propTypes = {
   onReady: PropTypes.func.isRequired,
   title: PropTypes.string
 };
 
-export default OrganizationMembershipsRoute;
+export default OrganizationsRoute;

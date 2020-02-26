@@ -60,6 +60,15 @@ export function isOwnerOrAdmin(organization) {
   return isOwner(organization) || isAdmin(organization);
 }
 
+/**
+ * @ngdoc method
+ * @name OrganizationRoles#hasMemberRole
+ * @param {object} organization
+ * @description
+ * Checks if the user's role is 'member' of the organization with the given ID.
+ */
+export const hasMemberRole = createRoleChecker('member');
+
 function createRoleChecker(role) {
   return function checkRole(organization) {
     const id = get(organization, 'sys.id');

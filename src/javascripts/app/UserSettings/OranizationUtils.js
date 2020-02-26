@@ -5,8 +5,8 @@ import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
 
 export const fetchCanLeaveOrg = async orgMembership => {
   if (isOrgOwner(orgMembership)) {
-    const orgEndpoint = createOrganizationEndpoint(orgMembership.sys.id);
     try {
+      const orgEndpoint = createOrganizationEndpoint(orgMembership.sys.id);
       const orgMembershipsData = await getMemberships(orgEndpoint, {
         role: 'owner',
         limit: 0

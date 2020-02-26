@@ -4,7 +4,6 @@ import useAsync from 'app/common/hooks/useAsync';
 import {
   TableRow,
   TableCell,
-  TextLink,
   Tooltip,
   CardActions,
   DropdownList,
@@ -14,6 +13,8 @@ import { css } from 'emotion';
 import moment from 'moment';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
 import { fetchCanLeaveOrg } from './OranizationUtils';
+import { hasMemberRole } from 'services/OrganizationRoles';
+import { go } from 'states/Navigator';
 
 const styles = {
   dotsRow: css({
@@ -25,14 +26,24 @@ const styles = {
   })
 };
 
-const OrganizationRow = ({ orgMembership, onLeave }) => {
-  const [canUserLeaveOrg, setCanUserLeaveOrg] = useState(false);
+const OrganizationRow = ({ organization, onLeave }) => {
+  const [canUserLeaveOrg, setCanUserLeaveOrg] = useState(true);
+
+  // If the user has a role different than 'member' it means they have more permissions and should be able to access the org settings page.
+  const canAccessOrgSettings = !hasMemberRole(organization);
+
+  const goToOrgSettings = () => {
+    go({
+      path: ['account', 'organizations', 'subscription_new'],
+      params: { orgId: organization.sys.id }
+    });
+  };
 
   useAsync(
     useCallback(async () => {
-      const canUserLeaveOrg = await fetchCanLeaveOrg(orgMembership);
+      const canUserLeaveOrg = await fetchCanLeaveOrg(organization);
       setCanUserLeaveOrg(canUserLeaveOrg);
-    }, [orgMembership])
+    }, [organization])
   );
 
   const toolTipContent = !canUserLeaveOrg
@@ -40,32 +51,42 @@ const OrganizationRow = ({ orgMembership, onLeave }) => {
     : '';
 
   return (
-    <TableRow key={orgMembership.sys.id} testId="membership-row">
-      <TableCell testId="orgMembership-cell">
-        <TextLink href={`/orgMemberships/${orgMembership.sys.id}`}>{orgMembership.name}</TextLink>
-      </TableCell>
-      <TableCell title={moment(orgMembership.sys.createdAt).format('MMMM DD, YYYY')}>
-        {moment(orgMembership.sys.createdAt, moment.ISO_8601).format('MMMM DD, YYYY')}
+    <TableRow key={organization.sys.id} testId="organization-row">
+      <TableCell testId="organization-row.organization-name">{organization.name}</TableCell>
+      <TableCell
+        title={moment(organization.sys.createdAt).format('MMMM DD, YYYY')}
+        testId="organization-row.created-at">
+        {moment(organization.sys.createdAt, moment.ISO_8601).format('MMMM DD, YYYY')}
       </TableCell>
 
-      <TableCell testId="subscription-page.spaces-list.option-dots" className={styles.dotsRow}>
+      <TableCell testId="organization-row.option-dots" className={styles.dotsRow}>
         <CardActions
           iconButtonProps={{
             buttonType: 'primary',
-            testId: 'subscription-page.spaces-list.dropdown-menu.trigger'
+            testId: 'organization-row.dropdown-menu.trigger'
           }}
-          data-test-id="subscription-page.spaces-list.dropdown-menu">
+          data-test-id="organization-row.dropdown-menu">
           <DropdownList>
-            <Tooltip place="top" content={toolTipContent} className={styles.tooltip}>
-              <DropdownListItem
-                isDisabled={!canUserLeaveOrg}
-                onClick={() => {
-                  onLeave(orgMembership);
-                }}
-                testId="subscription-page.spaces-list.change-space-link">
+            <DropdownListItem
+              isDisabled={!canAccessOrgSettings}
+              onClick={goToOrgSettings}
+              testId="organization-row.go-to-org-link">
+              Go to Organization Settings
+            </DropdownListItem>
+            <DropdownListItem
+              isDisabled={!canUserLeaveOrg}
+              onClick={() => {
+                onLeave(organization);
+              }}
+              testId="organization-row.leave-org-button">
+              <Tooltip
+                place="top"
+                testId="organization-row.tool-tip"
+                content={toolTipContent}
+                className={styles.tooltip}>
                 Leave Organization
-              </DropdownListItem>
-            </Tooltip>
+              </Tooltip>
+            </DropdownListItem>
           </DropdownList>
         </CardActions>
       </TableCell>
@@ -75,7 +96,7 @@ const OrganizationRow = ({ orgMembership, onLeave }) => {
 
 // Throwing prop errors
 OrganizationRow.propTypes = {
-  orgMembership: OrganizationPropType,
+  organization: OrganizationPropType.isRequired,
   onLeave: PropTypes.func.isRequired
 };
 
