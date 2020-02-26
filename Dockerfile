@@ -29,6 +29,7 @@ RUN NODE_ENV=production node --max_old_space_size=4096 ./tools/bin/build-app.js
 
 ARG CIRCLE_BRANCH
 ARG CIRCLE_SHA1
+RUN bin/docker-entry upload-sourcemaps-to-bugsnag --version "${CIRCLE_SHA1}"
 RUN bin/docker-entry configure-file-dist --branch "${CIRCLE_BRANCH}" --version "${CIRCLE_SHA1}"
 
 #--
