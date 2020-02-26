@@ -24,17 +24,6 @@ production APIs.
   other team that has access to the required repositories
 - You must have [NVM][] installed
 - You must have an account on our staging environment `app.flinkly.com`.
-- Add a bookmark in chrome
-  - Go to bookmark manager in chrome, or press `option+command+b`
-  - Click on the three dots in the upper right corner
-  - Click `Add new bookmark`
-  - Add these to the text fields
-    - Name: `LocalDev` (or whatever else you'd like to call it)
-    - Url:
-    ```
-    javascript:window.location.href=`http://localhost:3001${window.location.pathname}#access_token=${window.sessionStorage.getItem('token')}`
-    ```
-  - Click `save`
 
 You first must obtain an access token for the staging environment: Visit to
 `app.flinkly.com`, log in, and go to “APIs” → “Content management tokens”.
@@ -49,9 +38,17 @@ npm install
 npm run dev-staging
 ```
 
-Now visit [`http://localhost:3001/`](http://localhost:3001/) in your favorite browser.  
-Click the `LocalDev` Bookmark we made earlier.  
-Develop away!
+Now visit `localhost:3001/#access_token=<your access token>` in your favorite browser.
+
+To make this easier, you can add the following bookmark in your browser:
+
+```
+  javascript:window.location.href=`http://localhost:3001${window.location.pathname}#access_token=${window.sessionStorage.getItem('token')}`
+```
+
+- Then go to [app.flinkly.com](app.flinkly.com)
+- Click on the bookmark we just made
+- Develop away!
 
 #### Limitations
 
@@ -85,3 +82,7 @@ See the [Lab Readme][https://github.com/contentful/lab/blob/master/readme.md].
 If you want to add a general component that will be used across the app, you can add it to the [UI Component Library](https://github.com/contentful/forma-36). See their documentation on how to get started, or message in the `#project-design-system` Slack channel.
 
 Additionally, we have a legacy styleguide, [available here](https://ctf-legacy-ui-styleguide.netlify.com/), which you can use for additional reference beyond the component library.
+
+```
+
+```
