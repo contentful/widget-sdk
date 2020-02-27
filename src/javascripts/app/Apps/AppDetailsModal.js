@@ -180,7 +180,8 @@ export function AppDetails(props) {
     showPermissions,
     setShowPermissions,
     spaceInformation,
-    usageExceeded
+    usageExceeded,
+    userCanEditApps
   } = props;
 
   if (showPermissions) {
@@ -214,15 +215,23 @@ export function AppDetails(props) {
               onClick={determineOnClick(installed, onClick, onClose, setShowPermissions)}
               isFullWidth
               buttonType="primary"
-              disabled={usageExceeded}>
+              disabled={usageExceeded || !userCanEditApps}>
               {installed ? 'Configure' : 'Install'}
             </Button>
           )}
         </StateLink>
-        {!installed && usageExceeded && (
+        {!installed && usageExceeded && userCanEditApps && (
           <>
             <div className={styles.sidebarSpacingM} />
             <HelpText>{USAGE_EXCEEDED_MESSAGE}</HelpText>
+          </>
+        )}
+        {!userCanEditApps && (
+          <>
+            <div className={styles.sidebarSpacingM} />
+            <HelpText>
+              You don&rsquo;t have permission to manage apps. Ask your admin for help.
+            </HelpText>
           </>
         )}
         <div className={styles.sidebarSpacing} />
@@ -277,7 +286,8 @@ AppDetails.propTypes = {
   onClose: PropTypes.func.isRequired,
   showPermissions: PropTypes.bool,
   setShowPermissions: PropTypes.func,
-  usageExceeded: PropTypes.bool
+  usageExceeded: PropTypes.bool,
+  userCanEditApps: PropTypes.bool.isRequired
 };
 
 export default function AppDetailsModal(props) {
@@ -301,6 +311,7 @@ export default function AppDetailsModal(props) {
         showPermissions={showPermissions}
         setShowPermissions={setShowPermissions}
         usageExceeded={props.usageExceeded}
+        userCanEditApps={props.userCanEditApps}
       />
     </Modal>
   );
@@ -316,5 +327,6 @@ AppDetailsModal.propTypes = {
     envName: PropTypes.string.isRequired,
     envIsMaster: PropTypes.bool.isRequired
   }),
-  usageExceeded: PropTypes.bool
+  usageExceeded: PropTypes.bool,
+  userCanEditApps: PropTypes.bool.isRequired
 };

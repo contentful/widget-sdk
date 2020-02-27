@@ -9,6 +9,7 @@ import { getAppsRepo } from '../AppsRepoInstance';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { NAMESPACE_APP } from 'widgets/WidgetNamespaces';
+import { shouldHide, Action } from 'access_control/AccessChecker';
 
 const BASIC_APPS_FEATURE_KEY = 'basic_apps';
 const DEFAULT_FEATURE_STATUS = true; // Fail open
@@ -57,6 +58,7 @@ export default {
               envMeta: spaceContext.space.environmentMeta
             },
             userId: spaceContext.user.sys.id,
+            userCanEditApps: !shouldHide(Action.UPDATE, 'settings'),
             deeplinkAppId: $stateParams.appId || null,
             deeplinkReferrer: $stateParams.referrer || null
           };
@@ -94,7 +96,11 @@ export default {
           const installingWithoutConsent =
             !app.appInstallation && !$stateParams.acceptedPermissions;
 
-          if (!hasAppsFeature || installingWithoutConsent) {
+          if (
+            shouldHide(Action.UPDATE, 'settings') ||
+            !hasAppsFeature ||
+            installingWithoutConsent
+          ) {
             // When executing `onEnter` after a page refresh
             // the current state won't be initialized. For this reason
             // we need to compute params and an absolute path manually.

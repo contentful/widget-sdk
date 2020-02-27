@@ -491,7 +491,7 @@ function collectSectionVisibility() {
     previews: !shouldHide(Action.UPDATE, 'settings'),
     webhooks: !shouldHide(Action.UPDATE, 'settings'),
     spaceHome: get(space, 'spaceMember.admin') || isAuthorOrEditor(get(space, 'spaceMember.roles')),
-    apps: !shouldHide(Action.UPDATE, 'settings')
+    apps: true
   };
 }
 

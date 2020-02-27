@@ -65,7 +65,7 @@ const externalLinkProps = {
   rel: 'noopener noreferrer'
 };
 
-const openDetailModal = ({ spaceInformation, usageExceeded }) => app => {
+const openDetailModal = ({ spaceInformation, usageExceeded, userCanEditApps }) => app => {
   AppLifecycleTracking.detailsOpened(app.id);
 
   ModalLauncher.open(({ isShown, onClose }) => (
@@ -75,6 +75,7 @@ const openDetailModal = ({ spaceInformation, usageExceeded }) => app => {
       app={app}
       spaceInformation={spaceInformation}
       usageExceeded={usageExceeded}
+      userCanEditApps={userCanEditApps}
     />
   ));
 };
@@ -113,7 +114,7 @@ const AppsListShell = props => (
       actions={<FeedbackButton target="extensibility" about="Apps" label="Give your feedback" />}
     />
     <Workbench.Content type="text">
-      <AppsFrameworkIntroBanner />
+      <AppsFrameworkIntroBanner userCanEditApps={props.userCanEditApps} />
       {props.appsFeatureDisabled && <PricingInfo />}
       <Card padding="large" className={styles.appListCard}>
         {props.appsFeatureDisabled && (
@@ -126,7 +127,8 @@ const AppsListShell = props => (
 );
 
 AppsListShell.propTypes = {
-  appsFeatureDisabled: PropTypes.bool
+  appsFeatureDisabled: PropTypes.bool,
+  userCanEditApps: PropTypes.bool.isRequired
 };
 
 const ItemSkeleton = props => (
@@ -172,7 +174,8 @@ export default class AppsListPage extends React.Component {
     userId: PropTypes.string.isRequired,
     hasAppsFeature: PropTypes.bool.isRequired,
     deeplinkAppId: PropTypes.string,
-    deeplinkReferrer: PropTypes.string
+    deeplinkReferrer: PropTypes.string,
+    userCanEditApps: PropTypes.bool.isRequired
   };
 
   state = { ready: false };
@@ -233,7 +236,13 @@ export default class AppsListPage extends React.Component {
   }
 
   renderList() {
-    const { organizationId, spaceInformation, userId, hasAppsFeature } = this.props;
+    const {
+      organizationId,
+      spaceInformation,
+      userId,
+      hasAppsFeature,
+      userCanEditApps
+    } = this.props;
     const { installedApps, availableApps } = this.state;
     const { spaceId } = spaceInformation;
     const usageExceeded = isUsageExceeded(installedApps);
@@ -243,6 +252,7 @@ export default class AppsListPage extends React.Component {
         organizationId={organizationId}
         spaceId={spaceId}
         userId={userId}
+        userCanEditApps={userCanEditApps}
         appsFeatureDisabled={!hasAppsFeature}>
         {installedApps.length > 0 && (
           <>
@@ -252,7 +262,8 @@ export default class AppsListPage extends React.Component {
                 <AppListItem
                   key={app.id}
                   app={app}
-                  openDetailModal={openDetailModal({ spaceInformation })}
+                  userCanEditApps={userCanEditApps}
+                  openDetailModal={openDetailModal({ spaceInformation, userCanEditApps })}
                 />
               ))}
             </div>
@@ -265,7 +276,11 @@ export default class AppsListPage extends React.Component {
               <AppListItem
                 key={app.id}
                 app={app}
-                openDetailModal={openDetailModal({ spaceInformation, usageExceeded })}
+                openDetailModal={openDetailModal({
+                  spaceInformation,
+                  usageExceeded,
+                  userCanEditApps
+                })}
               />
             ))}
           </div>

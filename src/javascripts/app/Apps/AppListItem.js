@@ -66,19 +66,20 @@ export default class AppListItem extends Component {
       appInstallation: PropTypes.object,
       isPrivateApp: PropTypes.bool
     }).isRequired,
-    openDetailModal: PropTypes.func.isRequired
+    openDetailModal: PropTypes.func.isRequired,
+    userCanEditApps: PropTypes.bool.isRequired
   };
 
-  determineOnClick = (onClick, openDetailsFunc) => {
+  determineOnClick = (onClick, openDetailsFunc, userCanEditApps) => {
     const { app } = this.props;
 
     const continueDirectlyToAppPage = !!app.appInstallation || app.isPrivateApp;
 
-    return continueDirectlyToAppPage ? onClick : openDetailsFunc;
+    return userCanEditApps && continueDirectlyToAppPage ? onClick : openDetailsFunc;
   };
 
   render() {
-    const { app, openDetailModal } = this.props;
+    const { app, openDetailModal, userCanEditApps } = this.props;
 
     const openDetailsFunc = () => openDetailModal(app);
 
@@ -89,7 +90,7 @@ export default class AppListItem extends Component {
             <StateLink path="^.detail" params={{ appId: app.id }}>
               {({ onClick }) => (
                 <div
-                  onClick={this.determineOnClick(onClick, openDetailsFunc)}
+                  onClick={this.determineOnClick(onClick, openDetailsFunc, userCanEditApps)}
                   className={styles.appLink}
                   data-test-id="app-details">
                   {app.icon ? (
@@ -108,7 +109,7 @@ export default class AppListItem extends Component {
           </Heading>
         </div>
         <div className={styles.actions}>
-          {!!app.appInstallation && (
+          {!!app.appInstallation && userCanEditApps && (
             <StateLink path="^.detail" params={{ appId: app.id }}>
               {({ onClick }) => (
                 <TextLink onClick={onClick} linkType="primary">
