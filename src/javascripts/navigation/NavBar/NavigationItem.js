@@ -7,6 +7,8 @@ import { Tooltip } from '@contentful/forma-36-react-components';
 import * as Navigator from 'states/Navigator';
 import NavigationItemTag from './NavigationItemTag';
 import Icon from 'ui/Components/Icon';
+import NavigationIcon from 'ui/Components/NavigationIcon';
+
 import keycodes from 'utils/keycodes';
 
 function Label({ hasTooptip, children, ...rest }) {
@@ -79,7 +81,11 @@ export default function NavigationItem(props) {
           tabIndex: item.disabled ? undefined : '0'
         }}>
         <Label hasTooptip={Boolean(item.tooltip)} content={item.tooltip} placement="bottom">
-          <Icon name={item.icon} />
+          {item.navIcon ? (
+            <NavigationIcon name={item.navIcon} size="medium" mono color="white" inNavigation />
+          ) : (
+            <Icon name={item.icon} />
+          )}
           {item.tagLabel && <NavigationItemTag label={item.tagLabel} />}
           {item.title}
         </Label>
@@ -93,6 +99,7 @@ NavigationItem.propTypes = {
     title: PropTypes.string.isRequired,
     icon: PropTypes.string.isRequired,
     tagLabel: PropTypes.string,
+    navIcon: PropTypes.string,
     rootSref: PropTypes.string,
     sref: PropTypes.string,
     srefParams: PropTypes.object,

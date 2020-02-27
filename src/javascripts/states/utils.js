@@ -27,7 +27,7 @@ const migratedStates = [
  * Define a state for an old GK iframe view
  */
 export function iframeStateWrapper(definition = {}) {
-  const { title } = definition;
+  const { title, icon } = definition;
   const defaults = {
     params: {
       pathSuffix: ''
@@ -35,7 +35,7 @@ export function iframeStateWrapper(definition = {}) {
     resolve: {
       useNewView: () => false
     },
-    controller: getController(title, AccountView),
+    controller: getController(title, icon, AccountView),
     template: '<react-component component="component" props="props"></react-component>'
   };
 
@@ -49,7 +49,7 @@ export function iframeStateWrapper(definition = {}) {
 export function reactStateWrapper(definition = {}) {
   const { component } = definition;
   const defaults = {
-    controller: getController(definition.title, component),
+    controller: getController(definition.title, definition.icon, component),
     resolve: {
       useNewView: () => true
     },
@@ -68,10 +68,10 @@ export function reactStateWrapper(definition = {}) {
  * @param {string} definition.component  React component
  */
 export function conditionalIframeWrapper(definition = {}) {
-  const { title, component, featureFlag } = definition;
+  const { title, icon, component, featureFlag } = definition;
 
   const defaults = {
-    controller: getController(title, component),
+    controller: getController(title, icon, component),
     resolve: {
       useNewView: () => (featureFlag ? getCurrentVariation(featureFlag) : false)
     },
@@ -81,7 +81,7 @@ export function conditionalIframeWrapper(definition = {}) {
   return organizationBase(Object.assign(defaults, definition));
 }
 
-function getController(title = '', component) {
+function getController(title = '', icon = '', component) {
   return [
     '$scope',
     '$stateParams',
@@ -91,6 +91,7 @@ function getController(title = '', component) {
       $scope.props = {
         ...$stateParams,
         title,
+        icon,
         context: $scope.context,
         onReady: () => {
           $scope.context.ready = true;
@@ -157,6 +158,7 @@ export function organizationBase(definition) {
   delete definition.featureFlag;
   delete definition.component;
   delete definition.title;
+  delete definition.icon;
 
   return Base(definition);
 }

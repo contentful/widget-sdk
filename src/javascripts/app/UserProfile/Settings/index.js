@@ -15,6 +15,7 @@ import ErrorState from 'app/common/ErrorState';
 import LoadingState from 'app/common/LoadingState';
 import { getOrganizations } from 'services/TokenStore';
 import { OrgMembershipsSection } from './OrgMembershipsSection';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 
 const styles = {
   content: css({
@@ -52,7 +53,10 @@ export default function IndexPage({ title, onReady }) {
     <>
       <DocumentTitle title={title} />
       <Workbench>
-        <Workbench.Header title={title} />
+        <Workbench.Header
+          title={title}
+          icon={<NavigationIcon name="user-profile" size="large" color="green" />}
+        />
         <Workbench.Content className={styles.content}>
           {isLoading && <LoadingState loadingText="Loading your account…" />}
           {!isLoading && error && <ErrorState />}

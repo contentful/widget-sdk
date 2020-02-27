@@ -4,6 +4,7 @@ import { getGatekeeperUrl } from 'account/UrlSyncHelper';
 import { css } from 'emotion';
 
 import { Workbench } from '@contentful/forma-36-react-components';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 
 const wrapperStyle = css({
   position: 'absolute',
@@ -13,12 +14,15 @@ const wrapperStyle = css({
   right: 0
 });
 
-export default function AccountView({ title, onReady }) {
+export default function AccountView({ title, icon, onReady }) {
   const gatekeeperUrl = useMemo(() => getGatekeeperUrl(), []);
 
   return (
     <Workbench testId="account-iframe-page">
-      <Workbench.Header title={title} />
+      <Workbench.Header
+        title={title}
+        icon={icon ? <NavigationIcon name={icon} size="large" color="green" /> : null}
+      />
       <Workbench.Content>
         <div className={wrapperStyle}>
           <iframe
@@ -37,5 +41,6 @@ export default function AccountView({ title, onReady }) {
 
 AccountView.propTypes = {
   onReady: PropTypes.func.isRequired,
-  title: PropTypes.string.isRequired
+  title: PropTypes.string.isRequired,
+  icon: PropTypes.string
 };
