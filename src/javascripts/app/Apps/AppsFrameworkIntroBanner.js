@@ -67,7 +67,7 @@ const AppsFrameworkIntroBanner = ({ userCanEditApps }) => {
 };
 
 AppsFrameworkIntroBanner.propTypes = {
-  userCanEditApps: PropTypes.bool.isRequired
+  userCanEditApps: PropTypes.bool
 };
 
 export default AppsFrameworkIntroBanner;

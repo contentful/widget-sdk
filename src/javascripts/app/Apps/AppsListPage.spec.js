@@ -37,6 +37,7 @@ describe('AppsListPage', () => {
         userId={userId}
         hasAppsFeature={true}
         spaceInformation={spaceInformation}
+        userCanEditApps={true}
       />
     );
 
@@ -56,6 +57,7 @@ describe('AppsListPage', () => {
         spaceInformation={spaceInformation}
         userId={userId}
         hasAppsFeature={true}
+        userCanEditApps={true}
       />
     );
 

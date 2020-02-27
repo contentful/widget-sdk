@@ -175,7 +175,7 @@ export default class AppsListPage extends React.Component {
     hasAppsFeature: PropTypes.bool.isRequired,
     deeplinkAppId: PropTypes.string,
     deeplinkReferrer: PropTypes.string,
-    userCanEditApps: PropTypes.bool.isRequired
+    userCanEditApps: PropTypes.bool
   };
 
   state = { ready: false };
