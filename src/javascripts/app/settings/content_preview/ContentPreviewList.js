@@ -14,7 +14,7 @@ import {
   TableCell,
   TableRow
 } from '@contentful/forma-36-react-components';
-import EmptyStateIllustration from 'svg/content-preview-empty-state.svg';
+import EmptyStateIllustration from 'svg/illustrations/content-preview-empty-state.svg';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 
 const styles = {
@@ -41,6 +41,7 @@ export default class ContentPreviewList extends Component {
 
   renderList() {
     return (
+      // eslint-disable-next-line rulesdir/restrict-inline-styles
       <Table style={{ width: '100%' }}>
         <TableHead>
           <TableRow>
@@ -55,6 +56,7 @@ export default class ContentPreviewList extends Component {
               path="^.detail"
               params={{ contentPreviewId: preview.sys.id }}>
               {({ onClick }) => (
+                // eslint-disable-next-line rulesdir/restrict-inline-styles
                 <TableRow onClick={onClick} style={{ cursor: 'pointer' }}>
                   <TableCell>{preview.name}</TableCell>
                   <TableCell>{preview.description}</TableCell>

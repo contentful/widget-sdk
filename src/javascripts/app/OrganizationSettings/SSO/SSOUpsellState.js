@@ -1,6 +1,6 @@
 import React from 'react';
 import { css } from 'emotion';
-import SSOUpsellStateImage from 'svg/upsell-state-sso.svg';
+// import SSOUpsellStateImage from 'svg/illustrations/upsell-state-sso.svg';
 import {
   Heading,
   Typography,
@@ -21,7 +21,29 @@ const styles = {
   topMargin: css({ marginTop: tokens.spacingL })
 };
 
-function SSOUpsellState() {
+const SSOUpsellState = () => {
+  // const [lazycsvg, setSvg] = useState(null);
+  // let ImportView;
+  // import('svg/illustrations/upsell-state-sso.svg').then((m) => {
+  //   ImportView = m.default
+  // })
+
+  // // const ImportView = () =>
+  // //   lazy(() => import(`svg/illustrations/upsell-state-sso.svg`))
+
+  // // console.log(importView());
+  // console.log('????', ImportView)
+
+  // state: {
+  //   lazycsvg:null
+  // }
+
+  // useEffect(() => {
+  // import('svg/illustrations/upsell-state-sso.svg').then(m => {
+  //   setSvg(m);
+  // });
+  // }, [lazysvg])
+
   return (
     <Workbench className="sso-setup">
       <Workbench.Header
@@ -60,6 +82,6 @@ function SSOUpsellState() {
       </Workbench.Content>
     </Workbench>
   );
-}
+};
 
 export default SSOUpsellState;

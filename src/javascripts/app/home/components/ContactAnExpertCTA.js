@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from '../styles';
 import CTACardComponent from './CTACardComponent';
-import ContactExpertIllustration from 'svg/flower-pen.svg';
+import ContactExpertIllustration from 'svg/illustrations/flower-pen.svg';
 import * as Intercom from 'services/intercom';
 import { trackClickCTA } from '../tracking';
 

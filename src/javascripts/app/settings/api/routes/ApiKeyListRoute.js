@@ -22,7 +22,7 @@ import * as Navigator from 'states/Navigator';
 import EmptyStateContainer, {
   defaultSVGStyle
 } from 'components/EmptyStateContainer/EmptyStateContainer';
-import ApiKeysEmptyIllustration from 'svg/api-keys-empty-illustation.svg';
+import ApiKeysEmptyIllustration from 'svg/illustrations/api-keys-empty-illustation.svg';
 
 const styles = {
   actions: css({
@@ -66,6 +66,7 @@ function StaffHint() {
             <div className="staff-hint__author-photo x--herve"></div>
             <div className="staff-hint__author-name">
               <strong>Herve Labas</strong>
+              {/* eslint-disable-next-line rulesdir/restrict-non-f36-components */}
               <p>Product Manager at Contentful</p>
             </div>
           </div>

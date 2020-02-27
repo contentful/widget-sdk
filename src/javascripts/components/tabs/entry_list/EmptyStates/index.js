@@ -5,7 +5,7 @@ import { can, Action } from 'access_control/AccessChecker';
 import { getModule } from 'NgRegistry';
 import CreateEntryButton from 'components/CreateEntryButton/CreateEntryButton';
 import FolderIllustration from 'svg/folder-illustration.svg';
-import PenIllustration from 'svg/pen-illustration.svg';
+import PenIllustration from 'svg/illustrations/pen-illustration.svg';
 import CoffeeCupIllustration from 'svg/coffee-cup-illustration.svg';
 import EmptyStateContainer, {
   defaultSVGStyle

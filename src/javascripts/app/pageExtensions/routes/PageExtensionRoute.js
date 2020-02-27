@@ -11,7 +11,7 @@ import {
   SkeletonBodyText
 } from '@contentful/forma-36-react-components';
 import Placeholder from 'app/common/Placeholder';
-import BinocularsIllustration from 'svg/binoculars-illustration.svg';
+import BinocularsIllustration from 'svg/illustrations/binoculars-illustration.svg';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 

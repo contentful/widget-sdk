@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Advice from 'components/tabs/Advice';
-import EmptyContentIcon from 'svg/empty-content-model.svg';
+import EmptyContentIcon from 'svg/illustrations/empty-content-model.svg';
 import { Note, TextLink } from '@contentful/forma-36-react-components';
 import CreateEntryButton from 'components/CreateEntryButton/CreateEntryButton';
 
