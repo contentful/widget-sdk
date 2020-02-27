@@ -6,7 +6,7 @@ import { sum } from 'lodash';
 import { Grid, GridItem } from '../common/Grid';
 import { css } from 'emotion';
 import OrganisationBarChart from '../charts/OrganisationBarChart';
-import OrganizationUsageInfo from '../OrganizationUsageInfo';
+import OrganizationUsageInfoNew from '../OrganizationUsageInfoNew';
 import AssetBandwidthSection from '../AssetBandwidthSection';
 import { periodicUsagePropType } from '../propTypes';
 
@@ -28,7 +28,7 @@ const OrgTabs = props => {
       title: 'API Requests',
       defaultActive: true,
       leftComponent: (
-        <OrganizationUsageInfo totalUsage={totalUsage} includedLimit={apiRequestIncludedLimit} />
+        <OrganizationUsageInfoNew totalUsage={totalUsage} includedLimit={apiRequestIncludedLimit} />
       ),
       rightComponent: <OrganisationBarChart period={period} usage={orgUsage} />
     },
