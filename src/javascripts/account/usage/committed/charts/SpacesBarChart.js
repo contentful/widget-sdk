@@ -15,7 +15,7 @@ const styles = {
 
 const setOptions = (chart, spaceNames, data, period, colours) => {
   const series = data.map((item, index) => ({
-    name: spaceNames[item.sys.space.sys.id],
+    name: spaceNames[item.sys.space.sys.id] || 'Deleted space',
     type: 'bar',
     data: item.usage,
     itemStyle: {

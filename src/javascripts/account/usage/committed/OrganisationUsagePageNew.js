@@ -23,7 +23,7 @@ const OrganizationUsagePageNew = props => {
 
   return (
     <>
-      <OrgTabs period={period} spaceNames={spaceNames} periodicUsage={periodicUsage} />
+      <OrgTabs {...props} />
       <Heading element="h2" className={styles.heading}>
         View API requests by type and space
       </Heading>

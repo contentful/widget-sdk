@@ -25,7 +25,7 @@ const calcRelativeSpaceUsage = (spaceUsage, totalUsage) => {
 const renderTableRow = (spaceName, spaceUsage, totalUsage, colour) => {
   return (
     <TableRow key={spaceName}>
-      <TableCell>{spaceName ? spaceName : 'Deleted space'}</TableCell>
+      <TableCell>{spaceName || 'Deleted space'}</TableCell>
       <TableCell>{shorten(sum(spaceUsage))}</TableCell>
       <TableCell className={apiColumnStyle(colour)}>
         {`${calcRelativeSpaceUsage(spaceUsage, totalUsage)}%`}
