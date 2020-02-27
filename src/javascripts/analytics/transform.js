@@ -233,6 +233,8 @@ registerGenericEvent('app_management:created');
 registerGenericEvent('app_management:deleted');
 registerGenericEvent('app_management:updated');
 
+registerGenericEvent('tracking:invalid_event');
+
 /**
  * Registers an event to be tracked by snowplow.
  * @param {string} event
@@ -294,6 +296,10 @@ function registerSSOSelfConfigurationEvent(event) {
 
 function registerEnvironmentAliasesEvent(event) {
   registerEvent(event, 'environment_aliases', EnvironmentAliases);
+}
+
+export function eventExists(eventName) {
+  return !!getAtPath(_events, [eventName]);
 }
 
 /**

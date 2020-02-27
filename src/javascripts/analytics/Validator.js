@@ -143,7 +143,8 @@ export const validEvents = {
   entity_state: ['revert'],
   asset_list: ['add_asset_single', 'add_asset_multiple'],
   telemetry: ['measurement'],
-  app_management: ['created', 'deleted', 'updated']
+  app_management: ['created', 'deleted', 'updated'],
+  tracking: ['invalid_event']
 };
 
 export const validateEvent = eventName => {
