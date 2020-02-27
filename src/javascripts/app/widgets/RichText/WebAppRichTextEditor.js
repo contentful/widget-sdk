@@ -16,10 +16,10 @@ const RichTextEditorWithTracking = withTracking(RichTextEditor);
  * @param {Object} loadEvents
  * @returns {React.Element}
  */
-export function renderRichTextEditor({ widgetApi, spaceContext, loadEvents }) {
+export function renderRichTextEditor({ widgetApi, spaceContext, loadEvents, $scope }) {
   // RichTextEditor relies on some non-default widgetApi APIs that are not (yet) open sourced in
   // the ui-extensions-sdk.
-  const richTextWidgetAPI = richTextWidgetApiDecorator(widgetApi, spaceContext);
+  const richTextWidgetAPI = richTextWidgetApiDecorator(widgetApi, spaceContext, $scope.jobsStore);
   return (
     // TODO: Avoid using `WidgetAPIContext`, currently only necessary for rendering
     //  entity cards.

@@ -18,10 +18,9 @@ import {
  * @param {Object} spaceContext
  * @returns {Object}
  */
-export default function(widgetAPI, spaceContext, $scope) {
-  const jobs = $scope && $scope.jobsStore;
+export default function(widgetAPI, spaceContext, jobs) {
   const { asset: canAccessAssets } = getSectionVisibility();
-  const contentTypes = spaceContext.publishedCTs.getAllBare();
+  const contentTypes = spaceContext ? spaceContext.publishedCTs.getAllBare() : [];
 
   const rtWidgetAPI = {
     ...widgetAPI,
