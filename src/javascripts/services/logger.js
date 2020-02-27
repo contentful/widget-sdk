@@ -274,6 +274,10 @@ function _log(type, severity, message, metadata) {
     logToConsole(type, severity, message, augmentedMetadata);
   }
 
+  if (message instanceof Error) {
+    message = message.message;
+  }
+
   // Items without a message logged to Bugsnag are essentially noise (it's really hard to act on them)
   // and therefore useless, so we ignore those
   //
