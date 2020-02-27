@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Tabs, Tab, TabPanel } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
+import { sum } from 'lodash';
 import { Grid, GridItem } from '../common/Grid';
 import { css } from 'emotion';
 import OrganisationBarChart from '../charts/OrganisationBarChart';
@@ -15,13 +17,19 @@ const styles = {
 };
 
 const OrgTabs = props => {
+  const { period, periodicUsage, apiRequestIncludedLimit } = props;
+
+  const orgUsage = periodicUsage.org.usage;
+  const totalUsage = sum(orgUsage);
   const tabsData = [
     {
       id: 'apiRequest',
       title: 'API Requests',
       defaultActive: true,
-      leftComponent: <OrganizationUsageInfo totalUsage={2150} includedLimit={200} />,
-      rightComponent: <OrganisationBarChart chartData={props} />
+      leftComponent: (
+        <OrganizationUsageInfo totalUsage={totalUsage} includedLimit={apiRequestIncludedLimit} />
+      ),
+      rightComponent: <OrganisationBarChart period={period} usage={orgUsage} />
     },
     {
       id: 'assetBandwidth',
@@ -62,6 +70,12 @@ const OrgTabs = props => {
       </TabPanel>
     </>
   );
+};
+
+OrgTabs.propTypes = {
+  period: PropTypes.object,
+  periodicUsage: PropTypes.object,
+  apiRequestIncludedLimit: PropTypes.number
 };
 
 export default OrgTabs;
