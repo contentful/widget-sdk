@@ -48,9 +48,10 @@ const chartOptions = (period, usage) => {
         name: 'API Requests',
         type: 'bar',
         itemStyle: {
-          color: 'rgba(46, 117, 212, 0.5)',
+          color: '#2E75D4',
           borderWidth: 2,
-          borderColor: '#2E75D4'
+          borderColor: '#2E75D4',
+          opacity: 0.5
         },
         data: usage,
         areaStyle: {},

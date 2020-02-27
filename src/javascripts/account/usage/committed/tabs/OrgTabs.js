@@ -8,6 +8,7 @@ import { css } from 'emotion';
 import OrganisationBarChart from '../charts/OrganisationBarChart';
 import OrganizationUsageInfo from '../OrganizationUsageInfo';
 import AssetBandwidthSection from '../AssetBandwidthSection';
+import { periodicUsagePropType } from '../propTypes';
 
 const styles = {
   tabPanel: css({
@@ -40,24 +41,25 @@ const OrgTabs = props => {
   ];
 
   const defaultActiveTabIndex = tabsData && tabsData.findIndex(item => item.defaultActive);
+
   const [selected, setSelected] = useState(
     defaultActiveTabIndex === -1 ? 0 : defaultActiveTabIndex
   );
 
-  const handleSelected = id => {
-    setSelected(id);
+  const handleSelected = idx => {
+    setSelected(idx);
   };
 
   return (
     <>
       <Tabs withDivider={true}>
         {tabsData &&
-          tabsData.map(item => (
+          tabsData.map((item, idx) => (
             <Tab
               id={item.id}
               key={item.id}
-              selected={selected === item.id}
-              onSelect={handleSelected}>
+              selected={tabsData[selected].id === item.id}
+              onSelect={() => handleSelected(idx)}>
               {item.title}
             </Tab>
           ))}
@@ -73,9 +75,9 @@ const OrgTabs = props => {
 };
 
 OrgTabs.propTypes = {
-  period: PropTypes.object,
-  periodicUsage: PropTypes.object,
-  apiRequestIncludedLimit: PropTypes.number
+  period: PropTypes.object.isRequired,
+  periodicUsage: periodicUsagePropType.isRequired,
+  apiRequestIncludedLimit: PropTypes.number.isRequired
 };
 
 export default OrgTabs;

@@ -7,11 +7,7 @@ import PropTypes from 'prop-types';
 import SpacesTable from '../charts/SpacesTable';
 import SpacesBarChart from '../charts/SpacesBarChart';
 import { sum } from 'lodash';
-import {
-  organizationUsagePropType,
-  arrayPropType,
-  organizationResourceUsagePropType
-} from '../propTypes';
+import { periodicUsagePropType } from '../propTypes';
 
 const styles = {
   tabPanel: css({
@@ -20,7 +16,7 @@ const styles = {
   })
 };
 
-const SpacesTab = ({ spaceNames, period, periodicUsage }) => {
+const SpacesTabs = ({ spaceNames, period, periodicUsage }) => {
   const tabsData = [
     {
       id: 'cma',
@@ -53,10 +49,8 @@ const SpacesTab = ({ spaceNames, period, periodicUsage }) => {
   };
 
   const apiName = selected.toUpperCase();
-  // const spaceNames = props.spaceNames; // props
   const data = periodicUsage.apis[selected].items;
-  const totalUsage = sum(periodicUsage.org.usage); // props: periodicUsage.org and .api
-  // const period = periodToDates(props.period) //props: period
+  const totalUsage = sum(periodicUsage.org.usage);
 
   return (
     <>
@@ -92,20 +86,10 @@ const SpacesTab = ({ spaceNames, period, periodicUsage }) => {
   );
 };
 
-const apiUsagePropType = arrayPropType(organizationResourceUsagePropType);
-
-SpacesTab.propTypes = {
+SpacesTabs.propTypes = {
   spaceNames: PropTypes.objectOf(PropTypes.string).isRequired,
   period: PropTypes.arrayOf(PropTypes.string).isRequired,
-  periodicUsage: PropTypes.shape({
-    org: organizationUsagePropType,
-    apis: PropTypes.shape({
-      cma: apiUsagePropType,
-      cda: apiUsagePropType,
-      cpa: apiUsagePropType,
-      gql: apiUsagePropType
-    })
-  }).isRequired
+  periodicUsage: periodicUsagePropType.isRequired
 };
 
-export default SpacesTab;
+export default SpacesTabs;

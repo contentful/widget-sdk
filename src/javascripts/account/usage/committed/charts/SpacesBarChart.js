@@ -1,8 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
+import * as echarts from 'echarts';
 import { organizationResourceUsagePropType } from '../propTypes';
 import tokens from '@contentful/forma-36-tokens';
 import { shorten } from 'utils/NumberUtils';
+import { css } from 'emotion';
+
+const styles = {
+  chartWrapper: css({
+    height: '450px',
+    width: '853px'
+  })
+};
 
 const setOptions = (chart, spaceNames, data, period, colours) => {
   const series = data.map((item, index) => ({
@@ -10,7 +19,10 @@ const setOptions = (chart, spaceNames, data, period, colours) => {
     type: 'bar',
     data: item.usage,
     itemStyle: {
-      color: colours[index]
+      color: colours[index],
+      borderWidth: 2,
+      borderColor: colours[index],
+      opacity: 0.5
     }
   }));
 
@@ -27,6 +39,10 @@ const setOptions = (chart, spaceNames, data, period, colours) => {
           title: 'Save'
         }
       }
+    },
+    grid: {
+      left: '2%',
+      right: '5%'
     },
     xAxis: {
       type: 'category',
@@ -83,7 +99,6 @@ const setOptions = (chart, spaceNames, data, period, colours) => {
 
 const SpacesBarChart = ({ spaceNames, data, period, colours }) => {
   const chartRef = useRef();
-  const echarts = require('echarts');
 
   const [myChart, setMyChart] = useState(null);
 
@@ -93,7 +108,7 @@ const SpacesBarChart = ({ spaceNames, data, period, colours }) => {
       const chart = echarts.init(chartRef.current);
       setMyChart(chart);
     }
-  }, [echarts]);
+  }, []);
 
   useEffect(() => {
     if (myChart) {
@@ -101,7 +116,7 @@ const SpacesBarChart = ({ spaceNames, data, period, colours }) => {
     }
   });
 
-  return <div ref={chartRef} style={{ width: '853px', height: '450px' }} />;
+  return <div ref={chartRef} className={styles.chartWrapper} />;
 };
 
 SpacesBarChart.propTypes = {

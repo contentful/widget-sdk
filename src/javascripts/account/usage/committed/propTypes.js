@@ -31,9 +31,22 @@ const organizationResourceUsagePropType = PropTypes.shape({
   usage: PropTypes.arrayOf(PropTypes.number).isRequired
 });
 
+const apiUsagePropType = arrayPropType(organizationResourceUsagePropType);
+
+const periodicUsagePropType = PropTypes.shape({
+  org: organizationUsagePropType,
+  apis: PropTypes.shape({
+    cma: apiUsagePropType,
+    cda: apiUsagePropType,
+    cpa: apiUsagePropType,
+    gql: apiUsagePropType
+  })
+});
+
 export {
   arrayPropType,
   periodPropType,
   organizationUsagePropType,
-  organizationResourceUsagePropType
+  organizationResourceUsagePropType,
+  periodicUsagePropType
 };
