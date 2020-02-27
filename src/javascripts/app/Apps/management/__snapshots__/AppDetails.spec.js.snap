@@ -1204,28 +1204,7 @@ Object {
         </div>
       </div>
     </div>
-    <div>
-      <div
-        aria-hidden="true"
-        class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
-        contenteditable="false"
-        data-test-id="cf-ui-tooltip"
-        role="tooltip"
-        style="max-width: 360px; left: 0px; top: -20px;"
-      >
-        <div
-          class="InViewport__InViewport___2o6g4"
-          data-test-id="cf-ui-in-viewport"
-          offset="0"
-        >
-          <span>
-            Copy to 
-            <br />
-             clipboard
-          </span>
-        </div>
-      </div>
-    </div>
+    <div />
   </body>,
   "container": @keyframes animation-0 {
   from {
@@ -3631,28 +3610,7 @@ Object {
         </div>
       </div>
     </div>
-    <div>
-      <div
-        aria-hidden="true"
-        class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
-        contenteditable="false"
-        data-test-id="cf-ui-tooltip"
-        role="tooltip"
-        style="max-width: 360px; left: 0px; top: -20px;"
-      >
-        <div
-          class="InViewport__InViewport___2o6g4"
-          data-test-id="cf-ui-in-viewport"
-          offset="0"
-        >
-          <span>
-            Copy to 
-            <br />
-             clipboard
-          </span>
-        </div>
-      </div>
-    </div>
+    <div />
   </body>,
   "container": @keyframes animation-0 {
   from {

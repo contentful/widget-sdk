@@ -34,7 +34,7 @@ const styles = {
 
 const actionColors = {
   [ScheduledActionActions.Publish]: 'positive',
-  [ScheduledActionActions.Unpublish]: 'element'
+  [ScheduledActionActions.Unpublish]: 'secondary'
 };
 
 const ScheduleTooltipContent = ({ job, jobsCount }) => {

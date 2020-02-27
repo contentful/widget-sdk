@@ -87,7 +87,11 @@ function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }
           <Tooltip
             testId="subscription-page.spaces-list.enterprise-toolitp"
             content="This space is part of your Enterprise deal with Contentful">
-            <span className={styles.star}>★</span>
+            <span
+              data-test-id="subscription-page.spaces-list.enterprise-toolitp-trigger"
+              className={styles.star}>
+              ★
+            </span>
           </Tooltip>
         )}
       </TableCell>
@@ -98,7 +102,9 @@ function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }
             <Tooltip
               testId="subscription-page.spaces-list.features-toolitp"
               content={`This space includes ${joinAnd(enabledFeatures.map(({ name }) => name))}`}>
-              <QuestionMarkIcon color={tokens.colorTextLight} />
+              <span data-test-id="subscription-page.spaces-list.features-toolitp-trigger">
+                <QuestionMarkIcon color={tokens.colorTextLight} />
+              </span>
             </Tooltip>
           </div>
         )}

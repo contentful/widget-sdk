@@ -551,6 +551,8 @@ describe('TeamList', () => {
             'disabled',
             true
           );
+
+          wrapper.find('[data-test-id="new-team-button"]').simulate('mouseOver');
           expect(wrapper.find('[data-test-id="read-only-tooltip"]')).toHaveLength(1);
         });
       });
