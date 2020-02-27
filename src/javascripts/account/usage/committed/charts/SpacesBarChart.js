@@ -41,8 +41,9 @@ const setOptions = (chart, spaceNames, data, period, colours) => {
       }
     },
     grid: {
-      left: '2%',
-      right: '5%'
+      left: '5%',
+      right: '5%',
+      bottom: 70
     },
     xAxis: {
       type: 'category',
@@ -90,6 +91,9 @@ const setOptions = (chart, spaceNames, data, period, colours) => {
       {
         type: 'inside',
         throttle: 50
+      },
+      {
+        type: 'slider'
       }
     ],
     series: series

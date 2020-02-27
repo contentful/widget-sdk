@@ -3,7 +3,18 @@ import OrgTabs from './tabs/OrgTabs';
 import SpacesTabs from './tabs/SpacesTabs';
 import PropTypes from 'prop-types';
 import { periodicUsagePropType, periodPropType } from './propTypes';
+import { Heading } from '@contentful/forma-36-react-components';
 import periodToDates from './charts/periodToDates';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
+
+const styles = {
+  heading: css({
+    color: '#6A7889',
+    fontWeight: tokens.fontWeightNormal,
+    paddingBottom: tokens.spacingXl
+  })
+};
 
 const OrganizationUsagePageNew = props => {
   const period = periodToDates(props.period);
@@ -12,7 +23,10 @@ const OrganizationUsagePageNew = props => {
 
   return (
     <>
-      <OrgTabs period={period} {...props} />
+      <OrgTabs period={period} spaceNames={spaceNames} periodicUsage={periodicUsage} />
+      <Heading element="h2" className={styles.heading}>
+        View API requests by type and space
+      </Heading>
       <SpacesTabs period={period} spaceNames={spaceNames} periodicUsage={periodicUsage} />
     </>
   );
