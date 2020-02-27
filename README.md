@@ -82,7 +82,3 @@ See the [Lab Readme][https://github.com/contentful/lab/blob/master/readme.md].
 If you want to add a general component that will be used across the app, you can add it to the [UI Component Library](https://github.com/contentful/forma-36). See their documentation on how to get started, or message in the `#project-design-system` Slack channel.
 
 Additionally, we have a legacy styleguide, [available here](https://ctf-legacy-ui-styleguide.netlify.com/), which you can use for additional reference beyond the component library.
-
-```
-
-```
