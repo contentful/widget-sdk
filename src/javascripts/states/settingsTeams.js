@@ -1,20 +1,23 @@
-import { reactStateWrapper } from './utils';
 import SpaceTeamsPage from 'app/SpaceSettings/Teams/SpaceTeamsPage';
 import AddTeamsRouter from 'app/SpaceSettings/Teams/AddTeams/AddTeamsRouter';
 
-const list = reactStateWrapper({
+const list = {
   name: 'list',
-  title: 'Space teams',
-  loadingText: 'Loading teams…',
   url: '',
   component: SpaceTeamsPage
-});
+};
 
-const add = reactStateWrapper({
+const add = {
   name: 'add',
   url: '/add',
-  component: AddTeamsRouter
-});
+  component: AddTeamsRouter,
+  mapInjectedToProps: [
+    '$stateParams',
+    $stateParams => ({
+      spaceId: $stateParams.spaceId
+    })
+  ]
+};
 
 export default {
   name: 'teams',

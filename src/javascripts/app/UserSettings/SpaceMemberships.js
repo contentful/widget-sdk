@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import PropTypes from 'prop-types';
 import { Notification, ModalConfirm } from '@contentful/forma-36-react-components';
 import { without } from 'lodash';
 
@@ -7,10 +6,11 @@ import * as TokenStore from 'services/TokenStore';
 import * as SpaceMembershipRepository from 'access_control/SpaceMembershipRepository';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import ModalLauncher from 'app/common/ModalLauncher';
+import { FetcherLoading } from 'app/common/createFetcherComponent';
 
 import SpaceMembershipsPresentation from './SpaceMembershipsPresentation';
 
-const SpaceMemberships = ({ onReady }) => {
+const SpaceMemberships = () => {
   const [spaces, setSpaces] = useState(null);
   useEffect(() => {
     (async () => setSpaces(await TokenStore.getSpaces()))();
@@ -51,15 +51,11 @@ const SpaceMemberships = ({ onReady }) => {
     [spaces]
   );
 
-  if (spaces) {
-    onReady();
+  if (!spaces) {
+    return <FetcherLoading message="Loading spaces..." />;
   }
 
   return <SpaceMembershipsPresentation onLeave={onLeave} spaces={spaces} />;
-};
-
-SpaceMemberships.propTypes = {
-  onReady: PropTypes.func.isRequired
 };
 
 export default SpaceMemberships;

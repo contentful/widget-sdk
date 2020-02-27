@@ -1,27 +1,22 @@
 import base from 'states/Base';
-import { iframeStateWrapper, reactStateWrapper } from './utils';
+import { iframeStateWrapper } from './utils';
 import { noop } from 'lodash';
 import ProfileNavigationBar from 'navigation/ProfileNavigationBar';
 import Settings from 'app/UserProfile/Settings';
 import SpaceMemberships from 'app/UserSettings/SpaceMemberships';
 import UserCMATokens from 'app/UserCMATokens/UserCMATokens';
 
-const user = reactStateWrapper({
-  loadingText: 'Loading your account…',
-  onEnter: [noop],
+const user = {
   name: 'user',
-  title: 'User profile',
   url: '/user',
   component: Settings
-});
+};
 
-const spaceMemberships = reactStateWrapper({
+const spaceMemberships = {
   name: 'space_memberships',
-  title: 'Space memberships',
-  loadingText: 'Loading spaces…',
   url: '/space_memberships',
   component: SpaceMemberships
-});
+};
 
 const organizationMemberships = userBase({
   name: 'organization_memberships',
@@ -30,13 +25,11 @@ const organizationMemberships = userBase({
   url: '/organization_memberships{pathSuffix:PathSuffix}'
 });
 
-const cmaTokens = reactStateWrapper({
+const cmaTokens = {
   name: 'cma_tokens',
-  title: 'CMA tokens',
-  loadingText: 'Loading tokens…',
   url: '/cma_tokens',
   component: UserCMATokens
-});
+};
 
 const accessGrants = userBase({
   name: 'access_grants',

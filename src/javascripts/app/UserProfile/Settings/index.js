@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Card, Workbench } from '@contentful/forma-36-react-components';
 import DocumentTitle from 'components/shared/DocumentTitle';
@@ -31,7 +31,7 @@ const styles = {
   })
 };
 
-export default function IndexPage({ title, onReady }) {
+export default function IndexPage({ title }) {
   const [user, setUser] = useState({});
   const [hasOrgMemberships, setHasOrgMemberships] = useState(false);
 
@@ -45,7 +45,6 @@ export default function IndexPage({ title, onReady }) {
       setHasOrgMemberships(orgs.length > 0);
     }, [])
   );
-  useEffect(onReady, [onReady]);
 
   const { userCancellationWarning: warning } = user;
 
@@ -98,6 +97,5 @@ export default function IndexPage({ title, onReady }) {
 }
 
 IndexPage.propTypes = {
-  onReady: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired
 };

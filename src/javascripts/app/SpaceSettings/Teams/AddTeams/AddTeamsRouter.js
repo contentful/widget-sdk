@@ -10,10 +10,11 @@ import { getAllTeams, getTeamsSpaceMembershipsOfSpace } from 'access_control/Tea
 import { getInstance as createRoleRepo } from 'access_control/RoleRepository';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import { getModule } from 'NgRegistry';
+import { FetcherLoading } from 'app/common/createFetcherComponent';
 
 import AddTeamsPage from './AddTeamsPage';
 
-const fetch = (spaceId, onReady) => async () => {
+const fetch = spaceId => async () => {
   const spaceContext = getModule('spaceContext');
 
   const {
@@ -26,33 +27,31 @@ const fetch = (spaceId, onReady) => async () => {
   const spaceEndpoint = createSpaceEndpoint(spaceId);
   const roleRepo = createRoleRepo(spaceContext.space);
 
-  let roles;
-  let teams;
-  let teamSpaceMemberships;
-
-  try {
-    [roles, teams, teamSpaceMemberships] = await Promise.all([
-      roleRepo.getAll(),
-      getAllTeams(orgEndpoint),
-      getTeamsSpaceMembershipsOfSpace(spaceEndpoint)
-    ]);
-  } finally {
-    onReady();
-  }
+  const [roles, teams, teamSpaceMemberships] = await Promise.all([
+    roleRepo.getAll(),
+    getAllTeams(orgEndpoint),
+    getTeamsSpaceMembershipsOfSpace(spaceEndpoint)
+  ]);
 
   return { teams, teamSpaceMemberships, roles };
 };
 
-export default function AddTeamsRouter({ onReady, spaceId }) {
-  const { error, data } = useAsync(useCallback(fetch(spaceId, onReady), [spaceId]));
+export default function AddTeamsRouter({ spaceId }) {
+  const { isLoading, error, data } = useAsync(useCallback(fetch(spaceId), [spaceId]));
 
   const hasAccess = getSectionVisibility().teams;
   const hasError = error || !data;
 
   let page;
+
+  if (isLoading) {
+    return <FetcherLoading />;
+  }
+
   if (!hasError) {
     page = <AddTeamsPage spaceId={spaceId} {...data} />;
   }
+
   if (!hasAccess) {
     page = <ForbiddenPage />;
   }
@@ -66,6 +65,5 @@ export default function AddTeamsRouter({ onReady, spaceId }) {
 }
 
 AddTeamsRouter.propTypes = {
-  onReady: PropTypes.func.isRequired,
   spaceId: PropTypes.string.isRequired
 };
