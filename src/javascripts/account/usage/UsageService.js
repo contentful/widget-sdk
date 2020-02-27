@@ -48,7 +48,7 @@ export const getOrgUsage = (endpoint, { startDate, endDate }) =>
  * @param  {string} query.apiType - One of cma, cpa, cda, gql
  * @return {Promise}
  */
-export const getApiUsage = (endpoint, { apiType, startDate, endDate }) =>
+export const getApiUsage = (endpoint, { apiType, startDate, endDate, limit }) =>
   endpoint({
     method: 'GET',
     path: ['space_periodic_usages'],
@@ -56,7 +56,7 @@ export const getApiUsage = (endpoint, { apiType, startDate, endDate }) =>
       'metric[in]': apiType,
       'dateRange.startAt': startDate,
       'dateRange.endAt': endDate,
-      limit: 5
+      limit
     }
   });
 

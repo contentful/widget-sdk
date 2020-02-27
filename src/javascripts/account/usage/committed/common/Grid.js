@@ -47,7 +47,7 @@ export const Grid = props => {
 Grid.propTypes = {
   rows: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   columns: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  inline: PropTypes.boolean,
+  inline: PropTypes.bool,
   columnGap: PropTypes.string,
   rowGap: PropTypes.string,
   justifyContent: PropTypes.string,

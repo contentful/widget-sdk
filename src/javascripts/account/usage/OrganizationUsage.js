@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { mapValues, flow, keyBy, get, eq, isNumber, pick } from 'lodash/fp';
 
@@ -38,7 +38,7 @@ const WorkbenchContent = props => {
     error,
     periods,
     resources,
-    orgId
+    newOrgEnabled
   } = props;
 
   const [newOrgEnabled, setNewOrgEnabled] = useState(false);
@@ -113,7 +113,7 @@ WorkbenchContent.propTypes = {
   error: PropTypes.string,
   periods: PropTypes.arrayOf(PropTypes.object),
   resources: PropTypes.arrayOf(PropTypes.object),
-  orgId: PropTypes.string
+  newOrgEnabled: PropTypes.bool
 };
 
 export class WorkbenchActions extends React.Component {
@@ -168,14 +168,25 @@ export class OrganizationUsage extends React.Component {
   constructor(props) {
     super(props);
 
+<<<<<<< HEAD
     this.state = { isLoading: true, error: null };
+=======
+    this.state = { isLoading: true, newOrgEnabled: false };
+>>>>>>> fix: toggle limit based on feature flag
 
     this.endpoint = EndpointFactory.createOrganizationEndpoint(props.orgId);
     this.setPeriodIndex = this.setPeriodIndex.bind(this);
   }
 
   async componentDidMount() {
+<<<<<<< HEAD
+=======
+    const { onForbidden, orgId } = this.props;
+
+>>>>>>> fix: toggle limit based on feature flag
     try {
+      const featureFlag = await getVariation(USAGE_API_UX, { organizationId: orgId });
+      this.setState({ newOrgEnabled: featureFlag });
       await this.checkPermissions();
       await this.fetchOrgData();
     } catch (ex) {
@@ -255,7 +266,7 @@ export class OrganizationUsage extends React.Component {
 
   loadPeriodData = async newIndex => {
     const { orgId } = this.props;
-    const { periods } = this.state;
+    const { periods, newOrgEnabled } = this.state;
 
     const service = createResourceService(orgId, 'organization');
     const newPeriod = periods[newIndex];
@@ -280,7 +291,8 @@ export class OrganizationUsage extends React.Component {
             apiType,
             startDate: newPeriod.startDate,
             endDate: newPeriod.endDate,
-            periodId: newPeriod.sys.id
+            periodId: newPeriod.sys.id,
+            limit: newOrgEnabled ? 5 : 3
           })
         )
       ];
@@ -332,9 +344,9 @@ export class OrganizationUsage extends React.Component {
       assetBandwidthData,
       committed,
       resources,
-      hasSpaces
+      hasSpaces,
+      newOrgEnabled
     } = this.state;
-    const { orgId } = this.props;
     return (
       <Workbench testId="organization.usage">
         <Workbench.Header
@@ -368,7 +380,7 @@ export class OrganizationUsage extends React.Component {
               error,
               periods,
               resources,
-              orgId
+              newOrgEnabled
             }}
           />
         </Workbench.Content>
