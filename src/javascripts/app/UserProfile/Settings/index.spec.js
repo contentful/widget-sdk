@@ -2,7 +2,6 @@ import React from 'react';
 import { render, wait } from '@testing-library/react';
 import IndexPage from '.';
 import { fetchUserData } from './AccountRepository';
-import { getVariation } from 'LaunchDarkly';
 
 jest.mock('./AccountRepository', () => ({
   fetchUserData: jest.fn()
@@ -100,9 +99,7 @@ describe('IndexPage', () => {
   });
 
   describe('Security section', () => {
-    it('should show the security section if the feature flag is enabled and the user is not SSO restricted', async () => {
-      getVariation.mockResolvedValueOnce(true);
-
+    it('should show the security section if the user is not SSO restricted', async () => {
       const { queryByTestId } = build();
 
       await wait();
@@ -110,20 +107,9 @@ describe('IndexPage', () => {
       expect(queryByTestId('security-section-card')).toBeVisible();
     });
 
-    it('should not show the security section if the feature flag is enabled but the user is SSO restricted', async () => {
-      getVariation.mockResolvedValueOnce(true);
+    it('should not show the security section if the user is SSO restricted', async () => {
       const profile = createProfile({ ssoLoginOnly: true });
       fetchUserData.mockReset().mockResolvedValueOnce(profile);
-
-      const { queryByTestId } = build();
-
-      await wait();
-
-      expect(queryByTestId('security-section-card')).toBeNull();
-    });
-
-    it('should not show the security section if the feature flag is disabled', async () => {
-      getVariation.mockResolvedValueOnce(false);
 
       const { queryByTestId } = build();
 

@@ -5,8 +5,6 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import useAsync from 'app/common/hooks/useAsync';
-import { getVariation } from 'LaunchDarkly';
-import { TWO_FA as TWO_FA_FLAG } from 'featureFlags';
 
 import { fetchUserData } from './AccountRepository';
 import AccountDetails from './AccountDetails';
@@ -35,16 +33,14 @@ const styles = {
 export default function IndexPage({ title, onReady }) {
   const [user, setUser] = useState({});
   const [hasOrgMemberships, setHasOrgMemberships] = useState(false);
-  const [mfaEnabled, setMFAEnabled] = useState(false);
 
   const { isLoading, error } = useAsync(
     useCallback(async () => {
-      const [user, variation] = await Promise.all([fetchUserData(), getVariation(TWO_FA_FLAG)]);
+      const user = await fetchUserData();
       const orgs = await getOrganizations();
       // We fetch the user here and set it above so that children
       // components can update the user without needing to fetch
       setUser(user);
-      setMFAEnabled(variation);
       setHasOrgMemberships(orgs.length > 0);
     }, [])
   );
@@ -70,7 +66,7 @@ export default function IndexPage({ title, onReady }) {
                   <OrgMembershipsSection />
                 </Card>
               )}
-              {!user.ssoLoginOnly && mfaEnabled && (
+              {!user.ssoLoginOnly && (
                 <Card testId="security-section-card" className={styles.section}>
                   <SecuritySection
                     user={user}
