@@ -27,6 +27,9 @@ const setOptions = (chart, spaceNames, data, period, colours) => {
   }));
 
   const option = {
+    legend: {
+      show: true
+    },
     tooltip: {
       trigger: 'axis',
       axisPointer: {
