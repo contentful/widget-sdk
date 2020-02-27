@@ -24,7 +24,7 @@ import * as OrganizationRoles from 'services/OrganizationRoles';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import ErrorState from 'app/common/ErrorState';
 
-const WorkbenchContent = props => {
+export const WorkbenchContent = props => {
   const {
     committed,
     hasSpaces,

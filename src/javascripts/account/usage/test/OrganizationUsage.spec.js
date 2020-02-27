@@ -265,7 +265,8 @@ describe('WorkbenchContent', () => {
       assetBandwidthUOM: 'GB',
       isLoading: false,
       periods: [],
-      resources: []
+      resources: [],
+      newOrgEnabled: false
     };
   });
 
