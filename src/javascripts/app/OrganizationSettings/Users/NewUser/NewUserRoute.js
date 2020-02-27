@@ -4,7 +4,7 @@ import { css } from 'emotion';
 
 import { Workbench } from '@contentful/forma-36-react-components';
 
-import Icon from 'ui/Components/Icon';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 import ErrorState from 'app/common/ErrorState';
 import LoadingState from 'app/common/LoadingState';
 import useAsync from 'app/common/hooks/useAsync';
@@ -46,7 +46,10 @@ export default function NewUserRoute({ orgId }) {
 
   return (
     <Workbench title="Invite users">
-      <Workbench.Header title="Invite users" icon={<Icon name="page-users" scale="0.75" />} />
+      <Workbench.Header
+        title="Invite users"
+        icon={<NavigationIcon name="users" size="large" color="green" />}
+      />
       <Workbench.Content className={styles.content} type="text">
         {isLoading && <LoadingState loadingText="Loading…" />}
         {!isLoading && error && <ErrorState />}

@@ -21,13 +21,13 @@ import { track } from 'analytics/Analytics';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
-import Icon from 'ui/Components/Icon';
 import _ from 'lodash';
 
 import { connect } from 'react-redux';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import SSOUpsellState from './SSOUpsellState';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 
 const styles = {
   heading: css({
@@ -150,7 +150,7 @@ export class SSOSetup extends React.Component {
     return (
       <Workbench className="sso-setup">
         <Workbench.Header
-          icon={<Icon name="page-sso" scale="0.75" />}
+          icon={<NavigationIcon name="sso" size="large" color="green" />}
           title="Single Sign-On (SSO)"
         />
         <Workbench.Content>

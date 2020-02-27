@@ -54,6 +54,7 @@ const colorsConfig = {
 };
 
 const sizesConfig = {
+  small: '18px',
   medium: '24px',
   large: '32px'
 };
@@ -68,6 +69,12 @@ const styles = {
   },
   flexShrink: 0,
   sizes: {
+    small: css({
+      width: sizesConfig.small,
+      height: sizesConfig.small,
+      maxWidth: sizesConfig.small,
+      maxHeight: sizesConfig.small
+    }),
     medium: css({
       width: sizesConfig.medium,
       height: sizesConfig.medium,

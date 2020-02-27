@@ -28,7 +28,7 @@ import StateLink from 'app/common/StateLink';
 import { track } from 'analytics/Analytics';
 
 import RoleSelector from './RoleSelector';
-import Icon from 'ui/Components/Icon';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 
 const styles = {
   workbench: css({
@@ -367,7 +367,7 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
     <Workbench className={styles.workbench}>
       <Workbench.Header
         title="Add teams"
-        icon={<Icon name="page-teams" scale="0.75" />}
+        icon={<NavigationIcon name="teams" color="green" size="large" />}
         onBack={() =>
           go({
             path: ['spaces', 'detail', 'settings', 'teams', 'list']

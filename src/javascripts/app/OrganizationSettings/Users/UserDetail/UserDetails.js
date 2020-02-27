@@ -13,7 +13,6 @@ import { getSpaceMemberships } from 'access_control/OrganizationMembershipReposi
 import { getAllTeamMemberships } from 'access_control/TeamRepository';
 import { go } from 'states/Navigator';
 import UserCard from '../UserCard';
-import Icon from 'ui/Components/Icon';
 import UserSpaceList from './UserSpaceList';
 import UserTeamList from './UserTeamList';
 import UserAttributes from './UserAttributes';
@@ -21,6 +20,7 @@ import ModalLauncher from 'app/common/ModalLauncher';
 import AddToSpacesModal from 'app/OrganizationSettings/Users/common/AddToSpacesModal';
 import EditSpaceMembershipModal from './EditSpaceMembershipModal';
 import { getFullNameOrEmail } from 'app/OrganizationSettings/Users/UserUtils';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 
 const styles = {
   tabs: css({
@@ -166,7 +166,7 @@ export default function UserDetails({
     <Workbench>
       <Workbench.Header
         title={getFullNameOrEmail(initialMembership.sys.user)}
-        icon={<Icon name="page-users" scale="0.75" />}
+        icon={<NavigationIcon name="users" size="large" color="green" />}
         onBack={handleBackButtonClicked}
       />
       <Workbench.Content>

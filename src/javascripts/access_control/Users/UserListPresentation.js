@@ -7,7 +7,7 @@ import { map } from 'lodash';
 
 import { List } from '@contentful/forma-36-react-components';
 import { SpaceMember as SpaceMemberPropType } from 'app/OrganizationSettings/PropTypes';
-import Icon from 'ui/Components/Icon';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import FilterPill from 'app/ContentList/Search/FilterPill';
 import ValueInput from 'app/ContentList/Search/FilterValueInputs';
@@ -90,7 +90,7 @@ const UserListPresentation = ({
       <Workbench>
         <Workbench.Header
           title={`Users (${spaceUsersCount})`}
-          icon={<Icon name="page-users" scale="0.75" />}
+          icon={<NavigationIcon name="users" size="large" color="green" />}
           actions={
             <Button
               buttonType="primary"

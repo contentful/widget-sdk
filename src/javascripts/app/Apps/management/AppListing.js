@@ -7,6 +7,7 @@ import AppsPrivateFrameworkIllustration from 'svg/apps-private-framework.svg';
 import tokens from '@contentful/forma-36-tokens';
 import * as ModalLauncher from 'app/common/ModalLauncher';
 import DocumentTitle from 'components/shared/DocumentTitle';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 
 import {
   Heading,
@@ -182,7 +183,7 @@ export default function AppListing({ definitions, canManageApps }) {
       <DocumentTitle title="Apps" />
       <Workbench.Header
         title={<Heading>Apps</Heading>}
-        icon={<Icon name="page-apps" scale="1" />}
+        icon={<NavigationIcon name="apps" size="large" color="green" />}
         actions={
           <StateLink path="^.new_definition">
             {({ onClick }) => <Button onClick={onClick}>Create new</Button>}

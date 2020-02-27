@@ -8,7 +8,7 @@ import { Workbench } from '@contentful/forma-36-react-components';
 import ResourceUsageList from './ResourceUsageList';
 import SpaceUsageSidebar from './SpaceUsageSidebar';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import Icon from 'ui/Components/Icon';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 
 const addMasterEnvironment = flow(
   update(
@@ -74,7 +74,10 @@ class SpaceUsage extends React.Component {
       <React.Fragment>
         <DocumentTitle title="Usage" />
         <Workbench>
-          <Workbench.Header icon={<Icon name="page-usage" />} title="Space usage" />
+          <Workbench.Header
+            icon={<NavigationIcon name="usage" color="green" size="large" />}
+            title="Space usage"
+          />
           <Workbench.Content>
             <ResourceUsageList
               spaceResources={spaceResources}

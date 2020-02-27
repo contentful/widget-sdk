@@ -18,7 +18,7 @@ import * as OrganizationMembershipRepository from 'access_control/OrganizationMe
 import * as PricingDataProvider from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 import * as OrganizationRoles from 'services/OrganizationRoles';
-import Icon from 'ui/Components/Icon';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 import ErrorState from 'app/common/ErrorState';
 
 export class WorkbenchContent extends React.Component {
@@ -313,7 +313,7 @@ export class OrganizationUsage extends React.Component {
       <Workbench testId="organization.usage">
         <Workbench.Header
           title="Usage"
-          icon={<Icon name="page-usage" scale="0.75" />}
+          icon={<NavigationIcon name="usage" color="green" size="large" />}
           actions={
             <WorkbenchActions
               {...{

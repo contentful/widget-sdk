@@ -3,24 +3,28 @@ import { iframeStateWrapper } from 'states/utils';
 const edit = {
   name: 'edit',
   title: 'Organization information',
+  icon: 'org-info',
   url: '/edit{pathSuffix:PathSuffix}'
 };
 
 const subscription = {
   name: 'subscription',
   title: 'Subscription',
+  icon: 'subscription',
   url: '/z_subscription{pathSuffix:PathSuffix}'
 };
 
 const subscriptionBilling = {
   name: 'subscription_billing',
   title: 'Subscription',
+  icon: 'subscription',
   url: '/subscription{pathSuffix:PathSuffix}'
 };
 
 const spaces = {
   name: 'spaces',
   title: 'Organization spaces',
+  icon: 'spaces',
   url: '/spaces{pathSuffix:PathSuffix}'
 };
 

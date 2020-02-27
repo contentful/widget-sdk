@@ -10,8 +10,8 @@ import {
   Tooltip,
   Workbench
 } from '@contentful/forma-36-react-components';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 
-import Icon from 'ui/Components/Icon';
 import {
   SpaceMembership as SpaceMembershipPropType,
   SpaceRole as SpaceRolePropType,
@@ -55,7 +55,7 @@ const SpaceTeamsPagePresentation = ({
   return (
     <Workbench>
       <Workbench.Header
-        icon={<Icon name="page-teams" scale={0.75} />}
+        icon={<NavigationIcon name="teams" color="green" size="large" />}
         title={`Teams ${!isLoading ? `(${teamSpaceMemberships.length})` : ''}`}
         actions={
           <Tooltip
