@@ -367,7 +367,7 @@ export default function AddTeamsPage({ teams, teamSpaceMemberships, roles, space
     <Workbench className={styles.workbench}>
       <Workbench.Header
         title="Add teams"
-        icon={<NavigationIcon name="teams" color="green" size="large" />}
+        icon={<NavigationIcon icon="teams" color="green" size="large" />}
         onBack={() =>
           go({
             path: ['spaces', 'detail', 'settings', 'teams', 'list']

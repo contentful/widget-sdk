@@ -271,7 +271,7 @@ class UsersList extends React.Component {
     return (
       <Workbench testId="organization-users-page">
         <Workbench.Header
-          icon={<NavigationIcon name="users" size="large" color="green" />}
+          icon={<NavigationIcon icon="users" size="large" color="green" />}
           title="Users"
           actions={
             <div className={styles.actionsWrapper}>

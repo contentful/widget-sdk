@@ -90,8 +90,8 @@ const styles = {
   }
 };
 
-const NavigationIcon = ({ className, size, name, style, color, inNavigation }) => {
-  const IconComponent = SVGs[name];
+const NavigationIcon = ({ className, size, icon, style, color, inNavigation }) => {
+  const IconComponent = SVGs[icon];
 
   const iconSvgStyle = css({
     fill: colorsConfig[color]
@@ -99,13 +99,13 @@ const NavigationIcon = ({ className, size, name, style, color, inNavigation }) =
 
   if (!IconComponent) {
     // eslint-disable-next-line
-    console.warn(`"${name}" is not imported in Icon`);
+    console.warn(`"${icon}" is not imported in Icon`);
   }
 
   return (
     <div
       data-test-id="product-icon"
-      data-icon-name={inNavigation ? `nav-${name}` : `headline-${name}`} // temporary, CSS for navigation will be refactored
+      data-icon-name={inNavigation ? `nav-${icon}` : `headline-${icon}`} // temporary, CSS for navigation will be refactored
       className={cx('icon-component', className, styles.flexShrink, styles.pocIcon.svg, {
         [`${styles.sizes[size]}`]: size
       })}
@@ -117,7 +117,7 @@ const NavigationIcon = ({ className, size, name, style, color, inNavigation }) =
 
 NavigationIcon.propTypes = {
   size: PropTypes.oneOf(Object.keys(sizesConfig)).isRequired,
-  name: PropTypes.oneOf(Object.keys(SVGs)).isRequired,
+  icon: PropTypes.oneOf(Object.keys(SVGs)).isRequired,
   color: PropTypes.oneOf(Object.keys(colorsConfig)).isRequired,
   className: PropTypes.string,
   style: PropTypes.object,

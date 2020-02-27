@@ -17,7 +17,7 @@ export default function OrgActions({ gotoOrgSettings, showOrgSettingsAsTeams }) 
           <div className="nav-sidepanel__org-icon">
             {showOrgSettingsAsTeams ? (
               <>
-                <NavigationIcon name="teams" size="medium" color="white" />
+                <NavigationIcon icon="teams" size="medium" color="white" />
                 <span>Teams</span>
               </>
             ) : (

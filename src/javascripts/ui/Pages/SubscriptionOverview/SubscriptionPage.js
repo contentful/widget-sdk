@@ -119,7 +119,7 @@ export default function SubscriptionPage({ organizationId, data }) {
   return (
     <Workbench testId="subscription-page">
       <Workbench.Header
-        icon={<NavigationIcon name="subscription" size="large" color="green" />}
+        icon={<NavigationIcon icon="subscription" size="large" color="green" />}
         title="Subscription"
       />
       <Workbench.Content className={styles.content}>

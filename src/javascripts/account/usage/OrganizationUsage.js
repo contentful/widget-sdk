@@ -313,7 +313,7 @@ export class OrganizationUsage extends React.Component {
       <Workbench testId="organization.usage">
         <Workbench.Header
           title="Usage"
-          icon={<NavigationIcon name="usage" color="green" size="large" />}
+          icon={<NavigationIcon icon="usage" color="green" size="large" />}
           actions={
             <WorkbenchActions
               {...{

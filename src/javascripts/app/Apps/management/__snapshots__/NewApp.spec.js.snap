@@ -26,41 +26,41 @@ Array [
 exports[`NewApp should allow for new app creation 2`] = `
 Object {
   "asFragment": [Function],
-  "baseElement": .emotion-4 {
+  "baseElement": .emotion-6 {
   color: #8091a5;
 }
 
-.emotion-2 {
+.emotion-4 {
   margin-bottom: 1.5rem;
 }
 
-.emotion-8 {
+.emotion-10 {
   margin-bottom: 0.5rem;
 }
 
-.emotion-5 {
+.emotion-7 {
   margin-bottom: 1.5rem;
 }
 
-.emotion-7 {
+.emotion-9 {
   width: 100%;
   padding: 0.25rem 0;
 }
 
-.emotion-7 label ~ p {
+.emotion-9 label ~ p {
   display: inline;
   margin-left: 0.5rem;
   color: #b4c3ca;
   font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
 }
 
-.emotion-7 svg {
+.emotion-9 svg {
   position: absolute;
   right: 0.75rem;
   top: calc(50% - 9px);
 }
 
-.emotion-26 {
+.emotion-28 {
   opacity: 0;
   height: 0px;
   border-radius: 2px;
@@ -72,20 +72,20 @@ Object {
   overflow: hidden;
 }
 
-.emotion-26 p {
+.emotion-28 p {
   color: #536171;
 }
 
-.emotion-25 {
+.emotion-27 {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
 }
 
-.emotion-11 {
+.emotion-13 {
   margin-top: 0.75rem;
 }
 
-.emotion-6 {
+.emotion-8 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -104,33 +104,47 @@ Object {
   cursor: pointer;
 }
 
-.emotion-6 input {
+.emotion-8 input {
   vertical-align: text-top;
   margin-right: 0.5rem;
   cursor: pointer;
 }
 
-.emotion-6 label {
+.emotion-8 label {
   font-weight: 600;
   margin-right: 0.5rem;
   cursor: pointer;
 }
 
-.emotion-6 span {
+.emotion-8 span {
   color: #b4c3ca;
   font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
 }
 
-.emotion-0 {
+.emotion-2 {
   margin-bottom: 1rem;
 }
 
-.emotion-1 {
+.emotion-3 {
   margin-bottom: 2rem;
 }
 
-.emotion-38 {
+.emotion-40 {
   margin-bottom: 5rem;
+}
+
+.emotion-0 {
+  fill: #0eb87f;
+}
+
+.emotion-1 {
+  width: 100%;
+  height: 100%;
+  display: block;
+  width: 32px;
+  height: 32px;
+  max-width: 32px;
+  max-height: 32px;
 }
 
 <body>
@@ -182,12 +196,15 @@ Object {
           <div
             class="Workbench__Workbench__header-icon___1kJlL"
           >
-            <span
-              class="icon-component"
-              data-icon-name="page-apps"
+            <div
+              class="icon-component emotion-1"
+              data-icon-name="headline-apps"
+              data-test-id="product-icon"
             >
-              <page-apps.svg />
-            </span>
+              <apps.svg
+                class="emotion-0"
+              />
+            </div>
           </div>
           <div
             class="Workbench__Workbench__header-title___3xp7b"
@@ -212,13 +229,13 @@ Object {
               class="Workbench__Workbench__content-inner___36_Hx Workbench__Workbench__content-inner--text___7nfTX"
             >
               <p
-                class="Paragraph__Paragraph___2aO-9 emotion-0"
+                class="Paragraph__Paragraph___2aO-9 emotion-2"
                 data-test-id="cf-ui-paragraph"
               >
                 Build apps for Contentful to extend the core functionality of the web app and optimize the workflow of editors.
               </p>
               <p
-                class="Paragraph__Paragraph___2aO-9 emotion-1"
+                class="Paragraph__Paragraph___2aO-9 emotion-3"
                 data-test-id="cf-ui-paragraph"
               >
                 Learn more about
@@ -241,11 +258,11 @@ Object {
                 to get started.
               </p>
               <div
-                class="emotion-1"
+                class="emotion-3"
               >
                 <div>
                   <div
-                    class="TextField__TextField___Sf6eo TextField__TextField--full___11DBK emotion-2"
+                    class="TextField__TextField___Sf6eo TextField__TextField--full___11DBK emotion-4"
                     data-test-id="app-name-input"
                   >
                     <div
@@ -281,7 +298,7 @@ Object {
                     </div>
                   </div>
                   <div
-                    class="TextField__TextField___Sf6eo TextField__TextField--full___11DBK emotion-2"
+                    class="TextField__TextField___Sf6eo TextField__TextField--full___11DBK emotion-4"
                     data-test-id="app-src-input"
                   >
                     <div
@@ -327,7 +344,7 @@ Object {
                     </div>
                   </div>
                   <div
-                    class="emotion-5"
+                    class="emotion-7"
                   >
                     <label
                       class="FormLabel__FormLabel___3d6zQ"
@@ -337,7 +354,7 @@ Object {
                       Locations
                     </label>
                     <p
-                      class="Paragraph__Paragraph___2aO-9 emotion-4"
+                      class="Paragraph__Paragraph___2aO-9 emotion-6"
                       data-test-id="cf-ui-paragraph"
                     >
                       Specify where the app can be rendered. Check out the
@@ -361,10 +378,10 @@ Object {
                     </p>
                   </div>
                   <div
-                    class="emotion-8"
+                    class="emotion-10"
                   >
                     <div
-                      class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-7 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr Card__Card--is-selected___IBDSP"
+                      class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-9 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr Card__Card--is-selected___IBDSP"
                       data-test-id="app-location-app-config"
                     >
                       <button
@@ -381,7 +398,7 @@ Object {
                             class="ToggleButton__Toggle__content-wrapper___1VoAt"
                           >
                             <div
-                              class="emotion-6"
+                              class="emotion-8"
                             >
                               <div>
                                 <input
@@ -410,10 +427,10 @@ Object {
                     </div>
                   </div>
                   <div
-                    class="emotion-8"
+                    class="emotion-10"
                   >
                     <div
-                      class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
+                      class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-9 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                       data-test-id="app-location-entry-field"
                     >
                       <button
@@ -430,7 +447,7 @@ Object {
                             class="ToggleButton__Toggle__content-wrapper___1VoAt"
                           >
                             <div
-                              class="emotion-6"
+                              class="emotion-8"
                             >
                               <div>
                                 <input
@@ -474,7 +491,7 @@ Object {
                       </button>
                     </div>
                     <div
-                      class="emotion-26"
+                      class="emotion-28"
                     >
                       <p
                         class="Paragraph__Paragraph___2aO-9"
@@ -483,10 +500,10 @@ Object {
                         Select the field types the app can be rendered in.
                       </p>
                       <div
-                        class="emotion-25"
+                        class="emotion-27"
                       >
                         <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                           data-test-id="cf-ui-checkbox-field"
                         >
                           <input
@@ -508,7 +525,7 @@ Object {
                           </div>
                         </div>
                         <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                           data-test-id="cf-ui-checkbox-field"
                         >
                           <input
@@ -530,7 +547,7 @@ Object {
                           </div>
                         </div>
                         <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                           data-test-id="cf-ui-checkbox-field"
                         >
                           <input
@@ -552,7 +569,7 @@ Object {
                           </div>
                         </div>
                         <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                           data-test-id="cf-ui-checkbox-field"
                         >
                           <input
@@ -574,7 +591,7 @@ Object {
                           </div>
                         </div>
                         <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                           data-test-id="cf-ui-checkbox-field"
                         >
                           <input
@@ -596,7 +613,7 @@ Object {
                           </div>
                         </div>
                         <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                           data-test-id="cf-ui-checkbox-field"
                         >
                           <input
@@ -618,7 +635,7 @@ Object {
                           </div>
                         </div>
                         <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                           data-test-id="cf-ui-checkbox-field"
                         >
                           <input
@@ -640,7 +657,7 @@ Object {
                           </div>
                         </div>
                         <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                           data-test-id="cf-ui-checkbox-field"
                         >
                           <input
@@ -662,7 +679,7 @@ Object {
                           </div>
                         </div>
                         <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                           data-test-id="cf-ui-checkbox-field"
                         >
                           <input
@@ -684,7 +701,7 @@ Object {
                           </div>
                         </div>
                         <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                           data-test-id="cf-ui-checkbox-field"
                         >
                           <input
@@ -706,7 +723,7 @@ Object {
                           </div>
                         </div>
                         <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                           data-test-id="cf-ui-checkbox-field"
                         >
                           <input
@@ -728,7 +745,7 @@ Object {
                           </div>
                         </div>
                         <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                           data-test-id="cf-ui-checkbox-field"
                         >
                           <input
@@ -750,7 +767,7 @@ Object {
                           </div>
                         </div>
                         <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                           data-test-id="cf-ui-checkbox-field"
                         >
                           <input
@@ -772,7 +789,7 @@ Object {
                           </div>
                         </div>
                         <div
-                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                          class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                           data-test-id="cf-ui-checkbox-field"
                         >
                           <input
@@ -797,10 +814,10 @@ Object {
                     </div>
                   </div>
                   <div
-                    class="emotion-8"
+                    class="emotion-10"
                   >
                     <div
-                      class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
+                      class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-9 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                       data-test-id="app-location-entry-sidebar"
                     >
                       <button
@@ -817,7 +834,7 @@ Object {
                             class="ToggleButton__Toggle__content-wrapper___1VoAt"
                           >
                             <div
-                              class="emotion-6"
+                              class="emotion-8"
                             >
                               <div>
                                 <input
@@ -846,10 +863,10 @@ Object {
                     </div>
                   </div>
                   <div
-                    class="emotion-8"
+                    class="emotion-10"
                   >
                     <div
-                      class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
+                      class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-9 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                       data-test-id="app-location-entry-editor"
                     >
                       <button
@@ -866,7 +883,7 @@ Object {
                             class="ToggleButton__Toggle__content-wrapper___1VoAt"
                           >
                             <div
-                              class="emotion-6"
+                              class="emotion-8"
                             >
                               <div>
                                 <input
@@ -895,10 +912,10 @@ Object {
                     </div>
                   </div>
                   <div
-                    class="emotion-8"
+                    class="emotion-10"
                   >
                     <div
-                      class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
+                      class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-9 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                       data-test-id="app-location-dialog"
                     >
                       <button
@@ -915,7 +932,7 @@ Object {
                             class="ToggleButton__Toggle__content-wrapper___1VoAt"
                           >
                             <div
-                              class="emotion-6"
+                              class="emotion-8"
                             >
                               <div>
                                 <input
@@ -946,7 +963,7 @@ Object {
                 </div>
               </div>
               <button
-                class="Button__Button___1ZfFj a11y__focus-border--default___60AXp emotion-38 Button__Button--primary___JImeO"
+                class="Button__Button___1ZfFj a11y__focus-border--default___60AXp emotion-40 Button__Button--primary___JImeO"
                 data-test-id="app-create"
                 type="button"
               >
@@ -1166,41 +1183,41 @@ Object {
       </div>
     </div>
   </body>,
-  "container": .emotion-4 {
+  "container": .emotion-6 {
   color: #8091a5;
 }
 
-.emotion-2 {
+.emotion-4 {
   margin-bottom: 1.5rem;
 }
 
-.emotion-8 {
+.emotion-10 {
   margin-bottom: 0.5rem;
 }
 
-.emotion-5 {
+.emotion-7 {
   margin-bottom: 1.5rem;
 }
 
-.emotion-7 {
+.emotion-9 {
   width: 100%;
   padding: 0.25rem 0;
 }
 
-.emotion-7 label ~ p {
+.emotion-9 label ~ p {
   display: inline;
   margin-left: 0.5rem;
   color: #b4c3ca;
   font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
 }
 
-.emotion-7 svg {
+.emotion-9 svg {
   position: absolute;
   right: 0.75rem;
   top: calc(50% - 9px);
 }
 
-.emotion-26 {
+.emotion-28 {
   opacity: 0;
   height: 0px;
   border-radius: 2px;
@@ -1212,20 +1229,20 @@ Object {
   overflow: hidden;
 }
 
-.emotion-26 p {
+.emotion-28 p {
   color: #536171;
 }
 
-.emotion-25 {
+.emotion-27 {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
 }
 
-.emotion-11 {
+.emotion-13 {
   margin-top: 0.75rem;
 }
 
-.emotion-6 {
+.emotion-8 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -1244,33 +1261,47 @@ Object {
   cursor: pointer;
 }
 
-.emotion-6 input {
+.emotion-8 input {
   vertical-align: text-top;
   margin-right: 0.5rem;
   cursor: pointer;
 }
 
-.emotion-6 label {
+.emotion-8 label {
   font-weight: 600;
   margin-right: 0.5rem;
   cursor: pointer;
 }
 
-.emotion-6 span {
+.emotion-8 span {
   color: #b4c3ca;
   font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
 }
 
-.emotion-0 {
+.emotion-2 {
   margin-bottom: 1rem;
 }
 
-.emotion-1 {
+.emotion-3 {
   margin-bottom: 2rem;
 }
 
-.emotion-38 {
+.emotion-40 {
   margin-bottom: 5rem;
+}
+
+.emotion-0 {
+  fill: #0eb87f;
+}
+
+.emotion-1 {
+  width: 100%;
+  height: 100%;
+  display: block;
+  width: 32px;
+  height: 32px;
+  max-width: 32px;
+  max-height: 32px;
 }
 
 <div>
@@ -1321,12 +1352,15 @@ Object {
         <div
           class="Workbench__Workbench__header-icon___1kJlL"
         >
-          <span
-            class="icon-component"
-            data-icon-name="page-apps"
+          <div
+            class="icon-component emotion-1"
+            data-icon-name="headline-apps"
+            data-test-id="product-icon"
           >
-            <page-apps.svg />
-          </span>
+            <apps.svg
+              class="emotion-0"
+            />
+          </div>
         </div>
         <div
           class="Workbench__Workbench__header-title___3xp7b"
@@ -1351,13 +1385,13 @@ Object {
             class="Workbench__Workbench__content-inner___36_Hx Workbench__Workbench__content-inner--text___7nfTX"
           >
             <p
-              class="Paragraph__Paragraph___2aO-9 emotion-0"
+              class="Paragraph__Paragraph___2aO-9 emotion-2"
               data-test-id="cf-ui-paragraph"
             >
               Build apps for Contentful to extend the core functionality of the web app and optimize the workflow of editors.
             </p>
             <p
-              class="Paragraph__Paragraph___2aO-9 emotion-1"
+              class="Paragraph__Paragraph___2aO-9 emotion-3"
               data-test-id="cf-ui-paragraph"
             >
               Learn more about
@@ -1380,11 +1414,11 @@ Object {
               to get started.
             </p>
             <div
-              class="emotion-1"
+              class="emotion-3"
             >
               <div>
                 <div
-                  class="TextField__TextField___Sf6eo TextField__TextField--full___11DBK emotion-2"
+                  class="TextField__TextField___Sf6eo TextField__TextField--full___11DBK emotion-4"
                   data-test-id="app-name-input"
                 >
                   <div
@@ -1420,7 +1454,7 @@ Object {
                   </div>
                 </div>
                 <div
-                  class="TextField__TextField___Sf6eo TextField__TextField--full___11DBK emotion-2"
+                  class="TextField__TextField___Sf6eo TextField__TextField--full___11DBK emotion-4"
                   data-test-id="app-src-input"
                 >
                   <div
@@ -1466,7 +1500,7 @@ Object {
                   </div>
                 </div>
                 <div
-                  class="emotion-5"
+                  class="emotion-7"
                 >
                   <label
                     class="FormLabel__FormLabel___3d6zQ"
@@ -1476,7 +1510,7 @@ Object {
                     Locations
                   </label>
                   <p
-                    class="Paragraph__Paragraph___2aO-9 emotion-4"
+                    class="Paragraph__Paragraph___2aO-9 emotion-6"
                     data-test-id="cf-ui-paragraph"
                   >
                     Specify where the app can be rendered. Check out the
@@ -1500,10 +1534,10 @@ Object {
                   </p>
                 </div>
                 <div
-                  class="emotion-8"
+                  class="emotion-10"
                 >
                   <div
-                    class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-7 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr Card__Card--is-selected___IBDSP"
+                    class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-9 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr Card__Card--is-selected___IBDSP"
                     data-test-id="app-location-app-config"
                   >
                     <button
@@ -1520,7 +1554,7 @@ Object {
                           class="ToggleButton__Toggle__content-wrapper___1VoAt"
                         >
                           <div
-                            class="emotion-6"
+                            class="emotion-8"
                           >
                             <div>
                               <input
@@ -1549,10 +1583,10 @@ Object {
                   </div>
                 </div>
                 <div
-                  class="emotion-8"
+                  class="emotion-10"
                 >
                   <div
-                    class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
+                    class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-9 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                     data-test-id="app-location-entry-field"
                   >
                     <button
@@ -1569,7 +1603,7 @@ Object {
                           class="ToggleButton__Toggle__content-wrapper___1VoAt"
                         >
                           <div
-                            class="emotion-6"
+                            class="emotion-8"
                           >
                             <div>
                               <input
@@ -1613,7 +1647,7 @@ Object {
                     </button>
                   </div>
                   <div
-                    class="emotion-26"
+                    class="emotion-28"
                   >
                     <p
                       class="Paragraph__Paragraph___2aO-9"
@@ -1622,10 +1656,10 @@ Object {
                       Select the field types the app can be rendered in.
                     </p>
                     <div
-                      class="emotion-25"
+                      class="emotion-27"
                     >
                       <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                         data-test-id="cf-ui-checkbox-field"
                       >
                         <input
@@ -1647,7 +1681,7 @@ Object {
                         </div>
                       </div>
                       <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                         data-test-id="cf-ui-checkbox-field"
                       >
                         <input
@@ -1669,7 +1703,7 @@ Object {
                         </div>
                       </div>
                       <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                         data-test-id="cf-ui-checkbox-field"
                       >
                         <input
@@ -1691,7 +1725,7 @@ Object {
                         </div>
                       </div>
                       <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                         data-test-id="cf-ui-checkbox-field"
                       >
                         <input
@@ -1713,7 +1747,7 @@ Object {
                         </div>
                       </div>
                       <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                         data-test-id="cf-ui-checkbox-field"
                       >
                         <input
@@ -1735,7 +1769,7 @@ Object {
                         </div>
                       </div>
                       <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                         data-test-id="cf-ui-checkbox-field"
                       >
                         <input
@@ -1757,7 +1791,7 @@ Object {
                         </div>
                       </div>
                       <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                         data-test-id="cf-ui-checkbox-field"
                       >
                         <input
@@ -1779,7 +1813,7 @@ Object {
                         </div>
                       </div>
                       <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                         data-test-id="cf-ui-checkbox-field"
                       >
                         <input
@@ -1801,7 +1835,7 @@ Object {
                         </div>
                       </div>
                       <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                         data-test-id="cf-ui-checkbox-field"
                       >
                         <input
@@ -1823,7 +1857,7 @@ Object {
                         </div>
                       </div>
                       <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                         data-test-id="cf-ui-checkbox-field"
                       >
                         <input
@@ -1845,7 +1879,7 @@ Object {
                         </div>
                       </div>
                       <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                         data-test-id="cf-ui-checkbox-field"
                       >
                         <input
@@ -1867,7 +1901,7 @@ Object {
                         </div>
                       </div>
                       <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                         data-test-id="cf-ui-checkbox-field"
                       >
                         <input
@@ -1889,7 +1923,7 @@ Object {
                         </div>
                       </div>
                       <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                         data-test-id="cf-ui-checkbox-field"
                       >
                         <input
@@ -1911,7 +1945,7 @@ Object {
                         </div>
                       </div>
                       <div
-                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-11"
+                        class="ControlledInputField__ControlledInputField___2uIG9 emotion-13"
                         data-test-id="cf-ui-checkbox-field"
                       >
                         <input
@@ -1936,10 +1970,10 @@ Object {
                   </div>
                 </div>
                 <div
-                  class="emotion-8"
+                  class="emotion-10"
                 >
                   <div
-                    class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
+                    class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-9 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                     data-test-id="app-location-entry-sidebar"
                   >
                     <button
@@ -1956,7 +1990,7 @@ Object {
                           class="ToggleButton__Toggle__content-wrapper___1VoAt"
                         >
                           <div
-                            class="emotion-6"
+                            class="emotion-8"
                           >
                             <div>
                               <input
@@ -1985,10 +2019,10 @@ Object {
                   </div>
                 </div>
                 <div
-                  class="emotion-8"
+                  class="emotion-10"
                 >
                   <div
-                    class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
+                    class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-9 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                     data-test-id="app-location-entry-editor"
                   >
                     <button
@@ -2005,7 +2039,7 @@ Object {
                           class="ToggleButton__Toggle__content-wrapper___1VoAt"
                         >
                           <div
-                            class="emotion-6"
+                            class="emotion-8"
                           >
                             <div>
                               <input
@@ -2034,10 +2068,10 @@ Object {
                   </div>
                 </div>
                 <div
-                  class="emotion-8"
+                  class="emotion-10"
                 >
                   <div
-                    class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-7 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
+                    class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-9 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                     data-test-id="app-location-dialog"
                   >
                     <button
@@ -2054,7 +2088,7 @@ Object {
                           class="ToggleButton__Toggle__content-wrapper___1VoAt"
                         >
                           <div
-                            class="emotion-6"
+                            class="emotion-8"
                           >
                             <div>
                               <input
@@ -2085,7 +2119,7 @@ Object {
               </div>
             </div>
             <button
-              class="Button__Button___1ZfFj a11y__focus-border--default___60AXp emotion-38 Button__Button--primary___JImeO"
+              class="Button__Button___1ZfFj a11y__focus-border--default___60AXp emotion-40 Button__Button--primary___JImeO"
               data-test-id="app-create"
               type="button"
             >

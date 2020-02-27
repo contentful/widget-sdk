@@ -53,7 +53,7 @@ export default function IndexPage() {
       <Workbench>
         <Workbench.Header
           title="User profile"
-          icon={<NavigationIcon name="user-profile" size="large" color="green" />}
+          icon={<NavigationIcon icon="user-profile" size="large" color="green" />}
         />
         <Workbench.Content className={styles.content}>
           {isLoading && <LoadingState loadingText="Loading your account…" />}

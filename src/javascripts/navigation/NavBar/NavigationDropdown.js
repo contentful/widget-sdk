@@ -84,7 +84,7 @@ export default function NavigationDropdown(props) {
             }}>
             <span className="nav-bar__list-label">
               {item.navIcon ? (
-                <NavigationIcon name={item.navIcon} size="medium" color="white" inNavigation />
+                <NavigationIcon icon={item.navIcon} size="medium" color="white" inNavigation />
               ) : (
                 <Icon name={item.icon} />
               )}
@@ -138,7 +138,7 @@ export default function NavigationDropdown(props) {
 NavigationDropdown.propTypes = {
   item: PropTypes.shape({
     title: PropTypes.string.isRequired,
-    icon: PropTypes.string.isRequired,
+    icon: PropTypes.string,
     tagLabel: PropTypes.string,
     navIcon: PropTypes.string,
     rootSref: PropTypes.string,

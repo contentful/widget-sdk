@@ -150,7 +150,7 @@ export class SSOSetup extends React.Component {
     return (
       <Workbench className="sso-setup">
         <Workbench.Header
-          icon={<NavigationIcon name="sso" size="large" color="green" />}
+          icon={<NavigationIcon icon="sso" size="large" color="green" />}
           title="Single Sign-On (SSO)"
         />
         <Workbench.Content>

@@ -16,7 +16,7 @@ const UserCMATokens = () => {
   return (
     <Workbench>
       <Workbench.Header
-        icon={<NavigationIcon name="token" size="large" color="green" />}
+        icon={<NavigationIcon icon="token" size="large" color="green" />}
         title={'Personal access tokens'}
       />
       <Workbench.Content type="default">

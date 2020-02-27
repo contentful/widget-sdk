@@ -48,7 +48,7 @@ export default function NewUserRoute({ orgId }) {
     <Workbench title="Invite users">
       <Workbench.Header
         title="Invite users"
-        icon={<NavigationIcon name="users" size="large" color="green" />}
+        icon={<NavigationIcon icon="users" size="large" color="green" />}
       />
       <Workbench.Content className={styles.content} type="text">
         {isLoading && <LoadingState loadingText="Loading…" />}

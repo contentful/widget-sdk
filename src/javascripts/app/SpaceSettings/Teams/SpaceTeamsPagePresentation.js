@@ -55,7 +55,7 @@ const SpaceTeamsPagePresentation = ({
   return (
     <Workbench>
       <Workbench.Header
-        icon={<NavigationIcon name="teams" color="green" size="large" />}
+        icon={<NavigationIcon icon="teams" color="green" size="large" />}
         title={`Teams ${!isLoading ? `(${teamSpaceMemberships.length})` : ''}`}
         actions={
           <Tooltip

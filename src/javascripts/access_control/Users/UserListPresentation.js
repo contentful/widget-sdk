@@ -90,7 +90,7 @@ const UserListPresentation = ({
       <Workbench>
         <Workbench.Header
           title={`Users (${spaceUsersCount})`}
-          icon={<NavigationIcon name="users" size="large" color="green" />}
+          icon={<NavigationIcon icon="users" size="large" color="green" />}
           actions={
             <Button
               buttonType="primary"

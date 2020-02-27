@@ -166,7 +166,7 @@ export default function UserDetails({
     <Workbench>
       <Workbench.Header
         title={getFullNameOrEmail(initialMembership.sys.user)}
-        icon={<NavigationIcon name="users" size="large" color="green" />}
+        icon={<NavigationIcon icon="users" size="large" color="green" />}
         onBack={handleBackButtonClicked}
       />
       <Workbench.Content>

@@ -68,7 +68,7 @@ export default class NewApp extends React.Component {
         <Workbench.Header
           title="Create app"
           onBack={this.props.goToListView}
-          icon={<NavigationIcon name="apps" size="large" color="green" />}></Workbench.Header>
+          icon={<NavigationIcon icon="apps" size="large" color="green" />}></Workbench.Header>
         <Workbench.Content type="text">
           <Paragraph className={styles.spacerM}>
             Build apps for Contentful to extend the core functionality of the web app and optimize

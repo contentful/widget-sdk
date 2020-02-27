@@ -137,7 +137,6 @@ function getItems(params, { orgId }) {
       tagLabel: 'new',
       rootSref: 'account.organizations.access-tools',
       navIcon: 'sso',
-      icon: 'nav-organization-sso',
       dataViewType: 'organization-access-tools',
       children: accessToolsDropdownItems
     },
@@ -151,7 +150,6 @@ function getItems(params, { orgId }) {
         inherit: false
       },
       navIcon: 'sso',
-      icon: 'nav-organization-sso',
       dataViewType: 'organization-sso'
     },
     {

@@ -75,7 +75,7 @@ class SpaceUsage extends React.Component {
         <DocumentTitle title="Usage" />
         <Workbench>
           <Workbench.Header
-            icon={<NavigationIcon name="usage" color="green" size="large" />}
+            icon={<NavigationIcon icon="usage" color="green" size="large" />}
             title="Space usage"
           />
           <Workbench.Content>

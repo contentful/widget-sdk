@@ -72,7 +72,7 @@ export default function UserProvisioningConfiguration({ orgId }) {
   return (
     <Workbench>
       <Workbench.Header
-        icon={<NavigationIcon name="sso" size="large" color="green" />}
+        icon={<NavigationIcon icon="sso" size="large" color="green" />}
         title="User Provisioning"
       />
       <Workbench.Content type="text">

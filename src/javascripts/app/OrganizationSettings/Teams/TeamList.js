@@ -76,7 +76,7 @@ class TeamList extends React.Component {
     return (
       <Workbench>
         <Workbench.Header
-          icon={<NavigationIcon name="teams" size="large" color="green" />}
+          icon={<NavigationIcon icon="teams" size="large" color="green" />}
           title="Teams"
           actions={
             <div className={styles.headerActions}>

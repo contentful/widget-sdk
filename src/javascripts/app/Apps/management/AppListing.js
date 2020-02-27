@@ -183,7 +183,7 @@ export default function AppListing({ definitions, canManageApps }) {
       <DocumentTitle title="Apps" />
       <Workbench.Header
         title={<Heading>Apps</Heading>}
-        icon={<NavigationIcon name="apps" size="large" color="green" />}
+        icon={<NavigationIcon icon="apps" size="large" color="green" />}
         actions={
           <StateLink path="^.new_definition">
             {({ onClick }) => <Button onClick={onClick}>Create new</Button>}
