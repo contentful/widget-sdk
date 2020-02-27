@@ -4,6 +4,14 @@ import tokens from '@contentful/forma-36-tokens';
 import { Grid, GridItem } from '../common/Grid';
 import { css } from 'emotion';
 import PropTypes from 'prop-types';
+import SpacesTable from '../charts/SpacesTable';
+import SpacesBarChart from '../charts/SpacesBarChart';
+import { sum } from 'lodash';
+import {
+  organizationUsagePropType,
+  arrayPropType,
+  organizationResourceUsagePropType
+} from '../propTypes';
 
 const styles = {
   tabPanel: css({
@@ -12,37 +20,29 @@ const styles = {
   })
 };
 
-const SpacesTab = props => {
+const SpacesTab = ({ spaceNames, period, periodicUsage }) => {
   const tabsData = [
     {
-      id: 'cmaRequests',
+      id: 'cma',
       title: 'CMA Request',
-      defaultActive: true,
-      leftComponent: <div>Table</div>,
-      rightComponent: <div>CMA Chart</div>
+      defaultActive: true
     },
     {
-      id: 'cdaRequests',
-      title: 'CDA Request',
-      leftComponent: <div>Table</div>,
-      rightComponent: <div>CDA Chart</div>
+      id: 'cda',
+      title: 'CDA Request'
     },
     {
-      id: 'cpaRequests',
-      title: 'CPA Request',
-      leftComponent: <div>Table</div>,
-      rightComponent: <div>CPA Chart</div>
+      id: 'cpa',
+      title: 'CPA Request'
     },
     {
-      id: 'gqlRequests',
-      title: 'GraphQL Request',
-      defaultActive: true,
-      leftComponent: <div>Table</div>,
-      rightComponent: <div>GraphQL Chart</div>
+      id: 'gql',
+      title: 'GraphQL Request'
     }
   ];
 
-  const { periods } = props;
+  const colours = ['#2E75D4', '#0EB87F', '#EA9005', '#C7A544', '#CC3C52'];
+
   const defaultActiveTab = tabsData && tabsData.find(item => item.defaultActive);
   const [selected, setSelected] = useState(
     defaultActiveTab ? defaultActiveTab.id : tabsData[0]['id']
@@ -51,6 +51,12 @@ const SpacesTab = props => {
   const handleSelected = id => {
     setSelected(id);
   };
+
+  const apiName = selected.toUpperCase();
+  // const spaceNames = props.spaceNames; // props
+  const data = periodicUsage.apis[selected].items;
+  const totalUsage = sum(periodicUsage.org.usage); // props: periodicUsage.org and .api
+  // const period = periodToDates(props.period) //props: period
 
   return (
     <>
@@ -68,10 +74,17 @@ const SpacesTab = props => {
       </Tabs>
       <TabPanel id="ID_IS_A_MUST" className={styles.tabPanel}>
         <Grid columns={'repeat(12, 1fr)'}>
-          <GridItem columnStart={'span 4'}>{/* <SpaceTable /> */}</GridItem>
+          <GridItem columnStart={'span 4'}>
+            <SpacesTable
+              spaceNames={spaceNames}
+              apiName={apiName}
+              data={data}
+              totalUsage={totalUsage}
+              colours={colours}
+            />
+          </GridItem>
           <GridItem columnStart={'span 8'}>
-            {periods}
-            {/* <Charts periods={periods} usage={''} spaceName={''} /> */}
+            <SpacesBarChart spaceNames={spaceNames} period={period} data={data} colours={colours} />
           </GridItem>
         </Grid>
       </TabPanel>
@@ -79,9 +92,20 @@ const SpacesTab = props => {
   );
 };
 
+const apiUsagePropType = arrayPropType(organizationResourceUsagePropType);
+
 SpacesTab.propTypes = {
-  tabsData: PropTypes.string,
-  periods: PropTypes.array
+  spaceNames: PropTypes.objectOf(PropTypes.string).isRequired,
+  period: PropTypes.arrayOf(PropTypes.string).isRequired,
+  periodicUsage: PropTypes.shape({
+    org: organizationUsagePropType,
+    apis: PropTypes.shape({
+      cma: apiUsagePropType,
+      cda: apiUsagePropType,
+      cpa: apiUsagePropType,
+      gql: apiUsagePropType
+    })
+  }).isRequired
 };
 
 export default SpacesTab;

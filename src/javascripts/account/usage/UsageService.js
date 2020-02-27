@@ -56,7 +56,7 @@ export const getApiUsage = (endpoint, { apiType, startDate, endDate }) =>
       'metric[in]': apiType,
       'dateRange.startAt': startDate,
       'dateRange.endAt': endDate,
-      limit: 3
+      limit: 5
     }
   });
 
