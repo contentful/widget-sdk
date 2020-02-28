@@ -90,7 +90,7 @@ export const queryPendingJobsForDefaultSpaceWithoutLimit = {
       withRequest: queryJobsForDefaultSpaceRequest(pendingJobsQueryWithoutLimit),
       willRespondWith: {
         status: 200,
-        body: severalPendingJobsResponse
+        body: severalPendingJobsResponse(100) // Limit to 100
       }
     }).as('queryPendingJobsForDefaultSpace');
 
@@ -121,7 +121,7 @@ export const queryPendingJobsForDefaultSpace = {
       withRequest: queryJobsForDefaultSpaceRequest(pendingJobsQuery),
       willRespondWith: {
         status: 200,
-        body: severalPendingJobsResponse
+        body: severalPendingJobsResponse()
       }
     }).as('queryPendingJobsForDefaultSpace');
 
