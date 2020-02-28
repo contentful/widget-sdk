@@ -1,7 +1,6 @@
 import { Client } from '@contentful/pubsub-subscriber';
 import { apiUrl, pusher } from 'Config';
 import { getToken } from 'Authentication';
-import * as logger from 'services/logger';
 
 export const ENVIRONMENT_ALIAS_CHANGED_EVENT = 'environment-alias-changed';
 export const ENVIRONMENT_CREATION_COMPLETE_EVENT = 'environment-creation-complete';
@@ -27,7 +26,6 @@ const client = (async () => {
  */
 export async function createPubSubClientForSpace(spaceId) {
   const spaceClient = (await client).forSpace(spaceId);
-  spaceClient.onError(logger.logError);
 
   /*
     The original spaceClient causes an error when passed to JSON.stringify
