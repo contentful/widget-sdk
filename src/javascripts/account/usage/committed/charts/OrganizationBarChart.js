@@ -112,7 +112,7 @@ const chartOptions = (period, usage) => {
   };
 };
 
-export default class OrganisationBarChart extends Component {
+export default class OrganizationBarChart extends Component {
   constructor(props) {
     super(props);
     this.options = chartOptions(props.period, props.usage);
@@ -140,7 +140,7 @@ export default class OrganisationBarChart extends Component {
   }
 }
 
-OrganisationBarChart.propTypes = {
+OrganizationBarChart.propTypes = {
   period: PropTypes.arrayOf(PropTypes.string).isRequired,
   usage: PropTypes.array
 };

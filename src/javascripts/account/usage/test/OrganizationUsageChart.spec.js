@@ -5,7 +5,7 @@ import moment from 'moment';
 import { shorten } from 'utils/NumberUtils';
 
 import LineChart from '../committed/charts/LineChart';
-import OrganisationUsageChart from '../committed/charts/OrganisationUsageChart';
+import OrganizationUsageChart from '../committed/charts/OrganizationUsageChart';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
@@ -25,7 +25,7 @@ describe('OrganizationUsageChart', () => {
 
   const renderChart = (includedLimit = 2000) =>
     shallow(
-      <OrganisationUsageChart
+      <OrganizationUsageChart
         period={{
           startDate: testStartDate.format(DATE_FORMAT),
           endDate: null
@@ -104,7 +104,7 @@ describe('OrganizationUsageChart', () => {
   describe('is loading', () => {
     const renderChart = () =>
       shallow(
-        <OrganisationUsageChart
+        <OrganizationUsageChart
           period={{
             startDate: moment()
               .subtract(12, 'days')

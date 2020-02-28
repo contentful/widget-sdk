@@ -5,7 +5,7 @@ import tokens from '@contentful/forma-36-tokens';
 import { sum } from 'lodash';
 import { Grid, GridItem } from '../common/Grid';
 import { css } from 'emotion';
-import OrganisationBarChart from '../charts/OrganisationBarChart';
+import OrganizationBarChart from '../charts/OrganizationBarChart';
 import OrganizationUsageInfoNew from '../OrganizationUsageInfoNew';
 import AssetBandwidthSection from '../AssetBandwidthSection';
 import { periodicUsagePropType } from '../propTypes';
@@ -30,7 +30,7 @@ const OrgTabs = props => {
       leftComponent: (
         <OrganizationUsageInfoNew totalUsage={totalUsage} includedLimit={apiRequestIncludedLimit} />
       ),
-      rightComponent: <OrganisationBarChart period={period} usage={orgUsage} />
+      rightComponent: <OrganizationBarChart period={period} usage={orgUsage} />
     },
     {
       id: 'assetBandwidth',

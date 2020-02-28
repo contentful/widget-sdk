@@ -7,7 +7,7 @@ import ReloadNotification from 'app/common/ReloadNotification';
 
 import OrganizationResourceUsageList from './non_committed/OrganizationResourceUsageList';
 import OrganizationUsagePage from './committed/OrganizationUsagePage';
-import OrganizationUsagePageNew from './committed/OrganisationUsagePageNew';
+import OrganizationUsagePageNew from './committed/OrganizationUsagePageNew';
 import { getVariation } from 'LaunchDarkly';
 import { USAGE_API_UX } from 'featureFlags';
 import PeriodSelector from './committed/PeriodSelector';
