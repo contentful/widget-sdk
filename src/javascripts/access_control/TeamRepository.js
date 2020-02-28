@@ -43,6 +43,16 @@ export async function getAllTeamMemberships(orgEndpoint, params = {}) {
   return fetchAllWithIncludes(orgEndpoint, ['team_memberships'], BATCH_LIMIT, params, alphaHeader);
 }
 
+export function removeTeamMembership(orgEndpoint, membership) {
+  return orgEndpoint(
+    {
+      method: 'DELETE',
+      path: ['teams', membership.sys.team.sys.id, 'team_memberships', membership.sys.id]
+    },
+    alphaHeader
+  );
+}
+
 export async function updateTeamSpaceMembership(spaceEndpoint, membership, admin, roles) {
   return spaceEndpoint(
     {

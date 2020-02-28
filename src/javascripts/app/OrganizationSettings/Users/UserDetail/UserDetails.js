@@ -1,4 +1,4 @@
-import React, { useReducer, useMemo, useEffect, useCallback } from 'react';
+import React, { useReducer, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { OrganizationMembership as OrganizationMembershipPropType } from 'app/OrganizationSettings/PropTypes';
 import { Tabs, Tab, Button, Heading, Workbench } from '@contentful/forma-36-react-components';
@@ -10,7 +10,7 @@ import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/EndpointFa
 import { useAsyncFn } from 'app/common/hooks/useAsync';
 import { fetchAndResolve } from 'data/LinkResolver';
 import { getSpaceMemberships } from 'access_control/OrganizationMembershipRepository';
-import { getAllTeamMemberships } from 'access_control/TeamRepository';
+import { getAllTeamMemberships, removeTeamMembership } from 'access_control/TeamRepository';
 import { go } from 'states/Navigator';
 import UserCard from '../UserCard';
 import UserSpaceList from './UserSpaceList';
@@ -21,6 +21,7 @@ import AddToSpacesModal from 'app/OrganizationSettings/Users/common/AddToSpacesM
 import EditSpaceMembershipModal from './EditSpaceMembershipModal';
 import { getFullNameOrEmail } from 'app/OrganizationSettings/Users/UserUtils';
 import NavigationIcon from 'ui/Components/NavigationIcon';
+import AddToTeamsModal from '../common/AddToTeamsModal';
 
 const styles = {
   tabs: css({
@@ -55,6 +56,11 @@ const reducer = createImmerReducer({
   },
   TEAM_MEMBERSHIPS_FETCHED: (state, action) => {
     state.teamMemberships = action.payload;
+  },
+  TEAM_MEMBERSHIP_REMOVED: (state, action) => {
+    state.teamMemberships = state.teamMemberships.filter(
+      membership => membership.sys.id !== action.payload.sys.id
+    );
   },
   ORG_ROLE_CHANGED: (state, action) => {
     state.membership.role = action.payload.role;
@@ -110,17 +116,21 @@ export default function UserDetails({
     fetchTeamMemberships
   );
 
-  const currentSpaces = useMemo(() => spaceMemberships.map(sm => sm.sys.space), [spaceMemberships]);
-
   useEffect(() => {
     updateSpaceMemberships();
     updateTeamMemberships();
   }, [updateSpaceMemberships, updateTeamMemberships]);
 
-  const removeSpaceMembership = spaceMembership => {
+  const removeFromSpace = spaceMembership => {
     const repo = createRepoFromSpaceMembership(spaceMembership);
     repo.remove(spaceMembership);
     dispatch({ type: 'SPACE_MEMBERSHIP_REMOVED', payload: spaceMembership });
+  };
+
+  const removeFromTeam = async teamMembership => {
+    const endpoint = createOrganizationEndpoint(orgId);
+    await removeTeamMembership(endpoint, teamMembership);
+    dispatch({ type: 'TEAM_MEMBERSHIP_REMOVED', payload: teamMembership });
   };
 
   const handleSpaceRoleChanged = useCallback(
@@ -142,6 +152,7 @@ export default function UserDetails({
   };
 
   const handleAddToSpace = () => {
+    const currentSpaces = spaceMemberships.map(sm => sm.sys.space);
     ModalLauncher.open(({ isShown, onClose }) => {
       return (
         <AddToSpacesModal
@@ -151,6 +162,23 @@ export default function UserDetails({
           onClose={onClose}
           currentSpaces={currentSpaces}
           onAddedToSpaces={updateSpaceMemberships}
+        />
+      );
+    });
+  };
+
+  const handleAddToTeams = () => {
+    const currentTeams = teamMemberships.map(tm => tm.sys.team);
+    ModalLauncher.open(({ isShown, onClose }) => {
+      return (
+        <AddToTeamsModal
+          user={initialMembership.sys.user}
+          orgId={orgId}
+          orgMembershipId={initialMembership.sys.id}
+          isShown={isShown}
+          onClose={onClose}
+          currentTeams={currentTeams}
+          onAddedToTeams={updateTeamMemberships}
         />
       );
     });
@@ -195,7 +223,12 @@ export default function UserDetails({
           {!hasTeamsFeature && <Heading>Spaces</Heading>}
           {selectedTab === tabs.SPACES && (
             <Button onClick={handleAddToSpace} testId="user-details.add-to-space-button">
-              Add to space
+              Add to spaces
+            </Button>
+          )}
+          {selectedTab === tabs.TEAMS && (
+            <Button onClick={handleAddToTeams} testId="user-details.add-to-teams-button">
+              Add to teams
             </Button>
           )}
         </div>
@@ -205,7 +238,7 @@ export default function UserDetails({
             user={membership.sys.user}
             memberships={spaceMemberships}
             loading={isLoadingSpaceMemberships}
-            onSpaceMembershipRemove={removeSpaceMembership}
+            onSpaceMembershipRemove={removeFromSpace}
             onSpaceMembershipEdit={editSpaceMembership}
           />
         )}
@@ -214,6 +247,7 @@ export default function UserDetails({
             user={membership.sys.user}
             memberships={teamMemberships}
             loading={isLoadingTeamMemberships}
+            onTeamMembershipRemove={removeFromTeam}
           />
         )}
       </Workbench.Content>

@@ -13,7 +13,10 @@ import {
   Heading,
   Paragraph,
   SkeletonContainer,
-  SkeletonBodyText
+  SkeletonBodyText,
+  CardActions,
+  DropdownList,
+  DropdownListItem
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
@@ -37,37 +40,32 @@ const styles = {
   })
 };
 
-export default function UserTeamMemberships({ memberships = [], loading, user }) {
+export default function UserTeamMemberships({
+  memberships = [],
+  loading,
+  user,
+  onTeamMembershipRemove
+}) {
   if (loading) return <Skeleton />;
   if (!loading && memberships.length === 0) return <EmptyState user={user} />;
   return (
     <Table testId="user-team-list" className={styles.table}>
       <TableHead>
         <TableRow>
-          <TableCell width="33%">Name</TableCell>
+          <TableCell width="20%">Name</TableCell>
           <TableCell width="33%">Description</TableCell>
           <TableCell>Members</TableCell>
-          <TableCell>Added at</TableCell>
+          <TableCell width="20%">Added at</TableCell>
+          <TableCell />
         </TableRow>
       </TableHead>
       <TableBody>
         {memberships.map(membership => (
-          <TableRow key={membership.sys.id} testId="user-team-list.item">
-            <TableCell>
-              <div className={styles.ellipsis}>
-                <StateLink
-                  path="account.organizations.teams.detail"
-                  params={{ teamId: membership.sys.team.sys.id }}>
-                  {membership.sys.team.name}
-                </StateLink>
-              </div>
-            </TableCell>
-            <TableCell>
-              <div className={styles.ellipsis}>{membership.sys.team.description}</div>
-            </TableCell>
-            <TableCell>{membership.sys.team.memberCount}</TableCell>
-            <TableCell>{moment(membership.sys.createdAt).format('MMMM DD, YYYY')}</TableCell>
-          </TableRow>
+          <UserTeamRow
+            key={membership.sys.id}
+            membership={membership}
+            onRemove={onTeamMembershipRemove}
+          />
         ))}
       </TableBody>
     </Table>
@@ -77,7 +75,46 @@ export default function UserTeamMemberships({ memberships = [], loading, user })
 UserTeamMemberships.propTypes = {
   memberships: PropTypes.arrayOf(TeamMembershipPropType).isRequired,
   user: UserPropType.isRequired,
+  onTeamMembershipRemove: PropTypes.func.isRequired,
   loading: PropTypes.bool
+};
+
+function UserTeamRow({ membership, onRemove }) {
+  return (
+    <TableRow testId="user-team-list.item">
+      <TableCell>
+        <div className={styles.ellipsis}>
+          <StateLink
+            path="account.organizations.teams.detail"
+            params={{ teamId: membership.sys.team.sys.id }}>
+            {membership.sys.team.name}
+          </StateLink>
+        </div>
+      </TableCell>
+      <TableCell>
+        <div className={styles.ellipsis}>{membership.sys.team.description}</div>
+      </TableCell>
+      <TableCell>{membership.sys.team.memberCount}</TableCell>
+      <TableCell>{moment(membership.sys.createdAt).format('MMMM DD, YYYY')}</TableCell>
+      <TableCell align="right">
+        <CardActions
+          iconButtonProps={{ buttonType: 'primary', testId: 'user-space-list.menu.trigger' }}
+          data-test-id="user-space-list.menu">
+          <DropdownList>
+            <DropdownListItem
+              onClick={() => onRemove(membership)}
+              testId="user-space-list.menu.remove">
+              Remove from team
+            </DropdownListItem>
+          </DropdownList>
+        </CardActions>
+      </TableCell>
+    </TableRow>
+  );
+}
+UserTeamRow.propTypes = {
+  membership: TeamMembershipPropType.isRequired,
+  onRemove: PropTypes.func.isRequired
 };
 
 function Skeleton() {
