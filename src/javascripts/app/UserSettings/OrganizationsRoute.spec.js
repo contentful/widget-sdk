@@ -32,6 +32,8 @@ jest.mock('services/TokenStore', () => ({
   getOrganizations: jest.fn()
 }));
 
+jest.mock('./OrganizationRow', () => () => <div data-test-id="organization-row"></div>);
+
 const buildWithoutWaiting = props => {
   return render(
     <OrganizationsRoute
@@ -53,7 +55,7 @@ const build = (props = {}) => {
 describe('OrganizationsRoute', () => {
   beforeEach(() => {
     const noOrganiztions = [];
-    getOrganizations.mockResolvedValueOnce(noOrganiztions);
+    getOrganizations.mockResolvedValue(noOrganiztions);
   });
 
   it('should call onReady immediately, but only once', async () => {
@@ -77,7 +79,7 @@ describe('OrganizationsRoute', () => {
   });
 
   it('should render an error if the data fails to load', async () => {
-    getOrganizations.mockReset().mockRejectedValueOnce(new Error());
+    getOrganizations.mockReset().mockRejectedValue(new Error());
 
     const { queryByTestId } = buildWithoutWaiting();
 
@@ -117,21 +119,14 @@ describe('OrganizationsRoute', () => {
         expect(screen.getByTestId('organizations-list.invited-at-header')).toHaveTextContent(
           'Invited at'
         );
+        expect(screen.getByTestId('organizations-list.role-header')).toHaveTextContent('Role');
         expect(screen.getByTestId('organizations-list.action-header')).toHaveTextContent('');
       });
     });
 
-    // getOrganizations throw to get an error.
-
-    // await wait(); userprofile/index.js
-
-    // teams/list/MembershipRow.spec.js for how to work with modal
-
-    // Notification.success && fail jest spy()
-
     describe('it should render the organizations', () => {
       it('should render one organization if there is only one', async () => {
-        getOrganizations.mockReset().mockResolvedValueOnce(ONE_ORGANIZATION);
+        getOrganizations.mockReset().mockReturnValue(ONE_ORGANIZATION);
 
         await build();
 
@@ -139,7 +134,7 @@ describe('OrganizationsRoute', () => {
       });
 
       it('should render two organization if there are two', async () => {
-        getOrganizations.mockReset().mockResolvedValueOnce(TWO_ORGANIZATIONS);
+        getOrganizations.mockReset().mockReturnValue(TWO_ORGANIZATIONS);
 
         await build();
 

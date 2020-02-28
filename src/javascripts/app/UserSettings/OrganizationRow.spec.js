@@ -5,26 +5,37 @@ import * as FORMA_CONSTANTS from 'testHelpers/Forma36Constants';
 
 import OrganizationRow from './OrganizationRow';
 import { fetchCanLeaveOrg } from './OranizationUtils';
-import { hasMemberRole } from 'services/OrganizationRoles';
+import { hasMemberRole, getRole } from 'services/OrganizationRoles';
 import { go } from 'states/Navigator';
 
+import { Notification } from '@contentful/forma-36-react-components';
+
+import { removeMembership } from 'access_control/OrganizationMembershipRepository';
+
+import ModalLauncher from '__mocks__/app/common/ModalLauncher';
+
 const fakeOrganization = fake.Organization();
-const onLeave = jest.fn();
+const onLeaveSuccess = jest.fn();
 
 jest.mock('./OranizationUtils', () => ({
-  fetchCanLeaveOrg: jest.fn().mockImplementation(() => {
-    return true;
-  })
+  fetchCanLeaveOrg: jest.fn()
 }));
 
 jest.mock('services/OrganizationRoles', () => ({
-  hasMemberRole: jest.fn().mockImplementation(() => {
-    return true;
-  })
+  hasMemberRole: jest.fn(),
+  getRole: jest.fn()
 }));
 
 jest.mock('states/Navigator', () => ({
   go: jest.fn()
+}));
+
+jest.mock('data/EndpointFactory', () => ({
+  createOrganizationEndpoint: jest.fn()
+}));
+
+jest.mock('access_control/OrganizationMembershipRepository', () => ({
+  removeMembership: jest.fn()
 }));
 
 const buildWithoutWaiting = props => {
@@ -32,7 +43,7 @@ const buildWithoutWaiting = props => {
     <OrganizationRow
       {...{
         organization: fakeOrganization,
-        onLeave: onLeave,
+        onLeaveSuccess: onLeaveSuccess,
         ...props
       }}
     />
@@ -47,6 +58,16 @@ const build = (props = {}) => {
 };
 
 describe('OrganizationRow', () => {
+  beforeEach(() => {
+    removeMembership.mockResolvedValueOnce(jest.fn());
+    fetchCanLeaveOrg.mockReturnValue(true);
+    hasMemberRole.mockReturnValue(false);
+    getRole.mockReturnValue('admin');
+
+    jest.spyOn(Notification, 'success').mockImplementation(() => {});
+    jest.spyOn(Notification, 'error').mockImplementation(() => {});
+  });
+
   describe('should render correctly', () => {
     it('should display the organization name', async () => {
       await build();
@@ -64,6 +85,12 @@ describe('OrganizationRow', () => {
       );
     });
 
+    it('should display the users role', async () => {
+      await build();
+
+      expect(screen.getByTestId('organization-row.user-role')).toHaveTextContent('admin');
+    });
+
     it('should display the organization option dots', async () => {
       await build();
 
@@ -73,9 +100,7 @@ describe('OrganizationRow', () => {
 
   describe('test canUserLeaveOrg default behavoir ', () => {
     it('should default to allow the user to leave the org, this should be caught on the backend if not valid', async () => {
-      fetchCanLeaveOrg.mockImplementation(() => {
-        return false;
-      });
+      fetchCanLeaveOrg.mockReset().mockReturnValue(false);
 
       buildWithoutWaiting();
 
@@ -100,9 +125,7 @@ describe('OrganizationRow', () => {
     });
 
     it('should display a tooltip which explains why the user cannot leave the org', async () => {
-      fetchCanLeaveOrg.mockImplementation(() => {
-        return false;
-      });
+      fetchCanLeaveOrg.mockReset().mockReturnValue(false);
 
       await build();
       fireEvent.click(screen.getByTestId('organization-row.dropdown-menu.trigger'));
@@ -113,10 +136,6 @@ describe('OrganizationRow', () => {
     });
 
     it('should not display a tooltip when the user can leave the org', async () => {
-      fetchCanLeaveOrg.mockImplementation(() => {
-        return true;
-      });
-
       await build();
       fireEvent.click(screen.getByTestId('organization-row.dropdown-menu.trigger'));
 
@@ -124,9 +143,7 @@ describe('OrganizationRow', () => {
     });
 
     it('should render the go to org settings button as disabled if they are a regular member of the org', async () => {
-      hasMemberRole.mockImplementation(() => {
-        return true;
-      });
+      hasMemberRole.mockReset().mockReturnValue(true);
 
       await build();
       fireEvent.click(screen.getByTestId('organization-row.dropdown-menu.trigger'));
@@ -140,9 +157,7 @@ describe('OrganizationRow', () => {
     });
 
     it('should render the leave button as disabled when they are the last owner of an organization', async () => {
-      fetchCanLeaveOrg.mockImplementation(() => {
-        return false;
-      });
+      fetchCanLeaveOrg.mockReset().mockReturnValue(false);
 
       await build();
       fireEvent.click(screen.getByTestId('organization-row.dropdown-menu.trigger'));
@@ -156,10 +171,6 @@ describe('OrganizationRow', () => {
     });
 
     it('should go to the org settings if they are not a member and click on the go to org settings button', async () => {
-      hasMemberRole.mockImplementation(() => {
-        return false;
-      });
-
       await build();
       fireEvent.click(screen.getByTestId('organization-row.dropdown-menu.trigger'));
 
@@ -175,21 +186,41 @@ describe('OrganizationRow', () => {
       });
     });
 
+    it('should call removed them from the org and call onLeaveSuccess if they are can leave the org and click on the leave button', async () => {
+      await build();
+      fireEvent.click(screen.getByTestId('organization-row.dropdown-menu.trigger'));
+
+      const leaveButtonContainer = screen.getByTestId('organization-row.leave-org-button');
+      fireEvent.click(
+        within(leaveButtonContainer).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
+      );
+
+      await expect(ModalLauncher.open).toHaveBeenCalled();
+
+      await wait();
+      expect(Notification.success).toHaveBeenCalledWith(
+        `Successfully left organization ${fakeOrganization.name}`
+      );
+      await expect(onLeaveSuccess).toHaveBeenCalled();
+    });
+
     it('should call onLeave if they are can leave the org and click on the leave button', async () => {
-      fetchCanLeaveOrg.mockImplementation(() => {
-        return true;
-      });
+      removeMembership.mockReset().mockRejectedValueOnce(new Error());
 
       await build();
       fireEvent.click(screen.getByTestId('organization-row.dropdown-menu.trigger'));
 
       const leaveButtonContainer = screen.getByTestId('organization-row.leave-org-button');
-
       fireEvent.click(
         within(leaveButtonContainer).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
       );
 
-      expect(onLeave).toHaveBeenCalled();
+      await expect(ModalLauncher.open).toHaveBeenCalled();
+
+      await wait();
+      expect(Notification.error).toHaveBeenCalledWith(
+        `Could not leave organization ${fakeOrganization.name}`
+      );
     });
   });
 });

@@ -2,19 +2,61 @@ import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import useAsync from 'app/common/hooks/useAsync';
 import {
+  CardActions,
   TableRow,
   TableCell,
   Tooltip,
-  CardActions,
+  ModalConfirm,
+  Notification,
+  Paragraph,
   DropdownList,
   DropdownListItem
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import moment from 'moment';
+
+import ModalLauncher from 'app/common/ModalLauncher';
+import { removeMembership } from 'access_control/OrganizationMembershipRepository';
+import { createOrganizationEndpoint } from 'data/EndpointFactory';
+
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
 import { fetchCanLeaveOrg } from './OranizationUtils';
-import { hasMemberRole } from 'services/OrganizationRoles';
+import { hasMemberRole, getRole } from 'services/OrganizationRoles';
 import { go } from 'states/Navigator';
+
+const triggerLeaveModal = async (organization, onLeaveSuccess) => {
+  const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
+    <ModalConfirm
+      testId="organization-row.leave-confirmation"
+      title="Leave organization"
+      confirmLabel="Leave"
+      intent="negative"
+      isShown={isShown}
+      onConfirm={() => onClose(true)}
+      onCancel={() => onClose(false)}>
+      <React.Fragment>
+        <Paragraph>
+          You are about to leave organization <b>{organization.name}.</b>
+        </Paragraph>
+        <Paragraph>Do you want to proceed?</Paragraph>
+      </React.Fragment>
+    </ModalConfirm>
+  ));
+
+  if (!confirmation) {
+    return;
+  }
+
+  try {
+    await removeMembership(createOrganizationEndpoint(organization.sys.id), organization.sys.id);
+  } catch (e) {
+    // should we have a more actionable error?
+    Notification.error(`Could not leave organization ${organization.name}`);
+    return;
+  }
+  onLeaveSuccess(organization);
+  Notification.success(`Successfully left organization ${organization.name}`);
+};
 
 const styles = {
   dotsRow: css({
@@ -26,7 +68,9 @@ const styles = {
   })
 };
 
-const OrganizationRow = ({ organization, onLeave }) => {
+const OrganizationRow = ({ organization, onLeaveSuccess }) => {
+  const userRole = getRole(organization.sys.id);
+
   const [canUserLeaveOrg, setCanUserLeaveOrg] = useState(true);
 
   // If the user has a role different than 'member' it means they have more permissions and should be able to access the org settings page.
@@ -58,7 +102,7 @@ const OrganizationRow = ({ organization, onLeave }) => {
         testId="organization-row.created-at">
         {moment(organization.sys.createdAt, moment.ISO_8601).format('MMMM DD, YYYY')}
       </TableCell>
-
+      <TableCell testId="organization-row.user-role">{userRole}</TableCell>
       <TableCell testId="organization-row.option-dots" className={styles.dotsRow}>
         <CardActions
           iconButtonProps={{
@@ -76,7 +120,7 @@ const OrganizationRow = ({ organization, onLeave }) => {
             <DropdownListItem
               isDisabled={!canUserLeaveOrg}
               onClick={() => {
-                onLeave(organization);
+                triggerLeaveModal(organization, onLeaveSuccess);
               }}
               testId="organization-row.leave-org-button">
               <Tooltip
@@ -97,7 +141,7 @@ const OrganizationRow = ({ organization, onLeave }) => {
 // Throwing prop errors
 OrganizationRow.propTypes = {
   organization: OrganizationPropType.isRequired,
-  onLeave: PropTypes.func.isRequired
+  onLeaveSuccess: PropTypes.func.isRequired
 };
 
 export default OrganizationRow;
