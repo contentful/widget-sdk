@@ -1,10 +1,10 @@
 /* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React, { Component } from 'react';
-import * as echarts from 'echarts';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
-import periodToDates from './periodToDates';
+
+const echarts = require('echarts');
 
 const styles = {
   chartWrapper: css({
@@ -16,7 +16,7 @@ const styles = {
 const chartOptions = (period, usage) => {
   return {
     xAxis: {
-      data: periodToDates(period),
+      data: period,
       type: 'category',
       axisLabel: {
         color: '#6A7889',
@@ -138,6 +138,6 @@ export default class OrganisationBarChart extends Component {
 }
 
 OrganisationBarChart.propTypes = {
-  period: PropTypes.object,
+  period: PropTypes.arrayOf(PropTypes.string).isRequired,
   usage: PropTypes.array
 };

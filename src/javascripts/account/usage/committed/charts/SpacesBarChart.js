@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import * as echarts from 'echarts';
 import { organizationResourceUsagePropType } from '../propTypes';
 import tokens from '@contentful/forma-36-tokens';
 import { shorten } from 'utils/NumberUtils';
 import { css } from 'emotion';
+
+const echarts = require('echarts');
 
 const styles = {
   chartWrapper: css({
@@ -39,7 +40,7 @@ const setOptions = (chart, spaceNames, data, period, colours) => {
     toolbox: {
       feature: {
         saveAsImage: {
-          title: 'Save'
+          title: 'Save as an image'
         },
         magicType: {
           type: ['line', 'bar'],

@@ -75,7 +75,7 @@ const OrgTabs = props => {
 };
 
 OrgTabs.propTypes = {
-  period: PropTypes.object.isRequired,
+  period: PropTypes.arrayOf(PropTypes.string).isRequired,
   periodicUsage: periodicUsagePropType.isRequired,
   apiRequestIncludedLimit: PropTypes.number.isRequired
 };

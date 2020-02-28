@@ -19,11 +19,15 @@ const styles = {
 const OrganizationUsagePageNew = props => {
   const period = periodToDates(props.period);
   const spaceNames = props.spaceNames;
-  const periodicUsage = props.periodicUsage;
+  const { periodicUsage, apiRequestIncludedLimit } = props;
 
   return (
     <>
-      <OrgTabs {...props} />
+      <OrgTabs
+        period={period}
+        periodicUsage={periodicUsage}
+        apiRequestIncludedLimit={apiRequestIncludedLimit}
+      />
       <Heading element="h2" className={styles.heading}>
         View API requests by type and space
       </Heading>
