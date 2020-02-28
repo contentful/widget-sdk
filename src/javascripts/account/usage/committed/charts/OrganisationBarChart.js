@@ -3,8 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
-
-const echarts = require('echarts');
+import * as echarts from 'echarts';
 
 const styles = {
   chartWrapper: css({
@@ -49,11 +48,15 @@ const chartOptions = (period, usage) => {
         type: 'bar',
         itemStyle: {
           color: '#2E75D4',
-          borderWidth: 2,
           borderColor: '#2E75D4',
           opacity: 0.5
         },
-        data: usage,
+        data: usage.map(val => ({
+          value: val,
+          itemStyle: {
+            borderWidth: val > 0 ? 2 : 0
+          }
+        })),
         areaStyle: {},
         markLine: {
           symbol: ['none', 'circle'],

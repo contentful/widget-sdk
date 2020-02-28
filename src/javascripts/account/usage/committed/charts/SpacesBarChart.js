@@ -4,8 +4,7 @@ import { organizationResourceUsagePropType } from '../propTypes';
 import tokens from '@contentful/forma-36-tokens';
 import { shorten } from 'utils/NumberUtils';
 import { css } from 'emotion';
-
-const echarts = require('echarts');
+import * as echarts from 'echarts';
 
 const styles = {
   chartWrapper: css({
@@ -18,10 +17,14 @@ const setOptions = (chart, spaceNames, data, period, colours) => {
   const series = data.map((item, index) => ({
     name: spaceNames[item.sys.space.sys.id] || 'Deleted space',
     type: 'bar',
-    data: item.usage,
+    data: item.usage.map(val => ({
+      value: val,
+      itemStyle: {
+        borderWidth: val > 0 ? 2 : 0
+      }
+    })),
     itemStyle: {
       color: colours[index],
-      borderWidth: 2,
       borderColor: colours[index],
       opacity: 0.5
     }

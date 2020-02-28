@@ -20,20 +20,20 @@ const SpacesTabs = ({ spaceNames, period, periodicUsage }) => {
   const tabsData = [
     {
       id: 'cma',
-      title: 'CMA Request',
+      title: 'CMA Requests',
       defaultActive: true
     },
     {
       id: 'cda',
-      title: 'CDA Request'
+      title: 'CDA Requests'
     },
     {
       id: 'cpa',
-      title: 'CPA Request'
+      title: 'CPA Requests'
     },
     {
       id: 'gql',
-      title: 'GraphQL Request'
+      title: 'GraphQL Requests'
     }
   ];
 
