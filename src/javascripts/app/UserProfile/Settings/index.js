@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from 'react';
-import PropTypes from 'prop-types';
 import { Card, Workbench } from '@contentful/forma-36-react-components';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import tokens from '@contentful/forma-36-tokens';
@@ -31,7 +30,7 @@ const styles = {
   })
 };
 
-export default function IndexPage({ title }) {
+export default function IndexPage() {
   const [user, setUser] = useState({});
   const [hasOrgMemberships, setHasOrgMemberships] = useState(false);
 
@@ -50,10 +49,10 @@ export default function IndexPage({ title }) {
 
   return (
     <>
-      <DocumentTitle title={title} />
+      <DocumentTitle title="User profile" />
       <Workbench>
         <Workbench.Header
-          title={title}
+          title="User profile"
           icon={<NavigationIcon name="user-profile" size="large" color="green" />}
         />
         <Workbench.Content className={styles.content}>
@@ -95,7 +94,3 @@ export default function IndexPage({ title }) {
     </>
   );
 }
-
-IndexPage.propTypes = {
-  title: PropTypes.string.isRequired
-};

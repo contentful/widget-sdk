@@ -10,13 +10,7 @@ const list = {
 const add = {
   name: 'add',
   url: '/add',
-  component: AddTeamsRouter,
-  mapInjectedToProps: [
-    '$stateParams',
-    $stateParams => ({
-      spaceId: $stateParams.spaceId
-    })
-  ]
+  component: AddTeamsRouter
 };
 
 export default {

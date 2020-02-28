@@ -1,4 +1,5 @@
 import React, { useCallback, useReducer } from 'react';
+import PropTypes from 'prop-types';
 import { findIndex, clone, filter } from 'lodash';
 import { Notification } from '@contentful/forma-36-react-components';
 import { fetchAllWithIncludes } from 'data/CMA/FetchAll';
@@ -180,13 +181,12 @@ const useFetching = (spaceId, organizationId) => {
   return [{ state, isLoading, error }, onUpdateTeamSpaceMembership, onRemoveTeamSpaceMembership];
 };
 
-const SpaceTeamsPage = () => {
+const SpaceTeamsPage = ({ spaceId }) => {
   // TODO: Move this to mapInjectedToProps/a routing component
   //
   // This cannot be done yet due to spaceMember being an object which causes overflows
   const spaceContext = getModule('spaceContext');
 
-  const spaceId = spaceContext.space.data.sys.id;
   const organizationId = spaceContext.organization.sys.id;
   const spaceMember = spaceContext.getData('spaceMember');
   const readOnly = !spaceContext.getData('spaceMember.admin', false);
@@ -240,6 +240,10 @@ const SpaceTeamsPage = () => {
       />
     </>
   );
+};
+
+SpaceTeamsPage.propTypes = {
+  spaceId: PropTypes.string
 };
 
 export default SpaceTeamsPage;
