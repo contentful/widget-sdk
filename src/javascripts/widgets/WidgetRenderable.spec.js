@@ -52,22 +52,6 @@ describe('WidgetRenderables', () => {
       expect(renderables.form[0].problem).toBe('incompatible');
     });
 
-    it('adds widget’s template property', () => {
-      const renderables = buildRenderables(
-        [{ widgetId: 'SIDEBAR', widgetNamespace: NAMESPACE_EXTENSION, field: { type: 'Symbol' } }],
-        [
-          {
-            id: 'SIDEBAR',
-            namespace: NAMESPACE_EXTENSION,
-            fieldTypes: ['Symbol'],
-            template: 'TEMPLATE',
-            parameters: []
-          }
-        ]
-      );
-      expect(renderables.form[0].template).toEqual('TEMPLATE');
-    });
-
     it('keeps settings property', () => {
       const params = { param: 'MY PARAMS' };
       const renderables = buildRenderables(
@@ -183,12 +167,12 @@ describe('WidgetRenderables', () => {
           id: 'foo',
           namespace: NAMESPACE_EXTENSION,
           fieldTypes: 'Boolean',
-          template: 'FOO-FROM-EXT'
+          renderFieldEditor: () => 'FOO-FROM-EXT'
         },
         { id: 'foo', namespace: NAMESPACE_BUILTIN }
       ]
     );
 
-    expect(renderables.form[0].template).toBe('FOO-FROM-EXT');
+    expect(renderables.form[0].renderFieldEditor()).toBe('FOO-FROM-EXT');
   });
 });

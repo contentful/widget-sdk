@@ -4,12 +4,11 @@ import { range } from 'lodash';
 import React from 'react';
 import * as Config from 'Config';
 import { NAMESPACE_BUILTIN } from './WidgetNamespaces';
-
+import { getModule } from 'NgRegistry';
 import LinkEditor, {
   SingleLinkEditor,
   withCfWebApp as linkEditorWithCfWebApp
 } from 'app/widgets/LinkEditor';
-import { getModule } from 'NgRegistry';
 import EmbedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
 import { default as RichTextEditor } from 'app/widgets/rich_text';
 import { renderRichTextEditor } from 'app/widgets/RichText';
@@ -31,7 +30,7 @@ import { MarkdownEditor, openMarkdownDialog } from '@contentful/field-editor-mar
 import FileEditor from 'app/widgets/FileEditor';
 import { SlugEditor } from '@contentful/field-editor-slug';
 import { canUploadMultipleAssets } from 'access_control/AccessChecker';
-import { NEW_SLUG_EDITOR, NEW_RICH_TEXT } from 'featureFlags';
+import { NEW_RICH_TEXT } from 'featureFlags';
 import { getVariation } from 'LaunchDarkly';
 
 const CfLinkEditor = linkEditorWithCfWebApp(LinkEditor);
@@ -383,26 +382,8 @@ export function create() {
     name: 'Slug',
     icon: 'slug',
     isBackground: true,
-    renderWhen: async () => {
-      const spaceContext = getModule('spaceContext');
-      const organizationId = spaceContext.getData('organization.sys.id');
-      const spaceId = spaceContext.space.getId();
-      const isNewSlugEnabled = await getVariation(NEW_SLUG_EDITOR, {
-        spaceId,
-        organizationId
-      });
-
-      if (isNewSlugEnabled) {
-        return {
-          renderFieldEditor: ({ widgetApi }) => {
-            return <SlugEditor field={widgetApi.field} baseSdk={widgetApi} />;
-          }
-        };
-      }
-
-      return {
-        template: '<cf-slug-editor />'
-      };
+    renderFieldEditor: ({ widgetApi }) => {
+      return <SlugEditor field={widgetApi.field} baseSdk={widgetApi} />;
     }
   });
 

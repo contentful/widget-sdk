@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { noop } from 'lodash';
 import { registerDirective } from 'NgRegistry';
-import $ from 'jquery';
 import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
 import { NAMESPACE_BUILTIN, NAMESPACE_EXTENSION, NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';
@@ -25,10 +24,9 @@ export default function register() {
    * @scope.requires {FieldLocaleController} fieldLocale
    */
   registerDirective('cfWidgetRenderer', [
-    '$compile',
     '$rootScope',
     'spaceContext',
-    ($compile, $rootScope, spaceContext) => {
+    ($rootScope, spaceContext) => {
       return {
         scope: true,
         require: '?^cfWidgetApi',
@@ -42,7 +40,6 @@ export default function register() {
             widget: {
               problem,
               widgetNamespace,
-              template,
               buildTemplate,
               renderFieldEditor,
               descriptor,
@@ -74,15 +71,10 @@ export default function register() {
               renderEditorialComponent(config);
             });
           } else {
-            renderEditorialComponent({ problem, template, buildTemplate, renderFieldEditor });
+            renderEditorialComponent({ problem, buildTemplate, renderFieldEditor });
           }
 
-          function renderEditorialComponent({
-            problem,
-            template,
-            buildTemplate,
-            renderFieldEditor
-          }) {
+          function renderEditorialComponent({ problem, buildTemplate, renderFieldEditor }) {
             if (problem) {
               trackLinksRendered();
               renderJsxTemplate(<WidgetRenderWarning message={problem}></WidgetRenderWarning>);
@@ -99,9 +91,6 @@ export default function register() {
                   })}
                 />
               );
-            } else if (widgetNamespace === NAMESPACE_BUILTIN && template) {
-              handleWidgetLinkRenderEvents();
-              renderTemplate(template);
             } else if (widgetNamespace === NAMESPACE_BUILTIN && buildTemplate) {
               if (!widgetApi) {
                 throw new Error('widgetApi is unavailable in this context.');
@@ -130,15 +119,8 @@ export default function register() {
               );
               handleWidgetLinkRenderEvents();
             } else {
-              throw new Error('Builtin widget template or a valid UI Extension is required.');
+              throw new Error('Builtin widget or a valid UI Extension is required.');
             }
-          }
-
-          function renderTemplate(template) {
-            const $widget = $(template);
-            element.append($widget);
-            $compile($widget)(scope);
-            setupFocus();
           }
 
           function renderJsxTemplate(jsx) {
