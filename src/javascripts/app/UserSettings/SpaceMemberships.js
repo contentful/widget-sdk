@@ -29,6 +29,7 @@ const SpaceMemberships = ({ onReady }) => {
             onCancel={() => onClose(false)}>
             <React.Fragment>
               <Paragraph>You are about to leave space {space.name}.</Paragraph>
+              <br />
               <Paragraph>Do you want to proceed?</Paragraph>
             </React.Fragment>
           </ModalConfirm>
