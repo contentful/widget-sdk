@@ -16,6 +16,7 @@ import {
  *
  * @param {Object} widgetAPI
  * @param {Object} spaceContext
+ * @param {Object} jobs
  * @returns {Object}
  */
 export default function(widgetAPI, spaceContext, jobs) {
