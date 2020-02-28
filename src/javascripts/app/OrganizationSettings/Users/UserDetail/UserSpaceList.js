@@ -89,7 +89,7 @@ function UserSpaceRow({ membership, onRemove, onEdit }) {
               Change space role
             </DropdownListItem>
             <DropdownListItem onClick={onRemove} testId="user-space-list.menu.remove">
-              Remove memberships
+              Remove from space
             </DropdownListItem>
           </DropdownList>
         </CardActions>
