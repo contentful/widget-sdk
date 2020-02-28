@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { Notification, ModalConfirm } from '@contentful/forma-36-react-components';
+import { Notification, ModalConfirm, Paragraph } from '@contentful/forma-36-react-components';
 import { without } from 'lodash';
 
 import * as TokenStore from 'services/TokenStore';
@@ -23,12 +23,13 @@ const SpaceMemberships = ({ onReady }) => {
           <ModalConfirm
             title="Leave space"
             intent="negative"
+            confirmLabel="Leave"
             isShown={isShown}
             onConfirm={() => onClose(true)}
             onCancel={() => onClose(false)}>
             <React.Fragment>
-              <p>You are about to leave space {space.name}.</p>
-              <p>Do you want to proceed?</p>
+              <Paragraph>You are about to leave space {space.name}.</Paragraph>
+              <Paragraph>Do you want to proceed?</Paragraph>
             </React.Fragment>
           </ModalConfirm>
         ));
