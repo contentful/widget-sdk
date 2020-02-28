@@ -11,8 +11,7 @@ describe('IndexPage', () => {
   const build = custom => {
     const props = Object.assign(
       {
-        title: 'User profile',
-        onReady: () => {}
+        title: 'User profile'
       },
       custom
     );
@@ -54,17 +53,6 @@ describe('IndexPage', () => {
     await wait();
 
     expect(queryByTestId('cf-ui-loading-state')).toBeNull();
-  });
-
-  it('should call onReady immediately, but only once', async () => {
-    const onReady = jest.fn();
-    build({ onReady });
-
-    expect(onReady).toHaveBeenCalled();
-
-    await wait();
-
-    expect(onReady).toHaveBeenCalledTimes(1);
   });
 
   it('should render an error if the data fails to load', async () => {

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { noop } from 'lodash';
 import { mount } from 'enzyme';
 import 'jest-enzyme';
 import { createStore } from 'redux';
@@ -14,13 +13,14 @@ import TeamPage from './TeamPage';
 import TeamList from './TeamList';
 import TeamDetails from './TeamDetails';
 import TeamsEmptyState from './TeamsEmptyState';
+import { FetcherLoading } from 'app/common/createFetcherComponent';
 
-const renderComponent = (actions, onReady = noop) => {
+const renderComponent = actions => {
   const store = createStore(reducer);
   actions.forEach(action => store.dispatch(action));
   const wrapper = mount(
     <Provider store={store}>
-      <TeamPage onReady={onReady} />
+      <TeamPage />
     </Provider>
   );
   return { store, wrapper };
@@ -33,10 +33,7 @@ describe('TeamPage', () => {
   });
 
   describe('is at teams route', () => {
-    let onReadyMock;
-
     beforeEach(() => {
-      onReadyMock = jest.fn(noop);
       actions.push({
         type: 'LOCATION_CHANGED',
         payload: {
@@ -46,8 +43,8 @@ describe('TeamPage', () => {
     });
 
     it('should not have called onReady', () => {
-      renderComponent(actions, onReadyMock);
-      expect(onReadyMock).not.toHaveBeenCalled();
+      const { wrapper } = renderComponent(actions);
+      expect(wrapper.find(FetcherLoading)).toHaveLength(1);
     });
 
     it('should render nothing', () => {
@@ -84,11 +81,6 @@ describe('TeamPage', () => {
             }
           }
         });
-      });
-
-      it('should have called onReady', () => {
-        renderComponent(actions, onReadyMock);
-        expect(onReadyMock).toHaveBeenCalled();
       });
 
       it('should render TeamList', () => {

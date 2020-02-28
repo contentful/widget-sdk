@@ -8,6 +8,7 @@ exports[`OrganizationUsage should render page without errors 1`] = `
     actions={
       <WorkbenchActions
         committed={true}
+        error={null}
         hasSpaces={true}
         isLoading={true}
         periods={
@@ -49,6 +50,7 @@ exports[`OrganizationUsage should render page without errors 1`] = `
     <WorkbenchContent
       apiRequestIncludedLimit={1000000}
       committed={true}
+      error={null}
       hasSpaces={true}
       isLoading={true}
       isPoC={

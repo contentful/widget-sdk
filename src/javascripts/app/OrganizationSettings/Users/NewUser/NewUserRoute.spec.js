@@ -22,7 +22,6 @@ describe('NewUserRoute', () => {
   const build = custom => {
     const props = Object.assign(
       {
-        onReady: jest.fn(),
         orgId: 'org_1234'
       },
       custom
@@ -30,16 +29,6 @@ describe('NewUserRoute', () => {
 
     return render(<NewUserRoute {...props} />);
   };
-
-  it('calls onReady always', async () => {
-    const onReady = jest.fn();
-
-    build({ onReady });
-
-    await wait();
-
-    expect(onReady).toBeCalledTimes(1);
-  });
 
   it('requests the organization and teams org feature', async () => {
     build();
