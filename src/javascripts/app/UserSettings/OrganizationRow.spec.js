@@ -5,7 +5,7 @@ import * as FORMA_CONSTANTS from 'testHelpers/Forma36Constants';
 
 import OrganizationRow from './OrganizationRow';
 import { fetchCanLeaveOrg } from './OranizationUtils';
-import { hasMemberRole, getRole } from 'services/OrganizationRoles';
+import { hasMemberRole, getOrganizationMembership } from 'services/OrganizationRoles';
 import { go } from 'states/Navigator';
 
 import { Notification } from '@contentful/forma-36-react-components';
@@ -23,7 +23,7 @@ jest.mock('./OranizationUtils', () => ({
 
 jest.mock('services/OrganizationRoles', () => ({
   hasMemberRole: jest.fn(),
-  getRole: jest.fn()
+  getOrganizationMembership: jest.fn()
 }));
 
 jest.mock('states/Navigator', () => ({
@@ -58,11 +58,12 @@ const build = (props = {}) => {
 };
 
 describe('OrganizationRow', () => {
+  const fakeOrgMemberhip = fake.OrganizationMembership('admin');
   beforeEach(() => {
     removeMembership.mockResolvedValueOnce(jest.fn());
     fetchCanLeaveOrg.mockReturnValue(true);
     hasMemberRole.mockReturnValue(false);
-    getRole.mockReturnValue('admin');
+    getOrganizationMembership.mockReturnValue(fakeOrgMemberhip);
 
     jest.spyOn(Notification, 'success').mockImplementation(() => {});
     jest.spyOn(Notification, 'error').mockImplementation(() => {});

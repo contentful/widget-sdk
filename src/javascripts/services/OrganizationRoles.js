@@ -71,18 +71,20 @@ export const hasMemberRole = createRoleChecker('member');
 
 /**
  * @ngdoc method
- * @name OrganizationRoles#getRole
+ * @name OrganizationRoles#getOrganizationMembershipu
  * @param {number} organizationId
  * @description
- * Returns the current user's role in the organization with the given ID.
+ * Returns the current user's organization membership with the given ID.
  */
-export function getRole(organizationId) {
+export function getOrganizationMembership(organizationId) {
   const memberships = get(currentUser, 'organizationMemberships', []);
   const found = find(memberships, { organization: { sys: { id: organizationId } } });
   if (!found) {
-    throw Error(`Cannot find organization with id: ${organizationId}`);
+    throw Error(
+      `Cannot find organization membership of current user with organization id: ${organizationId}`
+    );
   }
-  return get(found, 'role');
+  return found;
 }
 
 function createRoleChecker(role) {

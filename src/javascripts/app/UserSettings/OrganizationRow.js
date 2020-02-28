@@ -21,10 +21,10 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory';
 
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
 import { fetchCanLeaveOrg } from './OranizationUtils';
-import { hasMemberRole, getRole } from 'services/OrganizationRoles';
+import { hasMemberRole, getOrganizationMembership } from 'services/OrganizationRoles';
 import { go } from 'states/Navigator';
 
-const triggerLeaveModal = async (organization, onLeaveSuccess) => {
+const triggerLeaveModal = async ({ organization, userOrgMembershipId, onLeaveSuccess }) => {
   const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
     <ModalConfirm
       testId="organization-row.leave-confirmation"
@@ -48,7 +48,7 @@ const triggerLeaveModal = async (organization, onLeaveSuccess) => {
   }
 
   try {
-    await removeMembership(createOrganizationEndpoint(organization.sys.id), organization.sys.id);
+    await removeMembership(createOrganizationEndpoint(organization.sys.id), userOrgMembershipId);
   } catch (e) {
     // should we have a more actionable error?
     Notification.error(`Could not leave organization ${organization.name}`);
@@ -69,7 +69,10 @@ const styles = {
 };
 
 const OrganizationRow = ({ organization, onLeaveSuccess }) => {
-  const userRole = getRole(organization.sys.id);
+  const {
+    role: userRole,
+    sys: { id: userOrgMembershipId }
+  } = getOrganizationMembership(organization.sys.id);
 
   const [canUserLeaveOrg, setCanUserLeaveOrg] = useState(true);
 
@@ -120,7 +123,7 @@ const OrganizationRow = ({ organization, onLeaveSuccess }) => {
             <DropdownListItem
               isDisabled={!canUserLeaveOrg}
               onClick={() => {
-                triggerLeaveModal(organization, onLeaveSuccess);
+                triggerLeaveModal({ organization, userOrgMembershipId, onLeaveSuccess });
               }}
               testId="organization-row.leave-org-button">
               <Tooltip
