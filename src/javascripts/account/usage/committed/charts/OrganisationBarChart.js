@@ -96,6 +96,13 @@ const chartOptions = (period, usage) => {
           type: 'png',
           name: `Organisation-Usage-${new Date().toDateString()}`,
           title: 'Save as an image'
+        },
+        magicType: {
+          type: ['line', 'bar'],
+          title: {
+            line: 'Line Chart',
+            bar: 'Bar Chart'
+          }
         }
       }
     }

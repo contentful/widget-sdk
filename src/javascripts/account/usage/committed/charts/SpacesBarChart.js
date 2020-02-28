@@ -40,6 +40,13 @@ const setOptions = (chart, spaceNames, data, period, colours) => {
       feature: {
         saveAsImage: {
           title: 'Save'
+        },
+        magicType: {
+          type: ['line', 'bar'],
+          title: {
+            line: 'Line Chart',
+            bar: 'Bar Chart'
+          }
         }
       }
     },
