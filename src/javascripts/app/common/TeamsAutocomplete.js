@@ -6,11 +6,12 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getAllTeams } from 'access_control/TeamRepository';
 import useAsync from 'app/common/hooks/useAsync';
 
-export default function SpacesAutoComplete({
+export default function TeamsAutocomplete({
   value,
   orgId,
   disabled = false,
   validationMessage,
+  inputWidth = 'large',
   onChange
 }) {
   const [teams, setTeams] = useState([]);
@@ -54,7 +55,7 @@ export default function SpacesAutoComplete({
       placeholder="Choose from teams in your organization"
       validationMessage={validationMessage}
       isLoading={isLoading}
-      width="large"
+      width={inputWidth}
       disabled={disabled}
       emptyListMessage="There are no teams to choose from"
       noMatchesMessage="No teams found"
@@ -64,10 +65,11 @@ export default function SpacesAutoComplete({
   );
 }
 
-SpacesAutoComplete.propTypes = {
+TeamsAutocomplete.propTypes = {
   value: PropTypes.arrayOf(Space).isRequired,
   orgId: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
-  validationMessage: PropTypes.string
+  validationMessage: PropTypes.string,
+  inputWidth: PropTypes.oneOf(['small', 'medium', 'large', 'full'])
 };
