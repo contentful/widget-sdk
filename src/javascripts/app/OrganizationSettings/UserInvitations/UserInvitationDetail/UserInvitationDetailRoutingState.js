@@ -1,5 +1,7 @@
+import React from 'react';
 import { organizationRoute } from 'states/utils';
-import UserInvitationDetailRouter from 'app/OrganizationSettings/UserInvitations/UserInvitationDetail/UserInvitationDetailRouter';
+import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
+import importer from 'app/OrganizationSettings/importer';
 
 export default organizationRoute({
   name: 'invitation',
@@ -7,5 +9,11 @@ export default organizationRoute({
   params: {
     invitationId: ''
   },
-  component: UserInvitationDetailRouter
+  component: props => (
+    <LazyLoadedComponent importer={importer}>
+      {({ UserInvitationDetailRouter }) => {
+        return <UserInvitationDetailRouter {...props} />;
+      }}
+    </LazyLoadedComponent>
+  )
 });

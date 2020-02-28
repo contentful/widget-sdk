@@ -1,12 +1,18 @@
+import React from 'react';
 import { organizationRoute } from 'states/utils';
-import NewUserRoute from 'app/OrganizationSettings/Users/NewUser/NewUserRoute';
-import UserDetailsRoute from 'app/OrganizationSettings/Users/UserDetail/UserDetailsRoute';
-import UserListRoute from 'app/OrganizationSettings/Users/UsersList/UserListRoute';
+import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
+import importer from 'app/OrganizationSettings/importer';
 
 export const inviteUsersState = organizationRoute({
   name: 'new',
   url: '/invite',
-  component: NewUserRoute
+  component: props => (
+    <LazyLoadedComponent importer={importer}>
+      {({ NewUserRoute }) => {
+        return <NewUserRoute {...props} />;
+      }}
+    </LazyLoadedComponent>
+  )
 });
 
 export const userDetailState = organizationRoute({
@@ -15,11 +21,23 @@ export const userDetailState = organizationRoute({
     userId: ''
   },
   url: '/organization_memberships/:userId',
-  component: UserDetailsRoute
+  component: props => (
+    <LazyLoadedComponent importer={importer}>
+      {({ UserDetailsRoute }) => {
+        return <UserDetailsRoute {...props} />;
+      }}
+    </LazyLoadedComponent>
+  )
 });
 
 export const usersListState = organizationRoute({
   name: 'list',
   url: '/organization_memberships',
-  component: UserListRoute
+  component: props => (
+    <LazyLoadedComponent importer={importer}>
+      {({ UserListRoute }) => {
+        return <UserListRoute {...props} />;
+      }}
+    </LazyLoadedComponent>
+  )
 });
