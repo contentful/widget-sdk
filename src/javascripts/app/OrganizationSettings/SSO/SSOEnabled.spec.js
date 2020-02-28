@@ -3,14 +3,10 @@ import Enzyme from 'enzyme';
 import 'jest-enzyme';
 import SSOEnabled from './SSOEnabled';
 import { track } from 'analytics/Analytics';
+import * as fake from 'testHelpers/fakeFactory';
 
 describe('SSOEnabled', () => {
-  const organization = {
-    name: 'My Org',
-    sys: {
-      id: 'org_1234'
-    }
-  };
+  const organization = fake.Organization();
 
   const render = ({ ssoName = '', restricted = undefined } = {}) => {
     return Enzyme.shallow(

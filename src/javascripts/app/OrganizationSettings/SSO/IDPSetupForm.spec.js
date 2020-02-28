@@ -7,6 +7,7 @@ import ModalLauncher from 'app/common/ModalLauncher';
 import { track } from 'analytics/Analytics';
 
 import { connectionTestingAllowed, formatConnectionTestErrors } from './utils';
+import * as fake from 'testHelpers/fakeFactory';
 
 const awaitSetImmediate = () => new Promise(resolve => setImmediate(resolve));
 
@@ -54,12 +55,7 @@ describe('IDPSetupForm', () => {
     );
   };
 
-  const organization = {
-    name: 'My Awesome Org',
-    sys: {
-      id: 'org_1234'
-    }
-  };
+  const organization = fake.Organization();
 
   beforeEach(() => {
     identityProvider = {

@@ -47,16 +47,21 @@ export function Space(name = '') {
     sys: sys({
       type: types.SPACE,
       id: uniqueSpaceId,
-      createAt: DEFAULT_CREATED_AT_TIME_ISO,
+      createdAt: DEFAULT_CREATED_AT_TIME_ISO,
       createdBy: User()
     })
   };
 }
 
-export function Organization(name = '') {
+export function Organization(options = {}) {
   return {
-    name: name || uniqueId('Organization'),
-    sys: sys({ type: types.ORGANIZATION })
+    name: uniqueId('Organization'),
+    sys: sys({
+      type: types.ORGANIZATION,
+      id: uniqueId('OrganizationSys'),
+      createdAt: DEFAULT_CREATED_AT_TIME_ISO
+    }),
+    ...options
   };
 }
 
