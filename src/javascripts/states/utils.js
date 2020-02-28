@@ -12,33 +12,38 @@ const store = getStore();
  * Define a state for an old GK iframe view
  */
 export function iframeStateWrapper(definition = {}) {
-  const { title, icon } = definition;
+  const { title, icon, ...remainingDefinition } = definition;
   const defaults = {
     params: {
       pathSuffix: ''
     },
-    controller: getController(title, icon, AccountView),
+    controller: getIframeController(title, icon, AccountView),
     template: '<react-component component="component" props="props"></react-component>'
   };
 
-  return organizationBase(Object.assign(defaults, definition));
+  return Base(organizationRoute(Object.assign(defaults, remainingDefinition)));
 }
 
-/**
- * Define a state for a new style React view
- * @param {string} definition.component React component
- */
-export function reactStateWrapper(definition = {}) {
-  const { component } = definition;
+export function organizationRoute(definition) {
   const defaults = {
-    controller: getController(definition.title, definition.icon, component),
-    template: '<react-component component="component" props="props"></react-component>'
+    onEnter: [
+      '$stateParams',
+      async $stateParams => {
+        const { orgId: organizationId } = $stateParams;
+
+        const organization = await TokenStore.getOrganization(organizationId);
+
+        accessChecker.setOrganization(organization);
+
+        store.set('lastUsedOrg', organizationId);
+      }
+    ]
   };
 
-  return organizationBase(Object.assign(defaults, definition));
+  return Object.assign(defaults, definition);
 }
 
-function getController(title = '', icon = '', component) {
+function getIframeController(title = '', icon = '', component) {
   return [
     '$scope',
     '$stateParams',
@@ -60,35 +65,4 @@ function getController(title = '', icon = '', component) {
       };
     }
   ];
-}
-
-export function organizationBase(definition) {
-  const defaults = {
-    loadingText: 'Loading…',
-    onEnter: [
-      '$stateParams',
-      async $stateParams => {
-        // This function is currently being used in non-org routes since it's used for all `reactStateWrapper` usages,
-        // so we have to have this check
-        if ($stateParams.orgId) {
-          const { orgId: organizationId } = $stateParams;
-
-          const organization = await TokenStore.getOrganization(organizationId);
-
-          accessChecker.setOrganization(organization);
-
-          store.set('lastUsedOrg', organizationId);
-        }
-      }
-    ]
-  };
-
-  definition = Object.assign(defaults, definition);
-
-  delete definition.featureFlag;
-  delete definition.component;
-  delete definition.title;
-  delete definition.icon;
-
-  return Base(definition);
 }

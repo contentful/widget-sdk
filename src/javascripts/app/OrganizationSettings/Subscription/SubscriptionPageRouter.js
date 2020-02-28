@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import useAsync from 'app/common/hooks/useAsync';
 
@@ -22,9 +22,7 @@ const fetch = organizationId => async () => {
   };
 };
 
-export default function SubscriptionPageRouter({ onReady, orgId }) {
-  useEffect(onReady, [onReady]);
-
+export default function SubscriptionPageRouter({ orgId }) {
   const { isLoading, error, data } = useAsync(useCallback(fetch(orgId), []));
 
   if (isLoading || !data) {
@@ -45,6 +43,5 @@ export default function SubscriptionPageRouter({ onReady, orgId }) {
 }
 
 SubscriptionPageRouter.propTypes = {
-  onReady: PropTypes.func.isRequired,
   orgId: PropTypes.string.isRequired
 };

@@ -19,6 +19,7 @@ import * as PricingDataProvider from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import Icon from 'ui/Components/Icon';
+import ErrorState from 'app/common/ErrorState';
 
 export class WorkbenchContent extends React.Component {
   static propTypes = {
@@ -37,6 +38,7 @@ export class WorkbenchContent extends React.Component {
       })
     }),
     isLoading: PropTypes.bool,
+    error: PropTypes.string,
     periods: PropTypes.arrayOf(PropTypes.object),
     resources: PropTypes.arrayOf(PropTypes.object)
   };
@@ -52,9 +54,14 @@ export class WorkbenchContent extends React.Component {
       apiRequestIncludedLimit,
       assetBandwidthData,
       isLoading,
+      error,
       periods,
       resources
     } = this.props;
+
+    if (error) {
+      return <ErrorState />;
+    }
 
     if (committed) {
       if (!hasSpaces) {
@@ -87,6 +94,7 @@ export class WorkbenchContent extends React.Component {
 export class WorkbenchActions extends React.Component {
   static propTypes = {
     isLoading: PropTypes.bool,
+    error: PropTypes.string,
     hasSpaces: PropTypes.bool,
     committed: PropTypes.bool,
     periods: PropTypes.array,
@@ -97,6 +105,7 @@ export class WorkbenchActions extends React.Component {
   render() {
     const {
       isLoading,
+      error,
       hasSpaces,
       committed,
       periods,
@@ -104,42 +113,48 @@ export class WorkbenchActions extends React.Component {
       setPeriodIndex
     } = this.props;
 
-    return isLoading ? (
-      <Spinner />
-    ) : hasSpaces && committed && periods ? (
-      <PeriodSelector
-        periods={periods}
-        selectedPeriodIndex={selectedPeriodIndex}
-        onChange={setPeriodIndex}
-      />
-    ) : null;
+    if (error) {
+      return null;
+    }
+
+    if (isLoading) {
+      return <Spinner />;
+    }
+
+    if (hasSpaces && committed && periods) {
+      return (
+        <PeriodSelector
+          periods={periods}
+          selectedPeriodIndex={selectedPeriodIndex}
+          onChange={setPeriodIndex}
+        />
+      );
+    }
+
+    return null;
   }
 }
 
 export class OrganizationUsage extends React.Component {
   static propTypes = {
-    orgId: PropTypes.string.isRequired,
-    onReady: PropTypes.func.isRequired,
-    onForbidden: PropTypes.func.isRequired
+    orgId: PropTypes.string.isRequired
   };
 
   constructor(props) {
     super(props);
 
-    this.state = { isLoading: true };
+    this.state = { isLoading: true, error: null };
 
     this.endpoint = EndpointFactory.createOrganizationEndpoint(props.orgId);
     this.setPeriodIndex = this.setPeriodIndex.bind(this);
   }
 
   async componentDidMount() {
-    const { onForbidden } = this.props;
-
     try {
       await this.checkPermissions();
       await this.fetchOrgData();
     } catch (ex) {
-      onForbidden(ex);
+      this.setState({ isLoading: false, error: ex.message });
     }
   }
 
@@ -153,7 +168,7 @@ export class OrganizationUsage extends React.Component {
   }
 
   async fetchOrgData() {
-    const { orgId, onReady } = this.props;
+    const { orgId } = this.props;
 
     try {
       const service = createResourceService(orgId, 'organization');
@@ -199,10 +214,10 @@ export class OrganizationUsage extends React.Component {
 
         await this.loadPeriodData(0);
       } else {
-        this.setState({ resources: await service.getAll(), isLoading: false }, onReady);
+        this.setState({ resources: await service.getAll(), isLoading: false });
       }
 
-      this.setState({ committed }, onReady);
+      this.setState({ committed });
     } catch (e) {
       // Show the forbidden screen on 404 and 403
       if ([404, 403].includes(e.status)) {
@@ -285,6 +300,7 @@ export class OrganizationUsage extends React.Component {
       isPoC,
       selectedPeriodIndex,
       isLoading,
+      error,
       periods,
       periodicUsage,
       apiRequestIncludedLimit,
@@ -302,6 +318,7 @@ export class OrganizationUsage extends React.Component {
             <WorkbenchActions
               {...{
                 isLoading,
+                error,
                 hasSpaces,
                 committed,
                 periods,
@@ -322,6 +339,7 @@ export class OrganizationUsage extends React.Component {
               apiRequestIncludedLimit,
               assetBandwidthData,
               isLoading,
+              error,
               periods,
               resources
             }}

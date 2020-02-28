@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import { ACCESS_TOOLS } from 'featureFlags';
@@ -16,9 +16,7 @@ const FeatureFetcher = createFetcherComponent(async ({ orgId }) => {
   return { featureEnabled, accessToolsEnabled };
 });
 
-export default function UserProvisioning({ orgId, onReady }) {
-  useEffect(onReady, [onReady]);
-
+export default function UserProvisioning({ orgId }) {
   return (
     <OrgAdminOnly orgId={orgId}>
       <FeatureFetcher orgId={orgId}>
@@ -44,6 +42,5 @@ export default function UserProvisioning({ orgId, onReady }) {
 }
 
 UserProvisioning.propTypes = {
-  orgId: PropTypes.string.isRequired,
-  onReady: PropTypes.func.isRequired
+  orgId: PropTypes.string.isRequired
 };

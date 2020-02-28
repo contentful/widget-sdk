@@ -20,6 +20,7 @@ import UserAttributes from './UserAttributes';
 import ModalLauncher from 'app/common/ModalLauncher';
 import AddToSpacesModal from 'app/OrganizationSettings/Users/common/AddToSpacesModal';
 import EditSpaceMembershipModal from './EditSpaceMembershipModal';
+import { getFullNameOrEmail } from 'app/OrganizationSettings/Users/UserUtils';
 
 const styles = {
   tabs: css({
@@ -164,7 +165,7 @@ export default function UserDetails({
   return (
     <Workbench>
       <Workbench.Header
-        title="Users"
+        title={getFullNameOrEmail(initialMembership.sys.user)}
         icon={<Icon name="page-users" scale="0.75" />}
         onBack={handleBackButtonClicked}
       />

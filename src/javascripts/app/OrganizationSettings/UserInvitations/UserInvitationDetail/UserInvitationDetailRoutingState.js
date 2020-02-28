@@ -1,7 +1,7 @@
-import { reactStateWrapper } from 'states/utils';
+import { organizationRoute } from 'states/utils';
 import UserInvitationDetailRouter from 'app/OrganizationSettings/UserInvitations/UserInvitationDetail/UserInvitationDetailRouter';
 
-export default reactStateWrapper({
+export default organizationRoute({
   name: 'invitation',
   url: '/invitations/:invitationId',
   params: {

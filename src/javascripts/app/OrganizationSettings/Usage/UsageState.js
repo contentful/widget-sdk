@@ -1,9 +1,8 @@
-import { reactStateWrapper } from 'states/utils';
+import { organizationRoute } from 'states/utils';
 import OrganizationUsage from 'account/usage/OrganizationUsage';
 
-export default reactStateWrapper({
+export default organizationRoute({
   name: 'usage',
   url: '/usage',
-  loadingText: 'Loading your usage…',
   component: OrganizationUsage
 });
