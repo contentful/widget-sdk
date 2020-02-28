@@ -18,13 +18,13 @@ import pluralize from 'pluralize';
 import { orgRoles } from 'utils/MembershipUtils';
 import { useAddToOrg } from './NewUserHooks';
 import { isValidEmail, parseList } from 'utils/StringUtils';
-import TeamList from './TeamList';
 import NewUserSuccess from './NewUserSuccess';
 import NewUserProgress from './NewUserProgress';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import ModalLauncher from 'app/common/ModalLauncher';
 import AddToSpaces from '../common/AddToSpaces';
+import AddToTeams from '../common/AddToTeams';
 
 const styles = {
   subheading: css({
@@ -258,7 +258,7 @@ export default function NewUser({ orgId, hasSsoEnabled, hasTeamsFeature, isOwner
               <Subheading element="h3" className={styles.subheading}>
                 Add to teams
               </Subheading>
-              <TeamList orgId={orgId} onChange={handleTeamSelected} />
+              <AddToTeams orgId={orgId} onChange={handleTeamSelected} inputWidth="large" />
             </fieldset>
           )}
           {hasSsoEnabled && (
