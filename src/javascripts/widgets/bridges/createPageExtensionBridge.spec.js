@@ -25,7 +25,10 @@ describe('createPageExtensionBridge', () => {
           getEnvironmentId: () => 'environmentId',
           isMasterEnvironment: () => false,
           cma: { updateEntry: stubs.updateEntry, getEntry: stubs.getEntry },
-          space: { data: { spaceMember: 'MEMBER ', spaceMembership: 'MEMBERSHIP ' } }
+          space: { data: { spaceMember: 'MEMBER ', spaceMembership: 'MEMBERSHIP ' } },
+          publishedCTs: {
+            getAllBare: () => [{ id: 'first-content-type' }, { id: 'second-content-type' }]
+          }
         },
         entitySelector: {},
         entityCreator: {}
@@ -56,6 +59,7 @@ describe('createPageExtensionBridge', () => {
         locales: { available: [{ code: 'pl' }, { code: 'en' }], default: { code: 'pl' } },
         current: null,
         contentTypeData: { sys: {}, fields: [] },
+        initialContentTypesData: [{ id: 'first-content-type' }, { id: 'second-content-type' }],
         editorInterface: undefined,
         spaceMember: 'MEMBER ',
         spaceMembership: 'MEMBERSHIP '

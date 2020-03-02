@@ -54,7 +54,8 @@ export default function register() {
                 fieldValue,
                 locale,
                 contentType,
-                entry
+                entry,
+                initialContentTypes: spaceContext.publishedCTs.getAllBare()
               });
             };
 

@@ -61,6 +61,7 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
       },
       entryData: $scope.otDoc.getValueAt([]),
       contentTypeData: $scope.entityInfo.contentType,
+      initialContentTypesData: spaceContext.publishedCTs.getAllBare(),
       editorInterface: $scope.editorData.editorInterface
     };
   }

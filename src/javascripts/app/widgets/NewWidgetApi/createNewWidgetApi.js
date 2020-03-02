@@ -51,6 +51,7 @@ export default function createNewWidgetApi(dependencies) {
   const { locale, widget, otDoc } = $scope;
   const { contentType } = $scope.entityInfo;
   const contentTypeApi = createContentTypeApi({ contentType });
+
   const entry = createEntryApi({ contentType, locale, otDoc });
   const field = createFieldApi({ $scope }); // TODO: Get rid of $scope here, pass actual dependencies.
 
@@ -60,7 +61,10 @@ export default function createNewWidgetApi(dependencies) {
   };
 
   return {
-    ...createSpaceScopedWidgetApi({ cma }),
+    ...createSpaceScopedWidgetApi({
+      cma,
+      initialContentTypes: spaceContext.publishedCTs.getAllBare()
+    }),
     contentType: contentTypeApi,
     entry,
     field,
@@ -68,22 +72,30 @@ export default function createNewWidgetApi(dependencies) {
   };
 }
 
-export function createNewReadOnlyWidgetApi({ cma, field, fieldValue, locale, entry, contentType }) {
+export function createNewReadOnlyWidgetApi({
+  cma,
+  field,
+  fieldValue,
+  locale,
+  entry,
+  contentType,
+  initialContentTypes
+}) {
   const contentTypeApi = createContentTypeApi({ contentType });
   const entryApi = createReadOnlyEntryApi({ contentType, locale, entry });
   const fieldApi = createReadOnlyFieldApi({ locale, field, value: fieldValue });
 
   return {
-    ...createSpaceScopedWidgetApi({ cma }),
+    ...createSpaceScopedWidgetApi({ cma, initialContentTypes }),
     contentType: contentTypeApi,
     entry: entryApi,
     field: fieldApi
   };
 }
 
-function createSpaceScopedWidgetApi({ cma: cmaOrBatchingApiClient }) {
+function createSpaceScopedWidgetApi({ cma: cmaOrBatchingApiClient, initialContentTypes }) {
   const cma = getBatchingApiClient(cmaOrBatchingApiClient);
-  const space = createSpaceApi({ cma });
+  const space = createSpaceApi({ cma, initialContentTypes });
   const navigator = createNavigatorApi({ cma });
   const locales = createLocalesApi();
   const dialogs = createDialogsApi();

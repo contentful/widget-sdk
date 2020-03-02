@@ -31,6 +31,7 @@ export default function createDialogExtensionBridge(dependencies, openDialog, on
       },
       entryData: { sys: {}, fields: {} },
       contentTypeData: { sys: {}, fields: [] },
+      initialContentTypesData: spaceContext.publishedCTs.getAllBare(),
       editorInterface: undefined
     };
   }

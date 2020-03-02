@@ -30,6 +30,7 @@ export default function createPageExtensionBridge(dependencies, currentExtension
       },
       entryData: { sys: {}, fields: {} },
       contentTypeData: { sys: {}, fields: [] },
+      initialContentTypesData: spaceContext.publishedCTs.getAllBare(),
       editorInterface: undefined
     };
   }

@@ -41,6 +41,7 @@ export default function createAppExtensionBridge(dependencies) {
       },
       entryData: { sys: {}, fields: {} },
       contentTypeData: { sys: {}, fields: [] },
+      initialContentTypesData: spaceContext.publishedCTs.getAllBare(),
       editorInterface: undefined
     };
   }

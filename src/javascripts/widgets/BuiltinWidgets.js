@@ -239,7 +239,7 @@ export function create() {
     )
   });
 
-  const newRichText = (spaceContext) => ({
+  const newRichText = spaceContext => ({
     renderFieldEditor: ({ widgetApi, $scope, loadEvents }) => {
       return renderRichTextEditor({ widgetApi, $scope, spaceContext, loadEvents });
     }
@@ -311,6 +311,15 @@ export function create() {
     )
   });
 
+  registerWidget('entryCardEditor', {
+    fieldTypes: ['Entry'],
+    name: 'Entry card',
+    icon: 'reference-card',
+    buildTemplate: ({ widgetApi, loadEvents }) => (
+      <CfSingleLinkEditor type="Entry" style="card" widgetApi={widgetApi} loadEvents={loadEvents} />
+    )
+  });
+
   // NOTE: We render this as "card" ever since we got rid of the actual "link" appearance
   // option for single assets some time in 2016.
   registerWidget('assetLinkEditor', {
@@ -338,15 +347,6 @@ export function create() {
       <CfLinkEditor type="Entry" style="link" widgetApi={widgetApi} loadEvents={loadEvents} />
     ),
     parameters: [BULK_EDITOR_PARAMETER]
-  });
-
-  registerWidget('entryCardEditor', {
-    fieldTypes: ['Entry'],
-    name: 'Entry card',
-    icon: 'reference-card',
-    buildTemplate: ({ widgetApi, loadEvents }) => (
-      <CfSingleLinkEditor type="Entry" style="card" widgetApi={widgetApi} loadEvents={loadEvents} />
-    )
   });
 
   registerWidget('entryCardsEditor', {

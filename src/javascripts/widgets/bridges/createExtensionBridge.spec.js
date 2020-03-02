@@ -115,7 +115,10 @@ describe('createExtensionBridge', () => {
         getEnvironmentId: () => 'eid',
         isMasterEnvironment: () => false,
         cma: { updateEntry: stubs.updateEntry, getEntry: stubs.getEntry },
-        space: { data: { spaceMember: 'MEMBER ', spaceMembership: 'MEMBERSHIP ' } }
+        space: { data: { spaceMember: 'MEMBER ', spaceMembership: 'MEMBERSHIP ' } },
+        publishedCTs: {
+          getAllBare: () => [{ id: 'first-content-type' }, { id: 'second-content-type' }]
+        }
       }
     });
 
@@ -144,6 +147,7 @@ describe('createExtensionBridge', () => {
         spaceId: 'sid',
         location: LOCATION_ENTRY_FIELD,
         contentTypeData: 'CONTENT TYPE',
+        initialContentTypesData: [{ id: 'first-content-type' }, { id: 'second-content-type' }],
         current: { field: 'FIELD', locale: { code: 'pl' } },
         entryData: { fields: {}, sys: {} },
         locales: {
