@@ -13,6 +13,7 @@ import {
 import { css } from 'emotion';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import StateLink from 'app/common/StateLink';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 
 import ErrorState from 'app/common/ErrorState';
 import LoadingState from 'app/common/LoadingState';
@@ -55,6 +56,7 @@ const OrganizationsRoute = ({ onReady, title }) => {
       <DocumentTitle title={title} />
       <Workbench>
         <Workbench.Header
+          icon={<NavigationIcon name="organizations" size="large" color="green" />}
           testId="organizations-list.title"
           title={title}
           actions={
