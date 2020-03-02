@@ -5,6 +5,7 @@ import * as K from 'utils/kefir';
 import { deepFreeze, deepFreezeClone } from 'utils/Freeze';
 import { purgeContentPreviewCache } from 'services/contentPreview';
 import { purgeApiKeyRepoCache } from 'app/settings/api/services/ApiKeyRepoInstance';
+
 const MASTER_ENVIRONMENT_ID = 'master';
 
 export default function register() {
@@ -97,10 +98,11 @@ export default function register() {
         },
 
         /**
+         * @type {Published}
          * @description
-         * A property containing data on the published CTs in the current space.
-         * It is updated in resetWithSpace method once we know we are in the context
-         * of a space.
+         * A property containing data on the published CTs in the current space and space-specific repository methods.
+         * Initialized with a predefined items$ bus to keep the bus reference the same between space switches.
+         * It is updated in resetWithSpace method once we know we are in the context of a space.
          */
         publishedCTs: {
           items$: publishedCTsBus$.property
@@ -170,42 +172,29 @@ export default function register() {
 
           self.memberships = MembershipRepo.create(self.endpoint);
           self.members = createSpaceMembersRepo(self.endpoint);
-
           self.docPool = DocumentPool.create(self.docConnection, self.endpoint);
-
-          /**
-           * ContentTypeRepo with all CTs on the space already fetched which allows safe
-           * usage of `spaceContext.publishedCTs.get(...)` (instead of `.fetch(...)`).
-           * @type {data/ContentTypeRepo/Published}
-           */
-          const publishedCTsForSpace = PublishedCTRepo.create(space);
-          K.onValue(publishedCTsForSpace.items$, items => {
-            publishedCTsBus$.set(items);
-          });
-          _.assign(self.publishedCTs, _.omit(publishedCTsForSpace, 'items$'));
-
           self.user = K.getValue(TokenStore.user$);
 
           // This happens here, rather than in `prelude.js`, since it's scoped to a space
           // and not the user, so the spaceId is required.
           enforcementsDeInit = EnforcementsService.init(spaceId);
 
+          await setupPublishedCTsBus(self);
+
+          const ctMap = self.publishedCTs
+            .getAllBare()
+            .reduce((acc, ct) => ({ ...acc, [ct.sys.id]: ct }), {});
+          self.uiConfig = createUiConfigStore(
+            space,
+            self.endpoint,
+            self.publishedCTs,
+            createViewMigrator(ctMap)
+          );
+
           const start = Date.now();
           return Promise.all([
             setupEnvironments(self, uriEnvOrAliasId),
             TheLocaleStore.init(self.localeRepo),
-            self.publishedCTs.refresh().then(() => {
-              const ctMap = self.publishedCTs.getAllBare().reduce((acc, ct) => {
-                return { ...acc, [ct.sys.id]: ct };
-              }, {});
-
-              self.uiConfig = createUiConfigStore(
-                space,
-                self.endpoint,
-                self.publishedCTs,
-                createViewMigrator(ctMap)
-              );
-            }),
             (async () => {
               self.pubsubClient = await createPubSubClientForSpace(spaceId);
             })()
@@ -286,7 +275,7 @@ export default function register() {
 
         /**
 
-        /**
+         /**
          * @name spaceContext#hasOptedIntoAliases
          * @description
          * Checks if the space is opted in to the environment alias feature
@@ -314,6 +303,21 @@ export default function register() {
 
       resetMembers(spaceContext);
       return spaceContext;
+
+      /**
+       * Extend the publishedCTs prop with the space-specific repo methods excluding
+       * the repo items$ bus – to keep the same instance between space switches.
+       * That means that calling on provided methods (like repo.publish()) will update the repo.items$, but not self.publishedCTs.items$.
+       * So the additional listener on values changes is required to keep (self.publishedCTs.items$ = publishedCTsBus$) bus up-to-date.
+       */
+      async function setupPublishedCTsBus(spaceContext) {
+        /** @type {Published} */
+        const publishedCTsForSpace = PublishedCTRepo.create(spaceContext.space);
+        _.assign(spaceContext.publishedCTs, _.omit(publishedCTsForSpace, 'items$'));
+        await spaceContext.publishedCTs.refresh();
+        // Synchronous first update since there's a current value now.
+        K.onValue(publishedCTsForSpace.items$, items => publishedCTsBus$.set(items));
+      }
 
       function resetMembers(spaceContext) {
         // Deinit the enforcement refreshing on space ID change, so that
