@@ -23,7 +23,7 @@ import {
   Paragraph,
   Note
 } from '@contentful/forma-36-react-components';
-import RolesWorkbenchShell from '../routes/RolesWorkbenchShell';
+import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import FormSection from 'components/forms/FormSection';
@@ -384,7 +384,7 @@ class RoleEditor extends React.Component {
     return (
       <>
         <DocumentTitle title={`${title} | Roles`} />
-        <RolesWorkbenchShell
+        <RolesWorkbenchSkeleton
           title={title}
           onBack={() => {
             this.navigateToList();
@@ -586,7 +586,7 @@ class RoleEditor extends React.Component {
               />
             </div>
           </FormSection>
-        </RolesWorkbenchShell>
+        </RolesWorkbenchSkeleton>
       </>
     );
   }

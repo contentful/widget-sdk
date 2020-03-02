@@ -10,6 +10,7 @@ import * as EntityResolver from 'data/CMA/EntityResolver';
 import { isRtlLocale } from 'utils/locales';
 import * as EntityHelpers from 'app/entity_editor/entityHelpers';
 import { MarkdownPreview } from '@contentful/field-editor-markdown';
+import { createNewReadOnlyWidgetApi } from 'app/widgets/NewWidgetApi/createNewWidgetApi';
 
 import snapshotPresenterTemplate from './cf_snapshot_presenter.html';
 
@@ -42,6 +43,21 @@ export default function register() {
             $scope.entity = $scope.version === 'current' ? entry : snapshot;
             $scope.value = _.get($scope.entity, ['fields', field.id, $scope.locale.internal_code]);
             $scope.hasValue = !isEmpty($scope.value);
+            $scope.createReadOnlyWidgetAPI = () => {
+              const { cma } = spaceContext;
+              const { locale, value: fieldValue } = $scope;
+              const contentType = $scope.contentType.data;
+              const entry = $scope.entity;
+              return createNewReadOnlyWidgetApi({
+                cma,
+                field,
+                fieldValue,
+                locale,
+                contentType,
+                entry,
+                initialContentTypes: spaceContext.publishedCTs.getAllBare()
+              });
+            };
 
             $scope.methods = {
               shouldDisplayRtl: isRtlLocale

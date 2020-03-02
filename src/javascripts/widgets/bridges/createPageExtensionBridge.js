@@ -30,6 +30,7 @@ export default function createPageExtensionBridge(dependencies, currentExtension
       },
       entryData: { sys: {}, fields: {} },
       contentTypeData: { sys: {}, fields: [] },
+      initialContentTypesData: spaceContext.publishedCTs.getAllBare(),
       editorInterface: undefined
     };
   }
@@ -41,7 +42,7 @@ export default function createPageExtensionBridge(dependencies, currentExtension
 
     api.registerHandler(
       'navigateToContentEntity',
-      makeExtensionNavigationHandlers(dependencies, { disableSlideIn: true })
+      makeExtensionNavigationHandlers(dependencies.spaceContext, { disableSlideIn: true })
     );
 
     api.registerHandler(

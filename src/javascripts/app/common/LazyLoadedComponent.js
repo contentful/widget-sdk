@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent';
+import createFetcherComponent, { DelayedLoading } from 'app/common/createFetcherComponent';
 import StateRedirect from 'app/common/StateRedirect';
 
 const AsyncComponentFetcher = createFetcherComponent(async ({ importer, onReady }) => {
@@ -12,19 +12,30 @@ const AsyncComponentFetcher = createFetcherComponent(async ({ importer, onReady 
   return Component;
 });
 
-export default function LazyLoadedComponent({ onReady, importer, ...rest }) {
+export default function LazyLoadedComponent({
+  onReady,
+  importer,
+  delay,
+  fallback: FallbackComponent,
+  error: ErrorComponent,
+  children
+}) {
   return (
     <AsyncComponentFetcher onReady={onReady} importer={importer}>
-      {({ isLoading, isError, data: Component }) => {
+      {({ isLoading, isError, data }) => {
         if (isLoading) {
-          return <FetcherLoading message="Loading..." />;
+          return (
+            <DelayedLoading delay={delay}>
+              <FallbackComponent />
+            </DelayedLoading>
+          );
         }
 
         if (isError) {
-          return <StateRedirect path="home" />;
+          return <ErrorComponent />;
         }
 
-        return <Component {...rest} />;
+        return children(data);
       }}
     </AsyncComponentFetcher>
   );
@@ -32,5 +43,20 @@ export default function LazyLoadedComponent({ onReady, importer, ...rest }) {
 
 LazyLoadedComponent.propTypes = {
   onReady: PropTypes.func.isRequired,
-  importer: PropTypes.func.isRequired
+  importer: PropTypes.func.isRequired,
+  fallback: PropTypes.func,
+  error: PropTypes.func,
+  delay: PropTypes.number,
+  children: PropTypes.func.isRequired
+};
+
+LazyLoadedComponent.defaultProps = {
+  fallback: () => (
+    <div className="loading-box--stretched">
+      <div className="loading-box__spinner" />
+      <div className="loading-box__message">Loading...</div>
+    </div>
+  ),
+  error: () => <StateRedirect path="home" />,
+  onReady: () => {}
 };

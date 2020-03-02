@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import StateRedirect from 'app/common/StateRedirect';
-import RolesWorkbenchShell from './RolesWorkbenchShell';
+import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import createResourceService from 'services/ResourceService';
 import { ENVIRONMENT_ALIASING } from 'featureFlags';
@@ -70,7 +70,7 @@ export default function RoleEditorRoute(props) {
         isNew={props.isNew}>
         {({ isLoading, isError, data }) => {
           if (isLoading) {
-            return <RolesWorkbenchShell onBack={() => {}} />;
+            return <RolesWorkbenchSkeleton onBack={() => {}} />;
           }
           if (isError) {
             return <StateRedirect path="spaces.detail.entries.list" />;

@@ -35,13 +35,8 @@ const InvitationListFetcher = createFetcherComponent(async ({ orgId }) => {
 export default class UserInvitationsListRouter extends React.Component {
   static propTypes = {
     orgId: PropTypes.string.isRequired,
-    onReady: PropTypes.func.isRequired,
     context: PropTypes.any
   };
-
-  componentDidMount() {
-    this.props.onReady();
-  }
 
   render() {
     const { orgId } = this.props;

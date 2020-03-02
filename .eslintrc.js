@@ -32,6 +32,7 @@ module.exports = {
     Promise: false,
     ArrayBuffer: false,
     Uint8Array: false,
+    WeakMap: false,
     window: true,
     document: true
   },

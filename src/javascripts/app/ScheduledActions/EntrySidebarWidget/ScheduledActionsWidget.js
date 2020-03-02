@@ -210,6 +210,7 @@ export default function ScheduledActionsWidget({
         primary={primary}
         isScheduled={hasScheduledActions}
         entity={entity}
+        entryTitle={entryTitle}
         secondary={secondary}
         revert={revert}
         isSaving={isSaving}

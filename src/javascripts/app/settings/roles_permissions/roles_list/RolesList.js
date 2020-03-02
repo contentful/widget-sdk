@@ -11,7 +11,7 @@ import {
   Paragraph
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import RolesWorkbenchShell from '../routes/RolesWorkbenchShell';
+import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
 import { RoleListItem, AdministratorRoleListItem } from './RoleListItem';
 import { go } from 'states/Navigator';
 import * as ResourceUtils from 'utils/ResourceUtils';
@@ -74,7 +74,7 @@ export default function RolesList(props) {
     });
 
   return (
-    <RolesWorkbenchShell
+    <RolesWorkbenchSkeleton
       title={`Roles (${props.roles.length + 1})`}
       actions={
         <RoleListActions
@@ -119,7 +119,7 @@ export default function RolesList(props) {
           ))}
         </TableBody>
       </Table>
-    </RolesWorkbenchShell>
+    </RolesWorkbenchSkeleton>
   );
 }
 

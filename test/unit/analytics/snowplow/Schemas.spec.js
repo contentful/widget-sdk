@@ -1,6 +1,6 @@
 describe('Snowplow schemas service', () => {
   beforeEach(async function() {
-    this.getSchema = (await this.system.import('analytics/snowplow/Schemas')).getSchema;
+    this.getSchema = (await this.system.import('analytics/Schemas')).getSchema;
   });
 
   describe('#getSchema()', () => {

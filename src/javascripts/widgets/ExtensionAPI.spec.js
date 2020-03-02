@@ -15,6 +15,7 @@ describe('ExtensionAPI', () => {
       locales: { available: [], default: {} },
       entryData: { sys: {}, fields: {} },
       contentTypeData: {},
+      initialContentTypesData: [],
       editorInterface: {},
       spaceMember: {
         sys: { user: { sys: {}, firstName: 'Jakub' } },

@@ -18,7 +18,7 @@ const styles = {
 
 const IconWrappedIntoScheduledTooltip = memo(({ entityType, entityId }) => {
   const { widgetAPI } = useContext(WidgetApiContext);
-  if (!widgetAPI.jobs) {
+  if (!widgetAPI || !widgetAPI.jobs) {
     return null;
   }
   const jobs = widgetAPI.jobs.getPendingJobs();

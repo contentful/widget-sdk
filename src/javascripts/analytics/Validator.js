@@ -95,6 +95,7 @@ export const validEvents = {
   ],
   content_type: ['create'],
   entry: ['create', 'publish'],
+  entry_references: ['dialog_open'],
   asset: ['create'],
   api_key: ['create', 'clipboard_copy', 'boilerplate'],
   invite_user: ['learn', 'create_space'],
@@ -143,7 +144,8 @@ export const validEvents = {
   entity_state: ['revert'],
   asset_list: ['add_asset_single', 'add_asset_multiple'],
   telemetry: ['measurement'],
-  app_management: ['created', 'deleted', 'updated']
+  app_management: ['created', 'deleted', 'updated'],
+  tracking: ['invalid_event']
 };
 
 export const validateEvent = eventName => {

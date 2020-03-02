@@ -1,17 +1,23 @@
+import React from 'react';
 import RoleRepository from 'access_control/RoleRepository';
-import RoleEditorRoute from './RoleEditorRoute';
-import RolesListRoute from './RolesListRoute';
 import * as ResourceUtils from 'utils/ResourceUtils';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { loadEntry, loadAsset } from 'app/entity_editor/DataLoader';
 import * as PolicyBuilder from 'access_control/PolicyBuilder';
 import * as logger from 'services/logger';
+import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
+import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
+import { SettingsImporter } from 'app/settings/SettingsImporter';
 
 const list = {
   name: 'list',
   url: '',
-  component: RolesListRoute,
+  component: props => (
+    <LazyLoadedComponent importer={SettingsImporter} fallback={RolesWorkbenchSkeleton}>
+      {({ RolesListRoute }) => <RolesListRoute {...props} />}
+    </LazyLoadedComponent>
+  ),
   mapInjectedToProps: [
     'spaceContext',
     spaceContext => {
@@ -39,7 +45,11 @@ const newRole = {
         $stateParams.baseRoleId ? roleRepo.get($stateParams.baseRoleId) : null
     ]
   },
-  component: RoleEditorRoute,
+  component: props => (
+    <LazyLoadedComponent importer={SettingsImporter} fallback={RolesWorkbenchSkeleton}>
+      {({ RoleEditorRoute }) => <RoleEditorRoute {...props} />}
+    </LazyLoadedComponent>
+  ),
   mapInjectedToProps: [
     '$scope',
     'spaceContext',
@@ -80,7 +90,11 @@ const detail = {
         RoleRepository.getInstance(spaceContext.space).get($stateParams.roleId)
     ]
   },
-  component: RoleEditorRoute,
+  component: props => (
+    <LazyLoadedComponent importer={SettingsImporter} fallback={RolesWorkbenchSkeleton}>
+      {({ RoleEditorRoute }) => <RoleEditorRoute {...props} />}
+    </LazyLoadedComponent>
+  ),
   mapInjectedToProps: [
     '$scope',
     'spaceContext',

@@ -16,7 +16,9 @@ describe('LazyLoadedComponent', () => {
       custom
     );
 
-    return render(<LazyLoadedComponent {...props} />);
+    return render(
+      <LazyLoadedComponent {...props}>{Component => <Component />}</LazyLoadedComponent>
+    );
   };
   it('should immediately call onReady', () => {
     const onReady = jest.fn();
@@ -54,19 +56,5 @@ describe('LazyLoadedComponent', () => {
     await wait();
 
     expect(queryByTestId('lazy-component')).toBeVisible();
-  });
-
-  it('should pass down any extra props to the component', async () => {
-    const importer = jest
-      .fn()
-      .mockResolvedValue(({ aRandomProp }) => (
-        <div data-test-id="lazy-component">{aRandomProp}</div>
-      ));
-
-    const { queryByTestId } = build({ importer, aRandomProp: 'this is a test' });
-
-    await wait();
-
-    expect(queryByTestId('lazy-component')).toHaveTextContent('this is a test');
   });
 });

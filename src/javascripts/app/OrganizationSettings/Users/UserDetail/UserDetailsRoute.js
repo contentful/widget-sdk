@@ -7,7 +7,7 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getMembership, getUser } from 'access_control/OrganizationMembershipRepository';
-import { getUserName } from 'app/OrganizationSettings/Users/UserUtils';
+import { getFullNameOrEmail } from 'app/OrganizationSettings/Users/UserUtils';
 import { getUserSync, getOrganization } from 'services/TokenStore';
 
 import { logError } from 'services/logger';
@@ -51,13 +51,8 @@ export default class UserDetailRoute extends React.Component {
   static propTypes = {
     orgId: PropTypes.string.isRequired,
     userId: PropTypes.string.isRequired,
-    onReady: PropTypes.func.isRequired,
     context: PropTypes.any
   };
-
-  componentDidMount() {
-    this.props.onReady();
-  }
 
   render() {
     const { orgId, userId } = this.props;
@@ -77,7 +72,7 @@ export default class UserDetailRoute extends React.Component {
 
             return (
               <React.Fragment>
-                <DocumentTitle title={[getUserName(user), 'Users']} />
+                <DocumentTitle title={[getFullNameOrEmail(user), 'Users']} />
                 <UserDetails {...data} orgId={orgId} />
               </React.Fragment>
             );

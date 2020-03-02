@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 
@@ -25,9 +25,7 @@ const styles = {
   })
 };
 
-export default function NewUserRoute({ onReady, orgId }) {
-  useEffect(onReady, [onReady]);
-
+export default function NewUserRoute({ orgId }) {
   const { isLoading, error, data: componentProps } = useAsync(
     useCallback(async () => {
       const [org, hasTeamsFeature] = await Promise.all([
@@ -59,6 +57,5 @@ export default function NewUserRoute({ onReady, orgId }) {
 }
 
 NewUserRoute.propTypes = {
-  onReady: PropTypes.func.isRequired,
   orgId: PropTypes.string.isRequired
 };

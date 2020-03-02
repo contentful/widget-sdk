@@ -81,5 +81,11 @@ describe('PublicContentType', () => {
         }
       });
     });
+
+    it('takes an already public content type and returns an exact copy of it', () => {
+      const publicData1 = PublicContentType.fromInternal(ct);
+      const publicData2 = PublicContentType.fromInternal(publicData1);
+      expect(publicData2).toEqual(publicData1);
+    });
   });
 });

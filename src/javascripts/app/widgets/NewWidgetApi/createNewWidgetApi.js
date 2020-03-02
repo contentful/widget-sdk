@@ -1,14 +1,14 @@
+import { noop } from 'lodash';
+import { getBatchingApiClient } from '../WidgetApi/BatchingApiClient';
 import { Notification } from '@contentful/forma-36-react-components';
-import { createFieldApi } from './createFieldApi';
+import { createEntryApi, createReadOnlyEntryApi } from './createEntryApi';
+import { createFieldApi, createReadOnlyFieldApi } from './createFieldApi';
 import { createNavigatorApi } from './createNavigatorApi';
 import { createLocalesApi } from './createLocalesApi';
 import { createDialogsApi } from './createDialogsApi';
-import { createEntryApi } from './createEntryApi';
 import { createSpaceApi } from './createSpaceApi';
 import { createContentTypeApi } from './createContentTypeApi';
 import checkDependencies from 'widgets/bridges/checkDependencies';
-
-const noop = () => {};
 
 /**
  * @typedef { import("contentful-ui-extensions-sdk").FieldAPI } FieldAPI
@@ -46,27 +46,62 @@ const noop = () => {};
  */
 export default function createNewWidgetApi(dependencies) {
   checkDependencies('createNewWidgetApi', dependencies, ['$scope', 'spaceContext']);
+  const { spaceContext, $scope } = dependencies;
+  const { cma } = spaceContext;
+  const { locale, widget, otDoc } = $scope;
+  const { contentType } = $scope.entityInfo;
+  const contentTypeApi = createContentTypeApi({ contentType });
 
-  const { $scope, spaceContext } = dependencies;
-
-  const field = createFieldApi({ $scope });
-  const space = createSpaceApi({ spaceContext });
-  const entry = createEntryApi({ $scope });
-  const navigator = createNavigatorApi({ spaceContext });
-  const locales = createLocalesApi();
-  const dialogs = createDialogsApi();
-  const contentType = createContentTypeApi({ $scope });
+  const entry = createEntryApi({ contentType, locale, otDoc });
+  const field = createFieldApi({ $scope }); // TODO: Get rid of $scope here, pass actual dependencies.
 
   const parameters = {
     installation: {},
-    instance: $scope.widget.settings || {}
+    instance: widget.settings || {}
   };
 
   return {
+    ...createSpaceScopedWidgetApi({
+      cma,
+      initialContentTypes: spaceContext.publishedCTs.getAllBare()
+    }),
+    contentType: contentTypeApi,
     entry,
-    space,
     field,
-    contentType,
+    parameters
+  };
+}
+
+export function createNewReadOnlyWidgetApi({
+  cma,
+  field,
+  fieldValue,
+  locale,
+  entry,
+  contentType,
+  initialContentTypes
+}) {
+  const contentTypeApi = createContentTypeApi({ contentType });
+  const entryApi = createReadOnlyEntryApi({ contentType, locale, entry });
+  const fieldApi = createReadOnlyFieldApi({ locale, field, value: fieldValue });
+
+  return {
+    ...createSpaceScopedWidgetApi({ cma, initialContentTypes }),
+    contentType: contentTypeApi,
+    entry: entryApi,
+    field: fieldApi
+  };
+}
+
+function createSpaceScopedWidgetApi({ cma: cmaOrBatchingApiClient, initialContentTypes }) {
+  const cma = getBatchingApiClient(cmaOrBatchingApiClient);
+  const space = createSpaceApi({ cma, initialContentTypes });
+  const navigator = createNavigatorApi({ cma });
+  const locales = createLocalesApi();
+  const dialogs = createDialogsApi();
+
+  return {
+    space,
     navigator,
     locales,
     dialogs,
@@ -83,6 +118,9 @@ export default function createNewWidgetApi(dependencies) {
         Notification.error(text);
       }
     },
-    parameters
+    parameters: {
+      installation: {},
+      instance: {}
+    }
   };
 }

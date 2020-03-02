@@ -1,8 +1,11 @@
+import React from 'react';
 import createUnsavedChangesDialogOpener from 'app/common/UnsavedChangesDialog';
-import WebhookListRoute from './WebhookListRoute';
-import WebhookNewRoute from './WebhookNewRoute';
-import WebhookEditRoute from './WebhookEditRoute';
-import WebhookCallRoute from './WebhookCallRoute';
+import {
+  WebhooksListLoadingSkeleton,
+  WebhookLoadingSkeleton
+} from '../skeletons/WebhookListRouteSkeleton';
+import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
+import { SettingsImporter } from 'app/settings/SettingsImporter';
 
 const mapInjectedToEditorProps = [
   '$scope',
@@ -34,7 +37,13 @@ export default {
         templateId: null,
         referrer: null
       },
-      component: WebhookListRoute,
+      component: props => (
+        <LazyLoadedComponent fallback={WebhooksListLoadingSkeleton} importer={SettingsImporter}>
+          {({ WebhookListRoute }) => {
+            return <WebhookListRoute {...props} />;
+          }}
+        </LazyLoadedComponent>
+      ),
       mapInjectedToProps: [
         '$stateParams',
         $stateParams => {
@@ -48,19 +57,37 @@ export default {
     {
       name: 'new',
       url: '/new',
-      component: WebhookNewRoute,
+      component: props => (
+        <LazyLoadedComponent fallback={WebhookLoadingSkeleton} importer={SettingsImporter}>
+          {({ WebhookNewRoute }) => {
+            return <WebhookNewRoute {...props} />;
+          }}
+        </LazyLoadedComponent>
+      ),
       mapInjectedToProps: mapInjectedToEditorProps
     },
     {
       name: 'detail',
       url: '/:webhookId',
-      component: WebhookEditRoute,
+      component: props => (
+        <LazyLoadedComponent fallback={WebhookLoadingSkeleton} importer={SettingsImporter}>
+          {({ WebhookEditRoute }) => {
+            return <WebhookEditRoute {...props} />;
+          }}
+        </LazyLoadedComponent>
+      ),
       mapInjectedToProps: mapInjectedToEditorProps,
       children: [
         {
           name: 'call',
           url: '/call/:callId',
-          component: WebhookCallRoute,
+          component: props => (
+            <LazyLoadedComponent fallback={WebhookLoadingSkeleton} importer={SettingsImporter}>
+              {({ WebhookCallRoute }) => {
+                return <WebhookCallRoute {...props} />;
+              }}
+            </LazyLoadedComponent>
+          ),
           mapInjectedToProps: [
             '$stateParams',
             '$state',

@@ -1,9 +1,10 @@
 import * as Config from 'Config';
-import * as Snowplow from 'analytics/snowplow/Snowplow';
+import * as Snowplow from 'analytics/snowplow';
 import stringifySafe from 'json-stringify-safe';
 import { prepareUserData } from 'analytics/UserData';
 import _ from 'lodash';
 import segment from 'analytics/segment';
+import { transformEvent, eventExists } from 'analytics/transform';
 import * as logger from 'services/logger';
 import * as analyticsConsole from 'analytics/analyticsConsole';
 
@@ -107,14 +108,24 @@ export function getSessionData(path, defaultValue) {
  * if it is on the valid events list.
  */
 export function track(event, data) {
+  if (!eventExists(event)) {
+    track('tracking:invalid_event', {
+      event
+    });
+
+    return;
+  }
+
   try {
     data = _.isObject(data) ? _.cloneDeep(data) : {};
     data = removeCircularRefs(Object.assign({}, getBasicPayload(), data));
 
-    segment.track(event, data);
-    Snowplow.track(event, data);
-    analyticsConsole.add(event, data);
-    logEventPayloadSize(event, data);
+    const transformedData = transformEvent(event, data);
+
+    segment.track(event, transformedData);
+    Snowplow.track(event, transformedData);
+    analyticsConsole.add(event, transformedData);
+    logEventPayloadSize(event, transformedData);
   } catch (error) {
     // ensure no errors caused by analytics will break business logic
     logger.logError('Unexpected error during event tracking', {

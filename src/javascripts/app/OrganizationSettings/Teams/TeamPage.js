@@ -11,6 +11,7 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { FEATURE_INACTIVE } from 'redux/accessConstants';
 import { Organization as OrganizationPropType } from '../PropTypes';
 import { getCurrentVariation } from 'utils/LaunchDarkly';
+import { FetcherLoading } from 'app/common/createFetcherComponent';
 
 import TeamList from './TeamList';
 import TeamDetails from './TeamDetails';
@@ -18,7 +19,6 @@ import TeamsEmptyState from './TeamsEmptyState';
 
 class TeamPage extends React.Component {
   static propTypes = {
-    onReady: PropTypes.func.isRequired,
     showList: PropTypes.bool.isRequired,
     showDetails: PropTypes.bool.isRequired,
     isLoading: PropTypes.bool.isRequired,
@@ -38,16 +38,6 @@ class TeamPage extends React.Component {
       );
       this.setState({ spaceMembershipsEnabled });
     }
-
-    if (!this.props.isLoading) {
-      this.props.onReady();
-    }
-  }
-
-  componentDidUpdate(prevProps) {
-    if (prevProps.isLoading && !this.props.isLoading) {
-      this.props.onReady();
-    }
   }
 
   render() {
@@ -56,30 +46,28 @@ class TeamPage extends React.Component {
       if (deniedReason === FEATURE_INACTIVE) {
         return <TeamsEmptyState isLegacy={true} isAdmin={isOwnerOrAdmin(organization)} />;
       } else {
-        const text =
-          'It seems you are not allowed to see this page. Please contact you administrator.';
+        const text = 'Access forbidden.';
         return (
           <Placeholder
             testId="access-denied-placeholder"
             text={text}
-            title="No access to Teams page"
+            title="No access to teams page"
           />
         );
       }
     }
+
     if (isLoading) {
-      return null;
+      return <FetcherLoading />;
     }
+
     if (showList) {
       return <TeamList />;
     }
+
     if (showDetails) {
       return <TeamDetails spaceMembershipsEnabled={this.state.spaceMembershipsEnabled} />;
     }
-    // this will never be reached, because angular handles 404 for this case
-    // if we remove that from angular at some point, this would be a possible place
-    // to return a 404 page
-    return '404 not found';
   }
 }
 

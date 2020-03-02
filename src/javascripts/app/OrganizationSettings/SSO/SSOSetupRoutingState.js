@@ -1,14 +1,20 @@
 import React from 'react';
-import { reactStateWrapper } from 'states/utils';
+import { organizationRoute } from 'states/utils';
 
 import LazyLoadedComponent from 'app/common/LazyLoadedComponent';
 
-const importer = async () =>
+const SSOSetupImporter = async () =>
   (await import(/* webpackChunkName: "SSOSetup" */ 'app/OrganizationSettings/SSO/SSOSetup'))
     .default;
 
-export default reactStateWrapper({
+export default organizationRoute({
   name: 'sso',
   url: '/sso',
-  component: props => <LazyLoadedComponent importer={importer} {...props} />
+  component: props => (
+    <LazyLoadedComponent importer={SSOSetupImporter}>
+      {SSOSetup => {
+        return <SSOSetup {...props} />;
+      }}
+    </LazyLoadedComponent>
+  )
 });

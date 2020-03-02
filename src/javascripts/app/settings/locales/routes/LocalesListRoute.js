@@ -2,12 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { getModule } from 'NgRegistry';
-import {
-  SkeletonContainer,
-  SkeletonBodyText,
-  Workbench
-} from '@contentful/forma-36-react-components';
-import Icon from 'ui/Components/Icon';
+import { LocalesListSkeleton } from '../skeletons/LocalesListSkeleton';
 import LocalesListPricingOne from '../LocalesListPricingOne';
 import LocalesListPricingTwo from '../LocalesListPricingTwo';
 import createFetcherComponent from 'app/common/createFetcherComponent';
@@ -41,23 +36,6 @@ const LocalesFetcher = createFetcherComponent(() => {
   ]);
 });
 
-function LocalesLoadingShell() {
-  return (
-    <Workbench testId="locale-list-workbench">
-      <Workbench.Header icon={<Icon name="page-settings" scale="0.8" />} title="Locales" />
-      <Workbench.Content type="full">
-        <SkeletonContainer
-          svgWidth={600}
-          svgHeight={300}
-          ariaLabel="Loading locales..."
-          clipId="loading-locales-list">
-          <SkeletonBodyText numberOfLines={5} offsetLeft={20} marginBottom={15} offsetTop={20} />
-        </SkeletonContainer>
-      </Workbench.Content>
-    </Workbench>
-  );
-}
-
 class LocalesListRoute extends React.Component {
   static propTypes = {
     showUpgradeSpaceDialog: PropTypes.func.isRequired,
@@ -75,7 +53,7 @@ class LocalesListRoute extends React.Component {
         <LocalesFetcher>
           {({ isLoading, isError, data, fetch }) => {
             if (isLoading) {
-              return <LocalesLoadingShell />;
+              return <LocalesListSkeleton />;
             }
             if (isError) {
               return <StateRedirect path="spaces.detail.entries.list" />;

@@ -126,7 +126,7 @@ export default class InvitationsList extends React.Component {
             <div className={styles.actionsWrapper}>
               <StateLink
                 component={TextLink}
-                path="account,organizations.users.list"
+                path="account.organizations.users.list"
                 className={styles.userListLink}>
                 View all users ({membershipsCount})
               </StateLink>

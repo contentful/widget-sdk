@@ -61,6 +61,7 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
       },
       entryData: $scope.otDoc.getValueAt([]),
       contentTypeData: $scope.entityInfo.contentType,
+      initialContentTypesData: spaceContext.publishedCTs.getAllBare(),
       editorInterface: $scope.editorData.editorInterface
     };
   }
@@ -124,7 +125,10 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
 
     api.registerHandler('openDialog', makeExtensionDialogsHandler(dependencies));
     api.registerHandler('callSpaceMethod', makeExtensionSpaceMethodsHandlers(dependencies));
-    api.registerHandler('navigateToContentEntity', makeExtensionNavigationHandlers(dependencies));
+    api.registerHandler(
+      'navigateToContentEntity',
+      makeExtensionNavigationHandlers(dependencies.spaceContext)
+    );
     api.registerHandler('notify', makeExtensionNotificationHandlers(dependencies));
 
     $scope.$watch('preferences.showDisabledFields', () => {

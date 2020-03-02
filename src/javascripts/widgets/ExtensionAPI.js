@@ -19,6 +19,7 @@ const REQUIRED_CONFIG_KEYS = [
   'locales', // `{ available, default }` with all private locales and the default.
   'entryData', // API Entry entity. Using internal IDs (ShareJS format).
   'contentTypeData', // API ContentType entity. Using internal IDs (ShareJS format).
+  'initialContentTypesData', // All available ContentType entities. Using internal IDs (ShareJS format).
   'spaceMember', // API SpaceMember entity.
   'spaceMembership', // API SpaceMemberships entity.
   'parameters', // UI Extension parameters.
@@ -89,7 +90,8 @@ export default class ExtensionAPI {
       location,
       editorInterface,
       parameters,
-      contentTypeData
+      contentTypeData,
+      initialContentTypesData
     } = this;
 
     this.channel.connect({
@@ -147,6 +149,9 @@ export default class ExtensionAPI {
       entry: { sys: entryData.sys },
       // Convert content type to its public form for external consumption:
       contentType: PublicContentType.fromInternal(contentTypeData),
+      initialContentTypes: (initialContentTypesData || []).map(ct =>
+        PublicContentType.fromInternal(ct)
+      ),
       editorInterface,
       parameters,
       ids: this.getIds()

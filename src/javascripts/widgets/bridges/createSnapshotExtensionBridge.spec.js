@@ -34,7 +34,10 @@ describe('createSnaphotExtensionBridge', () => {
         getId: () => 'spaceId',
         getEnvironmentId: () => 'environmentId',
         cma: { updateEntry: stubs.updateEntry, getEntry: stubs.getEntry },
-        space: { data: { spaceMember: 'MEMBER ', spaceMembership: 'MEMBERSHIP ' } }
+        space: { data: { spaceMember: 'MEMBER ', spaceMembership: 'MEMBERSHIP ' } },
+        publishedCTs: {
+          getAllBare: () => [{ id: 'first-content-type' }, { id: 'second-content-type' }]
+        }
       }
     });
 
@@ -50,6 +53,7 @@ describe('createSnaphotExtensionBridge', () => {
         spaceId: 'spaceId',
         location: LOCATION_ENTRY_FIELD,
         contentTypeData: 'CONTENT TYPE',
+        initialContentTypesData: [{ id: 'first-content-type' }, { id: 'second-content-type' }],
         current: { field: 'FIELD', locale: { code: 'pl' } },
         entryData: { fields: {}, sys: {} },
         locales: { available: [{ code: 'pl' }, { code: 'en' }], default: { code: 'pl' } },

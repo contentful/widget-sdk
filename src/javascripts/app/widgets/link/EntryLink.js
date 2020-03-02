@@ -9,7 +9,7 @@ import { getState, stateName } from 'data/CMA/EntityState';
 const EntryLink = ({ entry, entityHelpers, getContentType, isSelected, size }) => {
   const state = entry ? getState(entry.sys) : undefined;
   const entityStatus = state ? stateName(state) : undefined;
-  const [{ title, description, contentTypeName }, setEntityInfo] = useState({});
+  const [{ title, description, contentTypeName, file }, setEntityInfo] = useState({});
   const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -20,8 +20,14 @@ const EntryLink = ({ entry, entityHelpers, getContentType, isSelected, size }) =
           contentType = await getContentType(entry);
         }
         const title = await entityHelpers.entityTitle(entry);
+        const file = await entityHelpers.entityFile(entry);
         const description = await entityHelpers.entityDescription(entry);
-        setEntityInfo({ title, description, contentTypeName: get(contentType, 'data.name') });
+        setEntityInfo({
+          title,
+          description,
+          contentTypeName: get(contentType, 'data.name'),
+          file
+        });
         setLoading(false);
       }
     };
@@ -36,15 +42,21 @@ const EntryLink = ({ entry, entityHelpers, getContentType, isSelected, size }) =
     return title ? title : 'Untitled';
   };
 
+  const shouldSizeBeDefault = !!(file || description);
+  const cardSize = size || shouldSizeBeDefault ? 'default' : 'small';
+
   return entry ? (
     <WrappedEntityCard
       entity={entry}
+      entityType={get(entry, 'sys.type', 'Entry')}
+      entityFile={file}
+      entityId={get(entry, 'sys.id')}
       entityDescription={description}
       entityTitle={getEntryTitle()}
       entityStatus={entityStatus}
       isLoading={isLoading}
       contentTypeName={contentTypeName}
-      size={size}
+      size={cardSize}
       readOnly={true}
       selected={isSelected}
     />
@@ -60,7 +72,8 @@ EntryLink.propTypes = {
   }),
   entityHelpers: PropTypes.shape({
     entityTitle: PropTypes.func.isRequired,
-    entityDescription: PropTypes.func.isRequired
+    entityDescription: PropTypes.func.isRequired,
+    entityFile: PropTypes.func.isRequired
   }).isRequired,
   getContentType: PropTypes.func,
   isSelected: PropTypes.bool,
@@ -68,7 +81,6 @@ EntryLink.propTypes = {
 };
 
 EntryLink.defaultProps = {
-  size: 'small',
   isSelected: false
 };
 

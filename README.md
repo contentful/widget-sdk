@@ -38,8 +38,17 @@ npm install
 npm run dev-staging
 ```
 
-Now visit `localhost:3001/#access_token=<your access token>` in your favorite
-browser.
+Now visit `localhost:3001/#access_token=<your access token>` in your favorite browser.
+
+To make this easier, you can add the following bookmark in your browser:
+
+```
+  javascript:window.location.href=`http://localhost:3001${window.location.pathname}#access_token=${window.sessionStorage.getItem('token')}`
+```
+
+- Then go to [app.flinkly.com](app.flinkly.com)
+- Click on the bookmark we just made
+- Develop away!
 
 #### Limitations
 

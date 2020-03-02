@@ -6,9 +6,7 @@ import * as SlideInNavigatorWithPromise from 'navigation/SlideInNavigator/withPr
 import * as SlideInNavigator from 'navigation/SlideInNavigator';
 
 export default function makeExtensionNavigationHandlers(dependencies, handlerOptions = {}) {
-  const { spaceContext } = checkDependencies('ExtensionNavigationHandlers', dependencies, [
-    'spaceContext'
-  ]);
+  const { cma } = checkDependencies('ExtensionNavigationHandlers', dependencies, ['cma']);
 
   return async function navigate(options) {
     if (!['Entry', 'Asset'].includes(options.entityType)) {
@@ -76,9 +74,9 @@ export default function makeExtensionNavigationHandlers(dependencies, handlerOpt
 
   function getEntity(options) {
     if (options.entityType === 'Asset') {
-      return spaceContext.cma.getAsset(options.id);
+      return cma.getAsset(options.id);
     } else {
-      return spaceContext.cma.getEntry(options.id);
+      return cma.getEntry(options.id);
     }
   }
 }

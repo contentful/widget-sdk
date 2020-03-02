@@ -3,8 +3,8 @@
 exports[`AppListing should render the app listing when definitions are present 1`] = `
 Object {
   "asFragment": [Function],
-  "baseElement": .emotion-6 button:first-child {
-  margin-right: 0.75rem;
+  "baseElement": .emotion-6 {
+  vertical-align: middle;
 }
 
 .emotion-3 button {
@@ -149,7 +149,7 @@ Object {
               <table
                 cellpadding="0"
                 cellspacing="0"
-                class="Table__Table___2x3zV"
+                class="Table__Table___3vKIR"
                 data-test-id="cf-ui-table"
               >
                 <thead
@@ -286,14 +286,44 @@ Object {
                         class="emotion-5"
                       >
                         <div
-                          style="margin-left: 10px; position: relative;"
+                          class="Dropdown__Dropdown___nAsJ-"
+                          data-test-id="cf-ui-card-actions"
+                          position="bottom-right"
                         >
                           <button
-                            class="btn-inline btn-actions-nav"
+                            aria-expanded="false"
+                            aria-haspopup="menu"
+                            class="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 IconButton__IconButton--primary___1nYDN"
+                            data-test-id="cf-ui-icon-button"
+                            type="button"
                           >
-                            •••
+                            <span
+                              class="TabFocusTrap__TabFocusTrap___39Vty IconButton__IconButton__inner___3fnmT"
+                              tabindex="-1"
+                            >
+                              <svg
+                                class="Icon__Icon___38Epv Icon__Icon--small___1yGZK undefined IconButton__IconButton__icon___3yZQN"
+                                data-test-id="cf-ui-icon"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                width="18"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M0 0h24v24H0z"
+                                  fill="none"
+                                />
+                                <path
+                                  d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
+                                />
+                              </svg>
+                              <span
+                                class="IconButton__IconButton__label___1kp5y helpers__sr-only___3Kv3z"
+                              >
+                                Actions
+                              </span>
+                            </span>
                           </button>
-                          
                         </div>
                       </div>
                     </td>
@@ -397,14 +427,44 @@ Object {
                         class="emotion-5"
                       >
                         <div
-                          style="margin-left: 10px; position: relative;"
+                          class="Dropdown__Dropdown___nAsJ-"
+                          data-test-id="cf-ui-card-actions"
+                          position="bottom-right"
                         >
                           <button
-                            class="btn-inline btn-actions-nav"
+                            aria-expanded="false"
+                            aria-haspopup="menu"
+                            class="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 IconButton__IconButton--primary___1nYDN"
+                            data-test-id="cf-ui-icon-button"
+                            type="button"
                           >
-                            •••
+                            <span
+                              class="TabFocusTrap__TabFocusTrap___39Vty IconButton__IconButton__inner___3fnmT"
+                              tabindex="-1"
+                            >
+                              <svg
+                                class="Icon__Icon___38Epv Icon__Icon--small___1yGZK undefined IconButton__IconButton__icon___3yZQN"
+                                data-test-id="cf-ui-icon"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                width="18"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M0 0h24v24H0z"
+                                  fill="none"
+                                />
+                                <path
+                                  d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
+                                />
+                              </svg>
+                              <span
+                                class="IconButton__IconButton__label___1kp5y helpers__sr-only___3Kv3z"
+                              >
+                                Actions
+                              </span>
+                            </span>
                           </button>
-                          
                         </div>
                       </div>
                     </td>
@@ -508,14 +568,44 @@ Object {
                         class="emotion-5"
                       >
                         <div
-                          style="margin-left: 10px; position: relative;"
+                          class="Dropdown__Dropdown___nAsJ-"
+                          data-test-id="cf-ui-card-actions"
+                          position="bottom-right"
                         >
                           <button
-                            class="btn-inline btn-actions-nav"
+                            aria-expanded="false"
+                            aria-haspopup="menu"
+                            class="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 IconButton__IconButton--primary___1nYDN"
+                            data-test-id="cf-ui-icon-button"
+                            type="button"
                           >
-                            •••
+                            <span
+                              class="TabFocusTrap__TabFocusTrap___39Vty IconButton__IconButton__inner___3fnmT"
+                              tabindex="-1"
+                            >
+                              <svg
+                                class="Icon__Icon___38Epv Icon__Icon--small___1yGZK undefined IconButton__IconButton__icon___3yZQN"
+                                data-test-id="cf-ui-icon"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                width="18"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M0 0h24v24H0z"
+                                  fill="none"
+                                />
+                                <path
+                                  d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
+                                />
+                              </svg>
+                              <span
+                                class="IconButton__IconButton__label___1kp5y helpers__sr-only___3Kv3z"
+                              >
+                                Actions
+                              </span>
+                            </span>
                           </button>
-                          
                         </div>
                       </div>
                     </td>
@@ -583,75 +673,12 @@ Object {
         </div>
       </div>
     </div>
-    <div>
-      <div
-        aria-hidden="true"
-        class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
-        contenteditable="false"
-        data-test-id="cf-ui-tooltip"
-        role="tooltip"
-        style="max-width: 360px;"
-      >
-        <div
-          class="InViewport__InViewport___2o6g4"
-          data-test-id="cf-ui-in-viewport"
-          offset="0"
-        >
-          <span>
-            Copy to 
-            <br />
-             clipboard
-          </span>
-        </div>
-      </div>
-    </div>
-    <div>
-      <div
-        aria-hidden="true"
-        class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
-        contenteditable="false"
-        data-test-id="cf-ui-tooltip"
-        role="tooltip"
-        style="max-width: 360px;"
-      >
-        <div
-          class="InViewport__InViewport___2o6g4"
-          data-test-id="cf-ui-in-viewport"
-          offset="0"
-        >
-          <span>
-            Copy to 
-            <br />
-             clipboard
-          </span>
-        </div>
-      </div>
-    </div>
-    <div>
-      <div
-        aria-hidden="true"
-        class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
-        contenteditable="false"
-        data-test-id="cf-ui-tooltip"
-        role="tooltip"
-        style="max-width: 360px;"
-      >
-        <div
-          class="InViewport__InViewport___2o6g4"
-          data-test-id="cf-ui-in-viewport"
-          offset="0"
-        >
-          <span>
-            Copy to 
-            <br />
-             clipboard
-          </span>
-        </div>
-      </div>
-    </div>
+    <div />
+    <div />
+    <div />
   </body>,
-  "container": .emotion-6 button:first-child {
-  margin-right: 0.75rem;
+  "container": .emotion-6 {
+  vertical-align: middle;
 }
 
 .emotion-3 button {
@@ -795,7 +822,7 @@ Object {
             <table
               cellpadding="0"
               cellspacing="0"
-              class="Table__Table___2x3zV"
+              class="Table__Table___3vKIR"
               data-test-id="cf-ui-table"
             >
               <thead
@@ -932,14 +959,44 @@ Object {
                       class="emotion-5"
                     >
                       <div
-                        style="margin-left: 10px; position: relative;"
+                        class="Dropdown__Dropdown___nAsJ-"
+                        data-test-id="cf-ui-card-actions"
+                        position="bottom-right"
                       >
                         <button
-                          class="btn-inline btn-actions-nav"
+                          aria-expanded="false"
+                          aria-haspopup="menu"
+                          class="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 IconButton__IconButton--primary___1nYDN"
+                          data-test-id="cf-ui-icon-button"
+                          type="button"
                         >
-                          •••
+                          <span
+                            class="TabFocusTrap__TabFocusTrap___39Vty IconButton__IconButton__inner___3fnmT"
+                            tabindex="-1"
+                          >
+                            <svg
+                              class="Icon__Icon___38Epv Icon__Icon--small___1yGZK undefined IconButton__IconButton__icon___3yZQN"
+                              data-test-id="cf-ui-icon"
+                              height="18"
+                              viewBox="0 0 24 24"
+                              width="18"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M0 0h24v24H0z"
+                                fill="none"
+                              />
+                              <path
+                                d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
+                              />
+                            </svg>
+                            <span
+                              class="IconButton__IconButton__label___1kp5y helpers__sr-only___3Kv3z"
+                            >
+                              Actions
+                            </span>
+                          </span>
                         </button>
-                        
                       </div>
                     </div>
                   </td>
@@ -1043,14 +1100,44 @@ Object {
                       class="emotion-5"
                     >
                       <div
-                        style="margin-left: 10px; position: relative;"
+                        class="Dropdown__Dropdown___nAsJ-"
+                        data-test-id="cf-ui-card-actions"
+                        position="bottom-right"
                       >
                         <button
-                          class="btn-inline btn-actions-nav"
+                          aria-expanded="false"
+                          aria-haspopup="menu"
+                          class="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 IconButton__IconButton--primary___1nYDN"
+                          data-test-id="cf-ui-icon-button"
+                          type="button"
                         >
-                          •••
+                          <span
+                            class="TabFocusTrap__TabFocusTrap___39Vty IconButton__IconButton__inner___3fnmT"
+                            tabindex="-1"
+                          >
+                            <svg
+                              class="Icon__Icon___38Epv Icon__Icon--small___1yGZK undefined IconButton__IconButton__icon___3yZQN"
+                              data-test-id="cf-ui-icon"
+                              height="18"
+                              viewBox="0 0 24 24"
+                              width="18"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M0 0h24v24H0z"
+                                fill="none"
+                              />
+                              <path
+                                d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
+                              />
+                            </svg>
+                            <span
+                              class="IconButton__IconButton__label___1kp5y helpers__sr-only___3Kv3z"
+                            >
+                              Actions
+                            </span>
+                          </span>
                         </button>
-                        
                       </div>
                     </div>
                   </td>
@@ -1154,14 +1241,44 @@ Object {
                       class="emotion-5"
                     >
                       <div
-                        style="margin-left: 10px; position: relative;"
+                        class="Dropdown__Dropdown___nAsJ-"
+                        data-test-id="cf-ui-card-actions"
+                        position="bottom-right"
                       >
                         <button
-                          class="btn-inline btn-actions-nav"
+                          aria-expanded="false"
+                          aria-haspopup="menu"
+                          class="IconButton__IconButton___1_XeU a11y__focus-outline--default___2hwb1 IconButton__IconButton--primary___1nYDN"
+                          data-test-id="cf-ui-icon-button"
+                          type="button"
                         >
-                          •••
+                          <span
+                            class="TabFocusTrap__TabFocusTrap___39Vty IconButton__IconButton__inner___3fnmT"
+                            tabindex="-1"
+                          >
+                            <svg
+                              class="Icon__Icon___38Epv Icon__Icon--small___1yGZK undefined IconButton__IconButton__icon___3yZQN"
+                              data-test-id="cf-ui-icon"
+                              height="18"
+                              viewBox="0 0 24 24"
+                              width="18"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M0 0h24v24H0z"
+                                fill="none"
+                              />
+                              <path
+                                d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
+                              />
+                            </svg>
+                            <span
+                              class="IconButton__IconButton__label___1kp5y helpers__sr-only___3Kv3z"
+                            >
+                              Actions
+                            </span>
+                          </span>
                         </button>
-                        
                       </div>
                     </div>
                   </td>

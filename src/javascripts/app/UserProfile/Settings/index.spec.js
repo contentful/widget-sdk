@@ -2,7 +2,6 @@ import React from 'react';
 import { render, wait } from '@testing-library/react';
 import IndexPage from '.';
 import { fetchUserData } from './AccountRepository';
-import { getVariation } from 'LaunchDarkly';
 
 jest.mock('./AccountRepository', () => ({
   fetchUserData: jest.fn()
@@ -12,8 +11,7 @@ describe('IndexPage', () => {
   const build = custom => {
     const props = Object.assign(
       {
-        title: 'User profile',
-        onReady: () => {}
+        title: 'User profile'
       },
       custom
     );
@@ -57,17 +55,6 @@ describe('IndexPage', () => {
     expect(queryByTestId('cf-ui-loading-state')).toBeNull();
   });
 
-  it('should call onReady immediately, but only once', async () => {
-    const onReady = jest.fn();
-    build({ onReady });
-
-    expect(onReady).toHaveBeenCalled();
-
-    await wait();
-
-    expect(onReady).toHaveBeenCalledTimes(1);
-  });
-
   it('should render an error if the data fails to load', async () => {
     fetchUserData.mockReset().mockRejectedValueOnce(new Error());
 
@@ -100,9 +87,7 @@ describe('IndexPage', () => {
   });
 
   describe('Security section', () => {
-    it('should show the security section if the feature flag is enabled and the user is not SSO restricted', async () => {
-      getVariation.mockResolvedValueOnce(true);
-
+    it('should show the security section if the user is not SSO restricted', async () => {
       const { queryByTestId } = build();
 
       await wait();
@@ -110,20 +95,9 @@ describe('IndexPage', () => {
       expect(queryByTestId('security-section-card')).toBeVisible();
     });
 
-    it('should not show the security section if the feature flag is enabled but the user is SSO restricted', async () => {
-      getVariation.mockResolvedValueOnce(true);
+    it('should not show the security section if the user is SSO restricted', async () => {
       const profile = createProfile({ ssoLoginOnly: true });
       fetchUserData.mockReset().mockResolvedValueOnce(profile);
-
-      const { queryByTestId } = build();
-
-      await wait();
-
-      expect(queryByTestId('security-section-card')).toBeNull();
-    });
-
-    it('should not show the security section if the feature flag is disabled', async () => {
-      getVariation.mockResolvedValueOnce(false);
 
       const { queryByTestId } = build();
 

@@ -27,7 +27,7 @@ import * as appEntryEditorCustomEditorExtensionRendererEs6 from 'app/entry_edito
 import * as componentsTabsNoLocalizedFieldsAdviceIndexEs6 from 'components/tabs/NoLocalizedFieldsAdvice';
 import * as appHomeSpaceHomePageEs6 from 'app/home/SpaceHomePage';
 import * as appSettingsLocalesRoutesLocalesEditRouteEs6 from 'app/settings/locales/routes/LocalesEditRoute';
-import * as appWidgetsRichTextReadOnlyRichTextEditorEs6 from 'app/widgets/rich_text/ReadOnlyRichTextEditor';
+import * as appWidgetsRichTextReadOnlyRichTextEditorEs6 from 'app/widgets/RichText/ReadOnlyRichTextEditor';
 import * as componentsSharedRelativeDateTimeIndexEs6 from 'components/shared/RelativeDateTime';
 import * as componentsFieldDialogValidationValuesEs6 from 'components/field_dialog/ValidationValues';
 import * as componentsFieldDialogAppearanceFieldDialogAppearanceTabEs6 from 'components/field_dialog/appearance/FieldDialogAppearanceTab';
@@ -278,7 +278,7 @@ function getModule(name) {
     'components/tabs/NoLocalizedFieldsAdvice': componentsTabsNoLocalizedFieldsAdviceIndexEs6,
     'app/home/SpaceHomePage': appHomeSpaceHomePageEs6,
     'app/settings/locales/routes/LocalesEditRoute': appSettingsLocalesRoutesLocalesEditRouteEs6,
-    'app/widgets/rich_text/ReadOnlyRichTextEditor': appWidgetsRichTextReadOnlyRichTextEditorEs6,
+    'app/widgets/RichText/ReadOnlyRichTextEditor': appWidgetsRichTextReadOnlyRichTextEditorEs6,
     'components/shared/RelativeDateTime': componentsSharedRelativeDateTimeIndexEs6,
     'components/field_dialog/ValidationValues': componentsFieldDialogValidationValuesEs6,
     'components/field_dialog/appearance/FieldDialogAppearanceTab': componentsFieldDialogAppearanceFieldDialogAppearanceTabEs6,

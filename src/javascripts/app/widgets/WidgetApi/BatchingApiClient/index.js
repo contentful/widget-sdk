@@ -1,5 +1,7 @@
-import { mapValues, memoize, toPlainObject } from 'lodash';
+import { mapValues, toPlainObject } from 'lodash';
 import newBatchEntityFetcher from './newBatchEntityFetcher';
+
+const instances = new WeakMap();
 
 /**
  * Takes a client instance and returns an object with identical interface.
@@ -10,14 +12,18 @@ import newBatchEntityFetcher from './newBatchEntityFetcher';
  * @param {Data.APIClient} cma
  * @returns {Object} With same interface as `cma`.
  */
-export const getBatchingApiClient = memoize(cma => {
+export const getBatchingApiClient = cma => {
+  const existingInstance = instances.get(cma);
+  if (existingInstance) {
+    return existingInstance;
+  }
   const { spaceId, envId } = cma;
   const newResourceContext = type => ({ type, spaceId, envId });
   // Allow to call all - not just overwritten - functions directly, out of context:
   const cmaFunctions = mapValues(toPlainObject(cma), (_fn, name) => (...args) =>
     cma[name](...args)
   );
-  return {
+  const instance = {
     ...cmaFunctions,
 
     getContentType: newBatchEntityFetcher({
@@ -35,4 +41,7 @@ export const getBatchingApiClient = memoize(cma => {
       resourceContext: newResourceContext('Entry')
     })
   };
-});
+  instances.set(cma, instance);
+  instances.set(instance, instance);
+  return instance;
+};

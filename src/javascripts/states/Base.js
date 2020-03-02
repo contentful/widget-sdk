@@ -12,6 +12,8 @@ import { h } from 'utils/legacy-html-hyperscript';
  * - show a loader if a state change is in progress (using the
  *   `ui/Loader` component)
  * - show the original template otherwise.
+ *
+ * @deprecated
  */
 export default function makeBase(stateDefinition) {
   const wrapped = {

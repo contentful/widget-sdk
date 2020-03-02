@@ -5,8 +5,8 @@ import moment from 'moment';
 import { validateEvent } from 'analytics/Validator';
 import * as logger from 'services/logger';
 
-import * as SnowplowEvents from 'analytics/snowplow/Events';
-import * as Snowplow from 'analytics/snowplow/Snowplow';
+import { getSchemaForEvent } from 'analytics/transform';
+import * as Snowplow from 'analytics/snowplow';
 
 /**
  * @description
@@ -22,7 +22,6 @@ import * as Snowplow from 'analytics/snowplow/Snowplow';
  */
 
 const { buildUnstructEventData: buildSnowplowEvent } = Snowplow;
-const { getSchema: getSnowplowSchema } = SnowplowEvents;
 
 let isEnabled = false;
 let el = null;
@@ -89,7 +88,7 @@ export function add(name, data) {
   };
 
   if (snowplowEvent) {
-    const snowplowSchema = getSnowplowSchema(name);
+    const snowplowSchema = getSchemaForEvent(name);
 
     event.snowplow = {
       name: snowplowSchema.name,

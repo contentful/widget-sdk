@@ -3,7 +3,6 @@ import { Notification } from '@contentful/forma-36-react-components';
 import { get, includes, extend, filter, map, isEmpty } from 'lodash';
 
 import ReloadNotification from 'app/common/ReloadNotification';
-import UserSpaceInvitationDialog from 'access_control/templates/UserSpaceInvitationDialog';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getAllUsers } from 'access_control/OrganizationMembershipRepository';
 import { getModule } from 'NgRegistry';
@@ -19,6 +18,7 @@ import { ADMIN_ROLE_ID } from '../constants';
 import RoleChangeDialog from './RoleChangeDialog';
 import UserRemovalConfirmDialog from './UserRemovalConfirmDialog';
 import LastAdminRemovalConfirmDialog from './LastAdminRemovalConfirmDialog';
+import userSpaceInvitationDialogTemplate from 'access_control/templates/user_space_invitation_dialog.html';
 
 const MODAL_OPTS_BASE = {
   noNewScope: true,
@@ -158,7 +158,7 @@ export function create(availableRoles, spaceUsers) {
           noPagination: true
         })
         .then(result => {
-          return openDialog(UserSpaceInvitationDialog(), controller);
+          return openDialog(userSpaceInvitationDialogTemplate, controller);
 
           function controller(scope) {
             extend(scope, {

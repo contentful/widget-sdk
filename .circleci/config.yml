@@ -68,6 +68,8 @@ orbs:
             type: string
         docker:
           - image: circleci/node:10.15.3
+        environment:
+          CYPRESS_INSTALL_BINARY: 0
         steps:
           - attach_workspace:
               at: ~/workspace
@@ -210,6 +212,7 @@ executors:
   cypress-base-10:
     docker:
       - image: 'cypress/base:10'
+    resource_class: large
     environment:
       NODE_ENV: dev
       UI_CONFIG: localhost
@@ -547,7 +550,7 @@ workflows:
             - build-and-push-image
       - ui-extensions-sdk/run:
           name: run-ui-extensions-integration
-          <<: *run_only_on_master_branch
+      #          <<: *run_only_on_master_branch
       - saucelabs/run:
           name: run-win10-edge-tests
           browser: 'MicrosoftEdge'

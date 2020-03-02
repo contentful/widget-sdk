@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { cloneDeep } from 'lodash';
 import PropTypes from 'prop-types';
 import ModalLauncher from 'app/common/ModalLauncher';
+import { LocalesFormSkeleton } from '../skeletons/LocalesFormSkeleton';
 import LocaleEditForm from '../LocaleEditForm';
-import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent';
+import createFetcherComponent from 'app/common/createFetcherComponent';
 import StateRedirect from 'app/common/StateRedirect';
 import LocaleNotifications from '../utils/LocaleNotifications';
 import LocaleRemovalConfirmDialog from '../dialogs/LocaleRemovalConfirmDialog';
@@ -206,7 +207,7 @@ export default class LocalesEditRoute extends React.Component {
       <LocalesFetcher>
         {({ isLoading, isError, data, fetch }) => {
           if (isLoading) {
-            return <FetcherLoading message="Loading locale..." />;
+            return <LocalesFormSkeleton />;
           }
           if (isError) {
             return <StateRedirect path="^.list" />;

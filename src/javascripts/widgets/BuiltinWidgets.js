@@ -4,12 +4,11 @@ import { range } from 'lodash';
 import React from 'react';
 import * as Config from 'Config';
 import { NAMESPACE_BUILTIN } from './WidgetNamespaces';
-
+import { getModule } from 'NgRegistry';
 import LinkEditor, {
   SingleLinkEditor,
   withCfWebApp as linkEditorWithCfWebApp
 } from 'app/widgets/LinkEditor';
-import { getModule } from 'NgRegistry';
 import EmbedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
 import { default as RichTextEditor } from 'app/widgets/rich_text';
 import { renderRichTextEditor } from 'app/widgets/RichText';
@@ -31,7 +30,7 @@ import { MarkdownEditor, openMarkdownDialog } from '@contentful/field-editor-mar
 import FileEditor from 'app/widgets/FileEditor';
 import { SlugEditor } from '@contentful/field-editor-slug';
 import { canUploadMultipleAssets } from 'access_control/AccessChecker';
-import { NEW_SLUG_EDITOR, NEW_RICH_TEXT } from 'featureFlags';
+import { NEW_RICH_TEXT } from 'featureFlags';
 import { getVariation } from 'LaunchDarkly';
 
 const CfLinkEditor = linkEditorWithCfWebApp(LinkEditor);
@@ -240,11 +239,11 @@ export function create() {
     )
   });
 
-  const newRichText = {
+  const newRichText = spaceContext => ({
     renderFieldEditor: ({ widgetApi, $scope, loadEvents }) => {
-      return renderRichTextEditor({ widgetApi, $scope, loadEvents });
+      return renderRichTextEditor({ widgetApi, $scope, spaceContext, loadEvents });
     }
-  };
+  });
   const legacyRichText = {
     buildTemplate: ({ widgetApi, loadEvents }) => {
       return <RichTextEditor widgetApi={widgetApi} loadEvents={loadEvents} />;
@@ -260,7 +259,7 @@ export function create() {
       const organizationId = spaceContext.getData('organization.sys.id');
       const spaceId = spaceContext.space.getId();
       const isEnabled = await getVariation(NEW_RICH_TEXT, { organizationId, spaceId });
-      return isEnabled ? newRichText : legacyRichText;
+      return isEnabled ? newRichText(spaceContext) : legacyRichText;
     }
   });
 
@@ -312,6 +311,15 @@ export function create() {
     )
   });
 
+  registerWidget('entryCardEditor', {
+    fieldTypes: ['Entry'],
+    name: 'Entry card',
+    icon: 'reference-card',
+    buildTemplate: ({ widgetApi, loadEvents }) => (
+      <CfSingleLinkEditor type="Entry" style="card" widgetApi={widgetApi} loadEvents={loadEvents} />
+    )
+  });
+
   // NOTE: We render this as "card" ever since we got rid of the actual "link" appearance
   // option for single assets some time in 2016.
   registerWidget('assetLinkEditor', {
@@ -339,15 +347,6 @@ export function create() {
       <CfLinkEditor type="Entry" style="link" widgetApi={widgetApi} loadEvents={loadEvents} />
     ),
     parameters: [BULK_EDITOR_PARAMETER]
-  });
-
-  registerWidget('entryCardEditor', {
-    fieldTypes: ['Entry'],
-    name: 'Entry card',
-    icon: 'reference-card',
-    buildTemplate: ({ widgetApi, loadEvents }) => (
-      <CfSingleLinkEditor type="Entry" style="card" widgetApi={widgetApi} loadEvents={loadEvents} />
-    )
   });
 
   registerWidget('entryCardsEditor', {
@@ -382,26 +381,9 @@ export function create() {
     fieldTypes: ['Symbol'],
     name: 'Slug',
     icon: 'slug',
-    renderWhen: async () => {
-      const spaceContext = getModule('spaceContext');
-      const organizationId = spaceContext.getData('organization.sys.id');
-      const spaceId = spaceContext.space.getId();
-      const isNewSlugEnabled = await getVariation(NEW_SLUG_EDITOR, {
-        spaceId,
-        organizationId
-      });
-
-      if (isNewSlugEnabled) {
-        return {
-          renderFieldEditor: ({ widgetApi }) => {
-            return <SlugEditor field={widgetApi.field} baseSdk={widgetApi} />;
-          }
-        };
-      }
-
-      return {
-        template: '<cf-slug-editor />'
-      };
+    isBackground: true,
+    renderFieldEditor: ({ widgetApi }) => {
+      return <SlugEditor field={widgetApi.field} baseSdk={widgetApi} />;
     }
   });
 

@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import WebhookEditor from '../WebhookEditor';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
-import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent';
+import { WebhookLoadingSkeleton } from '../skeletons/WebhookListRouteSkeleton';
+import createFetcherComponent from 'app/common/createFetcherComponent';
 import StateRedirect from 'app/common/StateRedirect';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { getWebhookRepo } from 'app/settings/webhooks/services/WebhookRepoInstance';
@@ -29,7 +30,7 @@ export class WebhookEditRoute extends React.Component {
       <WebhookFetcher webhookId={this.props.webhookId}>
         {({ isLoading, isError, data }) => {
           if (isLoading) {
-            return <FetcherLoading message="Loading webhook..." />;
+            return <WebhookLoadingSkeleton />;
           }
           if (isError) {
             return <StateRedirect path="^.list" />;

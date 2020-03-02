@@ -1,20 +1,20 @@
 import _ from 'lodash';
 
-describe('Snowplow events service', () => {
+describe('Events transformation', () => {
   beforeEach(async function() {
-    this.system.set('analytics/snowplow/transformers/Generic', {
+    this.system.set('analytics/transformers/Generic', {
       default: _.constant({ foo: 'bar' })
     });
 
-    this.Events = await this.system.import('analytics/snowplow/Events');
+    this.Events = await this.system.import('analytics/transform');
   });
 
-  it('#transform()', function() {
-    const transformed = this.Events.transform('learn:language_selected', {});
+  it('#transformEvent()', function() {
+    const transformed = this.Events.transformEvent('learn:language_selected', {});
     expect(transformed).toEqual({ foo: 'bar' });
   });
 
-  it('#getSchema()', function() {
-    expect(this.Events.getSchema('learn:language_selected').name).toBe('generic');
+  it('#getSchemaForEvent()', function() {
+    expect(this.Events.getSchemaForEvent('learn:language_selected').name).toBe('generic');
   });
 });

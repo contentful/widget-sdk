@@ -8,7 +8,7 @@ import * as PublicContentType from 'widgets/PublicContentType';
  * @param {{ $scope: Object }}
  * @return {ContentType}
  */
-export function createContentTypeApi({ $scope }) {
-  const contentType = PublicContentType.fromInternal($scope.entityInfo.contentType);
-  return contentType;
+export function createContentTypeApi({ contentType }) {
+  const publicContentType = PublicContentType.fromInternal(contentType);
+  return publicContentType;
 }

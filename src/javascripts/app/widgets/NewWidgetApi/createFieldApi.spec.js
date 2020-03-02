@@ -1,10 +1,13 @@
 import { createFieldApi } from './createFieldApi';
 import { identity, set } from 'lodash';
-import { onValueScope } from 'utils/kefir';
+import { onValueWhile, onValueScope } from 'utils/kefir';
 
 jest.mock(
   'utils/kefir',
   () => ({
+    onValueWhile: jest.fn().mockImplementation((_lifeline, stream, onChange) => {
+      return onChange(stream);
+    }),
     onValueScope: jest.fn().mockImplementation((_scope, stream, onChange) => {
       return onChange(stream);
     })
@@ -257,8 +260,8 @@ describe('widgets/NewWidgetApi/createFieldApi', () => {
 
       fieldApi.onValueChanged(callback);
 
-      expect(onValueScope).toHaveBeenCalledWith(
-        $scope,
+      expect(onValueWhile).toHaveBeenCalledWith(
+        $scope.otDoc.changes,
         [['fields', $scope.widget.field.id, $scope.locale.internal_code, '123']],
         expect.any(Function)
       );

@@ -1,20 +1,22 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
+import { ACCESS_TOOLS } from 'featureFlags';
+import { getVariation } from 'LaunchDarkly';
 import OrgAdminOnly from 'app/common/OrgAdminOnly';
 import StateRedirect from 'app/common/StateRedirect';
 import ForbiddenState from 'app/common/ForbiddenState';
 import UserProvisioningConfiguration from './UserProvisioningConfiguration';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent';
+import UserProvisioningUpsellState from './UserProvisioningUpsellState';
 
 const FeatureFetcher = createFetcherComponent(async ({ orgId }) => {
   const featureEnabled = await getOrgFeature(orgId, 'scim');
-  return { featureEnabled: featureEnabled };
+  const accessToolsEnabled = await getVariation(ACCESS_TOOLS, { organizationId: orgId });
+  return { featureEnabled, accessToolsEnabled };
 });
 
-export default function UserProvisioning({ orgId, onReady }) {
-  useEffect(onReady, [onReady]);
-
+export default function UserProvisioning({ orgId }) {
   return (
     <OrgAdminOnly orgId={orgId}>
       <FeatureFetcher orgId={orgId}>
@@ -26,6 +28,9 @@ export default function UserProvisioning({ orgId, onReady }) {
             return <StateRedirect path="home" />;
           }
           if (!data.featureEnabled) {
+            if (data.accessToolsEnabled) {
+              return <UserProvisioningUpsellState />;
+            }
             return <ForbiddenState />;
           }
 
@@ -37,6 +42,5 @@ export default function UserProvisioning({ orgId, onReady }) {
 }
 
 UserProvisioning.propTypes = {
-  orgId: PropTypes.string.isRequired,
-  onReady: PropTypes.func.isRequired
+  orgId: PropTypes.string.isRequired
 };

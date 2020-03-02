@@ -2,17 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { get, cloneDeep, isEqual, omit } from 'lodash';
-import {
-  Notification,
-  SkeletonContainer,
-  SkeletonBodyText,
-  SkeletonDisplayText,
-  Heading,
-  Button,
-  Workbench
-} from '@contentful/forma-36-react-components';
+import { Notification, Button } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import Icon from 'ui/Components/Icon';
 import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils';
 import getExtensionParameterIds from './getExtensionParameterIds';
 import StateLink from 'app/common/StateLink';
@@ -21,50 +12,12 @@ import ExtensionForm from './ExtensionForm';
 import * as Analytics from 'analytics/Analytics';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
+import { ExtensionEditorSkeleton } from './skeletons/ExtensionEditorSkeleton';
 
 const styles = {
   actionButton: css({
     marginRight: tokens.spacingM
   })
-};
-
-export const ExtensionEditorShell = props => (
-  <Workbench>
-    <Workbench.Header
-      onBack={() => {
-        props.goToList();
-      }}
-      icon={<Icon name="page-settings" scale="0.8" />}
-      title={
-        <>
-          {props.title && <Heading>{props.title}</Heading>}
-          {!props.title && (
-            <SkeletonContainer svgHeight={21} clipId="header">
-              <SkeletonDisplayText lineHeight={21} />
-            </SkeletonContainer>
-          )}
-        </>
-      }
-      actions={props.actions}
-    />
-    <Workbench.Content>
-      {props.children || (
-        <SkeletonContainer
-          svgWidth={600}
-          svgHeight={300}
-          ariaLabel="Loading extension..."
-          clipId="content">
-          <SkeletonBodyText numberOfLines={5} offsetLeft={28} marginBottom={15} offsetTop={18} />
-        </SkeletonContainer>
-      )}
-    </Workbench.Content>
-  </Workbench>
-);
-
-ExtensionEditorShell.propTypes = {
-  goToList: PropTypes.func.isRequired,
-  title: PropTypes.string,
-  actions: PropTypes.node
 };
 
 class ExtensionEditor extends React.Component {
@@ -199,12 +152,12 @@ class ExtensionEditor extends React.Component {
     const dirty = this.isDirty();
 
     return (
-      <ExtensionEditorShell
+      <ExtensionEditorSkeleton
         goToList={this.props.goToList}
         title={`Extension: ${this.state.initial.extension.name}${dirty ? '*' : ''}`}
         actions={this.renderActions(dirty)}>
         {this.renderContent()}
-      </ExtensionEditorShell>
+      </ExtensionEditorSkeleton>
     );
   }
 }

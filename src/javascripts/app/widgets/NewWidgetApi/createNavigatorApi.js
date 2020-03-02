@@ -5,11 +5,11 @@ import makeExtensionNavigationHandlers from 'widgets/bridges/makeExtensionNaviga
  */
 
 /**
- * @param {{ spaceContext: Object }}
+ * @param {APIClient} cma
  * @return {NavigatorAPI}
  */
-export function createNavigatorApi({ spaceContext }) {
-  const navigateToContentEntity = makeExtensionNavigationHandlers({ spaceContext });
+export function createNavigatorApi({ cma }) {
+  const navigateToContentEntity = makeExtensionNavigationHandlers({ cma });
 
   return {
     openEntry: (id, opts) => {

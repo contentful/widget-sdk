@@ -19,7 +19,9 @@ export function formatQuery(filters = []) {
   return filters
     .filter(({ value }) => !isNilOrEmpty(value))
     .reduce((memo, { key, operator, value }) => {
-      memo[`${key}${operator ? `[${operator}]` : ''}`] = value;
+      const op = operator ? `[${operator(value)}]` : '';
+
+      memo[`${key}${op}`] = value;
 
       return memo;
     }, {});

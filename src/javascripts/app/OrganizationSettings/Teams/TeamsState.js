@@ -1,17 +1,15 @@
-import { reactStateWrapper } from 'states/utils';
+import { organizationRoute } from 'states/utils';
 import TeamPage from 'app/OrganizationSettings/Teams/TeamPage';
 
-const teamDetailState = reactStateWrapper({
+const teamDetailState = organizationRoute({
   name: 'detail',
-  title: 'Teams',
   url: '/:teamId',
   component: TeamPage
 });
 
-export default reactStateWrapper({
+export default organizationRoute({
   name: 'teams',
   children: [teamDetailState],
-  title: 'Teams',
   url: '/teams',
   component: TeamPage
 });

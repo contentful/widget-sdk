@@ -9,6 +9,8 @@ import {
   Paragraph,
   Workbench
 } from '@contentful/forma-36-react-components';
+import { ACCESS_TOOLS } from 'featureFlags';
+import { getVariation } from 'LaunchDarkly';
 import { FetcherLoading } from 'app/common/createFetcherComponent';
 import IDPSetupForm from './IDPSetupForm';
 import SSOEnabled from './SSOEnabled';
@@ -25,6 +27,7 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
+import SSOUpsellState from './SSOUpsellState';
 
 const styles = {
   heading: css({
@@ -45,6 +48,7 @@ export class SSOSetup extends React.Component {
 
   state = {
     isAllowed: false,
+    showUpsellState: false,
     isLoading: true
   };
 
@@ -70,11 +74,15 @@ export class SSOSetup extends React.Component {
     const { organization } = this.props;
 
     const featureEnabled = await getOrgFeature(organization.sys.id, 'self_configure_sso');
+    const accessToolsEnabled = await getVariation(ACCESS_TOOLS, {
+      organizationId: organization.sys.id
+    });
     const hasPerms = isOwnerOrAdmin(organization);
 
     if (!featureEnabled || !hasPerms) {
       this.setState({
         isAllowed: false,
+        showUpsellState: accessToolsEnabled,
         isLoading: false
       });
 
@@ -117,13 +125,17 @@ export class SSOSetup extends React.Component {
 
   render() {
     const { identityProvider, organization } = this.props;
-    const { isAllowed, isLoading } = this.state;
+    const { isAllowed, showUpsellState, isLoading } = this.state;
 
     if (!organization || isLoading) {
       return <FetcherLoading message="Loading SSO..." />;
     }
 
     if (!isAllowed) {
+      if (showUpsellState) {
+        return <SSOUpsellState />;
+      }
+
       return <ForbiddenPage />;
     }
 

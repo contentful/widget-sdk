@@ -8,7 +8,9 @@ import SSOEnabled from './SSOEnabled';
 import { track } from 'analytics/Analytics';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
+import { getVariation } from 'LaunchDarkly';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
+import SSOUpsellState from './SSOUpsellState';
 
 jest.mock('services/OrganizationRoles', () => ({
   isOwnerOrAdmin: jest.fn().mockReturnValue(true)
@@ -89,10 +91,11 @@ describe('SSOSetup', () => {
   /*
     Should call `getOrgStatus`, should show ForbiddenPage, should not call `retrieveIdp`
    */
-  it('should go through the forbidden flow if the feature is not enabled', async () => {
+  it('should go through the forbidden flow if the sso and access tools features are not enabled', async () => {
     const retrieveIdp = jest.fn();
 
     getOrgFeature.mockResolvedValueOnce(false);
+    getVariation.mockResolvedValue(false);
 
     const rendered = await render({ organization, retrieveIdp });
 
@@ -101,10 +104,24 @@ describe('SSOSetup', () => {
     expect(retrieveIdp.mock.calls).toHaveLength(0);
   });
 
+  it('should show the SSO upsell state if the sso feature is not enabled and the access tools feature is enabled', async () => {
+    const retrieveIdp = jest.fn();
+
+    getOrgFeature.mockResolvedValueOnce(false);
+    getVariation.mockResolvedValue(true);
+
+    const rendered = await render({ organization, retrieveIdp });
+
+    expect(rendered.find(SSOUpsellState)).toHaveLength(1);
+
+    expect(retrieveIdp.mock.calls).toHaveLength(0);
+  });
+
   it('should go through the forbidden flow if the user is not admin/owner', async () => {
     const retrieveIdp = jest.fn();
 
     isOwnerOrAdmin.mockReturnValueOnce(false);
+    getVariation.mockResolvedValue(false);
 
     const rendered = await render({ organization, retrieveIdp });
 
@@ -150,7 +167,11 @@ describe('SSOSetup', () => {
   it('should attempt to create an identity provider if CTA button is clicked', async () => {
     const createIdp = jest.fn().mockResolvedValue(true);
     const identityProvider = {};
-    const rendered = await render({ organization, identityProvider, createIdp });
+    const rendered = await render({
+      organization,
+      identityProvider,
+      createIdp
+    });
 
     rendered
       .find('[testId="create-idp"]')

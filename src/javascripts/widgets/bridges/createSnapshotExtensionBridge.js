@@ -36,6 +36,7 @@ export default function createSnapshotExtensionBridge(dependencies) {
       },
       entryData: $scope.entity,
       contentTypeData: $scope.entityInfo.contentType,
+      initialContentTypesData: spaceContext.publishedCTs.getAllBare(),
       editorInterface: $scope.editorData.editorInterface
     };
   }

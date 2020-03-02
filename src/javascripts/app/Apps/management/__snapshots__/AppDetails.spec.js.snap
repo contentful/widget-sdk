@@ -559,14 +559,31 @@ Object {
                       class="Paragraph__Paragraph___2aO-9 emotion-7"
                       data-test-id="cf-ui-paragraph"
                     >
-                      Specify where the app can be rendered. Check out the documentation for more details.
+                      Specify where the app can be rendered. Check out the
+                       
+                      <a
+                        class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                        data-test-id="cf-ui-text-link"
+                        href="https://contentful.com/developers/docs/references/content-management-api/#/reference/app-definitions"
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
+                        <span
+                          class="TabFocusTrap__TabFocusTrap___39Vty"
+                          tabindex="-1"
+                        >
+                          documentation
+                        </span>
+                      </a>
+                       
+                      for more details.
                     </p>
                   </div>
                   <div
                     class="emotion-11"
                   >
                     <div
-                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-10 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf Card__Card--is-selected___3zM50"
+                      class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-10 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr Card__Card--is-selected___IBDSP"
                       data-test-id="app-location-app-config"
                     >
                       <button
@@ -616,7 +633,7 @@ Object {
                     class="emotion-11"
                   >
                     <div
-                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                      class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                       data-test-id="app-location-entry-field"
                     >
                       <button
@@ -1003,7 +1020,7 @@ Object {
                     class="emotion-11"
                   >
                     <div
-                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-10 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf Card__Card--is-selected___3zM50"
+                      class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-10 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr Card__Card--is-selected___IBDSP"
                       data-test-id="app-location-entry-sidebar"
                     >
                       <button
@@ -1053,7 +1070,7 @@ Object {
                     class="emotion-11"
                   >
                     <div
-                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                      class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                       data-test-id="app-location-entry-editor"
                     >
                       <button
@@ -1102,7 +1119,7 @@ Object {
                     class="emotion-11"
                   >
                     <div
-                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                      class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                       data-test-id="app-location-dialog"
                     >
                       <button
@@ -1187,28 +1204,7 @@ Object {
         </div>
       </div>
     </div>
-    <div>
-      <div
-        aria-hidden="true"
-        class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
-        contenteditable="false"
-        data-test-id="cf-ui-tooltip"
-        role="tooltip"
-        style="max-width: 360px; left: 0px; top: -20px;"
-      >
-        <div
-          class="InViewport__InViewport___2o6g4"
-          data-test-id="cf-ui-in-viewport"
-          offset="0"
-        >
-          <span>
-            Copy to 
-            <br />
-             clipboard
-          </span>
-        </div>
-      </div>
-    </div>
+    <div />
   </body>,
   "container": @keyframes animation-0 {
   from {
@@ -1708,14 +1704,31 @@ Object {
                     class="Paragraph__Paragraph___2aO-9 emotion-7"
                     data-test-id="cf-ui-paragraph"
                   >
-                    Specify where the app can be rendered. Check out the documentation for more details.
+                    Specify where the app can be rendered. Check out the
+                     
+                    <a
+                      class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                      data-test-id="cf-ui-text-link"
+                      href="https://contentful.com/developers/docs/references/content-management-api/#/reference/app-definitions"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      <span
+                        class="TabFocusTrap__TabFocusTrap___39Vty"
+                        tabindex="-1"
+                      >
+                        documentation
+                      </span>
+                    </a>
+                     
+                    for more details.
                   </p>
                 </div>
                 <div
                   class="emotion-11"
                 >
                   <div
-                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-10 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf Card__Card--is-selected___3zM50"
+                    class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-10 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr Card__Card--is-selected___IBDSP"
                     data-test-id="app-location-app-config"
                   >
                     <button
@@ -1765,7 +1778,7 @@ Object {
                   class="emotion-11"
                 >
                   <div
-                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                    class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                     data-test-id="app-location-entry-field"
                   >
                     <button
@@ -2152,7 +2165,7 @@ Object {
                   class="emotion-11"
                 >
                   <div
-                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-10 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf Card__Card--is-selected___3zM50"
+                    class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-10 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr Card__Card--is-selected___IBDSP"
                     data-test-id="app-location-entry-sidebar"
                   >
                     <button
@@ -2202,7 +2215,7 @@ Object {
                   class="emotion-11"
                 >
                   <div
-                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                    class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                     data-test-id="app-location-entry-editor"
                   >
                     <button
@@ -2251,7 +2264,7 @@ Object {
                   class="emotion-11"
                 >
                   <div
-                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                    class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                     data-test-id="app-location-dialog"
                   >
                     <button
@@ -2896,14 +2909,31 @@ Object {
                       class="Paragraph__Paragraph___2aO-9 emotion-7"
                       data-test-id="cf-ui-paragraph"
                     >
-                      Specify where the app can be rendered. Check out the documentation for more details.
+                      Specify where the app can be rendered. Check out the
+                       
+                      <a
+                        class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                        data-test-id="cf-ui-text-link"
+                        href="https://contentful.com/developers/docs/references/content-management-api/#/reference/app-definitions"
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
+                        <span
+                          class="TabFocusTrap__TabFocusTrap___39Vty"
+                          tabindex="-1"
+                        >
+                          documentation
+                        </span>
+                      </a>
+                       
+                      for more details.
                     </p>
                   </div>
                   <div
                     class="emotion-11"
                   >
                     <div
-                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-10 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf Card__Card--is-selected___3zM50"
+                      class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-10 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr Card__Card--is-selected___IBDSP"
                       data-test-id="app-location-app-config"
                     >
                       <button
@@ -2953,7 +2983,7 @@ Object {
                     class="emotion-11"
                   >
                     <div
-                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                      class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                       data-test-id="app-location-entry-field"
                     >
                       <button
@@ -3340,7 +3370,7 @@ Object {
                     class="emotion-11"
                   >
                     <div
-                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-10 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf Card__Card--is-selected___3zM50"
+                      class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-10 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr Card__Card--is-selected___IBDSP"
                       data-test-id="app-location-entry-sidebar"
                     >
                       <button
@@ -3390,7 +3420,7 @@ Object {
                     class="emotion-11"
                   >
                     <div
-                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                      class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                       data-test-id="app-location-entry-editor"
                     >
                       <button
@@ -3439,7 +3469,7 @@ Object {
                     class="emotion-11"
                   >
                     <div
-                      class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                      class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                       data-test-id="app-location-dialog"
                     >
                       <button
@@ -3580,28 +3610,7 @@ Object {
         </div>
       </div>
     </div>
-    <div>
-      <div
-        aria-hidden="true"
-        class="Tooltip__Tooltip___32xAi Tooltip__Tooltip--place-top___1_DNW Tooltip__Tooltip--hidden___3uqEe"
-        contenteditable="false"
-        data-test-id="cf-ui-tooltip"
-        role="tooltip"
-        style="max-width: 360px; left: 0px; top: -20px;"
-      >
-        <div
-          class="InViewport__InViewport___2o6g4"
-          data-test-id="cf-ui-in-viewport"
-          offset="0"
-        >
-          <span>
-            Copy to 
-            <br />
-             clipboard
-          </span>
-        </div>
-      </div>
-    </div>
+    <div />
   </body>,
   "container": @keyframes animation-0 {
   from {
@@ -4105,14 +4114,31 @@ Object {
                     class="Paragraph__Paragraph___2aO-9 emotion-7"
                     data-test-id="cf-ui-paragraph"
                   >
-                    Specify where the app can be rendered. Check out the documentation for more details.
+                    Specify where the app can be rendered. Check out the
+                     
+                    <a
+                      class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                      data-test-id="cf-ui-text-link"
+                      href="https://contentful.com/developers/docs/references/content-management-api/#/reference/app-definitions"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      <span
+                        class="TabFocusTrap__TabFocusTrap___39Vty"
+                        tabindex="-1"
+                      >
+                        documentation
+                      </span>
+                    </a>
+                     
+                    for more details.
                   </p>
                 </div>
                 <div
                   class="emotion-11"
                 >
                   <div
-                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-10 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf Card__Card--is-selected___3zM50"
+                    class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-10 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr Card__Card--is-selected___IBDSP"
                     data-test-id="app-location-app-config"
                   >
                     <button
@@ -4162,7 +4188,7 @@ Object {
                   class="emotion-11"
                 >
                   <div
-                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                    class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                     data-test-id="app-location-entry-field"
                   >
                     <button
@@ -4549,7 +4575,7 @@ Object {
                   class="emotion-11"
                 >
                   <div
-                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-10 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf Card__Card--is-selected___3zM50"
+                    class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-10 ToggleButton__Toggle--active___cx5OU Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr Card__Card--is-selected___IBDSP"
                     data-test-id="app-location-entry-sidebar"
                   >
                     <button
@@ -4599,7 +4625,7 @@ Object {
                   class="emotion-11"
                 >
                   <div
-                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                    class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                     data-test-id="app-location-entry-editor"
                   >
                     <button
@@ -4648,7 +4674,7 @@ Object {
                   class="emotion-11"
                 >
                   <div
-                    class="Card__Card___xXJsT ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1Jrxi Card__Card--is-interactive___dMQtf"
+                    class="Card__Card___1_26G ToggleButton__Toggle___1gUNN emotion-10 Card__Card--padding-none___1_Xu1 Card__Card--is-interactive___3nFqr"
                     data-test-id="app-location-dialog"
                   >
                     <button

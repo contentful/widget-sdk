@@ -9,13 +9,11 @@ describe('analytics/snowplow/transformers/EntryActionV2', () => {
   beforeEach(async function() {
     this.EntityActionStub = sinon.stub();
 
-    this.system.set('analytics/snowplow/transformers/EntityAction', {
+    this.system.set('analytics/transformers/EntityAction', {
       default: this.EntityActionStub
     });
 
-    const transformer = (await this.system.import(
-      'analytics/snowplow/transformers/EntryActionV2'
-    )).default;
+    const transformer = (await this.system.import('analytics/transformers/EntryActionV2')).default;
 
     this.transform = eventData => {
       this.EntityActionStub.withArgs('entry:create', {

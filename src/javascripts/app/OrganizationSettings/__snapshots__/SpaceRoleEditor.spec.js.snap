@@ -56,7 +56,7 @@ exports[`SpaceRoleEditor renders the component 1`] = `
     }
   >
     <div
-      className="Dropdown__Dropdown___1qyn8 emotion-0"
+      className="Dropdown__Dropdown___nAsJ- emotion-0"
       data-test-id="cf-ui-dropdown"
       onClose={[Function]}
       position="bottom-left"
@@ -246,7 +246,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
     }
   >
     <div
-      className="Dropdown__Dropdown___1qyn8 emotion-5"
+      className="Dropdown__Dropdown___nAsJ- emotion-5"
       data-test-id="cf-ui-dropdown"
       onClose={[Function]}
       position="bottom-left"
@@ -367,7 +367,7 @@ exports[`SpaceRoleEditor shows a list of options 1`] = `
 }
 
 <div
-            class="Dropdown__Dropdown___1qyn8 emotion-0"
+            class="Dropdown__Dropdown___nAsJ- emotion-0"
             data-test-id="cf-ui-dropdown"
             position="bottom-left"
           >

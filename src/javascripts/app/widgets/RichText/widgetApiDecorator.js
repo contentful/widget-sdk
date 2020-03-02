@@ -1,4 +1,10 @@
 import openHyperlinkDialog from 'app/widgets/WidgetApi/dialogs/openHyperlinkDialog';
+import {
+  getSectionVisibility,
+  canCreateAsset,
+  canPerformActionOnEntryOfType,
+  Action
+} from 'access_control/AccessChecker';
 
 /**
  * Takes a standard widgetAPI and returns a copy of it, decorated with
@@ -9,10 +15,13 @@ import openHyperlinkDialog from 'app/widgets/WidgetApi/dialogs/openHyperlinkDial
  *  ui-extensions-sdk in this or a similar way.
  *
  * @param {Object} widgetAPI
+ * @param {Object} spaceContext
+ * @param {Object} jobs
  * @returns {Object}
  */
-export default function(widgetAPI, $scope) {
-  const jobs = $scope.jobsStore;
+export default function(widgetAPI, spaceContext, jobs) {
+  const { asset: canAccessAssets } = getSectionVisibility();
+  const contentTypes = spaceContext ? spaceContext.publishedCTs.getAllBare() : [];
 
   const rtWidgetAPI = {
     ...widgetAPI,
@@ -21,13 +30,17 @@ export default function(widgetAPI, $scope) {
     currentUrl: window.location,
     // TODO: Get rid of this or implement in extensions sdk in some way!
     jobs,
-    // TODO:xxx Implement for Rich Text commands and embedding.
     permissions: {
-      canAccessAssets: true,
-      canCreateAssets: true,
-      canCreateEntryOfContentType: {
-        exampleCT: true
-      }
+      canAccessAssets,
+      canCreateAssets: canCreateAsset(),
+
+      canCreateEntryOfContentType: contentTypes.reduce(
+        (acc, contentType) => ({
+          ...acc,
+          [contentType.sys.id]: canPerformActionOnEntryOfType(Action.CREATE, contentType)
+        }),
+        {}
+      )
     },
     dialogs: {
       ...widgetAPI.dialogs,

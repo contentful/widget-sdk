@@ -1,16 +1,13 @@
-import { reactStateWrapper } from './utils';
 import UserList from 'access_control/Users/UserList';
 
-const list = reactStateWrapper({
+const list = {
   name: 'list',
-  title: 'Space users',
-  loadingText: 'Loading users…',
   url: '',
   params: {
     jumpToRole: null
   },
   component: UserList
-});
+};
 
 export default {
   name: 'users',

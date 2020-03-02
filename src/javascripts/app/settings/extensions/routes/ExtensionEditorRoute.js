@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ExtensionEditor, { ExtensionEditorShell } from '../ExtensionEditor';
+import ExtensionEditor from '../ExtensionEditor';
+import { ExtensionEditorSkeleton } from '../skeletons/ExtensionEditorSkeleton';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import StateRedirect from 'app/common/StateRedirect';
 import { getSectionVisibility } from 'access_control/AccessChecker';
@@ -31,7 +32,7 @@ export class ExtensionEditorRoute extends React.Component {
       <ExtensionFetcher cma={this.props.cma} extensionId={this.props.extensionId}>
         {({ isLoading, isError, data }) => {
           if (isLoading) {
-            return <ExtensionEditorShell goToList={this.props.goToList} />;
+            return <ExtensionEditorSkeleton goToList={this.props.goToList} />;
           }
           if (isError) {
             return <StateRedirect path="^.list" />;
