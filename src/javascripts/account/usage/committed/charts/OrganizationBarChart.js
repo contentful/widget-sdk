@@ -1,5 +1,4 @@
-/* eslint "rulesdir/restrict-inline-styles": "warn" */
-import React, { Component } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
@@ -75,8 +74,9 @@ const chartOptions = (period, usage) => {
       }
     ],
     grid: {
-      left: '2%',
-      right: '5%'
+      left: '5%',
+      right: '5%',
+      bottom: 70
     },
     dataZoom: [
       {
@@ -112,35 +112,31 @@ const chartOptions = (period, usage) => {
   };
 };
 
-export default class OrganizationBarChart extends Component {
-  constructor(props) {
-    super(props);
-    this.options = chartOptions(props.period, props.usage);
-  }
+const OrganizationBarChart = props => {
+  const { period, usage } = props;
+  const chartRef = useRef(null);
+  const [chartInstance, setChartInstance] = useState(null);
 
-  componentDidUpdate() {
-    const { period, usage } = this.props;
-    this.options = chartOptions(period, usage);
-    this.chartInstance.setOption(this.options);
-  }
+  useEffect(() => {
+    if (chartRef.current) {
+      const initChart = echarts.init(chartRef.current);
+      setChartInstance(initChart);
+    }
+  }, [period, usage]);
 
-  componentDidMount() {
-    this.chartInstance = echarts.init(this.ref);
-    this.chartInstance.setOption(this.options);
-  }
+  useEffect(() => {
+    if (chartInstance) {
+      const options = chartOptions(period, usage);
+      chartInstance.setOption(options);
+    }
+  });
 
-  render() {
-    return (
-      <div
-        ref={ref => {
-          this.ref = ref;
-        }}
-        className={styles.chartWrapper}></div>
-    );
-  }
-}
+  return <div ref={chartRef} className={styles.chartWrapper}></div>;
+};
 
 OrganizationBarChart.propTypes = {
   period: PropTypes.arrayOf(PropTypes.string).isRequired,
   usage: PropTypes.array
 };
+
+export default OrganizationBarChart;
