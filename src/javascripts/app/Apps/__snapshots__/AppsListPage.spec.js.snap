@@ -120,7 +120,7 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
               <a
                 class="Button__Button___1ZfFj a11y__focus-border--default___60AXp emotion-2 Button__Button--primary___JImeO"
                 data-test-id="cf-ui-button"
-                href="https://www.contentful.com/developers/docs/extensibility/app-framework/"
+                href="https://www.contentful.com/app-framework/"
                 rel="noopener noreferrer"
                 target="_blank"
                 type="button"
@@ -132,7 +132,7 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
                   <span
                     class="Button__Button__label___3tcOj"
                   >
-                    Learn how to build your own app
+                    Learn more about Contentful apps
                   </span>
                 </span>
               </a>
@@ -507,7 +507,525 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
                   <span
                     class="Button__Button__label___3tcOj"
                   >
-                    Learn how to build your own app
+                    Learn more about Contentful apps
+                  </span>
+                </span>
+              </a>
+            </div>
+            <div
+              class="emotion-3"
+            >
+              <connected-shapes.svg
+                classname="css-1z01nmi-svgContainerExtension"
+              />
+            </div>
+          </div>
+          <div
+            class="Card__Card___1_26G emotion-47 Card__Card--padding-large___2KzUK"
+            data-test-id="cf-ui-card"
+          >
+            <div>
+              <h2
+                class="Heading__Heading___83D3K"
+                data-test-id="cf-ui-heading"
+              >
+                Available
+              </h2>
+              <div>
+                <div
+                  class="emotion-11"
+                >
+                  <div
+                    class="emotion-9"
+                    data-test-id="app-title"
+                  >
+                    <h3
+                      class="Heading__Heading___83D3K emotion-8"
+                      data-test-id="cf-ui-heading"
+                    >
+                      <div
+                        class="emotion-7"
+                        data-test-id="app-details"
+                      >
+                        <img
+                          class="emotion-5"
+                          src="//images.ctfassets.net/lpjm8d10rkpy/2dYQ3x6VMNZJgDXYmMzLBx/b338ad4b50cd0ff31e7157671b801b4d/logomark.svg"
+                        />
+                        <div>
+                          Netlify
+                          <div
+                            class="emotion-6"
+                          >
+                            Easily build and preview sites with the Netlify app 
+                          </div>
+                        </div>
+                      </div>
+                    </h3>
+                  </div>
+                  <div
+                    class="emotion-10"
+                  >
+                    <button
+                      class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                      data-test-id="cf-ui-text-link"
+                      type="button"
+                    >
+                      <span
+                        class="TabFocusTrap__TabFocusTrap___39Vty"
+                        tabindex="-1"
+                      >
+                        About
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                <div
+                  class="emotion-11"
+                >
+                  <div
+                    class="emotion-9"
+                    data-test-id="app-title"
+                  >
+                    <h3
+                      class="Heading__Heading___83D3K emotion-8"
+                      data-test-id="cf-ui-heading"
+                    >
+                      <div
+                        class="emotion-7"
+                        data-test-id="app-details"
+                      >
+                        <img
+                          class="emotion-5"
+                          src="//images.ctfassets.net/lpjm8d10rkpy/4X7O4Q0pIgQZNcONoQrQlp/9262ad9a935fa92e9cacd9207ae0a401/optimizely-logo.svg"
+                        />
+                        <div>
+                          Optimizely
+                          <div
+                            class="emotion-6"
+                          >
+                            Enable experimentation at scale with the Optimizely app
+                          </div>
+                        </div>
+                      </div>
+                    </h3>
+                  </div>
+                  <div
+                    class="emotion-10"
+                  >
+                    <button
+                      class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                      data-test-id="cf-ui-text-link"
+                      type="button"
+                    >
+                      <span
+                        class="TabFocusTrap__TabFocusTrap___39Vty"
+                        tabindex="-1"
+                      >
+                        About
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                <div
+                  class="emotion-11"
+                >
+                  <div
+                    class="emotion-9"
+                    data-test-id="app-title"
+                  >
+                    <h3
+                      class="Heading__Heading___83D3K emotion-8"
+                      data-test-id="cf-ui-heading"
+                    >
+                      <div
+                        class="emotion-7"
+                        data-test-id="app-details"
+                      >
+                        <img
+                          class="emotion-5"
+                          src="//images.ctfassets.net/lpjm8d10rkpy/1o6HKvOxxumeW64hv6ANMw/b1c5308bcd4e48cfaafc185c0b12aa36/Gatsby_Monogram.svg"
+                        />
+                        <div>
+                          Gatsby Cloud
+                          <div
+                            class="emotion-6"
+                          >
+                            Instantly see content changes on your website with the Gatsby app
+                          </div>
+                        </div>
+                      </div>
+                    </h3>
+                  </div>
+                  <div
+                    class="emotion-10"
+                  >
+                    <button
+                      class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                      data-test-id="cf-ui-text-link"
+                      type="button"
+                    >
+                      <span
+                        class="TabFocusTrap__TabFocusTrap___39Vty"
+                        tabindex="-1"
+                      >
+                        About
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                <div
+                  class="emotion-11"
+                >
+                  <div
+                    class="emotion-9"
+                    data-test-id="app-title"
+                  >
+                    <h3
+                      class="Heading__Heading___83D3K emotion-8"
+                      data-test-id="cf-ui-heading"
+                    >
+                      <div
+                        class="emotion-7"
+                        data-test-id="app-details"
+                      >
+                        <img
+                          class="emotion-5"
+                          src="//images.ctfassets.net/lpjm8d10rkpy/3ZH89y9VHHd53v4OQ3BG0V/cc62043a88cd5fb80719687f299e7351/cloudinary_icon_for_white_bg.svg"
+                        />
+                        <div>
+                          Cloudinary
+                          <div
+                            class="emotion-6"
+                          >
+                            Seamlessly deliver images and videos with the Cloudinary app
+                          </div>
+                        </div>
+                      </div>
+                    </h3>
+                  </div>
+                  <div
+                    class="emotion-10"
+                  >
+                    <button
+                      class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                      data-test-id="cf-ui-text-link"
+                      type="button"
+                    >
+                      <span
+                        class="TabFocusTrap__TabFocusTrap___39Vty"
+                        tabindex="-1"
+                      >
+                        About
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                <div
+                  class="emotion-11"
+                >
+                  <div
+                    class="emotion-9"
+                    data-test-id="app-title"
+                  >
+                    <h3
+                      class="Heading__Heading___83D3K emotion-8"
+                      data-test-id="cf-ui-heading"
+                    >
+                      <div
+                        class="emotion-7"
+                        data-test-id="app-details"
+                      >
+                        <img
+                          class="emotion-5"
+                          src="//images.ctfassets.net/lpjm8d10rkpy/3vNJZRjthatucy2mBJMy1u/0e5d501207427780021e7580cc384761/bynder.5e9e457b9d.svg"
+                        />
+                        <div>
+                          Bynder
+                          <div
+                            class="emotion-6"
+                          >
+                            Find and use brand, marketing and product assets from your Bynder library 
+                          </div>
+                        </div>
+                      </div>
+                    </h3>
+                  </div>
+                  <div
+                    class="emotion-10"
+                  >
+                    <button
+                      class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                      data-test-id="cf-ui-text-link"
+                      type="button"
+                    >
+                      <span
+                        class="TabFocusTrap__TabFocusTrap___39Vty"
+                        tabindex="-1"
+                      >
+                        About
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                <div
+                  class="emotion-11"
+                >
+                  <div
+                    class="emotion-9"
+                    data-test-id="app-title"
+                  >
+                    <h3
+                      class="Heading__Heading___83D3K emotion-8"
+                      data-test-id="cf-ui-heading"
+                    >
+                      <div
+                        class="emotion-7"
+                        data-test-id="app-details"
+                      >
+                        <img
+                          class="emotion-5"
+                          src="//images.ctfassets.net/lpjm8d10rkpy/7KdyOX9FlBz0SX5QyaLFaF/6ee4f786204d6f80b096fb73584dbcf7/logo.svg"
+                        />
+                        <div>
+                          Dropbox
+                          <div
+                            class="emotion-6"
+                          >
+                            Connect Contentful and Dropbox to easily share content 
+                          </div>
+                        </div>
+                      </div>
+                    </h3>
+                  </div>
+                  <div
+                    class="emotion-10"
+                  >
+                    <button
+                      class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+                      data-test-id="cf-ui-text-link"
+                      type="button"
+                    >
+                      <span
+                        class="TabFocusTrap__TabFocusTrap___39Vty"
+                        tabindex="-1"
+                      >
+                        About
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`AppsListPage should match snapshot of apps loaded with limited access 1`] = `
+.emotion-4 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  height: 100%;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.emotion-2 {
+  margin-top: 1.5rem;
+}
+
+.emotion-3 {
+  -webkit-align-self: flex-start;
+  -ms-flex-item-align: start;
+  align-self: flex-start;
+}
+
+.emotion-0 {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.emotion-1 {
+  font-size: 0.875rem;
+  padding-right: 1.5rem;
+}
+
+.emotion-11 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid #e5ebed;
+}
+
+.emotion-11:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.emotion-9 {
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  display: block;
+}
+
+.emotion-6 {
+  font-size: 0.75rem;
+  color: #b4c3ca;
+}
+
+.emotion-8 {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.emotion-10 {
+  display: block;
+}
+
+.emotion-10 button {
+  margin-left: 1rem;
+}
+
+.emotion-5 {
+  border-radius: 5px;
+  background-color: #fff;
+  box-shadow: 0 2px 3px 0 rgba(0,0,0,0.08);
+  padding: 2px;
+  margin-right: 0.75rem;
+  width: 35px;
+  height: 35px;
+}
+
+.emotion-7 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.emotion-48 {
+  background-color: #f7f9fa;
+}
+
+.emotion-47 {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+<div>
+  <div
+    class="Workbench__Workbench___THi9K emotion-48"
+    data-test-id="cf-ui-workbench"
+  >
+    <div
+      class="Workbench__Workbench__header___2wo2E"
+      data-test-id="cf-ui-workbench-header"
+    >
+      <div
+        class="Workbench__Workbench__header-icon___1kJlL"
+      >
+        <span
+          class="icon-component"
+          data-icon-name="page-apps"
+        >
+          <page-apps.svg />
+        </span>
+      </div>
+      <div
+        class="Workbench__Workbench__header-title___3xp7b"
+        data-test-id="workbench-title"
+      >
+        <h1
+          class="Heading__Heading___83D3K"
+          data-test-id="cf-ui-heading"
+        >
+          Apps
+        </h1>
+      </div>
+      <div
+        class="Workbench__Workbench__header-actions___mJoSR"
+      >
+        <button
+          class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
+          data-test-id="cf-ui-text-link"
+          type="button"
+        >
+          <span
+            class="TabFocusTrap__TabFocusTrap___39Vty"
+            tabindex="-1"
+          >
+            Give your feedback
+          </span>
+        </button>
+      </div>
+    </div>
+    <div
+      class="Workbench__Workbench__content-wrapper___3yWKi"
+    >
+      <div
+        class="Workbench__Workbench__content___1U8bV"
+        data-test-id="cf-ui-workbench-content"
+      >
+        <div
+          class="Workbench__Workbench__content-inner___36_Hx Workbench__Workbench__content-inner--text___7nfTX"
+        >
+          <div
+            class="Card__Card___1_26G emotion-4 Card__Card--padding-large___2KzUK"
+            data-test-id="cf-ui-card"
+          >
+            <div>
+              <h1
+                class="Heading__Heading___83D3K emotion-0"
+                data-test-id="cf-ui-heading"
+              >
+                Introducing Contentful apps
+              </h1>
+              <p
+                class="Paragraph__Paragraph___2aO-9 emotion-1"
+                data-test-id="cf-ui-paragraph"
+              >
+                Contentful apps extend the capabilities of the Contentful web app and the editors who use it. Apps empower you to integrate third-party services, build efficient workflows and customize the functionality of the Contentful web app.
+              </p>
+              <a
+                class="Button__Button___1ZfFj a11y__focus-border--default___60AXp emotion-2 Button__Button--primary___JImeO"
+                data-test-id="cf-ui-button"
+                href="https://www.contentful.com/app-framework/"
+                rel="noopener noreferrer"
+                target="_blank"
+                type="button"
+              >
+                <span
+                  class="TabFocusTrap__TabFocusTrap___39Vty Button__Button__inner-wrapper___3qrNC"
+                  tabindex="-1"
+                >
+                  <span
+                    class="Button__Button__label___3tcOj"
+                  >
+                    Learn more about Contentful apps
                   </span>
                 </span>
               </a>

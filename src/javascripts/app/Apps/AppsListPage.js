@@ -128,7 +128,7 @@ const AppsListShell = props => (
 
 AppsListShell.propTypes = {
   appsFeatureDisabled: PropTypes.bool,
-  userCanEditApps: PropTypes.bool.isRequired
+  userCanEditApps: PropTypes.bool
 };
 
 const ItemSkeleton = props => (

@@ -67,7 +67,7 @@ export default class AppListItem extends Component {
       isPrivateApp: PropTypes.bool
     }).isRequired,
     openDetailModal: PropTypes.func.isRequired,
-    userCanEditApps: PropTypes.bool.isRequired
+    userCanEditApps: PropTypes.bool
   };
 
   determineOnClick = (onClick, openDetailsFunc, userCanEditApps) => {

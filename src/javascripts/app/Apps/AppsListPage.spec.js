@@ -54,10 +54,35 @@ describe('AppsListPage', () => {
         goToContent={() => {}}
         repo={mockRepo}
         organizationId={orgId}
-        spaceInformation={spaceInformation}
+        spaceId={spaceId}
         userId={userId}
         hasAppsFeature={true}
+        spaceInformation={spaceInformation}
         userCanEditApps={true}
+      />
+    );
+
+    await wait();
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it('should match snapshot of apps loaded with limited access', async () => {
+    const mockRepo = {
+      getApps: jest.fn(() => Promise.resolve(repoAppsMock))
+    };
+
+    const { container } = render(
+      <AppsListPage
+        goToContent={() => {}}
+        repo={mockRepo}
+        organizationId={orgId}
+        spaceId={spaceId}
+        userId={userId}
+        hasAppsFeature={true}
+        spaceInformation={spaceInformation}
+        // limit the access
+        userCanEditApps={false}
       />
     );
 
