@@ -20,6 +20,9 @@ const commandTemplate = {
 
 jest.mock('../DataManagement/ScheduledActionsService');
 jest.mock('classes/EntityFieldValueSpaceContext', () => ({ entryTitle: () => 'Test' }));
+jest.mock('utils/LaunchDarkly', () => ({
+  getCurrentVariation: jest.fn().mockResolvedValue(false) // Reference Dialog disabled
+}));
 jest.mock('app/entity_editor/UnpublishedReferencesWarning', () => ({
   showUnpublishedReferencesWarning: () => Promise.resolve(true)
 }));

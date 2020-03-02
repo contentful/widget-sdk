@@ -18,6 +18,7 @@ import RestrictedAction from './RestrictedAction';
 
 import CommandPropType from 'app/entity_editor/CommandPropType';
 import StatusBadge from 'app/EntrySidebar/PublicationWidget/StatusBadge';
+import ReferencesDialog from 'app/EntrySidebar/ReferencesDialog';
 
 // TODO: This code started as a copy of <PublicationWidget />, there should be
 //  some shared code as there are still a lot of similarities.
@@ -64,7 +65,8 @@ export default class StatusWidget extends React.PureComponent {
     onScheduledPublishClick: PropTypes.func.isRequired,
     isScheduledPublishDisabled: PropTypes.bool.isRequired,
     isDisabled: PropTypes.bool.isRequired,
-    publicationBlockedReason: PropTypes.string
+    publicationBlockedReason: PropTypes.string,
+    entity: PropTypes.object
   };
 
   state = {
@@ -108,10 +110,12 @@ export default class StatusWidget extends React.PureComponent {
       revert,
       isDisabled,
       isScheduled,
-      publicationBlockedReason
+      publicationBlockedReason,
+      entity
     } = this.props;
     const secondaryActionsDisabled =
       every(secondary || [], action => action.isDisabled()) && !this.canSchedule();
+
     return (
       <div data-test-id="status-widget">
         <header className="entity-sidebar__header">
@@ -196,6 +200,12 @@ export default class StatusWidget extends React.PureComponent {
             publicationBlockedReason && <ActionRestrictedNote reason={publicationBlockedReason} />
           )}
         </div>
+
+        <ReferencesDialog
+          entity={entity}
+          isOpen={this.state.isReferenceDialogOpen}
+          onClose={() => this.setState({ isReferenceDialogOpen: false })}
+        />
         <div className="entity-sidebar__status-more">
           {updatedAt && (
             <div className="entity-sidebar__save-status">

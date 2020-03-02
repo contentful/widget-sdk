@@ -18,3 +18,6 @@ export const ENVIRONMENT_ALIASING = 'environment_aliasing';
 export const CONTENT_WORKFLOW_TASKS = 'tasks';
 export const SCHEDULED_PUBLISHING = 'scheduled_publishing';
 export const NEW_RICH_TEXT = 'feature-pen-02-2020-open-source-rich-text';
+
+// Pulitzer Releases Flags
+export const ALL_REFERENCES_DIALOG = 'feature-pulitzer-02-2020-all-reference-dialog';

@@ -8,7 +8,8 @@ const API_KEY = '85be5437fb63d71aec4a8f99eff1022d-6b60e603-8a27e1dd';
 
 const TARGET_MAILS = {
   extensibility: 'team-extensibility+apps@contentful.com',
-  devWorkflows: 'prd-dev-workflows+aliases-feedback@contentful.com'
+  devWorkflows: 'prd-dev-workflows+aliases-feedback@contentful.com',
+  cxPulitzerReleases: 'team-pulitzer+feedback-releases@contentful.com'
 };
 
 const getMailText = ({ feedback, userId, orgId }) => `
