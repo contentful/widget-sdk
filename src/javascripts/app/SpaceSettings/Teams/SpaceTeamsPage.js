@@ -10,7 +10,6 @@ import UnknownErrorMessage from 'components/shared/UnknownErrorMessage';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import useAsync from 'app/common/hooks/useAsync';
 import resolveLinks from 'data/LinkResolver';
-import { getModule } from 'NgRegistry';
 import {
   getTeamsSpaceMembershipsOfSpace,
   updateTeamSpaceMembership,
@@ -21,6 +20,8 @@ import { getSectionVisibility } from 'access_control/AccessChecker';
 import { ADMIN_ROLE_ID } from 'access_control/constants';
 import * as SpaceMembershipRepository from 'access_control/SpaceMembershipRepository';
 import DocumentTitle from 'components/shared/DocumentTitle';
+
+import { getModule } from 'NgRegistry';
 
 import styles from './styles';
 import SpaceTeamsPagePresentation from './SpaceTeamsPagePresentation';
@@ -97,13 +98,9 @@ const reducer = (state, { type, payload }) => {
   }
 };
 
-const fetch = (spaceId, dispatch) => async () => {
+const fetch = (spaceId, organizationId, dispatch) => async () => {
   const spaceEndpoint = createSpaceEndpoint(spaceId);
-  const spaceContext = getModule('spaceContext');
-  const {
-    sys: { id: orgId }
-  } = spaceContext.organization;
-  const orgEndpoint = createOrganizationEndpoint(orgId);
+  const orgEndpoint = createOrganizationEndpoint(organizationId);
 
   const [
     teamSpaceMemberships,
@@ -122,9 +119,9 @@ const fetch = (spaceId, dispatch) => async () => {
   });
 };
 
-const useFetching = spaceId => {
+const useFetching = (spaceId, organizationId) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { isLoading, error } = useAsync(useCallback(fetch(spaceId, dispatch), []));
+  const { isLoading, error } = useAsync(useCallback(fetch(spaceId, organizationId, dispatch), []));
 
   const onUpdateTeamSpaceMembership = useCallback(
     async (membership, selectedRoleIds) => {
@@ -184,10 +181,16 @@ const useFetching = spaceId => {
   return [{ state, isLoading, error }, onUpdateTeamSpaceMembership, onRemoveTeamSpaceMembership];
 };
 
-const SpaceTeamsPage = ({ spaceId, onReady }) => {
+const SpaceTeamsPage = ({ spaceId }) => {
+  // TODO: Move this to mapInjectedToProps/a routing component
+  //
+  // This cannot be done yet due to spaceMember being an object which causes overflows
   const spaceContext = getModule('spaceContext');
 
-  onReady();
+  const organizationId = spaceContext.organization.sys.id;
+  const spaceMember = spaceContext.getData('spaceMember');
+  const readOnly = !spaceContext.getData('spaceMember.admin', false);
+
   const [
     {
       state: { teamSpaceMemberships, spaceMemberships, teams, availableRoles, isPending },
@@ -196,18 +199,18 @@ const SpaceTeamsPage = ({ spaceId, onReady }) => {
     },
     onUpdateTeamSpaceMembership,
     onRemoveTeamSpaceMembership
-  ] = useFetching(spaceId);
+  ] = useFetching(spaceId, organizationId);
 
   if (!getSectionVisibility().teams) {
     return <ForbiddenPage />;
   }
-  const readOnly = !spaceContext.getData('spaceMember.admin', false);
-  const spaceMember = spaceContext.getData('spaceMember');
+
   const [{ relatedMemberships: currentUserSpaceMemberships }] = resolveLinks({
     paths: ['relatedMemberships'],
     includes: { TeamSpaceMembership: teamSpaceMemberships },
     items: [spaceMember]
   });
+
   const currentUserAdminSpaceMemberships = filter(currentUserSpaceMemberships, { admin: true });
 
   if (error) {
@@ -240,8 +243,7 @@ const SpaceTeamsPage = ({ spaceId, onReady }) => {
 };
 
 SpaceTeamsPage.propTypes = {
-  spaceId: PropTypes.string.isRequired,
-  onReady: PropTypes.func.isRequired
+  spaceId: PropTypes.string
 };
 
 export default SpaceTeamsPage;

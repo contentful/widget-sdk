@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 
 import { Workbench } from '@contentful/forma-36-react-components';
 import NavigationIcon from 'ui/Components/NavigationIcon';
@@ -10,11 +9,9 @@ import { useTokensState } from '../settings/api/cma-tokens/CMATokensViewReducer'
 
 import PersonalAccessTokenSection from 'app/common/ApiTokens/PersonalAccessTokenSection';
 
-const UserCMATokens = ({ onReady }) => {
+const UserCMATokens = () => {
   const tokenResourceManager = TokenResourceManager.create(Auth);
   const [state, actions] = useTokensState(tokenResourceManager);
-
-  useEffect(onReady, [onReady]);
 
   return (
     <Workbench>
@@ -27,10 +24,6 @@ const UserCMATokens = ({ onReady }) => {
       </Workbench.Content>
     </Workbench>
   );
-};
-
-UserCMATokens.propTypes = {
-  onReady: PropTypes.func.isRequired
 };
 
 export default UserCMATokens;

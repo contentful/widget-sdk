@@ -158,13 +158,12 @@ export default function register() {
         const injectables = mapping.slice(0, mapping.length - 1);
         const mapperFn = mapping[mapping.length - 1];
 
-        return ['$scope', '$state'].concat(injectables).concat([
-          function($scope, $state) {
-            const args = Array.prototype.slice.call(arguments).slice(2);
+        return ['$scope', '$state', '$stateParams'].concat(injectables).concat([
+          function($scope, $state, $stateParams, ...rest) {
             $scope.context = {};
             $state.current.data = $scope.context;
             $scope.component = component;
-            $scope.props = mapperFn(...args);
+            $scope.props = Object.assign({}, mapperFn(...rest), $stateParams);
             $scope.$applyAsync();
           }
         ]);

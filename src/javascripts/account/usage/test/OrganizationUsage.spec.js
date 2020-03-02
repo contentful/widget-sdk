@@ -114,9 +114,7 @@ describe('OrganizationUsage', () => {
 
   beforeAll(() => {
     defaultProps = {
-      orgId: '23423',
-      onReady: jest.fn(),
-      onForbidden: jest.fn()
+      orgId: '23423'
     };
     // set fixed date for stable snapshots
     // moment('2017-12-01').unix() = 1512082800
@@ -133,55 +131,40 @@ describe('OrganizationUsage', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('should call `onReady`', async () => {
-    await shallowRenderComponent(defaultProps);
-    expect(defaultProps.onReady).toHaveBeenCalled();
-  });
-
   describe('user is not owner or admin', () => {
-    it('should call `onForbidden`', async () => {
+    it('should populate error in the state', async () => {
       OrganizationRolesMocked.isOwnerOrAdmin.mockReturnValueOnce(false);
 
-      await shallowRenderComponent(defaultProps);
+      const wrapper = await shallowRenderComponent(defaultProps);
 
       expect(TokenStoreMocked.getOrganization).toHaveBeenCalledWith(defaultProps.orgId);
       expect(OrganizationRolesMocked.isOwnerOrAdmin).toHaveBeenCalledWith({});
-      const errArg = defaultProps.onForbidden.mock.calls[0][0];
-      expect(errArg).toBeInstanceOf(Error);
-      expect(errArg.message).toBe('No permission');
+      expect(wrapper.state('error')).toBeTruthy();
     });
   });
 
   describe('fetching org data fails with 404', () => {
-    it('should call `onForbidden`', async () => {
+    it('should populate error in the state', async () => {
       const error404 = new Error('Test error');
       error404.status = 404;
 
       OrganizationMembershipRepositoryMocked.getAllSpaces.mockRejectedValueOnce(error404);
-      const onForbiddenMock = jest.fn();
 
-      await shallowRenderComponent({
-        ...defaultProps,
-        onForbidden: onForbiddenMock
-      });
+      const wrapper = await shallowRenderComponent(defaultProps);
 
-      expect(onForbiddenMock).toHaveBeenCalledWith(error404);
+      expect(wrapper.state('error')).toBeTruthy();
     });
   });
 
   describe('fetching org data fails with 403', () => {
-    it('should call `onForbidden`', async () => {
+    it('should populate error in the state', async () => {
       const error403 = new Error('Test error');
       error403.status = 403;
       OrganizationMembershipRepositoryMocked.getAllSpaces.mockRejectedValueOnce(error403);
-      const onForbiddenMock = jest.fn();
 
-      await shallowRenderComponent({
-        ...defaultProps,
-        onForbidden: onForbiddenMock
-      });
+      const wrapper = await shallowRenderComponent(defaultProps);
 
-      expect(onForbiddenMock).toHaveBeenCalledWith(error403);
+      expect(wrapper.state('error')).toBeTruthy();
     });
   });
 
@@ -192,14 +175,8 @@ describe('OrganizationUsage', () => {
 
       OrganizationMembershipRepositoryMocked.getAllSpaces.mockRejectedValueOnce(error400);
 
-      const onForbiddenMock = jest.fn();
+      await shallowRenderComponent(defaultProps);
 
-      await shallowRenderComponent({
-        ...defaultProps,
-        onForbidden: onForbiddenMock
-      });
-
-      expect(onForbiddenMock).not.toHaveBeenCalled();
       expect(ReloadNotification.trigger).toHaveBeenCalled();
     });
   });

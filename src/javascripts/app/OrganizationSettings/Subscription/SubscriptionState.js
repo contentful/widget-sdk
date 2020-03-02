@@ -1,9 +1,8 @@
-import { reactStateWrapper } from 'states/utils';
-import SubscriptionOverview from 'ui/Pages/SubscriptionOverview';
+import { organizationRoute } from 'states/utils';
+import SubscriptionPageRoute from 'ui/Pages/SubscriptionOverview';
 
-export default reactStateWrapper({
+export default organizationRoute({
   name: 'subscription_new',
   url: '/subscription_overview',
-  loadingText: 'Loading your subscription…',
-  component: SubscriptionOverview
+  component: SubscriptionPageRoute
 });

@@ -1,28 +1,25 @@
-import { reactStateWrapper } from 'states/utils';
+import { organizationRoute } from 'states/utils';
 import NewUserRoute from 'app/OrganizationSettings/Users/NewUser/NewUserRoute';
 import UserDetailsRoute from 'app/OrganizationSettings/Users/UserDetail/UserDetailsRoute';
 import UserListRoute from 'app/OrganizationSettings/Users/UsersList/UserListRoute';
 
-export const inviteUsersState = reactStateWrapper({
+export const inviteUsersState = organizationRoute({
   name: 'new',
-  title: 'Invite new users',
   url: '/invite',
   component: NewUserRoute
 });
 
-export const userDetailState = reactStateWrapper({
+export const userDetailState = organizationRoute({
   name: 'detail',
   params: {
     userId: ''
   },
-  title: 'Organization user',
   url: '/organization_memberships/:userId',
   component: UserDetailsRoute
 });
 
-export const usersListState = reactStateWrapper({
+export const usersListState = organizationRoute({
   name: 'list',
-  title: 'Organization users',
   url: '/organization_memberships',
   component: UserListRoute
 });

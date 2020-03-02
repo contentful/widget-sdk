@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
@@ -7,9 +7,10 @@ import { get, isUndefined } from 'lodash';
 import { getPlansWithSpaces, getRatePlans } from 'account/pricing/PricingDataProvider';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import createResourceService from 'services/ResourceService';
-import { getSpaces, getOrganization } from 'services/TokenStore';
+import { getSpaces } from 'services/TokenStore';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { calcUsersMeta, calculateTotalPrice } from 'utils/SubscriptionUtils';
+import { getOrganization } from 'services/TokenStore';
 
 import DocumentTitle from 'components/shared/DocumentTitle';
 
@@ -84,10 +85,8 @@ const fetch = organizationId => async () => {
   return { basePlan, spacePlans, grandTotal, usersMeta, organization, productRatePlans };
 };
 
-export default function SubscriptionPageRouter({ onReady, orgId }) {
-  const { isLoading, error, data } = useAsync(useCallback(fetch(orgId), [orgId]));
-
-  useEffect(onReady, [orgId]);
+export default function SubscriptionPageRouter({ orgId: organizationId }) {
+  const { isLoading, error, data } = useAsync(useCallback(fetch(organizationId), []));
 
   if (isLoading || !data) {
     return <FetcherLoading message="Loading subscription" />;
@@ -100,12 +99,11 @@ export default function SubscriptionPageRouter({ onReady, orgId }) {
   return (
     <>
       <DocumentTitle title="Subscription" />
-      <SubscriptionPage organizationId={orgId} data={data} />
+      <SubscriptionPage organizationId={organizationId} data={data} />
     </>
   );
 }
 
 SubscriptionPageRouter.propTypes = {
-  onReady: PropTypes.func.isRequired,
   orgId: PropTypes.string.isRequired
 };

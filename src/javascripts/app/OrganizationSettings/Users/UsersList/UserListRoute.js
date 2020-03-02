@@ -37,13 +37,8 @@ const UserListFetcher = createFetcherComponent(({ orgId }) => {
 export default class UserListRoute extends React.Component {
   static propTypes = {
     orgId: PropTypes.string.isRequired,
-    onReady: PropTypes.func.isRequired,
     context: PropTypes.any
   };
-
-  componentDidMount() {
-    this.props.onReady();
-  }
 
   render() {
     const { orgId } = this.props;

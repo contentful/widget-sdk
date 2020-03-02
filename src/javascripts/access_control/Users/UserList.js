@@ -17,7 +17,10 @@ import * as UserListActions from './UserListActions';
 import UserListPresentation from './UserListPresentation';
 import { VIEW_BY_NAME, VIEW_BY_ROLE } from './constants';
 
-const fetch = (orgId, endpoint, space, onReady, setData) => async () => {
+import { FetcherLoading } from 'app/common/createFetcherComponent';
+import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
+
+const fetch = (orgId, endpoint, space, setData) => async () => {
   const [members, spaceMemberships, roles, spaceUsers, hasTeamsFeature] = await Promise.all([
     createSpaceMembersRepo(endpoint).getAll(),
     createMembershipRepo(endpoint).getAll(),
@@ -33,17 +36,15 @@ const fetch = (orgId, endpoint, space, onReady, setData) => async () => {
   });
 
   setData({ resolvedMembers, roles, spaceUsers, hasTeamsFeature });
-
-  onReady();
 };
 
-const UserList = ({ onReady, jumpToRole }) => {
+const UserList = ({ jumpToRole }) => {
   const { endpoint, space, organization } = getModule('spaceContext');
 
   const [selectedView, setSelectedView] = useState(jumpToRole ? VIEW_BY_ROLE : VIEW_BY_NAME);
   const [isInvitingUsersToSpace, setIsInvitingUsersToSpace] = useState(false);
   const [data, setData] = useState(null);
-  const boundFetch = fetch(organization.sys.id, endpoint, space, onReady, setData);
+  const boundFetch = fetch(organization.sys.id, endpoint, space, setData);
   const { isLoading, error } = useAsync(useCallback(boundFetch, []));
 
   const resolvedMembers = get(data, 'resolvedMembers', []);
@@ -87,8 +88,12 @@ const UserList = ({ onReady, jumpToRole }) => {
     return userGroups;
   }, [sortedMembers]);
 
-  if (isLoading || error) {
-    return null;
+  if (isLoading || !data) {
+    return <FetcherLoading message="Loading subscription" />;
+  }
+
+  if (error) {
+    return <ForbiddenPage />;
   }
 
   const userGroups = selectedView === VIEW_BY_NAME ? usersByName : usersByRole;
@@ -141,7 +146,6 @@ const UserList = ({ onReady, jumpToRole }) => {
   }
 };
 UserList.propTypes = {
-  onReady: PropTypes.func.isRequired,
   jumpToRole: PropTypes.string
 };
 

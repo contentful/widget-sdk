@@ -74,13 +74,8 @@ export default class UserInvitationsListRouter extends React.Component {
   static propTypes = {
     orgId: PropTypes.string.isRequired,
     invitationId: PropTypes.string.isRequired,
-    onReady: PropTypes.func.isRequired,
     context: PropTypes.any
   };
-
-  componentDidMount() {
-    this.props.onReady();
-  }
 
   render() {
     const { orgId, invitationId } = this.props;
