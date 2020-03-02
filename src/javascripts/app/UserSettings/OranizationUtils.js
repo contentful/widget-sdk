@@ -1,6 +1,5 @@
 import { getMemberships } from 'access_control/OrganizationMembershipRepository';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-
 import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
 
 export const fetchCanLeaveOrg = async orgMembership => {

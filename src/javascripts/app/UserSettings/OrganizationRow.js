@@ -9,6 +9,7 @@ import {
   ModalConfirm,
   Notification,
   Paragraph,
+  Typography,
   DropdownList,
   DropdownListItem
 } from '@contentful/forma-36-react-components';
@@ -18,7 +19,6 @@ import moment from 'moment';
 import ModalLauncher from 'app/common/ModalLauncher';
 import { removeMembership } from 'access_control/OrganizationMembershipRepository';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
 import { fetchCanLeaveOrg } from './OranizationUtils';
 import { hasMemberRole, getOrganizationMembership } from 'services/OrganizationRoles';
@@ -35,10 +35,12 @@ const triggerLeaveModal = async ({ organization, userOrgMembershipId, onLeaveSuc
       onConfirm={() => onClose(true)}
       onCancel={() => onClose(false)}>
       <React.Fragment>
-        <Paragraph>
-          You are about to leave organization <b>{organization.name}.</b>
-        </Paragraph>
-        <Paragraph>Do you want to proceed?</Paragraph>
+        <Typography>
+          <Paragraph>
+            You are about to leave organization <b>{organization.name}.</b>
+          </Paragraph>
+          <Paragraph>Do you want to proceed?</Paragraph>
+        </Typography>
       </React.Fragment>
     </ModalConfirm>
   ));
@@ -76,13 +78,13 @@ const OrganizationRow = ({ organization, onLeaveSuccess }) => {
 
   const [canUserLeaveOrg, setCanUserLeaveOrg] = useState(true);
 
-  // If the user has a role different than 'member' it means they have more permissions and should be able to access the org settings page.
+  // If the user has a role different than 'member' it means they are an 'owner' or 'admin' and should be able to access the org settings page.
   const canAccessOrgSettings = !hasMemberRole(organization);
 
   const goToOrgSettings = () => {
     go({
       path: ['account', 'organizations', 'subscription_new'],
-      params: { orgId: organization.sys.id }
+      params: { orgId: userOrgMembershipId }
     });
   };
 

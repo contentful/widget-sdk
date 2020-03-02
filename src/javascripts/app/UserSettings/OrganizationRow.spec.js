@@ -1,18 +1,16 @@
 import React from 'react';
 import { render, fireEvent, screen, wait, within } from '@testing-library/react';
+
 import * as fake from 'testHelpers/fakeFactory';
 import * as FORMA_CONSTANTS from 'testHelpers/Forma36Constants';
 
 import OrganizationRow from './OrganizationRow';
+import ModalLauncher from '__mocks__/app/common/ModalLauncher';
 import { fetchCanLeaveOrg } from './OranizationUtils';
 import { hasMemberRole, getOrganizationMembership } from 'services/OrganizationRoles';
 import { go } from 'states/Navigator';
-
 import { Notification } from '@contentful/forma-36-react-components';
-
 import { removeMembership } from 'access_control/OrganizationMembershipRepository';
-
-import ModalLauncher from '__mocks__/app/common/ModalLauncher';
 
 const fakeOrganization = fake.Organization();
 const onLeaveSuccess = jest.fn();

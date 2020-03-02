@@ -2,7 +2,6 @@ import React from 'react';
 import { render, screen, wait } from '@testing-library/react';
 
 import OrganizationsRoute from './OrganizationsRoute';
-
 import { getOrganizations } from 'services/TokenStore';
 import * as fake from 'testHelpers/fakeFactory';
 

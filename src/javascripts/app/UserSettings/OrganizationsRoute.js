@@ -11,15 +11,14 @@ import {
   Button
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
+import { without } from 'lodash';
+
 import DocumentTitle from 'components/shared/DocumentTitle';
 import StateLink from 'app/common/StateLink';
 import NavigationIcon from 'ui/Components/NavigationIcon';
-
 import ErrorState from 'app/common/ErrorState';
 import LoadingState from 'app/common/LoadingState';
 import OrganizationRow from './OrganizationRow';
-import { without } from 'lodash';
-
 import { getOrganizations } from 'services/TokenStore';
 
 const styles = {

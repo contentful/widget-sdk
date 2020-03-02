@@ -1,8 +1,6 @@
 import { getMemberships } from 'access_control/OrganizationMembershipRepository';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-
 import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
-
 import { fetchCanLeaveOrg } from './OranizationUtils';
 import * as fake from 'testHelpers/fakeFactory';
 
