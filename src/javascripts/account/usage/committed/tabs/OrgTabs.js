@@ -22,29 +22,8 @@ const OrgTabs = props => {
 
   const orgUsage = periodicUsage.org.usage;
   const totalUsage = sum(orgUsage);
-  const tabsData = [
-    {
-      id: 'apiRequest',
-      title: 'API Requests',
-      defaultActive: true,
-      leftComponent: (
-        <OrganizationUsageInfoNew totalUsage={totalUsage} includedLimit={apiRequestIncludedLimit} />
-      ),
-      rightComponent: <OrganizationBarChart period={period} usage={orgUsage} />
-    },
-    {
-      id: 'assetBandwidth',
-      title: 'Asset Bandwidth',
-      leftComponent: <AssetBandwidthSection />,
-      rightComponent: <div>Asset Bandwidth</div>
-    }
-  ];
 
-  const defaultActiveTabIndex = tabsData && tabsData.findIndex(item => item.defaultActive);
-
-  const [selected, setSelected] = useState(
-    defaultActiveTabIndex === -1 ? 0 : defaultActiveTabIndex
-  );
+  const [selected, setSelected] = useState('apiRequest');
 
   const handleSelected = idx => {
     setSelected(idx);
@@ -52,24 +31,39 @@ const OrgTabs = props => {
 
   return (
     <>
-      <Tabs withDivider={true}>
-        {tabsData &&
-          tabsData.map((item, idx) => (
-            <Tab
-              id={item.id}
-              key={item.id}
-              selected={tabsData[selected].id === item.id}
-              onSelect={() => handleSelected(idx)}>
-              {item.title}
-            </Tab>
-          ))}
+      <Tabs withDivider>
+        <Tab id="apiRequest" selected={selected === 'apiRequest'} onSelect={handleSelected}>
+          API Requests
+        </Tab>
+        <Tab id="assetBandwidth" selected={selected === 'assetBandwidth'} onSelect={handleSelected}>
+          Asset Bandwidth
+        </Tab>
       </Tabs>
-      <TabPanel id={tabsData[selected].id} className={styles.tabPanel}>
-        <Grid columns={'repeat(12, 1fr)'}>
-          <GridItem columnStart={'span 4'}>{tabsData[selected].leftComponent}</GridItem>
-          <GridItem columnStart={'span 8'}>{tabsData[selected].rightComponent}</GridItem>
-        </Grid>
-      </TabPanel>
+
+      {selected === 'apiRequest' && (
+        <TabPanel id="apiRequest" className={styles.tabPanel}>
+          <Grid columns={'repeat(12, 1fr)'}>
+            <GridItem columnStart="span 4">
+              <OrganizationUsageInfoNew
+                totalUsage={totalUsage}
+                includedLimit={apiRequestIncludedLimit}
+              />
+            </GridItem>
+            <GridItem columnStart="span 8">
+              <OrganizationBarChart period={period} usage={orgUsage} />
+            </GridItem>
+          </Grid>
+        </TabPanel>
+      )}
+      {selected === 'assetBandwidth' && (
+        <TabPanel id="assetBandwidth" className={styles.tabPanel}>
+          <Grid columns={'repeat(12, 1fr)'}>
+            <GridItem columnStart="span 12">
+              <AssetBandwidthSection />
+            </GridItem>
+          </Grid>
+        </TabPanel>
+      )}
     </>
   );
 };
