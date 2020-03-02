@@ -97,6 +97,13 @@ describe('TeamMembershipForm', () => {
                   avatarUrl: 'doesntMatter.com/blah',
                   email: 'userX@test.com',
                   sys: { id: 'testUserX' }
+                },
+                {
+                  firstName: null,
+                  lastName: null,
+                  avatarUrl: 'doesntMatter.com/blah',
+                  email: 'userI@test.com',
+                  sys: { id: 'testUserI' }
                 }
               ],
               [ORG_MEMBERSHIPS]: [
@@ -151,6 +158,19 @@ describe('TeamMembershipForm', () => {
                       }
                     }
                   }
+                },
+                {
+                  role: 'member',
+                  sys: {
+                    id: 'orgMembershipI',
+                    user: {
+                      sys: {
+                        type: 'Link',
+                        linkType: USERS,
+                        id: 'testUserI'
+                      }
+                    }
+                  }
                 }
               ],
               [TEAM_MEMBERSHIPS]: [
@@ -190,11 +210,12 @@ describe('TeamMembershipForm', () => {
         const { wrapper } = renderComponent(actions);
 
         const options = wrapper.find(Option).filter({ testId: 'user-select-option' });
-        expect(options).toHaveLength(3);
+        expect(options).toHaveLength(4);
         expect(options.get(0).props.children).toEqual('A User LastName <userA@test.com>');
         expect(options.get(0).props).toHaveProperty('value', 'orgMembershipA');
         expect(options.get(1).props).toHaveProperty('value', 'orgMembershipB1');
         expect(options.get(2).props).toHaveProperty('value', 'orgMembershipB2');
+        expect(options.get(3).props.children).toEqual('Invited <userI@test.com>');
       });
 
       it('the close button should close the form', () => {

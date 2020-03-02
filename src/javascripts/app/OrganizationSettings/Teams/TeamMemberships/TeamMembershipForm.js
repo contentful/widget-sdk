@@ -35,7 +35,9 @@ class TeamMembershipForm extends React.Component {
             </Option>
             {orgMemberships.map(({ sys: { user, id } }) => (
               <Option testId="user-select-option" key={id} value={id}>
-                {`${user.firstName} ${user.lastName} <${user.email}>`}
+                {user.firstName && user.lastName
+                  ? `${user.firstName} ${user.lastName} <${user.email}>`
+                  : `Invited <${user.email}>`}
               </Option>
             ))}
           </Select>
@@ -47,6 +49,7 @@ class TeamMembershipForm extends React.Component {
             buttonType="primary"
             onClick={() => onSubmit(selectedOrgMembershipId)}
             disabled={!selectedOrgMembershipId}
+            // eslint-disable-next-line
             style={{ marginRight: '10px' }}>
             Add to team
           </Button>
