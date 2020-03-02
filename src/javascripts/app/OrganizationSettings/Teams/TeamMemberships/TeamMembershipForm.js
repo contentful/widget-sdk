@@ -33,9 +33,9 @@ class TeamMembershipForm extends React.Component {
             <Option value="" disabled>
               Please select a user
             </Option>
-            {orgMemberships.map(({ sys: { user, id } }) => (
+            {orgMemberships.map(({ status, sys: { user, id } }) => (
               <Option testId="user-select-option" key={id} value={id}>
-                {user.firstName && user.lastName
+                {status === 'active' && user.firstName
                   ? `${user.firstName} ${user.lastName} <${user.email}>`
                   : `Invited <${user.email}>`}
               </Option>
