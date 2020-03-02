@@ -1,8 +1,8 @@
 import { organizationRoute } from 'states/utils';
-import SubscriptionPageRouter from './SubscriptionPageRouter';
+import SubscriptionPageRoute from 'ui/Pages/SubscriptionOverview';
 
 export default organizationRoute({
   name: 'subscription_new',
   url: '/subscription_overview',
-  component: SubscriptionPageRouter
+  component: SubscriptionPageRoute
 });
