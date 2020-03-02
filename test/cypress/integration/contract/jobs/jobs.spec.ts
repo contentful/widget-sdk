@@ -110,7 +110,7 @@ describe('Jobs page', () => {
       cy.getByTestId('scheduled-jobs-date-group')
         .should('be.visible')
         .getAllByTestId('cf-ui-entity-list-item')
-        .should('have.length', severalPendingJobsResponse.items.length);
+        .should('have.length', severalPendingJobsResponse().items.length);
     });
     it('renders list of completed jobs', () => {
       const completedJobsInteraction = queryCompletedJobsForDefaultSpace.willFindSeveral();

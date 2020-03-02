@@ -6,24 +6,24 @@ import {
   defaultEnvironmentId
 } from '../../util/requests';
 
-export const severalPendingJobsResponse = {
+export const severalPendingJobsResponse = (limit: number = 40) => ({
   sys: {
     type: 'Array'
   },
-  limit: 100,
+  limit: limit,
   pages: {},
   items: [
     job({ sys: { id: Matchers.somethingLike(defaultJobId) } }),
     job({ sys: { id: Matchers.somethingLike('jobID2') } }),
     job({ sys: { id: Matchers.somethingLike('jobID3') } })
   ]
-};
+});
 
 export const severalCompletedJobsResponse = {
   sys: {
     type: 'Array'
   },
-  limit: 100,
+  limit: 40,
   pages: {},
   items: [
     job({ sys: { id: Matchers.somethingLike('jobID3'), status: 'succeeded' } }),
@@ -34,7 +34,7 @@ export const severalFailedJobsResponse = {
   sys: {
     type: 'Array'
   },
-  limit: 100,
+  limit: 40,
   pages: {},
   items: [
     job({ sys: { id: Matchers.somethingLike('jobID5'), status: 'failed' } }),

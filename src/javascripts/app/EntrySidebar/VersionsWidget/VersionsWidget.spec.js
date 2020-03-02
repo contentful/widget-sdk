@@ -57,10 +57,11 @@ describe('EntrySidebar/VersionsWidget', () => {
       const { wrapper } = render({
         versions
       });
+
       expect(wrapper.find('table tr')).toHaveLength(2);
-      expect(wrapper.find('table input')).toHaveLength(2);
-      expect(wrapper.find('table input#selected-1')).toBeDisabled();
-      expect(wrapper.find('table input#selected-2')).not.toBeDisabled();
+      expect(wrapper.find('table RadioButton')).toHaveLength(2);
+      expect(wrapper.find('table RadioButton#selected-1')).toBeDisabled();
+      expect(wrapper.find('table RadioButton#selected-2')).not.toBeDisabled();
     });
 
     it('disableds compare button by default which has to be enabled once version is selected', () => {

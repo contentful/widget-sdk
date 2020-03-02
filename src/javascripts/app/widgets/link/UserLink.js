@@ -48,7 +48,9 @@ const UserLink = ({ user }) => {
     return condition ? (
       <span className={cx(styles.statusUnconfirmed, 'user-link__unconfirmed')}>
         <Tooltip content={tooltipMessage} place="bottom" testId="user-details-tooltip">
-          &nbsp;{user.activated ? '(not confirmed)' : '(hasn’t accepted invitation)'}
+          <span data-test-id="user-details-tooltip-trigger">
+            &nbsp;{user.activated ? '(not confirmed)' : '(hasn’t accepted invitation)'}
+          </span>
         </Tooltip>
       </span>
     ) : null;

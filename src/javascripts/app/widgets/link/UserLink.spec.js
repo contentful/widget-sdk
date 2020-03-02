@@ -38,10 +38,9 @@ describe('UserLink', () => {
     const { container, getByTestId } = render(<UserLink {...props} />);
     expect(container.querySelector('img').getAttribute('src')).toBe(props.user.avatarUrl);
     expect(getByTestId('user-details').textContent).toMatch(/\(not confirmed\)$/);
-    const tooltip = getByTestId('user-details-tooltip');
-    expect(tooltip).toBeDefined();
-    fireEvent.mouseOver(tooltip);
-    expect(tooltip.textContent).toBe(
+    const tooltipTrigger = getByTestId('user-details-tooltip-trigger');
+    fireEvent.mouseOver(tooltipTrigger);
+    expect(getByTestId('user-details-tooltip').textContent).toBe(
       'This user hasn’t confirmed their email address yet. Therefore  we can’t guarantee the identity of the user'
     );
   });
@@ -60,10 +59,9 @@ describe('UserLink', () => {
     const { container, getByTestId } = render(<UserLink {...props} />);
     expect(container.querySelector('img').getAttribute('src')).toBe(props.user.avatarUrl);
     expect(getByTestId('user-details').textContent).toMatch(/\(hasn’t accepted invitation\)$/);
-    const tooltip = getByTestId('user-details-tooltip');
-    expect(tooltip).toBeDefined();
-    fireEvent.mouseOver(tooltip);
-    expect(tooltip.textContent).toBe(
+    const tooltipTrigger = getByTestId('user-details-tooltip-trigger');
+    fireEvent.mouseOver(tooltipTrigger);
+    expect(getByTestId('user-details-tooltip').textContent).toBe(
       'This user hasn’t accepted the invitation to your organization yet.'
     );
   });
@@ -81,10 +79,9 @@ describe('UserLink', () => {
     };
     const { container, getByTestId } = render(<UserLink {...props} />);
     expect(container.querySelector('img').getAttribute('src')).toBe(props.user.avatarUrl);
-    const tooltip = getByTestId('user-details-tooltip');
-    expect(tooltip).toBeDefined();
-    fireEvent.mouseOver(tooltip);
-    expect(tooltip.textContent).toBe(
+    const tooltipTrigger = getByTestId('user-details-tooltip-trigger');
+    fireEvent.mouseOver(tooltipTrigger);
+    expect(getByTestId('user-details-tooltip').textContent).toBe(
       'This user hasn’t accepted the invitation to your organization yet.'
     );
   });

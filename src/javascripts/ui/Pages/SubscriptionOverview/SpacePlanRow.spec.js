@@ -115,6 +115,9 @@ describe('Space Plan Row', () => {
     it('shows the enterprise tooltip when plan is committed', async () => {
       await build({ committed: true });
 
+      fireEvent.mouseOver(
+        screen.getByTestId('subscription-page.spaces-list.enterprise-toolitp-trigger')
+      );
       expect(screen.getByTestId('subscription-page.spaces-list.enterprise-toolitp')).toBeDefined();
     });
 
@@ -122,7 +125,7 @@ describe('Space Plan Row', () => {
       await build();
 
       expect(() => {
-        screen.getByTestId('subscription-page.spaces-list.features-toolitp');
+        screen.getByTestId('subscription-page.spaces-list.features-toolitp-trigger');
       }).toThrow();
     });
 
@@ -132,6 +135,10 @@ describe('Space Plan Row', () => {
         return ['FakeFeature1'];
       });
       await build();
+
+      fireEvent.mouseOver(
+        screen.getByTestId('subscription-page.spaces-list.features-toolitp-trigger')
+      );
 
       expect(screen.getByTestId('subscription-page.spaces-list.features-toolitp')).toBeDefined();
     });

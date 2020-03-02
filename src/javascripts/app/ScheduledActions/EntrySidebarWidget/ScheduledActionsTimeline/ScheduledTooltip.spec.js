@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import 'jest-enzyme';
 import { Icon } from '@contentful/forma-36-react-components';
 import ScheduledActionActions from 'app/ScheduledActions/ScheduledActionAction';
@@ -89,7 +89,7 @@ describe('ScheduleTooltip', () => {
       }
     ];
 
-    const wrapper = shallow(
+    const wrapper = mount(
       <ScheduleTooltip jobs={jobs} filter={job => job.entity.sys.id === targetEntryId}>
         <Icon icon="Clock" />
       </ScheduleTooltip>
@@ -97,7 +97,8 @@ describe('ScheduleTooltip', () => {
 
     expect(wrapper.exists('Tooltip')).toBe(true);
     expect(wrapper.exists('Icon')).toBe(true);
-    const tooltipContent = wrapper.dive().find('ScheduleTooltipContent');
+    wrapper.find('Icon').simulate('mouseOver');
+    const tooltipContent = wrapper.find('ScheduleTooltipContent');
     expect(tooltipContent.exists()).toBe(true);
     expect(tooltipContent.prop('job')).toEqual(jobs[jobs.length - 1]);
     expect(tooltipContent.prop('jobsCount')).toBe(jobs.length - 1);
@@ -121,7 +122,7 @@ describe('ScheduleTooltip', () => {
 
     const filter = jest.fn();
 
-    const wrapper = shallow(
+    const wrapper = mount(
       <ScheduleTooltip job={job} jobs={[]} jobsCount={1} filter={filter}>
         <Icon icon="Clock" />
       </ScheduleTooltip>
@@ -129,7 +130,8 @@ describe('ScheduleTooltip', () => {
 
     expect(wrapper.exists('Tooltip')).toBe(true);
     expect(wrapper.exists('Icon')).toBe(true);
-    const tooltipContent = wrapper.dive().find('ScheduleTooltipContent');
+    wrapper.find('Icon').simulate('mouseOver');
+    const tooltipContent = wrapper.find('ScheduleTooltipContent');
     expect(tooltipContent.exists()).toBe(true);
     expect(tooltipContent.prop('job')).toEqual(job);
     expect(tooltipContent.prop('jobsCount')).toBe(1);
