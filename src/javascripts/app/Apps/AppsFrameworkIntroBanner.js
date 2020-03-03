@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Heading, Paragraph, Button, Card } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -30,34 +31,43 @@ const styles = {
   })
 };
 
-const AppsFrameworkIntroBanner = () => (
-  <Card className={styles.flexContainer} padding="large">
-    <div>
-      <Heading className={styles.heading}>Introducing Contentful apps</Heading>
-      <Paragraph className={styles.description}>
-        Contentful apps extend the capabilities of the Contentful web app and the editors who use
-        it. Apps empower you to integrate third-party services, build efficient workflows and
-        customize the functionality of the Contentful web app.
-      </Paragraph>
-      <Button
-        className={styles.button}
-        onClick={() =>
-          track('element:click', {
-            elementId: 'apps_documentation_link',
-            groupId: 'apps_listing_page',
-            fromState: getCurrentStateName()
-          })
-        }
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://www.contentful.com/developers/docs/extensibility/app-framework/">
-        Learn how to build your own app
-      </Button>
-    </div>
-    <div className={styles.illustrationContainer}>
-      <ConnectWithAppIllustration className={styles.svgContainerExtension} />
-    </div>
-  </Card>
-);
+const AppsFrameworkIntroBanner = ({ canManageApps }) => {
+  const ctaLink = canManageApps
+    ? 'https://www.contentful.com/developers/docs/extensibility/app-framework/'
+    : 'https://www.contentful.com/app-framework/';
+  return (
+    <Card className={styles.flexContainer} padding="large">
+      <div>
+        <Heading className={styles.heading}>Introducing Contentful apps</Heading>
+        <Paragraph className={styles.description}>
+          Contentful apps extend the capabilities of the Contentful web app and the editors who use
+          it. Apps empower you to integrate third-party services, build efficient workflows and
+          customize the functionality of the Contentful web app.
+        </Paragraph>
+        <Button
+          className={styles.button}
+          onClick={() =>
+            track('element:click', {
+              elementId: 'apps_documentation_link',
+              groupId: 'apps_listing_page',
+              fromState: getCurrentStateName()
+            })
+          }
+          target="_blank"
+          rel="noopener noreferrer"
+          href={ctaLink}>
+          Learn more about Contentful apps
+        </Button>
+      </div>
+      <div className={styles.illustrationContainer}>
+        <ConnectWithAppIllustration className={styles.svgContainerExtension} />
+      </div>
+    </Card>
+  );
+};
+
+AppsFrameworkIntroBanner.propTypes = {
+  canManageApps: PropTypes.bool
+};
 
 export default AppsFrameworkIntroBanner;

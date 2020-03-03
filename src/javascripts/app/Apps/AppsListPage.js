@@ -22,11 +22,9 @@ import {
 import Icon from 'ui/Components/Icon';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import ModalLauncher from 'app/common/ModalLauncher';
-import StateRedirect from 'app/common/StateRedirect';
 import FeedbackButton from 'app/common/FeedbackButton';
 
 import { websiteUrl } from 'Config';
-import { getSectionVisibility } from 'access_control/AccessChecker';
 
 import AppListItem from './AppListItem';
 import AppDetailsModal from './AppDetailsModal';
@@ -65,7 +63,7 @@ const externalLinkProps = {
   rel: 'noopener noreferrer'
 };
 
-const openDetailModal = ({ spaceInformation, usageExceeded }) => app => {
+const openDetailModal = ({ spaceInformation, usageExceeded, canManageApps }) => app => {
   AppLifecycleTracking.detailsOpened(app.id);
 
   ModalLauncher.open(({ isShown, onClose }) => (
@@ -75,6 +73,7 @@ const openDetailModal = ({ spaceInformation, usageExceeded }) => app => {
       app={app}
       spaceInformation={spaceInformation}
       usageExceeded={usageExceeded}
+      canManageApps={canManageApps}
     />
   ));
 };
@@ -113,7 +112,7 @@ const AppsListShell = props => (
       actions={<FeedbackButton target="extensibility" about="Apps" label="Give your feedback" />}
     />
     <Workbench.Content type="text">
-      <AppsFrameworkIntroBanner />
+      <AppsFrameworkIntroBanner canManageApps={props.canManageApps} />
       {props.appsFeatureDisabled && <PricingInfo />}
       <Card padding="large" className={styles.appListCard}>
         {props.appsFeatureDisabled && (
@@ -126,7 +125,8 @@ const AppsListShell = props => (
 );
 
 AppsListShell.propTypes = {
-  appsFeatureDisabled: PropTypes.bool
+  appsFeatureDisabled: PropTypes.bool,
+  canManageApps: PropTypes.bool
 };
 
 const ItemSkeleton = props => (
@@ -172,7 +172,8 @@ export default class AppsListPage extends React.Component {
     userId: PropTypes.string.isRequired,
     hasAppsFeature: PropTypes.bool.isRequired,
     deeplinkAppId: PropTypes.string,
-    deeplinkReferrer: PropTypes.string
+    deeplinkReferrer: PropTypes.string,
+    canManageApps: PropTypes.bool
   };
 
   state = { ready: false };
@@ -220,10 +221,6 @@ export default class AppsListPage extends React.Component {
   }
 
   render() {
-    if (!getSectionVisibility()['apps']) {
-      return <StateRedirect path="spaces.detail.entries.list" />;
-    }
-
     return (
       <>
         <DocumentTitle title="Apps" />
@@ -233,7 +230,7 @@ export default class AppsListPage extends React.Component {
   }
 
   renderList() {
-    const { organizationId, spaceInformation, userId, hasAppsFeature } = this.props;
+    const { organizationId, spaceInformation, userId, hasAppsFeature, canManageApps } = this.props;
     const { installedApps, availableApps } = this.state;
     const { spaceId } = spaceInformation;
     const usageExceeded = isUsageExceeded(installedApps);
@@ -243,6 +240,7 @@ export default class AppsListPage extends React.Component {
         organizationId={organizationId}
         spaceId={spaceId}
         userId={userId}
+        canManageApps={canManageApps}
         appsFeatureDisabled={!hasAppsFeature}>
         {installedApps.length > 0 && (
           <>
@@ -252,7 +250,8 @@ export default class AppsListPage extends React.Component {
                 <AppListItem
                   key={app.id}
                   app={app}
-                  openDetailModal={openDetailModal({ spaceInformation })}
+                  canManageApps={canManageApps}
+                  openDetailModal={openDetailModal({ spaceInformation, canManageApps })}
                 />
               ))}
             </div>
@@ -265,7 +264,11 @@ export default class AppsListPage extends React.Component {
               <AppListItem
                 key={app.id}
                 app={app}
-                openDetailModal={openDetailModal({ spaceInformation, usageExceeded })}
+                openDetailModal={openDetailModal({
+                  spaceInformation,
+                  usageExceeded,
+                  canManageApps
+                })}
               />
             ))}
           </div>
