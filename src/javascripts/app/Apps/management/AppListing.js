@@ -2,11 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import Icon from 'ui/Components/Icon';
-import { CardActions, DropdownList, DropdownListItem } from '@contentful/forma-36-react-components';
+import get from 'lodash/get';
+import {
+  CardActions,
+  DropdownList,
+  DropdownListItem,
+  Tooltip
+} from '@contentful/forma-36-react-components';
 import AppsPrivateFrameworkIllustration from 'svg/apps-private-framework.svg';
 import tokens from '@contentful/forma-36-tokens';
 import * as ModalLauncher from 'app/common/ModalLauncher';
 import DocumentTitle from 'components/shared/DocumentTitle';
+
+import { MARKETPLACE_ORG_ID, MAX_DEFINITIONS_ALLOWED } from '../config';
 
 import {
   Heading,
@@ -126,7 +134,25 @@ function openInstallModal(definition) {
   ));
 }
 
+function CreateAppButton({ orgId, disabled, onClick }) {
+  const isNotPublicOrg = orgId !== MARKETPLACE_ORG_ID;
+  if (isNotPublicOrg && disabled) {
+    return (
+      <Tooltip content={`Your organization has reached the limit of ${MAX_DEFINITIONS_ALLOWED} app definitions.`}>
+        <Button onClick={onClick} disabled={disabled}>
+          Create app
+        </Button>
+      </Tooltip>
+    );
+  }
+
+  return <Button onClick={onClick}>Create app</Button>;
+}
+
 export default function AppListing({ definitions, canManageApps }) {
+  const definitionsLimitExceeded = definitions.length >= MAX_DEFINITIONS_ALLOWED;
+  const orgId = get(definitions, [0, 'sys', 'organization', 'sys', 'id'], '');
+
   const learnMoreParagraph = (
     <Paragraph>
       Learn more about{' '}
@@ -185,7 +211,13 @@ export default function AppListing({ definitions, canManageApps }) {
         icon={<Icon name="page-apps" scale="1" />}
         actions={
           <StateLink path="^.new_definition">
-            {({ onClick }) => <Button onClick={onClick}>Create new</Button>}
+            {({ onClick }) => (
+              <CreateAppButton
+                onClick={onClick}
+                orgId={orgId}
+                disabled={definitionsLimitExceeded}
+              />
+            )}
           </StateLink>
         }
       />
@@ -257,4 +289,10 @@ export default function AppListing({ definitions, canManageApps }) {
 AppListing.propTypes = {
   definitions: PropTypes.arrayOf(PropTypes.object).isRequired,
   canManageApps: PropTypes.bool.isRequired
+};
+
+CreateAppButton.propTypes = {
+  disabled: PropTypes.bool.isRequired,
+  onClick: PropTypes.func.isRequired,
+  orgId: PropTypes.string.isRequired
 };

@@ -17,6 +17,8 @@ import { toInternalFieldType, toApiFieldType } from 'widgets/FieldTypes';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 
+import { MARKETPLACE_ORG_ID } from '../config';
+
 const styles = {
   helpParagraph: css({
     color: tokens.colorTextLight
@@ -96,8 +98,6 @@ const styles = {
     })
   })
 };
-
-const PUBLIC_ORG_ID = '5EJGHo8tYJcjnEhYWDxivp';
 
 const LOCATION_ORDER = [
   ['App configuration screen', WidgetLocations.LOCATION_APP_CONFIG],
@@ -278,7 +278,7 @@ export default function AppEditor({ definition, onChange }) {
             </div>
           );
         })}
-        {definition.sys.organization.sys.id === PUBLIC_ORG_ID && (
+        {definition.sys.organization.sys.id === MARKETPLACE_ORG_ID && (
           <div className={styles.publicSwitch}>
             <Switch
               testId="public-switch"
