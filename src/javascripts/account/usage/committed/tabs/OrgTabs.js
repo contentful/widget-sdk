@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Tabs, Tab, TabPanel } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { sum } from 'lodash';
+import { sum, get } from 'lodash';
 import { Grid, GridItem } from '../common/Grid';
 import { css } from 'emotion';
 import OrganizationBarChart from '../charts/OrganizationBarChart';
 import OrganizationUsageInfoNew from '../OrganizationUsageInfoNew';
-import AssetBandwidthSection from '../AssetBandwidthSection';
+import AssetBandwidthSection from '../AssetBandwidthSectionNew';
 import { periodicUsagePropType } from '../propTypes';
 
 const styles = {
@@ -18,7 +18,7 @@ const styles = {
 };
 
 const OrgTabs = props => {
-  const { period, periodicUsage, apiRequestIncludedLimit } = props;
+  const { period, periodicUsage, apiRequestIncludedLimit, assetBandwidthData } = props;
 
   const orgUsage = periodicUsage.org.usage;
   const totalUsage = sum(orgUsage);
@@ -59,7 +59,11 @@ const OrgTabs = props => {
         <TabPanel id="assetBandwidth" className={styles.tabPanel}>
           <Grid columns={'repeat(12, 1fr)'}>
             <GridItem columnStart="span 12">
-              <AssetBandwidthSection />
+              <AssetBandwidthSection
+                limit={get(assetBandwidthData, ['limits', 'included'])}
+                usage={get(assetBandwidthData, ['usage'])}
+                uom={get(assetBandwidthData, ['unitOfMeasure'])}
+              />
             </GridItem>
           </Grid>
         </TabPanel>
@@ -71,7 +75,14 @@ const OrgTabs = props => {
 OrgTabs.propTypes = {
   period: PropTypes.arrayOf(PropTypes.string).isRequired,
   periodicUsage: periodicUsagePropType.isRequired,
-  apiRequestIncludedLimit: PropTypes.number.isRequired
+  apiRequestIncludedLimit: PropTypes.number.isRequired,
+  assetBandwidthData: PropTypes.shape({
+    usage: PropTypes.number,
+    unitOfMeasure: PropTypes.string,
+    limits: PropTypes.shape({
+      included: PropTypes.number
+    })
+  })
 };
 
 export default OrgTabs;

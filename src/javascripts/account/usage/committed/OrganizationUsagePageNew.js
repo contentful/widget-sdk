@@ -19,11 +19,12 @@ const styles = {
 const OrganizationUsagePageNew = props => {
   const period = periodToDates(props.period);
   const spaceNames = props.spaceNames;
-  const { periodicUsage, apiRequestIncludedLimit } = props;
+  const { periodicUsage, apiRequestIncludedLimit, assetBandwidthData } = props;
 
   return (
     <>
       <OrgTabs
+        assetBandwidthData={assetBandwidthData}
         period={period}
         periodicUsage={periodicUsage}
         apiRequestIncludedLimit={apiRequestIncludedLimit}
