@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import Icon from 'ui/Components/Icon';
 import {
   Notification,
   Button,
@@ -14,6 +13,7 @@ import AppEditor from './AppEditor';
 import * as ManagementApiClient from './ManagementApiClient';
 import { track } from 'analytics/Analytics';
 import DocumentTitle from 'components/shared/DocumentTitle';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 
 const styles = {
   spacerM: css({
@@ -68,7 +68,7 @@ export default class NewApp extends React.Component {
         <Workbench.Header
           title="Create app"
           onBack={this.props.goToListView}
-          icon={<Icon name="page-apps" scale={1} />}></Workbench.Header>
+          icon={<NavigationIcon icon="apps" size="large" color="green" />}></Workbench.Header>
         <Workbench.Content type="text">
           <Paragraph className={styles.spacerM}>
             Build apps for Contentful to extend the core functionality of the web app and optimize

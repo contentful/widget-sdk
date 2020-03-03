@@ -46,7 +46,7 @@ import {
   Space as SpacePropType,
   Team as TeamPropType
 } from 'app/OrganizationSettings/PropTypes';
-import Icon from 'ui/Components/Icon';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 
 const styles = {
   filters: css({
@@ -271,7 +271,7 @@ class UsersList extends React.Component {
     return (
       <Workbench testId="organization-users-page">
         <Workbench.Header
-          icon={<Icon name="page-users" scale="0.75" />}
+          icon={<NavigationIcon icon="users" size="large" color="green" />}
           title="Users"
           actions={
             <div className={styles.actionsWrapper}>

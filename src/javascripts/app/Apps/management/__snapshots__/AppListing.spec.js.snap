@@ -3,11 +3,11 @@
 exports[`AppListing should render the app listing when definitions are present 1`] = `
 Object {
   "asFragment": [Function],
-  "baseElement": .emotion-6 {
+  "baseElement": .emotion-8 {
   vertical-align: middle;
 }
 
-.emotion-3 button {
+.emotion-5 button {
   height: 20px;
   border: none;
   background-color: transparent;
@@ -19,7 +19,7 @@ Object {
   transition: all 0.2s cubic-bezier(0.13,0.62,0.11,0.99);
 }
 
-.emotion-3 button:hover {
+.emotion-5 button:hover {
   background-color: transparent;
   border: none;
   opacity: 1;
@@ -28,13 +28,13 @@ Object {
   transform: translateX(0);
 }
 
-.emotion-21 {
+.emotion-23 {
   color: #b4c3ca;
   border-bottom: 1px solid #d3dce0;
   font-weight: 400;
 }
 
-.emotion-1 {
+.emotion-3 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -45,12 +45,12 @@ Object {
   align-items: center;
 }
 
-.emotion-0 {
+.emotion-2 {
   margin-right: 0.75rem;
   vertical-align: sub;
 }
 
-.emotion-5 {
+.emotion-7 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -62,7 +62,7 @@ Object {
   height: 20px;
 }
 
-.emotion-5 div {
+.emotion-7 div {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -73,15 +73,29 @@ Object {
   justify-content: center;
 }
 
-.emotion-2 {
+.emotion-4 {
   font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
 }
 
-.emotion-2:hover ~ .emotion-3 button {
+.emotion-4:hover ~ .emotion-5 button {
   opacity: 1;
   -webkit-transform: translateX(0);
   -ms-transform: translateX(0);
   transform: translateX(0);
+}
+
+.emotion-0 {
+  fill: #0eb87f;
+}
+
+.emotion-1 {
+  width: 100%;
+  height: 100%;
+  display: block;
+  width: 32px;
+  height: 32px;
+  max-width: 32px;
+  max-height: 32px;
 }
 
 <body>
@@ -97,12 +111,15 @@ Object {
           <div
             class="Workbench__Workbench__header-icon___1kJlL"
           >
-            <span
-              class="icon-component"
-              data-icon-name="page-apps"
+            <div
+              class="icon-component emotion-1"
+              data-icon-name="headline-apps"
+              data-test-id="product-icon"
             >
-              <page-apps.svg />
-            </span>
+              <apps.svg
+                class="emotion-0"
+              />
+            </div>
           </div>
           <div
             class="Workbench__Workbench__header-title___3xp7b"
@@ -198,13 +215,13 @@ Object {
                       style="top: 0px;"
                     >
                       <div
-                        class="emotion-1"
+                        class="emotion-3"
                       >
                         <a
                           href="^.definitions?definitionId=3AjEyjWz5tRouW4cVOF9la"
                         >
                           <span
-                            class="icon-component emotion-0"
+                            class="icon-component emotion-2"
                             data-icon-name="page-apps"
                           >
                             <page-apps.svg />
@@ -223,16 +240,16 @@ Object {
                       style="top: 0px;"
                     >
                       <div
-                        class="emotion-1"
+                        class="emotion-3"
                       >
                         <span
-                          class="emotion-2"
+                          class="emotion-4"
                         >
                           3AjEyjWz5tRouW4cVOF9la
                            
                         </span>
                         <div
-                          class="CopyButton__CopyButton___OoA5D emotion-3"
+                          class="CopyButton__CopyButton___OoA5D emotion-5"
                           data-test-id="cf-ui-copy-button"
                           id="copyButton"
                         >
@@ -278,12 +295,12 @@ Object {
                     </td>
                     <td
                       align="right"
-                      class="TableCell__TableCell___Wou8a emotion-6"
+                      class="TableCell__TableCell___Wou8a emotion-8"
                       data-test-id="cf-ui-table-cell"
                       style="top: 0px;"
                     >
                       <div
-                        class="emotion-5"
+                        class="emotion-7"
                       >
                         <div
                           class="Dropdown__Dropdown___nAsJ-"
@@ -339,13 +356,13 @@ Object {
                       style="top: 0px;"
                     >
                       <div
-                        class="emotion-1"
+                        class="emotion-3"
                       >
                         <a
                           href="^.definitions?definitionId=2WoMzSs2fRJx79JeVvqdGR"
                         >
                           <span
-                            class="icon-component emotion-0"
+                            class="icon-component emotion-2"
                             data-icon-name="page-apps"
                           >
                             <page-apps.svg />
@@ -364,16 +381,16 @@ Object {
                       style="top: 0px;"
                     >
                       <div
-                        class="emotion-1"
+                        class="emotion-3"
                       >
                         <span
-                          class="emotion-2"
+                          class="emotion-4"
                         >
                           2WoMzSs2fRJx79JeVvqdGR
                            
                         </span>
                         <div
-                          class="CopyButton__CopyButton___OoA5D emotion-3"
+                          class="CopyButton__CopyButton___OoA5D emotion-5"
                           data-test-id="cf-ui-copy-button"
                           id="copyButton"
                         >
@@ -419,12 +436,12 @@ Object {
                     </td>
                     <td
                       align="right"
-                      class="TableCell__TableCell___Wou8a emotion-6"
+                      class="TableCell__TableCell___Wou8a emotion-8"
                       data-test-id="cf-ui-table-cell"
                       style="top: 0px;"
                     >
                       <div
-                        class="emotion-5"
+                        class="emotion-7"
                       >
                         <div
                           class="Dropdown__Dropdown___nAsJ-"
@@ -480,13 +497,13 @@ Object {
                       style="top: 0px;"
                     >
                       <div
-                        class="emotion-1"
+                        class="emotion-3"
                       >
                         <a
                           href="^.definitions?definitionId=3cG9ueyzkY0GCndLiQzmZ0"
                         >
                           <span
-                            class="icon-component emotion-0"
+                            class="icon-component emotion-2"
                             data-icon-name="page-apps"
                           >
                             <page-apps.svg />
@@ -505,16 +522,16 @@ Object {
                       style="top: 0px;"
                     >
                       <div
-                        class="emotion-1"
+                        class="emotion-3"
                       >
                         <span
-                          class="emotion-2"
+                          class="emotion-4"
                         >
                           3cG9ueyzkY0GCndLiQzmZ0
                            
                         </span>
                         <div
-                          class="CopyButton__CopyButton___OoA5D emotion-3"
+                          class="CopyButton__CopyButton___OoA5D emotion-5"
                           data-test-id="cf-ui-copy-button"
                           id="copyButton"
                         >
@@ -560,12 +577,12 @@ Object {
                     </td>
                     <td
                       align="right"
-                      class="TableCell__TableCell___Wou8a emotion-6"
+                      class="TableCell__TableCell___Wou8a emotion-8"
                       data-test-id="cf-ui-table-cell"
                       style="top: 0px;"
                     >
                       <div
-                        class="emotion-5"
+                        class="emotion-7"
                       >
                         <div
                           class="Dropdown__Dropdown___nAsJ-"
@@ -623,7 +640,7 @@ Object {
               data-test-id="cf-ui-text-container"
             >
               <h3
-                class="SectionHeading__SectionHeading___39J6j emotion-21 f36-margin-bottom--l"
+                class="SectionHeading__SectionHeading___39J6j emotion-23 f36-margin-bottom--l"
                 data-test-id="cf-ui-section-heading"
               >
                 About Apps
@@ -677,11 +694,11 @@ Object {
     <div />
     <div />
   </body>,
-  "container": .emotion-6 {
+  "container": .emotion-8 {
   vertical-align: middle;
 }
 
-.emotion-3 button {
+.emotion-5 button {
   height: 20px;
   border: none;
   background-color: transparent;
@@ -693,7 +710,7 @@ Object {
   transition: all 0.2s cubic-bezier(0.13,0.62,0.11,0.99);
 }
 
-.emotion-3 button:hover {
+.emotion-5 button:hover {
   background-color: transparent;
   border: none;
   opacity: 1;
@@ -702,13 +719,13 @@ Object {
   transform: translateX(0);
 }
 
-.emotion-21 {
+.emotion-23 {
   color: #b4c3ca;
   border-bottom: 1px solid #d3dce0;
   font-weight: 400;
 }
 
-.emotion-1 {
+.emotion-3 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -719,12 +736,12 @@ Object {
   align-items: center;
 }
 
-.emotion-0 {
+.emotion-2 {
   margin-right: 0.75rem;
   vertical-align: sub;
 }
 
-.emotion-5 {
+.emotion-7 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -736,7 +753,7 @@ Object {
   height: 20px;
 }
 
-.emotion-5 div {
+.emotion-7 div {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -747,15 +764,29 @@ Object {
   justify-content: center;
 }
 
-.emotion-2 {
+.emotion-4 {
   font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;
 }
 
-.emotion-2:hover ~ .emotion-3 button {
+.emotion-4:hover ~ .emotion-5 button {
   opacity: 1;
   -webkit-transform: translateX(0);
   -ms-transform: translateX(0);
   transform: translateX(0);
+}
+
+.emotion-0 {
+  fill: #0eb87f;
+}
+
+.emotion-1 {
+  width: 100%;
+  height: 100%;
+  display: block;
+  width: 32px;
+  height: 32px;
+  max-width: 32px;
+  max-height: 32px;
 }
 
 <div>
@@ -770,12 +801,15 @@ Object {
         <div
           class="Workbench__Workbench__header-icon___1kJlL"
         >
-          <span
-            class="icon-component"
-            data-icon-name="page-apps"
+          <div
+            class="icon-component emotion-1"
+            data-icon-name="headline-apps"
+            data-test-id="product-icon"
           >
-            <page-apps.svg />
-          </span>
+            <apps.svg
+              class="emotion-0"
+            />
+          </div>
         </div>
         <div
           class="Workbench__Workbench__header-title___3xp7b"
@@ -871,13 +905,13 @@ Object {
                     style="top: 0px;"
                   >
                     <div
-                      class="emotion-1"
+                      class="emotion-3"
                     >
                       <a
                         href="^.definitions?definitionId=3AjEyjWz5tRouW4cVOF9la"
                       >
                         <span
-                          class="icon-component emotion-0"
+                          class="icon-component emotion-2"
                           data-icon-name="page-apps"
                         >
                           <page-apps.svg />
@@ -896,16 +930,16 @@ Object {
                     style="top: 0px;"
                   >
                     <div
-                      class="emotion-1"
+                      class="emotion-3"
                     >
                       <span
-                        class="emotion-2"
+                        class="emotion-4"
                       >
                         3AjEyjWz5tRouW4cVOF9la
                          
                       </span>
                       <div
-                        class="CopyButton__CopyButton___OoA5D emotion-3"
+                        class="CopyButton__CopyButton___OoA5D emotion-5"
                         data-test-id="cf-ui-copy-button"
                         id="copyButton"
                       >
@@ -951,12 +985,12 @@ Object {
                   </td>
                   <td
                     align="right"
-                    class="TableCell__TableCell___Wou8a emotion-6"
+                    class="TableCell__TableCell___Wou8a emotion-8"
                     data-test-id="cf-ui-table-cell"
                     style="top: 0px;"
                   >
                     <div
-                      class="emotion-5"
+                      class="emotion-7"
                     >
                       <div
                         class="Dropdown__Dropdown___nAsJ-"
@@ -1012,13 +1046,13 @@ Object {
                     style="top: 0px;"
                   >
                     <div
-                      class="emotion-1"
+                      class="emotion-3"
                     >
                       <a
                         href="^.definitions?definitionId=2WoMzSs2fRJx79JeVvqdGR"
                       >
                         <span
-                          class="icon-component emotion-0"
+                          class="icon-component emotion-2"
                           data-icon-name="page-apps"
                         >
                           <page-apps.svg />
@@ -1037,16 +1071,16 @@ Object {
                     style="top: 0px;"
                   >
                     <div
-                      class="emotion-1"
+                      class="emotion-3"
                     >
                       <span
-                        class="emotion-2"
+                        class="emotion-4"
                       >
                         2WoMzSs2fRJx79JeVvqdGR
                          
                       </span>
                       <div
-                        class="CopyButton__CopyButton___OoA5D emotion-3"
+                        class="CopyButton__CopyButton___OoA5D emotion-5"
                         data-test-id="cf-ui-copy-button"
                         id="copyButton"
                       >
@@ -1092,12 +1126,12 @@ Object {
                   </td>
                   <td
                     align="right"
-                    class="TableCell__TableCell___Wou8a emotion-6"
+                    class="TableCell__TableCell___Wou8a emotion-8"
                     data-test-id="cf-ui-table-cell"
                     style="top: 0px;"
                   >
                     <div
-                      class="emotion-5"
+                      class="emotion-7"
                     >
                       <div
                         class="Dropdown__Dropdown___nAsJ-"
@@ -1153,13 +1187,13 @@ Object {
                     style="top: 0px;"
                   >
                     <div
-                      class="emotion-1"
+                      class="emotion-3"
                     >
                       <a
                         href="^.definitions?definitionId=3cG9ueyzkY0GCndLiQzmZ0"
                       >
                         <span
-                          class="icon-component emotion-0"
+                          class="icon-component emotion-2"
                           data-icon-name="page-apps"
                         >
                           <page-apps.svg />
@@ -1178,16 +1212,16 @@ Object {
                     style="top: 0px;"
                   >
                     <div
-                      class="emotion-1"
+                      class="emotion-3"
                     >
                       <span
-                        class="emotion-2"
+                        class="emotion-4"
                       >
                         3cG9ueyzkY0GCndLiQzmZ0
                          
                       </span>
                       <div
-                        class="CopyButton__CopyButton___OoA5D emotion-3"
+                        class="CopyButton__CopyButton___OoA5D emotion-5"
                         data-test-id="cf-ui-copy-button"
                         id="copyButton"
                       >
@@ -1233,12 +1267,12 @@ Object {
                   </td>
                   <td
                     align="right"
-                    class="TableCell__TableCell___Wou8a emotion-6"
+                    class="TableCell__TableCell___Wou8a emotion-8"
                     data-test-id="cf-ui-table-cell"
                     style="top: 0px;"
                   >
                     <div
-                      class="emotion-5"
+                      class="emotion-7"
                     >
                       <div
                         class="Dropdown__Dropdown___nAsJ-"
@@ -1296,7 +1330,7 @@ Object {
             data-test-id="cf-ui-text-container"
           >
             <h3
-              class="SectionHeading__SectionHeading___39J6j emotion-21 f36-margin-bottom--l"
+              class="SectionHeading__SectionHeading___39J6j emotion-23 f36-margin-bottom--l"
               data-test-id="cf-ui-section-heading"
             >
               About Apps

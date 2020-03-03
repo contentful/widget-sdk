@@ -21,7 +21,7 @@ export default function AccountView({ title, icon, onReady }) {
     <Workbench testId="account-iframe-page">
       <Workbench.Header
         title={title}
-        icon={icon ? <NavigationIcon name={icon} size="large" color="green" /> : null}
+        icon={icon ? <NavigationIcon icon={icon} size="large" color="green" /> : null}
       />
       <Workbench.Content>
         <div className={wrapperStyle}>

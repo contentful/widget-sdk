@@ -17,7 +17,7 @@ import { css } from 'emotion';
 
 import { getTeamListWithOptimistic, hasReadOnlyPermission } from 'redux/selectors/teams';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes';
-import Icon from 'ui/Components/Icon';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 
 import TeamDialog from './TeamDialog';
 import TeamListRow from './TeamListRow';
@@ -76,7 +76,7 @@ class TeamList extends React.Component {
     return (
       <Workbench>
         <Workbench.Header
-          icon={<Icon name="page-teams" scale={0.75} />}
+          icon={<NavigationIcon icon="teams" size="large" color="green" />}
           title="Teams"
           actions={
             <div className={styles.headerActions}>

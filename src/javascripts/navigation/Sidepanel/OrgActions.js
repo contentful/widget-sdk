@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SettingsIcon from 'svg/settings.svg';
-import TeamsIcon from 'svg/nav-organization-teams.svg';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 
 export default function OrgActions({ gotoOrgSettings, showOrgSettingsAsTeams }) {
   return (
@@ -17,7 +17,7 @@ export default function OrgActions({ gotoOrgSettings, showOrgSettingsAsTeams }) 
           <div className="nav-sidepanel__org-icon">
             {showOrgSettingsAsTeams ? (
               <>
-                <TeamsIcon />
+                <NavigationIcon icon="teams" size="medium" color="white" />
                 <span>Teams</span>
               </>
             ) : (

@@ -18,7 +18,7 @@ import NavigationIcon from 'ui/Components/NavigationIcon';
 const SpaceMembershipsPresentation = ({ spaces, onLeave }) => (
   <Workbench>
     <Workbench.Header
-      icon={<NavigationIcon name="spaces" size="large" color="green" />}
+      icon={<NavigationIcon icon="spaces" size="large" color="green" />}
       title={`Space memberships (${(spaces || []).length})`}
     />
     <Workbench.Content type="default">

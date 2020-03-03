@@ -35,9 +35,10 @@ exports[`OrganizationUsage should render page without errors 1`] = `
       />
     }
     icon={
-      <Icon
-        name="page-usage"
-        scale="0.75"
+      <NavigationIcon
+        color="green"
+        icon="usage"
+        size="large"
       />
     }
     testId="cf-ui-workbench-header"

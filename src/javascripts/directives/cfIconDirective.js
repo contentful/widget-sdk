@@ -14,10 +14,6 @@ import svgPageCtEs6 from 'svg/page-ct.svg';
 import svgPageEntriesEs6 from 'svg/page-entries.svg';
 import svgPageMediaEs6 from 'svg/page-media.svg';
 import svgPageSettingsEs6 from 'svg/page-settings.svg';
-import svgPageSsoEs6 from 'svg/page-sso.svg';
-import svgPageTeamsEs6 from 'svg/page-teams.svg';
-import svgPageUsageEs6 from 'svg/page-usage.svg';
-import svgPageUsersEs6 from 'svg/page-users.svg';
 
 const SVGs = {
   'arrow-up': svgArrowUpEs6,
@@ -31,11 +27,7 @@ const SVGs = {
   'page-ct': svgPageCtEs6,
   'page-entries': svgPageEntriesEs6,
   'page-media': svgPageMediaEs6,
-  'page-settings': svgPageSettingsEs6,
-  'page-sso': svgPageSsoEs6,
-  'page-teams': svgPageTeamsEs6,
-  'page-usage': svgPageUsageEs6,
-  'page-users': svgPageUsersEs6
+  'page-settings': svgPageSettingsEs6
 };
 
 export default function register() {

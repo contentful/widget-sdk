@@ -9,7 +9,7 @@ import {
   Workbench
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import Icon from 'ui/Components/Icon';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 import { salesUrl } from 'Config';
 import EmptyStateContainer, {
   defaultSVGStyle
@@ -23,7 +23,10 @@ const styles = {
 function UserProvisioningUpsellState() {
   return (
     <Workbench>
-      <Workbench.Header icon={<Icon name="page-sso" scale="0.75" />} title="User Provisioning" />
+      <Workbench.Header
+        icon={<NavigationIcon icon="sso" size="large" color="green" />}
+        title="User Provisioning"
+      />
       <Workbench.Content type="text">
         <EmptyStateContainer>
           <div className={defaultSVGStyle}>

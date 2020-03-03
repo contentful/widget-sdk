@@ -82,7 +82,7 @@ export default function NavigationItem(props) {
         }}>
         <Label hasTooptip={Boolean(item.tooltip)} content={item.tooltip} placement="bottom">
           {item.navIcon ? (
-            <NavigationIcon name={item.navIcon} size="medium" mono color="white" inNavigation />
+            <NavigationIcon icon={item.navIcon} size="medium" mono color="white" inNavigation />
           ) : (
             <Icon name={item.icon} />
           )}
@@ -97,7 +97,7 @@ export default function NavigationItem(props) {
 NavigationItem.propTypes = {
   item: PropTypes.shape({
     title: PropTypes.string.isRequired,
-    icon: PropTypes.string.isRequired,
+    icon: PropTypes.string,
     tagLabel: PropTypes.string,
     navIcon: PropTypes.string,
     rootSref: PropTypes.string,

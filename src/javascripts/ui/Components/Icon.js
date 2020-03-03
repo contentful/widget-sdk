@@ -18,10 +18,6 @@ import GithubIcon from 'svg/icon-github.svg';
 import AddUserIcon from 'svg/onboarding-add-user.svg';
 import PageSettings from 'svg/page-settings.svg';
 import PageApps from 'svg/page-apps.svg';
-import PageUsage from 'svg/page-usage.svg';
-import PageUsers from 'svg/page-users.svg';
-import PageTeams from 'svg/page-teams.svg';
-import PageSSO from 'svg/page-sso.svg';
 import Bubble from 'svg/bubble.svg';
 import ArrowDown from 'svg/dd-arrow-down.svg';
 import ArrowUp from 'svg/arrow-up.svg';
@@ -101,19 +97,7 @@ import svgNavCtEs6 from 'svg/nav-ct.svg';
 import svgNavEntriesEs6 from 'svg/nav-entries.svg';
 import svgNavHomeEs6 from 'svg/nav-home.svg';
 import svgNavMediaEs6 from 'svg/nav-media.svg';
-import svgNavOrganizationBillingEs6 from 'svg/nav-organization-billing.svg';
-import svgNavOrganizationInformationEs6 from 'svg/nav-organization-information.svg';
-import svgNavOrganizationSsoEs6 from 'svg/nav-organization-sso.svg';
-import svgNavOrganizationSubscriptionEs6 from 'svg/nav-organization-subscription.svg';
-import svgNavOrganizationTeamsEs6 from 'svg/nav-organization-teams.svg';
-import svgNavOrganizationUsersEs6 from 'svg/nav-organization-users.svg';
 import svgNavSettingsEs6 from 'svg/nav-settings.svg';
-import svgNavSpacesEs6 from 'svg/nav-spaces.svg';
-import svgNavUsageEs6 from 'svg/nav-usage.svg';
-import svgNavUserApplicationsEs6 from 'svg/nav-user-applications.svg';
-import svgNavUserOauthEs6 from 'svg/nav-user-oauth.svg';
-import svgNavUserOrganizationsEs6 from 'svg/nav-user-organizations.svg';
-import svgNavUserSettingsEs6 from 'svg/nav-user-settings.svg';
 
 const SVGs = {
   'nav-api': svgNavApiEs6,
@@ -122,19 +106,7 @@ const SVGs = {
   'nav-entries': svgNavEntriesEs6,
   'nav-home': svgNavHomeEs6,
   'nav-media': svgNavMediaEs6,
-  'nav-organization-billing': svgNavOrganizationBillingEs6,
-  'nav-organization-information': svgNavOrganizationInformationEs6,
-  'nav-organization-sso': svgNavOrganizationSsoEs6,
-  'nav-organization-subscription': svgNavOrganizationSubscriptionEs6,
-  'nav-organization-teams': svgNavOrganizationTeamsEs6,
-  'nav-organization-users': svgNavOrganizationUsersEs6,
   'nav-settings': svgNavSettingsEs6,
-  'nav-spaces': svgNavSpacesEs6,
-  'nav-usage': svgNavUsageEs6,
-  'nav-user-applications': svgNavUserApplicationsEs6,
-  'nav-user-oauth': svgNavUserOauthEs6,
-  'nav-user-organizations': svgNavUserOrganizationsEs6,
-  'nav-user-settings': svgNavUserSettingsEs6,
   'home-welcome': HomeWelcomeIcon,
   'page-media': PageMediaIcon,
   'question-mark': QuestionMarkIcon,
@@ -150,10 +122,6 @@ const SVGs = {
   'onboarding-add-user': AddUserIcon,
   'page-settings': PageSettings,
   'page-apps': PageApps,
-  'page-usage': PageUsage,
-  'page-users': PageUsers,
-  'page-teams': PageTeams,
-  'page-sso': PageSSO,
   bubble: Bubble,
   'dd-arrow-down': ArrowDown,
   back: BackIcon,

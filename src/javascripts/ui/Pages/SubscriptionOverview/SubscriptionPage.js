@@ -14,7 +14,7 @@ import BasePlan from './BasePlan';
 import UsersForPlan from './UsersForPlan';
 import SpacePlans from './SpacePlans';
 import Sidebar from './Sidebar';
-import Icon from 'ui/Components/Icon';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 
 const styles = {
   content: css({
@@ -118,7 +118,10 @@ export default function SubscriptionPage({ organizationId, data }) {
 
   return (
     <Workbench testId="subscription-page">
-      <Workbench.Header icon={<Icon name="subscription" />} title="Subscription" />
+      <Workbench.Header
+        icon={<NavigationIcon icon="subscription" size="large" color="green" />}
+        title="Subscription"
+      />
       <Workbench.Content className={styles.content}>
         <div className={styles.header}>
           <BasePlan basePlan={basePlan} organizationId={organizationId} />
