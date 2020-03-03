@@ -53,9 +53,12 @@ const AssetBandwidthSection = props => {
         </Heading>
         <Paragraph className={styles.usageNumber}>Not available</Paragraph>
         <Note className={styles.note}>
-          Note that the asset bandwidth displayed is not in real time; there is a 48 hour delay. To
+          Note that the asset bandwidth is not displayed in real time; there is a 48 hour delay. To
           learn about utility limits, read the
-          <TextLink href="https://www.contentful.com/r/knowledgebase/fair-use/" target="_blank">
+          <TextLink
+            href="https://www.contentful.com/r/knowledgebase/fair-use/"
+            className={styles.learnMoreLink}
+            target="_blank">
             Fair Use Policy
           </TextLink>
           .
@@ -81,7 +84,7 @@ const AssetBandwidthSection = props => {
           href="https://www.contentful.com/r/knowledgebase/fair-use/"
           target="_blank"
           className={styles.learnMoreLink}>
-          Learn more
+          Fair Use Policy
         </TextLink>
       </div>
     </Typography>
