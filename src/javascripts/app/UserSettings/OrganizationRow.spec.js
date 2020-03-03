@@ -13,6 +13,7 @@ import { Notification } from '@contentful/forma-36-react-components';
 import { removeMembership } from 'access_control/OrganizationMembershipRepository';
 
 const fakeOrganization = fake.Organization();
+const fakeOrgMemberhip = fake.OrganizationMembership('admin');
 const onLeaveSuccess = jest.fn();
 
 jest.mock('./OranizationUtils', () => ({
@@ -56,7 +57,6 @@ const build = (props = {}) => {
 };
 
 describe('OrganizationRow', () => {
-  const fakeOrgMemberhip = fake.OrganizationMembership('admin');
   beforeEach(() => {
     removeMembership.mockResolvedValueOnce(jest.fn());
     fetchCanLeaveOrg.mockReturnValue(true);
@@ -181,7 +181,7 @@ describe('OrganizationRow', () => {
 
       expect(go).toHaveBeenCalledWith({
         path: ['account', 'organizations', 'subscription_new'],
-        params: { orgId: fakeOrganization.sys.id }
+        params: { orgId: fakeOrgMemberhip.sys.id }
       });
     });
 

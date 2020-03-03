@@ -71,10 +71,10 @@ export const hasMemberRole = createRoleChecker('member');
 
 /**
  * @ngdoc method
- * @name OrganizationRoles#getOrganizationMembershipu
+ * @name OrganizationRoles#getOrganizationMembership
  * @param {number} organizationId
  * @description
- * Returns the current user's organization membership with the given ID.
+ * Returns the current user's organization membership given the organization's ID.
  */
 export function getOrganizationMembership(organizationId) {
   const memberships = get(currentUser, 'organizationMemberships', []);
@@ -84,6 +84,7 @@ export function getOrganizationMembership(organizationId) {
       `Cannot find organization membership of current user with organization id: ${organizationId}`
     );
   }
+
   return found;
 }
 

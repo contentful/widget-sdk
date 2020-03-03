@@ -58,7 +58,7 @@ export function Organization(options = {}) {
     name: uniqueId('Organization'),
     sys: sys({
       type: types.ORGANIZATION,
-      id: uniqueId(types.ORGANIZATION),
+      id: uniqueId(types.ORGANIZATION_MEMBERSHIP),
       createdAt: DEFAULT_CREATED_AT_TIME_ISO
     }),
     ...options
