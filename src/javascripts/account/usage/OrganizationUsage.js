@@ -5,6 +5,7 @@ import { mapValues, flow, keyBy, get, eq, isNumber, pick } from 'lodash/fp';
 import { Spinner, Workbench } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification';
 
+import DocumentTitle from 'components/shared/DocumentTitle';
 import OrganizationResourceUsageList from './non_committed/OrganizationResourceUsageList';
 import OrganizationUsagePage from './committed/OrganizationUsagePage';
 import OrganizationUsagePageNew from './committed/OrganizationUsagePageNew';
@@ -168,22 +169,15 @@ export class OrganizationUsage extends React.Component {
   constructor(props) {
     super(props);
 
-<<<<<<< HEAD
-    this.state = { isLoading: true, error: null };
-=======
-    this.state = { isLoading: true, newOrgEnabled: false };
->>>>>>> fix: toggle limit based on feature flag
+    this.state = { isLoading: true, error: null, newOrgEnabled: false };
 
     this.endpoint = EndpointFactory.createOrganizationEndpoint(props.orgId);
     this.setPeriodIndex = this.setPeriodIndex.bind(this);
   }
 
   async componentDidMount() {
-<<<<<<< HEAD
-=======
     const { onForbidden, orgId } = this.props;
 
->>>>>>> fix: toggle limit based on feature flag
     try {
       const featureFlag = await getVariation(USAGE_API_UX, { organizationId: orgId });
       this.setState({ newOrgEnabled: featureFlag });
@@ -348,6 +342,7 @@ export class OrganizationUsage extends React.Component {
       newOrgEnabled
     } = this.state;
     return (
+<<<<<<< HEAD
       <Workbench testId="organization.usage">
         <Workbench.Header
           title="Usage"
@@ -358,12 +353,44 @@ export class OrganizationUsage extends React.Component {
                 isLoading,
                 error,
                 hasSpaces,
+=======
+      <>
+        <DocumentTitle title="Usage" />
+        <Workbench testId="organization.usage">
+          <Workbench.Header
+            title="Usage"
+            icon={<Icon name="page-usage" scale="0.75" />}
+            actions={
+              <WorkbenchActions
+                {...{
+                  isLoading,
+                  hasSpaces,
+                  committed,
+                  periods,
+                  selectedPeriodIndex,
+                  setPeriodIndex: this.setPeriodIndex
+                }}
+              />
+            }></Workbench.Header>
+          <Workbench.Content>
+            <WorkbenchContent
+              {...{
+>>>>>>> feat: add documentTitle to usage page
                 committed,
-                periods,
+                hasSpaces,
                 selectedPeriodIndex,
-                setPeriodIndex: this.setPeriodIndex
+                spaceNames,
+                isPoC,
+                periodicUsage,
+                apiRequestIncludedLimit,
+                assetBandwidthData,
+                isLoading,
+                periods,
+                resources,
+                newOrgEnabled
               }}
             />
+<<<<<<< HEAD
           }></Workbench.Header>
         <Workbench.Content>
           <WorkbenchContent
@@ -385,6 +412,11 @@ export class OrganizationUsage extends React.Component {
           />
         </Workbench.Content>
       </Workbench>
+=======
+          </Workbench.Content>
+        </Workbench>
+      </>
+>>>>>>> feat: add documentTitle to usage page
     );
   }
 }
