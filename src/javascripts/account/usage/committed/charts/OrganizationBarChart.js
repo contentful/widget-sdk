@@ -81,8 +81,11 @@ const chartOptions = (period, usage) => {
     dataZoom: [
       {
         id: 'dataZoomX',
+        type: 'slider'
+      },
+      {
         type: 'inside',
-        xAxisIndex: [0],
+        throttle: 50,
         filterMode: 'filter'
       }
     ],
