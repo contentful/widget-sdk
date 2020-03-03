@@ -98,12 +98,12 @@ function UserTeamRow({ membership, onRemove }) {
       <TableCell>{moment(membership.sys.createdAt).format('MMMM DD, YYYY')}</TableCell>
       <TableCell align="right">
         <CardActions
-          iconButtonProps={{ buttonType: 'primary', testId: 'user-space-list.menu.trigger' }}
-          data-test-id="user-space-list.menu">
+          iconButtonProps={{ buttonType: 'primary', testId: 'user-team-list.menu.trigger' }}
+          data-test-id="user-team-list.menu">
           <DropdownList>
             <DropdownListItem
               onClick={() => onRemove(membership)}
-              testId="user-space-list.menu.remove">
+              testId="user-team-list.menu.remove">
               Remove from team
             </DropdownListItem>
           </DropdownList>

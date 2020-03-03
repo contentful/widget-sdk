@@ -1,9 +1,17 @@
 import React from 'react';
-import { render, screen, wait, fireEvent, within } from '@testing-library/react';
+import {
+  render,
+  screen,
+  wait,
+  fireEvent,
+  within,
+  waitForElementToBeRemoved
+} from '@testing-library/react';
 import UserDetails from './UserDetails';
 
 import * as fake from 'testHelpers/fakeFactory';
 import ModalLauncher from '__mocks__/app/common/ModalLauncher';
+import { removeTeamMembership } from 'access_control/TeamRepository';
 
 const membershipUser = fake.User({ firstName: 'John', lastName: 'Doe' });
 const createdByUser = fake.User({ firstName: 'Jane', lastName: 'Smith' });
@@ -18,25 +26,19 @@ pendingMembership.sys.createdBy = createdByUser;
 pendingMembership.sys.createdAt = new Date(2019, 11, 1).toISOString();
 pendingMembership.sys.lastActiveAt = null;
 
-const mockSpaces = [
-  fake.Space('Pizza Space'),
-  fake.Space('Burger Space'),
-  fake.Space('Ramen Space')
-];
+const pizzaSpace = fake.Space('Pizza Space');
+const mockSpaces = [pizzaSpace, fake.Space('Burger Space'), fake.Space('Ramen Space')];
 
-const mockTeams = [fake.Team('Hejo'), fake.Team('Moi'), fake.Team('Ahoy')];
+const teamHejo = fake.Team('Hejo');
+const mockTeams = [teamHejo, fake.Team('Moi'), fake.Team('Ahoy')];
 
-const mockSpaceMemberships = [
-  fake.SpaceMembership(fake.Link('Space', mockSpaces[0].sys.id), membershipUser),
-  fake.SpaceMembership(fake.Link('Space', mockSpaces[0].sys.id), membershipUser),
-  fake.SpaceMembership(fake.Link('Space', mockSpaces[0].sys.id), membershipUser)
-];
+const mockSpaceMemberships = mockSpaces.map(space =>
+  fake.SpaceMembership(fake.Link('Space', space.sys.id), membershipUser)
+);
 
-const mockTeamMemberships = [
-  fake.TeamMembership(fake.Link('Team', mockTeams[0].sys.id), mockOrgMembership, membershipUser),
-  fake.TeamMembership(fake.Link('Team', mockTeams[0].sys.id), mockOrgMembership, membershipUser),
-  fake.TeamMembership(fake.Link('Team', mockTeams[0].sys.id), mockOrgMembership, membershipUser)
-];
+const mockTeamMemberships = mockTeams.map(team =>
+  fake.TeamMembership(fake.Link('Team', team.sys.id), mockOrgMembership, membershipUser)
+);
 
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
   getSpaceMemberships: jest.fn(async () => ({
@@ -49,7 +51,8 @@ jest.mock('access_control/TeamRepository', () => ({
   getAllTeamMemberships: jest.fn(async () => ({
     includes: { Team: mockTeams },
     items: mockTeamMemberships
-  }))
+  })),
+  removeTeamMembership: jest.fn(() => Promise.resolve())
 }));
 
 describe('User Details', () => {
@@ -146,6 +149,26 @@ describe('User Details', () => {
       const items = screen.getAllByTestId('user-team-list.item')[0];
       const cell = within(items).queryByText('Hejo');
       expect(cell).toBeVisible();
+    });
+
+    it('should display the Add to Teams modal', () => {
+      const button = screen.getByTestId('user-details.add-to-teams-button');
+      fireEvent.click(button);
+      expect(ModalLauncher.open).toHaveBeenCalled();
+    });
+
+    it('removes from a team', async () => {
+      // Get the table row containing that specific team name
+      const membershipRow = screen
+        .queryByText('Hejo')
+        .closest('[data-test-id="user-team-list.item"]');
+      const dropdownButton = within(membershipRow).getByTestId('user-team-list.menu.trigger');
+      fireEvent.click(dropdownButton);
+      const menuItemButton = screen.getByTestId('user-team-list.menu.remove').firstElementChild;
+      fireEvent.click(menuItemButton);
+      expect(removeTeamMembership).toHaveBeenCalled();
+      // assert that the membership is removed from the list
+      await waitForElementToBeRemoved(() => screen.queryByText('Hejo'));
     });
   });
 });
