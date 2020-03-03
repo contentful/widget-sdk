@@ -1,20 +1,10 @@
 import React from 'react';
-import OrgTabs from './tabs/OrgTabs';
-import SpacesTabs from './tabs/SpacesTabs';
+import MainTabs from './tabs/MainTabs';
+
 import PropTypes from 'prop-types';
 import { periodicUsagePropType, periodPropType } from './propTypes';
-import { Heading } from '@contentful/forma-36-react-components';
-import periodToDates from './charts/periodToDates';
-import { css } from 'emotion';
-import tokens from '@contentful/forma-36-tokens';
 
-const styles = {
-  heading: css({
-    color: '#6A7889',
-    fontWeight: tokens.fontWeightNormal,
-    paddingBottom: tokens.spacingXl
-  })
-};
+import periodToDates from './charts/periodToDates';
 
 const OrganizationUsagePageNew = props => {
   const period = periodToDates(props.period);
@@ -23,23 +13,19 @@ const OrganizationUsagePageNew = props => {
 
   return (
     <>
-      <OrgTabs
+      <MainTabs
         assetBandwidthData={assetBandwidthData}
         period={period}
         periodicUsage={periodicUsage}
         apiRequestIncludedLimit={apiRequestIncludedLimit}
+        spaceNames={spaceNames}
       />
-      <Heading element="h2" className={styles.heading}>
-        View API requests by type and space
-      </Heading>
-      <SpacesTabs period={period} spaceNames={spaceNames} periodicUsage={periodicUsage} />
     </>
   );
 };
 
 OrganizationUsagePageNew.propTypes = {
   spaceNames: PropTypes.objectOf(PropTypes.string).isRequired,
-  isPoC: PropTypes.objectOf(PropTypes.bool).isRequired,
   periodicUsage: periodicUsagePropType.isRequired,
   period: periodPropType,
   apiRequestIncludedLimit: PropTypes.number.isRequired,

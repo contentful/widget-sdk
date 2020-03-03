@@ -5,6 +5,8 @@ import tokens from '@contentful/forma-36-tokens';
 import { sum, get } from 'lodash';
 import { Grid, GridItem } from '../common/Grid';
 import { css } from 'emotion';
+import SpacesTabs from './SpacesTabs';
+import { Heading } from '@contentful/forma-36-react-components';
 import OrganizationBarChart from '../charts/OrganizationBarChart';
 import OrganizationUsageInfoNew from '../OrganizationUsageInfoNew';
 import AssetBandwidthSection from '../AssetBandwidthSectionNew';
@@ -14,11 +16,16 @@ const styles = {
   tabPanel: css({
     paddingTop: tokens.spacing2Xl,
     paddingBottom: tokens.spacing2Xl
+  }),
+  heading: css({
+    color: '#6A7889',
+    fontWeight: tokens.fontWeightNormal,
+    paddingBottom: tokens.spacingXl
   })
 };
 
-const OrgTabs = props => {
-  const { period, periodicUsage, apiRequestIncludedLimit, assetBandwidthData } = props;
+const MainTabs = props => {
+  const { period, periodicUsage, apiRequestIncludedLimit, assetBandwidthData, spaceNames } = props;
 
   const orgUsage = periodicUsage.org.usage;
   const totalUsage = sum(orgUsage);
@@ -53,6 +60,10 @@ const OrgTabs = props => {
               <OrganizationBarChart period={period} usage={orgUsage} />
             </GridItem>
           </Grid>
+          <Heading element="h2" className={styles.heading}>
+            View API requests by type and space
+          </Heading>
+          <SpacesTabs period={period} spaceNames={spaceNames} periodicUsage={periodicUsage} />
         </TabPanel>
       )}
       {selected === 'assetBandwidth' && (
@@ -72,10 +83,11 @@ const OrgTabs = props => {
   );
 };
 
-OrgTabs.propTypes = {
+MainTabs.propTypes = {
   period: PropTypes.arrayOf(PropTypes.string).isRequired,
   periodicUsage: periodicUsagePropType.isRequired,
   apiRequestIncludedLimit: PropTypes.number.isRequired,
+  spaceNames: PropTypes.objectOf(PropTypes.string).isRequired,
   assetBandwidthData: PropTypes.shape({
     usage: PropTypes.number,
     unitOfMeasure: PropTypes.string,
@@ -85,4 +97,4 @@ OrgTabs.propTypes = {
   })
 };
 
-export default OrgTabs;
+export default MainTabs;
