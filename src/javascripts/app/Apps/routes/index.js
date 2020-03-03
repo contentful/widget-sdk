@@ -100,7 +100,7 @@ export default {
           const installingWithoutConsent =
             !app.appInstallation && !$stateParams.acceptedPermissions;
 
-          if (canUserManageApps() || !hasAppsFeature || installingWithoutConsent) {
+          if (!canUserManageApps() || !hasAppsFeature || installingWithoutConsent) {
             // When executing `onEnter` after a page refresh
             // the current state won't be initialized. For this reason
             // we need to compute params and an absolute path manually.
