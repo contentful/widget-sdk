@@ -21,4 +21,12 @@ async function getEntityTitle(entity) {
   return fetchedTitle || 'Untitled';
 }
 
-export { getReferencesForEntryId, getDefaultLocale, getEntityTitle };
+function getUserInfo() {
+  const spaceContext = getModule('spaceContext');
+  return {
+    userId: spaceContext.user.sys.id,
+    orgId: spaceContext.organization.sys.id
+  };
+}
+
+export { getReferencesForEntryId, getDefaultLocale, getEntityTitle, getUserInfo };

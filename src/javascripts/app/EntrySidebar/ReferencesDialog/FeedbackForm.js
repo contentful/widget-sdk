@@ -13,6 +13,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import createMicroBackendsClient from 'MicroBackendsClient';
 import tokens from '@contentful/forma-36-tokens';
+import { getUserInfo } from './referencesDialogService';
 
 const styles = {
   form: css({ marginTop: tokens.spacingM }),
@@ -26,20 +27,28 @@ const FeedbackForm = ({ onClose }) => {
   const [isUseful, setIsUseful] = useState(null);
   const [commentValue, setCommentValue] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [canBeContacted, setCanBeContacted] = useState(false);
 
   const sendFeedbackForm = async ({ feedback }) => {
     const client = createMicroBackendsClient({ backendName: 'feedback' });
     setIsSubmitting(true);
+
+    const userData = {};
+    if (canBeContacted) {
+      Object.assign(userData, getUserInfo());
+    }
     const res = await client.call('/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         about: 'Publish all references',
         target: 'cxPulitzerReleases',
-        feedback
+        feedback,
+        ...userData
       })
     });
     setIsSubmitting(false);
+    onClose();
 
     if (res.ok) {
       Notification.success('Thank you for your feedback!');
@@ -84,6 +93,24 @@ const FeedbackForm = ({ onClose }) => {
               maxLength={textFieldMaxLength}
               onChange={e => setCommentValue(e.target.value.substr(0, textFieldMaxLength))}
               value={commentValue}
+            />
+          </FieldGroup>
+          <FieldGroup>
+            <RadioButtonField
+              labelText="Make it anonymous"
+              helpText="Your contact information won't be included in the feedback"
+              checked={!canBeContacted}
+              onChange={() => setCanBeContacted(false)}
+              name="anonymous"
+              id="anonymous"
+            />
+            <RadioButtonField
+              labelText="Include my contact information in the feedback"
+              helpText="We might reach out with some additional questions"
+              checked={canBeContacted}
+              onChange={() => setCanBeContacted(true)}
+              name="can-be-contacted"
+              id="can-be-contacted"
             />
           </FieldGroup>
           <div className={styles.buttonWrapper}>
