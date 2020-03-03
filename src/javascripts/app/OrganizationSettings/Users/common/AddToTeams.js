@@ -17,30 +17,10 @@ const styles = {
   }),
   list: css({
     marginTop: tokens.spacingM
-  }),
-  leftColumn: css({
-    display: 'flex',
-    justifyContent: 'flex-start',
-    alignItems: 'center'
-  }),
-  teamName: css({
-    fontWeight: tokens.fontWeightMedium,
-    width: 200
-  }),
-  roleEditor: css({}),
-  errorIcon: css({
-    marginLeft: tokens.spacingS
   })
 };
 
-/**
- * Holds an object of space memberships and role ids key'd by space id,
- * At this state, admin is held as a role with a fake id for simplicity.
- * The objects will be converted to a real space membership shape in SpaceMembershipRepo.invite
- * Calls a callback when memberships change
- * [{ space: {}, roles: [ROLE_ID_1, ROLE_ID_2]]
- */
-export default function SpaceMembershipList({ orgId, onChange }) {
+export default function AddToTeams({ orgId, onChange, inputWidth }) {
   const [teams, setTeams] = useState([]);
   const [teamSpaceMemberships, setTeamSpaceMemberships] = useState([]);
 
@@ -69,7 +49,12 @@ export default function SpaceMembershipList({ orgId, onChange }) {
 
   return (
     <div data-test-id="new-user.teams">
-      <TeamsAutocomplete orgId={orgId} onChange={handleTeamSelected} value={teams} />
+      <TeamsAutocomplete
+        orgId={orgId}
+        onChange={handleTeamSelected}
+        value={teams}
+        inputWidth={inputWidth}
+      />
       {teams.length > 0 && (
         <SectionHeading className={styles.count}>{`${pluralize(
           'team',
@@ -90,7 +75,8 @@ export default function SpaceMembershipList({ orgId, onChange }) {
   );
 }
 
-SpaceMembershipList.propTypes = {
+AddToTeams.propTypes = {
   orgId: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired
+  onChange: PropTypes.func.isRequired,
+  inputWidth: PropTypes.oneOf(['small', 'medium', 'large', 'full'])
 };

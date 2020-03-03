@@ -74,6 +74,7 @@ function Toggle({ isOpen, onClick, count }) {
   if (!hasMemberships) return 'No spaces';
 
   return (
+    /* eslint-disable-next-line rulesdir/restrict-non-f36-components  */
     <button onClick={onClick} className={style}>
       {label}
       <Icon icon={iconName} color="muted" />
