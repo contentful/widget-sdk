@@ -100,8 +100,9 @@ class ReferencesTree extends React.Component {
 
       const nextLevelReferenceCards = Object.entries(fields).reduce((allCards, [_, fieldValue]) => {
         const localizedFieldValue = fieldValue[defaultLocale];
+
         // if field is an array of entities
-        if (Array.isArray(localizedFieldValue)) {
+        if (Array.isArray(localizedFieldValue) && localizedFieldValue.every(value => value.sys)) {
           return allCards.concat(
             localizedFieldValue.map(entity => {
               if (!visitedEntries.includes(entity.sys.id)) {
