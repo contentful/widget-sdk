@@ -11,6 +11,7 @@ import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import { getVariation } from 'LaunchDarkly';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import SSOUpsellState from './SSOUpsellState';
+import * as fake from 'testHelpers/fakeFactory';
 
 jest.mock('services/OrganizationRoles', () => ({
   isOwnerOrAdmin: jest.fn().mockReturnValue(true)
@@ -23,12 +24,7 @@ jest.mock('data/CMA/ProductCatalog', () => ({
 const awaitSetImmediate = () => new Promise(resolve => setImmediate(resolve));
 
 describe('SSOSetup', () => {
-  const organization = {
-    name: 'My Org',
-    sys: {
-      id: 'org_1234'
-    }
-  };
+  const organization = fake.Organization();
 
   const render = async ({
     identityProvider,
