@@ -25,14 +25,10 @@ module.exports = {
       This ensures that we catch overridden names such as `Navigator` .
     */
     browser: false,
-    node: true
+    node: true,
+    es6: true
   },
   globals: {
-    setTimeout: false,
-    Promise: false,
-    ArrayBuffer: false,
-    Uint8Array: false,
-    WeakMap: false,
     window: true,
     document: true
   },
