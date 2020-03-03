@@ -5,23 +5,6 @@ import OrganizationsRoute from './OrganizationsRoute';
 import { getOrganizations } from 'services/TokenStore';
 import * as fake from 'testHelpers/fakeFactory';
 
-// What do we need to test heiar:
-// zero state
-// loading state
-// loaded state
-// - Renders correctly
-// - Workbench Title
-// - Workbench new org button
-// - Table headers
-//   - Name
-//   - Invited at
-//   - empty space for options
-// - renders organization rows with right params
-
-// Calls onReady?
-// Gets state from store
-// Clicking NewOrg button calls function
-// Renders rows?
 const onReady = jest.fn();
 const TITLE = 'Organizations Test';
 const ONE_ORGANIZATION = [fake.Organization()];
