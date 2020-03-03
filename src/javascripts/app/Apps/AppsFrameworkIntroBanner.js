@@ -31,8 +31,8 @@ const styles = {
   })
 };
 
-const AppsFrameworkIntroBanner = ({ userCanEditApps }) => {
-  const ctaLink = userCanEditApps
+const AppsFrameworkIntroBanner = ({ canManageApps }) => {
+  const ctaLink = canManageApps
     ? 'https://www.contentful.com/developers/docs/extensibility/app-framework/'
     : 'https://www.contentful.com/app-framework/';
   return (
@@ -67,7 +67,7 @@ const AppsFrameworkIntroBanner = ({ userCanEditApps }) => {
 };
 
 AppsFrameworkIntroBanner.propTypes = {
-  userCanEditApps: PropTypes.bool
+  canManageApps: PropTypes.bool
 };
 
 export default AppsFrameworkIntroBanner;

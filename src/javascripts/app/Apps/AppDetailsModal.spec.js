@@ -43,7 +43,7 @@ The Optimizely app makes it easier to power experiments with structured content.
     },
     showPermissions: null,
     onClose: () => {},
-    userCanEditApps: true
+    canManageApps: true
   };
 
   it('should match the snapshot', async () => {

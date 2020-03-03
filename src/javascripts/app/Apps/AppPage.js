@@ -15,7 +15,6 @@ import {
 } from '@contentful/forma-36-react-components';
 import { get } from 'lodash';
 
-import StateRedirect from 'app/common/StateRedirect';
 import ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer';
 import { buildAppDefinitionWidget } from 'widgets/WidgetTypes';
 import DocumentTitle from 'components/shared/DocumentTitle';
@@ -25,7 +24,6 @@ import UnknownErrorMessage from 'components/shared/UnknownErrorMessage';
 import UninstallModal from './UninstallModal';
 import ModalLauncher from 'app/common/ModalLauncher';
 import * as AppLifecycleTracking from './AppLifecycleTracking';
-import { getSectionVisibility } from 'access_control/AccessChecker';
 import { isUsageExceededErrorResponse, USAGE_EXCEEDED_MESSAGE } from './isUsageExceeded';
 
 const BUSY_STATE_INSTALLATION = 'installation';
@@ -443,10 +441,6 @@ export default class AppRoute extends Component {
   };
 
   render() {
-    if (!getSectionVisibility()['apps']) {
-      return <StateRedirect path="spaces.detail.entries.list" />;
-    }
-
     const { ready, appLoaded, loadingError } = this.state;
 
     if (!ready) {

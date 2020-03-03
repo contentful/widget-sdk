@@ -14,6 +14,10 @@ import { shouldHide, Action } from 'access_control/AccessChecker';
 const BASIC_APPS_FEATURE_KEY = 'basic_apps';
 const DEFAULT_FEATURE_STATUS = true; // Fail open
 
+function canUserManageApps() {
+  return !shouldHide(Action.UPDATE, 'settings');
+}
+
 const appsFeatureResolver = [
   'spaceContext',
   async spaceContext => {
@@ -58,7 +62,7 @@ export default {
               envMeta: spaceContext.space.environmentMeta
             },
             userId: spaceContext.user.sys.id,
-            userCanEditApps: !shouldHide(Action.UPDATE, 'settings'),
+            canManageApps: canUserManageApps(),
             deeplinkAppId: $stateParams.appId || null,
             deeplinkReferrer: $stateParams.referrer || null
           };
@@ -96,11 +100,7 @@ export default {
           const installingWithoutConsent =
             !app.appInstallation && !$stateParams.acceptedPermissions;
 
-          if (
-            shouldHide(Action.UPDATE, 'settings') ||
-            !hasAppsFeature ||
-            installingWithoutConsent
-          ) {
+          if (canUserManageApps() || !hasAppsFeature || installingWithoutConsent) {
             // When executing `onEnter` after a page refresh
             // the current state won't be initialized. For this reason
             // we need to compute params and an absolute path manually.

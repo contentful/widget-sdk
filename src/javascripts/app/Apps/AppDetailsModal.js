@@ -181,7 +181,7 @@ export function AppDetails(props) {
     setShowPermissions,
     spaceInformation,
     usageExceeded,
-    userCanEditApps
+    canManageApps
   } = props;
 
   if (showPermissions) {
@@ -215,18 +215,18 @@ export function AppDetails(props) {
               onClick={determineOnClick(installed, onClick, onClose, setShowPermissions)}
               isFullWidth
               buttonType="primary"
-              disabled={usageExceeded || !userCanEditApps}>
+              disabled={usageExceeded || !canManageApps}>
               {installed ? 'Configure' : 'Install'}
             </Button>
           )}
         </StateLink>
-        {!installed && usageExceeded && userCanEditApps && (
+        {!installed && usageExceeded && canManageApps && (
           <>
             <div className={styles.sidebarSpacingM} />
             <HelpText>{USAGE_EXCEEDED_MESSAGE}</HelpText>
           </>
         )}
-        {!userCanEditApps && (
+        {!canManageApps && (
           <>
             <div className={styles.sidebarSpacingM} />
             <HelpText>
@@ -287,7 +287,7 @@ AppDetails.propTypes = {
   showPermissions: PropTypes.bool,
   setShowPermissions: PropTypes.func,
   usageExceeded: PropTypes.bool,
-  userCanEditApps: PropTypes.bool.isRequired
+  canManageApps: PropTypes.bool.isRequired
 };
 
 export default function AppDetailsModal(props) {
@@ -311,7 +311,7 @@ export default function AppDetailsModal(props) {
         showPermissions={showPermissions}
         setShowPermissions={setShowPermissions}
         usageExceeded={props.usageExceeded}
-        userCanEditApps={props.userCanEditApps}
+        canManageApps={props.canManageApps}
       />
     </Modal>
   );
@@ -328,5 +328,5 @@ AppDetailsModal.propTypes = {
     envIsMaster: PropTypes.bool.isRequired
   }),
   usageExceeded: PropTypes.bool,
-  userCanEditApps: PropTypes.bool.isRequired
+  canManageApps: PropTypes.bool.isRequired
 };
