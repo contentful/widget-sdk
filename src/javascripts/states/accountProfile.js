@@ -19,12 +19,11 @@ const spaceMemberships = {
   component: SpaceMemberships
 };
 
-const organizationMemberships = reactStateWrapper({
+const organizationMemberships = {
   name: 'organization_memberships',
-  title: 'Organizations',
   url: '/organization_memberships',
   component: OrganizationMembershipsRoute
-});
+};
 
 const cmaTokens = {
   name: 'cma_tokens',

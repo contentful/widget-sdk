@@ -56,6 +56,7 @@ const triggerLeaveModal = async ({ organization, userOrgMembershipId, onLeaveSuc
     Notification.error(`Could not leave organization ${organization.name}`);
     return;
   }
+
   onLeaveSuccess(organization);
   Notification.success(`Successfully left organization ${organization.name}`);
 };
@@ -81,10 +82,12 @@ const OrganizationRow = ({ organization, onLeaveSuccess }) => {
   // If the user has a role different than 'member' it means they are an 'owner' or 'admin' and should be able to access the org settings page.
   const canAccessOrgSettings = !hasMemberRole(organization);
 
+  // Developers should go to somewhere else...
+  // Different routing for V1, is there a route that already accomplishes this?
   const goToOrgSettings = () => {
     go({
       path: ['account', 'organizations', 'subscription_new'],
-      params: { orgId: userOrgMembershipId }
+      params: { orgId: organization.sys.id }
     });
   };
 

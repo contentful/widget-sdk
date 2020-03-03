@@ -5,8 +5,8 @@ import OrganizationsRoute from './OrganizationsRoute';
 import { getOrganizations } from 'services/TokenStore';
 import * as fake from 'testHelpers/fakeFactory';
 
-const onReady = jest.fn();
-const TITLE = 'Organizations Test';
+// Has the title and the New Organization button in this title div.
+const TITLE = 'OrganizationsNew Organization';
 const ONE_ORGANIZATION = [fake.Organization()];
 const TWO_ORGANIZATIONS = [fake.Organization(), fake.Organization()];
 
@@ -16,20 +16,12 @@ jest.mock('services/TokenStore', () => ({
 
 jest.mock('./OrganizationRow', () => () => <div data-test-id="organization-row"></div>);
 
-const buildWithoutWaiting = props => {
-  return render(
-    <OrganizationsRoute
-      {...{
-        onReady: onReady,
-        title: TITLE,
-        ...props
-      }}
-    />
-  );
+const buildWithoutWaiting = () => {
+  return render(<OrganizationsRoute />);
 };
 
-const build = (props = {}) => {
-  buildWithoutWaiting(props);
+const build = () => {
+  buildWithoutWaiting();
 
   return wait();
 };
@@ -38,16 +30,6 @@ describe('OrganizationsRoute', () => {
   beforeEach(() => {
     const noOrganiztions = [];
     getOrganizations.mockResolvedValue(noOrganiztions);
-  });
-
-  it('should call onReady immediately, but only once', async () => {
-    await build({ onReady });
-
-    expect(onReady).toHaveBeenCalled();
-
-    await wait();
-
-    expect(onReady).toHaveBeenCalledTimes(1);
   });
 
   it('should render a loading state while the data is loading', async () => {

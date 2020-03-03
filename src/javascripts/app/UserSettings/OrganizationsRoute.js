@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import useAsync from 'app/common/hooks/useAsync';
 import {
@@ -19,7 +19,7 @@ import NavigationIcon from 'ui/Components/NavigationIcon';
 import ErrorState from 'app/common/ErrorState';
 import LoadingState from 'app/common/LoadingState';
 import OrganizationRow from './OrganizationRow';
-import { getOrganizations } from 'services/TokenStore';
+import * as TokenStore from 'services/TokenStore';
 
 const styles = {
   content: css({
@@ -30,34 +30,35 @@ const styles = {
   })
 };
 
-const OrganizationsRoute = ({ onReady, title }) => {
-  const [organizations, setOrganizations] = useState([]);
+const TITLE = 'Organizations';
 
-  useEffect(onReady, [onReady]);
+const OrganizationsRoute = () => {
+  const [organizations, setOrganizations] = useState([]);
 
   const { isLoading, error } = useAsync(
     useCallback(async () => {
-      const organizations = await getOrganizations();
+      const organizations = await TokenStore.getOrganizations();
       setOrganizations(organizations);
     }, [])
   );
 
+  // Note: this function is not currently tested, please be careful when editing it.
   const onLeaveSuccess = useCallback(
     organization => {
-      // Note: this function is not currently tested, please be careful when editing it.
       setOrganizations(without(organizations, organization));
+      TokenStore.refresh();
     },
     [organizations]
   );
 
   return (
     <>
-      <DocumentTitle title={title} />
+      <DocumentTitle title={TITLE} />
       <Workbench>
         <Workbench.Header
           icon={<NavigationIcon name="organizations" size="large" color="green" />}
           testId="organizations-list.title"
-          title={title}
+          title={TITLE}
           actions={
             <StateLink path="account.new_organization">
               <Button buttonType="primary" testId="organizations-list.new-org-button">
@@ -99,7 +100,6 @@ const OrganizationsRoute = ({ onReady, title }) => {
 };
 
 OrganizationsRoute.propTypes = {
-  onReady: PropTypes.func.isRequired,
   title: PropTypes.string
 };
 

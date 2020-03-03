@@ -29,12 +29,8 @@ jest.mock('states/Navigator', () => ({
   go: jest.fn()
 }));
 
-jest.mock('data/EndpointFactory', () => ({
-  createOrganizationEndpoint: jest.fn()
-}));
-
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
-  removeMembership: jest.fn()
+  removeMembership: jest.fn(Promise.resolve())
 }));
 
 const buildWithoutWaiting = props => {
@@ -98,7 +94,7 @@ describe('OrganizationRow', () => {
   });
 
   describe('test canUserLeaveOrg default behavoir ', () => {
-    it('should default to allow the user to leave the org, this should be caught on the backend if not valid', async () => {
+    it('should default to allow the user to leave the org', async () => {
       fetchCanLeaveOrg.mockReset().mockReturnValue(false);
 
       buildWithoutWaiting();
@@ -121,24 +117,6 @@ describe('OrganizationRow', () => {
 
       expect(screen.getByTestId('organization-row.go-to-org-link')).toBeVisible();
       expect(screen.getByTestId('organization-row.leave-org-button')).toBeVisible();
-    });
-
-    it('should display a tooltip which explains why the user cannot leave the org', async () => {
-      fetchCanLeaveOrg.mockReset().mockReturnValue(false);
-
-      await build();
-      fireEvent.click(screen.getByTestId('organization-row.dropdown-menu.trigger'));
-
-      expect(screen.getByTestId('organization-row.tool-tip')).toHaveTextContent(
-        'You cannot leave this organization since you are the only owner remaining'
-      );
-    });
-
-    it('should not display a tooltip when the user can leave the org', async () => {
-      await build();
-      fireEvent.click(screen.getByTestId('organization-row.dropdown-menu.trigger'));
-
-      expect(screen.queryByTestId('organization-row.tool-tip')).toBeNull();
     });
 
     it('should render the go to org settings button as disabled if they are a regular member of the org', async () => {
@@ -181,7 +159,7 @@ describe('OrganizationRow', () => {
 
       expect(go).toHaveBeenCalledWith({
         path: ['account', 'organizations', 'subscription_new'],
-        params: { orgId: fakeOrgMemberhip.sys.id }
+        params: { orgId: fakeOrganization.sys.id }
       });
     });
 
@@ -203,7 +181,7 @@ describe('OrganizationRow', () => {
       await expect(onLeaveSuccess).toHaveBeenCalled();
     });
 
-    it('should call onLeave if they are can leave the org and click on the leave button', async () => {
+    it('should call onLeave if they can leave the org and click on the leave button', async () => {
       removeMembership.mockReset().mockRejectedValueOnce(new Error());
 
       await build();
