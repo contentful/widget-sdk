@@ -99,13 +99,6 @@ describe('TeamMembershipForm', () => {
                   sys: { id: 'testUserX' }
                 },
                 {
-                  firstName: 'SCIM first name',
-                  lastName: 'SCIM last name',
-                  avatarUrl: 'doesntMatter.com/blah',
-                  email: 'userScim@test.com',
-                  sys: { id: 'testUserS' }
-                },
-                {
                   firstName: null,
                   lastName: null,
                   avatarUrl: 'doesntMatter.com/blah',
@@ -116,7 +109,6 @@ describe('TeamMembershipForm', () => {
               [ORG_MEMBERSHIPS]: [
                 {
                   role: 'member',
-                  status: 'active',
                   sys: {
                     id: 'orgMembershipB2',
                     user: {
@@ -130,7 +122,6 @@ describe('TeamMembershipForm', () => {
                 },
                 {
                   role: 'member',
-                  status: 'active',
                   sys: {
                     id: 'orgMembershipB1',
                     user: {
@@ -144,7 +135,6 @@ describe('TeamMembershipForm', () => {
                 },
                 {
                   role: 'member',
-                  status: 'active',
                   sys: {
                     id: 'orgMembershipA',
                     user: {
@@ -158,7 +148,6 @@ describe('TeamMembershipForm', () => {
                 },
                 {
                   role: 'member',
-                  status: 'active',
                   sys: {
                     id: 'orgMembershipX',
                     user: {
@@ -172,7 +161,6 @@ describe('TeamMembershipForm', () => {
                 },
                 {
                   role: 'member',
-                  status: 'active',
                   sys: {
                     id: 'orgMembershipI',
                     user: {
@@ -180,20 +168,6 @@ describe('TeamMembershipForm', () => {
                         type: 'Link',
                         linkType: USERS,
                         id: 'testUserI'
-                      }
-                    }
-                  }
-                },
-                {
-                  role: 'member',
-                  status: 'pending',
-                  sys: {
-                    id: 'orgMembershipS',
-                    user: {
-                      sys: {
-                        type: 'Link',
-                        linkType: USERS,
-                        id: 'testUserS'
                       }
                     }
                   }
@@ -236,13 +210,12 @@ describe('TeamMembershipForm', () => {
         const { wrapper } = renderComponent(actions);
 
         const options = wrapper.find(Option).filter({ testId: 'user-select-option' });
-        expect(options).toHaveLength(5);
-        expect(options.get(0).props.children).toEqual('A User LastName <userA@test.com>');
+        expect(options).toHaveLength(4);
+        expect(options.get(0).props.children).toEqual(['A User LastName ', '<userA@test.com>']);
         expect(options.get(0).props).toHaveProperty('value', 'orgMembershipA');
         expect(options.get(1).props).toHaveProperty('value', 'orgMembershipB1');
         expect(options.get(2).props).toHaveProperty('value', 'orgMembershipB2');
-        expect(options.get(3).props.children).toEqual('Invited <userScim@test.com>');
-        expect(options.get(4).props.children).toEqual('Invited <userOldInvitation@test.com>');
+        expect(options.get(3).props.children).toEqual([null, '<userOldInvitation@test.com>']);
       });
 
       it('the close button should close the form', () => {

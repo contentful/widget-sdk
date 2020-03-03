@@ -1,12 +1,18 @@
-/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
 import { connect } from 'react-redux';
 import { get, orderBy, filter, flow } from 'lodash/fp';
 import { TableCell, TableRow, Button, Select, Option } from '@contentful/forma-36-react-components';
 import getOrgMemberships from 'redux/selectors/getOrgMemberships';
 import getMembershipsOfCurrentTeamToDisplay from 'redux/selectors/teamMemberships/getMembershipsOfCurrentTeamToDisplay';
 import { OrganizationMembership as OrganizationMembershipPropType } from 'app/OrganizationSettings/PropTypes';
+
+const styles = {
+  addTeamMemberButton: css({
+    marginRight: '10px'
+  })
+};
 
 class TeamMembershipForm extends React.Component {
   static propTypes = {
@@ -33,11 +39,10 @@ class TeamMembershipForm extends React.Component {
             <Option value="" disabled>
               Please select a user
             </Option>
-            {orgMemberships.map(({ status, sys: { user, id } }) => (
+            {orgMemberships.map(({ sys: { user, id } }) => (
               <Option testId="user-select-option" key={id} value={id}>
-                {status === 'active' && user.firstName
-                  ? `${user.firstName} ${user.lastName} <${user.email}>`
-                  : `Invited <${user.email}>`}
+                {user.firstName && `${user.firstName} ${user.lastName} `}
+                {`<${user.email}>`}
               </Option>
             ))}
           </Select>
@@ -49,8 +54,7 @@ class TeamMembershipForm extends React.Component {
             buttonType="primary"
             onClick={() => onSubmit(selectedOrgMembershipId)}
             disabled={!selectedOrgMembershipId}
-            // eslint-disable-next-line
-            style={{ marginRight: '10px' }}>
+            className={styles.addTeamMemberButton}>
             Add to team
           </Button>
           <Button testId="cancel-button" size="small" buttonType="naked" onClick={onClose}>
