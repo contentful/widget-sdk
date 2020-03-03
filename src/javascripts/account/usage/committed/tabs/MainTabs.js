@@ -20,7 +20,8 @@ const styles = {
   heading: css({
     color: '#6A7889',
     fontWeight: tokens.fontWeightNormal,
-    paddingBottom: tokens.spacingXl
+    paddingBottom: tokens.spacingXl,
+    paddingTop: tokens.spacing2Xl
   })
 };
 

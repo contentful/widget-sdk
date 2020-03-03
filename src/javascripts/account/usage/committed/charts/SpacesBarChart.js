@@ -134,7 +134,7 @@ const SpacesBarChart = ({ spaceNames, data, period, colours }) => {
     }
   });
 
-  return <div ref={chartRef} className={styles.chartWrapper} />;
+  return <div ref={chartRef} className={styles.chartWrapper} data-test-id="api-usage-bar-chart" />;
 };
 
 SpacesBarChart.propTypes = {
