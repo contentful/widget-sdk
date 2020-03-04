@@ -45,7 +45,7 @@ describe('CreateEntity', () => {
   it('renders "create entry" link if entity type is "Entry"', () => {
     const props = {
       type: entityTypes.Entry,
-      contentTypes: [{ sys: {} }],
+      contentTypes: [{ sys: {}, name: 'First content type' }],
       onSelect: () => {}
     };
     accessChecker.canPerformActionOnEntryOfType.mockReturnValueOnce(true);
@@ -56,7 +56,7 @@ describe('CreateEntity', () => {
   it('renders "create asset" link if entity type is "Asset"', () => {
     const props = {
       type: entityTypes.Asset,
-      contentTypes: [{ sys: {} }],
+      contentTypes: [{ sys: {}, name: 'First content type' }],
       onSelect: () => {}
     };
     accessChecker.canCreateAsset.mockReturnValueOnce(true);
@@ -68,7 +68,7 @@ describe('CreateEntity', () => {
   it('does not render "create entry" link if user has no "CREATE" access on the passed content types', () => {
     const props = {
       type: entityTypes.Entry,
-      contentTypes: [{ sys: {} }],
+      contentTypes: [{ sys: {}, name: 'First content type' }],
       onSelect: () => {}
     };
     const wrapper = mountComponent(props);
@@ -79,7 +79,7 @@ describe('CreateEntity', () => {
   it('does not render "create asset" link if user has no "CREATE" access on assets', () => {
     const props = {
       type: entityTypes.Asset,
-      contentTypes: [{ sys: {} }],
+      contentTypes: [{ sys: {}, name: 'First content type' }],
       onSelect: () => {}
     };
     const wrapper = mountComponent(props);
@@ -90,7 +90,7 @@ describe('CreateEntity', () => {
   it('creates an entry when a content type is clicked and opens slide in editor', async () => {
     const props = {
       type: entityTypes.Entry,
-      contentTypes: [{ sys: { id: 'abs' } }],
+      contentTypes: [{ sys: { id: 'abs' }, name: 'First content type' }],
       onSelect: jest.fn()
     };
     const entry = { data: { sys: { id: '1', type: entityTypes.Entry } } };

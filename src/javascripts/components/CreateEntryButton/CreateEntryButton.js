@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { get } from 'lodash';
 import { css } from 'emotion';
 import { Button } from '@contentful/forma-36-react-components';
-import CreateEntryMenuTrigger from './CreateEntryMenuTrigger';
+import { CreateEntryMenuTrigger } from '@contentful/field-editor-reference';
 
 const styles = {
   createEntryButton: css({
@@ -32,7 +32,11 @@ const CreateEntryButton = ({
       contentTypes={contentTypes}
       suggestedContentTypeId={suggestedContentTypeId}
       onSelect={onSelect}
-      testId={testId}>
+      testId={testId}
+      dropdownSettings={{
+        isAutoalignmentEnabled: true,
+        position: 'bottom-left'
+      }}>
       {({ openMenu }) => (
         <Button
           key="button"

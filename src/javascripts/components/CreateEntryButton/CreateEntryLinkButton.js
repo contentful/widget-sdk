@@ -4,7 +4,7 @@ import { get } from 'lodash';
 import { css } from 'emotion';
 import { Icon, TextLink, Spinner } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import CreateEntryMenuTrigger from './CreateEntryMenuTrigger';
+import { CreateEntryMenuTrigger } from '@contentful/field-editor-reference';
 
 const styles = {
   chevronIcon: css({
@@ -40,7 +40,11 @@ const CreateEntryLinkButton = ({
       contentTypes={contentTypes}
       suggestedContentTypeId={suggestedContentTypeId}
       onSelect={onSelect}
-      testId={testId}>
+      testId={testId}
+      dropdownSettings={{
+        isAutoalignmentEnabled: true,
+        position: 'bottom-right'
+      }}>
       {({ openMenu, isSelecting }) => (
         <>
           {isSelecting && <Spinner size="small" key="spinner" className={styles.spinnerMargin} />}
