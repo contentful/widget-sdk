@@ -96,16 +96,19 @@ describe('IncomingLinks', () => {
 
   describe('onFetchLinks', () => {
     it('tracks the link fetch event', function() {
+      const incomingLinkIds = ['a', 'b', 'c', 'd', 'e'];
+
       this.incomingLinksEvents.onFetchLinks({
         entityId: 'foo',
         entityType: 'bar',
-        incomingLinksCount: 19
+        incomingLinkIds
       });
 
       sinon.assert.calledWith(this.analytics.track, 'incoming_links:query', {
         entity_id: 'foo',
         entity_type: 'bar',
-        incoming_links_count: 19
+        incoming_links_count: 5,
+        incoming_link_ids: incomingLinkIds
       });
     });
   });

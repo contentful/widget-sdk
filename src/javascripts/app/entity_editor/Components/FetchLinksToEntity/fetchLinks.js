@@ -3,6 +3,7 @@ import { EntityType } from '../constants';
 import TheLocaleStore from 'services/localeStore';
 import { getModule } from 'NgRegistry';
 import * as EntityHelpers from 'app/entity_editor/entityHelpers';
+import { onFetchLinks } from 'analytics/events/IncomingLinks';
 
 const assertEntityTypeIsValid = entityType => {
   if (entityType !== EntityType.ENTRY && entityType !== EntityType.ASSET) {
@@ -23,6 +24,14 @@ export default (id, type) => {
   };
 
   return spaceContext.cma.getEntries(payload).then(({ items }) => {
+    const incomingLinkIds = items.map(i => i.sys.id);
+
+    onFetchLinks({
+      entityId: id,
+      entityType: type,
+      incomingLinkIds
+    });
+
     return Promise.all(
       items.map(entry => {
         const { id } = entry.sys;

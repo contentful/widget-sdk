@@ -53,7 +53,7 @@ describe('FetchLinksToEntity', () => {
   });
 
   it('passes success state and links if api called returns data', async function() {
-    const links = [{ a: 1 }, { b: 2 }];
+    const links = [{ id: 1 }, { id: 2 }];
     const fetchLinksStub = sinon
       .stub()
       .withArgs(defaultProps.id, defaultProps.type)
@@ -72,7 +72,7 @@ describe('FetchLinksToEntity', () => {
     sinon.assert.calledWithExactly(this.onFetchLinks, {
       entityId: 'entry-id',
       entityType: EntityType.ENTRY,
-      incomingLinksCount: 2
+      incomingLinkIds: [1, 2]
     });
   });
 
