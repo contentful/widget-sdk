@@ -24,10 +24,12 @@ export default (id, type) => {
   };
 
   return spaceContext.cma.getEntries(payload).then(({ items }) => {
+    const incomingLinkIds = items.map(i => i.sys.id);
+
     onFetchLinks({
       entityId: id,
       entityType: type,
-      incomingLinksCount: items.length
+      incomingLinkIds
     });
 
     return Promise.all(

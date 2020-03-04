@@ -44,10 +44,12 @@ class FetchLinksToEntity extends React.Component {
           requestState: RequestState.SUCCESS
         }));
         if (this.props.origin === IncomingLinksOrigin.SIDEBAR) {
+          const incomingLinkIds = links.map(l => l.id);
+
           trackFetchLinks({
             entityId: this.props.id,
             entityType: this.props.type,
-            incomingLinksCount: links.length
+            incomingLinkIds
           });
         }
       },

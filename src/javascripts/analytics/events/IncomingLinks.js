@@ -46,11 +46,12 @@ export function onDialogConfirm(options) {
   trackDialogEvent('confirm', options);
 }
 
-export function onFetchLinks({ entityId, entityType, incomingLinksCount }) {
+export function onFetchLinks({ entityId, entityType, incomingLinkIds }) {
   track('incoming_links:query', {
     entity_id: entityId,
     entity_type: entityType,
-    incoming_links_count: incomingLinksCount
+    incoming_links_count: incomingLinkIds.length,
+    incoming_link_ids: incomingLinkIds
   });
 }
 
