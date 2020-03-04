@@ -142,7 +142,8 @@ describe('spaceContext', () => {
       expect(typeof this.spaceContext.localeRepo.getAll).toBe('function');
     });
 
-    it('calls TheLocaleStore.init()', function() {
+    it('calls TheLocaleStore.init()', async function() {
+      await this.result;
       sinon.assert.calledOnceWith(this.localeStore.init, this.spaceContext.localeRepo);
     });
 
@@ -409,8 +410,8 @@ describe('spaceContext', () => {
   });
 
   describe('#uiConfig', () => {
-    it('exposes the store', function() {
-      this.resetWithSpace();
+    it('exposes the store', async function() {
+      await this.spaceContext.resetWithSpace(this.makeSpaceData());
       expect(_.isObject(this.spaceContext.uiConfig)).toBe(true);
     });
   });

@@ -19,6 +19,7 @@ import * as Store from 'data/streamHashSet';
  */
 
 /**
+ * @class Published
  * @param {Client.Space} space  Space instance from the client.
  */
 export function create(space) {
