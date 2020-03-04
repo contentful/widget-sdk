@@ -41,6 +41,9 @@ const styles = {
   }),
   maxLevelWarning: css({
     marginTop: tokens.spacingM
+  }),
+  tooComplexNote: css({
+    marginBottom: tokens.spacingM
   })
 };
 
@@ -50,6 +53,7 @@ const ReferencesDialog = ({ entity }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [defaultLocale, setDefaultLocale] = useState('');
   const [references, setReferences] = useState([]);
+  const [isTooComplex, setIsTooComplex] = useState(false);
 
   const maxLevel = 5;
 
@@ -74,8 +78,13 @@ const ReferencesDialog = ({ entity }) => {
   }
 
   const fetchReferencesAndOpenModal = async () => {
-    const fetchedRefs = await getReferencesForEntryId(entity.sys.id);
-    setReferences(fetchedRefs);
+    try {
+      const fetchedRefs = await getReferencesForEntryId(entity.sys.id);
+      setReferences(fetchedRefs);
+    } catch {
+      setIsTooComplex(true);
+    }
+
     setIsOpen(true);
     setIsLoading(false);
   };
@@ -116,13 +125,19 @@ const ReferencesDialog = ({ entity }) => {
             <>
               <Modal.Header title={title} onClose={onClose} />
               <Modal.Content className={styles.modalContent}>
-                <ReferencesTree
-                  root={references[0]}
-                  defaultLocale={defaultLocale}
-                  setIsDialogOpen={onClose}
-                  maxLevel={maxLevel}
-                  onReferenceCardClick={handleReferenceCardClick}
-                />
+                {isTooComplex ? (
+                  <Note noteType="negative" className={styles.tooComplexNote}>
+                    Right now we can not handle the complexity of your references
+                  </Note>
+                ) : (
+                  <ReferencesTree
+                    root={references[0]}
+                    defaultLocale={defaultLocale}
+                    setIsDialogOpen={onClose}
+                    maxLevel={maxLevel}
+                    onReferenceCardClick={handleReferenceCardClick}
+                  />
+                )}
               </Modal.Content>
               <Modal.Controls>
                 <FeedbackForm onClose={onClose} />

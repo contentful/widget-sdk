@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get, memoize } from 'lodash';
 import { css } from 'emotion';
-import { Paragraph, List } from '@contentful/forma-36-react-components';
+import { Paragraph, List, Note } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { track } from 'analytics/Analytics';
 import ReferenceCard from './ReferenceCard';
@@ -23,6 +23,9 @@ const styles = {
         display: 'none'
       }
     }
+  }),
+  noReferencesNote: css({
+    marginBottom: tokens.spacingM
   })
 };
 
@@ -170,13 +173,23 @@ class ReferencesTree extends React.Component {
   render() {
     const { root } = this.props;
 
+    const referencesTree = this.memoizedRenderReferenceCards();
+
     return (
       <>
-        <Paragraph className={styles.description}>Click an entry to edit or publish</Paragraph>
-        <List className={styles.parentList}>
-          <ReferenceCard entity={root} />
-          {this.memoizedRenderReferenceCards()}
-        </List>
+        {referencesTree ? (
+          <>
+            <Paragraph className={styles.description}>Click an entry to edit or publish</Paragraph>
+            <List className={styles.parentList}>
+              <ReferenceCard entity={root} />
+              {referencesTree}
+            </List>
+          </>
+        ) : (
+          <Note noteType="positive" className={styles.noReferencesNote}>
+            This entry has no references
+          </Note>
+        )}
       </>
     );
   }
