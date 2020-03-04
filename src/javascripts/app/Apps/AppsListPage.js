@@ -193,7 +193,7 @@ export default class AppsListPage extends React.Component {
   }
 
   openDeeplinkedAppDetails() {
-    const { deeplinkAppId, hasAppsFeature, spaceInformation } = this.props;
+    const { deeplinkAppId, hasAppsFeature, spaceInformation, canManageApps } = this.props;
 
     if (!hasAppsFeature || !deeplinkAppId) {
       return;
@@ -216,7 +216,8 @@ export default class AppsListPage extends React.Component {
       // Use `this.props.deeplinkReferrer`.
       openDetailModal({
         spaceInformation,
-        usageExceeded: isUsageExceeded(installedApps)
+        usageExceeded: isUsageExceeded(installedApps),
+        canManageApps
       })(deeplinkedApp);
     }
   }
