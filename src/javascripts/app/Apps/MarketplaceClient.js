@@ -4,11 +4,13 @@ import resolveResponse from 'contentful-resolve-response';
 import qs from 'qs';
 
 const MARKETPLACE_SPACE_CDN_TOKEN = 'XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk';
-const MARKETPLACE_SPACE_PREVIEW_BASE_URL = 'https://preview.contentful.com/spaces/lpjm8d10rkpy';
-const MARKETPLACE_SPACE_CDN_BASE_URL = 'https://cdn.contentful.com/spaces/lpjm8d10rkpy';
+const MARKETPLACE_SPACE_ID = 'lpjm8d10rkpy';
+const MARKETPLACE_SPACE_PREVIEW_BASE_URL = `https://preview.contentful.com/spaces/${MARKETPLACE_SPACE_ID}`;
+const MARKETPLACE_SPACE_CDN_BASE_URL = `https://cdn.contentful.com/spaces/${MARKETPLACE_SPACE_ID}`;
 
 const { MARKETPLACE_SPACE_TOKEN, MARKETPLACE_SPACE_BASE_URL } = getMarketplaceSpaceUrlAndToken();
-const MARKETPLACE_LISTING_QUERY = '/entries?include=10&sys.id[in]=2fPbSMx3baxlwZoCyXC7F1';
+const MARKETPLACE_LISTING_QUERY = '/entries?include=0&sys.id[in]=2fPbSMx3baxlwZoCyXC7F1';
+const MARKETPLACE_APPS_QUERY = '/entries?include=10&content_type=app';
 
 // Cache globally (across all spaces and environments).
 // Changes in marketplace are very infrequent - we can live
@@ -21,11 +23,29 @@ export async function fetchMarketplaceApps() {
     return marketplaceAppsCache;
   }
 
-  let res = await window.fetch(MARKETPLACE_SPACE_BASE_URL + MARKETPLACE_LISTING_QUERY, {
+  const [listingResponse, marketplaceAppsResponse] = await Promise.all([
+    tryPreviewRequest(MARKETPLACE_LISTING_QUERY),
+    tryPreviewRequest(MARKETPLACE_APPS_QUERY)
+  ]);
+  const allApps = resolveResponse(marketplaceAppsResponse);
+  const listedAppIds = new Set(
+    get(listingResponse, ['items', '0', 'fields', 'apps'], []).map(app => app.sys.id)
+  );
+
+  marketplaceAppsCache = allApps
+    .map(a => createAppObject(a, listedAppIds.has(a.sys.id)))
+    .filter(({ definitionId }) => !!definitionId);
+
+  return marketplaceAppsCache;
+}
+
+async function tryPreviewRequest(query) {
+  const isTryingToFetchMarketplacePreview = MARKETPLACE_SPACE_TOKEN !== MARKETPLACE_SPACE_CDN_TOKEN;
+
+  let res = await window.fetch(MARKETPLACE_SPACE_BASE_URL + query, {
     headers: { Authorization: `Bearer ${MARKETPLACE_SPACE_TOKEN}` }
   });
 
-  const isTryingToFetchMarketplacePreview = MARKETPLACE_SPACE_TOKEN !== MARKETPLACE_SPACE_CDN_TOKEN;
   if (isTryingToFetchMarketplacePreview) {
     if (res.ok) {
       Notifier.success('You are temporarily viewing the apps listing in preview mode.');
@@ -38,24 +58,17 @@ export async function fetchMarketplaceApps() {
     }
   }
 
-  const [listingEntry] = resolveResponse(res.ok ? await res.json() : {});
-
-  marketplaceAppsCache = get(listingEntry, ['fields', 'apps'], [])
-    .map(createAppObject)
-    .filter(({ definitionId }) => {
-      return typeof definitionId === 'string' && definitionId.length > 0;
-    });
-
-  return marketplaceAppsCache;
+  return res.ok ? res.json() : {};
 }
 
-function createAppObject(entry) {
+function createAppObject(entry, isListed) {
   const definitionId = get(entry, ['fields', 'appDefinitionId']);
   const title = get(entry, ['fields', 'title'], '');
 
   return {
     definitionId,
     title,
+    isListed,
     id: get(entry, ['fields', 'slug'], ''),
     author: {
       name: get(entry, ['fields', 'developer', 'fields', 'name']),

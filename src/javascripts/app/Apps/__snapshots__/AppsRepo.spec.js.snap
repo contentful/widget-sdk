@@ -77,9 +77,10 @@ See build status in real-time, track progress and view recent changes all from w
 ![Netlify sidebar](//images.ctfassets.net/lpjm8d10rkpy/RrSqXTcdlpfkPt7sJzkEb/57172d0fd3eaa36a5ab90e7d183ed171/apps-netlify-sidebar.0ffd73e12b.png) ",
     "icon": "//images.ctfassets.net/lpjm8d10rkpy/2dYQ3x6VMNZJgDXYmMzLBx/b338ad4b50cd0ff31e7157671b801b4d/logomark.svg",
     "id": "netlify",
+    "isListed": true,
     "legal": Object {
-      "eula": "",
-      "privacyPolicy": "",
+      "eula": "https://github.com/contentful/apps/blob/master/apps/netlify/LICENSE",
+      "privacyPolicy": "https://www.contentful.com/legal/us/privacy/",
     },
     "links": Array [
       Object {
@@ -89,6 +90,10 @@ See build status in real-time, track progress and view recent changes all from w
       Object {
         "title": "Documentation for the Netlify app",
         "url": "https://www.contentful.com/developers/docs/extensibility/apps/netlify/",
+      },
+      Object {
+        "title": "Netlify app source code on GitHub",
+        "url": "https://github.com/contentful/apps/tree/master/apps/netlify",
       },
     ],
     "tagLine": "Easily build and preview sites with the Netlify app ",

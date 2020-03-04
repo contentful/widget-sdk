@@ -1,5 +1,6 @@
 import createAppsRepo from './AppsRepo';
 import appsListingEntryMock from './mockData/appsListingEntryMock.json';
+import allAppsMock from './mockData/appEntriesMock.json';
 
 const NETLIFY_DEFINITION_ID = '1VchawWvbIClHuMIyxwR5m';
 
@@ -68,7 +69,12 @@ describe('AppsRepo', () => {
       const result = await repo.getApps();
 
       expect(mockFetch).toHaveBeenCalledWith(
-        'https://cdn.contentful.com/spaces/lpjm8d10rkpy/entries?include=10&sys.id[in]=2fPbSMx3baxlwZoCyXC7F1',
+        'https://cdn.contentful.com/spaces/lpjm8d10rkpy/entries?include=0&sys.id[in]=2fPbSMx3baxlwZoCyXC7F1',
+        { headers: { Authorization: 'Bearer XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk' } }
+      );
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://cdn.contentful.com/spaces/lpjm8d10rkpy/entries?include=10&content_type=app',
         { headers: { Authorization: 'Bearer XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk' } }
       );
 
@@ -95,11 +101,6 @@ describe('AppsRepo', () => {
       const repo = createAppsRepo(cma, loader);
       const result = await repo.getApps();
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        'https://cdn.contentful.com/spaces/lpjm8d10rkpy/entries?include=10&sys.id[in]=2fPbSMx3baxlwZoCyXC7F1',
-        { headers: { Authorization: 'Bearer XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk' } }
-      );
-
       expect(result).toEqual([
         {
           appDefinition: privateDefinition,
@@ -111,8 +112,11 @@ describe('AppsRepo', () => {
     });
 
     it('should return an array of apps when the marketplace endpoint returns good data', async () => {
-      const mockFetch = jest.fn(() => {
-        return Promise.resolve({ ok: true, json: () => Promise.resolve(appsListingEntryMock) });
+      const mockFetch = jest.fn(url => {
+        const jsonResponse = url.endsWith('2fPbSMx3baxlwZoCyXC7F1')
+          ? appsListingEntryMock
+          : allAppsMock;
+        return Promise.resolve({ ok: true, json: () => Promise.resolve(jsonResponse) });
       });
 
       global.window.fetch = mockFetch;
@@ -121,7 +125,12 @@ describe('AppsRepo', () => {
       const result = await repo.getApps();
 
       expect(mockFetch).toHaveBeenCalledWith(
-        'https://cdn.contentful.com/spaces/lpjm8d10rkpy/entries?include=10&sys.id[in]=2fPbSMx3baxlwZoCyXC7F1',
+        'https://cdn.contentful.com/spaces/lpjm8d10rkpy/entries?include=0&sys.id[in]=2fPbSMx3baxlwZoCyXC7F1',
+        { headers: { Authorization: 'Bearer XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk' } }
+      );
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://cdn.contentful.com/spaces/lpjm8d10rkpy/entries?include=10&content_type=app',
         { headers: { Authorization: 'Bearer XMf7qZNsdNypDfO9TC1NZK2YyitHORa_nIYqYdpnQhk' } }
       );
 
@@ -131,10 +140,16 @@ describe('AppsRepo', () => {
 
   describe('getApp', () => {
     beforeEach(() => {
-      global.window.fetch = jest.fn(() => {
+      global.window.fetch = jest.fn(url => {
+        const jsonResponse = url.endsWith('2fPbSMx3baxlwZoCyXC7F1')
+          ? // listing
+            appsListingEntryMock
+          : // apps
+            allAppsMock;
+
         return Promise.resolve({
           ok: true,
-          json: () => Promise.resolve(appsListingEntryMock)
+          json: () => Promise.resolve(jsonResponse)
         });
       });
     });

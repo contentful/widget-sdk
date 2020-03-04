@@ -1,4 +1,4 @@
-import { omit } from 'lodash';
+import { omit, sortBy } from 'lodash';
 
 import { fetchMarketplaceApps } from './MarketplaceClient';
 
@@ -21,9 +21,9 @@ export default function createAppsRepo(cma, appDefinitionLoader) {
   }
 
   async function getApps() {
-    const [installationMap, marketplaceApps, orgDefinitions] = await Promise.all([
-      getAppDefinitionToInstallationMap(),
-      fetchMarketplaceApps(),
+    const installationMap = await getAppDefinitionToInstallationMap();
+    const [marketplaceApps, orgDefinitions] = await Promise.all([
+      fetchMarketplaceApps(installationMap),
       appDefinitionLoader.getAllForCurrentOrganization()
     ]);
 
@@ -34,21 +34,27 @@ export default function createAppsRepo(cma, appDefinitionLoader) {
   }
 
   async function getMarketplaceApps(installationMap, marketplaceApps) {
-    const definitionIds = marketplaceApps.map(app => app.definitionId);
+    const definitionIds = marketplaceApps
+      // show apps from the marketplace space which are in the public listing or are installed
+      .filter(app => app.isListed || !!installationMap[app.definitionId])
+      .map(app => app.definitionId);
     const appDefinitionMap = await appDefinitionLoader.getByIds(definitionIds);
 
-    return marketplaceApps.reduce((acc, app) => {
-      const { definitionId } = app;
-      const appDefinition = appDefinitionMap[definitionId];
-      const appInstallation = installationMap[definitionId];
+    return sortBy(
+      marketplaceApps.reduce((acc, app) => {
+        const { definitionId } = app;
+        const appDefinition = appDefinitionMap[definitionId];
+        const appInstallation = installationMap[definitionId];
 
-      // Referred definition, for whatever reason, is missing. Skip the app.
-      if (!appDefinition) {
-        return acc;
-      }
+        // Referred definition, for whatever reason, is missing. Skip the app.
+        if (!appDefinition) {
+          return acc;
+        }
 
-      return [...acc, makeMarketplaceAppObject(app, appDefinition, appInstallation)];
-    }, []);
+        return [...acc, makeMarketplaceAppObject(app, appDefinition, appInstallation)];
+      }, []),
+      app => app.title.toLowerCase()
+    );
   }
 
   function getPrivateApps(installationMap, orgDefinitions) {
