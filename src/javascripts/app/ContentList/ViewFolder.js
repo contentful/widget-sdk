@@ -10,6 +10,7 @@ import { openRoleSelector } from './RoleSelector';
 import { openInputDialog } from 'app/InputDialogComponent';
 import * as accessChecker from 'access_control/AccessChecker';
 import { htmlEncode } from 'utils/encoder';
+import * as K from 'utils/kefir';
 
 export default function ViewFolder({ folder, state, actions }) {
   const { canEdit, roleAssignment, tracking } = state;
@@ -17,6 +18,15 @@ export default function ViewFolder({ folder, state, actions }) {
   const [views, setViews] = React.useState(
     filter(folder.views, view => isViewVisible(view, roleAssignment))
   );
+
+  // Reinitialize folders visibility once accessChecker is initialized.
+  React.useEffect(() => {
+    return K.onValue(
+      accessChecker.isInitialized$,
+      isInitialized =>
+        isInitialized && setViews(filter(folder.views, view => isViewVisible(view, roleAssignment)))
+    );
+  }, [folder.views, roleAssignment]);
 
   // Do not render anything when:
   // - all views in the folder were hidden from you

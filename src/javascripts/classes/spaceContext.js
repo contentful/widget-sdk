@@ -179,22 +179,21 @@ export default function register() {
           // and not the user, so the spaceId is required.
           enforcementsDeInit = EnforcementsService.init(spaceId);
 
-          await setupPublishedCTsBus(self);
-
-          const ctMap = self.publishedCTs
-            .getAllBare()
-            .reduce((acc, ct) => ({ ...acc, [ct.sys.id]: ct }), {});
-          self.uiConfig = createUiConfigStore(
-            space,
-            self.endpoint,
-            self.publishedCTs,
-            createViewMigrator(ctMap)
-          );
-
           const start = Date.now();
           return Promise.all([
             setupEnvironments(self, uriEnvOrAliasId),
             TheLocaleStore.init(self.localeRepo),
+            setupPublishedCTsBus(self).then(() => {
+              const ctMap = self.publishedCTs
+                .getAllBare()
+                .reduce((acc, ct) => ({ ...acc, [ct.sys.id]: ct }), {});
+              self.uiConfig = createUiConfigStore(
+                space,
+                self.endpoint,
+                self.publishedCTs,
+                createViewMigrator(ctMap)
+              );
+            }),
             (async () => {
               self.pubsubClient = await createPubSubClientForSpace(spaceId);
             })()

@@ -196,24 +196,29 @@ export default function register() {
       const isSearching$ = K.fromScopeValue($scope, $scope => $scope.context.isSearching);
 
       function initializeSearchUI() {
-        const initialSearchState = getViewSearchState();
-        const contentTypes = getAccessibleCTs(
-          spaceContext.publishedCTs,
-          initialSearchState.contentTypeId
-        );
+        K.onValueScope($scope, accessChecker.isInitialized$, isInitialized => {
+          if (!isInitialized) {
+            return;
+          }
+          const initialSearchState = getViewSearchState();
+          const contentTypes = getAccessibleCTs(
+            spaceContext.publishedCTs,
+            initialSearchState.contentTypeId
+          );
 
-        if (_.isEqual(lastUISearchState, initialSearchState)) {
-          return;
-        }
+          if (_.isEqual(lastUISearchState, initialSearchState)) {
+            return;
+          }
 
-        lastUISearchState = initialSearchState;
-        createSearchInput({
-          $scope: $scope,
-          contentTypes: contentTypes,
-          onSearchChange: onSearchChange,
-          isSearching$: isSearching$,
-          initState: initialSearchState,
-          users$: Kefir.fromPromise(spaceContext.users.getAll())
+          lastUISearchState = initialSearchState;
+          createSearchInput({
+            $scope: $scope,
+            contentTypes: contentTypes,
+            onSearchChange: onSearchChange,
+            isSearching$: isSearching$,
+            initState: initialSearchState,
+            users$: Kefir.fromPromise(spaceContext.users.getAll())
+          });
         });
       }
 

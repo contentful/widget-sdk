@@ -1,6 +1,8 @@
 import sinon from 'sinon';
 import _ from 'lodash';
 import { $initialize, $inject, $apply, $removeControllers } from 'test/utils/ng';
+import * as accessChecker from 'access_control/AccessChecker';
+import * as K from 'test/utils/kefir';
 
 let ListQueryOriginal;
 
@@ -34,8 +36,14 @@ describe('Entry List Controller', () => {
     this.stubs = {
       apiErrorHandler: sinon.stub(),
       getQuery: sinon.stub().resolves({}),
-      entryTitle: sinon.stub()
+      entryTitle: sinon.stub(),
+      accessChecker: sinon.stub()
     };
+
+    this.system.set('access_control/AccessChecker', {
+      ...accessChecker,
+      isInitialized$: K.createMockProperty(true)
+    });
 
     this.system.set('analytics/Analytics', {
       track: sinon.stub()
