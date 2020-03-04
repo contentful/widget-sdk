@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Icon from 'ui/Components/Icon';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 import { Workbench } from '@contentful/forma-36-react-components';
 import { SkeletonContainer, SkeletonBodyText } from '@contentful/forma-36-react-components';
 
 export function WebhookLoadingSkeleton() {
   return (
     <Workbench testId="webhooks.list">
-      <Workbench.Header icon={<Icon name="page-settings" scale="0.8" />} />
+      <Workbench.Header icon={<NavigationIcon icon="settings" color="green" size="large" />} />
       <Workbench.Content type="full">
         <SkeletonContainer
           svgWidth={600}
@@ -39,7 +39,7 @@ export function WebhookListShell(props) {
   return (
     <Workbench testId="webhooks.list">
       <Workbench.Header
-        icon={<Icon name="page-settings" scale="0.8" />}
+        icon={<NavigationIcon icon="settings" color="green" size="large" />}
         title={props.title}
         actions={props.actions}
       />

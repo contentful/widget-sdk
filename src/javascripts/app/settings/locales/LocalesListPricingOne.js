@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Icon from 'ui/Components/Icon';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 import _ from 'lodash';
 import {
   Button,
@@ -175,7 +175,7 @@ class LocalesListPricingOne extends React.Component {
     return (
       <Workbench testId="locale-list-workbench">
         <Workbench.Header
-          icon={<Icon name="page-settings" scale="0.8" />}
+          icon={<NavigationIcon icon="settings" color="green" size="large" />}
           title={
             <>
               <Heading>Locales</Heading>

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Icon from 'ui/Components/Icon';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 import { Heading, Workbench } from '@contentful/forma-36-react-components';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import LocalesListSidebar from './LocalesListSidebar';
@@ -32,7 +32,7 @@ class LocalesListPricingTwo extends React.Component {
     return (
       <Workbench testId="locale-list-workbench">
         <Workbench.Header
-          icon={<Icon name="page-settings" scale="0.8" />}
+          icon={<NavigationIcon icon="settings" color="green" size="large" />}
           title={this.renderTitle()}
         />
         <Workbench.Content type="full">

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Workbench } from '@contentful/forma-36-react-components';
-import Icon from 'ui/Components/Icon';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 import { get } from 'lodash';
 
 import WebhookCallStatus from './WebhookCallStatus';
@@ -39,7 +39,7 @@ export class WebhookCall extends React.Component {
             this.props.onGoBack();
           }}
           title={`Call details for ${webhook.name} at ${call.requestAt}`}
-          icon={<Icon name="page-settings" scale="0.8" />}
+          icon={<NavigationIcon icon="settings" color="green" size="large" />}
         />
         <Workbench.Content type="full">
           <div className="webhook-call__details">

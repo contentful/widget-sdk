@@ -5,14 +5,14 @@ import {
   SkeletonBodyText,
   Workbench
 } from '@contentful/forma-36-react-components';
-import Icon from 'ui/Components/Icon';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 import ExtensionsSidebar from '../ExtensionsSidebar';
 
 export const ExtensionListSkeleton = props => (
   <Workbench>
     <Workbench.Header
       title={props.title || 'Extensions'}
-      icon={<Icon name="page-settings" scale="0.8" />}
+      icon={<NavigationIcon icon="settings" color="green" size="large" />}
       actions={props.actions}
     />
     <Workbench.Content type="full">

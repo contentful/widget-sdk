@@ -29,6 +29,8 @@ import tokens from '@contentful/forma-36-tokens';
 
 import QuestionMarkIcon from 'svg/QuestionMarkIcon.svg';
 import Icon from 'ui/Components/Icon';
+import NavigationIcon from 'ui/Components/NavigationIcon';
+
 import { Tooltip } from '@contentful/forma-36-react-components';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import EnvironmentAliases from 'app/SpaceSettings/EnvironmentAliases/EnvironmentAliases';
@@ -69,7 +71,10 @@ export default function EnvironmentsRoute(props) {
     <Fragment>
       <DocumentTitle title="Environments" />
       <Workbench>
-        <Workbench.Header icon={<Icon name="page-settings" scale="0.8" />} title="Environments" />
+        <Workbench.Header
+          icon={<NavigationIcon icon="settings" color="green" size="large" />}
+          title="Environments"
+        />
         <Workbench.Content>
           {aliasesEnabled && canManageAliases && (
             <EnvironmentAliases {...state} {...actions} testId="environmentaliases.card" />

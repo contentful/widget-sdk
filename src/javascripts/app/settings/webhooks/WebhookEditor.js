@@ -11,7 +11,7 @@ import {
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import Icon from 'ui/Components/Icon';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 import WebhookForm from './WebhookForm';
 import WebhookSidebar from './WebhookSidebar';
 import * as WebhookEditorActions from './WebhookEditorActions';
@@ -163,7 +163,7 @@ class WebhookEditor extends React.Component {
             onBack={() => {
               Navigator.go({ path: '^.list' });
             }}
-            icon={<Icon name="page-settings" scale="0.8" />}
+            icon={<NavigationIcon icon="settings" color="green" size="large" />}
             title={`Webhook: ${webhook.name || 'Unnamed'}${dirty ? '*' : ''}`}
             actions={
               <>

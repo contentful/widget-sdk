@@ -4,7 +4,7 @@ import { css } from 'emotion';
 import PropTypes from 'prop-types';
 import { Button, TextField, Form, Workbench } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import Icon from 'ui/Components/Icon';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 import getOrgRole from 'redux/selectors/getOrgRole';
 
 const styles = {
@@ -56,7 +56,7 @@ class SpaceSettings extends React.Component {
       <Workbench>
         <Workbench.Header
           title="Space settings"
-          icon={<Icon name="page-settings" scale="0.8" />}
+          icon={<NavigationIcon icon="settings" color="green" size="large" />}
           actions={
             <>
               {showDeleteButton && (

@@ -4,7 +4,7 @@ import { orderBy } from 'lodash';
 import { Subheading, Form, Paragraph, Typography } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import Icon from 'ui/Components/Icon';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 import {
   Button,
   Select,
@@ -125,7 +125,7 @@ export default class LocaleEditForm extends Component {
           onBack={() => {
             this.props.goToList();
           }}
-          icon={<Icon name="page-settings" scale="0.8" />}
+          icon={<NavigationIcon icon="settings" color="green" size="large" />}
           title={`${this.state.locale.name || 'New locale'}${
             this.state.locale.default ? ' / Default locale' : ''
           }`}
