@@ -3,6 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 import { merge, update, flow, isArray } from 'lodash/fp';
+import * as echarts from 'echarts';
 
 import baseStyle, { seriesBaseStyle } from './lineChartBaseStyle';
 import { Spinner } from '@contentful/forma-36-react-components';
@@ -31,37 +32,15 @@ export default class LineChart extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { loading: true };
+    this.chartRef = React.createRef();
   }
 
   componentDidMount() {
-    try {
-      require.ensure(
-        ['echarts'],
-        require => {
-          const echarts = require('echarts');
-          this.chartInstance = echarts.init(this.ref, null, {
-            renderer: 'svg'
-          });
-          this.setState({ loading: false });
-          this.setChartOptions();
-        },
-        'echarts'
-      );
-    } catch (ex) {
-      this.props.require.ensure(
-        ['echarts'],
-        require => {
-          const echarts = require('echarts');
-          this.chartInstance = echarts.init(this.ref, null, {
-            renderer: 'svg'
-          });
-          this.setState({ loading: false });
-          this.setChartOptions();
-        },
-        'echarts'
-      );
-    }
+    this.chartInstance = echarts.init(this.chartRef.current, null, {
+      renderer: 'svg'
+    });
+
+    this.setChartOptions();
   }
 
   componentDidUpdate() {
@@ -85,15 +64,14 @@ export default class LineChart extends React.Component {
   }
 
   render() {
-    const { EmptyPlaceholder, empty, className, width, height } = this.props;
-    const loading = this.state.loading || this.props.loading;
+    const { EmptyPlaceholder, empty, className, width, height, loading } = this.props;
     return (
       <div
         className={cn(
           'line-chart',
           {
-            'line-chart--loading': loading,
-            'line-chart--empty': empty
+            'line-chart--empty': empty,
+            'line-chart--loading': loading
           },
           className
         )}
@@ -103,9 +81,7 @@ export default class LineChart extends React.Component {
         }}>
         <div
           className={'line-chart__mount'}
-          ref={ref => {
-            this.ref = ref;
-          }}
+          ref={this.chartRef}
           style={{
             width,
             height
