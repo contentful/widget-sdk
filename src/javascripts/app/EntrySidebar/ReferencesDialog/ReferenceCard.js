@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
+import { noop } from 'lodash';
 import { Card, Paragraph, Icon, ListItem } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { EntityStatusTag } from 'components/shared/EntityStatusTag';
@@ -45,6 +46,9 @@ const styles = {
   assetIcon: css({
     marginRight: tokens.spacing2Xs
   }),
+  circularIconWrapper: css({
+    display: 'flex'
+  }),
   text: css({
     maxWidth: '100%',
     overflow: 'hidden',
@@ -56,7 +60,7 @@ const styles = {
   })
 };
 
-const ReferenceCard = ({ entity, onClick, isMoreCard }) => {
+const ReferenceCard = ({ entity, onClick, isMoreCard, isUnresolved, isCircular }) => {
   const [title, setTitle] = useState('Untitled');
 
   useEffect(() => {
@@ -66,8 +70,39 @@ const ReferenceCard = ({ entity, onClick, isMoreCard }) => {
         setTitle(fetchedTitle || 'Untitled');
       }
     }
-    getTitle();
-  }, [entity]);
+    if (!isUnresolved) {
+      getTitle();
+    }
+  }, [entity, isUnresolved]);
+
+  if (isMoreCard) {
+    return (
+      <ListItem
+        className={styles.listItem}
+        title="There are more references, click the parent entry to see all of them.">
+        <Card className={styles.card}>+ more</Card>
+      </ListItem>
+    );
+  }
+
+  if (!entity) {
+    return null;
+  }
+
+  if (isUnresolved) {
+    return (
+      <ListItem className={styles.listItem}>
+        <Card className={styles.card} onClick={noop}>
+          {entity.sys.linkType === 'Asset' && (
+            <Icon icon="Asset" color="muted" className={styles.assetIcon} />
+          )}
+          <Paragraph className={styles.text}>
+            {entity.sys.linkType} is missing or inaccessible
+          </Paragraph>
+        </Card>
+      </ListItem>
+    );
+  }
 
   if (isMoreCard) {
     return (
@@ -88,6 +123,13 @@ const ReferenceCard = ({ entity, onClick, isMoreCard }) => {
       <Card className={styles.card} onClick={() => onClick(entity)}>
         {entity.sys.type === 'Asset' && (
           <Icon icon={entity.sys.type} color="muted" className={styles.assetIcon} />
+        )}
+        {isCircular && (
+          <span
+            title="This entry has already been referenced in one of the parent entries"
+            className={styles.circularIconWrapper}>
+            <Icon icon="Cycle" color="muted" className={styles.assetIcon} />
+          </span>
         )}
         <Paragraph className={styles.text} title={title}>
           {title}
@@ -111,7 +153,9 @@ export const ReferencePropType = PropTypes.shape({
 ReferenceCard.propTypes = {
   entity: ReferencePropType,
   onClick: PropTypes.func.isRequired,
-  isMoreCard: PropTypes.bool
+  isMoreCard: PropTypes.bool,
+  isUnresolved: PropTypes.bool,
+  isCircular: PropTypes.bool
 };
 
 export default ReferenceCard;
