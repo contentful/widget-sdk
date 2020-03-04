@@ -2,7 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { EntityType } from '../constants';
 import fetchLinks from 'app/entity_editor/Components/FetchLinksToEntity/fetchLinks';
-import { Origin as IncomingLinksOrigin } from 'analytics/events/IncomingLinks';
+import {
+  onFetchLinks as trackFetchLinks,
+  Origin as IncomingLinksOrigin
+} from 'analytics/events/IncomingLinks';
 
 export const RequestState = {
   PENDING: 'pending',
@@ -40,6 +43,13 @@ class FetchLinksToEntity extends React.Component {
           links,
           requestState: RequestState.SUCCESS
         }));
+        if (this.props.origin === IncomingLinksOrigin.SIDEBAR) {
+          trackFetchLinks({
+            entityId: this.props.id,
+            entityType: this.props.type,
+            incomingLinksCount: links.length
+          });
+        }
       },
       () => {
         this.setState(() => ({
