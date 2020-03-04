@@ -8,7 +8,6 @@ import {
   Heading,
   Workbench
 } from '@contentful/forma-36-react-components';
-import Icon from 'ui/Components/Icon';
 import ContentTypeList from './ContentTypeList';
 import NoSearchResultsAdvice from 'components/tabs/NoSearchResultsAdvice';
 import NoContentTypeAdvice from 'components/tabs/NoContentTypeAdvice';
@@ -18,6 +17,7 @@ import ContentTypeListSearch from './ContentTypeListSearch';
 import ContentTypeListFilter from './ContentTypeListFilter';
 import * as service from './ContentTypeListService';
 import { getSearchTerm } from 'redux/selectors/filters';
+import NavigationIcon from 'ui/Components/NavigationIcon';
 
 export class ContentTypesPage extends React.Component {
   static propTypes = {
@@ -85,7 +85,7 @@ export class ContentTypesPage extends React.Component {
         <DocumentTitle title="Content Model" />
         <Workbench>
           <Workbench.Header
-            icon={<Icon name="page-ct" scale="0.75" />}
+            icon={<NavigationIcon icon="content-model" color="green" size="large" />}
             title={
               <>
                 <Heading>Content Model</Heading>

@@ -14,6 +14,7 @@ import * as accessControlAddUsersToSpaceNoteEs6 from 'access_control/AddUsersToS
 import * as accessControlNoUsersToAddNoteEs6 from 'access_control/NoUsersToAddNote';
 import * as componentsSharedKnowledgeBaseIconKnowledgeBaseEs6 from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import * as uiComponentsContactUsButtonEs6 from 'ui/Components/ContactUsButton';
+import * as uiComponentsNavigationIcon from 'ui/Components/NavigationIcon';
 import * as appContentListSaveViewDialogComponentEs6 from 'app/ContentList/SaveViewDialogComponent';
 import * as uiComponentsIconEs6 from 'ui/Components/Icon';
 import * as componentsSharedDocumentTitleEs6 from 'components/shared/DocumentTitle';
@@ -265,6 +266,7 @@ function getModule(name) {
     'access_control/NoUsersToAddNote': accessControlNoUsersToAddNoteEs6,
     'components/shared/knowledge_base_icon/KnowledgeBase': componentsSharedKnowledgeBaseIconKnowledgeBaseEs6,
     'ui/Components/ContactUsButton': uiComponentsContactUsButtonEs6,
+    'ui/Components/NavigationIcon': uiComponentsNavigationIcon,
     'app/ContentList/SaveViewDialogComponent': appContentListSaveViewDialogComponentEs6,
     'ui/Components/Icon': uiComponentsIconEs6,
     'components/shared/DocumentTitle': componentsSharedDocumentTitleEs6,

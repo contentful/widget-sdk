@@ -4,7 +4,12 @@
 ></react-component>
 <header class="workbench-header">
   <div class="workbench-header__left">
-    <cf-icon class="workbench-header__icon" name="page-content" scale="0.75"></cf-icon>
+    <div class="workbench-header__icon">
+      <react-component
+        name="ui/Components/NavigationIcon"
+        props="{icon: 'content', size: 'large', color: 'green'}"
+      ></react-component>
+    </div>
     <h1 class="workbench-header__title">
       Content
       <react-component

@@ -144,14 +144,14 @@ export function getSpaceNavigationItems({
           if: canNavigateTo('spaceHome'),
           sref: 'spaces.detail.home',
           dataViewType: 'space-home',
-          icon: 'nav-home',
+          navIcon: 'home',
           title: 'Space home'
         }
       : {
           if: canNavigateTo('spaceHome'),
           disabled: true,
           tooltip: 'The space home is only available in the master environment.',
-          icon: 'nav-home',
+          navIcon: 'home',
           title: 'Space home'
         },
     {
@@ -159,7 +159,7 @@ export function getSpaceNavigationItems({
       sref: makeRef('content_types.list', isMasterEnvironment),
       rootSref: makeRef('content_types', isMasterEnvironment),
       dataViewType: 'content-type-list',
-      icon: 'nav-ct',
+      navIcon: 'content-model',
       title: 'Content model'
     },
     {
@@ -167,7 +167,7 @@ export function getSpaceNavigationItems({
       sref: makeRef('entries.list', isMasterEnvironment),
       rootSref: makeRef('entries', isMasterEnvironment),
       dataViewType: 'entry-list',
-      icon: 'nav-entries',
+      navIcon: 'content',
       title: 'Content'
     },
     {
@@ -175,13 +175,13 @@ export function getSpaceNavigationItems({
       sref: makeRef('assets.list', isMasterEnvironment),
       rootSref: makeRef('assets', isMasterEnvironment),
       dataViewType: 'asset-list',
-      icon: 'nav-media',
+      navIcon: 'media',
       title: 'Media'
     },
     {
       if: canNavigateTo('apps'),
       dataViewType: 'apps',
-      icon: 'nav-apps',
+      navIcon: 'apps',
       sref: makeRef('apps.list', isMasterEnvironment),
       rootSref: makeRef('apps', isMasterEnvironment),
       title: 'Apps'
@@ -190,6 +190,7 @@ export function getSpaceNavigationItems({
       if: useSpaceEnviroment ? envSettingsDropdown.length > 0 : spaceSettingsDropdown.length > 0,
       dataViewType: 'space-settings',
       rootSref: makeRef('settings', isMasterEnvironment),
+      navIcon: 'settings',
       icon: 'nav-settings',
       title: useSpaceEnviroment ? 'Settings' : 'Space settings',
       children: useSpaceEnviroment ? envSettingsDropdown : spaceSettingsDropdown

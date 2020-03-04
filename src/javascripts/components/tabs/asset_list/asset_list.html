@@ -1,7 +1,12 @@
 <react-component name="components/shared/DocumentTitle" props="{title: 'Media'}"></react-component>
 <header class="workbench-header">
   <div class="workbench-header__left">
-    <cf-icon class="workbench-header__icon" name="page-media" scale="0.75"></cf-icon>
+    <div class="workbench-header__icon">
+      <react-component
+        name="ui/Components/NavigationIcon"
+        props="{icon: 'media', size: 'large', color: 'green'}"
+      ></react-component>
+    </div>
     <h1 class="workbench-header__title">
       Media
       <react-component
