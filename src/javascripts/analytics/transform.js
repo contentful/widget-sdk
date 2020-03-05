@@ -36,7 +36,6 @@ import DialogTransformer from './transformers/Dialog';
 import JobsCreateTransformer from './transformers/JobsCreate';
 import JobsCancelTransformer from './transformers/JobsCancel';
 import EnvironmentAliases from './transformers/EnvironmentAliases';
-import EntryReferences from './transformers/EntryReferences';
 
 /**
  * @ngdoc module
@@ -235,7 +234,7 @@ registerGenericEvent('app_management:deleted');
 registerGenericEvent('app_management:updated');
 
 registerGenericEvent('tracking:invalid_event');
-registerEvent('entry_references:dialog_open', 'entry_references', EntryReferences);
+registerGenericEvent('entry_references:dialog_open');
 
 /**
  * Registers an event to be tracked by snowplow.

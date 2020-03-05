@@ -223,6 +223,7 @@ class ReferencesTree extends React.Component {
     const referenceCards = renderLayer(root, level, parentIndexInTree);
 
     track(trackingEvents.dialogOpen, {
+      entity_id: root.sys.id,
       references_depth: depth,
       references_per_level: entitiesPerLevel,
       circular_references_count: circularReferenceCount
