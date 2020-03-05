@@ -102,8 +102,15 @@ describe('TeamMembershipForm', () => {
                   firstName: null,
                   lastName: null,
                   avatarUrl: 'doesntMatter.com/blah',
-                  email: 'userOldInvitation@test.com',
-                  sys: { id: 'testUserI' }
+                  email: 'userWithoutName@test.com',
+                  sys: { id: 'testUserW' }
+                },
+                {
+                  firstName: null,
+                  lastName: null,
+                  avatarUrl: 'doesntMatter.com/blah',
+                  email: 'testSortingWithoutName@test.com',
+                  sys: { id: 'testUserS' }
                 }
               ],
               [ORG_MEMBERSHIPS]: [
@@ -162,12 +169,25 @@ describe('TeamMembershipForm', () => {
                 {
                   role: 'member',
                   sys: {
-                    id: 'orgMembershipI',
+                    id: 'orgMembershipW',
                     user: {
                       sys: {
                         type: 'Link',
                         linkType: USERS,
-                        id: 'testUserI'
+                        id: 'testUserW'
+                      }
+                    }
+                  }
+                },
+                {
+                  role: 'member',
+                  sys: {
+                    id: 'orgMembershipS',
+                    user: {
+                      sys: {
+                        type: 'Link',
+                        linkType: USERS,
+                        id: 'testUserS'
                       }
                     }
                   }
@@ -210,12 +230,13 @@ describe('TeamMembershipForm', () => {
         const { wrapper } = renderComponent(actions);
 
         const options = wrapper.find(Option).filter({ testId: 'user-select-option' });
-        expect(options).toHaveLength(4);
+        expect(options).toHaveLength(5);
         expect(options.get(0).props.children).toEqual(['A User LastName ', '<userA@test.com>']);
         expect(options.get(0).props).toHaveProperty('value', 'orgMembershipA');
         expect(options.get(1).props).toHaveProperty('value', 'orgMembershipB1');
         expect(options.get(2).props).toHaveProperty('value', 'orgMembershipB2');
-        expect(options.get(3).props.children).toEqual([null, '<userOldInvitation@test.com>']);
+        expect(options.get(3).props.children).toEqual([null, '<testSortingWithoutName@test.com>']);
+        expect(options.get(4).props.children).toEqual([null, '<userWithoutName@test.com>']);
       });
 
       it('the close button should close the form', () => {

@@ -4,13 +4,14 @@ import { css } from 'emotion';
 import { connect } from 'react-redux';
 import { get, orderBy, filter, flow } from 'lodash/fp';
 import { TableCell, TableRow, Button, Select, Option } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 import getOrgMemberships from 'redux/selectors/getOrgMemberships';
 import getMembershipsOfCurrentTeamToDisplay from 'redux/selectors/teamMemberships/getMembershipsOfCurrentTeamToDisplay';
 import { OrganizationMembership as OrganizationMembershipPropType } from 'app/OrganizationSettings/PropTypes';
 
 const styles = {
   addTeamMemberButton: css({
-    marginRight: '10px'
+    marginRight: tokens.spacingS
   })
 };
 
@@ -73,7 +74,7 @@ function getAvailableOrgMemberships(state) {
     getOrgMemberships,
     Object.values,
     filter(({ sys: { id } }) => !unavailableOrgMemberships.includes(id)),
-    orderBy(['sys.user.firstName', 'sys.user.lastName'], ['asc', 'asc'])
+    orderBy(['sys.user.firstName', 'sys.user.lastName', 'sys.user.email'], ['asc', 'asc', 'asc'])
   )(state);
 }
 
