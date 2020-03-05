@@ -51,7 +51,9 @@ const AssetBandwidthSection = props => {
         <Heading element="h2" className={styles.heading}>
           Total asset bandwidth
         </Heading>
-        <Paragraph className={styles.usageNumber}>Not available</Paragraph>
+        <Paragraph data-test-id="asset-bandwidth-not-available" className={styles.usageNumber}>
+          Not available
+        </Paragraph>
         <Note className={styles.note}>
           Note that the asset bandwidth is not displayed in real time; there is a 48 hour delay. To
           learn about utility limits, read the
@@ -74,11 +76,17 @@ const AssetBandwidthSection = props => {
       <Heading element="h2" className={styles.heading}>
         Total asset bandwidth
       </Heading>
-      <Paragraph className={styles.usageNumber}>{withUnit(usage)}</Paragraph>
+      <Paragraph data-test-id="asset-bandwidth-usage" className={styles.usageNumber}>
+        {withUnit(usage)}
+      </Paragraph>
       <div className={styles.limit}>
-        <strong className={styles.includedLimit}>{`${withUnit(limit)} included`}</strong>
+        <strong data-test-id="asset-bandwidth-limit" className={styles.includedLimit}>{`${withUnit(
+          limit
+        )} included`}</strong>
         {usage > limit && (
-          <small className={styles.overage}>{` + ${withUnit(usage - limit)} overage`}</small>
+          <small className={styles.overage} data-test-id="asset-bandwidth-overage">
+            {` + ${withUnit(usage - limit)} overage`}
+          </small>
         )}
         <TextLink
           href="https://www.contentful.com/r/knowledgebase/fair-use/"
