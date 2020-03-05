@@ -18,8 +18,7 @@ const apiColumnStyle = colour =>
   });
 
 const calcRelativeSpaceUsage = (spaceUsage, totalUsage) => {
-  const spaceUsageSum = sum(spaceUsage);
-  return spaceUsageSum === 0 ? 0 : Math.round((spaceUsageSum / totalUsage) * 100);
+return !totalUsage ? 0 : Math.round((sum(spaceUsage) / totalUsage) * 100);
 };
 
 const renderTableRow = (spaceName, spaceUsage, totalUsage, colour) => {
