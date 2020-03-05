@@ -11,7 +11,6 @@ export const PENDING_ORG_MEMBERSHIPS = 'feature-bv-09-2019-new-invitation-flow-n
 export const NEW_INVITATION_FORM = 'feature-bv-05-2019-new-invitation-flow';
 export const ACCESS_TOOLS = 'feature-ogg-02-2020-access-tools';
 export const USAGE_API_UX = 'feature-moi-02-2020-organisation-usage';
-export const NEW_SLUG_EDITOR = 'new-slug-editor';
 
 // Gatekeeper Product Catalog Flags
 export const ENVIRONMENT_USAGE_ENFORCEMENT = 'environment_usage_enforcements';
