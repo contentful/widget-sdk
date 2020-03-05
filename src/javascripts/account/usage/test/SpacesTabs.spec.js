@@ -100,7 +100,7 @@ describe('<SpacesTabs />', () => {
       expect(getByText('CDASpace')).toBeInTheDocument();
     });
 
-    it('renders a bar chart and does not initialise again', () => {
+    it('renders a bar chart and initializes once', () => {
       const { getByTestId, getByText } = build(defaultProps);
       expect(echarts.init).toHaveBeenCalledTimes(1);
 
