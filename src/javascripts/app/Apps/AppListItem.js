@@ -73,9 +73,10 @@ export default class AppListItem extends Component {
   determineOnClick = (onClick, openDetailsFunc, canManageApps) => {
     const { app } = this.props;
 
-    const continueDirectlyToAppPage = !!app.appInstallation || app.isPrivateApp;
+    const isInstalledOrPrivate = !!app.appInstallation || app.isPrivateApp;
+    const continueDirectlyToAppPage = canManageApps && isInstalledOrPrivate;
 
-    return canManageApps && continueDirectlyToAppPage ? onClick : openDetailsFunc;
+    return continueDirectlyToAppPage ? onClick : openDetailsFunc;
   };
 
   render() {
