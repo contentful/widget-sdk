@@ -282,6 +282,8 @@ angular
         /* webpackMode: "eager" */ 'app/RolesForWalkMe'
       );
 
+      const { init: initOsano } = await import(/* webpackMode: "eager" */'services/OsanoService');
+
       const { init: initDialogs } = $injector.get('dialogsInitController');
       const { setup: setupStateChangeHandlers } = $injector.get('navigation/stateChangeHandlers');
 
@@ -300,6 +302,7 @@ angular
       initContextMenuHandler();
       initExtentionActivationTracking();
       initRolesForWalkMe();
+      initOsano();
 
       initDialogs();
       setupStateChangeHandlers();

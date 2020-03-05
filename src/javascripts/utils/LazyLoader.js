@@ -61,6 +61,10 @@ const RESOURCES = {
   PubNub: {
     url: 'https://cdn.pubnub.com/sdk/javascript/pubnub.4.21.6.js',
     globalObject: ['PubNub']
+  },
+  osano: {
+    url: `https://cmp.osano.com/16BcqiRsJId123ATa/${Config.services.osano.cdnKey}/osano.js`,
+    globalObject: ['Osano']
   }
 };
 
