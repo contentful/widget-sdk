@@ -1,16 +1,69 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`OrganizationUsage should render page without errors 1`] = `
-<Workbench
-  testId="organization.usage"
->
-  <WorkbenchHeader
-    actions={
-      <WorkbenchActions
+<Fragment>
+  <DocumentTitle
+    title="Usage"
+  />
+  <Workbench
+    testId="organization.usage"
+  >
+    <WorkbenchHeader
+      actions={
+        <WorkbenchActions
+          committed={true}
+          hasSpaces={true}
+          isLoading={true}
+          periods={
+            Array [
+              Object {
+                "endDate": null,
+                "startDate": "2018-12-23",
+                "sys": Object {
+                  "id": "0",
+                  "type": "UsagePeriod",
+                },
+              },
+              Object {
+                "endDate": "2018-12-22",
+                "startDate": "2018-11-22",
+                "sys": Object {
+                  "id": "1",
+                  "type": "UsagePeriod",
+                },
+              },
+            ]
+          }
+          setPeriodIndex={[Function]}
+        />
+      }
+      icon={
+        <NavigationIcon
+          color="green"
+          icon="usage"
+          size="large"
+        />
+      }
+      testId="cf-ui-workbench-header"
+      title="Usage"
+    />
+    <WorkbenchContent
+      testId="cf-ui-workbench-content"
+      type="default"
+    >
+      <WorkbenchContent
+        apiRequestIncludedLimit={1000000}
         committed={true}
         error={null}
         hasSpaces={true}
         isLoading={true}
+        isPoC={
+          Object {
+            "space1": false,
+            "space2": false,
+          }
+        }
+        newOrgEnabled={true}
         periods={
           Array [
             Object {
@@ -31,65 +84,16 @@ exports[`OrganizationUsage should render page without errors 1`] = `
             },
           ]
         }
-        setPeriodIndex={[Function]}
-      />
-    }
-    icon={
-      <NavigationIcon
-        color="green"
-        icon="usage"
-        size="large"
-      />
-    }
-    testId="cf-ui-workbench-header"
-    title="Usage"
-  />
-  <WorkbenchContent
-    testId="cf-ui-workbench-content"
-    type="default"
-  >
-    <WorkbenchContent
-      apiRequestIncludedLimit={1000000}
-      committed={true}
-      error={null}
-      hasSpaces={true}
-      isLoading={true}
-      isPoC={
-        Object {
-          "space1": false,
-          "space2": false,
-        }
-      }
-      newOrgEnabled={true}
-      periods={
-        Array [
+        spaceNames={
           Object {
-            "endDate": null,
-            "startDate": "2018-12-23",
-            "sys": Object {
-              "id": "0",
-              "type": "UsagePeriod",
-            },
-          },
-          Object {
-            "endDate": "2018-12-22",
-            "startDate": "2018-11-22",
-            "sys": Object {
-              "id": "1",
-              "type": "UsagePeriod",
-            },
-          },
-        ]
-      }
-      spaceNames={
-        Object {
-          "test1": "Test1",
-          "test2": "Test2",
+            "test1": "Test1",
+            "test2": "Test2",
+          }
         }
-      }
-    />
-  </WorkbenchContent>
-</Workbench>
+      />
+    </WorkbenchContent>
+  </Workbench>
+</Fragment>
 `;
 
 exports[`WorkbenchActions should render 1`] = `""`;
