@@ -42,13 +42,6 @@ export const WorkbenchContent = props => {
     newOrgEnabled
   } = props;
 
-  const [newOrgEnabled, setNewOrgEnabled] = useState(false);
-
-  (async function() {
-    const featureFlag = await getVariation(USAGE_API_UX, { organizationId: orgId });
-    setNewOrgEnabled(featureFlag);
-  })();
-
   if (error) {
     return <ErrorState />;
   }
@@ -176,7 +169,7 @@ export class OrganizationUsage extends React.Component {
   }
 
   async componentDidMount() {
-    const { onForbidden, orgId } = this.props;
+    const { orgId } = this.props;
 
     try {
       const featureFlag = await getVariation(USAGE_API_UX, { organizationId: orgId });
@@ -342,24 +335,12 @@ export class OrganizationUsage extends React.Component {
       newOrgEnabled
     } = this.state;
     return (
-<<<<<<< HEAD
-      <Workbench testId="organization.usage">
-        <Workbench.Header
-          title="Usage"
-          icon={<NavigationIcon icon="usage" color="green" size="large" />}
-          actions={
-            <WorkbenchActions
-              {...{
-                isLoading,
-                error,
-                hasSpaces,
-=======
       <>
         <DocumentTitle title="Usage" />
         <Workbench testId="organization.usage">
           <Workbench.Header
             title="Usage"
-            icon={<Icon name="page-usage" scale="0.75" />}
+            icon={<NavigationIcon icon="usage" color="green" size="large" />}
             actions={
               <WorkbenchActions
                 {...{
@@ -375,7 +356,6 @@ export class OrganizationUsage extends React.Component {
           <Workbench.Content>
             <WorkbenchContent
               {...{
->>>>>>> feat: add documentTitle to usage page
                 committed,
                 hasSpaces,
                 selectedPeriodIndex,
@@ -385,38 +365,15 @@ export class OrganizationUsage extends React.Component {
                 apiRequestIncludedLimit,
                 assetBandwidthData,
                 isLoading,
+                error,
                 periods,
                 resources,
                 newOrgEnabled
               }}
             />
-<<<<<<< HEAD
-          }></Workbench.Header>
-        <Workbench.Content>
-          <WorkbenchContent
-            {...{
-              committed,
-              hasSpaces,
-              selectedPeriodIndex,
-              spaceNames,
-              isPoC,
-              periodicUsage,
-              apiRequestIncludedLimit,
-              assetBandwidthData,
-              isLoading,
-              error,
-              periods,
-              resources,
-              newOrgEnabled
-            }}
-          />
-        </Workbench.Content>
-      </Workbench>
-=======
           </Workbench.Content>
         </Workbench>
       </>
->>>>>>> feat: add documentTitle to usage page
     );
   }
 }
