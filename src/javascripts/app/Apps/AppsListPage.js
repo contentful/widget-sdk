@@ -266,6 +266,7 @@ export default class AppsListPage extends React.Component {
               <AppListItem
                 key={app.id}
                 app={app}
+                canManageApps={canManageApps}
                 openDetailModal={openDetailModal({
                   spaceInformation,
                   usageExceeded,
