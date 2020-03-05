@@ -24,6 +24,7 @@ export default function createAppExtensionBridge(dependencies) {
   return {
     getData,
     install,
+    uninstall: () => {},
     apply: fn => fn()
   };
 

@@ -8,6 +8,16 @@ const SLIDES_BELOW_QS = 'previousEntries';
 
 export const slideInStackEmitter = mitt();
 
+export const onSlideInNavigation = fn => {
+  const funcWrapper = ({ currentSlideLevel, targetSlideLevel }) => {
+    fn({ newSlideLevel: targetSlideLevel, oldSlideLevel: currentSlideLevel });
+  };
+  slideInStackEmitter.on('changed', funcWrapper);
+  return () => {
+    slideInStackEmitter.off('changed', funcWrapper);
+  };
+};
+
 /**
  * Serializes a given slide as a string.
  *

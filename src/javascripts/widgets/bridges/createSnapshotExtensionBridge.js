@@ -16,6 +16,7 @@ export default function createSnapshotExtensionBridge(dependencies) {
   return {
     getData,
     install,
+    uninstall: () => {},
     apply: () => {} // No matter what - don't apply changes
   };
 

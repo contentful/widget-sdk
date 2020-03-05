@@ -14,6 +14,7 @@ export default function createDialogExtensionBridge(dependencies, openDialog, on
   return {
     getData,
     install,
+    uninstall: () => {},
     apply: fn => fn()
   };
 

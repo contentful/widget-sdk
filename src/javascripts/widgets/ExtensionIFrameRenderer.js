@@ -27,7 +27,8 @@ export default class ExtensionIFrameRenderer extends React.Component {
     bridge: PropTypes.shape({
       getData: PropTypes.func.isRequired,
       apply: PropTypes.func.isRequired,
-      install: PropTypes.func.isRequired
+      install: PropTypes.func.isRequired,
+      uninstall: PropTypes.func
     }).isRequired,
     descriptor: PropTypes.shape({
       id: PropTypes.string,
@@ -52,6 +53,9 @@ export default class ExtensionIFrameRenderer extends React.Component {
   }
 
   componentWillUnmount() {
+    if (this.props.bridge.uninstall) {
+      this.props.bridge.uninstall();
+    }
     if (this.extensionApi) {
       this.extensionApi.destroy();
     }

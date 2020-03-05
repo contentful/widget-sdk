@@ -6,8 +6,6 @@ import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
 import SidebarWidgetTypes from 'app/EntrySidebar/SidebarWidgetTypes';
 import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
 import * as WidgetLocations from 'widgets/WidgetLocations';
-import * as SlideInNavigator from 'navigation/SlideInNavigator';
-import * as Navigator from 'states/Navigator';
 import TheLocaleStore from 'services/localeStore';
 
 export default ({ $scope, emitter }) => {
@@ -226,9 +224,7 @@ export default ({ $scope, emitter }) => {
       {
         $rootScope,
         $scope: fieldLocaleScope,
-        spaceContext,
-        Navigator,
-        SlideInNavigator
+        spaceContext
       },
       WidgetLocations.LOCATION_ENTRY_FIELD_SIDEBAR
     );
@@ -240,9 +236,7 @@ export default ({ $scope, emitter }) => {
     {
       $rootScope,
       $scope,
-      spaceContext,
-      Navigator,
-      SlideInNavigator
+      spaceContext
     },
     WidgetLocations.LOCATION_ENTRY_SIDEBAR
   );

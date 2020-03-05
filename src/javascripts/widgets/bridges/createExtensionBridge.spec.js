@@ -53,7 +53,8 @@ jest.mock('states/Navigator', () => ({
 }));
 
 jest.mock('navigation/SlideInNavigator', () => ({
-  goToSlideInEntity: jest.fn()
+  goToSlideInEntity: jest.fn(),
+  onSlideInNavigation: jest.fn()
 }));
 
 jest.mock('navigation/SlideInNavigator/withPromise', () => ({

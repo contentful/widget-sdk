@@ -1,6 +1,7 @@
 import * as K from 'utils/kefir';
 import * as PathUtils from 'utils/Path';
 import TheLocaleStore from 'services/localeStore';
+import { onSlideInNavigation } from 'navigation/SlideInNavigator/index';
 
 import makeExtensionDialogsHandler from './makeExtensionDialogsHandlers';
 import makeExtensionSpaceMethodsHandlers from './makeExtensionSpaceMethodsHandlers';
@@ -33,12 +34,18 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
     'spaceContext'
   ]);
 
+  let unsubscribeFunctions = [];
+
   const isFieldLevelExtension =
     location === LOCATION_ENTRY_FIELD || location === LOCATION_ENTRY_FIELD_SIDEBAR;
 
   return {
     getData,
     install,
+    uninstall: () => {
+      unsubscribeFunctions.forEach(fn => fn());
+      unsubscribeFunctions = [];
+    },
     apply: fn => $rootScope.$apply(fn)
   };
 
@@ -118,6 +125,12 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
       $scope,
       $scope.otDoc.changes.filter(path => PathUtils.isAffecting(path, ['fields'])),
       path => api.update(path, $scope.otDoc.getValueAt([]))
+    );
+
+    unsubscribeFunctions.push(
+      onSlideInNavigation(data => {
+        api.send('navigateSlideIn', [data]);
+      })
     );
 
     api.registerPathHandler('setValue', setValue);

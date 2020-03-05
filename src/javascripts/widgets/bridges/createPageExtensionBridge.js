@@ -13,6 +13,7 @@ export default function createPageExtensionBridge(dependencies, currentExtension
   return {
     getData,
     install,
+    uninstall: () => {},
     apply: fn => fn()
   };
 
