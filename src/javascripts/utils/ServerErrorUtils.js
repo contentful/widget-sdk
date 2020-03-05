@@ -10,7 +10,3 @@ export function isTaken(error) {
 export function isForbidden(error) {
   return error.statusCode === 403;
 }
-
-export function getErrorMessage(data) {
-  return data.message;
-}
