@@ -21,9 +21,9 @@ const calcRelativeSpaceUsage = (spaceUsage, totalUsage) => {
   return !totalUsage ? 0 : Math.round((sum(spaceUsage) / totalUsage) * 100);
 };
 
-const renderTableRow = (spaceName, spaceUsage, totalUsage, colour, index) => {
+const SpaceRow = ({ spaceName, spaceUsage, totalUsage, colour }) => {
   return (
-    <TableRow key={index} data-test-id="api-usage-table-row">
+    <TableRow data-test-id="api-usage-table-row">
       <TableCell>{spaceName || 'Deleted space'}</TableCell>
       <TableCell>{shorten(sum(spaceUsage))}</TableCell>
       <TableCell className={apiColumnStyle(colour)}>
@@ -31,6 +31,13 @@ const renderTableRow = (spaceName, spaceUsage, totalUsage, colour, index) => {
       </TableCell>
     </TableRow>
   );
+};
+
+SpaceRow.propTypes = {
+  spaceName: PropTypes.string,
+  spaceUsage: PropTypes.arrayOf(PropTypes.number).isRequired,
+  totalUsage: PropTypes.number.isRequired,
+  colour: PropTypes.string.isRequired
 };
 
 const SpacesTable = ({ spaceNames, apiName, data, totalUsage, colours }) => {
@@ -44,15 +51,16 @@ const SpacesTable = ({ spaceNames, apiName, data, totalUsage, colours }) => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {data.map((item, index) =>
-          renderTableRow(
-            spaceNames[item.sys.space.sys.id],
-            item.usage,
-            totalUsage,
-            colours[index],
-            index
-          )
-        )}
+        {data.map((item, index) => (
+          <SpaceRow
+            key={index}
+            spaceName={spaceNames[item.sys.space.sys.id]}
+            spaceUsage={item.usage}
+            totalUsage={totalUsage}
+            colour={colours[index]}
+            index={index}
+          />
+        ))}
       </TableBody>
     </Table>
   );

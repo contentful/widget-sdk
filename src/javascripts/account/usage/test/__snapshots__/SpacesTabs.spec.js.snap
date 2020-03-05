@@ -87,7 +87,7 @@ Object {
       <div
         class="emotion-6"
         data-test-id="cf-ui-tab-panel"
-        id="ID_IS_A_MUST"
+        id="api-usage-tab-panel"
         role="tabpanel"
       >
         <div
@@ -295,7 +295,7 @@ Object {
     <div
       class="emotion-6"
       data-test-id="cf-ui-tab-panel"
-      id="ID_IS_A_MUST"
+      id="api-usage-tab-panel"
       role="tabpanel"
     >
       <div

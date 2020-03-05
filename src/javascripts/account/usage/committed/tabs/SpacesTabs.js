@@ -66,7 +66,7 @@ const SpacesTabs = ({ spaceNames, period, periodicUsage }) => {
             </Tab>
           ))}
       </Tabs>
-      <TabPanel id="ID_IS_A_MUST" className={styles.tabPanel}>
+      <TabPanel id="api-usage-tab-panel" className={styles.tabPanel}>
         <Grid columns={'repeat(12, 1fr)'}>
           <GridItem columnStart={'span 4'}>
             <SpacesTable
