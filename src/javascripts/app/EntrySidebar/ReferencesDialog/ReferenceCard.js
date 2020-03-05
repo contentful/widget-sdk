@@ -13,15 +13,17 @@ const styles = {
     display: 'flex',
     padding: `${tokens.spacing2Xs} ${tokens.spacingXs}`,
     alignItems: 'center',
-    marginBottom: tokens.spacing2Xs,
     position: 'relative'
   }),
   listItem: css({
+    margin: '0',
+    padding: `${tokens.spacing2Xs} 0`,
+    background: 'white',
     position: 'relative',
-    '&:first-child:before': {
+    '&:before': {
       position: 'absolute',
       left: '-10px',
-      top: '1px',
+      top: tokens.spacing2Xs,
       content: '""',
       display: 'block',
       borderLeft: `1px solid ${tokens.colorElementMid}`,
@@ -29,14 +31,14 @@ const styles = {
       borderBottom: `1px solid ${tokens.colorElementMid}`,
       width: '20px'
     },
-    '&:first-child:after': {
+    '&:after': {
       position: 'absolute',
       left: '-10px',
       bottom: '20px',
       content: '""',
       display: 'block',
       borderLeft: `1px solid ${tokens.colorElementMid}`,
-      height: '100%',
+      height: '9999px',
       zIndex: '-1'
     }
   }),

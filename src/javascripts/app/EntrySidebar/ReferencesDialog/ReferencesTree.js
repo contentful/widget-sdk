@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get, memoize } from 'lodash';
 import { css } from 'emotion';
-import { Paragraph, List, Note } from '@contentful/forma-36-react-components';
+import { Paragraph, List, ListItem, Note } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import ReferenceCard from './ReferenceCard';
 import { getEntityTitle } from './referencesDialogService';
@@ -14,6 +14,18 @@ const styles = {
   }),
   list: css({
     marginLeft: 20
+  }),
+  listItem: css({
+    position: 'relative',
+    margin: '0',
+    '&:after': {
+      content: '""',
+      position: 'absolute',
+      bottom: '0',
+      width: '20px',
+      height: '20px',
+      background: 'white'
+    }
   }),
   parentList: css({
     paddingBottom: tokens.spacingM,
@@ -198,7 +210,12 @@ class ReferencesTree extends React.Component {
         return null;
       }
 
-      return <List className={styles.list}>{nextLevelReferenceCards}</List>;
+      return (
+        // All lists must be nested in list items
+        <ListItem className={styles.listItem}>
+          <List className={styles.list}>{nextLevelReferenceCards}</List>
+        </ListItem>
+      );
     };
 
     const level = 1;

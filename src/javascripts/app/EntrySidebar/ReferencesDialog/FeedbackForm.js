@@ -125,7 +125,7 @@ const FeedbackForm = ({ onClose }) => {
             </>
           )}
           <div className={styles.buttonWrapper}>
-            <Button type="submit" loading={isSubmitting}>
+            <Button type="submit" loading={isSubmitting} disabled={!isCommentFieldVisible}>
               Submit
             </Button>
             <Button onClick={onClose} buttonType="muted">
