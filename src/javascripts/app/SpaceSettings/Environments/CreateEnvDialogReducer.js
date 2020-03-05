@@ -130,7 +130,7 @@ export const useCreateEnvState = props => {
  * functions that take the field value and return an error if the field
  * value is invalid.
  */
-const validations = {
+export const validations = {
   id: value => {
     if (!value || !value.trim()) {
       return EMPTY_FIELD_ERROR_MESSAGE;
