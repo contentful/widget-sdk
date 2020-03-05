@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
+import { shorten } from 'utils/NumberUtils';
 import * as echarts from 'echarts';
 
 const styles = {
@@ -33,7 +34,8 @@ const chartOptions = (period, usage) => {
       axisLabel: {
         color: '#536171',
         fontFamily: tokens.fontStackPrimary,
-        fontSize: 14
+        fontSize: 14,
+        formatter: value => shorten(value)
       },
       axisLine: {
         lineStyle: {
