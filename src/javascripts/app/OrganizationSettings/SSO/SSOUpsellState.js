@@ -10,7 +10,7 @@ import {
   Workbench
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { salesUrl } from 'Config';
+import { salesUrl, apiUrl } from 'Config';
 import EmptyStateContainer, {
   defaultSVGStyle
 } from 'components/EmptyStateContainer/EmptyStateContainer';
@@ -29,32 +29,34 @@ function SSOUpsellState() {
         title="Single Sign-On (SSO)"
       />
       <Workbench.Content>
-        <EmptyStateContainer>
-          <div className={defaultSVGStyle}>
-            <SSOUpsellStateImage />
-          </div>
-          <Typography>
-            <Heading>Authorize users in Contentful using your identity provider</Heading>
-            <Paragraph>
-              You can authorize users within your organization in Contentful directly from your
-              identity provider. We support SAML 2.0 for user authorization.{' '}
-              <TextLink href="https://www.contentful.com/faq/sso" target="_blank">
-                Read our FAQs for more information.
-              </TextLink>
-            </Paragraph>
-            <Paragraph>
-              The single sign-on feature is available only on enterprise-grade platform plans. To
-              add single sign-on to your plan, contact us directly.
-            </Paragraph>
-          </Typography>
-          <Button
-            testId="get-in-touch-btn"
-            className={styles.topMargin}
-            href={salesUrl}
-            target="_blank">
-            Get in touch
-          </Button>
-        </EmptyStateContainer>
+        <div className={styles.pageWrapper}>
+          <EmptyStateContainer>
+            <div className={defaultSVGStyle}>
+              <SSOUpsellStateImage />
+            </div>
+            <Typography>
+              <Heading>Authorize users in Contentful using your identity provider</Heading>
+              <Paragraph>
+                You can authorize users within your organization in Contentful directly from your
+                identity provider. We support SAML 2.0 for user authorization.{' '}
+                <TextLink href={`https:${apiUrl('faq/sso/')}`} target="_blank">
+                  Read our FAQs for more information.
+                </TextLink>
+              </Paragraph>
+              <Paragraph>
+                The single sign-on feature is available only on enterprise-grade platform plans. To
+                add single sign-on to your plan, contact us directly.
+              </Paragraph>
+            </Typography>
+            <Button
+              testId="get-in-touch-btn"
+              className={styles.topMargin}
+              href={salesUrl}
+              target="_blank">
+              Get in touch
+            </Button>
+          </EmptyStateContainer>
+        </div>
       </Workbench.Content>
     </Workbench>
   );
