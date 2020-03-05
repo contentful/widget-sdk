@@ -63,7 +63,11 @@ const RESOURCES = {
     globalObject: ['PubNub']
   },
   osano: {
-    url: `https://cmp.osano.com/16BcqiRsJId123ATa/${Config.services.osano.cdnKey}/osano.js`,
+    url: `https://cmp.osano.com/16BcqiRsJId123ATa/${getAtPath(Config, [
+      'services',
+      'osano',
+      'cdnKey'
+    ])}/osano.js`,
     globalObject: ['Osano']
   }
 };
