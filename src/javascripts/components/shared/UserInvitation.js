@@ -16,7 +16,6 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { article } from 'utils/StringUtils';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import { User as UserPropType } from 'app/OrganizationSettings/PropTypes';
-import { isEntityUnprocessable, getErrorBaseMessage } from 'utils/ServerErrorUtils';
 
 export default class UserInvitation extends React.Component {
   static propTypes = {
@@ -95,9 +94,9 @@ export default class UserInvitation extends React.Component {
         accepting: false
       });
 
-      if (isEntityUnprocessable(e)) {
-        const { data } = e;
-        const errorMessageText = getErrorBaseMessage(data);
+      const errorMessageText = e.data && e.data.message;
+
+      if (errorMessageText) {
         Notification.error(`${errorMessageText}`);
       } else {
         Notification.error(
