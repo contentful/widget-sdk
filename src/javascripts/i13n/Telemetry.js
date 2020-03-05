@@ -1,6 +1,5 @@
 import createMicroBackendsClient from 'MicroBackendsClient';
 import { gitRevision as uiVersion } from 'Config';
-import { track } from 'analytics/Analytics';
 
 // How often measurements should be sent using `send`.
 //
@@ -55,9 +54,6 @@ export function count(name, tags) {
 export function record(name, value, tags) {
   const measurement = makeMeasurement(name, value, tags, state);
 
-  // Immediately track the measurement
-  track(`telemetry:measurement`, measurement);
-
   withState(state => {
     state.measurements = [...state.measurements, measurement];
   });
@@ -77,9 +73,6 @@ export function countImmediate(name, tags) {
 
 export function recordImmediate(name, value, tags) {
   const measurement = makeMeasurement(name, value, tags, state);
-
-  // Immediately track the measurement
-  track(`telemetry:measurement`, measurement);
 
   withState(state => {
     const body = JSON.stringify([measurement]);
