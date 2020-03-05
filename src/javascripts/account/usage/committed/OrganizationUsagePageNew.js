@@ -11,8 +11,7 @@ const OrganizationUsagePageNew = props => {
   const spaceNames = props.spaceNames;
   const { periodicUsage, apiRequestIncludedLimit, assetBandwidthData } = props;
 
-  return (
-    <>
+    return (
       <MainTabs
         assetBandwidthData={assetBandwidthData}
         period={period}
@@ -20,7 +19,6 @@ const OrganizationUsagePageNew = props => {
         apiRequestIncludedLimit={apiRequestIncludedLimit}
         spaceNames={spaceNames}
       />
-    </>
   );
 };
 
