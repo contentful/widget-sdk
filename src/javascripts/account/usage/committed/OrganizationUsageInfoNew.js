@@ -30,16 +30,17 @@ const OrganizationUsageInfoNew = props => {
       <Heading element="h2" className={styles.heading}>
         Total API requests
       </Heading>
-      <Heading element="p" className={styles.usageNumber}>
+      <Heading element="p" data-test-id="org-usage-total" className={styles.usageNumber}>
         {totalUsage.toLocaleString('en-US')}
         {totalUsage > includedLimit && (
-          <small className={styles.overageNumber}>
+          <small data-test-id="org-usage-overage" className={styles.overageNumber}>
             {` +${(totalUsage - includedLimit).toLocaleString('en-US')} overage`}
           </small>
         )}
       </Heading>
       <Paragraph>
-        Total API calls made this month from a <strong>{`${shorten(includedLimit)}`}</strong>
+        Total API calls made this month from a{' '}
+        <strong data-test-id="org-usage-limit">{`${shorten(includedLimit)}`}</strong>
         /month quota. This number includes CMA, CDA, CPA, and GraphQL requests. To learn about
         utility limits, read the
         <TextLink
