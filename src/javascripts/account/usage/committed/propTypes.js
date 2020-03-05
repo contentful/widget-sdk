@@ -24,8 +24,7 @@ const organizationUsagePropType = PropTypes.shape({
 
 const organizationResourceUsagePropType = PropTypes.shape({
   sys: PropTypes.shape({
-    type: PropTypes.oneOf(['ApiUsage', 'SpacePeriodicUsage']),
-    id: PropTypes.string,
+    type: PropTypes.oneOf(['OrganizationPeriodicUsage', 'SpacePeriodicUsage']),
     space: PropTypes.shape({ sys: PropTypes.shape({ id: PropTypes.string.isRequired }) }).isRequired
   }),
   usage: PropTypes.arrayOf(PropTypes.number).isRequired
