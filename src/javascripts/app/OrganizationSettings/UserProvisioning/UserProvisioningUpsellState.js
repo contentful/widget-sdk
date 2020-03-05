@@ -40,8 +40,8 @@ function UserProvisioningUpsellState() {
                 your identity provider. We support SCIM 2.0 for user provisioning.{' '}
                 {/* TODO uncomment when page is available
                 <TextLink
-                  href="https://www.contentful.com/faq/SSO-Groups-Provisioning/
-                  "
+                  testId="faq-url"
+                  href={`https:${apiUrl('faq/SSO-Groups-Provisioning/')}`}
                   target="_blank">
                   Read our FAQs for more information.
                 </TextLink> */}
