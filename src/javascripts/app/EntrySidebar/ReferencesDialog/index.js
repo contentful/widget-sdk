@@ -127,7 +127,7 @@ const ReferencesDialog = ({ entity }) => {
               <Modal.Content className={styles.modalContent}>
                 {isTooComplex ? (
                   <Note noteType="negative" className={styles.tooComplexNote}>
-                    Right now we can not handle the complexity of your references
+                    At the moment we are unable to handle the reference complexity for this entry
                   </Note>
                 ) : (
                   <ReferencesTree
