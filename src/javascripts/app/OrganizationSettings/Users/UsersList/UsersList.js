@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { startCase, debounce } from 'lodash';
+import { startCase, debounce, times } from 'lodash';
 import { css } from 'emotion';
 import { isEqual } from 'lodash/fp';
 import pluralize from 'pluralize';
@@ -258,19 +258,22 @@ class UsersList extends React.Component {
     updateSearchTerm(newSearchTerm);
   }, 500);
 
-  renderLoadingState = () => (
-    <TableRow>
-      <TableCell>
-        <SkeletonContainer svgHeight={42} clipId="user-avatar">
-          <SkeletonImage width={32} height={32} radiusX="100%" radiusY="100%" />
-          <SkeletonBodyText numberOfLines={2} offsetLeft={52} />
-        </SkeletonContainer>
-      </TableCell>
-      <SkeletonCell clipId="role" />
-      <SkeletonCell clipId="last-active" />
-      <SkeletonCell clipId="2fa-status" />
-    </TableRow>
-  );
+  renderLoadingState = () => {
+    return times(5, idx => (
+      <TableRow key={idx}>
+        <TableCell>
+          <SkeletonContainer svgHeight={42} clipId="user-avatar">
+            <SkeletonImage width={32} height={32} radiusX="100%" radiusY="100%" />
+            <SkeletonBodyText numberOfLines={2} offsetLeft={52} />
+          </SkeletonContainer>
+        </TableCell>
+        <SkeletonCell clipId="role" />
+        <SkeletonCell clipId="last-active" />
+        <SkeletonCell clipId="2fa-status" />
+        <TableCell />
+      </TableRow>
+    ));
+  };
 
   render() {
     const {
@@ -338,7 +341,7 @@ class UsersList extends React.Component {
                   })}>
                   <TableHead>
                     <TableRow>
-                      <TableCell width="50">User</TableCell>
+                      <TableCell>User</TableCell>
                       <TableCell width="200">Organization role</TableCell>
                       <TableCell>Last active</TableCell>
                       <TableCell>
@@ -401,7 +404,6 @@ class UsersList extends React.Component {
               </div>
             ) : (
               <Placeholder
-                loading={loading}
                 title="No users found 🧐"
                 text="Check your spelling or try changing the filters"
               />
