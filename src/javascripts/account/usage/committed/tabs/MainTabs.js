@@ -33,9 +33,7 @@ const MainTabs = props => {
 
   const [selected, setSelected] = useState('apiRequest');
 
-  const handleSelected = idx => {
-    setSelected(idx);
-  };
+  const handleSelected = setSelected;
 
   return (
     <>
