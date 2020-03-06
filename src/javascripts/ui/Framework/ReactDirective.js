@@ -64,6 +64,7 @@ import * as UserLink from 'app/widgets/link/UserLink';
 import * as ProhibitRegExpValidation from 'components/field_dialog/validations/ProhibitRegExpValidation';
 import * as AssetLink from 'app/widgets/link/AssetLink';
 import * as EntryLink from 'app/widgets/link/EntryLink';
+import * as ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -315,7 +316,8 @@ function getModule(name) {
     'app/widgets/link/UserLink': UserLink,
     'components/field_dialog/validations/ProhibitRegExpValidation': ProhibitRegExpValidation,
     'app/widgets/link/AssetLink': AssetLink,
-    'app/widgets/link/EntryLink': EntryLink
+    'app/widgets/link/EntryLink': EntryLink,
+    'widgets/ExtensionIFrameRenderer': ExtensionIFrameRenderer
   };
 
   return get(allowedModules, name, null);
