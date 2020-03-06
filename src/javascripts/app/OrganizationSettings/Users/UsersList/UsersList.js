@@ -124,9 +124,13 @@ class UsersList extends React.Component {
   }
 
   loadInitialData = async () => {
+    const { hasPendingOrgMembershipsEnabled } = this.props;
+
     this.setState({ loading: true });
 
-    if (!this.props.hasPendingOrgMembershipsEnabled) {
+    // if this is undefined while the flag value is being fetched the list will show pending members for a second and then hide then
+    // forcing it to check if the flag is bool false fix this
+    if (hasPendingOrgMembershipsEnabled === false) {
       await this.loadInvitationsCount();
     }
 
@@ -159,7 +163,9 @@ class UsersList extends React.Component {
 
     // in the legacy invitation flow we filter out users without name.
     // this won't be needed once pending org memberships are fully rolled out
-    if (!hasPendingOrgMembershipsEnabled) query[membershipExistsParam] = true;
+    // if this is undefined while the flag value is being fetched the list will show pending members for a second and then hide then
+    // forcing it to check if the flag is bool false fix this
+    if (hasPendingOrgMembershipsEnabled === false) query[membershipExistsParam] = true;
 
     this.setState({ loading: true });
 

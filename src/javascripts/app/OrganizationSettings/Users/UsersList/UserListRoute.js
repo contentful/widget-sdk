@@ -4,7 +4,7 @@ import UsersList from './UsersList';
 import OrgAdminOnly from 'app/common/OrgAdminOnly';
 import StateRedirect from 'app/common/StateRedirect';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent';
+import createFetcherComponent from 'app/common/createFetcherComponent';
 import { getAllSpaces, getAllRoles } from 'access_control/OrganizationMembershipRepository';
 import { getAllTeams } from 'access_control/TeamRepository';
 import { getOrganization } from 'services/TokenStore';
@@ -45,10 +45,7 @@ export default class UserListRoute extends React.Component {
     return (
       <OrgAdminOnly orgId={orgId}>
         <UserListFetcher orgId={orgId}>
-          {({ isLoading, isError, data }) => {
-            if (isLoading) {
-              return <FetcherLoading message="Loading users..." />;
-            }
+          {({ isError, data }) => {
             if (isError) {
               return <StateRedirect path="spaces.detail.entries.list" />;
             }
@@ -60,7 +57,7 @@ export default class UserListRoute extends React.Component {
               org,
               hasTeamsFeature,
               hasPendingOrgMembershipsEnabled
-            ] = data;
+            ] = data ? data : [];
 
             return (
               <>
@@ -70,7 +67,7 @@ export default class UserListRoute extends React.Component {
                   spaceRoles={roles}
                   orgId={orgId}
                   teams={teams}
-                  hasSsoEnabled={org.hasSsoEnabled}
+                  hasSsoEnabled={org && org.hasSsoEnabled}
                   hasTeamsFeature={hasTeamsFeature}
                   hasPendingOrgMembershipsEnabled={hasPendingOrgMembershipsEnabled}
                 />
