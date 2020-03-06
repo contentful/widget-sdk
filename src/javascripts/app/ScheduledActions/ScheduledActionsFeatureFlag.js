@@ -5,7 +5,7 @@ import * as FeatureFlagKey from 'featureFlags';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { trackAlphaEligibilityToIntercom } from './Analytics/ScheduledActionsAnalytics';
 
-export function getJobsFeatureVariation({ spaceId }) {
+export function getScheduledActionsFeatureVariation({ spaceId }) {
   return getSpaceFeature(spaceId, FeatureFlagKey.SCHEDULED_PUBLISHING);
 }
 

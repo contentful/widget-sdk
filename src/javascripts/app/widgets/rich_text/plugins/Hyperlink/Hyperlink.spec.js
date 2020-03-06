@@ -47,8 +47,8 @@ describe('Hyperlink', () => {
         }),
         getContentType: jest.fn().mockResolvedValue({ name: 'Entry' })
       },
-      jobs: {
-        getPendingJobs: jest.fn()
+      scheduledActions: {
+        getPendingScheduledActions: jest.fn()
       }
     };
   });
@@ -71,7 +71,7 @@ describe('Hyperlink', () => {
       }
     ];
 
-    widgetAPIMock.jobs.getPendingJobs.mockReturnValue(jobs);
+    widgetAPIMock.scheduledActions.getPendingScheduledActions.mockReturnValue(jobs);
 
     const tooltipDataStub = jest.fn(entityType =>
       getScheduledJobsTooltip(entityType, node, widgetAPIMock)
@@ -116,7 +116,7 @@ describe('Hyperlink', () => {
       }
     ];
 
-    widgetAPIMock.jobs.getPendingJobs = jest.fn().mockReturnValue(jobs);
+    widgetAPIMock.scheduledActions.getPendingScheduledActions = jest.fn().mockReturnValue(jobs);
 
     const tooltipDataStub = jest.fn(entityType =>
       getScheduledJobsTooltip(entityType, node, widgetAPIMock)
@@ -226,8 +226,8 @@ describe("Hyperlink's default getScheduledJobsTooltip", () => {
     ];
 
     const widgetAPIMock = {
-      jobs: {
-        getPendingJobs: jest.fn().mockReturnValue(jobs)
+      scheduledActions: {
+        getPendingScheduledActions: jest.fn().mockReturnValue(jobs)
       }
     };
 

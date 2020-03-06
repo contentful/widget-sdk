@@ -30,8 +30,8 @@ describe('EmbeddedEntryInline component', () => {
       field: {
         locale: 'en-US'
       },
-      jobs: {
-        getPendingJobs: jest.fn().mockReturnValue([
+      scheduledActions: {
+        getPendingScheduledActions: jest.fn().mockReturnValue([
           {
             action: ScheduledActionAction.Publish,
             sys: {

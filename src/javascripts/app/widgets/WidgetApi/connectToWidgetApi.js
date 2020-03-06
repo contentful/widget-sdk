@@ -82,7 +82,7 @@ export default function connectToWidgetApi(
     };
 
     render() {
-      const { entry, field, settings, jobs } = this.props.widgetApi;
+      const { entry, field, settings, scheduledActions } = this.props.widgetApi;
       const { currentUrl } = this.state;
       // TODO: Merge this part of widgetApi with the other widgetApi.
       const widgetAPI = buildWidgetApi({
@@ -90,7 +90,7 @@ export default function connectToWidgetApi(
         field,
         currentUrl,
         settings,
-        jobs
+        scheduledActions
       });
       const { widgetApi: _widgetApi, ...otherProps } = this.props;
       return (

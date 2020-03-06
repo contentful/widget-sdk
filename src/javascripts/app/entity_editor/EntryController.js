@@ -29,7 +29,7 @@ import { trackIsCommentsAlphaEligible } from '../EntrySidebar/CommentsPanel/anal
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
 import { getAllForEntry } from 'data/CMA/CommentsRepo';
 import initSidebarTogglesProps from 'app/entity_editor/entityEditorSidebarToggles';
-import { initJobStore } from 'app/ScheduledActions/DataManagement/ScheduledActionsStoreNg';
+import { initScheduledActionsStore } from 'app/ScheduledActions/DataManagement/ScheduledActionsStoreNg';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 import { appendDuplicateIndexToEntryTitle } from './entityHelpers';
 
@@ -231,7 +231,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
     }
   });
 
-  initJobStore($scope, spaceContext);
+  initScheduledActionsStore($scope);
 
   setupNoShareJsCmaFakeRequestsExperiment({ $scope, spaceContext, entityInfo });
 

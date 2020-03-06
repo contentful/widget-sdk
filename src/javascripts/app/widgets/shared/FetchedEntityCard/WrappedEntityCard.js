@@ -18,10 +18,10 @@ const styles = {
 
 const IconWrappedIntoScheduledTooltip = memo(({ entityType, entityId }) => {
   const { widgetAPI } = useContext(WidgetApiContext);
-  if (!widgetAPI || !widgetAPI.jobs) {
+  if (!widgetAPI || !widgetAPI.scheduledActions) {
     return null;
   }
-  const jobs = widgetAPI.jobs.getPendingJobs();
+  const jobs = widgetAPI.scheduledActions.getPendingScheduledActions();
   const relevantJobs = filterRelevantJobsForEntity(jobs, entityType, entityId);
   const mostRelevantJob = sortJobsByRelevance(relevantJobs)[0];
   return (

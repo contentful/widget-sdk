@@ -25,15 +25,15 @@ export const getScheduledJobsTooltip = (entityType, node, widgetAPI) => {
   if (
     entityType !== 'Entry' ||
     typeof get(node, 'data.get') !== 'function' ||
-    typeof get(widgetAPI, 'jobs.getPendingJobs') !== 'function'
+    typeof get(widgetAPI, 'scheduledActions.getPendingScheduledActions') !== 'function'
   ) {
     return null;
   }
 
   const target = node.data.get('target');
   const referencedEntityId = get(target, 'sys.id', undefined);
-  const jobs = widgetAPI.jobs
-    .getPendingJobs()
+  const jobs = widgetAPI.scheduledActions
+    .getPendingScheduledActions()
     .filter(job => job.entity.sys.id === referencedEntityId);
   const sortedJobs = orderBy(jobs, ['scheduledFor.datetime'], ['asc']);
   return sortedJobs.length ? (

@@ -50,11 +50,11 @@ export default function renderEntityHyperlinkTooltip(richTextAPI, target) {
   }
 
   function renderScheduledJobs() {
-    if (!widgetAPI.jobs) {
+    if (!widgetAPI.scheduledActions) {
       return null;
     }
     const { id: entityId, linkType: entityType } = target.sys;
-    const jobs = widgetAPI.jobs.getPendingJobs();
+    const jobs = widgetAPI.scheduledActions.getPendingScheduledActions();
     const relevantJobs = filterRelevantJobsForEntity(jobs, entityType, entityId);
     const mostRelevantJob = sortJobsByRelevance(relevantJobs)[0];
     return mostRelevantJob ? (

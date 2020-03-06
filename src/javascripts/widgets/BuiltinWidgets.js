@@ -240,8 +240,8 @@ export function create() {
   });
 
   const newRichText = spaceContext => ({
-    renderFieldEditor: ({ widgetApi, $scope, loadEvents }) => {
-      return renderRichTextEditor({ widgetApi, $scope, spaceContext, loadEvents });
+    renderFieldEditor: ({ widgetApi, loadEvents }) => {
+      return renderRichTextEditor({ widgetApi, spaceContext, loadEvents });
     }
   });
   const legacyRichText = {

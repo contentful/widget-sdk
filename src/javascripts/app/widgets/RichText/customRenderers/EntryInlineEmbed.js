@@ -88,7 +88,9 @@ export default class EntryInlineEmbed extends React.Component {
           if (fetchEntityResult.requestStatus === RequestStatus.Error) {
             return this.renderMissingNode();
           } else {
-            const jobs = widgetAPI.jobs ? widgetAPI.jobs.getPendingJobs() : [];
+            const jobs = widgetAPI.scheduledActions
+              ? widgetAPI.scheduledActions.getPendingScheduledActions()
+              : [];
             const relevantJobs = filterRelevantJobsForEntity(jobs, 'Entry', entryId);
             const mostRelevantJob = sortJobsByRelevance(relevantJobs)[0];
             const scheduledInfo = {

@@ -104,8 +104,10 @@ class EmbeddedEntryInline extends React.Component {
                 if (fetchEntityResult.requestStatus === RequestStatus.Error) {
                   return this.renderMissingNode();
                 } else {
-                  const jobs = widgetAPI.jobs
-                    ? widgetAPI.jobs.getPendingJobs().filter(job => job.entity.sys.id === entryId)
+                  const jobs = widgetAPI.scheduledActions
+                    ? widgetAPI.scheduledActions
+                        .getPendingScheduledActions()
+                        .filter(job => job.entity.sys.id === entryId)
                     : [];
                   const sortedJobs = orderBy(jobs, ['scheduledFor.datetime'], ['asc']);
                   const scheduledInfo = {

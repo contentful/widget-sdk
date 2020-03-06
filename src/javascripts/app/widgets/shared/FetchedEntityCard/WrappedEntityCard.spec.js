@@ -39,8 +39,8 @@ describe('WrappedEntityCard', () => {
     ];
 
     widgetAPIMock = {
-      jobs: {
-        getPendingJobs: jest.fn().mockReturnValue(jobs)
+      scheduledActions: {
+        getPendingScheduledActions: jest.fn().mockReturnValue(jobs)
       }
     };
   });

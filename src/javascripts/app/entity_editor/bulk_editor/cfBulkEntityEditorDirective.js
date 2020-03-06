@@ -14,7 +14,7 @@ import setupNoShareJsCmaFakeRequestsExperiment from 'app/entity_editor/NoShareJs
 import initDocErrorHandler from 'app/entity_editor/DocumentErrorHandler';
 import * as Validator from 'app/entity_editor/Validator';
 import { buildFieldsApi } from 'app/entity_editor/dataFields';
-import { initJobStore } from 'app/ScheduledActions/DataManagement/ScheduledActionsStoreNg';
+import { initScheduledActionsStore } from 'app/ScheduledActions/DataManagement/ScheduledActionsStoreNg';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
 
 import bulkEntityEditorTemplate from './bulk_entity_editor.html';
@@ -78,7 +78,7 @@ export default function register() {
 
             // TODO required by FormWidgetsController. Should not be on scope
             $scope.preferences = bulkEditorContext.editorSettings;
-            initJobStore($scope, spaceContext);
+            initScheduledActionsStore($scope);
 
             const data = ($scope.data = {
               expanded: true,

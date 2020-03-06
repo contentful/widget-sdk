@@ -16,10 +16,9 @@ import {
  *
  * @param {Object} widgetAPI
  * @param {Object} spaceContext
- * @param {Object} jobs
  * @returns {Object}
  */
-export default function(widgetAPI, spaceContext, jobs) {
+export default function(widgetAPI, spaceContext) {
   const { asset: canAccessAssets } = getSectionVisibility();
   const contentTypes = spaceContext ? spaceContext.publishedCTs.getAllBare() : [];
 
@@ -28,8 +27,6 @@ export default function(widgetAPI, spaceContext, jobs) {
     // TODO: Get rid of this ugly hack we're using for checking whether or not we need
     //  to update fetched entity card info.
     currentUrl: window.location,
-    // TODO: Get rid of this or implement in extensions sdk in some way!
-    jobs,
     permissions: {
       canAccessAssets,
       canCreateAssets: canCreateAsset(),

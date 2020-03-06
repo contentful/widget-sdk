@@ -13,7 +13,7 @@ export default class ReadOnlyRichTextEditor extends React.Component {
 
   render() {
     const { value, widgetApi } = this.props;
-    const richTextWidgetAPI = richTextWidgetApiDecorator(widgetApi, null, null);
+    const richTextWidgetAPI = richTextWidgetApiDecorator(widgetApi, null);
     return (
       <WidgetAPIContext.Provider value={{ widgetAPI: richTextWidgetAPI }}>
         <ConnectedRichTextEditor

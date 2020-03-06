@@ -21,7 +21,7 @@ import * as entitySelector from 'search/EntitySelector/entitySelector';
  * @param {string} currentUrl
  * @returns {Object}
  */
-export default function buildWidgetApi({ field, entry, currentUrl, settings, jobs }) {
+export default function buildWidgetApi({ field, entry, currentUrl, settings, scheduledActions }) {
   const spaceContext = getModule('spaceContext');
 
   const { entry: canAccessEntries, asset: canAccessAssets } = getSectionVisibility();
@@ -30,7 +30,7 @@ export default function buildWidgetApi({ field, entry, currentUrl, settings, job
     field,
     entry,
     space: getBatchingApiClient(spaceContext.cma),
-    jobs,
+    scheduledActions,
     dialogs: {
       /**
        * TODO: Add to ui-extensions-sdk when open sourcing the RichText widget.

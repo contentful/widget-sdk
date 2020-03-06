@@ -41,7 +41,8 @@ import checkDependencies from 'widgets/bridges/checkDependencies';
  *  space: SpaceAPI,
  *  parameters: ParametersAPI,
  *  notifier: NotifierAPI,
- *  navigator: NavigatorAPI
+ *  navigator: NavigatorAPI,
+ *  scheduledActions: any
  * }}
  */
 export default function createNewWidgetApi(dependencies) {
@@ -62,6 +63,7 @@ export default function createNewWidgetApi(dependencies) {
 
   return {
     ...createSpaceScopedWidgetApi({
+      scheduledActions: $scope.scheduledActionsStore,
       cma,
       initialContentTypes: spaceContext.publishedCTs.getAllBare()
     }),
@@ -93,7 +95,11 @@ export function createNewReadOnlyWidgetApi({
   };
 }
 
-function createSpaceScopedWidgetApi({ cma: cmaOrBatchingApiClient, initialContentTypes }) {
+function createSpaceScopedWidgetApi({
+  cma: cmaOrBatchingApiClient,
+  initialContentTypes,
+  scheduledActions
+}) {
   const cma = getBatchingApiClient(cmaOrBatchingApiClient);
   const space = createSpaceApi({ cma, initialContentTypes });
   const navigator = createNavigatorApi({ cma });
@@ -110,6 +116,7 @@ function createSpaceScopedWidgetApi({ cma: cmaOrBatchingApiClient, initialConten
       startAutoResizer: noop,
       stopAutoResizer: noop
     },
+    scheduledActions,
     notifier: {
       success: text => {
         Notification.success(text);
