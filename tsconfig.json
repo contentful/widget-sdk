@@ -6,5 +6,6 @@
     "allowJs": true,
     "jsx": "react"
   },
-  "include": ["./src/javascripts/**/*"]
+  "include": ["./src/javascripts/**/*"],
+  "exclude": ["./src/javascripts/AngularInit.js"]
 }
