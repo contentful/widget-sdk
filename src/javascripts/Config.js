@@ -194,7 +194,8 @@ export const services = {
   google: settings.google,
   segment_io: settings.segment_io,
   embedly: settings.embedly,
-  getstream_io: settings.getstream_io
+  getstream_io: settings.getstream_io,
+  osano: settings.osano
 };
 
 function ensureLeadingSlash(x = '') {
