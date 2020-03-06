@@ -10,6 +10,9 @@ const styles = {
       marginRight: tokens.spacingS
     }
   }),
+  flexAlignStart: css({
+    alignItems: 'start'
+  }),
   textInputNumber: css({
     'input[type=number]': {
       width: '120px'
@@ -47,7 +50,14 @@ const styles = {
     marginBottom: tokens.spacingS
   }),
   checkbox: css({
-    minWidth: tokens.spacing4Xl
+    minWidth: tokens.spacing4Xl,
+    alignSelf: 'center'
+  }),
+  minWidth6rem: css({
+    minWidth: '6rem'
+  }),
+  timeZonePicker: css({
+    flexGrow: '1'
   })
 };
 

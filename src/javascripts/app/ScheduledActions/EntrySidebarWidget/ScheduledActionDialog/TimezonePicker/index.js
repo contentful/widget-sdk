@@ -5,9 +5,10 @@ import _ from 'lodash';
 import { FormLabel } from '@contentful/forma-36-react-components';
 import { Autocomplete } from '@contentful/forma-36-react-components/dist/alpha';
 import styles from './styles';
+import { cx } from 'emotion';
 import allTimezones from './Timezones';
 
-export function TimezonePicker({ validationMessage, onSelect }) {
+export function TimezonePicker({ validationMessage, onSelect, disabled, className }) {
   const defaultTimezone = allTimezones.find(timezone => timezone.ianaName === moment.tz.guess());
 
   const [filteredTimezones, setFilteredTimezones] = useState(allTimezones);
@@ -30,10 +31,13 @@ export function TimezonePicker({ validationMessage, onSelect }) {
   };
 
   return (
-    <div className={styles.timezonePicker} data-test-id="timezone-picker">
+    <div
+      className={className ? cx(styles.timezonePicker, className) : styles.timezonePicker}
+      data-test-id="timezone-picker">
       <FormLabel htmlFor="scheduleTimezoneForm">Timezone</FormLabel>
       <div className={styles.inputWrapper} id="scheduleTimezoneForm">
         <Autocomplete
+          disabled={disabled}
           maxHeight={300}
           width="full"
           className={styles.dropdown}
@@ -64,7 +68,9 @@ TimezonePicker.propTypes = {
   helpText: PropTypes.string,
   validationMessage: PropTypes.string,
   id: PropTypes.string,
-  name: PropTypes.string
+  name: PropTypes.string,
+  disabled: PropTypes.bool,
+  className: PropTypes.string
 };
 
 TimezonePicker.defaultProps = {

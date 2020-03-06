@@ -65,6 +65,7 @@ import * as ProhibitRegExpValidation from 'components/field_dialog/validations/P
 import * as AssetLink from 'app/widgets/link/AssetLink';
 import * as EntryLink from 'app/widgets/link/EntryLink';
 import * as ExtensionIFrameRenderer from 'widgets/ExtensionIFrameRenderer';
+import * as DateRangeValidation from 'components/field_dialog/validations/DateRangeValidation';
 
 // TODO refactor this function (6 arguments is too much)
 function renderComponent(Component, props, scope, container, store) {
@@ -317,7 +318,8 @@ function getModule(name) {
     'components/field_dialog/validations/ProhibitRegExpValidation': ProhibitRegExpValidation,
     'app/widgets/link/AssetLink': AssetLink,
     'app/widgets/link/EntryLink': EntryLink,
-    'widgets/ExtensionIFrameRenderer': ExtensionIFrameRenderer
+    'widgets/ExtensionIFrameRenderer': ExtensionIFrameRenderer,
+    'components/field_dialog/validations/DateRangeValidation': DateRangeValidation
   };
 
   return get(allowedModules, name, null);

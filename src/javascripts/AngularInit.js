@@ -52,13 +52,9 @@ export const angularInitRun = [
       import(/* webpackMode: "eager" */ 'app/snapshots/snapshotComparator'),
       import(/* webpackMode: "eager" */ 'components/client/activationEmailResendController'),
       import(/* webpackMode: "eager" */ 'components/client/dialogsInitController'),
-      import(/* webpackMode: "eager" */ 'components/field_dialog/cfValidationDateSelectDirective'),
       import(/* webpackMode: "eager" */ 'components/field_dialog/cfValidationSettingsDirective'),
       import(/* webpackMode: "eager" */ 'components/field_dialog/validationAssetTypesController'),
       import(/* webpackMode: "eager" */ 'components/field_dialog/validationLinkTypeController'),
-      import(
-        /* webpackMode: "eager" */ 'components/forms/datetime_editor/cfDatetimeEditorDirective'
-      ),
       import(/* webpackMode: "eager" */ 'components/shared/cfSelectionDirective'),
       import(
         /* webpackMode: "eager" */ 'components/shared/create_new_space/createNewSpaceDirective'
