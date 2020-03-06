@@ -108,6 +108,9 @@ function integrations() {
     getstream_io: strictObject({
       api_key: { type: 'string' },
       app_id: { type: 'string' }
+    }),
+    osano: strictObject({
+      cdnKey: { type: 'string' }
     })
   };
 }

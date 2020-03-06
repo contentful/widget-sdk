@@ -59,5 +59,8 @@
     "cluster": "mt1",
     "endpoint": "/pubsub/auth",
     "appKey": "985caf550eec9cea8762"
+  },
+  "osano": {
+    "cdnKey": "61bf79e3-cf48-4e17-a64a-04056daec26d"
   }
 }
