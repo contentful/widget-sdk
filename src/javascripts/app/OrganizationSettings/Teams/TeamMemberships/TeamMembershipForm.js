@@ -1,12 +1,19 @@
-/* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
 import { connect } from 'react-redux';
 import { get, orderBy, filter, flow } from 'lodash/fp';
 import { TableCell, TableRow, Button, Select, Option } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
 import getOrgMemberships from 'redux/selectors/getOrgMemberships';
 import getMembershipsOfCurrentTeamToDisplay from 'redux/selectors/teamMemberships/getMembershipsOfCurrentTeamToDisplay';
 import { OrganizationMembership as OrganizationMembershipPropType } from 'app/OrganizationSettings/PropTypes';
+
+const styles = {
+  addTeamMemberButton: css({
+    marginRight: tokens.spacingS
+  })
+};
 
 class TeamMembershipForm extends React.Component {
   static propTypes = {
@@ -35,7 +42,8 @@ class TeamMembershipForm extends React.Component {
             </Option>
             {orgMemberships.map(({ sys: { user, id } }) => (
               <Option testId="user-select-option" key={id} value={id}>
-                {`${user.firstName} ${user.lastName} <${user.email}>`}
+                {user.firstName && `${user.firstName} ${user.lastName} `}
+                {`<${user.email}>`}
               </Option>
             ))}
           </Select>
@@ -47,7 +55,7 @@ class TeamMembershipForm extends React.Component {
             buttonType="primary"
             onClick={() => onSubmit(selectedOrgMembershipId)}
             disabled={!selectedOrgMembershipId}
-            style={{ marginRight: '10px' }}>
+            className={styles.addTeamMemberButton}>
             Add to team
           </Button>
           <Button testId="cancel-button" size="small" buttonType="naked" onClick={onClose}>
@@ -66,7 +74,7 @@ function getAvailableOrgMemberships(state) {
     getOrgMemberships,
     Object.values,
     filter(({ sys: { id } }) => !unavailableOrgMemberships.includes(id)),
-    orderBy(['sys.user.firstName', 'sys.user.lastName'], ['asc', 'asc'])
+    orderBy(['sys.user.firstName', 'sys.user.lastName', 'sys.user.email'], ['asc', 'asc', 'asc'])
   )(state);
 }
 
