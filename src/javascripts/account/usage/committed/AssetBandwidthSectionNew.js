@@ -85,7 +85,7 @@ const AssetBandwidthSection = props => {
         )} included`}</strong>
         {usage > limit && (
           <small className={styles.overage} data-test-id="asset-bandwidth-overage">
-            {` + ${withUnit(usage - limit)} overage`}
+            {' '} + {withUnit(usage - limit)} overage
           </small>
         )}
         <TextLink

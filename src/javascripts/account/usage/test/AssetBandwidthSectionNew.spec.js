@@ -27,7 +27,7 @@ describe('AssetBandwidthSectionNew', () => {
     expect(bandwidthLimit.textContent).toBe('750 GB included');
   });
 
-  it('should render bandwidth data not available', () => {
+  it('should render bandwidth data as not available if not given limit and usage data', () => {
     const undefinedProps = {
       limit: undefined,
       usage: undefined,

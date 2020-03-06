@@ -27,7 +27,7 @@ const SpaceRow = ({ spaceName, spaceUsage, totalUsage, colour }) => {
       <TableCell>{spaceName || 'Deleted space'}</TableCell>
       <TableCell>{shorten(sum(spaceUsage))}</TableCell>
       <TableCell className={apiColumnStyle(colour)}>
-        {`${calcRelativeSpaceUsage(spaceUsage, totalUsage)}%`}
+        {calcRelativeSpaceUsage(spaceUsage, totalUsage)}%
       </TableCell>
     </TableRow>
   );

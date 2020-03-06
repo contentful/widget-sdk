@@ -55,7 +55,7 @@ const defaultProps = {
   }
 };
 
-describe('<SpacesTabs />', () => {
+describe('SpacesTabs', () => {
   const build = props => {
     return render(<SpacesTabs {...props} />);
   };

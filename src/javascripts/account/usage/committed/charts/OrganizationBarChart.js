@@ -102,7 +102,7 @@ const propsToChartOption = ({ period, usage }) => {
         saveAsImage: {
           show: true,
           type: 'png',
-          name: `Organisation-Usage-${new Date().toDateString()}`,
+          name: `Organization-Usage-${new Date().toDateString()}`,
           title: 'Save as an image'
         },
         magicType: {
