@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { organizationResourceUsagePropType } from '../propTypes';
 import tokens from '@contentful/forma-36-tokens';
 import { shorten } from 'utils/NumberUtils';
 import { css } from 'emotion';
-import * as echarts from 'echarts';
+import { useChart } from './hooks/useChart';
 
 const styles = {
   chartWrapper: css({
@@ -13,7 +13,7 @@ const styles = {
   })
 };
 
-const setOptions = (chart, spaceNames, data, period, colours) => {
+const propsToChartOptions = ({ spaceNames, data, period, colours }) => {
   const series = data.map((item, index) => ({
     name: spaceNames[item.sys.space.sys.id] || 'Deleted space',
     type: 'bar',
@@ -30,7 +30,7 @@ const setOptions = (chart, spaceNames, data, period, colours) => {
     }
   }));
 
-  const option = {
+  return {
     legend: {
       show: true
     },
@@ -112,28 +112,10 @@ const setOptions = (chart, spaceNames, data, period, colours) => {
     ],
     series: series
   };
-  chart.setOption(option);
 };
 
-const SpacesBarChart = ({ spaceNames, data, period, colours }) => {
-  const chartRef = useRef();
-
-  const [myChart, setMyChart] = useState(null);
-
-  // only initialise once
-  useEffect(() => {
-    if (chartRef.current) {
-      const chart = echarts.init(chartRef.current);
-      setMyChart(chart);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (myChart) {
-      setOptions(myChart, spaceNames, data, period, colours);
-    }
-  });
-
+const SpacesBarChart = props => {
+  const chartRef = useChart(propsToChartOptions(props));
   return <div ref={chartRef} className={styles.chartWrapper} data-test-id="api-usage-bar-chart" />;
 };
 

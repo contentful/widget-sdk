@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { shorten } from 'utils/NumberUtils';
-import * as echarts from 'echarts';
+import { useChart } from './hooks/useChart';
 
 const styles = {
   chartWrapper: css({
@@ -12,7 +12,7 @@ const styles = {
   })
 };
 
-const chartOptions = (period, usage) => {
+const propsToChartOption = ({ period, usage }) => {
   return {
     xAxis: {
       data: period,
@@ -118,24 +118,7 @@ const chartOptions = (period, usage) => {
 };
 
 const OrganizationBarChart = props => {
-  const { period, usage } = props;
-  const chartRef = useRef(null);
-  const [chartInstance, setChartInstance] = useState(null);
-
-  useEffect(() => {
-    if (chartRef.current) {
-      const initChart = echarts.init(chartRef.current);
-      setChartInstance(initChart);
-    }
-  }, [period, usage]);
-
-  useEffect(() => {
-    if (chartInstance) {
-      const options = chartOptions(period, usage);
-      chartInstance.setOption(options);
-    }
-  });
-
+  const chartRef = useChart(propsToChartOption(props));
   return <div ref={chartRef} className={styles.chartWrapper}></div>;
 };
 
