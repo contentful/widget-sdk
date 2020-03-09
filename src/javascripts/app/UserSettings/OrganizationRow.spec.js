@@ -6,7 +6,7 @@ import * as FORMA_CONSTANTS from 'testHelpers/Forma36Constants';
 
 import OrganizationRow from './OrganizationRow';
 import ModalLauncher from '__mocks__/app/common/ModalLauncher';
-import { fetchCanLeaveOrg } from './OranizationUtils';
+import { fetchCanLeaveOrg } from './OrganizationUtils';
 import { isOwnerOrAdmin, getOrganizationMembership } from 'services/OrganizationRoles';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { go } from 'states/Navigator';
@@ -16,7 +16,7 @@ const fakeOrganization = fake.Organization();
 const fakeOrgMemberhip = fake.OrganizationMembership('admin');
 const onLeaveSuccess = jest.fn();
 
-jest.mock('./OranizationUtils', () => ({
+jest.mock('./OrganizationUtils', () => ({
   fetchCanLeaveOrg: jest.fn(Promise.resolve())
 }));
 

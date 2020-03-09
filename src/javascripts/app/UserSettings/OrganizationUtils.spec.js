@@ -1,7 +1,7 @@
 import { getMemberships } from 'access_control/OrganizationMembershipRepository';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
-import { fetchCanLeaveOrg } from './OranizationUtils';
+import { fetchCanLeaveOrg } from './OrganizationUtils';
 import * as fake from 'testHelpers/fakeFactory';
 
 jest.mock('data/EndpointFactory', () => ({
@@ -24,9 +24,7 @@ describe('Organization Utils', () => {
     limit: 0
   };
 
-  createOrganizationEndpoint.mockImplementation(() => {
-    return fakeOrgEnpoint;
-  });
+  createOrganizationEndpoint.mockReturnValue(fakeOrgEnpoint);
 
   describe('if the user is an Organization Owner', () => {
     it('should call createOrganizationEndpoint with the correct arguement', async () => {
@@ -72,9 +70,7 @@ describe('Organization Utils', () => {
 
   describe('if the user is not an Organization Owner', () => {
     it('should allow the user to leave the org', () => {
-      isOrgOwner.mockImplementation(() => {
-        return false;
-      });
+      isOrgOwner.mockReturnValue(false);
 
       expect(fetchCanLeaveOrg(fakeOrgMembership)).toBeTruthy();
     });

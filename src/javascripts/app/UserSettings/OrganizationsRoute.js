@@ -56,7 +56,7 @@ const OrganizationsRoute = () => {
       <DocumentTitle title={TITLE} />
       <Workbench>
         <Workbench.Header
-          icon={<NavigationIcon name="organizations" size="large" color="green" />}
+          icon={<NavigationIcon icon="organizations" size="large" color="green" />}
           testId="organizations-list.title"
           title={TITLE}
           actions={

@@ -19,7 +19,7 @@ import ModalLauncher from 'app/common/ModalLauncher';
 import { removeMembership } from 'access_control/OrganizationMembershipRepository';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
-import { fetchCanLeaveOrg } from './OranizationUtils';
+import { fetchCanLeaveOrg } from './OrganizationUtils';
 import { isOwnerOrAdmin, getOrganizationMembership } from 'services/OrganizationRoles';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 
@@ -144,7 +144,6 @@ const OrganizationRow = ({ organization, onLeaveSuccess }) => {
   );
 };
 
-// Throwing prop errors
 OrganizationRow.propTypes = {
   organization: OrganizationPropType.isRequired,
   onLeaveSuccess: PropTypes.func.isRequired
