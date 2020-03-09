@@ -122,7 +122,7 @@ export const helpCenterUrl = websiteUrl('help');
  *
  * In production this is `//www.contentful.com/developers/docs`.
  */
-export const developerDocsUrl = websiteUrl('developers/docs');
+export const developerDocsUrl = websiteUrl('developers/docs/');
 
 /**
  * Environment - e.g. production, staging, development, unittest
