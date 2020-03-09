@@ -9,9 +9,10 @@ import {
   TextLink,
   Card,
   Button,
-  TextInput,
   Notification,
-  Paragraph
+  Paragraph,
+  ValidationMessage,
+  TextInput
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import EnvironmentIcon from 'svg/environment.svg';
@@ -23,6 +24,7 @@ import { aliasStyles } from './SharedStyles';
 import { optInAbortStep, optInComplete } from 'analytics/events/EnvironmentAliases';
 import moment from 'moment';
 import * as Navigator from 'states/Navigator';
+import { validations } from '../Environments/CreateEnvDialogReducer';
 
 const aliasOptInStyles = {
   buttons: css({
@@ -51,6 +53,9 @@ const aliasOptInStyles = {
     '& > code': {
       display: 'inline-block'
     }
+  }),
+  renameDropdownWithError: css({
+    top: `${tokens.spacing3Xl} !important`
   })
 };
 
@@ -58,8 +63,13 @@ export default function OptIn({ step, setStep, spaceId, testId }) {
   const [newEnvironmentId, setNewEnvironmentId] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const isValidEnvironmentId = () => {
+    return validations['id'](newEnvironmentId) === undefined;
+  };
+
   const optIn = async () => {
     setLoading(true);
+
     try {
       await handleOptIn(spaceId, newEnvironmentId);
       setStep(STEPS.THIRD_CHANGE_ENV);
@@ -152,6 +162,11 @@ export default function OptIn({ step, setStep, spaceId, testId }) {
                     <Fragment>
                       <EnvironmentIcon className={aliasStyles.icon} />
                       <StaticDropdown
+                        className={
+                          newEnvironmentId && !isValidEnvironmentId()
+                            ? aliasOptInStyles.renameDropdownWithError
+                            : ''
+                        }
                         isVisible={step === STEPS.SECOND_RENAMING}
                         title="Name your production environment"
                         body={
@@ -164,7 +179,8 @@ export default function OptIn({ step, setStep, spaceId, testId }) {
                               counter or date:
                             </Paragraph>
                             <Paragraph className={aliasOptInStyles.paragraph}>
-                              For example <code>prod-1</code> or <code>master-YYYY-MM-DD</code>.
+                              For example <code>prod-1</code> or
+                              <code>master-{moment().format('YYYY-MM-DD')}</code>.
                             </Paragraph>
                             <Paragraph>
                               This helps you to keep track of the environment used in production –
@@ -174,7 +190,11 @@ export default function OptIn({ step, setStep, spaceId, testId }) {
                               <Button
                                 testId="button.to-third-step"
                                 loading={loading}
-                                disabled={!newEnvironmentId || newEnvironmentId === 'master'}
+                                disabled={
+                                  !newEnvironmentId ||
+                                  newEnvironmentId === 'master' ||
+                                  !isValidEnvironmentId()
+                                }
                                 buttonType="positive"
                                 onClick={optIn}>
                                 Rename Environment
@@ -185,11 +205,17 @@ export default function OptIn({ step, setStep, spaceId, testId }) {
                         }>
                         <TextInput
                           maxLength={40}
+                          placeholder="master-YYYY-MM-DD"
                           testId="input"
-                          placeholder={`master-${moment().format('YYYY-MM-DD')}`}
                           value={newEnvironmentId}
                           onChange={({ target }) => setNewEnvironmentId(target.value)}
                         />
+
+                        {newEnvironmentId && !isValidEnvironmentId() && (
+                          <ValidationMessage>
+                            {validations['id'](newEnvironmentId)}
+                          </ValidationMessage>
+                        )}
                       </StaticDropdown>
                     </Fragment>
                   )}
