@@ -130,7 +130,7 @@ const ReferenceCard = ({ entity, onClick, isMoreCard, isUnresolved, isCircular }
           <span
             title="This entry has already been referenced in one of the parent entries"
             className={styles.circularIconWrapper}>
-            <Icon icon="Cycle" color="muted" className={styles.assetIcon} />
+            <Icon testId="circular-icon" icon="Cycle" color="muted" className={styles.assetIcon} />
           </span>
         )}
         <Paragraph className={styles.text} title={title}>
@@ -154,10 +154,14 @@ export const ReferencePropType = PropTypes.shape({
 
 ReferenceCard.propTypes = {
   entity: ReferencePropType,
-  onClick: PropTypes.func.isRequired,
+  onClick: PropTypes.func,
   isMoreCard: PropTypes.bool,
   isUnresolved: PropTypes.bool,
   isCircular: PropTypes.bool
+};
+
+ReferenceCard.defaultProps = {
+  onClick: noop
 };
 
 export default ReferenceCard;
