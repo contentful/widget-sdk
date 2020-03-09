@@ -9,7 +9,8 @@ import {
   Textarea,
   Note,
   Notification,
-  Button
+  Button,
+  Subheading
 } from '@contentful/forma-36-react-components';
 import createMicroBackendsClient from 'MicroBackendsClient';
 import tokens from '@contentful/forma-36-tokens';
@@ -18,7 +19,11 @@ import { getUserInfo } from './referencesDialogService';
 const styles = {
   form: css({ marginTop: tokens.spacingM }),
   optionYes: css({ marginRight: tokens.spacingS }),
-  buttonWrapper: css({ display: 'flex' })
+  buttonWrapper: css({ display: 'flex' }),
+  textAreaHeader: css({
+    fontSize: tokens.fontSizeM,
+    marginBottom: tokens.spacingS
+  })
 };
 
 const textFieldMaxLength = 1024;
@@ -27,7 +32,7 @@ const FeedbackForm = ({ onClose }) => {
   const [isUseful, setIsUseful] = useState(null);
   const [commentValue, setCommentValue] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [canBeContacted, setCanBeContacted] = useState(false);
+  const [canBeContacted, setCanBeContacted] = useState(true);
   const [isCommentFieldVisible, setIsCommentFieldVisibile] = useState(false);
 
   const sendFeedbackForm = async ({ feedback }) => {
@@ -57,6 +62,9 @@ const FeedbackForm = ({ onClose }) => {
       Notification.error("We couldn't send your feedback. Please try again.");
     }
   };
+
+  const isAnswerPositive = isUseful === 'yes';
+
   return (
     <div className={styles.form}>
       <Note>
@@ -77,7 +85,7 @@ const FeedbackForm = ({ onClose }) => {
               id="yes"
               className={styles.optionYes}
               value="yes"
-              checked={isUseful === 'yes'}
+              checked={isAnswerPositive}
               onChange={e => {
                 setIsUseful(e.target.value);
                 setIsCommentFieldVisibile(true);
@@ -96,9 +104,16 @@ const FeedbackForm = ({ onClose }) => {
           </div>
           {isCommentFieldVisible && (
             <>
+              <Subheading className={styles.textAreaHeader}>
+                {isAnswerPositive ? 'Why?' : 'Why not?'}
+              </Subheading>
               <FieldGroup>
                 <Textarea
-                  placeholder="Comments"
+                  placeholder={
+                    isAnswerPositive
+                      ? 'I feel confident because...'
+                      : "I don't feel confident because..."
+                  }
                   maxLength={textFieldMaxLength}
                   onChange={e => setCommentValue(e.target.value.substr(0, textFieldMaxLength))}
                   value={commentValue}
@@ -106,20 +121,20 @@ const FeedbackForm = ({ onClose }) => {
               </FieldGroup>
               <FieldGroup>
                 <RadioButtonField
-                  labelText="Make it anonymous"
-                  helpText="Your contact information won't be included in the feedback"
-                  checked={!canBeContacted}
-                  onChange={() => setCanBeContacted(false)}
-                  name="anonymous"
-                  id="anonymous"
-                />
-                <RadioButtonField
                   labelText="Include my contact information in the feedback"
                   helpText="We might reach out with some additional questions"
                   checked={canBeContacted}
                   onChange={() => setCanBeContacted(true)}
                   name="can-be-contacted"
                   id="can-be-contacted"
+                />
+                <RadioButtonField
+                  labelText="Make it anonymous"
+                  helpText="Your contact information won't be included in the feedback"
+                  checked={!canBeContacted}
+                  onChange={() => setCanBeContacted(false)}
+                  name="anonymous"
+                  id="anonymous"
                 />
               </FieldGroup>
             </>
