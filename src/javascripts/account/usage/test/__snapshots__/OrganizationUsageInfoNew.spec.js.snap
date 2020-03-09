@@ -24,7 +24,7 @@ exports[`OrganisationUsageInfoNew should render 1`] = `
       Total API requests
     </h2>
     <p
-      class="Heading__Heading___83D3K emotion-1 f36-margin-bottom--m"
+      class="Paragraph__Paragraph___2aO-9 emotion-1 f36-margin-bottom--m"
       data-test-id="org-usage-total"
     >
       23,000
