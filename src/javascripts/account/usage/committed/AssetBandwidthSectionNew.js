@@ -42,33 +42,7 @@ const styles = {
   })
 };
 
-const AssetBandwidthSection = props => {
-  const { limit, usage, uom } = props;
-
-  if (usage == null) {
-    return (
-      <Typography>
-        <Heading element="h2" className={styles.heading}>
-          Total asset bandwidth
-        </Heading>
-        <Paragraph data-test-id="asset-bandwidth-not-available" className={styles.usageNumber}>
-          Not available
-        </Paragraph>
-        <Note className={styles.note}>
-          Note that the asset bandwidth is not displayed in real time; there is a 48 hour delay. To
-          learn about utility limits, read the
-          <TextLink
-            href="https://www.contentful.com/r/knowledgebase/fair-use/"
-            className={styles.learnMoreLink}
-            target="_blank">
-            Fair Use Policy
-          </TextLink>
-          .
-        </Note>
-      </Typography>
-    );
-  }
-
+const AssetBandwidthSection = ({ limit, usage, uom }) => {
   const withUnit = partialRight(shortenStorageUnit, uom);
 
   return (
@@ -95,15 +69,18 @@ const AssetBandwidthSection = props => {
           className={styles.learnMoreLink}>
           Fair Use Policy
         </TextLink>
+        <Note className={styles.note}>
+          Please note that asset bandwidth is calculated daily with a 48 hour delay.
+        </Note>
       </div>
     </Typography>
   );
 };
 
 AssetBandwidthSection.propTypes = {
-  limit: PropTypes.number,
-  usage: PropTypes.number,
-  uom: PropTypes.string
+  limit: PropTypes.number.isRequired,
+  usage: PropTypes.number.isRequired,
+  uom: PropTypes.string.isRequired
 };
 
 export default AssetBandwidthSection;

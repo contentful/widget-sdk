@@ -6,18 +6,22 @@ import { periodicUsagePropType, periodPropType } from './propTypes';
 
 import periodToDates from './charts/periodToDates';
 
-const OrganizationUsagePageNew = props => {
-  const period = periodToDates(props.period);
-  const spaceNames = props.spaceNames;
-  const { periodicUsage, apiRequestIncludedLimit, assetBandwidthData } = props;
-
+const OrganizationUsagePageNew = ({
+  spaceNames,
+  period,
+  periodicUsage,
+  apiRequestIncludedLimit,
+  assetBandwidthData,
+  onTabSelect
+}) => {
   return (
     <MainTabs
       assetBandwidthData={assetBandwidthData}
-      period={period}
+      period={periodToDates(period)}
       periodicUsage={periodicUsage}
       apiRequestIncludedLimit={apiRequestIncludedLimit}
       spaceNames={spaceNames}
+      onTabSelect={onTabSelect}
     />
   );
 };
@@ -34,7 +38,8 @@ OrganizationUsagePageNew.propTypes = {
       included: PropTypes.number
     })
   }),
-  isLoading: PropTypes.bool.isRequired
+  isLoading: PropTypes.bool.isRequired,
+  onTabSelect: PropTypes.func
 };
 
 export default OrganizationUsagePageNew;

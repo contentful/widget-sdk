@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Tabs, Tab, TabPanel } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
@@ -32,17 +32,30 @@ const MainTabs = ({
   periodicUsage,
   apiRequestIncludedLimit,
   assetBandwidthData,
-  spaceNames
+  spaceNames,
+  onTabSelect
 }) => {
   const orgUsage = periodicUsage.org.usage;
   const totalUsage = sum(orgUsage);
 
   const [selected, setSelected] = useState('apiRequest');
+  const [currentAssetBandwidthData, setCurrentBandwidthData] = useState();
 
   const handleSelected = id => {
     track('usage:org_tab_selected', { old: selected, new: id });
     setSelected(id);
+    onTabSelect(id);
   };
+
+  useEffect(() => {
+    const data = {
+      usage: get(assetBandwidthData, ['usage']),
+      limit: get(assetBandwidthData, ['limits', 'included']),
+      uom: get(assetBandwidthData, ['unitOfMeasure'])
+    };
+    setCurrentBandwidthData(data);
+    // eslint-disable-next-line
+  }, []);
 
   return (
     <>
@@ -78,11 +91,9 @@ const MainTabs = ({
         <TabPanel id="assetBandwidth" className={styles.tabPanel}>
           <Grid columns={'repeat(12, 1fr)'}>
             <GridItem columnStart="span 12">
-              <AssetBandwidthSection
-                limit={get(assetBandwidthData, ['limits', 'included'])}
-                usage={get(assetBandwidthData, ['usage'])}
-                uom={get(assetBandwidthData, ['unitOfMeasure'])}
-              />
+              {currentAssetBandwidthData.usage !== null && (
+                <AssetBandwidthSection {...currentAssetBandwidthData} />
+              )}
             </GridItem>
           </Grid>
         </TabPanel>
@@ -102,7 +113,8 @@ MainTabs.propTypes = {
     limits: PropTypes.shape({
       included: PropTypes.number
     })
-  })
+  }),
+  onTabSelect: PropTypes.func
 };
 
 export default MainTabs;
