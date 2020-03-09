@@ -179,7 +179,7 @@ export default function OptIn({ step, setStep, spaceId, testId }) {
                               counter or date:
                             </Paragraph>
                             <Paragraph className={aliasOptInStyles.paragraph}>
-                              For example <code>prod-1</code> or{' '}
+                              For example <code>prod-1</code> or
                               <code>master-{moment().format('YYYY-MM-DD')}</code>.
                             </Paragraph>
                             <Paragraph>

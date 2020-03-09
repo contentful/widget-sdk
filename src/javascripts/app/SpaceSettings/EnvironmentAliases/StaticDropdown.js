@@ -47,7 +47,15 @@ const styles = {
   })
 };
 
-export default function StaticDropdown({ isVisible, children, title, body, align, testId }) {
+export default function StaticDropdown({
+  isVisible,
+  children,
+  title,
+  body,
+  align,
+  testId,
+  className
+}) {
   const [top, setTop] = useState(0);
 
   const ref = useRef(null);
@@ -70,7 +78,7 @@ export default function StaticDropdown({ isVisible, children, title, body, align
       <div ref={ref}>{children}</div>
       {isVisible && (
         <div
-          className={`${styles.wrapper} ${dynamicWrapper}`}
+          className={`${styles.wrapper} ${dynamicWrapper} ${className}`}
           data-test-id="staticdropdown.dropdown">
           <div
             className={`${styles.arrowUp} ${dynamicArrowUp}`}
@@ -88,10 +96,12 @@ StaticDropdown.propTypes = {
   isVisible: PropTypes.bool,
   title: PropTypes.string.isRequired,
   body: PropTypes.node,
-  testId: PropTypes.string
+  testId: PropTypes.string,
+  className: PropTypes.string
 };
 
 StaticDropdown.defaultProps = {
   align: 'left',
-  testId: 'staticdropdown.wrapper'
+  testId: 'staticdropdown.wrapper',
+  className: ''
 };
