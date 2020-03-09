@@ -9,6 +9,8 @@ import SpacesBarChart from '../charts/SpacesBarChart';
 import { sum } from 'lodash';
 import { periodicUsagePropType } from '../propTypes';
 
+import { track } from 'analytics/Analytics';
+
 const styles = {
   tabPanel: css({
     paddingTop: tokens.spacing2Xl,
@@ -16,35 +18,36 @@ const styles = {
   })
 };
 
+const tabsData = [
+  {
+    id: 'cma',
+    title: 'CMA Requests',
+    defaultActive: true
+  },
+  {
+    id: 'cda',
+    title: 'CDA Requests'
+  },
+  {
+    id: 'cpa',
+    title: 'CPA Requests'
+  },
+  {
+    id: 'gql',
+    title: 'GraphQL Requests'
+  }
+];
+
+const colours = ['#2E75D4', '#0EB87F', '#EA9005', '#C7A544', '#CC3C52'];
+
 const SpacesTabs = ({ spaceNames, period, periodicUsage }) => {
-  const tabsData = [
-    {
-      id: 'cma',
-      title: 'CMA Requests',
-      defaultActive: true
-    },
-    {
-      id: 'cda',
-      title: 'CDA Requests'
-    },
-    {
-      id: 'cpa',
-      title: 'CPA Requests'
-    },
-    {
-      id: 'gql',
-      title: 'GraphQL Requests'
-    }
-  ];
-
-  const colours = ['#2E75D4', '#0EB87F', '#EA9005', '#C7A544', '#CC3C52'];
-
-  const defaultActiveTab = tabsData && tabsData.find(item => item.defaultActive);
+  const defaultActiveTab = tabsData.find(item => item.defaultActive);
   const [selected, setSelected] = useState(
     defaultActiveTab ? defaultActiveTab.id : tabsData[0]['id']
   );
 
   const handleSelected = id => {
+    track('usage:space_tab_selected', { old: selected, new: id });
     setSelected(id);
   };
 
@@ -55,16 +58,11 @@ const SpacesTabs = ({ spaceNames, period, periodicUsage }) => {
   return (
     <>
       <Tabs withDivider={true}>
-        {tabsData &&
-          tabsData.map(item => (
-            <Tab
-              id={item.id}
-              key={item.id}
-              selected={selected === item.id}
-              onSelect={handleSelected}>
-              {item.title}
-            </Tab>
-          ))}
+        {tabsData.map(item => (
+          <Tab id={item.id} key={item.id} selected={selected === item.id} onSelect={handleSelected}>
+            {item.title}
+          </Tab>
+        ))}
       </Tabs>
       <TabPanel id="api-usage-tab-panel" className={styles.tabPanel}>
         <Grid columns={'repeat(12, 1fr)'}>
