@@ -7,9 +7,9 @@ import * as FORMA_CONSTANTS from 'testHelpers/Forma36Constants';
 import OrganizationRow from './OrganizationRow';
 import ModalLauncher from '__mocks__/app/common/ModalLauncher';
 import { fetchCanLeaveOrg } from './OranizationUtils';
-import { hasMemberRole, getOrganizationMembership } from 'services/OrganizationRoles';
+import { isOwnerOrAdmin, getOrganizationMembership } from 'services/OrganizationRoles';
+import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { go } from 'states/Navigator';
-import { Notification } from '@contentful/forma-36-react-components';
 import { removeMembership } from 'access_control/OrganizationMembershipRepository';
 
 const fakeOrganization = fake.Organization();
@@ -17,11 +17,15 @@ const fakeOrgMemberhip = fake.OrganizationMembership('admin');
 const onLeaveSuccess = jest.fn();
 
 jest.mock('./OranizationUtils', () => ({
-  fetchCanLeaveOrg: jest.fn()
+  fetchCanLeaveOrg: jest.fn(Promise.resolve())
+}));
+
+jest.mock('utils/ResourceUtils', () => ({
+  isLegacyOrganization: jest.fn()
 }));
 
 jest.mock('services/OrganizationRoles', () => ({
-  hasMemberRole: jest.fn(),
+  isOwnerOrAdmin: jest.fn(),
   getOrganizationMembership: jest.fn()
 }));
 
@@ -55,12 +59,10 @@ const build = (props = {}) => {
 describe('OrganizationRow', () => {
   beforeEach(() => {
     removeMembership.mockResolvedValueOnce(jest.fn());
-    fetchCanLeaveOrg.mockReturnValue(true);
-    hasMemberRole.mockReturnValue(false);
+    fetchCanLeaveOrg.mockResolvedValue(true);
+    isOwnerOrAdmin.mockReturnValue(false);
+    isLegacyOrganization.mockReturnValue(false);
     getOrganizationMembership.mockReturnValue(fakeOrgMemberhip);
-
-    jest.spyOn(Notification, 'success').mockImplementation(() => {});
-    jest.spyOn(Notification, 'error').mockImplementation(() => {});
   });
 
   describe('should render correctly', () => {
@@ -95,17 +97,17 @@ describe('OrganizationRow', () => {
 
   describe('test canUserLeaveOrg default behavoir ', () => {
     it('should default to allow the user to leave the org', async () => {
-      fetchCanLeaveOrg.mockReset().mockReturnValue(false);
+      fetchCanLeaveOrg.mockResolvedValue(false);
 
       buildWithoutWaiting();
 
       fireEvent.click(screen.getByTestId('organization-row.dropdown-menu.trigger'));
       const leaveButtonContainer = screen.getByTestId('organization-row.leave-org-button');
-      const leaveButton = within(leaveButtonContainer).getByTestId(
-        FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID
+      fireEvent.click(
+        within(leaveButtonContainer).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
       );
-      expect(leaveButton.hasAttribute('disabled')).toBeFalsy();
 
+      expect(ModalLauncher.open).toHaveBeenCalled();
       await wait();
     });
   });
@@ -119,35 +121,33 @@ describe('OrganizationRow', () => {
       expect(screen.getByTestId('organization-row.leave-org-button')).toBeVisible();
     });
 
-    it('should render the go to org settings button as disabled if they are a regular member of the org', async () => {
-      hasMemberRole.mockReset().mockReturnValue(true);
+    it('should not render the go to org settings button if they are a legacy V1 org and the user is not admin or owner', async () => {
+      isLegacyOrganization.mockReturnValue(true);
 
       await build();
       fireEvent.click(screen.getByTestId('organization-row.dropdown-menu.trigger'));
 
-      const goToOrgButtonContainer = screen.getByTestId('organization-row.go-to-org-link');
-      const goToOrgButton = within(goToOrgButtonContainer).getByTestId(
-        FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID
-      );
-
-      expect(goToOrgButton.hasAttribute('disabled')).toBeTruthy();
+      expect(screen.queryByTestId('organization-row.go-to-org-link')).not.toBeInTheDocument();
     });
 
     it('should render the leave button as disabled when they are the last owner of an organization', async () => {
-      fetchCanLeaveOrg.mockReset().mockReturnValue(false);
+      fetchCanLeaveOrg.mockResolvedValue(false);
 
       await build();
       fireEvent.click(screen.getByTestId('organization-row.dropdown-menu.trigger'));
 
       const leaveButtonContainer = screen.getByTestId('organization-row.leave-org-button');
-      const leaveButton = within(leaveButtonContainer).getByTestId(
-        FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID
+      fireEvent.click(
+        within(leaveButtonContainer).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
       );
 
-      expect(leaveButton.hasAttribute('disabled')).toBeTruthy();
+      await expect(ModalLauncher.open).not.toHaveBeenCalled();
     });
 
-    it('should go to the org settings if they are not a member and click on the go to org settings button', async () => {
+    it('should go to the org settings if they are a V1 legacy customer and user is admin or owner and click on the go to org settings button', async () => {
+      isLegacyOrganization.mockReturnValue(true);
+      isOwnerOrAdmin.mockReturnValue(true);
+
       await build();
       fireEvent.click(screen.getByTestId('organization-row.dropdown-menu.trigger'));
 
@@ -158,7 +158,23 @@ describe('OrganizationRow', () => {
       );
 
       expect(go).toHaveBeenCalledWith({
-        path: ['account', 'organizations', 'subscription_new'],
+        path: ['account', 'organization_settings'],
+        params: { orgId: fakeOrganization.sys.id }
+      });
+    });
+
+    it('should go to the org settings if they are a V2 pricing customer and click on the go to org settings button', async () => {
+      await build();
+      fireEvent.click(screen.getByTestId('organization-row.dropdown-menu.trigger'));
+
+      const goToOrgButtonContainer = screen.getByTestId('organization-row.go-to-org-link');
+
+      fireEvent.click(
+        within(goToOrgButtonContainer).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
+      );
+
+      expect(go).toHaveBeenCalledWith({
+        path: ['account', 'organization_settings'],
         params: { orgId: fakeOrganization.sys.id }
       });
     });
@@ -174,14 +190,14 @@ describe('OrganizationRow', () => {
 
       await expect(ModalLauncher.open).toHaveBeenCalled();
 
-      await wait();
-      expect(Notification.success).toHaveBeenCalledWith(
-        `Successfully left organization ${fakeOrganization.name}`
-      );
+      expect(
+        await screen.findByText(`Successfully left organization ${fakeOrganization.name}`)
+      ).toBeInTheDocument();
+
       await expect(onLeaveSuccess).toHaveBeenCalled();
     });
 
-    it('should call onLeave if they can leave the org and click on the leave button', async () => {
+    it('should display an error if leaving the org request fails', async () => {
       removeMembership.mockReset().mockRejectedValueOnce(new Error());
 
       await build();
@@ -194,9 +210,12 @@ describe('OrganizationRow', () => {
 
       await expect(ModalLauncher.open).toHaveBeenCalled();
 
-      await wait();
-      expect(Notification.error).toHaveBeenCalledWith(
-        `Could not leave organization ${fakeOrganization.name}`
+      expect(
+        await screen.findByText(`Could not leave organization ${fakeOrganization.name}`)
+      ).toBeInTheDocument();
+
+      expect(screen.getByTestId('organization-row.organization-name')).toHaveTextContent(
+        fakeOrganization.name
       );
     });
   });

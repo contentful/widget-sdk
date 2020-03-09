@@ -13,6 +13,10 @@ import gatekeeperStates from './OrganizationSettingsGatekeeperStates';
 import OrganizationNavBar from 'navigation/OrganizationNavBar';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
 import appsState from 'app/Apps/routes/management';
+import * as TokenStore from 'services/TokenStore';
+import { isDeveloper, isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { isLegacyOrganization } from 'utils/ResourceUtils';
+import { go } from 'states/Navigator';
 
 const usersAndInvitationsState = base({
   name: 'users',
@@ -29,6 +33,35 @@ const usersAndInvitationsState = base({
   ]
 });
 
+const organizationSettings = {
+  name: 'organization_settings',
+  url: '/organization_settings',
+  params: { orgId: '' },
+  onEnter: [
+    '$stateParams',
+    async ({ orgId }) => {
+      const organization = await TokenStore.getOrganization(orgId);
+
+      let path = ['account', 'organizations'];
+      if (isDeveloper(organization)) {
+        path = [...path, 'apps', 'list'];
+      } else if (isOwnerOrAdmin(organization)) {
+        const hasNewPricing = !isLegacyOrganization(organization);
+
+        path = [...path, hasNewPricing ? 'subscription_new' : 'subscription'];
+      } else {
+        // They are a member and the member path should go to organization/teams
+        path = [...path, 'teams'];
+      }
+
+      go({
+        path: path,
+        params: { orgId: organization.sys.id }
+      });
+    }
+  ]
+};
+
 export default [
   iframeStateWrapper({
     name: 'new_organization',
@@ -36,6 +69,7 @@ export default [
     navComponent: EmptyNavigationBar,
     title: 'Create new organization'
   }),
+  organizationSettings,
   base({
     name: 'organizations',
     url: '/organizations/:orgId',

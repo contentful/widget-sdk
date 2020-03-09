@@ -1,6 +1,5 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import useAsync from 'app/common/hooks/useAsync';
 import {
   CardActions,
   TableRow,
@@ -21,7 +20,9 @@ import { removeMembership } from 'access_control/OrganizationMembershipRepositor
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
 import { fetchCanLeaveOrg } from './OranizationUtils';
-import { hasMemberRole, getOrganizationMembership } from 'services/OrganizationRoles';
+import { isOwnerOrAdmin, getOrganizationMembership } from 'services/OrganizationRoles';
+import { isLegacyOrganization } from 'utils/ResourceUtils';
+
 import { go } from 'states/Navigator';
 
 const triggerLeaveModal = async ({ organization, userOrgMembershipId, onLeaveSuccess }) => {
@@ -78,25 +79,23 @@ const OrganizationRow = ({ organization, onLeaveSuccess }) => {
   } = getOrganizationMembership(organization.sys.id);
 
   const [canUserLeaveOrg, setCanUserLeaveOrg] = useState(true);
+  let canUserAccessOrgSettings = true;
 
-  // If the user has a role different than 'member' it means they are an 'owner' or 'admin' and should be able to access the org settings page.
-  const canAccessOrgSettings = !hasMemberRole(organization);
+  // If it's a legacy organization (V1), then only the owner or admin can access the org settings.
+  if (isLegacyOrganization(organization) && !isOwnerOrAdmin(organization)) {
+    canUserAccessOrgSettings = false;
+  }
 
-  // Developers should go to somewhere else...
-  // Different routing for V1, is there a route that already accomplishes this?
   const goToOrgSettings = () => {
     go({
-      path: ['account', 'organizations', 'subscription_new'],
+      path: ['account', 'organization_settings'],
       params: { orgId: organization.sys.id }
     });
   };
 
-  useAsync(
-    useCallback(async () => {
-      const canUserLeaveOrg = await fetchCanLeaveOrg(organization);
-      setCanUserLeaveOrg(canUserLeaveOrg);
-    }, [organization])
-  );
+  useEffect(() => {
+    fetchCanLeaveOrg(organization).then(setCanUserLeaveOrg);
+  }, [organization]);
 
   const toolTipContent = !canUserLeaveOrg
     ? 'You cannot leave this organization since you are the only owner remaining'
@@ -119,12 +118,11 @@ const OrganizationRow = ({ organization, onLeaveSuccess }) => {
           }}
           data-test-id="organization-row.dropdown-menu">
           <DropdownList>
-            <DropdownListItem
-              isDisabled={!canAccessOrgSettings}
-              onClick={goToOrgSettings}
-              testId="organization-row.go-to-org-link">
-              Go to Organization Settings
-            </DropdownListItem>
+            {canUserAccessOrgSettings && (
+              <DropdownListItem onClick={goToOrgSettings} testId="organization-row.go-to-org-link">
+                Go to Organization Settings
+              </DropdownListItem>
+            )}
             <DropdownListItem
               isDisabled={!canUserLeaveOrg}
               onClick={() => {
