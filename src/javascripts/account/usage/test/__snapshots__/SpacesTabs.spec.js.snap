@@ -3,36 +3,28 @@
 exports[`SpacesTabs renders correctly 1`] = `
 Object {
   "asFragment": [Function],
-  "baseElement": .emotion-3 {
+  "baseElement": .emotion-1 {
   height: 450px;
   width: 853px;
 }
 
-.emotion-6 {
+.emotion-4 {
   padding-top: 3rem;
   padding-bottom: 3rem;
 }
 
-.emotion-5 {
+.emotion-3 {
   display: grid;
   grid-template-columns: repeat(12,1fr);
   grid-template-rows: auto;
   grid-gap: 24px 0;
 }
 
-.emotion-2 {
+.emotion-0 {
   grid-column-start: span 4;
 }
 
-.emotion-0 {
-  color: #2E75D4;
-}
-
-.emotion-1 {
-  color: #0EB87F;
-}
-
-.emotion-4 {
+.emotion-2 {
   grid-column-start: span 8;
 }
 
@@ -85,16 +77,16 @@ Object {
         </div>
       </div>
       <div
-        class="emotion-6"
+        class="emotion-4"
         data-test-id="cf-ui-tab-panel"
         id="api-usage-tab-panel"
         role="tabpanel"
       >
         <div
-          class="emotion-5"
+          class="emotion-3"
         >
           <div
-            class="emotion-2"
+            class="emotion-0"
           >
             <table
               cellpadding="0"
@@ -161,9 +153,9 @@ Object {
                   </td>
                   <td
                     align="left"
-                    class="TableCell__TableCell___Wou8a emotion-0"
+                    class="TableCell__TableCell___Wou8a"
                     data-test-id="cf-ui-table-cell"
-                    style="top: 0px;"
+                    style="color: rgb(46, 117, 212);"
                   >
                     12
                     %
@@ -191,9 +183,9 @@ Object {
                   </td>
                   <td
                     align="left"
-                    class="TableCell__TableCell___Wou8a emotion-1"
+                    class="TableCell__TableCell___Wou8a"
                     data-test-id="cf-ui-table-cell"
-                    style="top: 0px;"
+                    style="color: rgb(14, 184, 127);"
                   >
                     12
                     %
@@ -203,10 +195,10 @@ Object {
             </table>
           </div>
           <div
-            class="emotion-4"
+            class="emotion-2"
           >
             <div
-              class="emotion-3"
+              class="emotion-1"
               data-test-id="api-usage-bar-chart"
             />
           </div>
@@ -214,36 +206,28 @@ Object {
       </div>
     </div>
   </body>,
-  "container": .emotion-3 {
+  "container": .emotion-1 {
   height: 450px;
   width: 853px;
 }
 
-.emotion-6 {
+.emotion-4 {
   padding-top: 3rem;
   padding-bottom: 3rem;
 }
 
-.emotion-5 {
+.emotion-3 {
   display: grid;
   grid-template-columns: repeat(12,1fr);
   grid-template-rows: auto;
   grid-gap: 24px 0;
 }
 
-.emotion-2 {
+.emotion-0 {
   grid-column-start: span 4;
 }
 
-.emotion-0 {
-  color: #2E75D4;
-}
-
-.emotion-1 {
-  color: #0EB87F;
-}
-
-.emotion-4 {
+.emotion-2 {
   grid-column-start: span 8;
 }
 
@@ -295,16 +279,16 @@ Object {
       </div>
     </div>
     <div
-      class="emotion-6"
+      class="emotion-4"
       data-test-id="cf-ui-tab-panel"
       id="api-usage-tab-panel"
       role="tabpanel"
     >
       <div
-        class="emotion-5"
+        class="emotion-3"
       >
         <div
-          class="emotion-2"
+          class="emotion-0"
         >
           <table
             cellpadding="0"
@@ -371,9 +355,9 @@ Object {
                 </td>
                 <td
                   align="left"
-                  class="TableCell__TableCell___Wou8a emotion-0"
+                  class="TableCell__TableCell___Wou8a"
                   data-test-id="cf-ui-table-cell"
-                  style="top: 0px;"
+                  style="color: rgb(46, 117, 212);"
                 >
                   12
                   %
@@ -401,9 +385,9 @@ Object {
                 </td>
                 <td
                   align="left"
-                  class="TableCell__TableCell___Wou8a emotion-1"
+                  class="TableCell__TableCell___Wou8a"
                   data-test-id="cf-ui-table-cell"
-                  style="top: 0px;"
+                  style="color: rgb(14, 184, 127);"
                 >
                   12
                   %
@@ -413,10 +397,10 @@ Object {
           </table>
         </div>
         <div
-          class="emotion-4"
+          class="emotion-2"
         >
           <div
-            class="emotion-3"
+            class="emotion-1"
             data-test-id="api-usage-bar-chart"
           />
         </div>

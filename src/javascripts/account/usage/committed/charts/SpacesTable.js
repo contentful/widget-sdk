@@ -10,12 +10,6 @@ import PropTypes from 'prop-types';
 import { sum } from 'lodash';
 import { shorten } from 'utils/NumberUtils';
 import { organizationResourceUsagePropType } from '../propTypes';
-import { css } from 'emotion';
-
-const apiColumnStyle = colour =>
-  css({
-    color: colour
-  });
 
 const calcRelativeSpaceUsage = (spaceUsage, totalUsage) => {
   return !totalUsage ? 0 : Math.round((sum(spaceUsage) / totalUsage) * 100);
@@ -26,7 +20,8 @@ const SpaceRow = ({ spaceName, spaceUsage, totalUsage, colour }) => {
     <TableRow data-test-id="api-usage-table-row">
       <TableCell>{spaceName || 'Deleted space'}</TableCell>
       <TableCell>{shorten(sum(spaceUsage))}</TableCell>
-      <TableCell className={apiColumnStyle(colour)}>
+      {/* eslint-disable-next-line */}
+      <TableCell style={{ color: colour }}>
         {calcRelativeSpaceUsage(spaceUsage, totalUsage)}%
       </TableCell>
     </TableRow>
