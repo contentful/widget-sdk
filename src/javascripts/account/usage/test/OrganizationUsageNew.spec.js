@@ -28,7 +28,7 @@ describe('WorkbenchContent', () => {
       isLoading: false,
       periods: [],
       resources: [],
-      newOrgEnabled: true
+      newUsagePageVariation: true
     };
   });
 

@@ -39,7 +39,7 @@ export const WorkbenchContent = props => {
     error,
     periods,
     resources,
-    newOrgEnabled
+    newUsagePageVariation
   } = props;
 
   if (error) {
@@ -51,7 +51,7 @@ export const WorkbenchContent = props => {
       return <NoSpacesPlaceholder />;
     }
     if (typeof selectedPeriodIndex !== 'undefined') {
-      if (newOrgEnabled) {
+      if (newUsagePageVariation) {
         return (
           <OrganizationUsagePageNew
             {...{
@@ -107,7 +107,7 @@ WorkbenchContent.propTypes = {
   error: PropTypes.string,
   periods: PropTypes.arrayOf(PropTypes.object),
   resources: PropTypes.arrayOf(PropTypes.object),
-  newOrgEnabled: PropTypes.bool
+  newUsagePageVariation: PropTypes.bool
 };
 
 export class WorkbenchActions extends React.Component {
@@ -162,7 +162,7 @@ export class OrganizationUsage extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { isLoading: true, error: null, newOrgEnabled: false };
+    this.state = { isLoading: true, error: null, newUsagePageVariation: false };
 
     this.endpoint = EndpointFactory.createOrganizationEndpoint(props.orgId);
     this.setPeriodIndex = this.setPeriodIndex.bind(this);
@@ -173,7 +173,7 @@ export class OrganizationUsage extends React.Component {
 
     try {
       const featureFlag = await getVariation(USAGE_API_UX, { organizationId: orgId });
-      this.setState({ newOrgEnabled: featureFlag });
+      this.setState({ newUsagePageVariation: featureFlag });
       await this.checkPermissions();
       await this.fetchOrgData();
     } catch (ex) {
@@ -253,7 +253,7 @@ export class OrganizationUsage extends React.Component {
 
   loadPeriodData = async newIndex => {
     const { orgId } = this.props;
-    const { periods, newOrgEnabled } = this.state;
+    const { periods, newUsagePageVariation } = this.state;
 
     const service = createResourceService(orgId, 'organization');
     const newPeriod = periods[newIndex];
@@ -279,7 +279,7 @@ export class OrganizationUsage extends React.Component {
             startDate: newPeriod.startDate,
             endDate: newPeriod.endDate,
             periodId: newPeriod.sys.id,
-            limit: newOrgEnabled ? 5 : 3
+            limit: newUsagePageVariation ? 5 : 3
           })
         )
       ];
@@ -332,7 +332,7 @@ export class OrganizationUsage extends React.Component {
       committed,
       resources,
       hasSpaces,
-      newOrgEnabled
+      newUsagePageVariation
     } = this.state;
     return (
       <>
@@ -368,7 +368,7 @@ export class OrganizationUsage extends React.Component {
                 error,
                 periods,
                 resources,
-                newOrgEnabled
+                newUsagePageVariation
               }}
             />
           </Workbench.Content>

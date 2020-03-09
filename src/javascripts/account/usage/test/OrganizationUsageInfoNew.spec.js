@@ -33,6 +33,6 @@ describe('OrganisationUsageInfoNew', () => {
 
     const { getByTestId } = renderComp(overageProps);
     const overage = getByTestId('org-usage-overage');
-    expect(overage).toHaveTextContent(' +500,000 overage');
+    expect(overage).toHaveTextContent('+500,000 overage');
   });
 });

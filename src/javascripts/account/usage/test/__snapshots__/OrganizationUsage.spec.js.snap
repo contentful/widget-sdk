@@ -63,7 +63,7 @@ exports[`OrganizationUsage should render page without errors 1`] = `
             "space2": false,
           }
         }
-        newOrgEnabled={true}
+        newUsagePageVariation={true}
         periods={
           Array [
             Object {
