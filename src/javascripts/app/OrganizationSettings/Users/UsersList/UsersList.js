@@ -128,8 +128,8 @@ class UsersList extends React.Component {
 
     this.setState({ loading: true });
 
-    // if this is undefined while the flag value is being fetched the list will show pending members for a second and then hide then
-    // forcing it to check if the flag is bool false fix this
+    // `hasPendingOrgMembershipsEnabled` is undefined while the flag value is being fetched, and we want to wait
+    // until we get an explicit value before loading the invitation count
     if (hasPendingOrgMembershipsEnabled === false) {
       await this.loadInvitationsCount();
     }
