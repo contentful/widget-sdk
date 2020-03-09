@@ -111,6 +111,20 @@ export const supportUrl = websiteUrl('support');
 export const salesUrl = websiteUrl('contact/sales');
 
 /**
+ * URL which allows the user to get to the Help Center in the website.
+ *
+ * In production this is `//www.contentful.com/help`.
+ */
+export const helpCenterUrl = websiteUrl('help');
+
+/**
+ * URL which allows the user to get to the Documentation for developers in the website.
+ *
+ * In production this is `//www.contentful.com/developers/docs`.
+ */
+export const developerDocsUrl = websiteUrl('developers/docs');
+
+/**
  * Environment - e.g. production, staging, development, unittest
  */
 export const env = settings.environment;

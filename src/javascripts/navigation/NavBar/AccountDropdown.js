@@ -244,6 +244,22 @@ export default class AccountDropdown extends Component {
         </DropdownList>
 
         <DropdownList border="bottom">
+          <DropdownListItem
+            testId="nav.account.help"
+            href={Config.helpCenterUrl}
+            target="_blank"
+            onClick={this.handleDropdownListItemClick}>
+            Help center
+          </DropdownListItem>
+
+          <DropdownListItem
+            testId="nav.account.docs"
+            href={Config.developerDocsUrl}
+            target="_blank"
+            onClick={this.handleDropdownListItemClick}>
+            Developer docs
+          </DropdownListItem>
+
           {Intercom.isEnabled && (
             <DropdownListItem testId="nav.account.intercom" onClick={this.handleLiveChat}>
               Talk to us
