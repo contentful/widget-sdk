@@ -59,7 +59,7 @@
     "delay": "^4.3.0",
     "detect-browser": "^3.0.1",
     "downshift": "^1.31.16",
-    "echarts": "^4.2.1",
+    "echarts": "^4.6.0",
     "element-resize-detector": "^1.1.15",
     "emotion": "^10.0.17",
     "eslint-module-utils": "^2.4.0",

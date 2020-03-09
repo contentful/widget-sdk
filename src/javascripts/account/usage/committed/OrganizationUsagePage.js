@@ -12,7 +12,7 @@ import {
 } from './propTypes';
 import OrganizationUsageInfo from './OrganizationUsageInfo';
 import AssetBandwidthSection from './AssetBandwidthSection';
-import OrganisationUsageChart from './charts/OrganisationUsageChart';
+import OrganizationUsageChart from './charts/OrganizationUsageChart';
 import ApiUsageInfo from './ApiUsageInfo';
 import ApiUsageChart from './charts/ApiUsageChart';
 import * as Intercom from 'services/intercom';
@@ -75,7 +75,7 @@ export default class OrganizationUsagePage extends React.Component {
       <div className="usage-page">
         <div className="usage-page__section">
           <OrganizationUsageInfo totalUsage={totalUsage} includedLimit={apiRequestIncludedLimit} />
-          <OrganisationUsageChart
+          <OrganizationUsageChart
             usage={orgUsage}
             includedLimit={apiRequestIncludedLimit}
             period={period}

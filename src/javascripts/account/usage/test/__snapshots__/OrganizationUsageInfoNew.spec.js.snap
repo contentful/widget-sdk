@@ -1,0 +1,60 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OrganisationUsageInfoNew should render 1`] = `
+.emotion-0 {
+  color: #536171;
+  font-weight: 400;
+}
+
+.emotion-1 {
+  color: #253545;
+  font-size: 2.1875rem;
+  font-weight: 600;
+}
+
+<div>
+  <div
+    class="Typography__Typography___1ZUfE"
+    data-test-id="cf-ui-text-container"
+  >
+    <h2
+      class="Heading__Heading___83D3K emotion-0 f36-margin-bottom--m"
+      data-test-id="cf-ui-heading"
+    >
+      Total API requests
+    </h2>
+    <p
+      class="Paragraph__Paragraph___2aO-9 emotion-1 f36-margin-bottom--m"
+      data-test-id="org-usage-total"
+    >
+      23,000
+    </p>
+    <p
+      class="Paragraph__Paragraph___2aO-9 f36-margin-bottom--m"
+      data-test-id="cf-ui-paragraph"
+    >
+      Total API calls made this month from a
+       
+      <strong
+        data-test-id="org-usage-limit"
+      >
+        2M
+      </strong>
+      /month quota. This number includes CMA, CDA, CPA, and GraphQL requests. To learn about utility limits, read the
+      <a
+        class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 usage-page__learn-more-link TextLink__TextLink--primary___2Vc9F"
+        data-test-id="cf-ui-text-link"
+        href="https://www.contentful.com/r/knowledgebase/fair-use/"
+        target="_blank"
+      >
+        <span
+          class="TabFocusTrap__TabFocusTrap___39Vty"
+          tabindex="-1"
+        >
+          Fair Use Policy.
+        </span>
+      </a>
+    </p>
+  </div>
+</div>
+`;

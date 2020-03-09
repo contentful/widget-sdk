@@ -14,7 +14,7 @@ const accumulateUsage = usage =>
 const belowLimitColor = '#263545';
 const aboveLimitColor = '#FDA31A';
 
-export default class OrganisationUsageChart extends React.Component {
+export default class OrganizationUsageChart extends React.Component {
   static propTypes = {
     usage: PropTypes.arrayOf(PropTypes.number).isRequired,
     includedLimit: PropTypes.number.isRequired,

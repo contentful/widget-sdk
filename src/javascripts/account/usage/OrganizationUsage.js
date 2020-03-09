@@ -5,8 +5,12 @@ import { mapValues, flow, keyBy, get, eq, isNumber, pick } from 'lodash/fp';
 import { Spinner, Workbench } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification';
 
+import DocumentTitle from 'components/shared/DocumentTitle';
 import OrganizationResourceUsageList from './non_committed/OrganizationResourceUsageList';
 import OrganizationUsagePage from './committed/OrganizationUsagePage';
+import OrganizationUsagePageNew from './committed/OrganizationUsagePageNew';
+import { getVariation } from 'LaunchDarkly';
+import { USAGE_API_UX } from 'featureFlags';
 import PeriodSelector from './committed/PeriodSelector';
 import NoSpacesPlaceholder from './NoSpacesPlaceholder';
 import * as Analytics from 'analytics/Analytics';
@@ -21,55 +25,35 @@ import * as OrganizationRoles from 'services/OrganizationRoles';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import ErrorState from 'app/common/ErrorState';
 
-export class WorkbenchContent extends React.Component {
-  static propTypes = {
-    committed: PropTypes.bool,
-    hasSpaces: PropTypes.bool,
-    selectedPeriodIndex: PropTypes.number,
-    spaceNames: PropTypes.objectOf(PropTypes.string),
-    isPoC: PropTypes.objectOf(PropTypes.bool),
-    periodicUsage: PropTypes.object,
-    apiRequestIncludedLimit: PropTypes.number,
-    assetBandwidthData: PropTypes.shape({
-      usage: PropTypes.number,
-      unitOfMeasure: PropTypes.string,
-      limits: PropTypes.shape({
-        included: PropTypes.number
-      })
-    }),
-    isLoading: PropTypes.bool,
-    error: PropTypes.string,
-    periods: PropTypes.arrayOf(PropTypes.object),
-    resources: PropTypes.arrayOf(PropTypes.object)
-  };
+export const WorkbenchContent = props => {
+  const {
+    committed,
+    hasSpaces,
+    selectedPeriodIndex,
+    spaceNames,
+    isPoC,
+    periodicUsage,
+    apiRequestIncludedLimit,
+    assetBandwidthData,
+    isLoading,
+    error,
+    periods,
+    resources,
+    newUsagePageVariation
+  } = props;
 
-  render() {
-    const {
-      committed,
-      hasSpaces,
-      selectedPeriodIndex,
-      spaceNames,
-      isPoC,
-      periodicUsage,
-      apiRequestIncludedLimit,
-      assetBandwidthData,
-      isLoading,
-      error,
-      periods,
-      resources
-    } = this.props;
+  if (error) {
+    return <ErrorState />;
+  }
 
-    if (error) {
-      return <ErrorState />;
+  if (committed) {
+    if (!hasSpaces) {
+      return <NoSpacesPlaceholder />;
     }
-
-    if (committed) {
-      if (!hasSpaces) {
-        return <NoSpacesPlaceholder />;
-      }
-      if (typeof selectedPeriodIndex !== 'undefined') {
+    if (typeof selectedPeriodIndex !== 'undefined') {
+      if (newUsagePageVariation) {
         return (
-          <OrganizationUsagePage
+          <OrganizationUsagePageNew
             {...{
               period: periods[selectedPeriodIndex],
               spaceNames,
@@ -82,14 +66,49 @@ export class WorkbenchContent extends React.Component {
           />
         );
       }
-    } else {
-      if (typeof resources !== 'undefined') {
-        return <OrganizationResourceUsageList resources={resources} />;
-      }
+      return (
+        <OrganizationUsagePage
+          {...{
+            period: periods[selectedPeriodIndex],
+            spaceNames,
+            isPoC,
+            periodicUsage,
+            apiRequestIncludedLimit,
+            assetBandwidthData,
+            isLoading
+          }}
+        />
+      );
     }
-    return <div />;
+  } else {
+    if (typeof resources !== 'undefined') {
+      return <OrganizationResourceUsageList resources={resources} />;
+    }
   }
-}
+  return <div />;
+};
+
+WorkbenchContent.propTypes = {
+  committed: PropTypes.bool,
+  hasSpaces: PropTypes.bool,
+  selectedPeriodIndex: PropTypes.number,
+  spaceNames: PropTypes.objectOf(PropTypes.string),
+  isPoC: PropTypes.objectOf(PropTypes.bool),
+  periodicUsage: PropTypes.object,
+  apiRequestIncludedLimit: PropTypes.number,
+  assetBandwidthData: PropTypes.shape({
+    usage: PropTypes.number,
+    unitOfMeasure: PropTypes.string,
+    limits: PropTypes.shape({
+      included: PropTypes.number
+    })
+  }),
+  isLoading: PropTypes.bool,
+  error: PropTypes.string,
+  periods: PropTypes.arrayOf(PropTypes.object),
+  resources: PropTypes.arrayOf(PropTypes.object),
+  newUsagePageVariation: PropTypes.bool
+};
 
 export class WorkbenchActions extends React.Component {
   static propTypes = {
@@ -143,14 +162,18 @@ export class OrganizationUsage extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { isLoading: true, error: null };
+    this.state = { isLoading: true, error: null, newUsagePageVariation: false };
 
     this.endpoint = EndpointFactory.createOrganizationEndpoint(props.orgId);
     this.setPeriodIndex = this.setPeriodIndex.bind(this);
   }
 
   async componentDidMount() {
+    const { orgId } = this.props;
+
     try {
+      const featureFlag = await getVariation(USAGE_API_UX, { organizationId: orgId });
+      this.setState({ newUsagePageVariation: featureFlag });
       await this.checkPermissions();
       await this.fetchOrgData();
     } catch (ex) {
@@ -230,7 +253,7 @@ export class OrganizationUsage extends React.Component {
 
   loadPeriodData = async newIndex => {
     const { orgId } = this.props;
-    const { periods } = this.state;
+    const { periods, newUsagePageVariation } = this.state;
 
     const service = createResourceService(orgId, 'organization');
     const newPeriod = periods[newIndex];
@@ -255,7 +278,8 @@ export class OrganizationUsage extends React.Component {
             apiType,
             startDate: newPeriod.startDate,
             endDate: newPeriod.endDate,
-            periodId: newPeriod.sys.id
+            periodId: newPeriod.sys.id,
+            limit: newUsagePageVariation ? 5 : 3
           })
         )
       ];
@@ -307,45 +331,49 @@ export class OrganizationUsage extends React.Component {
       assetBandwidthData,
       committed,
       resources,
-      hasSpaces
+      hasSpaces,
+      newUsagePageVariation
     } = this.state;
     return (
-      <Workbench testId="organization.usage">
-        <Workbench.Header
-          title="Usage"
-          icon={<NavigationIcon icon="usage" color="green" size="large" />}
-          actions={
-            <WorkbenchActions
+      <>
+        <DocumentTitle title="Usage" />
+        <Workbench testId="organization.usage">
+          <Workbench.Header
+            title="Usage"
+            icon={<NavigationIcon icon="usage" color="green" size="large" />}
+            actions={
+              <WorkbenchActions
+                {...{
+                  isLoading,
+                  hasSpaces,
+                  committed,
+                  periods,
+                  selectedPeriodIndex,
+                  setPeriodIndex: this.setPeriodIndex
+                }}
+              />
+            }></Workbench.Header>
+          <Workbench.Content>
+            <WorkbenchContent
               {...{
+                committed,
+                hasSpaces,
+                selectedPeriodIndex,
+                spaceNames,
+                isPoC,
+                periodicUsage,
+                apiRequestIncludedLimit,
+                assetBandwidthData,
                 isLoading,
                 error,
-                hasSpaces,
-                committed,
                 periods,
-                selectedPeriodIndex,
-                setPeriodIndex: this.setPeriodIndex
+                resources,
+                newUsagePageVariation
               }}
             />
-          }></Workbench.Header>
-        <Workbench.Content>
-          <WorkbenchContent
-            {...{
-              committed,
-              hasSpaces,
-              selectedPeriodIndex,
-              spaceNames,
-              isPoC,
-              periodicUsage,
-              apiRequestIncludedLimit,
-              assetBandwidthData,
-              isLoading,
-              error,
-              periods,
-              resources
-            }}
-          />
-        </Workbench.Content>
-      </Workbench>
+          </Workbench.Content>
+        </Workbench>
+      </>
     );
   }
 }

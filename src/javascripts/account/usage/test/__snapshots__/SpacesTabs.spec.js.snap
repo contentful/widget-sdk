@@ -1,0 +1,462 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SpacesTabs renders correctly 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": .emotion-1 {
+  height: 450px;
+  width: 853px;
+}
+
+.emotion-4 {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+.emotion-3 {
+  display: grid;
+  grid-template-columns: repeat(12,1fr);
+  grid-template-rows: auto;
+  grid-gap: 24px 0;
+}
+
+.emotion-0 {
+  grid-column-start: span 4;
+}
+
+.emotion-2 {
+  grid-column-start: span 8;
+}
+
+<body>
+    <div>
+      <div
+        class="Tabs__Tabs___3Cp8m Tabs__Tabs__with-divider___2Mx3Z"
+        data-test-id="cf-ui-tabs"
+        role="tablist"
+      >
+        <div
+          aria-controls="cma"
+          aria-selected="true"
+          class="Tabs__Tab___1SiYI Tabs__Tab__selected___3erbm"
+          data-test-id="cf-ui-tab"
+          role="tab"
+          tabindex="0"
+        >
+          CMA Requests
+        </div>
+        <div
+          aria-controls="cda"
+          aria-selected="false"
+          class="Tabs__Tab___1SiYI"
+          data-test-id="cf-ui-tab"
+          role="tab"
+          tabindex="0"
+        >
+          CDA Requests
+        </div>
+        <div
+          aria-controls="cpa"
+          aria-selected="false"
+          class="Tabs__Tab___1SiYI"
+          data-test-id="cf-ui-tab"
+          role="tab"
+          tabindex="0"
+        >
+          CPA Requests
+        </div>
+        <div
+          aria-controls="gql"
+          aria-selected="false"
+          class="Tabs__Tab___1SiYI"
+          data-test-id="cf-ui-tab"
+          role="tab"
+          tabindex="0"
+        >
+          GraphQL Requests
+        </div>
+      </div>
+      <div
+        class="emotion-4"
+        data-test-id="cf-ui-tab-panel"
+        id="api-usage-tab-panel"
+        role="tabpanel"
+      >
+        <div
+          class="emotion-3"
+        >
+          <div
+            class="emotion-0"
+          >
+            <table
+              cellpadding="0"
+              cellspacing="0"
+              class="Table__Table___3vKIR"
+              data-test-id="api-usage-table"
+            >
+              <thead
+                class=""
+                data-test-id="cf-ui-table-head"
+              >
+                <tr
+                  class="TableRow__TableRow___3kcNC"
+                  data-test-id="cf-ui-table-row"
+                >
+                  <th
+                    align="left"
+                    class="TableCell__TableCell___Wou8a TableCell__TableCell--head___1HhvZ"
+                    data-test-id="cf-ui-table-cell"
+                    style="top: 0px;"
+                  >
+                    Space
+                  </th>
+                  <th
+                    align="left"
+                    class="TableCell__TableCell___Wou8a TableCell__TableCell--head___1HhvZ"
+                    data-test-id="cf-ui-table-cell"
+                    style="top: 0px;"
+                  >
+                    CMA
+                  </th>
+                  <th
+                    align="left"
+                    class="TableCell__TableCell___Wou8a TableCell__TableCell--head___1HhvZ"
+                    data-test-id="cf-ui-table-cell"
+                    style="top: 0px;"
+                  >
+                    API %
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                data-test-id="cf-ui-table-body"
+              >
+                <tr
+                  class="TableRow__TableRow___3kcNC"
+                  data-test-id="api-usage-table-row"
+                >
+                  <td
+                    align="left"
+                    class="TableCell__TableCell___Wou8a"
+                    data-test-id="cf-ui-table-cell"
+                    style="top: 0px;"
+                  >
+                    CMASpace
+                  </td>
+                  <td
+                    align="left"
+                    class="TableCell__TableCell___Wou8a"
+                    data-test-id="cf-ui-table-cell"
+                    style="top: 0px;"
+                  >
+                    94
+                  </td>
+                  <td
+                    align="left"
+                    class="TableCell__TableCell___Wou8a"
+                    data-test-id="cf-ui-table-cell"
+                    style="color: rgb(46, 117, 212);"
+                  >
+                    12
+                    %
+                  </td>
+                </tr>
+                <tr
+                  class="TableRow__TableRow___3kcNC"
+                  data-test-id="api-usage-table-row"
+                >
+                  <td
+                    align="left"
+                    class="TableCell__TableCell___Wou8a"
+                    data-test-id="cf-ui-table-cell"
+                    style="top: 0px;"
+                  >
+                    Deleted space
+                  </td>
+                  <td
+                    align="left"
+                    class="TableCell__TableCell___Wou8a"
+                    data-test-id="cf-ui-table-cell"
+                    style="top: 0px;"
+                  >
+                    94
+                  </td>
+                  <td
+                    align="left"
+                    class="TableCell__TableCell___Wou8a"
+                    data-test-id="cf-ui-table-cell"
+                    style="color: rgb(14, 184, 127);"
+                  >
+                    12
+                    %
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div
+            class="emotion-2"
+          >
+            <div
+              class="emotion-1"
+              data-test-id="api-usage-bar-chart"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": .emotion-1 {
+  height: 450px;
+  width: 853px;
+}
+
+.emotion-4 {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+.emotion-3 {
+  display: grid;
+  grid-template-columns: repeat(12,1fr);
+  grid-template-rows: auto;
+  grid-gap: 24px 0;
+}
+
+.emotion-0 {
+  grid-column-start: span 4;
+}
+
+.emotion-2 {
+  grid-column-start: span 8;
+}
+
+<div>
+    <div
+      class="Tabs__Tabs___3Cp8m Tabs__Tabs__with-divider___2Mx3Z"
+      data-test-id="cf-ui-tabs"
+      role="tablist"
+    >
+      <div
+        aria-controls="cma"
+        aria-selected="true"
+        class="Tabs__Tab___1SiYI Tabs__Tab__selected___3erbm"
+        data-test-id="cf-ui-tab"
+        role="tab"
+        tabindex="0"
+      >
+        CMA Requests
+      </div>
+      <div
+        aria-controls="cda"
+        aria-selected="false"
+        class="Tabs__Tab___1SiYI"
+        data-test-id="cf-ui-tab"
+        role="tab"
+        tabindex="0"
+      >
+        CDA Requests
+      </div>
+      <div
+        aria-controls="cpa"
+        aria-selected="false"
+        class="Tabs__Tab___1SiYI"
+        data-test-id="cf-ui-tab"
+        role="tab"
+        tabindex="0"
+      >
+        CPA Requests
+      </div>
+      <div
+        aria-controls="gql"
+        aria-selected="false"
+        class="Tabs__Tab___1SiYI"
+        data-test-id="cf-ui-tab"
+        role="tab"
+        tabindex="0"
+      >
+        GraphQL Requests
+      </div>
+    </div>
+    <div
+      class="emotion-4"
+      data-test-id="cf-ui-tab-panel"
+      id="api-usage-tab-panel"
+      role="tabpanel"
+    >
+      <div
+        class="emotion-3"
+      >
+        <div
+          class="emotion-0"
+        >
+          <table
+            cellpadding="0"
+            cellspacing="0"
+            class="Table__Table___3vKIR"
+            data-test-id="api-usage-table"
+          >
+            <thead
+              class=""
+              data-test-id="cf-ui-table-head"
+            >
+              <tr
+                class="TableRow__TableRow___3kcNC"
+                data-test-id="cf-ui-table-row"
+              >
+                <th
+                  align="left"
+                  class="TableCell__TableCell___Wou8a TableCell__TableCell--head___1HhvZ"
+                  data-test-id="cf-ui-table-cell"
+                  style="top: 0px;"
+                >
+                  Space
+                </th>
+                <th
+                  align="left"
+                  class="TableCell__TableCell___Wou8a TableCell__TableCell--head___1HhvZ"
+                  data-test-id="cf-ui-table-cell"
+                  style="top: 0px;"
+                >
+                  CMA
+                </th>
+                <th
+                  align="left"
+                  class="TableCell__TableCell___Wou8a TableCell__TableCell--head___1HhvZ"
+                  data-test-id="cf-ui-table-cell"
+                  style="top: 0px;"
+                >
+                  API %
+                </th>
+              </tr>
+            </thead>
+            <tbody
+              data-test-id="cf-ui-table-body"
+            >
+              <tr
+                class="TableRow__TableRow___3kcNC"
+                data-test-id="api-usage-table-row"
+              >
+                <td
+                  align="left"
+                  class="TableCell__TableCell___Wou8a"
+                  data-test-id="cf-ui-table-cell"
+                  style="top: 0px;"
+                >
+                  CMASpace
+                </td>
+                <td
+                  align="left"
+                  class="TableCell__TableCell___Wou8a"
+                  data-test-id="cf-ui-table-cell"
+                  style="top: 0px;"
+                >
+                  94
+                </td>
+                <td
+                  align="left"
+                  class="TableCell__TableCell___Wou8a"
+                  data-test-id="cf-ui-table-cell"
+                  style="color: rgb(46, 117, 212);"
+                >
+                  12
+                  %
+                </td>
+              </tr>
+              <tr
+                class="TableRow__TableRow___3kcNC"
+                data-test-id="api-usage-table-row"
+              >
+                <td
+                  align="left"
+                  class="TableCell__TableCell___Wou8a"
+                  data-test-id="cf-ui-table-cell"
+                  style="top: 0px;"
+                >
+                  Deleted space
+                </td>
+                <td
+                  align="left"
+                  class="TableCell__TableCell___Wou8a"
+                  data-test-id="cf-ui-table-cell"
+                  style="top: 0px;"
+                >
+                  94
+                </td>
+                <td
+                  align="left"
+                  class="TableCell__TableCell___Wou8a"
+                  data-test-id="cf-ui-table-cell"
+                  style="color: rgb(14, 184, 127);"
+                >
+                  12
+                  %
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div
+          class="emotion-2"
+        >
+          <div
+            class="emotion-1"
+            data-test-id="api-usage-bar-chart"
+          />
+        </div>
+      </div>
+    </div>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
