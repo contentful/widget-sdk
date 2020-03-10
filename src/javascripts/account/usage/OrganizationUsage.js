@@ -13,7 +13,7 @@ import { getVariation } from 'LaunchDarkly';
 import { USAGE_API_UX } from 'featureFlags';
 import PeriodSelector from './committed/PeriodSelector';
 import NoSpacesPlaceholder from './NoSpacesPlaceholder';
-import * as Analytics from 'analytics/Analytics';
+import { track } from 'analytics/Analytics';
 import * as UsageService from '././UsageService';
 
 import * as TokenStore from 'services/TokenStore';
@@ -260,7 +260,7 @@ export class OrganizationUsage extends React.Component {
 
     if (isNumber(this.state.selectedPeriodIndex)) {
       const oldPeriod = periods[this.state.selectedPeriodIndex];
-      Analytics.track('usage:period_selected', {
+      track('usage:period_selected', {
         oldPeriod: pick(['startDate', 'endDate'], oldPeriod),
         newPeriod: pick(['startDate', 'endDate'], newPeriod)
       });

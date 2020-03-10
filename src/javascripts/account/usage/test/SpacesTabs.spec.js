@@ -1,7 +1,9 @@
 import React from 'react';
 import { render, fireEvent, within } from '@testing-library/react';
-import SpacesTabs from '../committed/tabs/SpacesTabs';
 import * as echarts from 'echarts';
+
+import { track } from 'analytics/Analytics';
+import SpacesTabs from '../committed/tabs/SpacesTabs';
 
 jest.mock('echarts', () => ({
   init: jest.fn()
@@ -74,7 +76,7 @@ describe('SpacesTabs', () => {
       expect(getByText('CMASpace')).toBeInTheDocument();
     });
 
-    describe('<SpacesTable />', () => {
+    describe('SpacesTable', () => {
       it('shows deleted space', () => {
         const { getByText } = build(defaultProps);
         expect(getByText('Deleted space')).toBeInTheDocument();
@@ -108,6 +110,15 @@ describe('SpacesTabs', () => {
 
       expect(getByTestId('api-usage-bar-chart')).toBeInTheDocument();
       expect(echarts.init).toHaveBeenCalledTimes(1);
+    });
+
+    it('sends a cma to cda tracking event', () => {
+      const { getByText } = build(defaultProps);
+
+      fireEvent.click(getByText('CDA Requests'));
+
+      expect(track).toHaveBeenCalledTimes(1);
+      expect(track).toHaveBeenCalledWith('usage:space_tab_selected', { new: 'cda', old: 'cma' });
     });
   });
 

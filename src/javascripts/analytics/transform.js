@@ -101,6 +101,8 @@ registerEnvironmentAliasesEvent('environment_aliases:notification_switch_to_alia
 registerEnvironmentAliasesEvent('environment_aliases:notification_continue_on_environment');
 
 registerGenericEvent('usage:period_selected');
+registerGenericEvent('usage:org_tab_selected');
+registerGenericEvent('usage:space_tab_selected');
 
 registerGenericEvent('quick_navigation:opened_by_shortcut');
 

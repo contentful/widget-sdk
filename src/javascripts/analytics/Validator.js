@@ -133,7 +133,7 @@ export const validEvents = {
     'notification_continue_on_environment'
   ],
   ui_webhook_editor: ['save'],
-  usage: ['period_selected'],
+  usage: ['period_selected', 'org_tab_selected', 'space_tab_selected'],
   text_editor: ['action'],
   apps: ['lifecycle_event', 'uninstallation_reason'],
   sso: ['start_setup', 'connection_test_result', 'contact_support', 'enable'],

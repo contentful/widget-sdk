@@ -12,6 +12,8 @@ import OrganizationUsageInfoNew from '../OrganizationUsageInfoNew';
 import AssetBandwidthSection from '../AssetBandwidthSectionNew';
 import { periodicUsagePropType } from '../propTypes';
 
+import { track } from 'analytics/Analytics';
+
 const styles = {
   tabPanel: css({
     paddingTop: tokens.spacing2Xl,
@@ -25,15 +27,22 @@ const styles = {
   })
 };
 
-const MainTabs = props => {
-  const { period, periodicUsage, apiRequestIncludedLimit, assetBandwidthData, spaceNames } = props;
-
+const MainTabs = ({
+  period,
+  periodicUsage,
+  apiRequestIncludedLimit,
+  assetBandwidthData,
+  spaceNames
+}) => {
   const orgUsage = periodicUsage.org.usage;
   const totalUsage = sum(orgUsage);
 
   const [selected, setSelected] = useState('apiRequest');
 
-  const handleSelected = setSelected;
+  const handleSelected = id => {
+    track('usage:org_tab_selected', { old: selected, new: id });
+    setSelected(id);
+  };
 
   return (
     <>
