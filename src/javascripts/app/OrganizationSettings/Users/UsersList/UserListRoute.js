@@ -45,7 +45,7 @@ export default class UserListRoute extends React.Component {
     return (
       <OrgAdminOnly orgId={orgId}>
         <UserListFetcher orgId={orgId}>
-          {({ isError, data }) => {
+          {({ isLoading, isError, data }) => {
             if (isError) {
               return <StateRedirect path="spaces.detail.entries.list" />;
             }
@@ -63,6 +63,7 @@ export default class UserListRoute extends React.Component {
               <>
                 <DocumentTitle title="Users" />
                 <UsersList
+                  initialLoad={isLoading}
                   spaces={spaces}
                   spaceRoles={roles}
                   orgId={orgId}

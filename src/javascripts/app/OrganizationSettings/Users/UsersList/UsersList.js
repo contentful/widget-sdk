@@ -82,6 +82,7 @@ const styles = {
 
 class UsersList extends React.Component {
   static propTypes = {
+    initialLoad: PropTypes.bool,
     orgId: PropTypes.string.isRequired,
     spaceRoles: PropTypes.array,
     teams: PropTypes.arrayOf(TeamPropType),
@@ -95,8 +96,7 @@ class UsersList extends React.Component {
   };
 
   state = {
-    loading: false,
-    initialLoad: true,
+    loading: true,
     queryTotal: 0,
     usersList: [],
     pagination: {
@@ -108,12 +108,12 @@ class UsersList extends React.Component {
 
   endpoint = createOrganizationEndpoint(this.props.orgId);
 
-  async componentDidMount() {
-    await this.loadInitialData();
-    this.setState({ initialLoad: false });
-  }
-
   componentDidUpdate(prevProps) {
+    // Call loadInitialData after UserListRoute has finished loading
+    if (prevProps.initialLoad && !this.props.initialLoad) {
+      this.loadInitialData();
+    }
+
     if (
       !isEqual(prevProps.filters, this.props.filters) ||
       prevProps.searchTerm !== this.props.searchTerm
@@ -128,9 +128,7 @@ class UsersList extends React.Component {
 
     this.setState({ loading: true });
 
-    // `hasPendingOrgMembershipsEnabled` is undefined while the flag value is being fetched, and we want to wait
-    // until we get an explicit value before loading the invitation count
-    if (hasPendingOrgMembershipsEnabled === false) {
+    if (!hasPendingOrgMembershipsEnabled) {
       await this.loadInvitationsCount();
     }
 
@@ -163,9 +161,7 @@ class UsersList extends React.Component {
 
     // in the legacy invitation flow we filter out users without name.
     // this won't be needed once pending org memberships are fully rolled out
-    // if this is undefined while the flag value is being fetched the list will show pending members for a second and then hide then
-    // forcing it to check if the flag is bool false fix this
-    if (hasPendingOrgMembershipsEnabled === false) query[membershipExistsParam] = true;
+    if (!hasPendingOrgMembershipsEnabled) query[membershipExistsParam] = true;
 
     this.setState({ loading: true });
 
@@ -265,7 +261,8 @@ class UsersList extends React.Component {
   }, 500);
 
   renderLoadingState = () => {
-    return times(5, idx => (
+    const { pagination } = this.state;
+    return times(pagination.limit, idx => (
       <TableRow key={idx}>
         <TableCell>
           <SkeletonContainer svgHeight={42} clipId="user-avatar">
@@ -288,8 +285,7 @@ class UsersList extends React.Component {
       pagination,
       loading,
       invitedUsersCount,
-      numberOrgMemberships,
-      initialLoad
+      numberOrgMemberships
     } = this.state;
     const { searchTerm, spaces, spaceRoles, filters, hasPendingOrgMembershipsEnabled } = this.props;
 
@@ -338,7 +334,7 @@ class UsersList extends React.Component {
               spaceRoles={spaceRoles}
               filters={filters}
             />
-            {initialLoad || queryTotal > 0 ? (
+            {loading || queryTotal > 0 ? (
               <div className={styles.list}>
                 <Table
                   data-test-id="organization-membership-list"
