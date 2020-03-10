@@ -35,6 +35,7 @@ exports[`OrganizationUsage should render page without errors 1`] = `
             ]
           }
           setPeriodIndex={[Function]}
+          showPeriodSelector={true}
         />
       }
       icon={
@@ -64,6 +65,7 @@ exports[`OrganizationUsage should render page without errors 1`] = `
           }
         }
         newUsagePageVariation={true}
+        onTabSelect={[Function]}
         periods={
           Array [
             Object {

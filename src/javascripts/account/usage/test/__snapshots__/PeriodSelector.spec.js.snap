@@ -5,7 +5,7 @@ exports[`PeriodSelector should render 1`] = `
   className="usage__period-selector"
 >
   <label>
-    Usage period
+    API requests usage period
   </label>
   <Select
     defaultValue={0}

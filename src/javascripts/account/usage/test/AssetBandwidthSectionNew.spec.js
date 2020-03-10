@@ -27,18 +27,6 @@ describe('AssetBandwidthSectionNew', () => {
     expect(bandwidthLimit.textContent).toBe('750 GB included');
   });
 
-  it('should render bandwidth data as not available if not given limit and usage data', () => {
-    const undefinedProps = {
-      limit: undefined,
-      usage: undefined,
-      uom: undefined
-    };
-
-    const { getByTestId } = renderComp(undefinedProps);
-    const notAvilable = getByTestId('asset-bandwidth-not-available');
-    expect(notAvilable.textContent).toBe('Not available');
-  });
-
   it('should render overage with correct data', () => {
     const overageProps = {
       limit: 200,

@@ -208,6 +208,7 @@ describe('WorkbenchActions', () => {
           periods={[]}
           selectedPeriodIndex={0}
           setPeriodIndex={() => {}}
+          showPeriodSelector
         />
       );
 
@@ -223,6 +224,7 @@ describe('WorkbenchActions', () => {
           periods={[]}
           selectedPeriodIndex={0}
           setPeriodIndex={() => {}}
+          showPeriodSelector
         />
       );
 
@@ -235,6 +237,24 @@ describe('WorkbenchActions', () => {
     it('should render nothing', () => {
       const wrapper = shallow(
         <WorkbenchActions
+          committed
+          periods={[]}
+          selectedPeriodIndex={0}
+          setPeriodIndex={() => {}}
+          showPeriodSelector
+        />
+      );
+
+      expect(wrapper.find(PeriodSelector)).toHaveLength(0);
+      expect(wrapper.find(Spinner)).toHaveLength(0);
+    });
+  });
+
+  describe('the PeriodSelect must be hidden', () => {
+    it('should render nothing', () => {
+      const wrapper = shallow(
+        <WorkbenchActions
+          hasSpaces
           committed
           periods={[]}
           selectedPeriodIndex={0}

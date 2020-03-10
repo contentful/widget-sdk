@@ -39,7 +39,8 @@ export const WorkbenchContent = props => {
     error,
     periods,
     resources,
-    newUsagePageVariation
+    newUsagePageVariation,
+    onTabSelect
   } = props;
 
   if (error) {
@@ -61,7 +62,8 @@ export const WorkbenchContent = props => {
               periodicUsage,
               apiRequestIncludedLimit,
               assetBandwidthData,
-              isLoading
+              isLoading,
+              onTabSelect
             }}
           />
         );
@@ -107,7 +109,8 @@ WorkbenchContent.propTypes = {
   error: PropTypes.string,
   periods: PropTypes.arrayOf(PropTypes.object),
   resources: PropTypes.arrayOf(PropTypes.object),
-  newUsagePageVariation: PropTypes.bool
+  newUsagePageVariation: PropTypes.bool,
+  onTabSelect: PropTypes.func
 };
 
 export class WorkbenchActions extends React.Component {
@@ -118,7 +121,8 @@ export class WorkbenchActions extends React.Component {
     committed: PropTypes.bool,
     periods: PropTypes.array,
     selectedPeriodIndex: PropTypes.number,
-    setPeriodIndex: PropTypes.func
+    setPeriodIndex: PropTypes.func,
+    showPeriodSelector: PropTypes.bool
   };
 
   render() {
@@ -129,7 +133,8 @@ export class WorkbenchActions extends React.Component {
       committed,
       periods,
       selectedPeriodIndex,
-      setPeriodIndex
+      setPeriodIndex,
+      showPeriodSelector
     } = this.props;
 
     if (error) {
@@ -140,7 +145,7 @@ export class WorkbenchActions extends React.Component {
       return <Spinner />;
     }
 
-    if (hasSpaces && committed && periods) {
+    if (hasSpaces && committed && periods && showPeriodSelector) {
       return (
         <PeriodSelector
           periods={periods}
@@ -162,7 +167,12 @@ export class OrganizationUsage extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { isLoading: true, error: null, newUsagePageVariation: false };
+    this.state = {
+      isLoading: true,
+      error: null,
+      newUsagePageVariation: false,
+      showPeriodSelector: true
+    };
 
     this.endpoint = EndpointFactory.createOrganizationEndpoint(props.orgId);
     this.setPeriodIndex = this.setPeriodIndex.bind(this);
@@ -318,6 +328,10 @@ export class OrganizationUsage extends React.Component {
     await this.loadPeriodData(parseInt(e.target.value));
   }
 
+  setShowPeriodSelector = val => {
+    this.setState({ showPeriodSelector: val !== 'assetBandwidth' });
+  };
+
   render() {
     const {
       spaceNames,
@@ -332,8 +346,10 @@ export class OrganizationUsage extends React.Component {
       committed,
       resources,
       hasSpaces,
-      newUsagePageVariation
+      newUsagePageVariation,
+      showPeriodSelector
     } = this.state;
+
     return (
       <>
         <DocumentTitle title="Usage" />
@@ -349,7 +365,8 @@ export class OrganizationUsage extends React.Component {
                   committed,
                   periods,
                   selectedPeriodIndex,
-                  setPeriodIndex: this.setPeriodIndex
+                  setPeriodIndex: this.setPeriodIndex,
+                  showPeriodSelector
                 }}
               />
             }></Workbench.Header>
@@ -368,7 +385,8 @@ export class OrganizationUsage extends React.Component {
                 error,
                 periods,
                 resources,
-                newUsagePageVariation
+                newUsagePageVariation,
+                onTabSelect: this.setShowPeriodSelector
               }}
             />
           </Workbench.Content>

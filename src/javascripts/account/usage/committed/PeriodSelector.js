@@ -19,7 +19,7 @@ export default class PeriodSelector extends React.Component {
     const { periods, onChange, selectedPeriodIndex } = this.props;
     return (
       <span className="usage__period-selector">
-        <label>Usage period</label>
+        <label>API requests usage period</label>
         <Select
           defaultValue={selectedPeriodIndex}
           onChange={onChange}
