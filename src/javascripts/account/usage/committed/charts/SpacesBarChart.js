@@ -98,7 +98,7 @@ const propsToChartOptions = ({ spaceNames, data, period, colours }) => {
           fontFamily: tokens.fontStackPrimary,
           fontSize: 14
         },
-        formatter: value => shorten(value)
+        formatter: shorten
       },
       axisLine: {
         lineStyle: {
