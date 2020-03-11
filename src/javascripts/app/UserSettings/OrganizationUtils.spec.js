@@ -9,9 +9,7 @@ jest.mock('data/EndpointFactory', () => ({
 }));
 
 jest.mock('services/OrganizationRoles', () => ({
-  isOwner: jest.fn().mockImplementation(() => {
-    return true;
-  })
+  isOwner: jest.fn().mockReturnValue(true)
 }));
 
 jest.mock('access_control/OrganizationMembershipRepository', () => ({ getMemberships: jest.fn() }));
@@ -41,25 +39,19 @@ describe('Organization Utils', () => {
       });
 
       it('should return true when the user is not the only owner left', async () => {
-        getMemberships.mockImplementation(() => {
-          return { total: 2 };
-        });
+        getMemberships.mockResolvedValue({ total: 2 });
 
         expect(await fetchCanLeaveOrg(fakeOrgMembership)).toBeTruthy();
       });
 
       it('should return true if the request fails', async () => {
-        getMemberships.mockImplementation(() => {
-          throw Error;
-        });
+        getMemberships.mockRejectedValueOnce();
 
         expect(await fetchCanLeaveOrg(fakeOrgMembership)).toBeTruthy();
       });
 
       it('should return false when the user is the only owner left', async () => {
-        createOrganizationEndpoint.mockImplementation(() => {
-          return fakeOrgEnpoint;
-        });
+        createOrganizationEndpoint.mockReturnValue(fakeOrgEnpoint);
 
         getMemberships.mockResolvedValue({ total: 1 });
 
