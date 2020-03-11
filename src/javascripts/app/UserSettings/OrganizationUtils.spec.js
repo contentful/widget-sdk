@@ -27,42 +27,44 @@ describe('Organization Utils', () => {
   createOrganizationEndpoint.mockReturnValue(fakeOrgEnpoint);
 
   describe('if the user is an Organization Owner', () => {
-    it('should call createOrganizationEndpoint with the correct arguement', async () => {
-      await fetchCanLeaveOrg(fakeOrgMembership);
+    describe('fetchCanLeaveOrg', () => {
+      it('should call createOrganizationEndpoint with the correct arguement', async () => {
+        await fetchCanLeaveOrg(fakeOrgMembership);
 
-      expect(createOrganizationEndpoint).toBeCalledWith(fakeOrgMembership.sys.id);
-    });
-
-    it('should call getMemberships with the correct arguements', async () => {
-      await fetchCanLeaveOrg(fakeOrgMembership);
-
-      expect(getMemberships).toBeCalledWith(fakeOrgEnpoint, queryForOwners);
-    });
-
-    it('should return true when the user is not the only owner left', async () => {
-      getMemberships.mockImplementation(() => {
-        return { total: 2 };
+        expect(createOrganizationEndpoint).toBeCalledWith(fakeOrgMembership.sys.id);
       });
 
-      expect(await fetchCanLeaveOrg(fakeOrgMembership)).toBeTruthy();
-    });
+      it('should call getMemberships with the correct arguements', async () => {
+        await fetchCanLeaveOrg(fakeOrgMembership);
 
-    it('should return true if the request fails', async () => {
-      getMemberships.mockImplementation(() => {
-        throw Error;
+        expect(getMemberships).toBeCalledWith(fakeOrgEnpoint, queryForOwners);
       });
 
-      expect(await fetchCanLeaveOrg(fakeOrgMembership)).toBeTruthy();
-    });
+      it('should return true when the user is not the only owner left', async () => {
+        getMemberships.mockImplementation(() => {
+          return { total: 2 };
+        });
 
-    it('should return false when the user is the only owner left', async () => {
-      createOrganizationEndpoint.mockImplementation(() => {
-        return fakeOrgEnpoint;
+        expect(await fetchCanLeaveOrg(fakeOrgMembership)).toBeTruthy();
       });
 
-      getMemberships.mockResolvedValue({ total: 1 });
+      it('should return true if the request fails', async () => {
+        getMemberships.mockImplementation(() => {
+          throw Error;
+        });
 
-      expect(await fetchCanLeaveOrg(fakeOrgMembership)).toBeFalsy();
+        expect(await fetchCanLeaveOrg(fakeOrgMembership)).toBeTruthy();
+      });
+
+      it('should return false when the user is the only owner left', async () => {
+        createOrganizationEndpoint.mockImplementation(() => {
+          return fakeOrgEnpoint;
+        });
+
+        getMemberships.mockResolvedValue({ total: 1 });
+
+        expect(await fetchCanLeaveOrg(fakeOrgMembership)).toBeFalsy();
+      });
     });
   });
 

@@ -127,13 +127,18 @@ describe('OrganizationRow', () => {
       expect(screen.getByTestId('organization-row.leave-org-button')).toBeVisible();
     });
 
-    it('should not render the go to org settings button if they are a legacy V1 org and the user is not admin or owner', async () => {
+    it('should not render the go to org settings button as disabled if they are a legacy V1 org and the user is not admin or owner', async () => {
       isLegacyOrganization.mockReturnValue(true);
 
       await build();
       fireEvent.click(screen.getByTestId('organization-row.dropdown-menu.trigger'));
 
-      expect(screen.queryByTestId('organization-row.go-to-org-link')).not.toBeInTheDocument();
+      const leaveButtonContainer = screen.getByTestId('organization-row.go-to-org-link');
+      fireEvent.click(
+        within(leaveButtonContainer).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
+      );
+
+      await expect(ModalLauncher.open).not.toHaveBeenCalled();
     });
 
     it('should render the leave button as disabled when they are the last owner of an organization', async () => {

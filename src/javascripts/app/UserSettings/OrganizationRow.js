@@ -98,8 +98,11 @@ const OrganizationRow = ({ organization, onLeaveSuccess }) => {
     fetchCanLeaveOrg(organization).then(setCanUserLeaveOrg);
   }, [organization]);
 
-  const toolTipContent = !canUserLeaveOrg
+  const toolTipContentLeaveOrg = !canUserLeaveOrg
     ? 'You cannot leave this organization since you are the only owner remaining'
+    : '';
+  const toolTipContentOrgSettingsLink = !userCanAccessOrgSettings
+    ? 'Only owners or admins of the organization can access the settings'
     : '';
 
   return (
@@ -119,22 +122,24 @@ const OrganizationRow = ({ organization, onLeaveSuccess }) => {
           }}
           data-test-id="organization-row.dropdown-menu">
           <DropdownList>
-            {userCanAccessOrgSettings && (
-              <DropdownListItem onClick={goToOrgSettings} testId="organization-row.go-to-org-link">
+            <DropdownListItem
+              onClick={goToOrgSettings}
+              isDisabled={!userCanAccessOrgSettings}
+              testId="organization-row.go-to-org-link">
+              <Tooltip
+                place="top"
+                content={toolTipContentOrgSettingsLink}
+                className={styles.tooltip}>
                 Go to Organization Settings
-              </DropdownListItem>
-            )}
+              </Tooltip>
+            </DropdownListItem>
             <DropdownListItem
               isDisabled={!canUserLeaveOrg}
               onClick={() => {
                 triggerLeaveModal({ organization, userOrgMembershipId, onLeaveSuccess });
               }}
               testId="organization-row.leave-org-button">
-              <Tooltip
-                place="top"
-                testId="organization-row.tool-tip"
-                content={toolTipContent}
-                className={styles.tooltip}>
+              <Tooltip place="top" content={toolTipContentLeaveOrg} className={styles.tooltip}>
                 Leave Organization
               </Tooltip>
             </DropdownListItem>
