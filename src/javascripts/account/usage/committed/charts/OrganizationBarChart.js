@@ -85,8 +85,8 @@ const propsToChartOption = ({ period, usage, includedLimit }) => {
       }
     ],
     grid: {
-      left: '3%',
-      right: '3%',
+      left: '50px',
+      right: '50px',
       bottom: 70
     },
     dataZoom: [
