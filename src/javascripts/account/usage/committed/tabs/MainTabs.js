@@ -78,7 +78,11 @@ const MainTabs = ({
               />
             </GridItem>
             <GridItem columnStart="span 8">
-              <OrganizationBarChart period={period} usage={orgUsage} />
+              <OrganizationBarChart
+                period={period}
+                usage={orgUsage}
+                includedLimit={apiRequestIncludedLimit}
+              />
             </GridItem>
           </Grid>
           <Heading element="h2" className={styles.heading}>

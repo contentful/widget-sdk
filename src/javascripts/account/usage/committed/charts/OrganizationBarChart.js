@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { last } from 'lodash';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { shorten } from 'utils/NumberUtils';
@@ -12,7 +13,18 @@ const styles = {
   })
 };
 
-const propsToChartOption = ({ period, usage }) => {
+const accumulation = (acc, value) => acc.concat(value + (last(acc) || 0));
+
+export const accumulate = data => data.reduce(accumulation, []);
+
+export const applyBorderStyle = value => ({
+  value,
+  itemStyle: { borderWidth: value > 0 ? 2 : 0 }
+});
+
+const propsToChartOption = ({ period, usage, includedLimit }) => {
+  const dataWithStyle = accumulate(usage).map(applyBorderStyle);
+
   return {
     xAxis: {
       data: period,
@@ -30,6 +42,7 @@ const propsToChartOption = ({ period, usage }) => {
     },
     yAxis: {
       scale: false,
+      min: 0,
       position: 'right',
       splitLine: {
         lineStyle: {
@@ -41,7 +54,7 @@ const propsToChartOption = ({ period, usage }) => {
         color: '#536171',
         fontFamily: tokens.fontStackPrimary,
         fontSize: 14,
-        formatter: value => shorten(value)
+        formatter: shorten
       },
       axisLine: {
         lineStyle: {
@@ -51,6 +64,7 @@ const propsToChartOption = ({ period, usage }) => {
     },
     series: [
       {
+        data: dataWithStyle,
         name: 'API Requests',
         type: 'bar',
         itemStyle: {
@@ -58,20 +72,9 @@ const propsToChartOption = ({ period, usage }) => {
           borderColor: '#2E75D4',
           opacity: 0.5
         },
-        data: usage.map(val => ({
-          value: val,
-          itemStyle: {
-            borderWidth: val > 0 ? 2 : 0
-          }
-        })),
-        areaStyle: {},
         markLine: {
           symbol: ['none', 'circle'],
-          data: [
-            {
-              type: 'max'
-            }
-          ],
+          data: [{ yAxis: includedLimit }],
           lineStyle: {
             color: '#CC3C52'
           },
@@ -82,8 +85,8 @@ const propsToChartOption = ({ period, usage }) => {
       }
     ],
     grid: {
-      left: '3%',
-      right: '3%',
+      left: '50px',
+      right: '50px',
       bottom: 70
     },
     dataZoom: [
