@@ -11,6 +11,7 @@ import { isOwnerOrAdmin, getOrganizationMembership } from 'services/Organization
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { go } from 'states/Navigator';
 import { removeMembership } from 'access_control/OrganizationMembershipRepository';
+import { Table, TableBody } from '@contentful/forma-36-react-components';
 
 const fakeOrganization = fake.Organization();
 const fakeOrgMemberhip = fake.OrganizationMembership('admin');
@@ -37,23 +38,27 @@ jest.mock('access_control/OrganizationMembershipRepository', () => ({
   removeMembership: jest.fn(Promise.resolve())
 }));
 
-const buildWithoutWaiting = props => {
-  return render(
-    <OrganizationRow
-      {...{
-        organization: fakeOrganization,
-        onLeaveSuccess: onLeaveSuccess,
-        ...props
-      }}
-    />
+const build = async (options = { props: {}, withoutWaiting: false }) => {
+  // Wrapped with a table to prevent error of <tr> being a child of <div> that react testing auto wraps the component in.
+  const renderedComponent = render(
+    <Table>
+      <TableBody>
+        <OrganizationRow
+          {...{
+            organization: fakeOrganization,
+            onLeaveSuccess: onLeaveSuccess,
+            ...options.props
+          }}
+        />
+      </TableBody>
+    </Table>
   );
-};
 
-const build = (props = {}) => {
-  buildWithoutWaiting(props);
-  // the component makes requests on mount.
-  // wait until there are changes as effect of the calls.
-  return wait();
+  if (options.withoutWaiting) {
+    await wait();
+  }
+
+  return renderedComponent;
 };
 
 describe('OrganizationRow', () => {
@@ -99,7 +104,7 @@ describe('OrganizationRow', () => {
     it('should default to allow the user to leave the org', async () => {
       fetchCanLeaveOrg.mockResolvedValue(false);
 
-      buildWithoutWaiting();
+      build({ withoutWaiting: true });
 
       fireEvent.click(screen.getByTestId('organization-row.dropdown-menu.trigger'));
       const leaveButtonContainer = screen.getByTestId('organization-row.leave-org-button');
@@ -188,13 +193,12 @@ describe('OrganizationRow', () => {
         within(leaveButtonContainer).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
       );
 
-      await expect(ModalLauncher.open).toHaveBeenCalled();
+      expect(ModalLauncher.open).toHaveBeenCalled();
 
       expect(
         await screen.findByText(`Successfully left organization ${fakeOrganization.name}`)
       ).toBeInTheDocument();
-
-      await expect(onLeaveSuccess).toHaveBeenCalled();
+      expect(onLeaveSuccess).toHaveBeenCalled();
     });
 
     it('should display an error if leaving the org request fails', async () => {
@@ -208,12 +212,11 @@ describe('OrganizationRow', () => {
         within(leaveButtonContainer).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
       );
 
-      await expect(ModalLauncher.open).toHaveBeenCalled();
+      expect(ModalLauncher.open).toHaveBeenCalled();
 
       expect(
         await screen.findByText(`Could not leave organization ${fakeOrganization.name}`)
       ).toBeInTheDocument();
-
       expect(screen.getByTestId('organization-row.organization-name')).toHaveTextContent(
         fakeOrganization.name
       );

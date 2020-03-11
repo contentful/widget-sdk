@@ -7,6 +7,7 @@ import * as fake from 'testHelpers/fakeFactory';
 
 // Has the title and the New Organization button in this title div.
 const TITLE = 'OrganizationsNew Organization';
+const ZERO_ORGANIZATIONS = [];
 const ONE_ORGANIZATION = [fake.Organization()];
 const TWO_ORGANIZATIONS = [fake.Organization(), fake.Organization()];
 
@@ -14,42 +15,41 @@ jest.mock('services/TokenStore', () => ({
   getOrganizations: jest.fn()
 }));
 
-jest.mock('./OrganizationRow', () => () => <div data-test-id="organization-row"></div>);
+jest.mock('./OrganizationRow', () => () => <tr data-test-id="organization-row"></tr>);
 
-const buildWithoutWaiting = () => {
-  return render(<OrganizationsRoute />);
-};
+const build = async (options = { withoutWaiting: true }) => {
+  const renderedComponent = render(<OrganizationsRoute />);
 
-const build = () => {
-  buildWithoutWaiting();
+  if (options.withoutWaiting) {
+    await wait();
+  }
 
-  return wait();
+  return renderedComponent;
 };
 
 describe('OrganizationsRoute', () => {
   beforeEach(() => {
-    const noOrganiztions = [];
-    getOrganizations.mockResolvedValue(noOrganiztions);
+    getOrganizations.mockResolvedValue(ONE_ORGANIZATION);
   });
 
   it('should render a loading state while the data is loading', async () => {
-    const { queryByTestId } = buildWithoutWaiting();
+    build({ withoutWaiting: true });
 
-    expect(queryByTestId('cf-ui-loading-state')).toBeVisible();
+    expect(screen.queryByTestId('cf-ui-loading-state')).toBeVisible();
 
     await wait();
 
-    expect(queryByTestId('cf-ui-loading-state')).toBeNull();
+    expect(screen.queryByTestId('cf-ui-loading-state')).toBeNull();
   });
 
   it('should render an error if the data fails to load', async () => {
     getOrganizations.mockReset().mockRejectedValue(new Error());
 
-    const { queryByTestId } = buildWithoutWaiting();
+    build({ withoutWaiting: true });
 
     await wait();
 
-    expect(queryByTestId('cf-ui-error-state')).toBeVisible();
+    expect(screen.queryByTestId('cf-ui-error-state')).toBeVisible();
   });
 
   it('should fetch user data when the component renders', async () => {
@@ -89,6 +89,14 @@ describe('OrganizationsRoute', () => {
     });
 
     describe('it should render the organizations', () => {
+      it('should render the empty state organization if there are no organiztions', async () => {
+        getOrganizations.mockReset().mockReturnValue(ZERO_ORGANIZATIONS);
+
+        await build();
+
+        expect(screen.getByTestId('organizations-list-empty-state')).toBeInTheDocument();
+      });
+
       it('should render one organization if there is only one', async () => {
         getOrganizations.mockReset().mockReturnValue(ONE_ORGANIZATION);
 
