@@ -16,6 +16,7 @@ import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { article } from 'utils/StringUtils';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import { User as UserPropType } from 'app/OrganizationSettings/PropTypes';
+import { logError } from 'services/logger';
 
 export default class UserInvitation extends React.Component {
   static propTypes = {
@@ -49,6 +50,8 @@ export default class UserInvitation extends React.Component {
     });
 
     try {
+      // TODO: there's too much happening in this try block. We should split this into smaller chunks of functionality
+      // TODO: this needs unit tests!
       const acceptedInvitation = await endpoint({
         method: 'POST',
         path: ['invitations', invitationId, 'accept']
@@ -69,7 +72,7 @@ export default class UserInvitation extends React.Component {
         //the user might have access to spaces through team memberships
         const orgId = get(acceptedInvitation, 'sys.organization.sys.id');
         const spaces = await getOrganizationSpaces(orgId);
-        firstSpaceId = spaces ? spaces[0].sys.id : null;
+        firstSpaceId = get(spaces, '[0].sys.id', null);
       }
 
       const navMeta = {};
@@ -99,6 +102,7 @@ export default class UserInvitation extends React.Component {
       if (errorMessageText) {
         Notification.error(`${errorMessageText}`);
       } else {
+        logError('Unable to accept org invitation', { error: e });
         Notification.error(
           'Your invitation didn’t go through. Ask your Contentful organization admin to invite you again.'
         );
