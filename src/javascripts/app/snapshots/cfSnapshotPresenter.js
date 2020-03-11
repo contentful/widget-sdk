@@ -2,10 +2,8 @@ import { registerDirective } from 'NgRegistry';
 import React from 'react';
 import _ from 'lodash';
 import EmbedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
-import moment from 'moment';
 import createSnapshotExtensionBridge from 'widgets/bridges/createSnapshotExtensionBridge';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
-import { userInputFromDatetime } from './dateUtils';
 import * as EntityResolver from 'data/CMA/EntityResolver';
 import { isRtlLocale } from 'utils/locales';
 import * as EntityHelpers from 'app/entity_editor/entityHelpers';
@@ -161,40 +159,4 @@ export default function register() {
       ]
     })
   ]);
-
-  registerDirective('cfSnapshotPresenterDate', () => ({
-    restrict: 'E',
-    template: '<span>{{ dtString }}</span>',
-    controller: [
-      '$scope',
-      $scope => {
-        const dt = userInputFromDatetime($scope.value);
-        const mode = _.get($scope, 'widget.settings.format', 'date');
-        let s = moment(dt.date).format('dddd, MMMM Do YYYY');
-
-        if (mode === 'date') {
-          $scope.dtString = s;
-          return;
-        }
-
-        if (parseInt(_.get($scope, 'widget.settings.ampm'), 10) !== 24) {
-          const x = dt.time.split(':');
-          s +=
-            ', ' +
-            moment()
-              .hour(x[0])
-              .minute(x[1])
-              .format('LT');
-        } else {
-          s += ', ' + dt.time;
-        }
-
-        if (mode === 'timeZ') {
-          s += ', UTC' + dt.utcOffset;
-        }
-
-        $scope.dtString = s;
-      }
-    ]
-  }));
 }

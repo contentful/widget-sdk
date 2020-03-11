@@ -23,7 +23,10 @@
       ><span ng-if="value === false">{{ widget.settings.falseLabel || 'No' }}</span>
     </div>
     <div ng-switch-when="Date">
-      <cf-snapshot-presenter-date></cf-snapshot-presenter-date>
+      <react-component
+        name="app/snapshots/SnapshotPresenterDate"
+        props="{settings: widget.settings, value}"
+      ></react-component>
     </div>
     <div class="x--directed" ng-switch-when="Array&lt;Symbol&gt;">
       <ul class="symbol-array-preview">

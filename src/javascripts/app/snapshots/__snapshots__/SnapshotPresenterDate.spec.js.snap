@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SnapshotPresenterDate should render default string 1`] = `
+<div>
+  <span>
+    Tuesday, March 10th 2020
+  </span>
+</div>
+`;
+
+exports[`SnapshotPresenterDate should render standard 24H string 1`] = `
+<div>
+  <span>
+    Tuesday, March 10th 2020, 16:00, UTC+00:00
+  </span>
+</div>
+`;
+
+exports[`SnapshotPresenterDate should render standard AmPm string 1`] = `
+<div>
+  <span>
+    Tuesday, March 10th 2020, 4:00 PM
+  </span>
+</div>
+`;
