@@ -62,15 +62,6 @@ export function isOwnerOrAdmin(organization) {
 
 /**
  * @ngdoc method
- * @name OrganizationRoles#hasMemberRole
- * @param {object} organization
- * @description
- * Checks if the user's role is 'member' of the organization with the given ID.
- */
-export const hasMemberRole = createRoleChecker('member');
-
-/**
- * @ngdoc method
  * @name OrganizationRoles#getOrganizationMembership
  * @param {number} organizationId
  * @description
@@ -80,7 +71,7 @@ export function getOrganizationMembership(organizationId) {
   const memberships = get(currentUser, 'organizationMemberships', []);
   const found = find(memberships, { organization: { sys: { id: organizationId } } });
   if (!found) {
-    throw Error(
+    throw new Error(
       `Cannot find organization membership of current user with organization id: ${organizationId}`
     );
   }

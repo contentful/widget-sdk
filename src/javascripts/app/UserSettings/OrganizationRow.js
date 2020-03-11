@@ -22,7 +22,7 @@ import { Organization as OrganizationPropType } from 'app/OrganizationSettings/P
 import { fetchCanLeaveOrg } from './OrganizationUtils';
 import { isOwnerOrAdmin, getOrganizationMembership } from 'services/OrganizationRoles';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
-
+import * as logger from 'services/logger';
 import { go } from 'states/Navigator';
 
 const triggerLeaveModal = async ({ organization, userOrgMembershipId, onLeaveSuccess }) => {
@@ -52,8 +52,9 @@ const triggerLeaveModal = async ({ organization, userOrgMembershipId, onLeaveSuc
 
   try {
     await removeMembership(createOrganizationEndpoint(organization.sys.id), userOrgMembershipId);
-  } catch (e) {
+  } catch (err) {
     // should we have a more actionable error?
+    logger.logError('Cannot Remove membership', err);
     Notification.error(`Could not leave organization ${organization.name}`);
     return;
   }
