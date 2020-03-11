@@ -67,16 +67,6 @@ const OrganizationsRoute = () => {
     </EmptyStateContainer>
   );
 
-  const organizationRows = organizations.map(organization => {
-    return (
-      <OrganizationRow
-        key={organization.sys.id}
-        organization={organization}
-        onLeaveSuccess={onLeaveSuccess}
-      />
-    );
-  });
-
   return (
     <>
       <DocumentTitle title="Organizations" />
@@ -98,7 +88,7 @@ const OrganizationsRoute = () => {
           {!isLoading && error && <ErrorState />}
           {!isLoading &&
             !error &&
-            (organizationRows.length > 0 ? (
+            (organizations.length > 0 ? (
               <Table>
                 <TableHead>
                   <TableRow>
@@ -108,7 +98,17 @@ const OrganizationsRoute = () => {
                     <TableCell testId="organizations-list.action-header"></TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>{organizationRows}</TableBody>
+                <TableBody>
+                  {organizations.map(organization => {
+                    return (
+                      <OrganizationRow
+                        key={organization.sys.id}
+                        organization={organization}
+                        onLeaveSuccess={onLeaveSuccess}
+                      />
+                    );
+                  })}
+                </TableBody>
               </Table>
             ) : (
               emptyState
