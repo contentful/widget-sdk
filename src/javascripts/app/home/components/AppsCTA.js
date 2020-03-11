@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from '../styles';
 import CTACardComponent from './CTACardComponent';
-import ConnectWithAppIllustration from 'svg/connected-shapes.svg';
+import ConnectWithAppIllustration from 'svg/illustrations/connected-shapes.svg';
 import { trackClickCTA } from '../tracking';
 
 const AppsCTA = () => {

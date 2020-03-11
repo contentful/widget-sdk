@@ -1,6 +1,6 @@
 import React from 'react';
 import { css } from 'emotion';
-import SSOUpsellStateImage from 'svg/upsell-state-sso.svg';
+import SSOUpsellStateImage from 'svg/illustrations/upsell-state-sso.svg';
 import {
   Heading,
   Typography,

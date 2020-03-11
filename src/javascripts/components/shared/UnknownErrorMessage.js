@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import UnknownErrorIllustration from 'svg/unknown-error-illustration.svg';
+import UnknownErrorIllustration from 'svg/illustrations/unknown-error-illustration.svg';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import { Paragraph, Heading, Button } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';

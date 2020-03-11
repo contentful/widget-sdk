@@ -3,7 +3,7 @@ import { Heading, Paragraph, TextLink, Button } from '@contentful/forma-36-react
 import EmptyStateContainer, {
   defaultSVGStyle
 } from 'components/EmptyStateContainer/EmptyStateContainer';
-import ContentTypeIllustration from 'svg/connected-forms-illustration.svg';
+import ContentTypeIllustration from 'svg/illustrations/connected-forms-illustration.svg';
 import StateLink from 'app/common/StateLink';
 import { websiteUrl } from 'Config';
 

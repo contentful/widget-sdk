@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Heading, Paragraph, Button, Card } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import ConnectWithAppIllustration from 'svg/connected-shapes.svg';
+import ConnectWithAppIllustration from 'svg/illustrations/connected-shapes.svg';
 import { track } from 'analytics/Analytics';
 import { getCurrentStateName } from 'states/Navigator';
 

@@ -15,7 +15,7 @@ import {
   Paragraph
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import AliasesIllustration from 'svg/aliases-illustration.svg';
+import AliasesIllustration from 'svg/illustrations/aliases-illustration.svg';
 import EnvironmentDetails from 'app/common/EnvironmentDetails';
 import ChangeEnvironmentModal from './ChangeEnvironmentModal';
 import OptIn from './OptIn';

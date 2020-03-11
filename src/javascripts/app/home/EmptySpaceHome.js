@@ -5,7 +5,7 @@ import EmptyStateContainer, {
   defaultSVGStyle
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import * as CreateSpace from 'services/CreateSpace';
-import Illustration from 'svg/readonly-space-home-ill.svg';
+import Illustration from 'svg/illustrations/readonly-space-home-ill.svg';
 import EmptyStateAdminIllustration from 'svg/folder-illustration.svg';
 
 const EmptySpaceHomePage = ({ orgId, orgOwnerOrAdmin }) => {

@@ -21,7 +21,7 @@ import StateLink from 'app/common/StateLink';
 import EmptyStateContainer, {
   defaultSVGStyle
 } from 'components/EmptyStateContainer/EmptyStateContainer';
-import EmptyStateIllustration from 'svg/connected-forms-illustration.svg';
+import EmptyStateIllustration from 'svg/illustrations/connected-forms-illustration.svg';
 import { websiteUrl } from 'Config';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';

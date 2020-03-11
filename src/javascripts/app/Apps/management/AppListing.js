@@ -9,7 +9,7 @@ import {
   DropdownListItem,
   Tooltip
 } from '@contentful/forma-36-react-components';
-import AppsPrivateFrameworkIllustration from 'svg/apps-private-framework.svg';
+import AppsPrivateFrameworkIllustration from 'svg/illustrations/apps-private-framework.svg';
 import tokens from '@contentful/forma-36-tokens';
 import * as ModalLauncher from 'app/common/ModalLauncher';
 import DocumentTitle from 'components/shared/DocumentTitle';
@@ -139,7 +139,8 @@ function CreateAppButton({ orgId, disabled, onClick }) {
   const isNotPublicOrg = orgId !== MARKETPLACE_ORG_ID;
   if (isNotPublicOrg && disabled) {
     return (
-      <Tooltip content={`Your organization has reached the limit of ${MAX_DEFINITIONS_ALLOWED} app definitions.`}>
+      <Tooltip
+        content={`Your organization has reached the limit of ${MAX_DEFINITIONS_ALLOWED} app definitions.`}>
         <Button onClick={onClick} disabled={disabled}>
           Create app
         </Button>
