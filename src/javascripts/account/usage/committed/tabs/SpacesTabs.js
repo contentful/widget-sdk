@@ -38,7 +38,7 @@ const tabsData = [
   }
 ];
 
-const colours = ['#2E75D4', '#0EB87F', '#EA9005', '#C7A544', '#CC3C52'];
+const colours = ['#2E75D4', '#0EB87F', '#EA9005', '#8C53C2', '#CC3C52'];
 
 const SpacesTabs = ({ spaceNames, period, periodicUsage }) => {
   const defaultActiveTab = tabsData.find(item => item.defaultActive);
@@ -51,7 +51,6 @@ const SpacesTabs = ({ spaceNames, period, periodicUsage }) => {
     setSelected(id);
   };
 
-  const apiName = selected.toUpperCase();
   const data = periodicUsage.apis[selected].items;
   const totalUsage = sum(periodicUsage.org.usage);
 
@@ -69,7 +68,6 @@ const SpacesTabs = ({ spaceNames, period, periodicUsage }) => {
           <GridItem columnStart={'span 4'}>
             <SpacesTable
               spaceNames={spaceNames}
-              apiName={apiName}
               data={data}
               totalUsage={totalUsage}
               colours={colours}

@@ -35,14 +35,14 @@ SpaceRow.propTypes = {
   colour: PropTypes.string.isRequired
 };
 
-const SpacesTable = ({ spaceNames, apiName, data, totalUsage, colours }) => {
+const SpacesTable = ({ spaceNames, data, totalUsage, colours }) => {
   return (
     <Table data-test-id="api-usage-table">
       <TableHead>
         <TableRow>
           <TableCell>Space</TableCell>
-          <TableCell>{apiName}</TableCell>
-          <TableCell>API %</TableCell>
+          <TableCell>Current usage period</TableCell>
+          <TableCell>Total API requests (%)</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -62,7 +62,6 @@ const SpacesTable = ({ spaceNames, apiName, data, totalUsage, colours }) => {
 };
 
 SpacesTable.propTypes = {
-  apiName: PropTypes.string.isRequired,
   spaceNames: PropTypes.objectOf(PropTypes.string).isRequired,
   totalUsage: PropTypes.number.isRequired,
   data: PropTypes.arrayOf(organizationResourceUsagePropType).isRequired,
