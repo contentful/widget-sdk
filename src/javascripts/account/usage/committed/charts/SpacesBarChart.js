@@ -8,8 +8,8 @@ import { useChart } from './hooks/useChart';
 
 const styles = {
   chartWrapper: css({
-    height: '450px',
-    width: '853px'
+    height: '512px',
+    width: '100%'
   })
 };
 
@@ -32,7 +32,9 @@ const propsToChartOptions = ({ spaceNames, data, period, colours }) => {
 
   return {
     legend: {
-      show: true
+      show: true,
+      icon: 'rect',
+      left: '50px'
     },
     tooltip: {
       trigger: 'axis',
@@ -55,8 +57,8 @@ const propsToChartOptions = ({ spaceNames, data, period, colours }) => {
       }
     },
     grid: {
-      left: '5%',
-      right: '5%',
+      left: '50px',
+      right: '50px',
       bottom: 70
     },
     xAxis: {
@@ -85,7 +87,10 @@ const propsToChartOptions = ({ spaceNames, data, period, colours }) => {
       type: 'value',
       position: 'right',
       splitLine: {
-        show: false
+        lineStyle: {
+          color: '#D3DCE0',
+          type: 'dashed'
+        }
       },
       axisLabel: {
         textStyle: {
@@ -104,7 +109,7 @@ const propsToChartOptions = ({ spaceNames, data, period, colours }) => {
     dataZoom: [
       {
         type: 'inside',
-        throttle: 50
+        throttle: 60
       },
       {
         type: 'slider'

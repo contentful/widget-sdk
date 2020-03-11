@@ -4,8 +4,8 @@ exports[`SpacesTabs renders correctly 1`] = `
 Object {
   "asFragment": [Function],
   "baseElement": .emotion-1 {
-  height: 450px;
-  width: 853px;
+  height: 512px;
+  width: 100%;
 }
 
 .emotion-4 {
@@ -116,7 +116,7 @@ Object {
                     data-test-id="cf-ui-table-cell"
                     style="top: 0px;"
                   >
-                    CMA
+                    Current usage period
                   </th>
                   <th
                     align="left"
@@ -124,7 +124,7 @@ Object {
                     data-test-id="cf-ui-table-cell"
                     style="top: 0px;"
                   >
-                    API %
+                    Total API requests (%)
                   </th>
                 </tr>
               </thead>
@@ -179,7 +179,7 @@ Object {
                     data-test-id="cf-ui-table-cell"
                     style="top: 0px;"
                   >
-                    94
+                    104
                   </td>
                   <td
                     align="left"
@@ -187,7 +187,7 @@ Object {
                     data-test-id="cf-ui-table-cell"
                     style="color: rgb(14, 184, 127);"
                   >
-                    12
+                    13
                     %
                   </td>
                 </tr>
@@ -207,8 +207,8 @@ Object {
     </div>
   </body>,
   "container": .emotion-1 {
-  height: 450px;
-  width: 853px;
+  height: 512px;
+  width: 100%;
 }
 
 .emotion-4 {
@@ -318,7 +318,7 @@ Object {
                   data-test-id="cf-ui-table-cell"
                   style="top: 0px;"
                 >
-                  CMA
+                  Current usage period
                 </th>
                 <th
                   align="left"
@@ -326,7 +326,7 @@ Object {
                   data-test-id="cf-ui-table-cell"
                   style="top: 0px;"
                 >
-                  API %
+                  Total API requests (%)
                 </th>
               </tr>
             </thead>
@@ -381,7 +381,7 @@ Object {
                   data-test-id="cf-ui-table-cell"
                   style="top: 0px;"
                 >
-                  94
+                  104
                 </td>
                 <td
                   align="left"
@@ -389,7 +389,7 @@ Object {
                   data-test-id="cf-ui-table-cell"
                   style="color: rgb(14, 184, 127);"
                 >
-                  12
+                  13
                   %
                 </td>
               </tr>

@@ -28,7 +28,7 @@ const defaultProps = {
             }
           },
           {
-            usage: [48, 46],
+            usage: [48, 56],
             sys: {
               space: {
                 sys: {
@@ -42,7 +42,7 @@ const defaultProps = {
       cda: {
         items: [
           {
-            usage: [48, 46],
+            usage: [48, 66],
             sys: {
               space: {
                 sys: {
@@ -68,11 +68,12 @@ describe('SpacesTabs', () => {
   });
 
   describe('by default', () => {
-    it('renders a CMA table', () => {
+    it('renders CMA data correctly', () => {
       const { getByTestId, getByText } = build(defaultProps);
       const table = getByTestId('api-usage-table');
       expect(table).toBeInTheDocument();
-      within(table.firstChild).getByText('CMA');
+      expect(getByText('94')).toBeInTheDocument();
+      expect(getByText('104')).toBeInTheDocument();
       expect(getByText('CMASpace')).toBeInTheDocument();
     });
 
@@ -92,13 +93,13 @@ describe('SpacesTabs', () => {
   });
 
   describe('on CDA tab click', () => {
-    it('renders a CDA table', () => {
+    it('renders CDA data correctly', () => {
       const { getByTestId, getByText } = build(defaultProps);
       fireEvent.click(getByText('CDA Requests'));
 
       const table = getByTestId('api-usage-table');
       expect(table).toBeInTheDocument();
-      within(table.firstChild).getByText('CDA');
+      expect(getByText('114')).toBeInTheDocument();
       expect(getByText('CDASpace')).toBeInTheDocument();
     });
 
@@ -140,7 +141,7 @@ describe('SpacesTabs', () => {
       const table = getByTestId('api-usage-table');
       expect(table).toBeInTheDocument();
       expect(table.firstElementChild).toBeInTheDocument();
-      within(table.firstChild).getByText('CMA');
+      within(table.firstChild).getByText('Current usage period');
       expect(queryByTestId('api-usage-table-row')).toBeNull();
     });
 
@@ -155,7 +156,6 @@ describe('SpacesTabs', () => {
       fireEvent.click(getByText('CDA Requests'));
       const table = getByTestId('api-usage-table');
       expect(table).toBeInTheDocument();
-      within(table.firstChild).getByText('CDA');
 
       expect(getByTestId('api-usage-bar-chart')).toBeInTheDocument();
     });

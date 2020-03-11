@@ -7,8 +7,8 @@ import { useChart } from './hooks/useChart';
 
 const styles = {
   chartWrapper: css({
-    height: '450px',
-    width: '853px'
+    height: '512px',
+    width: '100%'
   })
 };
 
@@ -31,6 +31,12 @@ const propsToChartOption = ({ period, usage }) => {
     yAxis: {
       scale: false,
       position: 'right',
+      splitLine: {
+        lineStyle: {
+          color: '#D3DCE0',
+          type: 'dashed'
+        }
+      },
       axisLabel: {
         color: '#536171',
         fontFamily: tokens.fontStackPrimary,
@@ -76,8 +82,8 @@ const propsToChartOption = ({ period, usage }) => {
       }
     ],
     grid: {
-      left: '5%',
-      right: '5%',
+      left: '3%',
+      right: '3%',
       bottom: 70
     },
     dataZoom: [
