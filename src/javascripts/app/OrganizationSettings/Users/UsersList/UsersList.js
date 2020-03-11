@@ -109,7 +109,7 @@ class UsersList extends React.Component {
   endpoint = createOrganizationEndpoint(this.props.orgId);
 
   componentDidUpdate(prevProps) {
-    // Call loadInitialData after UserListRoute has finished loading
+    // Call loadInitialData after UserListRoute has finished loading its initial data
     if (prevProps.initialLoad && !this.props.initialLoad) {
       this.loadInitialData();
     }
@@ -260,24 +260,6 @@ class UsersList extends React.Component {
     updateSearchTerm(newSearchTerm);
   }, 500);
 
-  renderLoadingState = () => {
-    const { pagination } = this.state;
-    return times(pagination.limit, idx => (
-      <TableRow key={idx}>
-        <TableCell>
-          <SkeletonContainer svgHeight={42} clipId="user-avatar">
-            <SkeletonImage width={32} height={32} radiusX="100%" radiusY="100%" />
-            <SkeletonBodyText numberOfLines={2} offsetLeft={52} />
-          </SkeletonContainer>
-        </TableCell>
-        <SkeletonCell clipId="role" />
-        <SkeletonCell clipId="last-active" />
-        <SkeletonCell clipId="2fa-status" />
-        <TableCell />
-      </TableRow>
-    ));
-  };
-
   render() {
     const {
       queryTotal,
@@ -343,7 +325,7 @@ class UsersList extends React.Component {
                   })}>
                   <TableHead>
                     <TableRow>
-                      <TableCell>User</TableCell>
+                      <TableCell width="300">User</TableCell>
                       <TableCell width="200">Organization role</TableCell>
                       <TableCell>Last active</TableCell>
                       <TableCell>
@@ -355,46 +337,48 @@ class UsersList extends React.Component {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {usersList.length === 0
-                      ? this.renderLoadingState()
-                      : usersList.map(membership => (
-                          <TableRow
-                            key={membership.sys.id}
-                            className="membership-list__item"
-                            data-test-id="organization-membership-list-row">
-                            <TableCell>
+                    {usersList.length === 0 ? (
+                      <LoadingState numberOfRows={pagination.limit} />
+                    ) : (
+                      usersList.map(membership => (
+                        <TableRow
+                          key={membership.sys.id}
+                          className="membership-list__item"
+                          data-test-id="organization-membership-list-row">
+                          <TableCell>
+                            <StateLink
+                              component={TextLink}
+                              {...this.getLinkToUser(membership)}
+                              className={styles.membershipLink}>
+                              <UserCard user={membership.sys.user} status={membership.status} />
+                            </StateLink>
+                          </TableCell>
+                          <TableCell>{startCase(membership.role)}</TableCell>
+                          <TableCell>{getLastActivityDate(membership)}</TableCell>
+                          <TableCell>{get2FAStatus(membership)}</TableCell>
+                          <TableCell align="right">
+                            <div className="membership-list__item__menu">
+                              <Button
+                                buttonType="muted"
+                                size="small"
+                                onClick={this.handleMembershipRemove(membership)}
+                                className="membership-list__item__menu__button">
+                                Remove
+                              </Button>
                               <StateLink
-                                component={TextLink}
-                                {...this.getLinkToUser(membership)}
-                                className={styles.membershipLink}>
-                                <UserCard user={membership.sys.user} status={membership.status} />
+                                component={Button}
+                                buttonType="muted"
+                                size="small"
+                                href={this.getLinkToUser(membership)}
+                                className="membership-list__item__menu__button"
+                                {...this.getLinkToUser(membership)}>
+                                Edit
                               </StateLink>
-                            </TableCell>
-                            <TableCell>{startCase(membership.role)}</TableCell>
-                            <TableCell>{getLastActivityDate(membership)}</TableCell>
-                            <TableCell>{get2FAStatus(membership)}</TableCell>
-                            <TableCell align="right">
-                              <div className="membership-list__item__menu">
-                                <Button
-                                  buttonType="muted"
-                                  size="small"
-                                  onClick={this.handleMembershipRemove(membership)}
-                                  className="membership-list__item__menu__button">
-                                  Remove
-                                </Button>
-                                <StateLink
-                                  component={Button}
-                                  buttonType="muted"
-                                  size="small"
-                                  href={this.getLinkToUser(membership)}
-                                  className="membership-list__item__menu__button"
-                                  {...this.getLinkToUser(membership)}>
-                                  Edit
-                                </StateLink>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ))}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
                   </TableBody>
                 </Table>
                 <Pagination
@@ -417,9 +401,9 @@ class UsersList extends React.Component {
   }
 }
 
-function SkeletonCell({ clipId }) {
+function SkeletonCell({ clipId, width }) {
   return (
-    <TableCell>
+    <TableCell width={width}>
       <SkeletonContainer svgHeight={42} clipId={clipId}>
         <SkeletonBodyText numberOfLines={2} />
       </SkeletonContainer>
@@ -428,7 +412,29 @@ function SkeletonCell({ clipId }) {
 }
 
 SkeletonCell.propTypes = {
-  clipId: PropTypes.string
+  clipId: PropTypes.string.isRequired,
+  width: PropTypes.string
+};
+
+function LoadingState({ numberOfRows }) {
+  return times(numberOfRows, idx => (
+    <TableRow key={idx}>
+      <TableCell width="300">
+        <SkeletonContainer svgHeight={42} clipId="user-avatar">
+          <SkeletonImage width={32} height={32} radiusX="100%" radiusY="100%" />
+          <SkeletonBodyText numberOfLines={2} offsetLeft={52} />
+        </SkeletonContainer>
+      </TableCell>
+      <SkeletonCell width="200" clipId="role" />
+      <SkeletonCell clipId="last-active" />
+      <SkeletonCell clipId="2fa-status" />
+      <TableCell />
+    </TableRow>
+  ));
+}
+
+LoadingState.propTypes = {
+  numberOfRows: PropTypes.number.isRequired
 };
 
 export default connect(
