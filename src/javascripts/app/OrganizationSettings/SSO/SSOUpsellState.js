@@ -21,29 +21,7 @@ const styles = {
   topMargin: css({ marginTop: tokens.spacingL })
 };
 
-const SSOUpsellState = () => {
-  // const [lazycsvg, setSvg] = useState(null);
-  // let ImportView;
-  // import('svg/illustrations/upsell-state-sso.svg').then((m) => {
-  //   ImportView = m.default
-  // })
-
-  // // const ImportView = () =>
-  // //   lazy(() => import(`svg/illustrations/upsell-state-sso.svg`))
-
-  // // console.log(importView());
-  // console.log('????', ImportView)
-
-  // state: {
-  //   lazycsvg:null
-  // }
-
-  // useEffect(() => {
-  // import('svg/illustrations/upsell-state-sso.svg').then(m => {
-  //   setSvg(m);
-  // });
-  // }, [lazysvg])
-
+function SSOUpsellState() {
   return (
     <Workbench className="sso-setup">
       <Workbench.Header
@@ -82,6 +60,6 @@ const SSOUpsellState = () => {
       </Workbench.Content>
     </Workbench>
   );
-};
+}
 
 export default SSOUpsellState;
