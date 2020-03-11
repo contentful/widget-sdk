@@ -60,9 +60,7 @@ describe('Organization Utils', () => {
         return fakeOrgEnpoint;
       });
 
-      getMemberships.mockImplementation(() => {
-        return { total: 1 };
-      });
+      getMemberships.mockResolvedValue({ total: 1 });
 
       expect(await fetchCanLeaveOrg(fakeOrgMembership)).toBeFalsy();
     });

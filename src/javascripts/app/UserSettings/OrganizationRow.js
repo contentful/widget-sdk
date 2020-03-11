@@ -25,6 +25,16 @@ import { isLegacyOrganization } from 'utils/ResourceUtils';
 import * as logger from 'services/logger';
 import { go } from 'states/Navigator';
 
+const styles = {
+  dotsRow: css({
+    textAlign: 'right',
+    verticalAlign: 'middle'
+  }),
+  tooltip: css({
+    marginLeft: '10px'
+  })
+};
+
 const triggerLeaveModal = async ({ organization, userOrgMembershipId, onLeaveSuccess }) => {
   const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
     <ModalConfirm
@@ -63,16 +73,6 @@ const triggerLeaveModal = async ({ organization, userOrgMembershipId, onLeaveSuc
   Notification.success(`Successfully left organization ${organization.name}`);
 };
 
-const styles = {
-  dotsRow: css({
-    textAlign: 'right',
-    verticalAlign: 'middle'
-  }),
-  tooltip: css({
-    marginLeft: '10px'
-  })
-};
-
 const OrganizationRow = ({ organization, onLeaveSuccess }) => {
   const {
     role: userRole,
@@ -80,11 +80,11 @@ const OrganizationRow = ({ organization, onLeaveSuccess }) => {
   } = getOrganizationMembership(organization.sys.id);
 
   const [canUserLeaveOrg, setCanUserLeaveOrg] = useState(true);
-  let canUserAccessOrgSettings = true;
+  let userCanAccessOrgSettings = true;
 
   // If it's a legacy organization (V1), then only the owner or admin can access the org settings.
   if (isLegacyOrganization(organization) && !isOwnerOrAdmin(organization)) {
-    canUserAccessOrgSettings = false;
+    userCanAccessOrgSettings = false;
   }
 
   const goToOrgSettings = () => {
@@ -119,7 +119,7 @@ const OrganizationRow = ({ organization, onLeaveSuccess }) => {
           }}
           data-test-id="organization-row.dropdown-menu">
           <DropdownList>
-            {canUserAccessOrgSettings && (
+            {userCanAccessOrgSettings && (
               <DropdownListItem onClick={goToOrgSettings} testId="organization-row.go-to-org-link">
                 Go to Organization Settings
               </DropdownListItem>

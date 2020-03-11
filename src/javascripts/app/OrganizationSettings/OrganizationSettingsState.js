@@ -33,6 +33,7 @@ const usersAndInvitationsState = base({
   ]
 });
 
+// Psuedo route to handle which path a user should be redirected to when they click on "Go to Organization" in the account profile page.
 const organizationSettings = {
   name: 'organization_settings',
   url: '/organization_settings',

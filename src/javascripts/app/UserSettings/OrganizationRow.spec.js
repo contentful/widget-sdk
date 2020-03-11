@@ -39,7 +39,7 @@ jest.mock('access_control/OrganizationMembershipRepository', () => ({
   removeMembership: jest.fn(Promise.resolve())
 }));
 
-const build = async (options = { props: {}, withoutWaiting: false }) => {
+const build = async (options = { props: {}, wait: true }) => {
   // Wrapped with a table to prevent error of <tr> being a child of <div> that react testing auto wraps the component in.
   const renderedComponent = render(
     <Table>
@@ -55,7 +55,7 @@ const build = async (options = { props: {}, withoutWaiting: false }) => {
     </Table>
   );
 
-  if (options.withoutWaiting) {
+  if (options.wait) {
     await wait();
   }
 
@@ -101,11 +101,11 @@ describe('OrganizationRow', () => {
     });
   });
 
-  describe('test canUserLeaveOrg default behavoir ', () => {
+  describe('canUserLeaveOrg, default behavior', () => {
     it('should default to allow the user to leave the org', async () => {
       fetchCanLeaveOrg.mockResolvedValue(false);
 
-      build({ withoutWaiting: true });
+      build({ wait: false });
 
       fireEvent.click(screen.getByTestId('organization-row.dropdown-menu.trigger'));
       const leaveButtonContainer = screen.getByTestId('organization-row.leave-org-button');

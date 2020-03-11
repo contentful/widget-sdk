@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from 'react';
-import PropTypes from 'prop-types';
 import useAsync from 'app/common/hooks/useAsync';
 import {
   Workbench,
@@ -60,7 +59,7 @@ const OrganizationsRoute = () => {
     <EmptyStateContainer data-test-id="organizations-list-empty-state">
       <Illustration className={defaultSVGStyle} />
       <Typography>
-        <Heading>You are not a member of an organization.</Heading>
+        <Heading>You&#39;re not a member of any organizations.</Heading>
         <Paragraph>
           Create one by clicking on the <b>New Organization</b> button in the top right.
         </Paragraph>
@@ -118,10 +117,6 @@ const OrganizationsRoute = () => {
       </Workbench>
     </>
   );
-};
-
-OrganizationsRoute.propTypes = {
-  title: PropTypes.string
 };
 
 export default OrganizationsRoute;
