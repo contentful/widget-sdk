@@ -41,7 +41,10 @@
       <p><strong>Latitude:</strong> {{ value.lat }}</p>
     </div>
     <div ng-switch-when="Reference">
-      <cf-snapshot-presenter-link></cf-snapshot-presenter-link>
+      <react-component
+        name="app/snapshots/SnapshotPresenterLink"
+        props="{value, linkType, locale}"
+      ></react-component>
     </div>
     <div ng-switch-default>
       <pre>{{ value | json }}</pre>

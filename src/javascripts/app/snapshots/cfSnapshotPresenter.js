@@ -2,9 +2,7 @@ import { registerDirective } from 'NgRegistry';
 import _ from 'lodash';
 import createSnapshotExtensionBridge from 'widgets/bridges/createSnapshotExtensionBridge';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
-import * as EntityResolver from 'data/CMA/EntityResolver';
 import { isRtlLocale } from 'utils/locales';
-import * as EntityHelpers from 'app/entity_editor/entityHelpers';
 import { createNewReadOnlyWidgetApi } from 'app/widgets/NewWidgetApi/createNewWidgetApi';
 
 import snapshotPresenterTemplate from './cf_snapshot_presenter.html';
@@ -90,47 +88,5 @@ export default function register() {
         return v === null || v === undefined || v === '' || _.isEqual(v, []) || _.isEqual(v, {});
       }
     }
-  ]);
-
-  registerDirective('cfSnapshotPresenterLink', [
-    'spaceContext',
-    spaceContext => ({
-      restrict: 'E',
-
-      template: `<div ng-repeat="model in models" ng-style='model.entity.sys.type === "Asset" ? {"display": "inline-block", "margin": "0px 10px 10px 0px"} : {}'>
-          <react-component
-            ng-if="model.entity.sys.type === 'Entry'"
-            name="app/widgets/link/EntryLink"
-            props="{entry:model.entity, entityHelpers:helper, getContentType}"
-          />
-          <react-component
-            ng-if="model.entity.sys.type === 'Asset'"
-            name="app/widgets/link/AssetLink"
-            props="{asset:model.entity, entityHelpers:helper}"
-          />
-        </div>`,
-
-      controller: [
-        '$scope',
-        $scope => {
-          const links = Array.isArray($scope.value) ? $scope.value : [$scope.value];
-          const ids = links.map(link => link.sys.id);
-
-          EntityResolver.fetchForType(spaceContext, $scope.linkType, ids).then(results => {
-            $scope.models = results.map(entity => ({
-              entity
-            }));
-          });
-
-          $scope.helper = EntityHelpers.newForLocale($scope.locale.code);
-          $scope.config = { minimized: true };
-          const getContentType = _.memoize(
-            entity => spaceContext.publishedCTs.fetch(entity.sys.contentType.sys.id),
-            entity => entity.sys.id
-          );
-          $scope.getContentType = getContentType;
-        }
-      ]
-    })
   ]);
 }

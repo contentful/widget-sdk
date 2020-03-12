@@ -36,7 +36,7 @@ const SnapshotPresenterDate = ({ settings, value }) => {
 SnapshotPresenterDate.propTypes = {
   settings: PropTypes.shape({
     format: PropTypes.string,
-    ampm: PropTypes.number
+    ampm: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
   }).isRequired,
   value: PropTypes.string.isRequired
 };
