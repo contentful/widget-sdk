@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { startCase, debounce } from 'lodash';
+import { startCase, debounce, times } from 'lodash';
 import { css } from 'emotion';
 import { isEqual } from 'lodash/fp';
 import pluralize from 'pluralize';
@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import {
   Button,
   Notification,
-  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -18,7 +17,10 @@ import {
   TextInput,
   TextLink,
   Tooltip,
-  Workbench
+  Workbench,
+  SkeletonContainer,
+  SkeletonBodyText,
+  SkeletonImage
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import StateLink from 'app/common/StateLink';
@@ -80,6 +82,7 @@ const styles = {
 
 class UsersList extends React.Component {
   static propTypes = {
+    initialLoad: PropTypes.bool,
     orgId: PropTypes.string.isRequired,
     spaceRoles: PropTypes.array,
     teams: PropTypes.arrayOf(TeamPropType),
@@ -93,8 +96,7 @@ class UsersList extends React.Component {
   };
 
   state = {
-    loading: false,
-    initialLoad: true,
+    loading: true,
     queryTotal: 0,
     usersList: [],
     pagination: {
@@ -106,12 +108,12 @@ class UsersList extends React.Component {
 
   endpoint = createOrganizationEndpoint(this.props.orgId);
 
-  async componentDidMount() {
-    await this.loadInitialData();
-    this.setState({ initialLoad: false });
-  }
-
   componentDidUpdate(prevProps) {
+    // Call loadInitialData after UserListRoute has finished loading its initial data
+    if (prevProps.initialLoad && !this.props.initialLoad) {
+      this.loadInitialData();
+    }
+
     if (
       !isEqual(prevProps.filters, this.props.filters) ||
       prevProps.searchTerm !== this.props.searchTerm
@@ -122,9 +124,11 @@ class UsersList extends React.Component {
   }
 
   loadInitialData = async () => {
+    const { hasPendingOrgMembershipsEnabled } = this.props;
+
     this.setState({ loading: true });
 
-    if (!this.props.hasPendingOrgMembershipsEnabled) {
+    if (!hasPendingOrgMembershipsEnabled) {
       await this.loadInvitationsCount();
     }
 
@@ -263,8 +267,7 @@ class UsersList extends React.Component {
       pagination,
       loading,
       invitedUsersCount,
-      numberOrgMemberships,
-      initialLoad
+      numberOrgMemberships
     } = this.state;
     const { searchTerm, spaces, spaceRoles, filters, hasPendingOrgMembershipsEnabled } = this.props;
 
@@ -313,11 +316,8 @@ class UsersList extends React.Component {
               spaceRoles={spaceRoles}
               filters={filters}
             />
-            {initialLoad || queryTotal > 0 ? (
+            {loading || queryTotal > 0 ? (
               <div className={styles.list}>
-                {loading ? (
-                  <Spinner size="large" className="organization-users-page__spinner" />
-                ) : null}
                 <Table
                   data-test-id="organization-membership-list"
                   className={classnames('organization-membership-list', {
@@ -325,7 +325,7 @@ class UsersList extends React.Component {
                   })}>
                   <TableHead>
                     <TableRow>
-                      <TableCell width="50">User</TableCell>
+                      <TableCell width="300">User</TableCell>
                       <TableCell width="200">Organization role</TableCell>
                       <TableCell>Last active</TableCell>
                       <TableCell>
@@ -337,44 +337,48 @@ class UsersList extends React.Component {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {usersList.map(membership => (
-                      <TableRow
-                        key={membership.sys.id}
-                        className="membership-list__item"
-                        data-test-id="organization-membership-list-row">
-                        <TableCell>
-                          <StateLink
-                            component={TextLink}
-                            {...this.getLinkToUser(membership)}
-                            className={styles.membershipLink}>
-                            <UserCard user={membership.sys.user} status={membership.status} />
-                          </StateLink>
-                        </TableCell>
-                        <TableCell>{startCase(membership.role)}</TableCell>
-                        <TableCell>{getLastActivityDate(membership)}</TableCell>
-                        <TableCell>{get2FAStatus(membership)}</TableCell>
-                        <TableCell align="right">
-                          <div className="membership-list__item__menu">
-                            <Button
-                              buttonType="muted"
-                              size="small"
-                              onClick={this.handleMembershipRemove(membership)}
-                              className="membership-list__item__menu__button">
-                              Remove
-                            </Button>
+                    {usersList.length === 0 ? (
+                      <LoadingState numberOfRows={pagination.limit} />
+                    ) : (
+                      usersList.map(membership => (
+                        <TableRow
+                          key={membership.sys.id}
+                          className="membership-list__item"
+                          data-test-id="organization-membership-list-row">
+                          <TableCell>
                             <StateLink
-                              component={Button}
-                              buttonType="muted"
-                              size="small"
-                              href={this.getLinkToUser(membership)}
-                              className="membership-list__item__menu__button"
-                              {...this.getLinkToUser(membership)}>
-                              Edit
+                              component={TextLink}
+                              {...this.getLinkToUser(membership)}
+                              className={styles.membershipLink}>
+                              <UserCard user={membership.sys.user} status={membership.status} />
                             </StateLink>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                          </TableCell>
+                          <TableCell>{startCase(membership.role)}</TableCell>
+                          <TableCell>{getLastActivityDate(membership)}</TableCell>
+                          <TableCell>{get2FAStatus(membership)}</TableCell>
+                          <TableCell align="right">
+                            <div className="membership-list__item__menu">
+                              <Button
+                                buttonType="muted"
+                                size="small"
+                                onClick={this.handleMembershipRemove(membership)}
+                                className="membership-list__item__menu__button">
+                                Remove
+                              </Button>
+                              <StateLink
+                                component={Button}
+                                buttonType="muted"
+                                size="small"
+                                href={this.getLinkToUser(membership)}
+                                className="membership-list__item__menu__button"
+                                {...this.getLinkToUser(membership)}>
+                                Edit
+                              </StateLink>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
                   </TableBody>
                 </Table>
                 <Pagination
@@ -386,7 +390,6 @@ class UsersList extends React.Component {
               </div>
             ) : (
               <Placeholder
-                loading={loading}
                 title="No users found 🧐"
                 text="Check your spelling or try changing the filters"
               />
@@ -397,6 +400,42 @@ class UsersList extends React.Component {
     );
   }
 }
+
+function SkeletonCell({ clipId, width }) {
+  return (
+    <TableCell width={width}>
+      <SkeletonContainer svgHeight={42} clipId={clipId}>
+        <SkeletonBodyText numberOfLines={2} />
+      </SkeletonContainer>
+    </TableCell>
+  );
+}
+
+SkeletonCell.propTypes = {
+  clipId: PropTypes.string.isRequired,
+  width: PropTypes.string
+};
+
+function LoadingState({ numberOfRows }) {
+  return times(numberOfRows, idx => (
+    <TableRow key={idx}>
+      <TableCell width="300">
+        <SkeletonContainer svgHeight={42} clipId="user-avatar">
+          <SkeletonImage width={32} height={32} radiusX="100%" radiusY="100%" />
+          <SkeletonBodyText numberOfLines={2} offsetLeft={52} />
+        </SkeletonContainer>
+      </TableCell>
+      <SkeletonCell width="200" clipId="role" />
+      <SkeletonCell clipId="last-active" />
+      <SkeletonCell clipId="2fa-status" />
+      <TableCell />
+    </TableRow>
+  ));
+}
+
+LoadingState.propTypes = {
+  numberOfRows: PropTypes.number.isRequired
+};
 
 export default connect(
   (
