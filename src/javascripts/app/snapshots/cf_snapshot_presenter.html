@@ -10,7 +10,10 @@
     <div ng-switch-when="Integer">{{ value }}</div>
     <div ng-switch-when="Number">{{ value }}</div>
     <div class="x--directed" ng-switch-when="Text">
-      <cf-snapshot-presenter-markdown></cf-snapshot-presenter-markdown>
+      <react-component
+        name="app/snapshots/SnapshotPresenterMarkdown"
+        props="{value}"
+      ></react-component>
     </div>
     <div class="x--directed" ng-switch-when="RichText">
       <react-component

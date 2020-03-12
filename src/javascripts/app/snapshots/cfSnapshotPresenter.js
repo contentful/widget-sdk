@@ -1,13 +1,10 @@
 import { registerDirective } from 'NgRegistry';
-import React from 'react';
 import _ from 'lodash';
-import EmbedlyPreview from 'components/forms/embedly_preview/EmbedlyPreview';
 import createSnapshotExtensionBridge from 'widgets/bridges/createSnapshotExtensionBridge';
 import { NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 import * as EntityResolver from 'data/CMA/EntityResolver';
 import { isRtlLocale } from 'utils/locales';
 import * as EntityHelpers from 'app/entity_editor/entityHelpers';
-import { MarkdownPreview } from '@contentful/field-editor-markdown';
 import { createNewReadOnlyWidgetApi } from 'app/widgets/NewWidgetApi/createNewWidgetApi';
 
 import snapshotPresenterTemplate from './cf_snapshot_presenter.html';
@@ -93,29 +90,6 @@ export default function register() {
         return v === null || v === undefined || v === '' || _.isEqual(v, []) || _.isEqual(v, {});
       }
     }
-  ]);
-
-  registerDirective('cfSnapshotPresenterMarkdown', [
-    () => ({
-      restrict: 'E',
-      template: '<react-component props="props" component="component" />',
-
-      controller: [
-        '$scope',
-        $scope => {
-          $scope.component = MarkdownPreview;
-          $scope.props = {
-            value: $scope.value,
-            mode: 'zen',
-            direction: 'ltr',
-            previewComponents: {
-              // eslint-disable-next-line
-              embedly: ({ url }) => <EmbedlyPreview previewUrl={url} delay={100} />
-            }
-          };
-        }
-      ]
-    })
   ]);
 
   registerDirective('cfSnapshotPresenterLink', [
