@@ -32,9 +32,11 @@ const propsToChartOptions = ({ spaceNames, data, period, colours }) => {
 
   return {
     legend: {
+      type: 'scroll',
       show: true,
       icon: 'rect',
-      left: '50px'
+      left: '50px',
+      right: '100px'
     },
     tooltip: {
       trigger: 'axis',
