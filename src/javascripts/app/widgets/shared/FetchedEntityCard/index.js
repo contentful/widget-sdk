@@ -1,5 +1,4 @@
-/* eslint-disable rulesdir/restrict-inline-styles */
-/* eslint "rulesdir/restrict-inline-styles": "warn" */
+/* eslint rulesdir/restrict-inline-styles: "warn" */
 import { once, noop } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';

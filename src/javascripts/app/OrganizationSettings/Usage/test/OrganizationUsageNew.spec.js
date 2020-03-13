@@ -5,7 +5,7 @@ import 'jest-enzyme';
 import { WorkbenchContent } from '../OrganizationUsage';
 import NoSpacesPlaceholder from '../NoSpacesPlaceholder';
 import OrganizationUsagePageNew from '../committed/OrganizationUsagePageNew';
-import OrganizationResourceUsageList from 'account/usage/non_committed/OrganizationResourceUsageList';
+import OrganizationResourceUsageList from '../non_committed/OrganizationResourceUsageList';
 
 describe('WorkbenchContent', () => {
   let defaultProps = null;
