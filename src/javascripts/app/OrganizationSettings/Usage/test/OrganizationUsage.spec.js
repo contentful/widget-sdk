@@ -7,7 +7,7 @@ import { OrganizationUsage, WorkbenchContent, WorkbenchActions } from '../Organi
 import PeriodSelector from '../committed/PeriodSelector';
 import NoSpacesPlaceholder from '../NoSpacesPlaceholder';
 import OrganizationUsagePage from '../committed/OrganizationUsagePage';
-import OrganizationResourceUsageList from 'account/usage/non_committed/OrganizationResourceUsageList';
+import OrganizationResourceUsageList from '../non_committed/OrganizationResourceUsageList';
 import ReloadNotification from 'app/common/ReloadNotification';
 import * as OrganizationRolesMocked from 'services/OrganizationRoles';
 import * as TokenStoreMocked from 'services/TokenStore';

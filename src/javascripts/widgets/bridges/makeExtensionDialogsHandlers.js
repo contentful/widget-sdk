@@ -1,7 +1,5 @@
-/* eslint-disable rulesdir/restrict-inline-styles */
-
+/* eslint rulesdir/restrict-inline-styles: "warn" */
 import React from 'react';
-
 import isNumber from 'lodash/isNumber';
 import { Modal } from '@contentful/forma-36-react-components';
 import ModalLauncher from 'app/common/ModalLauncher';
