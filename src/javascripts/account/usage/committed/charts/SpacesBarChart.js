@@ -15,7 +15,7 @@ const styles = {
 
 const propsToChartOptions = ({ spaceNames, data, period, colours }) => {
   const series = data.map((item, index) => ({
-    name: spaceNames[item.sys.space.sys.id] || 'Deleted space',
+    name: item.sys.space.sys.id,
     type: 'bar',
     data: item.usage.map(val => ({
       value: val,
@@ -36,12 +36,20 @@ const propsToChartOptions = ({ spaceNames, data, period, colours }) => {
       show: true,
       icon: 'rect',
       left: '50px',
-      right: '100px'
+      right: '100px',
+      formatter: spaceId => spaceNames[spaceId] || 'Deleted space'
     },
     tooltip: {
       trigger: 'axis',
       axisPointer: {
         type: 'shadow'
+      },
+      formatter: args => {
+        let tooltip = `${args[0].axisValue}</br>`;
+        args.forEach(({ marker, seriesName, value }) => {
+          tooltip += `${marker} ${spaceNames[seriesName] || 'Deleted space'}: ${value}</br>`;
+        });
+        return tooltip;
       }
     },
     toolbox: {
