@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { getCurrentVariation } from 'utils/LaunchDarkly';
 import { ALL_REFERENCES_DIALOG } from 'featureFlags';
-import { Modal, Button, Icon, Note } from '@contentful/forma-36-react-components';
+import { Modal, Button, Icon, Note, Subheading } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import ErrorHandler from 'components/shared/ErrorHandlerComponent.js';
 import { goToSlideInEntity } from 'navigation/SlideInNavigator';
@@ -95,58 +95,61 @@ const ReferencesDialog = ({ entity }) => {
   };
 
   return (
-    <ErrorHandler
-      renderOnError={
-        <Note noteType="negative">
-          Sorry, we are unable to show the references for this entry at this time
-        </Note>
-      }>
-      <div>
-        <Button
-          isFullWidth
-          loading={isLoading}
-          onClick={() => {
-            setIsLoading(true);
-            fetchReferencesAndOpenModal();
-          }}
-          buttonType="muted">
-          <span className={styles.dialogButton}>
-            <Icon icon="Filter" className={styles.icon} color="secondary" />
-            Show all references
-          </span>
-        </Button>
-        <Modal
-          isShown={isOpen}
-          shouldCloseOnEscapePress
-          shouldCloseOnOverlayClick
-          title="All references"
-          onClose={() => setIsOpen(false)}>
-          {({ title, onClose }) => (
-            <>
-              <Modal.Header title={title} onClose={onClose} />
-              <Modal.Content className={styles.modalContent}>
-                {isTooComplex ? (
-                  <Note noteType="negative" className={styles.tooComplexNote}>
-                    At the moment we are unable to handle the reference complexity for this entry
-                  </Note>
-                ) : (
-                  <ReferencesTree
-                    root={references[0]}
-                    defaultLocale={defaultLocale}
-                    setIsDialogOpen={onClose}
-                    maxLevel={maxLevel}
-                    onReferenceCardClick={handleReferenceCardClick}
-                  />
-                )}
-              </Modal.Content>
-              <Modal.Controls>
-                <FeedbackForm onClose={onClose} />
-              </Modal.Controls>
-            </>
-          )}
-        </Modal>
-      </div>
-    </ErrorHandler>
+    <>
+      <Subheading className="entity-sidebar__heading">References tree</Subheading>
+      <ErrorHandler
+        renderOnError={
+          <Note noteType="negative">
+            Sorry, we are unable to show the references for this entry at this time
+          </Note>
+        }>
+        <div>
+          <Button
+            isFullWidth
+            loading={isLoading}
+            onClick={() => {
+              setIsLoading(true);
+              fetchReferencesAndOpenModal();
+            }}
+            buttonType="muted">
+            <span className={styles.dialogButton}>
+              <Icon icon="Filter" className={styles.icon} color="secondary" />
+              Show all references
+            </span>
+          </Button>
+          <Modal
+            isShown={isOpen}
+            shouldCloseOnEscapePress
+            shouldCloseOnOverlayClick
+            title="All references"
+            onClose={() => setIsOpen(false)}>
+            {({ title, onClose }) => (
+              <>
+                <Modal.Header title={title} onClose={onClose} />
+                <Modal.Content className={styles.modalContent}>
+                  {isTooComplex ? (
+                    <Note noteType="negative" className={styles.tooComplexNote}>
+                      At the moment we are unable to handle the reference complexity for this entry
+                    </Note>
+                  ) : (
+                    <ReferencesTree
+                      root={references[0]}
+                      defaultLocale={defaultLocale}
+                      setIsDialogOpen={onClose}
+                      maxLevel={maxLevel}
+                      onReferenceCardClick={handleReferenceCardClick}
+                    />
+                  )}
+                </Modal.Content>
+                <Modal.Controls>
+                  <FeedbackForm onClose={onClose} />
+                </Modal.Controls>
+              </>
+            )}
+          </Modal>
+        </div>
+      </ErrorHandler>
+    </>
   );
 };
 

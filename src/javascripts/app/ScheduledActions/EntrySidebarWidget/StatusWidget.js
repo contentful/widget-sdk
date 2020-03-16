@@ -19,7 +19,6 @@ import RestrictedAction from './RestrictedAction';
 
 import CommandPropType from 'app/entity_editor/CommandPropType';
 import StatusBadge from 'app/EntrySidebar/PublicationWidget/StatusBadge';
-import ReferencesDialog from 'app/EntrySidebar/ReferencesDialog';
 
 import StatusSwitchPortal from './StatusSwitchPortal';
 import StatusSwitch from './StatusSwitch';
@@ -229,12 +228,6 @@ class StatusWidget extends React.PureComponent {
             publicationBlockedReason && <ActionRestrictedNote reason={publicationBlockedReason} />
           )}
         </div>
-
-        <ReferencesDialog
-          entity={entity}
-          isOpen={this.state.isReferenceDialogOpen}
-          onClose={() => this.setState({ isReferenceDialogOpen: false })}
-        />
         <div className="entity-sidebar__status-more">
           {updatedAt && (
             <div className="entity-sidebar__save-status">
