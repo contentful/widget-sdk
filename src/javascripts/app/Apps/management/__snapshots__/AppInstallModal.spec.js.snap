@@ -12,19 +12,19 @@ Object {
   >
     <div />
     <div
-      class="Modal__Modal__portal___F-liP"
+      class="Modal__Modal__portal___1AjJC"
     >
       <div
-        class="Modal__Modal__overlay___38PZk Modal__Modal__overlay--centered___19mI8 Modal__Modal__overlay--after-open___2WVa7"
+        class="Modal__Modal__overlay___3gPyC Modal__Modal__overlay--centered___2kDOU Modal__Modal__overlay--after-open___sRqhJ"
       >
         <div
-          class="Modal__Modal__wrap___16arr Modal__Modal__wrap--after-open___2mXQz"
+          class="Modal__Modal__wrap___BjfRz Modal__Modal__wrap--after-open___1XDbx"
           role="dialog"
           style="top: 0px;"
           tabindex="-1"
         >
           <div
-            class="Modal__Modal___1064L"
+            class="Modal__Modal___2S_pS"
             data-test-id="cf-ui-modal"
             style="width: 520px;"
           >
@@ -68,11 +68,11 @@ Object {
                     </label>
                   </div>
                   <div
-                    class="Select__Select__wrapper___2pBIz Select__Select--full___7ei7d"
+                    class="Select__Select__wrapper___2mbYV Select__Select--full___AENS4"
                   >
                     <select
                       aria-label="spaceSelection"
-                      class="Select__Select___31Z46 a11y__focus-border--default___60AXp"
+                      class="Select__Select___2Gi9N a11y__focus-border--default___60AXp"
                       data-test-id="cf-ui-select"
                       id="spaceSelection"
                       name="spaceSelection"
@@ -92,7 +92,7 @@ Object {
                       </option>
                     </select>
                     <svg
-                      class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--muted___3egnD Select__Select__icon___boRAZ"
+                      class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--muted___3egnD Select__Select__icon___OBmvS"
                       data-test-id="cf-ui-icon"
                       height="24"
                       viewBox="0 0 24 24"
@@ -132,11 +132,11 @@ Object {
                     </label>
                   </div>
                   <div
-                    class="Select__Select__wrapper___2pBIz Select__Select--full___7ei7d"
+                    class="Select__Select__wrapper___2mbYV Select__Select--full___AENS4"
                   >
                     <select
                       aria-label="envSelection"
-                      class="Select__Select___31Z46 a11y__focus-border--default___60AXp"
+                      class="Select__Select___2Gi9N a11y__focus-border--default___60AXp"
                       data-test-id="cf-ui-select"
                       id="envSelection"
                       name="envSelection"
@@ -156,7 +156,7 @@ Object {
                       </option>
                     </select>
                     <svg
-                      class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--muted___3egnD Select__Select__icon___boRAZ"
+                      class="Icon__Icon___38Epv Icon__Icon--small___1yGZK Icon__Icon--muted___3egnD Select__Select__icon___OBmvS"
                       data-test-id="cf-ui-icon"
                       height="24"
                       viewBox="0 0 24 24"

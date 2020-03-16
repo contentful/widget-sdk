@@ -31,7 +31,7 @@
     "@contentful/field-editor-tags": "0.4.8",
     "@contentful/field-editor-url": "0.3.7",
     "@contentful/forma-36-fcss": "^0.0.34",
-    "@contentful/forma-36-react-components": "^3.32.0",
+    "@contentful/forma-36-react-components": "^3.32.3",
     "@contentful/forma-36-react-datepicker": "^0.1.1-alpha.59",
     "@contentful/forma-36-react-timepicker": "^0.2.0-alpha.56",
     "@contentful/forma-36-tokens": "^0.5.1",
