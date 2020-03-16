@@ -5,7 +5,7 @@ import { reducer } from './SidebarConfigurationReducer';
 import useAsync from 'app/common/hooks/useAsync';
 import {
   convertInternalStateToConfiguration,
-  convertConfigirationToInternalState
+  convertConfigurationToInternalState
 } from './service/SidebarSync';
 import WidgetsConfiguration from './WidgetsConfiguration';
 import { getEntryConfiguration } from './defaults';
@@ -23,7 +23,7 @@ function SidebarConfiguration(props) {
 
   const [state, dispatch] = useReducer(
     reducer,
-    convertConfigirationToInternalState(configuration, extensions, defaultAvailableItems)
+    convertConfigurationToInternalState(configuration, extensions, defaultAvailableItems)
   );
 
   useEffect(() => {

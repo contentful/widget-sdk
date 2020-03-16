@@ -1,6 +1,6 @@
 import {
   convertInternalStateToConfiguration,
-  convertConfigirationToInternalState
+  convertConfigurationToInternalState
 } from './SidebarSync';
 import { flatten, uniq } from 'lodash';
 import { SidebarType } from '../constants';
@@ -67,7 +67,7 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
     });
   });
 
-  describe('convertConfigirationToInternalState', () => {
+  describe('convertConfigurationToInternalState', () => {
     it('should return default state is configuration is not array', () => {
       const defaultState = {
         sidebarType: SidebarType.default,
@@ -75,13 +75,13 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
         items: EntryConfiguration,
         availableItems: []
       };
-      expect(convertConfigirationToInternalState(null, [], EntryConfiguration)).toEqual(
+      expect(convertConfigurationToInternalState(null, [], EntryConfiguration)).toEqual(
         defaultState
       );
-      expect(convertConfigirationToInternalState(undefined, [], EntryConfiguration)).toEqual(
+      expect(convertConfigurationToInternalState(undefined, [], EntryConfiguration)).toEqual(
         defaultState
       );
-      expect(convertConfigirationToInternalState({ foo: 'bar' }, [], EntryConfiguration)).toEqual(
+      expect(convertConfigurationToInternalState({ foo: 'bar' }, [], EntryConfiguration)).toEqual(
         defaultState
       );
     });
@@ -92,7 +92,7 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
         widgetNamespace: widget.widgetNamespace,
         disabled: true
       }));
-      const state = convertConfigirationToInternalState(allDisabled, [], EntryConfiguration);
+      const state = convertConfigurationToInternalState(allDisabled, [], EntryConfiguration);
       expect(state).toEqual({
         sidebarType: SidebarType.custom,
         configurableWidget: null,
@@ -136,7 +136,7 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
         }
       ];
 
-      const state = convertConfigirationToInternalState(configuration, [], EntryConfiguration);
+      const state = convertConfigurationToInternalState(configuration, [], EntryConfiguration);
 
       expect(state).toEqual({
         sidebarType: SidebarType.custom,
@@ -199,7 +199,7 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
         }
       ];
 
-      const state = convertConfigirationToInternalState(
+      const state = convertConfigurationToInternalState(
         configuration,
         [
           {
@@ -236,6 +236,9 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
             name: 'Netlify Extension',
             widgetId: 'netlify-extension',
             widgetNamespace: NAMESPACE_EXTENSION,
+            settings: {
+              netlifyBuildHook: 'http://hook'
+            },
             parameters: [
               {
                 id: 'netlifyBuildHook',

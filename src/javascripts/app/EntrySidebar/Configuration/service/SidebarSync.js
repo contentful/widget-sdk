@@ -70,7 +70,7 @@ function canBeUsedInSidebar(widget) {
  * to initial state of configuration reducer, enriches saved configuration
  * with additional data needed to render UI.
  */
-export function convertConfigirationToInternalState(configuration, widgets, initialItems) {
+export function convertConfigurationToInternalState(configuration, widgets, initialItems) {
   if (!Array.isArray(configuration)) {
     return {
       sidebarType: SidebarType.default,
@@ -99,7 +99,14 @@ export function convertConfigirationToInternalState(configuration, widgets, init
             e.widgetNamespace === configItem.widgetNamespace && e.widgetId === configItem.widgetId
         );
 
-        return found || { ...configItem, problem: true };
+        // Settings have to be copied to the widget for
+        // the updating of instance parameters to work
+        const widget = found
+          ? { ...found, ...pick(configItem, ['settings']) }
+          : // Mark as problem true if the widget wasn't found in the list of valid widgets
+            { ...configItem, problem: true };
+
+        return widget;
       }
 
       return null;
