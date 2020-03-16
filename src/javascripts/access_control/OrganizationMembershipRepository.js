@@ -138,12 +138,8 @@ export function getRoles(endpoint, query) {
 }
 
 export async function getAllRoles(endpoint, params) {
-  try {
-    const roles = await fetchAllWithIncludes(endpoint, ['roles'], BATCH_LIMIT, params);
-    return roles.items;
-  } catch (e) {
-    throw e;
-  }
+  const roles = await fetchAllWithIncludes(endpoint, ['roles'], BATCH_LIMIT, params);
+  return roles.items;
 }
 
 export function getInvitations(endpoint, query) {

@@ -113,7 +113,7 @@ describe('widgets/NewWidgetApi/createFieldApi', () => {
       );
     });
 
-    it('should handle errors properly', () => {
+    it('should handle errors properly', async () => {
       const $scope = createScopeMock();
 
       $scope.otDoc.setValueAt.mockImplementation(() => {
@@ -122,7 +122,7 @@ describe('widgets/NewWidgetApi/createFieldApi', () => {
 
       const fieldApi = createFieldApi({ $scope });
 
-      expect(fieldApi.setValue('value')).rejects.toMatchInlineSnapshot(
+      await expect(fieldApi.setValue('value')).rejects.toMatchInlineSnapshot(
         `[Error: Could not update entry field]`
       );
 
@@ -153,7 +153,7 @@ describe('widgets/NewWidgetApi/createFieldApi', () => {
       ]);
     });
 
-    it('should handle errors properly', () => {
+    it('should handle errors properly', async () => {
       const $scope = createScopeMock();
 
       $scope.otDoc.removeValueAt.mockImplementation(() => {
@@ -162,7 +162,7 @@ describe('widgets/NewWidgetApi/createFieldApi', () => {
 
       const fieldApi = createFieldApi({ $scope });
 
-      expect(fieldApi.removeValue()).rejects.toMatchInlineSnapshot(
+      await expect(fieldApi.removeValue()).rejects.toMatchInlineSnapshot(
         `[Error: Could not remove value for field]`
       );
 

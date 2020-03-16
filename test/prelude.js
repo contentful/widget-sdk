@@ -1,4 +1,4 @@
-/* global SystemJS window */
+/* global SystemJS */
 /**
  * This module sets up the SystemTest.register() where modules defined in the
  * `test/` folder register their presence.
