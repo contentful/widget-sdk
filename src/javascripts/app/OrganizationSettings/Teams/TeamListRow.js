@@ -31,15 +31,8 @@ const styles = {
   description: css({
     width: '30rem',
     ...ellipsisStyle
-  }),
-  row: css({})
+  })
 };
-styles.button = css({
-  transition: 'none',
-  visibility: 'hidden',
-  marginLeft: '10px',
-  [`.${styles.row}:hover &`]: { visibility: 'visible' }
-});
 
 class TeamListRow extends React.Component {
   static propTypes = {
@@ -61,7 +54,7 @@ class TeamListRow extends React.Component {
     const teamId = get(team, 'sys.id');
 
     return (
-      <TableRow className={styles.row}>
+      <TableRow>
         <TableCell>
           <div className={styles.name}>
             {teamId !== 'placeholder' ? (
