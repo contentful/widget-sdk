@@ -135,14 +135,6 @@ describe('TeamListRow', () => {
         });
       });
 
-      it('should render details of given team with member count', () => {
-        const { getByTestId } = renderComponent(actions, teams[0]);
-
-        expect(getByTestId('team-name')).toHaveTextContent('A Team');
-        expect(getByTestId('team-description')).toHaveTextContent('A description');
-        expect(getByTestId('team-member-count')).toHaveTextContent('3 members');
-      });
-
       it('should render details of given team with member count with link', () => {
         const { getByTestId } = renderComponent(actions, teams[1]);
         const teamNameElement = getByTestId('team-name');
