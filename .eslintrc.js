@@ -49,6 +49,7 @@ module.exports = {
     'no-template-curly-in-string': 'off',
     'no-useless-return': 'off',
     'no-mixed-operators': 'off',
+    'no-prototype-builtins': 'off',
     'padded-blocks': ['warn', 'never'],
     'no-use-before-define': [
       'error',

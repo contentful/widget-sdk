@@ -72,7 +72,6 @@ export function createMVar(value) {
 // TODO we should probably extract this
 function makeDeferred() {
   let resolve, reject;
-  // eslint-disable-next-line promise/param-name
   const promise = new Promise((resolve_, reject_) => {
     resolve = resolve_;
     reject = reject_;

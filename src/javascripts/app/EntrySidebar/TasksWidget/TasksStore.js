@@ -22,32 +22,19 @@ export function createTasksStoreForEntry(endpoint, entryId) {
   return {
     items$,
     add: async task => {
-      let newTask;
       const { sys: _sys, ...data } = task;
-      try {
-        newTask = await create(endpoint, entryId, data);
-      } catch (error) {
-        throw error;
-      }
+      const newTask = await create(endpoint, entryId, data);
+
       tasksBus.set([...getItems(), newTask]);
       return newTask;
     },
     remove: async taskId => {
-      try {
-        const task = getItems().find(task => task.sys.id === taskId);
-        await remove(endpoint, entryId, task);
-      } catch (error) {
-        throw error;
-      }
+      const task = getItems().find(task => task.sys.id === taskId);
+      await remove(endpoint, entryId, task);
       tasksBus.set(getItems().filter(task => task.sys.id !== taskId));
     },
     update: async task => {
-      let updatedTask;
-      try {
-        updatedTask = await update(endpoint, entryId, task);
-      } catch (error) {
-        throw error;
-      }
+      const updatedTask = await update(endpoint, entryId, task);
       tasksBus.set(
         getItems().map(task => (task.sys.id === updatedTask.sys.id ? updatedTask : task))
       );
