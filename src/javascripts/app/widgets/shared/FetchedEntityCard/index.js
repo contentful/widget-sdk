@@ -113,48 +113,47 @@ class FetchedEntityCard extends React.Component {
 
               if (fetchEntityResult.requestStatus === RequestStatus.Error) {
                 return this.renderMissingEntityReferenceCard(fetchEntityResult);
-              } else {
-                const isEntry = entityType === 'Entry';
-                const entityId = fetchEntityResult.entity
-                  ? fetchEntityResult.entity.sys.id
-                  : undefined;
-
-                const WrapperComponent = cardComponent
-                  ? cardComponent
-                  : isEntry
-                  ? WrappedEntityCard
-                  : WrappedAssetCard;
-
-                const cardProps = {
-                  entityType,
-                  entityId,
-                  ...fetchEntityResult,
-                  readOnly,
-                  size,
-                  isLoading,
-                  className,
-                  selected,
-                  disabled,
-                  onEdit: () => onEdit(fetchEntityResult),
-                  onClick: event => {
-                    event.preventDefault();
-                    onClick(fetchEntityResult);
-                  },
-                  onRemove: () => onRemove(fetchEntityResult),
-                  cardDragHandleComponent
-                };
-                return (
-                  <EntityStateLink
-                    entity={{
-                      sys: {
-                        type: entityType,
-                        id: entityId
-                      }
-                    }}>
-                    {({ getHref }) => <WrapperComponent {...cardProps} href={getHref()} />}
-                  </EntityStateLink>
-                );
               }
+
+              const isEntry = entityType === 'Entry';
+              const entityId = fetchEntityResult.entity
+                ? fetchEntityResult.entity.sys.id
+                : undefined;
+              const WrapperComponent = cardComponent
+                ? cardComponent
+                : isEntry
+                ? WrappedEntityCard
+                : WrappedAssetCard;
+
+              const cardProps = {
+                entityType,
+                entityId,
+                ...fetchEntityResult,
+                readOnly,
+                size,
+                isLoading,
+                className,
+                selected,
+                disabled,
+                onEdit: () => onEdit(fetchEntityResult),
+                onClick: event => {
+                  event.preventDefault();
+                  onClick(fetchEntityResult);
+                },
+                onRemove: () => onRemove(fetchEntityResult),
+                cardDragHandleComponent
+              };
+              return (
+                <EntityStateLink
+                  entity={{
+                    sys: {
+                      type: entityType,
+                      id: entityId
+                    }
+                  }}>
+                  {({ getHref }) => <WrapperComponent {...cardProps} href={getHref()} />}
+                </EntityStateLink>
+              );
             }}
           />
         )}

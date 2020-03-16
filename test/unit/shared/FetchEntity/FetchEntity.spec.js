@@ -4,6 +4,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { $initialize } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
+import { noop } from 'lodash';
 
 const sandbox = sinon.sandbox.create();
 
@@ -24,6 +25,9 @@ const newMockWidgetAPI = (entity, contentType) => {
     },
     currentUrl: {
       pathname: ''
+    },
+    navigator: {
+      onSlideInNavigation: sandbox.stub().returns(noop)
     }
   };
 };
@@ -177,15 +181,26 @@ describe('FetchEntity', () => {
     });
   });
 
-  describe('on navigation (widgetAPI.currentUrl', function() {
+  describe('on slide-in navigation', function() {
     beforeEach(async function() {
       const updateUrl = pathname =>
         (this.props.widgetAPI = { ...this.props.widgetAPI, currentUrl: { pathname } });
       updateUrl(`base/${this.entity.sys.id}`);
+
+      let onNav;
+      this.props.widgetAPI.navigator.onSlideInNavigation = cb => {
+        onNav = cb;
+        return noop;
+      };
       this.mount();
       await flushPromises();
       this.props.render.reset();
-      updateUrl(`base/other`);
+
+      updateUrl('base/other');
+      onNav({
+        oldSlideLevel: 1,
+        newSlideLevel: 0
+      });
       this.wrapper.setProps(this.props);
       await flushPromises();
     });

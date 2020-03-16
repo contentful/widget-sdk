@@ -1,5 +1,5 @@
 import React from 'react';
-import _ from 'lodash';
+import { noop } from 'lodash';
 import { mount, shallow } from 'enzyme';
 import 'jest-enzyme';
 
@@ -49,6 +49,9 @@ describe('Hyperlink', () => {
       },
       scheduledActions: {
         getPendingScheduledActions: jest.fn()
+      },
+      navigator: {
+        onSlideInNavigation: jest.fn().mockReturnValue(noop)
       }
     };
   });
@@ -79,7 +82,7 @@ describe('Hyperlink', () => {
 
     const wrapper = mount(
       <WidgetAPIContext.Provider value={{ widgetAPI: widgetAPIMock }}>
-        <Hyperlink attributes={{}} onClick={_.noop()} node={node} getTooltipData={tooltipDataStub}>
+        <Hyperlink attributes={{}} onClick={noop()} node={node} getTooltipData={tooltipDataStub}>
           Hiya!
         </Hyperlink>
       </WidgetAPIContext.Provider>
@@ -124,7 +127,7 @@ describe('Hyperlink', () => {
 
     const wrapper = mount(
       <WidgetAPIContext.Provider value={{ widgetAPI: widgetAPIMock }}>
-        <Hyperlink attributes={{}} onClick={_.noop()} node={node} getTooltipData={tooltipDataStub}>
+        <Hyperlink attributes={{}} onClick={noop()} node={node} getTooltipData={tooltipDataStub}>
           Hiya!
         </Hyperlink>
       </WidgetAPIContext.Provider>

@@ -4,6 +4,7 @@ import '@testing-library/jest-dom/extend-expect';
 import EmbeddedEntryInline from './EmbeddedEntryInline';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';
 import ScheduledActionAction from 'app/ScheduledActions/ScheduledActionAction';
+import { noop } from 'lodash';
 
 describe('EmbeddedEntryInline component', () => {
   it('should render the scheduled icon if linked entry was scheduled', async () => {
@@ -43,6 +44,9 @@ describe('EmbeddedEntryInline component', () => {
             }
           }
         ])
+      },
+      navigator: {
+        onSlideInNavigation: jest.fn().mockReturnValue(noop)
       }
     };
 

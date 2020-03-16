@@ -1,7 +1,7 @@
 import openHyperlinkDialog from 'app/widgets/WidgetApi/dialogs/openHyperlinkDialog';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 import { getModule } from 'NgRegistry';
-import { goToSlideInEntity } from 'navigation/SlideInNavigator';
+import { goToSlideInEntity, onSlideInNavigation } from 'navigation/SlideInNavigator';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import * as entitySelector from 'search/EntitySelector/entitySelector';
 
@@ -52,7 +52,8 @@ export default function buildWidgetApi({ field, entry, currentUrl, settings, sch
     navigator: {
       openAsset: (...args) => openEntity('Asset', ...args),
       openEntry: (...args) => openEntity('Entry', ...args),
-      openEntity
+      openEntity,
+      onSlideInNavigation
     },
 
     /**

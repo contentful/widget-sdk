@@ -19,42 +19,36 @@ export default class FetchEntity extends React.PureComponent {
   static defaultProps = {
     fetchFile: true
   };
-  constructor(props) {
-    const { entityId, entityType } = props;
 
+  constructor(props) {
     super(props);
 
+    const { entityId, entityType } = props;
     this.state = {
       entityId,
       entityType,
       requestStatus: RequestStatus.Pending
     };
   }
+
   componentDidMount() {
     this.fetchEntity();
+
+    // TODO: Ideally we would only re-fetch entity that was edited (could be multiple in case of bulk-editor)
+    this.unsubscribeSlideInNavigation = this.props.widgetAPI.navigator.onSlideInNavigation(
+      ({ oldSlideLevel, newSlideLevel }) => {
+        if (oldSlideLevel > newSlideLevel) {
+          this.fetchEntity();
+        }
+      }
+    );
   }
+
   componentWillUnmount() {
     this.unmounting = true;
+    this.unsubscribeSlideInNavigation();
   }
-  componentDidUpdate(prevProps) {
-    const currentUrl = this.props.widgetAPI.currentUrl;
-    const prevUrl = prevProps.widgetAPI.currentUrl;
 
-    const prevEntryId = prevUrl.pathname.split('/').pop();
-
-    // TODO: Find better way of detecting whether entity was edited than this path hack.
-    // TODO: This does not work in case of bulk editor edit.
-    const hasUserJustEditedEntity = () =>
-      currentUrl.pathname !== prevUrl.pathname && prevEntryId === this.props.entityId;
-
-    if (
-      this.props.entityId !== prevProps.entityId ||
-      this.props.entityType !== prevProps.entityType ||
-      hasUserJustEditedEntity()
-    ) {
-      this.fetchEntity();
-    }
-  }
   fetchEntity = async () => {
     const { widgetAPI, entityId, entityType, localeCode, fetchFile } = this.props;
 
@@ -104,11 +98,13 @@ export default class FetchEntity extends React.PureComponent {
       requestStatus: RequestStatus.Success
     });
   };
+
   setStateSafe(newState) {
     if (!this.unmounting) {
       this.setState(newState);
     }
   }
+
   render() {
     return this.props.render(this.state);
   }
