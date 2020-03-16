@@ -115,12 +115,12 @@ describe('SpaceTemplateLoader', () => {
       expect(templates).toEqual(sortedEntries);
     });
 
-    it('should throw when something fails', () => {
+    it('should throw when something fails', async () => {
       newContentfulClient.mockImplementation(_ => {
         throw new Error();
       });
 
-      expect(getTemplatesList()).rejects.toThrow();
+      await expect(getTemplatesList()).rejects.toThrow();
 
       newContentfulClient.mockReset();
       newContentfulClient.mockReturnValue({
@@ -129,7 +129,7 @@ describe('SpaceTemplateLoader', () => {
       clientGetEntriesMock.mockReset();
       clientGetEntriesMock.mockRejectedValue(new Error());
 
-      expect(getTemplatesList()).rejects.toThrow();
+      await expect(getTemplatesList()).rejects.toThrow();
     });
   });
 

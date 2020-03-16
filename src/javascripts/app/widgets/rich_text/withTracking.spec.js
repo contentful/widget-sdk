@@ -103,7 +103,7 @@ describe('withTracking() returned hoc', () => {
       expect(props.onAction).toBeCalledWith(...onActionArgs);
     });
 
-    test.each([
+    it.each([
       ['insert', BLOCKS.HEADING_1, 'insertHeading1'],
       ['insert', BLOCKS.HEADING_2, 'insertHeading2'],
       ['insert', BLOCKS.HEADING_3, 'insertHeading3'],
@@ -143,7 +143,7 @@ describe('withTracking() returned hoc', () => {
       }
     );
 
-    test.each([
+    it.each([
       ['mark', MARKS.BOLD, 'markBold'],
       ['mark', MARKS.UNDERLINE, 'markUnderline'],
       ['mark', MARKS.ITALIC, 'markItalic'],

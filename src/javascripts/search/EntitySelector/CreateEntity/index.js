@@ -62,7 +62,8 @@ function CreateEntry(props) {
 CreateEntry.propTypes = {
   contentTypes: PropTypes.array.isRequired,
   onSelect: PropTypes.func.isRequired,
-  hasPlusIcon: PropTypes.bool
+  hasPlusIcon: PropTypes.bool,
+  suggestedContentTypeId: PropTypes.string
 };
 
 function CreateAsset(props) {
