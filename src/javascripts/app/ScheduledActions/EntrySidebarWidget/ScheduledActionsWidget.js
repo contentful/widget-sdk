@@ -45,6 +45,10 @@ const styles = {
   }),
   warningNote: css({
     marginTop: tokens.spacingM
+  }),
+  marginedJobsSkeleton: css({
+    maxHeight: '40px',
+    marginTop: tokens.spacing2Xl
   })
 };
 
@@ -106,7 +110,8 @@ export default function ScheduledActionsWidget({
   isSaving,
   updatedAt,
   validator,
-  publicationBlockedReason
+  publicationBlockedReason,
+  isStatusSwitch
 }) {
   const [jobs, setJobs] = useState([]);
   const [isDialogShown, setIsDialogShown] = useState(false);
@@ -215,6 +220,7 @@ export default function ScheduledActionsWidget({
         revert={revert}
         isSaving={isSaving}
         updatedAt={updatedAt}
+        isStatusSwitch={isStatusSwitch}
         onScheduledPublishClick={async () => {
           const isConfirmed = await showUnpublishedReferencesWarning({
             entity,
@@ -233,7 +239,9 @@ export default function ScheduledActionsWidget({
         publicationBlockedReason={publicationBlockedReason}
       />
       {isLoading && (
-        <SkeletonContainer data-test-id="jobs-skeleton" className={styles.jobsSkeleton}>
+        <SkeletonContainer
+          data-test-id="jobs-skeleton"
+          className={isStatusSwitch ? styles.marginedJobsSkeleton : styles.jobsSkeleton}>
           <SkeletonBodyText numberOfLines={2} />
         </SkeletonContainer>
       )}
@@ -254,25 +262,25 @@ export default function ScheduledActionsWidget({
               isReadOnly={primary.isDisabled()}
             />
           )}
-          {isDialogShown && (
-            <ScheduledActionDialog
-              isMasterEnvironment={isMasterEnvironment}
-              spaceId={spaceId}
-              environmentId={environmentId}
-              entity={entity}
-              validator={validator}
-              entryTitle={entryTitle}
-              pendingJobs={pendingJobs}
-              onCreate={(newJob, timezone) => {
-                handleCreate(newJob, timezone);
-              }}
-              onCancel={() => {
-                setIsDialogShown(false);
-              }}
-              isSubmitting={isCreatingJob}
-            />
-          )}
         </>
+      )}
+      {isDialogShown && (
+        <ScheduledActionDialog
+          isMasterEnvironment={isMasterEnvironment}
+          spaceId={spaceId}
+          environmentId={environmentId}
+          entity={entity}
+          validator={validator}
+          entryTitle={entryTitle}
+          pendingJobs={pendingJobs}
+          onCreate={(newJob, timezone) => {
+            handleCreate(newJob, timezone);
+          }}
+          onCancel={() => {
+            setIsDialogShown(false);
+          }}
+          isSubmitting={isCreatingJob}
+        />
       )}
     </ErrorHandler>
   );
@@ -294,5 +302,10 @@ ScheduledActionsWidget.propTypes = {
     run: PropTypes.func,
     setApiResponseErrors: PropTypes.func
   }).isRequired,
-  publicationBlockedReason: PropTypes.string
+  publicationBlockedReason: PropTypes.string,
+  isStatusSwitch: PropTypes.bool
+};
+
+ScheduledActionsWidget.defaultProps = {
+  isStatusSwitch: false
 };

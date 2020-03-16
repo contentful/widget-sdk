@@ -13,12 +13,16 @@ import {
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import RelativeTimeData from 'components/shared/RelativeDateTime';
+
 import ActionRestrictedNote from './ActionRestrictedNote';
 import RestrictedAction from './RestrictedAction';
 
 import CommandPropType from 'app/entity_editor/CommandPropType';
 import StatusBadge from 'app/EntrySidebar/PublicationWidget/StatusBadge';
 import ReferencesDialog from 'app/EntrySidebar/ReferencesDialog';
+
+import StatusSwitchPortal from './StatusSwitchPortal';
+import StatusSwitch from './StatusSwitch';
 
 // TODO: This code started as a copy of <PublicationWidget />, there should be
 //  some shared code as there are still a lot of similarities.
@@ -42,48 +46,52 @@ const styles = {
   scheduledIcon: css({
     marginRight: tokens.spacing2Xs
   }),
-  alphaTag: css({
-    marginLeft: tokens.spacing2Xs
-  }),
   sidebarHeading: css({
     display: 'flex'
   }),
   sidebarHeadingStatus: css({
     marginRight: 'auto'
+  }),
+  dropdownItem: css({
+    width: tokens.contentWidthFull,
+    '& > *': {
+      textAlign: 'center'
+    },
+    '& div': {
+      justifyContent: 'center'
+    }
   })
 };
 
-export default class StatusWidget extends React.PureComponent {
-  static propTypes = {
-    status: PropTypes.string.isRequired,
-    isSaving: PropTypes.bool.isRequired,
-    updatedAt: PropTypes.string,
-    isScheduled: PropTypes.bool,
-    revert: CommandPropType,
-    primary: CommandPropType,
-    secondary: PropTypes.arrayOf(CommandPropType.isRequired).isRequired,
-    onScheduledPublishClick: PropTypes.func.isRequired,
-    isScheduledPublishDisabled: PropTypes.bool.isRequired,
-    isDisabled: PropTypes.bool.isRequired,
-    publicationBlockedReason: PropTypes.string,
-    entity: PropTypes.object
-  };
+class StatusWidget extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isOpenDropdown: false
+    };
+  }
 
-  state = {
-    isOpenDropdown: false
-  };
-
-  renderScheduledPublicationCta = () => {
+  renderScheduledPublicationCta = isButtonLocked => {
     // disabled by the parent component (e.g. error during jobs fetching)
     if (this.props.isScheduledPublishDisabled || this.props.primary.isRestricted()) {
       return null;
     }
 
+    const { isStatusSwitch } = this.props;
+
     return (
       <DropdownListItem
-        className={styles.scheduleListItem}
+        className={
+          isStatusSwitch
+            ? cx(styles.scheduleListItem, styles.dropdownItem)
+            : styles.scheduleListItem
+        }
         testId="schedule-publication"
-        isDisabled={!!this.props.publicationBlockedReason || this.props.status === 'archived'}
+        isDisabled={
+          isButtonLocked ||
+          !!this.props.publicationBlockedReason ||
+          this.props.status === 'archived'
+        }
         onClick={() => {
           this.props.onScheduledPublishClick();
           this.setState({ isOpenDropdown: false });
@@ -111,8 +119,31 @@ export default class StatusWidget extends React.PureComponent {
       isDisabled,
       isScheduled,
       publicationBlockedReason,
-      entity
+      entity,
+      isStatusSwitch,
+      onScheduledPublishClick,
+      isScheduledPublishDisabled
     } = this.props;
+
+    if (isStatusSwitch) {
+      return (
+        <StatusSwitchPortal entityId={entity.sys.id}>
+          <StatusSwitch
+            primaryAction={primary}
+            status={status}
+            isSaving={isSaving}
+            secondaryActions={secondary}
+            isDisabled={isDisabled}
+            publicationBlockedReason={publicationBlockedReason}
+            isScheduled={isScheduled}
+            onScheduledPublishClick={onScheduledPublishClick}
+            isScheduledPublishDisabled={isScheduledPublishDisabled}
+            withScheduling={true}
+          />
+        </StatusSwitchPortal>
+      );
+    }
+
     const secondaryActionsDisabled =
       every(secondary || [], action => action.isDisabled()) && !this.canSchedule();
 
@@ -127,24 +158,22 @@ export default class StatusWidget extends React.PureComponent {
           <StatusBadge status={status} isScheduled={isScheduled} />
           <div className="publish-buttons-row">
             {status !== 'published' && primary && (
-              <React.Fragment>
-                <Button
-                  isFullWidth
-                  buttonType="positive"
-                  disabled={
-                    primary.isDisabled() ||
-                    isDisabled ||
-                    (primary.targetStateId === 'published' && !!publicationBlockedReason)
-                  }
-                  loading={primary.inProgress()}
-                  testId={`change-state-${primary.targetStateId}`}
-                  onClick={() => {
-                    primary.execute();
-                  }}
-                  className="primary-publish-button">
-                  {primary.label}
-                </Button>
-              </React.Fragment>
+              <Button
+                isFullWidth
+                buttonType="positive"
+                disabled={
+                  primary.isDisabled() ||
+                  isDisabled ||
+                  (primary.targetStateId === 'published' && !!publicationBlockedReason)
+                }
+                loading={primary.inProgress()}
+                testId={`change-state-${primary.targetStateId}`}
+                onClick={() => {
+                  primary.execute();
+                }}
+                className="primary-publish-button">
+                {primary.label}
+              </Button>
             )}
             <Dropdown
               className="secondary-publish-button-wrapper"
@@ -232,3 +261,25 @@ export default class StatusWidget extends React.PureComponent {
     );
   }
 }
+
+StatusWidget.propTypes = {
+  status: PropTypes.string.isRequired,
+  isSaving: PropTypes.bool.isRequired,
+  updatedAt: PropTypes.string,
+  isScheduled: PropTypes.bool,
+  revert: CommandPropType,
+  primary: CommandPropType,
+  secondary: PropTypes.arrayOf(CommandPropType.isRequired).isRequired,
+  onScheduledPublishClick: PropTypes.func.isRequired,
+  isScheduledPublishDisabled: PropTypes.bool.isRequired,
+  isDisabled: PropTypes.bool.isRequired,
+  publicationBlockedReason: PropTypes.string,
+  entity: PropTypes.object,
+  isStatusSwitch: PropTypes.bool
+};
+
+StatusWidget.defaultProps = {
+  isStatusSwitch: false
+};
+
+export default StatusWidget;

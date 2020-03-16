@@ -11,6 +11,7 @@
       props="{title, localeName: localeData.focusedLocale.name, isSingleLocaleModeOn: localeData.isSingleLocaleModeOn, contentTypeName: 'Asset', entityInfo }"
     ></react-component>
     <div class="workbench-header__actions">
+      <div id="editor-status-switch-{{entityInfo.id}}"></div>
       <button
         class="btn-secondary-action"
         data-test-id="trigger-delete-modal"

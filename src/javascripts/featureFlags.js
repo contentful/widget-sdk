@@ -21,3 +21,4 @@ export const NEW_RICH_TEXT = 'feature-pen-02-2020-open-source-rich-text';
 
 // Pulitzer Releases Flags
 export const ALL_REFERENCES_DIALOG = 'feature-pulitzer-02-2020-all-reference-dialog';
+export const NEW_STATUS_SWITCH = 'feature-pulitzer-03-2020-new-status-switch';

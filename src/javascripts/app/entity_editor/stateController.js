@@ -127,8 +127,8 @@ export default function register() {
             () => {
               controller.current = 'published';
               controller.primary = noop;
-              controller.secondary = [archive, unpublish];
-              controller.allActions = [archive, unpublish];
+              controller.secondary = [unpublish, archive];
+              controller.allActions = [unpublish, archive];
             }
           ],
           [
@@ -136,8 +136,8 @@ export default function register() {
             () => {
               controller.current = 'changes';
               controller.primary = publishChanges;
-              controller.secondary = [archive, unpublish];
-              controller.allActions = [publishChanges, archive, unpublish];
+              controller.secondary = [unpublish, archive];
+              controller.allActions = [publishChanges, unpublish, archive];
             }
           ],
           [

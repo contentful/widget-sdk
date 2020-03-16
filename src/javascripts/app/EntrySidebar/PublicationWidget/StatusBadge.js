@@ -43,6 +43,7 @@ const statusMap = {
     title: 'Changed'
   }
 };
+
 const StatusBadge = ({ status, isScheduled }) => (
   <div className={styles.statusBadge}>
     <span className={styles.current}>Current</span>

@@ -17,6 +17,8 @@ import EntrySidebarWidget from '../EntrySidebarWidget';
 import RelativeTimeData from 'components/shared/RelativeDateTime';
 import CommandPropType from 'app/entity_editor/CommandPropType';
 import StatusBadge from './StatusBadge';
+import StatusSwitchPortal from 'app/ScheduledActions/EntrySidebarWidget/StatusSwitchPortal';
+import StatusSwitch from 'app/ScheduledActions/EntrySidebarWidget/StatusSwitch';
 
 const styles = {
   actionRestrictionNote: css({
@@ -66,7 +68,12 @@ export default class PublicationWidget extends React.PureComponent {
     spaceId: PropTypes.string,
     environmentId: PropTypes.string,
     userId: PropTypes.string,
-    entity: PropTypes.object
+    entityId: PropTypes.string,
+    isStatusSwitch: PropTypes.bool
+  };
+
+  static defaultProps = {
+    isStatusSwitch: false
   };
 
   state = {
@@ -75,17 +82,35 @@ export default class PublicationWidget extends React.PureComponent {
 
   render() {
     const {
+      entityId,
       primary,
       status,
       secondary,
       isSaving,
       updatedAt,
       revert,
-      publicationBlockedReason
+      publicationBlockedReason,
+      isStatusSwitch
     } = this.props;
     const secondaryActionsDisabled = every(secondary || [], action => action.isDisabled());
     const isPrimaryPublishBlocked =
       primary && primary.targetStateId === 'published' && !!publicationBlockedReason;
+
+    if (isStatusSwitch) {
+      return (
+        <StatusSwitchPortal entityId={entityId}>
+          <StatusSwitch
+            primaryAction={primary}
+            status={status}
+            isSaving={isSaving}
+            isDisabled={false}
+            secondaryActions={secondary}
+            publicationBlockedReason={publicationBlockedReason}
+            withScheduling={false}
+          />
+        </StatusSwitchPortal>
+      );
+    }
 
     return (
       <EntrySidebarWidget title="Status">
@@ -93,20 +118,18 @@ export default class PublicationWidget extends React.PureComponent {
         <div className="entity-sidebar__state-select">
           <div className="publish-buttons-row">
             {status !== 'published' && primary && (
-              <React.Fragment>
-                <Button
-                  isFullWidth
-                  buttonType="positive"
-                  disabled={primary.isDisabled() || isPrimaryPublishBlocked}
-                  loading={primary.inProgress()}
-                  testId={`change-state-${primary.targetStateId}`}
-                  onClick={() => {
-                    primary.execute();
-                  }}
-                  className="primary-publish-button">
-                  {primary.label}
-                </Button>
-              </React.Fragment>
+              <Button
+                isFullWidth
+                buttonType="positive"
+                disabled={primary.isDisabled() || isPrimaryPublishBlocked}
+                loading={primary.inProgress()}
+                testId={`change-state-${primary.targetStateId}`}
+                onClick={() => {
+                  primary.execute();
+                }}
+                className="primary-publish-button">
+                {primary.label}
+              </Button>
             )}
             <Dropdown
               className="secondary-publish-button-wrapper"
