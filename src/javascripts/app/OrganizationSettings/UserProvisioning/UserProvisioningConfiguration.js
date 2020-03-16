@@ -13,7 +13,7 @@ import {
 import NavigationIcon from 'ui/Components/NavigationIcon';
 
 import { css } from 'emotion';
-import { apiUrl } from 'Config';
+import { helpCenterUrl, apiUrl } from 'Config';
 import tokens from '@contentful/forma-36-tokens';
 import ModalLauncher from 'app/common/ModalLauncher';
 import GenerateCMATokenDialog from 'app/common/ApiTokens/GenerateCMATokenDialog';
@@ -80,7 +80,7 @@ export default function UserProvisioningConfiguration({ orgId }) {
           <Heading>Set up user provisioning with SCIM 2.0</Heading>
           <Paragraph className={styles.paragraph}>
             Set up user provisioning for your organization in Contentful in a few steps.{' '}
-            <TextLink href={`https:${apiUrl('faq/')}`} target="_blank">
+            <TextLink href={`${helpCenterUrl}/scim-faq`} target="_blank">
               Check out the FAQs.
             </TextLink>
           </Paragraph>
