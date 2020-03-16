@@ -148,7 +148,7 @@ describe('TeamListRow', () => {
         const teamNameElement = getByTestId('team-name');
 
         expect(teamNameElement.href).toEqual(
-          `http://localhost/account/organizations/${activeOrgId}/teams/bTeam`
+          expect.stringContaining(`account/organizations/${activeOrgId}/teams/bTeam`)
         );
         expect(getByTestId('team-description')).toHaveTextContent('');
         expect(getByTestId('team-member-count')).toHaveTextContent('0 members');
