@@ -5,7 +5,7 @@ import * as fake from 'testHelpers/fakeFactory';
 import * as FORMA_CONSTANTS from 'testHelpers/Forma36Constants';
 
 import OrganizationRow from './OrganizationRow';
-import ModalLauncher from '__mocks__/app/common/ModalLauncher';
+import ModalLauncher from 'app/common/ModalLauncher';
 import { fetchCanLeaveOrg } from './OrganizationUtils';
 import { isOwnerOrAdmin, getOrganizationMembership } from 'services/OrganizationRoles';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
