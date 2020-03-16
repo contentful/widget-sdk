@@ -135,6 +135,14 @@ describe('TeamListRow', () => {
         });
       });
 
+      it('should render details of given team with member count', () => {
+        const { getByTestId } = renderComponent(actions, teams[0]);
+
+        expect(getByTestId('team-name')).toHaveTextContent('A Team');
+        expect(getByTestId('team-description')).toHaveTextContent('A description');
+        expect(getByTestId('team-member-count')).toHaveTextContent('3 members');
+      });
+
       it('should render details of given team with member count with link', () => {
         const { getByTestId } = renderComponent(actions, teams[1]);
         const teamNameElement = getByTestId('team-name');
@@ -173,15 +181,6 @@ describe('TeamListRow', () => {
               }
             }
           });
-        });
-
-        it('should have an edit and remove button', () => {
-          const { getByTestId } = renderComponent(actions, teams[0]);
-
-          fireEvent.click(getByTestId('user-space-list.menu.trigger'));
-
-          expect(screen.getByTestId('remove-team-button')).toBeInTheDocument();
-          expect(screen.getByTestId('edit-team-button')).toBeInTheDocument();
         });
 
         it('clicking the edit button should open team edit dialog for the correct team', () => {
