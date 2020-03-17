@@ -73,19 +73,25 @@ const styles = {
       width: sizesConfig.small,
       height: sizesConfig.small,
       maxWidth: sizesConfig.small,
-      maxHeight: sizesConfig.small
+      maxHeight: sizesConfig.small,
+      minWidth: sizesConfig.small,
+      minHeight: sizesConfig.small
     }),
     medium: css({
       width: sizesConfig.medium,
       height: sizesConfig.medium,
       maxWidth: sizesConfig.medium,
-      maxHeight: sizesConfig.medium
+      maxHeight: sizesConfig.medium,
+      minWidth: sizesConfig.medium,
+      minHeight: sizesConfig.medium
     }),
     large: css({
       width: sizesConfig.large,
       height: sizesConfig.large,
       maxWidth: sizesConfig.large,
-      maxHeight: sizesConfig.large
+      maxHeight: sizesConfig.large,
+      minWidth: sizesConfig.large,
+      minHeight: sizesConfig.large
     })
   }
 };

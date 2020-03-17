@@ -3350,6 +3350,7 @@ pre,
   .app-top-bar__outer-wrapper {
     display: flex;
     width: 100%;
+    background-color: #263545;
   }
 
   .app-top-bar__inner-wrapper {
@@ -3369,7 +3370,8 @@ pre,
     display: flex;
     -ms-flex-pack: justify;
     -webkit-box-pack: justify;
-            justify-content: space-between;
+    justify-content: space-between;
+    padding-right: 16px;
   }
 
   .nav-bar__end {
@@ -5224,7 +5226,10 @@ pre,
     height: 100%;
   }
   .app-top-bar__action:first-child {
-    padding-left: 15px;
+    padding-left: 16px;
+  }
+  .app-top-bar__action:last-child {
+    padding-right: 16px;
   }
   .app-top-bar__action > a > cf-icon {
     margin-right: 10px;
@@ -5239,7 +5244,7 @@ pre,
   }
   .app-top-bar__action a {
     color: #fff;
-    padding: 0 20px;
+    padding: 0 16px;
   }
   .app-top-bar__action a:hover {
     color: #4a90e2;

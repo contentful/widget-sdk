@@ -55,6 +55,8 @@ exports[`AppsListPage should match snapshot for loading state 1`] = `
   height: 32px;
   max-width: 32px;
   max-height: 32px;
+  min-width: 32px;
+  min-height: 32px;
 }
 
 <div>
@@ -447,6 +449,8 @@ exports[`AppsListPage should match snapshot of apps loaded state 1`] = `
   height: 32px;
   max-width: 32px;
   max-height: 32px;
+  min-width: 32px;
+  min-height: 32px;
 }
 
 <div>
@@ -982,6 +986,8 @@ exports[`AppsListPage should match snapshot of apps loaded with limited access 1
   height: 32px;
   max-width: 32px;
   max-height: 32px;
+  min-width: 32px;
+  min-height: 32px;
 }
 
 <div>
