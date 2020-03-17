@@ -1,11 +1,24 @@
 /* eslint "rulesdir/restrict-inline-styles": "warn" */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
+
 import { connect } from 'react-redux';
 import { isEmpty, get, some } from 'lodash';
 import { Modal, TextField, Button, Paragraph } from '@contentful/forma-36-react-components';
 import { getTeams } from 'redux/selectors/teams';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes';
+
+const styles = {
+  form: css({
+    display: 'flex',
+    flexDirection: 'column'
+  }),
+  modalContent: css({
+    marginBottom: tokens.spacingL
+  })
+};
 
 class TeamDialog extends React.Component {
   static propTypes = {
@@ -97,17 +110,18 @@ class TeamDialog extends React.Component {
           <form
             noValidate
             onSubmit={this.onConfirm}
-            style={{ display: 'flex', flexDirection: 'column' }}
+            className={styles.form}
             data-test-id="team-form">
             <Modal.Header title={isEditing ? 'Edit team' : 'New team'} onClose={onClose} />
             <Modal.Content>
-              <Paragraph className="f36-margin-bottom--l">
+              <Paragraph className={styles.modalContent}>
                 Teams make it easy to group people together.
               </Paragraph>
               <TextField
                 required
                 name="teamName"
                 id="team_name"
+                testId="team-name-input"
                 labelText="Team name"
                 value={name}
                 countCharacters

@@ -5,7 +5,15 @@ import { get } from 'lodash';
 import pluralize from 'pluralize';
 import { css } from 'emotion';
 
-import { Button, TableRow, TableCell, Spinner } from '@contentful/forma-36-react-components';
+import {
+  TextLink,
+  TableRow,
+  TableCell,
+  Spinner,
+  CardActions,
+  DropdownList,
+  DropdownListItem
+} from '@contentful/forma-36-react-components';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes';
 import ROUTES from 'redux/routes';
 import getOrgId from 'redux/selectors/getOrgId';
@@ -23,15 +31,8 @@ const styles = {
   description: css({
     width: '30rem',
     ...ellipsisStyle
-  }),
-  row: css({})
+  })
 };
-styles.button = css({
-  transition: 'none',
-  visibility: 'hidden',
-  marginLeft: '10px',
-  [`.${styles.row}:hover &`]: { visibility: 'visible' }
-});
 
 class TeamListRow extends React.Component {
   static propTypes = {
@@ -53,18 +54,18 @@ class TeamListRow extends React.Component {
     const teamId = get(team, 'sys.id');
 
     return (
-      <TableRow className={styles.row}>
+      <TableRow>
         <TableCell>
           <div className={styles.name}>
             {teamId !== 'placeholder' ? (
-              <a
+              <TextLink
                 data-test-id="team-name"
                 href={ROUTES.organization.children.teams.children.team.build({
                   orgId,
                   teamId: team.sys.id
                 })}>
                 {team.name}
-              </a>
+              </TextLink>
             ) : (
               <span data-test-id="team-name">
                 {team.name} <Spinner size="small" />
@@ -80,24 +81,22 @@ class TeamListRow extends React.Component {
         <TableCell testId="team-member-count">{pluralize('member', memberCount, true)}</TableCell>
         {!readOnlyPermission && (
           <TableCell align="right">
-            <div>
-              <Button
-                testId="remove-team-button"
-                buttonType="muted"
-                size="small"
-                onClick={() => removeTeam(get(team, 'sys.id'))}
-                className={styles.button}>
-                Remove
-              </Button>
-              <Button
-                testId="edit-team-button"
-                buttonType="muted"
-                size="small"
-                onClick={() => this.setState({ showTeamDialog: true })}
-                className={styles.button}>
-                Edit
-              </Button>
-            </div>
+            <CardActions
+              iconButtonProps={{ buttonType: 'primary', testId: 'user-space-list.menu.trigger' }}
+              data-test-id="user-space-list.menu">
+              <DropdownList>
+                <DropdownListItem
+                  onClick={() => removeTeam(get(team, 'sys.id'))}
+                  testId="remove-team-button">
+                  Remove
+                </DropdownListItem>
+                <DropdownListItem
+                  onClick={() => this.setState({ showTeamDialog: true })}
+                  testId="edit-team-button">
+                  Edit
+                </DropdownListItem>
+              </DropdownList>
+            </CardActions>
           </TableCell>
         )}
         <TeamDialog
