@@ -25,7 +25,7 @@ import * as TokenStore from 'services/TokenStore';
 import EmptyStateContainer, {
   defaultSVGStyle
 } from 'components/EmptyStateContainer/EmptyStateContainer';
-import Illustration from 'svg/readonly-space-ill.svg';
+import Illustration from 'svg/illustrations/readonly-space-ill.svg';
 
 const styles = {
   content: css({
