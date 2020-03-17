@@ -2,7 +2,7 @@ import { get } from 'lodash';
 import * as Analytics from 'analytics/Analytics';
 import { getToken } from 'Authentication';
 import { uploadApiUrl } from 'Config';
-
+import ScheduledActionsRepo from 'app/ScheduledActions/DataManagement/ScheduledActionsRepo';
 import checkDependencies from './checkDependencies';
 
 const ASSET_PROCESSING_POLL_MS = 500;
@@ -34,6 +34,16 @@ export default function makeExtensionSpaceMethodsHandlers(dependencies, handlerO
 
       if (methodName === 'waitUntilAssetProcessed') {
         return waitUntilAssetProcessed(spaceContext.cma, args[0], args[1]);
+      }
+
+      if (methodName === 'getEntityScheduledActions') {
+        const entityType = args[0];
+        const entityId = args[1];
+        return ScheduledActionsRepo.getEntityScheduledActions(entityType, entityId);
+      }
+
+      if (methodName === 'getAllScheduledActions') {
+        return ScheduledActionsRepo.getAllScheduledActions();
       }
 
       // TODO: Use `getBatchingApiClient(spaceContext.cma)`.

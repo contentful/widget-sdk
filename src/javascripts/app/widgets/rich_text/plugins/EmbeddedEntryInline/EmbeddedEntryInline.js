@@ -6,12 +6,11 @@ import {
   DropdownList,
   Icon
 } from '@contentful/forma-36-react-components';
-import { orderBy } from 'lodash';
 
 import { default as FetchEntity, RequestStatus } from 'app/widgets/shared/FetchEntity';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';
 import { INLINES } from '@contentful/rich-text-types';
-import ScheduleTooltip from 'app/ScheduledActions/EntrySidebarWidget/ScheduledActionsTimeline/ScheduleTooltip';
+import { ScheduledIconWithTooltip } from 'app/widgets/shared/FetchedEntityCard/ScheduledIconWithTooltip';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -42,10 +41,7 @@ class EmbeddedEntryInline extends React.Component {
     );
   }
 
-  renderNode(
-    { requestStatus, contentTypeName, entity, entityTitle, entityStatus },
-    { job, jobsCount }
-  ) {
+  renderNode({ requestStatus, contentTypeName, entity, entityTitle, entityStatus }, entityId) {
     const isLoading = requestStatus === RequestStatus.Pending && !entity;
     return (
       <InlineEntryCard
@@ -67,16 +63,14 @@ class EmbeddedEntryInline extends React.Component {
             </DropdownList>
           ) : null
         }>
-        {job && (
-          <ScheduleTooltip job={job} jobsCount={jobsCount}>
-            <Icon
-              className={styles.scheduledIcon}
-              icon="Clock"
-              color="muted"
-              testId="scheduled-icon"
-            />
-          </ScheduleTooltip>
-        )}
+        <ScheduledIconWithTooltip entityType="Entry" entityId={entityId}>
+          <Icon
+            className={styles.scheduledIcon}
+            icon="Clock"
+            color="muted"
+            testId="scheduled-icon"
+          />
+        </ScheduledIconWithTooltip>
         {entityTitle || 'Untitled'}
       </InlineEntryCard>
     );
@@ -104,17 +98,7 @@ class EmbeddedEntryInline extends React.Component {
                 if (fetchEntityResult.requestStatus === RequestStatus.Error) {
                   return this.renderMissingNode();
                 } else {
-                  const jobs = widgetAPI.scheduledActions
-                    ? widgetAPI.scheduledActions
-                        .getPendingScheduledActions()
-                        .filter(job => job.entity.sys.id === entryId)
-                    : [];
-                  const sortedJobs = orderBy(jobs, ['scheduledFor.datetime'], ['asc']);
-                  const scheduledInfo = {
-                    job: sortedJobs[0],
-                    jobsCount: sortedJobs.length
-                  };
-                  return this.renderNode(fetchEntityResult, scheduledInfo);
+                  return this.renderNode(fetchEntityResult, entryId);
                 }
               }}
             />

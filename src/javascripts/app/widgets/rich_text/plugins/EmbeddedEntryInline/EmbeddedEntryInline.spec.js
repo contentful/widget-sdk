@@ -32,7 +32,7 @@ describe('EmbeddedEntryInline component', () => {
         locale: 'en-US'
       },
       scheduledActions: {
-        getPendingScheduledActions: jest.fn().mockReturnValue([
+        getEntityScheduledActions: jest.fn().mockResolvedValue([
           {
             action: ScheduledActionAction.Publish,
             sys: {

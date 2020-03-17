@@ -63,7 +63,6 @@ export default function createNewWidgetApi(dependencies) {
 
   return {
     ...createSpaceScopedWidgetApi({
-      scheduledActions: $scope.scheduledActionsStore,
       cma,
       initialContentTypes: spaceContext.publishedCTs.getAllBare()
     }),
@@ -95,11 +94,7 @@ export function createNewReadOnlyWidgetApi({
   };
 }
 
-function createSpaceScopedWidgetApi({
-  cma: cmaOrBatchingApiClient,
-  initialContentTypes,
-  scheduledActions
-}) {
+function createSpaceScopedWidgetApi({ cma: cmaOrBatchingApiClient, initialContentTypes }) {
   const cma = getBatchingApiClient(cmaOrBatchingApiClient);
   const space = createSpaceApi({ cma, initialContentTypes });
   const navigator = createNavigatorApi({ cma });
@@ -116,7 +111,6 @@ function createSpaceScopedWidgetApi({
       startAutoResizer: noop,
       stopAutoResizer: noop
     },
-    scheduledActions,
     notifier: {
       success: text => {
         Notification.success(text);

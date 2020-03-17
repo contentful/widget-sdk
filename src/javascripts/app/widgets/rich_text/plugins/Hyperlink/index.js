@@ -1,6 +1,7 @@
-import React from 'react';
+import * as React from 'react';
+import PropTypes from 'prop-types';
 import isHotkey from 'is-hotkey';
-import { get, orderBy } from 'lodash';
+import { get } from 'lodash';
 import { INLINES } from '@contentful/rich-text-types';
 import ToolbarIcon from './ToolbarIcon';
 import Hyperlink from './Hyperlink';
@@ -19,29 +20,58 @@ const styles = {
   })
 };
 
-export default ToolbarIcon;
+const ScheduleFetcher = ({ getEntityScheduledActions, entityType, entityId }) => {
+  const [status, setStatus] = React.useState({ type: 'loading' });
+
+  React.useEffect(() => {
+    getEntityScheduledActions(entityType, entityId)
+      .then(data => {
+        setStatus({ type: 'loaded', jobs: data });
+      })
+      .catch(e => {
+        setStatus({ type: 'error', error: e });
+      });
+  }, [entityId, entityType, getEntityScheduledActions, setStatus]);
+
+  if (status.type === 'loading' || status.type === 'error') {
+    return null;
+  }
+
+  const jobs = status.jobs ? status.jobs : [];
+
+  return jobs.length > 0 ? (
+    <>
+      <hr className={styles.tooltipSeparator} />
+      <ScheduleTooltipContent job={jobs[0]} jobsCount={jobs.length} />
+    </>
+  ) : null;
+};
+
+ScheduleFetcher.propTypes = {
+  getEntityScheduledActions: PropTypes.func.isRequired,
+  entityType: PropTypes.string.isRequired,
+  entityId: PropTypes.string.isRequired
+};
 
 export const getScheduledJobsTooltip = (entityType, node, widgetAPI) => {
   if (
     entityType !== 'Entry' ||
     typeof get(node, 'data.get') !== 'function' ||
-    typeof get(widgetAPI, 'scheduledActions.getPendingScheduledActions') !== 'function'
+    typeof get(widgetAPI, 'scheduledActions.getEntityScheduledActions') !== 'function'
   ) {
     return null;
   }
 
   const target = node.data.get('target');
   const referencedEntityId = get(target, 'sys.id', undefined);
-  const jobs = widgetAPI.scheduledActions
-    .getPendingScheduledActions()
-    .filter(job => job.entity.sys.id === referencedEntityId);
-  const sortedJobs = orderBy(jobs, ['scheduledFor.datetime'], ['asc']);
-  return sortedJobs.length ? (
-    <>
-      <hr className={styles.tooltipSeparator} />
-      <ScheduleTooltipContent job={sortedJobs[0]} jobsCount={sortedJobs.length} />
-    </>
-  ) : null;
+
+  return (
+    <ScheduleFetcher
+      getEntityScheduledActions={widgetAPI.scheduledActions.getEntityScheduledActions}
+      entityType={entityType}
+      entityId={referencedEntityId}
+    />
+  );
 };
 
 export const HyperlinkPlugin = ({
@@ -97,3 +127,5 @@ export const HyperlinkPlugin = ({
 function isHyperlink(type) {
   return [HYPERLINK, ENTRY_HYPERLINK, ASSET_HYPERLINK].indexOf(type) > -1;
 }
+
+export default ToolbarIcon;

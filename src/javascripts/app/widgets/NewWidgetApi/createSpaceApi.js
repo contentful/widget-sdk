@@ -3,6 +3,7 @@
  */
 
 import * as PublicContentType from 'widgets/PublicContentType';
+import ScheduledActionsRepo from 'app/ScheduledActions/DataManagement/ScheduledActionsRepo';
 import { waitUntilAssetProcessed } from 'widgets/bridges/makeExtensionSpaceMethodsHandlers';
 
 /**
@@ -38,6 +39,12 @@ export function createSpaceApi({ cma, initialContentTypes }) {
     },
     processAsset: (...args) => {
       return cma.processAsset(...args);
+    },
+    getEntityScheduledActions: (entityType, entityId) => {
+      return ScheduledActionsRepo.getEntityScheduledActions(entityType, entityId);
+    },
+    getAllScheduledActions: () => {
+      return ScheduledActionsRepo.getAllScheduledActions();
     }
   };
 }

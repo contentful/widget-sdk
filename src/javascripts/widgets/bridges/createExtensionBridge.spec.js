@@ -409,7 +409,7 @@ describe('createExtensionBridge', () => {
     const api = makeStubbedApi();
     bridge.install(api);
 
-    const registerCall = api.registerHandler.mock.calls[6];
+    const registerCall = api.registerHandler.mock.calls[4];
     expect(registerCall[0]).toBe('navigateToPageExtension');
     const navigateToPageExtension = registerCall[1];
     expect(typeof navigateToPageExtension).toBe('function');
@@ -424,10 +424,10 @@ describe('createExtensionBridge', () => {
     bridge.install(api);
 
     const registerCalls = api.registerHandler.mock.calls;
-    expect(registerCalls[4][0]).toBe('setInvalid');
-    const setInvalid = registerCalls[4][1];
-    expect(registerCalls[5][0]).toBe('setActive');
-    const setActive = registerCalls[5][1];
+    expect(registerCalls[5][0]).toBe('setInvalid');
+    const setInvalid = registerCalls[5][1];
+    expect(registerCalls[6][0]).toBe('setActive');
+    const setActive = registerCalls[6][1];
 
     setInvalid(true, 'de-DE');
     expect(stubs.setInvalid).toBeCalledWith('de-DE', true);

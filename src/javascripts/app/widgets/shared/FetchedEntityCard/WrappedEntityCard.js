@@ -1,39 +1,17 @@
-import React, { memo, useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { EntryCard, Icon } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { ScheduleTooltip } from 'app/ScheduledActions';
 import { css } from 'emotion';
-import WidgetApiContext from 'app/widgets/WidgetApi/WidgetApiContext';
+import { ScheduledIconWithTooltip } from 'app/widgets/shared/FetchedEntityCard/ScheduledIconWithTooltip';
 
 import Thumbnail from './Thumbnail';
 import { EntryActions, AssetActions } from './CardActions';
-import { filterRelevantJobsForEntity, sortJobsByRelevance } from 'app/ScheduledActions/utils';
 
 const styles = {
   marginRightXS: css({
     marginRight: tokens.spacing2Xs
   })
-};
-
-const IconWrappedIntoScheduledTooltip = memo(({ entityType, entityId }) => {
-  const { widgetAPI } = useContext(WidgetApiContext);
-  if (!widgetAPI || !widgetAPI.scheduledActions) {
-    return null;
-  }
-  const jobs = widgetAPI.scheduledActions.getPendingScheduledActions();
-  const relevantJobs = filterRelevantJobsForEntity(jobs, entityType, entityId);
-  const mostRelevantJob = sortJobsByRelevance(relevantJobs)[0];
-  return (
-    <ScheduleTooltip job={mostRelevantJob} jobsCount={relevantJobs.length}>
-      <Icon icon="Clock" className={styles.marginRightXS} size="small" color="muted" />
-    </ScheduleTooltip>
-  );
-});
-
-IconWrappedIntoScheduledTooltip.propTypes = {
-  entityType: PropTypes.string.isRequired,
-  entityId: PropTypes.string.isRequired
 };
 
 /**
@@ -109,7 +87,17 @@ export default class WrappedEntityCard extends React.Component {
         size={size}
         selected={selected}
         status={entityStatus}
-        statusIcon={<IconWrappedIntoScheduledTooltip entityType={entityType} entityId={entityId} />}
+        statusIcon={
+          <ScheduledIconWithTooltip entityType={entityType} entityId={entityId}>
+            <Icon
+              icon="Clock"
+              className={styles.marginRightXS}
+              size="small"
+              color="muted"
+              testId="schedule-icon"
+            />
+          </ScheduledIconWithTooltip>
+        }
         thumbnailElement={entityFile && <Thumbnail thumbnail={entityFile} />}
         loading={isLoading}
         dropdownListElements={this.renderActions()}

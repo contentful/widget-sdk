@@ -4,6 +4,7 @@ import * as K from 'utils/kefir';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 import * as PublicContentType from 'widgets/PublicContentType';
 import * as EntityHelpers from 'app/entity_editor/entityHelpers';
+import ScheduledActionsRepo from 'app/ScheduledActions/DataManagement/ScheduledActionsRepo';
 
 import TheLocaleStore from 'services/localeStore';
 
@@ -67,7 +68,7 @@ export default function register() {
 
       this.space = getBatchingApiClient(spaceContext.cma);
       this.entityHelpers = EntityHelpers.newForLocale(locale.code);
-      this.scheduledActions = $scope.scheduledActionsStore;
+      this.scheduledActions = ScheduledActionsRepo;
 
       // This interface is not exposed on the Extensions SDK. It serves for
       // internal convenience. Everything that uses these values can be

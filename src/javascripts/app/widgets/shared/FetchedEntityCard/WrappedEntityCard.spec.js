@@ -1,16 +1,8 @@
 import React from 'react';
-import { mount } from 'enzyme';
-import 'jest-enzyme';
+import { render, waitForElement } from '@testing-library/react';
 import EntityCard from './WrappedEntityCard';
 import ScheduledActionActions from 'app/ScheduledActions/ScheduledActionAction';
 import WidgetAPIContext from 'app/widgets/WidgetApi/WidgetApiContext';
-
-// https://github.com/airbnb/enzyme/issues/1875#issuecomment-451177239
-jest.mock('react', () => {
-  const r = jest.requireActual('react');
-
-  return { ...r, memo: x => x };
-});
 
 describe('WrappedEntityCard', () => {
   const JOB_ENTITY_ID = 'entity-id';
@@ -40,13 +32,13 @@ describe('WrappedEntityCard', () => {
 
     widgetAPIMock = {
       scheduledActions: {
-        getPendingScheduledActions: jest.fn().mockReturnValue(jobs)
+        getEntityScheduledActions: jest.fn().mockResolvedValue(jobs)
       }
     };
   });
 
-  it('should display the tooltip with an icon for a scheduled entry', () => {
-    const wrapper = mount(
+  it('should display the tooltip with an icon for a scheduled entry', async () => {
+    const { getByTestId } = render(
       <WidgetAPIContext.Provider value={{ widgetAPI: widgetAPIMock }}>
         <EntityCard
           entityId={JOB_ENTITY_ID}
@@ -60,17 +52,24 @@ describe('WrappedEntityCard', () => {
       </WidgetAPIContext.Provider>
     );
 
-    const tooltip = wrapper.find('ScheduleTooltip');
-
-    expect(tooltip.exists()).toBeTrue();
-    expect(tooltip.children().length > 0).toBeTrue();
-    expect(tooltip.prop('job')).toEqual(jobs[0]);
-    expect(tooltip.prop('jobsCount')).toBe(jobs.length);
+    await waitForElement(() => getByTestId('schedule-icon'));
+    expect(widgetAPIMock.scheduledActions.getEntityScheduledActions).toHaveBeenCalledWith(
+      'Entry',
+      'entity-id'
+    );
   });
 
-  it('should not display the tooltip with an icon for an entry that was not scheduled', () => {
-    const wrapper = mount(
-      <WidgetAPIContext.Provider value={{ widgetAPI: widgetAPIMock }}>
+  it('should not display the tooltip with an icon for an entry that was not scheduled', async () => {
+    const widgetAPI = {
+      scheduledActions: {
+        getEntityScheduledActions: jest.fn().mockResolvedValue([])
+      }
+    };
+    const { getByTestId } = render(
+      <WidgetAPIContext.Provider
+        value={{
+          widgetAPI: widgetAPI
+        }}>
         <EntityCard
           entityId="another-entity-not-scheduled"
           entityType="Entry"
@@ -83,9 +82,18 @@ describe('WrappedEntityCard', () => {
       </WidgetAPIContext.Provider>
     );
 
-    const tooltip = wrapper.find('ScheduleTooltip');
+    let foundIcon = true;
 
-    expect(tooltip.exists()).toBeTrue();
-    expect(tooltip.children()).toHaveLength(0);
+    try {
+      await waitForElement(() => getByTestId('schedule-icon'));
+    } catch (e) {
+      foundIcon = false;
+    }
+
+    expect(foundIcon).toBeFalsy();
+    expect(widgetAPI.scheduledActions.getEntityScheduledActions).toHaveBeenCalledWith(
+      'Entry',
+      'another-entity-not-scheduled'
+    );
   });
 });

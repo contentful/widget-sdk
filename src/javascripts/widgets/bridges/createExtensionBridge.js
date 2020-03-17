@@ -143,6 +143,7 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
       makeExtensionNavigationHandlers(dependencies.spaceContext)
     );
     api.registerHandler('notify', makeExtensionNotificationHandlers(dependencies));
+    api.registerHandler('navigateToPageExtension', makePageExtensionHandlers(dependencies));
 
     $scope.$watch('preferences.showDisabledFields', () => {
       api.send('showDisabledFieldsChanged', [$scope.preferences.showDisabledFields]);
@@ -178,7 +179,5 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
         $scope.fieldLocale.setActive(isActive);
       });
     }
-
-    api.registerHandler('navigateToPageExtension', makePageExtensionHandlers(dependencies));
   }
 }

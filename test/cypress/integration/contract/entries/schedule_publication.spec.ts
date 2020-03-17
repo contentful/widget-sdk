@@ -14,14 +14,13 @@ import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 import {
   createScheduledPublicationForDefaultSpace,
   cancelDefaultJobInDefaultSpace,
-  queryAllScheduledJobsForDefaultEntry,
-  queryPendingJobsForDefaultSpaceWithoutLimit
+  queryAllScheduledJobsForDefaultEntry
 } from '../../../interactions/jobs';
 import { FeatureFlag } from '../../../util/featureFlag';
 import {
   queryForTasksAndAppsInDefaultSpace,
   queryForScheduledPublishingOnEntryPage
-} from '../../../interactions/product_catalog_features'
+} from '../../../interactions/product_catalog_features';
 
 describe('Schedule Publication', () => {
   let interactions: string[];
@@ -157,7 +156,6 @@ function basicServerSetUp(): string[] {
     queryLinksToDefaultEntry.willReturnNone(),
     getFirst7SnapshotsOfDefaultEntry.willReturnNone(),
     getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
-    queryPendingJobsForDefaultSpaceWithoutLimit.willFindNone(),
     queryForTasksAndAppsInDefaultSpace.willFindBothEnabled(),
     queryForScheduledPublishingOnEntryPage.willFindFeatureEnabled()
   ];

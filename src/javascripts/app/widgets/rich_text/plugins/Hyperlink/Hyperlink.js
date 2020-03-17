@@ -67,6 +67,7 @@ export default class Hyperlink extends React.Component {
     return (
       <Tooltip
         content={tooltip}
+        place="bottom"
         className="rich-text__tooltip-container"
         targetWrapperClassName="rich-text__hyperlink-wrapper"
         maxWidth="auto">
