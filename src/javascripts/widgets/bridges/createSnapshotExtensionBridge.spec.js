@@ -1,8 +1,9 @@
 import createSnapshotExtensionBridge from './createSnapshotExtensionBridge';
 import { LOCATION_ENTRY_FIELD } from '../WidgetLocations';
+import { getModule } from 'NgRegistry';
 
 jest.mock('Authentication', () => ({ getToken: () => '<TOKEN>' }));
-
+jest.mock('NgRegistry', () => ({ getModule: jest.fn() }));
 jest.mock('services/localeStore', () => ({
   getPrivateLocales: () => [{ code: 'pl' }, { code: 'en' }],
   getDefaultLocale: () => ({ code: 'pl' })
@@ -14,29 +15,26 @@ describe('createSnaphotExtensionBridge', () => {
     getEntry: jest.fn(() => Promise.resolve('Entry data'))
   };
 
+  getModule.mockImplementation(() => ({
+    getId: () => 'spaceId',
+    getEnvironmentId: () => 'environmentId',
+    cma: stubs,
+    space: { data: { spaceMember: 'MEMBER ', spaceMembership: 'MEMBERSHIP ' } },
+    publishedCTs: {
+      getAllBare: () => [{ id: 'first-content-type' }, { id: 'second-content-type' }]
+    }
+  }));
+
   const makeBridge = () => {
     const bridge = createSnapshotExtensionBridge({
-      $scope: {
-        widget: { field: 'FIELD' },
-        locale: { code: 'pl' },
-        entity: { sys: {}, fields: {} },
-        entityInfo: {
-          contentType: 'CONTENT TYPE'
-        },
-        editorData: {
-          editorInterface: {
-            controls: [],
-            sidebar: []
-          }
-        }
-      },
-      spaceContext: {
-        getId: () => 'spaceId',
-        getEnvironmentId: () => 'environmentId',
-        cma: { updateEntry: stubs.updateEntry, getEntry: stubs.getEntry },
-        space: { data: { spaceMember: 'MEMBER ', spaceMembership: 'MEMBERSHIP ' } },
-        publishedCTs: {
-          getAllBare: () => [{ id: 'first-content-type' }, { id: 'second-content-type' }]
+      field: 'FIELD',
+      locale: { code: 'pl' },
+      entity: { sys: {}, fields: {} },
+      editorData: {
+        contentType: 'CONTENT TYPE',
+        editorInterface: {
+          controls: [],
+          sidebar: []
         }
       }
     });

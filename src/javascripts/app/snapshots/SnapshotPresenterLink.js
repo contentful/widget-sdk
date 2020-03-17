@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { memoize } from 'lodash';
-import { getModule } from 'NgRegistry';
 import { css } from 'emotion';
+import { getModule } from 'NgRegistry';
 
 import * as EntityResolver from 'data/CMA/EntityResolver';
 import * as EntityHelpers from 'app/entity_editor/entityHelpers';
@@ -39,11 +39,11 @@ const SnapshotPresenterLink = ({ locale, value, linkType }) => {
   return models.map(({ entity }, i) => {
     const key = `${entity.sys.id}_${i}`;
     return entity.sys.type === 'Entry' ? (
-      <div key={key}>
+      <div key={key} data-test-id="snapshot-presenter-link">
         <EntryLink entry={entity} entityHelpers={helper} getContentType={getContentType} />
       </div>
     ) : (
-      <div key={key} className={styles.assetLink}>
+      <div key={key} className={styles.assetLink} data-test-id="snapshot-presenter-link">
         <AssetLink asset={entity} entityHelpers={helper} />
       </div>
     );

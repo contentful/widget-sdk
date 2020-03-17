@@ -7559,16 +7559,6 @@ pre,
     -webkit-box-pack: justify;
             justify-content: space-between;
   }
-  .snapshot-comparator__presenter {
-    font-size: 1.1em;
-  }
-  .snapshot-comparator__presenter.x--dir-rtl .x--directed {
-    direction: rtl;
-  }
-  .snapshot-comparator__presenter .symbol-array-preview li {
-    margin-left: 1.5em;
-    list-style-type: disc;
-  }
   .snapshot-comparator__overlay-different,
   .snapshot-comparator__overlay-identical {
     z-index: 150;

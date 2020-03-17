@@ -75,7 +75,10 @@
               <cf-icon name="lock"></cf-icon>This field is disabled
             </div>
           </div>
-          <cf-snapshot-presenter></cf-snapshot-presenter>
+          <react-component
+            name="app/snapshots/SnapshotPresenter"
+            props="{version, snapshot, locale, widget, getEditorData}"
+          ></react-component>
           <div
             class="snapshot-comparator__overlay-different"
             ng-if="canRestore"
@@ -107,7 +110,11 @@
               <cf-icon name="lock"></cf-icon>This field is disabled
             </div>
           </div>
-          <cf-snapshot-presenter></cf-snapshot-presenter>
+          <react-component
+            name="app/snapshots/SnapshotPresenter"
+            props="{version, snapshot, locale, widget, getEditorData}"
+          ></react-component>
+          <!-- <cf-snapshot-presenter></cf-snapshot-presenter> -->
           <div
             class="snapshot-comparator__overlay-different"
             ng-if="canRestore"

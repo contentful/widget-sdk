@@ -37,6 +37,8 @@ export default function register() {
     '$stateParams',
     'spaceContext',
     function SnapshotComparatorController($scope, $q, $state, $stateParams, spaceContext) {
+      $scope.getEditorData = () => $scope.editorData; // Temporary solution to avoid RangeError when passing down object as props
+
       $scope.versionPicker = versionPicker.create();
       $scope.snapshotCount = $stateParams.snapshotCount;
 

@@ -75,12 +75,12 @@ export default function createNewWidgetApi(dependencies) {
 }
 
 export function createNewReadOnlyWidgetApi({
-  cma,
   field,
   fieldValue,
   locale,
   entry,
   contentType,
+  cma,
   initialContentTypes
 }) {
   const contentTypeApi = createContentTypeApi({ contentType });
