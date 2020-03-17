@@ -191,10 +191,10 @@ describe('TeamListRow', () => {
           const button = screen.getByTestId('edit-team-button');
 
           fireEvent.click(button.children[0]);
-          expect(screen.getByTestId('team-form')).toBeInTheDocument();
+          expect(screen.getByTestId('team-form')).toBeVisible();
 
           const teamInput = getByTestId('team-name-input').querySelector('input');
-          expect(teamInput.value).toBe(`${teams[0].name}`);
+          expect(teamInput.value).toBe(teams[0].name);
         });
       });
     });
