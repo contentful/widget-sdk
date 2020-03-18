@@ -66,9 +66,11 @@ export default function register() {
         fields: $scope.fields // comes from entry editor controller
       };
 
-      this.space = getBatchingApiClient(spaceContext.cma);
+      this.space = {
+        ...getBatchingApiClient(spaceContext.cma),
+        ...ScheduledActionsRepo
+      };
       this.entityHelpers = EntityHelpers.newForLocale(locale.code);
-      this.scheduledActions = ScheduledActionsRepo;
 
       // This interface is not exposed on the Extensions SDK. It serves for
       // internal convenience. Everything that uses these values can be

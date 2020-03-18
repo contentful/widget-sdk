@@ -100,10 +100,14 @@ describe('cfWidgetApi directive', () => {
   });
 
   describe('#space', () => {
-    it('exposes same methods as spaceContext.cma', function() {
+    it('exposes same methods as spaceContext.cma + scheduled actions', function() {
       const spaceContext = $inject('spaceContext');
       const getAllKeys = obj => Object.keys(_.toPlainObject(obj));
-      expect(getAllKeys(this.widgetApi.space)).toEqual(getAllKeys(spaceContext.cma));
+      expect(getAllKeys(this.widgetApi.space)).toEqual([
+        ...getAllKeys(spaceContext.cma),
+        'getAllScheduledActions',
+        'getEntityScheduledActions'
+      ]);
     });
   });
 

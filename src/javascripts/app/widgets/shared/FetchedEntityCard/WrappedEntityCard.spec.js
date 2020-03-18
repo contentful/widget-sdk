@@ -31,7 +31,7 @@ describe('WrappedEntityCard', () => {
     ];
 
     widgetAPIMock = {
-      scheduledActions: {
+      space: {
         getEntityScheduledActions: jest.fn().mockResolvedValue(jobs)
       }
     };
@@ -53,7 +53,7 @@ describe('WrappedEntityCard', () => {
     );
 
     await waitForElement(() => getByTestId('schedule-icon'));
-    expect(widgetAPIMock.scheduledActions.getEntityScheduledActions).toHaveBeenCalledWith(
+    expect(widgetAPIMock.space.getEntityScheduledActions).toHaveBeenCalledWith(
       'Entry',
       'entity-id'
     );
@@ -61,7 +61,7 @@ describe('WrappedEntityCard', () => {
 
   it('should not display the tooltip with an icon for an entry that was not scheduled', async () => {
     const widgetAPI = {
-      scheduledActions: {
+      space: {
         getEntityScheduledActions: jest.fn().mockResolvedValue([])
       }
     };
@@ -91,7 +91,7 @@ describe('WrappedEntityCard', () => {
     }
 
     expect(foundIcon).toBeFalsy();
-    expect(widgetAPI.scheduledActions.getEntityScheduledActions).toHaveBeenCalledWith(
+    expect(widgetAPI.space.getEntityScheduledActions).toHaveBeenCalledWith(
       'Entry',
       'another-entity-not-scheduled'
     );

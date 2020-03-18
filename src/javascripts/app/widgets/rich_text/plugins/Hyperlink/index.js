@@ -57,7 +57,7 @@ export const getScheduledJobsTooltip = (entityType, node, widgetAPI) => {
   if (
     entityType !== 'Entry' ||
     typeof get(node, 'data.get') !== 'function' ||
-    typeof get(widgetAPI, 'scheduledActions.getEntityScheduledActions') !== 'function'
+    typeof get(widgetAPI, 'space.getEntityScheduledActions') !== 'function'
   ) {
     return null;
   }
@@ -67,7 +67,7 @@ export const getScheduledJobsTooltip = (entityType, node, widgetAPI) => {
 
   return (
     <ScheduleFetcher
-      getEntityScheduledActions={widgetAPI.scheduledActions.getEntityScheduledActions}
+      getEntityScheduledActions={widgetAPI.space.getEntityScheduledActions}
       entityType={entityType}
       entityId={referencedEntityId}
     />

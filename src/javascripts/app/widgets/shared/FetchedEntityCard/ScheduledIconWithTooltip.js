@@ -8,8 +8,8 @@ export const ScheduledIconWithTooltip = memo(({ entityType, entityId, children }
   const [status, setStatus] = React.useState({ type: 'loading' });
 
   React.useEffect(() => {
-    if (widgetAPI && widgetAPI.scheduledActions) {
-      widgetAPI.scheduledActions
+    if (widgetAPI && widgetAPI.space) {
+      widgetAPI.space
         .getEntityScheduledActions(entityType, entityId)
         .then(data => {
           setStatus({ type: 'loaded', jobs: data });

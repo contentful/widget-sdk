@@ -26,12 +26,7 @@ describe('EmbeddedEntryInline component', () => {
       },
       space: {
         getEntry: jest.fn().mockResolvedValue(entry),
-        getContentType: jest.fn().mockResolvedValue('User')
-      },
-      field: {
-        locale: 'en-US'
-      },
-      scheduledActions: {
+        getContentType: jest.fn().mockResolvedValue('User'),
         getEntityScheduledActions: jest.fn().mockResolvedValue([
           {
             action: ScheduledActionAction.Publish,
@@ -44,6 +39,9 @@ describe('EmbeddedEntryInline component', () => {
             }
           }
         ])
+      },
+      field: {
+        locale: 'en-US'
       },
       navigator: {
         onSlideInNavigation: jest.fn().mockReturnValue(noop)

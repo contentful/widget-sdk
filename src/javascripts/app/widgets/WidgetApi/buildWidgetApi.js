@@ -4,6 +4,7 @@ import { getModule } from 'NgRegistry';
 import { goToSlideInEntity, onSlideInNavigation } from 'navigation/SlideInNavigator';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import * as entitySelector from 'search/EntitySelector/entitySelector';
+import ScheduledActionsRepo from 'app/ScheduledActions/DataManagement/ScheduledActionsRepo';
 
 /**
  * @deprecated  Use and extend the new `app/widgets/NewWidgetApi/createNewWidgetApi.js` instead.
@@ -21,7 +22,7 @@ import * as entitySelector from 'search/EntitySelector/entitySelector';
  * @param {string} currentUrl
  * @returns {Object}
  */
-export default function buildWidgetApi({ field, entry, currentUrl, settings, scheduledActions }) {
+export default function buildWidgetApi({ field, entry, currentUrl, settings }) {
   const spaceContext = getModule('spaceContext');
 
   const { entry: canAccessEntries, asset: canAccessAssets } = getSectionVisibility();
@@ -29,8 +30,7 @@ export default function buildWidgetApi({ field, entry, currentUrl, settings, sch
   const widgetAPI = {
     field,
     entry,
-    space: getBatchingApiClient(spaceContext.cma),
-    scheduledActions,
+    space: { ...getBatchingApiClient(spaceContext.cma), ...ScheduledActionsRepo },
     dialogs: {
       /**
        * TODO: Add to ui-extensions-sdk when open sourcing the RichText widget.
