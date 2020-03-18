@@ -104,6 +104,7 @@ export function openFromField(field, currentSize) {
  * @param {number}   options.min           Minimal number of selected entities
  * @param {number}   options.max           Maximal number of selected entities
  * @param {string[]} options.contentTypes  List of CT IDs to filter entries with
+ * @param {string[]} options.mimetypeGroups List of mimetype groups to filter assetsd with
  * @returns {Promise<API.Entity[]>}
  * @description
  * Opens a modal for a configuration object

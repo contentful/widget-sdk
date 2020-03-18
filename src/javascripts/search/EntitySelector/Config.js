@@ -110,7 +110,7 @@ export function newConfigFromExtension(options = {}) {
     ...pick(options, ['multiple', 'min', 'max', 'entityType', 'withCreate']),
     locale: options.locale || getDefaultLocaleCode(),
     linkedContentTypeIds: options.contentTypes || [],
-    linkedMimetypeGroups: []
+    linkedMimetypeGroups: options.mimetypeGroups || []
   };
   config.fetch = makeFetch(config);
   return config;
