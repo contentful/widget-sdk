@@ -4,6 +4,7 @@ import moment from 'moment';
 
 import { keyBy, property } from 'lodash';
 import { ResourceUsage } from 'app/SpaceSettings/Usage/ResourceUsage';
+import { Paragraph, Heading } from '@contentful/forma-36-react-components';
 
 export default class OrganizationResourceUsageList extends React.Component {
   static propTypes = {
@@ -27,10 +28,12 @@ export default class OrganizationResourceUsageList extends React.Component {
       <div className="resource-list">
         <ResourceUsage resource={byId['organization_membership']} />
         <div className="resource-list__title">
-          <h3 className="section-title">Current billing period</h3>
-          <p>
+          <Heading element="h3" className="section-title">
+            Current billing period
+          </Heading>
+          <Paragraph>
             {startDate} – {endDate} ({daysLeft} days remaining)
-          </p>
+          </Paragraph>
         </div>
         <ResourceUsage resource={byId['api_request']} abbreviateLimit={true} />
         <ResourceUsage resource={byId['asset_bandwidth']} />

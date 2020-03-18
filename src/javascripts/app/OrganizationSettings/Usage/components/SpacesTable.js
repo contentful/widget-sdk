@@ -12,10 +12,7 @@ import PropTypes from 'prop-types';
 import { sum } from 'lodash';
 import { shorten } from 'utils/NumberUtils';
 import { organizationResourceUsagePropType } from '../propTypes';
-
-export const calcRelativeSpaceUsage = (spaceUsage, totalUsage) => {
-  return !totalUsage ? 0 : Math.round((sum(spaceUsage) / totalUsage) * 100);
-};
+import calcRelativeSpaceUsage from '../utils/calcRelativeSpaceUsage';
 
 const SpaceRow = ({ spaceName, spaceUsage, totalUsage, colour, isPoC }) => {
   return (

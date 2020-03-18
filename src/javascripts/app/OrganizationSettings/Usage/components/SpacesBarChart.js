@@ -4,7 +4,7 @@ import { organizationResourceUsagePropType } from '../propTypes';
 import tokens from '@contentful/forma-36-tokens';
 import { shorten } from 'utils/NumberUtils';
 import { css } from 'emotion';
-import { useChart } from './hooks/useChart';
+import { useChart } from '../hooks/useChart';
 
 const styles = {
   chartWrapper: css({

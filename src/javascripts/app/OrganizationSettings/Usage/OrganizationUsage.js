@@ -6,12 +6,12 @@ import { Spinner, Workbench } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification';
 
 import DocumentTitle from 'components/shared/DocumentTitle';
-import OrganizationResourceUsageList from './non_committed/OrganizationResourceUsageList';
-import OrganizationUsagePage from './committed/OrganizationUsagePage';
-import PeriodSelector from './committed/PeriodSelector';
-import NoSpacesPlaceholder from './NoSpacesPlaceholder';
+import OrganizationResourceUsageList from './components/OrganizationResourceUsageList';
+import OrganizationUsagePage from './components/OrganizationUsagePage';
+import PeriodSelector from './components/PeriodSelector';
+import NoSpacesPlaceholder from './components/NoSpacesPlaceholder';
 import { track } from 'analytics/Analytics';
-import * as UsageService from '././UsageService';
+import * as UsageService from './UsageService';
 
 import * as TokenStore from 'services/TokenStore';
 import * as EndpointFactory from 'data/EndpointFactory';

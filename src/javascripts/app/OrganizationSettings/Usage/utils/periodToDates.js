@@ -1,8 +1,6 @@
 import { range } from 'lodash';
 import moment from 'moment';
 
-import formatDate from './formatDate';
-
 export default ({ startDate, endDate }) =>
   range(
     (endDate
@@ -14,4 +12,4 @@ export default ({ startDate, endDate }) =>
       .diff(moment(startDate), 'days') + 1
   )
     .map(index => moment(startDate).add(index, 'days'))
-    .map(formatDate);
+    .map(moment => moment.format('D MMM'));

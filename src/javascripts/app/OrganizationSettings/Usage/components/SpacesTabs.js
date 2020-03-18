@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Tabs, Tab, TabPanel } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { Grid, GridItem } from '../common/Grid';
+import { Grid, GridItem } from './common/Grid';
 import { css } from 'emotion';
 import PropTypes from 'prop-types';
-import SpacesTable from '../charts/SpacesTable';
-import SpacesBarChart from '../charts/SpacesBarChart';
+import SpacesTable from './SpacesTable';
+import SpacesBarChart from './SpacesBarChart';
 import { sum } from 'lodash';
 import { periodicUsagePropType } from '../propTypes';
 

@@ -1,7 +1,7 @@
 import '@testing-library/dom';
 import React from 'react';
 import { render } from '@testing-library/react';
-import AssetBandwidthSection from '../committed/AssetBandwidthSection';
+import AssetBandwidthSection from './AssetBandwidthSection';
 
 describe('AssetBandwidthSection', () => {
   const defaultProps = {

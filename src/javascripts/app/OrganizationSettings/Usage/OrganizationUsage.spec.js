@@ -3,11 +3,11 @@ import { shallow } from 'enzyme';
 import 'jest-enzyme';
 import { Spinner } from '@contentful/forma-36-react-components';
 
-import { OrganizationUsage, WorkbenchContent, WorkbenchActions } from '../OrganizationUsage';
-import PeriodSelector from '../committed/PeriodSelector';
-import NoSpacesPlaceholder from '../NoSpacesPlaceholder';
-import OrganizationUsagePage from '../committed/OrganizationUsagePage';
-import OrganizationResourceUsageList from '../non_committed/OrganizationResourceUsageList';
+import { OrganizationUsage, WorkbenchContent, WorkbenchActions } from './OrganizationUsage';
+import PeriodSelector from './components/PeriodSelector';
+import NoSpacesPlaceholder from './components/NoSpacesPlaceholder';
+import OrganizationUsagePage from './components/OrganizationUsagePage';
+import OrganizationResourceUsageList from './components/OrganizationResourceUsageList';
 import ReloadNotification from 'app/common/ReloadNotification';
 import * as OrganizationRolesMocked from 'services/OrganizationRoles';
 import * as TokenStoreMocked from 'services/TokenStore';

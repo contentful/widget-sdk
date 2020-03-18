@@ -4,7 +4,7 @@ import React from 'react';
 import moment from 'moment';
 import { Select } from '@contentful/forma-36-react-components';
 
-import PeriodSelector from '../committed/PeriodSelector';
+import PeriodSelector from './PeriodSelector';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 

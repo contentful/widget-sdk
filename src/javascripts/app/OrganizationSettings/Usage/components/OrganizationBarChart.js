@@ -4,7 +4,7 @@ import { last } from 'lodash';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
 import { shorten } from 'utils/NumberUtils';
-import { useChart } from './hooks/useChart';
+import { useChart } from '../hooks/useChart';
 
 const styles = {
   chartWrapper: css({

@@ -3,21 +3,7 @@ import { render, fireEvent, within } from '@testing-library/react';
 import * as echarts from 'echarts';
 
 import { track } from 'analytics/Analytics';
-import SpacesTabs from '../committed/tabs/SpacesTabs';
-
-import { calcRelativeSpaceUsage } from '../committed/charts/SpacesTable';
-
-describe('calcRelativeSpaceUsage', () => {
-  it('should return correct relative space usage for values > 0', () => {
-    expect(calcRelativeSpaceUsage([2, 3, 5], 100)).toBe(10);
-    expect(calcRelativeSpaceUsage([5, 5, 5], 300)).toBe(5);
-  });
-
-  it('should return correct relative space usage for 0 usage', () => {
-    expect(calcRelativeSpaceUsage([0], 100)).toBe(0);
-    expect(calcRelativeSpaceUsage([0], 0)).toBe(0);
-  });
-});
+import SpacesTabs from './SpacesTabs';
 
 jest.mock('echarts', () => ({
   init: jest.fn()

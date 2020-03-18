@@ -1,4 +1,4 @@
-import * as UsageService from '../UsageService';
+import * as UsageService from './UsageService';
 
 describe('Usage API transformations', () => {
   it('Empty usagePerDay should map to an empty usage array', () => {

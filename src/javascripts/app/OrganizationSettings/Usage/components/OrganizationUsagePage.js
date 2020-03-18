@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { Tabs, Tab, TabPanel } from '@contentful/forma-36-react-components';
-import tokens from '@contentful/forma-36-tokens';
-import { sum, get } from 'lodash';
-import { Grid, GridItem } from '../common/Grid';
-import { css } from 'emotion';
+import { Tabs, Tab, TabPanel, Heading } from '@contentful/forma-36-react-components';
 import SpacesTabs from './SpacesTabs';
-import { Heading } from '@contentful/forma-36-react-components';
-import OrganizationBarChart from '../charts/OrganizationBarChart';
-import OrganizationUsageInfo from '../OrganizationUsageInfo';
-import AssetBandwidthSection from '../AssetBandwidthSection';
-import { periodicUsagePropType } from '../propTypes';
+import OrganizationBarChart from './OrganizationBarChart';
+import OrganizationUsageInfo from './OrganizationUsageInfo';
+import AssetBandwidthSection from './AssetBandwidthSection';
+import { Grid, GridItem } from './common/Grid';
+
+import PropTypes from 'prop-types';
+import { periodicUsagePropType, periodPropType } from '../propTypes';
+
+import periodToDates from '../utils/periodToDates';
+import { sum, get } from 'lodash';
+
+import { css } from 'emotion';
+import tokens from '@contentful/forma-36-tokens';
 
 import { track } from 'analytics/Analytics';
 
@@ -27,17 +30,18 @@ const styles = {
   })
 };
 
-const MainTabs = ({
+const OrganizationUsagePage = ({
+  spaceNames,
   period,
   periodicUsage,
   apiRequestIncludedLimit,
   assetBandwidthData,
-  spaceNames,
   onTabSelect,
   isPoC
 }) => {
   const orgUsage = periodicUsage.org.usage;
   const totalUsage = sum(orgUsage);
+  const dates = periodToDates(period);
 
   const [selected, setSelected] = useState('apiRequest');
   const [currentAssetBandwidthData, setCurrentBandwidthData] = useState();
@@ -80,7 +84,7 @@ const MainTabs = ({
             </GridItem>
             <GridItem columnStart="span 8">
               <OrganizationBarChart
-                period={period}
+                period={dates}
                 usage={orgUsage}
                 includedLimit={apiRequestIncludedLimit}
               />
@@ -90,7 +94,7 @@ const MainTabs = ({
             View API requests by type and space
           </Heading>
           <SpacesTabs
-            period={period}
+            period={dates}
             spaceNames={spaceNames}
             periodicUsage={periodicUsage}
             isPoC={isPoC}
@@ -112,11 +116,11 @@ const MainTabs = ({
   );
 };
 
-MainTabs.propTypes = {
-  period: PropTypes.arrayOf(PropTypes.string).isRequired,
-  periodicUsage: periodicUsagePropType.isRequired,
-  apiRequestIncludedLimit: PropTypes.number.isRequired,
+OrganizationUsagePage.propTypes = {
   spaceNames: PropTypes.objectOf(PropTypes.string).isRequired,
+  periodicUsage: periodicUsagePropType.isRequired,
+  period: periodPropType,
+  apiRequestIncludedLimit: PropTypes.number.isRequired,
   assetBandwidthData: PropTypes.shape({
     usage: PropTypes.number,
     unitOfMeasure: PropTypes.string,
@@ -128,4 +132,4 @@ MainTabs.propTypes = {
   onTabSelect: PropTypes.func
 };
 
-export default MainTabs;
+export default OrganizationUsagePage;

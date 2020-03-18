@@ -1,4 +1,4 @@
-import { accumulate, applyBorderStyle } from '../committed/charts/OrganizationBarChart';
+import { accumulate, applyBorderStyle } from './OrganizationBarChart';
 
 describe('OrganizationBarChart', () => {
   it('should apply the correct tranformation for [1, 2, 3]', () => {
