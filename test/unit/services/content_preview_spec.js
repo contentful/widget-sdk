@@ -77,7 +77,7 @@ describe('contentPreview', () => {
     return {
       getId: () => id,
       data: {
-        sys: { id },
+        sys: { id, environment: { sys: { id: 'master' } } },
         fields: {
           title: { en: 'Title' },
           slug: { en: 'my-slug' },
@@ -425,6 +425,15 @@ describe('contentPreview', () => {
       );
 
       expect(this.compiledUrl).toBe('https://www.test.com/');
+    });
+
+    it('inserts an env_id into the url', async function() {
+      this.compiledUrl = await this.contentPreview.replaceVariablesInUrl(
+        'http://test-domain.com/{env_id}/test',
+        makeEntry('entry-1').data,
+        'en'
+      );
+      expect(this.compiledUrl).toBe('http://test-domain.com/master/test');
     });
   });
 

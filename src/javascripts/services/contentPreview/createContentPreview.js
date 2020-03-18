@@ -3,6 +3,7 @@ import { resolveReferences } from 'services/ContentPreviewHelper';
 import { getStore } from 'browserStorage';
 
 export const ENTRY_ID_PATTERN = /\{\s*entry_id\s*\}/g;
+export const ENTRY_ENV_PATTERN = /\{\s*env_id\s*\}/g;
 export const ENTRY_FIELD_PATTERN = /\{\s*entry_field\.(\w+)\s*\}/g;
 
 export const VALID_URL_PATTERN = /^https?:\/\/.+/;
@@ -277,6 +278,7 @@ export default function createContentPreview({ space, cma }) {
   function replaceVariablesInUrl(urlTemplate, entry, localeCode) {
     const processedUrl = urlTemplate
       .replace(ENTRY_ID_PATTERN, entry.sys.id)
+      .replace(ENTRY_ENV_PATTERN, entry.sys.environment.sys.id)
       .replace(ENTRY_FIELD_PATTERN, (match, fieldId) => {
         if (!_.has(entry, ['fields', fieldId])) {
           return match;

@@ -27,6 +27,10 @@ export const TokensForContentPreview = () => (
         values when the preview is opened in the entry editor.
       </Paragraph>
       <Paragraph>
+        <code className="content-preview-sidebar__token">{'{env_id}'}</code>
+        <span> : the environment ID for the entry</span>
+      </Paragraph>
+      <Paragraph>
         <code className="content-preview-sidebar__token">{'{entry}'}</code>
         <span> : an object containing all the properties and their values for the entry</span>
       </Paragraph>
