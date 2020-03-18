@@ -6,11 +6,12 @@ import {
   Typography,
   Paragraph,
   Button,
-  Workbench
+  Workbench,
+  TextLink
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import NavigationIcon from 'ui/Components/NavigationIcon';
-import { salesUrl } from 'Config';
+import { helpCenterUrl, salesUrl } from 'Config';
 import EmptyStateContainer, {
   defaultSVGStyle
 } from 'components/EmptyStateContainer/EmptyStateContainer';
@@ -38,13 +39,9 @@ function UserProvisioningUpsellState() {
               <Paragraph>
                 You can manage users and teams within your organization in Contentful directly from
                 your identity provider. We support SCIM 2.0 for user provisioning.{' '}
-                {/* TODO uncomment when page is available
-                <TextLink
-                  testId="faq-url"
-                  href={`https:${apiUrl('faq/SSO-Groups-Provisioning/')}`}
-                  target="_blank">
+                <TextLink testId="faq-url" href={`${helpCenterUrl}/scim-faq`} target="_blank">
                   Read our FAQs for more information.
-                </TextLink> */}
+                </TextLink>
               </Paragraph>
               <Paragraph>
                 The user provisioning feature is available on selected enterprise-grade platform

@@ -99,13 +99,7 @@ export default function UserProvisioningConfiguration({ orgId }) {
           <div className={styles.subheading}>Personal access token</div>
           <Note noteType="primary">
             We strongly recommend logging into a service account, with the organization role set to
-            owner, for setting up user provisioning in Contentful.{' '}
-            {/* TODO uncomment when page is available
-              <TextLink
-                testId="faq-url"href={`https:${apiUrl('faq/SSO-Groups-Provisioning/')}`}
-                target="_blank">
-                Learn why.
-              </TextLink> */}
+            owner, for setting up user provisioning in Contentful.
           </Note>
           <Paragraph className={styles.paragraph}>
             We advise using a personal access token to manage SCIM API access. These tokens are
