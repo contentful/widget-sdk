@@ -57,7 +57,8 @@ const organizationSettings = {
 
       go({
         path: path,
-        params: { orgId: organization.sys.id }
+        params: { orgId: organization.sys.id },
+        options: { location: 'replace' }
       });
     }
   ]
