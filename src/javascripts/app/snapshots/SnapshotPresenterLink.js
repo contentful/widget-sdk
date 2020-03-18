@@ -25,7 +25,14 @@ const SnapshotPresenterLink = ({ locale, value, linkType }) => {
     const ids = links.map(({ sys }) => sys.id);
 
     EntityResolver.fetchForType(spaceContext, linkType, ids).then(results => {
-      const mappedResults = results.map(entity => ({ entity }));
+      const mapped = results.reduce(
+        (red, entity) => ({
+          ...red,
+          [entity.sys.id]: { entity }
+        }),
+        {}
+      );
+      const mappedResults = ids.map(id => mapped[id]);
       setModels(mappedResults);
     });
   }, [linkType, spaceContext, value]);
