@@ -1,9 +1,9 @@
 import '@testing-library/dom';
 import React from 'react';
 import { render } from '@testing-library/react';
-import AssetBandwidthSection from '../committed/AssetBandwidthSectionNew';
+import AssetBandwidthSection from '../committed/AssetBandwidthSection';
 
-describe('AssetBandwidthSectionNew', () => {
+describe('AssetBandwidthSection', () => {
   const defaultProps = {
     limit: 750,
     usage: 200,

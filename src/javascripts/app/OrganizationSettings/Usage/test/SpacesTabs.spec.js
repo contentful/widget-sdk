@@ -5,6 +5,20 @@ import * as echarts from 'echarts';
 import { track } from 'analytics/Analytics';
 import SpacesTabs from '../committed/tabs/SpacesTabs';
 
+import { calcRelativeSpaceUsage } from '../committed/charts/SpacesTable';
+
+describe('calcRelativeSpaceUsage', () => {
+  it('should return correct relative space usage for values > 0', () => {
+    expect(calcRelativeSpaceUsage([2, 3, 5], 100)).toBe(10);
+    expect(calcRelativeSpaceUsage([5, 5, 5], 300)).toBe(5);
+  });
+
+  it('should return correct relative space usage for 0 usage', () => {
+    expect(calcRelativeSpaceUsage([0], 100)).toBe(0);
+    expect(calcRelativeSpaceUsage([0], 0)).toBe(0);
+  });
+});
+
 jest.mock('echarts', () => ({
   init: jest.fn()
 }));
@@ -32,7 +46,7 @@ const defaultProps = {
             sys: {
               space: {
                 sys: {
-                  id: 'Some space'
+                  id: 'Deleted space'
                 }
               }
             }
@@ -54,6 +68,10 @@ const defaultProps = {
         ]
       }
     }
+  },
+  isPoC: {
+    cmaSpace: true,
+    cdaSpace: false
   }
 };
 
@@ -82,6 +100,14 @@ describe('SpacesTabs', () => {
         const { getByText } = build(defaultProps);
         expect(getByText('Deleted space')).toBeInTheDocument();
       });
+
+      it('shows one space as PoC', () => {
+        const { getAllByText } = build(defaultProps);
+        const tags = getAllByText('POC');
+        expect(tags).toHaveLength(1);
+        fireEvent.mouseOver(tags[0]);
+        expect(getAllByText('Proof of concept')).toHaveLength(1);
+      });
     });
 
     it('renders a bar chart', () => {
@@ -101,6 +127,14 @@ describe('SpacesTabs', () => {
       expect(table).toBeInTheDocument();
       expect(getByText('114')).toBeInTheDocument();
       expect(getByText('CDASpace')).toBeInTheDocument();
+    });
+
+    describe('SpacesTable', () => {
+      it('does not show any PoC spaces', () => {
+        const { getByText, queryByText } = build(defaultProps);
+        fireEvent.click(getByText('CDA Requests'));
+        expect(queryByText('POC')).toBeNull();
+      });
     });
 
     it('renders a bar chart and initializes once', () => {
@@ -133,7 +167,8 @@ describe('SpacesTabs', () => {
           cda: { items: [] }
         },
         org: { usage: [] }
-      }
+      },
+      isPoC: {}
     };
 
     it('renders an empty table', () => {

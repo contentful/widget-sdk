@@ -2,27 +2,32 @@ import React from 'react';
 import { css } from 'emotion';
 import PropTypes from 'prop-types';
 import { partialRight } from 'lodash';
-import { TextLink, Note } from '@contentful/forma-36-react-components';
+import {
+  TextLink,
+  Note,
+  Typography,
+  Heading,
+  Paragraph
+} from '@contentful/forma-36-react-components';
 import * as tokens from '@contentful/forma-36-tokens';
 
 import { shortenStorageUnit } from 'utils/NumberUtils';
 
-const classes = {
-  section: css({
-    margin: tokens.spacingXl,
-    borderTop: `solid 1px ${tokens.colorElementMid}`,
-    padding: `${tokens.spacing3Xl} 0`
+const styles = {
+  heading: css({
+    color: '#536171',
+    fontWeight: tokens.fontWeightNormal
   }),
-  totalUsage: css({
+  usageNumber: css({
+    color: '#253545',
     fontSize: tokens.fontSize3Xl,
-    lineHeight: tokens.spacing3Xl,
-    marginTop: tokens.spacingM
+    fontWeight: tokens.fontWeightMedium
   }),
   limit: css({
     fontSize: tokens.fontSizeM
   }),
   includedLimit: css({
-    color: tokens.colorTextLightest
+    color: '#6A7889'
   }),
   overage: css({
     color: tokens.colorOrangeMid
@@ -32,51 +37,50 @@ const classes = {
   }),
   note: css({
     width: '40%',
-    marginTop: tokens.spacingS
+    marginTop: tokens.spacingS,
+    color: '#27457A'
   })
 };
 
-export default class AssetBandwidthSection extends React.Component {
-  static propTypes = {
-    limit: PropTypes.number,
-    usage: PropTypes.number,
-    uom: PropTypes.string
-  };
+const AssetBandwidthSection = ({ limit, usage, uom }) => {
+  const withUnit = partialRight(shortenStorageUnit, uom);
 
-  render() {
-    const { limit, usage, uom } = this.props;
-
-    if (usage == null) {
-      return (
-        <div className={classes.section}>
-          <h2>Total asset bandwidth</h2>
-          <div className={classes.totalUsage}>Not available</div>
-          <Note className={classes.note}>
-            Asset bandwidth usage information is only available in the most recent usage period
-          </Note>
-        </div>
-      );
-    }
-
-    const withUnit = partialRight(shortenStorageUnit, uom);
-
-    return (
-      <div className={classes.section}>
-        <h2>Total asset bandwidth</h2>
-        <div className={classes.totalUsage}>{withUnit(usage)}</div>
-        <div className={classes.limit}>
-          <span className={classes.includedLimit}>{`${withUnit(limit)} included`}</span>
-          {usage > limit && (
-            <span className={classes.overage}>{` + ${withUnit(usage - limit)} overage`}</span>
-          )}
-          <TextLink
-            href="https://www.contentful.com/r/knowledgebase/fair-use/"
-            target="_blank"
-            className={classes.learnMoreLink}>
-            Learn more
-          </TextLink>
-        </div>
+  return (
+    <Typography>
+      <Heading element="h2" className={styles.heading}>
+        Total asset bandwidth
+      </Heading>
+      <Paragraph data-test-id="asset-bandwidth-usage" className={styles.usageNumber}>
+        {withUnit(usage)}
+      </Paragraph>
+      <div className={styles.limit}>
+        <strong data-test-id="asset-bandwidth-limit" className={styles.includedLimit}>{`${withUnit(
+          limit
+        )} included`}</strong>
+        {usage > limit && (
+          <small className={styles.overage} data-test-id="asset-bandwidth-overage">
+            {' '}
+            + {withUnit(usage - limit)} overage
+          </small>
+        )}
+        <TextLink
+          href="https://www.contentful.com/r/knowledgebase/fair-use/"
+          target="_blank"
+          className={styles.learnMoreLink}>
+          Fair Use Policy
+        </TextLink>
+        <Note className={styles.note}>
+          Please note that asset bandwidth is calculated daily with a 48 hour delay.
+        </Note>
       </div>
-    );
-  }
-}
+    </Typography>
+  );
+};
+
+AssetBandwidthSection.propTypes = {
+  limit: PropTypes.number.isRequired,
+  usage: PropTypes.number.isRequired,
+  uom: PropTypes.string.isRequired
+};
+
+export default AssetBandwidthSection;

@@ -1,36 +1,60 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TextLink } from '@contentful/forma-36-react-components';
+import { Typography, Paragraph, TextLink, Heading } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+import { css } from 'emotion';
 
 import { shorten } from 'utils/NumberUtils';
 
-export default class OrganizationUsageInfo extends React.Component {
-  static propTypes = {
-    totalUsage: PropTypes.number.isRequired,
-    includedLimit: PropTypes.number.isRequired
-  };
+const styles = {
+  heading: css({
+    color: '#536171',
+    fontWeight: tokens.fontWeightNormal
+  }),
+  usageNumber: css({
+    color: '#253545',
+    fontSize: tokens.fontSize3Xl,
+    fontWeight: tokens.fontWeightMedium
+  }),
+  overageNumber: css({
+    color: '#9F6312',
+    fontSize: tokens.fontSizeS
+  })
+};
 
-  render() {
-    const { totalUsage, includedLimit } = this.props;
-    return (
-      <div>
-        <h2>Total number of API requests</h2>
-        <div className="usage-page__total-usage">{totalUsage.toLocaleString('en-US')}</div>
-        <div className="usage-page__limit">
-          <span className="usage-page__included-limit">{`${shorten(includedLimit)} included`}</span>
-          {totalUsage > includedLimit && (
-            <span className="usage-page__overage">
-              {` + ${(totalUsage - includedLimit).toLocaleString('en-US')} overage`}
-            </span>
-          )}
-          <TextLink
-            href="https://www.contentful.com/r/knowledgebase/fair-use/"
-            target="_blank"
-            className="usage-page__learn-more-link">
-            Learn more
-          </TextLink>
-        </div>
-      </div>
-    );
-  }
-}
+const OrganizationUsageInfo = props => {
+  const { totalUsage, includedLimit } = props;
+
+  return (
+    <Typography>
+      <Heading element="h2" className={styles.heading}>
+        Total API requests
+      </Heading>
+      <Paragraph data-test-id="org-usage-total" className={styles.usageNumber}>
+        {totalUsage.toLocaleString('en-US')}
+        {totalUsage > includedLimit && (
+          <small data-test-id="org-usage-overage" className={styles.overageNumber}>
+            {` +${(totalUsage - includedLimit).toLocaleString('en-US')} overage`}
+          </small>
+        )}
+      </Paragraph>
+      <Paragraph>
+        Total API calls made this month from a{' '}
+        <strong data-test-id="org-usage-limit">{`${shorten(includedLimit)}`}</strong>
+        /month quota. This number includes CMA, CDA, CPA, and GraphQL requests. To learn about
+        utility limits, read the{' '}
+        <TextLink href="https://www.contentful.com/r/knowledgebase/fair-use/" target="_blank">
+          Fair Use Policy
+        </TextLink>
+        .
+      </Paragraph>
+    </Typography>
+  );
+};
+
+OrganizationUsageInfo.propTypes = {
+  totalUsage: PropTypes.number.isRequired,
+  includedLimit: PropTypes.number.isRequired
+};
+
+export default OrganizationUsageInfo;

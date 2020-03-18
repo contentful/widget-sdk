@@ -40,7 +40,7 @@ const tabsData = [
 
 const colours = ['#2E75D4', '#0EB87F', '#EA9005', '#8C53C2', '#CC3C52'];
 
-const SpacesTabs = ({ spaceNames, period, periodicUsage }) => {
+const SpacesTabs = ({ spaceNames, period, periodicUsage, isPoC }) => {
   const defaultActiveTab = tabsData.find(item => item.defaultActive);
   const [selected, setSelected] = useState(
     defaultActiveTab ? defaultActiveTab.id : tabsData[0]['id']
@@ -71,6 +71,7 @@ const SpacesTabs = ({ spaceNames, period, periodicUsage }) => {
               data={data}
               totalUsage={totalUsage}
               colours={colours}
+              isPoC={isPoC}
             />
           </GridItem>
           <GridItem columnStart={'span 8'}>
@@ -85,7 +86,8 @@ const SpacesTabs = ({ spaceNames, period, periodicUsage }) => {
 SpacesTabs.propTypes = {
   spaceNames: PropTypes.objectOf(PropTypes.string).isRequired,
   period: PropTypes.arrayOf(PropTypes.string).isRequired,
-  periodicUsage: periodicUsagePropType.isRequired
+  periodicUsage: periodicUsagePropType.isRequired,
+  isPoC: PropTypes.objectOf(PropTypes.bool).isRequired
 };
 
 export default SpacesTabs;

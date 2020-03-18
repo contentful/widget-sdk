@@ -4,24 +4,36 @@ import {
   TableHead,
   TableRow,
   TableCell,
-  TableBody
+  TableBody,
+  Tooltip,
+  Tag
 } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
 import { sum } from 'lodash';
 import { shorten } from 'utils/NumberUtils';
 import { organizationResourceUsagePropType } from '../propTypes';
 
-const calcRelativeSpaceUsage = (spaceUsage, totalUsage) => {
+export const calcRelativeSpaceUsage = (spaceUsage, totalUsage) => {
   return !totalUsage ? 0 : Math.round((sum(spaceUsage) / totalUsage) * 100);
 };
 
-const SpaceRow = ({ spaceName, spaceUsage, totalUsage, colour }) => {
+const SpaceRow = ({ spaceName, spaceUsage, totalUsage, colour, isPoC }) => {
   return (
     <TableRow data-test-id="api-usage-table-row">
-      <TableCell>{spaceName || 'Deleted space'}</TableCell>
-      <TableCell>{shorten(sum(spaceUsage))}</TableCell>
+      <TableCell>
+        <div>{spaceName || 'Deleted space'}</div>
+        <div>
+          {isPoC && (
+            <Tooltip content="Proof of concept">
+              <Tag tagType="muted">POC</Tag>
+            </Tooltip>
+          )}
+        </div>
+      </TableCell>
       {/* eslint-disable-next-line */}
-      <TableCell style={{ color: colour }}>
+      <TableCell style={{ verticalAlign: 'middle' }}>{shorten(sum(spaceUsage))}</TableCell>
+      {/* eslint-disable-next-line */}
+      <TableCell style={{ color: colour, verticalAlign: 'middle' }}>
         {calcRelativeSpaceUsage(spaceUsage, totalUsage)}%
       </TableCell>
     </TableRow>
@@ -32,10 +44,11 @@ SpaceRow.propTypes = {
   spaceName: PropTypes.string,
   spaceUsage: PropTypes.arrayOf(PropTypes.number).isRequired,
   totalUsage: PropTypes.number.isRequired,
-  colour: PropTypes.string.isRequired
+  colour: PropTypes.string.isRequired,
+  isPoC: PropTypes.bool
 };
 
-const SpacesTable = ({ spaceNames, data, totalUsage, colours }) => {
+const SpacesTable = ({ spaceNames, data, totalUsage, colours, isPoC }) => {
   return (
     <Table data-test-id="api-usage-table">
       <TableHead>
@@ -54,6 +67,7 @@ const SpacesTable = ({ spaceNames, data, totalUsage, colours }) => {
             totalUsage={totalUsage}
             colour={colours[index]}
             index={index}
+            isPoC={isPoC[item.sys.space.sys.id]}
           />
         ))}
       </TableBody>
@@ -65,7 +79,8 @@ SpacesTable.propTypes = {
   spaceNames: PropTypes.objectOf(PropTypes.string).isRequired,
   totalUsage: PropTypes.number.isRequired,
   data: PropTypes.arrayOf(organizationResourceUsagePropType).isRequired,
-  colours: PropTypes.arrayOf(PropTypes.string).isRequired
+  colours: PropTypes.arrayOf(PropTypes.string).isRequired,
+  isPoC: PropTypes.objectOf(PropTypes.bool).isRequired
 };
 
 export default SpacesTable;

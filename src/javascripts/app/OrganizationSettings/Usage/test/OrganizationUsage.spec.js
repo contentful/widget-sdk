@@ -278,15 +278,17 @@ describe('WorkbenchContent', () => {
       selectedPeriodIndex: 0,
       spaceNames: { space1: 'Space1', space2: 'Space2' },
       isPoC: { space1: false, space2: true },
-      periodicUsage: {},
+      periodicUsage: {
+        org: { usage: [] },
+        apis: { cma: { items: [] } }
+      },
       apiRequestIncludedLimit: 1000,
       assetBandwidthUsage: 100,
       assetBandwidthIncludedLimit: 50,
       assetBandwidthUOM: 'GB',
       isLoading: false,
       periods: [],
-      resources: [],
-      newUsagePageVariation: false
+      resources: []
     };
   });
 

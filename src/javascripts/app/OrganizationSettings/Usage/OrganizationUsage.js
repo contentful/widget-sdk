@@ -8,9 +8,6 @@ import ReloadNotification from 'app/common/ReloadNotification';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import OrganizationResourceUsageList from './non_committed/OrganizationResourceUsageList';
 import OrganizationUsagePage from './committed/OrganizationUsagePage';
-import OrganizationUsagePageNew from './committed/OrganizationUsagePageNew';
-import { getVariation } from 'LaunchDarkly';
-import { USAGE_API_UX } from 'featureFlags';
 import PeriodSelector from './committed/PeriodSelector';
 import NoSpacesPlaceholder from './NoSpacesPlaceholder';
 import { track } from 'analytics/Analytics';
@@ -39,7 +36,6 @@ export const WorkbenchContent = props => {
     error,
     periods,
     resources,
-    newUsagePageVariation,
     onTabSelect
   } = props;
 
@@ -52,22 +48,6 @@ export const WorkbenchContent = props => {
       return <NoSpacesPlaceholder />;
     }
     if (typeof selectedPeriodIndex !== 'undefined') {
-      if (newUsagePageVariation) {
-        return (
-          <OrganizationUsagePageNew
-            {...{
-              period: periods[selectedPeriodIndex],
-              spaceNames,
-              isPoC,
-              periodicUsage,
-              apiRequestIncludedLimit,
-              assetBandwidthData,
-              isLoading,
-              onTabSelect
-            }}
-          />
-        );
-      }
       return (
         <OrganizationUsagePage
           {...{
@@ -77,7 +57,8 @@ export const WorkbenchContent = props => {
             periodicUsage,
             apiRequestIncludedLimit,
             assetBandwidthData,
-            isLoading
+            isLoading,
+            onTabSelect
           }}
         />
       );
@@ -109,7 +90,6 @@ WorkbenchContent.propTypes = {
   error: PropTypes.string,
   periods: PropTypes.arrayOf(PropTypes.object),
   resources: PropTypes.arrayOf(PropTypes.object),
-  newUsagePageVariation: PropTypes.bool,
   onTabSelect: PropTypes.func
 };
 
@@ -170,7 +150,6 @@ export class OrganizationUsage extends React.Component {
     this.state = {
       isLoading: true,
       error: null,
-      newUsagePageVariation: false,
       showPeriodSelector: true
     };
 
@@ -179,11 +158,7 @@ export class OrganizationUsage extends React.Component {
   }
 
   async componentDidMount() {
-    const { orgId } = this.props;
-
     try {
-      const featureFlag = await getVariation(USAGE_API_UX, { organizationId: orgId });
-      this.setState({ newUsagePageVariation: featureFlag });
       await this.checkPermissions();
       await this.fetchOrgData();
     } catch (ex) {
@@ -263,7 +238,7 @@ export class OrganizationUsage extends React.Component {
 
   loadPeriodData = async newIndex => {
     const { orgId } = this.props;
-    const { periods, newUsagePageVariation } = this.state;
+    const { periods } = this.state;
 
     const service = createResourceService(orgId, 'organization');
     const newPeriod = periods[newIndex];
@@ -289,7 +264,7 @@ export class OrganizationUsage extends React.Component {
             startDate: newPeriod.startDate,
             endDate: newPeriod.endDate,
             periodId: newPeriod.sys.id,
-            limit: newUsagePageVariation ? 5 : 3
+            limit: 5
           })
         )
       ];
@@ -346,7 +321,6 @@ export class OrganizationUsage extends React.Component {
       committed,
       resources,
       hasSpaces,
-      newUsagePageVariation,
       showPeriodSelector
     } = this.state;
 
@@ -385,7 +359,6 @@ export class OrganizationUsage extends React.Component {
                 error,
                 periods,
                 resources,
-                newUsagePageVariation,
                 onTabSelect: this.setShowPeriodSelector
               }}
             />

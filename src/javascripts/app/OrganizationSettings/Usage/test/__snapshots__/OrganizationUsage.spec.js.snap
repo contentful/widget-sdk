@@ -64,7 +64,6 @@ exports[`OrganizationUsage should render page without errors 1`] = `
             "space2": false,
           }
         }
-        newUsagePageVariation={true}
         onTabSelect={[Function]}
         periods={
           Array [
@@ -110,7 +109,18 @@ exports[`WorkbenchContent should render 1`] = `
       "space2": true,
     }
   }
-  periodicUsage={Object {}}
+  periodicUsage={
+    Object {
+      "apis": Object {
+        "cma": Object {
+          "items": Array [],
+        },
+      },
+      "org": Object {
+        "usage": Array [],
+      },
+    }
+  }
   spaceNames={
     Object {
       "space1": "Space1",

@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import OrganizationUsageInfoNew from '../committed/OrganizationUsageInfoNew';
+import OrganizationUsageInfo from '../committed/OrganizationUsageInfo';
 
 describe('OrganisationUsageInfoNew', () => {
   const defaultProps = {
@@ -9,7 +9,7 @@ describe('OrganisationUsageInfoNew', () => {
   };
 
   const renderComp = props => {
-    return render(<OrganizationUsageInfoNew {...props} />);
+    return render(<OrganizationUsageInfo {...props} />);
   };
 
   it('should render', () => {

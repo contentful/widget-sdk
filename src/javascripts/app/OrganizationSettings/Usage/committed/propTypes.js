@@ -1,14 +1,5 @@
 import PropTypes from 'prop-types';
 
-const arrayPropType = itemPropType =>
-  PropTypes.shape({
-    total: PropTypes.number.isRequired,
-    sys: PropTypes.shape({
-      type: PropTypes.oneOf(['Array']).isRequired
-    }).isRequired,
-    items: PropTypes.arrayOf(itemPropType).isRequired
-  });
-
 const periodPropType = PropTypes.shape({
   sys: PropTypes.shape({
     type: PropTypes.oneOf(['UsagePeriod']).isRequired,
@@ -18,15 +9,15 @@ const periodPropType = PropTypes.shape({
   endDate: PropTypes.string
 });
 
-const organizationUsagePropType = PropTypes.shape({
-  usage: PropTypes.arrayOf(PropTypes.number).isRequired
-});
-
 const organizationResourceUsagePropType = PropTypes.shape({
   sys: PropTypes.shape({
     type: PropTypes.oneOf(['OrganizationPeriodicUsage', 'SpacePeriodicUsage']),
     space: PropTypes.shape({ sys: PropTypes.shape({ id: PropTypes.string.isRequired }) }).isRequired
   }),
+  usage: PropTypes.arrayOf(PropTypes.number).isRequired
+});
+
+const organizationUsagePropType = PropTypes.shape({
   usage: PropTypes.arrayOf(PropTypes.number).isRequired
 });
 
@@ -44,10 +35,4 @@ const periodicUsagePropType = PropTypes.shape({
   }).isRequired
 });
 
-export {
-  arrayPropType,
-  periodPropType,
-  organizationUsagePropType,
-  organizationResourceUsagePropType,
-  periodicUsagePropType
-};
+export { periodPropType, organizationResourceUsagePropType, periodicUsagePropType };

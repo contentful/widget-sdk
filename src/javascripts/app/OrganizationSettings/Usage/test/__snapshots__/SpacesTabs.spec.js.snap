@@ -141,13 +141,27 @@ Object {
                     data-test-id="cf-ui-table-cell"
                     style="top: 0px;"
                   >
-                    CMASpace
+                    <div>
+                      CMASpace
+                    </div>
+                    <div>
+                      <span
+                        class="Tooltip__Tooltip__target-wrapper___Mtw42"
+                      >
+                        <div
+                          class="Tag__Tag___Y-myd Tag__Tag--muted___1Uba5"
+                          data-test-id="cf-ui-tag"
+                        >
+                          POC
+                        </div>
+                      </span>
+                    </div>
                   </td>
                   <td
                     align="left"
                     class="TableCell__TableCell___Wou8a"
                     data-test-id="cf-ui-table-cell"
-                    style="top: 0px;"
+                    style="vertical-align: middle;"
                   >
                     94
                   </td>
@@ -155,7 +169,7 @@ Object {
                     align="left"
                     class="TableCell__TableCell___Wou8a"
                     data-test-id="cf-ui-table-cell"
-                    style="color: rgb(46, 117, 212);"
+                    style="color: rgb(46, 117, 212); vertical-align: middle;"
                   >
                     12
                     %
@@ -171,13 +185,16 @@ Object {
                     data-test-id="cf-ui-table-cell"
                     style="top: 0px;"
                   >
-                    Deleted space
+                    <div>
+                      Deleted space
+                    </div>
+                    <div />
                   </td>
                   <td
                     align="left"
                     class="TableCell__TableCell___Wou8a"
                     data-test-id="cf-ui-table-cell"
-                    style="top: 0px;"
+                    style="vertical-align: middle;"
                   >
                     104
                   </td>
@@ -185,7 +202,7 @@ Object {
                     align="left"
                     class="TableCell__TableCell___Wou8a"
                     data-test-id="cf-ui-table-cell"
-                    style="color: rgb(14, 184, 127);"
+                    style="color: rgb(14, 184, 127); vertical-align: middle;"
                   >
                     13
                     %
@@ -205,6 +222,7 @@ Object {
         </div>
       </div>
     </div>
+    <div />
   </body>,
   "container": .emotion-1 {
   height: 512px;
@@ -343,13 +361,27 @@ Object {
                   data-test-id="cf-ui-table-cell"
                   style="top: 0px;"
                 >
-                  CMASpace
+                  <div>
+                    CMASpace
+                  </div>
+                  <div>
+                    <span
+                      class="Tooltip__Tooltip__target-wrapper___Mtw42"
+                    >
+                      <div
+                        class="Tag__Tag___Y-myd Tag__Tag--muted___1Uba5"
+                        data-test-id="cf-ui-tag"
+                      >
+                        POC
+                      </div>
+                    </span>
+                  </div>
                 </td>
                 <td
                   align="left"
                   class="TableCell__TableCell___Wou8a"
                   data-test-id="cf-ui-table-cell"
-                  style="top: 0px;"
+                  style="vertical-align: middle;"
                 >
                   94
                 </td>
@@ -357,7 +389,7 @@ Object {
                   align="left"
                   class="TableCell__TableCell___Wou8a"
                   data-test-id="cf-ui-table-cell"
-                  style="color: rgb(46, 117, 212);"
+                  style="color: rgb(46, 117, 212); vertical-align: middle;"
                 >
                   12
                   %
@@ -373,13 +405,16 @@ Object {
                   data-test-id="cf-ui-table-cell"
                   style="top: 0px;"
                 >
-                  Deleted space
+                  <div>
+                    Deleted space
+                  </div>
+                  <div />
                 </td>
                 <td
                   align="left"
                   class="TableCell__TableCell___Wou8a"
                   data-test-id="cf-ui-table-cell"
-                  style="top: 0px;"
+                  style="vertical-align: middle;"
                 >
                   104
                 </td>
@@ -387,7 +422,7 @@ Object {
                   align="left"
                   class="TableCell__TableCell___Wou8a"
                   data-test-id="cf-ui-table-cell"
-                  style="color: rgb(14, 184, 127);"
+                  style="color: rgb(14, 184, 127); vertical-align: middle;"
                 >
                   13
                   %

@@ -41,8 +41,9 @@ exports[`OrganisationUsageInfoNew should render 1`] = `
         2M
       </strong>
       /month quota. This number includes CMA, CDA, CPA, and GraphQL requests. To learn about utility limits, read the
+       
       <a
-        class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 usage-page__learn-more-link TextLink__TextLink--primary___2Vc9F"
+        class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
         data-test-id="cf-ui-text-link"
         href="https://www.contentful.com/r/knowledgebase/fair-use/"
         target="_blank"
@@ -51,9 +52,10 @@ exports[`OrganisationUsageInfoNew should render 1`] = `
           class="TabFocusTrap__TabFocusTrap___39Vty"
           tabindex="-1"
         >
-          Fair Use Policy.
+          Fair Use Policy
         </span>
       </a>
+      .
     </p>
   </div>
 </div>

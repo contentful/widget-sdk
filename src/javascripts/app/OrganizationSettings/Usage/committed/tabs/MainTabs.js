@@ -8,8 +8,8 @@ import { css } from 'emotion';
 import SpacesTabs from './SpacesTabs';
 import { Heading } from '@contentful/forma-36-react-components';
 import OrganizationBarChart from '../charts/OrganizationBarChart';
-import OrganizationUsageInfoNew from '../OrganizationUsageInfoNew';
-import AssetBandwidthSection from '../AssetBandwidthSectionNew';
+import OrganizationUsageInfo from '../OrganizationUsageInfo';
+import AssetBandwidthSection from '../AssetBandwidthSection';
 import { periodicUsagePropType } from '../propTypes';
 
 import { track } from 'analytics/Analytics';
@@ -33,7 +33,8 @@ const MainTabs = ({
   apiRequestIncludedLimit,
   assetBandwidthData,
   spaceNames,
-  onTabSelect
+  onTabSelect,
+  isPoC
 }) => {
   const orgUsage = periodicUsage.org.usage;
   const totalUsage = sum(orgUsage);
@@ -72,7 +73,7 @@ const MainTabs = ({
         <TabPanel id="apiRequest" className={styles.tabPanel}>
           <Grid columns={'repeat(12, 1fr)'}>
             <GridItem columnStart="span 4">
-              <OrganizationUsageInfoNew
+              <OrganizationUsageInfo
                 totalUsage={totalUsage}
                 includedLimit={apiRequestIncludedLimit}
               />
@@ -88,7 +89,12 @@ const MainTabs = ({
           <Heading element="h2" className={styles.heading}>
             View API requests by type and space
           </Heading>
-          <SpacesTabs period={period} spaceNames={spaceNames} periodicUsage={periodicUsage} />
+          <SpacesTabs
+            period={period}
+            spaceNames={spaceNames}
+            periodicUsage={periodicUsage}
+            isPoC={isPoC}
+          />
         </TabPanel>
       )}
       {selected === 'assetBandwidth' && (
@@ -118,6 +124,7 @@ MainTabs.propTypes = {
       included: PropTypes.number
     })
   }),
+  isPoC: PropTypes.objectOf(PropTypes.bool).isRequired,
   onTabSelect: PropTypes.func
 };
 
