@@ -62,10 +62,17 @@
       </div>
     </div>
   </div>
-  <div
-    class="bulk-editor-entry__fields cf-workbench-content cf-workbench-content-type__text"
-    ng-if="data.expanded"
-  >
-    <cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>
+  <div ng-if="data.expanded">
+    <react-component
+      ng-if="editorData.editorExtension"
+      name="app/entry_editor/CustomEditorExtensionRenderer"
+      props="customExtensionProps"
+    ></react-component>
+    <div
+      class="bulk-editor-entry__fields cf-workbench-content cf-workbench-content-type__text"
+      ng-if="!editorData.editorExtension"
+    >
+      <cf-entity-field ng-repeat="widget in widgets track by widget.fieldId"></cf-entity-field>
+    </div>
   </div>
 </div>

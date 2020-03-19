@@ -1,8 +1,9 @@
-import { registerDirective, registerController } from 'NgRegistry';
+import { registerDirective, registerController, getModule } from 'NgRegistry';
 import _ from 'lodash';
 import * as K from 'utils/kefir';
 import { caseof } from 'sum-types';
 import * as Navigator from 'states/Navigator';
+import * as SlideInNavigator from 'navigation/SlideInNavigator';
 import { makeNotify } from 'app/entity_editor/Notifications';
 import { truncate } from 'utils/StringUtils';
 import * as Focus from 'app/entity_editor/Focus';
@@ -15,6 +16,8 @@ import initDocErrorHandler from 'app/entity_editor/DocumentErrorHandler';
 import * as Validator from 'app/entity_editor/Validator';
 import { buildFieldsApi } from 'app/entity_editor/dataFields';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
+import createExtensionBridge from 'widgets/bridges/createExtensionBridge';
+import * as WidgetLocations from 'widgets/WidgetLocations';
 
 import bulkEntityEditorTemplate from './bulk_entity_editor.html';
 
@@ -164,8 +167,23 @@ export default function register() {
             });
 
             function setupEditor(editorData) {
+              const $rootScope = getModule('$rootScope');
+
               $scope.editorData = editorData;
               $scope.otDoc = editorData.doc;
+              $scope.customExtensionProps = {
+                extension: editorData.editorExtension,
+                bridge: createExtensionBridge(
+                  {
+                    $rootScope,
+                    $scope,
+                    spaceContext,
+                    Navigator,
+                    SlideInNavigator
+                  },
+                  WidgetLocations.LOCATION_ENTRY_EDITOR
+                )
+              };
               $controller('InlineEditingController/editor', { $scope });
               data.hasEditor = true;
             }
