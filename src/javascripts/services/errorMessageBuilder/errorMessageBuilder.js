@@ -102,6 +102,8 @@ function buildAssetError(error) {
     error.path[3] === 'url'
   ) {
     return 'Cannot publish until processing has finished';
+  } else if (error.value && error.value.message) {
+    return error.value.message;
   } else {
     return buildErrorMessage(error);
   }
