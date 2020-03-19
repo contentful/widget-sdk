@@ -31,8 +31,6 @@ function queryUserProfileDataRequest(): RequestOptions {
 
 export const getUserProfileData = {
     willReturnDefault() {
-        const interactionName = 'getDefaultUserProfileData';
-
         cy.addInteraction({
             provider: 'user_profile',
             state: 'user profile default login',
@@ -42,9 +40,9 @@ export const getUserProfileData = {
                 status: 200,
                 body: defaultData
             }
-        }).as(interactionName);
+        }).as('getDefaultUserProfileData');
 
-        return `@${interactionName}`;
+        return '@getDefaultUserProfileData';
     },
     willReturnIdentityLoginUser() {
 

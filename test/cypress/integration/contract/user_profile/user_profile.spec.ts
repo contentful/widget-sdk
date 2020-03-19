@@ -29,7 +29,7 @@ describe('User profile page', () => {
     context('default user', () => {
         beforeEach(() => {
             cy.resetAllFakeServers();
-            cy.enableFeatureFlags([FeatureFlag.TWO_FA]);
+            cy.enableFeatureFlags([FeatureFlag.COOKIE_CONSENT_MANAGEMENT]);
             const interactions = [
                 getTokenForUser.willReturnAValidToken(),
                 getUserProfileData.willReturnDefault()
@@ -181,7 +181,7 @@ describe('User profile page', () => {
     context('identity only logged in user', () => {
         beforeEach(() => {
             cy.resetAllFakeServers();
-            cy.enableFeatureFlags([FeatureFlag.TWO_FA]);
+            cy.enableFeatureFlags([FeatureFlag.COOKIE_CONSENT_MANAGEMENT]);
 
             const interactions = [
                 getTokenForUser.willReturnAValidToken(),
@@ -240,7 +240,7 @@ describe('User profile page', () => {
     context('user with 2FA enabled', () => {
         beforeEach(() => {
             cy.resetAllFakeServers();
-            cy.enableFeatureFlags([FeatureFlag.TWO_FA]);
+            cy.enableFeatureFlags([FeatureFlag.COOKIE_CONSENT_MANAGEMENT]);
             const interactions = [
                 getTokenForUser.willReturnAValidToken(),
                 getUserProfileData.willReturnUserWithTwoFA()
