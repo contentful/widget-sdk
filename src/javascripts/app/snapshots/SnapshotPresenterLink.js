@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { memoize } from 'lodash';
 import { css } from 'emotion';
 import { getModule } from 'NgRegistry';
+import { Card } from '@contentful/forma-36-react-components';
 
 import * as EntityResolver from 'data/CMA/EntityResolver';
 import * as EntityHelpers from 'app/entity_editor/entityHelpers';
@@ -43,7 +44,15 @@ const SnapshotPresenterLink = ({ locale, value, linkType }) => {
     ({ sys }) => sys.id
   );
 
-  return models.map(({ entity }, i) => {
+  return models.map((model, i) => {
+    if (!model) {
+      return (
+        <div key={`missing_${i}`} data-test-id="snapshot-presenter-link">
+          <Card>Entry missing or inaccessible</Card>
+        </div>
+      );
+    }
+    const { entity } = model;
     const key = `${entity.sys.id}_${i}`;
     return entity.sys.type === 'Entry' ? (
       <div key={key} data-test-id="snapshot-presenter-link">
