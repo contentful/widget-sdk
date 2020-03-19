@@ -220,6 +220,16 @@ module.exports = () => {
         new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
       )
       .concat(
+        isDev
+          ? [
+              new webpack.ProgressPlugin({
+                entries: true,
+                modules: true,
+                modulesCount: 1500,
+                profile: true
+              })
+            ]
+          : [],
         isProd
           ? [
               new ManifestPlugin({
