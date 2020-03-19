@@ -1,16 +1,37 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@contentful/forma-36-react-components';
+import tokens from '@contentful/forma-36-tokens';
+import { css } from 'emotion';
 import Pluralized from 'ui/Components/Pluralized';
 import StateLink from 'app/common/StateLink';
 import { Typography, Paragraph } from '@contentful/forma-36-react-components';
 import WorkbenchSidebarItem from 'app/common/WorkbenchSidebarItem';
+import ExternalTextLink from 'app/common/ExternalTextLink';
+import { developerDocsUrl } from 'Config';
+
+// TODO: Maybe create a utm parameters generator to append to the URL because this will be used more often
+const localeDocUrlParameters =
+  '?utm_source=webapp&utm_medium=locales-sidebar&utm_campaign=in-app-help';
+const conceptLocalesDocsUrl = `${developerDocsUrl}/concepts/locales/${localeDocUrlParameters}`;
+
+const documentationsSectionStyles = {
+  paragraph: css({
+    marginBottom: tokens.spacingM
+  })
+};
 
 const DocumentationsSection = () => (
   <WorkbenchSidebarItem testId="locales-documentation" title="Documentation">
-    <Paragraph>
-      Contentful enables publishing content in multiple language. To translate your content, add a
-      locale, and enable translation for each necessary field in your content.
+    <Paragraph className={documentationsSectionStyles.paragraph}>
+      Locales enable you to publish in multiple languages.
+    </Paragraph>
+    <Paragraph className={documentationsSectionStyles.paragraph}>
+      See our{' '}
+      <ExternalTextLink testId="locales-documentation-link" href={conceptLocalesDocsUrl}>
+        developer documentation
+      </ExternalTextLink>{' '}
+      for details.
     </Paragraph>
   </WorkbenchSidebarItem>
 );

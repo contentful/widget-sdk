@@ -258,7 +258,7 @@ export default class AccountDropdown extends Component {
 
           <DropdownListItem
             testId="nav.account.docs"
-            href={`${Config.developerDocsUrl}${utmParams}`}
+            href={`${Config.developerDocsUrl}/${utmParams}`}
             target="_blank"
             onClick={this.handleDropdownListItemClick}>
             Developer docs

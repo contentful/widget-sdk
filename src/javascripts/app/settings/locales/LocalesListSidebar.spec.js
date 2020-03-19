@@ -25,6 +25,7 @@ describe('settings/locales/LocalesListSidebar', () => {
     return {
       addLocaleButton: queryByTestId('add-locales-button'),
       documentationSection: queryByTestId('locales-documentation'),
+      documentationLink: queryByTestId('locales-documentation-link'),
       usagesSection: queryByTestId('locales-usage'),
       changeSpaceSection: queryByTestId('change-space-block'),
       upgradeSpaceButton: queryByTestId('locales-change'),
@@ -237,6 +238,25 @@ describe('settings/locales/LocalesListSidebar', () => {
           'Ask the administrator of your organization to change the space to add more.'
         );
       });
+    });
+  });
+
+  describe('documentation', () => {
+    it('has the UTM paramters for the documentation link', () => {
+      const { documentationLink } = renderComponent({
+        insideMasterEnv: true,
+        canChangeSpace: false,
+        localeResource: {
+          usage: 1,
+          limits: {
+            maximum: 2
+          }
+        }
+      });
+
+      expect(documentationLink.getAttribute('href')).toContain(
+        '?utm_source=webapp&utm_medium=locales-sidebar&utm_campaign=in-app-help'
+      );
     });
   });
 });
