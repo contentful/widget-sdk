@@ -14,15 +14,12 @@ export default function register() {
     'spaceContext',
     '$rootScope',
     function ClientController($scope, $state, spaceContext, $rootScope) {
-      let isAnalyticsAllowed;
       let logger;
-      let Intercom;
       let getSpaceFeature;
       let store;
       let EnforcementsService;
       let NavState;
       let CreateSpace;
-      let Analytics;
       let TokenStore;
       let refreshNavState;
       let pubsubSubscribed;
@@ -30,6 +27,7 @@ export default function register() {
       let EntityFieldValueSpaceContext;
       let ENVIRONMENT_ALIAS_CHANGED_EVENT;
       let initEnvAliasChangeHandler;
+      let initOsano;
 
       // TODO remove this eventually. All components should access it as a service
       $scope.spaceContext = spaceContext;
@@ -163,16 +161,9 @@ export default function register() {
 
         $scope.user = user;
 
-        if (isAnalyticsAllowed(user)) {
-          logger.enable(user);
-          Analytics.enable(user);
-        } else {
-          logger.disable();
-          Analytics.disable();
-          // Intercom is enabled by default, but because it is loaded by Segment,
-          // it will only be available when Analytics/Segment is.
-          Intercom.disable();
-        }
+        initOsano();
+
+        logger.enable(user);
       }
 
       // usage/limits enforcement should happen only
@@ -187,30 +178,25 @@ export default function register() {
 
       async function initialize() {
         [
-          { default: isAnalyticsAllowed },
           logger,
-          Intercom,
           { getSpaceFeature },
           { default: store },
           EnforcementsService,
           NavState,
           CreateSpace,
-          Analytics,
           TokenStore,
           { default: authorization },
           EntityFieldValueSpaceContext,
           { ENVIRONMENT_ALIAS_CHANGED_EVENT },
           { default: initEnvAliasChangeHandler },
+          { init: initOsano },
         ] = await Promise.all([
-          import(/* webpackMode: "eager" */ 'analytics/isAnalyticsAllowed'),
           import(/* webpackMode: "eager" */ 'services/logger'),
-          import(/* webpackMode: "eager" */ 'services/intercom'),
           import(/* webpackMode: "eager" */ 'data/CMA/ProductCatalog'),
           import(/* webpackMode: "eager" */ 'redux/store'),
           import(/* webpackMode: "eager" */ 'services/EnforcementsService'),
           import(/* webpackMode: "eager" */ 'navigation/NavState'),
           import(/* webpackMode: "eager" */ 'services/CreateSpace'),
-          import(/* webpackMode: "eager" */ 'analytics/Analytics'),
           import(/* webpackMode: "eager" */ 'services/TokenStore'),
           import(/* webpackMode: "eager" */ 'services/authorization'),
           import(/* webpackMode: "eager" */ 'classes/EntityFieldValueSpaceContext'),
@@ -218,6 +204,7 @@ export default function register() {
           import(
             /* webpackMode: "eager" */ 'app/SpaceSettings/EnvironmentAliases/NotificationsService'
           ),
+          import(/* webpackMode: "eager" */ 'services/OsanoService'),
         ]);
 
         refreshNavState = NavState.makeStateRefresher($state, spaceContext);

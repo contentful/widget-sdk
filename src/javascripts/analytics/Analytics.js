@@ -40,8 +40,8 @@ const ANALYTICS_ENVS = ['production', 'staging', 'preview'];
 const VALUE_UNKNOWN = {};
 
 let env = Config.env;
-let session = {};
-let isDisabled = false;
+const session = {};
+let isEnabled = false;
 
 // Ugly but it's super tricky to simulate environment.
 // Better ideas needed.
@@ -56,33 +56,20 @@ export const __testOnlySetEnv = (_env) => {
  * Starts event tracking
  */
 export const enable = _.once((user) => {
-  if (isDisabled) {
+  if (isEnabled) {
     return;
   }
 
+  isEnabled = true;
+
   if (ANALYTICS_ENVS.includes(env)) {
-    segment.enable();
+    segment.enable(segmentLoadOptions);
     Snowplow.enable();
   }
 
   identify(prepareUserData(removeCircularRefs(user)));
   track('global:app_loaded');
 });
-
-/**
- * @ngdoc method
- * @name analytics#disable
- * @description
- * Stops event tracking, communication, cleans up
- * session data and blocks next `enable` calls.
- */
-export function disable() {
-  segment.disable();
-  Snowplow.disable();
-  isDisabled = true;
-  session = {};
-  sendSessionDataToConsole();
-}
 
 /**
  * @ngdoc method
@@ -108,6 +95,10 @@ export function getSessionData(path, defaultValue) {
  * if it is on the valid events list.
  */
 export function track(event, data) {
+  if (!isEnabled) {
+    return;
+  }
+
   if (!eventExists(event)) {
     track('tracking:invalid_event', {
       event,
@@ -257,6 +248,10 @@ export function trackContextChange(space, organization) {
  * the Segment's client.
  */
 export function trackStateChange(state, params, from, fromParams) {
+  if (!isEnabled) {
+    return;
+  }
+
   const data = (session.navigation = removeCircularRefs({
     state: state.name,
     params,

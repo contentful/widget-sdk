@@ -157,7 +157,6 @@ export default class AccountDropdown extends Component {
 
   handleLogout = () => {
     Analytics.track('global:logout_clicked');
-    Analytics.disable();
     Authentication.logout();
     this.handleDropdownListItemClick();
   };

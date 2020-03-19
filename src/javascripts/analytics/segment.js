@@ -26,29 +26,18 @@ const TRACK_INTEGRATIONS = {
 
 const buffer = CallBuffer.create();
 const bufferedTrack = bufferedCall('track');
-let isDisabled = false;
+let isEnabled = false;
 
 /**
  * Loads lazily the script and starts
  * sending analytical events.
  */
-function enable() {
-  if (!isDisabled) {
-    install().then(buffer.resolve);
-  }
-}
+function enable(loadOptions = {}) {
+  if (!isEnabled) {
+    isEnabled = true;
 
-/**
- * Stops sending analytical events and
- * blocks next calls to `enable`.
- * Removes all user traits.
- */
-function disable() {
-  buffer.call((analytics) => {
-    analytics.user().traits({});
-  });
-  buffer.disable();
-  isDisabled = true;
+    install(loadOptions).then(buffer.resolve);
+  }
 }
 
 function bufferedCall(fnName) {
@@ -71,7 +60,7 @@ function bufferedCall(fnName) {
 
 // Adapted from the docs ("step 1" section):
 // https://segment.com/docs/sources/website/analytics.js/quickstart/
-function install() {
+function install(loadOptions) {
   const analytics = (window.analytics = window.analytics || []);
 
   if (analytics.initialize || analytics.invoked) {
@@ -112,6 +101,7 @@ function install() {
   });
 
   analytics.load = _.noop;
+  analytics._loadOptions = loadOptions;
 
   return LazyLoader.get('segment');
 }
@@ -146,7 +136,6 @@ function sendOnboardingDeploymentEvent(event, data) {
 
 export default {
   enable: _.once(enable),
-  disable: disable,
   /**
    * Sends a single event with data to
    * the selected integrations.
