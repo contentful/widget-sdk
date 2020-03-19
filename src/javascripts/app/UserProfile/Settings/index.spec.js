@@ -106,4 +106,14 @@ describe('IndexPage', () => {
       expect(queryByTestId('security-section-card')).toBeNull();
     });
   });
+
+  describe('Cookie Consent section', () => {
+    it('should show the cookie consent section always', async () => {
+      const { getByTestId } = build();
+
+      await wait();
+
+      expect(getByTestId('privacy-section-card')).toBeVisible();
+    });
+  });
 });

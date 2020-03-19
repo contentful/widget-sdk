@@ -10,6 +10,7 @@ export const ENTITY_EDITOR_CMA_EXPERIMENT =
 export const PENDING_ORG_MEMBERSHIPS = 'feature-bv-09-2019-new-invitation-flow-new-entity';
 export const NEW_INVITATION_FORM = 'feature-bv-05-2019-new-invitation-flow';
 export const ACCESS_TOOLS = 'feature-ogg-02-2020-access-tools';
+export const COOKIE_CONSENT_MANAGEMENT = 'feature-ahoy-03-2020-cookie-consent-mgmt';
 
 // Gatekeeper Product Catalog Flags
 export const ENVIRONMENT_USAGE_ENFORCEMENT = 'environment_usage_enforcements';
