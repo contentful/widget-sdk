@@ -9,6 +9,7 @@ import ForbiddenState from 'app/common/ForbiddenState';
 import UserProvisioningConfiguration from './UserProvisioningConfiguration';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent';
 import UserProvisioningUpsellState from './UserProvisioningUpsellState';
+import DocumentTitle from 'components/shared/DocumentTitle';
 
 const FeatureFetcher = createFetcherComponent(async ({ orgId }) => {
   const featureEnabled = await getOrgFeature(orgId, 'scim');
@@ -19,6 +20,7 @@ const FeatureFetcher = createFetcherComponent(async ({ orgId }) => {
 export default function UserProvisioning({ orgId }) {
   return (
     <OrgAdminOnly orgId={orgId}>
+      <DocumentTitle title="User provisioning" />
       <FeatureFetcher orgId={orgId}>
         {({ isLoading, isError, data }) => {
           if (isLoading) {

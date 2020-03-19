@@ -21,6 +21,7 @@ import { track } from 'analytics/Analytics';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
+import DocumentTitle from 'components/shared/DocumentTitle';
 import _ from 'lodash';
 
 import { connect } from 'react-redux';
@@ -148,52 +149,57 @@ export class SSOSetup extends React.Component {
     const restrictedModeEnabled = _.get(idpData, ['restrictedMode'], false);
 
     return (
-      <Workbench className="sso-setup">
-        <Workbench.Header
-          icon={<NavigationIcon icon="sso" size="large" color="green" />}
-          title="Single Sign-On (SSO)"
-        />
-        <Workbench.Content>
-          <div className="sso-setup__main">
-            {!isEnabled && (
-              <React.Fragment>
-                <Heading element="h1" className={styles.heading}>
-                  Set up Single Sign-On (SSO) SAML 2.0
-                </Heading>
-                <Paragraph className={styles.setupParagraph}>
-                  Set up SSO for your organization in Contentful in a few steps.&nbsp;&nbsp;
-                  <TextLink href="https://www.contentful.com/faq/sso/">Check out the FAQs</TextLink>
-                  &nbsp;&nbsp;
-                  <TextLink
-                    onClick={this.trackSupportClick}
-                    testId="support-link"
-                    href="https://www.contentful.com/support/">
-                    Talk to support
-                  </TextLink>
-                </Paragraph>
-              </React.Fragment>
-            )}
-            {!identityProvider.data && (
-              <Button
-                buttonType="primary"
-                isFullWidth={false}
-                testId="create-idp"
-                loading={identityProvider.isPending}
-                onClick={this.createIdp}>
-                Set up SSO
-              </Button>
-            )}
-            {idpData && !isEnabled && <IDPSetupForm organization={organization} />}
-            {idpData && isEnabled && (
-              <SSOEnabled
-                organization={organization}
-                ssoName={idpData.ssoName}
-                restrictedModeEnabled={restrictedModeEnabled}
-              />
-            )}
-          </div>
-        </Workbench.Content>
-      </Workbench>
+      <>
+        <DocumentTitle title="SSO" />
+        <Workbench className="sso-setup">
+          <Workbench.Header
+            icon={<NavigationIcon icon="sso" size="large" color="green" />}
+            title="Single Sign-On (SSO)"
+          />
+          <Workbench.Content>
+            <div className="sso-setup__main">
+              {!isEnabled && (
+                <React.Fragment>
+                  <Heading element="h1" className={styles.heading}>
+                    Set up Single Sign-On (SSO) SAML 2.0
+                  </Heading>
+                  <Paragraph className={styles.setupParagraph}>
+                    Set up SSO for your organization in Contentful in a few steps.&nbsp;&nbsp;
+                    <TextLink href="https://www.contentful.com/faq/sso/">
+                      Check out the FAQs
+                    </TextLink>
+                    &nbsp;&nbsp;
+                    <TextLink
+                      onClick={this.trackSupportClick}
+                      testId="support-link"
+                      href="https://www.contentful.com/support/">
+                      Talk to support
+                    </TextLink>
+                  </Paragraph>
+                </React.Fragment>
+              )}
+              {!identityProvider.data && (
+                <Button
+                  buttonType="primary"
+                  isFullWidth={false}
+                  testId="create-idp"
+                  loading={identityProvider.isPending}
+                  onClick={this.createIdp}>
+                  Set up SSO
+                </Button>
+              )}
+              {idpData && !isEnabled && <IDPSetupForm organization={organization} />}
+              {idpData && isEnabled && (
+                <SSOEnabled
+                  organization={organization}
+                  ssoName={idpData.ssoName}
+                  restrictedModeEnabled={restrictedModeEnabled}
+                />
+              )}
+            </div>
+          </Workbench.Content>
+        </Workbench>
+      </>
     );
   }
 }
