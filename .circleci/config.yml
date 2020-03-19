@@ -195,8 +195,8 @@ orbs:
               command: npm start
               background: true
           - run:
-              name: Wait http://localhost:3001 to be ready
-              command: npx wait-on http-get://localhost:3001
+              name: Wait http://localhost:3001/app/app.js to be ready
+              command: npx wait-on http-get://localhost:3001/app/app.js
           - run:
               name: Run integration tests
               environment:
@@ -499,7 +499,7 @@ workflows:
                 paths:
                   - pacts/*
           start: npm start
-          wait-on: 'http-get://localhost:3001'
+          wait-on: 'http-get://localhost:3001/app/app.js'
           command: |
             TESTFILES=$(circleci tests glob "test/cypress/integration/contract/**/*.ts" | circleci tests split --split-by=timings --timings-type=filename | tr '\n' ',')
             npx cypress run --spec "${TESTFILES}" --env PACT_DIR="./pacts/${CIRCLE_NODE_INDEX}"
@@ -518,7 +518,7 @@ workflows:
             - store_test_results:
                 path: cypress/reports
           start: npm start
-          wait-on: 'http-get://localhost:3001'
+          wait-on: 'http-get://localhost:3001/app/app.js'
           command: npx cypress run --spec "test/cypress/integration/ui/**/*"
           store_artifacts: true
       - build-tracker/upload-build:

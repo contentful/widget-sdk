@@ -6,7 +6,6 @@ const WebpackRequireFrom = require('webpack-require-from');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserJSPlugin = require('terser-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
 
 /**
@@ -22,7 +21,6 @@ module.exports = () => {
   const isDev = /^(dev|development)$/.test(currentEnv) || !currentEnv;
   const isProd = currentEnv === 'production';
   const isTest = currentEnv === 'test';
-  const configName = process.env.UI_CONFIG || 'development';
   const projectRoot = path.resolve(__dirname, '..');
 
   const publicPath = '/app/';
@@ -222,64 +220,6 @@ module.exports = () => {
         new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
       )
       .concat(
-        isDev
-          ? [
-              new webpack.ProgressPlugin({
-                entries: true,
-                modules: true,
-                modulesCount: 1500,
-                profile: true
-              }),
-              new HtmlWebpackPlugin({
-                /*
-                  We use `HtmlWebpackPlugin`'s lodash template parser
-                  maintaining compatibility with our build and CI scripts.
-                 */
-                template: 'index.html',
-                inject: false,
-                /*
-                  Both webpack and build scripts expect a manifest object which
-                  maps assets to their fingerprinted names as well as the
-                  `externalConfig`.
-                 */
-                templateParameters: compilation => {
-                  const stats = compilation.getStats().toJson({
-                    assets: true,
-                    all: true,
-                    cachedAssets: true
-                  });
-
-                  const manifestedAssets = [
-                    'app.js',
-                    'vendors~app.js',
-                    'styles.css',
-                    'assets/favicon32x32.png',
-                    'assets/apple_icon57x57.png',
-                    'assets/apple_icon72x72.png',
-                    'assets/apple_icon114x114.png'
-                  ];
-
-                  const manifest = manifestedAssets.reduce((acc, asset) => {
-                    acc[asset] = `${publicPath}${
-                      stats.assets.find(real => real.name === asset).name
-                    }`;
-
-                    return acc;
-                  }, {});
-
-                  const config = require(path.join(projectRoot, 'config', `${configName}.json`));
-
-                  return {
-                    manifest,
-                    externalConfig: {
-                      uiVersion: null,
-                      config
-                    }
-                  };
-                }
-              })
-            ]
-          : [],
         isProd
           ? [
               new ManifestPlugin({
