@@ -31,12 +31,6 @@ const Sidebar = () => {
         <List>
           <ListItem>
             <DocsLink
-              href="https://www.contentful.com/developers/marketplace/#type=ui-extension"
-              title="Browse the marketplace"
-            />
-          </ListItem>
-          <ListItem>
-            <DocsLink
               href="https://www.contentful.com/developers/docs/extensibility/ui-extensions/"
               title="Get started with extensions"
             />

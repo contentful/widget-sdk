@@ -7,7 +7,6 @@ import {
   DropdownListItem,
   Notification
 } from '@contentful/forma-36-react-components';
-import ExamplePickerModal from './dialogs/ExamplePickerModal';
 import GitHubInstallerModal from './dialogs/GitHubInstallerModal';
 import { toInternalFieldType } from 'widgets/FieldTypes';
 import getExtensionParameterIds from './getExtensionParameterIds';
@@ -57,26 +56,6 @@ function handleInstallError(err) {
     return true;
   }
 }
-
-export const openExamplePicker = async () => {
-  const { data, err } = await ModalLauncher.open(({ isShown, onClose }) => (
-    <ExamplePickerModal
-      isShown={isShown}
-      onConfirm={data => {
-        onClose({ data });
-      }}
-      onCancel={err => {
-        onClose({ err: err instanceof Error ? err : { cancelled: true } });
-      }}
-    />
-  ));
-
-  if (data) {
-    return install({ ...data, type: 'github-example' });
-  } else {
-    return handleInstallError(err);
-  }
-};
 
 export const openGitHubInstaller = async (extensionUrl = null, extensionUrlReferrer = null) => {
   const { data, err } = await ModalLauncher.open(({ onClose, isShown }) => (
@@ -156,13 +135,6 @@ export default class ExtensionsActions extends React.Component {
             }}
             testId="extensions.add.new">
             Add a new extension
-          </DropdownListItem>
-          <DropdownListItem
-            onClick={() => {
-              openExamplePicker();
-              this.close();
-            }}>
-            Install an example
           </DropdownListItem>
           <DropdownListItem
             onClick={() => {
