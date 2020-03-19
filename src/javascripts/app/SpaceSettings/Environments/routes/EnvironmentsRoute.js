@@ -364,6 +364,14 @@ const sidebarStyles = {
   })
 };
 
+const envDocSidebarUtmParams =
+  '?utm_source=webapp&utm_medium=environments-sidebar&utm_campaign=in-app-help';
+
+const docLinks = {
+  domainModelConcepts: `${Config.developerDocsUrl}/concepts/domain-model/${envDocSidebarUtmParams}`,
+  envAliasesConcepts: `${Config.developerDocsUrl}/concepts/environment-aliases/${envDocSidebarUtmParams}`
+};
+
 function Sidebar({
   canCreateEnv,
   resource,
@@ -423,11 +431,11 @@ function Sidebar({
           Environments allow you to develop and test changes to data in isolation.
         </Paragraph>
         <Paragraph>
-          <span>Read more in the </span>
-          <ExternalTextLink href="https://www.contentful.com/developers/docs/concepts/domain-model/">
+          See the{' '}
+          <ExternalTextLink href={docLinks.domainModelConcepts}>
             Contentful domain model
-          </ExternalTextLink>
-          <span> document.</span>
+          </ExternalTextLink>{' '}
+          for details.
         </Paragraph>
       </div>
       {aliasesEnabled && shouldShowAliasDefinition && (
@@ -439,11 +447,11 @@ function Sidebar({
               through a different static identifier.
             </Paragraph>
             <Paragraph>
-              <span>Read more in the </span>
-              <ExternalTextLink href="https://www.contentful.com/developers/docs/concepts/environment-aliases/">
-                Contentful alias
-              </ExternalTextLink>
-              <span> documentation.</span>
+              Read our{' '}
+              <ExternalTextLink href={docLinks.envAliasesConcepts}>
+                environment alias documentation
+              </ExternalTextLink>{' '}
+              for more information.
             </Paragraph>
           </div>
         </Fragment>
