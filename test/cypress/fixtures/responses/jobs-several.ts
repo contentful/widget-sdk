@@ -75,7 +75,7 @@ export function job(jobPayload = { sys: {} }) {
     createdAt: Matchers.iso8601DateTimeWithMillis('2119-09-02T13:00:00.000Z'),
     createdBy: {
       sys: {
-        id: 'userID',
+        id: '1AMbGlddLG0ISEoa1I423p',
         linkType: 'User',
         type: 'Link',
       },

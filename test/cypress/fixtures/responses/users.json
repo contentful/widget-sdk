@@ -1,11 +1,32 @@
 {
-  "total": 2,
+  "total": 3,
   "limit": 100,
   "skip": 0,
   "sys": {
     "type": "Array"
   },
   "items": [
+    {
+      "firstName": "TestUser",
+      "lastName": "LastName",
+      "avatarUrl": "http://www.gravatar.com/avatar/1ac2431c292c00d0fb0c040b0e5886fa?s=50&d=http%3A%2F%2Favatars.joistio.com%3A8888%2Finitials%2Fv1%2FTL%2F50",
+      "email": "testuser1568299076511@mailinator.com",
+      "activated": false,
+      "signInCount": 0,
+      "confirmed": true,
+      "canCreateOrganization": true,
+      "features": {
+        "logAnalytics": true,
+        "showPreview": false
+      },
+      "sys": {
+        "type": "User",
+        "id": "1AMbGlddLG0ISEoa1I423p",
+        "version": 1,
+        "createdAt": "2019-03-06T13:01:00Z",
+        "updatedAt": "2019-03-06T13:01:00Z"
+      }
+    },
     {
       "firstName": "Test",
       "lastName": "User",
