@@ -14,17 +14,10 @@
 </header>
 <div class="snapshot-comparator__header">
   <div class="snapshot-comparator__header-cell">
-    <button
-      class="btn-link snapshot-comparator__version"
-      aria-label="show-snapshot-list-btn"
-      ng-click="toggleSnapshotSelector()"
-    >
-      <react-component
-        name="components/shared/RelativeDateTime"
-        props="{value: snapshot.sys.createdAt}"
-      ></react-component>
-      <cf-icon class="btn-dropdown-icon" name="dd-arrow-down"></cf-icon>
-    </button>
+    <react-component
+      name="app/snapshots/SnapshotSelector"
+      props="{snapshot, getEditorData, goToSnapshot}"
+    ></react-component>
     <button
       class="btn-link"
       ng-show="versionPicker.getDifferenceCount() &gt; 0"
@@ -42,7 +35,6 @@
     </label>
   </div>
 </div>
-<cf-snapshot-selector ng-show="isShowingSnapshotSelector()"></cf-snapshot-selector>
 <div class="workbench-main x--content-full-size">
   <div
     class="snapshot-comparator__field"
@@ -114,7 +106,6 @@
             name="app/snapshots/SnapshotPresenter"
             props="{version, snapshot, locale, widget, getEditorData}"
           ></react-component>
-          <!-- <cf-snapshot-presenter></cf-snapshot-presenter> -->
           <div
             class="snapshot-comparator__overlay-different"
             ng-if="canRestore"

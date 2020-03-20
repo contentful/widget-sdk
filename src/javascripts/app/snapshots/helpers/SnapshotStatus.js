@@ -1,20 +1,16 @@
-export function getProps(snapshot) {
-  let label;
-  let type;
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Tag } from '@contentful/forma-36-react-components';
 
-  if (snapshot.sys.isCurrent) {
-    label = 'current';
-    type = 'secondary';
-  } else if (snapshot.sys.snapshotType === 'publish') {
-    label = 'published';
-    type = 'positive';
-  } else {
-    label = 'other';
-    type = 'warning';
-  }
+const SnapshotStatus = ({ isCurrent, snapshotType }) => {
+  if (isCurrent) return <Tag tagType="secondary">current</Tag>;
+  if (snapshotType === 'publish') return <Tag tagType="positive">published</Tag>;
+  return <Tag tagType="warning">other</Tag>;
+};
 
-  return {
-    children: label,
-    tagType: type
-  };
-}
+SnapshotStatus.propTypes = {
+  isCurrent: PropTypes.bool,
+  snapshotType: PropTypes.string
+};
+
+export default SnapshotStatus;

@@ -2,10 +2,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import StateLink from 'app/common/StateLink';
-import { Button, Tag, Tooltip, RadioButton } from '@contentful/forma-36-react-components';
+import { Button, Tooltip, RadioButton } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
-import * as SnapshotStatus from 'app/snapshots/helpers/SnapshotStatus';
+import SnapshotStatus from 'app/snapshots/helpers/SnapshotStatus';
 import EntrySidebarWidget from '../EntrySidebarWidget';
 import FetchAndFormatUserName from 'components/shared/UserNameFormatter/FetchAndFormatUserName';
 
@@ -106,7 +106,7 @@ export default class VersionsWidget extends Component {
                 </React.Fragment>
               )
             }>
-            <Tag {...SnapshotStatus.getProps(version)} />
+            <SnapshotStatus {...version.sys} />
           </Tooltip>
         </td>
       </tr>

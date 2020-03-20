@@ -7368,98 +7368,6 @@ pre,
     font-size: 0.85em;
     padding: 5px 7px;
   }
-  .snapshot-selector {
-    width: 40%;
-    min-width: 600px;
-    max-width: 700px;
-    border: 1px solid #e5ebed;
-    -webkit-box-shadow: 0 1px 2px 0 rgba(0,0,0,0.1);
-    box-shadow: 0 1px 2px 0 rgba(0,0,0,0.1);
-    position: absolute;
-    top: 122px;
-    left: 10px;
-    padding: 25px;
-    background-color: #fff;
-    z-index: 200;
-  }
-  .snapshot-selector:after {
-    content: '';
-    display: block;
-    position: absolute;
-    top: -6px;
-    left: 86px;
-    height: 8px;
-    width: 8px;
-    background-color: #fff;
-    -webkit-transform: rotate(45deg);
-    transform: rotate(45deg);
-    border: 1px solid #e5ebed;
-    border-bottom-color: transparent;
-    border-right-color: transparent;
-  }
-  .snapshot-selector__list > .result-list.main-header tr {
-    background-color: #f7f9fa;
-  }
-  .snapshot-selector__list > .result-list.main-header tr th {
-    text-transform: none;
-    font-size: 100%;
-    letter-spacing: normal;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    padding-left: 10px;
-    line-height: 1.5em;
-  }
-  .snapshot-selector__list > .result-list.main-header tr th i {
-    margin-left: 5px;
-  }
-  .snapshot-selector__item-status {
-    font-size: 0.9em;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-  .snapshot-selector__item-status-published {
-    color: #0eb87f;
-  }
-  .snapshot-selector__item-status-draft {
-    color: #3c80cf;
-  }
-  .snapshot-selector__item-list-placeholder {
-    color: #536171;
-    padding-left: 10px;
-    padding-top: 20px;
-  }
-  .snapshot-selector .main-results-wrapper {
-    max-height: 45vh;
-    overflow-y: scroll;
-  }
-  .snapshot-selector .main-results-wrapper tr {
-    color: #536171;
-  }
-  .snapshot-selector .main-results-wrapper tr:hover {
-    cursor: pointer;
-    background-color: #f7f9fa;
-  }
-  .snapshot-selector .main-results-wrapper tr td {
-    border-bottom: 1px solid #e5ebed;
-    padding-top: 16px;
-    padding-bottom: 16px;
-    line-height: 1.5em;
-    padding-left: 10px;
-  }
-  .snapshot-selector .x--sortable:hover {
-    cursor: pointer;
-    background-color: #e5ebed;
-  }
-  .snapshot-selector .x--current {
-    background-color: #e8f7ff;
-  }
-  .snapshot-selector .x--selected-header {
-    font-weight: bold;
-  }
-  .snapshot-selector .x--selected-header .button-icon {
-    color: #8091a5;
-    font-weight: normal;
-  }
   .snapshot-comparator__header {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -7512,14 +7420,6 @@ pre,
     font-size: 16px;
     font-weight: bold;
     padding-right: 4px;
-  }
-  .snapshot-comparator__version.btn-link:hover {
-    -webkit-transition: none;
-    transition: none;
-    color: #a2a9b1;
-  }
-  .snapshot-comparator__version.btn-link:hover cf-icon path {
-    fill: #a2a9b1;
   }
   .snapshot-comparator__version cf-icon path {
     fill: #2d2f31;

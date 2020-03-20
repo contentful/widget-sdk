@@ -1,5 +1,4 @@
 import { cloneDeep, get } from 'lodash';
-import { getModule } from 'NgRegistry';
 
 /**
  * @ngdoc method
@@ -35,8 +34,6 @@ export function withCurrent(entrySys, snapshots) {
  * Decorates snapshots setting snapshot.sys.createdBy.authorName value
  */
 export function withAuthorName(spaceContext, snapshots) {
-  const $q = getModule('$q');
-
   const promises = snapshots.map(snapshot => {
     const userId = get(snapshot, 'sys.createdBy.sys.id');
 
@@ -48,5 +45,5 @@ export function withAuthorName(spaceContext, snapshots) {
     });
   });
 
-  return $q.all(promises);
+  return Promise.all(promises);
 }

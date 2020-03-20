@@ -1,6 +1,5 @@
 import { registerDirective, registerController } from 'NgRegistry';
 import _ from 'lodash';
-import * as K from 'utils/kefir';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as versionPicker from 'app/snapshots/VersionPicker';
 import * as trackVersioning from 'analytics/events/versioning';
@@ -60,16 +59,6 @@ export default function register() {
           $scope.context.dirty = isDirty;
         }
       );
-
-      let isShowingSnapshotSelector = false;
-      const showSnapshotSelectorBus = K.createPropertyBus(isShowingSnapshotSelector, $scope);
-
-      $scope.toggleSnapshotSelector = () => {
-        isShowingSnapshotSelector = !isShowingSnapshotSelector;
-        showSnapshotSelectorBus.set(isShowingSnapshotSelector);
-      };
-      $scope.isShowingSnapshotSelector = () => isShowingSnapshotSelector;
-      $scope.showSnapshotSelector$ = showSnapshotSelectorBus.property;
 
       $scope.showOnlyDifferences = false;
 
