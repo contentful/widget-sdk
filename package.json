@@ -19,7 +19,7 @@
     "@contentful/field-editor-json": "0.3.0",
     "@contentful/field-editor-list": "0.7.0",
     "@contentful/field-editor-location": "0.4.0",
-    "@contentful/field-editor-markdown": "0.3.0",
+    "@contentful/field-editor-markdown": "0.3.1",
     "@contentful/field-editor-multiple-line": "0.5.0",
     "@contentful/field-editor-number": "0.5.0",
     "@contentful/field-editor-radio": "0.4.0",
