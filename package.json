@@ -138,6 +138,8 @@
     "@babel/preset-react": "^7.8.3",
     "@babel/register": "^7.8.3",
     "@babel/traverse": "^7.8.4",
+    "@commitlint/cli": "8.3.5",
+    "@commitlint/config-conventional": "8.3.4",
     "@contentful/cypress-pact": "^3.0.0",
     "@contentful/micro-backends": "^0.6.0",
     "@cypress/webpack-preprocessor": "^4.1.0",
@@ -318,7 +320,8 @@
     "hooks": {
       "pre-commit": "lint-staged",
       "post-checkout": "node ./tools/bin/cond-drop-cache.js",
-      "prepare-commit-msg": "exec < /dev/tty && npx git-cz --hook || true"
+      "prepare-commit-msg": "exec < /dev/tty && npx git-cz --hook || true",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   },
   "config": {
