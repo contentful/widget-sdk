@@ -1,14 +1,7 @@
-'use strict';
-
 import _ from 'lodash';
+import * as pac from 'access_control/AccessChecker/PolicyChecker';
 
 describe('Policy Access Checker', () => {
-  let pac;
-
-  beforeEach(async function() {
-    pac = await this.system.import('access_control/AccessChecker/PolicyChecker');
-  });
-
   const roles = {
     empty: { policies: [] },
     allowAllEntry: {
@@ -429,102 +422,109 @@ describe('Policy Access Checker', () => {
       };
     }
 
-    function test(field, locale, expectation, id = 'id', ctId = 'ctid', type = 'Entry') {
+    function buildExpectation(
+      field,
+      locale,
+      expectation,
+      id = 'id',
+      ctId = 'ctid',
+      type = 'Entry'
+    ) {
       expect(
         pac.canEditFieldLocale({ id, type, contentType: { sys: { id: ctId } } }, field, locale)
       ).toBe(expectation);
     }
 
     it('returns false by default', () => {
-      test({}, {}, false);
+      buildExpectation({}, {}, false);
     });
 
     it('returns true for admin', () => {
       setRole(undefined, true);
-      test({}, {}, true);
+      buildExpectation({}, {}, true);
     });
 
     it('returns true for admin even for paths that do not match', () => {
       setRole(pathPolicy('fields.other.%'), true);
-      test({ apiName: 'test' }, {}, true);
+      buildExpectation({ apiName: 'test' }, {}, true);
     });
 
     it('returns false if policy states: field - other than given, locale - any', () => {
       setRole(pathPolicy('fields.other.%'));
-      test({ apiName: 'test' }, {}, false);
+      buildExpectation({ apiName: 'test' }, {}, false);
     });
 
     it('returns false if policy states: field - any, locale - other than given', () => {
       setRole(pathPolicy('fields.%.en'));
-      test({ apiName: 'test' }, { code: 'pl' }, false);
+      buildExpectation({ apiName: 'test' }, { code: 'pl' }, false);
     });
 
     it('returns false if policy states: field - other than given, locale - other than given', () => {
       setRole(pathPolicy('fields.other.en'));
-      test({ apiName: 'test' }, { code: 'pl' }, false);
+      buildExpectation({ apiName: 'test' }, { code: 'pl' }, false);
     });
 
     it('returns true if policy states: field - given, locale - any', () => {
       setRole(pathPolicy('fields.test.%'));
-      test({ apiName: 'test' }, {}, true);
+      buildExpectation({ apiName: 'test' }, {}, true);
     });
 
     it('returns true if policy states: field - any, locale - given', () => {
       setRole(pathPolicy('fields.%.en'));
-      test({ apiName: 'somefield' }, { code: 'en' }, true);
+      buildExpectation({ apiName: 'somefield' }, { code: 'en' }, true);
     });
 
     it('returns true if policy states: field - given, locale - given', () => {
       setRole(pathPolicy('fields.test.pl'));
-      test({ apiName: 'test' }, { code: 'pl' }, true);
+      buildExpectation({ apiName: 'test' }, { code: 'pl' }, true);
     });
 
     it('returns false if there is overriding policy', () => {
       const p1 = pathPolicy('fields.test.pl');
       const p2 = pathPolicy('fields.test.pl', 'deny');
       setRole({ policies: _.union(p1.policies, p2.policies) });
-      test({ apiName: 'test' }, { code: 'pl' }, false);
+      buildExpectation({ apiName: 'test' }, { code: 'pl' }, false);
     });
 
     it('returns false if there is partially overriding policy', () => {
       const p1 = pathPolicy('fields.test.pl');
       const p2 = pathPolicy('fields.%.pl', 'deny');
       setRole({ policies: _.union(p1.policies, p2.policies) });
-      test({ apiName: 'test' }, { code: 'pl' }, false);
+      buildExpectation({ apiName: 'test' }, { code: 'pl' }, false);
     });
 
     it('uses legacy field ID property if apiName is not available', () => {
       setRole(pathPolicy('fields.test.%'));
-      test({ id: 'test' }, { code: 'pl' }, true);
+      buildExpectation({ id: 'test' }, { code: 'pl' }, true);
     });
 
     it('returns false if CT does not match', () => {
       setRole(pathPolicy('fields.test.pl'));
-      test({ apiName: 'test' }, { code: 'pl' }, false, undefined, 'x');
+      buildExpectation({ apiName: 'test' }, { code: 'pl' }, false, undefined, 'x');
     });
 
     it('returns true if entity has been allowed by ID', () => {
       setRole(allowIdPolicy('entry1'));
-      test({ apiName: 'test' }, { code: 'pl' }, true, 'entry1');
+      buildExpectation({ apiName: 'test' }, { code: 'pl' }, true, 'entry1');
     });
 
     it('returns false if entity has been denied by ID', () => {
       setRole(denyIdPolicy('entry1'));
-      test({ apiName: 'test' }, { code: 'pl' }, false, 'entry1');
+      buildExpectation({ apiName: 'test' }, { code: 'pl' }, false, 'entry1');
     });
 
     it('returns false for asset field w/o allow policies', () => {
-      test({}, {}, false, undefined);
+      buildExpectation({}, {}, false, undefined);
     });
 
     it('returns false for asset with policy allowing editing other locale', () => {
       setRole(assetPathPolicy('fields.%.en'));
-      test({}, { code: 'pl' }, false, undefined, undefined, 'Asset');
+      buildExpectation({}, { code: 'pl' }, false, undefined, undefined, 'Asset');
     });
 
     it('returns true for asset with allowing policy', () => {
       setRole(assetPathPolicy('fields.%.en'));
-      test({}, { code: 'en' }, true, undefined, undefined, 'Asset');
+      buildExpectation({}, { code: 'en' }, true, undefined, undefined, 'Asset');
     });
 
     it('merges policies from two roles in a master environment', () => {
