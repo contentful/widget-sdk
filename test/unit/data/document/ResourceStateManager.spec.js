@@ -18,7 +18,7 @@ describe('data/document/ResourceStateManager', () => {
     this.State = State;
 
     const { DocLoad } = await this.system.import('data/sharejs/Connection');
-    const Doc = await this.system.import('app/entity_editor/Document');
+    const Doc = await this.system.import('app/entity_editor/Document/OtDocument');
 
     await $initialize(this.system);
 

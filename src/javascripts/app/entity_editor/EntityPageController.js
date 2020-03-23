@@ -13,6 +13,7 @@ import {
   goToPreviousSlideOrExit
 } from 'navigation/SlideInNavigator';
 import * as random from 'utils/Random';
+import { valuePropertyAt } from './Document'
 
 const entityLoaders = {
   Entry: loadEntry,
@@ -262,7 +263,7 @@ export default ($scope, $state) => {
     const field = find(entityInfo.contentType.fields, { apiName: fieldId });
     const lifeline = K.createBus();
     const links$ = K.endWith(
-      doc.valuePropertyAt(['fields', field.id, localeCode]),
+      valuePropertyAt(doc, ['fields', field.id, localeCode]),
       lifeline.stream
     ).map(links => links || []);
 

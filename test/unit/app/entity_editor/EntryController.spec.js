@@ -106,7 +106,8 @@ describe('Entry Editor Controller', function() {
     });
 
     this.system.set('app/entity_editor/LoadEventTracker', {
-      bootstrapEntryEditorLoadEvents: () => {}
+      bootstrapEntryEditorLoadEvents: () => {
+      }
     });
 
     this.system.set('app/entity_editor/Tracking', {
@@ -126,7 +127,8 @@ describe('Entry Editor Controller', function() {
     });
 
     this.system.set('app/entry_editor/formWidgetsController', {
-      default: () => {}
+      default: () => {
+      }
     });
 
     this.system.set('classes/EntityFieldValueSpaceContext', {
@@ -238,7 +240,7 @@ describe('Entry Editor Controller', function() {
       ).not.toThrow();
     });
 
-    it("should not break down in case one of the entry title's localized values is not defined", async function() {
+    it('should not break down in case one of the entry title\'s localized values is not defined', async function() {
       this.sandbox.stub(stubs, 'getDefaultEntryFields').returns({
         [entryTitleId]: {
           'en-US': 'Hey, Sunshine!',

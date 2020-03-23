@@ -44,6 +44,7 @@ angular.module('contentful/mocks').factory('mocks/entityEditor/Document', [
 
         const sysProperty = valuePropertyAt(['sys']);
         const docLocalChangesBus = K.createMockProperty();
+        const changesStream = K.createMockStream();
 
         const resourceState = createResourceState(
           sysProperty,
@@ -57,7 +58,6 @@ angular.module('contentful/mocks').factory('mocks/entityEditor/Document', [
           destroy: _.noop,
           getVersion: sinon.stub(),
 
-          docLocalChangesBus,
           state: {
             isDirty$: K.createMockProperty(),
             isSaving$: K.createMockProperty(false),
@@ -66,8 +66,6 @@ angular.module('contentful/mocks').factory('mocks/entityEditor/Document', [
             loaded$: K.createMockProperty(true),
             error$: K.createMockStream()
           },
-
-          status$: K.createMockProperty('ok'),
 
           getData: sinon.spy(getData),
           data$: data$,
@@ -79,16 +77,15 @@ angular.module('contentful/mocks').factory('mocks/entityEditor/Document', [
           insertValueAt: sinon.spy(insertValueAt),
           pushValueAt: sinon.spy(pushValueAt),
 
-          // TODO should emit when calling setters
-          changes: K.createMockStream(),
-          localFieldChanges$: K.createMockStream(),
-          docLocalChanges$: K.createMockStream(),
+          changes: changesStream,
 
-          valuePropertyAt: sinon.spy(valuePropertyAt),
           sysProperty: sysProperty,
 
-          collaboratorsFor: sinon.stub().returns(K.createMockProperty([])),
-          notifyFocus: sinon.spy(),
+          presence: {
+            collaborators: K.createMockProperty([]),
+            collaboratorsFor: sinon.stub().returns(K.createMockProperty([])),
+            focus: sinon.spy()
+          },
 
           reverter: reverter,
           permissions: permissions,
@@ -114,15 +111,15 @@ angular.module('contentful/mocks').factory('mocks/entityEditor/Document', [
         function getAtPath(obj, path) {
           if (Array.isArray(path) && path.length === 0) {
             return obj;
-          } else {
-            return _.get(obj, path);
           }
+          return _.get(obj, path);
         }
 
         function insertValueAt(path, pos, val) {
           const list = getValueAt(path);
           list.splice(pos, 0, val);
           setValueAt(path, list);
+          changesStream.emit([path]);
           return $q.resolve(val);
         }
 
@@ -130,6 +127,7 @@ angular.module('contentful/mocks').factory('mocks/entityEditor/Document', [
           const list = getValueAt(path);
           list.push(val);
           setValueAt(path, list);
+          changesStream.emit([path]);
           return $q.resolve(val);
         }
 
@@ -137,13 +135,14 @@ angular.module('contentful/mocks').factory('mocks/entityEditor/Document', [
           if (!path.length) {
             // If no path is specified, replace entire data object
             data$.set(_.cloneDeep(value));
-            return $q.resolve(value);
           } else {
             const data = _.cloneDeep(currentData);
             _.set(data, path, value);
             data$.set(data);
-            return $q.resolve(value);
           }
+
+          changesStream.emit(path);
+          return $q.resolve(value);
         }
       }
     };

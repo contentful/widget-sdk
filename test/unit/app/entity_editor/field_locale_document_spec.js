@@ -98,10 +98,10 @@ describe('entityEditor/FieldLocaleDocument', () => {
     it('emits when root document emits "localFieldChanges$" for current field', function() {
       const emitted = sinon.spy();
       this.doc.localChanges$.onValue(emitted);
-      this.rootDoc.localFieldChanges$.emit(['FID', 'LC-other']);
-      this.rootDoc.localFieldChanges$.emit(['FID-other', 'LC']);
+      this.rootDoc.changes.emit(['fields', 'FID', 'LC-other']);
+      this.rootDoc.changes.emit(['fields', 'FID-other', 'LC']);
       sinon.assert.notCalled(emitted);
-      this.rootDoc.localFieldChanges$.emit(fieldsPath);
+      this.rootDoc.changes.emit(['fields', ...fieldsPath]);
       sinon.assert.calledOnce(emitted);
     });
   });

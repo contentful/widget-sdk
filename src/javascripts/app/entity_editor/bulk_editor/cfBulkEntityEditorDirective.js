@@ -10,6 +10,7 @@ import * as Focus from 'app/entity_editor/Focus';
 import * as logger from 'services/logger';
 import localeStore from 'services/localeStore';
 import { trackEntryView } from 'app/entity_editor/Tracking';
+import { localFieldChanges, valuePropertyAt } from 'app/entity_editor/Document';
 
 import setupNoShareJsCmaFakeRequestsExperiment from 'app/entity_editor/NoShareJsCmaFakeRequestsExperiment';
 import initDocErrorHandler from 'app/entity_editor/DocumentErrorHandler';
@@ -245,7 +246,7 @@ export default function register() {
         track.changeStatus($scope.entityInfo.id, data.to);
       });
 
-      K.onValueScope($scope, $scope.otDoc.localFieldChanges$, () => {
+      K.onValueScope($scope, localFieldChanges($scope.otDoc), () => {
         track.edited(entityInfo.id);
       });
 
@@ -255,7 +256,7 @@ export default function register() {
         $scope.data.isSaving = isSaving;
       });
 
-      K.onValueScope($scope, $scope.otDoc.valuePropertyAt([]), data => {
+      K.onValueScope($scope, valuePropertyAt($scope.otDoc, []), data => {
         const title = EntityFieldValueSpaceContext.entryTitle({
           getContentTypeId: _.constant($scope.entityInfo.contentTypeId),
           data: data

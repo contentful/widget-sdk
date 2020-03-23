@@ -29,6 +29,9 @@ const formatErroredLocales = erroredLocales => {
 };
 
 const messages = ({ entityLabel, erroredLocales }) => ({
+  [DocumentStatusCode.EDIT_CONFLICT]:
+    'There is a new version of this entry. To view or edit, refresh your browser or open the entry in a new tab. ' +
+    'Your current changes may be lost.',
   [DocumentStatusCode.INTERNAL_SERVER_ERROR]:
     `Due to a server error, we could not process this ${entityLabel}. ` +
     'The fields are temporarily locked so that you won’t lose any ' +

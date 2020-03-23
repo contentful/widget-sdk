@@ -6,5 +6,6 @@ export default {
   CONNECTION_ERROR: 'ot-connection-error',
   ARCHIVED: 'archived',
   DELETED: 'deleted',
+  EDIT_CONFLICT: 'edit-conflict',
   OK: 'ok'
 };

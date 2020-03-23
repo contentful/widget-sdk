@@ -13,6 +13,7 @@ import { makeNotify } from './Notifications';
 import installTracking, { trackEntryView } from './Tracking';
 import { bootstrapEntryEditorLoadEvents } from 'app/entity_editor/LoadEventTracker';
 import setLocaleData from 'app/entity_editor/setLocaleData';
+import { valuePropertyAt } from 'app/entity_editor/Document';
 
 import { getModule } from 'NgRegistry';
 import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge';
@@ -81,8 +82,14 @@ export default async function create($scope, editorData, preferences, trackLoadE
 
   $scope.entityInfo = entityInfo;
 
+  /**
+   * @type {EntityDocument}
+   */
   const doc = editorData.openDoc(K.scopeLifeline($scope));
   // TODO rename the scope property
+  /**
+   * @type {EntityDocument}
+   */
   $scope.otDoc = doc;
   bootstrapEntryEditorLoadEvents($scope, $scope.loadEvents, editorData, trackLoadEvent);
 
@@ -134,7 +141,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
       });
     },
     onDuplicate: () => {
-      const currentFields = K.getValue(doc.valuePropertyAt(['fields']));
+      const currentFields = K.getValue(valuePropertyAt(doc, ['fields']));
       return spaceContext.space
         .createEntry(contentType.id, {
           fields: appendDuplicateIndexToEntryTitle(
@@ -164,7 +171,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
   editorContext.focus = Focus.create();
 
   // TODO Move this into a separate function
-  K.onValueScope($scope, doc.valuePropertyAt([]), data => {
+  K.onValueScope($scope, valuePropertyAt(doc, []), data => {
     const title = EntityFieldValueSpaceContext.entryTitle({
       getContentTypeId: constant(entityInfo.contentTypeId),
       data

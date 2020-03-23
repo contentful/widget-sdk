@@ -42,7 +42,7 @@ export default ({ $scope, emitter }) => {
 
   const initializeUsers = once(() => {
     emitter.emit(SidebarEventTypes.UPDATED_USERS_WIDGET, []);
-    K.onValueScope($scope, $scope.otDoc.collaborators, collaborators => {
+    K.onValueScope($scope, $scope.otDoc.presence.collaborators, collaborators => {
       emitter.emit(SidebarEventTypes.UPDATED_USERS_WIDGET, collaborators);
     });
   });

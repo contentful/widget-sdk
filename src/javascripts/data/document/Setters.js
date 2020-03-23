@@ -1,7 +1,7 @@
 import * as K from 'utils/kefir';
 import * as RichTextFieldSetter from 'data/document/RichTextFieldSetter';
 import * as ShareJS from 'data/sharejs/utils';
-import * as StringField from 'app/entity_editor/document/stringField';
+import * as StringField from 'app/entity_editor/Document/stringField';
 import { getModule } from 'NgRegistry';
 
 /**

@@ -4,14 +4,14 @@ import _ from 'lodash';
 
 describe('DocumentPool', () => {
   beforeEach(async function() {
-    this.system.set('app/entity_editor/Document', {
+    this.system.set('app/entity_editor/Document/OtDocument', {
       create: sinon.spy((_conn, entity) => {
         const s = entity.data.sys;
         return s.id === 'id' && s.type === 'Entry' ? this.doc : this.doc2;
       })
     });
 
-    this.createDoc = (await this.system.import('app/entity_editor/Document')).create;
+    this.createDoc = (await this.system.import('app/entity_editor/Document/OtDocument')).create;
     this.doc = {
       destroy: sinon.stub(),
       state: {

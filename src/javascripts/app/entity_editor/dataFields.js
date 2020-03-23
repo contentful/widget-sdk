@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import * as K from 'utils/kefir';
 import TheLocaleStore from 'services/localeStore';
+import { valuePropertyAt } from './Document'
 
 /**
  * Builds the `entry.fields` api as described in the widget-sdk
@@ -54,7 +55,7 @@ function createField(field, otDoc) {
       locale = undefined;
     }
     const path = makeLocalePath(internalId, locale);
-    return K.onValue(otDoc.valuePropertyAt(path), cb);
+    return K.onValue(valuePropertyAt(otDoc, path), cb);
   }
 }
 

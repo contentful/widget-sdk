@@ -4,11 +4,12 @@
  *
  */
 import { isEqual } from 'lodash';
+import { localFieldChanges, valuePropertyAt } from 'app/entity_editor/Document';
 
 /**
  * @ngdoc method
  * @name app/entity_editor/FieldLocaleDocument#create
- * @param {app/EntityEditor/Document} doc
+ * @param {OtDocument} doc
  * @param {string} fieldId  Internal field ID
  * @param {string} localeCode  Internal locale code
  */
@@ -33,8 +34,7 @@ export default function create(doc, fieldId, localeCode) {
    *
    * @type {Property<any>}
    */
-  const valueProperty = doc
-    .valuePropertyAt(path)
+  const valueProperty = valuePropertyAt(doc, path)
     .filter(value => !isEqual(value, lastSetValue))
     .onValue(value => (lastSetValue = value))
     .toProperty(getValue);
@@ -51,7 +51,7 @@ export default function create(doc, fieldId, localeCode) {
    *
    * @type {Property<any>}
    */
-  const value$ = doc.valuePropertyAt(path);
+  const value$ = valuePropertyAt(doc, path);
 
   /**
    * @ngdoc property
@@ -62,7 +62,7 @@ export default function create(doc, fieldId, localeCode) {
    *
    * @type {Property<void>}
    */
-  const localChanges$ = doc.localFieldChanges$
+  const localChanges$ = localFieldChanges(doc)
     .filter(([otherFieldId, otherLocaleCode]) => {
       return otherFieldId === fieldId && otherLocaleCode === localeCode;
     })
@@ -78,17 +78,10 @@ export default function create(doc, fieldId, localeCode) {
     insert: bindToPath('insertValueAt'),
     value$,
     valueProperty,
-    collaborators: doc.collaboratorsFor(fieldId, localeCode),
-    notifyFocus,
+    collaborators: doc.presence.collaboratorsFor(fieldId, localeCode),
+    notifyFocus: () => doc.presence.focus(fieldId, localeCode),
     localChanges$
   };
-
-  function notifyFocus(isFocused) {
-    if (isFocused === false) {
-      doc.docLocalChangesBus.set({ name: 'blur', path });
-    }
-    return doc.notifyFocus(fieldId, localeCode);
-  }
 
   function set(value) {
     lastSetValue = value;

@@ -2,6 +2,7 @@ import { noop } from 'lodash';
 import * as K from 'utils/kefir';
 import { getVariation } from 'LaunchDarkly';
 import { ENTITY_EDITOR_CMA_EXPERIMENT } from 'featureFlags';
+import { localFieldChanges } from './Document';
 
 const PATH = {
   Entry: 'entries',
@@ -37,8 +38,7 @@ export default async function create({ $scope, spaceContext, entityInfo }) {
       }
     });
 
-    const throttledRelevantChanges$ = $scope.otDoc.docLocalChanges$
-      .filter(change => change && change.name === 'changed')
+    const throttledRelevantChanges$ = localFieldChanges($scope.otDoc)
       .throttle(throttleMs, { leading: false });
 
     K.onValueScope($scope, throttledRelevantChanges$, () => {

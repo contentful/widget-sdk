@@ -139,7 +139,7 @@ describe('FieldLocaleController', () => {
   describe('#collaborators', () => {
     it('watches "docPresence" with path', function() {
       const scope = this.init();
-      this.otDoc.collaboratorsFor().set(['USER']);
+      this.otDoc.presence.collaboratorsFor().set(['USER']);
       $apply();
       expect(scope.fieldLocale.collaborators).toEqual(['USER']);
     });
@@ -150,9 +150,9 @@ describe('FieldLocaleController', () => {
       this.scope = this.init();
     });
 
-    it('calls "otDoc.notifyFocus()" if set to true', function() {
+    it('calls "otDoc.presence.focus()" if set to true', function() {
       this.scope.fieldLocale.setActive(true);
-      const focus = this.otDoc.notifyFocus;
+      const focus = this.otDoc.presence.focus;
       sinon.assert.calledWithExactly(focus, 'FID', 'LID');
     });
 
@@ -196,7 +196,7 @@ describe('FieldLocaleController', () => {
     });
 
     it('is "disconnected" and "disabled" when is connected with an erroneous document status', function() {
-      this.otDoc.status$ = K.createMockProperty('internal-server-error');
+      this.otDoc.state.error$ = K.createMockProperty('internal-server-error');
       this.otDoc.state.isConnected$.set(true);
       const scope = this.init();
       $apply();
@@ -216,7 +216,7 @@ describe('FieldLocaleController', () => {
     });
 
     it('is "disabled" and "occupied" for `RichText` field with collaborators', function() {
-      this.otDoc.collaboratorsFor.returns(K.createMockProperty([{}]));
+      this.otDoc.presence.collaboratorsFor.returns(K.createMockProperty([{}]));
       const scope = this.init(scope => {
         scope.widget.field.type = 'RichText';
       });
@@ -262,7 +262,7 @@ describe('FieldLocaleController', () => {
     const clock = this.sandbox.useFakeTimers();
     const scope = this.init();
     const validator = scope.editorContext.validator;
-    this.otDoc.localFieldChanges$.emit(['FID', 'LID']);
+    this.otDoc.changes.emit(['fields', 'FID', 'LID']);
     sinon.assert.notCalled(validator.validateFieldLocale);
     clock.tick(800);
     sinon.assert.calledOnceWith(validator.validateFieldLocale, 'FID', 'LID');

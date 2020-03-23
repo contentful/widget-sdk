@@ -15,6 +15,7 @@ import setupNoShareJsCmaFakeRequestsExperiment from './NoShareJsCmaFakeRequestsE
 import initSidebarTogglesProps from 'app/entity_editor/entityEditorSidebarToggles';
 import { getModule } from 'NgRegistry';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
+import { statusProperty, valuePropertyAt } from './Document';
 
 /**
  * @param {Object} $scope
@@ -42,7 +43,7 @@ export default async function create($scope, editorData, preferences) {
   $scope.otDoc = editorData.openDoc(K.scopeLifeline($scope));
   initDocErrorHandler($scope, $scope.otDoc.state.error$);
 
-  K.onValueScope($scope, $scope.otDoc.status$, status => {
+  K.onValueScope($scope, statusProperty($scope.otDoc), status => {
     $scope.statusNotificationProps = { status, entityLabel: 'asset' };
   });
 
@@ -63,7 +64,7 @@ export default async function create($scope, editorData, preferences) {
     otDoc: $scope.otDoc
   });
 
-  K.onValueScope($scope, $scope.otDoc.valuePropertyAt([]), data => {
+  K.onValueScope($scope, valuePropertyAt($scope.otDoc, []), data => {
     const title = EntityFieldValueSpaceContext.assetTitle({
       getContentTypeId: () => {},
       data

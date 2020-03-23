@@ -5,6 +5,7 @@ import * as Navigator from 'states/Navigator';
 import createFieldLocaleDoc from 'app/entity_editor/FieldLocaleDocument';
 import DocumentStatusCode from 'data/document/statusCode';
 import * as EntityFieldValueSpaceContext from 'classes/EntityFieldValueSpaceContext';
+import { statusProperty } from './Document';
 
 export default function register() {
   /**
@@ -185,11 +186,10 @@ export default function register() {
        * @param {boolean} active
        */
       controller.setActive = isActive => {
+        controller.doc.notifyFocus();
         if (isActive && !controller.access.disabled) {
-          controller.doc.notifyFocus(true);
           editorContext.focus.set(field.id);
         } else {
-          controller.doc.notifyFocus(false);
           editorContext.focus.unset(field.id);
         }
       };
@@ -199,7 +199,7 @@ export default function register() {
         locale.code
       );
 
-      const documentStatus$ = $scope.otDoc.status$ || K.constant();
+      const documentStatus$ = statusProperty($scope.otDoc) || K.constant();
 
       /**
        * @ngdoc property
@@ -233,7 +233,10 @@ export default function register() {
             ) {
               return OCCUPIED;
             } else if (isConnected) {
-              return status === DocumentStatusCode.INTERNAL_SERVER_ERROR ? DISCONNECTED : EDITABLE;
+              return status === DocumentStatusCode.INTERNAL_SERVER_ERROR ||
+                status === DocumentStatusCode.EDIT_CONFLICT
+                ? DISCONNECTED
+                : EDITABLE;
             } else {
               return DISCONNECTED;
             }

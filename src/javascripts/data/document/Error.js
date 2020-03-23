@@ -6,6 +6,7 @@ import { makeSum } from 'sum-types';
  */
 
 export const Error = makeSum({
+  Disconnected: [],
   // Opening a document fails with 'forbidden'
   OpenForbidden: [],
   // `doc.set(path)` responds with a 'forbidden' error.

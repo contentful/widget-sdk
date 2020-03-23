@@ -3,6 +3,7 @@ import { groupBy, isEmpty, keys } from 'lodash';
 import SidebarEventTypes from 'app/EntrySidebar/SidebarEventTypes';
 import DocumentStatusCode from 'data/document/statusCode';
 import TheLocaleStore from 'services/localeStore';
+import { statusProperty } from './Document';
 
 export default ($scope, { entityLabel, shouldHideLocaleErrors, emitter }) => {
   setLocaleData($scope);
@@ -106,8 +107,12 @@ function handleTopNavErrors($scope, entityLabel, shouldHideLocaleErrors) {
     }
   });
 
-  K.onValueScope($scope, $scope.otDoc.status$, status => {
-    if (status === 'ok' && !isEmpty($scope.localeData.errors) && !shouldHideLocaleErrors()) {
+  K.onValueScope($scope, statusProperty($scope.otDoc), status => {
+    if (
+      status === DocumentStatusCode.OK &&
+      !isEmpty($scope.localeData.errors) &&
+      !shouldHideLocaleErrors()
+    ) {
       return;
     }
     $scope.statusNotificationProps = { status, entityLabel };

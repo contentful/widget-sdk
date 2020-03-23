@@ -1,17 +1,8 @@
-/**
- * @ngdoc service
- * @module contentful
- * @name Document
- * @description
- * Used to edit an entry or asset through ShareJS
- */
-
-import { get, memoize, cloneDeep, isEqual } from 'lodash';
+import { get, cloneDeep, isEqual } from 'lodash';
 import * as K from 'utils/kefir';
 import { deepFreeze } from 'utils/Freeze';
 import * as PathUtils from 'utils/Path';
 import { caseof } from 'sum-types';
-import * as accessChecker from 'access_control/AccessChecker';
 import * as Permissions from 'access_control/EntityPermissions';
 import { Error as DocError } from 'data/document/Error';
 import * as Normalizer from 'data/document/Normalize';
@@ -19,15 +10,20 @@ import * as ResourceStateManager from 'data/document/ResourceStateManager';
 import * as DocSetters from 'data/document/Setters';
 import DocumentStatusCode from 'data/document/statusCode';
 import { DocLoad } from 'data/sharejs/Connection';
-import * as Reverter from './document/Reverter';
+import * as Reverter from './Reverter';
 import { getModule } from 'NgRegistry';
 import * as logger from 'services/logger';
-import * as Status from 'data/document/status';
 import TheLocaleStore from 'services/localeStore';
 import * as ShareJS from 'data/sharejs/utils';
+import { valuePropertyAt } from 'app/entity_editor/Document';
 
-// TODO Instead of passing an entity instance provided by the client
-// library we should only pass the entity data.
+/**
+ * @returns {EntityDocument}
+ * @description
+ * Used to edit an entry or asset through ShareJS
+ *
+ * TODO Instead of passing an entity instance provided by the client library we should only pass the entity data.
+ */
 export function create(docConnection, entity, contentType, user, spaceEndpoint) {
   const PresenceHub = getModule('entityEditor/Document/PresenceHub');
 
@@ -71,6 +67,8 @@ export function create(docConnection, entity, contentType, user, spaceEndpoint) 
       docConnection.refreshAuth().catch(() => {
         errorBus.emit(DocError.SetValueForbidden(path));
       });
+    } else if (error === DocumentStatusCode.INTERNAL_SERVER_ERROR) {
+      errorBus.emit(DocumentStatusCode.INTERNAL_SERVER_ERROR);
     }
   });
   cleanupTasks.push(docSetters.destroy);
@@ -136,17 +134,18 @@ export function create(docConnection, entity, contentType, user, spaceEndpoint) 
   /**
    * @ngdoc property
    * @module contentful
-   * @name Document#docLocalChanges$
+   * @name Document#docLocalChangesBus
    * A stream of changes to the the document that includes
    * focus state, status changes and content modification.
    * The focus state changes are emitted in FieldLocaleDocument#notify()
    * The status changes are emitted in the ResourceStateManager module.
    * The content changes are emitted in Document#docEventsBus#onValue.
+   *
+   * TODO: it is not used anywhere (previously was used for SidebarBridge) and should be removed
    */
 
   const docLocalChangesBus = K.createPropertyBus();
   cleanupTasks.push(docLocalChangesBus.end);
-  const docLocalChanges$ = docLocalChangesBus.property;
 
   /**
    * @ngdoc property
@@ -267,32 +266,6 @@ export function create(docConnection, entity, contentType, user, spaceEndpoint) 
     return sys.publishedVersion ? sys.version > sys.publishedVersion + 1 : true;
   });
 
-  /**
-   * @ngdoc method
-   * @module contentful
-   * @name Document#valuePropertyAt
-   * @description
-   * Returns a property that always has the current value at the given
-   * path of the document.
-   *
-   * @deprecated
-   * TODO replace this with specialized field access like, `getFieldValue(fid,
-   * locale)`.
-   *
-   * @param {string[]} path
-   * @returns {Property<any>}
-   */
-  const memoizedValuePropertyAt = memoize(valuePropertyAt, path => path.join('!'));
-
-  function valuePropertyAt(valuePath) {
-    return changes
-      .filter(changePath => {
-        return PathUtils.isAffecting(changePath, valuePath);
-      })
-      .toProperty(() => undefined)
-      .map(() => getValueAt(valuePath));
-  }
-
   // Property<ShareJS.Document?>
   const doc$ = docLoader.doc
     .map(doc => {
@@ -332,37 +305,13 @@ export function create(docConnection, entity, contentType, user, spaceEndpoint) 
   });
 
   docLoadError$.onValue(error => {
-    if (error === 'forbidden') {
-      errorBus.emit(DocError.OpenForbidden());
-    }
+    const errors = {
+      forbidden: DocError.OpenForbidden(),
+      disconnected: DocError.Disconnected(),
+      [DocumentStatusCode.INTERNAL_SERVER_ERROR]: DocumentStatusCode.INTERNAL_SERVER_ERROR
+    };
+    errorBus.emit(errors[error] || null);
   });
-
-  /**
-   * @ngdoc property
-   * @name Document#status$
-   * @type string
-   * @description
-   * Current status of the document
-   *
-   * Is one of
-   * - 'editing-not-allowed'
-   * - 'ot-connection-error'
-   * - 'internal-server-error'
-   * - 'archived'
-   * - 'ok'
-   *
-   * This property is used by entry_editor/StatusNotification component.
-   */
-  const status$ = Status.create(
-    sysProperty,
-    docLoadError$,
-    accessChecker.canUpdateEntity(entity),
-    docSetters.error$
-      // The only error we are interested in in this stream is
-      // internal server errors coming from Sharejs.
-      .filter(({ error }) => error === DocumentStatusCode.INTERNAL_SERVER_ERROR)
-      .toProperty(() => ({ error: null }))
-  );
 
   const presence = PresenceHub.create(user.sys.id, docEventsBus.stream, shout);
   cleanupTasks.push(presence.destroy);
@@ -414,35 +363,6 @@ export function create(docConnection, entity, contentType, user, spaceEndpoint) 
 
   /**
    * @ngdoc property
-   * @name Document#data$
-   * @type Property<API.Entity>
-   * @description
-   * Holds the current entity data, i.e. the 'sys' and 'fields' properties.
-   *
-   * Note that we cannot simply use `valuePropertiesAt([])` because this will
-   * represents the raw SJS snapshot which does not have 'sys.updatedAt'.
-   */
-  const data$ = K.combinePropertiesObject({
-    sys: sysProperty,
-    fields: valuePropertyAt(['fields'])
-  });
-
-  // Sync the data to the entity instance.
-  // The entity instance is unique for the ID. Other views will share
-  // the same instance and not necessarily load the data. This is why
-  // we need to make sure that we keep it updated.
-  data$.onValue(data => {
-    entity.data = data;
-    if (data.sys.deletedVersion) {
-      entity.setDeleted();
-      // We need to remove the `data` property. Otherwise `entity.isDeleted()`
-      // will return `false`.
-      delete entity.data;
-    }
-  });
-
-  /**
-   * @ngdoc property
    * @name Document#localFieldChanges
    * @type Stream<[string, string]>
    * @description
@@ -452,12 +372,10 @@ export function create(docConnection, entity, contentType, user, spaceEndpoint) 
   const localFieldChangesBus = K.createBus();
   cleanupTasks.push(localFieldChangesBus.end);
 
-  return {
+  const document = {
     destroy,
     getVersion,
 
-    docLocalChanges$,
-    docLocalChangesBus,
     state: {
       // Used by Entry/Asset editor controller
       isSaving$,
@@ -473,8 +391,6 @@ export function create(docConnection, entity, contentType, user, spaceEndpoint) 
       error$: errorBus.stream
     },
 
-    status$,
-
     getValueAt,
     setValueAt: docSetters.setValueAt,
     removeValueAt: docSetters.removeValueAt,
@@ -482,16 +398,13 @@ export function create(docConnection, entity, contentType, user, spaceEndpoint) 
     pushValueAt: docSetters.pushValueAt,
 
     changes,
-    localFieldChanges$: docSetters.localFieldChange$,
 
-    valuePropertyAt: memoizedValuePropertyAt,
     sysProperty,
-    data$,
 
-    // TODO only expose presence
-    collaboratorsFor: presence.collaboratorsFor,
-    collaborators: presence.collaborators,
-    notifyFocus: presence.focus,
+    /**
+     * @type {PresenceHub}
+     */
+    presence,
 
     /**
      * @ngdoc property
@@ -534,6 +447,37 @@ export function create(docConnection, entity, contentType, user, spaceEndpoint) 
 
     resourceState
   };
+
+  /**
+   * @ngdoc property
+   * @name Document#data$
+   * @type Property<API.Entity>
+   * @description
+   * Holds the current entity data, i.e. the 'sys' and 'fields' properties.
+   *
+   * Note that we cannot simply use `valuePropertiesAt([])` because this will
+   * represents the raw SJS snapshot which does not have 'sys.updatedAt'.
+   */
+  document.data$ = K.combinePropertiesObject({
+    sys: sysProperty,
+    fields: valuePropertyAt(document, ['fields'])
+  });
+
+  // Sync the data to the entity instance.
+  // The entity instance is unique for the ID. Other views will share
+  // the same instance and not necessarily load the data. This is why
+  // we need to make sure that we keep it updated.
+  document.data$.onValue(data => {
+    entity.data = data;
+    if (data.sys.deletedVersion) {
+      entity.setDeleted();
+      // We need to remove the `data` property. Otherwise `entity.isDeleted()`
+      // will return `false`.
+      delete entity.data;
+    }
+  });
+
+  return document;
 
   /**
    * Used by resource state manager

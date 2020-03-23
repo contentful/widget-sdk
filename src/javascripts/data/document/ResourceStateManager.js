@@ -85,18 +85,22 @@ export function create(sys$, setSys, getData, spaceEndpoint, docStateChangeBus) 
         to: nextState
       });
     }
-    // Document#docEventsBus doesn't emit changes of the document
-    // status so we have to listen to those here.
-    if (statesMap[nextState]) {
-      docStateChangeBus.set({ name: statesMap[nextState], p: ['sys'] });
-    } else if (previousState === State.Archived()) {
-      docStateChangeBus.set({ name: 'unarchived', p: ['sys'] });
-    } else if (
-      previousState === State.Published() ||
-      // When an entry is published, changed and then unpublished, it goes to Draft state.
-      (previousState === State.Changed() && nextState === State.Draft())
-    ) {
-      docStateChangeBus.set({ name: 'unpublished', p: ['sys'] });
+
+    // todo: this is not used anymore (was used in SidebarBridge) and should be removed
+    if (docStateChangeBus) {
+      // Document#docEventsBus doesn't emit changes of the document
+      // status so we have to listen to those here.
+      if (statesMap[nextState]) {
+        docStateChangeBus.set({ name: statesMap[nextState], p: ['sys'] });
+      } else if (previousState === State.Archived()) {
+        docStateChangeBus.set({ name: 'unarchived', p: ['sys'] });
+      } else if (
+        previousState === State.Published() ||
+        // When an entry is published, changed and then unpublished, it goes to Draft state.
+        (previousState === State.Changed() && nextState === State.Draft())
+      ) {
+        docStateChangeBus.set({ name: 'unpublished', p: ['sys'] });
+      }
     }
   }
 }

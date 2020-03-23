@@ -11,7 +11,7 @@ jest.mock(
   { virtual: true }
 );
 
-describe('entity_editor/document/stringField', () => {
+describe('entity_editor/Document/stringField', () => {
   beforeEach(() => {
     ShareJS.peek.mockClear();
     ShareJS.setDeep.mockClear();

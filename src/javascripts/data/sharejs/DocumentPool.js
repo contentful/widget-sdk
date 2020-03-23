@@ -1,4 +1,4 @@
-import { create as createDoc } from 'app/entity_editor/Document';
+import { createOtDoc } from 'app/entity_editor/Document';
 import { find, includes, isString, get as getAtPath } from 'lodash';
 
 /**
@@ -37,7 +37,7 @@ export function create(docConnection, spaceEndpoint) {
       doc = instance.doc;
       instance.count += 1;
     } else {
-      doc = createDoc(docConnection, entity, contentType, user, spaceEndpoint);
+      doc = createOtDoc(docConnection, entity, contentType, user, spaceEndpoint);
       instances[key] = { key, doc, count: 1 };
     }
 
