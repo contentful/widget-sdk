@@ -312,7 +312,7 @@ describe('createExtensionBridge', () => {
       expect(result).toBe('Entry updated');
     });
 
-    it('handles invlid space method calls', async () => {
+    it('handles invalid space method calls', async () => {
       const [bridge] = makeBridge();
       const api = makeStubbedApi();
       bridge.install(api);

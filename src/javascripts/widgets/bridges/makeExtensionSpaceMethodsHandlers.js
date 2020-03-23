@@ -7,6 +7,51 @@ import checkDependencies from './checkDependencies';
 
 const ASSET_PROCESSING_POLL_MS = 500;
 
+// This list helps prevent unknown or malicious use of methods that exist on the cma
+// by whitelisting only the actions we deem necessary
+const ALLOWED_SDK_METHODS = [
+  'getContentType',
+  'getEntry',
+  'getEntrySnapshots',
+  'getAsset',
+  'getEditorInterface',
+
+  'getPublishedEntries',
+  'getPublishedAssets',
+  'getContentTypes',
+  'getEntries',
+  'getEditorInterfaces',
+  'getAssets',
+
+  'createContentType',
+  'createEntry',
+  'createAsset',
+
+  'updateContentType',
+  'updateEntry',
+  'updateAsset',
+
+  'deleteContentType',
+  'deleteEntry',
+  'deleteAsset',
+
+  'publishEntry',
+  'publishAsset',
+  'unpublishEntry',
+  'unpublishAsset',
+
+  'archiveEntry',
+  'archiveAsset',
+  'unarchiveEntry',
+  'unarchiveAsset',
+
+  'createUpload',
+  'processAsset',
+  'waitUntilAssetProcessed',
+
+  'getUsers'
+];
+
 export default function makeExtensionSpaceMethodsHandlers(dependencies, handlerOptions = {}) {
   const { spaceContext } = checkDependencies('ExtensionSpaceMethodsHandlers', dependencies, [
     'spaceContext'
@@ -22,6 +67,10 @@ export default function makeExtensionSpaceMethodsHandlers(dependencies, handlerO
     }
 
     try {
+      if (!ALLOWED_SDK_METHODS.includes(methodName)) {
+        throw new Error(`Method "${methodName}" does not exist.`);
+      }
+
       // Users are fetched with the User Cache, not the CMA client.
       if (methodName === 'getUsers') {
         const users = await spaceContext.users.getAll();
