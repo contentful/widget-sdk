@@ -129,6 +129,7 @@ const StatusSwitch = ({
     primaryActionButtonPropsByEntityStatus[primaryAction.targetStateId] || {};
 
   const isPrimaryActionDisabled =
+    primaryAction.isRestricted() ||
     primaryAction.isDisabled() ||
     isDisabled ||
     (primaryAction.targetStateId === 'published' && !!publicationBlockedReason);
@@ -139,11 +140,14 @@ const StatusSwitch = ({
       ? secondaryActions.filter(action => action.targetStateId !== 'published')
       : secondaryActions;
 
-  const restrictedAction = [primaryAction, ...avilableSecondaryActions].find(
-    action => action.isDisabled() || action.isRestricted()
-  );
+  const allActionsRestricted = [primaryAction, ...avilableSecondaryActions]
+    // when published, primary action becomes a stub with isAvailable() true,
+    // isDisabled() false, isRestricted() false, but also without any way to execute it
+    // or change the status, so a stub
+    .filter(action => !!action.targetStateId)
+    .every(action => action.isDisabled() || action.isRestricted());
 
-  const isButtonLocked = !!(publicationBlockedReason || restrictedAction);
+  const isButtonLocked = !!(publicationBlockedReason || allActionsRestricted);
   const lockReason = publicationBlockedReason || 'You do not have permission to change status';
 
   // overwriting forma 36 button component styles to make it flat instead of gradient
@@ -245,6 +249,7 @@ const StatusSwitch = ({
                   testId="force-publish-menu-trigger"
                   buttonType={primaryActionProps.tagType}
                   disabled={isPrimaryActionDisabled}
+                  icon={isPrimaryActionDisabled ? 'Lock' : undefined}
                   isFullWidth
                   onClick={async () => {
                     setDropdownOpen(false);
@@ -270,6 +275,7 @@ const StatusSwitch = ({
                         await action.execute();
                         setActionInProgress(false);
                       }}
+                      icon={action.isDisabled() ? 'Lock' : undefined}
                       isDisabled={action.isDisabled()}>
                       {action.isRestricted() ? (
                         <RestrictedAction actionName={action.label} />
