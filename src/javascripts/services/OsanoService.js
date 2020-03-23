@@ -12,6 +12,7 @@ import isAnalyticsAllowed from 'analytics/isAnalyticsAllowed';
 import * as Analytics from 'analytics/Analytics';
 import segment from 'analytics/segment';
 import * as Intercom from 'services/intercom';
+import { Notification } from '@contentful/forma-36-react-components';
 import { getStore } from 'browserStorage';
 
 const localStorage = getStore();
@@ -30,18 +31,12 @@ const handleConsentChanged = debounce(function debouncedHandleConsentChanged(new
   const personalizationAllowed = newConsentOptions.PERSONALIZATION === 'ACCEPT';
 
   if (consentOptions) {
-    // If the consent options changed from ACCEPT to DENY, we need to reload because we can't
-    // unload existing scripts like GA, Intercom.
-    const analyticsAllowedPrev = consentOptions.ANALYTICS === 'ACCEPT';
-    const personalizationAllowedPrev = consentOptions.PERSONALIZATION === 'ACCEPT';
+    // If the consent options, we need to reload because we can't unload existing scripts like GA, Intercom.
 
-    if (analyticsAllowedPrev && !analyticsAllowed) {
-      window.reload();
-    }
-
-    if (personalizationAllowedPrev && !personalizationAllowed) {
-      window.reload();
-    }
+    // TODO: This message sounds a little weird in the context of our app...
+    Notification.success(
+      'Your preferences have been successfully saved. Reload the app to finish applying changes.'
+    );
   }
 
   consentOptions = newConsentOptions;
