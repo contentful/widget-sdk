@@ -176,10 +176,12 @@
     "chalk": "^2.4.2",
     "chokidar": "^1.4.3",
     "codecov": "^3.6.5",
+    "commitizen": "^4.0.3",
     "contentful-ui-extensions-sdk": "^3.9.1",
     "css-loader": "^3.4.0",
     "cypress": "^3.4.0",
     "cypress-testing-library": "^2.6.0",
+    "cz-conventional-changelog": "^3.1.0",
     "diff": "4.0.1",
     "enzyme": "3.8.0",
     "enzyme-adapter-react-16": "1.9.1",
@@ -315,10 +317,14 @@
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
-      "post-checkout": "node ./tools/bin/cond-drop-cache.js"
+      "post-checkout": "node ./tools/bin/cond-drop-cache.js",
+      "prepare-commit-msg": "exec < /dev/tty && npx git-cz --hook || true"
     }
   },
   "config": {
-    "pact_do_not_track": true
+    "pact_do_not_track": true,
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
