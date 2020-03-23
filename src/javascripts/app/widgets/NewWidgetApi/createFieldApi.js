@@ -7,21 +7,30 @@ import { get, noop } from 'lodash';
  * @typedef { import("contentful-ui-extensions-sdk").FieldAPI } FieldAPI
  */
 
-const ERROR_CODES = { EBADUPDATE: 'ENTRY UPDATE FAILED' };
+const ERROR_CODES = {
+  BADUPDATE: 'ENTRY UPDATE FAILED',
+  NO_PERMISSIONS: 'NOT ENOUGH PERMISSIONS'
+};
 
 const ERROR_MESSAGES = {
   MFAILUPDATE: 'Could not update entry field',
-  MFAILREMOVAL: 'Could not remove value for field'
+  MFAILREMOVAL: 'Could not remove value for field',
+  MFAILPERMISSIONS: 'Could not update entry field'
 };
 
-function makeShareJSError(shareJSError, message) {
+export function makePermissionError() {
+  const error = new Error(ERROR_MESSAGES.MFAILPERMISSIONS);
+  return Object.assign(error, { code: ERROR_CODES.NO_PERMISSIONS });
+}
+
+export function makeShareJSError(shareJSError, message) {
   const data = {};
   if (shareJSError && shareJSError.message) {
     data.shareJSCode = shareJSError.message;
   }
 
   const error = new Error(message);
-  return Object.assign(error, { code: ERROR_CODES.EBADUPDATE, data });
+  return Object.assign(error, { code: ERROR_CODES.BADUPDATE, data });
 }
 
 /**
@@ -48,6 +57,8 @@ export function createReadOnlyFieldApi({ field, locale, getValue = noop }) {
 export function createInternalFieldApi({ field, locale, otDoc }) {
   const currentPath = ['fields', field.id, locale.internal_code];
 
+  const canEdit = otDoc.permissions.canEditFieldLocale(field.apiName, locale.code);
+
   return {
     ...createReadOnlyFieldApi({ locale, field }),
 
@@ -55,6 +66,9 @@ export function createInternalFieldApi({ field, locale, otDoc }) {
       return get(otDoc.getValueAt([]), currentPath);
     },
     setValue: async function setValue(value) {
+      if (!canEdit) {
+        throw makePermissionError();
+      }
       try {
         await otDoc.setValueAt(currentPath, value);
         return value;
@@ -63,6 +77,9 @@ export function createInternalFieldApi({ field, locale, otDoc }) {
       }
     },
     removeValue: async function removeValue() {
+      if (!canEdit) {
+        throw makePermissionError();
+      }
       try {
         await otDoc.removeValueAt(currentPath);
       } catch (err) {

@@ -194,10 +194,8 @@ export default function register() {
         }
       };
 
-      const editingAllowed = $scope.otDoc.permissions.canEditFieldLocale(
-        field.apiName,
-        locale.code
-      );
+      const canEditLocale = $scope.otDoc.permissions.canEditFieldLocale(field.apiName, locale.code);
+      $scope.canEditLocale = canEditLocale;
 
       const documentStatus$ = statusProperty($scope.otDoc) || K.constant();
 
@@ -224,7 +222,7 @@ export default function register() {
           (status, isConnected, collaborators) => {
             if (field.disabled) {
               return EDITING_DISABLED;
-            } else if (!editingAllowed) {
+            } else if (!canEditLocale) {
               return DENIED;
             } else if (
               isCollaborativeEditingDisabledForFieldType(field.type) &&

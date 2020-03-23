@@ -41,7 +41,10 @@ describe('widgets/NewWidgetApi/createFieldApi', () => {
       otDoc: {
         setValueAt: jest.fn(),
         removeValueAt: jest.fn(),
-        getValueAt: jest.fn()
+        getValueAt: jest.fn(),
+        permissions: {
+          canEditFieldLocale: jest.fn().mockReturnValue(true)
+        }
       }
     });
   }

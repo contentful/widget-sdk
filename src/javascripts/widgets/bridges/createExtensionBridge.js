@@ -1,5 +1,6 @@
 import * as K from 'utils/kefir';
 import * as PathUtils from 'utils/Path';
+import get from 'lodash/get';
 import TheLocaleStore from 'services/localeStore';
 import { onSlideInNavigation } from 'navigation/SlideInNavigator/index';
 
@@ -9,13 +10,13 @@ import makeExtensionNavigationHandlers from './makeExtensionNavigationHandlers';
 import makeExtensionNotificationHandlers from './makeExtensionNotificationHandlers';
 import makePageExtensionHandlers from './makePageExtensionHandlers';
 import checkDependencies from './checkDependencies';
+import { makeShareJSError, makePermissionError } from 'app/widgets/NewWidgetApi/createFieldApi';
 import { LOCATION_ENTRY_FIELD, LOCATION_ENTRY_FIELD_SIDEBAR } from '../WidgetLocations';
-
-const ERROR_CODES = { EBADUPDATE: 'ENTRY UPDATE FAILED' };
 
 const ERROR_MESSAGES = {
   MFAILUPDATE: 'Could not update entry field',
-  MFAILREMOVAL: 'Could not remove value for field'
+  MFAILREMOVAL: 'Could not remove value for field',
+  MFAILPERMISSIONS: 'Could not update entry field'
 };
 
 // This module, given editor-specific Angular dependencies
@@ -74,6 +75,10 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
   }
 
   async function setValue(path, value) {
+    const canEditLocale = get($scope, 'fieldLocale.canEditLocale', true);
+    if (!canEditLocale) {
+      throw makePermissionError();
+    }
     try {
       await $scope.otDoc.setValueAt(path, value);
       return value;
@@ -83,21 +88,15 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
   }
 
   async function removeValue(path) {
+    const canEditLocale = get($scope, 'fieldLocale.canEditLocale', true);
+    if (!canEditLocale) {
+      throw makePermissionError();
+    }
     try {
       await $scope.otDoc.removeValueAt(path);
     } catch (err) {
       throw makeShareJSError(err, ERROR_MESSAGES.MFAILREMOVAL);
     }
-  }
-
-  function makeShareJSError(shareJSError, message) {
-    const data = {};
-    if (shareJSError && shareJSError.message) {
-      data.shareJSCode = shareJSError.message;
-    }
-
-    const error = new Error(message);
-    return Object.assign(error, { code: ERROR_CODES.EBADUPDATE, data });
   }
 
   function getLocaleSettings() {
