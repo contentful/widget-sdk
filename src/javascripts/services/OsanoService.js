@@ -5,7 +5,7 @@
   This is now the central place where analytics and Intercom are enabled.
  */
 
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import * as LazyLoader from 'utils/LazyLoader';
 import { getUserSync } from 'services/TokenStore';
 import isAnalyticsAllowed from 'analytics/isAnalyticsAllowed';
@@ -17,29 +17,55 @@ import { getStore } from 'browserStorage';
 
 const localStorage = getStore();
 
-// cm is Osano's cookie maangement api
+// The Osano "Consent Manager" object
 let cm = null;
-let consentOptions = null;
+
+// Previously saved consent options
+let prevConsentOptions = null;
+
+// Function to handle resetting `cm` in testing
+export const __reset = () => {
+  cm = null;
+  prevConsentOptions = null;
+}
 
 // Debounce handleConsentChanged in case the script initializes and the user consents within
 // two seconds
-const handleConsentChanged = debounce(function debouncedHandleConsentChanged(newConsentOptions) {
+//
+// Exported for testing
+export const handleConsentChanged = debounce(function debouncedHandleConsentChanged(newConsentOptions) {
   // Initialization happens in ClientController, and only happens after the user is available to us, so we
   // can safely synchronously get the user.
   const user = getUserSync();
   const analyticsAllowed = isAnalyticsAllowed(user) && newConsentOptions.ANALYTICS === 'ACCEPT';
   const personalizationAllowed = newConsentOptions.PERSONALIZATION === 'ACCEPT';
 
-  if (consentOptions) {
-    // If the consent options, we need to reload because we can't unload existing scripts like GA, Intercom.
+  if (prevConsentOptions) {
+    const prevAnalyticsAllowed = prevConsentOptions.analyticsAllowed;
+    const prevPersonalizationAllowed = prevConsentOptions.personalizationAllowed;
 
-    // TODO: This message sounds a little weird in the context of our app...
-    Notification.success(
-      'Your preferences have been successfully saved. Reload the app to finish applying changes.'
-    );
+    let changed = false;
+
+    if (prevAnalyticsAllowed !== analyticsAllowed || prevPersonalizationAllowed !== personalizationAllowed) {
+      changed = true;
+    }
+
+    if (changed) {
+      // If the consent options changed, we need to reload because we can't unload existing scripts like GA, Intercom.
+      Notification.warning(
+        'Your preferences have been saved. Reload the app to finish saving.'
+      );
+    }
+
+    // Regardless if a notification is shown, we do not want to run any of the logic below, since it
+    // will break things (for example, Segment cannot be initialized twice).
+    return;
   }
 
-  consentOptions = newConsentOptions;
+  prevConsentOptions = {
+    analyticsAllowed,
+    personalizationAllowed
+  };
 
   const segmentLoadOptions = {
     integrations: {
@@ -114,7 +140,7 @@ export async function init() {
 }
 
 export async function waitForCMInstance(tries = 0) {
-  if (tries > 10) {
+  if (tries === 10) {
     throw new Error('Osano failed to load');
   }
 
