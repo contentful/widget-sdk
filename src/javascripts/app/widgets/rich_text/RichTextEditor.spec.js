@@ -6,10 +6,10 @@ import RichTextEditor from './RichTextEditor';
 import Toolbar from './Toolbar';
 
 jest.mock('ng/data/CMA/EntityState', () => ({}), { virtual: true });
-jest.mock('directives/thumbnailHelpers', () => ({}), { virtual: true });
-jest.mock('access_control/AccessChecker', () => ({}), { virtual: true });
-jest.mock('utils/browser', () => ({}), { virtual: true });
-jest.mock('redux/store', () => ({}), { virtual: true });
+jest.mock('directives/thumbnailHelpers', () => ({}));
+jest.mock('access_control/AccessChecker', () => ({}));
+jest.mock('utils/browser', () => ({}));
+jest.mock('redux/store', () => ({}));
 jest.mock('ng/entityCreator', () => ({}), { virtual: true });
 jest.mock(
   'ng/debounce',

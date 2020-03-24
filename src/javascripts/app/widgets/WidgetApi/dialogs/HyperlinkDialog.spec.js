@@ -6,7 +6,7 @@ import { HyperlinkDialogForm } from 'app/widgets/WidgetApi/dialogs/HyperlinkDial
 
 jest.mock('ui/Framework/AngularComponent', () => () => null);
 jest.mock('NgRegistry', () => ({ getModule: jest.fn().mockImplementation(() => null) }));
-jest.mock('directives/thumbnailHelpers', () => ({}), { virtual: true });
+jest.mock('directives/thumbnailHelpers', () => ({}));
 
 jest.mock('search/EntitySelector/Config', () => ({
   getLabels: () => ({

@@ -8,29 +8,21 @@ import { ContentTypesPage as Page } from './ContentTypeListPage';
 import * as spaceContextMocked from 'ng/spaceContext';
 import * as contentTypeFactory from 'testHelpers/contentTypeFactory';
 
-jest.mock('lodash/debounce', () => fn => fn, { virtual: true });
+jest.mock('lodash/debounce', () => fn => fn);
 
 jest.mock('detect-browser', () => ({
   detect: jest.fn().mockReturnValue({ name: 'not-ie' })
 }));
 
-jest.mock(
-  './ContentTypeList',
-  () => {
-    return props => props.contentTypes.map(item => item.sys.id).join(',');
-  },
-  { virtual: true }
-);
+jest.mock('./ContentTypeList', () => {
+  return props => props.contentTypes.map(item => item.sys.id).join(',');
+});
 
-jest.mock(
-  'access_control/AccessChecker',
-  () => ({
-    shouldHide: jest.fn().mockReturnValue(false),
-    shouldDisable: jest.fn().mockReturnValue(false),
-    Action: { CREATE: 'Create' }
-  }),
-  { virtual: true }
-);
+jest.mock('access_control/AccessChecker', () => ({
+  shouldHide: jest.fn().mockReturnValue(false),
+  shouldDisable: jest.fn().mockReturnValue(false),
+  Action: { CREATE: 'Create' }
+}));
 
 const selectors = {
   contentLoader: '[data-test-id="content-loader"]',

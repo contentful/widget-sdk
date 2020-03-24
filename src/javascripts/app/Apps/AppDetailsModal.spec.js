@@ -3,15 +3,11 @@ import { render, wait } from '@testing-library/react';
 
 import { AppDetails } from './AppDetailsModal';
 
-jest.mock(
-  'services/TokenStore',
-  () => ({
-    getDomains: () => ({
-      images: ''
-    })
-  }),
-  { virtual: true }
-);
+jest.mock('services/TokenStore', () => ({
+  getDomains: () => ({
+    images: ''
+  })
+}));
 
 describe('AppDetailsModal', () => {
   const modalProps = {

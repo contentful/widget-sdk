@@ -7,13 +7,9 @@ import ExtensionsListRoute from './ExtensionsListRoute';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import * as AccessCheckerMocked from 'access_control/AccessChecker';
 
-jest.mock(
-  'access_control/AccessChecker',
-  () => ({
-    getSectionVisibility: jest.fn(() => {})
-  }),
-  { virtual: true }
-);
+jest.mock('access_control/AccessChecker', () => ({
+  getSectionVisibility: jest.fn(() => {})
+}));
 
 describe('ExtensionsListRoute', () => {
   beforeEach(() => {

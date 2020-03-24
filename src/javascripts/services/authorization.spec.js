@@ -1,14 +1,10 @@
 import authorization from './authorization';
 import worf from '@contentful/worf';
 
-jest.mock('@contentful/worf', () => jest.fn(), { virtual: true });
-jest.mock(
-  'access_control/AccessChecker',
-  () => ({
-    setAuthContext: jest.fn()
-  }),
-  { virtual: true }
-);
+jest.mock('@contentful/worf', () => jest.fn());
+jest.mock('access_control/AccessChecker', () => ({
+  setAuthContext: jest.fn()
+}));
 
 describe('Authorization service', () => {
   it('creates an instance', () => {

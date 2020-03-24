@@ -35,23 +35,15 @@ jest.mock('components/shared/auto_create_new_space/CreateModernOnboarding', () =
   getStoragePrefix: jest.fn()
 }));
 
-jest.mock(
-  'services/TokenStore',
-  () => ({
-    getSpaces: jest.fn(),
-    getOrganizations: jest.fn(),
-    getOrganizationSpaces: jest.fn()
-  }),
-  { virtual: true }
-);
+jest.mock('services/TokenStore', () => ({
+  getSpaces: jest.fn(),
+  getOrganizations: jest.fn(),
+  getOrganizationSpaces: jest.fn()
+}));
 
-jest.mock(
-  'utils/ResourceUtils',
-  () => ({
-    isLegacyOrganization: jest.fn().mockReturnValue(true)
-  }),
-  { virtual: true }
-);
+jest.mock('utils/ResourceUtils', () => ({
+  isLegacyOrganization: jest.fn().mockReturnValue(true)
+}));
 
 async function testSpaceScopedPathDeeplinks(link, expected) {
   const space = {

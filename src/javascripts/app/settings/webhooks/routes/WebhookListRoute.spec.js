@@ -9,29 +9,17 @@ const mockWebhookRepo = {
   getAll: jest.fn().mockResolvedValue([])
 };
 
-jest.mock(
-  'app/settings/webhooks/services/WebhookRepoInstance',
-  () => ({
-    getWebhookRepo: () => mockWebhookRepo
-  }),
-  { virtual: true }
-);
+jest.mock('app/settings/webhooks/services/WebhookRepoInstance', () => ({
+  getWebhookRepo: () => mockWebhookRepo
+}));
 
-jest.mock(
-  'access_control/AccessChecker',
-  () => ({
-    getSectionVisibility: jest.fn(() => {})
-  }),
-  { virtual: true }
-);
+jest.mock('access_control/AccessChecker', () => ({
+  getSectionVisibility: jest.fn(() => {})
+}));
 
-jest.mock(
-  'app/common/ReloadNotification',
-  () => ({
-    basicErrorHandler: () => {}
-  }),
-  { virtual: true }
-);
+jest.mock('app/common/ReloadNotification', () => ({
+  basicErrorHandler: () => {}
+}));
 
 jest.mock('data/CMA/ProductCatalog', () => ({ getOrgFeature: () => Promise.resolve(false) }));
 

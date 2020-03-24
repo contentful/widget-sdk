@@ -15,14 +15,10 @@ jest.mock('services/contentPreview', () => ({
   getContentPreview: () => mockContentPreview
 }));
 
-jest.mock(
-  'services/localeStore',
-  () => ({
-    toPublicCode: _ => _,
-    getDefaultLocale: () => ({ code: 'en_US' })
-  }),
-  { virtual: true }
-);
+jest.mock('services/localeStore', () => ({
+  toPublicCode: _ => _,
+  getDefaultLocale: () => ({ code: 'en_US' })
+}));
 
 const contentPreviews = [
   {

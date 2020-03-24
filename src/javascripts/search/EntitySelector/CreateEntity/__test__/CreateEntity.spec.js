@@ -10,32 +10,20 @@ import * as entityCreator from 'components/app_container/entityCreator';
 import flushPromises from 'testHelpers/flushPromises';
 import { act } from 'react-dom/test-utils';
 
-jest.mock(
-  'navigation/SlideInNavigator',
-  () => ({
-    goToSlideInEntity: jest.fn()
-  }),
-  { virtual: true }
-);
+jest.mock('navigation/SlideInNavigator', () => ({
+  goToSlideInEntity: jest.fn()
+}));
 
-jest.mock(
-  'components/app_container/entityCreator',
-  () => ({
-    newEntry: jest.fn().mockResolvedValue({}),
-    newAsset: jest.fn().mockResolvedValue({})
-  }),
-  { virtual: true }
-);
+jest.mock('components/app_container/entityCreator', () => ({
+  newEntry: jest.fn().mockResolvedValue({}),
+  newAsset: jest.fn().mockResolvedValue({})
+}));
 
-jest.mock(
-  'access_control/AccessChecker',
-  () => ({
-    canCreateAsset: jest.fn(),
-    canPerformActionOnEntryOfType: jest.fn(),
-    Action: { CREATE: 'Create' }
-  }),
-  { virtual: true }
-);
+jest.mock('access_control/AccessChecker', () => ({
+  canCreateAsset: jest.fn(),
+  canPerformActionOnEntryOfType: jest.fn(),
+  Action: { CREATE: 'Create' }
+}));
 
 const mountComponent = props => {
   return mount(<CreateEntity {...props} />);

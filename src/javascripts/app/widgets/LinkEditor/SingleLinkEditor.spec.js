@@ -12,10 +12,8 @@ const link = {
   }
 };
 
-jest.mock('./withCfWebApp.js', () => ({}), { virtual: true });
-jest.mock('../shared/FetchedEntityCard', () => ({ WrappedEntityCard: {} }), {
-  virtual: true
-});
+jest.mock('./withCfWebApp.js', () => ({}));
+jest.mock('../shared/FetchedEntityCard', () => ({ WrappedEntityCard: {} }));
 
 function mount(customProps) {
   const props = {
