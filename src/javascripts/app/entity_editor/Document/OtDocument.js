@@ -176,14 +176,15 @@ export function create(docConnection, entity, contentType, user, spaceEndpoint) 
     const previousVersion = currentSys.version;
     const version = event.doc.version + (event.doc.compressed || 0);
 
-    // ShareJS has some documents that are out of sync with the index
-    // held in the CMA. We want to log these to be able to repair
-    // them.
-    if (version < initialEntitySys.version) {
-      logger.logWarn('Inconsistent ShareJS document version', {
+    // ShareJS has some documents that are out of sync with the index held in the CMA.
+    // We want to log these to be able to repair them.
+    // Ignoring compressed documents to see if this even happens at all on uncompressed docs.
+    if (!event.doc.compressed && version < initialEntitySys.version) {
+      logger.logWarn('Inconsistent ShareJS document version on uncompressed document', {
         data: {
-          sysFromCMA: initialEntitySys,
-          shareJsVersion: version
+          cmaEntityVersion: initialEntitySys.version,
+          shareJsDocVersion: event.doc.version,
+          shareJsDocCompressed: !!event.doc.compressed
         }
       });
     }
