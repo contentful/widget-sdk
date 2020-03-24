@@ -24,7 +24,8 @@ import { valuePropertyAt } from 'app/entity_editor/Document';
  *
  * TODO Instead of passing an entity instance provided by the client library we should only pass the entity data.
  */
-export function create(docConnection, entity, contentType, user, spaceEndpoint) {
+export function create(docConnection, initialEntity, contentType, user, spaceEndpoint) {
+  const entity = cloneDeep(initialEntity);
   const PresenceHub = getModule('entityEditor/Document/PresenceHub');
 
   let currentDoc;
@@ -46,15 +47,15 @@ export function create(docConnection, entity, contentType, user, spaceEndpoint) 
   /**
    * @ngdoc property
    * @name Document#state.error$
-   * @type K.Stream<Doc.Error>
+   * @type K.Property<Doc.Error>
    * @description
-   * A stream of error values. The value constructors are defined in
+   * A property of error values. The value constructors are defined in
    * 'data/document/Error'.
-   * It emits an event when opending or updating a document fails
+   * It emits an event when opening or updating a document fails
    * with a 'forbidden' response from the server. In the future we
    * should include more errors.
    */
-  const errorBus = K.createBus();
+  const errorBus = K.createPropertyBus(null);
   cleanupTasks.push(errorBus.end);
 
   const docSetters = DocSetters.create({
@@ -311,7 +312,7 @@ export function create(docConnection, entity, contentType, user, spaceEndpoint) 
       disconnected: DocError.Disconnected(),
       [DocumentStatusCode.INTERNAL_SERVER_ERROR]: DocumentStatusCode.INTERNAL_SERVER_ERROR
     };
-    errorBus.emit(errors[error] || null);
+    errorBus.set(errors[error] || null);
   });
 
   const presence = PresenceHub.create(user.sys.id, docEventsBus.stream, shout);
@@ -389,7 +390,7 @@ export function create(docConnection, entity, contentType, user, spaceEndpoint) 
 
       loaded$,
 
-      error$: errorBus.stream
+      error$: errorBus.property
     },
 
     getValueAt,

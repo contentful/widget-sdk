@@ -52,7 +52,7 @@ export function localFieldChanges(document) {
 export function statusProperty(document) {
   return Status.create(
     document.sysProperty,
-    document.state.error$.toProperty(() => null),
+    document.state.error$,
     accessChecker.canUpdateEntity({ data: document.getValueAt([]) })
   );
 }

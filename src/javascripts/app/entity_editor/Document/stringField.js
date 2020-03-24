@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import { diff } from 'utils/StringDiff';
-import { getModule } from 'NgRegistry';
 import * as ShareJS from 'data/sharejs/utils';
 
 const STRING_FIELD_TYPES = ['Symbol', 'Text'];
@@ -14,7 +13,6 @@ function shouldPatchString(oldValue, newValue) {
 }
 
 function patchStringAt(doc, path, oldValue, newValue) {
-  const $q = getModule('$q');
   const patches = diff(oldValue, newValue);
 
   /**
@@ -37,9 +35,8 @@ function patchStringAt(doc, path, oldValue, newValue) {
     }
   });
 
-  return $q.denodeify((
-    cb // When patching - do it atomically
-  ) => doc.submitOp(_.filter(ops), cb));
+  // When patching - do it atomically
+  return new Promise(resolve => doc.submitOp(_.filter(ops), resolve));
 }
 
 function deleteOp(path, value, patch) {
@@ -60,14 +57,13 @@ function insertOp(path, patch) {
 }
 
 export function setAt(doc, path, newValue) {
-  const $q = getModule('$q');
   const oldValue = ShareJS.peek(doc, path);
 
   if (!isValidStringFieldValue(newValue)) {
-    return $q.reject(new Error('Invalid string field value.'));
+    return Promise.reject(new Error('Invalid string field value.'));
   } else if (newValue === '') {
     if (oldValue === undefined) {
-      return $q.resolve(oldValue);
+      return Promise.resolve(oldValue);
     } else {
       return ShareJS.setDeep(doc, path, undefined);
     }

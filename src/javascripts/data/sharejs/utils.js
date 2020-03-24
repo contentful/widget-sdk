@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import { getModule } from 'NgRegistry';
 
 /**
  * @description
@@ -24,15 +23,14 @@ export function peek(doc, path) {
  * @return {Promise<void>}
  */
 export function remove(doc, path) {
-  const $q = getModule('$q');
-  return $q.denodeify(cb => {
+  return new Promise(resolve => {
     // We catch and ignore synchronous errors since they tell us
     // that a value along the path does not exist. I.e. it has
     // already been removed.
     try {
-      doc.removeAt(path, cb);
+      doc.removeAt(path, resolve);
     } catch (e) {
-      cb();
+      resolve();
     }
   });
 }
@@ -55,8 +53,6 @@ export function remove(doc, path) {
  * @return {Promise<void>}
  */
 export function setDeep(doc, path, value) {
-  const $q = getModule('$q');
-
   if (!doc) {
     throw new TypeError('No ShareJS document provided');
   }
@@ -65,16 +61,16 @@ export function setDeep(doc, path, value) {
   }
 
   if (_.isEqual(value, peek(doc, path))) {
-    return $q.resolve(value);
+    return Promise.resolve(value);
   }
   if (value === undefined) {
     return remove(doc, path);
   }
 
-  return $q.denodeify(callback => {
+  return new Promise(resolve => {
     const container = getContainer(doc, path);
     const wrappedValue = makeDeepObject(container.restPath, value);
-    container.doc.set(wrappedValue, callback);
+    container.doc.set(wrappedValue, resolve);
   });
 }
 
