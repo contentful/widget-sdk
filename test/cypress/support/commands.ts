@@ -3,6 +3,7 @@ declare global {
   namespace Cypress {
     interface Chainable {
       setAuthTokenToLocalStorage: typeof setAuthTokenToLocalStorage;
+      disableConsentManager: typeof disableConsentManager;
       enableFeatureFlags: typeof enableFeatureFlags;
       disableFeatureFlags: typeof disableFeatureFlags;
       verifyNotification: typeof verifyNotification;
@@ -25,6 +26,15 @@ export function setAuthTokenToLocalStorage() {
   const TOKEN = Cypress.env('token');
   window.localStorage.setItem('token', TOKEN);
 }
+
+/**
+  * Custom command to disable the cookie consent manager (Osano)
+  *
+  * @returns {void}
+  */
+ export function disableConsentManager() {
+   window.localStorage.setItem('__disable_consentmanager', 'true');
+ }
 
 /**
  * Enable app feature flag
@@ -56,6 +66,7 @@ export function verifyNotification(type: 'success' | 'error', message: string) {
 }
 
 Cypress.Commands.add('setAuthTokenToLocalStorage', setAuthTokenToLocalStorage);
+Cypress.Commands.add('disableConsentManager', disableConsentManager);
 Cypress.Commands.add('enableFeatureFlags', enableFeatureFlags);
 Cypress.Commands.add('disableFeatureFlags', disableFeatureFlags);
 Cypress.Commands.add('verifyNotification', verifyNotification);

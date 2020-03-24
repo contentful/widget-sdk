@@ -1,4 +1,7 @@
 import * as LazyLoader from 'utils/LazyLoader';
+import { getStore } from 'browserStorage';
+
+const localStorage = getStore();
 
 // cm is Osano's cookie maangement api
 let cm = null;
@@ -8,10 +11,16 @@ export async function init() {
 
   // hide Marketing toggles
   const marketingToggles = document.querySelectorAll("input[data-category='MARKETING']");
+
   if (marketingToggles.length > 0) {
     marketingToggles.forEach(toggle => {
       toggle.parentElement.parentElement.style.display = 'none';
     });
+  }
+
+  // This allows us to programmatically disable the consent manager during testing
+  if (localStorage.has('__disable_consentmanager')) {
+    cm.teardown();
   }
 
   return cm;
