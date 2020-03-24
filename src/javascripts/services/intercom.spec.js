@@ -4,7 +4,7 @@ import loader from 'utils/LazyLoader';
 jest.mock('utils/LazyLoader', () => ({ getFromGlobal: jest.fn() }));
 
 describe('intercom', () => {
-  it('is enabled by default', () => {
+  it('is not enabled by default', () => {
     expect(Intercom.isEnabled()).toBe(false);
   });
 

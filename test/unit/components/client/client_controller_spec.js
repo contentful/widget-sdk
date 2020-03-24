@@ -228,7 +228,7 @@ describe('Client Controller', () => {
         };
       });
 
-      it('sets enables logging and initializes the Osano service', function () {
+      it('enables logging and initializes the Osano service', function () {
         this.prepare();
         sinon.assert.called(this.stubs.initOsano);
         sinon.assert.calledWithExactly(this.logger.enable, user);

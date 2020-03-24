@@ -2,10 +2,10 @@
   Osano is our consent management SaaS tool, which we use to gather consent for
   various things -- analytics and personalization scripts -- before loading them.
 
-  This is now the central place where analytics and Intercom are enabled.
+  This is now the only place where analytics and Intercom are enabled.
  */
 
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash';
 import * as LazyLoader from 'utils/LazyLoader';
 import { getUserSync } from 'services/TokenStore';
 import isAnalyticsAllowed from 'analytics/isAnalyticsAllowed';
@@ -52,9 +52,7 @@ export const handleConsentChanged = debounce(function debouncedHandleConsentChan
 
     if (changed) {
       // If the consent options changed, we need to reload because we can't unload existing scripts like GA, Intercom.
-      Notification.warning(
-        'Your preferences have been saved. Reload the app to finish saving.'
-      );
+      Notification.warning('Reload the app to apply your new preferences.');
     }
 
     // Regardless if a notification is shown, we do not want to run any of the logic below, since it

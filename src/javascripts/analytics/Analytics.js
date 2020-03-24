@@ -55,7 +55,7 @@ export const __testOnlySetEnv = (_env) => {
  * @description
  * Starts event tracking
  */
-export const enable = _.once((user) => {
+export const enable = _.once((user, segmentLoadOptions) => {
   if (isEnabled) {
     return;
   }
