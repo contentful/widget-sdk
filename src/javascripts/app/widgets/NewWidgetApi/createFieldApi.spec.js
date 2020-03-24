@@ -2,18 +2,14 @@ import { createFieldApi } from './createFieldApi';
 import { identity, set } from 'lodash';
 import { onValueWhile, onValueScope } from 'utils/kefir';
 
-jest.mock(
-  'utils/kefir',
-  () => ({
-    onValueWhile: jest.fn().mockImplementation((_lifeline, stream, onChange) => {
-      return onChange(stream);
-    }),
-    onValueScope: jest.fn().mockImplementation((_scope, stream, onChange) => {
-      return onChange(stream);
-    })
+jest.mock('utils/kefir', () => ({
+  onValueWhile: jest.fn().mockImplementation((_lifeline, stream, onChange) => {
+    return onChange(stream);
   }),
-  { virtual: true }
-);
+  onValueScope: jest.fn().mockImplementation((_scope, stream, onChange) => {
+    return onChange(stream);
+  })
+}));
 
 describe('widgets/NewWidgetApi/createFieldApi', () => {
   function createScopeMock(modify = identity) {

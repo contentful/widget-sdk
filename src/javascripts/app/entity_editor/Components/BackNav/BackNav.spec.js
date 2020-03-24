@@ -3,13 +3,9 @@ import { shallow } from 'enzyme';
 import BackNav from '.';
 import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 
-jest.mock(
-  'navigation/SlideInNavigator',
-  () => ({
-    goToPreviousSlideOrExit: jest.fn()
-  }),
-  { virtual: true }
-);
+jest.mock('navigation/SlideInNavigator', () => ({
+  goToPreviousSlideOrExit: jest.fn()
+}));
 
 describe('BackNav', () => {
   it('renders the back navigation button with the icon', () => {

@@ -11,13 +11,9 @@ jest.mock('./utils', () => ({
   getAllEnviroments: jest.fn()
 }));
 
-jest.mock(
-  './resolver',
-  () => ({
-    resolveLink: jest.fn()
-  }),
-  { virtual: true }
-);
+jest.mock('./resolver', () => ({
+  resolveLink: jest.fn()
+}));
 
 describe('deeplink/DeeplinkPage', () => {
   it('should redirect user accoring to resolver response', async () => {

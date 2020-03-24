@@ -4,36 +4,28 @@ import * as TokenStore from 'services/TokenStore';
 
 jest.mock('browserStorage', () => ({ getStore: jest.fn() }));
 
-jest.mock(
-  'services/TokenStore',
-  () => {
-    const Kefir = require('utils/kefir');
+jest.mock('services/TokenStore', () => {
+  const Kefir = require('utils/kefir');
 
-    function createMockKefirProperty(initial) {
-      const { property, end, set, error } = Kefir.createPropertyBus(initial);
-      property.end = end;
-      property.set = set;
-      property.error = error;
-      return property;
-    }
+  function createMockKefirProperty(initial) {
+    const { property, end, set, error } = Kefir.createPropertyBus(initial);
+    property.end = end;
+    property.set = set;
+    property.error = error;
+    return property;
+  }
 
-    return {
-      getSpaces: jest.fn(),
-      getOrganizations: jest.fn(),
-      user$: createMockKefirProperty(null)
-    };
-  },
-  { virtual: true }
-);
+  return {
+    getSpaces: jest.fn(),
+    getOrganizations: jest.fn(),
+    user$: createMockKefirProperty(null)
+  };
+});
 
-jest.mock(
-  'components/shared/auto_create_new_space/CreateModernOnboarding',
-  () => ({
-    getStoragePrefix: jest.fn().mockReturnValue('prefix'),
-    MODERN_STACK_ONBOARDING_SPACE_NAME: 'modern stack name'
-  }),
-  { virtual: true }
-);
+jest.mock('components/shared/auto_create_new_space/CreateModernOnboarding', () => ({
+  getStoragePrefix: jest.fn().mockReturnValue('prefix'),
+  MODERN_STACK_ONBOARDING_SPACE_NAME: 'modern stack name'
+}));
 
 describe('states/deeplink/utils', () => {
   describe('#getOrg', () => {

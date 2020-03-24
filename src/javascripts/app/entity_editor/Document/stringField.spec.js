@@ -2,14 +2,10 @@ import _ from 'lodash';
 import * as ShareJS from 'data/sharejs/utils';
 import * as StringField from './stringField';
 
-jest.mock(
-  'data/sharejs/utils',
-  () => ({
-    setDeep: jest.fn().mockResolvedValue(),
-    peek: jest.fn().mockReturnValue(undefined)
-  }),
-  { virtual: true }
-);
+jest.mock('data/sharejs/utils', () => ({
+  setDeep: jest.fn().mockResolvedValue(),
+  peek: jest.fn().mockReturnValue(undefined)
+}));
 
 describe('entity_editor/Document/stringField', () => {
   beforeEach(() => {

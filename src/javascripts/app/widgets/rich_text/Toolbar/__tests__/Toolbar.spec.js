@@ -10,7 +10,7 @@ import ValidationType, {
 import { BLOCKS, INLINES } from '@contentful/rich-text-types';
 
 jest.mock('ng/data/CMA/EntityState', () => ({}), { virtual: true });
-jest.mock('directives/thumbnailHelpers', () => ({}), { virtual: true });
+jest.mock('directives/thumbnailHelpers', () => ({}));
 
 const fakeProps = () => ({
   isDisabled: false,

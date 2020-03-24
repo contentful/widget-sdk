@@ -9,14 +9,10 @@ const mocks = {
   }
 };
 
-jest.mock(
-  'data/sharejs/utils',
-  () => ({
-    setDeep: (...args) => mocks.ShareJS.setDeep(...args),
-    peek: (...args) => mocks.ShareJS.peek(...args)
-  }),
-  { virtual: true }
-);
+jest.mock('data/sharejs/utils', () => ({
+  setDeep: (...args) => mocks.ShareJS.setDeep(...args),
+  peek: (...args) => mocks.ShareJS.peek(...args)
+}));
 
 describe('RichTextFieldSetter', () => {
   describe('#is()', () => {

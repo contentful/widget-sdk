@@ -2,14 +2,10 @@ import _ from 'lodash';
 import * as Entries from './entries';
 import TheLocaleStore from 'services/localeStore';
 
-jest.mock(
-  'services/localeStore',
-  () => ({
-    toPublicCode: jest.fn(),
-    toInternalCode: jest.fn()
-  }),
-  { virtual: true }
-);
+jest.mock('services/localeStore', () => ({
+  toPublicCode: jest.fn(),
+  toInternalCode: jest.fn()
+}));
 
 describe('data/entries', () => {
   beforeEach(() => {

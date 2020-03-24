@@ -2,7 +2,7 @@ import _ from 'lodash';
 import client from './client';
 import makeRequest from 'data/Request';
 
-jest.mock('data/Request', () => jest.fn(), { virtual: true });
+jest.mock('data/Request', () => jest.fn());
 
 describe('Client', () => {
   describe('#request', () => {
