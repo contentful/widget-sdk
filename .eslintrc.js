@@ -117,6 +117,7 @@ module.exports = {
         'jest/prefer-to-be-null': 'warn',
         'jest/prefer-to-be-undefined': 'warn',
         'rulesdir/restrict-sinon': 'error',
+        'rulesdir/restrict-virtual-true': 'error',
         'react/prop-types': 'off'
       },
       parserOptions: {
