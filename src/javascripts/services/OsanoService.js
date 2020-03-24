@@ -6,6 +6,14 @@ let cm = null;
 export async function init() {
   cm = (await LazyLoader.get('osano')).cm;
 
+  // hide Marketing toggles
+  const marketingToggles = document.querySelectorAll("input[data-category='MARKETING']");
+  if (marketingToggles.length > 0) {
+    marketingToggles.forEach(toggle => {
+      toggle.parentElement.parentElement.style.display = 'none';
+    });
+  }
+
   return cm;
 }
 

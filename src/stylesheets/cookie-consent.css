@@ -1,0 +1,186 @@
+.osano-cm-window {
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
+    Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+}
+
+.osano-cm-dialog {
+  align-items: start;
+  box-shadow: none;
+  border: calc(1rem * (1 / 16)) solid #d3dce0;
+}
+
+.osano-cm-dialog__content {
+  flex: 1;
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5rem;
+}
+
+.osano-cm-dialog__content a:link {
+  text-decoration: underline;
+}
+
+.osano-cm-dialog-list {
+  margin-top: 0.5rem;
+}
+
+.osano-cm-dialog-list__item {
+  margin-bottom: 0;
+}
+
+.osano-cm-toggle {
+  margin: 0;
+}
+
+.osano-cm-label {
+  font-size: 0.875rem;
+  font-weight: bold;
+}
+
+.osano-cm-toggle__checkbox {
+  height: initial;
+  width: initial;
+  margin: 0;
+  opacity: 1;
+  position: initial;
+}
+
+.osano-cm-toggle__switch {
+  display: none;
+}
+
+.osano-cm-buttons {
+  display: flex;
+  flex: initial;
+  justify-content: initial;
+  width: initial;
+  margin-left: 1rem;
+}
+
+.osano-cm-button {
+  font-weight: normal;
+  font-size: 0.875rem;
+  padding: 0 calc(1rem * (14 / 16) + 1rem * (4 / 16));
+  height: calc(1rem * (40 / 16));
+  border-radius: calc(1rem * (2 / 16));
+  border: calc(1rem * (1 / 16)) solid #3072be;
+  min-width: initial;
+  box-shadow: none;
+  margin: 0;
+  -webkit-transition: background 0.2s ease-in-out, opacity 0.2s ease-in-out,
+    border-color 0.2s ease-in-out;
+  transition: background 0.2s ease-in-out, opacity 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.osano-cm-button {
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
+    Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+  border-color: #c3cfd5;
+  background-color: #e5ebed;
+  color: #536171;
+}
+
+.osano-cm-button:hover,
+.osano-cm-button:focus {
+  background-color: #d3dce0;
+}
+
+.osano-cm-info-dialog .osano-cm-button,
+.osano-cm-accept-all {
+  border-color: #0baa75;
+  background-image: linear-gradient(to top, #0eb87f, #14d997);
+  background-size: 100% 200%;
+  color: #f7f9fa;
+}
+
+.osano-cm-info-dialog .osano-cm-button:hover,
+.osano-cm-info-dialog .osano-cm-button:focus,
+.osano-cm-accept-all:hover,
+.osano-cm-accept-all:focus {
+  background-image: linear-gradient(to top, #0eb87f, #14d997);
+  background-color: #0eb87f;
+  background-size: 100% 200%;
+  background-position: 0 100%;
+}
+
+.osano-cm-button:last-child {
+  margin-left: 1rem;
+}
+
+.osano-cm-info-dialog {
+  box-shadow: none;
+  background-color: #f7f9fa;
+  padding: 1.25rem;
+  max-width: 350px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #536171;
+}
+
+.osano-cm-info-dialog-close {
+  display: none;
+}
+
+.osano-cm-info-dialog__header {
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid #c3ced5;
+}
+
+.osano-cm-info-dialog .osano-cm-label,
+.osano-cm-info-dialog__header-title {
+  padding: 0;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: bold;
+  color: #536171;
+}
+
+.osano-cm-info-dialog .osano-cm-label {
+  margin-bottom: 0;
+  margin-left: 0.5rem;
+}
+
+.osano-cm-description,
+.osano-cm-info-dialog__header-description {
+  font-size: 0.875rem;
+  font-weight: normal;
+  line-height: 1.5;
+  color: #536171;
+  margin: 0 0 1rem;
+}
+
+.osano-cm-info-list {
+  margin: 1rem 0 2rem;
+  padding: 0;
+}
+
+details.osano-cm-disclosure {
+  display: none;
+}
+
+.osano-cm-info-dialog .osano-cm-toggle {
+  flex-direction: row;
+  justify-content: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.osano-cm-info-list__item {
+  margin: 1rem 0 0;
+  border-bottom: 1px solid #c3cfd5;
+}
+
+.osano-cm-info-list__item:last-child {
+  border: 0;
+}
+
+.osano-cm-powered-by,
+button.osano-cm-widget {
+  display: none;
+}
+
+@media screen and (min-width: 1440px) {
+  .osano-cm-dialog {
+    padding: 1.5rem 15%;
+  }
+}

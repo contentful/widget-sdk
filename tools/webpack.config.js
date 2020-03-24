@@ -56,7 +56,8 @@ module.exports = () => {
           './node_modules/angular/angular-csp.css',
           './node_modules/@contentful/forma-36-react-components/dist/styles.css',
           './node_modules/@contentful/forma-36-fcss/dist/styles.css',
-          './src/stylesheets/legacy-styles.css'
+          './src/stylesheets/legacy-styles.css',
+          './src/stylesheets/cookie-consent.css'
         ],
         favicons: [
           './src/images/favicons/favicon32x32.png',
