@@ -65,10 +65,10 @@ export function create(docConnection, entity, contentType, user, spaceEndpoint) 
   docSetters.error$.onValue(({ error, path }) => {
     if (error === 'forbidden') {
       docConnection.refreshAuth().catch(() => {
-        errorBus.emit(DocError.SetValueForbidden(path));
+        errorBus.set(DocError.SetValueForbidden(path));
       });
     } else if (error === DocumentStatusCode.INTERNAL_SERVER_ERROR) {
-      errorBus.emit(DocumentStatusCode.INTERNAL_SERVER_ERROR);
+      errorBus.set(DocumentStatusCode.INTERNAL_SERVER_ERROR);
     }
   });
   cleanupTasks.push(docSetters.destroy);
