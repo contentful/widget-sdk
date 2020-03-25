@@ -63,12 +63,12 @@ describe('SSOEnabled', () => {
 
     rendered = render({ restricted: false });
 
-    expect(rendered.find('[testId="sign-in-name"]')).toHaveLength(1);
+    expect(rendered.find('[testId="ssoName"]')).toHaveLength(1);
     expect(rendered.find('[testId="login-url"]')).toHaveLength(1);
 
     rendered = render({ restricted: true });
 
-    expect(rendered.find('[testId="sign-in-name"]')).toHaveLength(1);
+    expect(rendered.find('[testId="ssoName"]')).toHaveLength(1);
     expect(rendered.find('[testId="login-url"]')).toHaveLength(1);
   });
 });

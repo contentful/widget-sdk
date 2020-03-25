@@ -378,17 +378,17 @@ export class IDPSetupForm extends React.Component {
 
         <section className="f36-margin-top--3xl">
           <Heading element="h2" className="f36-margin-bottom--xs">
-            Sign-in name
+            SSO name
           </Heading>
           <HelpText className="f36-margin-bottom--l">
-            It’s what you have to type if you choose to login in via SSO on Contentful. Make sure to
-            keep it short and memorable.
+            Users will have to type the SSO name if they log in via{' '}
+            <TextLink href="https://be.contentful.com/login/sso">Contentful&apos;s SSO login</TextLink>.
           </HelpText>
 
           <div className="sso-setup__field-container">
             <div className="sso-setup__field-input">
               <TextField
-                labelText="Sign-in name"
+                labelText="SSO name"
                 id="ssoName"
                 name="ssoName"
                 testId="ssoName"

@@ -61,10 +61,10 @@ export default class SSOEnabled extends React.Component {
         <div className="sso-enabled__links f36-margin-top--xl">
           <div className="sso-enabled__link">
             <TextField
-              labelText="Sign-in name"
-              id="sign-in-name"
-              name="sign-in-name"
-              testId="sign-in-name"
+              labelText="SSO name"
+              id="ssoName"
+              name="ssoName"
+              testId="ssoName"
               value={ssoName}
               textInputProps={{
                 withCopyButton: true,
