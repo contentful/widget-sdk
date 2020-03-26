@@ -363,17 +363,6 @@ export function create(docConnection, initialEntity, contentType, user, spaceEnd
     docLocalChangesBus
   );
 
-  /**
-   * @ngdoc property
-   * @name Document#localFieldChanges
-   * @type Stream<[string, string]>
-   * @description
-   * Emits a field ID and locale code whenever the document is
-   * changed on our side through one of the setter methods.
-   */
-  const localFieldChangesBus = K.createBus();
-  cleanupTasks.push(localFieldChangesBus.end);
-
   const document = {
     destroy,
     getVersion,

@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { cloneDeep, noop, set } from 'lodash';
 import jestKefir from 'jest-kefir';
 import * as K from '../../../../../test/utils/kefir';
 import * as Kefir from 'utils/kefir';
@@ -13,24 +13,23 @@ const kefirHelpers = jestKefir(Kefir); // https://github.com/kefirjs/jest-kefir
 const { value } = kefirHelpers; // end
 expect.extend(kefirHelpers.extensions);
 
-const mockEntry = fields => ({
-  data: {
-    sys: {
-      type: 'Entry',
-      version: 1,
-      contentType: {
-        sys: { id: 'ctId' }
-      },
+const newEntry = fields => ({
+  sys: {
+    type: 'Entry',
+    version: 1,
+    contentType: {
+      sys: { id: 'ctId' }
     },
-    fields: fields || {
-      fieldA: { 'en-US': 'en' },
-      fieldB: { 'en-US': 'val-EN', de: 'val-DE' },
-      listField: { 'en-US': ['one'] },
-      stringField: { 'en-US': 'value' }
-    }
   },
-  setDeleted: _.noop
+  fields: fields || {
+    fieldA: { 'en-US': 'en' },
+    fieldB: { 'en-US': 'val-EN', de: 'val-DE' },
+    listField: { 'en-US': ['one'] },
+    symbolField: { 'en-US': 'symbol value' },
+    textField: { 'en-US': 'text value' }
+  }
 });
+const newLegacyClientEntityMock = (entity) => ({ data: entity, setDeleted: noop });
 
 // Mock Angular getModule for PresenceHub in OtDocument
 jest.mock('NgRegistry', () => ({
@@ -57,7 +56,7 @@ jest.mock('access_control/EntityPermissions', () => {
   return mock;
 });
 
-function createOtDocument(initialEntity, spaceEndpoint = 'fake/endpoint', contentTypeFields) {
+function createOtDocument(initialEntity, contentTypeFields) {
   const docLoader = {
     doc: K.createMockProperty(DocLoad.None()),
     destroy: jest.fn(),
@@ -70,25 +69,24 @@ function createOtDocument(initialEntity, spaceEndpoint = 'fake/endpoint', conten
   const user = { sys: { id: 'USER' } };
   const contentType = {
     data: {
-      sys: initialEntity.data.sys.contentType.sys,
+      sys: initialEntity.sys.contentType.sys,
       fields: contentTypeFields || [
         { id: 'fieldA' },
         { id: 'fieldB' },
         { id: 'listField' },
-        {
-          id: 'stringField',
-          type: 'Text'
-        }
+        { id: 'symbolField', type: 'Symbol' },
+        { id: 'textField', type: 'Text' },
       ]
     }
   };
   const otDocMock = ShareJsDocMock();
-  const doc = new otDocMock(initialEntity.data);
-  docLoader.doc.set(DocLoad.Doc(doc));
+  const shareJsDoc = new otDocMock(initialEntity);
+  docLoader.doc.set(DocLoad.Doc(shareJsDoc));
+  const entity = newLegacyClientEntityMock(initialEntity);
   return {
-    document: OtDocument.create(docConnection, initialEntity, contentType, user, spaceEndpoint),
+    document: OtDocument.create(docConnection, entity, contentType, user, 'fake/endpoint'),
     docLoader,
-    shareJsDoc: doc
+    shareJsDoc
   };
 }
 
@@ -99,7 +97,7 @@ describe('OtDocument', () => {
   let entry;
 
   beforeEach(() => {
-    entry = mockEntry();
+    entry = newEntry();
     doc = createOtDocument(entry).document;
   });
 
@@ -139,13 +137,13 @@ describe('OtDocument', () => {
     });
 
     it('emits initial entity data', () => {
-      K.assertCurrentValue(doc.data$, entry.data);
+      K.assertCurrentValue(doc.data$, entry);
     });
 
     it('exposes updated entity data', () => {
-      const updatedEntry = _.cloneDeep(entry.data);
-      _.set(updatedEntry, fieldPath, 'en-US-updated');
-      _.set(updatedEntry, 'sys.version', 2);
+      const updatedEntry = cloneDeep(entry);
+      set(updatedEntry, fieldPath, 'en-US-updated');
+      set(updatedEntry, 'sys.version', 2);
 
       doc.setValueAt(fieldPath, 'en-US-updated');
       expect(K.getValue(doc.data$)).toMatchObject(updatedEntry);
@@ -231,7 +229,7 @@ describe('OtDocument', () => {
         K.assertCurrentValue(doc.state.isDirty$, true);
       });
       it('is false for a published document without changes', () => {
-        doc.setValueAt(['sys', 'publishedVersion'], entry.data.sys.version);
+        doc.setValueAt(['sys', 'publishedVersion'], entry.sys.version);
         K.assertCurrentValue(doc.state.isDirty$, false);
       });
       it('is true for a published document with un-published changes', () => {
@@ -255,7 +253,7 @@ describe('OtDocument', () => {
         const sys = doc.getValueAt(['sys']);
         expect(sys.archivedVersion).toBeUndefined();
         expect(sys.deletedVersion).toBeUndefined();
-        expect(Permissions.create(entry.data.sys).can('update')).toBeTruthy();
+        expect(Permissions.create(entry.sys).can('update')).toBeTruthy();
         K.assertCurrentValue(doc.state.canEdit$, true);
       });
       it('is false for archived document', () => {
@@ -285,14 +283,14 @@ describe('OtDocument', () => {
         expect(doc.state.loaded$).toBeProperty();
       });
       // TODO: from OtDoc it is not clear how and when Pending is triggered, the prop depends only on Pending
-      it('is true when document is loaded', () => {
+      it('is `true` when document is loaded', () => {
         K.assertCurrentValue(doc.state.loaded$, true);
       });
-      it('is true if loading fails', () => {
+      it('is `true` if loading fails', () => {
         docLoader.doc.set(DocLoad.Error('forbidden'));
         K.assertCurrentValue(doc.state.loaded$, true);
       });
-      it('is false when ShareJs doc is pending', () => {
+      it('is `false` when ShareJs doc is pending', () => {
         docLoader.doc.set(DocLoad.Pending());
         K.assertCurrentValue(doc.state.loaded$, false);
       });
@@ -304,12 +302,12 @@ describe('OtDocument', () => {
       expect(doc.sysProperty).toBeProperty();
     });
 
-    it('emits entity.data.sys as initial value', function() {
-      K.assertCurrentValue(doc.sysProperty, entry.data.sys);
+    it('emits `entity.data.sys` as initial value', function() {
+      K.assertCurrentValue(doc.sysProperty, entry.sys);
     });
 
     it('bumped version after update', function() {
-      const newVersionSys = { ...entry.data.sys, version: entry.data.sys.version + 1 };
+      const newVersionSys = { ...entry.sys, version: entry.sys.version + 1 };
       doc.setValueAt(fieldPath, 'en-US-updated');
       expect(K.getValue(doc.sysProperty)).toMatchObject(newVersionSys);
     });
@@ -320,12 +318,12 @@ describe('OtDocument', () => {
       expect(doc.getValueAt(['fields', 'fieldA', 'en-US'])).toBe('en');
     });
 
-    it('returns updated value for `path=fieldPath`', () => {
+    it('returns updated value at changed field path', () => {
       doc.setValueAt(fieldPath, 'en-US-updated');
       expect(doc.getValueAt(fieldPath)).toBe('en-US-updated');
     });
 
-    it('returns initial value if `path=anotherFieldPath`', () => {
+    it('returns initial value at untouched field path', () => {
       doc.setValueAt(fieldPath, 'en-US-updated');
       expect(doc.getValueAt(anotherFieldPath)).toBe('val-EN');
     });
@@ -349,13 +347,12 @@ describe('OtDocument', () => {
       expect(doc.getValueAt(fieldPath)).toBe('en-US-updated');
     });
 
-    it('throws when string field is given invalid value', async () => {
-      expect.assertions(1);
-      try {
-        await doc.setValueAt(['fields', 'stringField', 'en-US'], 123);
-      } catch (e) {
-        expect(e.message).toBe('Invalid string field value.');
-      }
+    it('throws when `Symbol` type field is given non-string value', async () => {
+      await expect(doc.setValueAt(['fields', 'symbolField', 'en-US'], 123)).rejects.toThrow('Invalid string field value.')
+    });
+
+    it('throws when `Text` type field is given non-string value', async () => {
+      await expect(doc.setValueAt(['fields', 'textField', 'en-US'], 123)).rejects.toThrow('Invalid string field value.')
     });
 
     it('throws ShareJs forbidden error on field level', async () => {
@@ -365,20 +362,30 @@ describe('OtDocument', () => {
       shareJsDoc.setAt = jest.fn().mockImplementationOnce(() => {
         throw new Error('forbidden');
       });
-
-      expect.assertions(1);
-      try {
-        await doc.setValueAt(fieldPath, 'en-US-updated');
-      } catch (e) {
-        expect(e.message).toBe('forbidden');
-      }
+      await expect(doc.setValueAt(fieldPath, 'en-US-updated')).rejects.toThrow('forbidden')
     });
   });
 
   describe('pushValueAt()', () => {
     it('adds an item to a list field', () => {
-      doc.pushValueAt(['fields', 'listField', 'en-US'], 'new-list-value');
-      expect(doc.getValueAt(['fields', 'listField', 'en-US'])).toEqual(['one', 'new-list-value']);
+      const path = ['fields', 'listField', 'en-US'];
+      const initialValue = doc.getValueAt(path);
+      doc.pushValueAt(path, 'new-list-value');
+      expect(doc.getValueAt(path)).toEqual([...initialValue, 'new-list-value']);
+    });
+
+    it('adds an item to an empty list field', () => {
+      const path = ['fields', 'listField', 'en-US'];
+      doc.removeValueAt(path);
+      doc.pushValueAt(path, 'new-list-value');
+      expect(doc.getValueAt(path)).toEqual(['new-list-value']);
+    });
+
+    it('silently fails on a non-list field', () => {
+      const path = ['fields', 'symbolField', 'en-US'];
+      const initialValue = doc.getValueAt(path);
+      doc.pushValueAt(path, 'new-list-value');
+      expect(doc.getValueAt(path)).toEqual(initialValue);
     });
   });
 
@@ -399,12 +406,12 @@ describe('OtDocument', () => {
 
   describe('snapshot normalization', () => {
     it('removes unknown fields and locales on document load', () => {
-      const notNormalizedEntry = mockEntry({
+      const notNormalizedEntry = newEntry({
         field1: { 'en-US': true, fr: true },
         field2: { 'en-US': true },
         unknownField: true
       });
-      doc = createOtDocument(notNormalizedEntry, 'fake/endpoint', [
+      doc = createOtDocument(notNormalizedEntry,  [
         { id: 'field1' },
         { id: 'field2' }
       ]).document;

@@ -39,6 +39,23 @@ describe.skip('CmaDocument specific behavior', () => {
       throwNotImplementedError();
     });
   });
+
+  // Also see basic test in `Document.spec.js`
+  describe('snapshot normalization', () => {
+    // While `Document` should not expose locales not known to `services/localeStore`,
+    // we have to keep them on the `PUT` request when saving changes so that this data
+    // does not get "magically" lost as a side-effect of editing an entry via the web app.
+    it('persists unknown locales in CMA request', () => {
+      throwNotImplementedError();
+    });
+
+    // In case of unknown fields we do not care as they should not ever existing in the
+    // first place and a `PUT` request with a non-existing field (not known to the CT)
+    // would simply fail.
+    it('does not persist unknown fields in CMA request', () => {
+      throwNotImplementedError();
+    });
+  });
 });
 
 function throwNotImplementedError() {
