@@ -18,6 +18,9 @@ export async function init() {
     });
   }
 
+  // Rename the cookie/local storage key to not clash with marketing website
+  cm.storage.key = 'cf_webapp_cookieconsent';
+
   // This allows us to programmatically disable the consent manager during testing
   if (localStorage.has('__disable_consentmanager')) {
     cm.teardown();
