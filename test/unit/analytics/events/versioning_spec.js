@@ -110,13 +110,11 @@ describe('Tracking versioning', () => {
   });
 
   describe('#restored', () => {
-    const picker = {
-      getPathsToRestore: () => [1, 2, 3],
-      getDifferenceCount: () => 4
-    };
+    const pathsToRestore = [1, 2, 3];
+    const diffCount = 4;
 
-    it('uses picker to calculate params for partial restore', function() {
-      this.track.restored(picker);
+    it('uses args to calculate params for partial restore', function() {
+      this.track.restored(pathsToRestore, diffCount);
       this.assertBasicAnalyticsCall('snapshot_restored');
       this.assertAnalyticsCall('snapshot_restored', {
         fullRestore: false,
@@ -125,9 +123,8 @@ describe('Tracking versioning', () => {
       });
     });
 
-    it('uses picker to calculate params for full restore', function() {
-      picker.getPathsToRestore = () => [1, 2, 3, 4];
-      this.track.restored(picker);
+    it('uses args to calculate params for full restore', function() {
+      this.track.restored([1, 2, 3, 4], diffCount);
       this.assertBasicAnalyticsCall('snapshot_restored');
       this.assertAnalyticsCall('snapshot_restored', {
         fullRestore: true,
@@ -136,7 +133,7 @@ describe('Tracking versioning', () => {
     });
 
     it('makes use of "show only diffs" toggle', function() {
-      this.track.restored(picker, true);
+      this.track.restored(pathsToRestore, diffCount, true);
       this.assertBasicAnalyticsCall('snapshot_restored');
       expect(this.getTrackingData().showDiffsOnly).toBe(true);
     });

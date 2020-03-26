@@ -85,10 +85,10 @@ const styles = {
   })
 };
 
-const SnapshotSelector = ({ snapshot: activeSnapshot, goToSnapshot, getEditorData }) => {
+const SnapshotSelector = ({ snapshot: activeSnapshot, goToSnapshot, editorData }) => {
   const [isOpen, setOpen] = useState(false);
   const [{ isLoading, snapshots }, { initSnapshots, loadMore, setSnapshots }] = useSnapshots({
-    getEditorData
+    editorData
   });
 
   const [sort, sortBy] = useSortableColumns({
@@ -198,7 +198,7 @@ const SnapshotSelector = ({ snapshot: activeSnapshot, goToSnapshot, getEditorDat
 SnapshotSelector.propTypes = {
   snapshot: PropTypes.object.isRequired,
   goToSnapshot: PropTypes.func.isRequired,
-  getEditorData: PropTypes.func.isRequired
+  editorData: PropTypes.object.isRequired
 };
 
 export default SnapshotSelector;

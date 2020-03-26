@@ -7,7 +7,7 @@ import * as snapshotDecorator from 'app/snapshots/helpers/SnapshotDecorator';
 const PER_PAGE = 20;
 const paginator = Paginator.create(PER_PAGE);
 
-const useSnapshots = ({ getEditorData }) => {
+const useSnapshots = ({ editorData }) => {
   const [snapshots, setSnapshots] = useState([]);
   const [isLoading, setLoading] = useState(true);
 
@@ -19,7 +19,6 @@ const useSnapshots = ({ getEditorData }) => {
         .slice(0, paginator.getPerPage())
         .filter(snapshot => snapshots.every(({ sys }) => sys.id !== snapshot.sys.id));
     };
-    const editorData = getEditorData();
     const entry = get(editorData, 'entity', {});
     const query = {
       skip: paginator.getSkipParam(),

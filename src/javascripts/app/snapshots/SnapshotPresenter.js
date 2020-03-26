@@ -30,10 +30,8 @@ const getFieldType = ({ type, items }) => {
 };
 
 const SnapshotPresenter = props => {
-  const { widget, version, locale, getEditorData } = props;
+  const { widget, version, locale, editorData } = props;
   const { field } = widget;
-
-  const editorData = getEditorData();
 
   const type = getFieldType(field);
   const linkType = get(field, 'linkType', get(field, 'items.linkType'));
@@ -61,7 +59,7 @@ const SnapshotPresenter = props => {
 };
 
 SnapshotPresenter.propTypes = {
-  getEditorData: PropTypes.func.isRequired,
+  editorData: PropTypes.object.isRequired,
   version: PropTypes.oneOf(['snapshot', 'current']).isRequired,
   widget: PropTypes.shape({
     field: PropTypes.oneOfType([

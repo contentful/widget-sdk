@@ -46,13 +46,12 @@ getModule.mockImplementation(() => ({
 
 const goToSnapshot = jest.fn();
 const getProps = (args = {}) => {
-  const getEditorData = jest.fn().mockReturnValue({
-    entity: { data: makeFakeSnapshot(undefined, -1) },
-    entityInfo: { id: 'entityId' }
-  });
   const props = {
     goToSnapshot,
-    getEditorData,
+    editorData: {
+      entity: { data: makeFakeSnapshot(undefined, -1) },
+      entityInfo: { id: 'entityId' }
+    },
     snapshot: {
       sys: {
         id: 'snapshotId',

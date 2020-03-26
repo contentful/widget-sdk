@@ -23,9 +23,8 @@ const snapshot = {
 };
 
 const getProps = (args = {}) => {
-  const getEditorData = jest.fn().mockReturnValue({ entity: { data: entry } });
   const props = {
-    getEditorData,
+    editorData: { entity: { data: entry } },
     locale: {
       code: 'en-US',
       internal_code: 'en-US'
@@ -100,17 +99,6 @@ describe('SnapshotPresenter', () => {
     ['Date', '2020-02-21T19:33:33', 'date'],
     ['Location', { lat: 12, lng: 12 }, 'location']
   ].forEach(([type, value, testIdSuffix]) => {
-    const getEditorData = jest.fn().mockReturnValue({
-      entity: {
-        data: {
-          fields: {
-            fieldId: {
-              'en-US': value
-            }
-          }
-        }
-      }
-    });
     const widget = {
       settings: {},
       field: {
@@ -124,7 +112,17 @@ describe('SnapshotPresenter', () => {
         <SnapshotPresenter
           {...getProps({
             widget,
-            getEditorData
+            editorData: {
+              entity: {
+                data: {
+                  fields: {
+                    fieldId: {
+                      'en-US': value
+                    }
+                  }
+                }
+              }
+            }
           })}
         />
       );

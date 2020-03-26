@@ -47,7 +47,7 @@ export const angularInitRun = [
       import(/* webpackMode: "eager" */ 'app/entry_editor/cfEntryEditorDirective'),
       import(/* webpackMode: "eager" */ 'app/entry_editor/cfWidgetApiDirective'),
       import(/* webpackMode: "eager" */ 'app/entry_editor/formWidgetsController'),
-      import(/* webpackMode: "eager" */ 'app/snapshots/snapshotComparator'),
+      import(/* webpackMode: "eager" */ 'app/snapshots/tempSnapshotComparator'),
       import(/* webpackMode: "eager" */ 'components/client/activationEmailResendController'),
       import(/* webpackMode: "eager" */ 'components/client/dialogsInitController'),
       import(/* webpackMode: "eager" */ 'components/field_dialog/cfValidationSettingsDirective'),

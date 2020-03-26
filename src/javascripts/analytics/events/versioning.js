@@ -26,11 +26,11 @@ export function closed(discarded) {
   });
 }
 
-export function restored(picker, showDiffsOnly) {
-  const count = picker.getPathsToRestore().length;
+export function restored(pathsToRestore, diffCount, showDiffsOnly) {
+  const count = pathsToRestore.length;
 
   track('snapshot_restored', {
-    fullRestore: count === picker.getDifferenceCount(),
+    fullRestore: count === diffCount,
     restoredFieldsCount: count,
     showDiffsOnly: !!showDiffsOnly,
     ...basicInfo()
