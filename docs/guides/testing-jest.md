@@ -2,22 +2,39 @@
 
 ## Table of Contents
 
-- [Running tests](#running-tests)
-- [Filename conventions](#filename-conventions)
-- [_(Deprecated)_ Testing components with Enzyme](#enzyme)
-- [Writing tests](#writing-tests)
-  - [Testing basic component rendering](#testing-basic-component-rendering)
-  - [Testing events](#testing-events)
-  - [Testing event handlers](#testing-event-handlers)
-  - [Matchers](#matchers)
-  - [Async tests](#async-tests)
-  - [Mocks](#mocks)
-- [Skipping tests](#skipping-tests)
-- [Debugging tests](#debugging-tests)
-  - [In Chrome](#debugging-tests-in-chrome)
-  - [In VSCode](#debugging-tests-in-visual-studio-code)
-- [Migration to Jest from Karma](#migration-to-jest-from-karma)
-- [Resources](#resources)
+- [Testing with Jest](#testing-with-jest)
+  - [Table of Contents](#table-of-contents)
+  - [Running tests](#running-tests)
+  - [Filename Conventions](#filename-conventions)
+  - [_(Deprecated)_ Testing components with Enzyme](#deprecated-testing-components-with-enzyme)
+    - [Enzyme](#enzyme)
+      - [Shallow rendering with `Enzyme.shallow`](#shallow-rendering-with-enzymeshallow)
+      - [Full Rendering API with `Enzyme.mount`](#full-rendering-api-with-enzymemount)
+      - [Static Rendering API with `Enzyme.render`](#static-rendering-api-with-enzymerender)
+      - [`shallow` vs. `mount` vs. `render`](#shallow-vs-mount-vs-render)
+    - [Jest](#jest)
+      - [Snapshots](#snapshots)
+  - [Writing tests](#writing-tests)
+    - [Testing basic component rendering](#testing-basic-component-rendering)
+    - [Testing events](#testing-events)
+    - [Testing event handlers](#testing-event-handlers)
+    - [Testing custom hooks](#testing-custom-hooks)
+    - [Matchers](#matchers)
+    - [Async tests](#async-tests)
+    - [Mocks](#mocks)
+      - [Mock functions](#mock-functions)
+      - [Mock modules](#mock-modules)
+      - [Mock Angular modules](#mock-angular-modules)
+  - [Skipping tests](#skipping-tests)
+  - [Debugging tests](#debugging-tests)
+    - [Debugging Tests in Chrome](#debugging-tests-in-chrome)
+    - [Debugging Tests in Visual Studio Code](#debugging-tests-in-visual-studio-code)
+  - [Migration to Jest from Karma](#migration-to-jest-from-karma)
+    - [If your tests have no Angular dependencies](#if-your-tests-have-no-angular-dependencies)
+    - [If your tests have Angular dependencies and use injection](#if-your-tests-have-angular-dependencies-and-use-injection)
+      - [Proper way](#proper-way)
+      - [Quick way](#quick-way)
+  - [Resources](#resources)
 
 ## Running tests
 
@@ -179,6 +196,37 @@ it('it calls the onChange handler with the selected value', () => {
   fireEvent.change(selectEl, { target: { value } });
 
   expect(onChange).toBeCalledWith(value);
+});
+```
+
+### Testing custom hooks
+
+You can use `renderHook()` to wrap the custom hook under test and use `act()` to call it's update functions in order to simulate the rendering cycle.
+The documentation for `@testing-library/react-hooks` can be found [here](https://react-hooks-testing-library.com/usage/basic-hooks).
+
+```js
+import { useState, useCallback } from 'react';
+import { renderHook, act } from '@testing-library/react-hooks';
+
+// Given a custom react hook
+const useCounter = (initial = 0) => {
+  const [count, setCount] = useState(initial);
+
+  const increment = useCallback(() => setCount(x => x + 1), []);
+
+  return { count, increment };
+};
+
+// This is a corresponding test case
+test('should increment counter', () => {
+  const { result } = renderHook(() => useCounter(1));
+
+  expect(result.current.count).toBe(1);
+
+  // act() is used to call an update function
+  act(() => result.current.increment());
+
+  expect(result.current.count).toBe(2);
 });
 ```
 

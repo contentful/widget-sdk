@@ -150,6 +150,7 @@
     "@svgr/webpack": "^4.3.3",
     "@testing-library/jest-dom": "5.0.2",
     "@testing-library/react": "9.4.0",
+    "@testing-library/react-hooks": "^3.2.1",
     "@testing-library/user-event": "8.0.4",
     "@types/classnames": "^2.2.9",
     "@types/enzyme": "^3.10.3",
