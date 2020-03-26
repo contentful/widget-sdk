@@ -23,7 +23,6 @@ export default function createPageExtensionBridge(dependencies, currentExtension
       environmentId: spaceContext.getEnvironmentId(),
       location: LOCATION_PAGE,
       spaceMember: spaceContext.space.data.spaceMember,
-      spaceMembership: spaceContext.space.data.spaceMembership,
       current: null,
       locales: {
         available: TheLocaleStore.getPrivateLocales(),

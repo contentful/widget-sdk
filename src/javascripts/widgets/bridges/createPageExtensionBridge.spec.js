@@ -61,8 +61,7 @@ describe('createPageExtensionBridge', () => {
         contentTypeData: { sys: {}, fields: [] },
         initialContentTypesData: [{ id: 'first-content-type' }, { id: 'second-content-type' }],
         editorInterface: undefined,
-        spaceMember: 'MEMBER ',
-        spaceMembership: 'MEMBERSHIP '
+        spaceMember: 'MEMBER '
       });
     });
   });

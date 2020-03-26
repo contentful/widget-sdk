@@ -196,16 +196,6 @@ describe('ExtensionAPI', () => {
         })
       );
     });
-
-    it('accepts the absence of a spaceMembership object', () => {
-      const api = createAPI({ spaceMembership: null });
-      expect(api.spaceMembership).toBeNull();
-      api.connect();
-
-      expect(api.channel.connect).toHaveBeenCalledWith(
-        expect.objectContaining({ user: expect.objectContaining({ spaceMembership: null }) })
-      );
-    });
   });
 
   describe('#registerHandler()', () => {

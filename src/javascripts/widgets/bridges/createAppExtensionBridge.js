@@ -34,7 +34,6 @@ export default function createAppExtensionBridge(dependencies) {
       environmentId: spaceContext.getEnvironmentId(),
       location: LOCATION_APP_CONFIG,
       spaceMember: spaceContext.space.data.spaceMember,
-      spaceMembership: spaceContext.space.data.spaceMembership,
       current: null,
       locales: {
         available: TheLocaleStore.getPrivateLocales(),

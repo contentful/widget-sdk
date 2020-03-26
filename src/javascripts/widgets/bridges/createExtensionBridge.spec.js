@@ -156,7 +156,6 @@ describe('createExtensionBridge', () => {
           default: { code: 'pl', name: 'Polski', default: true }
         },
         spaceMember: 'MEMBER ',
-        spaceMembership: 'MEMBERSHIP ',
         editorInterface: {
           controls: [],
           sidebar: []

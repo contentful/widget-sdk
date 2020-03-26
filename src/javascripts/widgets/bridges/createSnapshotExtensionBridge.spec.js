@@ -56,7 +56,6 @@ describe('createSnaphotExtensionBridge', () => {
         entryData: { fields: {}, sys: {} },
         locales: { available: [{ code: 'pl' }, { code: 'en' }], default: { code: 'pl' } },
         spaceMember: 'MEMBER ',
-        spaceMembership: 'MEMBERSHIP ',
         editorInterface: {
           controls: [],
           sidebar: []

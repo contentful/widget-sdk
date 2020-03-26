@@ -83,7 +83,6 @@ export default class ExtensionAPI {
   connect() {
     const {
       spaceMember,
-      spaceMembership,
       current,
       entryData,
       locales,
@@ -105,22 +104,17 @@ export default class ExtensionAPI {
         lastName: spaceMember.sys.user.lastName,
         email: spaceMember.sys.user.email,
         avatarUrl: spaceMember.sys.user.avatarUrl,
-        // There could be a case where spaceMembership is not present
-        // because the user has access to the space via a team.
-        // In this case we just return null for spaceMembership
-        spaceMembership: spaceMembership
-          ? {
-              sys: {
-                type: 'SpaceMembership',
-                id: spaceMember.sys.id
-              },
-              admin: !!spaceMember.admin,
-              roles: spaceMember.roles.map(role => ({
-                name: role.name,
-                description: role.description
-              }))
-            }
-          : null
+        spaceMembership: {
+          sys: {
+            type: 'SpaceMembership',
+            id: spaceMember.sys.id
+          },
+          admin: !!spaceMember.admin,
+          roles: spaceMember.roles.map(role => ({
+            name: role.name,
+            description: role.description
+          }))
+        }
       },
       field: current
         ? {
