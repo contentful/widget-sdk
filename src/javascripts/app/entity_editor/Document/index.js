@@ -6,7 +6,6 @@ export { create as createOtDoc } from './OtDocument';
 export { create as createCmaDoc } from './CmaDocument';
 
 /**
- * @description
  * Returns a property that always has the current value at the given
  * path of the document.
  *
@@ -34,10 +33,9 @@ export function localFieldChanges(document) {
 }
 
 /**
- * @description
  * Current status of the document
  *
- * Is one of
+ * Is one of data/document/statusCode.js codes:
  * - 'editing-not-allowed'
  * - 'ot-connection-error'
  * - 'internal-server-error'
@@ -52,7 +50,7 @@ export function localFieldChanges(document) {
 export function statusProperty(document) {
   return Status.create(
     document.sysProperty,
-    document.state.error$.toProperty(() => null),
+    document.state.error$,
     accessChecker.canUpdateEntity({ data: document.getValueAt([]) })
   );
 }

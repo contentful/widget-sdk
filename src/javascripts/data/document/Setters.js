@@ -2,7 +2,6 @@ import * as K from 'utils/kefir';
 import * as RichTextFieldSetter from 'data/document/RichTextFieldSetter';
 import * as ShareJS from 'data/sharejs/utils';
 import * as StringField from 'app/entity_editor/Document/stringField';
-import { getModule } from 'NgRegistry';
 
 /**
  * Create an object that exposes all methods for changing values in a
@@ -22,8 +21,6 @@ export function create({
   // update.
   contentType
 }) {
-  const $q = getModule('$q');
-
   const localFieldChangesBus = K.createBus();
   const errorBus = K.createBus();
 
@@ -84,14 +81,12 @@ export function create({
     return withRawDoc(path, doc => {
       if (ShareJS.peek(doc, path)) {
         maybeEmitLocalChange(path);
-        return $q.denodeify(cb => {
-          doc.insertAt(path, i, x, cb);
-        });
+        return new Promise(resolve => doc.insertAt(path, i, x, resolve));
       } else if (i === 0) {
         maybeEmitLocalChange(path);
         return setValueAtRaw(doc, path, [x]);
       } else {
-        return $q.reject(new Error(`Cannot insert index ${i} into empty container`));
+        return Promise.reject(new Error(`Cannot insert index ${i} into empty container`));
       }
     });
   }
@@ -114,11 +109,11 @@ export function create({
     if (doc) {
       result = run(doc);
     } else {
-      result = $q.reject(new Error('ShareJS document is not connected'));
+      result = Promise.reject(new Error('ShareJS document is not connected'));
     }
     return result.catch(error => {
       errorBus.emit({ path, error });
-      return $q.reject(error);
+      return Promise.reject(error);
     });
   }
 }

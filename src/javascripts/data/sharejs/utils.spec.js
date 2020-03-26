@@ -27,22 +27,20 @@ describe('data/ShareJS/Utils', () => {
   });
 
   describe('#remove', () => {
-    function testRemove(doesWhat, stub) {
-      it(doesWhat, async function() {
-        const doc = { removeAt: stub };
-        await ShareJS.remove(doc, ['a']);
-        expect(doc.removeAt).toHaveBeenCalledTimes(1);
-        expect(doc.removeAt).toHaveBeenCalledWith(['a'], expect.any(Function));
-      });
-    }
+    it('removes value from the doc', async () => {
+      const doc = new OtDocMock();
+      const removeAtSpy = jest.spyOn(doc, 'removeAt');
+      await expect(ShareJS.remove(doc, ['a'])).resolves.toBeUndefined();
+      expect(removeAtSpy).toHaveBeenCalledTimes(1);
+      expect(removeAtSpy).toHaveBeenCalledWith(['a'], expect.any(Function));
+      removeAtSpy.mockClear()
+    });
 
-    testRemove('removes value from the doc', jest.fn());
-    testRemove(
-      'ignores errors thrown by the doc',
-      jest.fn().mockImplementation(() => {
-        throw new Error('');
-      })
-    );
+    it('ignores errors thrown by the doc', async () => {
+      const doc = new OtDocMock();
+      doc.removeAt = () => { throw new Error( '' ) };
+      await expect(ShareJS.remove(doc, ['a'])).resolves.toBeUndefined();
+    });
   });
 
   describe('#setDeep()', () => {
@@ -96,10 +94,15 @@ describe('data/ShareJS/Utils', () => {
 
     it('removes value if undefined is given', function() {
       const doc = new OtDocMock();
+      const removeAtSpy = jest.spyOn(doc, 'removeAt');
+      const setSpy = jest.spyOn(doc, 'set');
       doc.snapshot.a = 'abc';
       ShareJS.setDeep(doc, ['a'], undefined);
-      sinon.assert.calledOnce(doc.removeAt.withArgs(['a'])); // eslint-disable-line
-      sinon.assert.notCalled(doc.set); // eslint-disable-line
+      expect(removeAtSpy).toHaveBeenCalledTimes(1);
+      expect(removeAtSpy).toHaveBeenCalledWith(['a'], expect.any(Function));
+      expect(setSpy).toHaveBeenCalledTimes(0);
+      removeAtSpy.mockClear();
+      setSpy.mockClear();
     });
   });
 });

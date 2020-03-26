@@ -18,7 +18,7 @@ const ENTRY = {
   }
 };
 
-describe('entity_editor/Document helpers', () => {
+describe.skip('entity_editor/Document helpers', () => {
   /**
    * @type {EntityDocument}
    */

@@ -64,7 +64,7 @@ angular.module('contentful/mocks').factory('mocks/entityEditor/Document', [
             canEdit$: K.createMockProperty(true),
             isConnected$: K.createMockProperty(true),
             loaded$: K.createMockProperty(true),
-            error$: K.createMockStream()
+            error$: K.createMockProperty(null)
           },
 
           getData: sinon.spy(getData),

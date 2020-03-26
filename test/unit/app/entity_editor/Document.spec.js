@@ -498,33 +498,6 @@ xdescribe('entityEditor/Document', () => {
     });
   });
 
-  describe('#reverter', () => {
-    it('has changes if changes are made', async function() {
-      this.connectAndOpen();
-      expect(this.doc.reverter.hasChanges()).toBe(false);
-      await this.doc.setValueAt(['fields', 'foo'], 'bar');
-      expect(this.doc.reverter.hasChanges()).toBe(true);
-    });
-
-    it('reverts field changes', async function() {
-      const path = ['fields', 'a', 'en'];
-      this.connectAndOpen();
-      await this.doc.setValueAt(path, 'NEW');
-      expect(this.doc.getValueAt(path)).toBe('NEW');
-      await this.doc.reverter.revert();
-      expect(this.doc.getValueAt(path)).toBe('INITIAL');
-    });
-
-    it('does not have changes after reverting', async function() {
-      this.connectAndOpen();
-      expect(this.doc.reverter.hasChanges()).toBe(false);
-      await this.doc.setValueAt(['fields', 'foo'], 'bar');
-      expect(this.doc.reverter.hasChanges()).toBe(true);
-      await this.doc.reverter.revert();
-      expect(this.doc.reverter.hasChanges()).toBe(false);
-    });
-  });
-
   describe('#sysProperty', () => {
     it('holds entity.data.sys as initial value', function() {
       K.assertCurrentValue(this.doc.sysProperty, this.entity.data.sys);
@@ -583,6 +556,7 @@ xdescribe('entityEditor/Document', () => {
   });
 
   describe('#state.isSaving$', () => {
+    // TODO: adapt these to the new flow, remove these tests
     it('is false if there is no document initially', function() {
       K.assertCurrentValue(this.doc.state.isSaving$, false);
     });
@@ -639,94 +613,12 @@ xdescribe('entityEditor/Document', () => {
     });
   });
 
-  describe('#state.isConnected$', () => {
-    it('changes to true when connecting', function() {
-      K.assertCurrentValue(this.doc.state.isConnected$, false);
-      this.connectAndOpen();
-      K.assertCurrentValue(this.doc.state.isConnected$, true);
-    });
-
-    it('changes to false when there is a connection error', function() {
-      this.connectAndOpen();
-      K.assertCurrentValue(this.doc.state.isConnected$, true);
-      this.docLoader.doc.set(this.DocLoad.Error());
-      K.assertCurrentValue(this.doc.state.isConnected$, false);
-    });
-  });
-
   describe('#state.error$', () => {
     it('emits "OpenForbidden" error when opening fails', function() {
       const errors = K.extractValues(this.doc.state.error$);
       this.docLoader.doc.set(this.DocLoad.Error('forbidden'));
       $apply();
       expect(errors[0].constructor.name).toBe('OpenForbidden');
-    });
-  });
-
-  describe('#permissions', () => {
-    describe('#can()', () => {
-      it('delegates to "accessChecker.canPerformActionOnEntity()"', function() {
-        this.stubs.canPerformActionOnEntity.returns(true);
-        expect(this.doc.permissions.can('publish')).toBe(true);
-
-        this.stubs.canPerformActionOnEntity.returns(false);
-        expect(this.doc.permissions.can('publish')).toBe(false);
-
-        const entity = this.stubs.canPerformActionOnEntity.args[0][1];
-        expect(entity.data.sys.id).toEqual('ENTITY_ID');
-      });
-
-      it('delegates "update" calls to "accessChecker.canUpdateEntry()"', function() {
-        this.stubs.canUpdateEntry.returns(true);
-        expect(this.doc.permissions.can('update')).toBe(true);
-
-        this.stubs.canUpdateEntry.returns(false);
-        expect(this.doc.permissions.can('update')).toBe(false);
-
-        const entity = this.stubs.canUpdateEntry.args[0][0];
-        expect(entity.data.sys.id).toEqual('ENTITY_ID');
-      });
-
-      it('delegates "update" calls to "accessChecker.canUpdateAsset()"', function() {
-        const doc = this.createDoc('Asset');
-
-        this.stubs.canUpdateAsset.returns(true);
-        expect(doc.permissions.can('update')).toBe(true);
-
-        this.stubs.canUpdateAsset.returns(false);
-        expect(doc.permissions.can('update')).toBe(false);
-
-        const entity = this.stubs.canUpdateAsset.args[0][0];
-        expect(entity.data.sys.id).toEqual('ENTITY_ID');
-      });
-
-      it('throws when action is unknown', function() {
-        const doc = this.createDoc();
-        expect(_.partial(doc.permissions.can, 'abc')).toThrowError('Unknown entity action "abc"');
-      });
-    });
-
-    describe('#canEditFieldLocale()', () => {
-      it('returns false if `update` permission is denied', function() {
-        this.stubs.canUpdateEntry.returns(false);
-        expect(this.doc.permissions.canEditFieldLocale('FIELD', 'LOCALE')).toBe(false);
-      });
-
-      it('delegates to "policyAccessChecker"', function() {
-        this.stubs.canUpdateEntry.returns(true);
-        this.stubs.canEditFieldLocale.returns(true);
-
-        expect(this.doc.permissions.canEditFieldLocale('FIELD', 'LOCALE')).toBe(true);
-
-        this.stubs.canEditFieldLocale.returns(false);
-        expect(this.doc.permissions.canEditFieldLocale('FIELD', 'LOCALE')).toBe(false);
-
-        const args = this.stubs.canEditFieldLocale.args[0];
-        const [ctId, { apiName }, { code }] = args;
-        expect(ctId).toBe('CT_ID');
-        expect(apiName).toBe('FIELD');
-        expect(code).toBe('LOCALE');
-      });
     });
   });
 
@@ -742,6 +634,29 @@ xdescribe('entityEditor/Document', () => {
       sjsDoc.version = 2000;
       sjsDoc.emit();
       expect(this.doc.getVersion()).toBe(2000);
+    });
+  });
+
+  describe('#presence', () => {
+    // TODO:xxx - expose presence directly
+    // just check that
+    // - presence is "something" (PresenceHub instance)
+    // - presence.collaboratorsFor is a function
+    // potentially test for presence.instance
+  });
+
+  describe('#destroy', () => {
+    it('ends the document streams', () => {
+      const doc = this.createDoc();
+      const destroyables = {};
+      const addToDestroyables = (key, stream) => {
+        destroyables[key] = false;
+        stream.onEnd(() => (destroyables[key] = true));
+      };
+      Object.entries(doc.state).map(addToDestroyables);
+      addToDestroyables('collaborators', doc.presence.collaborators);
+      doc.destroy();
+      expect(Object.values(destroyables).every(_.identity)).toBe(true);
     });
   });
 
