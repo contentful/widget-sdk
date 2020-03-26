@@ -275,6 +275,7 @@
     "cloc": "cloc --read-lang-def .cloc.def src",
     "clean": "rm -rf node_modules",
     "codecov": "codecov",
+    "cm": "git-cz",
     "bundle-analyzer": "node --max_old_space_size=6144 ./node_modules/webpack/bin/webpack.js --config ./tools/webpack.analyzer.config.js",
     "prettier:debug": "prettier --config .prettierrc --no-editorconfig --debug-check \"./*.js\" \"{./src/javascripts,./tools,./test,./bin,./tasks,./config}/**/*.{js,json}\"",
     "prettier": "prettier --config .prettierrc --no-editorconfig --write \"./*.js\" \"{./src/javascripts,./tools,./test,./bin,./tasks,./config}/**/*.{js,json}\"",
@@ -319,9 +320,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
-      "post-checkout": "node ./tools/bin/cond-drop-cache.js",
-      "prepare-commit-msg": "exec < /dev/tty && npx git-cz --hook || true",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+      "post-checkout": "node ./tools/bin/cond-drop-cache.js"
     }
   },
   "config": {
