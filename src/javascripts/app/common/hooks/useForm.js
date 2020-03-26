@@ -1,5 +1,5 @@
-import { get, cloneDeep } from 'lodash';
-import { useReducer } from 'react';
+import { get } from 'lodash';
+import { useReducer, useEffect } from 'react';
 import { createImmerReducer } from 'redux/utils/createImmerReducer';
 
 export const FORM_ERROR = '__FORM_ERROR__';
@@ -9,84 +9,17 @@ const ERROR_TYPES = {
   SUBMISSION: 'submission'
 };
 
-const initializeFn = initialValues => {
-  return {
-    fields: initialValues.fields,
-    fieldsValidator: initialValues.fieldsValidator || (() => {}),
-    form: {
-      isPending: false,
-      invalid: false,
-      pristine: true,
-      error: '',
-      submissionError: false
-    },
-    submitFn: initialValues.submitFn
-  };
-};
-
 const isFormInvalid = state => {
   const fieldValues = Object.values(state.fields);
 
-  const anyFieldHasErrors = !!fieldValues.find(field => !!field.error);
-  const anyFieldIsRequiredAndEmpty = !!fieldValues.find(field => field.required && !field.value);
+  const anyFieldHasErrors = fieldValues.some(field => !!field.error);
 
-  if (anyFieldHasErrors || anyFieldIsRequiredAndEmpty) {
+  if (anyFieldHasErrors) {
     return true;
   }
 
   return false;
 };
-
-const formReducer = createImmerReducer({
-  UPDATE_FIELD_VALUE: (state, { payload: { fieldName, value } }) => {
-    const field = state.fields[fieldName];
-
-    field.value = value;
-
-    state.form.pristine = false;
-
-    // Clear the error if the errorType is submission
-    // Non-submission errors are cleared by UNSET_FIELD_ERROR
-    if (field.error && field.errorType === ERROR_TYPES.SUBMISSION) {
-      field.error = '';
-    }
-
-    // Since a submission error may have been cleared, and the field
-    // may not have its own validator fn, we check to see if it's valid
-    // here as well.
-    state.form.invalid = isFormInvalid(state);
-  },
-  SET_FIELD_BLURRED: (state, { payload: { fieldName } }) => {
-    state.fields[fieldName].blurred = true;
-  },
-  SET_FIELD_ERROR: (state, { payload: { fieldName, message } }) => {
-    state.fields[fieldName].error = message;
-    state.fields[fieldName].errorType = ERROR_TYPES.VALIDATOR;
-
-    state.form.invalid = true;
-  },
-  UNSET_FIELD_ERROR: (state, { payload: { fieldName } }) => {
-    state.fields[fieldName].error = '';
-    state.fields[fieldName].errorType = null;
-
-    state.form.invalid = isFormInvalid(state);
-  },
-  SET_FIELD_SUBMISSION_ERROR: (state, { payload: { fieldName, message } }) => {
-    state.fields[fieldName].error = message;
-    state.fields[fieldName].errorType = ERROR_TYPES.SUBMISSION;
-    state.form.invalid = true;
-  },
-  SET_FORM_PENDING: (state, { payload: { isPending } }) => {
-    state.form.isPending = isPending;
-  },
-  SET_FORM_ERROR: (state, { payload: { message } }) => {
-    state.form.error = message;
-
-    // The form is not invalid simply because of a form error. This is because
-    // an API call may have just had an intermittent error, and so the form should
-    // be able to submit again
-  }
-});
 
 const fieldErrorMessage = (state, fieldName) => {
   const field = state.fields[fieldName];
@@ -115,15 +48,90 @@ const fieldErrorMessage = (state, fieldName) => {
   return errorMessage;
 };
 
-const runValidator = (state, fieldName, dispatch) => {
-  const errorMessage = fieldErrorMessage(state, fieldName);
-
-  if (errorMessage) {
-    dispatch({ type: 'SET_FIELD_ERROR', payload: { fieldName, message: errorMessage } });
-  } else {
-    dispatch({ type: 'UNSET_FIELD_ERROR', payload: { fieldName } });
-  }
+const initializeFn = initialValues => {
+  return {
+    fields: initialValues.fields,
+    fieldsValidator: initialValues.fieldsValidator || (() => {}),
+    form: {
+      isPending: false,
+      invalid: false,
+      pristine: true,
+      error: '',
+      submissionError: false
+    },
+    submitFn: initialValues.submitFn
+  };
 };
+
+const formReducer = createImmerReducer({
+  UPDATE_FIELD_VALUE: (state, { payload: { fieldName, value } }) => {
+    const field = state.fields[fieldName];
+
+    field.value = value;
+
+    state.form.pristine = false;
+
+    // Clear the error if the errorType is submission
+    // We don't know if the field is still invalid, because
+    // the error came from outside of `useForm`.
+    if (field.error && field.errorType === ERROR_TYPES.SUBMISSION) {
+      field.error = '';
+      field.errorType = null;
+    }
+
+    // We don't want to show an error if the user has just started to type, but hasn't left the field yet
+    if (field.blurred) {
+      const errorMessage = fieldErrorMessage(state, fieldName);
+
+      if (errorMessage) {
+        field.error = errorMessage;
+        field.errorType = ERROR_TYPES.VALIDATOR;
+      } else {
+        field.error = '';
+        field.errorType = null;
+      }
+    }
+
+    // Since a submission error may have been cleared, and the field
+    // may not have its own validator fn, we check to see if it's valid
+    // here as well.
+    state.form.invalid = isFormInvalid(state);
+  },
+  SET_FIELD_BLURRED: (state, { payload: { fieldName } }) => {
+    const field = state.fields[fieldName];
+
+    state.fields[fieldName].blurred = true;
+
+    const errorMessage = fieldErrorMessage(state, fieldName);
+
+    if (errorMessage) {
+      field.error = errorMessage;
+      field.errorType = ERROR_TYPES.VALIDATOR;
+    } else {
+      field.error = '';
+      field.errorType = null;
+    }
+  },
+  SET_FIELD_SUBMISSION_ERROR: (state, { payload: { fieldName, message } }) => {
+    state.fields[fieldName].error = message;
+    state.fields[fieldName].errorType = ERROR_TYPES.SUBMISSION;
+    state.form.invalid = true;
+  },
+  SET_FORM_PENDING: (state, { payload: { isPending } }) => {
+    state.form.isPending = isPending;
+  },
+  SET_FORM_ERROR: (state, { payload: { message } }) => {
+    state.form.error = message;
+
+    // The form is not invalid simply because of a form error. This is because
+    // an API call may have just had an intermittent error, and so the form should
+    // be able to submit again
+  },
+  SET_FORM_SUBMITTING: (state, { payload: { submitting, submitFnArgs } }) => {
+    state.form.submitting = submitting;
+    state.form.submitFnArgs = submitFnArgs;
+  }
+});
 
 /**
  * `useForm` is a hook that handles all form related logic and UX for UI forms. Specifically,
@@ -248,33 +256,125 @@ const runValidator = (state, fieldName, dispatch) => {
 export default function useForm(initialValues) {
   const [state, dispatch] = useReducer(formReducer, initialValues, initializeFn);
 
+  // This effect handles if the form has been submitted
+  useEffect(() => {
+    async function handleSubmit(state) {
+      const { submitting } = state.form;
+
+      if (!submitting) {
+        return;
+      }
+
+      if (submitting) {
+        // Immediately set the submitting status to false, so that later dispatches
+        // do not trigger this effect
+        dispatch({ type: 'SET_FORM_SUBMITTING', payload: { submitting: false } });
+
+        const formInvalid = isFormInvalid(state);
+
+        if (formInvalid) {
+          return;
+        }
+
+        dispatch({ type: 'SET_FORM_PENDING', payload: { isPending: true } });
+
+        let result;
+
+        // Create a mapping of fieldNames and values
+        //
+        // E.g.
+        // {
+        //   firstName: 'John',
+        //   lastName: 'Smith'
+        // }
+        const mappedFields = Object.entries(state.fields).reduce((memo, [fieldName, { value }]) => {
+          memo[fieldName] = value;
+
+          return memo;
+        }, {});
+
+        try {
+          const { submitFnArgs } = state.form;
+
+          result = await state.submitFn(mappedFields, ...submitFnArgs);
+        } catch (e) {
+          const message = e.message;
+
+          dispatch({
+            type: 'SET_FORM_ERROR',
+            payload: {
+              message
+            }
+          });
+
+          dispatch({
+            type: 'SET_FORM_PENDING',
+            payload: {
+              isPending: false
+            }
+          });
+
+          return;
+        }
+
+        if (result !== undefined) {
+          // If the result is not `undefined`, but the result has no keys, then
+          // something seems to be wrong (the result is not formatted correctly).
+          if (Object.keys(result).length === 0) {
+            dispatch({
+              type: 'SET_FORM_ERROR',
+              payload: {
+                message: 'An error occurred.'
+              }
+            });
+          } else {
+            const formError = get(result, FORM_ERROR, '');
+
+            if (formError !== '') {
+              dispatch({
+                type: 'SET_FORM_ERROR',
+                payload: {
+                  message: formError
+                }
+              });
+            }
+
+            Object.entries(result).forEach(([fieldName, message]) => {
+              // Ignore errors that don't correspond to a field
+              if (!state.fields[fieldName]) {
+                return;
+              }
+
+              dispatch({
+                type: 'SET_FIELD_SUBMISSION_ERROR',
+                payload: {
+                  fieldName,
+                  message
+                }
+              });
+            });
+          }
+        }
+
+        dispatch({
+          type: 'SET_FORM_PENDING',
+          payload: {
+            isPending: false
+          }
+        });
+      }
+    }
+
+    handleSubmit(state);
+  }, [state]);
+
   const onBlur = fieldName => {
     dispatch({ type: 'SET_FIELD_BLURRED', payload: { fieldName } });
-
-    // Clone the state and update the blurred key on the field, and pass
-    // the clonedState to the validator runner
-    const clonedState = cloneDeep(state);
-    clonedState.fields[fieldName].blurred = true;
-
-    runValidator(clonedState, fieldName, dispatch);
   };
 
   const onChange = (fieldName, value) => {
     // Always update the field value
     dispatch({ type: 'UPDATE_FIELD_VALUE', payload: { fieldName, value } });
-
-    // Clone the state, update the field value, and pass
-    // the clonedState to the validator runner
-    const clonedState = cloneDeep(state);
-    const field = clonedState.fields[fieldName];
-
-    field.value = value;
-
-    // We don't want to show an error if the user has just started to type, but hasn't left the field yet
-    if (field.blurred) {
-      // We have to pass in the new value as the state hasn't been updated yet
-      runValidator(clonedState, fieldName, dispatch);
-    }
   };
 
   const onSubmit = async (...submitFnArgs) => {
@@ -284,105 +384,14 @@ export default function useForm(initialValues) {
       onBlur(fieldName);
     }
 
-    // Because we don't have the updated state from above (the fields may not be marked as blurred),
-    // but the fieldsValidator should have the most current state, we clone the state and set each field
-    // as blurred, and then check to see if any fields have errors
-    const clonedState = cloneDeep(state);
-
-    clonedState.fields.forEach(field => {
-      field.blurred = true;
+    // This triggers the effect above
+    dispatch({
+      type: 'SET_FORM_SUBMITTING',
+      payload: {
+        submitting: true,
+        submitFnArgs
+      }
     });
-
-    const anyFieldHasErrors = Object.keys(clonedState.fields).find(fieldName =>
-      fieldErrorMessage(clonedState, fieldName)
-    );
-
-    if (!anyFieldHasErrors) {
-      dispatch({ type: 'SET_FORM_PENDING', payload: { isPending: true } });
-
-      let result;
-
-      // Create a mapping of fieldNames and values
-      //
-      // E.g.
-      // {
-      //   firstName: 'John',
-      //   lastName: 'Smith'
-      // }
-      const mappedFields = Object.entries(state.fields).reduce((memo, [fieldName, { value }]) => {
-        memo[fieldName] = value;
-
-        return memo;
-      }, {});
-
-      try {
-        result = await state.submitFn(mappedFields, ...submitFnArgs);
-      } catch (e) {
-        const message = e.message;
-
-        dispatch({
-          type: 'SET_FORM_ERROR',
-          payload: {
-            message
-          }
-        });
-
-        dispatch({
-          type: 'SET_FORM_PENDING',
-          payload: {
-            isPending: false
-          }
-        });
-
-        return;
-      }
-
-      if (result !== undefined) {
-        // If the result is not `undefined`, but the result has no keys, then
-        // something seems to be wrong (the result is not formatted correctly).
-        if (Object.keys(result).length === 0) {
-          dispatch({
-            type: 'SET_FORM_ERROR',
-            payload: {
-              message: 'An error occurred.'
-            }
-          });
-        } else {
-          const formError = get(result, FORM_ERROR, '');
-
-          if (formError !== '') {
-            dispatch({
-              type: 'SET_FORM_ERROR',
-              payload: {
-                message: formError
-              }
-            });
-          }
-
-          Object.entries(result).forEach(([fieldName, message]) => {
-            // Ignore errors that don't correspond to a field
-            if (!state.fields[fieldName]) {
-              return;
-            }
-
-            dispatch({
-              type: 'SET_FIELD_SUBMISSION_ERROR',
-              payload: {
-                fieldName,
-                message
-              }
-            });
-          });
-        }
-      }
-
-      dispatch({
-        type: 'SET_FORM_PENDING',
-        payload: {
-          isPending: false
-        }
-      });
-    }
   };
 
   return {
