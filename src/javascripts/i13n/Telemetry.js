@@ -1,5 +1,4 @@
 import createMicroBackendsClient from 'MicroBackendsClient';
-import { gitRevision as uiVersion } from 'Config';
 
 // How often measurements should be sent using `send`.
 //
@@ -17,12 +16,6 @@ const INTERVAL = 120 * 1000;
 const INITIAL_DELAY = 10 * 1000;
 
 const makeMeasurement = (name, value, tags, { initializedAt }) => {
-  if (tags) {
-    tags.uiVersion = uiVersion;
-  } else {
-    tags = { uiVersion };
-  }
-
   // The "post initialization window" is the 15 window in which the request occurred,
   // starting from 1.
   //
@@ -34,6 +27,8 @@ const makeMeasurement = (name, value, tags, { initializedAt }) => {
 
   tags.postInitializationWindow = postInitializationWindow;
 
+  // Note: We used to have `tags.uiVersion` but Librato performance gets worse with each unique new
+  // tag value, which is why we had to remove `uiVersion`.
   return { name, value, tags };
 };
 
