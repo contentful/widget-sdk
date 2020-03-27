@@ -1,15 +1,5 @@
 import { useState } from 'react';
-import TheLocaleStore from 'services/localeStore';
-import { SNAPSHOT, CURRENT } from './SnapshotComparator';
-
-export const getLocalesForField = field => {
-  const fieldLocales = field.localized
-    ? TheLocaleStore.getPrivateLocales()
-    : [TheLocaleStore.getDefaultLocale()];
-  return fieldLocales.filter(TheLocaleStore.isLocaleActive);
-};
-
-export const getFieldPath = (fieldId, internalCode) => ['fields', fieldId, internalCode];
+import { SNAPSHOT, CURRENT, getLocalesForField, getFieldPath } from './utils';
 
 const getPathsToRestore = selected => {
   return Object.entries(selected)

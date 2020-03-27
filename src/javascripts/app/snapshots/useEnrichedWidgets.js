@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getLocalesForField, getFieldPath } from './useSelectedVersions';
+import { getLocalesForField, getFieldPath } from './utils';
 import { get, isEqual } from 'lodash';
 
 const useEnrichedWidgets = ({ widgets, getEditorData, snapshot }) => {

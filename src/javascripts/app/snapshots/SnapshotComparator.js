@@ -23,9 +23,7 @@ import SnapshotSelector from './SnapshotSelector';
 import SnapshotPresenter from './SnapshotPresenter';
 import useSelectedVersions from './useSelectedVersions';
 import useEnrichedWidgets from './useEnrichedWidgets';
-
-export const SNAPSHOT = 'snapshot';
-export const CURRENT = 'current';
+import { CURRENT, SNAPSHOT } from './utils';
 
 const commonCellStyles = {
   maxWidth: '50%',
