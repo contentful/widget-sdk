@@ -22,15 +22,15 @@ const usersAndInvitationsState = base({
   name: 'users',
   abstract: true,
   params: {
-    orgId: ''
+    orgId: '',
   },
   children: [
     inviteUsersState,
     userDetailState,
     usersListState,
     userInvitationsState,
-    userInvitationDetailState
-  ]
+    userInvitationDetailState,
+  ],
 });
 
 // Psuedo route to handle which path a user should be redirected to when they click on "Go to Organization" in the account profile page.
@@ -58,10 +58,10 @@ const organizationSettings = {
       go({
         path: path,
         params: { orgId: organization.sys.id },
-        options: { location: 'replace' }
+        options: { location: 'replace' },
       });
-    }
-  ]
+    },
+  ],
 };
 
 export default [
@@ -69,7 +69,7 @@ export default [
     name: 'new_organization',
     url: '/organizations/new',
     navComponent: EmptyNavigationBar,
-    title: 'Create new organization'
+    title: 'Create new organization',
   }),
   organizationSettings,
   base({
@@ -85,7 +85,7 @@ export default [
       appsState,
       ssoRoutingState,
       accessToolsState,
-      ...gatekeeperStates
-    ]
-  })
+      ...gatekeeperStates,
+    ],
+  }),
 ];

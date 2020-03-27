@@ -16,10 +16,10 @@
     </h1>
   </div>
   <div class="workbench-header__search">
-    <cf-component-bridge style="flex: 1; z-index: 1" component="search"></cf-component-bridge
+    <cf-component-bridge style="flex: 1; z-index: 1;" component="search"></cf-component-bridge
     ><a
       class="text-link"
-      style="margin-left: 15px"
+      style="margin-left: 15px;"
       ng-if="savedViewsState === 'ready'"
       ng-click="savedViewsSidebar.api.saveCurrentView()"
       >Save as view</a
@@ -36,16 +36,16 @@
   </div>
 </header>
 <div class="workbench-main" ng-hide="showNoAssetsAdvice()">
-  <div class="workbench-main__left-sidebar" style="max-height: 100vh; overflow-y: hidden">
+  <div class="workbench-main__left-sidebar" style="max-height: 100vh; overflow-y: hidden;">
     <div
       class="saved-views-wrapper"
       ng-if="savedViewsState === 'loading'"
-      style="padding: 4rem 1rem; text-align: center"
+      style="padding: 4rem 1rem; text-align: center;"
     >
       Loading&nbsp;
       <react-component name="@contentful/forma-36-react-components/Spinner"></react-component>
     </div>
-    <div class="saved-views-wrapper" ng-if="savedViewsState === 'error'" style="padding: 0.5rem">
+    <div class="saved-views-wrapper" ng-if="savedViewsState === 'error'" style="padding: 0.5rem;">
       <react-component
         name="@contentful/forma-36-react-components/Note"
         props="{noteType: 'warning', title: 'Failed to load views', children: 'Please refresh the page.'}"
@@ -173,7 +173,7 @@
             >
               <td
                 class="td__checkbox-cell x--image-cell"
-                style="cursor: pointer"
+                style="cursor: pointer;"
                 aria-label="cell-preview"
               >
                 <div>
@@ -192,23 +192,23 @@
                   </a>
                 </div>
               </td>
-              <td class="x--large-cell" style="cursor: pointer" aria-label="cell-name">
+              <td class="x--large-cell" style="cursor: pointer;" aria-label="cell-name">
                 <a ui-sref="{{linkToAsset}}" ng-click="$event.stopPropagation();"
                   >{{ EntityFieldValueSpaceContext.assetTitle(asset) || '&nbsp;' }}</a
                 >
               </td>
-              <td class="x--medium-cell" style="cursor: pointer" aria-label="cell-dimensions">
+              <td class="x--medium-cell" style="cursor: pointer;" aria-label="cell-dimensions">
                 <a ui-sref="{{linkToAsset}}" ng-click="$event.stopPropagation();"
                   ><span ng-bind-html="getAssetDimensions(asset)"></span
                 ></a>
               </td>
-              <td style="cursor: pointer" aria-label="cell-type">
+              <td style="cursor: pointer;" aria-label="cell-type">
                 <a ui-sref="{{linkToAsset}}" ng-click="$event.stopPropagation();"
                   ><span>{{file|fileType}}</span
                   ><span class="extension">{{file|fileExtension}}</span></a
                 >
               </td>
-              <td style="cursor: pointer" aria-label="cell-updated">
+              <td style="cursor: pointer;" aria-label="cell-updated">
                 <a ui-sref="{{linkToAsset}}" ng-click="$event.stopPropagation();">
                   <react-component
                     ng-if="asset.getUpdatedAt()"
@@ -217,7 +217,7 @@
                   ></react-component
                 ></a>
               </td>
-              <td class="x--small-cell" style="cursor: pointer" aria-label="cell-author">
+              <td class="x--small-cell" style="cursor: pointer;" aria-label="cell-author">
                 <a ui-sref="{{linkToAsset}}" ng-click="$event.stopPropagation();"
                   ><span>
                     <react-component
@@ -226,7 +226,7 @@
                     ></react-component></span
                 ></a>
               </td>
-              <td class="x--small-cell" style="cursor: pointer" aria-label="cell-status">
+              <td class="x--small-cell" style="cursor: pointer;" aria-label="cell-status">
                 <a ui-sref="{{linkToAsset}}" ng-click="$event.stopPropagation();"
                   ><react-component
                     name="@contentful/forma-36-react-components/Tag"

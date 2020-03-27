@@ -10,14 +10,14 @@ import {
   getSlideInEntities,
   goToSlideInEntity,
   getSlideAsString,
-  goToPreviousSlideOrExit
+  goToPreviousSlideOrExit,
 } from 'navigation/SlideInNavigator';
 import * as random from 'utils/Random';
-import { valuePropertyAt } from './Document'
+import { valuePropertyAt } from './Document';
 
 const entityLoaders = {
   Entry: loadEntry,
-  Asset: loadAsset
+  Asset: loadAsset,
 };
 
 const { setTimeout, clearTimeout } = window;
@@ -41,7 +41,7 @@ export default ($scope, $state) => {
   $scope.editorsData = {};
   $scope.context.ready = true;
 
-  const isTopLayer = ($scope.isTopLayer = index => index + 1 === $scope.slideStates.length);
+  const isTopLayer = ($scope.isTopLayer = (index) => index + 1 === $scope.slideStates.length);
   const getSlideStates = () => $scope.slideStates;
   const slidesControllerUuid = random.id();
 
@@ -49,7 +49,7 @@ export default ($scope, $state) => {
 
   $scope.getSlideAsString = getSlideAsString;
 
-  $scope.getLayerClasses = index => {
+  $scope.getLayerClasses = (index) => {
     const currentlyPeekedLayerIndex = peekedLayerIndexes.slice(-1)[0];
     const optimize = $scope.slideStates.length > 4;
     return {
@@ -58,11 +58,11 @@ export default ($scope, $state) => {
       'workbench-layer--hovered': index === hoveredLayerIndex,
       'workbench-layer--peeked': peekedLayerIndexes.includes(index),
       'workbench-layer--offset': index > currentlyPeekedLayerIndex,
-      'workbench-layer--optimized': optimize
+      'workbench-layer--optimized': optimize,
     };
   };
 
-  $scope.close = slide => {
+  $scope.close = (slide) => {
     clearTimeouts();
     hoveredLayerIndex = null;
     topPeekingLayerIndex = -1;
@@ -73,11 +73,11 @@ export default ($scope, $state) => {
 
     track('slide_in_editor:peek_click', {
       peekHoverTimeMs: Math.max(0, peekHoverTimeMs),
-      ...eventData
+      ...eventData,
     });
   };
 
-  $scope.initPeeking = index => {
+  $scope.initPeeking = (index) => {
     if (isTopLayer(index)) {
       topPeekingLayerIndex = index - 1;
 
@@ -90,7 +90,7 @@ export default ($scope, $state) => {
     }
   };
 
-  $scope.peekIn = index => {
+  $scope.peekIn = (index) => {
     const isPeekable = index <= topPeekingLayerIndex;
 
     if (isPeekable) {
@@ -152,7 +152,7 @@ export default ($scope, $state) => {
           key,
           slide,
           viewProps: null,
-          loadingError: null
+          loadingError: null,
         }
       );
       return slideStates;
@@ -166,24 +166,24 @@ export default ($scope, $state) => {
         buildSlideEditorViewProps = (editorData, trackLoadEvent) => ({
           editorData,
           trackLoadEvent,
-          preferences: { ...$scope.preferences, hasInitialFocus: i + 1 === slides.length }
+          preferences: { ...$scope.preferences, hasInitialFocus: i + 1 === slides.length },
         });
       } else if (slide.type === 'BulkEditor') {
         entityType = 'Entry';
         entityId = slide.path[0];
-        buildSlideEditorViewProps = editorData => {
+        buildSlideEditorViewProps = (editorData) => {
           const { entityInfo } = editorData;
           const lifeline = K.createBus();
           const onDestroy = () => lifeline.end();
           const doc = editorData.openDoc(lifeline.stream);
           return {
-            referenceContext: createReferenceContext(entityInfo, doc, slide, onDestroy)
+            referenceContext: createReferenceContext(entityInfo, doc, slide, onDestroy),
           };
         };
       } else {
         throw new Error(`Unknown slide of type "${slide.type}"`);
       }
-      const maybeUpdateSlideState = updateFn => {
+      const maybeUpdateSlideState = (updateFn) => {
         const key = getSlideAsString(slide);
         const slideState = getSlideStateByKey(key);
         if (slideState) {
@@ -193,11 +193,11 @@ export default ($scope, $state) => {
       };
       const updateSlideState = (editorData, trackLoadEvent) =>
         maybeUpdateSlideState(
-          slideState =>
+          (slideState) =>
             (slideState.viewProps = buildSlideEditorViewProps(editorData, trackLoadEvent))
         );
-      const setLoadingError = loadingError =>
-        maybeUpdateSlideState(slideState => (slideState.loadingError = loadingError));
+      const setLoadingError = (loadingError) =>
+        maybeUpdateSlideState((slideState) => (slideState.loadingError = loadingError));
 
       const loaderKey = `${entityType}:${entityId}`;
       if (!entityLoads[loaderKey]) {
@@ -216,12 +216,12 @@ export default ($scope, $state) => {
                   getSlideStates,
                   getEditorData,
                   slide,
-                  slidesControllerUuid
+                  slidesControllerUuid,
                 })
               : noop;
           trackLoadEvent('init');
 
-          entityLoads[loaderKey] = loadEntity(spaceContext, entityId).then(data => {
+          entityLoads[loaderKey] = loadEntity(spaceContext, entityId).then((data) => {
             editorData = data;
             trackLoadEvent('entity_loaded');
             recordEntityEditorLoadTime(entityType, loadStartMs);
@@ -235,7 +235,7 @@ export default ($scope, $state) => {
       }
       entityLoads[loaderKey]
         .then(({ editorData, trackLoadEvent }) => updateSlideState(editorData, trackLoadEvent))
-        .catch(error => setLoadingError(error));
+        .catch((error) => setLoadingError(error));
       return entityLoads;
     }, {});
 
@@ -265,7 +265,7 @@ export default ($scope, $state) => {
     const links$ = K.endWith(
       valuePropertyAt(doc, ['fields', field.id, localeCode]),
       lifeline.stream
-    ).map(links => links || []);
+    ).map((links) => links || []);
 
     return {
       links$,
@@ -273,13 +273,13 @@ export default ($scope, $state) => {
       editorSettings: deepFreeze(cloneDeep($scope.preferences)),
       parentId: entityInfo.id,
       field,
-      add: link => {
+      add: (link) => {
         return doc.pushValueAt(['fields', field.id, localeCode], link);
       },
-      remove: index => {
+      remove: (index) => {
         return doc.removeValueAt(['fields', field.id, localeCode, index]);
       },
-      close: closeReason => {
+      close: (closeReason) => {
         lifeline.end();
         goToPreviousSlideOrExit(closeReason, () => {
           // Bulk editor can't ever be the one and only slide. So e.g. returning to
@@ -287,7 +287,7 @@ export default ($scope, $state) => {
           throw new Error('Unexpected "exit" after closing bulk editor');
         });
         cb();
-      }
+      },
     };
   }
 
@@ -304,7 +304,7 @@ export default ($scope, $state) => {
       peekOutTimeoutID,
       peekInTimeoutID,
       clearPeekTimeoutID,
-      clearPreviousPeekTimeoutID
+      clearPreviousPeekTimeoutID,
     ].forEach(clearTimeout);
   }
 };
@@ -315,7 +315,7 @@ function isRelevantState({ name }) {
 
 const ENTITY_EDITOR_HTTP_TIME_EVENTS = {
   Entry: 'entry_editor_http_time',
-  Asset: 'asset_editor_http_time'
+  Asset: 'asset_editor_http_time',
 };
 
 function recordEntityEditorLoadTime(entityType, loadStartMs) {

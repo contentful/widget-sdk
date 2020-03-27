@@ -19,13 +19,13 @@ const RoleEditorFetcher = createFetcherComponent(
       hasEnvironmentAliasesEnabled,
       hasCustomRolesFeature,
       resource,
-      entities
+      entities,
     ] = await Promise.all([
       getContentTypes(),
       getSpaceFeature(spaceId, ENVIRONMENT_ALIASING),
       accessChecker.canModifyRoles(),
       createResourceService(spaceId).get('role'),
-      getEntities()
+      getEntities(),
     ]);
 
     if (!hasCustomRolesFeature) {
@@ -34,7 +34,7 @@ const RoleEditorFetcher = createFetcherComponent(
         entities,
         hasEnvironmentAliasesEnabled,
         hasCustomRolesFeature: false,
-        canModifyRoles: false
+        canModifyRoles: false,
       };
     }
 
@@ -45,7 +45,7 @@ const RoleEditorFetcher = createFetcherComponent(
         entities,
         hasEnvironmentAliasesEnabled,
         hasCustomRolesFeature: true,
-        canModifyRoles: false
+        canModifyRoles: false,
       };
     }
 
@@ -54,7 +54,7 @@ const RoleEditorFetcher = createFetcherComponent(
       entities,
       hasEnvironmentAliasesEnabled,
       hasCustomRolesFeature: true,
-      canModifyRoles: true
+      canModifyRoles: true,
     };
   }
 );
@@ -86,7 +86,7 @@ export default function RoleEditorRoute(props) {
 }
 
 RoleEditorRoute.defaultProps = {
-  getEntities: () => ({ Entry: {}, Asset: {} })
+  getEntities: () => ({ Entry: {}, Asset: {} }),
 };
 
 RoleEditorRoute.propTypes = {
@@ -94,5 +94,5 @@ RoleEditorRoute.propTypes = {
   isLegacyOrganization: PropTypes.bool.isRequired,
   getContentTypes: PropTypes.func.isRequired,
   getEntities: PropTypes.func.isRequired,
-  isNew: PropTypes.bool.isRequired
+  isNew: PropTypes.bool.isRequired,
 };

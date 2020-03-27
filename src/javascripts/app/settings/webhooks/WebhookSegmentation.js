@@ -6,7 +6,7 @@ import { WILDCARD, createMap } from './WebhookSegmentationState';
 export default class WebhookSegmentation extends React.Component {
   static propTypes = {
     values: PropTypes.object.isRequired,
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
   };
 
   renderOption(caption, checked, onChange) {

@@ -6,7 +6,7 @@ import { css } from 'emotion';
 import pluralize from 'pluralize';
 import {
   Team as TeamPropType,
-  TeamSpaceMembership as TeamSpaceMembershipPropType
+  TeamSpaceMembership as TeamSpaceMembershipPropType,
 } from 'app/OrganizationSettings/PropTypes';
 import tokens from '@contentful/forma-36-tokens';
 import { joinWithAnd } from 'utils/StringUtils';
@@ -15,22 +15,22 @@ const styles = {
   content: css({
     display: 'flex',
     justifyContent: 'start',
-    alignItems: 'center'
+    alignItems: 'center',
   }),
   teamName: css({
-    width: 200
+    width: 200,
   }),
   teamList: css({
-    marginTop: tokens.spacingS
+    marginTop: tokens.spacingS,
   }),
   toggleButton: css({
-    display: 'flex'
+    display: 'flex',
   }),
   teamRolesTooltip: css({
     display: 'block',
     whiteSpace: 'pre',
-    textAlign: 'left'
-  })
+    textAlign: 'left',
+  }),
 };
 
 export default function TeamSelection({ onRemove, team, teamSpaceMemberships = [] }) {
@@ -59,13 +59,13 @@ export default function TeamSelection({ onRemove, team, teamSpaceMemberships = [
 TeamSelection.propTypes = {
   onRemove: PropTypes.func.isRequired,
   team: TeamPropType.isRequired,
-  teamSpaceMemberships: PropTypes.arrayOf(TeamSpaceMembershipPropType)
+  teamSpaceMemberships: PropTypes.arrayOf(TeamSpaceMembershipPropType),
 };
 
 function Toggle({ isOpen, onClick, count }) {
   const style = css({
     appearance: 'none',
-    display: 'flex'
+    display: 'flex',
   });
   const hasMemberships = count > 0;
   const label = `in ${pluralize('space', count, true)}`;
@@ -84,18 +84,18 @@ function Toggle({ isOpen, onClick, count }) {
 Toggle.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
-  count: PropTypes.number.isRequired
+  count: PropTypes.number.isRequired,
 };
 
 function TeamSpaceMembershipList({ teamSpaceMemberships = [] }) {
   const style = css({
     marginLeft: 200,
-    marginTop: tokens.spacingS
+    marginTop: tokens.spacingS,
   });
   return (
     <Typography className={style}>
       {teamSpaceMemberships &&
-        teamSpaceMemberships.map(membership => (
+        teamSpaceMemberships.map((membership) => (
           <Paragraph key={membership.sys.id}>
             <strong>{membership.sys.space.name}</strong> as {getRolesText(membership)}
           </Paragraph>
@@ -105,7 +105,7 @@ function TeamSpaceMembershipList({ teamSpaceMemberships = [] }) {
 }
 
 TeamSpaceMembershipList.propTypes = {
-  teamSpaceMemberships: PropTypes.arrayOf(TeamSpaceMembershipPropType).isRequired
+  teamSpaceMemberships: PropTypes.arrayOf(TeamSpaceMembershipPropType).isRequired,
 };
 
 // Get a text listing the roles up to a limit
@@ -120,17 +120,17 @@ function getRolesText(membership) {
       <Tooltip
         content={
           <span className={styles.teamRolesTooltip}>
-            {membership.roles.map(role => `${role.name} \n`)}
+            {membership.roles.map((role) => `${role.name} \n`)}
           </span>
         }>
         {joinWithAnd([
           first.name,
           second.name,
-          `${rest.length} other space ${pluralize('role', rest.length)}`
+          `${rest.length} other space ${pluralize('role', rest.length)}`,
         ])}
       </Tooltip>
     );
   }
 
-  return joinWithAnd(membership.roles.map(role => role.name));
+  return joinWithAnd(membership.roles.map((role) => role.name));
 }

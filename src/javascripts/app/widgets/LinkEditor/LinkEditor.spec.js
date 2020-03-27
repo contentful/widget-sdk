@@ -18,30 +18,30 @@ describe('LinkEditor', () => {
       type: 'Entry',
       actions: {},
       contentTypes: [],
-      ...customProps
+      ...customProps,
     };
     return Enzyme.shallow(<LinkEditor {...props} />);
   }
 
   const renderLinksCases = {
     'without link': {
-      props: { value: [] }
+      props: { value: [] },
     },
     'with single link': {
-      props: { value: [link] }
+      props: { value: [link] },
     },
     'with links': {
-      props: { value: [link, newLink(), newLink()] }
+      props: { value: [link, newLink(), newLink()] },
     },
     'with duplicate links': {
-      props: { value: [link, link, link] }
+      props: { value: [link, link, link] },
     },
     'isSingle with link': {
-      props: { value: [link], isSingle: true }
+      props: { value: [link], isSingle: true },
     },
     '(isSingle without link': {
-      props: { value: [], isSingle: true }
-    }
+      props: { value: [], isSingle: true },
+    },
   };
   forEach(renderLinksCases, (testCase, description) => {
     const { props } = testCase;
@@ -58,20 +58,20 @@ describe('LinkEditor', () => {
   const linkingActionsVisibilityCases = {
     'without link': {
       props: { isSingle: false, value: [] },
-      expectLinkingActions: true
+      expectLinkingActions: true,
     },
     'with links': {
       props: { isSingle: false, value: [link, link] },
-      expectLinkingActions: true
+      expectLinkingActions: true,
     },
     'isSingle with link': {
       props: { isSingle: true, value: [link] },
-      expectLinkingActions: false
+      expectLinkingActions: false,
     },
     'isSingle without link': {
       props: { isSingle: true, value: [] },
-      expectLinkingActions: true
-    }
+      expectLinkingActions: true,
+    },
   };
   forEach(linkingActionsVisibilityCases, (testCase, description) => {
     const { props, expectLinkingActions } = testCase;

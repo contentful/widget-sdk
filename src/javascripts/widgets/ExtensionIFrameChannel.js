@@ -1,6 +1,6 @@
 import * as random from 'utils/Random';
 
-const callArg1 = fn => fn();
+const callArg1 = (fn) => fn();
 
 /**
  * This module exposes a `Channel` class that is used to communicate
@@ -120,8 +120,8 @@ export default class ExtensionIFrameChannel {
         error: {
           code: error.code || error.name,
           message: error.message,
-          data: error.data
-        }
+          data: error.data,
+        },
       },
       '*'
     );

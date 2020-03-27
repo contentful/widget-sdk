@@ -6,7 +6,7 @@ import tokens from '@contentful/forma-36-tokens';
 export class ProgressBar extends React.Component {
   static propTypes = {
     current: PropTypes.number.isRequired,
-    maximum: PropTypes.number.isRequired
+    maximum: PropTypes.number.isRequired,
   };
 
   getPercentual = () => {
@@ -35,7 +35,7 @@ export class ProgressBar extends React.Component {
           className="progress-bar__current"
           style={{
             width: this.getWidth(),
-            backgroundColor: this.getColor()
+            backgroundColor: this.getColor(),
           }}
         />
       </div>

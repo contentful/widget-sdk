@@ -6,7 +6,7 @@ export default addUserOrgSpace((_, segmentData) => {
   return {
     data: {
       scope: 'ui_extension',
-      action: 'render'
+      action: 'render',
     },
     contexts: [
       {
@@ -19,9 +19,9 @@ export default addUserOrgSpace((_, segmentData) => {
           'extension_name',
           'src',
           'installation_params',
-          'instance_params'
-        ])
-      }
-    ]
+          'instance_params',
+        ]),
+      },
+    ],
   };
 });

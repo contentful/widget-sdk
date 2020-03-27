@@ -4,7 +4,7 @@ import AccountDetails from './AccountDetails';
 import * as ModalLauncher from 'app/common/ModalLauncher';
 
 describe('AccountDetails', () => {
-  const makeUser = custom => {
+  const makeUser = (custom) => {
     return Object.assign(
       {
         firstName: 'Jack',
@@ -12,7 +12,7 @@ describe('AccountDetails', () => {
         email: 'jack.nicholson@example.com',
         ssoLoginOnly: false,
         passwordSet: true,
-        identities: []
+        identities: [],
       },
       custom
     );
@@ -26,7 +26,7 @@ describe('AccountDetails', () => {
 
   it('should allow the user to change their password if the passowrd is set', () => {
     const user = makeUser({
-      passwordSet: true
+      passwordSet: true,
     });
 
     const { queryByTestId } = build({ user });
@@ -37,7 +37,7 @@ describe('AccountDetails', () => {
 
   it('should allow the user to set their password if the password is not set', () => {
     const user = makeUser({
-      passwordSet: false
+      passwordSet: false,
     });
 
     const { queryByTestId } = build({ user });
@@ -75,7 +75,7 @@ describe('AccountDetails', () => {
     ModalLauncher.open.mockResolvedValueOnce(
       makeUser({
         firstName: 'Bruce',
-        lastName: 'Wayne'
+        lastName: 'Wayne',
       })
     );
 
@@ -97,7 +97,7 @@ describe('AccountDetails', () => {
     ModalLauncher.open.mockResolvedValueOnce(false);
 
     const user = makeUser({
-      passwordSet: false
+      passwordSet: false,
     });
 
     const onChangePassword = jest.fn();
@@ -115,13 +115,13 @@ describe('AccountDetails', () => {
   it('should call onChangePassword if the ChangePasswordModal result is not false', async () => {
     ModalLauncher.open.mockResolvedValueOnce(
       makeUser({
-        passwordSet: true
+        passwordSet: true,
       })
     );
 
     const onChangePassword = jest.fn();
     const user = makeUser({
-      passwordSet: false
+      passwordSet: false,
     });
 
     const { queryByTestId } = build({ user, onChangePassword });
@@ -139,7 +139,7 @@ describe('AccountDetails', () => {
     const unconfirmedEmail = 'jack.torrance@overlookhotel.com';
 
     const user = makeUser({
-      unconfirmedEmail
+      unconfirmedEmail,
     });
 
     const { queryByTestId } = build({ user });
@@ -152,7 +152,7 @@ describe('AccountDetails', () => {
   describe('SSO restricted', () => {
     // passwordSet is set to true by default above
     const user = makeUser({
-      ssoLoginOnly: true
+      ssoLoginOnly: true,
     });
 
     it('should tell the user that the account is SSO enabled', () => {

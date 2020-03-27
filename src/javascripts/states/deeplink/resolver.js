@@ -20,15 +20,15 @@ const ONBOARDING_ERROR = 'modern onboarding space id does not exist';
  * @return {Promise<{path:string, params:Object}>} - promise with resolved path and params
  */
 export function resolveLink(link, params) {
-  return resolveParams(link, params).catch(e => {
+  return resolveParams(link, params).catch((e) => {
     logger.logException(e, {
       data: {
-        link
+        link,
       },
-      groupingHash: 'Error during deeplink redirect'
+      groupingHash: 'Error during deeplink redirect',
     });
     return {
-      onboarding: e.message === ONBOARDING_ERROR
+      onboarding: e.message === ONBOARDING_ERROR,
     };
   });
 }
@@ -55,31 +55,31 @@ function resolveParams(link, params) {
       apps: resolveApps,
       home: makeSpaceScopedPathResolver({ spaceScopedPath: ['spaces', 'detail', 'home'] }),
       'general-settings': makeSpaceScopedPathResolver({
-        spaceScopedPath: ['spaces', 'detail', 'settings', 'space']
+        spaceScopedPath: ['spaces', 'detail', 'settings', 'space'],
       }),
       locales: makeSpaceScopedPathResolver({
-        spaceScopedPath: ['spaces', 'detail', 'settings', 'locales', 'list']
+        spaceScopedPath: ['spaces', 'detail', 'settings', 'locales', 'list'],
       }),
       environments: makeSpaceScopedPathResolver({
-        spaceScopedPath: ['spaces', 'detail', 'settings', 'environments']
+        spaceScopedPath: ['spaces', 'detail', 'settings', 'environments'],
       }),
       'roles-and-permissions': makeSpaceScopedPathResolver({
-        spaceScopedPath: ['spaces', 'detail', 'settings', 'roles', 'list']
+        spaceScopedPath: ['spaces', 'detail', 'settings', 'roles', 'list'],
       }),
       'content-preview': makeSpaceScopedPathResolver({
-        spaceScopedPath: ['spaces', 'detail', 'settings', 'content_preview', 'list']
+        spaceScopedPath: ['spaces', 'detail', 'settings', 'content_preview', 'list'],
       }),
       content: makeSpaceScopedPathResolver({
-        spaceScopedPath: ['spaces', 'detail', 'entries', 'list']
+        spaceScopedPath: ['spaces', 'detail', 'entries', 'list'],
       }),
       media: makeSpaceScopedPathResolver({
-        spaceScopedPath: ['spaces', 'detail', 'assets', 'list']
+        spaceScopedPath: ['spaces', 'detail', 'assets', 'list'],
       }),
       'content-model': makeSpaceScopedPathResolver({
-        spaceScopedPath: ['spaces', 'detail', 'content_types', 'list']
+        spaceScopedPath: ['spaces', 'detail', 'content_types', 'list'],
       }),
       extensions: makeSpaceScopedPathResolver({
-        spaceScopedPath: ['spaces', 'detail', 'settings', 'extensions', 'list']
+        spaceScopedPath: ['spaces', 'detail', 'settings', 'extensions', 'list'],
       }),
       'onboarding-get-started': createOnboardingScreenResolver('getStarted'),
       'onboarding-copy': createOnboardingScreenResolver('copy'),
@@ -87,18 +87,18 @@ function resolveParams(link, params) {
       'onboarding-deploy': createOnboardingScreenResolver('deploy'),
       // org scoped deeplinks
       invite: makeOrgScopedPathResolver({
-        orgScopedPath: ['account', 'organizations', 'users', 'new']
+        orgScopedPath: ['account', 'organizations', 'users', 'new'],
       }),
       users: makeOrgScopedPathResolver({
         orgScopedPath: ['account', 'organizations', 'users', 'list'],
-        pathSuffix: ''
+        pathSuffix: '',
       }),
       org: makeOrgScopedPathResolver({
         orgScopedPath: ['account', 'organizations', 'edit'],
-        pathSuffix: ''
+        pathSuffix: '',
       }),
       subscription: resolveSubscriptions,
-      'invitation-accepted': resolveSpaceHome
+      'invitation-accepted': resolveSpaceHome,
     };
 
     const resolverFn = mappings[link];
@@ -122,19 +122,19 @@ function makeSpaceScopedPathResolver({ spaceScopedPath }) {
     throw new Error('A space scoped path must be nested under "spaces"');
   }
 
-  return async function() {
+  return async function () {
     const { space, spaceId } = await getSpaceInfo();
     const spaceContext = getModule('spaceContext');
     await spaceContext.resetWithSpace(space);
     return {
       path: spaceScopedPath,
-      params: { spaceId }
+      params: { spaceId },
     };
   };
 }
 
 function createOnboardingScreenResolver(screen) {
-  return async function() {
+  return async function () {
     const store = getStore();
 
     const spaceId = await getOnboardingSpaceId();
@@ -145,11 +145,11 @@ function createOnboardingScreenResolver(screen) {
       // and resume the flow later, it opens the same step
       store.set(currentStepKey, {
         path: `spaces.detail.onboarding.${screen}`,
-        params: { spaceId }
+        params: { spaceId },
       });
       return {
         path: ['spaces', 'detail', 'onboarding', screen],
-        params: { spaceId }
+        params: { spaceId },
       };
     } else {
       throw new Error(ONBOARDING_ERROR);
@@ -178,7 +178,7 @@ async function resolveApi() {
   if (!apiKeys || apiKeys.length === 0) {
     return {
       path: ['spaces', 'detail', 'api', 'keys', 'list'],
-      params: { spaceId }
+      params: { spaceId },
     };
   }
 
@@ -186,8 +186,8 @@ async function resolveApi() {
     path: ['spaces', 'detail', 'api', 'keys', 'detail'],
     params: {
       spaceId,
-      apiKeyId: apiKeys[0].sys.id
-    }
+      apiKeyId: apiKeys[0].sys.id,
+    },
   };
 }
 
@@ -204,12 +204,12 @@ async function resolveInstallExtension({ url, referrer }) {
       spaceId,
       environmentId: 'master',
       referrer: referrer ? `deeplink-${referrer}` : 'deeplink',
-      ...(url ? { extensionUrl: url } : {})
+      ...(url ? { extensionUrl: url } : {}),
     },
     deeplinkOptions: {
       selectSpace: true,
-      selectEnvironment: true
-    }
+      selectEnvironment: true,
+    },
   };
 }
 
@@ -245,11 +245,11 @@ async function resolveWebhookTemplate({ id, referrer }) {
     params: {
       spaceId,
       referrer: referrer ? `deeplink-${referrer}` : 'deeplink',
-      ...(id ? { templateId: id } : {})
+      ...(id ? { templateId: id } : {}),
     },
     deeplinkOptions: {
-      selectSpace: true
-    }
+      selectSpace: true,
+    },
   };
 }
 
@@ -262,12 +262,12 @@ async function resolveApps({ id, referrer }) {
       spaceId,
       environmentId: 'master',
       referrer: referrer ? `deeplink-${referrer}` : 'deeplink',
-      ...(id ? { appId: id } : {})
+      ...(id ? { appId: id } : {}),
     },
     deeplinkOptions: {
       selectSpace: true,
-      selectEnvironment: true
-    }
+      selectEnvironment: true,
+    },
   };
 }
 
@@ -280,13 +280,13 @@ function makeOrgScopedPathResolver({ orgScopedPath, pathSuffix = null }) {
     throw new Error('An org scoped path must contain "organizations"');
   }
 
-  return async function() {
+  return async function () {
     const { orgId } = await getOrg();
     const params = pathSuffix === null ? { orgId } : { orgId, pathSuffix };
 
     return await applyOrgAccess(orgId, {
       path: orgScopedPath,
-      params
+      params,
     });
   };
 }
@@ -302,8 +302,8 @@ async function resolveSubscriptions() {
       orgId,
       // dummy pathsuffix since we don't want to redirect
       // to purchase page
-      pathSuffix: ''
-    }
+      pathSuffix: '',
+    },
   });
 }
 
@@ -313,15 +313,15 @@ async function resolveSpaceHome({ orgId }) {
     const orgOwnerOrAdmin = await checkOrgAccess(orgId);
     return {
       path: ['home'],
-      params: { orgId: orgId, orgOwnerOrAdmin: orgOwnerOrAdmin }
+      params: { orgId: orgId, orgOwnerOrAdmin: orgOwnerOrAdmin },
     };
   }
   const spaceId = spaces[0].sys.id;
   return {
     path: ['spaces', 'detail', 'home'],
     params: {
-      spaceId
-    }
+      spaceId,
+    },
   };
 }
 

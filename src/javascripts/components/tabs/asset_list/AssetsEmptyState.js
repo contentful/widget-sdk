@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import EmptyStateContainer, {
-  defaultSVGStyle
+  defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import { Heading, Paragraph } from '@contentful/forma-36-react-components';
 import AddAssetButton from './AddAssetButton';
@@ -30,7 +30,7 @@ const AssetsEmptyState = ({ canUploadMultipleAssets, createMultipleAssets, newAs
 AssetsEmptyState.propTypes = {
   canUploadMultipleAssets: PropTypes.func.isRequired,
   createMultipleAssets: PropTypes.func.isRequired,
-  newAsset: PropTypes.func.isRequired
+  newAsset: PropTypes.func.isRequired,
 };
 
 export default AssetsEmptyState;

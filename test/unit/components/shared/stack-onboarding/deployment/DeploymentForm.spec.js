@@ -9,19 +9,19 @@ import { mount } from 'enzyme';
 describe('in DeploymentForm', () => {
   let DeploymentForm;
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     this.system.set('services/TokenStore', {
-      user$: K.createMockProperty({ sys: { id: 1 } })
+      user$: K.createMockProperty({ sys: { id: 1 } }),
     });
 
-    DeploymentForm = (await this.system.import(
-      'components/shared/stack-onboarding/deployment/DeploymentForm'
-    )).default;
+    DeploymentForm = (
+      await this.system.import('components/shared/stack-onboarding/deployment/DeploymentForm')
+    ).default;
 
     await $initialize(this.system);
   });
 
-  afterEach(function() {
+  afterEach(function () {
     DeploymentForm = null;
   });
 
@@ -37,7 +37,7 @@ describe('in DeploymentForm', () => {
     const ourError = 'Please provide netify or heroku';
     wrapper.setState({
       url: 'aaa',
-      error: ourError
+      error: ourError,
     });
 
     expect(wrapper.find('.cfnext-form__field-error').text()).toBe(ourError);
@@ -47,7 +47,7 @@ describe('in DeploymentForm', () => {
     const wrapper = mount(<DeploymentForm />);
     wrapper.setState({
       url: 'some.netlify.com',
-      error: null
+      error: null,
     });
 
     const button = wrapper.find('button[type="submit"]');
@@ -70,7 +70,7 @@ describe('in DeploymentForm', () => {
     const wrapper = mount(<DeploymentForm onComplete={onComplete} />);
 
     wrapper.setState({
-      url: 'correct-url.herokuapp.com'
+      url: 'correct-url.herokuapp.com',
     });
 
     wrapper.find('button[type="submit"]').simulate('click');

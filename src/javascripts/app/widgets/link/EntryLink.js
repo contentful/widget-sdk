@@ -26,7 +26,7 @@ const EntryLink = ({ entry, entityHelpers, getContentType, isSelected, size }) =
           title,
           description,
           contentTypeName: get(contentType, 'data.name'),
-          file
+          file,
         });
         setLoading(false);
       }
@@ -67,21 +67,21 @@ EntryLink.propTypes = {
   entry: PropTypes.shape({
     sys: PropTypes.shape({
       id: PropTypes.string.isRequired,
-      type: PropTypes.oneOf(['Entry'])
-    })
+      type: PropTypes.oneOf(['Entry']),
+    }),
   }),
   entityHelpers: PropTypes.shape({
     entityTitle: PropTypes.func.isRequired,
     entityDescription: PropTypes.func.isRequired,
-    entityFile: PropTypes.func.isRequired
+    entityFile: PropTypes.func.isRequired,
   }).isRequired,
   getContentType: PropTypes.func,
   isSelected: PropTypes.bool,
-  size: PropTypes.oneOf(['default', 'small'])
+  size: PropTypes.oneOf(['default', 'small']),
 };
 
 EntryLink.defaultProps = {
-  isSelected: false
+  isSelected: false,
 };
 
 export default EntryLink;

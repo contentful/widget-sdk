@@ -5,7 +5,7 @@ import { openConsentManagementPanel } from 'services/OsanoService';
 
 jest.mock('services/OsanoService', () => ({
   openConsentManagementPanel: jest.fn(),
-  waitForCMInstance: jest.fn().mockResolvedValue()
+  waitForCMInstance: jest.fn().mockResolvedValue(),
 }));
 
 describe('ManageCookieConsentSection', () => {

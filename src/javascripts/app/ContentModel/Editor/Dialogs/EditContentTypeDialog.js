@@ -7,7 +7,7 @@ const DialogPropTypes = {
   onConfirm: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
   originalName: PropTypes.string.isRequired,
-  originalDescription: PropTypes.string
+  originalDescription: PropTypes.string,
 };
 
 export function EditContentForm(props) {
@@ -21,7 +21,7 @@ export function EditContentForm(props) {
   const onEditConfirm = async () => {
     props.onConfirm({
       name,
-      description
+      description,
     });
   };
 
@@ -38,14 +38,14 @@ export function EditContentForm(props) {
             required
             name="contentTypeName"
             id="contentTypeName"
-            onChange={e => {
+            onChange={(e) => {
               setName(e.target.value);
             }}
             validationMessage={!name && 'Name is required'}
             countCharacters
             textInputProps={{
               maxLength: 64,
-              placeholder: 'For example Product, Blog Post, Author'
+              placeholder: 'For example Product, Blog Post, Author',
             }}
           />
           <TextField
@@ -56,9 +56,9 @@ export function EditContentForm(props) {
             textarea
             countCharacters
             textInputProps={{
-              maxLength: 500
+              maxLength: 500,
             }}
-            onChange={e => {
+            onChange={(e) => {
               setDescription(e.target.value);
             }}
           />

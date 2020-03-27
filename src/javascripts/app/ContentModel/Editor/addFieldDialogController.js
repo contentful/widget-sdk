@@ -26,7 +26,7 @@ export default function register() {
     function AddFieldDialogController($scope, $controller, $q) {
       $scope.viewState = $controller('ViewStateController', {
         $scope: $scope,
-        defaultState: 'fieldSelection'
+        defaultState: 'fieldSelection',
       });
 
       $scope.selectFieldGroup = selectFieldGroup;
@@ -36,10 +36,10 @@ export default function register() {
       $scope.fieldGroupRows = fieldGroupsToRows(fieldFactory.groups);
 
       $scope.schema = {
-        errors: function(field) {
+        errors: function (field) {
           return fieldDecorator.validateInContentType(field, $scope.contentType.data);
         },
-        buildMessage: fieldErrorMessageBuilder
+        buildMessage: fieldErrorMessageBuilder,
       };
 
       // Initial dialog state
@@ -58,9 +58,9 @@ export default function register() {
           data: {
             name: '',
             id: random.id(),
-            apiName: ''
+            apiName: '',
           },
-          isList: false
+          isList: false,
         };
         $scope.viewState.set('fieldSelection');
 
@@ -77,7 +77,7 @@ export default function register() {
         $scope.viewState.set('fieldConfiguration');
       }
 
-      $scope.$watch('field.data.name', name => {
+      $scope.$watch('field.data.name', (name) => {
         const apiNameField = $scope.newFieldForm.apiName;
         const apiName = $scope.field.data.apiName;
         if (!apiNameField || !apiNameField.$touched || !apiName) {
@@ -121,7 +121,7 @@ export default function register() {
         create()
           // We don’t care about validation errors raised by
           // `configureField`, so catch is noop.
-          .then(field => {
+          .then((field) => {
             $scope.ctEditorController.openFieldDialog(field);
           }, _.noop);
       }
@@ -135,6 +135,6 @@ export default function register() {
       function first(array) {
         return array[0];
       }
-    }
+    },
   ]);
 }

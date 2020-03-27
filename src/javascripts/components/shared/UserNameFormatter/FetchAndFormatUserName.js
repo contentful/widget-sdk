@@ -13,7 +13,7 @@ import UserNameFormatter from '.';
  */
 class FetchAndFormatUserName extends Component {
   static propTypes = {
-    userId: PropTypes.string
+    userId: PropTypes.string,
   };
   render() {
     return (

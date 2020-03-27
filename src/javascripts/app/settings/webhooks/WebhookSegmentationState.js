@@ -14,7 +14,7 @@ export const ACTIONS = [
   'publish',
   'unpublish',
   'delete',
-  'change_target'
+  'change_target',
 ];
 const aliasActionIndex = ACTIONS.indexOf('change_target');
 
@@ -22,7 +22,7 @@ export const DISABLED = {
   ContentType: ['auto_save', 'archive', 'unarchive', 'change_target'],
   Asset: ['change_target'],
   Entry: ['change_target'],
-  EnvironmentAlias: ACTIONS.slice(0, aliasActionIndex)
+  EnvironmentAlias: ACTIONS.slice(0, aliasActionIndex),
 };
 
 export const HIDDEN_ENTITY_TYPES = ['EnvironmentAlias'];
@@ -31,7 +31,7 @@ export const HIDDEN_ACTIONS = ['change_target', 'Change Target'];
 export const TYPE_LABELS = {
   ContentType: 'Content type',
   Entry: 'Entry',
-  Asset: 'Asset'
+  Asset: 'Asset',
 };
 
 export const ACTION_LABELS = {
@@ -43,7 +43,7 @@ export const ACTION_LABELS = {
   publish: 'Publish',
   unpublish: 'Unpublish',
   delete: 'Delete',
-  change_target: 'Change Target'
+  change_target: 'Change Target',
 };
 
 // for non content entity types, don't create a table row
@@ -66,9 +66,9 @@ export function shouldHideAction(action) {
 export function createMap(defaultValue) {
   const map = {};
 
-  ENTITY_TYPES.forEach(type => {
+  ENTITY_TYPES.forEach((type) => {
     map[type] = {};
-    ACTIONS.forEach(action => {
+    ACTIONS.forEach((action) => {
       map[type][action] = defaultValue;
     });
   });
@@ -96,7 +96,7 @@ export function changeAction(map, entityType, action, checked) {
 // This function is pure and returns a new object
 export function changeAllActionsByEntityType(map, entityType, value) {
   const result = cloneDeep(map);
-  ACTIONS.filter(a => !isActionDisabled(entityType, a)).forEach(a => {
+  ACTIONS.filter((a) => !isActionDisabled(entityType, a)).forEach((a) => {
     result[entityType][a] = value;
   });
   return result;
@@ -106,7 +106,7 @@ export function changeAllActionsByEntityType(map, entityType, value) {
 // This function is pure and returns a new object
 export function changeAllTypesByAction(map, action, value) {
   const result = cloneDeep(map);
-  ENTITY_TYPES.filter(t => !isActionDisabled(t, action)).forEach(t => {
+  ENTITY_TYPES.filter((t) => !isActionDisabled(t, action)).forEach((t) => {
     result[t][action] = value;
   });
   return result;
@@ -131,12 +131,12 @@ export function isActionDisabled(type, action) {
 
 // Is all actions *under given entity type* checked ?
 export function areAllActionsChecked(map, entityType) {
-  return ACTIONS.filter(a => !isActionDisabled(entityType, a)).every(a => map[entityType][a]);
+  return ACTIONS.filter((a) => !isActionDisabled(entityType, a)).every((a) => map[entityType][a]);
 }
 
 // Is all types *matching given action* checked ?
 export function areAllEntityTypesChecked(map, action) {
-  return ENTITY_TYPES.filter(t => !isActionDisabled(t, action)).every(t => map[t][action]);
+  return ENTITY_TYPES.filter((t) => !isActionDisabled(t, action)).every((t) => map[t][action]);
 }
 
 // It takes a map, and returns list of topics from given map. Output looks like this;
@@ -153,14 +153,14 @@ export function transformMapToTopics(map) {
   const result = [];
 
   // Find wildcarded entity types and add them into the result array first
-  ENTITY_TYPES.forEach(t => {
+  ENTITY_TYPES.forEach((t) => {
     // Is all actions in the same entity row checked ? Then early return, adding a wilcard record.
     if (areAllActionsChecked(map, t)) {
       result.push(`${t}.*`);
       return;
     }
 
-    ACTIONS.filter(a => !isActionDisabled(t, a)).forEach(a => {
+    ACTIONS.filter((a) => !isActionDisabled(t, a)).forEach((a) => {
       // Is this action checked for all entity types? Then push a wild card for it.
       const allChecked = areAllEntityTypesChecked(map, a);
 
@@ -188,17 +188,17 @@ export function transformTopicsToMap(topics) {
 
   const map = createMap(false);
 
-  topics.forEach(topic => {
+  topics.forEach((topic) => {
     const [entityType, action] = topic.split('.');
 
     if (entityType !== '*' && action !== '*') {
       map[entityType][action] = true;
     } else if (entityType === '*') {
-      ENTITY_TYPES.forEach(t => {
+      ENTITY_TYPES.forEach((t) => {
         map[t][action] = true;
       });
     } else if (action === '*') {
-      ACTIONS.forEach(a => {
+      ACTIONS.forEach((a) => {
         map[entityType][a] = true;
       });
     }

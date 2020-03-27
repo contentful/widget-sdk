@@ -24,7 +24,7 @@ export default function register() {
     '$location',
     'spaceContext',
     'modalDialog',
-    function($rootScope, $state, $location, spaceContext, modalDialog) {
+    function ($rootScope, $state, $location, spaceContext, modalDialog) {
       const { updateNavState } = NavState;
 
       // Result of confirmation dialog
@@ -36,9 +36,9 @@ export default function register() {
 
       return {
         setup: setupHandlers,
-        setNavigationConfirmed: function(isConfirmed) {
+        setNavigationConfirmed: function (isConfirmed) {
           navigationConfirmed = isConfirmed;
-        }
+        },
       };
 
       function setupHandlers() {
@@ -49,7 +49,7 @@ export default function register() {
 
         const unlistenStateChange = $rootScope.$on('$stateChangeSuccess', (_e, toState) => {
           AppPerformanceMetrics.track({
-            stateName: toState.name
+            stateName: toState.name,
           });
           unlistenStateChange();
         });
@@ -67,7 +67,7 @@ export default function register() {
         logger.leaveBreadcrumb('Enter state', {
           state: toState && toState.name,
           // This is the limit for breadcrumb values
-          location: $location.path().substr(0, 140)
+          location: $location.path().substr(0, 140),
         });
 
         // we do it here instead of "onExit" hook in "spaces" state
@@ -112,8 +112,8 @@ export default function register() {
           logger.logError('Change state during state change confirmation', {
             state: {
               from: fromState.name,
-              to: toState.name
-            }
+              to: toState.name,
+            },
           });
         }
 
@@ -127,7 +127,7 @@ export default function register() {
           event.preventDefault();
           confirmationInProgress = true;
           requestLeaveConfirmation().then(
-            confirmed => {
+            (confirmed) => {
               confirmationInProgress = false;
               if (confirmed) {
                 navigationConfirmed = true;
@@ -148,7 +148,7 @@ export default function register() {
         if (toState.redirectTo) {
           event.preventDefault();
           $state.go(toState.redirectTo, toStateParams, {
-            relative: toState
+            relative: toState,
           });
         }
       }
@@ -186,18 +186,18 @@ export default function register() {
         const metaData = {
           error: error,
           event: {
-            name: event.name
+            name: event.name,
           },
           data: {
             toState: {
               name: _.get(to, 'state.name'),
-              params: _.get(to, 'params')
+              params: _.get(to, 'params'),
             },
             fromState: {
               name: _.get(from, 'state.name'),
-              params: _.get(from, 'params')
-            }
-          }
+              params: _.get(from, 'params'),
+            },
+          },
         };
 
         if (error && error.statusCode) {
@@ -229,6 +229,6 @@ export default function register() {
           _.isEqual(_.omit(toParams, ['addToContext']), _.omit(fromParams, ['addToContext']))
         );
       }
-    }
+    },
   ]);
 }

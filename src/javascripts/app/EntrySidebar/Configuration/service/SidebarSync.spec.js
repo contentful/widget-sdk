@@ -1,6 +1,6 @@
 import {
   convertInternalStateToConfiguration,
-  convertConfigurationToInternalState
+  convertConfigurationToInternalState,
 } from './SidebarSync';
 import { flatten, uniq } from 'lodash';
 import { SidebarType } from '../constants';
@@ -13,11 +13,11 @@ import {
   ContentPreview as ContentPreviewWidget,
   Links as LinksWidget,
   Translation as TranslationWidget,
-  Users as UsersWidget
+  Users as UsersWidget,
 } from '../defaults';
 
 function getAllKeys(arr) {
-  return uniq(flatten(arr.map(item => Object.keys(item))));
+  return uniq(flatten(arr.map((item) => Object.keys(item))));
 }
 
 describe('EntrySidebar/Configuration/SidebarSync', () => {
@@ -27,7 +27,7 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
         convertInternalStateToConfiguration(
           {
             sidebarType: SidebarType.default,
-            items: EntryConfiguration
+            items: EntryConfiguration,
           },
           EntryConfiguration
         )
@@ -40,28 +40,28 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
         VersionsWidget,
         {
           widgetId: 'some-custom-extension',
-          widgetNamespace: NAMESPACE_EXTENSION
+          widgetNamespace: NAMESPACE_EXTENSION,
         },
         {
           widgetId: 'some-problem-extension-that-was-deleted',
           widgetNamespace: NAMESPACE_EXTENSION,
-          problem: true
-        }
+          problem: true,
+        },
       ];
       const state = {
         sidebarType: SidebarType.custom,
-        items
+        items,
       };
       const configuration = convertInternalStateToConfiguration(state, EntryConfiguration);
       expect(getAllKeys(configuration)).toEqual([
         'widgetId',
         'widgetNamespace',
         'settings',
-        'disabled'
+        'disabled',
       ]);
 
       expect(configuration).toHaveLength(EntryConfiguration.length + 1);
-      expect(configuration.filter(item => item.disabled)).toHaveLength(
+      expect(configuration.filter((item) => item.disabled)).toHaveLength(
         EntryConfiguration.length - 2
       );
     });
@@ -73,7 +73,7 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
         sidebarType: SidebarType.default,
         configurableWidget: null,
         items: EntryConfiguration,
-        availableItems: []
+        availableItems: [],
       };
       expect(convertConfigurationToInternalState(null, [], EntryConfiguration)).toEqual(
         defaultState
@@ -87,23 +87,23 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
     });
 
     it('should split configuration to items and availableItems', () => {
-      const allDisabled = EntryConfiguration.map(widget => ({
+      const allDisabled = EntryConfiguration.map((widget) => ({
         widgetId: widget.widgetId,
         widgetNamespace: widget.widgetNamespace,
-        disabled: true
+        disabled: true,
       }));
       const state = convertConfigurationToInternalState(allDisabled, [], EntryConfiguration);
       expect(state).toEqual({
         sidebarType: SidebarType.custom,
         configurableWidget: null,
         items: [],
-        availableItems: EntryConfiguration
+        availableItems: EntryConfiguration,
       });
       expect(getAllKeys(state.availableItems)).toEqual([
         'widgetId',
         'widgetNamespace',
         'name',
-        'description'
+        'description',
       ]);
     });
 
@@ -111,29 +111,29 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
       const configuration = [
         {
           widgetId: PublicationWidget.widgetId,
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
+          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
         },
         {
           widgetId: TasksWidget.widgetId,
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
+          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
         },
         {
           widgetId: VersionsWidget.widgetId,
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
+          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
         },
         {
           widgetId: 'some-extension-that-is-not-installed',
-          widgetNamespace: NAMESPACE_EXTENSION
+          widgetNamespace: NAMESPACE_EXTENSION,
         },
         {
           widgetId: UsersWidget.widgetId,
           widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
-          disabled: true
+          disabled: true,
         },
         {
           widgetId: 'looks-like-in-invalid-built-in',
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
-        }
+          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+        },
       ];
 
       const state = convertConfigurationToInternalState(configuration, [], EntryConfiguration);
@@ -148,15 +148,15 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
           {
             widgetId: 'some-extension-that-is-not-installed',
             widgetNamespace: NAMESPACE_EXTENSION,
-            problem: true
+            problem: true,
           },
           {
             widgetId: 'looks-like-in-invalid-built-in',
             widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
-            problem: true
-          }
+            problem: true,
+          },
         ],
-        availableItems: [ContentPreviewWidget, LinksWidget, TranslationWidget, UsersWidget]
+        availableItems: [ContentPreviewWidget, LinksWidget, TranslationWidget, UsersWidget],
       });
     });
 
@@ -164,39 +164,39 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
       const configuration = [
         {
           widgetId: PublicationWidget.widgetId,
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
+          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
         },
         {
           widgetId: TasksWidget.widgetId,
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
+          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
         },
         {
           widgetId: VersionsWidget.widgetId,
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
+          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
         },
         {
           widgetId: UsersWidget.widgetId,
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
+          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
         },
         {
           widgetId: 'netlify-extension',
           widgetNamespace: NAMESPACE_EXTENSION,
           settings: {
-            netlifyBuildHook: 'http://hook'
-          }
+            netlifyBuildHook: 'http://hook',
+          },
         },
         {
           widgetId: LinksWidget.widgetId,
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
+          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
         },
         {
           widgetId: ContentPreviewWidget.widgetId,
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
+          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
         },
         {
           widgetId: TranslationWidget.widgetId,
-          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN
-        }
+          widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN,
+        },
       ];
 
       const state = convertConfigurationToInternalState(
@@ -211,15 +211,15 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
                 id: 'netlifyBuildHook',
                 name: 'Netlify build hook',
                 required: true,
-                type: 'Symbol'
-              }
-            ]
+                type: 'Symbol',
+              },
+            ],
           },
           {
             id: 'custom-publish-button',
             namespace: NAMESPACE_EXTENSION,
-            name: 'Custom Publish button'
-          }
+            name: 'Custom Publish button',
+          },
         ],
         EntryConfiguration
       );
@@ -237,28 +237,28 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
             widgetId: 'netlify-extension',
             widgetNamespace: NAMESPACE_EXTENSION,
             settings: {
-              netlifyBuildHook: 'http://hook'
+              netlifyBuildHook: 'http://hook',
             },
             parameters: [
               {
                 id: 'netlifyBuildHook',
                 name: 'Netlify build hook',
                 required: true,
-                type: 'Symbol'
-              }
-            ]
+                type: 'Symbol',
+              },
+            ],
           },
           LinksWidget,
           ContentPreviewWidget,
-          TranslationWidget
+          TranslationWidget,
         ],
         availableItems: [
           {
             widgetId: 'custom-publish-button',
             widgetNamespace: NAMESPACE_EXTENSION,
-            name: 'Custom Publish button'
-          }
-        ]
+            name: 'Custom Publish button',
+          },
+        ],
       });
     });
   });

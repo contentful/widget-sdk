@@ -9,11 +9,11 @@ import SortableLinkList, { DragHandle, linksToListItems } from './SortableLinkLi
 
 const STYLE = {
   LINK: 'link',
-  CARD: 'card'
+  CARD: 'card',
 };
 const VIEW_MODE = {
   LIST: 'list',
-  GRID: 'grid'
+  GRID: 'grid',
 };
 
 export default class LinkEditor extends React.Component {
@@ -32,8 +32,8 @@ export default class LinkEditor extends React.Component {
     actions: PropTypes.shape({
       selectEntities: PropTypes.func,
       editLinkedEntity: PropTypes.func,
-      createEntity: PropTypes.func
-    }).isRequired
+      createEntity: PropTypes.func,
+    }).isRequired,
   };
 
   static defaultProps = {
@@ -43,7 +43,7 @@ export default class LinkEditor extends React.Component {
     onUnlinkEntities: noop,
     onLinkFetchComplete: noop,
     style: STYLE.CARD,
-    canCreateEntity: true
+    canCreateEntity: true,
   };
 
   getLinks() {
@@ -60,7 +60,7 @@ export default class LinkEditor extends React.Component {
   getCardProps() {
     if (this.getViewMode() === VIEW_MODE.GRID) {
       return {
-        size: 'small' // Image gallery case
+        size: 'small', // Image gallery case
       };
     }
 
@@ -99,7 +99,7 @@ export default class LinkEditor extends React.Component {
     }
   };
 
-  handleCreateAndLink = async contentTypeId => {
+  handleCreateAndLink = async (contentTypeId) => {
     const entity = await this.props.actions.createEntity(contentTypeId);
     if (entity) {
       this.handleAddLinks([entity], true);
@@ -113,7 +113,7 @@ export default class LinkEditor extends React.Component {
 
   renderCard(link, index, cardProps) {
     const { isSingle, isDisabled, onLinkFetchComplete } = this.props;
-    const handleEditLink = fetchEntityResult =>
+    const handleEditLink = (fetchEntityResult) =>
       this.handleEditLink(fetchEntityResult.entity, index);
     const entityType = link.sys.linkType;
     return (
@@ -127,7 +127,7 @@ export default class LinkEditor extends React.Component {
         onEntityFetchComplete={() => onLinkFetchComplete()}
         onEdit={handleEditLink}
         onClick={handleEditLink}
-        onRemove={fetchEntityResult => {
+        onRemove={(fetchEntityResult) => {
           this.handleRemoveLinkAt(index, fetchEntityResult.entity);
         }}
         className="link-editor__entity-card"

@@ -4,15 +4,15 @@ import PropTypes from 'prop-types';
 export class DelayedLoading extends React.Component {
   static propTypes = {
     delay: PropTypes.number.isRequired,
-    children: PropTypes.node
+    children: PropTypes.node,
   };
 
   static defaultProps = {
-    delay: 300
+    delay: 300,
   };
 
   state = {
-    display: false
+    display: false,
   };
 
   constructor(props) {
@@ -47,15 +47,15 @@ export const FetcherLoading = ({ message }) => (
 );
 
 FetcherLoading.propTypes = {
-  message: PropTypes.string
+  message: PropTypes.string,
 };
 
-const createFetcherComponent = mapPropsToFetch => {
+const createFetcherComponent = (mapPropsToFetch) => {
   return class extends React.Component {
     static displayName = 'FetcherComponent';
 
     static propTypes = {
-      children: PropTypes.func.isRequired
+      children: PropTypes.func.isRequired,
     };
 
     _isMounted = false;
@@ -65,7 +65,7 @@ const createFetcherComponent = mapPropsToFetch => {
       isLoaded: false,
       isError: false,
       data: null,
-      error: null
+      error: null,
     };
 
     componentDidMount() {
@@ -80,12 +80,12 @@ const createFetcherComponent = mapPropsToFetch => {
     fetch = () => {
       this.setState({ isLoading: true });
       mapPropsToFetch(this.props)
-        .then(data => {
+        .then((data) => {
           if (this._isMounted) {
             this.setState({ isLoading: false, isLoaded: true, isError: false, data, error: null });
           }
         })
-        .catch(error => {
+        .catch((error) => {
           if (this._isMounted) {
             this.setState({ isLoading: false, isLoaded: false, isError: true, data: null, error });
           }
@@ -95,7 +95,7 @@ const createFetcherComponent = mapPropsToFetch => {
     render() {
       return this.props.children({
         ...this.state,
-        fetch: this.fetch.bind(this)
+        fetch: this.fetch.bind(this),
       });
     }
   };

@@ -8,16 +8,16 @@ import * as slideInNavigator from 'navigation/SlideInNavigator';
 import fetchLinks from 'app/entity_editor/Components/FetchLinksToEntity/fetchLinks';
 
 jest.mock('navigation/SlideInNavigator', () => ({
-  goToSlideInEntity: jest.fn()
+  goToSlideInEntity: jest.fn(),
 }));
 
 jest.mock('app/entity_editor/Components/FetchLinksToEntity/fetchLinks', () => jest.fn());
 
 jest.mock('services/localeStore', () => ({
   getDefaultLocale: () => ({
-    code: 'en-US'
+    code: 'en-US',
   }),
-  toInternalCode: () => jest.fn()
+  toInternalCode: () => jest.fn(),
 }));
 
 const mockedLinks = [
@@ -25,23 +25,23 @@ const mockedLinks = [
     id: 'id1',
     title: 'title1',
     contentTypeName: 'contentTypeName1',
-    url: 'url1'
+    url: 'url1',
   },
   {
     id: 'id2',
     title: 'title2',
     contentTypeName: 'contentTypeName2',
-    url: 'url2'
-  }
+    url: 'url2',
+  },
 ];
 
 describe('LinkedEntitiesBadge', () => {
-  const build = props => {
+  const build = (props) => {
     const resultProps = {
       entityInfo: {
         id: 'entityId',
-        type: 'Entry'
-      }
+        type: 'Entry',
+      },
     };
 
     return [render(<LinkedEntitiesBadge {...resultProps} />), props];
@@ -79,7 +79,7 @@ describe('LinkedEntitiesBadge', () => {
     fireEvent.click(renderResult.getByTestId(`cf-linked-entry-${mockedLinks[0].id}`));
     expect(slideInNavigator.goToSlideInEntity).toHaveBeenCalledWith({
       type: 'Entry',
-      id: mockedLinks[0].id
+      id: mockedLinks[0].id,
     });
   });
 });

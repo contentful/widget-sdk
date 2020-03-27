@@ -6,11 +6,11 @@ import SidebarWidgetTypes from '../SidebarWidgetTypes';
 
 export default class UsersWidgetContainer extends Component {
   static propTypes = {
-    emitter: PropTypes.object.isRequired
+    emitter: PropTypes.object.isRequired,
   };
 
   state = {
-    users: []
+    users: [],
   };
 
   componentDidMount() {
@@ -22,7 +22,7 @@ export default class UsersWidgetContainer extends Component {
     this.props.emitter.off(SidebarEventTypes.UPDATED_USERS_WIDGET, this.onUpdateCollaborators);
   }
 
-  onUpdateCollaborators = collaborators => {
+  onUpdateCollaborators = (collaborators) => {
     this.setState({ users: collaborators });
   };
 

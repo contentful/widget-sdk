@@ -6,8 +6,8 @@ import tokens from '@contentful/forma-36-tokens';
 
 const styles = {
   paragraph: css({
-    marginBottom: tokens.spacingS
-  })
+    marginBottom: tokens.spacingS,
+  }),
 };
 
 const SnapshotPresenterLocation = ({ value }) => {
@@ -26,8 +26,8 @@ const SnapshotPresenterLocation = ({ value }) => {
 SnapshotPresenterLocation.propTypes = {
   value: PropTypes.shape({
     lon: PropTypes.number,
-    lat: PropTypes.number
-  }).isRequired
+    lat: PropTypes.number,
+  }).isRequired,
 };
 
 export default SnapshotPresenterLocation;

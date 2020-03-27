@@ -6,5 +6,5 @@ import payload from './payload';
 // and meta additional information about it
 export default combineReducers({
   meta,
-  payload
+  payload,
 });

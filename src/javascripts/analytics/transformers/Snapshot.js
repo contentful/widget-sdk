@@ -4,7 +4,7 @@
  * @description
  * Exports a function that transforms data for tracking versioning
  */
-export default function(eventName, data) {
+export default function (eventName, data) {
   return {
     data: {
       action: eventName,
@@ -17,7 +17,7 @@ export default function(eventName, data) {
       option_changes_discarded: data.changesDiscarded,
       option_full_restore: data.fullRestore,
       option_show_diffs_only: data.showDiffsOnly,
-      restore_fields_count: data.restoreFieldsCount
-    }
+      restore_fields_count: data.restoreFieldsCount,
+    },
   };
 }

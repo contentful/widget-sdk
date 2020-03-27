@@ -35,8 +35,8 @@ export default function create(doc, fieldId, localeCode) {
    * @type {Property<any>}
    */
   const valueProperty = valuePropertyAt(doc, path)
-    .filter(value => !isEqual(value, lastSetValue))
-    .onValue(value => (lastSetValue = value))
+    .filter((value) => !isEqual(value, lastSetValue))
+    .onValue((value) => (lastSetValue = value))
     .toProperty(getValue);
 
   /**
@@ -80,12 +80,12 @@ export default function create(doc, fieldId, localeCode) {
     valueProperty,
     collaborators: doc.presence.collaboratorsFor(fieldId, localeCode),
     notifyFocus: () => doc.presence.focus(fieldId, localeCode),
-    localChanges$
+    localChanges$,
   };
 
   function set(value) {
     lastSetValue = value;
-    return doc.setValueAt(path, value).catch(error => {
+    return doc.setValueAt(path, value).catch((error) => {
       lastSetValue = getValue();
       return Promise.reject(error);
     });

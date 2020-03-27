@@ -36,7 +36,7 @@ export function getMemberships(endpoint, query) {
     {
       method: 'GET',
       path: ['organization_memberships'],
-      query
+      query,
     },
     USER_MANAGEMENT_ALPHA_HEADER
   );
@@ -46,7 +46,7 @@ export function getMembership(endpoint, membershipId) {
   return endpoint(
     {
       method: 'GET',
-      path: ['organization_memberships', membershipId]
+      path: ['organization_memberships', membershipId],
     },
     USER_MANAGEMENT_ALPHA_HEADER
   );
@@ -56,7 +56,7 @@ export function removeMembership(endpoint, membershipId) {
   return endpoint(
     {
       method: 'DELETE',
-      path: ['organization_memberships', membershipId]
+      path: ['organization_memberships', membershipId],
     },
     USER_MANAGEMENT_ALPHA_HEADER
   );
@@ -67,7 +67,7 @@ export function removeMembership(endpoint, membershipId) {
 export function removeInvitation(endpoint, invitationId) {
   return endpoint({
     method: 'DELETE',
-    path: ['invitations', invitationId]
+    path: ['invitations', invitationId],
   });
 }
 
@@ -80,7 +80,7 @@ export function getUsers(endpoint, query) {
   return endpoint({
     method: 'GET',
     path: ['users'],
-    query
+    query,
   });
 }
 
@@ -88,7 +88,7 @@ export function getUser(endpoint, userId) {
   return endpoint(
     {
       method: 'GET',
-      path: ['users', userId]
+      path: ['users', userId],
     },
     USER_MANAGEMENT_ALPHA_HEADER
   );
@@ -107,8 +107,8 @@ export function getAllUsers(endpoint, params) {
 export function getUsersByIds(endpoint, userIds) {
   // Split into batches because of query string limitation of 1024 chars
   const batches = chunk(uniq(userIds).filter(identity), USER_IDS_BATCH_LIMIT);
-  return Promise.all(batches.map(ids => getUsers(endpoint, { 'sys.id': ids.join(',') })))
-    .then(responces => responces.map(({ items }) => items))
+  return Promise.all(batches.map((ids) => getUsers(endpoint, { 'sys.id': ids.join(',') })))
+    .then((responces) => responces.map(({ items }) => items))
     .then(flatten);
 }
 
@@ -121,7 +121,7 @@ export function getSpaces(endpoint, params) {
   return endpoint({
     method: 'GET',
     path: ['spaces'],
-    query: params
+    query: params,
   });
 }
 
@@ -133,7 +133,7 @@ export function getRoles(endpoint, query) {
   return endpoint({
     method: 'GET',
     path: ['roles'],
-    query
+    query,
   });
 }
 
@@ -146,7 +146,7 @@ export function getInvitations(endpoint, query) {
   return endpoint({
     method: 'GET',
     path: ['invitations'],
-    query
+    query,
   });
 }
 
@@ -154,7 +154,7 @@ export function getInvitation(endpoint, invitationId, query) {
   return endpoint({
     method: 'GET',
     path: ['invitations', invitationId],
-    query
+    query,
   });
 }
 
@@ -166,9 +166,9 @@ export function invite(endpoint, { role, email, spaceInvitations, teamInvitation
         role,
         email,
         spaceInvitations,
-        teamInvitations
+        teamInvitations,
       },
-      path: ['invitations']
+      path: ['invitations'],
     },
     useAlpha ? INVITATION_ALPHA_HEADER : {}
   );
@@ -180,9 +180,9 @@ export function createOrgMembership(endpoint, { role, email, suppressInvitation 
     data: {
       role,
       email,
-      suppressInvitation
+      suppressInvitation,
     },
-    path: ['organization_memberships']
+    path: ['organization_memberships'],
   });
 }
 
@@ -191,10 +191,10 @@ export function updateMembership(endpoint, { id, role, version }) {
     {
       method: 'PUT',
       data: {
-        role
+        role,
       },
       version,
-      path: ['organization_memberships', id]
+      path: ['organization_memberships', id],
     },
     USER_MANAGEMENT_ALPHA_HEADER
   );
@@ -205,7 +205,7 @@ export function getSpaceMemberships(endpoint, query) {
     {
       method: 'GET',
       query,
-      path: ['space_memberships']
+      path: ['space_memberships'],
     },
     USER_MANAGEMENT_ALPHA_HEADER
   );

@@ -58,18 +58,18 @@ export default function createNewWidgetApi(dependencies) {
 
   const parameters = {
     installation: {},
-    instance: widget.settings || {}
+    instance: widget.settings || {},
   };
 
   return {
     ...createSpaceScopedWidgetApi({
       cma,
-      initialContentTypes: spaceContext.publishedCTs.getAllBare()
+      initialContentTypes: spaceContext.publishedCTs.getAllBare(),
     }),
     contentType: contentTypeApi,
     entry,
     field,
-    parameters
+    parameters,
   };
 }
 
@@ -80,7 +80,7 @@ export function createNewReadOnlyWidgetApi({
   entry,
   contentType,
   cma,
-  initialContentTypes
+  initialContentTypes,
 }) {
   const contentTypeApi = createContentTypeApi({ contentType });
   const entryApi = createReadOnlyEntryApi({ contentType, locale, entry });
@@ -90,7 +90,7 @@ export function createNewReadOnlyWidgetApi({
     ...createSpaceScopedWidgetApi({ cma, initialContentTypes }),
     contentType: contentTypeApi,
     entry: entryApi,
-    field: fieldApi
+    field: fieldApi,
   };
 }
 
@@ -109,19 +109,19 @@ function createSpaceScopedWidgetApi({ cma: cmaOrBatchingApiClient, initialConten
     window: {
       updateHeight: noop,
       startAutoResizer: noop,
-      stopAutoResizer: noop
+      stopAutoResizer: noop,
     },
     notifier: {
-      success: text => {
+      success: (text) => {
         Notification.success(text);
       },
-      error: text => {
+      error: (text) => {
         Notification.error(text);
-      }
+      },
     },
     parameters: {
       installation: {},
-      instance: {}
-    }
+      instance: {},
+    },
   };
 }

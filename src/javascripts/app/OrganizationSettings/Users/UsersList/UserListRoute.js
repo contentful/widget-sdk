@@ -28,7 +28,7 @@ const UserListFetcher = createFetcherComponent(({ orgId }) => {
     safeGetTeams(),
     getOrganization(orgId),
     getOrgFeature(orgId, 'teams', false),
-    getVariation(PENDING_ORG_MEMBERSHIPS, { organizationId: orgId })
+    getVariation(PENDING_ORG_MEMBERSHIPS, { organizationId: orgId }),
   ];
 
   return Promise.all(promises);
@@ -37,7 +37,7 @@ const UserListFetcher = createFetcherComponent(({ orgId }) => {
 export default class UserListRoute extends React.Component {
   static propTypes = {
     orgId: PropTypes.string.isRequired,
-    context: PropTypes.any
+    context: PropTypes.any,
   };
 
   render() {
@@ -56,7 +56,7 @@ export default class UserListRoute extends React.Component {
               teams,
               org,
               hasTeamsFeature,
-              hasPendingOrgMembershipsEnabled
+              hasPendingOrgMembershipsEnabled,
             ] = data ? data : [];
 
             return (

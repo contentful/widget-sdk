@@ -30,20 +30,20 @@ class EditLocaleForm extends Component {
     removeLocale: PropTypes.func.isRequired,
     setDirty: PropTypes.func.isRequired,
     goToList: PropTypes.func.isRequired,
-    registerSaveAction: PropTypes.func.isRequired
+    registerSaveAction: PropTypes.func.isRequired,
   };
 
   state = {
     isSaving: false,
     isDeleting: false,
-    isDeleted: false
+    isDeleted: false,
   };
 
   updateDependantLocales = (dependantLocales, newFallbackCode) => {
     const { spaceLocales, saveLocale } = this.props;
     return Promise.all(
-      dependantLocales.map(locale => {
-        const localeToUpdate = spaceLocales.find(item => item.code === locale.code);
+      dependantLocales.map((locale) => {
+        const localeToUpdate = spaceLocales.find((item) => item.code === locale.code);
         if (localeToUpdate) {
           const data = cloneDeep(localeToUpdate);
           data.fallbackCode = newFallbackCode || null;
@@ -55,7 +55,7 @@ class EditLocaleForm extends Component {
     );
   };
 
-  openRemovalConfirmation = locale => {
+  openRemovalConfirmation = (locale) => {
     return ModalLauncher.open(({ isShown, onClose }) => (
       <LocaleRemovalConfirmDialog
         isShown={isShown}
@@ -77,7 +77,7 @@ class EditLocaleForm extends Component {
         locale={locale}
         dependantLocales={dependantLocales}
         availableLocales={availableLocales}
-        onConfirm={newFallbackCode => {
+        onConfirm={(newFallbackCode) => {
           onClose(newFallbackCode);
         }}
         onCancel={() => {
@@ -183,7 +183,7 @@ class EditLocaleForm extends Component {
 }
 
 export default class LocalesEditRoute extends React.Component {
-  save = async function(locale) {
+  save = async function (locale) {
     const spaceContext = getModule('spaceContext');
 
     const savedLocale = await spaceContext.localeRepo.save(locale);
@@ -191,7 +191,7 @@ export default class LocalesEditRoute extends React.Component {
     return savedLocale;
   };
 
-  remove = async function(locale) {
+  remove = async function (locale) {
     const spaceContext = getModule('spaceContext');
 
     await spaceContext.localeRepo.remove(locale);
@@ -213,7 +213,7 @@ export default class LocalesEditRoute extends React.Component {
             return <StateRedirect path="^.list" />;
           }
           const spaceLocales = data;
-          const locale = spaceLocales.find(locale => locale.sys.id === this.props.localeId);
+          const locale = spaceLocales.find((locale) => locale.sys.id === this.props.localeId);
           if (!locale) {
             return <StateRedirect path="^.list" />;
           }
@@ -224,7 +224,7 @@ export default class LocalesEditRoute extends React.Component {
               <EditLocaleForm
                 initialLocale={locale}
                 spaceLocales={spaceLocales}
-                saveLocale={locale =>
+                saveLocale={(locale) =>
                   this.save(locale).then(() => {
                     fetch();
                   })
@@ -246,5 +246,5 @@ LocalesEditRoute.propTypes = {
   localeId: PropTypes.string.isRequired,
   setDirty: PropTypes.func.isRequired,
   goToList: PropTypes.func.isRequired,
-  registerSaveAction: PropTypes.func.isRequired
+  registerSaveAction: PropTypes.func.isRequired,
 };

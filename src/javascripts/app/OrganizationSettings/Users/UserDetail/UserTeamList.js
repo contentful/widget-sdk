@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   TeamMembership as TeamMembershipPropType,
-  User as UserPropType
+  User as UserPropType,
 } from 'app/OrganizationSettings/PropTypes';
 import {
   Table,
@@ -16,7 +16,7 @@ import {
   SkeletonBodyText,
   CardActions,
   DropdownList,
-  DropdownListItem
+  DropdownListItem,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
@@ -28,23 +28,23 @@ import StateLink from 'app/common/StateLink';
 
 const styles = {
   table: css({
-    tableLayout: 'fixed'
+    tableLayout: 'fixed',
   }),
   ellipsis: css({
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
-    overflow: 'hidden'
+    overflow: 'hidden',
   }),
   emptyState: css({
-    marginTop: tokens.spacing4Xl
-  })
+    marginTop: tokens.spacing4Xl,
+  }),
 };
 
 export default function UserTeamMemberships({
   memberships = [],
   loading,
   user,
-  onTeamMembershipRemove
+  onTeamMembershipRemove,
 }) {
   if (loading) return <Skeleton />;
   if (!loading && memberships.length === 0) return <EmptyState user={user} />;
@@ -60,7 +60,7 @@ export default function UserTeamMemberships({
         </TableRow>
       </TableHead>
       <TableBody>
-        {memberships.map(membership => (
+        {memberships.map((membership) => (
           <UserTeamRow
             key={membership.sys.id}
             membership={membership}
@@ -76,7 +76,7 @@ UserTeamMemberships.propTypes = {
   memberships: PropTypes.arrayOf(TeamMembershipPropType).isRequired,
   user: UserPropType.isRequired,
   onTeamMembershipRemove: PropTypes.func.isRequired,
-  loading: PropTypes.bool
+  loading: PropTypes.bool,
 };
 
 function UserTeamRow({ membership, onRemove }) {
@@ -114,7 +114,7 @@ function UserTeamRow({ membership, onRemove }) {
 }
 UserTeamRow.propTypes = {
   membership: TeamMembershipPropType.isRequired,
-  onRemove: PropTypes.func.isRequired
+  onRemove: PropTypes.func.isRequired,
 };
 
 function Skeleton() {
@@ -143,5 +143,5 @@ function EmptyState({ user }) {
 }
 
 EmptyState.propTypes = {
-  user: UserPropType.isRequired
+  user: UserPropType.isRequired,
 };

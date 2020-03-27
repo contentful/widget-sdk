@@ -13,8 +13,8 @@ export default function createClientStorageWrapper(storageType) {
     throw new Error(`Invalid storage type ${storageType} passed to ClientStorageWrapper`);
   }
 
-  methods.forEach(method => {
-    wrapper[method] = function() {
+  methods.forEach((method) => {
+    wrapper[method] = function () {
       const args = Array.prototype.slice.call(arguments);
 
       return storage[method](...args);

@@ -8,7 +8,7 @@ export const actionOrigin = {
   TOOLBAR: 'toolbar-icon',
   SHORTCUT: 'shortcut',
   VIEWPORT: 'viewport-interaction',
-  COMMAND_PALETTE: 'command-palette'
+  COMMAND_PALETTE: 'command-palette',
 };
 
 const createActionLogger = (onAction, origin) => (name, data) => {
@@ -28,7 +28,7 @@ export const createRichTextAPI = ({ widgetAPI, onAction }) => {
     logViewportAction: createActionLogger(onAction, actionOrigin.VIEWPORT),
     logShortcutAction: createActionLogger(onAction, actionOrigin.SHORTCUT),
     logToolbarAction: createActionLogger(onAction, actionOrigin.TOOLBAR),
-    logCommandPaletteAction: createActionLogger(onAction, actionOrigin.COMMAND_PALETTE)
+    logCommandPaletteAction: createActionLogger(onAction, actionOrigin.COMMAND_PALETTE),
   };
 };
 
@@ -41,8 +41,8 @@ export const EDITOR_PLUGIN_PROP_TYPES = {
     widgetAPI: PropTypes.object.isRequired,
     logViewportAction: PropTypes.func.isRequired,
     logShortcutAction: PropTypes.func.isRequired,
-    logToolbarAction: PropTypes.func.isRequired
-  })
+    logToolbarAction: PropTypes.func.isRequired,
+  }),
 };
 
 /**
@@ -54,5 +54,5 @@ export const TOOLBAR_PLUGIN_PROP_TYPES = {
   editor: PropTypes.object.isRequired,
   onToggle: PropTypes.func.isRequired,
   disabled: PropTypes.bool.isRequired,
-  isButton: PropTypes.bool
+  isButton: PropTypes.bool,
 };

@@ -9,7 +9,7 @@ const AssetImageDimensionsValidations = ({
   validation,
   errorMessages,
   updateValidationSettingsValue,
-  updateValidationMessageValue
+  updateValidationMessageValue,
 }) => {
   const [message, setMessage] = useState(validation.message);
   const [width, setWidthSettings] = useState(validation.settings.width);
@@ -50,7 +50,7 @@ AssetImageDimensionsValidations.propTypes = {
   validation: PropTypes.object.isRequired,
   errorMessages: PropTypes.array.isRequired,
   updateValidationSettingsValue: PropTypes.func.isRequired,
-  updateValidationMessageValue: PropTypes.func.isRequired
+  updateValidationMessageValue: PropTypes.func.isRequired,
 };
 
 export default AssetImageDimensionsValidations;

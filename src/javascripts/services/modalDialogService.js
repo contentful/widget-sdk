@@ -67,7 +67,7 @@ export default function register() {
             ignoreEsc: false,
             disableTopCloseButton: false,
             persistOnNavigation: false,
-            disableAutoFocus: false
+            disableAutoFocus: false,
           },
           _.pick(params, [
             'title',
@@ -83,7 +83,7 @@ export default function register() {
             'ignoreEsc',
             'disableAutoFocus',
             'disableTopCloseButton',
-            'persistOnNavigation'
+            'persistOnNavigation',
           ])
         );
 
@@ -96,7 +96,7 @@ export default function register() {
       }
 
       Dialog.prototype = {
-        attach: function() {
+        attach: function () {
           const scope = this.scope;
 
           if (this.params.messageTemplate) {
@@ -110,7 +110,7 @@ export default function register() {
           // Defer rendering to prevent positioning issues when firing dialogs
           // on page load
           defer(
-            _.bind(function() {
+            _.bind(function () {
               this.domElement.appendTo(this.params.attachTo);
               $compile(this.domElement)(scope);
 
@@ -123,10 +123,7 @@ export default function register() {
               this._centerOnBackground();
               if (!this.params.disableAutoFocus) {
                 if (this.domElement.find('input').length > 0) {
-                  this.domElement
-                    .find('input')
-                    .eq(0)
-                    .focus();
+                  this.domElement.find('input').eq(0).focus();
                 } else {
                   $(':focus').blur();
                 }
@@ -139,7 +136,7 @@ export default function register() {
           );
         },
 
-        reposition: function() {
+        reposition: function () {
           if (this.domElement) {
             const elem = this.domElement.find('.modal-dialog').first();
             const topOffset = Math.max((window.innerHeight - elem.height()) / 2, 0);
@@ -147,7 +144,7 @@ export default function register() {
           }
         },
 
-        _centerOnBackground: function() {
+        _centerOnBackground: function () {
           const elem = this.domElement.children('.modal-dialog');
           const reposition = this.reposition.bind(this);
           const debouncedReposition = debounce(reposition, 50);
@@ -169,14 +166,14 @@ export default function register() {
           });
         },
 
-        _closeOnBackground: function(ev) {
+        _closeOnBackground: function (ev) {
           const target = $(ev.target);
           if (target.hasClass('modal-background') && this.params.backgroundClose) {
             this.cancel();
           }
         },
 
-        _handleKeys: function(ev) {
+        _handleKeys: function (ev) {
           const dialog = this;
           dialog.scope.$apply(() => {
             if (ev.target.tagName.toLowerCase() === 'select') return;
@@ -193,24 +190,24 @@ export default function register() {
           });
         },
 
-        confirm: function(...args) {
+        confirm: function (...args) {
           this._deferred.resolve.apply(this, args);
           this.destroy();
           removeFromOpened(this);
           return this;
         },
 
-        cancel: function(...args) {
+        cancel: function (...args) {
           this._deferred.reject.apply(this, args);
           this.destroy();
           removeFromOpened(this);
           return this;
         },
 
-        destroy: function() {
+        destroy: function () {
           if (this._isDestroyed) {
             logger.logError('Cannot destroy modal dialog twice', {
-              data: { template: this.params.template }
+              data: { template: this.params.template },
             });
             return;
           }
@@ -229,19 +226,19 @@ export default function register() {
           }
           this.domElement.removeClass('is-visible');
           $timeout(destroyModal, 250);
-        }
+        },
       };
 
       return {
         open: openDialog,
         getOpened: getOpened,
         closeAll: closeAll,
-        richtextLayout: richtextLayout
+        richtextLayout: richtextLayout,
       };
 
       // Closes all modals with persistOnNaviagation = false
       function closeAll() {
-        _.forEachRight(opened, dialog => {
+        _.forEachRight(opened, (dialog) => {
           if (!dialog.persistOnNavigation) {
             dialog.cancel();
           }
@@ -302,10 +299,10 @@ export default function register() {
             h('header.modal-dialog__header', [h('h1', [title])]),
             richtextContent &&
               h('.modal-dialog__content', [h('.modal-dialog__richtext', richtextContent)]),
-            controls && h('.modal-dialog__controls', controls)
-          ])
+            controls && h('.modal-dialog__controls', controls),
+          ]),
         ]);
       }
-    }
+    },
   ]);
 }

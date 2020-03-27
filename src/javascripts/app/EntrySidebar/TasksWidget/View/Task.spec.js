@@ -15,8 +15,8 @@ MOCKS.UserViewData = {
     key: 'user-id-1',
     label: 'Mike Mitask-title-inputtchell',
     avatarUrl: 'https://mitchell.com/avatar.jpg',
-    isRemovedFromSpace: false
-  }
+    isRemovedFromSpace: false,
+  },
 };
 
 const validTask = {
@@ -32,14 +32,14 @@ const validTask = {
   validationMessage: null,
   assignableUsersInfo: null,
   canEdit: false,
-  canUpdateStatus: false
+  canUpdateStatus: false,
 };
 
 MOCKS.TaskViewData = {
   valid: validTask,
   validDone: {
     ...validTask,
-    isDone: true
+    isDone: true,
   },
   draft: {
     key: '<<DRAFT-TASK>>',
@@ -54,19 +54,19 @@ MOCKS.TaskViewData = {
     validationMessage: null,
     assignableUsersInfo: {
       selectedUser: null,
-      availableUsers: [MOCKS.UserViewData.existingLoadedSpaceUser]
-    }
-  }
+      availableUsers: [MOCKS.UserViewData.existingLoadedSpaceUser],
+    },
+  },
 };
 
 MOCKS.TaskViewData.validCanEdit = {
   ...MOCKS.TaskViewData.valid,
-  canEdit: true
+  canEdit: true,
 };
 
 MOCKS.TaskViewData.validCanUpdateStatus = {
   ...MOCKS.TaskViewData.valid,
-  canUpdateStatus: true
+  canUpdateStatus: true,
 };
 
 const TEST_IDS = {
@@ -77,27 +77,27 @@ const TEST_IDS = {
   disabledTaskTooltip: 'disabled-task-tooltip',
   saveButton: 'save-task',
   taskActions: 'task-actions',
-  editTaskDropdownListItem: 'edit-task'
+  editTaskDropdownListItem: 'edit-task',
 };
 
 describe('<Task />', () => {
   function render(props) {
     const allProps = {
       viewData: { ...MOCKS.TaskViewData.valid },
-      ...props
+      ...props,
     };
     const wrapper = renderReact(<Task {...allProps} />);
     const elems = {};
     forEach(TEST_IDS, (testId, key) => {
       Object.defineProperty(elems, key, {
-        get: () => wrapper.queryByTestId(testId)
+        get: () => wrapper.queryByTestId(testId),
       });
     });
     Object.defineProperty(elems, 'titleInput', {
-      get: () => elems.titleInputWrapper.querySelector('textarea')
+      get: () => elems.titleInputWrapper.querySelector('textarea'),
     });
     Object.defineProperty(elems, 'assigneeSelector', {
-      get: () => elems.assigneeSelectorWrapper.querySelector('select')
+      get: () => elems.assigneeSelectorWrapper.querySelector('select'),
     });
     return { wrapper, elems, props: allProps };
   }
@@ -109,7 +109,7 @@ describe('<Task />', () => {
       // userEvent currently doesn't fire onChange events on select elements
       // See: https://github.com/testing-library/user-event/pull/131
       fireEvent.change(elems.assigneeSelector, {
-        target: { value: 'user-id-1' }
+        target: { value: 'user-id-1' },
       });
     };
 
@@ -174,7 +174,7 @@ describe('<Task />', () => {
   describe('when the task can be edited', () => {
     it('renders the task actions', () => {
       const { elems } = render({
-        viewData: MOCKS.TaskViewData.validCanEdit
+        viewData: MOCKS.TaskViewData.validCanEdit,
       });
       expect(elems.taskActions).toBeInTheDocument();
     });
@@ -191,7 +191,7 @@ describe('<Task />', () => {
   describe('when the status can be updated', () => {
     it('renders the task checkbox as usual', () => {
       const { elems } = render({
-        viewData: MOCKS.TaskViewData.validCanUpdateStatus
+        viewData: MOCKS.TaskViewData.validCanUpdateStatus,
       });
       expect(elems.statusCheckbox).not.toBeDisabled();
       expect(elems.disabledTaskTooltip).not.toBeInTheDocument();

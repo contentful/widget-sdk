@@ -29,14 +29,14 @@ export default {
           </a>
           .
         </p>
-      )
+      ),
     },
     {
       name: 'index',
       type: 'text',
       title: 'Index name',
       defaultValue: 'contentful-entries',
-      description: <p>Name of an index in which you want to store your documents.</p>
+      description: <p>Name of an index in which you want to store your documents.</p>,
     },
     {
       name: 'user',
@@ -51,7 +51,7 @@ export default {
           </a>
           .
         </p>
-      )
+      ),
     },
     {
       name: 'password',
@@ -65,8 +65,8 @@ export default {
           </a>
           . This value can’t be revealed once stored.
         </p>
-      )
-    }
+      ),
+    },
   ],
   mapParamsToDefinition: [
     ({ endpoint, index, user, password }, name) => {
@@ -81,13 +81,13 @@ export default {
           {
             key: 'Authorization',
             value: 'Basic ' + base64safe([user, password].join(':')),
-            secret: true
-          }
+            secret: true,
+          },
         ],
         transformation: {
           method: 'PUT',
-          contentType: 'application/json; charset=utf-8'
-        }
+          contentType: 'application/json; charset=utf-8',
+        },
       };
     },
     ({ endpoint, index, user, password }) => {
@@ -102,14 +102,14 @@ export default {
           {
             key: 'Authorization',
             value: 'Basic ' + base64safe([user, password].join(':')),
-            secret: true
-          }
+            secret: true,
+          },
         ],
         transformation: {
           contentType: 'application/json; charset=utf-8',
-          method: 'DELETE'
-        }
+          method: 'DELETE',
+        },
       };
-    }
-  ]
+    },
+  ],
 };

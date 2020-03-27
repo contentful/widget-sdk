@@ -30,15 +30,15 @@ module.exports = function findImports({ src, ast }) {
           modules.push(source.value);
         }
       }
-    }
+    },
   });
 
   return modules
     .filter(
       // filter out relative modules
-      module => module.indexOf('./') === -1
+      (module) => module.indexOf('./') === -1
     )
-    .map(item => {
+    .map((item) => {
       if (item === '@contentful/ui-component-library') {
         return '@contentful/forma-36-react-components';
       }

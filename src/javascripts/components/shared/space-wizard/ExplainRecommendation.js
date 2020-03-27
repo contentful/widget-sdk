@@ -21,7 +21,7 @@ export default function ExplainRecommendation({ currentPlan, recommendedPlan, re
     },
     {
       reached: [],
-      near: []
+      near: [],
     }
   );
 
@@ -50,5 +50,5 @@ export default function ExplainRecommendation({ currentPlan, recommendedPlan, re
 ExplainRecommendation.propTypes = {
   currentPlan: PropTypes.object.isRequired,
   recommendedPlan: PropTypes.object.isRequired,
-  resources: PropTypes.array.isRequired
+  resources: PropTypes.array.isRequired,
 };

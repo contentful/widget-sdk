@@ -4,7 +4,7 @@ import {
   Select,
   Option,
   TextField,
-  ValidationMessage
+  ValidationMessage,
 } from '@contentful/forma-36-react-components';
 import styles from './styles';
 import { toString } from 'lodash';
@@ -15,7 +15,7 @@ const AssetFileSizeValidation = ({
   validation,
   updateValidationSettingsValue,
   updateValidationCurrentView,
-  updateValidationMessageValue
+  updateValidationMessageValue,
 }) => {
   const [currentView, setCurrentView] = useState(validation.currentView);
   const [message, setMessage] = useState(validation.message);
@@ -34,7 +34,7 @@ const AssetFileSizeValidation = ({
     updateValidationMessageValue(message);
   }, [message, updateValidationMessageValue]);
 
-  const resetView = currentView => {
+  const resetView = (currentView) => {
     // TODO: remove after migrating content type settings dialog to React
     setMin(null);
     setMax(null);
@@ -95,7 +95,7 @@ AssetFileSizeValidation.propTypes = {
   validation: PropTypes.object.isRequired,
   updateValidationSettingsValue: PropTypes.func.isRequired,
   updateValidationCurrentView: PropTypes.func.isRequired,
-  updateValidationMessageValue: PropTypes.func.isRequired
+  updateValidationMessageValue: PropTypes.func.isRequired,
 };
 
 export default AssetFileSizeValidation;

@@ -15,7 +15,7 @@ const parseableResourceTypes = {
   Asset: Asset,
   ContentType: ContentType,
   Entry: Entry,
-  Space: Space
+  Space: Space,
 };
 
 function Client(options) {
@@ -24,11 +24,11 @@ function Client(options) {
   enforcep(options, 'space');
 
   this.options = _.defaults({}, options, {
-    secure: true
+    secure: true,
   });
 }
 
-Client.prototype.request = function(path, options) {
+Client.prototype.request = function (path, options) {
   const $q = getModule('$q');
   const $http = getModule('$http');
 
@@ -47,78 +47,78 @@ Client.prototype.request = function(path, options) {
     this.options.secure ? '443' : '80',
     '/spaces/',
     this.options.space,
-    path
+    path,
   ].join('');
 
   return $http(options)
-    .then(response => response.data)
-    .catch(error => $q.reject(error.data));
+    .then((response) => response.data)
+    .catch((error) => $q.reject(error.data));
 };
 
-Client.prototype.asset = function(id) {
+Client.prototype.asset = function (id) {
   return this.request('/assets/' + id).then(Asset.parse);
 };
 
-Client.prototype.assets = function(object) {
+Client.prototype.assets = function (object) {
   const params = Query.parse(object);
   return this.request('/assets', { params: params }).then(_.partial(SearchResult.parse, Asset));
 };
 
-Client.prototype.contentType = function(id) {
+Client.prototype.contentType = function (id) {
   return this.request('/content_types/' + id).then(ContentType.parse);
 };
 
-Client.prototype.contentTypes = function(object) {
+Client.prototype.contentTypes = function (object) {
   const params = Query.parse(object);
   return this.request('/content_types', { params: params }).then(
     _.partial(SearchResult.parse, ContentType)
   );
 };
 
-Client.prototype.entry = function(id) {
+Client.prototype.entry = function (id) {
   return this.request('/entries/' + id).then(Entry.parse);
 };
 
-Client.prototype.entries = function(object) {
+Client.prototype.entries = function (object) {
   const params = Query.parse(object);
   return this.request('/entries', { params: params }).then(_.partial(SearchResult.parse, Entry));
 };
 
-Client.prototype.space = function() {
+Client.prototype.space = function () {
   return this.request('');
 };
 
 function Asset() {}
 
-Asset.parse = object =>
+Asset.parse = (object) =>
   _.extend(new Asset(), {
     sys: Sys.parse(object.sys),
-    fields: object.fields
+    fields: object.fields,
   });
 
 function Entry() {}
 
-Entry.parse = object =>
+Entry.parse = (object) =>
   _.extend(new Entry(), {
     sys: Sys.parse(object.sys),
-    fields: object.fields
+    fields: object.fields,
   });
 
 function ContentType() {}
 
-ContentType.parse = object =>
+ContentType.parse = (object) =>
   _.extend(
     new ContentType(),
     {
       sys: Sys.parse(object.sys),
-      fields: object.fields.map(Field.parse)
+      fields: object.fields.map(Field.parse),
     },
     _.pick(object, ['name', 'displayField'])
   );
 
 function Field() {}
 
-Field.parse = object => _.extend(new Field(), object);
+Field.parse = (object) => _.extend(new Field(), object);
 
 function SearchResult() {}
 
@@ -133,19 +133,19 @@ SearchResult.parse = (_ItemType, object) => {
 
 function Query() {}
 
-Query.prototype.toQueryString = function() {
+Query.prototype.toQueryString = function () {
   return qs.stringify(this);
 };
 
-Query.parse = object => _.extend(new Query(), stringifyArrayValues(object));
+Query.parse = (object) => _.extend(new Query(), stringifyArrayValues(object));
 
 function Space() {}
 
-Space.parse = object => _.extend(new Space(), object);
+Space.parse = (object) => _.extend(new Space(), object);
 
 function Sys() {}
 
-Sys.parse = object =>
+Sys.parse = (object) =>
   _.extend(
     new Sys(),
     _.pick(object, ['id', 'revision', 'type', 'locale']),
@@ -154,15 +154,15 @@ Sys.parse = object =>
       createdAt: object.createdAt && new Date(object.createdAt),
       linkType: object.linkType,
       updatedAt: object.updatedAt && new Date(object.updatedAt),
-      space: object.space && Link.parse(object.space)
+      space: object.space && Link.parse(object.space),
     })
   );
 
 function Link() {}
 
-Link.parse = object =>
+Link.parse = (object) =>
   _.extend(new Link(), {
-    sys: Sys.parse(object.sys)
+    sys: Sys.parse(object.sys),
   });
 
 function defineProperty(obj, key, value) {
@@ -240,7 +240,7 @@ function walkMutate(input, pred, mutator) {
 }
 
 function resolveResponse(response) {
-  walkMutate(response, isLink, link => getLink(response, link) || link);
+  walkMutate(response, isLink, (link) => getLink(response, link) || link);
   return response.items || [];
 }
 
@@ -251,7 +251,7 @@ function isLink(object) {
 function getLink(response, link) {
   const type = link.sys.linkType;
   const id = link.sys.id;
-  const pred = resource => resource.sys.type === type && resource.sys.id === id;
+  const pred = (resource) => resource.sys.type === type && resource.sys.id === id;
   return (
     _.find(response.items, pred) || (response.includes && _.find(response.includes[type], pred))
   );

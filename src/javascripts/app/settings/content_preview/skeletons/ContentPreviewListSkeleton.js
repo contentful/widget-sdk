@@ -3,7 +3,7 @@ import React from 'react';
 import {
   SkeletonContainer,
   SkeletonBodyText,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 
 export const ContentPreviewListSkeleton = () => (

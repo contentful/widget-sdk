@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {
   getTooltip,
   SpaceResourceTypes,
-  getRolesTooltip
+  getRolesTooltip,
 } from 'components/shared/space-wizard/WizardUtils';
 import pluralize from 'pluralize';
 import { toLocaleString } from 'utils/NumberUtils';
@@ -37,11 +37,11 @@ PlanFeatures.propTypes = {
   resources: PropTypes.arrayOf(
     PropTypes.shape({
       type: PropTypes.string.isRequired,
-      number: PropTypes.number.isRequired
+      number: PropTypes.number.isRequired,
     })
   ),
   roleSet: PropTypes.shape({
     name: PropTypes.string,
-    roles: PropTypes.arrayOf(PropTypes.string)
-  }).isRequired
+    roles: PropTypes.arrayOf(PropTypes.string),
+  }).isRequired,
 };

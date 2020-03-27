@@ -9,7 +9,7 @@ function getSelectWidth(label) {
   return Math.max(7, width) + 'ch';
 }
 
-const Select = props => {
+const Select = (props) => {
   const { testId, options = [], value, inputRef, onChange, onKeyDown } = props;
   const [_, label] = find(options, ([v]) => v === value) || ['', ''];
   const width = getSelectWidth(label);

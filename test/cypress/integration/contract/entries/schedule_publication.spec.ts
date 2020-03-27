@@ -2,24 +2,24 @@ import { defaultRequestsMock } from '../../../util/factories';
 import { queryFirst100UsersInDefaultSpace } from '../../../interactions/users';
 import {
   getAllPublicContentTypesInDefaultSpace,
-  getEditorInterfaceForDefaultContentType
+  getEditorInterfaceForDefaultContentType,
 } from '../../../interactions/content_types';
 import {
   getDefaultEntry,
   validateAnEntryValidResponse,
   queryLinksToDefaultEntry,
-  getFirst7SnapshotsOfDefaultEntry
+  getFirst7SnapshotsOfDefaultEntry,
 } from '../../../interactions/entries';
 import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 import {
   createScheduledPublicationForDefaultSpace,
   cancelDefaultJobInDefaultSpace,
-  queryAllScheduledJobsForDefaultEntry
+  queryAllScheduledJobsForDefaultEntry,
 } from '../../../interactions/jobs';
 import { FeatureFlag } from '../../../util/featureFlag';
 import {
   queryForTasksAndAppsInDefaultSpace,
-  queryForScheduledPublishingOnEntryPage
+  queryForScheduledPublishingOnEntryPage,
 } from '../../../interactions/product_catalog_features';
 
 describe('Schedule Publication', () => {
@@ -112,9 +112,7 @@ describe('Schedule Publication', () => {
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
       cy.wait(interactions, { timeout: 10000 });
 
-      cy.getByTestId('failed-job-note')
-        .should('be.visible')
-        .should('contain', 'failed');
+      cy.getByTestId('failed-job-note').should('be.visible').should('contain', 'failed');
       cy.getByTestId('change-state-published').should('be.enabled');
     });
 
@@ -124,9 +122,7 @@ describe('Schedule Publication', () => {
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
       cy.wait(interactions, { timeout: 10000 });
 
-      cy.getByTestId('cf-ui-note')
-        .should('be.visible')
-        .should('contain', 'refresh');
+      cy.getByTestId('cf-ui-note').should('be.visible').should('contain', 'refresh');
       cy.getByTestId('change-state-published').should('be.enabled');
     });
   });
@@ -141,7 +137,7 @@ function basicServerSetUp(): string[] {
     cors: true,
     pactfileWriteMode: 'merge',
     dir: Cypress.env('pactDir'),
-    spec: 2
+    spec: 2,
   });
 
   cy.server();
@@ -149,7 +145,7 @@ function basicServerSetUp(): string[] {
 
   return [
     ...defaultRequestsMock({
-      publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
+      publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne,
     }),
     queryFirst100UsersInDefaultSpace.willFindSeveral(),
     getDefaultEntry.willReturnIt(),
@@ -157,6 +153,6 @@ function basicServerSetUp(): string[] {
     getFirst7SnapshotsOfDefaultEntry.willReturnNone(),
     getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
     queryForTasksAndAppsInDefaultSpace.willFindBothEnabled(),
-    queryForScheduledPublishingOnEntryPage.willFindFeatureEnabled()
+    queryForScheduledPublishingOnEntryPage.willFindFeatureEnabled(),
   ];
 }

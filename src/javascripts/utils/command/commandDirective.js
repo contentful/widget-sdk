@@ -32,16 +32,16 @@ export default function register() {
    */
   registerDirective('uiCommand', [
     'uiCommandStateDirective',
-    uiCommandStateDirectives => {
+    (uiCommandStateDirectives) => {
       const directive = uiCommandStateDirectives[0];
 
       return {
         restrict: 'A',
         scope: {
-          command: '=uiCommand'
+          command: '=uiCommand',
         },
         template: directive.template,
-        link: function(scope, element) {
+        link: function (scope, element) {
           directive.link(scope, element);
 
           element.on('click', () => {
@@ -53,9 +53,9 @@ export default function register() {
               scope.command.execute();
             });
           });
-        }
+        },
       };
-    }
+    },
   ]);
 
   /**
@@ -77,14 +77,14 @@ export default function register() {
     restrict: 'A',
 
     scope: {
-      command: '=uiCommandState'
+      command: '=uiCommandState',
     },
 
-    template: function(element) {
+    template: function (element) {
       return element.html();
     },
 
-    link: function(scope, element) {
+    link: function (scope, element) {
       if (!element.attr('role')) {
         element.attr('role', 'button');
       }
@@ -93,14 +93,14 @@ export default function register() {
         element.attr('type', 'button');
       }
 
-      scope.$watch('command.isAvailable()', isAvailable => {
+      scope.$watch('command.isAvailable()', (isAvailable) => {
         element.toggleClass('ng-hide', !isAvailable);
         setDisabled(scope.command.isDisabled());
       });
 
       scope.$watch('command.isDisabled()', setDisabled);
 
-      scope.$watch('command.inProgress()', inProgress => {
+      scope.$watch('command.inProgress()', (inProgress) => {
         element.toggleClass('is-loading', inProgress);
         if (inProgress) {
           element.attr('aria-busy', 'true');
@@ -120,6 +120,6 @@ export default function register() {
           element.removeAttr('aria-disabled');
         }
       }
-    }
+    },
   }));
 }

@@ -11,7 +11,7 @@ import {
   getSpaceRatePlans,
   isEnterprisePlan,
   getBasePlan,
-  isHighDemandEnterprisePlan
+  isHighDemandEnterprisePlan,
 } from 'account/pricing/PricingDataProvider';
 import { getModule } from 'NgRegistry';
 
@@ -21,7 +21,7 @@ function Loading() {
     alignItems: 'center',
     justifyContent: 'center',
     height: '100%',
-    padding: tokens.spacingL
+    padding: tokens.spacingL,
   };
 
   return (
@@ -65,7 +65,7 @@ export async function showDialog(organizationId) {
       template: '<cf-create-new-space class="modal-background"></cf-create-new-space>',
       backgroundClose: false,
       persistOnNavigation: true,
-      scopeData: { organization }
+      scopeData: { organization },
     });
   } else {
     let closeLoadingModal;
@@ -89,10 +89,10 @@ export async function showDialog(organizationId) {
       const freeSpaceIdentifier = 'free_space';
       const [freeSpaceResource, ratePlans] = await Promise.all([
         resources.get(freeSpaceIdentifier),
-        getSpaceRatePlans(orgEndpoint)
+        getSpaceRatePlans(orgEndpoint),
       ]);
       const freeSpaceRatePlan = ratePlans.find(
-        plan => plan.productPlanType === freeSpaceIdentifier
+        (plan) => plan.productPlanType === freeSpaceIdentifier
       );
       const modalProps = {
         freeSpaceRatePlan,
@@ -100,8 +100,8 @@ export async function showDialog(organizationId) {
         isHighDemand: isHighDemandEnterprisePlan(basePlan),
         organization: {
           sys: organization.sys,
-          name: organization.name
-        }
+          name: organization.name,
+        },
       };
       modalDialog.open({
         template: `
@@ -114,7 +114,7 @@ export async function showDialog(organizationId) {
         `,
         scopeData: { modalProps },
         backgroundClose: false,
-        persistOnNavigation: true
+        persistOnNavigation: true,
       });
     } else {
       modalDialog.open({
@@ -127,9 +127,9 @@ export async function showDialog(organizationId) {
           organization: {
             sys: organization.sys,
             name: organization.name,
-            isBillable: organization.isBillable
-          }
-        }
+            isBillable: organization.isBillable,
+          },
+        },
       });
     }
 

@@ -20,10 +20,10 @@ describe('<TasksWidgetContainer />', () => {
       emitter: {
         on: jest.fn(),
         off: jest.fn(),
-        emit: jest.fn()
+        emit: jest.fn(),
       },
       featureFlagKey: FeatureFlagKey.TASKS,
-      children: jest.fn().mockReturnValue(null)
+      children: jest.fn().mockReturnValue(null),
     };
     return { rendered: render(<TasksWidgetContainer {...props} />) };
   };

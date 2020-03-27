@@ -6,19 +6,19 @@ import * as $stateMocked from 'ng/$state';
 import * as AccessCheckerMocked from 'access_control/AccessChecker';
 
 const mockWebhookRepo = {
-  getAll: jest.fn().mockResolvedValue([])
+  getAll: jest.fn().mockResolvedValue([]),
 };
 
 jest.mock('app/settings/webhooks/services/WebhookRepoInstance', () => ({
-  getWebhookRepo: () => mockWebhookRepo
+  getWebhookRepo: () => mockWebhookRepo,
 }));
 
 jest.mock('access_control/AccessChecker', () => ({
-  getSectionVisibility: jest.fn(() => {})
+  getSectionVisibility: jest.fn(() => {}),
 }));
 
 jest.mock('app/common/ReloadNotification', () => ({
-  basicErrorHandler: () => {}
+  basicErrorHandler: () => {},
 }));
 
 jest.mock('data/CMA/ProductCatalog', () => ({ getOrgFeature: () => Promise.resolve(false) }));
@@ -30,7 +30,7 @@ describe('WebhookListRoute', () => {
     AccessCheckerMocked.getSectionVisibility.mockReset();
   });
 
-  const setSectionVisibility = isVisible => {
+  const setSectionVisibility = (isVisible) => {
     AccessCheckerMocked.getSectionVisibility.mockImplementation(() => ({ webhooks: isVisible }));
   };
 

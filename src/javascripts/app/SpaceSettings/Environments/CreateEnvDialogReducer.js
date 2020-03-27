@@ -34,7 +34,7 @@ export const createEnvReducer = createImmerReducer({
     state.selectedEnvironment = value;
   },
   [SET_ERRORS]: (state, { errors }) => {
-    Object.keys(errors).forEach(key => {
+    Object.keys(errors).forEach((key) => {
       state.fields[key].errors = errors[key];
     });
   },
@@ -43,17 +43,17 @@ export const createEnvReducer = createImmerReducer({
   },
   [SET_SERVER_FAILURE]: (state, { value }) => {
     state.serverFailure = value;
-  }
+  },
 });
 
-export const useCreateEnvState = props => {
+export const useCreateEnvState = (props) => {
   const {
     environments,
     currentEnvironment,
     canSelectSource,
     createEnvironment,
     onClose,
-    onCreate
+    onCreate,
   } = props;
 
   const initialState = {
@@ -61,15 +61,15 @@ export const useCreateEnvState = props => {
       id: {
         value: '',
         name: 'id',
-        errors: []
-      }
+        errors: [],
+      },
     },
     environments,
     currentEnvironment,
     // If you cannot select the source environment, pick `master` as selected because that's the only source you can use
     selectedEnvironment: canSelectSource ? currentEnvironment : 'master',
     canSelectSource,
-    inProgress: false
+    inProgress: false,
   };
 
   const [state, dispatch] = useReducer(createEnvReducer, initialState);
@@ -84,7 +84,7 @@ export const useCreateEnvState = props => {
       const result = await createEnvironment({
         id,
         name: id,
-        source: state.selectedEnvironment
+        source: state.selectedEnvironment,
       });
 
       if (result.type === Environment.EnvironmentUpdated) {
@@ -95,10 +95,10 @@ export const useCreateEnvState = props => {
           errors: {
             id: [
               {
-                message: ID_EXISTS_ERROR_MESSAGE
-              }
-            ]
-          }
+                message: ID_EXISTS_ERROR_MESSAGE,
+              },
+            ],
+          },
         });
       } else if (result.type === Environment.ServerError) {
         logger.logServerError(result.error);
@@ -119,7 +119,7 @@ export const useCreateEnvState = props => {
     },
     CancelDialog: () => {
       onClose(false);
-    }
+    },
   };
 
   return [state, actions];
@@ -131,14 +131,14 @@ export const useCreateEnvState = props => {
  * value is invalid.
  */
 export const validations = {
-  id: value => {
+  id: (value) => {
     if (!value || !value.trim()) {
       return EMPTY_FIELD_ERROR_MESSAGE;
     }
     if (!isValidResourceId(value)) {
       return INVALID_ID_CHARACTER_ERROR_MESSAGE;
     }
-  }
+  },
 };
 
 /**
@@ -157,8 +157,8 @@ function validate(fields) {
       hasErrors = true;
       return [
         {
-          message: errorMessage
-        }
+          message: errorMessage,
+        },
       ];
     } else {
       return [];

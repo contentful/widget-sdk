@@ -10,7 +10,7 @@ export const PREVIEW_COUNT = 7;
 
 export default class VersionsWidgetContainer extends Component {
   static propTypes = {
-    emitter: PropTypes.object.isRequired
+    emitter: PropTypes.object.isRequired,
   };
 
   constructor(props) {
@@ -20,7 +20,7 @@ export default class VersionsWidgetContainer extends Component {
       versions: [],
       publishedVersion: null,
       entryId: null,
-      error: null
+      error: null,
     };
   }
 
@@ -40,11 +40,11 @@ export default class VersionsWidgetContainer extends Component {
       this.setState({ publishedVersion });
       spaceContext.cma
         .getEntrySnapshots(entrySys.id, { limit: PREVIEW_COUNT })
-        .then(res => res.items)
-        .then(versions => {
+        .then((res) => res.items)
+        .then((versions) => {
           this.onLoad(versions, entrySys);
         })
-        .catch(error => {
+        .catch((error) => {
           this.onError(error, entrySys);
         });
     } else {
@@ -52,7 +52,7 @@ export default class VersionsWidgetContainer extends Component {
     }
   };
 
-  onUpdate = entrySys => {
+  onUpdate = (entrySys) => {
     this.onLoad(this.state.versions, entrySys, this.state.error);
   };
 
@@ -65,7 +65,7 @@ export default class VersionsWidgetContainer extends Component {
       isLoaded: true,
       versions: versionsWithCurrent,
       entryId: entrySys.id,
-      error
+      error,
     });
   };
 
@@ -73,7 +73,7 @@ export default class VersionsWidgetContainer extends Component {
     this.setState({
       error: 'There was a problem loading the versions of this entry.',
       entryId: entrySys.id,
-      isLoaded: true
+      isLoaded: true,
     });
   };
 

@@ -42,22 +42,22 @@ export default function create() {
     roles: makeGenericEndpoint(),
     extensions: makeGenericEndpoint(),
     environments: makeGenericEndpoint({
-      transformNew: entity => {
-        return update(entity, ['sys'], sys =>
+      transformNew: (entity) => {
+        return update(entity, ['sys'], (sys) =>
           assign(sys, {
             type: 'Environment',
-            status: { sys: { id: 'queued' } }
+            status: { sys: { id: 'queued' } },
           })
         );
-      }
+      },
     }),
     environment_aliases: makeGenericEndpoint(),
     resources: makeGenericEndpoint(),
-    features: makeGenericEndpoint()
+    features: makeGenericEndpoint(),
   };
 
-  const stores = mapValues(endpoints, ep => ep.store);
-  const requests = mapValues(endpoints, ep => ep.requests);
+  const stores = mapValues(endpoints, (ep) => ep.store);
+  const requests = mapValues(endpoints, (ep) => ep.requests);
 
   function request({ method, path, data, version }, headers) {
     data = cloneDeep(data);
@@ -73,7 +73,7 @@ export default function create() {
         path,
         data,
         version,
-        headers
+        headers,
       });
       return (
         endpoint
@@ -106,7 +106,7 @@ const defaultResourceConfig = {
    * user provided data. The result is stored and returned as the
    * reponse.
    */
-  transformNew: data => data
+  transformNew: (data) => data,
 };
 
 /**
@@ -139,7 +139,7 @@ function makeGenericEndpoint(resourceConfig) {
         return getResource(store, id);
       } else {
         return $q.resolve({
-          items: values(store)
+          items: values(store),
         });
       }
     }
@@ -269,8 +269,8 @@ function putResource(resourceConfig, store, id, version, data) {
       ...data,
       sys: {
         id: id,
-        version: 1
-      }
+        version: 1,
+      },
     };
     store[id] = resourceConfig.transformNew(newResource);
     return $q.resolve(newResource);
@@ -313,7 +313,7 @@ function rejectNotFound() {
 function rejectResponse(status, message) {
   return $q.reject(
     Object.assign(new Error(`${status} ${message}`), {
-      statusCode: status
+      statusCode: status,
     })
   );
 }

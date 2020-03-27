@@ -26,53 +26,53 @@ const RESOURCES = {
   embedly: {
     url: 'https://cdn.embedly.com/widgets/platform.js',
     globalObject: ['embedly'],
-    setup: embedly => {
+    setup: (embedly) => {
       embedly('defaults', {
         cards: {
-          key: Config.services.embedly.api_key
-        }
+          key: Config.services.embedly.api_key,
+        },
       });
       return embedly;
-    }
+    },
   },
   bugsnag: {
     url: 'https://d2wy8f7a9ursnm.cloudfront.net/bugsnag-3.min.js',
-    globalObject: ['Bugsnag']
+    globalObject: ['Bugsnag'],
   },
   segment: {
     url:
       'https://cdn.segment.com/analytics.js/v1/' + Config.services.segment_io + '/analytics.min.js',
-    globalObject: ['analytics']
+    globalObject: ['analytics'],
   },
   snowplow: {
     // This is a special CDN version prepared for us by Snowplow.
     // It's less likely to be marked as tracking script by ad blockers.
     url: 'https://d3unofs9w5amk7.cloudfront.net/Sp4yK8ZCFcVrSMi44LjI.js',
-    globalObject: ['Snowplow']
+    globalObject: ['Snowplow'],
   },
   walkMeStaging: {
     url:
-      'https://cdn.walkme.com/users/cf344057732941ed81018bf903986da9/test/walkme_cf344057732941ed81018bf903986da9_https.js'
+      'https://cdn.walkme.com/users/cf344057732941ed81018bf903986da9/test/walkme_cf344057732941ed81018bf903986da9_https.js',
   },
   walkMeProd: {
     url:
-      'https://cdn.walkme.com/users/cf344057732941ed81018bf903986da9/walkme_cf344057732941ed81018bf903986da9_https.js'
+      'https://cdn.walkme.com/users/cf344057732941ed81018bf903986da9/walkme_cf344057732941ed81018bf903986da9_https.js',
   },
   PubNub: {
     url: 'https://cdn.pubnub.com/sdk/javascript/pubnub.4.21.6.js',
-    globalObject: ['PubNub']
+    globalObject: ['PubNub'],
   },
   osano: {
     url: `https://cmp.osano.com/16BcqiRsJId123ATa/${getAtPath(Config, [
       'services',
       'osano',
-      'cdnKey'
+      'cdnKey',
     ])}/osano.js`,
-    globalObject: ['Osano']
-  }
+    globalObject: ['Osano'],
+  },
 };
 
-Object.keys(RESOURCES).forEach(key => {
+Object.keys(RESOURCES).forEach((key) => {
   const { url, globalObject, setup } = RESOURCES[key];
 
   const validUrl = typeof url === 'string' && url.length > 0;
@@ -147,7 +147,7 @@ export function getFromGlobal(globalObject) {
   }
 
   const deferred = {};
-  deferred.promise = new Promise(resolve => {
+  deferred.promise = new Promise((resolve) => {
     deferred.resolve = resolve;
   });
 

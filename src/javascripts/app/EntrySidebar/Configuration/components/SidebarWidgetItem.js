@@ -8,7 +8,7 @@ import { IconButton, Icon, Note, Tag } from '@contentful/forma-36-react-componen
 const styles = {
   closeButton: css({
     cursor: 'pointer',
-    marginLeft: tokens.spacingXs
+    marginLeft: tokens.spacingXs,
   }),
   itemHeader: css({
     display: 'flex',
@@ -23,32 +23,32 @@ const styles = {
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
-    marginBottom: tokens.spacingS
+    marginBottom: tokens.spacingS,
   }),
   itemName: css({
-    flex: '1 1 auto'
+    flex: '1 1 auto',
   }),
   itemDrag: css({
     position: 'absolute',
     left: tokens.spacingXs,
     top: tokens.spacingS,
-    fill: tokens.colorTextLight
+    fill: tokens.colorTextLight,
   }),
   problemItem: css({
     position: 'relative',
     marginBottom: tokens.spacingM,
     margin: 0,
-    userSelect: 'none'
+    userSelect: 'none',
   }),
   problemItemText: css({
-    paddingRight: tokens.spacingM
+    paddingRight: tokens.spacingM,
   }),
   item: css({
     border: `1px solid ${tokens.colorElementMid}`,
     backgroundColor: tokens.colorElementLightest,
     marginBottom: tokens.spacingM,
     padding: `${tokens.spacingXs} ${tokens.spacingM} ${tokens.spacingS} ${tokens.spacingXl}`,
-    position: 'relative'
+    position: 'relative',
   }),
   draggable: css({
     userSelect: 'none',
@@ -56,9 +56,9 @@ const styles = {
     cursor: 'grab',
     '&:focus': {
       outline: 'none',
-      boxShadow: tokens.glowPrimary
-    }
-  })
+      boxShadow: tokens.glowPrimary,
+    },
+  }),
 };
 
 const SortableItem = sortableElement(({ children }) => (
@@ -76,7 +76,7 @@ export function SidebarWidgetItem({
   isProblem,
   onRemoveClick,
   children,
-  availabilityStatus
+  availabilityStatus,
 }) {
   const removeBtn = (
     <IconButton
@@ -131,13 +131,13 @@ SidebarWidgetItem.propTypes = {
   isProblem: PropTypes.bool.isRequired,
   onRemoveClick: PropTypes.func,
   index: PropTypes.number,
-  availabilityStatus: PropTypes.oneOf(['alpha', 'beta'])
+  availabilityStatus: PropTypes.oneOf(['alpha', 'beta']),
 };
 
 SidebarWidgetItem.defaultProps = {
   isDraggable: false,
   isRemovable: false,
-  isProblem: false
+  isProblem: false,
 };
 
 export default SidebarWidgetItem;

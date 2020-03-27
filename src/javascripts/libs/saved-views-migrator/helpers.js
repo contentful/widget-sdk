@@ -5,10 +5,10 @@ const OP_MAP = {
   '<': '[lt]',
   '>=': '[gte]',
   '>': '[gt]',
-  '!=': '[ne]'
+  '!=': '[ne]',
 };
 
 module.exports = {
   RELATIVE_DATE_REGEX,
-  queryOperator: op => OP_MAP[op] || ''
+  queryOperator: (op) => OP_MAP[op] || '',
 };

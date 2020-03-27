@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const IframeHighlightHOC = Component => {
+const IframeHighlightHOC = (Component) => {
   return class extends React.Component {
     static propTypes = {
-      iframe: PropTypes.object
+      iframe: PropTypes.object,
     };
 
     state = { active: null };
@@ -13,7 +13,7 @@ const IframeHighlightHOC = Component => {
       this.removeHighlight();
     }
 
-    highlight = type => {
+    highlight = (type) => {
       this.removeHighlight();
       const { iframe } = this.props;
       this.setState({ active: type });
@@ -32,7 +32,7 @@ const IframeHighlightHOC = Component => {
       }
     };
 
-    onHover = type => {
+    onHover = (type) => {
       this.highlight(type);
     };
 
@@ -56,7 +56,7 @@ const IframeHighlightHOC = Component => {
         ...this.props,
         onHover: this.onHover,
         onLeave: this.onLeave,
-        active
+        active,
       };
       return <Component {...props} />;
     }

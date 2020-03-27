@@ -14,12 +14,12 @@ const PREFIXES = [
   'resources',
   'jobs',
   'editor_interfaces',
-  'app_installations'
+  'app_installations',
 ];
 
 // Given a path return `true` if the environment endpoint
 // should be used. Return `false` otherwise.
-export default function(path) {
+export default function (path) {
   if (typeof path === 'string') {
     path = path.split('/');
   }
@@ -33,8 +33,8 @@ export default function(path) {
   path = path
     .join('/')
     .split('/')
-    .filter(x => x)
+    .filter((x) => x)
     .join('/');
 
-  return PREFIXES.some(prefix => path.indexOf(prefix) === 0);
+  return PREFIXES.some((prefix) => path.indexOf(prefix) === 0);
 }

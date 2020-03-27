@@ -31,10 +31,7 @@ describe('SSOEnabled', () => {
   it('should track when the restricted support link is clicked', () => {
     const rendered = render({ restricted: true });
 
-    rendered
-      .find('[testId="restricted-support-link"]')
-      .first()
-      .simulate('click');
+    rendered.find('[testId="restricted-support-link"]').first().simulate('click');
 
     expect(track).toHaveBeenCalledTimes(1);
     expect(track).toHaveBeenNthCalledWith(1, 'sso:contact_support');
@@ -49,10 +46,7 @@ describe('SSOEnabled', () => {
   it('should track when the unrestricted support link is clicked', () => {
     const rendered = render({ restricted: false });
 
-    rendered
-      .find('[testId="unrestricted-support-link"]')
-      .first()
-      .simulate('click');
+    rendered.find('[testId="unrestricted-support-link"]').first().simulate('click');
 
     expect(track).toHaveBeenCalledTimes(1);
     expect(track).toHaveBeenNthCalledWith(1, 'sso:contact_support');

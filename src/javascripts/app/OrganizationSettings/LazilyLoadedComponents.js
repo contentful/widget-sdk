@@ -17,5 +17,5 @@ export {
   UserInvitationDetailRouter,
   TeamPage,
   SubscriptionPageRoute,
-  SSOSetup
+  SSOSetup,
 };

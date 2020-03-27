@@ -19,7 +19,7 @@ export default {
       name: 'contentTypeId',
       type: 'content-type-selector',
       title: 'Content type',
-      description: <p>Select the content type of the entries triggering the webhook.</p>
+      description: <p>Select the content type of the entries triggering the webhook.</p>,
     },
     {
       name: 'domain',
@@ -30,7 +30,7 @@ export default {
           Enter the domain without the protocol. For example: <code>your-domain.atlassian.com</code>
           .
         </p>
-      )
+      ),
     },
     {
       name: 'projectId',
@@ -47,7 +47,7 @@ export default {
           </a>{' '}
           with the API.
         </p>
-      )
+      ),
     },
     {
       name: 'issueTypeId',
@@ -65,7 +65,7 @@ export default {
           </a>
           .
         </p>
-      )
+      ),
     },
     {
       name: 'user',
@@ -73,18 +73,18 @@ export default {
       title: 'Username',
       description: (
         <p>Tasks will be created using this user. Consider creating a service account.</p>
-      )
+      ),
     },
     {
       name: 'password',
       type: 'password',
       title: 'Password',
-      description: <p>This value can’t be revealed once stored.</p>
-    }
+      description: <p>This value can’t be revealed once stored.</p>,
+    },
   ],
   mapParamsToDefinition: (params, name, templateContentTypes) => {
     const { contentTypeId, domain, projectId, issueTypeId, user, password } = params;
-    const contentType = templateContentTypes.find(ct => ct.id === contentTypeId);
+    const contentType = templateContentTypes.find((ct) => ct.id === contentTypeId);
 
     return {
       name,
@@ -92,18 +92,18 @@ export default {
       topics: ['Entry.create'],
       filters: [
         { equals: [{ doc: 'sys.environment.sys.id' }, 'master'] },
-        { equals: [{ doc: 'sys.contentType.sys.id' }, contentType.id] }
+        { equals: [{ doc: 'sys.contentType.sys.id' }, contentType.id] },
       ],
       headers: [
         {
           key: 'Accept',
-          value: 'application/json'
+          value: 'application/json',
         },
         {
           key: 'Authorization',
           value: 'Basic ' + base64safe([user, password].join(':')),
-          secret: true
-        }
+          secret: true,
+        },
       ],
       transformation: {
         contentType: 'application/json',
@@ -112,10 +112,10 @@ export default {
             project: { id: projectId },
             issuetype: { id: issueTypeId },
             summary: `Review a new ${contentType.name}`,
-            description: `Click to open: ${contentType.appUrlPointers}`
-          }
-        })
-      }
+            description: `Click to open: ${contentType.appUrlPointers}`,
+          },
+        }),
+      },
     };
-  }
+  },
 };

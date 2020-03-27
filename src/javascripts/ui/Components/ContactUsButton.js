@@ -9,7 +9,7 @@ class ContactUsButton extends React.Component {
   static propTypes = {
     noIcon: PropTypes.bool,
     buttonType: PropTypes.oneOf(['link', 'button']),
-    children: PropTypes.node
+    children: PropTypes.node,
   };
 
   onClick = () => {
@@ -29,7 +29,7 @@ class ContactUsButton extends React.Component {
 
     const props = {
       onClick: this.onClick,
-      ...otherProps
+      ...otherProps,
     };
 
     if (!noIcon) {

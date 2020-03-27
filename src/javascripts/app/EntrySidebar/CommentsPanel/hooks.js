@@ -32,7 +32,7 @@ export const useCommentsFetcher = (endpoint, entryId) => {
 export const useCommentCreator = (endpoint, entryId, parentCommentId) => {
   const user = getUserSync();
 
-  return useAsyncFn(async body => {
+  return useAsyncFn(async (body) => {
     const comment = await create(endpoint, entryId, { body, parentCommentId });
     comment.sys.createdBy = user;
     trackCommentCreated();
@@ -41,7 +41,7 @@ export const useCommentCreator = (endpoint, entryId, parentCommentId) => {
 };
 
 function withMinDelay(promise) {
-  const delay = () => new Promise(resolve => setTimeout(resolve, 700));
+  const delay = () => new Promise((resolve) => setTimeout(resolve, 700));
   return Promise.all([promise, delay()]).then(([data]) => data);
 }
 
@@ -50,7 +50,7 @@ async function fetchUsers(spaceId, userIds) {
   const orgEndpoint = createOrganizationEndpoint(organization.sys.id);
   // TODO: handle case where there are too many ids to fit into the query string
   const { items } = await getUsers(orgEndpoint, {
-    'sys.id[in]': userIds.join(',')
+    'sys.id[in]': userIds.join(','),
   });
   return items;
 }
@@ -67,7 +67,7 @@ export async function fetchCommentsAndUsers(endpoint, entryId) {
   const resolvedComments = resolveLinks({
     paths: ['sys.createdBy'],
     includes: { User: users },
-    items: comments
+    items: comments,
   });
   return resolvedComments;
 }

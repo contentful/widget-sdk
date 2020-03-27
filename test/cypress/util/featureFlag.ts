@@ -10,5 +10,5 @@ export enum FeatureFlag {
   QUICK_NAVIGATION = 'feature-ht-04-2019-quick-navigation',
   DEFAULT = ENVIRONMENTS,
   ACCESS_TOOLS = 'feature-ogg-02-2020-access-tools',
-  COOKIE_CONSENT_MANAGEMENT = 'feature-ahoy-03-2020-cookie-consent-mgmt'
+  COOKIE_CONSENT_MANAGEMENT = 'feature-ahoy-03-2020-cookie-consent-mgmt',
 }

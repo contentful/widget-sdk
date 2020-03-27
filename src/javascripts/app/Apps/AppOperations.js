@@ -3,7 +3,7 @@ import { get } from 'lodash';
 import validateTargetState from './validateTargetState';
 import {
   transformEditorInterfacesToTargetState,
-  removeAllEditorInterfaceReferences
+  removeAllEditorInterfaceReferences,
 } from './AppEditorInterfaces';
 
 export async function installOrUpdate(

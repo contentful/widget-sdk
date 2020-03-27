@@ -7,12 +7,12 @@ import { hasHyperlink, toggleLink, hasOnlyHyperlinkInlines } from './Util';
 export default class HyperlinkToolbarIcon extends Component {
   static propTypes = TOOLBAR_PLUGIN_PROP_TYPES;
 
-  handleClick = async event => {
+  handleClick = async (event) => {
     event.preventDefault();
     const {
       onToggle,
       editor,
-      richTextAPI: { widgetAPI, logToolbarAction }
+      richTextAPI: { widgetAPI, logToolbarAction },
     } = this.props;
     await toggleLink(editor, widgetAPI.dialogs.createHyperlink, logToolbarAction);
     onToggle(editor);
@@ -27,7 +27,7 @@ export default class HyperlinkToolbarIcon extends Component {
         type={INLINES.HYPERLINK}
         icon="Link"
         title="Hyperlink"
-        onToggle={event => this.handleClick(event)}
+        onToggle={(event) => this.handleClick(event)}
         isActive={hasHyperlink(editor.value)}
       />
     );

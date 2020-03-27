@@ -18,7 +18,7 @@ export default function LazyLoadedComponent({
   delay,
   fallback: FallbackComponent,
   error: ErrorComponent,
-  children
+  children,
 }) {
   return (
     <AsyncComponentFetcher onReady={onReady} importer={importer}>
@@ -47,7 +47,7 @@ LazyLoadedComponent.propTypes = {
   fallback: PropTypes.func,
   error: PropTypes.func,
   delay: PropTypes.number,
-  children: PropTypes.func.isRequired
+  children: PropTypes.func.isRequired,
 };
 
 LazyLoadedComponent.defaultProps = {
@@ -58,5 +58,5 @@ LazyLoadedComponent.defaultProps = {
     </div>
   ),
   error: () => <StateRedirect path="home" />,
-  onReady: () => {}
+  onReady: () => {},
 };

@@ -8,11 +8,11 @@ import {
   TextLink,
   Paragraph,
   Note,
-  Icon
+  Icon,
 } from '@contentful/forma-36-react-components';
 import {
   SpaceRole as SpaceRolePropType,
-  OrganizationMembership as OrganizationMembershipPropType
+  OrganizationMembership as OrganizationMembershipPropType,
 } from 'app/OrganizationSettings/PropTypes';
 import { css } from 'emotion';
 import { get } from 'lodash';
@@ -25,15 +25,15 @@ const styles = {
     display: 'flex',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    marginBottom: tokens.spacingS
+    marginBottom: tokens.spacingS,
   }),
   userSelection: css({
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
   }),
   list: css({
     maxHeight: 300,
-    overflow: 'auto'
+    overflow: 'auto',
   }),
   user: css({
     display: 'flex',
@@ -41,19 +41,19 @@ const styles = {
     alignItems: 'center',
     padding: `${tokens.spacingS} ${tokens.spacingM}`,
     '&:hover': {
-      backgroundColor: tokens.colorElementLightest
-    }
+      backgroundColor: tokens.colorElementLightest,
+    },
   }),
   roleSelector: css({
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   }),
   errorMessage: css({
-    margin: `${tokens.spacingS} 0 0`
+    margin: `${tokens.spacingS} 0 0`,
   }),
   errorIcon: css({
-    marginRight: tokens.spacingS
-  })
+    marginRight: tokens.spacingS,
+  }),
 };
 
 export default function RoleSelection({
@@ -63,7 +63,7 @@ export default function RoleSelection({
   onChange,
   onClose,
   onBack,
-  onConfirm
+  onConfirm,
 }) {
   const [invalidUsers, setInvalidUsers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -71,7 +71,7 @@ export default function RoleSelection({
   const handleSubmit = async () => {
     // get count of users without roles assigned
     const invalid = selectedUsers.filter(
-      orgMembership =>
+      (orgMembership) =>
         !selectedRoles[orgMembership.sys.id] || selectedRoles[orgMembership.sys.id].length === 0
     );
 
@@ -86,7 +86,7 @@ export default function RoleSelection({
   const handleRoleChange = (orgMembership, roleIds) => {
     if (invalidUsers.includes(orgMembership)) {
       // remove from the list of invalid
-      setInvalidUsers(invalidUsers.filter(membership => membership !== orgMembership));
+      setInvalidUsers(invalidUsers.filter((membership) => membership !== orgMembership));
     }
     onChange(orgMembership.sys.id, roleIds);
   };
@@ -100,7 +100,7 @@ export default function RoleSelection({
         </Paragraph>
 
         <Card className={styles.list} padding="none">
-          {selectedUsers.map(orgMembership => (
+          {selectedUsers.map((orgMembership) => (
             <div
               key={orgMembership.sys.id}
               className={styles.user}
@@ -113,7 +113,7 @@ export default function RoleSelection({
                 <SpaceRoleEditor
                   options={spaceRoles}
                   value={get(selectedRoles, [orgMembership.sys.id], [])}
-                  onChange={roleIds => handleRoleChange(orgMembership, roleIds)}
+                  onChange={(roleIds) => handleRoleChange(orgMembership, roleIds)}
                 />
               </div>
             </div>
@@ -163,5 +163,5 @@ RoleSelection.propTypes = {
   selectedUsers: PropTypes.arrayOf(OrganizationMembershipPropType).isRequired,
   spaceRoles: PropTypes.arrayOf(SpaceRolePropType),
   // object where the values are arrays of strings
-  selectedRoles: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string)).isRequired
+  selectedRoles: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string)).isRequired,
 };

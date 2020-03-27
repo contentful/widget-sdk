@@ -23,7 +23,7 @@ export default function register() {
    */
   registerDirective('cfWidgetApi', () => ({
     restrict: 'A',
-    controller: 'WidgetApiController'
+    controller: 'WidgetApiController',
   }));
 
   /**
@@ -40,16 +40,16 @@ export default function register() {
       const {
         locale,
         fieldLocale,
-        widget: { field: ctField }
+        widget: { field: ctField },
       } = $scope;
 
-      const isEditingDisabled = fieldLocale.access$.map(access => !!access.disabled);
+      const isEditingDisabled = fieldLocale.access$.map((access) => !!access.disabled);
 
       this.settings = _.clone($scope.widget.settings);
 
       this.locales = {
         default: getDefaultLocaleCode(),
-        available: getAvailableLocaleCodes()
+        available: getAvailableLocaleCodes(),
       };
 
       this.contentType = PublicContentType.fromInternal($scope.entityInfo.contentType);
@@ -57,18 +57,18 @@ export default function register() {
       this.entry = {
         // TODO only used by slug and reference editor; we should
         // remove it and only offer a property interface
-        getSys: function() {
+        getSys: function () {
           return K.getValue(fieldLocale.doc.sys);
         },
-        onSysChanged: function(cb) {
+        onSysChanged: function (cb) {
           return K.onValueScope($scope, fieldLocale.doc.sys, cb);
         },
-        fields: $scope.fields // comes from entry editor controller
+        fields: $scope.fields, // comes from entry editor controller
       };
 
       this.space = {
         ...getBatchingApiClient(spaceContext.cma),
-        ...ScheduledActionsRepo
+        ...ScheduledActionsRepo,
       };
       this.entityHelpers = EntityHelpers.newForLocale(locale.code);
 
@@ -81,21 +81,21 @@ export default function register() {
         // Property<Error[]?>
         schemaErrors$: fieldLocale.errors$,
         // Property<any>
-        value$: fieldLocale.doc.value$
+        value$: fieldLocale.doc.value$,
       };
 
       this.field = {
-        onIsDisabledChanged: function(cb) {
+        onIsDisabledChanged: function (cb) {
           return K.onValueScope($scope, isEditingDisabled, cb);
         },
-        onPermissionChanged: function(cb) {
+        onPermissionChanged: function (cb) {
           return K.onValueScope($scope, fieldLocale.access$, cb);
         },
-        onSchemaErrorsChanged: function(cb) {
+        onSchemaErrorsChanged: function (cb) {
           return K.onValueScope($scope, fieldLocale.errors$, cb);
         },
         setInvalid: setInvalid,
-        onValueChanged: function(cb) {
+        onValueChanged: function (cb) {
           return K.onValueScope($scope, fieldLocale.doc.valueProperty, cb);
         },
         getValue: fieldLocale.doc.get,
@@ -119,7 +119,7 @@ export default function register() {
         // Convenience properties not provided by the extensions API but
         // easily emulated.
         value$: fieldLocale.doc.value$,
-        setActive: fieldLocale.setActive
+        setActive: fieldLocale.setActive,
       };
 
       /**
@@ -144,6 +144,6 @@ export default function register() {
       function getAvailableLocaleCodes() {
         return _.map(TheLocaleStore.getPrivateLocales(), 'code');
       }
-    }
+    },
   ]);
 }

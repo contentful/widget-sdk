@@ -28,7 +28,7 @@ const isLastAdmin = (member, adminCount) => !!member.admin && adminCount === 1;
 export function create(availableRoles) {
   return {
     openRemovalConfirmationDialog,
-    openRoleChangeDialog
+    openRoleChangeDialog,
   };
 
   /**
@@ -52,7 +52,7 @@ export function create(availableRoles) {
         const currentUserId = spaceContext.getData('spaceMember.sys.user.sys.id');
         const isCurrentUser = currentUserId === member.sys.user.sys.id;
         const spaceMembership = filter(member.relatedMemberships, {
-          sys: { type: 'SpaceMembership' }
+          sys: { type: 'SpaceMembership' },
         })[0];
         return spaceContext.memberships
           .remove(spaceMembership)
@@ -77,7 +77,7 @@ export function create(availableRoles) {
     const {
       sys: { user },
       roles,
-      relatedMemberships
+      relatedMemberships,
     } = member;
 
     const uniqueModalKey = Date.now();

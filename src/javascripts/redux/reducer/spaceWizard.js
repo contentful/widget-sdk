@@ -11,7 +11,7 @@ export default combineReducers({
   newSpaceMeta,
   spacePlans,
   templates,
-  spacePlanSelected
+  spacePlanSelected,
 });
 
 function partnershipMeta(state = {}, action) {
@@ -21,12 +21,12 @@ function partnershipMeta(state = {}, action) {
     case actions.SPACE_PARTNERSHIP:
       return {
         ...state,
-        isPartnerSpacePlan: action.isPartnerSpacePlan
+        isPartnerSpacePlan: action.isPartnerSpacePlan,
       };
     case actions.SPACE_PARTNERSHIP_FIELDS:
       return {
         ...state,
-        fields: action.fields
+        fields: action.fields,
       };
     default:
       return state;
@@ -40,17 +40,17 @@ function spaceCreation(state = {}, action) {
     case actions.SPACE_CREATION_PENDING:
       return {
         ...state,
-        isPending: action.isPending
+        isPending: action.isPending,
       };
     case actions.SPACE_CREATION_FAILURE:
       return {
         ...state,
-        error: action.error
+        error: action.error,
       };
     case actions.SPACE_CREATION_SUCCESS:
       return {
         ...state,
-        success: true
+        success: true,
       };
     default:
       return state;
@@ -64,12 +64,12 @@ function spaceChange(state = {}, action) {
     case actions.SPACE_CHANGE_PENDING:
       return {
         ...state,
-        isPending: action.isPending
+        isPending: action.isPending,
       };
     case actions.SPACE_CHANGE_FAILURE:
       return {
         ...state,
-        error: action.error
+        error: action.error,
       };
     default:
       return state;
@@ -83,17 +83,17 @@ function subscriptionPrice(state = {}, action) {
     case actions.SUBSCRIPTION_PRICE_PENDING:
       return {
         ...state,
-        isPending: action.isPending
+        isPending: action.isPending,
       };
     case actions.SUBSCRIPTION_PRICE_FAILURE:
       return {
         ...state,
-        error: action.error
+        error: action.error,
       };
     case actions.SUBSCRIPTION_PRICE_SUCCESS:
       return {
         ...state,
-        totalPrice: action.totalPrice
+        totalPrice: action.totalPrice,
       };
     default:
       return state;
@@ -118,12 +118,12 @@ function newSpaceMeta(state = {}, action) {
     case actions.NEW_SPACE_NAME:
       return {
         ...state,
-        name: action.name
+        name: action.name,
       };
     case actions.NEW_SPACE_TEMPLATE:
       return {
         ...state,
-        template: action.template
+        template: action.template,
       };
     default:
       return state;
@@ -133,7 +133,7 @@ function newSpaceMeta(state = {}, action) {
 function spacePlans(
   state = {
     spaceRatePlans: [],
-    freeSpacesResource: {}
+    freeSpacesResource: {},
   },
   action
 ) {
@@ -143,23 +143,23 @@ function spacePlans(
     case actions.SPACE_WIZARD_RESET:
       return {
         spaceRatePlans: [],
-        freeSpacesResource: {}
+        freeSpacesResource: {},
       };
     case actions.SPACE_PLANS_PENDING:
       return {
         ...state,
-        isPending: action.isPending
+        isPending: action.isPending,
       };
     case actions.SPACE_PLANS_FAILURE:
       return {
         ...state,
-        error: action.error
+        error: action.error,
       };
     case actions.SPACE_PLANS_SUCCESS:
       return {
         ...state,
         spaceRatePlans,
-        freeSpacesResource
+        freeSpacesResource,
       };
     default:
       return state;
@@ -173,18 +173,18 @@ function templates(state = {}, action) {
     case actions.SPACE_TEMPLATES_PENDING:
       return {
         ...state,
-        isPending: action.isPending
+        isPending: action.isPending,
       };
 
     case actions.SPACE_TEMPLATES_FAILURE:
       return {
         ...state,
-        error: action.error
+        error: action.error,
       };
     case actions.SPACE_TEMPLATES_SUCCESS:
       return {
         ...state,
-        templatesList: action.templatesList
+        templatesList: action.templatesList,
       };
     default:
       return state;
@@ -198,7 +198,7 @@ function spacePlanSelected(state = {}, action) {
     case actions.SPACE_PLAN_SELECTED:
       return {
         currentPlan: action.currentPlan,
-        selectedPlan: action.selectedPlan
+        selectedPlan: action.selectedPlan,
       };
     default:
       return state;

@@ -7,10 +7,10 @@ describe('AssetBandwidthSection', () => {
   const defaultProps = {
     limit: 750,
     usage: 200,
-    uom: 'GB'
+    uom: 'GB',
   };
 
-  const renderComp = props => {
+  const renderComp = (props) => {
     return render(<AssetBandwidthSection {...props} />);
   };
 
@@ -31,7 +31,7 @@ describe('AssetBandwidthSection', () => {
     const overageProps = {
       limit: 200,
       usage: 750,
-      uom: 'GB'
+      uom: 'GB',
     };
     const { getByTestId } = renderComp(overageProps);
     const overage = getByTestId('asset-bandwidth-overage');

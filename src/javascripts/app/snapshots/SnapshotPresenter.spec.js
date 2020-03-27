@@ -3,23 +3,23 @@ import { render } from '@testing-library/react';
 import SnapshotPresenter from './SnapshotPresenter';
 
 jest.mock('detect-browser', () => ({
-  detect: jest.fn().mockReturnValue({ name: 'chrome' })
+  detect: jest.fn().mockReturnValue({ name: 'chrome' }),
 }));
 
 const entry = {
   fields: {
     fieldId: {
-      'en-US': 'entry'
-    }
-  }
+      'en-US': 'entry',
+    },
+  },
 };
 
 const snapshot = {
   fields: {
     fieldId: {
-      'en-US': 'snapshot'
-    }
-  }
+      'en-US': 'snapshot',
+    },
+  },
 };
 
 const getProps = (args = {}) => {
@@ -27,7 +27,7 @@ const getProps = (args = {}) => {
     editorData: { entity: { data: entry } },
     locale: {
       code: 'en-US',
-      internal_code: 'en-US'
+      internal_code: 'en-US',
     },
     snapshot: { snapshot },
     widget: {
@@ -35,11 +35,11 @@ const getProps = (args = {}) => {
       field: {
         linkType: 'Entry',
         id: 'fieldId',
-        type: 'Symbol'
-      }
+        type: 'Symbol',
+      },
     },
     version: 'current',
-    ...args
+    ...args,
   };
   return props;
 };
@@ -64,21 +64,21 @@ describe('SnapshotPresenter', () => {
     ['undefined', undefined],
     ['empty string', ''],
     ['empty array', []],
-    ['empty object', {}]
+    ['empty object', {}],
   ].forEach(([type, value]) => {
     const empty = {
       fields: {
         fieldId: {
-          'en-US': value
-        }
-      }
+          'en-US': value,
+        },
+      },
     };
     it(`should render empty if value is ${type}`, () => {
       const { getByTestId } = render(
         <SnapshotPresenter
           {...getProps({
             version: 'snapshot',
-            snapshot: { snapshot: empty }
+            snapshot: { snapshot: empty },
           })}
         />
       );
@@ -97,15 +97,15 @@ describe('SnapshotPresenter', () => {
     ['Integer', 1, 'standard'],
     ['Number', 1.2, 'standard'],
     ['Date', '2020-02-21T19:33:33', 'date'],
-    ['Location', { lat: 12, lng: 12 }, 'location']
+    ['Location', { lat: 12, lng: 12 }, 'location'],
   ].forEach(([type, value, testIdSuffix]) => {
     const widget = {
       settings: {},
       field: {
         linkType: 'Entry',
         id: 'fieldId',
-        type
-      }
+        type,
+      },
     };
     it(`should render ${type}`, () => {
       const { getByTestId } = render(
@@ -117,12 +117,12 @@ describe('SnapshotPresenter', () => {
                 data: {
                   fields: {
                     fieldId: {
-                      'en-US': value
-                    }
-                  }
-                }
-              }
-            }
+                      'en-US': value,
+                    },
+                  },
+                },
+              },
+            },
           })}
         />
       );

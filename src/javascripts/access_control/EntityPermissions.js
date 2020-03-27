@@ -31,7 +31,7 @@ const ACTIONS = ['update', 'delete', 'publish', 'unpublish', 'archive', 'unarchi
 export function create(entitySys) {
   return {
     can: partial(canPerformAction, entitySys),
-    canEditFieldLocale: partial(canEditFieldLocale, entitySys)
+    canEditFieldLocale: partial(canEditFieldLocale, entitySys),
   };
 }
 

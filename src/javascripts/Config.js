@@ -20,20 +20,20 @@ export function readInjectedConfig() {
 export const MOCK_APIS = {
   gatekeeper: {
     name: 'Gatekeeper',
-    url: 'https://pcfjmbizecazdxcwy.stoplight-proxy.io'
+    url: 'https://pcfjmbizecazdxcwy.stoplight-proxy.io',
   },
   comments: {
     name: 'Comments',
-    url: 'http://efbnibwtyzjteg4gr.stoplight-proxy.io'
+    url: 'http://efbnibwtyzjteg4gr.stoplight-proxy.io',
   },
   tasks: {
     name: 'Tasks',
-    url: 'https://xuybd3r75narrebtz.stoplight-proxy.io'
+    url: 'https://xuybd3r75narrebtz.stoplight-proxy.io',
   },
   'disco-lab': {
     name: 'Disco Lab',
-    url: 'http://6ryugnmcvdcwsggmd.stoplight-proxy.io'
-  }
+    url: 'http://6ryugnmcvdcwsggmd.stoplight-proxy.io',
+  },
 };
 
 /**
@@ -209,7 +209,7 @@ export const services = {
   segment_io: settings.segment_io,
   embedly: settings.embedly,
   getstream_io: settings.getstream_io,
-  osano: settings.osano
+  osano: settings.osano,
 };
 
 function ensureLeadingSlash(x = '') {

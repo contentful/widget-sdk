@@ -12,7 +12,7 @@ import {
   Heading,
   Paragraph,
   Subheading,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
@@ -47,11 +47,11 @@ AddButton.propTypes = {
   onClick: PropTypes.func,
   label: PropTypes.string.isRequired,
   disabled: PropTypes.bool,
-  className: PropTypes.string
+  className: PropTypes.string,
 };
 AddButton.defaultProps = {
   onClick: () => {},
-  disabled: false
+  disabled: false,
 };
 
 const EditButton = ({ onClick }) => (
@@ -83,38 +83,38 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
-    marginBottom: tokens.spacingL
+    marginBottom: tokens.spacingL,
   }),
   details: css({
     padding: '1em 2em 2em',
-    display: 'flex'
+    display: 'flex',
   }),
   detailsContent: css({
-    flex: 1
+    flex: 1,
   }),
   sidebar: css({
     marginRight: '25px',
-    width: '400px'
+    width: '400px',
   }),
   profileSection: css({
     borderBottom: `1px solid ${tokens.colorElementLight}`,
     paddingBottom: '20px',
-    marginBottom: '20px'
+    marginBottom: '20px',
   }),
   card: css({
     '> *': {
-      marginBottom: '1rem'
-    }
+      marginBottom: '1rem',
+    },
   }),
   name: css(ellipsisStyle),
   description: css(ellipsisStyle),
   svgContainer: css({ width: '15vw', minWidth: '280px', marginLeft: '-1vw' }),
   emptyMessageTeamName: css({
-    fontWeight: tokens.fontWeightDemiBold
+    fontWeight: tokens.fontWeightDemiBold,
   }),
   addButton: css({
-    marginTop: tokens.spacingL
-  })
+    marginTop: tokens.spacingL,
+  }),
 };
 
 class TeamDetails extends React.Component {
@@ -126,7 +126,7 @@ class TeamDetails extends React.Component {
     noOrgMembersLeft: PropTypes.bool.isRequired,
     team: TeamPropType,
     orgId: PropTypes.string.isRequired,
-    removeTeam: PropTypes.func.isRequired
+    removeTeam: PropTypes.func.isRequired,
   };
 
   tabs = {
@@ -148,8 +148,8 @@ class TeamDetails extends React.Component {
             <span className={styles.emptyMessageTeamName}>{this.props.team.name}</span>, contact
             your admin
           </>
-        )
-      })
+        ),
+      }),
     },
     spaceMemberships: {
       label: 'Space memberships',
@@ -163,15 +163,15 @@ class TeamDetails extends React.Component {
             To grant <span className={styles.emptyMessageTeamName}>{this.props.team.name}</span>{' '}
             access to more or one spaces, contact your admin
           </>
-        )
-      })
-    }
+        ),
+      }),
+    },
   };
 
   state = {
     showTeamDialog: false,
     selectedTab: this.tabs.teamMembers,
-    showingForm: false
+    showingForm: false,
   };
 
   isSelected(id) {
@@ -392,15 +392,15 @@ function getAvailableOrgMemberships(state) {
 }
 
 export default connect(
-  state => ({
+  (state) => ({
     team: getTeams(state)[getCurrentTeam(state)],
     orgId: getOrgId(state),
     readOnlyPermission: hasReadOnlyPermission(state),
     emptyTeamMemberships: getMembershipsOfCurrentTeamToDisplay(state).length === 0,
     emptyTeamSpaceMemberships: getTeamSpaceMembershipsOfCurrentTeamToDisplay(state).length === 0,
-    noOrgMembersLeft: getAvailableOrgMemberships(state).length === 0
+    noOrgMembersLeft: getAvailableOrgMemberships(state).length === 0,
   }),
-  dispatch => ({
-    removeTeam: teamId => dispatch({ type: 'REMOVE_TEAM', payload: { teamId } })
+  (dispatch) => ({
+    removeTeam: (teamId) => dispatch({ type: 'REMOVE_TEAM', payload: { teamId } }),
   })
 )(TeamDetails);

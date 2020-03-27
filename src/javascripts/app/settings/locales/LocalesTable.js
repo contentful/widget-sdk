@@ -8,7 +8,7 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Tag
+  Tag,
 } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink';
 
@@ -24,12 +24,12 @@ function groupLocaleNamesByCode(locales) {
 
 export default class LocalesTable extends React.Component {
   static propTypes = {
-    locales: PropTypes.arrayOf(PropTypes.object).isRequired
+    locales: PropTypes.arrayOf(PropTypes.object).isRequired,
   };
 
   static getDerivedStateFromProps(props) {
     return {
-      localeNamesByCode: groupLocaleNamesByCode(props.locales)
+      localeNamesByCode: groupLocaleNamesByCode(props.locales),
     };
   }
 
@@ -79,7 +79,7 @@ export default class LocalesTable extends React.Component {
           </TableRow>
         </TableHead>
         <TableBody>
-          {_.orderBy(this.props.locales, ['default', 'name'], ['desc', 'asc']).map(locale =>
+          {_.orderBy(this.props.locales, ['default', 'name'], ['desc', 'asc']).map((locale) =>
             this.renderRowForLocale(locale)
           )}
         </TableBody>

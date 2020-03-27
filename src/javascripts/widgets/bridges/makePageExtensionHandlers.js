@@ -7,7 +7,7 @@ export default function makePageExtensionHandlers(
   isOnPageExtensionPage = false
 ) {
   const { spaceContext } = checkDependencies('PageExtensionHandlers', dependencies, [
-    'spaceContext'
+    'spaceContext',
   ]);
 
   return async function navigate(options = {}) {
@@ -31,14 +31,14 @@ export default function makePageExtensionHandlers(
         spaceId: spaceContext.getId(),
         environmentId: spaceContext.getEnvironmentId(),
         extensionId: id,
-        path: path || ''
+        path: path || '',
       },
       options: {
         // If we are navigating to a new extension page OR we are not on the extension page,
         // we want to notify a state change of the URL. Otherwise, do NOT notify a state change
         // to ensure that the iframe on the page extension page doesn't reload.
-        notify: navigatingToNewExtensionPage || !isOnPageExtensionPage
-      }
+        notify: navigatingToNewExtensionPage || !isOnPageExtensionPage,
+      },
     });
 
     return { navigated: true, path };

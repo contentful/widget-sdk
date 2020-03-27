@@ -4,7 +4,7 @@ import UserProvisioningConfiguration from './UserProvisioningConfiguration';
 import ModalLauncher from 'app/common/ModalLauncher';
 
 jest.mock('app/settings/api/cma-tokens/TokenResourceManager', () => ({
-  create: jest.fn()
+  create: jest.fn(),
 }));
 
 const renderComponent = () => {

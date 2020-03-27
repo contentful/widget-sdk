@@ -7,7 +7,7 @@ const mockAllTrue = {
   entry: true,
   asset: true,
   apiKey: true,
-  settings: true
+  settings: true,
 };
 
 jest.mock('access_control/AccessChecker', () => {
@@ -18,7 +18,7 @@ jest.mock('access_control/AccessChecker', () => {
 
   return {
     ...AccessChecker,
-    getSectionVisibility: jest.fn(() => mockAllTrue)
+    getSectionVisibility: jest.fn(() => mockAllTrue),
   };
 });
 
@@ -30,7 +30,7 @@ describe('#getFirstAccessibleSref', () => {
   it('handles some-true scenario', () => {
     getSectionVisibility.mockImplementationOnce(() => ({
       ...mockAllTrue,
-      entry: false
+      entry: false,
     }));
     expect(getFirstAccessibleSref()).toBe('.content_types.list');
   });
@@ -46,7 +46,7 @@ describe('#getFirstAccessibleSref', () => {
   });
 
   it('returns home screen sref when not activated and admin', () => {
-    spaceContextMocked.getData.mockImplementation(key => {
+    spaceContextMocked.getData.mockImplementation((key) => {
       if (key === 'spaceMember.admin') {
         return true;
       }
@@ -60,7 +60,7 @@ describe('#getFirstAccessibleSref', () => {
   });
 
   it('returns first available screen sref when activated and admin', () => {
-    spaceContextMocked.getData.mockImplementation(key => {
+    spaceContextMocked.getData.mockImplementation((key) => {
       if (key === 'spaceMember.admin') {
         return true;
       }
@@ -74,7 +74,7 @@ describe('#getFirstAccessibleSref', () => {
   });
 
   it('returns home screen sref when user is author or editor', () => {
-    spaceContextMocked.getData.mockImplementation(key => {
+    spaceContextMocked.getData.mockImplementation((key) => {
       if (key === 'spaceMember.roles') {
         return [{ name: 'Author' }];
       }

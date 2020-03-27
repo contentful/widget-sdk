@@ -9,20 +9,20 @@ import { shorten } from 'utils/NumberUtils';
 const styles = {
   heading: css({
     color: '#536171',
-    fontWeight: tokens.fontWeightNormal
+    fontWeight: tokens.fontWeightNormal,
   }),
   usageNumber: css({
     color: '#253545',
     fontSize: tokens.fontSize3Xl,
-    fontWeight: tokens.fontWeightMedium
+    fontWeight: tokens.fontWeightMedium,
   }),
   overageNumber: css({
     color: '#9F6312',
-    fontSize: tokens.fontSizeS
-  })
+    fontSize: tokens.fontSizeS,
+  }),
 };
 
-const OrganizationUsageInfo = props => {
+const OrganizationUsageInfo = (props) => {
   const { totalUsage, includedLimit } = props;
 
   return (
@@ -54,7 +54,7 @@ const OrganizationUsageInfo = props => {
 
 OrganizationUsageInfo.propTypes = {
   totalUsage: PropTypes.number.isRequired,
-  includedLimit: PropTypes.number.isRequired
+  includedLimit: PropTypes.number.isRequired,
 };
 
 export default OrganizationUsageInfo;

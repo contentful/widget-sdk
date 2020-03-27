@@ -20,29 +20,29 @@ export const styles = {
     color: tokens.colorTextMid,
     background: tokens.colorElementLightest,
     transition: 'transform .3s cubic-bezier(.38,.54,.5,.99)',
-    zIndex: 1
+    zIndex: 1,
   }),
   commentList: css({
     overflow: 'auto',
     flexGrow: 1,
     margin: `-${tokens.spacingM}`,
-    padding: tokens.spacingM
+    padding: tokens.spacingM,
   }),
   commentListLoading: css({
-    overflow: 'hidden'
+    overflow: 'hidden',
   }),
   commentForm: css({
     borderTop: `1px solid ${tokens.colorElementLight}`,
     padding: `${tokens.spacingS} 0`,
-    marginTop: tokens.spacingM
+    marginTop: tokens.spacingM,
   }),
   errorState: css({
     display: 'flex',
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    textAlign: 'center'
-  })
+    textAlign: 'center',
+  }),
 };
 
 function CommentsPanelContent({ endpoint, entryId, onCommentsCountUpdate }) {
@@ -52,23 +52,23 @@ function CommentsPanelContent({ endpoint, entryId, onCommentsCountUpdate }) {
   const listRef = useRef(null);
 
   const setUpdatedComments = useCallback(
-    comments => {
+    (comments) => {
       setComments(comments);
       onCommentsCountUpdate(comments.length);
     },
     [onCommentsCountUpdate]
   );
 
-  const handleNewComment = comment => {
+  const handleNewComment = (comment) => {
     const updatedComments = [...comments, comment];
     setUpdatedComments(updatedComments);
     !isReply(comment) && setShouldScroll(true);
   };
 
   // Remove a single comment or a comment and its replies
-  const handleCommentRemoved = comment => {
+  const handleCommentRemoved = (comment) => {
     const isReply = isReplyToComment(comment);
-    const newList = comments.filter(item => {
+    const newList = comments.filter((item) => {
       return !(item == comment || isReply(item));
     });
     setUpdatedComments(newList);
@@ -105,7 +105,7 @@ function CommentsPanelContent({ endpoint, entryId, onCommentsCountUpdate }) {
         {isLoading && <CommentSkeletonGroup />}
         {isEmpty && <CommentsPanelEmptyState />}
         {threads.length > 0 &&
-          threads.map(thread => (
+          threads.map((thread) => (
             <CommentThread
               endpoint={endpoint}
               key={thread[0].sys.id}
@@ -133,7 +133,7 @@ function CommentsPanelContent({ endpoint, entryId, onCommentsCountUpdate }) {
 CommentsPanelContent.propTypes = {
   endpoint: PropTypes.func.isRequired,
   entryId: PropTypes.string.isRequired,
-  onCommentsCountUpdate: PropTypes.func.isRequired
+  onCommentsCountUpdate: PropTypes.func.isRequired,
 };
 
 export default function CommentsPanel({ isVisible, ...props }) {
@@ -146,7 +146,7 @@ export default function CommentsPanel({ isVisible, ...props }) {
 
 CommentsPanel.propTypes = {
   ...CommentsPanelContent.propTypes,
-  isVisible: PropTypes.bool
+  isVisible: PropTypes.bool,
 };
 
 function scrollToBottom(element) {
@@ -155,7 +155,7 @@ function scrollToBottom(element) {
     element.scroll({
       top: element.scrollHeight,
       left: 0,
-      behavior: 'smooth'
+      behavior: 'smooth',
     });
   } catch {
     // Safari, IE and Edge

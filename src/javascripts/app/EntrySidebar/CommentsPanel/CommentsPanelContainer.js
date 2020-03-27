@@ -14,11 +14,11 @@ import CommentsPanel from './CommentsPanel';
 export default class CommentsPanelContainer extends React.Component {
   static propTypes = {
     emitter: PropTypes.object.isRequired,
-    isVisible: PropTypes.bool.isRequired
+    isVisible: PropTypes.bool.isRequired,
   };
 
   state = {
-    initialized: false
+    initialized: false,
   };
 
   componentDidMount() {
@@ -29,7 +29,7 @@ export default class CommentsPanelContainer extends React.Component {
     });
   }
 
-  onCommentsCountUpdate = commentsCount => {
+  onCommentsCountUpdate = (commentsCount) => {
     this.props.emitter.emit(SidebarEventTypes.UPDATED_COMMENTS_COUNT, commentsCount);
   };
 

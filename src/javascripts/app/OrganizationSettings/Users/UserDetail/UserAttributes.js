@@ -11,7 +11,7 @@ import {
   TextLink,
   Notification,
   List,
-  ListItem
+  ListItem,
 } from '@contentful/forma-36-react-components';
 import { orgRoles } from 'utils/MembershipUtils';
 import SsoExemptionDialog from './SsoExemptionModal';
@@ -20,7 +20,7 @@ import ChangeOwnRoleConfirmation from './ChangeOwnRoleConfirmation';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import {
   updateMembership,
-  removeMembership
+  removeMembership,
 } from 'access_control/OrganizationMembershipRepository';
 import RemoveUserConfirmation from '../RemoveUserDialog';
 import { go } from 'states/Navigator';
@@ -32,23 +32,23 @@ const styles = {
     gridAutoFlow: 'column',
     gridTemplateColumns: '1fr 1fr',
     marginTop: tokens.spacingL,
-    marginBottom: tokens.spacingL
+    marginBottom: tokens.spacingL,
   }),
   rowWithSso: css({
-    gridTemplateColumns: '1fr 1fr 1fr'
+    gridTemplateColumns: '1fr 1fr 1fr',
   }),
   column: css({
     borderTop: `1px solid ${tokens.colorElementLight}`,
     paddingTop: tokens.spacingL,
-    color: tokens.colorTextMid
+    color: tokens.colorTextMid,
   }),
   item: css({
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   }),
   label: css({
-    marginRight: tokens.spacingS
-  })
+    marginRight: tokens.spacingS,
+  }),
 };
 
 export default function UserAttributes({ membership, isSelf, isOwner, onRoleChange, orgId }) {
@@ -59,7 +59,7 @@ export default function UserAttributes({ membership, isSelf, isOwner, onRoleChan
   // disable changing the org role if a non-owner is viewing an owner
   const shouldDisableRoleSelector = !isOwner && membership.role === 'owner';
 
-  const changeRole = async role => {
+  const changeRole = async (role) => {
     if (isSelf) {
       const confirmation = await ModalLauncher.open(({ isShown, onClose }) => (
         <ChangeOwnRoleConfirmation
@@ -150,7 +150,7 @@ export default function UserAttributes({ membership, isSelf, isOwner, onRoleChan
           </ListItem>
           <ListItem>
             <Paragraph>
-              {orgRoles.find(role => role.value === membership.role).description}
+              {orgRoles.find((role) => role.value === membership.role).description}
             </Paragraph>
           </ListItem>
           <ListItem>
@@ -174,7 +174,7 @@ UserAttributes.propTypes = {
   isSelf: PropTypes.bool.isRequired,
   isOwner: PropTypes.bool.isRequired,
   onRoleChange: PropTypes.func.isRequired,
-  orgId: PropTypes.string
+  orgId: PropTypes.string,
 };
 
 function UserSsoInfo({ membership }) {
@@ -203,7 +203,7 @@ function UserSsoInfo({ membership }) {
 }
 
 UserSsoInfo.propTypes = {
-  membership: OrganizationMembershipPropType.isRequired
+  membership: OrganizationMembershipPropType.isRequired,
 };
 
 function showExemptionDialog(membership) {

@@ -14,23 +14,23 @@ export default function register() {
       PromisedLoader.IN_PROGRESS = 'Already in progress';
 
       PromisedLoader.prototype = {
-        startLoading: function() {
+        startLoading: function () {
           this.inProgress = true;
         },
 
-        endLoading: function() {
+        endLoading: function () {
           this.inProgress = false;
         },
 
-        _loadPromiseImmediately: function(promiseLoader, args, deferred) {
+        _loadPromiseImmediately: function (promiseLoader, args, deferred) {
           const loader = this;
           this.startLoading();
           promiseLoader(...args).then(
-            res => {
+            (res) => {
               deferred.resolve(res);
               loader.endLoading();
             },
-            err => {
+            (err) => {
               deferred.reject(err);
               loader.endLoading();
             }
@@ -39,7 +39,7 @@ export default function register() {
 
         _loadPromise: null, // Initialized in Constructor
 
-        loadPromise: function(promiseLoader /*, args[] */) {
+        loadPromise: function (promiseLoader /*, args[] */) {
           const deferred = $q.defer();
           const args = drop(arguments, 1);
           if (this.inProgress) {
@@ -50,10 +50,10 @@ export default function register() {
           this._loadPromise(promiseLoader, args, deferred);
 
           return deferred.promise;
-        }
+        },
       };
 
       return PromisedLoader;
-    }
+    },
   ]);
 }

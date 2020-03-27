@@ -1,7 +1,7 @@
 import { canPerformActionOnEntryOfType, Action } from 'access_control/AccessChecker';
 
 export default function getAccessibleCTs(publishedCTs, selectedCtId) {
-  return publishedCTs.getAllBare().filter(ct => accessibleOrSelected(selectedCtId, ct));
+  return publishedCTs.getAllBare().filter((ct) => accessibleOrSelected(selectedCtId, ct));
 }
 function accessibleOrSelected(selectedCtId, ct) {
   // Get only accessible content types or one

@@ -2,20 +2,17 @@ import * as React from 'react';
 import { haveBlocks } from './UtilHave';
 import { TOOLBAR_PLUGIN_PROP_TYPES } from './PluginApi';
 
-export default ({
-  type,
-  title,
-  icon,
-  applyChange = (editor, type) => editor.setBlocks(type)
-}) => Block => {
+export default ({ type, title, icon, applyChange = (editor, type) => editor.setBlocks(type) }) => (
+  Block
+) => {
   return class BlockSelectDecorator extends React.Component {
     static propTypes = TOOLBAR_PLUGIN_PROP_TYPES;
 
-    handleSelect = e => {
+    handleSelect = (e) => {
       const {
         editor,
         onToggle,
-        richTextAPI: { logToolbarAction }
+        richTextAPI: { logToolbarAction },
       } = this.props;
       e.preventDefault();
 

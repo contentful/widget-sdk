@@ -2,7 +2,7 @@ import { track } from 'analytics/Analytics';
 
 export const Origin = {
   DIALOG: 'dialog',
-  SIDEBAR: 'sidebar'
+  SIDEBAR: 'sidebar',
 };
 
 export function onIncomingLinkClick({
@@ -12,20 +12,20 @@ export function onIncomingLinkClick({
   origin,
   linkEntityId,
   dialogAction,
-  dialogSessionId
+  dialogSessionId,
 }) {
   const defaults = {
     entity_id: entityId,
     entity_type: entityType,
     link_entity_id: linkEntityId,
-    incoming_links_count: incomingLinksCount
+    incoming_links_count: incomingLinksCount,
   };
   let options;
   if (origin === Origin.DIALOG) {
     options = {
       ...defaults,
       dialog_action: dialogAction,
-      dialog_session_id: dialogSessionId
+      dialog_session_id: dialogSessionId,
     };
   } else {
     options = defaults;
@@ -51,7 +51,7 @@ export function onFetchLinks({ entityId, entityType, incomingLinkIds }) {
     entity_id: entityId,
     entity_type: entityType,
     incoming_links_count: incomingLinkIds.length,
-    incoming_link_ids: incomingLinkIds
+    incoming_link_ids: incomingLinkIds,
   });
 }
 
@@ -68,7 +68,7 @@ function trackDialogEvent(
       entity_type: entityType,
       dialog_action: dialogAction,
       dialog_session_id: dialogSessionId,
-      incoming_links_count: incomingLinksCount
+      incoming_links_count: incomingLinksCount,
     }
   );
 }

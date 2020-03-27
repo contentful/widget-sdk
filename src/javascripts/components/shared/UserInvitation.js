@@ -10,7 +10,7 @@ import { go } from 'states/Navigator';
 import {
   refresh as refreshToken,
   getOrganization,
-  getOrganizationSpaces
+  getOrganizationSpaces,
 } from 'services/TokenStore';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { article } from 'utils/StringUtils';
@@ -25,15 +25,15 @@ export default class UserInvitation extends React.Component {
       role: PropTypes.string.isRequired,
       inviterName: PropTypes.string.isRequired,
       sys: PropTypes.shape({
-        id: PropTypes.string
-      })
+        id: PropTypes.string,
+      }),
     }),
     errored: PropTypes.bool,
-    user: UserPropType
+    user: UserPropType,
   };
 
   state = {
-    accepting: false
+    accepting: false,
   };
 
   acceptInvitation = async () => {
@@ -41,12 +41,12 @@ export default class UserInvitation extends React.Component {
     const {
       invitation: {
         organizationName,
-        sys: { id: invitationId }
-      }
+        sys: { id: invitationId },
+      },
     } = this.props;
 
     this.setState({
-      accepting: true
+      accepting: true,
     });
 
     try {
@@ -54,7 +54,7 @@ export default class UserInvitation extends React.Component {
       // TODO: this needs unit tests!
       const acceptedInvitation = await endpoint({
         method: 'POST',
-        path: ['invitations', invitationId, 'accept']
+        path: ['invitations', invitationId, 'accept'],
       });
 
       await refreshToken();
@@ -65,7 +65,7 @@ export default class UserInvitation extends React.Component {
         'sys',
         'space',
         'sys',
-        'id'
+        'id',
       ]);
 
       if (!firstSpaceId) {
@@ -94,7 +94,7 @@ export default class UserInvitation extends React.Component {
       });
     } catch (e) {
       this.setState({
-        accepting: false
+        accepting: false,
       });
 
       const errorMessageText = e.data && e.data.message;

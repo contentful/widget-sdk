@@ -5,7 +5,7 @@ const LocalesUsageStatus = {
   ONE_LOCALE_USED: 'ONE_LOCALE_USED',
   MORE_THAN_ONE_LOCALE_USED: 'MORE_THAN_ONE_LOCALE_USED',
   LOCALES_LIMIT_REACHED: 'LOCALES_LIMIT_REACHED',
-  UNKNOWN: 'UNKNOWN'
+  UNKNOWN: 'UNKNOWN',
 };
 
 export function getLocalesUsageStatus({ canCreateMultipleLocales, locales, localeResource }) {

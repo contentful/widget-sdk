@@ -6,8 +6,8 @@ import { css } from 'emotion';
 
 const styles = {
   confirmationInput: css({
-    marginTop: tokens.spacingS
-  })
+    marginTop: tokens.spacingS,
+  }),
 };
 
 const LastAdminRemovalConfirmDialog = ({ displayName, isShown, onClose }) => {
@@ -49,7 +49,7 @@ const LastAdminRemovalConfirmDialog = ({ displayName, isShown, onClose }) => {
 LastAdminRemovalConfirmDialog.propTypes = {
   displayName: PropTypes.string.isRequired,
   isShown: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired
+  onClose: PropTypes.func.isRequired,
 };
 
 export default LastAdminRemovalConfirmDialog;

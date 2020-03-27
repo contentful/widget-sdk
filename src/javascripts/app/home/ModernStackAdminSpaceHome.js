@@ -21,7 +21,7 @@ const ModernStackAdminSpaceHome = ({
   managementToken,
   entry,
   isSupportEnabled,
-  hasTeamsEnabled
+  hasTeamsEnabled,
 }) => {
   const prefix = getStoragePrefix();
   const deploymentProvider = store.get(`${prefix}:deploymentProvider`);
@@ -86,8 +86,8 @@ const ModernStackAdminSpaceHome = ({
                 headerText: (
                   <span className={styles.demiBold}>Learn what’s possible with Contentful</span>
                 ),
-                content: <LearnAboutContentful />
-              }
+                content: <LearnAboutContentful />,
+              },
             ]}
           />
         </WidgetContainer.Col>
@@ -108,7 +108,7 @@ ModernStackAdminSpaceHome.propTypes = {
   managementToken: PropTypes.string,
   entry: PropTypes.object,
   isSupportEnabled: PropTypes.bool.isRequired,
-  hasTeamsEnabled: PropTypes.bool.isRequired
+  hasTeamsEnabled: PropTypes.bool.isRequired,
 };
 
 export default ModernStackAdminSpaceHome;

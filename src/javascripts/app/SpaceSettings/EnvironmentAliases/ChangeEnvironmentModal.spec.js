@@ -3,7 +3,7 @@ import { render, wait } from '@testing-library/react';
 import ChangeEnvironmentModal from './ChangeEnvironmentModal';
 
 jest.mock('./Utils', () => ({
-  handleChangeEnvironment: jest.fn().mockImplementation((...res) => Promise.resolve(res))
+  handleChangeEnvironment: jest.fn().mockImplementation((...res) => Promise.resolve(res)),
 }));
 
 let setModalOpen;
@@ -18,24 +18,24 @@ describe('ChangeEnvironmentModal', () => {
           {
             aliases: ['master'],
             id: 'staging',
-            payload: { sys: { createdAt: Date.now() } }
+            payload: { sys: { createdAt: Date.now() } },
           },
           {
             aliases: [],
             id: 'release-1',
-            payload: { sys: { createdAt: Date.now() } }
+            payload: { sys: { createdAt: Date.now() } },
           },
           {
             aliases: [],
             id: 'release-2',
-            payload: { sys: { createdAt: Date.now() } }
-          }
+            payload: { sys: { createdAt: Date.now() } },
+          },
         ]}
         spaceId="123456"
         targetEnv={{
           aliases: ['master'],
           id: 'staging',
-          payload: { sys: { createdAt: Date.now() } }
+          payload: { sys: { createdAt: Date.now() } },
         }}
         modalOpen
         setModalOpen={setModalOpen}

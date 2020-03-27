@@ -9,15 +9,15 @@ import { track } from 'analytics/Analytics';
 import { connectionTestingAllowed, formatConnectionTestErrors } from './utils';
 import * as fake from 'test/helpers/fakeFactory';
 
-const awaitSetImmediate = () => new Promise(resolve => setImmediate(resolve));
+const awaitSetImmediate = () => new Promise((resolve) => setImmediate(resolve));
 
 jest.mock('./utils', () => ({
   connectionTestingAllowed: jest.fn(),
-  formatConnectionTestErrors: jest.fn().mockReturnValue([])
+  formatConnectionTestErrors: jest.fn().mockReturnValue([]),
 }));
 
 jest.mock('Config', () => ({
-  authUrl: path => `https://be.joistio.com${path}`
+  authUrl: (path) => `https://be.joistio.com${path}`,
 }));
 
 describe('IDPSetupForm', () => {
@@ -37,8 +37,8 @@ describe('IDPSetupForm', () => {
       idpName: {},
       ssoName: {},
       idpSsoTargetUrl: {},
-      idpCert: {}
-    }
+      idpCert: {},
+    },
   }) => {
     return Enzyme.shallow(
       <IDPSetupForm
@@ -60,8 +60,8 @@ describe('IDPSetupForm', () => {
   beforeEach(() => {
     identityProvider = {
       sys: {
-        version: 1
-      }
+        version: 1,
+      },
     };
 
     global.open = jest.fn();
@@ -71,7 +71,7 @@ describe('IDPSetupForm', () => {
       addEventListener: jest.spyOn(global, 'addEventListener'),
       removeEventListener: jest.spyOn(global, 'removeEventListener'),
       setInterval: jest.spyOn(global, 'setInterval'),
-      clearInterval: jest.spyOn(global, 'clearInterval')
+      clearInterval: jest.spyOn(global, 'clearInterval'),
     };
   });
 
@@ -128,7 +128,7 @@ describe('IDPSetupForm', () => {
 
     expect(updateFieldValue).not.toHaveBeenCalled();
 
-    await new Promise(resolve => setTimeout(resolve, 550));
+    await new Promise((resolve) => setTimeout(resolve, 550));
 
     expect(updateFieldValue).toHaveBeenCalledTimes(1);
   });
@@ -150,11 +150,11 @@ describe('IDPSetupForm', () => {
     const fields = {
       idpName: {
         // The current name is "Ping Identity", with the space. This is the legacy version
-        value: 'PingIdentity'
+        value: 'PingIdentity',
       },
       ssoName: {},
       idpSsoTargetUrl: {},
-      idpCert: {}
+      idpCert: {},
     };
 
     const rendered = render({ fields, identityProvider, organization });
@@ -190,17 +190,14 @@ describe('IDPSetupForm', () => {
 
     const rendered = render({ identityProvider, organization, connectionTestStart });
 
-    rendered
-      .find('[testId="test-connection-button"]')
-      .first()
-      .simulate('click');
+    rendered.find('[testId="test-connection-button"]').first().simulate('click');
 
     expect(connectionTestStart).toHaveBeenCalledTimes(1);
   });
 
   it('should show a cancel button if the connection test is pending', () => {
     const connectionTest = {
-      isPending: true
+      isPending: true,
     };
 
     const rendered = render({ identityProvider, organization, connectionTest });
@@ -210,7 +207,7 @@ describe('IDPSetupForm', () => {
 
   it('should call the connectionTestCancel prop if the test cancel button is clicked', () => {
     const connectionTest = {
-      isPending: true
+      isPending: true,
     };
 
     const connectionTestCancel = jest.fn();
@@ -219,13 +216,10 @@ describe('IDPSetupForm', () => {
       identityProvider,
       organization,
       connectionTest,
-      connectionTestCancel
+      connectionTestCancel,
     });
 
-    rendered
-      .find('[testId="cancel-button"]')
-      .first()
-      .simulate('click');
+    rendered.find('[testId="cancel-button"]').first().simulate('click');
 
     expect(connectionTestCancel).toHaveBeenCalledTimes(1);
   });
@@ -233,7 +227,7 @@ describe('IDPSetupForm', () => {
   it('should show the unknown note if the result is unknown', () => {
     const connectionTest = {
       timestamp: 'timestamp',
-      result: null
+      result: null,
     };
 
     const rendered = render({ identityProvider, organization, connectionTest });
@@ -246,7 +240,7 @@ describe('IDPSetupForm', () => {
       result: TEST_RESULTS.failure,
 
       // TODO: ensure that this is handled in the reducer AND add proptype for connectionTest
-      errors: []
+      errors: [],
     };
 
     const rendered = render({ identityProvider, organization, connectionTest });
@@ -256,7 +250,7 @@ describe('IDPSetupForm', () => {
 
   it('should show the success note if the result is successful', () => {
     const connectionTest = {
-      result: TEST_RESULTS.success
+      result: TEST_RESULTS.success,
     };
 
     const rendered = render({ identityProvider, organization, connectionTest });
@@ -267,7 +261,7 @@ describe('IDPSetupForm', () => {
   it('should show formatted errors to the user if the result is failure', () => {
     const connectionTest = {
       result: TEST_RESULTS.failure,
-      errors: ['something bad happened', 'another error']
+      errors: ['something bad happened', 'another error'],
     };
 
     const formattedErrs = ['Formatted err 1', 'Formatted err 2'];
@@ -287,7 +281,7 @@ describe('IDPSetupForm', () => {
     const connectionTest = {
       isPending: true,
       result: TEST_RESULTS.failure,
-      errors: ['something bad happened', 'another error']
+      errors: ['something bad happened', 'another error'],
     };
 
     const rendered = render({ identityProvider, organization, connectionTest });
@@ -301,15 +295,12 @@ describe('IDPSetupForm', () => {
 
     const enable = jest.fn();
     const connectionTest = {
-      result: TEST_RESULTS.success
+      result: TEST_RESULTS.success,
     };
 
     const rendered = render({ identityProvider, organization, connectionTest, enable });
 
-    rendered
-      .find('[testId="enable-button"]')
-      .first()
-      .simulate('click');
+    rendered.find('[testId="enable-button"]').first().simulate('click');
 
     await awaitSetImmediate();
 
@@ -321,15 +312,12 @@ describe('IDPSetupForm', () => {
 
     const enable = jest.fn();
     const connectionTest = {
-      result: TEST_RESULTS.success
+      result: TEST_RESULTS.success,
     };
 
     const rendered = render({ identityProvider, organization, connectionTest, enable });
 
-    rendered
-      .find('[testId="enable-button"]')
-      .first()
-      .simulate('click');
+    rendered.find('[testId="enable-button"]').first().simulate('click');
 
     await awaitSetImmediate();
 
@@ -340,10 +328,7 @@ describe('IDPSetupForm', () => {
   it('should track when a user clicks on the support link', () => {
     const rendered = render({ identityProvider, organization });
 
-    rendered
-      .find('[testId="support-link"]')
-      .first()
-      .simulate('click');
+    rendered.find('[testId="support-link"]').first().simulate('click');
 
     expect(track).toHaveBeenCalledTimes(1);
     expect(track).toHaveBeenNthCalledWith(1, 'sso:contact_support');

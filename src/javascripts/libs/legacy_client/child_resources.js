@@ -13,7 +13,7 @@ export default function mixinChildResourceFactory(target) {
      * The instances inherit the parent resource's persistence context
      * with 'path' added to it.
      */
-    childResourceFactory: function(Constructor, path) {
+    childResourceFactory: function (Constructor, path) {
       const persistenceContext = this.childPersistenceContext(path);
       function construct(data) {
         const entity = new Constructor(data, persistenceContext);
@@ -35,9 +35,9 @@ export default function mixinChildResourceFactory(target) {
       };
     },
 
-    childPersistenceContext: function(path) {
+    childPersistenceContext: function (path) {
       const endpoint = this.endpoint(path).deleteHeader('X-Contentful-Version');
       return this.persistenceContext.withEndpoint(endpoint);
-    }
+    },
   });
 }

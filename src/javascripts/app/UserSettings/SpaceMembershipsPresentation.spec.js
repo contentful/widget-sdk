@@ -10,7 +10,7 @@ const build = (props = {}) =>
       {...{
         onLeave: noop,
         spaces: [],
-        ...props
+        ...props,
       }}
     />
   );
@@ -39,14 +39,14 @@ describe('SpaceMembershipsPresentation', () => {
         sys: { id: 'space1' },
         name: 'Space 1',
         organization: { name: 'Org A' },
-        spaceMembership: undefined
+        spaceMembership: undefined,
       },
       {
         sys: { id: 'space2' },
         name: 'Space 2',
         organization: { name: 'Org A' },
-        spaceMembership: { sys: { id: 'membership alpha' } }
-      }
+        spaceMembership: { sys: { id: 'membership alpha' } },
+      },
     ];
     let onLeave;
 

@@ -38,14 +38,14 @@ export default function register() {
       return function openFieldDialog($scope, field, widget) {
         const scope = extend($scope.$new(), {
           field: field,
-          widget: widget
+          widget: widget,
         });
         return modalDialog.open({
           scope: scope,
-          template: fieldDialogTemplate
+          template: fieldDialogTemplate,
         }).promise;
       };
-    }
+    },
   ]);
 
   /**
@@ -81,7 +81,7 @@ export default function register() {
       $scope.currentTitleField = getTitleField();
 
       $scope.richTextOptions = getInitialRichTextOptions();
-      $scope.onRichTextOptionsChange = options => {
+      $scope.onRichTextOptionsChange = (options) => {
         $scope.richTextOptions = options;
       };
 
@@ -89,7 +89,7 @@ export default function register() {
         id: $scope.widget.widgetId,
         namespace: $scope.widget.widgetNamespace,
         // Need to clone so we do not mutate data if we cancel the dialog
-        params: cloneDeep($scope.widget.settings || {})
+        params: cloneDeep($scope.widget.settings || {}),
       };
 
       // Reposition the dialog when the active tab changes.
@@ -103,15 +103,15 @@ export default function register() {
         checked: $scope.decoratedField && $scope.decoratedField.required,
         helpText: "You won't be able to publish an entry if this field is empty",
         className: 'validation-checkboxfield',
-        onChange: e => {
+        onChange: (e) => {
           if ($scope.decoratedField) {
             $scope.decoratedField.required = e.target.checked;
             $scope.$digest();
           }
-        }
+        },
       });
 
-      $scope.buildValidationCheckboxProps = validation => {
+      $scope.buildValidationCheckboxProps = (validation) => {
         const { name, type, nodeType, onItems, enabled, helpText } = validation;
         const checkboxId = `field-validations${nodeType ? `--${nodeType}` : ''}${`--${type}`}${
           onItems ? '.listElement' : ''
@@ -125,10 +125,10 @@ export default function register() {
           className: 'validation-checkboxfield',
           name: 'isthisenabled',
           'aria-label': `${enabled ? 'Disable' : 'Enable'} validation`,
-          onChange: e => {
+          onChange: (e) => {
             validation.enabled = e.target.checked;
             $scope.$digest();
-          }
+          },
         };
       };
 
@@ -139,9 +139,10 @@ export default function register() {
       }
 
       const fieldType = toInternalFieldType($scope.field);
-      const availableWidgets = [...createBuiltinWidgetList(), ...$scope.customWidgets].filter(
-        widget => widget.fieldTypes.includes(fieldType)
-      );
+      const availableWidgets = [
+        ...createBuiltinWidgetList(),
+        ...$scope.customWidgets,
+      ].filter((widget) => widget.fieldTypes.includes(fieldType));
 
       $scope.availableWidgets = availableWidgets;
       $scope.fieldTypeLabel = fieldFactory.getLabel($scope.field);
@@ -165,7 +166,7 @@ export default function register() {
           validationDecorator.addEnabledRichTextOptions($scope.field, $scope.richTextOptions);
         }
 
-        const selectedWidget = availableWidgets.find(widget => {
+        const selectedWidget = availableWidgets.find((widget) => {
           const { namespace, id } = $scope.widgetSettings;
           return widget && widget.namespace === namespace && widget.id === id;
         });
@@ -178,7 +179,7 @@ export default function register() {
         values = WidgetParametersUtils.filterValues(definitions, values);
 
         const missing = WidgetParametersUtils.markMissingValues(definitions, values);
-        const hasMissingParameters = Object.keys(missing).some(key => missing[key] === true);
+        const hasMissingParameters = Object.keys(missing).some((key) => missing[key] === true);
 
         if (hasMissingParameters) {
           Notification.error('Please provide all required parameters.');
@@ -189,7 +190,7 @@ export default function register() {
           widgetId: $scope.widgetSettings.id,
           widgetNamespace: $scope.widgetSettings.namespace,
           fieldId: $scope.field.apiName,
-          settings: values
+          settings: values,
         });
 
         dialog.confirm();
@@ -199,7 +200,7 @@ export default function register() {
         const validationsForEnabledNodeTypesOrMarks =
           $scope.field.validations &&
           $scope.field.validations.length &&
-          $scope.field.validations.filter(value => {
+          $scope.field.validations.filter((value) => {
             return value.enabledNodeTypes || value.enabledMarks;
           });
 
@@ -228,11 +229,11 @@ export default function register() {
       }
       const locales = map(TheLocaleStore.getPrivateLocales(), 'name');
 
-      const updateFieldSettings = updatedSettings => {
+      const updateFieldSettings = (updatedSettings) => {
         $scope.decoratedField = updatedSettings;
       };
 
-      const updateValidation = valid => {
+      const updateValidation = (valid) => {
         $scope.formIsValid = valid;
       };
 
@@ -244,19 +245,19 @@ export default function register() {
         updateValidation: updateValidation,
         fieldTypeLabel: $scope.fieldTypeLabel,
         richTextOptions: $scope.richTextOptions,
-        onRichTextOptionsChange: $scope.onRichTextOptionsChange
+        onRichTextOptionsChange: $scope.onRichTextOptionsChange,
       };
-    }
+    },
   ]);
 
   registerController('FieldDialogSettingsController', [
     '$scope',
     function FieldDialogSettingsController($scope) {
       $scope.schema = {
-        errors: function(decoratedField) {
+        errors: function (decoratedField) {
           return fieldDecorator.validateInContentType(decoratedField, $scope.contentType.data);
         },
-        buildMessage: fieldErrorMessageBuilder
+        buildMessage: fieldErrorMessageBuilder,
       };
       $scope.field = $scope.decoratedField;
 
@@ -270,13 +271,13 @@ export default function register() {
             ? `Currently ${$scope.currentTitleField} is set as the title field. Please enable the field to select it as the Entry title.`
             : undefined,
         labelIsLight: true,
-        onChange: e => {
+        onChange: (e) => {
           if ($scope.field) {
             $scope.field.isTitle = e.target.checked;
             fieldDecorator.update($scope.decoratedField, $scope.field, $scope.contentType);
             $scope.$digest();
           }
-        }
+        },
       });
 
       $scope.buildLocalisationCheckboxProps = () => ({
@@ -289,18 +290,18 @@ export default function register() {
           'locales'
         )}`,
         labelIsLight: true,
-        onChange: e => {
+        onChange: (e) => {
           $scope.field.localized = e.target.checked;
           $scope.$digest();
-        }
+        },
       });
 
-      $scope.$watch('fieldSettingsForm.$invalid', isInvalid => {
+      $scope.$watch('fieldSettingsForm.$invalid', (isInvalid) => {
         $scope.tab.invalid = isInvalid;
       });
 
       $scope.locales = map(TheLocaleStore.getPrivateLocales(), 'name');
-    }
+    },
   ]);
 
   /**
@@ -313,14 +314,14 @@ export default function register() {
   registerController('FieldDialogValidationsController', [
     '$scope',
     function FieldDialogValidationsController($scope) {
-      $scope.$watch('fieldValidationsForm.$invalid', isInvalid => {
+      $scope.$watch('fieldValidationsForm.$invalid', (isInvalid) => {
         $scope.tab.invalid = isInvalid;
       });
 
       $scope.schema = {
-        errors: function(decoratedValidation) {
+        errors: function (decoratedValidation) {
           return validationDecorator.validate(decoratedValidation);
-        }
+        },
       };
 
       /**
@@ -349,7 +350,7 @@ export default function register() {
       if ($scope.field.type === 'RichText') {
         $scope.nodeValidationsEnabled = true;
       }
-    }
+    },
   ]);
 
   /**
@@ -379,7 +380,7 @@ export default function register() {
         $scope.contentType.data.displayField
       );
 
-      const defaultWidget = $scope.availableWidgets.find(w => {
+      const defaultWidget = $scope.availableWidgets.find((w) => {
         return w.namespace === NAMESPACE_BUILTIN && w.id === defaultWidgetId;
       });
 
@@ -396,11 +397,11 @@ export default function register() {
             updateProps();
             $scope.$applyAsync();
           },
-          onParametersUpdate: params => {
+          onParametersUpdate: (params) => {
             $scope.widgetSettings.params = params;
             updateProps();
             $scope.$applyAsync();
-          }
+          },
         };
       }
 
@@ -408,6 +409,6 @@ export default function register() {
         updateProps();
         $scope.$applyAsync();
       });
-    }
+    },
   ]);
 }

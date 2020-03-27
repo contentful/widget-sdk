@@ -11,7 +11,7 @@ const sharedConverters = {
   updatedAt: dateConverterFor('sys.updatedAt'),
   createdAt: dateConverterFor('sys.createdAt'),
   publishedAt: dateConverterFor('sys.publishedAt'),
-  firstPublishedAt: dateConverterFor('sys.firstPublishedAt')
+  firstPublishedAt: dateConverterFor('sys.firstPublishedAt'),
 };
 
 const assetSpecificConverters = {
@@ -19,12 +19,12 @@ const assetSpecificConverters = {
   type: (_op, val) => ({ mimetype_group: val }),
   width: (op, val) => ({ [`fields.file.details.image.width${queryOperator(op)}`]: val }),
   height: (op, val) => ({ [`fields.file.details.image.height${queryOperator(op)}`]: val }),
-  size: (op, val) => ({ [`fields.file.details.size${queryOperator(op)}`]: sizeParser(val) })
+  size: (op, val) => ({ [`fields.file.details.size${queryOperator(op)}`]: sizeParser(val) }),
 };
 
 module.exports = {
   Entry: { ...sharedConverters },
-  Asset: { ...sharedConverters, ...assetSpecificConverters }
+  Asset: { ...sharedConverters, ...assetSpecificConverters },
 };
 
 function statusConverter(_op, val) {
@@ -35,7 +35,7 @@ function statusConverter(_op, val) {
   if (val === 'changed') {
     return {
       'sys.archivedAt[exists]': 'false',
-      changed: 'true'
+      changed: 'true',
     };
   }
 
@@ -43,7 +43,7 @@ function statusConverter(_op, val) {
     return {
       'sys.archivedAt[exists]': 'false',
       'sys.publishedVersion[exists]': 'false',
-      changed: 'true'
+      changed: 'true',
     };
   }
 
@@ -61,7 +61,7 @@ function dateConverterFor(key) {
       if (dayEquality(op, val)) {
         return {
           [`${key}${queryOperator('>=')}`]: date.startOf('day').toISOString(),
-          [`${key}${queryOperator('<=')}`]: date.endOf('day').toISOString()
+          [`${key}${queryOperator('<=')}`]: date.endOf('day').toISOString(),
         };
       } else {
         return { [`${key}${queryOperator(op)}`]: date.toISOString() };

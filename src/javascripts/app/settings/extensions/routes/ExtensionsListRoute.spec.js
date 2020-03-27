@@ -8,7 +8,7 @@ import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import * as AccessCheckerMocked from 'access_control/AccessChecker';
 
 jest.mock('access_control/AccessChecker', () => ({
-  getSectionVisibility: jest.fn(() => {})
+  getSectionVisibility: jest.fn(() => {}),
 }));
 
 describe('ExtensionsListRoute', () => {
@@ -19,7 +19,7 @@ describe('ExtensionsListRoute', () => {
   });
 
   const selectors = {
-    forbiddenPage: '[data-test-id="extensions.forbidden"]'
+    forbiddenPage: '[data-test-id="extensions.forbidden"]',
   };
 
   it('should render Forbidden page when no access', () => {
@@ -45,12 +45,7 @@ describe('ExtensionsListRoute', () => {
     expect(getExtensionsForListing).not.toHaveBeenCalled();
     expect(wrapper.find(selectors.forbiddenPage)).toExist();
 
-    expect(
-      wrapper
-        .find('.workbench-forbidden__message')
-        .last()
-        .text()
-    ).toEqual(
+    expect(wrapper.find('.workbench-forbidden__message').last().text()).toEqual(
       'Share this URL with your admin so they can install it for you.https://app.contentful.com/deeplink?link=install-extension&url=https://github.com/contentful/extensions/blob/master/samples/build-netlify/extension.json'
     );
   });

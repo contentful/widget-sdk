@@ -20,7 +20,7 @@ const Editor = ({ height, value, onChange, options }) => {
   return (
     <div className={`extension-form__cm${options.readOnly ? ' x--readonly' : ''}`}>
       <CodeMirror
-        editorDidMount={editor => {
+        editorDidMount={(editor) => {
           editor.setSize(null, height || DEFAULT_CM_HEIGHT);
         }}
         value={value || ''}
@@ -66,7 +66,7 @@ const ExtensionParameters = ({ entity, onChange }) => {
           value={JSON.stringify(
             {
               instance: get(entity, ['extension', 'parameters', 'instance']) || [],
-              installation: definitions
+              installation: definitions,
             },
             null,
             2
@@ -82,17 +82,17 @@ Editor.propTypes = {
   height: PropTypes.string,
   value: PropTypes.string,
   onChange: PropTypes.func,
-  options: PropTypes.object.isRequired
+  options: PropTypes.object.isRequired,
 };
 
 Label.propTypes = {
   text: PropTypes.string.isRequired,
-  info: PropTypes.string
+  info: PropTypes.string,
 };
 
 ExtensionParameters.propTypes = {
   entity: PropTypes.object.isRequired,
-  onChange: PropTypes.func.isRequired
+  onChange: PropTypes.func.isRequired,
 };
 
 export { Label, Editor, ExtensionParameters };

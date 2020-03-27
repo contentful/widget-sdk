@@ -18,7 +18,7 @@ export const defaultPreviewDescription = 'Test Description';
 export const defaultPreviewId = '0xi0FU6rvrUVlJtPFuaUyl';
 export const defaultHeader = {
   Accept: 'application/json, text/plain, */*',
-  Authorization: 'Bearer CFAKE-140669ab83d2054794726a0372c87449841a876376f4de9369d856b098eda921'
+  Authorization: 'Bearer CFAKE-140669ab83d2054794726a0372c87449841a876376f4de9369d856b098eda921',
 };
 export const defaultUserId = 'userID';
 export const defaultJobId = 'jobID';
@@ -29,6 +29,6 @@ export function getEntries(spaceId: string = defaultSpaceId, query?: Query): Req
     method: 'GET',
     path: `/spaces/${spaceId}/entries`,
     headers: defaultHeader,
-    query
+    query,
   };
 }

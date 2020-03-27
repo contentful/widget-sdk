@@ -1,9 +1,9 @@
 describe('ShallowObjectDiff', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     this.shallowObjectDiff = (await this.system.import('utils/ShallowObjectDiff')).default;
   });
 
-  it('should return a shallow diff of input object', function() {
+  it('should return a shallow diff of input object', function () {
     let changes = this.shallowObjectDiff({}, { a: 10 });
     expect(changes).toEqual({ a: 10 });
 

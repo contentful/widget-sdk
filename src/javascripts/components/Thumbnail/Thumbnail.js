@@ -17,7 +17,7 @@ const groupToIconMap = {
   archive: 'zip',
   plaintext: 'text',
   code: 'code',
-  markup: 'code'
+  markup: 'code',
 };
 
 /**
@@ -43,9 +43,9 @@ function getThumbnailUrl(file, options) {
       w: options.width,
       h: options.height !== undefined ? options.height : options.width,
       f: options.focus,
-      fit: options.fit
+      fit: options.fit,
     },
-    value => !!value
+    (value) => !!value
   );
 
   if (isEmpty(params)) {
@@ -80,7 +80,7 @@ function getIconName(file) {
 
   const groupName = mimetype.getGroupLabel({
     type: file.contentType,
-    fallbackFileName: file.fileName
+    fallbackFileName: file.fileName,
   });
 
   if (groupName in groupToIconMap) {
@@ -93,7 +93,7 @@ function getIconName(file) {
 export default function Thumbnail(props) {
   const options = {
     fit: props.fit,
-    focus: props.focus
+    focus: props.focus,
   };
 
   const size = parseInt(props.size, 10);
@@ -113,7 +113,7 @@ export default function Thumbnail(props) {
         // eslint-disable-next-line rulesdir/restrict-inline-styles
         style={{
           width: options.width ? options.width + 'px' : '',
-          height: options.height ? options.height + 'px' : ''
+          height: options.height ? options.height + 'px' : '',
         }}
         className={cx('thumbnail', props.className)}
       />
@@ -126,11 +126,11 @@ export default function Thumbnail(props) {
 Thumbnail.propTypes = {
   className: PropTypes.string,
   file: PropTypes.shape({
-    url: PropTypes.string
+    url: PropTypes.string,
   }),
   fit: PropTypes.any,
   focus: PropTypes.any,
   width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  size: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+  size: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 };

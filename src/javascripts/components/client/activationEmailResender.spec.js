@@ -23,17 +23,17 @@ describe('activationEmailResender', () => {
         data: 'user%5Bemail%5D=user%40example.com',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         method: 'POST',
-        url: 'https://be.contentful.comconfirmation'
+        url: 'https://be.contentful.comconfirmation',
       });
     });
   });
 
   describe('error logging on rejection via `logger.logError()`', () => {
-    it('includes the right message and data', async function() {
+    it('includes the right message and data', async function () {
       $httpMocked.mockRejectedValue({
         status: 418,
         data: 'tea',
-        statusText: "I'm a teapot"
+        statusText: "I'm a teapot",
       });
 
       try {
@@ -47,9 +47,9 @@ describe('activationEmailResender', () => {
           response: {
             status: 418,
             statusText: "I'm a teapot",
-            data: 'tea'
-          }
-        }
+            data: 'tea',
+          },
+        },
       });
     });
   });

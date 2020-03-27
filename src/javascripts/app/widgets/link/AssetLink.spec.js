@@ -9,8 +9,8 @@ describe('AssetLink', () => {
   const props = {
     asset: {
       sys: {
-        type: 'Asset'
-      }
+        type: 'Asset',
+      },
     },
     entityHelpers: {
       entityTitle: jest.fn().mockResolvedValue('AssetTitle'),
@@ -19,13 +19,13 @@ describe('AssetLink', () => {
         details: {
           image: {
             height: 400,
-            width: 400
-          }
+            width: 400,
+          },
         },
         fileName: 'dog-in-a-house-on-fire',
-        url: '//google.com/dog-in-a-house-on-fire.jpg'
-      })
-    }
+        url: '//google.com/dog-in-a-house-on-fire.jpg',
+      }),
+    },
   };
 
   it('should render the asset card', async () => {
@@ -35,10 +35,10 @@ describe('AssetLink', () => {
     expect(image.getAttribute('src')).toMatch(/^\/\/google.com\/dog-in-a-house-on-fire.jpg/);
   });
 
-  it('should not render anything if entity type is not Asset', done => {
+  it('should not render anything if entity type is not Asset', (done) => {
     const propsOverride = {
       ...props,
-      asset: undefined
+      asset: undefined,
     };
     const { queryByText } = render(<AssetLink {...propsOverride} />);
     wait(
@@ -56,8 +56,8 @@ describe('AssetLink', () => {
       ...props,
       entityHelpers: {
         ...props.entityHelpers,
-        entityTitle: jest.fn().mockResolvedValue(undefined)
-      }
+        entityTitle: jest.fn().mockResolvedValue(undefined),
+      },
     };
     const { getByText } = render(<AssetLink {...propsOverrides} />);
     await waitForElement(() => getByText('Untitled'));

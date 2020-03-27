@@ -12,8 +12,8 @@ describe('Asset Page', () => {
       cors: true,
       pactfileWriteMode: 'merge',
       dir: Cypress.env('pactDir'),
-      spec: 2
-    })
+      spec: 2,
+    });
   });
 
   context('asset with empty fields', () => {
@@ -24,7 +24,7 @@ describe('Asset Page', () => {
         ...defaultRequestsMock(),
         queryFirst100UsersInDefaultSpace.willFindSeveral(),
         getDefaultAssetInDefaultSpace.willReturnIt(),
-        queryLinksToDefaultAsset.willReturnNone()
+        queryLinksToDefaultAsset.willReturnNone(),
       ];
 
       cy.server();

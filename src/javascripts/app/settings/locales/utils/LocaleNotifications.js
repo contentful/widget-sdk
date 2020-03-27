@@ -7,21 +7,21 @@ const NOT_RENAMEABLE_MESSAGE =
 const ERROR_CHECKS = [
   {
     message: 'This locale already exists.',
-    check: err => checkUnprocessableEntityErrorName('taken', err)
+    check: (err) => checkUnprocessableEntityErrorName('taken', err),
   },
   {
     message: 'Fallback setting creates a loop.',
-    check: err => checkUnprocessableEntityErrorName('fallback locale creates a loop', err)
+    check: (err) => checkUnprocessableEntityErrorName('fallback locale creates a loop', err),
   },
   {
     message: NOT_RENAMEABLE_MESSAGE,
-    check: function(err) {
+    check: function (err) {
       return (
         get(err, 'statusCode') === 403 &&
         get(err, ['body', 'sys', 'id']) === 'FallbackLocaleNotRenameable'
       );
-    }
-  }
+    },
+  },
 ];
 
 function deleteSuccess() {
@@ -56,7 +56,7 @@ function saveError(err) {
 }
 
 function getErrorMessage(err) {
-  const found = ERROR_CHECKS.find(item => item.check(err));
+  const found = ERROR_CHECKS.find((item) => item.check(err));
 
   return found && found.message;
 }
@@ -65,7 +65,7 @@ function checkUnprocessableEntityErrorName(name, err) {
   const status = get(err, 'statusCode');
   const errors = get(err, 'data.details.errors', []);
 
-  return status === 422 && !!errors.find(error => error.name === name);
+  return status === 422 && !!errors.find((error) => error.name === name);
 }
 
 export default {
@@ -74,5 +74,5 @@ export default {
   notRenameable,
   codeChangeError,
   deleteError,
-  saveError
+  saveError,
 };

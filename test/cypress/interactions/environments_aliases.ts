@@ -3,7 +3,7 @@ import { defaultSpaceId, defaultHeader } from '../util/requests';
 const environmentAliases = require('../fixtures/responses/environment_aliases.json');
 
 export enum States {
-  MASTER = 'environments/only-master'
+  MASTER = 'environments/only-master',
 }
 
 export const queryFirst101EnvironmentAliasesInDefaultSpace = {
@@ -17,13 +17,13 @@ export const queryFirst101EnvironmentAliasesInDefaultSpace = {
         path: `/spaces/${defaultSpaceId}/environment_aliases`,
         headers: { ...defaultHeader, 'X-Contentful-Enable-Alpha-Feature': 'environment-aliasing' },
         query: {
-          limit: '101'
-        }
+          limit: '101',
+        },
       },
       willRespondWith: {
         status: 200,
-        body: environmentAliases
-      }
+        body: environmentAliases,
+      },
     }).as('queryFirst101EnvironmentAliasesInDefaultSpace');
 
     return '@queryFirst101EnvironmentAliasesInDefaultSpace';
@@ -39,14 +39,14 @@ export const queryFirst101EnvironmentAliasesInDefaultSpace = {
         path: `/spaces/${defaultSpaceId}/environment_aliases`,
         headers: { ...defaultHeader, 'X-Contentful-Enable-Alpha-Feature': 'environment-aliasing' },
         query: {
-          limit: '101'
-        }
+          limit: '101',
+        },
       },
       willRespondWith: {
         status: 200,
-        body: environmentAliases
-      }
+        body: environmentAliases,
+      },
     }).as('queryFirst101EnvironmentAliasesInDefaultSpace');
     return '@queryFirst101EnvironmentAliasesInDefaultSpace';
-  }
+  },
 };

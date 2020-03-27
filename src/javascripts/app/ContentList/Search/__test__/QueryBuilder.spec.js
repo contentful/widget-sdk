@@ -14,7 +14,7 @@ describe('app/ContentList/Search/QueryBuilder', () => {
       message,
       {
         contentType: contentTypes[0],
-        search
+        search,
       },
       expected
     );
@@ -36,7 +36,7 @@ describe('app/ContentList/Search/QueryBuilder', () => {
     buildQueryWithContentTypesMacro(
       'searchFilters sys',
       {
-        searchFilters: [['sys.id', '', '2']]
+        searchFilters: [['sys.id', '', '2']],
       },
       { 'sys.id': '2' }
     );
@@ -44,7 +44,7 @@ describe('app/ContentList/Search/QueryBuilder', () => {
     buildQueryWithContentTypesMacro(
       'filesize field',
       {
-        searchFilters: [['fields.file.details.size', '', '52']]
+        searchFilters: [['fields.file.details.size', '', '52']],
       },
       { 'fields.file.details.size': 52000 }
     );
@@ -53,11 +53,11 @@ describe('app/ContentList/Search/QueryBuilder', () => {
       'searchFilters with contentType specific field',
       {
         searchFilters: [['fields.website', '', '2']],
-        contentTypeId: 'TEST_CT_ID'
+        contentTypeId: 'TEST_CT_ID',
       },
       {
         'fields.website': '2',
-        content_type: 'TEST_CT_ID'
+        content_type: 'TEST_CT_ID',
       }
     );
 
@@ -66,12 +66,12 @@ describe('app/ContentList/Search/QueryBuilder', () => {
       {
         searchFilters: [['fields.website', '', '2']],
         contentTypeId: 'TEST_CT_ID',
-        searchText: 'xoxo'
+        searchText: 'xoxo',
       },
       {
         'fields.website': '2',
         content_type: 'TEST_CT_ID',
-        query: 'xoxo'
+        query: 'xoxo',
       }
     );
 
@@ -79,18 +79,18 @@ describe('app/ContentList/Search/QueryBuilder', () => {
       'contentTypeId and searchText',
       {
         contentTypeId: 'contentTypeId',
-        searchText: 'free text'
+        searchText: 'free text',
       },
       {
         content_type: 'contentTypeId',
-        query: 'free text'
+        query: 'free text',
       }
     );
 
     buildQueryWithContentTypesMacro(
       'ignore filters with empty value',
       {
-        searchFilters: [['sys.id', '', '']]
+        searchFilters: [['sys.id', '', '']],
       },
       {}
     );
@@ -98,7 +98,7 @@ describe('app/ContentList/Search/QueryBuilder', () => {
     buildQueryWithContentTypesMacro(
       'ignore filters with null value',
       {
-        searchFilters: [['sys.id', '', null]]
+        searchFilters: [['sys.id', '', null]],
       },
       {}
     );
@@ -106,7 +106,7 @@ describe('app/ContentList/Search/QueryBuilder', () => {
     buildQueryWithContentTypesMacro(
       'ignore filters with undefined value',
       {
-        searchFilters: [['sys.id', '', undefined]]
+        searchFilters: [['sys.id', '', undefined]],
       },
       {}
     );
@@ -116,52 +116,52 @@ describe('app/ContentList/Search/QueryBuilder', () => {
     buildQueryWithContentTypesMacro(
       'status draft',
       {
-        searchFilters: [['__status', '', 'draft']]
+        searchFilters: [['__status', '', 'draft']],
       },
       {
         'sys.publishedAt[exists]': 'false',
         'sys.archivedAt[exists]': 'false',
-        changed: 'true'
+        changed: 'true',
       }
     );
 
     buildQueryWithContentTypesMacro(
       'status published',
       {
-        searchFilters: [['__status', '', 'published']]
+        searchFilters: [['__status', '', 'published']],
       },
       {
         'sys.publishedAt[exists]': 'true',
-        'sys.archivedAt[exists]': 'false'
+        'sys.archivedAt[exists]': 'false',
       }
     );
 
     buildQueryWithContentTypesMacro(
       'status changed',
       {
-        searchFilters: [['__status', '', 'changed']]
+        searchFilters: [['__status', '', 'changed']],
       },
       {
         'sys.publishedAt[exists]': 'true',
         'sys.archivedAt[exists]': 'false',
-        changed: 'true'
+        changed: 'true',
       }
     );
 
     buildQueryWithContentTypesMacro(
       'status archived',
       {
-        searchFilters: [['__status', '', 'archived']]
+        searchFilters: [['__status', '', 'archived']],
       },
       {
-        'sys.archivedAt[exists]': 'true'
+        'sys.archivedAt[exists]': 'true',
       }
     );
 
     buildQueryWithContentTypesMacro(
       'status empty value',
       {
-        searchFilters: [['__status', '', '']]
+        searchFilters: [['__status', '', '']],
       },
       {}
     );
@@ -169,7 +169,7 @@ describe('app/ContentList/Search/QueryBuilder', () => {
     buildQueryWithContentTypesMacro(
       'status undefined value',
       {
-        searchFilters: [['__status', '', undefined]]
+        searchFilters: [['__status', '', undefined]],
       },
       {}
     );
@@ -179,66 +179,58 @@ describe('app/ContentList/Search/QueryBuilder', () => {
     buildQueryWithContentTypesMacro(
       'sys. date field equals',
       {
-        searchFilters: [['sys.createdAt', '', '2017-10-15']]
+        searchFilters: [['sys.createdAt', '', '2017-10-15']],
       },
       {
-        'sys.createdAt[gte]': moment('2017-10-15')
-          .startOf('day')
-          .toISOString(),
-        'sys.createdAt[lte]': moment('2017-10-15')
-          .endOf('day')
-          .toISOString()
+        'sys.createdAt[gte]': moment('2017-10-15').startOf('day').toISOString(),
+        'sys.createdAt[lte]': moment('2017-10-15').endOf('day').toISOString(),
       }
     );
 
     buildQueryWithContentTypesMacro(
       'sys. date field lt',
       {
-        searchFilters: [['sys.createdAt', 'lt', '2017-10-15']]
+        searchFilters: [['sys.createdAt', 'lt', '2017-10-15']],
       },
       {
-        'sys.createdAt[lt]': moment('2017-10-15').toISOString()
+        'sys.createdAt[lt]': moment('2017-10-15').toISOString(),
       }
     );
 
     buildQueryWithContentTypesMacro(
       'sys. date field lte',
       {
-        searchFilters: [['sys.createdAt', 'lte', '2017-10-15']]
+        searchFilters: [['sys.createdAt', 'lte', '2017-10-15']],
       },
       {
-        'sys.createdAt[lte]': moment('2017-10-15')
-          .endOf('day')
-          .toISOString()
+        'sys.createdAt[lte]': moment('2017-10-15').endOf('day').toISOString(),
       }
     );
 
     buildQueryWithContentTypesMacro(
       'sys. date field gt',
       {
-        searchFilters: [['sys.createdAt', 'gt', '2017-10-15']]
+        searchFilters: [['sys.createdAt', 'gt', '2017-10-15']],
       },
       {
-        'sys.createdAt[gt]': moment('2017-10-15')
-          .endOf('day')
-          .toISOString()
+        'sys.createdAt[gt]': moment('2017-10-15').endOf('day').toISOString(),
       }
     );
 
     buildQueryWithContentTypesMacro(
       'sys. date field gte',
       {
-        searchFilters: [['sys.createdAt', 'gte', '2017-10-15']]
+        searchFilters: [['sys.createdAt', 'gte', '2017-10-15']],
       },
       {
-        'sys.createdAt[gte]': moment('2017-10-15').toISOString()
+        'sys.createdAt[gte]': moment('2017-10-15').toISOString(),
       }
     );
 
     buildQueryWithContentTypesMacro(
       'sys. date field invalid date',
       {
-        searchFilters: [['sys.createdAt', 'gte', '2017-99-99']]
+        searchFilters: [['sys.createdAt', 'gte', '2017-99-99']],
       },
       {}
     );

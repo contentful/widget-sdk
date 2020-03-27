@@ -2,9 +2,9 @@ import sinon from 'sinon';
 import { $initialize, $inject, $apply } from 'test/utils/ng';
 
 describe('cfValidateModel directive', () => {
-  beforeEach(async function() {
-    await $initialize(this.system, $provide => {
-      $provide.constant('$timeout', fn => {
+  beforeEach(async function () {
+    await $initialize(this.system, ($provide) => {
+      $provide.constant('$timeout', (fn) => {
         fn();
       });
     });
@@ -26,20 +26,20 @@ describe('cfValidateModel directive', () => {
     this.validator = this.scope.validator;
     sinon.spy(this.validator, 'run');
 
-    this.commitValue = function() {
+    this.commitValue = function () {
       this.scope.$emit('ngModel:update');
       $apply();
     };
   });
 
-  it('validates on input ngModel:update', function() {
+  it('validates on input ngModel:update', function () {
     this.scope.$emit('ngModel:update');
     $apply();
     sinon.assert.calledOnce(this.validator.run);
     sinon.assert.calledWith(this.validator.run, 'x', true);
   });
 
-  it('sets validity according to schema errors', function() {
+  it('sets validity according to schema errors', function () {
     // initial error
     this.scope.schema.errors.returns([{ name: 'e', path: ['x'] }]);
     this.commitValue();
@@ -56,11 +56,11 @@ describe('cfValidateModel directive', () => {
     expect(this.ngModel.$error).toEqual({});
   });
 
-  it('adds error details', function() {
+  it('adds error details', function () {
     this.scope.schema.errors.returns([{ name: 'e', path: ['x'] }]);
     this.commitValue();
     expect(this.ngModel.errorDetails).toEqual({
-      e: { name: 'e', path: ['x'] }
+      e: { name: 'e', path: ['x'] },
     });
   });
 });

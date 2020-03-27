@@ -10,7 +10,7 @@ import {
   Form,
   TextField,
   SelectField,
-  Option
+  Option,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
@@ -59,15 +59,15 @@ export function openCreateEnvDialog(
 
 const styles = {
   note: css({
-    marginBottom: tokens.spacingM
+    marginBottom: tokens.spacingM,
   }),
   dialogActions: css({
     display: 'flex',
     marginBottom: `-${tokens.spacingL}`,
     button: {
-      marginRight: tokens.spacingM
-    }
-  })
+      marginRight: tokens.spacingM,
+    },
+  }),
 };
 
 export function CreateEnvironmentView(props) {
@@ -77,7 +77,7 @@ export function CreateEnvironmentView(props) {
     canSelectSource: props.canSelectSource,
     createEnvironment: props.createEnvironment,
     onClose: props.onClose,
-    onCreate: props.onCreate
+    onCreate: props.onCreate,
   });
 
   return state.serverFailure ? (
@@ -94,7 +94,7 @@ CreateEnvironmentView.propTypes = {
   canSelectSource: PropTypes.bool,
   environments: PropTypes.any,
   selectedEnvironment: PropTypes.any,
-  currentEnvironment: PropTypes.any
+  currentEnvironment: PropTypes.any,
 };
 
 const CreateEnvironmentViewPropTypes = {
@@ -108,7 +108,7 @@ const CreateEnvironmentViewPropTypes = {
   SetFieldValue: PropTypes.func.isRequired,
   SetSourceEnvironment: PropTypes.func.isRequired,
   CancelDialog: PropTypes.func.isRequired,
-  Submit: PropTypes.func.isRequired
+  Submit: PropTypes.func.isRequired,
 };
 
 function CreateForm({
@@ -121,7 +121,7 @@ function CreateForm({
   SetFieldValue,
   SetSourceEnvironment,
   CancelDialog,
-  currentEnvironment
+  currentEnvironment,
 }) {
   const inputRef = useRef(null);
 
@@ -133,7 +133,7 @@ function CreateForm({
 
   return (
     <Form
-      onSubmit={ev => {
+      onSubmit={(ev) => {
         ev.preventDefault();
         Submit();
       }}>
@@ -142,7 +142,7 @@ function CreateForm({
         required
         textInputProps={{
           inputRef,
-          testId: 'field.id'
+          testId: 'field.id',
         }}
         name={`field.${fields.id.name}`}
         id={`field.${fields.id.name}`}
@@ -150,26 +150,28 @@ function CreateForm({
         type="text"
         helpText="The environment ID represents how it is referred to in the API"
         value={fields.id.value}
-        onChange={ev => {
+        onChange={(ev) => {
           SetFieldValue({ name: fields.id.name, value: ev.target.value });
         }}
         validationMessage={
-          fields.id.errors.length > 0 ? fields.id.errors.map(error => error.message).join('\n') : ''
+          fields.id.errors.length > 0
+            ? fields.id.errors.map((error) => error.message).join('\n')
+            : ''
         }
       />
 
       {canSelectSource && (
         <SelectField
           selectProps={{
-            testId: 'source.id'
+            testId: 'source.id',
           }}
           labelText="Clone new environment from"
           required
           id="field.source"
           name="field.source"
           value={selectedEnvironment}
-          onChange={ev => SetSourceEnvironment({ value: ev.target.value })}>
-          {environments.map(env => {
+          onChange={(ev) => SetSourceEnvironment({ value: ev.target.value })}>
+          {environments.map((env) => {
             return (
               <Option key={env.id} value={env.id}>
                 {env.id === currentEnvironment ? `${env.id} (current)` : `${env.id}`}
@@ -235,5 +237,5 @@ DialogActions.propTypes = {
   submitLabel: PropTypes.string.isRequired,
   inProgress: PropTypes.bool,
   CancelDialog: PropTypes.func.isRequired,
-  Submit: PropTypes.func
+  Submit: PropTypes.func,
 };

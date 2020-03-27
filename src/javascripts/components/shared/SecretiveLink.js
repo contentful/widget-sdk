@@ -12,18 +12,18 @@ const styles = {
     color: tokens.colorTextMid,
     textDecoration: 'none',
     '& > span': {
-      width: 'inherit'
+      width: 'inherit',
     },
     '&:link': {
       textDecoration: 'none',
-      display: 'inline-flex'
+      display: 'inline-flex',
     },
     '&:focus': {
       outline: 'none',
       boxShadow: 'unset',
-      textDecoration: 'none'
-    }
-  })
+      textDecoration: 'none',
+    },
+  }),
 };
 /**
  * Provides right click => open in a new tab flow
@@ -37,7 +37,7 @@ const SecretiveLink = ({ href, className, children, ...rest }) => {
       rel="noopener noreferrer"
       linkType="secondary"
       target="_blank"
-      onClick={e => e.preventDefault()}
+      onClick={(e) => e.preventDefault()}
       {...rest}>
       {children}
     </TextLink>
@@ -46,7 +46,7 @@ const SecretiveLink = ({ href, className, children, ...rest }) => {
 
 SecretiveLink.propTypes = {
   href: PropTypes.string.isRequired,
-  className: PropTypes.string
+  className: PropTypes.string,
 };
 
 export default SecretiveLink;

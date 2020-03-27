@@ -7,8 +7,8 @@ import { Promise } from 'bluebird';
 describe('ContentModel/Editor/DuplicateContentTypeDialog', () => {
   const render = (props = {}) => {
     const stubs = {
-      onConfirmStub: jest.fn().mockImplementation(input => Promise.resolve(input)),
-      onCloseStub: jest.fn()
+      onConfirmStub: jest.fn().mockImplementation((input) => Promise.resolve(input)),
+      onCloseStub: jest.fn(),
     };
     const initialProps = {
       isShown: true,
@@ -16,13 +16,13 @@ describe('ContentModel/Editor/DuplicateContentTypeDialog', () => {
       onCancel: stubs.onCloseStub,
       originalName: 'contentTypeYouWantToCopy',
       originalDescription: 'Description of contentTypeYouWantToCopy',
-      existingContentTypeIds: ['first', 'second', 'third', 'contentTypeYouWantToCopy']
+      existingContentTypeIds: ['first', 'second', 'third', 'contentTypeYouWantToCopy'],
     };
     const wrapper = Enzyme.mount(<DuplicateContentTypeForm {...initialProps} {...props} />);
     return {
       wrapper,
       initialProps,
-      stubs
+      stubs,
     };
   };
 
@@ -33,7 +33,7 @@ describe('ContentModel/Editor/DuplicateContentTypeDialog', () => {
     note: '[data-test-id="duplicate-content-type-note"]',
     confirmBtn: '[data-test-id="content-type-form-confirm"]',
     cancelBtn: '[data-test-id="content-type-form-cancel"]',
-    validationMessage: '[data-test-id="cf-ui-validation-message"]'
+    validationMessage: '[data-test-id="cf-ui-validation-message"]',
   };
 
   const changeFieldValue = (wrapper, field, value) => {
@@ -92,7 +92,7 @@ describe('ContentModel/Editor/DuplicateContentTypeDialog', () => {
 
     const getValidationErrors = () => {
       const containers = wrapper.find(selectors.validationMessage);
-      return containers.map(container => container.text());
+      return containers.map((container) => container.text());
     };
 
     changeName(wrapper, 'myContentType');
@@ -120,7 +120,7 @@ describe('ContentModel/Editor/DuplicateContentTypeDialog', () => {
     const values = {
       contentTypeId: 'superContentType',
       description: 'new description for new content type',
-      name: 'new content type'
+      name: 'new content type',
     };
 
     changeName(wrapper, values.name);

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ContentFieldsIcon = props => (
+const ContentFieldsIcon = (props) => (
   <svg width={36} height={30} viewBox="0 0 48 41" {...props}>
     <ellipse cx={24} cy={15} rx={6} ry={3} fill="#c0f2d6" />
     <ellipse cx={24} cy={4} rx={6} ry={3} fill="#c0f2d6" />

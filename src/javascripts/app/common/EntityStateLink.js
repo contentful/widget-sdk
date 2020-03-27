@@ -17,8 +17,8 @@ export function getEntityLink({ id, type }) {
     params,
     href: href({
       path,
-      params
-    })
+      params,
+    }),
   };
 }
 
@@ -37,5 +37,5 @@ export default function EntityStateLink({ entity, children }) {
 }
 
 EntityStateLink.propTypes = {
-  entity: PropTypes.object.isRequired
+  entity: PropTypes.object.isRequired,
 };

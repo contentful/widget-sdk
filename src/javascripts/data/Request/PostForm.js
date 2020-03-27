@@ -19,7 +19,7 @@ export default function postForm(url, data, config = {}) {
   config.url = url;
   config.data = qs.stringify(data);
   const headers = assign({}, config.headers, {
-    'Content-Type': 'application/x-www-form-urlencoded'
+    'Content-Type': 'application/x-www-form-urlencoded',
   });
   config.headers = headers;
   return $http(config);

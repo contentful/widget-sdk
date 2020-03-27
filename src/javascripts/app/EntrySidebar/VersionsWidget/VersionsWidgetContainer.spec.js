@@ -11,14 +11,14 @@ import SidebarEventTypes from '../SidebarEventTypes';
 
 jest.mock('ng/spaceContext', () => ({
   cma: {
-    getEntrySnapshots: jest.fn()
-  }
+    getEntrySnapshots: jest.fn(),
+  },
 }));
 
 const PUBLISHED_ENTRY_SYS = deepFreeze({
   id: 'SOME_ID_123',
   type: 'Entry',
-  publishedVersion: 10
+  publishedVersion: 10,
 });
 
 describe('EntrySidebar/VersionsWidgetContainer', () => {
@@ -32,7 +32,7 @@ describe('EntrySidebar/VersionsWidgetContainer', () => {
   async function emitUpdatedVersionsWidgetEvent(entrySys) {
     emitter.emit(SidebarEventTypes.UPDATED_VERSIONS_WIDGET, {
       entrySys: deepFreeze(cloneDeep(entrySys)),
-      publishedVersion: entrySys.publishedVersion
+      publishedVersion: entrySys.publishedVersion,
     });
     await Promise.resolve();
     await wrapper.update();
@@ -49,13 +49,13 @@ describe('EntrySidebar/VersionsWidgetContainer', () => {
       entryId: null,
       error: null,
       isLoaded: false,
-      versions: []
+      versions: [],
     });
   });
 
   it('gets entry snapshots when UPDATED_VERSIONS_WIDGET was emitted for the first time', async () => {
     spaceContextMocked.cma.getEntrySnapshots.mockResolvedValueOnce({
-      items: []
+      items: [],
     });
 
     const { wrapper } = render();
@@ -63,7 +63,7 @@ describe('EntrySidebar/VersionsWidgetContainer', () => {
     await emitUpdatedVersionsWidgetEvent(PUBLISHED_ENTRY_SYS);
 
     expect(spaceContextMocked.cma.getEntrySnapshots).toHaveBeenCalledWith(PUBLISHED_ENTRY_SYS.id, {
-      limit: PREVIEW_COUNT
+      limit: PREVIEW_COUNT,
     });
     expect(spaceContextMocked.cma.getEntrySnapshots).toHaveBeenCalledTimes(1);
 
@@ -74,13 +74,13 @@ describe('EntrySidebar/VersionsWidgetContainer', () => {
       entryId: PUBLISHED_ENTRY_SYS.id,
       error: null,
       isLoaded: true,
-      versions: []
+      versions: [],
     });
   });
 
   it('gets entry snapshots only when publishedVersion is changed', async () => {
     spaceContextMocked.cma.getEntrySnapshots.mockResolvedValueOnce({
-      items: []
+      items: [],
     });
 
     const { wrapper } = render();
@@ -90,19 +90,19 @@ describe('EntrySidebar/VersionsWidgetContainer', () => {
     await emitUpdatedVersionsWidgetEvent(sys2);
 
     expect(spaceContextMocked.cma.getEntrySnapshots).toHaveBeenCalledWith(PUBLISHED_ENTRY_SYS.id, {
-      limit: PREVIEW_COUNT
+      limit: PREVIEW_COUNT,
     });
     expect(spaceContextMocked.cma.getEntrySnapshots).toHaveBeenCalledTimes(1);
 
     const snapshots = [newSnapshotFromEntrySys(sys1), newSnapshotFromEntrySys(sys2)];
     spaceContextMocked.cma.getEntrySnapshots.mockResolvedValueOnce({
-      items: snapshots
+      items: snapshots,
     });
 
     const sys3 = {
       ...sys2,
       version: sys2.version + 1,
-      publishedVersion: sys2.version
+      publishedVersion: sys2.version,
     };
     await emitUpdatedVersionsWidgetEvent(sys3);
 
@@ -112,7 +112,7 @@ describe('EntrySidebar/VersionsWidgetContainer', () => {
       entryId: sys3.id,
       error: null,
       isLoaded: true,
-      versions: expect.any(Array)
+      versions: expect.any(Array),
     });
   });
 
@@ -124,7 +124,7 @@ describe('EntrySidebar/VersionsWidgetContainer', () => {
     const snapshots = deepFreeze([newSnapshotFromEntrySys(sys1), newSnapshotFromEntrySys(sys2)]);
 
     spaceContextMocked.cma.getEntrySnapshots.mockResolvedValueOnce({
-      items: snapshots
+      items: snapshots,
     });
     await emitUpdatedVersionsWidgetEvent(sys2);
 

@@ -5,12 +5,12 @@ import { $initialize, $inject, $apply } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
 
 describe('spaceContext', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     this.organization = { sys: { id: 'ORG_ID' } };
     this.AccessChecker = { setSpace: sinon.stub() };
     this.ProductCatalog = { getSpaceFeature: sinon.stub().resolves(false) };
     this.mockSpaceEndpoint = createMockSpaceEndpoint();
-    this.initEnforcements = sinon.stub().returns(function() {});
+    this.initEnforcements = sinon.stub().returns(function () {});
 
     this.userCache = {};
     this.createUserCache = sinon.stub().returns(this.userCache);
@@ -19,17 +19,17 @@ describe('spaceContext', () => {
     this.default_locale = { internal_code: 'xx' };
     this.localeStore = {
       init: sinon.stub(),
-      getDefaultLocale: sinon.stub().returns(this.default_locale)
+      getDefaultLocale: sinon.stub().returns(this.default_locale),
     };
 
     this.stubs = {
       sharejs_Connection_create: sinon.stub().returns({
-        close: sinon.stub()
+        close: sinon.stub(),
       }),
       DocumentPool_create: sinon.stub().returns({
         // close: sinon.stub(),
-        destroy: sinon.stub()
-      })
+        destroy: sinon.stub(),
+      }),
     };
 
     this.system.set('widgets/ExtensionLoader', { createExtensionLoader: sinon.stub() });
@@ -37,45 +37,45 @@ describe('spaceContext', () => {
     this.system.set('data/Endpoint', {
       createSpaceEndpoint: () => this.mockSpaceEndpoint.request,
       createOrganizationEndpoint: sinon.stub(),
-      createAppDefinitionsEndpoint: sinon.stub()
+      createAppDefinitionsEndpoint: sinon.stub(),
     });
     this.system.set('data/UiConfig/Store', {
-      default: sinon.stub().resolves({ store: true })
+      default: sinon.stub().resolves({ store: true }),
     });
     this.system.set('services/EnforcementsService', {
-      init: this.initEnforcements
+      init: this.initEnforcements,
     });
     this.system.set('data/userCache', {
-      default: this.createUserCache
+      default: this.createUserCache,
     });
     this.system.set('data/sharejs/Connection', {
-      create: sinon.stub()
+      create: sinon.stub(),
     });
     this.system.set('services/localeStore', {
-      default: this.localeStore
+      default: this.localeStore,
     });
 
     this.system.set('data/sharejs/Connection', {
-      create: this.stubs.sharejs_Connection_create
+      create: this.stubs.sharejs_Connection_create,
     });
 
     this.system.set('data/sharejs/DocumentPool', {
-      create: this.stubs.DocumentPool_create
+      create: this.stubs.DocumentPool_create,
     });
 
     this.system.set('data/CMA/ProductCatalog', this.ProductCatalog);
 
     this.system.set('services/client', {
       default: {
-        newSpace: makeClientSpaceMock
-      }
+        newSpace: makeClientSpaceMock,
+      },
     });
 
     this.system.set('services/PubSubService', {
       createPubSubClientForSpace: sinon.stub().returns({
         on: sinon.stub(),
-        off: sinon.stub()
-      })
+        off: sinon.stub(),
+      }),
     });
 
     this.LD = await this.system.import('utils/LaunchDarkly');
@@ -88,19 +88,19 @@ describe('spaceContext', () => {
 
     this.makeSpaceData = (spaceId = 'hello', organizationId = 'orgid') => ({
       sys: {
-        id: spaceId
+        id: spaceId,
       },
       organization: {
         sys: {
           type: 'Link',
           linkType: 'Organization',
-          id: organizationId
-        }
+          id: organizationId,
+        },
       },
-      spaceMember: {}
+      spaceMember: {},
     });
 
-    this.resetWithSpace = function(extraSpaceData = this.makeSpaceData()) {
+    this.resetWithSpace = function (extraSpaceData = this.makeSpaceData()) {
       this.spaceContext.resetWithSpace(extraSpaceData);
       $apply();
       return this.spaceContext.space;
@@ -108,18 +108,18 @@ describe('spaceContext', () => {
   });
 
   describe('#purge', () => {
-    it('gets rid of all space-related data', function() {
+    it('gets rid of all space-related data', function () {
       const sc = this.spaceContext;
       sc.purge();
 
-      ['space', 'users'].forEach(field => {
+      ['space', 'users'].forEach((field) => {
         expect(sc[field]).toEqual(null);
       });
     });
   });
 
   describe('#resetWithSpace()', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       this.reset = async () => {
         this.result = this.spaceContext.resetWithSpace(this.makeSpaceData());
         this.space = this.spaceContext.space;
@@ -128,58 +128,61 @@ describe('spaceContext', () => {
       this.reset(this);
     });
 
-    it('sets client space on context', function() {
+    it('sets client space on context', function () {
       expect(this.spaceContext.space.data.sys.id).toEqual('hello');
     });
 
-    it('creates environment aware space context', function() {
+    it('creates environment aware space context', function () {
       expect(this.spaceContext.space.environment).toBeUndefined();
       this.spaceContext.resetWithSpace(this.makeSpaceData('withenv'), 'envid');
       expect(this.spaceContext.space.environment.sys.id).toEqual('envid');
     });
 
-    it('creates locale repository', function() {
+    it('creates locale repository', function () {
       expect(typeof this.spaceContext.localeRepo.getAll).toBe('function');
     });
 
-    it('calls TheLocaleStore.init()', async function() {
+    it('calls TheLocaleStore.init()', async function () {
       await this.result;
       sinon.assert.calledOnceWith(this.localeStore.init, this.spaceContext.localeRepo);
     });
 
-    it('calls AccessChecker.setSpace with space data', function() {
+    it('calls AccessChecker.setSpace with space data', function () {
       sinon.assert.calledOnceWith(this.AccessChecker.setSpace, this.space.data);
     });
 
-    it('creates the user cache', function() {
+    it('creates the user cache', function () {
       this.resetWithSpace();
       sinon.assert.calledWithExactly(this.createUserCache, this.spaceContext.endpoint);
       expect(this.spaceContext.users).toBe(this.userCache);
     });
 
-    it('updates publishedCTs repo from refreshed CT list', async function() {
+    it('updates publishedCTs repo from refreshed CT list', async function () {
       await this.result;
-      expect(this.spaceContext.publishedCTs.getAllBare().map(ct => ct.sys.id)).toEqual(['A', 'B']);
+      expect(this.spaceContext.publishedCTs.getAllBare().map((ct) => ct.sys.id)).toEqual([
+        'A',
+        'B',
+      ]);
     });
 
-    it('always returns an array for the `environments` property even if there are no environments', async function() {
+    it('always returns an array for the `environments` property even if there are no environments', async function () {
       Object.assign(this.mockSpaceEndpoint.stores.environments, null);
       await this.spaceContext.resetWithSpace(this.makeSpaceData('spaceid'));
       expect(this.spaceContext.environments).toEqual([]);
     });
 
-    it('sets `environments` property if environments are enabled', async function() {
+    it('sets `environments` property if environments are enabled', async function () {
       const master = {
         name: 'master',
         sys: {
-          id: 'master'
-        }
+          id: 'master',
+        },
       };
       const staging = {
         name: 'staging',
         sys: {
-          id: 'staging'
-        }
+          id: 'staging',
+        },
       };
       const environments = { master, staging };
       Object.assign(this.mockSpaceEndpoint.stores.environments, environments);
@@ -189,7 +192,7 @@ describe('spaceContext', () => {
       expect(this.spaceContext.environments).toEqual([master, staging]);
     });
 
-    it('sets `aliases` property if aliases are enabled', async function() {
+    it('sets `aliases` property if aliases are enabled', async function () {
       this.ProductCatalog.getSpaceFeature.resolves(true);
       const alias = {
         name: 'master',
@@ -197,10 +200,10 @@ describe('spaceContext', () => {
           id: 'master',
           aliasedEnvironment: {
             sys: {
-              id: 'prod-1'
-            }
-          }
-        }
+              id: 'prod-1',
+            },
+          },
+        },
       };
       const prod1 = {
         name: 'prod-1',
@@ -208,17 +211,17 @@ describe('spaceContext', () => {
           id: 'prod-1',
           aliases: [
             {
-              sys: { id: 'master' }
-            }
-          ]
-        }
+              sys: { id: 'master' },
+            },
+          ],
+        },
       };
       const staging = {
         name: 'staging',
         sys: {
           id: 'staging',
-          aliases: []
-        }
+          aliases: [],
+        },
       };
       const environments = { prod1, staging, alias };
       Object.assign(this.mockSpaceEndpoint.stores.environments, environments);
@@ -228,25 +231,25 @@ describe('spaceContext', () => {
       expect(this.spaceContext.aliases).toEqual([alias]);
     });
 
-    it('sets `aliases` property to empty array if aliases are not enabled', async function() {
+    it('sets `aliases` property to empty array if aliases are not enabled', async function () {
       this.ProductCatalog.getSpaceFeature.resolves(false);
       await this.reset();
 
       expect(this.spaceContext.aliases).toEqual([]);
     });
 
-    it('sets `environmentMeta` property if environments are enabled', async function() {
+    it('sets `environmentMeta` property if environments are enabled', async function () {
       const master = {
         name: 'master',
         sys: {
-          id: 'master'
-        }
+          id: 'master',
+        },
       };
       const staging = {
         name: 'staging',
         sys: {
-          id: 'staging'
-        }
+          id: 'staging',
+        },
       };
       const environments = { master, staging };
       Object.assign(this.mockSpaceEndpoint.stores.environments, environments);
@@ -255,11 +258,11 @@ describe('spaceContext', () => {
         environmentId: 'master',
         optedIn: false,
         isMasterEnvironment: true,
-        aliasId: undefined
+        aliasId: undefined,
       });
     });
 
-    it('always returns an array for the `environments` property even if there are no environments', function() {
+    it('always returns an array for the `environments` property even if there are no environments', function () {
       this.LD._setFlag('feature-dv-11-2017-environments', false);
       Object.assign(this.mockSpaceEndpoint.stores.environments, null);
       return this.spaceContext.resetWithSpace(this.makeSpaceData('spaceid')).then(() => {
@@ -270,19 +273,19 @@ describe('spaceContext', () => {
       });
     });
 
-    it('sets alias details in `environmentMeta` property if aliases are enabled', async function() {
+    it('sets alias details in `environmentMeta` property if aliases are enabled', async function () {
       this.ProductCatalog.getSpaceFeature.resolves(true);
       const master = {
         name: 'master',
         sys: {
-          id: 'master'
-        }
+          id: 'master',
+        },
       };
       const staging = {
         name: 'staging',
         sys: {
-          id: 'staging'
-        }
+          id: 'staging',
+        },
       };
       const environments = { master, staging };
       Object.assign(this.mockSpaceEndpoint.stores.environments, environments);
@@ -291,27 +294,27 @@ describe('spaceContext', () => {
         environmentId: 'master',
         optedIn: false,
         isMasterEnvironment: true,
-        aliasId: undefined
+        aliasId: undefined,
       });
     });
 
-    it('refreshes enforcements with new space id', function() {
+    it('refreshes enforcements with new space id', function () {
       sinon.assert.calledOnce(this.initEnforcements.withArgs(this.spaceContext.space.data.sys.id));
     });
   });
 
   describe('#getEnvironmentId()', () => {
-    it('defaults to master if a space is set', function() {
+    it('defaults to master if a space is set', function () {
       this.spaceContext.resetWithSpace(this.makeSpaceData('spaceid'));
       expect(this.spaceContext.getEnvironmentId()).toBe('master');
     });
 
-    it('returns non-default environment ID', function() {
+    it('returns non-default environment ID', function () {
       this.spaceContext.resetWithSpace(this.makeSpaceData('spaceid'), 'staging');
       expect(this.spaceContext.getEnvironmentId()).toBe('staging');
     });
 
-    it('returns undefined if a space is not set', function() {
+    it('returns undefined if a space is not set', function () {
       this.spaceContext.purge();
       expect(this.spaceContext.getEnvironmentId()).toBeUndefined();
     });
@@ -323,8 +326,8 @@ describe('spaceContext', () => {
       sys: {
         id: 'master',
         type: 'Link',
-        linkType: 'Alias'
-      }
+        linkType: 'Alias',
+      },
     };
 
     const masterEnv = {
@@ -332,8 +335,8 @@ describe('spaceContext', () => {
       sys: {
         id: 'master',
         type: 'Link',
-        linkType: 'Environment'
-      }
+        linkType: 'Environment',
+      },
     };
 
     const stagingEnv = {
@@ -341,42 +344,42 @@ describe('spaceContext', () => {
       sys: {
         id: 'staging',
         type: 'Link',
-        linkType: 'Environment'
-      }
+        linkType: 'Environment',
+      },
     };
 
-    it('Finds current environment to be master', function() {
+    it('Finds current environment to be master', function () {
       expect(this.spaceContext.isMasterEnvironment()).toBe(true);
     });
 
-    it('Finds an Alias to be master', function() {
+    it('Finds an Alias to be master', function () {
       expect(this.spaceContext.isMasterEnvironment(masterAlias)).toBe(true);
     });
 
-    it('Finds an Environment to be master', function() {
+    it('Finds an Environment to be master', function () {
       expect(this.spaceContext.isMasterEnvironment(masterEnv)).toBe(true);
     });
 
-    it('Does not find an Environment named staging to be master', function() {
+    it('Does not find an Environment named staging to be master', function () {
       expect(this.spaceContext.isMasterEnvironment(stagingEnv)).toBe(false);
     });
   });
 
   describe('#getData() ', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       this.space = this.resetWithSpace();
     });
 
-    it('returns undefined for an invalid path', function() {
+    it('returns undefined for an invalid path', function () {
       expect(this.spaceContext.getData('x.y.z')).toBeUndefined();
     });
 
-    it('returns provided default value for an invalid path', function() {
+    it('returns provided default value for an invalid path', function () {
       const obj = {};
       expect(this.spaceContext.getData('x.y.z', obj)).toBe(obj);
     });
 
-    it('returns value if a path is correct', function() {
+    it('returns value if a path is correct', function () {
       const obj = {};
       this.space.data.x = { y: { z: obj } };
       expect(this.spaceContext.getData('x.y.z')).toBe(obj);
@@ -384,7 +387,7 @@ describe('spaceContext', () => {
   });
 
   describe('#docConnection and #docPool', () => {
-    it('creates on resetSpace', function() {
+    it('creates on resetSpace', function () {
       this.resetWithSpace();
       sinon.assert.calledOnce(this.stubs.sharejs_Connection_create);
       sinon.assert.calledOnce(
@@ -392,25 +395,25 @@ describe('spaceContext', () => {
       );
     });
 
-    it('cleans up on resetSpace', function() {
+    it('cleans up on resetSpace', function () {
       const stubs = [sinon.stub(), sinon.stub()];
       this.spaceContext.docConnection = { close: stubs[0] };
       this.spaceContext.docPool = { destroy: stubs[1] };
       this.resetWithSpace();
-      stubs.forEach(s => sinon.assert.calledOnce(s));
+      stubs.forEach((s) => sinon.assert.calledOnce(s));
     });
 
-    it('cleans up on purge', function() {
+    it('cleans up on purge', function () {
       const stubs = [sinon.stub(), sinon.stub()];
       this.spaceContext.docConnection = { close: stubs[0] };
       this.spaceContext.docPool = { destroy: stubs[1] };
       this.spaceContext.purge();
-      stubs.forEach(s => sinon.assert.calledOnce(s));
+      stubs.forEach((s) => sinon.assert.calledOnce(s));
     });
   });
 
   describe('#uiConfig', () => {
-    it('exposes the store', async function() {
+    it('exposes the store', async function () {
       await this.spaceContext.resetWithSpace(this.makeSpaceData());
       expect(_.isObject(this.spaceContext.uiConfig)).toBe(true);
     });
@@ -421,11 +424,11 @@ describe('spaceContext', () => {
       data: {
         sys: { id },
         displayField: opts.displayField,
-        fields: opts.fields || []
+        fields: opts.fields || [],
       },
       getId: _.constant(id),
       isDeleted: _.constant(opts.isDeleted === true),
-      getName: _.constant(id)
+      getName: _.constant(id),
     };
   }
 
@@ -433,13 +436,13 @@ describe('spaceContext', () => {
     return {
       data,
       endpoint: sinon.stub().returns({
-        get: sinon.stub().rejects()
+        get: sinon.stub().rejects(),
       }),
       getId: sinon.stub().returns(data.sys.id),
       getPublishedContentTypes: sinon.stub().resolves([makeCtMock('A'), makeCtMock('B')]),
-      makeEnvironment: sinon.stub().callsFake(envId => {
+      makeEnvironment: sinon.stub().callsFake((envId) => {
         return { ...makeClientSpaceMock(data), environment: { sys: { id: envId } } };
-      })
+      }),
     };
   }
 });

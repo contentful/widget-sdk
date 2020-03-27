@@ -22,7 +22,7 @@ import * as OrganizationRoles from 'services/OrganizationRoles';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 import ErrorState from 'app/common/ErrorState';
 
-export const WorkbenchContent = props => {
+export const WorkbenchContent = (props) => {
   const {
     committed,
     hasSpaces,
@@ -36,7 +36,7 @@ export const WorkbenchContent = props => {
     error,
     periods,
     resources,
-    onTabSelect
+    onTabSelect,
   } = props;
 
   if (error) {
@@ -58,7 +58,7 @@ export const WorkbenchContent = props => {
             apiRequestIncludedLimit,
             assetBandwidthData,
             isLoading,
-            onTabSelect
+            onTabSelect,
           }}
         />
       );
@@ -83,14 +83,14 @@ WorkbenchContent.propTypes = {
     usage: PropTypes.number,
     unitOfMeasure: PropTypes.string,
     limits: PropTypes.shape({
-      included: PropTypes.number
-    })
+      included: PropTypes.number,
+    }),
   }),
   isLoading: PropTypes.bool,
   error: PropTypes.string,
   periods: PropTypes.arrayOf(PropTypes.object),
   resources: PropTypes.arrayOf(PropTypes.object),
-  onTabSelect: PropTypes.func
+  onTabSelect: PropTypes.func,
 };
 
 export class WorkbenchActions extends React.Component {
@@ -102,7 +102,7 @@ export class WorkbenchActions extends React.Component {
     periods: PropTypes.array,
     selectedPeriodIndex: PropTypes.number,
     setPeriodIndex: PropTypes.func,
-    showPeriodSelector: PropTypes.bool
+    showPeriodSelector: PropTypes.bool,
   };
 
   render() {
@@ -114,7 +114,7 @@ export class WorkbenchActions extends React.Component {
       periods,
       selectedPeriodIndex,
       setPeriodIndex,
-      showPeriodSelector
+      showPeriodSelector,
     } = this.props;
 
     if (error) {
@@ -141,7 +141,7 @@ export class WorkbenchActions extends React.Component {
 
 export class OrganizationUsage extends React.Component {
   static propTypes = {
-    orgId: PropTypes.string.isRequired
+    orgId: PropTypes.string.isRequired,
   };
 
   constructor(props) {
@@ -150,7 +150,7 @@ export class OrganizationUsage extends React.Component {
     this.state = {
       isLoading: true,
       error: null,
-      showPeriodSelector: true
+      showPeriodSelector: true,
     };
 
     this.endpoint = EndpointFactory.createOrganizationEndpoint(props.orgId);
@@ -189,27 +189,19 @@ export class OrganizationUsage extends React.Component {
           plans,
           periods,
           {
-            limits: { included: apiRequestIncludedLimit }
-          }
+            limits: { included: apiRequestIncludedLimit },
+          },
         ] = await Promise.all([
           OrganizationMembershipRepository.getAllSpaces(this.endpoint),
           PricingDataProvider.getPlansWithSpaces(this.endpoint),
           UsageService.getPeriods(this.endpoint),
-          service.get('api_request')
+          service.get('api_request'),
         ]);
-        const spaceNames = flow(
-          keyBy('sys.id'),
-          mapValues('name')
-        )(spaces);
+        const spaceNames = flow(keyBy('sys.id'), mapValues('name'))(spaces);
 
         const isPoC = flow(
           keyBy('space.sys.id'),
-          mapValues(
-            flow(
-              get('name'),
-              eq('Proof of concept')
-            )
-          )
+          mapValues(flow(get('name'), eq('Proof of concept')))
         )(plans.items);
 
         this.setState({
@@ -217,7 +209,7 @@ export class OrganizationUsage extends React.Component {
           isPoC,
           periods: periods.items,
           apiRequestIncludedLimit,
-          hasSpaces: spaces.length !== 0
+          hasSpaces: spaces.length !== 0,
         });
 
         await this.loadPeriodData(0);
@@ -236,7 +228,7 @@ export class OrganizationUsage extends React.Component {
     }
   }
 
-  loadPeriodData = async newIndex => {
+  loadPeriodData = async (newIndex) => {
     const { orgId } = this.props;
     const { periods } = this.state;
 
@@ -247,7 +239,7 @@ export class OrganizationUsage extends React.Component {
       const oldPeriod = periods[this.state.selectedPeriodIndex];
       track('usage:period_selected', {
         oldPeriod: pick(['startDate', 'endDate'], oldPeriod),
-        newPeriod: pick(['startDate', 'endDate'], newPeriod)
+        newPeriod: pick(['startDate', 'endDate'], newPeriod),
       });
     }
 
@@ -256,17 +248,17 @@ export class OrganizationUsage extends React.Component {
         UsageService.getOrgUsage(this.endpoint, {
           startDate: newPeriod.startDate,
           endDate: newPeriod.endDate,
-          periodId: newPeriod.sys.id
+          periodId: newPeriod.sys.id,
         }),
-        ...['cma', 'cda', 'cpa', 'gql'].map(apiType =>
+        ...['cma', 'cda', 'cpa', 'gql'].map((apiType) =>
           UsageService.getApiUsage(this.endpoint, {
             apiType,
             startDate: newPeriod.startDate,
             endDate: newPeriod.endDate,
             periodId: newPeriod.sys.id,
-            limit: 5
+            limit: 5,
           })
-        )
+        ),
       ];
 
       if (newIndex === 0) {
@@ -290,7 +282,7 @@ export class OrganizationUsage extends React.Component {
           cpa,
           gql,
           assetBandwidthData,
-          newIndex
+          newIndex,
         })
       );
     } catch (e) {
@@ -303,7 +295,7 @@ export class OrganizationUsage extends React.Component {
     await this.loadPeriodData(parseInt(e.target.value));
   }
 
-  setShowPeriodSelector = val => {
+  setShowPeriodSelector = (val) => {
     this.setState({ showPeriodSelector: val !== 'assetBandwidth' });
   };
 
@@ -321,7 +313,7 @@ export class OrganizationUsage extends React.Component {
       committed,
       resources,
       hasSpaces,
-      showPeriodSelector
+      showPeriodSelector,
     } = this.state;
 
     return (
@@ -340,7 +332,7 @@ export class OrganizationUsage extends React.Component {
                   periods,
                   selectedPeriodIndex,
                   setPeriodIndex: this.setPeriodIndex,
-                  showPeriodSelector
+                  showPeriodSelector,
                 }}
               />
             }></Workbench.Header>
@@ -359,7 +351,7 @@ export class OrganizationUsage extends React.Component {
                 error,
                 periods,
                 resources,
-                onTabSelect: this.setShowPeriodSelector
+                onTabSelect: this.setShowPeriodSelector,
               }}
             />
           </Workbench.Content>

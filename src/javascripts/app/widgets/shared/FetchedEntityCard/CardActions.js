@@ -8,19 +8,19 @@ import { shortenStorageUnit } from 'utils/NumberUtils';
 
 const styles = {
   cardDropdown: css({
-    width: '300px'
-  })
+    width: '300px',
+  }),
 };
 
 const commonPropTypes = {
   onEdit: PropTypes.func,
   onRemove: PropTypes.func,
-  isDisabled: PropTypes.bool
+  isDisabled: PropTypes.bool,
 };
 
 export class EntryActions extends React.PureComponent {
   static propTypes = {
-    ...commonPropTypes
+    ...commonPropTypes,
   };
 
   render() {
@@ -45,7 +45,7 @@ export class EntryActions extends React.PureComponent {
 export class AssetActions extends React.PureComponent {
   static propTypes = {
     entityFile: PropTypes.object,
-    ...commonPropTypes
+    ...commonPropTypes,
   };
 
   renderActions() {

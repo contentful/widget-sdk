@@ -12,7 +12,7 @@ export default class PartnershipForm extends React.Component {
     spaceName: PropTypes.string.isRequired,
     onFieldChange: PropTypes.func.isRequired,
     validation: PropTypes.object,
-    template: PropTypes.object
+    template: PropTypes.object,
   };
 
   constructor({ onFieldChange }) {
@@ -27,7 +27,7 @@ export default class PartnershipForm extends React.Component {
       .utcOffset(0, true);
 
     this.state = {
-      estimatedDeliveryDate
+      estimatedDeliveryDate,
     };
 
     onFieldChange('estimatedDeliveryDate')(estimatedDeliveryDate.toISOString());
@@ -36,7 +36,7 @@ export default class PartnershipForm extends React.Component {
   onChange(fieldName) {
     const { onFieldChange } = this.props;
 
-    return event => {
+    return (event) => {
       const value = event.target.value;
 
       this.setState({ [fieldName]: value });
@@ -127,7 +127,7 @@ export default class PartnershipForm extends React.Component {
                 onChange={this.onChange('estimatedDeliveryDateDay')}
                 className="cfnext-select-box"
                 aria-invalid={Boolean(validation.estimatedDeliveryDate)}>
-                {range(daysInCurrentMonth).map(day => {
+                {range(daysInCurrentMonth).map((day) => {
                   return (
                     <option key={day} value={day + 1}>
                       {day + 1}
@@ -141,7 +141,7 @@ export default class PartnershipForm extends React.Component {
                 onChange={this.onChange('estimatedDeliveryDateYear')}
                 className="cfnext-select-box"
                 aria-invalid={Boolean(validation.estimatedDeliveryDate)}>
-                {years.map(year => {
+                {years.map((year) => {
                   return (
                     <option key={year} value={year}>
                       {year}
@@ -157,7 +157,7 @@ export default class PartnershipForm extends React.Component {
                     color="negative"
                     style={{
                       marginRight: '7px',
-                      marginBottom: '-4px'
+                      marginBottom: '-4px',
                     }}
                   />
                   <span>{validation.estimatedDeliveryDate}</span>

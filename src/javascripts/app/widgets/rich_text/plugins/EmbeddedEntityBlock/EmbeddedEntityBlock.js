@@ -9,14 +9,14 @@ class LinkedEntityBlock extends React.Component {
     isSelected: PropTypes.bool.isRequired,
     attributes: PropTypes.object.isRequired,
     editor: PropTypes.object.isRequired,
-    node: PropTypes.object.isRequired
+    node: PropTypes.object.isRequired,
   };
 
   getEntitySys() {
     const data = this.props.node.data;
     return {
       id: data.get('target').sys.id,
-      type: data.get('target').sys.linkType
+      type: data.get('target').sys.linkType,
     };
   }
 

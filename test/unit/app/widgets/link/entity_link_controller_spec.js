@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import { $initialize, $inject, $apply } from 'test/utils/ng';
 
 xdescribe('EntityLinkController', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     await $initialize(this.system);
 
     const $rootScope = $inject('$rootScope');
@@ -16,7 +16,7 @@ xdescribe('EntityLinkController', () => {
         'entityDescription',
         'entryImage',
         'assetFile',
-        'assetFileUrl'
+        'assetFileUrl',
       ],
       (acc, method) => {
         acc[method] = sinon.stub().resolves();
@@ -24,7 +24,7 @@ xdescribe('EntityLinkController', () => {
       {}
     );
 
-    this.init = function(scopeProps) {
+    this.init = function (scopeProps) {
       const defaultScope = _.extend($rootScope.$new(), { entityHelpers: this.helpers });
       this.scope = _.extend(defaultScope, scopeProps || {});
       this.controller = $controller('EntityLinkController', { $scope: this.scope });
@@ -36,17 +36,17 @@ xdescribe('EntityLinkController', () => {
     const id = 'testid';
     const entity = { sys: { id: id, type: 'Entry' } };
 
-    it('is missing if neither entity nor link is provided', function() {
+    it('is missing if neither entity nor link is provided', function () {
       this.init();
       expect(this.scope.missing).toBe(true);
     });
 
-    it('is not missing if some entity is provided', function() {
+    it('is not missing if some entity is provided', function () {
       this.init({ entity: entity });
       expect(this.scope.missing).toBeUndefined();
     });
 
-    it('is missing if only link is provided', function() {
+    it('is missing if only link is provided', function () {
       this.init({ link: { sys: { id: id } } });
       expect(this.scope.missing).toBe(true);
     });
@@ -58,7 +58,7 @@ xdescribe('EntityLinkController', () => {
     const url = 'http://some.image.host/pika.gif';
     const file = {};
 
-    it('always gets basic entity info', function() {
+    it('always gets basic entity info', function () {
       this.helpers.entityTitle.resolves('boo!');
       this.helpers.entityStatus.resolves('published');
       this.init({ entity: entry });
@@ -69,19 +69,19 @@ xdescribe('EntityLinkController', () => {
       expect(this.scope.title).toBe('pow!');
     });
 
-    it('does not get asset details if an entry is provided', function() {
+    it('does not get asset details if an entry is provided', function () {
       this.init({ entity: entry });
       sinon.assert.notCalled(this.helpers.assetFile);
       sinon.assert.notCalled(this.helpers.assetFileUrl);
     });
 
-    it('does not get entry details if an asset is provided', function() {
+    it('does not get entry details if an asset is provided', function () {
       this.init({ entity: asset });
       sinon.assert.notCalled(this.helpers.entityDescription);
       sinon.assert.notCalled(this.helpers.entryImage);
     });
 
-    it('gets entry details if an entry is provided and details are enabled', function() {
+    it('gets entry details if an entry is provided and details are enabled', function () {
       this.helpers.entityDescription.resolves('some description');
       this.helpers.entryImage.resolves(url);
       this.init({ entity: entry, config: { showDetails: true } });
@@ -89,7 +89,7 @@ xdescribe('EntityLinkController', () => {
       expect(this.scope.image).toBe(url);
     });
 
-    it('gets asset details if an asset is provided', function() {
+    it('gets asset details if an asset is provided', function () {
       this.helpers.assetFile.resolves(file);
       this.helpers.assetFileUrl.resolves(url);
       this.init({ entity: asset });
@@ -98,7 +98,7 @@ xdescribe('EntityLinkController', () => {
     });
   });
 
-  it('exposes content type when it is loaded', function() {
+  it('exposes content type when it is loaded', function () {
     const $q = $inject('$q');
 
     const contentType = $q.resolve({ data: { name: 'CTNAME' } });

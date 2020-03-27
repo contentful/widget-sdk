@@ -11,7 +11,7 @@ export const SpaceResourceTypes = {
   Roles: 'Roles',
   Locales: 'Locales',
   ContentTypes: 'Content types',
-  Records: 'Records'
+  Records: 'Records',
 };
 
 // Threshold for usage limit displaying/causing an error (100% usage e.g. limit reached)
@@ -21,7 +21,7 @@ const ERROR_THRESHOLD = 1;
 const WARNING_THRESHOLD = 0.8;
 
 const resourceTooltipPropTypes = {
-  number: PropTypes.number.isRequired
+  number: PropTypes.number.isRequired,
 };
 
 function EnvironmentsTooltip({ number }) {
@@ -48,8 +48,8 @@ export function getRolesTooltip(limit, roleSet) {
 
   // has many translator roles
   const translator = 'Translator';
-  const translatorRolesCount = roles.filter(name => name.includes(translator)).length;
-  const withoutTranslator = roles.filter(name => !name.includes(translator)).join(', ');
+  const translatorRolesCount = roles.filter((name) => name.includes(translator)).length;
+  const withoutTranslator = roles.filter((name) => !name.includes(translator)).join(', ');
   const hasMultipleTranslators = translatorRolesCount > 1;
 
   // has limits greater than number of roles in role set
@@ -78,25 +78,25 @@ export function getRolesTooltip(limit, roleSet) {
 
 const ResourceTooltips = {
   [SpaceResourceTypes.Environments]: EnvironmentsTooltip,
-  [SpaceResourceTypes.Records]: () => 'Records are entries and assets combined.'
+  [SpaceResourceTypes.Records]: () => 'Records are entries and assets combined.',
 };
 
 export const Steps = {
   SpaceCreateSteps: {
     SpaceType: 'space_type',
     SpaceDetails: 'space_details',
-    Confirmation: 'confirmation'
+    Confirmation: 'confirmation',
   },
   SpaceChangeSteps: {
     SpaceType: 'space_type',
-    Confirmation: 'confirmation'
-  }
+    Confirmation: 'confirmation',
+  },
 };
 
 export const RequestState = {
   PENDING: 'pending',
   SUCCESS: 'success',
-  ERROR: 'error'
+  ERROR: 'error',
 };
 
 export function formatPrice(value) {
@@ -108,7 +108,7 @@ export function formatPrice(value) {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: 0,
-    maximumFractionDigits: 2
+    maximumFractionDigits: 2,
   });
 }
 
@@ -119,7 +119,7 @@ export function unavailabilityTooltipNode(plan) {
     return null;
   }
 
-  plan.unavailabilityReasons.forEach(reason => {
+  plan.unavailabilityReasons.forEach((reason) => {
     if (!reasonsMeta[reason.type]) {
       reasonsMeta[reason.type] = [];
     }
@@ -127,7 +127,7 @@ export function unavailabilityTooltipNode(plan) {
     reasonsMeta[reason.type].push({
       additionalInfo: reason.additionalInfo,
       usage: reason.usage,
-      maximumLimit: reason.maximumLimit
+      maximumLimit: reason.maximumLimit,
     });
   });
 
@@ -135,7 +135,7 @@ export function unavailabilityTooltipNode(plan) {
 
   if (reasonsMeta.maximumLimitExceeded) {
     const resourceOverageText = joinWithAnd(
-      reasonsMeta.maximumLimitExceeded.map(ov => {
+      reasonsMeta.maximumLimitExceeded.map((ov) => {
         const additionalUsage = ov.usage - ov.maximumLimit;
         const resourceName = lowerCase(ov.additionalInfo);
 
@@ -150,12 +150,12 @@ export function unavailabilityTooltipNode(plan) {
     );
   }
 
-  const mappedMeta = Object.keys(reasonsMeta).map(key => {
+  const mappedMeta = Object.keys(reasonsMeta).map((key) => {
     const value = reasonsMeta[key];
 
     if (key === 'roleIncompatibility') {
       const multipleRoles = value.length > 1;
-      const roles = joinWithAnd(value.map(v => v.additionalInfo));
+      const roles = joinWithAnd(value.map((v) => v.additionalInfo));
 
       return `migrate users from the ${roles} role${multipleRoles ? 's' : ''}`;
     } else if (key === 'maximumLimitExceeded') {
@@ -199,7 +199,7 @@ export function getFieldErrors(error) {
  */
 export function getRecommendedPlan(spaceRatePlans = [], resources) {
   // Valid plans are only ones that have no unavailablilty reasons
-  const validPlans = spaceRatePlans.filter(plan => !get(plan, 'unavailabilityReasons'));
+  const validPlans = spaceRatePlans.filter((plan) => !get(plan, 'unavailabilityReasons'));
 
   if (!resources || validPlans.length === 0) {
     return null;
@@ -207,7 +207,7 @@ export function getRecommendedPlan(spaceRatePlans = [], resources) {
 
   // Find the first plan that has all true fulfillments, e.g. the status is "true" for all of the given fulfillments
   // for a given space rate plan, which means the plan fulfills the given resource usage
-  const recommendedPlan = validPlans.find(plan => {
+  const recommendedPlan = validPlans.find((plan) => {
     const statuses = Object.values(getPlanResourceFulfillment(plan, resources));
 
     if (statuses.length === 0) {
@@ -255,7 +255,7 @@ export function getPlanResourceFulfillment(plan, spaceResources = []) {
 
   return planIncludedResources.reduce((fulfillments, planResource) => {
     const typeLower = planResource.type.toLowerCase();
-    const spaceResource = spaceResources.find(r => {
+    const spaceResource = spaceResources.find((r) => {
       const mappedId = resourceHumanNameMap[get(r, 'sys.id')].toLowerCase();
 
       return mappedId === typeLower;
@@ -269,17 +269,17 @@ export function getPlanResourceFulfillment(plan, spaceResources = []) {
       if (usagePercentage >= ERROR_THRESHOLD) {
         fulfillments[planResource.type] = {
           reached: true,
-          near: true
+          near: true,
         };
       } else if (usagePercentage >= WARNING_THRESHOLD) {
         fulfillments[planResource.type] = {
           reached: false,
-          near: true
+          near: true,
         };
       } else {
         fulfillments[planResource.type] = {
           reached: false,
-          near: false
+          near: false,
         };
       }
 
@@ -294,10 +294,10 @@ export function getIncludedResources(charges) {
     Roles: 'Roles',
     Locales: 'Locales',
     ContentTypes: 'Content types',
-    Records: 'Records'
+    Records: 'Records',
   };
 
-  return Object.values(ResourceTypes).map(type => {
+  return Object.values(ResourceTypes).map((type) => {
     const charge = charges.find(({ name }) => name === type);
     let number = get(charge, 'tiers[0].endingUnit');
 
@@ -324,7 +324,7 @@ export function createTrackingData(data) {
     recommendedPlan,
     newSpaceName,
     newSpaceTemplate,
-    spaceId
+    spaceId,
   } = data;
 
   const trackingData = {
@@ -339,7 +339,7 @@ export function createTrackingData(data) {
     currentSpaceType: get(currentPlan, 'internalName', null),
     currentProductType: get(currentPlan, 'productType', null),
     recommendedSpaceType: get(recommendedPlan, 'internalName', null),
-    recommendedProductType: get(recommendedPlan, 'productType', null)
+    recommendedProductType: get(recommendedPlan, 'productType', null),
   };
 
   if (spaceId) {

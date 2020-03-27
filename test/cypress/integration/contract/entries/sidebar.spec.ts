@@ -2,17 +2,17 @@ import { defaultRequestsMock } from '../../../util/factories';
 import { queryFirst100UsersInDefaultSpace } from '../../../interactions/users';
 import {
   getAllPublicContentTypesInDefaultSpace,
-  getEditorInterfaceForDefaultContentType
+  getEditorInterfaceForDefaultContentType,
 } from '../../../interactions/content_types';
 import {
   getDefaultEntry,
   queryLinksToDefaultEntry,
-  getFirst7SnapshotsOfDefaultEntry
+  getFirst7SnapshotsOfDefaultEntry,
 } from '../../../interactions/entries';
 import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 
 describe('Entries page', () => {
-  let interactions: string[]
+  let interactions: string[];
   beforeEach(() => {
     cy.resetAllFakeServers();
     interactions = basicServerSetUp();
@@ -20,23 +20,18 @@ describe('Entries page', () => {
 
   context('with no sidebar in the editor_interface', () => {
     beforeEach(() => {
-      interactions.push(
-        getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
-      )
+      interactions.push(getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar());
 
       const slowInteractions = [
         queryLinksToDefaultEntry.willReturnNone(),
-        getFirst7SnapshotsOfDefaultEntry.willReturnNone()
-      ]
+        getFirst7SnapshotsOfDefaultEntry.willReturnNone(),
+      ];
 
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
 
       cy.wait(interactions);
 
-      cy.wait(
-        slowInteractions,
-        { timeout: 10000 }
-      );
+      cy.wait(slowInteractions, { timeout: 10000 });
     });
     describe('Opening the Entry page', () => {
       it('shows the default sidebar', () => {
@@ -80,7 +75,7 @@ function basicServerSetUp(): string[] {
     cors: true,
     pactfileWriteMode: 'merge',
     dir: Cypress.env('pactDir'),
-    spec: 2
+    spec: 2,
   });
 
   cy.server();
@@ -88,9 +83,9 @@ function basicServerSetUp(): string[] {
 
   return [
     ...defaultRequestsMock({
-      publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne
+      publicContentTypesResponse: getAllPublicContentTypesInDefaultSpace.willReturnOne,
     }),
     queryFirst100UsersInDefaultSpace.willFindSeveral(),
-    getDefaultEntry.willReturnIt()
+    getDefaultEntry.willReturnIt(),
   ];
 }

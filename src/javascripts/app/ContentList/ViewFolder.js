@@ -16,15 +16,16 @@ export default function ViewFolder({ folder, state, actions }) {
   const { canEdit, roleAssignment, tracking } = state;
   const { UpdateFolder, DeleteFolder, UpdateView, DeleteView } = actions;
   const [views, setViews] = React.useState(
-    filter(folder.views, view => isViewVisible(view, roleAssignment))
+    filter(folder.views, (view) => isViewVisible(view, roleAssignment))
   );
 
   // Reinitialize folders visibility once accessChecker is initialized.
   React.useEffect(() => {
     return K.onValue(
       accessChecker.isInitialized$,
-      isInitialized =>
-        isInitialized && setViews(filter(folder.views, view => isViewVisible(view, roleAssignment)))
+      (isInitialized) =>
+        isInitialized &&
+        setViews(filter(folder.views, (view) => isViewVisible(view, roleAssignment)))
     );
   }, [folder.views, roleAssignment]);
 
@@ -40,7 +41,7 @@ export default function ViewFolder({ folder, state, actions }) {
   const isClosed = state.folderStates[folder.id] === 'closed';
   const collapsed = isClosed ? '-collapsed' : '';
   const currentViewId = getAtPath(state.currentView, ['id']);
-  const active = view => (view.id === currentViewId ? '-active' : '');
+  const active = (view) => (view.id === currentViewId ? '-active' : '');
 
   return (
     <div key={folder.id} className={classNames('view-folder', isNotDefault ? draggable : '')}>
@@ -64,10 +65,10 @@ export default function ViewFolder({ folder, state, actions }) {
       )}
       {!isClosed && (
         <ul
-          ref={el => state.dnd.forViews(el, folder)}
+          ref={(el) => state.dnd.forViews(el, folder)}
           style={{
             minHeight: views.length === 0 ? '10px' : undefined,
-            marginBottom: views.length === 0 ? '0px' : undefined
+            marginBottom: views.length === 0 ? '0px' : undefined,
           }}
           className={classNames('view-folder__list', collapsed)}>
           {views.map((view, index) => {
@@ -88,7 +89,7 @@ export default function ViewFolder({ folder, state, actions }) {
                           if (roles !== false) {
                             const updatedView = {
                               ...view,
-                              roles
+                              roles,
                             };
                             tracking.viewRolesEdited(view);
                             const copyViews = [...views];
@@ -122,7 +123,7 @@ export default function ViewFolder({ folder, state, actions }) {
 ViewFolder.propTypes = {
   folder: PropTypes.object.isRequired,
   state: PropTypes.object.isRequired,
-  actions: PropTypes.object.isRequired
+  actions: PropTypes.object.isRequired,
 };
 
 async function renameFolder(folder, UpdateFolder) {
@@ -133,10 +134,10 @@ async function renameFolder(folder, UpdateFolder) {
       message: 'New name for the folder',
       intent: 'positive',
       maxLenght: 32,
-      isValid: value => {
+      isValid: (value) => {
         const trimmed = (value || '').trim();
         return trimmed.length > 0 && trimmed.length <= 32;
-      }
+      },
     },
     folder.title
   );
@@ -163,7 +164,7 @@ function deleteFolder(folder, DeleteFolder) {
       folder will also remove all the saved views inside. If you want to keep your views, please
       drag them into another folder before deleting the folder.
     </ModalConfirm>
-  )).then(confirmed => {
+  )).then((confirmed) => {
     if (confirmed) {
       DeleteFolder(folder);
     }
@@ -177,10 +178,10 @@ async function editViewTitle(view, tracking, UpdateView) {
       confirmLabel: 'Rename view',
       message: 'New name for the folder',
       intent: 'positive',
-      isValid: value => {
+      isValid: (value) => {
         const trimmed = (value || '').trim();
         return trimmed.length > 0 && trimmed.length <= 32;
-      }
+      },
     },
     view.title
   );
@@ -207,7 +208,7 @@ function deleteView(view, tracking, DeleteView) {
       Are you sure you want to delete the view{' '}
       <span className="modal-dialog__highlight">{htmlEncode(view.title)}</span>?
     </ModalConfirm>
-  )).then(confirmed => {
+  )).then((confirmed) => {
     if (confirmed) {
       tracking.viewDeleted(view);
       DeleteView(view);
@@ -243,8 +244,8 @@ function isVisibleForAssignedRoles(view, membership) {
     return true;
   } else {
     return view.roles
-      ? view.roles.some(viewRoleId => {
-          return membership.roles.some(role => viewRoleId === role.sys.id);
+      ? view.roles.some((viewRoleId) => {
+          return membership.roles.some((role) => viewRoleId === role.sys.id);
         })
       : true;
   }
@@ -269,7 +270,7 @@ function isContentTypeReadable(contentTypeId) {
 }
 
 function doNotPropagate(fn) {
-  return e => {
+  return (e) => {
     e.stopPropagation();
     fn(e);
   };

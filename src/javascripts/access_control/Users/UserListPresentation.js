@@ -20,21 +20,21 @@ const styles = {
   workbench: {
     content: css({
       padding: 0,
-      scrollBehavior: 'smooth'
-    })
+      scrollBehavior: 'smooth',
+    }),
   },
   groupSelect: css({
     marginLeft: '67px',
     marginTop: tokens.spacingXl,
-    display: 'inline-flex'
+    display: 'inline-flex',
   }),
   sidebar: {
     heading: css({
       color: tokens.colorTextLight,
       fontWeight: tokens.fontWeightNormal,
       borderBottom: '1px solid #c3cfd5',
-      marginBottom: tokens.spacingXl
-    })
+      marginBottom: tokens.spacingXl,
+    }),
   },
   userListGroup: css({
     margin: `${tokens.spacingXl} 0`,
@@ -51,12 +51,12 @@ const styles = {
       top: '-15px',
       background: '#fff',
       padding: `0 ${tokens.spacingS}`,
-      minWidth: '40px'
-    }
-  })
+      minWidth: '40px',
+    },
+  }),
 };
 
-const scrollToRole = roleGroupEl => {
+const scrollToRole = (roleGroupEl) => {
   roleGroupEl.current.scrollIntoView({ block: 'start' });
 };
 
@@ -74,7 +74,7 @@ const UserListPresentation = ({
   onChangeSelectedView,
   jumpToRole,
   numberOfTeamMemberships,
-  adminCount
+  adminCount,
 }) => {
   const roleAnchorEl = useRef(null);
   useEffect(() => {
@@ -106,8 +106,8 @@ const UserListPresentation = ({
             filter={{
               label: 'Group by',
               valueInput: ValueInput.Select(
-                Object.keys(VIEW_LABELS).map(key => [key, VIEW_LABELS[key]])
-              )
+                Object.keys(VIEW_LABELS).map((key) => [key, VIEW_LABELS[key]])
+              ),
             }}
             value={selectedView}
             onChange={onChangeSelectedView}
@@ -118,7 +118,7 @@ const UserListPresentation = ({
               <SectionHeading element="h3">{label}</SectionHeading>
 
               <List>
-                {members.map(member => (
+                {members.map((member) => (
                   <UserListRow
                     key={member.sys.id}
                     member={member}
@@ -142,7 +142,7 @@ const UserListPresentation = ({
             {...{
               orgId,
               isOwnerOrAdmin,
-              hasTeamsFeature
+              hasTeamsFeature,
             }}
           />
         </Workbench.Sidebar>
@@ -167,5 +167,5 @@ UserListPresentation.propTypes = {
   openRoleChangeDialog: PropTypes.func.isRequired,
   openRemovalConfirmationDialog: PropTypes.func.isRequired,
   onChangeSelectedView: PropTypes.func.isRequired,
-  adminCount: PropTypes.number.isRequired
+  adminCount: PropTypes.number.isRequired,
 };

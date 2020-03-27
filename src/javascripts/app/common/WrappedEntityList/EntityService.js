@@ -8,13 +8,13 @@ export async function getEntityData(entity, localeCode) {
     entityHelpers.entityTitle(entity),
     entityHelpers.entityDescription(entity),
     entityHelpers.entityFile(entity),
-    stateName(getState(entity.sys))
+    stateName(getState(entity.sys)),
   ]);
 
   return {
     title,
     description,
     file,
-    status
+    status,
   };
 }

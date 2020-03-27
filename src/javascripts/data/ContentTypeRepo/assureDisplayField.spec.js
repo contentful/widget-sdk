@@ -7,9 +7,9 @@ describe('assureDisplayField', () => {
       fields: [
         {
           id: 'ID',
-          type: 'Symbol'
-        }
-      ]
+          type: 'Symbol',
+        },
+      ],
     };
     assureDisplayField(ct);
     expect(ct.displayField).toEqual('ID');
@@ -21,9 +21,9 @@ describe('assureDisplayField', () => {
       fields: [
         {
           id: 'ID',
-          type: 'non displayable'
-        }
-      ]
+          type: 'non displayable',
+        },
+      ],
     };
     assureDisplayField(ct);
     expect(ct.displayField).toBeUndefined();
@@ -35,9 +35,9 @@ describe('assureDisplayField', () => {
       fields: [
         {
           id: 'ANOTHER ID',
-          type: 'non displayable'
-        }
-      ]
+          type: 'non displayable',
+        },
+      ],
     };
     assureDisplayField(ct);
     expect(ct.displayField).toBeUndefined();
@@ -49,17 +49,17 @@ describe('assureDisplayField', () => {
       fields: [
         {
           id: 'FIRST ID',
-          type: 'non displayable'
+          type: 'non displayable',
         },
         {
           id: 'SECOND ID',
-          type: 'Symbol'
+          type: 'Symbol',
         },
         {
           id: 'THIRD ID',
-          type: 'Symbol'
-        }
-      ]
+          type: 'Symbol',
+        },
+      ],
     };
     assureDisplayField(ct);
     expect(ct.displayField).toEqual('SECOND ID');
@@ -71,9 +71,9 @@ describe('assureDisplayField', () => {
       fields: [
         {
           id: 'fieldid',
-          type: 'non-displayable'
-        }
-      ]
+          type: 'non-displayable',
+        },
+      ],
     };
     assureDisplayField(ct);
     expect(ct.displayField).toBeNull();

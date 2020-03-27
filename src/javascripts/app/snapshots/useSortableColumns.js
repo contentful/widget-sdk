@@ -6,7 +6,7 @@ const useSortableColumns = ({ snapshots, setSnapshots }) => {
   const [sortOrder, setSortOrder] = useState({});
   const [isAscending, setIsAscending] = useState(true);
 
-  const handleOrdering = sorted => {
+  const handleOrdering = (sorted) => {
     const results = [...sorted];
     if (!isAscending) reverse(results);
     setSnapshots(results);
@@ -25,7 +25,7 @@ const useSortableColumns = ({ snapshots, setSnapshots }) => {
     sortByDate();
   };
 
-  const sortAsStringAtPath = stringPropertyPath => {
+  const sortAsStringAtPath = (stringPropertyPath) => {
     const sorted = snapshots.sort((a, b) => {
       const propA = get(a, stringPropertyPath, '');
       const propB = get(b, stringPropertyPath, '');

@@ -3,7 +3,7 @@ function isValidIdentifier(exportName) {
 }
 
 module.exports = {
-  translate: function(load) {
+  translate: function (load) {
     const json = JSON.parse(load.source);
     if (this.builder && this.transpiler && !Array.isArray(json)) {
       load.metadata.format = 'esm';
@@ -13,14 +13,14 @@ module.exports = {
 
       const output = ['exp' + 'ort var __useDefault = true;\n'];
 
-      validIdentifiers.forEach(function(exportName) {
+      validIdentifiers.forEach(function (exportName) {
         output.push(
           'exp' + 'ort var ' + exportName + ' = ' + JSON.stringify(json[exportName]) + ';\n'
         );
       });
 
       output.push('exp' + 'ort default {\n');
-      namedExports.forEach(function(exportName) {
+      namedExports.forEach(function (exportName) {
         if (validIdentifiers.indexOf(exportName) !== -1) {
           output.push(exportName + ': ' + exportName + ',\n');
         } else {
@@ -37,9 +37,9 @@ module.exports = {
       return 'module.exports = ' + JSON.stringify(json);
     }
   },
-  instantiate: function(load) {
+  instantiate: function (load) {
     if (!this.builder) {
       return JSON.parse(load.source);
     }
-  }
+  },
 };

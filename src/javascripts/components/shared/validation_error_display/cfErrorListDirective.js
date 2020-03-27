@@ -12,8 +12,8 @@ export default function register() {
       <li ng-repeat="(index, error) in errors.messages track by index">{{error}}</li>
     </ul>`,
 
-    link: function(scope, element, attrs) {
-      scope.$watchCollection('errors.messages', messages => {
+    link: function (scope, element, attrs) {
+      scope.$watchCollection('errors.messages', (messages) => {
         if (attrs['ngHide'] || attrs['ngShow']) {
           return;
         }
@@ -24,6 +24,6 @@ export default function register() {
           element.hide();
         }
       });
-    }
+    },
   }));
 }

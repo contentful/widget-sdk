@@ -15,8 +15,8 @@ class Authorization {
     const environment = {
       sys: {
         id: environmentId,
-        isMaster: isMasterEnvironment
-      }
+        isMaster: isMasterEnvironment,
+      },
     };
 
     if (space && enforcements) {
@@ -41,8 +41,8 @@ class Authorization {
       logger.logError('Worf initialization exception', {
         data: {
           exception: exp,
-          tokenLookup: tokenLookup
-        }
+          tokenLookup: tokenLookup,
+        },
       });
       return;
     }
@@ -54,7 +54,7 @@ class Authorization {
 
     accessChecker.setAuthContext({
       authContext: this.authContext,
-      spaceAuthContext: this.spaceContext
+      spaceAuthContext: this.spaceContext,
     });
   }
 }

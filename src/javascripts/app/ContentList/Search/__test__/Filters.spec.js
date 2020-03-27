@@ -53,7 +53,7 @@ describe('app/ContentList/Search/Filters', () => {
         'returns all sys and all ct fields',
         {
           searchQuery: '',
-          contentType: null
+          contentType: null,
         },
         [
           'sys.updatedAt',
@@ -87,7 +87,7 @@ describe('app/ContentList/Search/Filters', () => {
           'fields.quantity',
           'fields.sku',
           'fields.website',
-          'fields.createdAt'
+          'fields.createdAt',
         ]
       );
 
@@ -95,7 +95,7 @@ describe('app/ContentList/Search/Filters', () => {
         'returns brand sys and ct fields',
         {
           searchQuery: '',
-          contentType: contentTypes[0].sys.id
+          contentType: contentTypes[0].sys.id,
         },
         [
           'sys.updatedAt',
@@ -116,7 +116,7 @@ describe('app/ContentList/Search/Filters', () => {
           'fields.email',
           'fields.phone',
           'fields.symbol1',
-          'fields.symbol2'
+          'fields.symbol2',
         ]
       );
 
@@ -124,7 +124,7 @@ describe('app/ContentList/Search/Filters', () => {
         'returns filters if apiName startsWith searchQuery',
         {
           searchQuery: 'cr',
-          contentType: null
+          contentType: null,
         },
         ['sys.createdAt', 'sys.createdBy.sys.id', 'fields.createdAt']
       );
@@ -133,7 +133,7 @@ describe('app/ContentList/Search/Filters', () => {
         'returns filters if apiName startsWith searchQuery',
         {
           searchQuery: 't',
-          contentType: null
+          contentType: null,
         },
         ['fields.twitter', 'fields.tags']
       );
@@ -142,7 +142,7 @@ describe('app/ContentList/Search/Filters', () => {
         'returns filters if apiName startsWith searchQuery',
         {
           searchQuery: 'twi',
-          contentType: null
+          contentType: null,
         },
         ['fields.twitter']
       );
@@ -151,7 +151,7 @@ describe('app/ContentList/Search/Filters', () => {
         'returns filters if apiName startsWith searchQuery',
         {
           searchQuery: 'web',
-          contentType: null
+          contentType: null,
         },
         ['fields.website', 'fields.website']
       );
@@ -160,7 +160,7 @@ describe('app/ContentList/Search/Filters', () => {
         'returns empty array if there is no matching filters',
         {
           searchQuery: 'witter',
-          contentType: null
+          contentType: null,
         },
         []
       );

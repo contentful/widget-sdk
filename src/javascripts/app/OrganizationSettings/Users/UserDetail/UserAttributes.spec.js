@@ -5,7 +5,7 @@ import UserAttributes from './UserAttributes';
 import { orgRoles } from 'utils/MembershipUtils';
 import {
   updateMembership,
-  removeMembership
+  removeMembership,
 } from 'access_control/OrganizationMembershipRepository';
 import ModalLauncher from '__mocks__/app/common/ModalLauncher';
 import { Notification } from '@contentful/forma-36-react-components';
@@ -18,11 +18,11 @@ const onRoleChangeCb = jest.fn();
 
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
   updateMembership: jest.fn(async () => mockDeveloper),
-  removeMembership: jest.fn(async () => {})
+  removeMembership: jest.fn(async () => {}),
 }));
 
 jest.mock('states/Navigator', () => ({
-  go: jest.fn()
+  go: jest.fn(),
 }));
 
 describe('UserAttributes', () => {
@@ -50,7 +50,7 @@ describe('UserAttributes', () => {
       expect.any(Function),
       expect.objectContaining({
         id: mockMember.sys.id,
-        role: 'developer'
+        role: 'developer',
       })
     );
     const notification = await screen.findByTestId('cf-ui-notification');

@@ -6,20 +6,20 @@ import _ from 'lodash';
  This helper resets the global SystemJS on each test run
 */
 
-beforeEach(function() {
+beforeEach(function () {
   const isolatedSystem = new SystemJS.constructor();
   const config = _.cloneDeep(SystemJS.getConfig());
 
   isolatedSystem.config(config);
 
   // Register each existing module onto our blank system canvas
-  window.testRegistry.forEach(args => registerInIsolatedSystem(isolatedSystem, args));
-  window.libs.forEach(args => registerLibrary(isolatedSystem, args));
+  window.testRegistry.forEach((args) => registerInIsolatedSystem(isolatedSystem, args));
+  window.libs.forEach((args) => registerLibrary(isolatedSystem, args));
 
   this.__originalSystem = window.SystemJS;
 
   this.system = {
-    set: function(path, module) {
+    set: function (path, module) {
       const newModule = SystemJS.newModule(module);
 
       const normalizedPath = SystemJS.normalizeSync(path);
@@ -38,15 +38,15 @@ beforeEach(function() {
 
       return null;
     },
-    reimport: function(path) {
+    reimport: function (path) {
       SystemJS.registry.delete(SystemJS.resolveSync(path));
 
       return SystemJS.import(SystemJS.resolveSync(path));
     },
-    import: function(path) {
+    import: function (path) {
       return SystemJS.import(path);
     },
-    override: async function(path, update) {
+    override: async function (path, update) {
       const currentModule = await SystemJS.import(path);
 
       const newModule = Object.assign({}, currentModule, update);
@@ -54,30 +54,30 @@ beforeEach(function() {
       this.set(path, newModule);
 
       return null;
-    }
+    },
   };
 
   window.SystemJS = isolatedSystem;
 });
 
-afterEach(function() {
+afterEach(function () {
   window.SystemJS = this.__originalSystem;
 });
 
 function registerLibrary(system, [name, dep]) {
-  system.register(name, [], export_ => {
+  system.register(name, [], (export_) => {
     const exports = dep;
     export_(Object.assign({ default: exports }, exports));
     return {
       setters: [],
-      execute: function() {}
+      execute: function () {},
     };
   });
 }
 
 function registerAlias(isolatedSystem, moduleId, alias) {
-  isolatedSystem.register(alias, [moduleId], $export => ({
-    setters: [$export]
+  isolatedSystem.register(alias, [moduleId], ($export) => ({
+    setters: [$export],
   }));
 }
 

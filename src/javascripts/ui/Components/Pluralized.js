@@ -11,7 +11,7 @@ function Pluralized({ text, count }) {
 
 Pluralized.propTypes = {
   text: PropTypes.string.isRequired,
-  count: PropTypes.number.isRequired
+  count: PropTypes.number.isRequired,
 };
 
 export default Pluralized;

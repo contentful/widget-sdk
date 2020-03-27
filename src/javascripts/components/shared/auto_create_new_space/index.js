@@ -13,7 +13,7 @@ import {
   hasAnOrgWithSpaces,
   ownsAtleastOneOrg,
   getCurrOrg,
-  isUserOrgCreator
+  isUserOrgCreator,
 } from 'data/User';
 
 import { create } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
@@ -60,7 +60,7 @@ export function init() {
             );
           },
           org,
-          user
+          user,
         });
         return;
       } else {
@@ -79,7 +79,7 @@ export function init() {
 
           // we swallow all errors, so auto creation modal will always have green mark
           newSpace = await createSampleSpace(org, 'the example app', template).then(
-            newSpace => {
+            (newSpace) => {
               store.set(getSpaceAutoCreatedKey(user, 'success'), true);
 
               return newSpace;

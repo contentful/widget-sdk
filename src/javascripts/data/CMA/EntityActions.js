@@ -56,7 +56,7 @@ export const Action = {
    * @name data/CMA/EntityActions#Action.Delete
    * @returns {data/CMA/EntityActions.Action}
    */
-  Delete: constant('delete')
+  Delete: constant('delete'),
 };
 
 /**
@@ -86,10 +86,10 @@ export function makePerform(spaceEndpoint) {
       {
         method,
         path: compact([collection, id, path]),
-        version
+        version,
       },
       {
-        'X-Contentful-Skip-Transformation': 'true'
+        'X-Contentful-Skip-Transformation': 'true',
       }
     );
   };
@@ -105,7 +105,7 @@ function restArgs(action) {
     [Action.Unpublish(), constant(['DELETE', 'published'])],
     [Action.Archive(), constant(['PUT', 'archived'])],
     [Action.Unarchive(), constant(['DELETE', 'archived'])],
-    [Action.Delete(), constant(['DELETE'])]
+    [Action.Delete(), constant(['DELETE'])],
   ]);
 }
 

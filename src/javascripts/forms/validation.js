@@ -27,11 +27,11 @@ export default function register() {
    */
   registerDirective('cfValidateForm', [
     '$interpolate',
-    $interpolate => ({
+    ($interpolate) => ({
       restrict: 'A',
       require: ['^cfValidate', 'form'],
 
-      link: function(scope, _elem, attrs, ctrls) {
+      link: function (scope, _elem, attrs, ctrls) {
         const validator = ctrls[0];
         const form = ctrls[1];
 
@@ -55,8 +55,8 @@ export default function register() {
         function validate() {
           return validator.runLater(errorPath, true);
         }
-      }
-    })
+      },
+    }),
   ]);
 
   /**
@@ -84,10 +84,10 @@ export default function register() {
    */
   registerDirective('cfValidateModel', [
     '$interpolate',
-    $interpolate => ({
+    ($interpolate) => ({
       require: ['ngModel', '^cfValidate'],
 
-      link: function(scope, _elem, attrs, ctrls) {
+      link: function (scope, _elem, attrs, ctrls) {
         const modelCtrl = ctrls[0];
         const validator = ctrls[1];
         let schemaErrors = [];
@@ -98,7 +98,7 @@ export default function register() {
         scope.$on(validateOn, validate);
 
         scope.$watch('validator.errors', () => {
-          _.forEach(schemaErrors, error => {
+          _.forEach(schemaErrors, (error) => {
             modelCtrl.$setValidity(error.name, null);
           });
 
@@ -106,7 +106,7 @@ export default function register() {
 
           modelCtrl.errorDetails = mapBy(schemaErrors, 'name');
 
-          _.forEach(schemaErrors, error => {
+          _.forEach(schemaErrors, (error) => {
             modelCtrl.$setValidity(error.name, false);
           });
         });
@@ -117,10 +117,10 @@ export default function register() {
 
         function mapBy(collection, iteratee) {
           const grouped = _.groupBy(collection, iteratee);
-          return _.mapValues(grouped, items => items[0]);
+          return _.mapValues(grouped, (items) => items[0]);
         }
-      }
-    })
+      },
+    }),
   ]);
 
   /**
@@ -138,13 +138,13 @@ export default function register() {
   registerDirective('cfValidateOn', () => {
     const allowedEvents = ['update', 'commit'];
     return {
-      link: function(scope, _element, attrs) {
+      link: function (scope, _element, attrs) {
         const eventName = attrs.cfValidateOn;
         if (allowedEvents.indexOf(eventName) === -1) {
           throw new Error('Unknown validation event "' + eventName + '"');
         }
         scope.$validateOn = eventName;
-      }
+      },
     };
   });
 }

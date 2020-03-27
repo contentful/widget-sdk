@@ -21,10 +21,13 @@ export default (state = {}, { type, payload, meta, error }, globalState) => {
         const datasetKeys = Object.keys(datasets);
         // create an object with the current timestamp for the given datasets
         // this is used to limit how often data is requested from the server
-        const timestampsForDatasets = zipObject(datasetKeys, datasetKeys.map(() => ({ fetched })));
+        const timestampsForDatasets = zipObject(
+          datasetKeys,
+          datasetKeys.map(() => ({ fetched }))
+        );
         return update(
           orgId,
-          currentDatasets => merge(currentDatasets, timestampsForDatasets),
+          (currentDatasets) => merge(currentDatasets, timestampsForDatasets),
           state
         );
       }

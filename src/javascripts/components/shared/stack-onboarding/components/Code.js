@@ -11,9 +11,9 @@ const copyButtonStyleOverride = css({
     height: '1.7em',
     width: '2em',
     '&:hover': {
-      backgroundColor: 'transparent'
-    }
-  }
+      backgroundColor: 'transparent',
+    },
+  },
 });
 
 class Code extends React.Component {
@@ -23,12 +23,12 @@ class Code extends React.Component {
     copy: PropTypes.bool,
     onCopy: PropTypes.func,
     lineNumbers: PropTypes.bool,
-    className: PropTypes.string
+    className: PropTypes.string,
   };
 
   static defaultProps = {
     lineNumbers: true,
-    className: ''
+    className: '',
   };
 
   renderCode = () => {

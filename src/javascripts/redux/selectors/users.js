@@ -9,11 +9,7 @@ import { getDatasets } from './datasets';
  *
  * @return {Object}
  */
-export const getUsers = flow(
-  getDatasets,
-  get(USERS),
-  defaultTo({})
-);
+export const getUsers = flow(getDatasets, get(USERS), defaultTo({}));
 
 /**
  * @description

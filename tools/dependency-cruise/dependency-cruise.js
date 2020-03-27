@@ -7,7 +7,7 @@ module.exports = {
         Either use it or remove it. If it's logical this module is not reachable,
       add an exception for it in your dependency-cruiser configuration.`,
       from: {
-        path: 'prelude\\.js$'
+        path: 'prelude\\.js$',
       },
       to: {
         path: 'src',
@@ -24,8 +24,8 @@ module.exports = {
             for each file matching path and pathNot, check if it's reachable from the
             modules matching the criteria mentioned in "from"
            */
-        reachable: false
-      }
+        reachable: false,
+      },
     },
     {
       name: 'no-orphans',
@@ -35,9 +35,9 @@ module.exports = {
       severity: 'warn',
       from: {
         orphan: true,
-        pathNot: '__mocks__|\\.d\\.ts$'
+        pathNot: '__mocks__|\\.d\\.ts$',
       },
-      to: {}
+      to: {},
     },
     {
       name: 'not-to-unresolvable',
@@ -54,8 +54,8 @@ module.exports = {
           * imports like 'ng/spaceContext', 'ng/$state'
           * saved-views-migrator
         */
-        pathNot: 'ng\\/|saved-views-migrator'
-      }
+        pathNot: 'ng\\/|saved-views-migrator',
+      },
     },
     // {
     //   name: 'not-to-test',
@@ -80,8 +80,8 @@ module.exports = {
       severity: 'warn',
       from: {},
       to: {
-        path: '\\.spec\\.(js|ts\\.md)$'
-      }
+        path: '\\.spec\\.(js|ts\\.md)$',
+      },
     },
 
     {
@@ -94,11 +94,11 @@ module.exports = {
         from.pathNot re of the not-to-dev-dep rule in the dependency-cruiser configuration`,
       from: {
         path: '^(src)',
-        pathNot: '\\.spec\\.(js|ts\\.md)$'
+        pathNot: '\\.spec\\.(js|ts\\.md)$',
       },
       to: {
-        dependencyTypes: ['npm-dev']
-      }
+        dependencyTypes: ['npm-dev'],
+      },
     },
     {
       name: 'no-circular',
@@ -109,8 +109,8 @@ module.exports = {
       severity: 'warn',
       from: {},
       to: {
-        circular: true
-      }
+        circular: true,
+      },
     },
     {
       name: 'no-duplicate-dep-types',
@@ -124,8 +124,8 @@ module.exports = {
       severity: 'warn',
       from: {},
       to: {
-        moreThanOneDependencyType: true
-      }
+        moreThanOneDependencyType: true,
+      },
     },
     {
       name: 'optional-deps-used',
@@ -137,8 +137,8 @@ module.exports = {
         'depdency-cruiser configuration.',
       from: {},
       to: {
-        dependencyTypes: ['npm-optional']
-      }
+        dependencyTypes: ['npm-optional'],
+      },
     },
     {
       name: 'peer-deps-used',
@@ -150,9 +150,9 @@ module.exports = {
       severity: 'warn',
       from: {},
       to: {
-        dependencyTypes: ['npm-peer']
-      }
-    }
+        dependencyTypes: ['npm-peer'],
+      },
+    },
   ],
   options: {
     /* conditions specifying which files not to follow further when encountered:
@@ -162,12 +162,12 @@ module.exports = {
     */
     doNotFollow: {
       // path: 'node_modules',
-      dependencyTypes: ['npm', 'npm-dev', 'npm-optional', 'npm-peer', 'npm-bundled', 'npm-no-pkg']
+      dependencyTypes: ['npm', 'npm-dev', 'npm-optional', 'npm-peer', 'npm-bundled', 'npm-no-pkg'],
     },
 
     /* Webpack configuration to use to get resolve options from. */
     webpackConfig: {
-      fileName: './tools/dependency-cruise/dependency-cruise-webpack.config.js'
-    }
-  }
+      fileName: './tools/dependency-cruise/dependency-cruise-webpack.config.js',
+    },
+  },
 };

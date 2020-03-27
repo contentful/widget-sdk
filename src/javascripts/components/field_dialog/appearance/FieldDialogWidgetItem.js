@@ -12,13 +12,13 @@ const styles = {
   appIcon: css({
     margin: 'auto',
     height: '42px',
-    width: '42px'
+    width: '42px',
   }),
   widgetTitle: css({
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
-    overflow: 'hidden'
-  })
+    overflow: 'hidden',
+  }),
 };
 
 export default class FieldDialogWidgetItem extends Component {
@@ -28,7 +28,7 @@ export default class FieldDialogWidgetItem extends Component {
     isSelected: PropTypes.bool.isRequired,
     isDefault: PropTypes.bool.isRequired,
     isAdmin: PropTypes.bool.isRequired,
-    widget: PropTypes.object.isRequired
+    widget: PropTypes.object.isRequired,
   };
 
   renderIcon() {
@@ -50,7 +50,7 @@ export default class FieldDialogWidgetItem extends Component {
       <li
         className={classNames('field-dialog__widget-item', {
           'is-selected': isSelected,
-          'is-custom': [NAMESPACE_EXTENSION, NAMESPACE_APP].includes(widget.namespace)
+          'is-custom': [NAMESPACE_EXTENSION, NAMESPACE_APP].includes(widget.namespace),
         })}
         data-current-widget-index={index}
         onClick={onClick}

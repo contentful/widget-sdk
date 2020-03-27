@@ -14,14 +14,11 @@ apolloFetch.use(({ _, options }, next) => {
   next();
 });
 
-const getFileExtension = fileName => {
-  return fileName
-    .split('.')
-    .splice(1)
-    .join('.');
+const getFileExtension = (fileName) => {
+  return fileName.split('.').splice(1).join('.');
 };
 
-const getFilenameHash = fileName => {
+const getFilenameHash = (fileName) => {
   const parts = path.basename(fileName, '.' + getFileExtension(fileName)).split('-');
   if (parts[parts.length - 1] === 'chunk') {
     parts.pop();
@@ -29,7 +26,7 @@ const getFilenameHash = fileName => {
   return parts.length > 1 ? parts[parts.length - 1] : null;
 };
 
-const nameMapper = fileName => {
+const nameMapper = (fileName) => {
   const extension = getFileExtension(fileName);
   const hash = getFilenameHash(fileName);
   const out = fileName.replace('.' + extension, '');
@@ -50,8 +47,8 @@ const uploadBuildSize = async (meta, artifacts) => {
     variables: {
       meta: meta,
       project: 'user_interface',
-      artifacts: JSON.stringify(artifacts)
-    }
+      artifacts: JSON.stringify(artifacts),
+    },
   });
 
   if (response.data && response.data.uploadBuildSize === true) {
@@ -61,7 +58,7 @@ const uploadBuildSize = async (meta, artifacts) => {
   }
 };
 
-const compareBuilds = async commits => {
+const compareBuilds = async (commits) => {
   const response = await apolloFetch({
     query: `query Compare(
       $project: String!,
@@ -81,9 +78,9 @@ const compareBuilds = async commits => {
       project: 'user_interface',
       commits: commits,
       groups: [
-        { name: 'Initial rendering', artifactNames: ['vendors~app.js', 'app.js', 'styles.css'] }
-      ]
-    }
+        { name: 'Initial rendering', artifactNames: ['vendors~app.js', 'app.js', 'styles.css'] },
+      ],
+    },
   });
   if (response.data && response.data.compareBuilds) {
     return response.data.compareBuilds;
@@ -100,7 +97,7 @@ module.exports = {
   getFilenameHash,
   nameMapper,
   // actually stands for on ready to upload
-  onUpload: async build => {
+  onUpload: async (build) => {
     const { meta, artifacts } = build;
 
     await uploadBuildSize(meta, artifacts);
@@ -117,7 +114,7 @@ module.exports = {
       return [
         '## Build Tracker',
         str,
-        `[See details](https://contentful-sniffer.netlify.com/build-tracker#revs=${meta.parentRevision}&revs=${meta.revision})`
+        `[See details](https://contentful-sniffer.netlify.com/build-tracker#revs=${meta.parentRevision}&revs=${meta.revision})`,
       ].join('\n\n');
     }
 
@@ -129,13 +126,13 @@ module.exports = {
         body: JSON.stringify({
           issue: Number.parseInt(pr, 10),
           message: getMessage(result.markdown),
-          type: 'bundlesize'
+          type: 'bundlesize',
         }),
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.GITHUB_PAT_REPO_SCOPE_SQUIRELY}`
-        }
-      }).then(res => res.json());
+          Authorization: `Bearer ${process.env.GITHUB_PAT_REPO_SCOPE_SQUIRELY}`,
+        },
+      }).then((res) => res.json());
 
       if (statusCode >= 400) {
         const error = new Error(message);
@@ -150,5 +147,5 @@ module.exports = {
       console.error('Build tracker upload failed ->', err);
       console.log(`Comment won't be posted to PR#${pr}. Continuing anyway.`);
     }
-  }
+  },
 };

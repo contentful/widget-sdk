@@ -29,7 +29,7 @@ describe('ScheduledActionDialog', () => {
       entryTitle: 'Test',
       onCreate: jest.fn(),
       onCancel: jest.fn(),
-      isSubmitting: false
+      isSubmitting: false,
     };
     return [render(<ScheduledActionDialog {...props} />), props];
   };
@@ -63,7 +63,7 @@ describe('ScheduledActionDialog', () => {
     ['2018-06-18T15:33:12', '2018-06-18T16:00:00.000+00:00'],
     ['2018-06-18T00:01', '2018-06-18T01:00:00.000+00:00'],
     ['2018-06-18T23:55', '2018-06-19T00:00:00.000+00:00'],
-    ['2018-12-31T23:52', '2019-01-01T00:00:00.000+00:00']
+    ['2018-12-31T23:52', '2019-01-01T00:00:00.000+00:00'],
   ])('default values are the full hour in the future: %p => %p', async (now, expected) => {
     DateMocks.mockNowOnce(dateNowSpy, now);
 
@@ -74,7 +74,7 @@ describe('ScheduledActionDialog', () => {
     expect(props.onCreate).toHaveBeenCalledWith(
       {
         scheduledAt: expected,
-        action: 'publish'
+        action: 'publish',
       },
       'Africa/Abidjan'
     );
@@ -84,7 +84,7 @@ describe('ScheduledActionDialog', () => {
     ['2017-06-18T15:59', 'Africa/Nairobi', '2017-06-18T16:00:00.000+03:00'],
     ['2017-06-18T16:59', 'Africa/Nairobi', '2017-06-18T17:00:00.000+03:00'],
     ['2017-06-18T16:59', 'Europe/London', '2017-06-18T17:00:00.000+01:00'],
-    ['2017-12-01T16:59', 'Europe/Berlin', '2017-12-01T17:00:00.000+01:00']
+    ['2017-12-01T16:59', 'Europe/Berlin', '2017-12-01T17:00:00.000+01:00'],
   ])('allows to set timezone: %p + %p => %p', async (now, timezone, expected) => {
     DateMocks.mockNowOnce(dateNowSpy, now);
 
@@ -94,7 +94,7 @@ describe('ScheduledActionDialog', () => {
 
     fireEvent.focus(tz);
     fireEvent.change(tz, {
-      target: { value: timezone }
+      target: { value: timezone },
     });
     fireEvent.blur(tz);
 
@@ -105,14 +105,14 @@ describe('ScheduledActionDialog', () => {
 
     expect(
       renderResult.getByText(`The scheduled time you have selected will be: ${expectedLocalTime}`, {
-        exact: false
+        exact: false,
       })
     ).toBeInTheDocument();
     await schedulePublication(renderResult);
     expect(props.onCreate).toHaveBeenCalledWith(
       {
         scheduledAt: expected,
-        action: 'publish'
+        action: 'publish',
       },
       timezone
     );
@@ -162,7 +162,7 @@ describe('ScheduledActionDialog', () => {
     APIClient.mockReset().mockImplementation(() => ({
       validateEntry() {
         throw new Error('Invalid entity');
-      }
+      },
     }));
 
     const [renderResult] = build();

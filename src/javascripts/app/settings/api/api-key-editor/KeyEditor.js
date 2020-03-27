@@ -15,7 +15,7 @@ import {
   Note,
   Subheading,
   Typography,
-  Paragraph
+  Paragraph,
 } from '@contentful/forma-36-react-components';
 import KeyEditorActions from './KeyEditorActions';
 import { getApiKeyRepo } from 'app/settings/api/services/ApiKeyRepoInstance';
@@ -25,13 +25,13 @@ import * as logger from 'services/logger';
 
 const styles = {
   readOnlyNote: css({
-    marginBottom: tokens.spacingL
+    marginBottom: tokens.spacingL,
   }),
   separatorStyle: css({
     height: '1px',
     width: tokens.contentWidthFull,
     backgroundColor: tokens.colorElementMid,
-    margin: `${tokens.spacingXl} 0`
+    margin: `${tokens.spacingXl} 0`,
   }),
   sectionTitle: css({
     margin: '0 0 18px 0',
@@ -45,20 +45,20 @@ const styles = {
       height: '1px',
       marginTop: '10px',
       backgroundColor: '#e5ebed',
-      flexGrow: 1
-    }
+      flexGrow: 1,
+    },
   }),
   section: css({
-    marginTop: tokens.spacingL
-  })
+    marginTop: tokens.spacingL,
+  }),
 };
 
-const trackCopy = source => track('api_key:clipboard_copy', { source });
+const trackCopy = (source) => track('api_key:clipboard_copy', { source });
 
 function isApiKeyModelEqual(m1, m2) {
-  const sortedIds = envs =>
+  const sortedIds = (envs) =>
     (envs || [])
-      .map(env => env.sys.id)
+      .map((env) => env.sys.id)
       .sort()
       .join(',');
   return isEqual(
@@ -68,11 +68,11 @@ function isApiKeyModelEqual(m1, m2) {
 }
 
 const notify = {
-  saveSuccess: function(apiKey) {
+  saveSuccess: function (apiKey) {
     Notification.success(`“${apiKey.name}” saved successfully`);
   },
 
-  saveFail: function(error, apiKey) {
+  saveFail: function (error, apiKey) {
     Notification.error(`“${apiKey.name}” could not be saved`);
     // HTTP 422: Unprocessable entity
     if (get(error, 'statusCode') !== 422) {
@@ -80,7 +80,7 @@ const notify = {
     }
   },
 
-  saveNoEnvironments: function(aliasesExist) {
+  saveNoEnvironments: function (aliasesExist) {
     if (aliasesExist) {
       Notification.error('At least one environment or alias has to be selected.');
     } else {
@@ -88,14 +88,14 @@ const notify = {
     }
   },
 
-  deleteSuccess: function(apiKey) {
+  deleteSuccess: function (apiKey) {
     Notification.success(`“${apiKey.name}” deleted successfully`);
   },
 
-  deleteFail: function(error, apiKey) {
+  deleteFail: function (error, apiKey) {
     Notification.error(`“${apiKey.name}” could not be deleted`);
     logger.logServerWarn('ApiKey could not be deleted', { error });
-  }
+  },
 };
 
 export default function KeyEditor({
@@ -116,17 +116,17 @@ export default function KeyEditor({
     name: {
       value: apiKey.name || '',
       minLength: 1,
-      maxLength: 41
+      maxLength: 41,
     },
     description: {
       value: apiKey.description || '',
       minLength: 0,
-      maxLength: 256
+      maxLength: 256,
     },
     environments: concat(
       [],
       apiKey.environments || [{ sys: { id: 'master', type: 'Link', linkType: 'Environment' } }]
-    )
+    ),
   };
 
   const [model, update] = useState(pristineModel);
@@ -150,7 +150,7 @@ export default function KeyEditor({
     try {
       await getApiKeyRepo().remove(apiKey.sys.id);
       await Navigator.go({
-        path: '^.list'
+        path: '^.list',
       });
       notify.deleteSuccess(apiKey);
     } catch (err) {
@@ -277,7 +277,7 @@ export default function KeyEditor({
                   spaceEnvironments,
                   spaceAliases,
                   selectedEnvOrAliasLabel: model.environments,
-                  updateEnvOrAliasLabel: environments => update(assign(model, { environments }))
+                  updateEnvOrAliasLabel: (environments) => update(assign(model, { environments })),
                 }}
               />
             </Section>
@@ -291,15 +291,15 @@ export default function KeyEditor({
 KeyEditor.propTypes = {
   apiKey: PropTypes.shape({
     sys: PropTypes.shape({
-      id: PropTypes.string
+      id: PropTypes.string,
     }).isRequired,
     name: PropTypes.string,
     description: PropTypes.string,
     accessToken: PropTypes.string.isRequired,
     preview_api_key: PropTypes.shape({
-      accessToken: PropTypes.string.isRequired
+      accessToken: PropTypes.string.isRequired,
     }).isRequired,
-    environments: PropTypes.array
+    environments: PropTypes.array,
   }),
   spaceId: PropTypes.string.isRequired,
   canEdit: PropTypes.bool.isRequired,
@@ -309,11 +309,11 @@ KeyEditor.propTypes = {
   spaceAliases: PropTypes.array.isRequired,
   spaceEnvironments: PropTypes.array.isRequired,
   registerSaveAction: PropTypes.func.isRequired,
-  setDirty: PropTypes.func.isRequired
+  setDirty: PropTypes.func.isRequired,
 };
 
 KeyEditor.defaultProps = {
-  spaceAliases: []
+  spaceAliases: [],
 };
 
 /* eslint-disable react/prop-types */
@@ -322,13 +322,13 @@ function Input({ canEdit, model, update, name, isRequired = false, label, descri
   const textInputProps = {
     type: 'text',
     value: model[name].value,
-    onChange: e => update(assign(model, { [name]: { ...model[name], value: e.target.value } })),
+    onChange: (e) => update(assign(model, { [name]: { ...model[name], value: e.target.value } })),
     disabled: !canEdit,
-    error: hasError ? 'error' : undefined
+    error: hasError ? 'error' : undefined,
   };
   const formLabelProps = isRequired
     ? {
-        htmlFor: name
+        htmlFor: name,
       }
     : {};
 
@@ -341,8 +341,9 @@ function Input({ canEdit, model, update, name, isRequired = false, label, descri
       required={isRequired}
       validationMessage={
         hasError
-          ? `This field needs to be between ${model[name].minLength} and ${model[name].maxLength -
-              1} characters`
+          ? `This field needs to be between ${model[name].minLength} and ${
+              model[name].maxLength - 1
+            } characters`
           : undefined
       }
       textInputProps={textInputProps}
@@ -355,7 +356,7 @@ function InputWithCopy({ value, name, track, label, description = '' }) {
   const textInputProps = {
     onCopy: track,
     withCopyButton: true,
-    disabled: true
+    disabled: true,
   };
 
   return (

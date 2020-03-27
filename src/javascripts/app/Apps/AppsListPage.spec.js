@@ -10,7 +10,7 @@ jest.mock('MicroBackendsClient', () => {
 });
 
 jest.mock('access_control/AccessChecker', () => ({
-  getSectionVisibility: () => ({ apps: true })
+  getSectionVisibility: () => ({ apps: true }),
 }));
 
 describe('AppsListPage', () => {
@@ -23,8 +23,8 @@ describe('AppsListPage', () => {
     envMeta: {
       environmentId: 'master',
       isMasterEnvironment: true,
-      aliasId: undefined
-    }
+      aliasId: undefined,
+    },
   };
 
   it('should match snapshot for loading state', async () => {
@@ -46,7 +46,7 @@ describe('AppsListPage', () => {
 
   it('should match snapshot of apps loaded state', async () => {
     const mockRepo = {
-      getApps: jest.fn(() => Promise.resolve(repoAppsMock))
+      getApps: jest.fn(() => Promise.resolve(repoAppsMock)),
     };
 
     const { container } = render(
@@ -69,7 +69,7 @@ describe('AppsListPage', () => {
 
   it('should match snapshot of apps loaded with limited access', async () => {
     const mockRepo = {
-      getApps: jest.fn(() => Promise.resolve(repoAppsMock))
+      getApps: jest.fn(() => Promise.resolve(repoAppsMock)),
     };
 
     const { container } = render(

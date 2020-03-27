@@ -8,7 +8,7 @@ jest.mock('utils/kefir', () => ({
   }),
   onValueScope: jest.fn().mockImplementation((_scope, stream, onChange) => {
     return onChange(stream);
-  })
+  }),
 }));
 
 describe('widgets/NewWidgetApi/createFieldApi', () => {
@@ -19,7 +19,7 @@ describe('widgets/NewWidgetApi/createFieldApi', () => {
         default: true,
         internal_code: 'en-US-internal',
         name: 'English (United States)',
-        optional: false
+        optional: false,
       },
       widget: {
         field: {
@@ -27,11 +27,11 @@ describe('widgets/NewWidgetApi/createFieldApi', () => {
           id: 'HockMXw5PPwYzhkb',
           required: false,
           type: 'Symbol',
-          validations: [{ size: { min: 0, max: 123 } }]
-        }
+          validations: [{ size: { min: 0, max: 123 } }],
+        },
       },
       fieldController: {
-        setInvalid: jest.fn()
+        setInvalid: jest.fn(),
       },
       fieldLocale: {},
       otDoc: {
@@ -39,9 +39,9 @@ describe('widgets/NewWidgetApi/createFieldApi', () => {
         removeValueAt: jest.fn(),
         getValueAt: jest.fn(),
         permissions: {
-          canEditFieldLocale: jest.fn().mockReturnValue(true)
-        }
-      }
+          canEditFieldLocale: jest.fn().mockReturnValue(true),
+        },
+      },
     });
   }
 
@@ -80,9 +80,9 @@ describe('widgets/NewWidgetApi/createFieldApi', () => {
         return {
           fields: {
             [$scope.widget.field.id]: {
-              [$scope.locale.internal_code]: 'value'
-            }
-          }
+              [$scope.locale.internal_code]: 'value',
+            },
+          },
         };
       });
 
@@ -148,7 +148,7 @@ describe('widgets/NewWidgetApi/createFieldApi', () => {
       expect($scope.otDoc.removeValueAt).toHaveBeenCalledWith([
         'fields',
         $scope.widget.field.id,
-        $scope.locale.internal_code
+        $scope.locale.internal_code,
       ]);
     });
 
@@ -169,7 +169,7 @@ describe('widgets/NewWidgetApi/createFieldApi', () => {
       expect($scope.otDoc.removeValueAt).toHaveBeenCalledWith([
         'fields',
         $scope.widget.field.id,
-        $scope.locale.internal_code
+        $scope.locale.internal_code,
       ]);
     });
   });
@@ -188,9 +188,9 @@ describe('widgets/NewWidgetApi/createFieldApi', () => {
 
   describe('#onIsDisabledChanged', () => {
     it('should call a callback when a stream emits a new value', () => {
-      const $scope = createScopeMock(mock => {
+      const $scope = createScopeMock((mock) => {
         return set(mock, ['fieldLocale', 'access$'], {
-          disabled: true
+          disabled: true,
         });
       });
 
@@ -211,7 +211,7 @@ describe('widgets/NewWidgetApi/createFieldApi', () => {
 
   describe('#onSchemaErrorsChanged', () => {
     it('should call a callback when a stream emits a new value', () => {
-      const $scope = createScopeMock(mock => {
+      const $scope = createScopeMock((mock) => {
         return set(mock, ['fieldLocale', 'errors$'], ['some error']);
       });
 
@@ -232,13 +232,13 @@ describe('widgets/NewWidgetApi/createFieldApi', () => {
 
   describe('#onValueChanged', () => {
     it('should call a callback when a stream emits a new value', () => {
-      const $scope = createScopeMock(scope => {
+      const $scope = createScopeMock((scope) => {
         return set(
           scope,
           ['otDoc', 'changes'],
           [
             ['fields', scope.widget.field.id, scope.locale.internal_code, '123'],
-            ['fields', scope.widget.field.id, 'some-other-locale-code', '521']
+            ['fields', scope.widget.field.id, 'some-other-locale-code', '521'],
           ]
         );
       });
@@ -247,9 +247,9 @@ describe('widgets/NewWidgetApi/createFieldApi', () => {
         return {
           fields: {
             [$scope.widget.field.id]: {
-              [$scope.locale.internal_code]: 'value'
-            }
-          }
+              [$scope.locale.internal_code]: 'value',
+            },
+          },
         };
       });
 

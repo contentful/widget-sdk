@@ -14,38 +14,38 @@ export const WIDGET_MIGRATIONS = [
   {
     from: 'youtubeEditor',
     to: 'urlEditor',
-    fieldTypes: ['Symbol']
+    fieldTypes: ['Symbol'],
   },
   {
     from: 'radio',
     to: 'boolean',
-    fieldTypes: ['Boolean']
+    fieldTypes: ['Boolean'],
   },
   {
     from: 'dropdown',
     to: 'boolean',
-    fieldTypes: ['Boolean']
+    fieldTypes: ['Boolean'],
   },
   {
     from: 'newMarkdown',
-    to: 'markdown'
+    to: 'markdown',
   },
   {
     from: 'kalturaEditor',
-    to: 'singleLine'
+    to: 'singleLine',
   },
   {
     from: 'kalturaMultiVideoEditor',
-    to: 'listInput'
+    to: 'listInput',
   },
   {
     from: 'ooyalaEditor',
-    to: 'singleLine'
+    to: 'singleLine',
   },
   {
     from: 'ooyalaMultiAssetEditor',
-    to: 'listInput'
-  }
+    to: 'listInput',
+  },
 ];
 
 export function migrateControl(control, migrations = WIDGET_MIGRATIONS) {

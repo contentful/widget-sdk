@@ -7,19 +7,19 @@ export const severalAssetsBody = require('../fixtures/responses/assets-several.j
 
 enum States {
   NONE = 'assets/none',
-  SEVERAL = 'assets/several'
+  SEVERAL = 'assets/several',
 }
 
 const nonArchivedAssetsQuery = {
   limit: '40',
   order: '-sys.updatedAt',
   skip: '0',
-  'sys.archivedAt[exists]': 'false'
+  'sys.archivedAt[exists]': 'false',
 };
 
 const archivedAssetsQuery = {
   limit: '1',
-  'sys.archivedAt[exists]': 'true'
+  'sys.archivedAt[exists]': 'true',
 };
 
 function queryAllAssetsInTheDefaultSpaceRequest(query: Query): RequestOptions {
@@ -27,7 +27,7 @@ function queryAllAssetsInTheDefaultSpaceRequest(query: Query): RequestOptions {
     method: 'GET',
     path: `/spaces/${defaultSpaceId}/assets`,
     headers: defaultHeader,
-    query
+    query,
   };
 }
 
@@ -40,8 +40,8 @@ export const queryAllNonArchivedAssetsInTheDefaultSpace = {
       withRequest: queryAllAssetsInTheDefaultSpaceRequest(nonArchivedAssetsQuery),
       willRespondWith: {
         status: 200,
-        body: empty
-      }
+        body: empty,
+      },
     }).as('queryAllNonArchivedAssetsInTheDefaultSpace');
 
     return '@queryAllNonArchivedAssetsInTheDefaultSpace';
@@ -54,12 +54,12 @@ export const queryAllNonArchivedAssetsInTheDefaultSpace = {
       withRequest: queryAllAssetsInTheDefaultSpaceRequest(nonArchivedAssetsQuery),
       willRespondWith: {
         status: 200,
-        body: severalAssetsBody
-      }
+        body: severalAssetsBody,
+      },
     }).as('queryAllNonArchivedAssetsInTheDefaultSpace');
 
     return '@queryAllNonArchivedAssetsInTheDefaultSpace';
-  }
+  },
 };
 
 export const queryAllArchivedAssetsInTheDefaultSpace = {
@@ -71,12 +71,12 @@ export const queryAllArchivedAssetsInTheDefaultSpace = {
       withRequest: queryAllAssetsInTheDefaultSpaceRequest(archivedAssetsQuery),
       willRespondWith: {
         status: 200,
-        body: empty
-      }
+        body: empty,
+      },
     }).as('queryAllArchivedAssetsInTheDefaultSpace');
 
     return '@queryAllArchivedAssetsInTheDefaultSpace';
-  }
+  },
 };
 
 export const getDefaultAssetInDefaultSpace = {
@@ -88,14 +88,14 @@ export const getDefaultAssetInDefaultSpace = {
       withRequest: {
         method: 'GET',
         path: `/spaces/${defaultSpaceId}/assets/${defaultAssetId}`,
-        headers: defaultHeader
+        headers: defaultHeader,
       },
       willRespondWith: {
         status: 200,
-        body: defaultAsset
-      }
+        body: defaultAsset,
+      },
     }).as('getDefaultAssetInDefaultSpace');
 
     return '@getDefaultAssetInDefaultSpace';
-  }
+  },
 };

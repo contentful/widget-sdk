@@ -3,42 +3,42 @@ import { $initialize, $inject } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
 
 describe('CreateSampleSpace service', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     this.templates = [
       {
-        fields: { name: 'product catalogue' }
+        fields: { name: 'product catalogue' },
       },
       {
-        fields: { name: 'custom template' }
-      }
+        fields: { name: 'custom template' },
+      },
     ];
 
     this.template = {
-      apiKeys: []
+      apiKeys: [],
     };
 
     this.spaceTemplateLoader = {
       getTemplate: sinon.stub().resolves(this.template),
-      getTemplatesList: sinon.stub().resolves(this.templates)
+      getTemplatesList: sinon.stub().resolves(this.templates),
     };
 
     this.dialog = {
-      cancel: sinon.spy()
+      cancel: sinon.spy(),
     };
 
     this.modalDialog = {
-      open: sinon.stub().returns(this.dialog)
+      open: sinon.stub().returns(this.dialog),
     };
 
     this.client = {
-      createSpace: sinon.stub().resolves({ sys: { id: 'space-id' } })
+      createSpace: sinon.stub().resolves({ sys: { id: 'space-id' } }),
     };
 
     this.templateLoader = {
       create: sinon.spy(() => ({
         contentCreated: Promise.resolve(),
-        spaceSetup: Promise.reject(new Error('something wrong happened'))
-      }))
+        spaceSetup: Promise.reject(new Error('something wrong happened')),
+      })),
     };
 
     this.getCreator = sinon.stub().returns(this.templateLoader);
@@ -47,32 +47,32 @@ describe('CreateSampleSpace service', () => {
 
     this.spaceContext = {
       publishedCTs: {
-        refresh: sinon.stub().resolves()
-      }
+        refresh: sinon.stub().resolves(),
+      },
     };
 
     this.tokenStore = {
-      refresh: sinon.stub().resolves()
+      refresh: sinon.stub().resolves(),
     };
 
     this.system.set('services/TokenStore', this.tokenStore);
     this.system.set('services/SpaceTemplateCreator', {
-      getCreator: this.getCreator
+      getCreator: this.getCreator,
     });
     this.system.set('states/Navigator', {
-      go: this.go
+      go: this.go,
     });
     this.system.set('services/SpaceTemplateLoader', this.spaceTemplateLoader);
 
     this.system.set('services/client', {
-      default: this.client
+      default: this.client,
     });
 
-    this.createSampleSpace = (await this.system.import(
-      'components/shared/auto_create_new_space/CreateSampleSpace'
-    )).default;
+    this.createSampleSpace = (
+      await this.system.import('components/shared/auto_create_new_space/CreateSampleSpace')
+    ).default;
 
-    await $initialize(this.system, $provide => {
+    await $initialize(this.system, ($provide) => {
       $provide.constant('modalDialog', this.modalDialog);
       $provide.constant('spaceContext', this.spaceContext);
     });
@@ -83,22 +83,24 @@ describe('CreateSampleSpace service', () => {
     this.getOrg = (orgId = 'owned-org') => {
       return {
         sys: {
-          id: `${orgId}`
-        }
+          id: `${orgId}`,
+        },
       };
     };
-    this.assertRejection = async function(fn, errorMsg) {
+    this.assertRejection = async function (fn, errorMsg) {
       fn(new Error(errorMsg));
-      const error = await this.createSampleSpace(this.getOrg(), 'product catalogue').catch(e => e);
+      const error = await this.createSampleSpace(this.getOrg(), 'product catalogue').catch(
+        (e) => e
+      );
       expect(error.message).toBe(errorMsg);
     };
   });
 
   describe('default export', () => {
-    it('should throw when org is falsy', function() {
-      expect(_ => this.createSampleSpace()).toThrow(new Error('Required param org not provided'));
+    it('should throw when org is falsy', function () {
+      expect((_) => this.createSampleSpace()).toThrow(new Error('Required param org not provided'));
     });
-    it('should create a new space and load the chosen template', async function() {
+    it('should create a new space and load the chosen template', async function () {
       await this.createSampleSpace(this.getOrg(), 'custom template');
 
       const modalScope = this.modalDialog.open.args[0][0].scope;
@@ -109,7 +111,7 @@ describe('CreateSampleSpace service', () => {
         this.client.createSpace,
         {
           name: 'The example project',
-          defaultLocale: 'en-US'
+          defaultLocale: 'en-US',
         },
         'owned-org'
       );
@@ -117,8 +119,8 @@ describe('CreateSampleSpace service', () => {
       sinon.assert.calledWithExactly(this.go, {
         path: ['spaces', 'detail'],
         params: {
-          spaceId: 'space-id'
-        }
+          spaceId: 'space-id',
+        },
       });
       sinon.assert.calledOnce(this.getCreator);
       sinon.assert.calledWithExactly(
@@ -130,45 +132,47 @@ describe('CreateSampleSpace service', () => {
       sinon.assert.calledWithExactly(this.$rootScope.$broadcast, 'spaceTemplateCreated');
       expect(modalScope.isCreatingSpace).toBe(false);
     });
-    it('should reject if the template does not exist', async function() {
+    it('should reject if the template does not exist', async function () {
       const error = await this.createSampleSpace(this.getOrg(), 'non existing template').catch(
-        e => e
+        (e) => e
       );
       expect(error.message).toBe('Template named non existing template not found');
     });
-    it('should reject if space creation fails', async function() {
+    it('should reject if space creation fails', async function () {
       await this.assertRejection(
-        err => this.client.createSpace.rejects(err),
+        (err) => this.client.createSpace.rejects(err),
         'create space failed'
       );
     });
-    it('should reject if token refresh fails', async function() {
+    it('should reject if token refresh fails', async function () {
       await this.assertRejection(
-        err => this.tokenStore.refresh.rejects(err),
+        (err) => this.tokenStore.refresh.rejects(err),
         'token refresh failed'
       );
     });
-    it('should reject if state navigation fails', async function() {
-      await this.assertRejection(err => this.go.rejects(err), 'navigation failed');
+    it('should reject if state navigation fails', async function () {
+      await this.assertRejection((err) => this.go.rejects(err), 'navigation failed');
     });
-    it('should reject if getTemplate fails', async function() {
+    it('should reject if getTemplate fails', async function () {
       await this.assertRejection(
-        err => this.spaceTemplateLoader.getTemplate.rejects(err),
+        (err) => this.spaceTemplateLoader.getTemplate.rejects(err),
         'getting template failed'
       );
     });
-    it('should reject if template loader create fails', async function() {
+    it('should reject if template loader create fails', async function () {
       this.templateLoader.create = () => ({
         contentCreated: Promise.reject(new Error('Error during creation')),
-        spaceSetup: Promise.reject(new Error('something wrong happened'))
+        spaceSetup: Promise.reject(new Error('something wrong happened')),
       });
 
-      const error = await this.createSampleSpace(this.getOrg(), 'product catalogue').catch(e => e);
+      const error = await this.createSampleSpace(this.getOrg(), 'product catalogue').catch(
+        (e) => e
+      );
       expect(error.message).toBe('Error during creation');
     });
-    it('should reject if refresh of published CTs fails', async function() {
+    it('should reject if refresh of published CTs fails', async function () {
       await this.assertRejection(
-        err => this.spaceContext.publishedCTs.refresh.rejects(err),
+        (err) => this.spaceContext.publishedCTs.refresh.rejects(err),
         'refreshing published cts failed'
       );
     });

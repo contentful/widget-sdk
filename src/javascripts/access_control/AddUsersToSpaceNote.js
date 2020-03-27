@@ -22,7 +22,7 @@ const AddUsersNote = ({ isOwnerOrAdmin }) => {
 };
 
 AddUsersNote.propTypes = {
-  isOwnerOrAdmin: PropTypes.bool
+  isOwnerOrAdmin: PropTypes.bool,
 };
 
 export default AddUsersNote;

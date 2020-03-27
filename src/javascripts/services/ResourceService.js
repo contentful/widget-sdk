@@ -11,9 +11,10 @@ export default function createResourceService(id, type = 'space', envId) {
   return {
     get,
     getAll,
-    canCreate: resourceType => get(resourceType).then(canCreate),
-    canCreateEnvironmentResources: environmentId => getAll(environmentId).then(canCreateResources),
-    messagesFor: resourceType => get(resourceType).then(generateMessage),
+    canCreate: (resourceType) => get(resourceType).then(canCreate),
+    canCreateEnvironmentResources: (environmentId) =>
+      getAll(environmentId).then(canCreateResources),
+    messagesFor: (resourceType) => get(resourceType).then(generateMessage),
     async messages() {
       const resources = await getAll();
       return resources.reduce((memo, resource) => {
@@ -23,7 +24,7 @@ export default function createResourceService(id, type = 'space', envId) {
 
         return memo;
       }, {});
-    }
+    },
   };
 
   async function get(resourceType, environmentId) {
@@ -39,7 +40,7 @@ export default function createResourceService(id, type = 'space', envId) {
     return endpoint(
       {
         method: 'GET',
-        path
+        path,
       },
       alphaHeader
     );
@@ -52,7 +53,7 @@ export default function createResourceService(id, type = 'space', envId) {
     const raw = await endpoint(
       {
         method: 'GET',
-        path
+        path,
       },
       alphaHeader
     );

@@ -34,9 +34,9 @@ export default function createCache(endpoint) {
 
   return {
     getAll: getUserList,
-    get: function(id) {
-      return getUserMap().then(users => users[id]);
-    }
+    get: function (id) {
+      return getUserMap().then((users) => users[id]);
+    },
   };
 }
 

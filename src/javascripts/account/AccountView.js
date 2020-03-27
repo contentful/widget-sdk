@@ -11,7 +11,7 @@ const wrapperStyle = css({
   top: 0,
   bottom: 0,
   left: 0,
-  right: 0
+  right: 0,
 });
 
 export default function AccountView({ title, icon, onReady }) {
@@ -42,5 +42,5 @@ export default function AccountView({ title, icon, onReady }) {
 AccountView.propTypes = {
   onReady: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
-  icon: PropTypes.string
+  icon: PropTypes.string,
 };

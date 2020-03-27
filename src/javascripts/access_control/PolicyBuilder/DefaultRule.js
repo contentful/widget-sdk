@@ -5,12 +5,12 @@ import * as random from 'utils/Random';
 const DEFAULT_RULE = {
   action: 'all',
   scope: 'any',
-  locale: null
+  locale: null,
 };
 
 const DEFAULT_ENTRY_RULE = {
   contentType: PolicyBuilderConfig.ALL_CTS,
-  field: null
+  field: null,
 };
 
 function getDefaultRuleGetterFor(entity) {
@@ -31,5 +31,5 @@ function getDefaultRuleFor(entity) {
 
 export const DefaultRule = {
   getDefaultRuleFor,
-  getDefaultRuleGetterFor
+  getDefaultRuleGetterFor,
 };

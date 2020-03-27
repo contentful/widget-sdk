@@ -10,8 +10,8 @@ import { EntryActions, AssetActions } from './CardActions';
 
 const styles = {
   marginRightXS: css({
-    marginRight: tokens.spacing2Xs
-  })
+    marginRight: tokens.spacing2Xs,
+  }),
 };
 
 /**
@@ -37,11 +37,11 @@ export default class WrappedEntityCard extends React.Component {
     onRemove: PropTypes.func,
     onClick: PropTypes.func,
     readOnly: PropTypes.bool,
-    cardDragHandleComponent: PropTypes.element
+    cardDragHandleComponent: PropTypes.element,
   };
 
   static defaultProps = {
-    className: ''
+    className: '',
   };
 
   renderActions = () => {
@@ -73,7 +73,7 @@ export default class WrappedEntityCard extends React.Component {
       isLoading,
       onClick,
       href,
-      cardDragHandleComponent
+      cardDragHandleComponent,
     } = this.props;
     return (
       <EntryCard

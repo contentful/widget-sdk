@@ -8,11 +8,11 @@ import { logError } from 'services/logger';
 import { isFlagOverridden, getFlagOverride } from 'debug/EnforceFlags';
 
 jest.mock('ldclient-js', () => ({
-  initialize: jest.fn()
+  initialize: jest.fn(),
 }));
 
 jest.mock('data/CMA/ProductCatalog', () => ({
-  getOrgFeature: jest.fn().mockResolvedValue(true)
+  getOrgFeature: jest.fn().mockResolvedValue(true),
 }));
 
 jest.mock('data/User', () => ({
@@ -23,26 +23,26 @@ jest.mock('data/User', () => ({
   isAutomationTestUser: jest.fn().mockReturnValue(true),
   isUserOrgCreator: jest.fn().mockReturnValue(false),
   getUserCreationDateUnixTimestamp: jest.fn().mockReturnValue(1234567890),
-  getUserSpaceRoles: jest.fn().mockReturnValue(['editor', 'translator3'])
+  getUserSpaceRoles: jest.fn().mockReturnValue(['editor', 'translator3']),
 }));
 
 jest.mock('utils/ShallowObjectDiff', () => jest.fn().mockReturnValue({}));
 
 jest.mock('debug/EnforceFlags', () => ({
   isFlagOverridden: jest.fn().mockReturnValue(false),
-  getFlagOverride: jest.fn()
+  getFlagOverride: jest.fn(),
 }));
 
 jest.mock('services/TokenStore', () => ({
   getOrganization: jest.fn(),
   getSpace: jest.fn(),
   getUser: jest.fn(),
-  getSpacesByOrganization: jest.fn()
+  getSpacesByOrganization: jest.fn(),
 }));
 
 jest.mock('debug/EnforceFlags', () => ({
   isFlagOverridden: jest.fn(),
-  getFlagOverride: jest.fn()
+  getFlagOverride: jest.fn(),
 }));
 
 const orgCreationDate = new Date(2018, 12, 25);
@@ -54,15 +54,15 @@ const organization = {
   hasSsoEnabled: true,
   sys: {
     id: 'abcd_org',
-    createdAt: orgCreationDate.toISOString()
-  }
+    createdAt: orgCreationDate.toISOString(),
+  },
 };
 
 const space = {
   name: 'Awesome space',
   sys: {
-    id: 'abcd_space'
-  }
+    id: 'abcd_space',
+  },
 };
 
 describe('LaunchDarkly', () => {
@@ -79,7 +79,7 @@ describe('LaunchDarkly', () => {
       identify: jest.fn(),
       allFlags: jest.fn().mockImplementation(() => {
         return variations;
-      })
+      }),
     };
 
     ldClient.initialize.mockReturnValue(client);
@@ -89,11 +89,9 @@ describe('LaunchDarkly', () => {
       organizationMemberships: [organization],
       signInCount: 10,
       sys: {
-        createdAt: moment()
-          .subtract(7, 'days')
-          .toISOString(),
-        id: 'user-id-1'
-      }
+        createdAt: moment().subtract(7, 'days').toISOString(),
+        id: 'user-id-1',
+      },
     };
 
     getUser.mockResolvedValue(user);
@@ -231,8 +229,8 @@ describe('LaunchDarkly', () => {
           isAutomationTestUser: true,
           currentUserOwnsAtleastOneOrg: true,
           currentUserAge: 7,
-          currentUserCreationDate: 1234567890
-        }
+          currentUserCreationDate: 1234567890,
+        },
       });
     });
 
@@ -266,8 +264,8 @@ describe('LaunchDarkly', () => {
           currentUserOrgRole: 'org role',
           currentUserHasAtleastOneSpace: false,
           currentUserIsCurrentOrgCreator: false,
-          isNonPayingUser: true
-        }
+          isNonPayingUser: true,
+        },
       });
     });
 
@@ -291,8 +289,8 @@ describe('LaunchDarkly', () => {
           currentUserCreationDate: 1234567890,
 
           currentSpaceId: 'abcd_space',
-          currentUserSpaceRole: ['editor', 'translator3']
-        }
+          currentUserSpaceRole: ['editor', 'translator3'],
+        },
       });
     });
 
@@ -326,8 +324,8 @@ describe('LaunchDarkly', () => {
           isNonPayingUser: true,
 
           currentSpaceId: 'abcd_space',
-          currentUserSpaceRole: ['editor', 'translator3']
-        }
+          currentUserSpaceRole: ['editor', 'translator3'],
+        },
       });
     });
   });

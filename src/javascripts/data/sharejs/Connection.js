@@ -91,7 +91,7 @@ export function create(baseUrl, auth, spaceId, environmentId) {
     getDocLoader,
     open,
     close,
-    refreshAuth
+    refreshAuth,
   };
 
   /**
@@ -121,24 +121,24 @@ export function create(baseUrl, auth, spaceId, environmentId) {
     const loader = getDocLoader(entity, shouldOpen);
 
     return loader.doc
-      .flatten(docLoad =>
+      .flatten((docLoad) =>
         caseof(docLoad, [
-          [DocLoad.Doc, d => [d.doc]],
+          [DocLoad.Doc, (d) => [d.doc]],
           [
             DocLoad.Error,
-            e => {
+            (e) => {
               throw e.error;
-            }
+            },
           ],
           [DocLoad.None, constant([])],
-          [DocLoad.Pending, constant([])]
+          [DocLoad.Pending, constant([])],
         ])
       )
       .take(1)
       .toPromise($q)
-      .then(doc => ({
+      .then((doc) => ({
         doc,
-        destroy: loader.destroy
+        destroy: loader.destroy,
       }));
   }
 
@@ -184,7 +184,7 @@ function getEventStream(connection) {
   const eventBus = K.createBus();
 
   const connectionEmit = connection.emit;
-  connection.emit = function(name, data) {
+  connection.emit = function (name, data) {
     eventBus.emit({ name, data });
     return connectionEmit.apply(this, arguments);
   };
@@ -197,7 +197,7 @@ function createBaseConnection(baseUrl, getToken, spaceId, environmentId) {
   const connection = new ShareJS.Connection(url, getToken, spaceId, environmentId);
 
   // I’m not sure why we do this
-  connection.socket.send = function(message) {
+  connection.socket.send = function (message) {
     try {
       return this.sendMap({ JSON: angular.toJson(message) });
     } catch (error) {
@@ -221,9 +221,9 @@ function createDocWrapper(connection, key) {
   let rawDoc = null;
   let closePromise = $q.resolve();
 
-  const open = () => $q.denodeify(cb => connection.open(key, 'json', cb));
-  const close = doc =>
-    $q.denodeify(cb => {
+  const open = () => $q.denodeify((cb) => connection.open(key, 'json', cb));
+  const close = (doc) =>
+    $q.denodeify((cb) => {
       try {
         doc.close(cb);
         // Because of a bug in ShareJS we also need to listen for the
@@ -237,7 +237,7 @@ function createDocWrapper(connection, key) {
 
   return {
     open: () =>
-      closePromise.then(open).then(openedDoc => {
+      closePromise.then(open).then((openedDoc) => {
         rawDoc = openedDoc;
         return rawDoc;
       }),
@@ -246,12 +246,15 @@ function createDocWrapper(connection, key) {
         closePromise = close(rawDoc);
         rawDoc = null;
       }
-    }
+    },
   };
 }
 
 function entityMetadataToKey(environmentId, sys) {
-  const typeSegment = caseofEq(sys.type, [['Entry', () => 'entry'], ['Asset', () => 'asset']]);
+  const typeSegment = caseofEq(sys.type, [
+    ['Entry', () => 'entry'],
+    ['Asset', () => 'asset'],
+  ]);
   return [sys.space.sys.id, environmentId, typeSegment, sys.id].join('!');
 }
 

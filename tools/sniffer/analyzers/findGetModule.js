@@ -13,14 +13,14 @@ module.exports = function findGetModule({ src, ast }) {
           if (path.node.type === 'ImportDeclaration') {
             const { source } = path.node;
             if (source && source.value && source.value === 'NgRegistry') {
-              (path.node.specifiers || []).forEach(item => {
+              (path.node.specifiers || []).forEach((item) => {
                 if (item.type === 'ImportSpecifier') {
                   usedModules.push(item.imported.name);
                 }
               });
             }
           }
-        }
+        },
       });
     }
 
@@ -36,14 +36,14 @@ module.exports = function findGetModule({ src, ast }) {
           if (callee.type === 'Identifier' && callee.node.name === moduleName) {
             const args = path.node.arguments;
 
-            const readArgsAsDeps = args => {
+            const readArgsAsDeps = (args) => {
               if (_.isArray(args)) {
-                return _.map(args, arg => {
+                return _.map(args, (arg) => {
                   if (arg.type === 'StringLiteral') {
                     return arg.value;
                   }
                   return null;
-                }).filter(_ => _);
+                }).filter((_) => _);
               }
               return [];
             };
@@ -98,7 +98,7 @@ module.exports = function findGetModule({ src, ast }) {
             }
           }
         }
-      }
+      },
     });
     return modules;
   }

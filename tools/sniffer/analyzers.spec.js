@@ -4,7 +4,7 @@ const analyze = require('./analyzers');
 
 describe('analyze', () => {
   const node = {
-    extension: '.js'
+    extension: '.js',
   };
 
   it('should find dependencies imported via getModule', () => {
@@ -42,7 +42,7 @@ describe('analyze', () => {
       '$scope',
       'spaceContext',
       'access_control/AccessChecker',
-      'services/TokenStore'
+      'services/TokenStore',
     ]);
   });
 });

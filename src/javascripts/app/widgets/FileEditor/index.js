@@ -18,7 +18,7 @@ function isArchivedAsset(assetSys) {
 export default function FileEditorConnected(props) {
   const { sdk } = props;
 
-  const maybeSetTitle = fileName => {
+  const maybeSetTitle = (fileName) => {
     if (sdk.entry.fields.title && !sdk.entry.fields.title.getValue()) {
       const newTitle = stringUtils.fileNameToTitle(fileName);
       sdk.entry.fields.title.setValue(newTitle);
@@ -54,9 +54,9 @@ export default function FileEditorConnected(props) {
 
 FileEditorConnected.propTypes = {
   sdk: PropTypes.object.isRequired,
-  isInitiallyDisabled: PropTypes.bool
+  isInitiallyDisabled: PropTypes.bool,
 };
 
 FileEditorConnected.defaultProps = {
-  isInitiallyDisabled: true
+  isInitiallyDisabled: true,
 };

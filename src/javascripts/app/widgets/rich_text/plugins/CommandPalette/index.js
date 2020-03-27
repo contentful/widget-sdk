@@ -39,5 +39,5 @@ export const CommandPalettePlugin = ({ richTextAPI }) => ({
         />
       </React.Fragment>
     );
-  }
+  },
 });

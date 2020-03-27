@@ -3,7 +3,7 @@ const { diffArrays } = require('diff');
 
 const pathMessage = (path, m) => `\`${path}\`\n\n${m}`;
 
-module.exports = diff => {
+module.exports = (diff) => {
   const { added, deleted, updated } = diff;
   if (added.length === 0 && deleted.length === 0 && updated.length === 0) {
     return 'No migration impact 😢';
@@ -27,7 +27,7 @@ module.exports = diff => {
           pathMessage(
             path,
             `Avoid using the following dependencies:\n${deps
-              .map(item => `* \`${item}\``)
+              .map((item) => `* \`${item}\``)
               .join('\n')}`
           )
         );
@@ -35,27 +35,27 @@ module.exports = diff => {
     });
   }
   if (updated.length > 0) {
-    updated.forEach(item => {
+    updated.forEach((item) => {
       const rightDeps = _.uniq([
         ...(_.isArray(_.get(item, 'right.angular')) ? _.get(item, 'right.angular') : []),
         ...(_.isArray(_.get(item, 'right.needsRefactoring'))
           ? _.get(item, 'right.needsRefactoring')
-          : [])
+          : []),
       ]).sort();
       const leftDeps = _.uniq([
         ...(_.isArray(item, 'left.angular') ? _.get(item, 'left.angular') : []),
-        ...(_.isArray(item, 'left.needsRefactoring') ? _.get(item, 'left.needsRefactoring') : [])
+        ...(_.isArray(item, 'left.needsRefactoring') ? _.get(item, 'left.needsRefactoring') : []),
       ]).sort();
 
       const diffResult = diffArrays(leftDeps, rightDeps);
-      const addedResult = diffResult.find(item => item.added === true);
-      const removedResult = diffResult.find(item => item.removed === true);
+      const addedResult = diffResult.find((item) => item.added === true);
+      const removedResult = diffResult.find((item) => item.removed === true);
       if (addedResult) {
         suggestions.push(
           pathMessage(
             item.path,
             `Avoid using the following dependencies:\n${addedResult.value
-              .map(item => `* \`${item}\``)
+              .map((item) => `* \`${item}\``)
               .join('\n')}`
           )
         );
@@ -65,7 +65,7 @@ module.exports = diff => {
           pathMessage(
             item.path,
             `🎖 for removing some 🤕 dependencies:\n${removedResult.value
-              .map(item => `* \`${item}\``)
+              .map((item) => `* \`${item}\``)
               .join('\n')}`
           )
         );
@@ -87,7 +87,7 @@ module.exports = diff => {
           pathMessage(
             path,
             `Take a 🍩 from the shelf for removing some 💩 dependencies:\n${deps
-              .map(item => `* \`${item}\``)
+              .map((item) => `* \`${item}\``)
               .join('\n')}`
           )
         );

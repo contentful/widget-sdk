@@ -6,7 +6,7 @@ import {
   Option,
   TextInput,
   CheckboxField,
-  FormLabel
+  FormLabel,
 } from '@contentful/forma-36-react-components';
 import styles from '../styles';
 import { toString, toNumber, isNumber, isNil, startCase, isEmpty } from 'lodash';
@@ -23,12 +23,12 @@ const DimensionsParameters = ({ type, settings, setSettings, className }) => {
       return 'max';
     }
   };
-  const getCheckboxState = settings => Object.values(settings).some(item => isNumber(item));
+  const getCheckboxState = (settings) => Object.values(settings).some((item) => isNumber(item));
 
   const [isChecked, setChecked] = useState(() => getCheckboxState(settings));
   const [currentView, setCurrentView] = useState(() => getCurrentViewState(settings) || 'min');
 
-  const normalizeValue = value => (isEmpty(value) ? null : toNumber(value));
+  const normalizeValue = (value) => (isEmpty(value) ? null : toNumber(value));
 
   const getControls = () => {
     switch (currentView) {
@@ -37,7 +37,7 @@ const DimensionsParameters = ({ type, settings, setSettings, className }) => {
           <PxInputField
             id={`${type}-min-px-input`}
             value={toString(settings.min)}
-            onChange={value => {
+            onChange={(value) => {
               setSettings({ ...settings, min: normalizeValue(value) });
             }}
             disabled={!isChecked}
@@ -48,7 +48,7 @@ const DimensionsParameters = ({ type, settings, setSettings, className }) => {
           <PxInputField
             id={`${type}-max-px-input`}
             value={toString(settings.max)}
-            onChange={value => {
+            onChange={(value) => {
               setSettings({ ...settings, max: normalizeValue(value) });
             }}
             disabled={!isChecked}
@@ -60,7 +60,7 @@ const DimensionsParameters = ({ type, settings, setSettings, className }) => {
             <PxInputField
               id={`${type}-min-px-input`}
               value={toString(settings.min)}
-              onChange={value => {
+              onChange={(value) => {
                 setSettings({ ...settings, min: normalizeValue(value) });
               }}
               disabled={!isChecked}
@@ -69,7 +69,7 @@ const DimensionsParameters = ({ type, settings, setSettings, className }) => {
             <PxInputField
               id={`${type}-max-px-input`}
               value={toString(settings.max)}
-              onChange={value => {
+              onChange={(value) => {
                 setSettings({ ...settings, max: normalizeValue(value) });
               }}
               disabled={!isChecked}
@@ -81,7 +81,7 @@ const DimensionsParameters = ({ type, settings, setSettings, className }) => {
           <PxInputField
             id={`${type}-max-px-input`}
             value={toString(settings.max)}
-            onChange={value => {
+            onChange={(value) => {
               setSettings({ min: normalizeValue(value), max: normalizeValue(value) });
             }}
             disabled={!isChecked}
@@ -133,8 +133,8 @@ DimensionsParameters.propTypes = {
   setSettings: PropTypes.func.isRequired,
   settings: PropTypes.shape({
     min: PropTypes.number,
-    max: PropTypes.number
-  })
+    max: PropTypes.number,
+  }),
 };
 
 export default DimensionsParameters;
@@ -165,5 +165,5 @@ PxInputField.propTypes = {
   id: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
-  disabled: PropTypes.bool.isRequired
+  disabled: PropTypes.bool.isRequired,
 };

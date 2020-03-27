@@ -18,7 +18,7 @@ const build = (props = {}) =>
         isPending: false,
         readOnly: false,
         currentUserAdminSpaceMemberships: [],
-        ...props
+        ...props,
       }}
     />
   );
@@ -47,29 +47,29 @@ describe('SpaceTeamsPage', () => {
             team: {
               sys: {
                 type: 'Team',
-                id: 'team1'
+                id: 'team1',
               },
               description: 'This is the first test team',
               memberCount: 1,
-              name: 'TestTeam1'
-            }
-          }
-        }
+              name: 'TestTeam1',
+            },
+          },
+        },
       ];
     });
     teams = [
       {
         name: 'Team 1',
         sys: {
-          id: 'team_1234'
-        }
+          id: 'team_1234',
+        },
       },
       {
         name: 'Team 2',
         sys: {
-          id: 'team_5678'
-        }
-      }
+          id: 'team_5678',
+        },
+      },
     ];
 
     it('should render 0 rows', () => {
@@ -113,13 +113,13 @@ describe('SpaceTeamsPage', () => {
             team: {
               sys: {
                 type: 'Team',
-                id: 'team1'
+                id: 'team1',
               },
               description: 'This is the first test team',
               memberCount: 1,
-              name: 'TestTeam1'
-            }
-          }
+              name: 'TestTeam1',
+            },
+          },
         },
         {
           admin: false,
@@ -127,17 +127,17 @@ describe('SpaceTeamsPage', () => {
             {
               sys: {
                 type: 'Role',
-                id: 'role1'
+                id: 'role1',
               },
-              name: 'Role 1'
+              name: 'Role 1',
             },
             {
               sys: {
                 type: 'Role',
-                id: 'role2'
+                id: 'role2',
               },
-              name: 'Role 2'
-            }
+              name: 'Role 2',
+            },
           ],
           sys: {
             type: 'TeamSpaceMembership',
@@ -145,14 +145,14 @@ describe('SpaceTeamsPage', () => {
             team: {
               sys: {
                 type: 'Team',
-                id: 'team2'
+                id: 'team2',
               },
               description: 'This is the second test team',
               memberCount: 99,
-              name: 'TestTeam2'
-            }
-          }
-        }
+              name: 'TestTeam2',
+            },
+          },
+        },
       ];
     });
 

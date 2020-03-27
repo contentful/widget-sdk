@@ -4,51 +4,51 @@ import { mount } from 'enzyme';
 import { $initialize } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
 
-describe('Space Wizard', function() {
-  beforeEach(async function() {
+describe('Space Wizard', function () {
+  beforeEach(async function () {
     this.organization = {
       name: 'My Org',
       isBillable: true,
       sys: {
-        id: 'org_1234'
-      }
+        id: 'org_1234',
+      },
     };
 
     this.space = {
       name: 'My current awesome space',
       sys: {
-        id: 'space_1234'
-      }
+        id: 'space_1234',
+      },
     };
 
     this.newSpace = {
       name: 'Some New Space',
       sys: {
-        id: 'space_5678'
-      }
+        id: 'space_5678',
+      },
     };
 
     this.ratePlanCharges = [
       {
         name: 'Environments',
-        tiers: [{ endingUnit: 10 }]
+        tiers: [{ endingUnit: 10 }],
       },
       {
         name: 'Roles',
-        tiers: [{ endingUnit: 10 }]
+        tiers: [{ endingUnit: 10 }],
       },
       {
         name: 'Locales',
-        tiers: [{ endingUnit: 10 }]
+        tiers: [{ endingUnit: 10 }],
       },
       {
         name: 'Content types',
-        tiers: [{ endingUnit: 10 }]
+        tiers: [{ endingUnit: 10 }],
       },
       {
         name: 'Records',
-        tiers: [{ endingUnit: 10 }]
-      }
+        tiers: [{ endingUnit: 10 }],
+      },
     ];
 
     this.spaceRatePlansCreate = [
@@ -60,12 +60,12 @@ describe('Space Wizard', function() {
         productRatePlanCharges: this.ratePlanCharges,
         roleSet: {
           name: '',
-          roles: []
+          roles: [],
         },
         sys: {
-          id: 'plan_1234'
-        }
-      }
+          id: 'plan_1234',
+        },
+      },
     ];
 
     this.spaceRatePlansChange = [
@@ -77,16 +77,16 @@ describe('Space Wizard', function() {
         productRatePlanCharges: this.ratePlanCharges,
         roleSet: {
           name: '',
-          roles: []
+          roles: [],
         },
         unavailabilityReasons: [
           {
-            type: 'currentPlan'
-          }
+            type: 'currentPlan',
+          },
         ],
         sys: {
-          id: 'plan_1234'
-        }
+          id: 'plan_1234',
+        },
       },
       {
         name: 'Macro',
@@ -96,23 +96,23 @@ describe('Space Wizard', function() {
         productRatePlanCharges: this.ratePlanCharges,
         roleSet: {
           name: '',
-          roles: []
+          roles: [],
         },
         sys: {
-          id: 'plan_5678'
-        }
-      }
+          id: 'plan_5678',
+        },
+      },
     ];
 
     this.templates = [
       {
         fields: {
-          name: 'My awesome template!'
+          name: 'My awesome template!',
         },
         sys: {
-          id: 'awesome_template'
-        }
-      }
+          id: 'awesome_template',
+        },
+      },
     ];
 
     this.resources = [
@@ -121,12 +121,12 @@ describe('Space Wizard', function() {
         usage: 2,
         limits: {
           included: 5,
-          maximum: 5
+          maximum: 5,
         },
         sys: {
-          id: 'environment'
-        }
-      }
+          id: 'environment',
+        },
+      },
     ];
 
     this.resource = {
@@ -134,11 +134,11 @@ describe('Space Wizard', function() {
       usage: 1,
       limits: {
         included: 2,
-        maximum: 2
+        maximum: 2,
       },
       sys: {
-        id: 'free_space'
-      }
+        id: 'free_space',
+      },
     };
 
     this.stubs = {
@@ -164,73 +164,71 @@ describe('Space Wizard', function() {
         .stub()
         .returns({ spaceSetup: Promise.resolve(), contentCreated: Promise.resolve() }),
       publishedCTs_refresh: sinon.stub().resolves(),
-      changeSpace: sinon.stub().resolves(true)
+      changeSpace: sinon.stub().resolves(true),
     };
 
     this.system.set('analytics/Analytics', {
-      track: this.stubs.track
+      track: this.stubs.track,
     });
 
     this.system.set('services/ResourceService', {
       default: () => {
         return {
           get: this.stubs.resourceService_get,
-          getAll: this.stubs.resourceService_getAll
+          getAll: this.stubs.resourceService_getAll,
         };
-      }
+      },
     });
 
     this.system.set('account/pricing/PricingDataProvider', {
       getSpaceRatePlans: this.stubs.getSpaceRatePlans,
       getSubscriptionRatePlans: this.stubs.getSubscriptionRatePlans,
       calculateTotalPrice: this.stubs.getTotalPrice,
-      changeSpace: this.stubs.changeSpace
+      changeSpace: this.stubs.changeSpace,
     });
 
     this.system.set('app/settings/api/services/ApiKeyRepo', {
       default: () => {
         return {
-          create: this.stubs.ApiKeyRepo_create
+          create: this.stubs.ApiKeyRepo_create,
         };
-      }
+      },
     });
 
     this.system.set('data/EndpointFactory', {
       createSpaceEndpoint: this.stubs.createSpaceEndpoint,
-      createOrganizationEndpoint: this.stubs.createOrganizationEndpoint
+      createOrganizationEndpoint: this.stubs.createOrganizationEndpoint,
     });
 
     this.system.set('services/SpaceTemplateLoader', {
       getTemplatesList: this.stubs.getTemplatesList,
-      getTemplate: this.stubs.getTemplate
+      getTemplate: this.stubs.getTemplate,
     });
 
     this.system.set('services/SpaceTemplateCreator', {
       getCreator: () => {
         return {
-          create: this.stubs.getCreator_create
+          create: this.stubs.getCreator_create,
         };
-      }
+      },
     });
 
     this.system.set('services/TokenStore', {
-      refresh: this.stubs.TokenStore_refresh
+      refresh: this.stubs.TokenStore_refresh,
     });
 
     this.system.set('services/client', {
       default: {
-        createSpace: this.stubs.createSpace
-      }
+        createSpace: this.stubs.createSpace,
+      },
     });
 
-    const { default: Wizard } = await this.system.import(
-      'components/shared/space-wizard/Wizard'
-    );
+    const { default: Wizard } = await this.system.import('components/shared/space-wizard/Wizard');
     this.store = (await this.system.import('redux/store')).default;
 
     await $initialize(this.system);
 
-    this.mountWithAction = function(action) {
+    this.mountWithAction = function (action) {
       return mount(
         <Wizard
           organization={this.organization}
@@ -245,17 +243,17 @@ describe('Space Wizard', function() {
         />,
         {
           context: {
-            store: this.store
-          }
+            store: this.store,
+          },
         }
       );
     };
 
-    this.assertArgument = function(stub, order, ...args) {
+    this.assertArgument = function (stub, order, ...args) {
       return expect(stub.args[order]).toEqual(args);
     };
 
-    this.createTrackingDataWithAction = function(intendedAction, newData = {}) {
+    this.createTrackingDataWithAction = function (intendedAction, newData = {}) {
       const base = {
         intendedAction,
         currentSpaceType: null,
@@ -268,14 +266,14 @@ describe('Space Wizard', function() {
         currentStep: null,
         targetStep: null,
         targetSpaceName: null,
-        targetSpaceTemplateId: null
+        targetSpaceTemplateId: null,
       };
 
       return { ...base, ...newData };
     };
 
     this.awaitStateUpdate = () => {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         const unsubscribe = this.store.subscribe(() => {
           resolve();
           unsubscribe();
@@ -287,21 +285,18 @@ describe('Space Wizard', function() {
       await this.awaitStateUpdate();
 
       wizard.update();
-      wizard
-        .find('SpacePlanItem')
-        .at(at)
-        .simulate('click');
+      wizard.find('SpacePlanItem').at(at).simulate('click');
     };
 
-    this.confirm = async wizard => {
+    this.confirm = async (wizard) => {
       const confirmButton = wizard.find('button[data-test-id="space-create-confirm"]').first();
       confirmButton.simulate('click');
     };
   });
 
-  describe('Snowplow events', function() {
-    describe('space creation', function() {
-      beforeEach(function() {
+  describe('Snowplow events', function () {
+    describe('space creation', function () {
+      beforeEach(function () {
         this.stubs.getSpaceRatePlans.resolves(this.spaceRatePlansCreate);
         this.mount = this.mountWithAction.bind(this, 'create');
         this.createTrackingData = this.createTrackingDataWithAction.bind(this, 'create');
@@ -313,27 +308,18 @@ describe('Space Wizard', function() {
           wizard.update();
 
           if (selectTemplate) {
-            wizard
-              .find('input[id="newspace-template-usetemplate"]')
-              .first()
-              .simulate('click');
+            wizard.find('input[id="newspace-template-usetemplate"]').first().simulate('click');
             wizard.update();
 
-            wizard
-              .find('TemplatesList a')
-              .at(0)
-              .simulate('click');
+            wizard.find('TemplatesList a').at(0).simulate('click');
             wizard.update();
           }
 
-          wizard
-            .find('button[data-test-id="space-details-confirm"]')
-            .first()
-            .simulate('click');
+          wizard.find('button[data-test-id="space-details-confirm"]').first().simulate('click');
         };
       });
 
-      it('should fire the open and navigate events on mount', function() {
+      it('should fire the open and navigate events on mount', function () {
         this.mount();
 
         this.assertArgument(
@@ -341,7 +327,7 @@ describe('Space Wizard', function() {
           0,
           'space_wizard:open',
           this.createTrackingData({
-            paymentDetailsExist: true
+            paymentDetailsExist: true,
           })
         );
 
@@ -350,12 +336,12 @@ describe('Space Wizard', function() {
           1,
           'space_wizard:navigate',
           this.createTrackingData({
-            targetStep: 'space_type'
+            targetStep: 'space_type',
           })
         );
       });
 
-      it('should fire the select_plan and navigate events when selecting a plan', async function() {
+      it('should fire the select_plan and navigate events when selecting a plan', async function () {
         const wizard = this.mount();
         await this.selectPlan(wizard);
         await this.awaitStateUpdate();
@@ -366,7 +352,7 @@ describe('Space Wizard', function() {
           'space_wizard:select_plan',
           this.createTrackingData({
             targetSpaceType: 'space_size_1',
-            targetProductType: 'on_demand'
+            targetProductType: 'on_demand',
           })
         );
 
@@ -376,12 +362,12 @@ describe('Space Wizard', function() {
           'space_wizard:navigate',
           this.createTrackingData({
             currentStep: 'space_type',
-            targetStep: 'space_details'
+            targetStep: 'space_details',
           })
         );
       });
 
-      it('should fire the entered_details and navigate events when clicking the button on the details page', async function() {
+      it('should fire the entered_details and navigate events when clicking the button on the details page', async function () {
         const wizard = this.mount();
         await this.selectPlan(wizard);
         await this.awaitStateUpdate();
@@ -393,7 +379,7 @@ describe('Space Wizard', function() {
           'space_wizard:entered_details',
           this.createTrackingData({
             targetSpaceName: 'My New Space',
-            targetSpaceTemplateId: null
+            targetSpaceTemplateId: null,
           })
         );
 
@@ -403,12 +389,12 @@ describe('Space Wizard', function() {
           'space_wizard:navigate',
           this.createTrackingData({
             currentStep: 'space_details',
-            targetStep: 'confirmation'
+            targetStep: 'confirmation',
           })
         );
       });
 
-      it('should fire the nagivate event whenever navigating using the tabs', async function() {
+      it('should fire the nagivate event whenever navigating using the tabs', async function () {
         const wizard = this.mount();
         await this.selectPlan(wizard);
         await this.awaitStateUpdate();
@@ -423,7 +409,7 @@ describe('Space Wizard', function() {
           'space_wizard:navigate',
           this.createTrackingData({
             currentStep: 'confirmation',
-            targetStep: 'space_type'
+            targetStep: 'space_type',
           })
         );
 
@@ -434,7 +420,7 @@ describe('Space Wizard', function() {
           'space_wizard:navigate',
           this.createTrackingData({
             currentStep: 'space_type',
-            targetStep: 'confirmation'
+            targetStep: 'confirmation',
           })
         );
 
@@ -445,12 +431,12 @@ describe('Space Wizard', function() {
           'space_wizard:navigate',
           this.createTrackingData({
             currentStep: 'confirmation',
-            targetStep: 'space_details'
+            targetStep: 'space_details',
           })
         );
       });
 
-      it('should fire the confirm event when clicking the confirmation button', async function() {
+      it('should fire the confirm event when clicking the confirmation button', async function () {
         const wizard = this.mount();
         await this.selectPlan(wizard);
         await this.awaitStateUpdate();
@@ -460,7 +446,7 @@ describe('Space Wizard', function() {
         this.assertArgument(this.stubs.track, 6, 'space_wizard:confirm', this.createTrackingData());
       });
 
-      it('should fire space creation related events when the space is created on the API', async function() {
+      it('should fire space creation related events when the space is created on the API', async function () {
         const wizard = this.mount();
         await this.selectPlan(wizard);
         await this.awaitStateUpdate();
@@ -474,12 +460,12 @@ describe('Space Wizard', function() {
           7,
           'space_wizard:space_create',
           this.createTrackingData({
-            spaceId: this.newSpace.sys.id
+            spaceId: this.newSpace.sys.id,
           })
         );
       });
 
-      it('should fill in template information if selected on the details page', async function() {
+      it('should fill in template information if selected on the details page', async function () {
         const wizard = this.mount();
         await this.selectPlan(wizard);
         await this.awaitStateUpdate();
@@ -495,20 +481,20 @@ describe('Space Wizard', function() {
           'space_wizard:entered_details',
           this.createTrackingData({
             targetSpaceName: 'My New Space',
-            targetSpaceTemplateId: 'My awesome template!'
+            targetSpaceTemplateId: 'My awesome template!',
           })
         );
       });
     });
 
-    describe('space type changing', function() {
-      beforeEach(function() {
+    describe('space type changing', function () {
+      beforeEach(function () {
         this.stubs.getSpaceRatePlans.resolves(this.spaceRatePlansChange);
         this.mount = this.mountWithAction.bind(this, 'change');
         this.createTrackingData = this.createTrackingDataWithAction.bind(this, 'change');
       });
 
-      it('should fire the open and navigate events on mount', function() {
+      it('should fire the open and navigate events on mount', function () {
         this.mount();
 
         this.assertArgument(
@@ -516,7 +502,7 @@ describe('Space Wizard', function() {
           0,
           'space_wizard:open',
           this.createTrackingData({
-            paymentDetailsExist: true
+            paymentDetailsExist: true,
           })
         );
 
@@ -525,12 +511,12 @@ describe('Space Wizard', function() {
           1,
           'space_wizard:navigate',
           this.createTrackingData({
-            targetStep: 'space_type'
+            targetStep: 'space_type',
           })
         );
       });
 
-      it('should fire the select_plan and navigate events when selecting a plan', async function() {
+      it('should fire the select_plan and navigate events when selecting a plan', async function () {
         const wizard = this.mount();
         await this.selectPlan(wizard, 1);
 
@@ -544,7 +530,7 @@ describe('Space Wizard', function() {
             targetSpaceType: 'space_size_90',
             targetProductType: 'on_demand',
             recommendedSpaceType: 'space_size_90',
-            recommendedProductType: 'on_demand'
+            recommendedProductType: 'on_demand',
           })
         );
 
@@ -554,12 +540,12 @@ describe('Space Wizard', function() {
           'space_wizard:navigate',
           this.createTrackingData({
             currentStep: 'space_type',
-            targetStep: 'confirmation'
+            targetStep: 'confirmation',
           })
         );
       });
 
-      it('should fire the confirm event when clicking the confirmation button', async function() {
+      it('should fire the confirm event when clicking the confirmation button', async function () {
         const wizard = this.mount();
         await this.selectPlan(wizard, 1);
         await this.confirm(wizard);
@@ -567,7 +553,7 @@ describe('Space Wizard', function() {
         this.assertArgument(this.stubs.track, 4, 'space_wizard:confirm', this.createTrackingData());
       });
 
-      it('should fire the space_type_change event when the space type is changed on the API', async function() {
+      it('should fire the space_type_change event when the space type is changed on the API', async function () {
         const wizard = this.mount();
         await this.selectPlan(wizard, 1);
         await this.confirm(wizard);

@@ -9,7 +9,7 @@ export const ItalicPlugin = ({ richTextAPI }) => {
     type: MARKS.ITALIC,
     tagName: 'em',
     hotkey: ['mod+i'],
-    richTextAPI
+    richTextAPI,
   });
 };
 
@@ -22,5 +22,5 @@ class Italic extends Component {
 export default markToggleDecorator({
   type: MARKS.ITALIC,
   title: 'Italic',
-  icon: 'FormatItalic'
+  icon: 'FormatItalic',
 })(Italic);

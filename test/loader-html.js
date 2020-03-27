@@ -1,5 +1,5 @@
 module.exports = {
-  locate: function(load) {
+  locate: function (load) {
     // Assume that any HTML file will be loaded in a /src/javascripts file,
     // not /test.
 
@@ -12,7 +12,7 @@ module.exports = {
       return fullPath;
     }
   },
-  translate: function(load) {
+  translate: function (load) {
     const html = load.source;
 
     if (this.builder) {
@@ -20,9 +20,9 @@ module.exports = {
       return 'module.exports = ' + JSON.stringify(html);
     }
   },
-  instantiate: function(load) {
+  instantiate: function (load) {
     if (!this.builder) {
       return load.source;
     }
-  }
+  },
 };

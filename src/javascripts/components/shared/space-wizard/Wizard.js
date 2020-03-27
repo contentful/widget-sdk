@@ -18,17 +18,17 @@ import * as logger from 'services/logger';
 
 const styles = {
   modalDialog: css({
-    width: '750px'
+    width: '750px',
   }),
   closeButton: css({
-    padding: '18px 20px'
+    padding: '18px 20px',
   }),
   createSpaceWizard: css({
-    width: '780px'
+    width: '780px',
   }),
   modalHeader: css({
-    padding: 0
-  })
+    padding: 0,
+  }),
 };
 
 const SpaceCreateSteps = [
@@ -36,20 +36,20 @@ const SpaceCreateSteps = [
     id: Steps.SpaceCreateSteps.SpaceType,
     label: '1. Space type',
     isEnabled: () => true,
-    component: SpacePlanSelector
+    component: SpacePlanSelector,
   },
   {
     id: Steps.SpaceCreateSteps.SpaceDetails,
     label: '2. Space details',
-    isEnabled: props => Boolean(props.selectedPlan),
-    component: SpaceDetails
+    isEnabled: (props) => Boolean(props.selectedPlan),
+    component: SpaceDetails,
   },
   {
     id: Steps.SpaceCreateSteps.Confirmation,
     label: '3. Confirmation',
-    isEnabled: props => Boolean(props.selectedPlan && props.newSpaceMeta.name),
-    component: ConfirmScreen
-  }
+    isEnabled: (props) => Boolean(props.selectedPlan && props.newSpaceMeta.name),
+    component: ConfirmScreen,
+  },
 ];
 
 const SpaceChangeSteps = [
@@ -57,24 +57,24 @@ const SpaceChangeSteps = [
     id: Steps.SpaceChangeSteps.SpaceType,
     label: '1. Space type',
     isEnabled: () => true,
-    component: SpacePlanSelector
+    component: SpacePlanSelector,
   },
   {
     id: Steps.SpaceChangeSteps.Confirmation,
     label: '2. Confirmation',
-    isEnabled: props => Boolean(props.selectedPlan),
-    component: ConfirmScreen
-  }
+    isEnabled: (props) => Boolean(props.selectedPlan),
+    component: ConfirmScreen,
+  },
 ];
 
 class Wizard extends React.Component {
   static propTypes = {
     organization: PropTypes.shape({
       sys: PropTypes.shape({
-        id: PropTypes.string.isRequired
+        id: PropTypes.string.isRequired,
       }).isRequired,
       name: PropTypes.string.isRequired,
-      isBillable: PropTypes.bool
+      isBillable: PropTypes.bool,
     }).isRequired,
 
     // Space data as defined in spaceContext.space.data
@@ -112,7 +112,7 @@ class Wizard extends React.Component {
     resources: PropTypes.object.isRequired,
     currentPlan: PropTypes.object,
     selectedPlan: PropTypes.object,
-    partnershipMeta: propTypes.partnershipMeta
+    partnershipMeta: propTypes.partnershipMeta,
   };
 
   componentDidMount() {
@@ -120,14 +120,14 @@ class Wizard extends React.Component {
     const steps = getSteps(action);
 
     this.track('open', {
-      paymentDetailsExist: Boolean(organization.isBillable)
+      paymentDetailsExist: Boolean(organization.isBillable),
     });
     this.navigate(steps[0].id);
   }
 
   UNSAFE_componentWillReceiveProps = ({ spaceCreation: { error } }) => {
     const {
-      spaceCreation: { error: currentError }
+      spaceCreation: { error: currentError },
     } = this.props;
 
     const { action, onCancel, navigate } = this.props;
@@ -175,7 +175,7 @@ class Wizard extends React.Component {
       spaceCreation,
       spaceChange,
       templates,
-      partnershipMeta
+      partnershipMeta,
     } = this.props;
 
     const steps = getSteps(action);
@@ -244,7 +244,7 @@ class Wizard extends React.Component {
         spaceCreation,
         spaceChange,
         templates,
-        partnershipMeta
+        partnershipMeta,
       };
 
       return (
@@ -258,7 +258,7 @@ class Wizard extends React.Component {
               <div
                 key={id}
                 className={classnames('create-space-wizard__step', {
-                  'create-space-wizard__step--current': id === currentStepId
+                  'create-space-wizard__step--current': id === currentStepId,
                 })}>
                 {isEnabled(this.props) && React.createElement(component, stepProps)}
               </div>
@@ -290,20 +290,20 @@ class Wizard extends React.Component {
     track(eventName, { ...data, ...requiredTrackingData });
   };
 
-  setStateData = stepData => {
+  setStateData = (stepData) => {
     this.setState(({ data }) => ({
       data: { ...data, ...stepData },
       isFormSubmitted: false,
-      serverValidationErrors: null
+      serverValidationErrors: null,
     }));
   };
 
-  navigate = stepId => {
+  navigate = (stepId) => {
     const { navigate, currentStepId } = this.props;
 
     this.track('navigate', {
       currentStepId,
-      targetStepId: stepId
+      targetStepId: stepId,
     });
     navigate(stepId);
   };
@@ -321,7 +321,7 @@ class Wizard extends React.Component {
       onSpaceCreated,
       onTemplateCreated,
       onConfirm,
-      partnershipMeta
+      partnershipMeta,
     } = this.props;
 
     const steps = getSteps(action);
@@ -335,7 +335,7 @@ class Wizard extends React.Component {
         onSpaceCreated,
         onTemplateCreated,
         onConfirm,
-        partnershipMeta
+        partnershipMeta,
       });
     } else if (lastStep && action === 'change') {
       changeSpace({ space, selectedPlan, onConfirm });
@@ -346,7 +346,7 @@ class Wizard extends React.Component {
     }
   };
 
-  handleError = error => {
+  handleError = (error) => {
     const { action, onCancel } = this.props;
     const steps = getSteps(action);
 
@@ -357,7 +357,7 @@ class Wizard extends React.Component {
     if (action === 'create' && Object.keys(serverValidationErrors).length) {
       this.setState({
         serverValidationErrors,
-        currentStepId: steps[1].id
+        currentStepId: steps[1].id,
       });
     } else {
       Notification.error(
@@ -368,7 +368,7 @@ class Wizard extends React.Component {
   };
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     spacePlans: state.spaceWizard.spacePlans,
     templates: state.spaceWizard.templates,
@@ -380,7 +380,7 @@ const mapStateToProps = state => {
     subscriptionPrice: state.spaceWizard.subscriptionPrice,
     spaceCreation: state.spaceWizard.spaceCreation,
     spaceChange: state.spaceWizard.spaceChange,
-    partnershipMeta: state.spaceWizard.partnershipMeta
+    partnershipMeta: state.spaceWizard.partnershipMeta,
   };
 };
 
@@ -398,14 +398,11 @@ const mapDispatchToProps = {
   setNewSpaceTemplate: actionCreators.setNewSpaceTemplate,
   reset: actionCreators.reset,
   sendPartnershipEmail: actionCreators.sendPartnershipEmail,
-  setPartnershipFields: actionCreators.setPartnershipFields
+  setPartnershipFields: actionCreators.setPartnershipFields,
 };
 
 export { Wizard };
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Wizard);
+export default connect(mapStateToProps, mapDispatchToProps)(Wizard);
 
 function getSteps(action) {
   if (action === 'create') {

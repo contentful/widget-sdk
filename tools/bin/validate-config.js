@@ -2,7 +2,7 @@
 const U = require('../lib/utils');
 const { validate: validateConfig } = require('../lib/config-validator');
 
-validateFiles(process.argv.slice(2)).catch(e => {
+validateFiles(process.argv.slice(2)).catch((e) => {
   // from bluebird `.done()` – https://github.com/petkaantonov/bluebird/blob/master/src/async.js#L49-L53
   process.stderr.write('Fatal ' + (e instanceof Error ? e.stack : e) + '\n');
   process.exit(1);

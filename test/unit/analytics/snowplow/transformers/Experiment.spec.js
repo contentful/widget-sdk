@@ -1,5 +1,5 @@
 describe('Experiment transformer', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     const experimentTransformer = (await this.system.import('analytics/transformers/Experiment'))
       .default;
 
@@ -7,28 +7,28 @@ describe('Experiment transformer', () => {
       experiment: {
         id: 'experiment',
         variation: true,
-        interaction_context: 'test'
+        interaction_context: 'test',
       },
       organizationId: 'org',
       spaceId: 'space',
-      userId: 'user'
+      userId: 'user',
     };
-    this.experimentTransformer = function(action) {
+    this.experimentTransformer = function (action) {
       return experimentTransformer(action)(null, this.data);
     };
     this.transformedData = experimentTransformer('action')(null, this.data);
   });
 
-  it('should have an empty object for data', function() {
+  it('should have an empty object for data', function () {
     expect(this.transformedData.data).toEqual({});
   });
 
   describe('contexts array', () => {
-    it('should have one element', function() {
+    it('should have one element', function () {
       expect(Array.isArray(this.transformedData.contexts)).toBe(true);
       expect(this.transformedData.contexts.length).toBe(1);
     });
-    it('should contain an experiment object without interaction context', function() {
+    it('should contain an experiment object without interaction context', function () {
       const experiment = this.transformedData.contexts[0];
 
       expect(typeof experiment.schema).toBe('string');
@@ -38,10 +38,10 @@ describe('Experiment transformer', () => {
         action: 'action',
         executing_user_id: this.data.userId,
         organization_id: this.data.organizationId,
-        space_id: this.data.spaceId
+        space_id: this.data.spaceId,
       });
     });
-    it('should contain an experiment object with interaction context', function() {
+    it('should contain an experiment object with interaction context', function () {
       const experiment = this.experimentTransformer('interaction').contexts[0];
 
       expect(typeof experiment.schema).toBe('string');
@@ -52,7 +52,7 @@ describe('Experiment transformer', () => {
         action: 'interaction',
         executing_user_id: this.data.userId,
         organization_id: this.data.organizationId,
-        space_id: this.data.spaceId
+        space_id: this.data.spaceId,
       });
     });
   });

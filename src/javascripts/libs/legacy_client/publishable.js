@@ -3,7 +3,7 @@ import { dateStringToIso } from './utils';
 
 export default function mixinPublishable(base) {
   return extend(base, {
-    publish: function(version) {
+    publish: function (version) {
       if (typeof version === 'undefined') {
         version = this.getVersion();
       }
@@ -14,50 +14,48 @@ export default function mixinPublishable(base) {
         .then(this.handleUpdate);
     },
 
-    unpublish: function() {
-      return this.endpoint('published')
-        .delete()
-        .then(this.handleUpdate);
+    unpublish: function () {
+      return this.endpoint('published').delete().then(this.handleUpdate);
     },
 
-    getPublishedVersion: function() {
+    getPublishedVersion: function () {
       return this.getSys() && this.data.sys.publishedVersion;
     },
 
-    getPublishedAt: function() {
+    getPublishedAt: function () {
       return (
         this.getSys() && this.data.sys.publishedAt && dateStringToIso(this.data.sys.publishedAt)
       );
     },
 
-    setPublishedVersion: function(version) {
+    setPublishedVersion: function (version) {
       if (this.getSys()) {
         this.data.sys.publishedVersion = version;
       }
     },
 
-    getPublishedState: function() {
+    getPublishedState: function () {
       return this.endpoint('published').get();
     },
 
-    isPublished: function() {
+    isPublished: function () {
       return !!this.getPublishedVersion();
     },
 
-    hasUnpublishedChanges: function() {
+    hasUnpublishedChanges: function () {
       return !this.isPublished() || this.data.sys.version > this.data.sys.publishedVersion + 1;
     },
 
-    canPublish: function() {
+    canPublish: function () {
       return !this.isDeleted() && (!this.getPublishedVersion() || this.hasUnpublishedChanges());
     },
 
-    canUnpublish: function() {
+    canUnpublish: function () {
       return this.isPublished();
     },
 
-    canDelete: function() {
+    canDelete: function () {
       return !this.isDeleted() && !this.isPublished();
-    }
+    },
   });
 }

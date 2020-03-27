@@ -20,7 +20,7 @@ export function getForEntries(opts) {
   if (opts.contentTypeId) {
     return spaceContext.publishedCTs
       .fetch(opts.contentTypeId)
-      .then(contentType => prepareEntityListQuery(contentType, opts));
+      .then((contentType) => prepareEntityListQuery(contentType, opts));
   } else {
     return prepareEntityListQuery(null, opts);
   }
@@ -47,7 +47,7 @@ export function getForAssets(opts) {
 export function getForUsers(opts) {
   const userContentType = {
     data: {},
-    getId: _.constant(undefined)
+    getId: _.constant(undefined),
   };
   return prepareEntityListQuery(userContentType, opts);
 }
@@ -58,11 +58,11 @@ function prepareEntityListQuery(contentType, opts) {
     order: getOrderQuery(opts.order, contentType),
     limit: opts.paginator.getPerPage(),
     skip: opts.paginator.getSkipParam(),
-    'sys.archivedAt[exists]': 'false' // By default, don't get archived entries.
+    'sys.archivedAt[exists]': 'false', // By default, don't get archived entries.
   };
   const searchQuery = buildQueryFromUISearch({
     contentType: _.get(contentType, 'data'),
-    search: opts
+    search: opts,
   });
   // TODO: Lets not return a promise here.
   return $q.resolve(_.assign(queryObject, searchQuery));

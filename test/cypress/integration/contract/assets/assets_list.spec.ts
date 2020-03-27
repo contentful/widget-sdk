@@ -4,7 +4,7 @@ import { defaultSpaceId } from '../../../util/requests';
 import {
   queryAllNonArchivedAssetsInTheDefaultSpace,
   severalAssetsBody,
-  queryAllArchivedAssetsInTheDefaultSpace
+  queryAllArchivedAssetsInTheDefaultSpace,
 } from '../../../interactions/assets';
 
 describe('Assets List Page', () => {
@@ -15,25 +15,22 @@ describe('Assets List Page', () => {
       cors: true,
       pactfileWriteMode: 'merge',
       dir: Cypress.env('pactDir'),
-      spec: 2
-    })
+      spec: 2,
+    });
   });
 
-  let interactions: string[]
+  let interactions: string[];
   beforeEach(() => {
     cy.resetAllFakeServers();
 
-    interactions = [
-      ...defaultRequestsMock(),
-      queryFirst100UsersInDefaultSpace.willFindSeveral()
-    ];
+    interactions = [...defaultRequestsMock(), queryFirst100UsersInDefaultSpace.willFindSeveral()];
   });
   context('no assets in the space', () => {
     beforeEach(() => {
       interactions.push(
         queryAllNonArchivedAssetsInTheDefaultSpace.willFindNone(),
         queryAllArchivedAssetsInTheDefaultSpace.willFindNone()
-      )
+      );
 
       cy.visit(`/spaces/${defaultSpaceId}/assets`);
 

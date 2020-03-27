@@ -11,11 +11,11 @@ import ModalLauncher from 'app/common/ModalLauncher';
 const mockContentPreview = {
   create: jest.fn(),
   update: jest.fn(),
-  remove: jest.fn()
+  remove: jest.fn(),
 };
 
 jest.mock('services/contentPreview', () => ({
-  getContentPreview: () => mockContentPreview
+  getContentPreview: () => mockContentPreview,
 }));
 
 describe('app/settings/content_preview/ContentPreviewFormPage', () => {
@@ -34,7 +34,7 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
     nameInput: 'input#previewName',
     descriptionInput: 'textarea#previewDescription',
     checkboxes: 'input[type="checkbox"]',
-    nameValidation: '[data-test-id="preview-name-field"] [data-test-id="cf-ui-validation-message"]'
+    nameValidation: '[data-test-id="preview-name-field"] [data-test-id="cf-ui-validation-message"]',
   };
 
   const updateName = (wrapper, value) => {
@@ -58,9 +58,9 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
           contentTypeFields: [
             {
               apiName: 'body',
-              type: 'Symbol'
-            }
-          ]
+              type: 'Symbol',
+            },
+          ],
         },
         {
           name: 'Ct - 2',
@@ -70,18 +70,18 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
           contentTypeFields: [
             {
               apiName: 'title',
-              type: 'Symbol'
-            }
-          ]
-        }
+              type: 'Symbol',
+            },
+          ],
+        },
       ],
-      version: 0
+      version: 0,
     };
 
-    const render = props => {
+    const render = (props) => {
       const stubs = {
         setDirty: jest.fn(),
-        registerSaveAction: jest.fn()
+        registerSaveAction: jest.fn(),
       };
 
       const wrapper = Enzyme.mount(
@@ -165,7 +165,7 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
       ).toHaveText('URL is invalid');
     });
 
-    it('shows notification if create fails', done => {
+    it('shows notification if create fails', (done) => {
       mockContentPreview.create.mockRejectedValueOnce(new Error('API returned error'));
 
       const { wrapper } = render();
@@ -178,7 +178,7 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
       expect(mockContentPreview.create).toHaveBeenCalledWith({
         ...initialValue,
         name: 'preview name',
-        description: 'preview description'
+        description: 'preview description',
       });
 
       process.nextTick(() => {
@@ -188,12 +188,12 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
       });
     });
 
-    it('calls create method and redirects on save', done => {
+    it('calls create method and redirects on save', (done) => {
       const resolvedObject = {
         name: 'preview name',
         sys: {
-          id: 'ct-1'
-        }
+          id: 'ct-1',
+        },
       };
 
       mockContentPreview.create.mockResolvedValueOnce(resolvedObject);
@@ -217,7 +217,7 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
         ...initialValue,
         name: 'preview name',
         description: 'preview description',
-        configs: newConfigs
+        configs: newConfigs,
       });
 
       process.nextTick(() => {
@@ -227,7 +227,7 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
         expect(Analytics.track).toHaveBeenCalledWith('content_preview:created', {
           envName: resolvedObject.name,
           envId: resolvedObject.sys.id,
-          isDiscoveryApp: false
+          isDiscoveryApp: false,
         });
 
         expect($state.go).toHaveBeenCalledWith(
@@ -255,9 +255,9 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
           contentTypeFields: [
             {
               apiName: 'body',
-              type: 'Symbol'
-            }
-          ]
+              type: 'Symbol',
+            },
+          ],
         },
         {
           name: 'Ct - 2',
@@ -267,18 +267,18 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
           contentTypeFields: [
             {
               apiName: 'title',
-              type: 'Symbol'
-            }
-          ]
-        }
+              type: 'Symbol',
+            },
+          ],
+        },
       ],
-      version: 0
+      version: 0,
     };
 
-    const render = props => {
+    const render = (props) => {
       const stubs = {
         setDirty: jest.fn(),
-        registerSaveAction: jest.fn()
+        registerSaveAction: jest.fn(),
       };
       const wrapper = Enzyme.mount(
         <ContentPreviewFormPage
@@ -328,7 +328,7 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
       expect(stubs.setDirty).toHaveBeenCalledWith(false);
     });
 
-    it('displays error when fails', done => {
+    it('displays error when fails', (done) => {
       mockContentPreview.update.mockRejectedValueOnce(new Error('API returned error'));
 
       const { wrapper } = render();
@@ -339,7 +339,7 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
 
       expect(mockContentPreview.update).toHaveBeenCalledWith({
         ...initialValue,
-        name: 'test name new'
+        name: 'test name new',
       });
 
       process.nextTick(() => {
@@ -349,14 +349,14 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
       });
     });
 
-    it('calls remove method and redirects on delete', done => {
+    it('calls remove method and redirects on delete', (done) => {
       jest.spyOn(ModalLauncher, 'open').mockResolvedValue(true);
       mockContentPreview.remove.mockResolvedValueOnce();
       const { wrapper, stubs } = render();
       wrapper.find(selectors.deleteBtn).simulate('click');
       process.nextTick(() => {
         expect(mockContentPreview.remove).toHaveBeenCalledWith({
-          id: initialValue.id
+          id: initialValue.id,
         });
         expect(Notification.success).toHaveBeenCalledWith(
           'Content preview was deleted successfully'
@@ -364,20 +364,20 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
         expect(stubs.setDirty).toHaveBeenCalledWith(false);
         expect(Analytics.track).toHaveBeenCalledWith('content_preview:deleted', {
           name: initialValue.name,
-          sys: { id: initialValue.id }
+          sys: { id: initialValue.id },
         });
         expect($state.go).toHaveBeenCalledWith('^.list', undefined, undefined);
         done();
       });
     });
 
-    it('displays success message when saved successfully', done => {
+    it('displays success message when saved successfully', (done) => {
       const resolvedObject = {
         name: 'preview name new',
         sys: {
           id: 'ct-1',
-          version: 12
-        }
+          version: 12,
+        },
       };
 
       mockContentPreview.update.mockResolvedValueOnce(resolvedObject);
@@ -400,7 +400,7 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
         ...initialValue,
         name: 'preview name new',
         description: 'preview description new',
-        configs: newConfigs
+        configs: newConfigs,
       });
 
       process.nextTick(() => {
@@ -409,7 +409,7 @@ describe('app/settings/content_preview/ContentPreviewFormPage', () => {
         );
         expect(Analytics.track).toHaveBeenCalledWith('content_preview:updated', {
           envId: resolvedObject.sys.id,
-          envName: resolvedObject.name
+          envName: resolvedObject.name,
         });
 
         expect($state.go).not.toHaveBeenCalled();

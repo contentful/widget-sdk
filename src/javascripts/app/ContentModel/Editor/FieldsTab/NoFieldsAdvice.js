@@ -7,7 +7,7 @@ export default class NoFieldsAdvice extends Component {
     return (
       <div style={{ position: 'relative', maxWidth: '50em' }}>
         <ul className="ct-fields--dummy">
-          {range(1, 6).map(i => (
+          {range(1, 6).map((i) => (
             <li className="ct-field" key={i}>
               <div className="ct-field__drag-handle" />
               <div className="ct-field__name">Field {i}</div>

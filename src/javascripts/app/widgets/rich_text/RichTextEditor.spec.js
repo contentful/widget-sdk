@@ -19,38 +19,38 @@ jest.mock(
   { virtual: true }
 );
 
-const fakeProps = props => ({
+const fakeProps = (props) => ({
   widgetAPI: {
     permissions: {
-      canAccessAssets: true
+      canAccessAssets: true,
     },
     field: {
       id: 'FIELD_ID,',
-      locale: 'FIELD_LOCALE'
-    }
+      locale: 'FIELD_LOCALE',
+    },
   },
   value: undefined,
   onChange: jest.fn(),
   onAction: jest.fn(),
   isDisabled: false,
   showToolbar: false,
-  ...props
+  ...props,
 });
 
 describe('RichTextEditor', () => {
-  it('renders the editor', function() {
+  it('renders the editor', function () {
     const wrapper = Enzyme.shallow(<RichTextEditor {...fakeProps()} />);
 
     expect(wrapper.find('[data-test-id="editor"]').props().readOnly).toBe(false);
   });
 
-  it('renders toolbar', function() {
+  it('renders toolbar', function () {
     const wrapper = Enzyme.shallow(<RichTextEditor {...fakeProps()} />);
 
     expect(wrapper.find(Toolbar)).toHaveLength(1);
   });
 
-  it('renders readonly editor and toolbar', function() {
+  it('renders readonly editor and toolbar', function () {
     const wrapper = Enzyme.shallow(<RichTextEditor {...fakeProps({ isDisabled: true })} />);
 
     expect(wrapper.find('[data-test-id="editor"]').props().readOnly).toBe(true);

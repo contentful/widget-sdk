@@ -5,7 +5,7 @@ import * as accessChecker from 'access_control/AccessChecker';
 
 export default class WidgetRenderWarning extends React.Component {
   static propTypes = {
-    message: PropTypes.string.isRequired
+    message: PropTypes.string.isRequired,
   };
 
   render() {

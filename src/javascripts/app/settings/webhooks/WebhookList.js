@@ -10,7 +10,7 @@ import {
   TableRow,
   TableBody,
   Button,
-  TextLink
+  TextLink,
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 
@@ -19,20 +19,20 @@ import WebhookListSidebar from './WebhookListSidebar';
 
 const styles = {
   nameCell: css({
-    width: '25%'
+    width: '25%',
   }),
   urlCell: css({
-    width: '40%'
+    width: '40%',
   }),
   callsCell: css({
-    width: '20%'
+    width: '20%',
   }),
   actionsCell: css({
-    width: '20%'
+    width: '20%',
   }),
   row: css({
-    cursor: 'pointer'
-  })
+    cursor: 'pointer',
+  }),
 };
 
 export class WebhookList extends React.Component {
@@ -40,7 +40,7 @@ export class WebhookList extends React.Component {
     webhooks: PropTypes.array.isRequired,
     openTemplateDialog: PropTypes.func.isRequired,
     templateId: PropTypes.string,
-    templateIdReferrer: PropTypes.string
+    templateIdReferrer: PropTypes.string,
   };
 
   componentDidMount() {
@@ -76,12 +76,12 @@ export class WebhookList extends React.Component {
           </TableHead>
           <TableBody>
             {webhooks.length > 0 &&
-              webhooks.map(wh => {
+              webhooks.map((wh) => {
                 return (
                   <StateLink
                     path="^.detail"
                     params={{
-                      webhookId: wh.sys.id
+                      webhookId: wh.sys.id,
                     }}
                     key={wh.sys.id}>
                     {({ onClick }) => (

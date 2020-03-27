@@ -23,7 +23,7 @@ class UnsavedChangesDialog extends React.Component {
   static propTypes = {
     isShown: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
-    save: PropTypes.func.isRequired
+    save: PropTypes.func.isRequired,
   };
 
   state = { working: false };

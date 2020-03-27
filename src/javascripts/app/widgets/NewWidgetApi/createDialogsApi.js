@@ -13,36 +13,36 @@ export function createDialogsApi() {
     openAlert: ExtensionDialogs.openAlert,
     openConfirm: ExtensionDialogs.openConfirm,
     openPrompt: ExtensionDialogs.openPrompt,
-    selectSingleEntry: opts => {
+    selectSingleEntry: (opts) => {
       return entitySelector.openFromExtension({
         ...opts,
         entityType: 'Entry',
-        multiple: false
+        multiple: false,
       });
     },
-    selectMultipleEntries: opts => {
+    selectMultipleEntries: (opts) => {
       return entitySelector.openFromExtension({
         ...opts,
         entityType: 'Entry',
-        multiple: true
+        multiple: true,
       });
     },
-    selectSingleAsset: opts => {
+    selectSingleAsset: (opts) => {
       return entitySelector.openFromExtension({
         ...opts,
         entityType: 'Asset',
-        multiple: false
+        multiple: false,
       });
     },
-    selectMultipleAssets: opts => {
+    selectMultipleAssets: (opts) => {
       return entitySelector.openFromExtension({
         ...opts,
         entityType: 'Asset',
-        multiple: true
+        multiple: true,
       });
     },
     openExtension: () => {
       throw new Error('Not implemented yet');
-    }
+    },
   };
 }

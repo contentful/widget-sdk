@@ -15,27 +15,27 @@ const withAuthor = {
   sys: {
     createdAt: new Date(date).toISOString(),
     createdBy: mockAuthor,
-    id: 'xyz'
-  }
+    id: 'xyz',
+  },
 };
 const withUnknownAuthor = {
   body: 'Boo',
   sys: {
     createdAt: new Date(date).toISOString(),
     createdBy: unknownAuthor,
-    id: 'xyz'
-  }
+    id: 'xyz',
+  },
 };
 jest.mock('services/TokenStore', () => ({
   getSpace: jest.fn(),
-  getUserSync: jest.fn()
+  getUserSync: jest.fn(),
 }));
 
-const setAdmin = isAdmin => {
+const setAdmin = (isAdmin) => {
   spaceContextMocked.getData.mockReturnValue(isAdmin);
 };
 
-const setAsCommentAuthor = isAuthor => {
+const setAsCommentAuthor = (isAuthor) => {
   TokenStore.getUserSync.mockReturnValue(isAuthor ? mockAuthor : unknownAuthor);
 };
 
@@ -45,7 +45,7 @@ describe('Comment', () => {
       comment,
       hasReplies,
       endpoint: jest.fn(),
-      onRemoved: jest.fn()
+      onRemoved: jest.fn(),
     };
     return render(<Comment {...props} />);
   };

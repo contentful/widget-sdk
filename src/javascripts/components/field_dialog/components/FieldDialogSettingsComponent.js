@@ -8,7 +8,7 @@ import {
   CheckboxField,
   FieldGroup,
   Form,
-  Heading
+  Heading,
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -21,18 +21,18 @@ import RichTextOptions from 'components/field_dialog/RichTextOptions';
 
 const styles = {
   form: css({
-    paddingRight: tokens.spacingM
+    paddingRight: tokens.spacingM,
   }),
   flexContainer: css({
-    display: 'flex'
+    display: 'flex',
   }),
   formGroupHeader: css({
     fontSize: tokens.fontSizeM,
-    fontWeight: tokens.fontWeightMedium
-  })
+    fontWeight: tokens.fontWeightMedium,
+  }),
 };
 
-const onUnlock = async setDisabled => {
+const onUnlock = async (setDisabled) => {
   const result = await ModalLauncher.open(({ isShown, onClose }) => (
     <ModalConfirm
       title="Warning! Changing a published field ID"
@@ -65,13 +65,13 @@ const FieldDialogSettingsComponent = ({
   updateFieldSettings,
   updateValidation,
   richTextOptions,
-  onRichTextOptionsChange
+  onRichTextOptionsChange,
 }) => {
   const spaceContext = getModule('spaceContext');
   const [field, setFieldSettings] = useState(decoratedField);
   const validationSchema = {
     name: '',
-    id: ''
+    id: '',
   };
   const [formValidation, setFormValidation] = useState(validationSchema);
   const update = ({ updatedField, validation }) => {
@@ -80,16 +80,16 @@ const FieldDialogSettingsComponent = ({
     const isFormValid = validation.name === '' && validation.id === '';
     updateValidation(isFormValid);
   };
-  const validateName = value => {
+  const validateName = (value) => {
     if (inRange(value.length, 1, 50)) {
       return '';
     } else {
       return "Please edit the text so it's between 1 and 50 characters long";
     }
   };
-  const isUniqueId = newApiName =>
-    !contentTypeData.fields.some(field => field.apiName === newApiName);
-  const validateId = value => {
+  const isUniqueId = (newApiName) =>
+    !contentTypeData.fields.some((field) => field.apiName === newApiName);
+  const validateId = (value) => {
     if (!value.match(/^[a-zA-Z0-9_]+$/) || value.length === 0) {
       return 'Please use only letters and numbers';
     } else if (value.match(/^\d/)) {
@@ -116,7 +116,7 @@ const FieldDialogSettingsComponent = ({
             name="content-type-field-name"
             id="content-type-field-name"
             textInputProps={{
-              type: 'text'
+              type: 'text',
             }}
             validationMessage={formValidation.name}
             required
@@ -127,7 +127,7 @@ const FieldDialogSettingsComponent = ({
             testId="content-type-field-id"
             name="content-type-field-id"
             id="content-type-field-id"
-            setValue={value => {
+            setValue={(value) => {
               const updatedValidation = { ...formValidation, id: validateId(value) };
               update({ updatedField: { ...field, apiName: value }, validation: updatedValidation });
               setFormValidation(updatedValidation);
@@ -146,7 +146,7 @@ const FieldDialogSettingsComponent = ({
                   onChange={() =>
                     update({
                       updatedField: { ...field, isTitle: !field.isTitle },
-                      validation: formValidation
+                      validation: formValidation,
                     })
                   }
                   checked={field.isTitle}
@@ -160,7 +160,7 @@ const FieldDialogSettingsComponent = ({
                   onChange={() =>
                     update({
                       updatedField: { ...field, localized: !field.localized },
-                      validation: formValidation
+                      validation: formValidation,
                     })
                   }
                   checked={field.localized}
@@ -195,7 +195,7 @@ FieldDialogSettingsComponent.propTypes = {
   updateFieldSettings: PropTypes.func,
   richTextOptions: PropTypes.any,
   onRichTextOptionsChange: PropTypes.func,
-  updateValidation: PropTypes.func
+  updateValidation: PropTypes.func,
 };
 
 export default FieldDialogSettingsComponent;

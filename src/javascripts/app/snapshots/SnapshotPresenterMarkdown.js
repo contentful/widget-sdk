@@ -13,7 +13,7 @@ const SnapshotPresenterMarkdown = ({ className, value }) => {
         direction="ltr"
         previewComponents={{
           // eslint-disable-next-line
-          embedly: ({ url }) => <EmbedlyPreview previewUrl={url} delay={100} />
+          embedly: ({ url }) => <EmbedlyPreview previewUrl={url} delay={100} />,
         }}
       />
     </div>
@@ -22,11 +22,11 @@ const SnapshotPresenterMarkdown = ({ className, value }) => {
 
 SnapshotPresenterMarkdown.propTypes = {
   className: PropTypes.string,
-  value: PropTypes.string.isRequired
+  value: PropTypes.string.isRequired,
 };
 
 SnapshotPresenterMarkdown.defaultProps = {
-  className: ''
+  className: '',
 };
 
 export default SnapshotPresenterMarkdown;

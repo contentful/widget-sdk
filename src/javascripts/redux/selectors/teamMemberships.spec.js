@@ -17,10 +17,10 @@ describe('getCurrentTeamMembershipList', () => {
             location: {
               pathname: routes.organization.children.teams.children.team.build({
                 orgId: testOrgId,
-                teamId: testTeamId
-              })
-            }
-          }
+                teamId: testTeamId,
+              }),
+            },
+          },
         },
         {
           type: 'DATASET_LOADING',
@@ -30,25 +30,25 @@ describe('getCurrentTeamMembershipList', () => {
               [TEAMS]: [
                 {
                   name: 'Test Team',
-                  sys: { id: testTeamId }
-                }
+                  sys: { id: testTeamId },
+                },
               ],
               [USERS]: [
                 {
                   firstName: 'B',
                   lastName: 'B',
-                  sys: { id: 'userB' }
+                  sys: { id: 'userB' },
                 },
                 {
                   firstName: 'A',
                   lastName: '1',
-                  sys: { id: 'userA1' }
+                  sys: { id: 'userA1' },
                 },
                 {
                   firstName: 'A',
                   lastName: '2',
-                  sys: { id: 'userA2' }
-                }
+                  sys: { id: 'userA2' },
+                },
               ],
               [TEAM_MEMBERSHIPS]: [
                 {
@@ -59,17 +59,17 @@ describe('getCurrentTeamMembershipList', () => {
                       sys: {
                         type: 'Link',
                         linkType: 'Team',
-                        id: testTeamId
-                      }
+                        id: testTeamId,
+                      },
                     },
                     user: {
                       sys: {
                         type: 'Link',
                         linkType: 'User',
-                        id: 'userB'
-                      }
-                    }
-                  }
+                        id: 'userB',
+                      },
+                    },
+                  },
                 },
                 {
                   sys: {
@@ -79,17 +79,17 @@ describe('getCurrentTeamMembershipList', () => {
                       sys: {
                         type: 'Link',
                         linkType: 'Team',
-                        id: testTeamId
-                      }
+                        id: testTeamId,
+                      },
                     },
                     user: {
                       sys: {
                         type: 'Link',
                         linkType: 'User',
-                        id: 'userA2'
-                      }
-                    }
-                  }
+                        id: 'userA2',
+                      },
+                    },
+                  },
                 },
                 {
                   sys: {
@@ -99,17 +99,17 @@ describe('getCurrentTeamMembershipList', () => {
                       sys: {
                         type: 'Link',
                         linkType: 'Team',
-                        id: testTeamId
-                      }
+                        id: testTeamId,
+                      },
                     },
                     user: {
                       sys: {
                         type: 'Link',
                         linkType: 'User',
-                        id: 'userA1'
-                      }
-                    }
-                  }
+                        id: 'userA1',
+                      },
+                    },
+                  },
                 },
                 {
                   sys: {
@@ -119,22 +119,22 @@ describe('getCurrentTeamMembershipList', () => {
                       sys: {
                         type: 'Link',
                         linkType: 'Team',
-                        id: 'differentTeam'
-                      }
+                        id: 'differentTeam',
+                      },
                     },
                     user: {
                       sys: {
                         type: 'Link',
                         linkType: 'User',
-                        id: 'userC'
-                      }
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        }
+                        id: 'userC',
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        },
       ].reduce((state, action) => reducer(state, action), undefined);
     });
 
@@ -148,17 +148,17 @@ describe('getCurrentTeamMembershipList', () => {
             team: {
               name: 'Test Team',
               sys: {
-                id: testTeamId
-              }
+                id: testTeamId,
+              },
             },
             user: {
               firstName: 'A',
               lastName: '1',
               sys: {
-                id: 'userA1'
-              }
-            }
-          }
+                id: 'userA1',
+              },
+            },
+          },
         },
         {
           sys: {
@@ -167,17 +167,17 @@ describe('getCurrentTeamMembershipList', () => {
             team: {
               name: 'Test Team',
               sys: {
-                id: testTeamId
-              }
+                id: testTeamId,
+              },
             },
             user: {
               firstName: 'A',
               lastName: '2',
               sys: {
-                id: 'userA2'
-              }
-            }
-          }
+                id: 'userA2',
+              },
+            },
+          },
         },
         {
           sys: {
@@ -186,18 +186,18 @@ describe('getCurrentTeamMembershipList', () => {
             team: {
               name: 'Test Team',
               sys: {
-                id: testTeamId
-              }
+                id: testTeamId,
+              },
             },
             user: {
               firstName: 'B',
               lastName: 'B',
               sys: {
-                id: 'userB'
-              }
-            }
-          }
-        }
+                id: 'userB',
+              },
+            },
+          },
+        },
       ]);
     });
   });

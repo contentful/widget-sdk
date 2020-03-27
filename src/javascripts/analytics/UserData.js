@@ -35,9 +35,9 @@ function getFirstVisitData() {
       campaignName: parseCookie('cf_first_visit', 'campaign_name'),
       lastReferrer: parseCookie('cf_last_visit', 'referer'),
       experimentId: parseCookie('cf_experiment', 'experiment_id'),
-      experimentVariationId: parseCookie('cf_experiment', 'variation_id')
+      experimentVariationId: parseCookie('cf_experiment', 'variation_id'),
     },
-    val => val !== null && val !== undefined
+    (val) => val !== null && val !== undefined
   );
 }
 

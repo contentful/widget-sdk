@@ -21,7 +21,7 @@ const UserRemovalConfirmDialog = ({ displayName, isShown, onClose }) => (
 UserRemovalConfirmDialog.propTypes = {
   displayName: PropTypes.string.isRequired,
   isShown: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired
+  onClose: PropTypes.func.isRequired,
 };
 
 export default UserRemovalConfirmDialog;

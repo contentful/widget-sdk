@@ -9,7 +9,7 @@ import {
   DropdownListItem,
   TextLink,
   Icon,
-  Subheading
+  Subheading,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import RelativeTimeData from 'components/shared/RelativeDateTime';
@@ -34,43 +34,43 @@ const styles = {
     borderTop: `1px solid ${tokens.colorElementMid}`,
     marginBottom: `-${tokens.spacingS}`,
     '> button': {
-      height: '2.5rem'
-    }
+      height: '2.5rem',
+    },
   }),
   scheduleListItemInnerWrapper: css({
     lineHeight: '1rem',
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   }),
   scheduledIcon: css({
-    marginRight: tokens.spacing2Xs
+    marginRight: tokens.spacing2Xs,
   }),
   sidebarHeading: css({
-    display: 'flex'
+    display: 'flex',
   }),
   sidebarHeadingStatus: css({
-    marginRight: 'auto'
+    marginRight: 'auto',
   }),
   dropdownItem: css({
     width: tokens.contentWidthFull,
     '& > *': {
-      textAlign: 'center'
+      textAlign: 'center',
     },
     '& div': {
-      justifyContent: 'center'
-    }
-  })
+      justifyContent: 'center',
+    },
+  }),
 };
 
 class StatusWidget extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      isOpenDropdown: false
+      isOpenDropdown: false,
     };
   }
 
-  renderScheduledPublicationCta = isButtonLocked => {
+  renderScheduledPublicationCta = (isButtonLocked) => {
     // disabled by the parent component (e.g. error during jobs fetching)
     if (this.props.isScheduledPublishDisabled || this.props.primary.isRestricted()) {
       return null;
@@ -121,7 +121,7 @@ class StatusWidget extends React.PureComponent {
       entity,
       isStatusSwitch,
       onScheduledPublishClick,
-      isScheduledPublishDisabled
+      isScheduledPublishDisabled,
     } = this.props;
 
     if (isStatusSwitch) {
@@ -144,7 +144,7 @@ class StatusWidget extends React.PureComponent {
     }
 
     const secondaryActionsDisabled =
-      every(secondary || [], action => action.isDisabled()) && !this.canSchedule();
+      every(secondary || [], (action) => action.isDisabled()) && !this.canSchedule();
 
     return (
       <div data-test-id="status-widget">
@@ -190,7 +190,7 @@ class StatusWidget extends React.PureComponent {
                   buttonType="positive"
                   indicateDropdown
                   onClick={() => {
-                    this.setState(state => ({ isOpenDropdown: !state.isOpenDropdown }));
+                    this.setState((state) => ({ isOpenDropdown: !state.isOpenDropdown }));
                   }}>
                   {status === 'published' ? 'Change status' : ''}
                 </Button>
@@ -199,7 +199,7 @@ class StatusWidget extends React.PureComponent {
                 <DropdownListItem isTitle>Change status to</DropdownListItem>
                 {secondary &&
                   secondary.map(
-                    action =>
+                    (action) =>
                       action.isAvailable() && (
                         <DropdownListItem
                           key={action.label}
@@ -233,7 +233,7 @@ class StatusWidget extends React.PureComponent {
             <div className="entity-sidebar__save-status">
               <i
                 className={cx('entity-sidebar__saving-spinner', {
-                  'x--active': isSaving
+                  'x--active': isSaving,
                 })}
               />
               <span className="entity-sidebar__last-saved" data-test-id="last-saved">
@@ -268,11 +268,11 @@ StatusWidget.propTypes = {
   isDisabled: PropTypes.bool.isRequired,
   publicationBlockedReason: PropTypes.string,
   entity: PropTypes.object,
-  isStatusSwitch: PropTypes.bool
+  isStatusSwitch: PropTypes.bool,
 };
 
 StatusWidget.defaultProps = {
-  isStatusSwitch: false
+  isStatusSwitch: false,
 };
 
 export default StatusWidget;

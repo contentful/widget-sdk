@@ -30,13 +30,13 @@ export default {
           </a>
           .
         </p>
-      )
+      ),
     },
     {
       name: 'index',
       type: 'text',
       title: 'Index name',
-      description: <p>Name of an index within the selected application.</p>
+      description: <p>Name of an index within the selected application.</p>,
     },
     {
       name: 'apiKey',
@@ -53,8 +53,8 @@ export default {
           </a>
           . This value can’t be revealed once stored.
         </p>
-      )
-    }
+      ),
+    },
   ],
   mapParamsToDefinition: [
     ({ appId, index, apiKey }, name) => {
@@ -65,12 +65,12 @@ export default {
         filters: [{ equals: [{ doc: 'sys.environment.sys.id' }, 'master'] }],
         headers: [
           { key: 'X-Algolia-Application-Id', value: appId },
-          { key: 'X-Algolia-API-Key', value: apiKey, secret: true }
+          { key: 'X-Algolia-API-Key', value: apiKey, secret: true },
         ],
         transformation: {
           method: 'PUT',
-          contentType: 'application/json; charset=utf-8'
-        }
+          contentType: 'application/json; charset=utf-8',
+        },
       };
     },
     ({ appId, index, apiKey }) => {
@@ -81,12 +81,12 @@ export default {
         filters: [{ equals: [{ doc: 'sys.environment.sys.id' }, 'master'] }],
         headers: [
           { key: 'X-Algolia-Application-Id', value: appId },
-          { key: 'X-Algolia-API-Key', value: apiKey, secret: true }
+          { key: 'X-Algolia-API-Key', value: apiKey, secret: true },
         ],
         transformation: {
-          method: 'DELETE'
-        }
+          method: 'DELETE',
+        },
       };
-    }
-  ]
+    },
+  ],
 };

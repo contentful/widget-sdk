@@ -8,8 +8,8 @@ const link = {
   sys: {
     id: 'LINK_ID',
     type: 'Link',
-    linkType: 'Entry'
-  }
+    linkType: 'Entry',
+  },
 };
 
 jest.mock('./withCfWebApp.js', () => ({}));
@@ -19,7 +19,7 @@ function mount(customProps) {
   const props = {
     type: 'Entry',
     actions: {},
-    ...customProps
+    ...customProps,
   };
   return Enzyme.shallow(<SingleLinkEditor {...props} />);
 }
@@ -32,7 +32,7 @@ describe('SingleLinkEditor', () => {
     expect(linkEditor.props()).toEqual({
       ...wrapper.props(),
       isSingle: true,
-      value: [link]
+      value: [link],
     });
   });
 

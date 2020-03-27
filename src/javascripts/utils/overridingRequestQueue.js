@@ -38,7 +38,7 @@ export function createRequestQueue(requestFn, onceFn) {
     return {
       args: Array.prototype.slice.apply(argsObj),
       id: random.id(),
-      required: required || false
+      required: required || false,
     };
   }
 

@@ -1,8 +1,4 @@
-import {
-  defaultHeader,
-  defaultSpaceId,
-  defaultWebhookId
-} from '../util/requests';
+import { defaultHeader, defaultSpaceId, defaultWebhookId } from '../util/requests';
 import { RequestOptions } from '@pact-foundation/pact-web';
 
 const empty = require('../fixtures/responses/empty.json');
@@ -35,8 +31,8 @@ const queryFirst100WebhooksInDefaultSpaceRequest: RequestOptions = {
   path: `/spaces/${defaultSpaceId}/webhook_definitions`,
   headers: defaultHeader,
   query: {
-    limit: '100'
-  }
+    limit: '100',
+  },
 };
 
 enum States {
@@ -53,7 +49,7 @@ enum States {
   DEFAULT_WEBHOOK_HAS_PAYLOAD = 'webhooks/default-webhook-has-payload',
   DEFAULT_WEBHOOK_HAS_NO_CALLS = 'webhooks/default-webhook-has-no-calls',
   DEFAULT_WEBHOOK_HAS_SINGLE_EVENT = 'webhooks/default-webhook-has-single-event',
-  DEFAULT_WEBHOOK_HAS_ALL_SETTINGS = 'webhooks/default-webhook-has-all-settings'
+  DEFAULT_WEBHOOK_HAS_ALL_SETTINGS = 'webhooks/default-webhook-has-all-settings',
 }
 
 export const queryFirst100WebhooksInDefaultSpace = {
@@ -65,8 +61,8 @@ export const queryFirst100WebhooksInDefaultSpace = {
       withRequest: queryFirst100WebhooksInDefaultSpaceRequest,
       willRespondWith: {
         status: 200,
-        body: empty
-      }
+        body: empty,
+      },
     }).as('queryFirst100WebhooksInDefaultSpace');
 
     return '@queryFirst100WebhooksInDefaultSpace';
@@ -79,8 +75,8 @@ export const queryFirst100WebhooksInDefaultSpace = {
       withRequest: queryFirst100WebhooksInDefaultSpaceRequest,
       willRespondWith: {
         status: 200,
-        body: singleWebhookResponseBody
-      }
+        body: singleWebhookResponseBody,
+      },
     }).as('queryFirst100WebhooksInDefaultSpace');
 
     return '@queryFirst100WebhooksInDefaultSpace';
@@ -93,20 +89,20 @@ export const queryFirst100WebhooksInDefaultSpace = {
       withRequest: queryFirst100WebhooksInDefaultSpaceRequest,
       willRespondWith: {
         status: 500,
-        body: empty
-      }
+        body: empty,
+      },
     }).as('queryFirst100WebhooksInDefaultSpace');
 
     return '@queryFirst100WebhooksInDefaultSpace';
-  }
-}
+  },
+};
 
 function createWebhookInDefaultSpaceRequest(body: Object): RequestOptions {
   return {
     method: 'POST',
     path: `/spaces/${defaultSpaceId}/webhook_definitions`,
     headers: defaultHeader,
-    body
+    body,
   };
 }
 
@@ -119,13 +115,13 @@ export const createDefaultWebhook = {
       withRequest: createWebhookInDefaultSpaceRequest(defaultWebhookRequestBody),
       willRespondWith: {
         status: 200,
-        body: defaultWebhookResponseBody
-      }
+        body: defaultWebhookResponseBody,
+      },
     }).as('createDefaultWebhook');
 
     return '@createDefaultWebhook';
-  }
-}
+  },
+};
 
 export const createCustomWebhookTriggeringContentTypeEvents = {
   willSucceed() {
@@ -136,13 +132,13 @@ export const createCustomWebhookTriggeringContentTypeEvents = {
       withRequest: createWebhookInDefaultSpaceRequest(customWebhookContentTypeEventsRequestBody),
       willRespondWith: {
         status: 200,
-        body: customWebhookContentTypeEventsResponseBody
-      }
+        body: customWebhookContentTypeEventsResponseBody,
+      },
     }).as('createCustomWebhookTriggeringContentTypeEvents');
 
     return '@createCustomWebhookTriggeringContentTypeEvents';
-  }
-}
+  },
+};
 
 export const createCustomWebhookWithFilters = {
   willSucceed() {
@@ -153,13 +149,13 @@ export const createCustomWebhookWithFilters = {
       withRequest: createWebhookInDefaultSpaceRequest(customWebhookFilterRequestBody),
       willRespondWith: {
         status: 200,
-        body: customWebhookFilterResponseBody
-      }
+        body: customWebhookFilterResponseBody,
+      },
     }).as('createCustomWebhookWithFilters');
 
     return '@createCustomWebhookWithFilters';
-  }
-}
+  },
+};
 
 export const createCustomWebhookWithCustomHeader = {
   willSucceed() {
@@ -170,13 +166,13 @@ export const createCustomWebhookWithCustomHeader = {
       withRequest: createWebhookInDefaultSpaceRequest(customWebhookHeaderRequestBody),
       willRespondWith: {
         status: 200,
-        body: customWebhookHeaderResponseBody
-      }
+        body: customWebhookHeaderResponseBody,
+      },
     }).as('createCustomWebhookWithCustomHeader');
 
     return '@createCustomWebhookWithCustomHeader';
-  }
-}
+  },
+};
 
 export const createCustomWebhookWithSecretHeader = {
   willSucceed() {
@@ -187,13 +183,13 @@ export const createCustomWebhookWithSecretHeader = {
       withRequest: createWebhookInDefaultSpaceRequest(customWebhookSecretHeaderRequestBody),
       willRespondWith: {
         status: 200,
-        body: customWebhookSecretHeaderResponseBody
-      }
+        body: customWebhookSecretHeaderResponseBody,
+      },
     }).as('createCustomWebhookWithSecretHeader');
 
     return '@createCustomWebhookWithSecretHeader';
-  }
-}
+  },
+};
 
 export const createCustomWebhookWithHTTPHeader = {
   willSucceed() {
@@ -204,13 +200,13 @@ export const createCustomWebhookWithHTTPHeader = {
       withRequest: createWebhookInDefaultSpaceRequest(customWebhookHTTPRequestBody),
       willRespondWith: {
         status: 200,
-        body: customWebhookHTTPResponseBody
-      }
+        body: customWebhookHTTPResponseBody,
+      },
     }).as('createCustomWebhookWithHTTPHeader');
 
     return '@createCustomWebhookWithHTTPHeader';
-  }
-}
+  },
+};
 
 export const createCustomWebhookWithContentTypeHeader = {
   willSucceed() {
@@ -221,13 +217,13 @@ export const createCustomWebhookWithContentTypeHeader = {
       withRequest: createWebhookInDefaultSpaceRequest(customWebhookContentTypeHeaderRequestBody),
       willRespondWith: {
         status: 200,
-        body: customWebhookContentTypeHeaderResponseBody
-      }
+        body: customWebhookContentTypeHeaderResponseBody,
+      },
     }).as('createCustomWebhookWithContentTypeHeader');
 
     return '@createCustomWebhookWithContentTypeHeader';
-  }
-}
+  },
+};
 
 export const createCustomWebhookWithContentLengthHeader = {
   willSucceed() {
@@ -238,13 +234,13 @@ export const createCustomWebhookWithContentLengthHeader = {
       withRequest: createWebhookInDefaultSpaceRequest(customWebhookContentLengthHeaderRequestBody),
       willRespondWith: {
         status: 200,
-        body: customWebhookContentLengthHeaderResponseBody
-      }
+        body: customWebhookContentLengthHeaderResponseBody,
+      },
     }).as('createCustomWebhookWithContentLengthHeader');
 
     return '@createCustomWebhookWithContentLengthHeader';
-  }
-}
+  },
+};
 
 export const createCustomWebhookWithCustomPayload = {
   willSucceed() {
@@ -255,19 +251,19 @@ export const createCustomWebhookWithCustomPayload = {
       withRequest: createWebhookInDefaultSpaceRequest(customWebhookPayloadRequestBody),
       willRespondWith: {
         status: 200,
-        body: customWebhookPayloadResponseBody
-      }
+        body: customWebhookPayloadResponseBody,
+      },
     }).as('createCustomWebhookWithCustomPayload');
 
     return '@createCustomWebhookWithCustomPayload';
-  }
-}
+  },
+};
 
 const getDefaultWebhookRequest: RequestOptions = {
   method: 'GET',
   path: `/spaces/${defaultSpaceId}/webhook_definitions/${defaultWebhookId}`,
-  headers: defaultHeader
-}
+  headers: defaultHeader,
+};
 
 export const getDefaultWebhook = {
   willReturnTheDefaultWebhook() {
@@ -278,8 +274,8 @@ export const getDefaultWebhook = {
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
-        body: defaultWebhookResponseBody
-      }
+        body: defaultWebhookResponseBody,
+      },
     }).as('getDefaultWebhook');
 
     return '@getDefaultWebhook';
@@ -292,8 +288,8 @@ export const getDefaultWebhook = {
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
-        body: customWebhookContentTypeEventsResponseBody
-      }
+        body: customWebhookContentTypeEventsResponseBody,
+      },
     }).as('getDefaultWebhook');
 
     return '@getDefaultWebhook';
@@ -306,8 +302,8 @@ export const getDefaultWebhook = {
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
-        body: customWebhookFilterResponseBody
-      }
+        body: customWebhookFilterResponseBody,
+      },
     }).as('getDefaultWebhook');
 
     return '@getDefaultWebhook';
@@ -320,8 +316,8 @@ export const getDefaultWebhook = {
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
-        body: customWebhookHeaderResponseBody
-      }
+        body: customWebhookHeaderResponseBody,
+      },
     }).as('getDefaultWebhook');
 
     return '@getDefaultWebhook';
@@ -334,8 +330,8 @@ export const getDefaultWebhook = {
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
-        body: customWebhookSecretHeaderResponseBody
-      }
+        body: customWebhookSecretHeaderResponseBody,
+      },
     }).as('getDefaultWebhook');
 
     return '@getDefaultWebhook';
@@ -348,8 +344,8 @@ export const getDefaultWebhook = {
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
-        body: customWebhookHTTPResponseBody
-      }
+        body: customWebhookHTTPResponseBody,
+      },
     }).as('getDefaultWebhook');
 
     return '@getDefaultWebhook';
@@ -362,8 +358,8 @@ export const getDefaultWebhook = {
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
-        body: customWebhookContentTypeHeaderResponseBody
-      }
+        body: customWebhookContentTypeHeaderResponseBody,
+      },
     }).as('getDefaultWebhook');
 
     return '@getDefaultWebhook';
@@ -376,8 +372,8 @@ export const getDefaultWebhook = {
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
-        body: customWebhookContentLengthHeaderResponseBody
-      }
+        body: customWebhookContentLengthHeaderResponseBody,
+      },
     }).as('getDefaultWebhook');
 
     return '@getDefaultWebhook';
@@ -390,8 +386,8 @@ export const getDefaultWebhook = {
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
-        body: customWebhookPayloadResponseBody
-      }
+        body: customWebhookPayloadResponseBody,
+      },
     }).as('getDefaultWebhook');
 
     return '@getDefaultWebhook';
@@ -404,8 +400,8 @@ export const getDefaultWebhook = {
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
-        body: webhookSingleEventResponseBody
-      }
+        body: webhookSingleEventResponseBody,
+      },
     }).as('getDefaultWebhook');
 
     return '@getDefaultWebhook';
@@ -418,21 +414,21 @@ export const getDefaultWebhook = {
       withRequest: getDefaultWebhookRequest,
       willRespondWith: {
         status: 200,
-        body: webhookCustomAllSettingsResponseBody
-      }
+        body: webhookCustomAllSettingsResponseBody,
+      },
     }).as('getDefaultWebhook');
 
     return '@getDefaultWebhook';
-  }
-}
+  },
+};
 
 const queryFirst500DefaultWebhookCallsRequest: RequestOptions = {
   method: 'GET',
   path: `/spaces/${defaultSpaceId}/webhooks/${defaultWebhookId}/calls`,
   headers: defaultHeader,
   query: {
-    limit: '500'
-  }
+    limit: '500',
+  },
 };
 
 export const queryFirst500DefaultWebhookCalls = {
@@ -444,8 +440,8 @@ export const queryFirst500DefaultWebhookCalls = {
       withRequest: queryFirst500DefaultWebhookCallsRequest,
       willRespondWith: {
         status: 200,
-        body: empty
-      }
+        body: empty,
+      },
     }).as('queryFirst500DefaultWebhookCalls');
 
     return '@queryFirst500DefaultWebhookCalls';
@@ -458,13 +454,13 @@ export const queryFirst500DefaultWebhookCalls = {
       withRequest: queryFirst500DefaultWebhookCallsRequest,
       willRespondWith: {
         status: 200,
-        body: webhookSuccessfulCallResponseBody
-      }
+        body: webhookSuccessfulCallResponseBody,
+      },
     }).as('queryFirst500DefaultWebhookCalls');
 
     return '@queryFirst500DefaultWebhookCalls';
-  }
-}
+  },
+};
 
 export const getAllCallsForDefaultWebhook = {
   willReturnNone() {
@@ -475,23 +471,23 @@ export const getAllCallsForDefaultWebhook = {
       withRequest: {
         method: 'GET',
         path: `/spaces/${defaultSpaceId}/webhooks/${defaultWebhookId}/health`,
-        headers: defaultHeader
+        headers: defaultHeader,
       },
       willRespondWith: {
         status: 200,
-        body: noWebhookCallsResponseBody
-      }
+        body: noWebhookCallsResponseBody,
+      },
     }).as('getAllCallsForDefaultWebhook');
 
     return '@getAllCallsForDefaultWebhook';
-  }
-}
+  },
+};
 
 const deleteDefaultWebhookRequest: RequestOptions = {
   method: 'DELETE',
   path: `/spaces/${defaultSpaceId}/webhook_definitions/${defaultWebhookId}`,
-  headers: defaultHeader
-}
+  headers: defaultHeader,
+};
 
 export const deleteDefaultWebhook = {
   willSucceed() {
@@ -501,8 +497,8 @@ export const deleteDefaultWebhook = {
       uponReceiving: `a request to delete webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: deleteDefaultWebhookRequest,
       willRespondWith: {
-        status: 204
-      }
+        status: 204,
+      },
     }).as('deleteDefaultWebhook');
 
     return '@deleteDefaultWebhook';
@@ -514,10 +510,10 @@ export const deleteDefaultWebhook = {
       uponReceiving: `a request to delete webhook "${defaultWebhookId}" in space "${defaultSpaceId}"`,
       withRequest: deleteDefaultWebhookRequest,
       willRespondWith: {
-        status: 500
-      }
+        status: 500,
+      },
     }).as('willFailWithAnInternalServerError');
 
     return '@willFailWithAnInternalServerError';
-  }
-}
+  },
+};

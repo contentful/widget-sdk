@@ -6,7 +6,7 @@ import { haveTextInSomeBlocks } from '../shared/UtilHave';
 
 const newPlugin = (defaultType, tagName, hotkey) => ({
   type = defaultType,
-  richTextAPI: { logShortcutAction }
+  richTextAPI: { logShortcutAction },
 }) => {
   return {
     renderNode: (props, _editor, next) => {
@@ -27,7 +27,7 @@ const newPlugin = (defaultType, tagName, hotkey) => ({
         return;
       }
       return next();
-    }
+    },
   };
 };
 

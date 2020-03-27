@@ -7,8 +7,8 @@ import { Tabs, Tab } from '@contentful/forma-36-react-components';
 
 const styles = {
   editorFieldTabs: css({
-    marginBottom: tokens.spacingL
-  })
+    marginBottom: tokens.spacingL,
+  }),
 };
 
 export default function EditorFieldTabs(props) {
@@ -51,5 +51,5 @@ export default function EditorFieldTabs(props) {
 EditorFieldTabs.propTypes = {
   currentTab: PropTypes.string.isRequired,
   fieldsCount: PropTypes.number.isRequired,
-  hasAdvancedExtensibility: PropTypes.bool.isRequired
+  hasAdvancedExtensibility: PropTypes.bool.isRequired,
 };

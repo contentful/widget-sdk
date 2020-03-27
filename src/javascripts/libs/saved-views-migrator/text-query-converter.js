@@ -10,7 +10,7 @@ const DATE_OPERATORS = {
   '<': 'lt',
   '<=': 'lte',
   '>': 'gt',
-  '>=': 'gte'
+  '>=': 'gte',
   // '==', '=' and ':' default to ''
 };
 

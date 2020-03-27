@@ -12,7 +12,7 @@ import {
   DisplayText,
   Tooltip,
   Heading,
-  Paragraph
+  Paragraph,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import AliasesIllustration from 'svg/illustrations/aliases-illustration.svg';
@@ -34,12 +34,12 @@ const aliasHeaderStyles = {
     display: 'flex',
     alignItems: 'center',
     '& > span': {
-      marginRight: tokens.spacingS
+      marginRight: tokens.spacingS,
     },
     '& > svg': {
-      transform: 'none !important'
-    }
-  })
+      transform: 'none !important',
+    },
+  }),
 };
 
 function EnvironmentAliasHeader() {
@@ -55,7 +55,7 @@ function EnvironmentAlias({
   setModalOpen,
   canChangeEnvironment,
   children,
-  alias
+  alias,
 }) {
   const changeEnvironment = () => {
     changeEnvironmentOpen();
@@ -107,49 +107,49 @@ function EnvironmentAlias({
 EnvironmentAlias.propTypes = {
   environment: PropTypes.shape({
     aliases: PropTypes.arrayOf(PropTypes.string).isRequired,
-    id: PropTypes.string.isRequired
+    id: PropTypes.string.isRequired,
   }).isRequired,
   alias: PropTypes.shape({
     sys: PropTypes.shape({
-      id: PropTypes.string
-    })
+      id: PropTypes.string,
+    }),
   }).isRequired,
   setModalOpen: PropTypes.func.isRequired,
-  canChangeEnvironment: PropTypes.bool
+  canChangeEnvironment: PropTypes.bool,
 };
 
 const aliasesStyles = {
   card: css({
     display: 'flex',
-    marginBottom: tokens.spacingXl
+    marginBottom: tokens.spacingXl,
   }),
   leftColumn: css({
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
   }),
   illustration: css({
     flexShrink: '0',
-    marginLeft: tokens.spacingM
+    marginLeft: tokens.spacingM,
   }),
   buttonBar: css({
-    marginTop: 'auto'
+    marginTop: 'auto',
   }),
   button: css({
-    marginRight: tokens.spacingM
+    marginRight: tokens.spacingM,
   }),
   tag: css({
     padding: '0px 4px 0px 5px',
     marginBottom: tokens.spacingM,
     borderRadius: '3px',
     color: tokens.colorWhite,
-    backgroundColor: tokens.colorPrimary
+    backgroundColor: tokens.colorPrimary,
   }),
   header: css({
-    marginBottom: tokens.spacingM
+    marginBottom: tokens.spacingM,
   }),
   paragraph: css({
-    margin: `${tokens.spacingM} 0`
-  })
+    margin: `${tokens.spacingM} 0`,
+  }),
 };
 
 export default function EnvironmentAliases(props) {
@@ -163,7 +163,7 @@ export default function EnvironmentAliases(props) {
   }
 
   const aliasComponents = allSpaceAliases
-    .map(alias => {
+    .map((alias) => {
       const targetEnv = environments.find(({ aliases }) => aliases.includes(alias.sys.id));
       if (targetEnv) {
         return (
@@ -254,10 +254,10 @@ EnvironmentAliases.propTypes = {
   testId: PropTypes.string,
   items: PropTypes.array.isRequired,
   spaceId: PropTypes.string.isRequired,
-  allSpaceAliases: PropTypes.arrayOf(PropTypes.object)
+  allSpaceAliases: PropTypes.arrayOf(PropTypes.object),
 };
 
 EnvironmentAliases.defaultProps = {
   testId: 'environmentaliases.wrapper',
-  allSpaceAliases: []
+  allSpaceAliases: [],
 };

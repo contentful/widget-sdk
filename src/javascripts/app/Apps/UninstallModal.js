@@ -12,37 +12,37 @@ import {
   Icon,
   Paragraph,
   CheckboxField,
-  Textarea
+  Textarea,
 } from '@contentful/forma-36-react-components';
 
 const styles = {
   buttonMargin: css({
-    marginLeft: tokens.spacingM
+    marginLeft: tokens.spacingM,
   }),
   icon: css({
     verticalAlign: 'middle',
-    fill: tokens.colorTextLightest
+    fill: tokens.colorTextLightest,
   }),
   separator: css({
     marginTop: tokens.spacingL,
-    marginBottom: tokens.spacingL
+    marginBottom: tokens.spacingL,
   }),
   otherInput: css({
-    marginTop: tokens.spacingM
+    marginTop: tokens.spacingM,
   }),
   checkbox: css({
     label: {
-      fontWeight: tokens.fontWeightNormal
-    }
+      fontWeight: tokens.fontWeightNormal,
+    },
   }),
   actionItem: css({
     display: 'flex',
     flexDirection: 'row',
     marginBottom: tokens.spacingS,
     '& div:first-child': {
-      marginRight: tokens.spacingXs
-    }
-  })
+      marginRight: tokens.spacingXs,
+    },
+  }),
 };
 
 function createListItem(item) {
@@ -72,13 +72,13 @@ const reasons = [
   'Not needed anymore',
   'App is not performing well',
   'I have created my own instead',
-  'I was just testing it out'
+  'I was just testing it out',
 ];
 
 function parseReasons(checked, otherReason) {
   return Object.keys(checked)
-    .filter(x => checked[x])
-    .map(reason => reasons[reason])
+    .filter((x) => checked[x])
+    .map((reason) => reasons[reason])
     .concat(otherReason ? [{ custom: otherReason }] : []);
 }
 
@@ -108,7 +108,7 @@ export default function UninstallModal({ onConfirm, onClose, actionList, isShown
               labelText={reason}
               name="someOption"
               checked={checked[i]}
-              onChange={e => onCheck({ ...checked, [i]: e.target.checked })}
+              onChange={(e) => onCheck({ ...checked, [i]: e.target.checked })}
               id={reason}
               testId={`reason-${i}`}
             />
@@ -130,7 +130,7 @@ export default function UninstallModal({ onConfirm, onClose, actionList, isShown
           <Textarea
             className={styles.otherInput}
             value={otherReason}
-            onChange={e => setOtherReason(e.target.value)}
+            onChange={(e) => setOtherReason(e.target.value)}
             rows={3}
             maxLength={2000}
             placeholder="Why did you decide to uninstall the app?"
@@ -164,8 +164,8 @@ UninstallModal.propTypes = {
   actionList: PropTypes.arrayOf(
     PropTypes.shape({
       info: PropTypes.string.isRequired,
-      positive: PropTypes.bool
+      positive: PropTypes.bool,
     })
   ),
-  isShown: PropTypes.bool.isRequired
+  isShown: PropTypes.bool.isRequired,
 };

@@ -44,7 +44,7 @@ export const DocLoad = makeSum({
    * connection to the server has dropped.
    * @param {string} error
    */
-  Error: ['error']
+  Error: ['error'],
 });
 
 /**
@@ -76,7 +76,7 @@ export function create(docWrapper, connectionState$, shouldOpen$) {
     [connectionState$, shouldOpen$],
     (connectionState, shouldOpen) => ({
       connectionState,
-      shouldOpen
+      shouldOpen,
     })
   )
     .skipDuplicates()
@@ -123,7 +123,7 @@ export function create(docWrapper, connectionState$, shouldOpen$) {
   return {
     doc: docLoad,
     close,
-    destroy
+    destroy,
   };
 
   function close() {
@@ -140,12 +140,12 @@ export function create(docWrapper, connectionState$, shouldOpen$) {
   }
 
   function openDoc() {
-    return K.promiseProperty(docWrapper.open()).map(p =>
+    return K.promiseProperty(docWrapper.open()).map((p) =>
       caseof(p, [
         [K.PromiseStatus.Pending, () => DocLoad.Pending()],
         [
           K.PromiseStatus.Resolved,
-          x => {
+          (x) => {
             currentDoc = x.value;
             // There might be multiple doc loaders for a given doc. To
             // avoid applying pending operations twice we check if the
@@ -154,13 +154,13 @@ export function create(docWrapper, connectionState$, shouldOpen$) {
             // code that would create an operation executes after the
             // code below.
             if (!currentDoc.pendingOp) {
-              pendingOps.forEach(op => currentDoc.submitOp(op));
+              pendingOps.forEach((op) => currentDoc.submitOp(op));
             }
             pendingOps = [];
             return DocLoad.Doc(currentDoc);
-          }
+          },
         ],
-        [K.PromiseStatus.Rejected, x => DocLoad.Error(x.error)]
+        [K.PromiseStatus.Rejected, (x) => DocLoad.Error(x.error)],
       ])
     );
   }

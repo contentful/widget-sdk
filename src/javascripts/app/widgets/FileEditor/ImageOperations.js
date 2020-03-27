@@ -5,33 +5,33 @@ import { openInputDialog } from 'app/InputDialogComponent';
 import * as TokenStore from 'services/TokenStore';
 import * as HostnameTransformer from '@contentful/hostname-transformer';
 
-const ratio = file => `${file.details.image.width}:${file.details.image.height}`;
-const ratioNumber = file => file.details.image.width / file.details.image.height;
+const ratio = (file) => `${file.details.image.width}:${file.details.image.height}`;
+const ratioNumber = (file) => file.details.image.width / file.details.image.height;
 const url = (file, qs) => `https:${externalImageUrl(file.url)}${qs ? '?' + qs : ''}`;
 
 const NUMBER_REGEX = /^[1-9][0-9]{0,3}$/;
 const RATIO_REGEX = /^[1-9][0-9]{0,3}:[1-9][0-9]{0,3}$/;
 
 const RESIZE_MODES = {
-  width: file => ({
+  width: (file) => ({
     initialValue: `${file.details.image.width}`,
     regex: NUMBER_REGEX,
     title: 'Set width',
     message: `
       The original aspect ratio is maintained when a new width is set.
     `,
-    valueToUrl: value => url(file, `w=${value}&fit=scale`)
+    valueToUrl: (value) => url(file, `w=${value}&fit=scale`),
   }),
-  height: file => ({
+  height: (file) => ({
     initialValue: `${file.details.image.height}`,
     regex: NUMBER_REGEX,
     title: 'Set height',
     message: `
       The original aspect ratio is maintained when a new height is set.
     `,
-    valueToUrl: value => url(file, `h=${value}&fit=scale`)
+    valueToUrl: (value) => url(file, `h=${value}&fit=scale`),
   }),
-  scale: file => ({
+  scale: (file) => ({
     initialValue: ratio(file),
     regex: RATIO_REGEX,
     title: 'Please provide desired dimensions',
@@ -43,11 +43,11 @@ const RESIZE_MODES = {
         your image.
       </>
     ),
-    valueToUrl: value => {
+    valueToUrl: (value) => {
       const [w, h] = value.split(':');
       return url(file, `w=${w}&h=${h}&fit=scale`);
-    }
-  })
+    },
+  }),
 };
 
 export function rotateOrMirror(mode, file) {
@@ -76,12 +76,12 @@ export function resize(mode, file) {
       message,
       confirmLabel: 'Resize image',
       intent: 'positive',
-      isValid: value => {
+      isValid: (value) => {
         return regex.test(value);
-      }
+      },
     },
     initialValue
-  ).then(value => {
+  ).then((value) => {
     if (value) {
       return valueToUrl(value);
     }
@@ -105,7 +105,7 @@ function cropWithCustomAspectRatio(file) {
     {
       confirmLabel: 'Please provide desired aspect ratio',
       intent: 'positive',
-      isValid: value => {
+      isValid: (value) => {
         return RATIO_REGEX.test(value);
       },
       title: 'Please provide desired aspect ratio',
@@ -115,10 +115,10 @@ function cropWithCustomAspectRatio(file) {
           <code>height</code> should be numbers between 1 and 9999. The form is prepopulated with
           the aspect ratio of your image.
         </>
-      )
+      ),
     },
     ratio(file)
-  ).then(ratio => {
+  ).then((ratio) => {
     if (ratio) {
       const [w, h] = ratio.split(':');
       const parsedRatio = parseInt(w, 10) / parseInt(h, 10);
@@ -142,6 +142,6 @@ function externalImageUrl(url) {
   // Enforce use of images domain
   return HostnameTransformer.toExternal(internalUrl, {
     assets: domains.images,
-    images: domains.images
+    images: domains.images,
   });
 }

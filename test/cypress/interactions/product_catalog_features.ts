@@ -8,7 +8,7 @@ const productCatalogTasksAndApps = require('../fixtures/responses/product-catalo
 
 enum States {
   ORG_WITH_SEVERAL_FEATURES = 'product_catalog_features/org-with-several',
-  SPACE_WITH_SEVERAL_FEATURES = 'product_catalog_features/space-with-several'
+  SPACE_WITH_SEVERAL_FEATURES = 'product_catalog_features/space-with-several',
 }
 
 export const PROVIDER = 'product_catalog_features';
@@ -22,16 +22,16 @@ export const getAllProductCatalogFeaturesForDefaultOrg = {
       withRequest: {
         method: 'GET',
         path: `/organizations/${defaultOrgId}/product_catalog_features`,
-        headers: defaultHeader
+        headers: defaultHeader,
       },
       willRespondWith: {
         status: 200,
-        body: productCatalogOrg
-      }
+        body: productCatalogOrg,
+      },
     }).as('getAllProductCatalogFeaturesForDefaultOrg');
 
     return '@getAllProductCatalogFeaturesForDefaultOrg';
-  }
+  },
 };
 
 function productCatalogFeaturesForDefaultSpaceRequest(query?: Query): RequestOptions {
@@ -39,7 +39,7 @@ function productCatalogFeaturesForDefaultSpaceRequest(query?: Query): RequestOpt
     method: 'GET',
     path: `/spaces/${defaultSpaceId}/product_catalog_features`,
     headers: defaultHeader,
-    query
+    query,
   };
 }
 
@@ -52,12 +52,12 @@ export const getAllCatalogFeaturesForDefaultSpace = {
       withRequest: productCatalogFeaturesForDefaultSpaceRequest(),
       willRespondWith: {
         status: 200,
-        body: productCatalogSpace
-      }
+        body: productCatalogSpace,
+      },
     }).as('getAllCatalogFeaturesForDefaultSpace');
 
     return '@getAllCatalogFeaturesForDefaultSpace';
-  }
+  },
 };
 
 export const queryForTasksAndAppsInDefaultSpace = {
@@ -71,12 +71,12 @@ export const queryForTasksAndAppsInDefaultSpace = {
       ),
       willRespondWith: {
         status: 200,
-        body: productCatalogTasksAndApps
-      }
+        body: productCatalogTasksAndApps,
+      },
     }).as('queryForTasksAndAppsInDefaultSpace');
 
     return '@queryForTasksAndAppsInDefaultSpace';
-  }
+  },
 };
 
 export const queryForTasksAndScheduledPublishingInDefaultSpace = {
@@ -90,12 +90,12 @@ export const queryForTasksAndScheduledPublishingInDefaultSpace = {
       ),
       willRespondWith: {
         status: 200,
-        body: productCatalogTasksAndScheduledPublishing
-      }
+        body: productCatalogTasksAndScheduledPublishing,
+      },
     }).as('queryForTasksAndScheduledPublishingInDefaultSpace');
 
     return '@queryForTasksAndScheduledPublishingInDefaultSpace';
-  }
+  },
 };
 
 export const queryForScheduledPublishingInDefaultSpace = {
@@ -109,12 +109,12 @@ export const queryForScheduledPublishingInDefaultSpace = {
       ),
       willRespondWith: {
         status: 200,
-        body: productCatalogSpace
-      }
+        body: productCatalogSpace,
+      },
     }).as('queryForScheduledPublishingInDefaultSpace');
 
     return '@queryForScheduledPublishingInDefaultSpace';
-  }
+  },
 };
 
 export const queryForScheduledPublishingOnEntryPage = {
@@ -128,12 +128,12 @@ export const queryForScheduledPublishingOnEntryPage = {
       ),
       willRespondWith: {
         status: 200,
-        body: productCatalogSpace
-      }
+        body: productCatalogSpace,
+      },
     }).as('queryForScheduledPublishingOnEntryPage');
 
     return '@queryForScheduledPublishingOnEntryPage';
-  }
+  },
 };
 
 export const queryForEnvironmentAliasingAndAppsInDefaultSpace = {
@@ -146,12 +146,12 @@ export const queryForEnvironmentAliasingAndAppsInDefaultSpace = {
         'sys.featureId[]=environment_aliasing&sys.featureId[]=basic_apps'
       ),
       willRespondWith: {
-        status: 404
-      }
+        status: 404,
+      },
     }).as('queryForEnvironmentAliasingAndAppsInDefaultSpace');
 
     return '@queryForEnvironmentAliasingAndAppsInDefaultSpace';
-  }
+  },
 };
 
 export const queryForEnvironmentUsageAndAppsInDefaultSpace = {
@@ -164,10 +164,10 @@ export const queryForEnvironmentUsageAndAppsInDefaultSpace = {
         'sys.featureId[]=environment_usage_enforcements&sys.featureId[]=basic_apps'
       ),
       willRespondWith: {
-        status: 200
-      }
+        status: 200,
+      },
     }).as('queryForEnvironmentUsageAndAppsInDefaultSpace');
 
     return '@queryForEnvironmentUsageAndAppsInDefaultSpace';
-  }
+  },
 };

@@ -4,7 +4,7 @@ import { isAffecting, findCommonPrefix, isPrefix } from './Path';
 
 describe('utils/Path', () => {
   describe('#isAffecting', () => {
-    it('returns true if change at "changePath" affects the value of "valuePath"', function() {
+    it('returns true if change at "changePath" affects the value of "valuePath"', function () {
       expect(isAffecting(['a'], [])).toBe(true);
       expect(isAffecting([], ['a'])).toBe(true);
       expect(isAffecting(['a'], ['a', 'b'])).toBe(true);
@@ -12,14 +12,14 @@ describe('utils/Path', () => {
       expect(isAffecting(['a', 'b', 'x'], ['a', 'b'])).toBe(true);
     });
 
-    it('returns false if change at "changePath" does not affect the value of "valuePath"', function() {
+    it('returns false if change at "changePath" does not affect the value of "valuePath"', function () {
       expect(isAffecting(['x'], ['a', 'b'])).toBe(false);
       expect(isAffecting(['a', 'x'], ['a', 'b'])).toBe(false);
     });
   });
 
   describe('#findCommonPrefix', () => {
-    it('returns the longest shared prefix of given paths', function() {
+    it('returns the longest shared prefix of given paths', function () {
       const expectCommonPrefix = (paths, expected) => {
         expect(findCommonPrefix(paths)).toEqual(expected);
       };
@@ -30,13 +30,25 @@ describe('utils/Path', () => {
       expectCommonPrefix([[], ['a', 'b']], []);
       expectCommonPrefix([['a'], ['b']], []);
       expectCommonPrefix([['a'], ['a', 'b']], ['a']);
-      expectCommonPrefix([['a', 'b'], ['a', 'b', 'c']], ['a', 'b']);
+      expectCommonPrefix(
+        [
+          ['a', 'b'],
+          ['a', 'b', 'c'],
+        ],
+        ['a', 'b']
+      );
       expectCommonPrefix([['a', 'b']], ['a', 'b']);
-      expectCommonPrefix([['foo', 'ba'], ['foo', 'ba']], ['foo', 'ba']);
+      expectCommonPrefix(
+        [
+          ['foo', 'ba'],
+          ['foo', 'ba'],
+        ],
+        ['foo', 'ba']
+      );
     });
   });
 
-  it('#isPrefix', function() {
+  it('#isPrefix', function () {
     const expectIsPrefix = (prefix, target, expected) => {
       expect(isPrefix(prefix, target)).toBe(expected);
     };

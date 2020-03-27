@@ -6,7 +6,7 @@ import {
   TextInput,
   TextField,
   FormLabel,
-  ValidationMessage
+  ValidationMessage,
 } from '@contentful/forma-36-react-components';
 import { toString } from 'lodash';
 import styles from './styles';
@@ -17,7 +17,7 @@ const RegExpValidation = ({
   updateValidationSettingsValue,
   updateValidationCurrentView,
   updateValidationMessageValue,
-  validate
+  validate,
 }) => {
   const [message, setMessage] = useState(validation.message);
   const [currentView, setCurrentView] = useState(validation.currentView);
@@ -25,8 +25,8 @@ const RegExpValidation = ({
   const [flags, setFlags] = useState(validation.settings.flags);
   const [fieldTouched, setFieldTouched] = useState(false);
 
-  const updateCurrentView = selectedViewName => {
-    const selectedView = validation.views.find(view => selectedViewName === view.name);
+  const updateCurrentView = (selectedViewName) => {
+    const selectedView = validation.views.find((view) => selectedViewName === view.name);
     setCurrentView(selectedView.name);
     if (selectedView.pattern) {
       setPattern(selectedView.pattern);
@@ -35,11 +35,11 @@ const RegExpValidation = ({
     }
   };
 
-  const updatePattern = updatedPattern => {
+  const updatePattern = (updatedPattern) => {
     setFieldTouched(true);
     setPattern(updatedPattern);
     const updatedView =
-      validation.views.find(view => updatedPattern === view.pattern) || validation.views[0];
+      validation.views.find((view) => updatedPattern === view.pattern) || validation.views[0];
     setCurrentView(updatedView.name);
   };
 
@@ -113,7 +113,7 @@ RegExpValidation.propTypes = {
   updateValidationSettingsValue: PropTypes.func.isRequired,
   updateValidationCurrentView: PropTypes.func.isRequired,
   updateValidationMessageValue: PropTypes.func.isRequired,
-  validate: PropTypes.func.isRequired
+  validate: PropTypes.func.isRequired,
 };
 
 export default RegExpValidation;

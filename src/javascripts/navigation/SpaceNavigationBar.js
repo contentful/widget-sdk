@@ -18,18 +18,18 @@ const SPACE_SETTINGS_SECTIONS = [
   'roles',
   'apiKey',
   'webhooks',
-  'previews'
+  'previews',
 ];
 
 export default class SpaceNavigationBar extends React.Component {
   static propTypes = {
-    navVersion: PropTypes.number
+    navVersion: PropTypes.number,
   };
 
   constructor(props) {
     super(props);
     this.state = {
-      items: []
+      items: [],
     };
   }
 
@@ -54,7 +54,7 @@ export default class SpaceNavigationBar extends React.Component {
     const [environmentsEnabled, teamsInSpacesFF, hasOrgTeamFeature] = await Promise.all([
       getVariation(ENVIRONMENTS_FLAG, { organizationId, spaceId }),
       getVariation(TEAMS_IN_SPACES, { organizationId, spaceId }),
-      getOrgFeature(organizationId, 'teams')
+      getOrgFeature(organizationId, 'teams'),
     ]);
 
     const canManageEnvironments = accessChecker.can('manage', 'Environments');
@@ -70,7 +70,7 @@ export default class SpaceNavigationBar extends React.Component {
 
       const sectionAvailable = accessChecker.getSectionVisibility()[section];
       const enforcements = spaceContext.getData('enforcements') || [];
-      const isHibernated = enforcements.some(e => e.reason === 'hibernated');
+      const isHibernated = enforcements.some((e) => e.reason === 'hibernated');
 
       return spaceContext.space && !isHibernated && sectionAvailable;
     }
@@ -81,7 +81,7 @@ export default class SpaceNavigationBar extends React.Component {
       hasOrgTeamFeature,
       teamsInSpacesFF,
       useSpaceEnviroment: canManageEnvironments && environmentsEnabled,
-      isMasterEnvironment
+      isMasterEnvironment,
     });
 
     this.setState({ items });

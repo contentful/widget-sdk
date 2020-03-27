@@ -5,9 +5,9 @@ import analyticsConsoleTemplate from './analytics_console.html';
 export default function register() {
   registerDirective('cfAnalyticsConsole', [
     '$timeout',
-    $timeout => ({
+    ($timeout) => ({
       template: analyticsConsoleTemplate,
-      link: function(scope, $el) {
+      link: function (scope, $el) {
         const containerEl = $el.find('.analytics-console__content').get(0);
 
         scope.toggleSessionData = () => {
@@ -40,7 +40,7 @@ export default function register() {
 
         function isSearchResultEvent(event) {
           if (!scope.filterText) return true;
-          const isMatch = text => text.indexOf(scope.filterText) !== -1;
+          const isMatch = (text) => text.indexOf(scope.filterText) !== -1;
           return isMatch(event.name) || (event.snowplow && isMatch(event.snowplow.name));
         }
 
@@ -57,7 +57,7 @@ export default function register() {
         scope.unclearEvents = () => (scope.clearedEventsIndex = -1);
         scope.clearSearch = () => (scope.filterText = '');
 
-        scope.events$.onValue(events => {
+        scope.events$.onValue((events) => {
           scope.events = events;
           if (scope.clearedEventsIndex === undefined) {
             // When opening the console, show no events for great performance and
@@ -69,7 +69,7 @@ export default function register() {
           }
         });
 
-        scope.sessionData$.onValue(data => {
+        scope.sessionData$.onValue((data) => {
           scope.sessionData = data;
         });
 
@@ -84,7 +84,7 @@ export default function register() {
             containerEl.scrollTop = 0;
           });
         }
-      }
-    })
+      },
+    }),
   ]);
 }

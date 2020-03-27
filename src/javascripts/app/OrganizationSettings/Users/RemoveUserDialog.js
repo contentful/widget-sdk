@@ -8,7 +8,7 @@ export default class RemoveUserDialog extends React.Component {
   static propTypes = {
     user: UserPropType.isRequired,
     isShown: PropTypes.bool.isRequired,
-    onClose: PropTypes.func.isRequired
+    onClose: PropTypes.func.isRequired,
   };
 
   render() {

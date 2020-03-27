@@ -3,7 +3,7 @@ import {
   changeAction,
   isActionChecked,
   transformMapToTopics,
-  transformTopicsToMap
+  transformTopicsToMap,
 } from './WebhookSegmentationState';
 
 describe('WebhookSegmentationState', () => {

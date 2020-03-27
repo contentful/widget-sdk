@@ -4,7 +4,7 @@ import {
   SkeletonContainer,
   SkeletonBodyText,
   SkeletonDisplayText,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 
@@ -50,5 +50,5 @@ RolesWorkbenchSkeleton.propTypes = {
   actions: PropTypes.node,
   title: PropTypes.node.isRequired,
   children: PropTypes.node,
-  sidebar: PropTypes.node
+  sidebar: PropTypes.node,
 };

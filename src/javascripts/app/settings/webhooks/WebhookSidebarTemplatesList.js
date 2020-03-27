@@ -5,7 +5,7 @@ import WorkbenchSidebarItem from 'app/common/WorkbenchSidebarItem';
 
 const WebhookSidebarTemplatesList = ({ openTemplateDialog }) => (
   <WorkbenchSidebarItem title="Webhook Templates">
-    {Templates.slice(0, 5).map(template => (
+    {Templates.slice(0, 5).map((template) => (
       <div className="webhook-template-item" key={template.id}>
         <div className="webhook-template-item__logo">{template.logo}</div>
         <div className="webhook-template-item__title">
@@ -30,7 +30,7 @@ const WebhookSidebarTemplatesList = ({ openTemplateDialog }) => (
 );
 
 WebhookSidebarTemplatesList.propTypes = {
-  openTemplateDialog: PropTypes.func.isRequired
+  openTemplateDialog: PropTypes.func.isRequired,
 };
 
 export default WebhookSidebarTemplatesList;

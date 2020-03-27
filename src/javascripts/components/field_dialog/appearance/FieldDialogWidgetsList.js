@@ -10,17 +10,17 @@ export default class FieldDialogWidgetsList extends Component {
     onSelect: PropTypes.func.isRequired,
     selectedWidget: PropTypes.shape({
       namespace: PropTypes.string.isRequired,
-      id: PropTypes.string.isRequired
+      id: PropTypes.string.isRequired,
     }).isRequired,
     defaultWidget: PropTypes.shape({
       namespace: PropTypes.string.isRequired,
-      id: PropTypes.string.isRequired
+      id: PropTypes.string.isRequired,
     }).isRequired,
-    isAdmin: PropTypes.bool.isRequired
+    isAdmin: PropTypes.bool.isRequired,
   };
 
   static defaultProps = {
-    widgets: []
+    widgets: [],
   };
 
   render() {
@@ -31,7 +31,7 @@ export default class FieldDialogWidgetsList extends Component {
         <label>Choose how this field should be displayed</label>
         <ul className="field-dialog__widget-list">
           {widgets.map((widget, index) => {
-            const isSameWidget = w => w && (widget.namespace === w.namespace && widget.id === w.id);
+            const isSameWidget = (w) => w && widget.namespace === w.namespace && widget.id === w.id;
 
             return (
               <FieldDialogWidgetItem

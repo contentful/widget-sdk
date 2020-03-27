@@ -16,7 +16,7 @@ module.exports.readJSON = readJSON;
  * Read and parse multiple JSON files and merge the objects.
  */
 module.exports.readMergeJSON = function readMergeJSON(paths) {
-  return B.all(paths.map(readJSON)).then(manifests => {
+  return B.all(paths.map(readJSON)).then((manifests) => {
     return Object.assign({}, ...manifests);
   });
 };
@@ -25,8 +25,8 @@ module.exports.readMergeJSON = function readMergeJSON(paths) {
  * Run a command and get the contents of `stdout`.
  */
 module.exports.exec = function exec(cmd, opts) {
-  return new B.Promise(function(resolve, reject) {
-    CP.exec(cmd, opts, function(error, stdout, stderr) {
+  return new B.Promise(function (resolve, reject) {
+    CP.exec(cmd, opts, function (error, stdout, stderr) {
       if (error) {
         error.stderr = stderr;
         error.stdout = stdout;

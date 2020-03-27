@@ -6,31 +6,31 @@ angular
   .constant('lodash/debounce', _.identity)
   .constant('lodash/throttle', _.identity)
 
-  .constant('lodash/defer', function(f) {
+  .constant('lodash/defer', function (f) {
     const args = _.tail(arguments);
     f.apply(this, args);
   })
 
-  .constant('lodash/delay', function(f) {
+  .constant('lodash/delay', function (f) {
     const args = _.drop(arguments, 2);
     f.apply(this, args);
   })
 
-  .constant('delayedInvocationStub', originalFunction => {
+  .constant('delayedInvocationStub', (originalFunction) => {
     let result;
     function delayedFunction(...args) {
       delayedFunction.calls.push({
         thisArg: this,
-        arguments: args
+        arguments: args,
       });
       return result;
     }
     delayedFunction.calls = [];
-    delayedFunction.invokeDelayed = function() {
+    delayedFunction.invokeDelayed = function () {
       const call = this.calls.shift();
       result = originalFunction.apply(call.thisArg, call.arguments);
     };
-    delayedFunction.invokeAll = function() {
+    delayedFunction.invokeAll = function () {
       while (this.calls.length > 0) {
         this.invokeDelayed();
       }

@@ -13,7 +13,7 @@ describe('TimezonePicker', () => {
 
   const build = () => {
     const props = {
-      onSelect: jest.fn()
+      onSelect: jest.fn(),
     };
     return [
       render(
@@ -21,7 +21,7 @@ describe('TimezonePicker', () => {
           <TimezonePicker {...props} />
         </div>
       ),
-      props
+      props,
     ];
   };
 
@@ -38,7 +38,7 @@ describe('TimezonePicker', () => {
 
     fireEvent.focus(tz);
     fireEvent.change(tz, {
-      target: { value: 'New Y' }
+      target: { value: 'New Y' },
     });
 
     const newYorkItem = renderResult.queryByText('America/New York', { exact: false });

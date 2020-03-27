@@ -15,14 +15,14 @@ const styles = {
   textOverflow: css({
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap'
+    whiteSpace: 'nowrap',
   }),
   noWrap: css({
-    whiteSpace: 'nowrap'
-  })
+    whiteSpace: 'nowrap',
+  }),
 };
 
-const displayType = field => {
+const displayType = (field) => {
   if (
     field.type === 'Date' &&
     (field.id === 'updatedAt' || field.id === 'createdAt' || field.id === 'publishedAt')
@@ -49,7 +49,7 @@ function filterVisibleItems(items, entryCache, assetCache) {
   let counter = 0;
   const cacheName = hasItemsOfType(items, 'Entry') ? entryCache : assetCache;
   const limit = cacheName.params.limit;
-  return _.filter(items, item => {
+  return _.filter(items, (item) => {
     const hasItem = cacheName.has(item.sys.id);
     if (hasItem && counter < limit) {
       counter++;
@@ -88,9 +88,9 @@ const dataForLinkedAsset = (entry, field, assetCache) => {
   return assetLinkField ? dataForAsset(assetLinkField, assetCache) : '';
 };
 
-const displayBool = value => (value ? 'Yes' : 'No');
+const displayBool = (value) => (value ? 'Yes' : 'No');
 
-const displayLocation = value =>
+const displayLocation = (value) =>
   value ? parseLocation(value.lat) + ', ' + parseLocation(value.lon) : '';
 
 function parseLocation(val) {
@@ -114,13 +114,13 @@ const isAssetArray = (entity, field) => {
 const dataForArray = (entry, field, entryCache, assetCache) => {
   const items = dataForField(entry, field);
   if (hasItemsOfType(items, 'Entry')) {
-    return filterVisibleItems(items, entryCache, assetCache).map(entryLink =>
+    return filterVisibleItems(items, entryCache, assetCache).map((entryLink) =>
       dataForEntry(entryLink, entryCache)
     );
   }
 
   if (hasItemsOfType(items, 'Asset')) {
-    return filterVisibleItems(items, entryCache, assetCache).map(assetLink =>
+    return filterVisibleItems(items, entryCache, assetCache).map((assetLink) =>
       dataForAsset(assetLink, assetCache)
     );
   }
@@ -146,7 +146,7 @@ function RelativeDateFieldValue({ value }) {
 }
 
 RelativeDateFieldValue.propTypes = {
-  value: PropTypes.string.isRequired
+  value: PropTypes.string.isRequired,
 };
 
 function AbsoluteDateFieldValue({ value }) {
@@ -160,7 +160,7 @@ function AbsoluteDateFieldValue({ value }) {
 }
 
 AbsoluteDateFieldValue.propTypes = {
-  value: PropTypes.string.isRequired
+  value: PropTypes.string.isRequired,
 };
 
 export default function DisplayField({ entry, field, entryCache, assetCache }) {
@@ -213,7 +213,7 @@ export default function DisplayField({ entry, field, entryCache, assetCache }) {
         <ul
           className={cn(styles.textOverflow, {
             'linked-entries': isEntryArray(entry, field),
-            'linked-assets': isAssetArray(entry, field)
+            'linked-assets': isAssetArray(entry, field),
           })}>
           {!isEntryArray(entry, field) && !isAssetArray(entry, field) ? (
             <li>

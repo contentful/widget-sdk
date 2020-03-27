@@ -6,7 +6,7 @@ import {
   Button,
   Paragraph,
   TextLink,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import AppEditor from './AppEditor';
@@ -17,14 +17,14 @@ import NavigationIcon from 'ui/Components/NavigationIcon';
 
 const styles = {
   spacerM: css({
-    marginBottom: tokens.spacingM
+    marginBottom: tokens.spacingM,
   }),
   spacerXl: css({
-    marginBottom: tokens.spacingXl
+    marginBottom: tokens.spacingXl,
   }),
   createButton: css({
-    marginBottom: tokens.spacing4Xl
-  })
+    marginBottom: tokens.spacing4Xl,
+  }),
 };
 
 const BUILDING_APPS_URL =
@@ -36,7 +36,7 @@ export default class NewApp extends React.Component {
 
     this.state = {
       busy: false,
-      definition: ManagementApiClient.createDefinitionTemplateForOrg(props.orgId)
+      definition: ManagementApiClient.createDefinitionTemplateForOrg(props.orgId),
     };
   }
 
@@ -47,7 +47,7 @@ export default class NewApp extends React.Component {
       const saved = await ManagementApiClient.save(this.state.definition);
       Notification.success('App created successfully.');
       track('app_management:created', {
-        definitionId: saved.sys.id
+        definitionId: saved.sys.id,
       });
       this.props.goToDefinition(saved.sys.id);
     } catch (err) {
@@ -84,7 +84,7 @@ export default class NewApp extends React.Component {
           <div className={styles.spacerXl}>
             <AppEditor
               definition={definition}
-              onChange={definition => this.setState({ definition })}
+              onChange={(definition) => this.setState({ definition })}
             />
           </div>
           <Button
@@ -104,5 +104,5 @@ export default class NewApp extends React.Component {
 NewApp.propTypes = {
   goToDefinition: PropTypes.func.isRequired,
   goToListView: PropTypes.func.isRequired,
-  orgId: PropTypes.string.isRequired
+  orgId: PropTypes.string.isRequired,
 };

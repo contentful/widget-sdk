@@ -21,7 +21,7 @@ function PillsList({
   onChange,
   onOperatorChange,
   onRemove,
-  onRemoveAttempt
+  onRemoveAttempt,
 }) {
   return filters.map(([filter, op, value], index) => {
     return (
@@ -34,10 +34,10 @@ function PillsList({
           testId: filter.queryKey,
           isFocused: defaultFocus.index === index && !defaultFocus.isValueFocused,
           isValueFocused: defaultFocus.index === index && defaultFocus.isValueFocused,
-          onChange: value => onChange({ index, value }),
-          onOperatorChange: value => onOperatorChange({ index, value }),
+          onChange: (value) => onChange({ index, value }),
+          onOperatorChange: (value) => onOperatorChange({ index, value }),
           onRemove: () => onRemove({ index }),
-          onRemoveAttempt: () => onRemoveAttempt({ index })
+          onRemoveAttempt: () => onRemoveAttempt({ index }),
         }}
       />
     );
@@ -46,12 +46,12 @@ function PillsList({
 
 const styles = {
   searchWrapper: css({
-    marginLeft: tokens.spacingS
+    marginLeft: tokens.spacingS,
   }),
   searchIconWrapper: css({
     marginTop: '-3px',
-    marginRight: tokens.spacingS
-  })
+    marginRight: tokens.spacingS,
+  }),
 };
 
 function PillsWrapper({ searchBoxHasFocus, actions, children }) {
@@ -78,7 +78,7 @@ function PillsWrapper({ searchBoxHasFocus, actions, children }) {
     <div
       className={classNames('search-next__pills-wrapper', {
         'search-next__pills-wrapper--state-active': searchBoxHasFocus,
-        'is-overflown-y': isOverflownY
+        'is-overflown-y': isOverflownY,
       })}
       onClick={() => actions.SetFocusOnQueryInput()}
       onBlur={() => actions.ResetFocus()}
@@ -96,14 +96,14 @@ function Wrapper({ actions, searchBoxHasFocus, children }) {
       style={{
         height: '40px',
         width: '100%',
-        position: 'relative'
+        position: 'relative',
       }}
       onFocus={() => {
         if (!searchBoxHasFocus) {
           actions.SetBoxFocus(true);
         }
       }}
-      onBlur={event => {
+      onBlur={(event) => {
         if (el.current) {
           const parent = el.current;
           // Related target is not defined in IE11 so we need to fallback to the activeElement
@@ -135,7 +135,7 @@ export default function View(props) {
     suggestions,
     actions,
     withAssets,
-    hasLoaded
+    hasLoaded,
   } = props;
 
   if (!hasLoaded) {
@@ -157,7 +157,7 @@ export default function View(props) {
               testId="contentTypeFilter"
               isRemovable={false}
               filter={contentTypeFilter}
-              onChange={value => actions.SetContentType(value)}
+              onChange={(value) => actions.SetContentType(value)}
             />
           )}
           <PillsList
@@ -176,10 +176,10 @@ export default function View(props) {
           <QueryInput
             placeholder={placeholder}
             value={input || ''}
-            onChange={value => actions.SetQueryInput(value)}
+            onChange={(value) => actions.SetQueryInput(value)}
             autoFocus={!input && !hasFilters}
             isFocused={defaultFocus.isQueryInputFocused}
-            onKeyUp={e => {
+            onKeyUp={(e) => {
               if (Keys.escape(e)) {
                 if (isSuggestionOpen) {
                   e.stopPropagation();
@@ -187,7 +187,7 @@ export default function View(props) {
                 }
               }
             }}
-            onKeyDown={e => {
+            onKeyDown={(e) => {
               const { target } = e;
               const hasSelection = target.selectionStart !== 0 || target.selectionEnd !== 0;
               if (Keys.backspace(e) && !hasSelection) {
@@ -209,14 +209,14 @@ export default function View(props) {
             paddingTop: '10px',
             // We need to occupy the space to prevent breaking based on the
             // spinners visibility
-            visibility: hasSpinner ? '' : 'hidden'
+            visibility: hasSpinner ? '' : 'hidden',
           }}>
           <Spinner style={{ display: 'inline-block' }} />
         </div>
         <div
           className={classNames(styles.searchWrapper, 'search-next__filter-toggle', {
             '-active': isSuggestionOpen,
-            '-focus': searchBoxHasFocus
+            '-focus': searchBoxHasFocus,
           })}
           onClick={() => actions.ToggleSuggestions()}>
           <div
@@ -224,7 +224,7 @@ export default function View(props) {
               alignSelf: 'flex-start',
               height: '38px',
               display: 'flex',
-              alignItems: 'center'
+              alignItems: 'center',
             }}>
             <div className={styles.searchIconWrapper}>
               <FilterIcon />
@@ -239,17 +239,17 @@ export default function View(props) {
             items={suggestions}
             searchTerm={input}
             defaultFocus={defaultFocus}
-            onSelect={key => {
+            onSelect={(key) => {
               actions.SelectFilterSuggestions(key);
             }}
-            onKeyUp={e => {
+            onKeyUp={(e) => {
               if (Keys.escape(e)) {
                 e.stopPropagation();
                 actions.ToggleSuggestions();
                 actions.SetFocusOnQueryInput();
               }
             }}
-            onKeyDown={e => {
+            onKeyDown={(e) => {
               if (Keys.arrowUp(e) || Keys.shiftTab(e)) {
                 actions.SetFocusOnPrevSuggestion();
               } else if (Keys.arrowDown(e) || Keys.tab(e)) {

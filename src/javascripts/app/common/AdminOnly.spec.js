@@ -12,7 +12,7 @@ describe('AdminOnly', () => {
     spaceContextMocked.getData.mockReset();
   });
 
-  const setAdmin = isAdmin => {
+  const setAdmin = (isAdmin) => {
     spaceContextMocked.getData.mockReturnValue(isAdmin);
   };
 

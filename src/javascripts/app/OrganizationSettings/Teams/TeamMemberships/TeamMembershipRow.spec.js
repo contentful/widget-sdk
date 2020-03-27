@@ -8,7 +8,7 @@ import {
   TableCell,
   Table,
   TableHead,
-  TextLink
+  TextLink,
 } from '@contentful/forma-36-react-components';
 import reducer from 'redux/reducer';
 import UserCard from '../../Users/UserCard';
@@ -20,7 +20,7 @@ import ROUTES from '../../../../redux/routes';
 const renderComponent = (actions, membership) => {
   const store = createStore(reducer);
   store.dispatch = jest.fn(store.dispatch);
-  actions.forEach(action => store.dispatch(action));
+  actions.forEach((action) => store.dispatch(action));
   const wrapper = mount(
     <Provider store={store}>
       <Table>
@@ -48,10 +48,10 @@ describe('TeamMembershipRow', () => {
           location: {
             pathname: ROUTES.organization.children.teams.children.team.build({
               orgId: activeOrgId,
-              teamId: activeTeamId
-            })
-          }
-        }
+              teamId: activeTeamId,
+            }),
+          },
+        },
       });
     });
 
@@ -66,21 +66,21 @@ describe('TeamMembershipRow', () => {
                   role: 'member',
                   organization: {
                     sys: {
-                      id: activeOrgId
-                    }
-                  }
+                      id: activeOrgId,
+                    },
+                  },
                 },
                 {
                   role: 'owner',
                   organization: {
                     sys: {
-                      id: 'otherOrg'
-                    }
-                  }
-                }
-              ]
-            }
-          }
+                      id: 'otherOrg',
+                    },
+                  },
+                },
+              ],
+            },
+          },
         });
         membership = {
           admin: false,
@@ -89,28 +89,26 @@ describe('TeamMembershipRow', () => {
             user: {
               avatarUrl: 'test.com/avatar2',
               email: 'user1@test.com',
-              sys: { id: 'testUser1' }
+              sys: { id: 'testUser1' },
             },
             createdAt: '2019-01-25T10:33:15Z',
             createdBy: { firstName: 'test', lastName: 'User2', sys: { id: 'testUser2' } },
             organizationMembership: {
               sys: {
-                id: 'testOrgMembership'
-              }
-            }
-          }
+                id: 'testOrgMembership',
+              },
+            },
+          },
         };
       });
 
       it('should have no link to user details', () => {
         const { wrapper } = renderComponent(actions, membership);
         expect(wrapper.find(TextLink).filter({ testId: 'user-text-link' })).toHaveLength(0);
-        expect(
-          wrapper
-            .find(UserCard)
-            .filter({ testId: 'user-card' })
-            .props()
-        ).toHaveProperty('user', membership.sys.user);
+        expect(wrapper.find(UserCard).filter({ testId: 'user-card' }).props()).toHaveProperty(
+          'user',
+          membership.sys.user
+        );
       });
 
       it('should have no remove button', () => {
@@ -122,18 +120,13 @@ describe('TeamMembershipRow', () => {
       it('should render membership details without creator', () => {
         const { wrapper } = renderComponent(actions, membership);
 
-        expect(
-          wrapper
-            .find(TableCell)
-            .filter({ testId: 'created-at-cell' })
-            .text()
-        ).toEqual('January 25, 2019');
-        expect(
-          wrapper
-            .find(UserCard)
-            .filter({ testId: 'user-card' })
-            .props()
-        ).toHaveProperty('user', membership.sys.user);
+        expect(wrapper.find(TableCell).filter({ testId: 'created-at-cell' }).text()).toEqual(
+          'January 25, 2019'
+        );
+        expect(wrapper.find(UserCard).filter({ testId: 'user-card' }).props()).toHaveProperty(
+          'user',
+          membership.sys.user
+        );
         expect(wrapper.find(TableCell).filter({ 'data-test-id': 'created-by-cell' })).toHaveLength(
           0
         );
@@ -151,21 +144,21 @@ describe('TeamMembershipRow', () => {
                   role: 'admin',
                   organization: {
                     sys: {
-                      id: activeOrgId
-                    }
-                  }
+                      id: activeOrgId,
+                    },
+                  },
                 },
                 {
                   role: 'member',
                   organization: {
                     sys: {
-                      id: 'otherOrg'
-                    }
-                  }
-                }
-              ]
-            }
-          }
+                      id: 'otherOrg',
+                    },
+                  },
+                },
+              ],
+            },
+          },
         });
       });
 
@@ -178,20 +171,18 @@ describe('TeamMembershipRow', () => {
               user: {
                 avatarUrl: 'test.com/avatar2',
                 email: 'user1@test.com',
-                sys: { id: 'testUser1' }
-              }
-            }
+                sys: { id: 'testUser1' },
+              },
+            },
           };
         });
 
         it('should render membership details with no user link', () => {
           const { wrapper } = renderComponent(actions, membership);
-          expect(
-            wrapper
-              .find(UserCard)
-              .filter({ testId: 'user-card' })
-              .props()
-          ).toHaveProperty('user', membership.sys.user);
+          expect(wrapper.find(UserCard).filter({ testId: 'user-card' }).props()).toHaveProperty(
+            'user',
+            membership.sys.user
+          );
         });
       });
 
@@ -204,46 +195,35 @@ describe('TeamMembershipRow', () => {
               user: {
                 avatarUrl: 'test.com/avatar2',
                 email: 'user1@test.com',
-                sys: { id: 'testUser1' }
+                sys: { id: 'testUser1' },
               },
               createdAt: '2019-01-25T10:33:15Z',
               createdBy: { firstName: 'test', lastName: 'User2', sys: { id: 'testUser2' } },
               organizationMembership: {
                 sys: {
-                  id: 'testOrgMembership'
-                }
-              }
-            }
+                  id: 'testOrgMembership',
+                },
+              },
+            },
           };
         });
 
         it('should render membership details', () => {
           const { wrapper } = renderComponent(actions, membership);
 
+          expect(wrapper.find(TableCell).filter({ testId: 'created-at-cell' }).text()).toEqual(
+            'January 25, 2019'
+          );
           expect(
-            wrapper
-              .find(TableCell)
-              .filter({ testId: 'created-at-cell' })
-              .text()
-          ).toEqual('January 25, 2019');
-          expect(
-            wrapper
-              .find(TextLink)
-              .filter({ testId: 'user-text-link' })
-              .props()
+            wrapper.find(TextLink).filter({ testId: 'user-text-link' }).props()
           ).toHaveProperty('href', 'account.organizations.users.detail?userId=testOrgMembership');
-          expect(
-            wrapper
-              .find(UserCard)
-              .filter({ testId: 'user-card' })
-              .props()
-          ).toHaveProperty('user', membership.sys.user);
-          expect(
-            wrapper
-              .find(TableCell)
-              .filter({ testId: 'created-by-cell' })
-              .text()
-          ).toEqual('test User2');
+          expect(wrapper.find(UserCard).filter({ testId: 'user-card' }).props()).toHaveProperty(
+            'user',
+            membership.sys.user
+          );
+          expect(wrapper.find(TableCell).filter({ testId: 'created-by-cell' }).text()).toEqual(
+            'test User2'
+          );
         });
       });
 
@@ -256,11 +236,11 @@ describe('TeamMembershipRow', () => {
               user: {
                 avatarUrl: 'test.com/avatar2',
                 email: 'user1@test.com',
-                sys: { id: 'testUser1' }
+                sys: { id: 'testUser1' },
               },
               createdAt: '2019-01-25T10:33:15Z',
-              createdBy: { sys: { id: 'testUser2' } }
-            }
+              createdBy: { sys: { id: 'testUser2' } },
+            },
           };
         });
 
@@ -277,13 +257,10 @@ describe('TeamMembershipRow', () => {
       it('should have working remove button', () => {
         const { wrapper, store } = renderComponent(actions, membership);
 
-        wrapper
-          .find(Button)
-          .filter({ testId: 'remove-button' })
-          .simulate('click');
+        wrapper.find(Button).filter({ testId: 'remove-button' }).simulate('click');
         expect(store.dispatch).toHaveBeenCalledWith({
           type: 'REMOVE_TEAM_MEMBERSHIP',
-          payload: { teamMembershipId: membership.sys.id }
+          payload: { teamMembershipId: membership.sys.id },
         });
       });
     });

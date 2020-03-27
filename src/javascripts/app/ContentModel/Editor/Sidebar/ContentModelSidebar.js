@@ -6,15 +6,15 @@ import {
   Button,
   Paragraph,
   Subheading,
-  Typography
+  Typography,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 
 const styles = {
   addFieldButton: css({
-    marginBottom: tokens.spacingM
-  })
+    marginBottom: tokens.spacingM,
+  }),
 };
 
 export function FieldsSection(props) {
@@ -45,9 +45,9 @@ FieldsSection.propTypes = {
   canEdit: PropTypes.bool.isRequired,
   showNewFieldDialog: PropTypes.shape({
     isDisabled: PropTypes.func.isRequired,
-    execute: PropTypes.func.isRequired
+    execute: PropTypes.func.isRequired,
   }).isRequired,
-  fieldsUsed: PropTypes.number.isRequired
+  fieldsUsed: PropTypes.number.isRequired,
 };
 
 export function ContentTypeIdSection(props) {
@@ -72,7 +72,7 @@ export function ContentTypeIdSection(props) {
 }
 
 ContentTypeIdSection.propTypes = {
-  contentTypeId: PropTypes.string.isRequired
+  contentTypeId: PropTypes.string.isRequired,
 };
 
 export function DocumentationSection() {

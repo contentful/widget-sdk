@@ -3,7 +3,7 @@ import {
   SkeletonBodyText,
   SkeletonContainer,
   TableCell,
-  TableRow
+  TableRow,
 } from '@contentful/forma-36-react-components';
 import { range } from 'lodash';
 

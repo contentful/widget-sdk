@@ -10,7 +10,7 @@ import {
   Icon,
   Switch,
   Note,
-  TextLink
+  TextLink,
 } from '@contentful/forma-36-react-components';
 import * as WidgetLocations from 'widgets/WidgetLocations';
 import { toInternalFieldType, toApiFieldType } from 'widgets/FieldTypes';
@@ -21,16 +21,16 @@ import { MARKETPLACE_ORG_ID } from '../config';
 
 const styles = {
   helpParagraph: css({
-    color: tokens.colorTextLight
+    color: tokens.colorTextLight,
   }),
   input: css({
-    marginBottom: tokens.spacingL
+    marginBottom: tokens.spacingL,
   }),
   toggleContainer: css({
-    marginBottom: tokens.spacingXs
+    marginBottom: tokens.spacingXs,
   }),
   locationP: css({
-    marginBottom: tokens.spacingL
+    marginBottom: tokens.spacingL,
   }),
   locationToggle: css({
     width: '100%',
@@ -39,13 +39,13 @@ const styles = {
       display: 'inline',
       marginLeft: tokens.spacingXs,
       color: tokens.colorElementDarkest,
-      fontFamily: tokens.fontStackMonospace
+      fontFamily: tokens.fontStackMonospace,
     }),
     '& svg': css({
       position: 'absolute',
       right: tokens.spacingS,
-      top: 'calc(50% - 9px)'
-    })
+      top: 'calc(50% - 9px)',
+    }),
   }),
   fieldTypes: css({
     opacity: '0',
@@ -57,24 +57,24 @@ const styles = {
     transition: `all ${tokens.transitionDurationDefault} ${tokens.transitionEasingDefault}`,
     overflow: 'hidden',
     p: css({
-      color: tokens.colorTextMid
-    })
+      color: tokens.colorTextMid,
+    }),
   }),
   fieldTypesOpen: css({
     opacity: '1',
     height: '215px',
     padding: tokens.spacingS,
-    overflow: 'hidden'
+    overflow: 'hidden',
   }),
   fieldTypeChecks: css({
     display: 'grid',
-    gridTemplateColumns: '1fr 1fr 1fr'
+    gridTemplateColumns: '1fr 1fr 1fr',
   }),
   entryFieldCheck: css({
-    marginTop: tokens.spacingS
+    marginTop: tokens.spacingS,
   }),
   publicSwitch: css({
-    marginTop: tokens.spacingL
+    marginTop: tokens.spacingL,
   }),
   checkbox: css({
     display: 'flex',
@@ -85,18 +85,18 @@ const styles = {
     '& input': css({
       verticalAlign: 'text-top',
       marginRight: tokens.spacingXs,
-      cursor: 'pointer'
+      cursor: 'pointer',
     }),
     '& label': css({
       fontWeight: tokens.fontWeightMedium,
       marginRight: tokens.spacingXs,
-      cursor: 'pointer'
+      cursor: 'pointer',
     }),
     '& span': css({
       color: tokens.colorElementDarkest,
-      fontFamily: tokens.fontStackMonospace
-    })
-  })
+      fontFamily: tokens.fontStackMonospace,
+    }),
+  }),
 };
 
 const LOCATION_ORDER = [
@@ -104,7 +104,7 @@ const LOCATION_ORDER = [
   ['Entry field', WidgetLocations.LOCATION_ENTRY_FIELD],
   ['Entry sidebar', WidgetLocations.LOCATION_ENTRY_SIDEBAR],
   ['Entry editor', WidgetLocations.LOCATION_ENTRY_EDITOR],
-  ['Dialog', WidgetLocations.LOCATION_DIALOG]
+  ['Dialog', WidgetLocations.LOCATION_DIALOG],
 ];
 
 const FIELD_TYPES_ORDER = [
@@ -121,22 +121,22 @@ const FIELD_TYPES_ORDER = [
   ['Boolean', 'Boolean'],
   ['Media reference, list', 'Assets'],
   ['Number, integer', 'Integer'],
-  ['JSON object', 'Object']
+  ['JSON object', 'Object'],
 ];
 
 export default function AppEditor({ definition, onChange }) {
   definition.locations = definition.locations || [];
 
-  const getLocationIndex = locationValue => {
+  const getLocationIndex = (locationValue) => {
     return definition.locations.findIndex(({ location }) => {
       return location === locationValue;
     });
   };
 
-  const getLocation = locationValue => definition.locations[getLocationIndex(locationValue)];
-  const hasLocation = locationValue => !!getLocation(locationValue);
+  const getLocation = (locationValue) => definition.locations[getLocationIndex(locationValue)];
+  const hasLocation = (locationValue) => !!getLocation(locationValue);
 
-  const toggleLocation = locationValue => {
+  const toggleLocation = (locationValue) => {
     const updated = cloneDeep(definition);
 
     if (hasLocation(locationValue)) {
@@ -157,7 +157,7 @@ export default function AppEditor({ definition, onChange }) {
     onChange(updated);
   };
 
-  const getFieldTypeIndex = internalFieldType => {
+  const getFieldTypeIndex = (internalFieldType) => {
     const entryFieldLocation = getLocation(WidgetLocations.LOCATION_ENTRY_FIELD);
     if (entryFieldLocation && Array.isArray(entryFieldLocation.fieldTypes)) {
       return entryFieldLocation.fieldTypes.map(toInternalFieldType).indexOf(internalFieldType);
@@ -166,9 +166,9 @@ export default function AppEditor({ definition, onChange }) {
     }
   };
 
-  const hasFieldType = internalFieldType => getFieldTypeIndex(internalFieldType) > -1;
+  const hasFieldType = (internalFieldType) => getFieldTypeIndex(internalFieldType) > -1;
 
-  const toggleFieldType = internalFieldType => {
+  const toggleFieldType = (internalFieldType) => {
     const updated = cloneDeep(definition);
     const locationIndex = getLocationIndex(WidgetLocations.LOCATION_ENTRY_FIELD);
     const entryFieldLocation = updated.locations[locationIndex];
@@ -180,7 +180,7 @@ export default function AppEditor({ definition, onChange }) {
       );
     } else {
       entryFieldLocation.fieldTypes = (entryFieldLocation.fieldTypes || []).concat([
-        toApiFieldType(internalFieldType)
+        toApiFieldType(internalFieldType),
       ]);
     }
 
@@ -198,7 +198,7 @@ export default function AppEditor({ definition, onChange }) {
           labelText="Name"
           testId="app-name-input"
           value={definition.name || ''}
-          onChange={e => onChange({ ...definition, name: e.target.value })}
+          onChange={(e) => onChange({ ...definition, name: e.target.value })}
         />
         <TextField
           className={styles.input}
@@ -209,7 +209,7 @@ export default function AppEditor({ definition, onChange }) {
           testId="app-src-input"
           value={definition.src || ''}
           helpText="Valid URLs use HTTPS. Only localhost can use HTTP."
-          onChange={e => onChange({ ...definition, src: e.target.value })}
+          onChange={(e) => onChange({ ...definition, src: e.target.value })}
         />
         <div className={styles.locationP}>
           <FormLabel htmlFor="">Locations</FormLabel>
@@ -300,5 +300,5 @@ export default function AppEditor({ definition, onChange }) {
 
 AppEditor.propTypes = {
   definition: PropTypes.object.isRequired,
-  onChange: PropTypes.func.isRequired
+  onChange: PropTypes.func.isRequired,
 };

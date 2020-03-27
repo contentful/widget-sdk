@@ -4,7 +4,7 @@ import BackNav from '.';
 import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 
 jest.mock('navigation/SlideInNavigator', () => ({
-  goToPreviousSlideOrExit: jest.fn()
+  goToPreviousSlideOrExit: jest.fn(),
 }));
 
 describe('BackNav', () => {

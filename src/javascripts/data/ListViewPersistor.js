@@ -6,7 +6,7 @@ import { getQueryString } from 'utils/location';
 
 const STORE_PREFIX = 'lastFilterQueryString';
 
-const getEntityKey = entityType => {
+const getEntityKey = (entityType) => {
   const entityKey = { Entry: 'entries', Asset: 'assets' }[entityType];
 
   if (typeof entityKey === 'string') {
@@ -60,7 +60,7 @@ function omitUIConfigOnlyViewProperties(view) {
 
 function prepareQueryString(viewData) {
   const qsObject = Object.keys(viewData)
-    .filter(key => !key.startsWith('_'))
+    .filter((key) => !key.startsWith('_'))
     .reduce((acc, key) => ({ ...acc, [key]: viewData[key] }), {});
 
   // We use the "repeat" array format option so:

@@ -10,7 +10,7 @@ import {
   Textarea,
   Note,
   FormLabel,
-  Notification
+  Notification,
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -22,15 +22,15 @@ const styles = {
   orgName: css({
     fontWeight: tokens.fontWeightDemiBold,
     fontSize: tokens.fontSizeM,
-    color: tokens.colorTextDark
+    color: tokens.colorTextDark,
   }),
   paddingS: css({ padding: tokens.spacingS }),
   buttons: css({
     marginTop: tokens.spacingM,
     '> button': {
-      marginRight: tokens.spacingM
-    }
-  })
+      marginRight: tokens.spacingM,
+    },
+  }),
 };
 
 const DeleteUserModal = ({ singleOwnerOrganizations, onConfirm, onCancel, isShown }) => {
@@ -39,7 +39,7 @@ const DeleteUserModal = ({ singleOwnerOrganizations, onConfirm, onCancel, isShow
     notUseful: { name: "I don't find it useful", key: 'not_useful' },
     dontUnderstand: { name: "I don't understand how to use it", key: 'dont_understand' },
     temporary: { name: "It's temporary. I'll be back", key: 'temporary' },
-    other: { name: 'Other', key: 'other' }
+    other: { name: 'Other', key: 'other' },
   };
 
   const [activeOption, setActiveOption] = useState(reasons.other.key);
@@ -110,7 +110,7 @@ const DeleteUserModal = ({ singleOwnerOrganizations, onConfirm, onCancel, isShow
               name={reasons[reason].key}
               checked={activeOption === reasons[reason].key}
               value={reasons[reason].key}
-              onChange={e => {
+              onChange={(e) => {
                 setActiveOption(e.target.value);
               }}
             />
@@ -122,7 +122,7 @@ const DeleteUserModal = ({ singleOwnerOrganizations, onConfirm, onCancel, isShow
           id="cancellationDetails"
           testId="cancellation-details"
           value={details}
-          onChange={e => setDetails(e.target.value)}></Textarea>
+          onChange={(e) => setDetails(e.target.value)}></Textarea>
       </Typography>
       <div className={styles.buttons}>
         <Button
@@ -154,7 +154,7 @@ DeleteUserModal.propTypes = {
   singleOwnerOrganizations: PropTypes.array.isRequired,
   onConfirm: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
-  isShown: PropTypes.bool.isRequired
+  isShown: PropTypes.bool.isRequired,
 };
 
 export default DeleteUserModal;

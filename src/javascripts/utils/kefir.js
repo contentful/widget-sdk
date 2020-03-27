@@ -14,7 +14,7 @@ export * from 'kefir';
 export const PromiseStatus = makeSum({
   Pending: ['value'],
   Resolved: ['value'],
-  Rejected: ['error']
+  Rejected: ['error'],
 });
 
 /**
@@ -41,7 +41,7 @@ export const PromiseStatus = makeSum({
 export function createStreamBus(scope) {
   let currentEmitter;
 
-  const stream = Kefir.stream(emitter => {
+  const stream = Kefir.stream((emitter) => {
     currentEmitter = emitter;
   });
 
@@ -56,7 +56,7 @@ export function createStreamBus(scope) {
     stream,
     end,
     emit,
-    error
+    error,
   };
 
   function emit(value) {
@@ -112,7 +112,7 @@ export function createPropertyBus(initialValue, scope) {
     property,
     end: streamBus.end,
     set: streamBus.emit,
-    error: streamBus.error
+    error: streamBus.error,
   };
 }
 
@@ -138,7 +138,7 @@ export function createPropertyBus(initialValue, scope) {
  */
 export function onValueScope(scope, stream, cb) {
   const lifeline = scopeLifeline(scope);
-  const off = onValueWhile(lifeline, stream, value => {
+  const off = onValueWhile(lifeline, stream, (value) => {
     cb(value);
     scope.$applyAsync();
   });
@@ -210,8 +210,8 @@ export function onValueWhile(lifeline, stream, cb) {
  * an array value in the stream.
  */
 export function fromScopeEvent(scope, event, uncurry) {
-  return Kefir.stream(emitter => {
-    const offEvent = scope.$on(event, function(...args) {
+  return Kefir.stream((emitter) => {
+    const offEvent = scope.$on(event, function (...args) {
       let value;
       if (uncurry) {
         value = Array.prototype.slice.call(args, 1);
@@ -299,10 +299,10 @@ export function sampleBy(obs, sampler) {
 export function promiseProperty(promise, pendingValue) {
   const bus = createPropertyBus(PromiseStatus.Pending(pendingValue));
   promise.then(
-    value => {
+    (value) => {
       bus.set(PromiseStatus.Resolved(value));
     },
-    error => {
+    (error) => {
       bus.set(PromiseStatus.Rejected(error));
     }
   );
@@ -351,12 +351,12 @@ export function combineProperties(props, combinator) {
  */
 export function combinePropertiesObject(props) {
   const keys = Object.keys(props);
-  const values$ = keys.map(k => {
+  const values$ = keys.map((k) => {
     const prop = props[k];
     assertIsProperty(prop);
     return prop;
   });
-  return combineProperties(values$).map(values => zipObject(keys, values));
+  return combineProperties(values$).map((values) => zipObject(keys, values));
 }
 
 /**
@@ -410,7 +410,7 @@ export function holdWhen(prop, predicate) {
 export function getValue(prop) {
   let called = false;
   let value;
-  const off = onValue(prop, x => {
+  const off = onValue(prop, (x) => {
     value = x;
     called = true;
   });
@@ -443,7 +443,7 @@ export function getRef(prop) {
   assertIsProperty(prop);
   const ref = { dispose };
 
-  const unsub = onValue(prop, value => {
+  const unsub = onValue(prop, (value) => {
     ref.value = value;
   });
   return ref;
@@ -464,7 +464,7 @@ export function getRef(prop) {
  * @returns {Kefir.Stream<void>}
  */
 export function scopeLifeline(scope) {
-  return Kefir.stream(emitter => {
+  return Kefir.stream((emitter) => {
     if (!scope || scope.$$destroyed) {
       return end();
     } else {
@@ -496,7 +496,7 @@ export function endWith(prop, lifeline) {
 
   const propSub = prop.observe({
     value: bus.set,
-    end
+    end,
   });
 
   const lifelineSub = lifeline.observe({ end });

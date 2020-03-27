@@ -7,12 +7,12 @@ import EntrySidebarWidget from '../EntrySidebarWidget';
 
 export default class ContentPreviewWidget extends Component {
   static propTypes = {
-    emitter: PropTypes.object.isRequired
+    emitter: PropTypes.object.isRequired,
   };
 
   state = {
     isInitialized: false,
-    data: {}
+    data: {},
   };
 
   componentDidMount() {
@@ -27,7 +27,7 @@ export default class ContentPreviewWidget extends Component {
     this.props.emitter.off(SidebarEventTypes.UPDATED_CONTENT_PREVIEW_WIDGET, this.onUpdatePreview);
   }
 
-  onUpdatePreview = data => {
+  onUpdatePreview = (data) => {
     this.setState({ isInitialized: true, data });
   };
 

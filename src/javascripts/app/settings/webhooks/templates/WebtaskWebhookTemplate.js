@@ -26,8 +26,8 @@ export default {
           </a>
           , select function and copy its URL.
         </p>
-      )
-    }
+      ),
+    },
   ],
   mapParamsToDefinition: ({ url }, name) => {
     return {
@@ -36,8 +36,8 @@ export default {
       topics: ['Entry.publish'],
       filters: [{ equals: [{ doc: 'sys.environment.sys.id' }, 'master'] }],
       transformation: {
-        contentType: 'application/json'
-      }
+        contentType: 'application/json',
+      },
     };
-  }
+  },
 };

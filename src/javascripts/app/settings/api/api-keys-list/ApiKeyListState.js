@@ -11,7 +11,7 @@ async function getData() {
   const resources = createResourceService(spaceContext.getId());
   const [apiKeys, resource] = await Promise.all([
     getApiKeyRepo().getAll(),
-    resources.get('apiKey')
+    resources.get('apiKey'),
   ]);
 
   const canCreate = ResourceUtils.canCreate(resource);
@@ -25,7 +25,7 @@ async function getData() {
     reachedLimit: !canCreate,
     usage: resource.usage,
     apiKeys,
-    enableCreateApiKeyCreation
+    enableCreateApiKeyCreation,
   };
 }
 
@@ -39,7 +39,7 @@ export function useApiKeysState() {
     limit: undefined,
     usage: undefined,
     reachedLimit: undefined,
-    apiKeys: []
+    apiKeys: [],
   });
 
   function createAPIKey() {
@@ -49,11 +49,11 @@ export function useApiKeysState() {
 
   useEffect(() => {
     getData()
-      .then(data => {
+      .then((data) => {
         setData(data);
         setLoaded(true);
       })
-      .catch(error => {
+      .catch((error) => {
         setLoaded(true);
         ReloadNotification.apiErrorHandler(error);
       });

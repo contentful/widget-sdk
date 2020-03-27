@@ -13,12 +13,12 @@ class TemplateSelector extends React.Component {
     onToggle: PropTypes.func,
     fetchTemplates: PropTypes.func.isRequired,
     templates: PropTypes.object.isRequired,
-    formAlign: PropTypes.oneOf(['left', 'center'])
+    formAlign: PropTypes.oneOf(['left', 'center']),
   };
 
   state = {
     isShowingTemplates: false,
-    selectedTemplate: null
+    selectedTemplate: null,
   };
 
   componentDidMount() {
@@ -36,7 +36,7 @@ class TemplateSelector extends React.Component {
       'create-new-space__templates',
       {
         open: isShowingTemplates,
-        close: !isShowingTemplates
+        close: !isShowingTemplates,
       }
     );
 
@@ -46,7 +46,7 @@ class TemplateSelector extends React.Component {
       <div>
         <TemplatesToggle
           isShowingTemplates={isShowingTemplates}
-          onChange={val => this.toggle(val)}
+          onChange={(val) => this.toggle(val)}
           formAlign={formAlign}
         />
         {isPending && (
@@ -61,7 +61,7 @@ class TemplateSelector extends React.Component {
             <TemplatesList
               templates={templatesList}
               selectedTemplate={selectedTemplate}
-              onSelect={template => this.selectTemplate(template)}
+              onSelect={(template) => this.selectTemplate(template)}
             />
           </div>
         )}
@@ -96,7 +96,7 @@ class TemplateSelector extends React.Component {
 
   setInitialTemplate() {
     const {
-      templates: { templatesList }
+      templates: { templatesList },
     } = this.props;
     const { isShowingTemplates } = this.state;
     const template = get(templatesList, '[0]');

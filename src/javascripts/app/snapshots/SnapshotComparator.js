@@ -10,7 +10,7 @@ import {
   Icon,
   CheckboxField,
   FieldGroup,
-  Notification
+  Notification,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { getModule } from 'NgRegistry';
@@ -30,8 +30,8 @@ const commonCellStyles = {
   display: 'flex',
   flex: '1 0',
   '&:first-child': {
-    borderRight: '1px solid #dbdbdb'
-  }
+    borderRight: '1px solid #dbdbdb',
+  },
 };
 
 const commonOverlayStyles = {
@@ -40,19 +40,19 @@ const commonOverlayStyles = {
   top: 0,
   left: 0,
   right: 0,
-  bottom: 0
+  bottom: 0,
 };
 
 const styles = {
   workbenchContent: css({
-    padding: 0
+    padding: 0,
   }),
   actionButton: css({
-    marginLeft: tokens.spacingM
+    marginLeft: tokens.spacingM,
   }),
   header: css({
     display: 'flex',
-    backgroundColor: tokens.colorElementLightest
+    backgroundColor: tokens.colorElementLightest,
   }),
   headerCell: css({
     ...commonCellStyles,
@@ -64,18 +64,18 @@ const styles = {
       display: 'flex',
       alignItems: 'center',
       '& > input': {
-        margin: `0 ${tokens.spacingXs} 2px`
-      }
-    }
+        margin: `0 ${tokens.spacingXs} 2px`,
+      },
+    },
   }),
   cell: css({
     ...commonCellStyles,
     position: 'relative',
-    borderBottom: '1px solid #eee'
+    borderBottom: '1px solid #eee',
   }),
   selected: css({
     '& > span': {
-      display: 'inline-block !important'
+      display: 'inline-block !important',
     },
     zIndex: 151,
     border: ` 1px solid ${tokens.colorBlueMid}`,
@@ -83,28 +83,28 @@ const styles = {
     top: '-1px',
     left: '-1px',
     right: '-1px',
-    bottom: '-1px'
+    bottom: '-1px',
   }),
   cellPresenter: css({
     flexGrow: 1,
     padding: tokens.spacing3Xl,
     paddingLeft: 0,
-    maxWidth: `calc(100% - ${tokens.spacing3Xl})`
+    maxWidth: `calc(100% - ${tokens.spacing3Xl})`,
   }),
   version: css({
     color: tokens.colorTextDark,
     fontSize: tokens.fontSizeL,
     fontWeight: tokens.fontWeightDemiBold,
-    paddingRight: tokens.spacing2Xs
+    paddingRight: tokens.spacing2Xs,
   }),
   fieldLocale: css({
-    display: 'flex'
+    display: 'flex',
   }),
   fieldTitle: css({
     display: 'flex',
     color: tokens.colorTextLight,
     marginBottom: '0.642857142857143em',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   }),
   overlayDifferent: css({
     ...commonOverlayStyles,
@@ -118,12 +118,12 @@ const styles = {
       letterSpacing: '1px',
       textTransform: 'uppercase',
       background: tokens.colorBlueMid,
-      color: tokens.colorWhite
-    }
+      color: tokens.colorWhite,
+    },
   }),
   overlayIdentical: css({
     ...commonOverlayStyles,
-    background: 'rgba(255,255,255,0.75)'
+    background: 'rgba(255,255,255,0.75)',
   }),
   noPermissionInfo: css({
     marginLeft: 'auto',
@@ -131,19 +131,19 @@ const styles = {
     '& > i': {
       display: 'icon-block',
       marginRight: tokens.spacingXs,
-      fill: tokens.colorTextLight
-    }
+      fill: tokens.colorTextLight,
+    },
   }),
   radio: css({
     minWidth: tokens.spacing3Xl,
     maxWidth: tokens.spacing3Xl,
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center'
-  })
+    alignItems: 'center',
+  }),
 };
 
-const handleSaveError = error => {
+const handleSaveError = (error) => {
   if (error.code === 'VersionMismatch') {
     Notification.error('Versions do not match. Please reload the version first.');
   } else {
@@ -163,7 +163,7 @@ const SnapshotComparator = ({
   const [showOnlyDifferences, setShowOnlyDifferences] = useState(false);
   const [
     { selectedVersions, pathsToRestore },
-    { setSelectedVersionForField, setSelectAllSnapshots }
+    { setSelectedVersionForField, setSelectAllSnapshots },
   ] = useSelectedVersions({ widgets });
   const [{ enrichedWidgets, diffCount }] = useEnrichedWidgets({ widgets, getEditorData, snapshot });
 
@@ -194,7 +194,7 @@ const SnapshotComparator = ({
     const restoredSnapshot = Entries.internalToExternal(snapshot.snapshot || {}, ctData);
     const restoredResult = Entries.internalToExternal(entry.data, ctData);
 
-    pathsToRestore.forEach(path => {
+    pathsToRestore.forEach((path) => {
       path = Entries.internalPathToExternal(ctData, path);
       set(restoredResult, path, get(restoredSnapshot, path));
     });
@@ -202,7 +202,7 @@ const SnapshotComparator = ({
     return restoredResult;
   };
 
-  const onSave = async redirect => {
+  const onSave = async (redirect) => {
     const spaceContext = getModule('spaceContext');
     try {
       const restoredResult = prepareRestoredEntry();
@@ -289,7 +289,7 @@ const SnapshotComparator = ({
                 const isDisabled = field.disabled || !canEdit;
                 const canRestore = isDifferent && !isDisabled;
 
-                const onSelect = version => {
+                const onSelect = (version) => {
                   if (canRestore && isDifferent) {
                     setSelectedVersionForField(fieldPath, version);
                   }
@@ -298,7 +298,7 @@ const SnapshotComparator = ({
 
                 return (
                   <div className={styles.fieldLocale} key={fieldPath}>
-                    {[SNAPSHOT, CURRENT].map(version => {
+                    {[SNAPSHOT, CURRENT].map((version) => {
                       const isSelected = selectedFieldVersion === version;
                       return (
                         <div
@@ -373,7 +373,7 @@ SnapshotComparator.propTypes = {
   goToSnapshot: PropTypes.func.isRequired,
   redirect: PropTypes.func.isRequired,
   snapshot: PropTypes.shape({
-    snapshot: PropTypes.object
+    snapshot: PropTypes.object,
   }),
   widgets: PropTypes.arrayOf(
     PropTypes.shape({
@@ -381,19 +381,19 @@ SnapshotComparator.propTypes = {
         PropTypes.shape({
           id: PropTypes.string,
           type: PropTypes.string,
-          linkType: PropTypes.string
+          linkType: PropTypes.string,
         }),
         PropTypes.shape({
           id: PropTypes.string,
           type: PropTypes.string,
           items: PropTypes.shape({
             type: PropTypes.string,
-            linkType: PropTypes.string
-          })
-        })
-      ])
+            linkType: PropTypes.string,
+          }),
+        }),
+      ]),
     })
-  ).isRequired
+  ).isRequired,
 };
 
 export default SnapshotComparator;

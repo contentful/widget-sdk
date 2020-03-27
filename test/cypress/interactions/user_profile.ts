@@ -1,7 +1,5 @@
 import { RequestOptions } from '@pact-foundation/pact-web';
-import {
-    defaultHeader
-} from '../util/requests';
+import { defaultHeader } from '../util/requests';
 
 const defaultData = require('../fixtures/responses/user_account/default-data.json');
 const identityLoginData = require('../fixtures/responses/user_account/identity-login-user-data.json');
@@ -16,346 +14,344 @@ const verify2FASuccess = require('../fixtures/responses/user_account/2fa-verify-
 const verify2FAFail = require('../fixtures/responses/user_account/2fa-verify-fail.json');
 
 const userProfileHeader = {
-    ...defaultHeader,
-    "CONTENT-TYPE": "application/vnd.contentful.management.v1+json"
-}
+  ...defaultHeader,
+  'CONTENT-TYPE': 'application/vnd.contentful.management.v1+json',
+};
 
 function queryUserProfileDataRequest(): RequestOptions {
-    return {
-        method: 'GET',
-        path: `/users/me`,
-        headers: defaultHeader,
-        query: { profile: '' }
-    };
+  return {
+    method: 'GET',
+    path: `/users/me`,
+    headers: defaultHeader,
+    query: { profile: '' },
+  };
 }
 
 export const getUserProfileData = {
-    willReturnDefault() {
-        cy.addInteraction({
-            provider: 'user_profile',
-            state: 'user profile default login',
-            uponReceiving: `a request to get the user profile data`,
-            withRequest: queryUserProfileDataRequest(),
-            willRespondWith: {
-                status: 200,
-                body: defaultData
-            }
-        }).as('getDefaultUserProfileData');
+  willReturnDefault() {
+    cy.addInteraction({
+      provider: 'user_profile',
+      state: 'user profile default login',
+      uponReceiving: `a request to get the user profile data`,
+      withRequest: queryUserProfileDataRequest(),
+      willRespondWith: {
+        status: 200,
+        body: defaultData,
+      },
+    }).as('getDefaultUserProfileData');
 
-        return '@getDefaultUserProfileData';
-    },
-    willReturnIdentityLoginUser() {
+    return '@getDefaultUserProfileData';
+  },
+  willReturnIdentityLoginUser() {
+    cy.addInteraction({
+      provider: 'user_profile',
+      state: 'user profile identity login',
+      uponReceiving: `a request to get the user profile data for user with identity login only`,
+      withRequest: queryUserProfileDataRequest(),
+      willRespondWith: {
+        status: 200,
+        body: identityLoginData,
+      },
+    }).as('getIdentityLoginUserProfileData');
 
-        cy.addInteraction({
-            provider: 'user_profile',
-            state: 'user profile identity login',
-            uponReceiving: `a request to get the user profile data for user with identity login only`,
-            withRequest: queryUserProfileDataRequest(),
-            willRespondWith: {
-                status: 200,
-                body: identityLoginData
-            }
-        }).as('getIdentityLoginUserProfileData');
+    return '@getIdentityLoginUserProfileData';
+  },
+  willReturnUserWithTwoFA() {
+    cy.addInteraction({
+      provider: 'user_profile',
+      state: 'user 2FA enabled',
+      uponReceiving: 'a request to get the user profile data for user with 2FA enabled',
+      withRequest: queryUserProfileDataRequest(),
+      willRespondWith: {
+        status: 200,
+        body: twoFAData,
+      },
+    }).as('getTwoFAEnabledUserProfileData');
 
-        return '@getIdentityLoginUserProfileData';
-    },
-    willReturnUserWithTwoFA() {
-
-        cy.addInteraction({
-            provider: 'user_profile',
-            state: 'user 2FA enabled',
-            uponReceiving: 'a request to get the user profile data for user with 2FA enabled',
-            withRequest: queryUserProfileDataRequest(),
-            willRespondWith: {
-                status: 200,
-                body: twoFAData
-            }
-        }).as('getTwoFAEnabledUserProfileData');
-
-        return '@getTwoFAEnabledUserProfileData';
-    }
+    return '@getTwoFAEnabledUserProfileData';
+  },
 };
 
 function queryUserProfileUpdateRequest(body): RequestOptions {
-    return {
-        method: 'PUT',
-        path: `/users/me`,
-        headers: { ...userProfileHeader, "X-Contentful-Version": "1" },
-        body
-    };
+  return {
+    method: 'PUT',
+    path: `/users/me`,
+    headers: { ...userProfileHeader, 'X-Contentful-Version': '1' },
+    body,
+  };
 }
 
 export const updateDefaultUserProfileData = {
-    willReturnSuccess() {
-        cy.addInteraction({
-            provider: 'user_profile',
-            state: 'user profile default login',
-            uponReceiving: `a request to update the user profile data`,
-            withRequest: queryUserProfileUpdateRequest({
-                firstName: "NewFirstName",
-                lastName: "NewLastName",
-                email: "new-email@example.com",
-                currentPassword: "test12345",
-                logAnalyticsFeature: ""
-            }),
-            willRespondWith: {
-                status: 200,
-                body: updateDefaultData
-            }
-        }).as('updateSuccessDefaultUserProfileData');
+  willReturnSuccess() {
+    cy.addInteraction({
+      provider: 'user_profile',
+      state: 'user profile default login',
+      uponReceiving: `a request to update the user profile data`,
+      withRequest: queryUserProfileUpdateRequest({
+        firstName: 'NewFirstName',
+        lastName: 'NewLastName',
+        email: 'new-email@example.com',
+        currentPassword: 'test12345',
+        logAnalyticsFeature: '',
+      }),
+      willRespondWith: {
+        status: 200,
+        body: updateDefaultData,
+      },
+    }).as('updateSuccessDefaultUserProfileData');
 
-        return '@updateSuccessDefaultUserProfileData';
-    },
-    willReturnError() {
-        cy.addInteraction({
-            provider: 'user_profile',
-            state: 'user profile default login',
-            uponReceiving: `a request to update the user profile data with wrong password`,
-            withRequest: queryUserProfileUpdateRequest({
-                email: "new-email@example.com",
-                firstName: "NewFirstName",
-                lastName: "NewLastName",
-                logAnalyticsFeature: "",
-                currentPassword: "invalid-current-password"
-            }),
-            willRespondWith: {
-                status: 422,
-                body: invalidCurrentPasswordData
-            }
-        }).as('updateWithErrorDefaultUserProfileData');
+    return '@updateSuccessDefaultUserProfileData';
+  },
+  willReturnError() {
+    cy.addInteraction({
+      provider: 'user_profile',
+      state: 'user profile default login',
+      uponReceiving: `a request to update the user profile data with wrong password`,
+      withRequest: queryUserProfileUpdateRequest({
+        email: 'new-email@example.com',
+        firstName: 'NewFirstName',
+        lastName: 'NewLastName',
+        logAnalyticsFeature: '',
+        currentPassword: 'invalid-current-password',
+      }),
+      willRespondWith: {
+        status: 422,
+        body: invalidCurrentPasswordData,
+      },
+    }).as('updateWithErrorDefaultUserProfileData');
 
-        return '@updateWithErrorDefaultUserProfileData';
-    }
+    return '@updateWithErrorDefaultUserProfileData';
+  },
 };
 
 function queryChangePasswordRequest(body): RequestOptions {
-    return {
-        method: 'PUT',
-        path: `/users/me`,
-        headers: { ...userProfileHeader, "X-Contentful-Version": "1" },
-        body
-    };
+  return {
+    method: 'PUT',
+    path: `/users/me`,
+    headers: { ...userProfileHeader, 'X-Contentful-Version': '1' },
+    body,
+  };
 }
 export const addPassword = {
-    willReturnSuccess() {
-        cy.addInteraction({
-            provider: 'user_profile',
-            state: 'user profile identity login',
-            uponReceiving: `a request to add account password with valid password`,
-            withRequest: queryChangePasswordRequest({
-                password: "new-password"
-            }),
-            willRespondWith: {
-                status: 200,
-                body: updateIdentityLoginData
-            }
-        }).as('addPasswordSuccess');
+  willReturnSuccess() {
+    cy.addInteraction({
+      provider: 'user_profile',
+      state: 'user profile identity login',
+      uponReceiving: `a request to add account password with valid password`,
+      withRequest: queryChangePasswordRequest({
+        password: 'new-password',
+      }),
+      willRespondWith: {
+        status: 200,
+        body: updateIdentityLoginData,
+      },
+    }).as('addPasswordSuccess');
 
-        return '@addPasswordSuccess';
-    },
-    willReturnError() {
-        cy.addInteraction({
-            provider: 'user_profile',
-            state: 'user profile identity login',
-            uponReceiving: `a request to add account password with insecure password`,
-            withRequest: queryChangePasswordRequest({
-                password: "password"
-            }),
-            willRespondWith: {
-                status: 422,
-                body: insecureNewPasswordData
-            }
-        }).as('addPasswordError');
+    return '@addPasswordSuccess';
+  },
+  willReturnError() {
+    cy.addInteraction({
+      provider: 'user_profile',
+      state: 'user profile identity login',
+      uponReceiving: `a request to add account password with insecure password`,
+      withRequest: queryChangePasswordRequest({
+        password: 'password',
+      }),
+      willRespondWith: {
+        status: 422,
+        body: insecureNewPasswordData,
+      },
+    }).as('addPasswordError');
 
-        return '@addPasswordError';
-    }
+    return '@addPasswordError';
+  },
 };
 
 export const changePassword = {
-    willReturnSuccess() {
-        cy.addInteraction({
-            provider: 'user_profile',
-            state: 'user profile default login',
-            uponReceiving: `a request to change account password with valid password`,
-            withRequest: queryChangePasswordRequest({
-                currentPassword: "test12345",
-                password: "new-password"
-            }),
-            willRespondWith: {
-                status: 200,
-                body: updatePasswordDefaultData
-            }
-        }).as('changePasswordSuccess');
+  willReturnSuccess() {
+    cy.addInteraction({
+      provider: 'user_profile',
+      state: 'user profile default login',
+      uponReceiving: `a request to change account password with valid password`,
+      withRequest: queryChangePasswordRequest({
+        currentPassword: 'test12345',
+        password: 'new-password',
+      }),
+      willRespondWith: {
+        status: 200,
+        body: updatePasswordDefaultData,
+      },
+    }).as('changePasswordSuccess');
 
-        return '@changePasswordSuccess';
-    },
-    willReturnError() {
-        cy.addInteraction({
-            provider: 'user_profile',
-            state: 'user profile default login',
-            uponReceiving: `a request to change account password with insecure password`,
-            withRequest: queryChangePasswordRequest({
-                currentPassword: "test12345",
-                password: "password"
-            }),
-            willRespondWith: {
-                status: 422,
-                body: insecureNewPasswordData
-            }
-        }).as('changePasswordError');
+    return '@changePasswordSuccess';
+  },
+  willReturnError() {
+    cy.addInteraction({
+      provider: 'user_profile',
+      state: 'user profile default login',
+      uponReceiving: `a request to change account password with insecure password`,
+      withRequest: queryChangePasswordRequest({
+        currentPassword: 'test12345',
+        password: 'password',
+      }),
+      willRespondWith: {
+        status: 422,
+        body: insecureNewPasswordData,
+      },
+    }).as('changePasswordError');
 
-        return '@changePasswordError';
-    }
+    return '@changePasswordError';
+  },
 };
 
 function queryIdentityDeleteRequest(): RequestOptions {
-    return {
-        method: 'DELETE',
-        path: `/users/me/identities/3035`,
-        headers: defaultHeader
-    };
+  return {
+    method: 'DELETE',
+    path: `/users/me/identities/3035`,
+    headers: defaultHeader,
+  };
 }
 
 export const deleteIdentity = {
-    willReturnIt() {
-        cy.addInteraction({
-            provider: 'user_profile',
-            state: 'user profile default login',
-            uponReceiving: `a request to delete a user identity`,
-            withRequest: queryIdentityDeleteRequest(),
-            willRespondWith: {
-                status: 204
-            }
-        }).as('deleteIdentity');
+  willReturnIt() {
+    cy.addInteraction({
+      provider: 'user_profile',
+      state: 'user profile default login',
+      uponReceiving: `a request to delete a user identity`,
+      withRequest: queryIdentityDeleteRequest(),
+      willRespondWith: {
+        status: 204,
+      },
+    }).as('deleteIdentity');
 
-        return '@deleteIdentity';
-    }
+    return '@deleteIdentity';
+  },
 };
 
 function queryDeleteUserAccount(): RequestOptions {
-    return {
-        method: 'POST',
-        path: '/users/me/user_cancellations',
-        headers: { ...defaultHeader, "CONTENT-TYPE": "application/vnd.contentful.management.v1+json" },
-        body: {
-            "reason": "other",
-            "description": ""
-        }
-    };
+  return {
+    method: 'POST',
+    path: '/users/me/user_cancellations',
+    headers: { ...defaultHeader, 'CONTENT-TYPE': 'application/vnd.contentful.management.v1+json' },
+    body: {
+      reason: 'other',
+      description: '',
+    },
+  };
 }
 
 export const deleteUserAccount = {
-    willReturnIt() {
-        cy.addInteraction({
-            provider: 'user_profile',
-            state: 'user profile default login',
-            uponReceiving: `a request to delete the user account`,
-            withRequest: queryDeleteUserAccount(),
-            willRespondWith: {
-                status: 201
-            }
-        }).as('deleteUserAccount');
+  willReturnIt() {
+    cy.addInteraction({
+      provider: 'user_profile',
+      state: 'user profile default login',
+      uponReceiving: `a request to delete the user account`,
+      withRequest: queryDeleteUserAccount(),
+      willRespondWith: {
+        status: 201,
+      },
+    }).as('deleteUserAccount');
 
-        return '@deleteUserAccount';
-    }
+    return '@deleteUserAccount';
+  },
 };
 
 function queryPostTwoFA(): RequestOptions {
-    return {
-        method: 'POST',
-        path: '/users/me/mfa/totp',
-        headers: {
-            ...defaultHeader,
-            "CONTENT-TYPE": "application/vnd.contentful.management.v1+json",
-            'X-Contentful-Enable-Alpha-Feature': 'mfa-api'
-        },
-        body: {}
-    }
+  return {
+    method: 'POST',
+    path: '/users/me/mfa/totp',
+    headers: {
+      ...defaultHeader,
+      'CONTENT-TYPE': 'application/vnd.contentful.management.v1+json',
+      'X-Contentful-Enable-Alpha-Feature': 'mfa-api',
+    },
+    body: {},
+  };
 }
 
 export const getTwoFAData = {
-    willReturnIt() {
-        cy.addInteraction({
-            provider: 'user_profile',
-            state: 'user 2FA eligible',
-            uponReceiving: `a request to get data for 2FA`,
-            withRequest: queryPostTwoFA(),
-            willRespondWith: {
-                status: 201,
-                body: {}
-            }
-        }).as('deleteUserAccount');
+  willReturnIt() {
+    cy.addInteraction({
+      provider: 'user_profile',
+      state: 'user 2FA eligible',
+      uponReceiving: `a request to get data for 2FA`,
+      withRequest: queryPostTwoFA(),
+      willRespondWith: {
+        status: 201,
+        body: {},
+      },
+    }).as('deleteUserAccount');
 
-        return '@deleteUserAccount';
-    }
+    return '@deleteUserAccount';
+  },
 };
 
 function queryPutTwoFA(body): RequestOptions {
-    return {
-        method: 'PUT',
-        path: '/users/me/mfa/totp/verify',
-        headers: {
-            ...defaultHeader,
-            "CONTENT-TYPE": "application/vnd.contentful.management.v1+json",
-            'X-Contentful-Enable-Alpha-Feature': 'mfa-api'
-        },
-        body
-    }
+  return {
+    method: 'PUT',
+    path: '/users/me/mfa/totp/verify',
+    headers: {
+      ...defaultHeader,
+      'CONTENT-TYPE': 'application/vnd.contentful.management.v1+json',
+      'X-Contentful-Enable-Alpha-Feature': 'mfa-api',
+    },
+    body,
+  };
 }
 
 export const verifyTwoFAData = {
-    willReturnSuccess() {
-        cy.addInteraction({
-            provider: 'user_profile',
-            state: 'user with 2FA not yet enabled',
-            uponReceiving: `a request to verify 2FA setup`,
-            withRequest: queryPutTwoFA({ totpCode: "123456" }),
-            willRespondWith: {
-                status: 200,
-                body: verify2FASuccess
-            }
-        }).as('verifyTwoFASuccess');
+  willReturnSuccess() {
+    cy.addInteraction({
+      provider: 'user_profile',
+      state: 'user with 2FA not yet enabled',
+      uponReceiving: `a request to verify 2FA setup`,
+      withRequest: queryPutTwoFA({ totpCode: '123456' }),
+      willRespondWith: {
+        status: 200,
+        body: verify2FASuccess,
+      },
+    }).as('verifyTwoFASuccess');
 
-        return '@verifyTwoFASuccess';
-    },
-    willReturnFail() {
-        cy.addInteraction({
-            provider: 'user_profile',
-            state: 'user with 2FA not yet enabled',
-            uponReceiving: `a request to verify 2FA setup with invalid code`,
-            withRequest: queryPutTwoFA({ totpCode: "111111" }),
-            willRespondWith: {
-                status: 422,
-                body: verify2FAFail
-            }
-        }).as('verifyTwoFAFail');
+    return '@verifyTwoFASuccess';
+  },
+  willReturnFail() {
+    cy.addInteraction({
+      provider: 'user_profile',
+      state: 'user with 2FA not yet enabled',
+      uponReceiving: `a request to verify 2FA setup with invalid code`,
+      withRequest: queryPutTwoFA({ totpCode: '111111' }),
+      willRespondWith: {
+        status: 422,
+        body: verify2FAFail,
+      },
+    }).as('verifyTwoFAFail');
 
-        return '@verifyTwoFAFail';
-    }
+    return '@verifyTwoFAFail';
+  },
 };
 
 function queryDeleteTwoFA(): RequestOptions {
-    return {
-        method: 'DELETE',
-        path: '/users/me/mfa/totp',
-        headers: {
-            ...defaultHeader,
-            'X-Contentful-Enable-Alpha-Feature': 'mfa-api'
-        }
-    }
+  return {
+    method: 'DELETE',
+    path: '/users/me/mfa/totp',
+    headers: {
+      ...defaultHeader,
+      'X-Contentful-Enable-Alpha-Feature': 'mfa-api',
+    },
+  };
 }
 
 export const deleteTwoFA = {
-    willReturnSuccess() {
-        cy.addInteraction({
-            provider: 'user_profile',
-            state: 'user 2FA enabled',
-            uponReceiving: 'a request to delete 2FA',
-            withRequest: queryDeleteTwoFA(),
-            willRespondWith: {
-                status: 204
-            }
-        }).as('deleteTwoFA');
-        return '@deleteTwoFA';
-    }
-}
+  willReturnSuccess() {
+    cy.addInteraction({
+      provider: 'user_profile',
+      state: 'user 2FA enabled',
+      uponReceiving: 'a request to delete 2FA',
+      withRequest: queryDeleteTwoFA(),
+      willRespondWith: {
+        status: 204,
+      },
+    }).as('deleteTwoFA');
+    return '@deleteTwoFA';
+  },
+};

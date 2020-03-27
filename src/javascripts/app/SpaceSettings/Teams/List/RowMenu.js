@@ -17,7 +17,7 @@ const RowMenu = ({ setEditing, onRemove }) => (
 
 RowMenu.propTypes = {
   setEditing: PropTypes.func.isRequired,
-  onRemove: PropTypes.func.isRequired
+  onRemove: PropTypes.func.isRequired,
 };
 
 export default RowMenu;

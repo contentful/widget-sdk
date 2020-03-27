@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 
 import * as echarts from 'echarts';
 
-export const useChart = props => {
+export const useChart = (props) => {
   const chartRef = useRef();
   const [chart, setChart] = useState(null);
 

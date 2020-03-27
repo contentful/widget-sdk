@@ -23,7 +23,7 @@ export default function create(id, type = 'space') {
     const organization = await getTokenOrganization(id, type);
     const apiFeatureId = snakeCase(featureId);
     const allFeatures = await getAll(organization);
-    return allFeatures.some(feature => feature.sys.id === apiFeatureId);
+    return allFeatures.some((feature) => feature.sys.id === apiFeatureId);
   }
 
   async function getAll() {
@@ -40,15 +40,17 @@ export default function create(id, type = 'space') {
 
 function getFeaturesFromToken(organization) {
   const featuresHash = get(organization, 'subscriptionPlan.limits.features', {});
-  const enabledFeatureIds = Object.keys(featuresHash).filter(featureId => featuresHash[featureId]);
+  const enabledFeatureIds = Object.keys(featuresHash).filter(
+    (featureId) => featuresHash[featureId]
+  );
 
   // Make feature consistent with API Feature object
-  const features = enabledFeatureIds.map(featureId => {
+  const features = enabledFeatureIds.map((featureId) => {
     return {
       sys: {
         type: 'Feature',
-        id: snakeCase(featureId)
-      }
+        id: snakeCase(featureId),
+      },
     };
   });
 

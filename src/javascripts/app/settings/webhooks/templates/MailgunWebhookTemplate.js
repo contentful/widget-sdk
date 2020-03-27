@@ -19,7 +19,7 @@ export default {
       name: 'contentTypeId',
       type: 'content-type-selector',
       title: 'Content type',
-      description: <p>Select the content type of the entries triggering the webhook.</p>
+      description: <p>Select the content type of the entries triggering the webhook.</p>,
     },
     {
       name: 'domain',
@@ -33,19 +33,19 @@ export default {
           </a>
           .
         </p>
-      )
+      ),
     },
     {
       name: 'from',
       type: 'text',
       title: 'Email address of the sender',
-      description: <p>Notifications will be sent from this email address.</p>
+      description: <p>Notifications will be sent from this email address.</p>,
     },
     {
       name: 'to',
       type: 'text',
       title: 'Email address of the recipient',
-      description: <p>Email address you want to notify.</p>
+      description: <p>Email address you want to notify.</p>,
     },
 
     {
@@ -63,12 +63,12 @@ export default {
           </a>
           . This value can’t be revealed once stored.
         </p>
-      )
-    }
+      ),
+    },
   ],
   mapParamsToDefinition: (params, name, templateContentTypes) => {
     const { contentTypeId, domain, from, to, apiKey } = params;
-    const contentType = templateContentTypes.find(ct => ct.id === contentTypeId);
+    const contentType = templateContentTypes.find((ct) => ct.id === contentTypeId);
     const subject = `Published a new ${contentType.name}: { ${contentType.titlePointer} }`;
     const text = `${subject}\n\nClick to open: ${contentType.appUrlPointers}`;
 
@@ -78,19 +78,19 @@ export default {
       topics: ['Entry.publish'],
       filters: [
         { equals: [{ doc: 'sys.environment.sys.id' }, 'master'] },
-        { equals: [{ doc: 'sys.contentType.sys.id' }, contentType.id] }
+        { equals: [{ doc: 'sys.contentType.sys.id' }, contentType.id] },
       ],
       headers: [
         {
           key: 'Authorization',
           value: 'Basic ' + base64safe(['api', apiKey].join(':')),
-          secret: true
-        }
+          secret: true,
+        },
       ],
       transformation: {
         contentType: 'application/x-www-form-urlencoded',
-        body: JSON.stringify({ from, to, subject, text })
-      }
+        body: JSON.stringify({ from, to, subject, text }),
+      },
     };
-  }
+  },
 };

@@ -1,7 +1,7 @@
-beforeEach(function() {
+beforeEach(function () {
   window.$$currentSpec = this;
 });
 
-afterEach(function() {
+afterEach(function () {
   window.$$currentSpec = undefined;
 });

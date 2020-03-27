@@ -79,7 +79,7 @@ describe('DefaultWidget', () => {
   });
 
   it('returns default widget ID for each known field type', () => {
-    FIELD_TYPES.forEach(type => {
+    FIELD_TYPES.forEach((type) => {
       const id = getDefaultWidgetId(toApiFieldType(type), 'displayfieldid');
       expect(id).toBe(DEFAULTS[type]);
     });

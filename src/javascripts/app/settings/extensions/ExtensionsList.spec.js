@@ -24,45 +24,42 @@ describe('app/settings/extensions/Extensions', () => {
       parameterCounts: {
         instanceDefinitions: 1,
         installationDefinitions: 1,
-        installationValues: 0
-      }
+        installationValues: 0,
+      },
     },
     {
       id: 'test',
       name: 'Widget 1',
       fieldTypes: 'Number',
       hosting: 'self-hosted',
-      parameterCounts: {}
+      parameterCounts: {},
     },
     {
       id: 'test2',
       name: 'Widget 2',
       fieldTypes: 'Symbol, Text',
       hosting: 'self-hosted',
-      parameterCounts: {}
-    }
+      parameterCounts: {},
+    },
   ];
 
-  it('shows empty message', function() {
+  it('shows empty message', function () {
     expect.assertions(1);
     const wrapper = mount();
     expect(wrapper.exists("[data-test-id='extensions.empty']")).toEqual(true);
   });
 
-  it('navigates to single extension', function() {
+  it('navigates to single extension', function () {
     expect.assertions(2);
 
     const wrapper = mount(extensions);
 
     expect($stateMocked.go).not.toHaveBeenCalled();
-    wrapper
-      .find('a')
-      .first()
-      .simulate('click');
+    wrapper.find('a').first().simulate('click');
     expect($stateMocked.go).toHaveBeenCalled();
   });
 
-  it('lists extensions', function() {
+  it('lists extensions', function () {
     const wrapper = mount(extensions);
 
     expect(wrapper.find("[data-test-id='extensions.list']")).toHaveLength(1);
@@ -74,11 +71,7 @@ describe('app/settings/extensions/Extensions', () => {
     const secondRow = rows.find('tr').at(1);
     const thirdRow = rows.find('tr').at(2);
 
-    const getColText = (row, index) =>
-      row
-        .children()
-        .at(index)
-        .text();
+    const getColText = (row, index) => row.children().at(index).text();
 
     // name
     expect(getColText(firstRow, 0)).toEqual('hello');

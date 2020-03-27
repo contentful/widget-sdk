@@ -8,11 +8,11 @@ const styles = {
     marginBottom: tokens.spacingL,
     ul: {
       marginLeft: tokens.spacingM,
-      color: tokens.colorTextMid
+      color: tokens.colorTextMid,
     },
     li: {
-      listStyle: 'disc'
-    }
+      listStyle: 'disc',
+    },
   }),
   title: css({
     fontSize: tokens.fontSizeS,
@@ -22,8 +22,8 @@ const styles = {
     borderBottom: `1px solid ${tokens.colorElementDark}`,
     color: tokens.colorTextLight,
     marginBottom: tokens.spacingM,
-    textTransform: 'uppercase'
-  })
+    textTransform: 'uppercase',
+  }),
 };
 
 export default function WorkbenchSidebarItem(props) {
@@ -37,5 +37,5 @@ export default function WorkbenchSidebarItem(props) {
 
 WorkbenchSidebarItem.propTypes = {
   title: PropTypes.string.isRequired,
-  testId: PropTypes.string
+  testId: PropTypes.string,
 };

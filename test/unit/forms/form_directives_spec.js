@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import { $initialize, $inject, $apply } from 'test/utils/ng';
 
 describe('cfOnSubmit', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     await $initialize(this.system);
 
     const $compile = $inject('$compile');
@@ -14,13 +14,13 @@ describe('cfOnSubmit', () => {
   });
 
   describe('form.submit()', () => {
-    it('sets showErrors to true', function() {
+    it('sets showErrors to true', function () {
       expect(this.formController.showErrors).toBeUndefined();
       this.formController.submit();
       expect(this.formController.showErrors).toBe(true);
     });
 
-    it('evaluates the attribute expression', function() {
+    it('evaluates the attribute expression', function () {
       this.scope.submit = sinon.stub();
       this.formController.submit();
       $apply();
@@ -30,7 +30,7 @@ describe('cfOnSubmit', () => {
 });
 
 describe('cfFormSubmit', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     await $initialize(this.system);
     const $compile = $inject('$compile');
     this.scope = $inject('$rootScope').$new();
@@ -41,7 +41,7 @@ describe('cfFormSubmit', () => {
     this.form = this.element.controller('form');
   });
 
-  it('calls form.submit() when clicked', function() {
+  it('calls form.submit() when clicked', function () {
     this.scope.submit = sinon.stub();
     this.button.click();
     $apply();

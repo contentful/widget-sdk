@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 const messages = {
-  size: function(error) {
+  size: function (error) {
     if (_.isString(error.value)) {
       return stringLengthMessage(error.min, error.max);
     } else {
@@ -9,7 +9,7 @@ const messages = {
     }
   },
 
-  range: function(error) {
+  range: function (error) {
     if (_.isNumber(error.min) && _.isNumber(error.max)) {
       return 'Please enter a number between ' + error.min + ' and ' + error.max;
     } else if (_.isNumber(error.min)) {
@@ -19,19 +19,19 @@ const messages = {
     }
   },
 
-  regexp: function() {
+  regexp: function () {
     return 'Input does not match the expected format. Please edit and try again.';
   },
 
-  prohibitRegexp: function() {
+  prohibitRegexp: function () {
     return 'Input does not match the expected format. Please edit and try again.';
   },
 
-  in: function(error) {
+  in: function (error) {
     return 'Must be one of ' + error.expected.join(', ') + '.';
   },
 
-  required: function(error) {
+  required: function (error) {
     if (error.path.length === 1 && error.path[0] === 'fields') {
       return 'All fields are empty. Please fill out some fields.';
     } else {
@@ -39,13 +39,13 @@ const messages = {
     }
   },
 
-  unique: function(error) {
+  unique: function (error) {
     if (error.conflicting.length > 1) {
       return 'There are already entries with the same ${fieldName} field';
     } else {
       return "There's already an entry with the same ${fieldName} field";
     }
-  }
+  },
 };
 
 function stringLengthMessage(min, max) {

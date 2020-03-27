@@ -9,14 +9,14 @@ class LocaleSelectDialog extends React.Component {
     initialLocales: PropTypes.array,
     onClose: PropTypes.func,
     onUpdate: PropTypes.func,
-    isShown: PropTypes.bool
+    isShown: PropTypes.bool,
   };
 
   state = {
     locales: this.props.initialLocales,
     selectAllToggle:
-      this.props.initialLocales.filter(locale => locale.active).length >=
-      this.props.initialLocales.length
+      this.props.initialLocales.filter((locale) => locale.active).length >=
+      this.props.initialLocales.length,
   };
 
   handleConfirm = () => {
@@ -30,23 +30,23 @@ class LocaleSelectDialog extends React.Component {
     this.setState({
       selectAllToggle: active,
       locales: [
-        ...this.state.locales.map(locale => (locale.default ? locale : { ...locale, active }))
-      ]
+        ...this.state.locales.map((locale) => (locale.default ? locale : { ...locale, active })),
+      ],
     });
   };
 
   handleChangeLocale(locale) {
     this.setState({
       locales: [
-        ...this.state.locales.map(initialLocale =>
+        ...this.state.locales.map((initialLocale) =>
           initialLocale.code === locale.code
             ? {
                 ...locale,
-                active: !initialLocale.active
+                active: !initialLocale.active,
               }
             : initialLocale
-        )
-      ]
+        ),
+      ],
     });
   }
 
@@ -87,7 +87,7 @@ class LocaleSelectDialog extends React.Component {
             </div>
           )}
           <ul>
-            {_.orderBy(this.state.locales, ['default', 'name'], ['desc', 'asc']).map(locale =>
+            {_.orderBy(this.state.locales, ['default', 'name'], ['desc', 'asc']).map((locale) =>
               this.renderLocaleField(locale)
             )}
           </ul>
@@ -105,7 +105,7 @@ class LocaleSelectDialog extends React.Component {
   }
 }
 
-const LocaleSelectDialogModal = props => (
+const LocaleSelectDialogModal = (props) => (
   <Modal isShown={props.isShown} onClose={props.onClose} testId="locale-select-dialog">
     {() => (
       <LocaleSelectDialog
@@ -121,7 +121,7 @@ LocaleSelectDialogModal.propTypes = {
   initialLocales: PropTypes.array,
   onClose: PropTypes.func,
   onUpdate: PropTypes.func,
-  isShown: PropTypes.bool
+  isShown: PropTypes.bool,
 };
 
 export default LocaleSelectDialogModal;

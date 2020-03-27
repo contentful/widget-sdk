@@ -5,9 +5,9 @@ import LocalesListSidebar from './LocalesListSidebar';
 import * as $stateMocked from 'ng/$state';
 
 describe('settings/locales/LocalesListSidebar', () => {
-  const renderComponent = props => {
+  const renderComponent = (props) => {
     const stubs = {
-      upgradeSpace: jest.fn()
+      upgradeSpace: jest.fn(),
     };
     const { queryByTestId } = render(
       <LocalesListSidebar
@@ -16,7 +16,7 @@ describe('settings/locales/LocalesListSidebar', () => {
         subscriptionState={{
           path: ['account', 'organizations', 'subscription_new'],
           params: { orgId: '34NUQUZd5pA4mKLzDKGBWy' },
-          options: { replace: true }
+          options: { replace: true },
         }}
         {...props}
       />
@@ -29,7 +29,7 @@ describe('settings/locales/LocalesListSidebar', () => {
       usagesSection: queryByTestId('locales-usage'),
       changeSpaceSection: queryByTestId('change-space-block'),
       upgradeSpaceButton: queryByTestId('locales-change'),
-      stubs
+      stubs,
     };
   };
 
@@ -46,16 +46,16 @@ describe('settings/locales/LocalesListSidebar', () => {
           addLocaleButton,
           documentationSection,
           usagesSection,
-          upgradeSpaceButton
+          upgradeSpaceButton,
         } = renderComponent({
           insideMasterEnv: false,
           canChangeSpace: false,
           localeResource: {
             usage: 1,
             limits: {
-              maximum: 2
-            }
-          }
+              maximum: 2,
+            },
+          },
         });
         expect(addLocaleButton).toHaveTextContent('Add Locale');
 
@@ -77,7 +77,7 @@ describe('settings/locales/LocalesListSidebar', () => {
           documentationSection,
           addLocaleButton,
           upgradeSpaceButton,
-          usagesSection
+          usagesSection,
         } = renderComponent({
           allowedToEnforceLimits: true,
           insideMasterEnv: false,
@@ -85,9 +85,9 @@ describe('settings/locales/LocalesListSidebar', () => {
           localeResource: {
             usage: 2,
             limits: {
-              maximum: 2
-            }
-          }
+              maximum: 2,
+            },
+          },
         });
 
         expect(documentationSection).toBeInTheDocument();
@@ -112,16 +112,16 @@ describe('settings/locales/LocalesListSidebar', () => {
           documentationSection,
           usagesSection,
           upgradeSpaceButton,
-          changeSpaceSection
+          changeSpaceSection,
         } = renderComponent({
           insideMasterEnv: true,
           canChangeSpace: false,
           localeResource: {
             usage: 1,
             limits: {
-              maximum: 2
-            }
-          }
+              maximum: 2,
+            },
+          },
         });
         expect(documentationSection).toBeInTheDocument();
         expect(addLocaleButton).toHaveTextContent('Add Locale');
@@ -146,9 +146,9 @@ describe('settings/locales/LocalesListSidebar', () => {
           localeResource: {
             usage: 2,
             limits: {
-              maximum: 2
-            }
-          }
+              maximum: 2,
+            },
+          },
         });
         expect(documentationSection).toBeInTheDocument();
         expect(addLocaleButton).not.toBeInTheDocument();
@@ -169,9 +169,9 @@ describe('settings/locales/LocalesListSidebar', () => {
           localeResource: {
             usage: 1,
             limits: {
-              maximum: 1
-            }
-          }
+              maximum: 1,
+            },
+          },
         });
         expect(documentationSection).toBeInTheDocument();
         expect(addLocaleButton).not.toBeInTheDocument();
@@ -189,16 +189,16 @@ describe('settings/locales/LocalesListSidebar', () => {
           documentationSection,
           addLocaleButton,
           upgradeSpaceButton,
-          usagesSection
+          usagesSection,
         } = renderComponent({
           insideMasterEnv: true,
           canChangeSpace: false,
           localeResource: {
             usage: 2,
             limits: {
-              maximum: 2
-            }
-          }
+              maximum: 2,
+            },
+          },
         });
         expect(documentationSection).toBeInTheDocument();
         expect(addLocaleButton).not.toBeInTheDocument();
@@ -217,16 +217,16 @@ describe('settings/locales/LocalesListSidebar', () => {
           documentationSection,
           addLocaleButton,
           upgradeSpaceButton,
-          usagesSection
+          usagesSection,
         } = renderComponent({
           insideMasterEnv: true,
           canChangeSpace: false,
           localeResource: {
             usage: 1,
             limits: {
-              maximum: 1
-            }
-          }
+              maximum: 1,
+            },
+          },
         });
         expect(documentationSection).toBeInTheDocument();
         expect(addLocaleButton).not.toBeInTheDocument();
@@ -249,9 +249,9 @@ describe('settings/locales/LocalesListSidebar', () => {
         localeResource: {
           usage: 1,
           limits: {
-            maximum: 2
-          }
-        }
+            maximum: 2,
+          },
+        },
       });
 
       expect(documentationLink.getAttribute('href')).toContain(

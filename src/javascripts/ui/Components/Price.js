@@ -19,7 +19,7 @@ Price.propTypes = {
   currency: PropTypes.string.isRequired,
   unit: PropTypes.string,
   style: PropTypes.object,
-  testId: PropTypes.string
+  testId: PropTypes.string,
 };
 
 Price.defaultProps = {
@@ -27,7 +27,7 @@ Price.defaultProps = {
   currency: '$',
   unit: null,
   style: null,
-  testId: null
+  testId: null,
 };
 
 export default Price;

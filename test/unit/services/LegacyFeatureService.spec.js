@@ -5,7 +5,7 @@ import { it } from 'test/utils/dsl';
 import { $initialize } from 'test/utils/ng';
 
 describe('Legacy Feature Service', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     this.mocks = {
       legacyOrganization: null,
       organization: {
@@ -13,15 +13,15 @@ describe('Legacy Feature Service', () => {
           limits: {
             features: {
               customRoles: true,
-              multipleLocales: false
-            }
-          }
-        }
-      }
+              multipleLocales: false,
+            },
+          },
+        },
+      },
     };
 
     this.mocks.space = {
-      organization: this.mocks.organization
+      organization: this.mocks.organization,
     };
 
     this.stubs = {};
@@ -30,7 +30,7 @@ describe('Legacy Feature Service', () => {
     this.system.set('utils/ResourceUtils', {
       isLegacyOrganization: () => {
         return this.mocks.legacyOrganization;
-      }
+      },
     });
 
     // Spying on both the endpoint creation and the actual endpoint
@@ -41,15 +41,15 @@ describe('Legacy Feature Service', () => {
       name: 'Custom Roles',
       sys: {
         id: 'custom_roles',
-        type: 'Feature'
-      }
+        type: 'Feature',
+      },
     });
     set(mockedEndpoint.stores.features, 'multiple_locales', {
       name: 'Multiple Locales',
       sys: {
         id: 'multiple_locales',
-        type: 'Feature'
-      }
+        type: 'Feature',
+      },
     });
 
     this.spies.spaceEndpoint = sinon.spy(mockedEndpoint.request);
@@ -62,36 +62,36 @@ describe('Legacy Feature Service', () => {
 
     this.system.set('data/EndpointFactory', {
       createSpaceEndpoint: this.spies.createSpaceEndpoint,
-      createOrganizationEndpoint: this.stubs.createOrganizationEndpoint
+      createOrganizationEndpoint: this.stubs.createOrganizationEndpoint,
     });
 
     this.system.set('services/TokenStore', {
       getSpace: sinon.stub().resolves(this.mocks.space),
-      getOrganization: sinon.stub().resolves(this.mocks.organization)
+      getOrganization: sinon.stub().resolves(this.mocks.organization),
     });
 
-    this.createLegacyFeatureService = (await this.system.import(
-      'services/LegacyFeatureService'
-    )).default;
+    this.createLegacyFeatureService = (
+      await this.system.import('services/LegacyFeatureService')
+    ).default;
 
     await $initialize(this.system);
   });
 
-  it('should use the space endpoint by default during instantiation', function() {
+  it('should use the space endpoint by default during instantiation', function () {
     this.createLegacyFeatureService('1234');
 
     expect(this.spies.createSpaceEndpoint.called).toBe(true);
     expect(this.stubs.createOrganizationEndpoint.called).toBe(false);
   });
 
-  it('should also allow instantiating with the organization type', function() {
+  it('should also allow instantiating with the organization type', function () {
     this.createLegacyFeatureService('1234', 'organization');
 
     expect(this.spies.createSpaceEndpoint.called).toBe(false);
     expect(this.stubs.createOrganizationEndpoint.called).toBe(true);
   });
 
-  it('should return the proper definition on instantiation', function() {
+  it('should return the proper definition on instantiation', function () {
     const FeatureService = this.createLegacyFeatureService('1234');
 
     expect(Object.keys(FeatureService).length).toBe(2);
@@ -100,11 +100,11 @@ describe('Legacy Feature Service', () => {
   });
 
   describe('#get', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       this.FeatureService = this.createLegacyFeatureService('1234');
     });
 
-    it('should return true if feature is enabled from the token if org is legacy', async function() {
+    it('should return true if feature is enabled from the token if org is legacy', async function () {
       this.mocks.legacyOrganization = true;
 
       let feature = await this.FeatureService.get('multipleLocales');
@@ -115,7 +115,7 @@ describe('Legacy Feature Service', () => {
       expect(feature).toEqual(true);
     });
 
-    it('should return true if feature is enabled from the endpoint if org is not legacy', async function() {
+    it('should return true if feature is enabled from the endpoint if org is not legacy', async function () {
       let feature;
 
       this.mocks.legacyOrganization = false;
@@ -127,7 +127,7 @@ describe('Legacy Feature Service', () => {
       expect(feature).toEqual(false);
     });
 
-    it('should return false if the feature is not found', async function() {
+    it('should return false if the feature is not found', async function () {
       let feature;
 
       this.mocks.legacyOrganization = true;
@@ -143,11 +143,11 @@ describe('Legacy Feature Service', () => {
   });
 
   describe('#getAll', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       this.FeatureService = this.createLegacyFeatureService('1234');
     });
 
-    it('should return all enabled features from the token if org is legacy', async function() {
+    it('should return all enabled features from the token if org is legacy', async function () {
       this.mocks.legacyOrganization = true;
 
       const features = await this.FeatureService.getAll();
@@ -156,13 +156,13 @@ describe('Legacy Feature Service', () => {
         {
           sys: {
             id: 'custom_roles',
-            type: 'Feature'
-          }
-        }
+            type: 'Feature',
+          },
+        },
       ]);
     });
 
-    it('should return all features from the endpoint if org is not legacy', async function() {
+    it('should return all features from the endpoint if org is not legacy', async function () {
       this.mocks.legacyOrganization = false;
 
       const features = await this.FeatureService.getAll();
@@ -172,16 +172,16 @@ describe('Legacy Feature Service', () => {
           name: 'Custom Roles',
           sys: {
             id: 'custom_roles',
-            type: 'Feature'
-          }
+            type: 'Feature',
+          },
         },
         {
           name: 'Multiple Locales',
           sys: {
             id: 'multiple_locales',
-            type: 'Feature'
-          }
-        }
+            type: 'Feature',
+          },
+        },
       ]);
     });
   });

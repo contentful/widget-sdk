@@ -6,13 +6,13 @@ describe('utils/SubscriptionUtils', () => {
   let macroPlan;
   let allPlans;
 
-  beforeEach(function() {
+  beforeEach(function () {
     function createPlan(name, price, ratePlanCharges, isBase) {
       return {
         name,
         price,
         ratePlanCharges,
-        planType: isBase ? 'base' : 'space'
+        planType: isBase ? 'base' : 'space',
       };
     }
 
@@ -21,7 +21,7 @@ describe('utils/SubscriptionUtils', () => {
         price,
         startingUnit,
         endingUnit,
-        priceFormat
+        priceFormat,
       };
     }
 
@@ -29,7 +29,7 @@ describe('utils/SubscriptionUtils', () => {
       return {
         name,
         unitType,
-        tiers: tiers && tiers.map(createTier)
+        tiers: tiers && tiers.map(createTier),
       };
     }
 
@@ -41,15 +41,15 @@ describe('utils/SubscriptionUtils', () => {
             price: 0,
             startingUnit: 0,
             endingUnit: 10,
-            priceFormat: 'FlatFee'
+            priceFormat: 'FlatFee',
           },
           {
             price: 10,
             startingUnit: 11,
             endingUnit: null,
-            priceFormat: 'PerUnit'
-          }
-        ]
+            priceFormat: 'PerUnit',
+          },
+        ],
       },
       {
         name: 'Free spaces',
@@ -58,14 +58,14 @@ describe('utils/SubscriptionUtils', () => {
             price: 0,
             startingUnit: 0,
             endingUnit: 2,
-            priceFormat: 'PerUnit'
-          }
-        ]
+            priceFormat: 'PerUnit',
+          },
+        ],
       },
       {
         name: 'SSO',
-        unitType: 'feature'
-      }
+        unitType: 'feature',
+      },
     ].map(createRPC);
 
     const microTiers = [
@@ -76,10 +76,10 @@ describe('utils/SubscriptionUtils', () => {
             price: 0,
             startingUnit: 0,
             endingUnit: 7,
-            priceFormat: 'FlatFee'
-          }
-        ]
-      }
+            priceFormat: 'FlatFee',
+          },
+        ],
+      },
     ].map(createRPC);
 
     const macroTiers = [
@@ -90,14 +90,14 @@ describe('utils/SubscriptionUtils', () => {
             price: 0,
             startingUnit: 0,
             endingUnit: 12,
-            priceFormat: 'FlatFee'
-          }
-        ]
+            priceFormat: 'FlatFee',
+          },
+        ],
       },
       {
         name: 'Custom Roles',
-        unitType: 'feature'
-      }
+        unitType: 'feature',
+      },
     ].map(createRPC);
 
     basePlan = createPlan('Basic Platform', 0, baseRPCs, true);
@@ -108,7 +108,7 @@ describe('utils/SubscriptionUtils', () => {
   });
 
   describe('#calculateUsersCost', () => {
-    it('should calculate the cost for users depending on the tiers', function() {
+    it('should calculate the cost for users depending on the tiers', function () {
       expect(SubscriptionUtils.calculateUsersCost({ basePlan, numMemberships: 3 })).toBe(0);
       expect(SubscriptionUtils.calculateUsersCost({ basePlan, numMemberships: 7 })).toBe(0);
       expect(SubscriptionUtils.calculateUsersCost({ basePlan, numMemberships: 10 })).toBe(0);
@@ -121,32 +121,32 @@ describe('utils/SubscriptionUtils', () => {
   });
 
   describe('#calcUsersMeta', () => {
-    it('should calculate the meta information correctly', function() {
+    it('should calculate the meta information correctly', function () {
       // 0 - 10 are free, 11+ are paid
       expect(SubscriptionUtils.calcUsersMeta({ basePlan, numMemberships: 3 })).toEqual({
         numFree: 3,
         numPaid: 0,
-        cost: 0
+        cost: 0,
       });
 
       expect(SubscriptionUtils.calcUsersMeta({ basePlan, numMemberships: 8 })).toEqual({
         numFree: 8,
         numPaid: 0,
-        cost: 0
+        cost: 0,
       });
 
       expect(SubscriptionUtils.calcUsersMeta({ basePlan, numMemberships: 17 })).toEqual({
         numFree: 10,
         numPaid: 7,
-        cost: 70
+        cost: 70,
       });
     });
   });
 
   describe('#calculateTotalPrice', () => {
-    it('should be able to calculate the price based on just the base tier with given users', function() {
+    it('should be able to calculate the price based on just the base tier with given users', function () {
       const plansWithMemberships = {
-        allPlans: [basePlan]
+        allPlans: [basePlan],
       };
 
       plansWithMemberships.numMemberships = 3;
@@ -159,9 +159,9 @@ describe('utils/SubscriptionUtils', () => {
       expect(SubscriptionUtils.calculateTotalPrice(plansWithMemberships)).toBe(20);
     });
 
-    it('should calculate the cost of all spaces and users together', function() {
+    it('should calculate the cost of all spaces and users together', function () {
       const plansWithMemberships = {
-        allPlans: allPlans
+        allPlans: allPlans,
       };
 
       plansWithMemberships.numMemberships = 3;
@@ -173,11 +173,11 @@ describe('utils/SubscriptionUtils', () => {
   });
 
   describe('#getEnabledFeatures', () => {
-    it('should return an empty array if no features are present', function() {
+    it('should return an empty array if no features are present', function () {
       expect(SubscriptionUtils.getEnabledFeatures(microPlan)).toHaveLength(0);
     });
 
-    it('should return the feature RPCs if present', function() {
+    it('should return the feature RPCs if present', function () {
       expect(SubscriptionUtils.getEnabledFeatures(macroPlan)).toHaveLength(1);
       expect(SubscriptionUtils.getEnabledFeatures(basePlan)).toHaveLength(1);
     });
@@ -190,13 +190,13 @@ describe('utils/SubscriptionUtils', () => {
       expect(SubscriptionUtils.calculatePlansCost({ plans })).toBe(0);
     });
 
-    it('should return 0 if all the plan prices are 0', function() {
+    it('should return 0 if all the plan prices are 0', function () {
       const plans = [basePlan];
 
       expect(SubscriptionUtils.calculatePlansCost({ plans })).toBe(0);
     });
 
-    it('should return the correct price for all plans given', function() {
+    it('should return the correct price for all plans given', function () {
       const plans = allPlans;
 
       expect(SubscriptionUtils.calculatePlansCost({ plans })).toBe(113);

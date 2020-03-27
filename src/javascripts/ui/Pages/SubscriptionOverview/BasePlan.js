@@ -11,8 +11,8 @@ import { websiteUrl } from 'Config';
 const styles = {
   container: css({
     gridColumn: 1,
-    gridRow: 1
-  })
+    gridRow: 1,
+  }),
 };
 
 function BasePlan({ basePlan }) {
@@ -37,7 +37,7 @@ function BasePlan({ basePlan }) {
 }
 
 BasePlan.propTypes = {
-  basePlan: PropTypes.object.isRequired
+  basePlan: PropTypes.object.isRequired,
 };
 
 export default BasePlan;

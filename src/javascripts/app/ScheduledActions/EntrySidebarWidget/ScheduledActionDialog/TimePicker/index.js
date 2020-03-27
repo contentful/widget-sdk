@@ -9,7 +9,7 @@ import {
   ValidationMessage,
   Dropdown,
   DropdownListItem,
-  DropdownList
+  DropdownList,
 } from '@contentful/forma-36-react-components';
 import styles from './styles';
 
@@ -19,22 +19,16 @@ const MOMENT_24H_FORMAT = 'HH:mm';
 function createHours() {
   const hours = [];
   for (let hour = 0; hour < 24; hour++) {
+    hours.push(moment().startOf('day').add({ hour }));
     hours.push(
-      moment()
-        .startOf('day')
-        .add({ hour })
-    );
-    hours.push(
-      moment()
-        .startOf('day')
-        .add({
-          hour,
-          minute: 30
-        })
+      moment().startOf('day').add({
+        hour,
+        minute: 30,
+      })
     );
   }
 
-  return orderBy(hours, time => time.toDate(), 'asc').map(m => m.format(MOMENT_12H_FORMAT));
+  return orderBy(hours, (time) => time.toDate(), 'asc').map((m) => m.format(MOMENT_12H_FORMAT));
 }
 
 const allHourSuggestions = createHours();
@@ -64,7 +58,7 @@ function roundToHalfHour(value, method = 'ceil') {
 function getSuggestionList(value, date) {
   const before = [];
   const after = [];
-  allHourSuggestions.forEach(m => {
+  allHourSuggestions.forEach((m) => {
     if (
       moment(m, MOMENT_12H_FORMAT).isBefore(moment(value, MOMENT_24H_FORMAT).subtract(1, 'hours'))
     ) {
@@ -76,7 +70,9 @@ function getSuggestionList(value, date) {
 
   return after
     .concat(before)
-    .filter(time => moment(`${date} ${time}`, `YYYY-MM-DD ${MOMENT_12H_FORMAT}`).isAfter(moment()));
+    .filter((time) =>
+      moment(`${date} ${time}`, `YYYY-MM-DD ${MOMENT_12H_FORMAT}`).isAfter(moment())
+    );
 }
 
 export function TimePicker({ value, date, helpText, validationMessage, onChange, onBlur }) {
@@ -97,7 +93,7 @@ export function TimePicker({ value, date, helpText, validationMessage, onChange,
   }, [selectedTime, value]);
 
   const closeDropdown = useCallback(
-    event => {
+    (event) => {
       if (dropdownContainer) {
         const parent = dropdownContainer;
         const activeElement = event.relatedTarget || document.activeElement;
@@ -117,7 +113,7 @@ export function TimePicker({ value, date, helpText, validationMessage, onChange,
   );
 
   const handleChange = useCallback(
-    val => {
+    (val) => {
       setSelectedTime(val);
 
       const parsedTime = parseRawInput(val);
@@ -131,7 +127,7 @@ export function TimePicker({ value, date, helpText, validationMessage, onChange,
   );
 
   const handleKeyUp = useCallback(
-    event => {
+    (event) => {
       if (isHotkey('arrowUp', event)) {
         handleChange(roundToHalfHour(value, 'floor'));
       }
@@ -145,20 +141,20 @@ export function TimePicker({ value, date, helpText, validationMessage, onChange,
     [value, handleChange]
   );
 
-  const handleKeyDown = useCallback(event => {
+  const handleKeyDown = useCallback((event) => {
     if (isHotkey('arrowUp', event) || isHotkey('arrowDown', event)) {
       event.preventDefault();
     }
   }, []);
 
-  const handleFocus = useCallback(e => {
+  const handleFocus = useCallback((e) => {
     e.preventDefault();
     e.target.select();
     setTimeSuggestionOpen(true);
   }, []);
 
   const handleBlur = useCallback(
-    e => {
+    (e) => {
       const time = getTimeFromUserInputOrDefaultToValue();
       setSelectedTime(time);
       closeDropdown(e);
@@ -190,12 +186,12 @@ export function TimePicker({ value, date, helpText, validationMessage, onChange,
               onKeyDown={handleKeyDown}
               onFocus={handleFocus}
               onBlur={handleBlur}
-              onChange={e => handleChange(e.target.value)}
+              onChange={(e) => handleChange(e.target.value)}
             />
           }
           isOpen={isTimeSuggestionOpen}>
           <DropdownList maxHeight={200}>
-            {filteredHours.map(hour => {
+            {filteredHours.map((hour) => {
               return (
                 <DropdownListItem
                   testId="time-suggestion"
@@ -231,11 +227,11 @@ TimePicker.propTypes = {
   helpText: PropTypes.string,
   validationMessage: PropTypes.string,
   id: PropTypes.string,
-  name: PropTypes.string
+  name: PropTypes.string,
 };
 
 TimePicker.defaultProps = {
-  onBlur: () => {}
+  onBlur: () => {},
 };
 
 export default TimePicker;

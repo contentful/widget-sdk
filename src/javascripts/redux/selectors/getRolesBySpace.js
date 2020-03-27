@@ -10,7 +10,7 @@ import { ORG_SPACE_ROLES } from '../datasets';
  *
  * @return {Object}
  */
-export default state => {
+export default (state) => {
   const datasets = getDatasets(state);
   const roles = get(datasets, ORG_SPACE_ROLES, {});
   return groupBy(roles, 'sys.space.sys.id');

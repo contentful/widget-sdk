@@ -6,7 +6,7 @@ import {
   Modal,
   Button,
   Paragraph,
-  Typography
+  Typography,
 } from '@contentful/forma-36-react-components';
 import { getModule } from 'NgRegistry';
 import * as Authentication from 'Authentication';
@@ -89,7 +89,7 @@ ErrorModal.propTypes = {
   isShown: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
-  message: PropTypes.string.isRequired
+  message: PropTypes.string.isRequired,
 };
 
 function showErrorModal(data) {
@@ -120,7 +120,7 @@ function showNotification(data) {
   if (message) {
     if (level.match(/error/)) {
       Notification.error(message, {
-        id: 'gatekeeper-error'
+        id: 'gatekeeper-error',
       });
     } else {
       Notification.success(message);

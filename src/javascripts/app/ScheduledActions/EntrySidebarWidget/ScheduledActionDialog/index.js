@@ -11,14 +11,14 @@ import {
   Note,
   Notification,
   RadioButtonField,
-  FormLabel
+  FormLabel,
 } from '@contentful/forma-36-react-components';
 import * as EndpointFactory from 'data/EndpointFactory';
 import APIClient from 'data/APIClient';
 
 import {
   createDialogClose,
-  createDialogOpen
+  createDialogOpen,
 } from 'app/ScheduledActions/Analytics/ScheduledActionsAnalytics';
 
 import ScheduledActionsTimeline from '../ScheduledActionsTimeline';
@@ -29,14 +29,14 @@ import TimezonePicker from './TimezonePicker';
 
 const styles = {
   timezoneNote: css({
-    marginTop: tokens.spacingS
+    marginTop: tokens.spacingS,
   }),
   form: css({
-    marginBottom: `-${tokens.spacingM}`
+    marginBottom: `-${tokens.spacingM}`,
   }),
   noMarginBottom: css({
-    marginBottom: 0
-  })
+    marginBottom: 0,
+  }),
 };
 
 function TimezoneNote({ date, time, timezone }) {
@@ -61,7 +61,7 @@ function TimezoneNote({ date, time, timezone }) {
 TimezoneNote.propTypes = {
   date: PropTypes.string,
   time: PropTypes.string,
-  timezone: PropTypes.string
+  timezone: PropTypes.string,
 };
 
 function formatScheduledAtDate({ date, time, timezone }) {
@@ -80,7 +80,7 @@ function JobDialog({
   spaceId,
   environmentId,
   pendingJobs,
-  isMasterEnvironment
+  isMasterEnvironment,
 }) {
   const now = moment(Date.now());
   const currentTimezone = moment.tz.guess();
@@ -98,12 +98,12 @@ function JobDialog({
   }, []);
 
   const validateForm = useCallback(
-    onFormValid => {
+    (onFormValid) => {
       if (
         pendingJobs &&
         pendingJobs.length > 0 &&
         pendingJobs.find(
-          job =>
+          (job) =>
             job.scheduledFor.datetime ===
             moment(formatScheduledAtDate({ date, time, timezone })).toISOString()
         )
@@ -136,9 +136,7 @@ function JobDialog({
 
   function getSuggestedDate() {
     return pendingJobs && pendingJobs.length !== 0
-      ? moment(pendingJobs[0].scheduledFor.datetime)
-          .add(1, 'hours')
-          .startOf('hour')
+      ? moment(pendingJobs[0].scheduledFor.datetime).add(1, 'hours').startOf('hour')
       : now.add(1, 'hours').startOf('hour');
   }
 
@@ -159,7 +157,7 @@ function JobDialog({
       onCreate(
         {
           scheduledAt: formatScheduledAtDate({ date, time, timezone }),
-          action
+          action,
         },
         timezone
       );
@@ -210,7 +208,7 @@ function JobDialog({
               </FieldGroup>
               <FieldGroup row>
                 <DatePicker
-                  onChange={date => {
+                  onChange={(date) => {
                     setDate(moment(date).format('YYYY-MM-DD'));
                   }}
                   labelText={actionToLabelText(action)}
@@ -223,7 +221,7 @@ function JobDialog({
                   name="time"
                   value={time}
                   date={date}
-                  onChange={time => {
+                  onChange={(time) => {
                     setTime(time);
                   }}
                   required
@@ -233,7 +231,7 @@ function JobDialog({
                 />
               </FieldGroup>
               <FieldGroup row>
-                <TimezonePicker onSelect={value => setTimezone(value)} />
+                <TimezonePicker onSelect={(value) => setTimezone(value)} />
               </FieldGroup>
               {timezone !== currentTimezone && (
                 <FieldGroup>
@@ -274,14 +272,14 @@ JobDialog.propTypes = {
   entity: PropTypes.object.isRequired,
   validator: PropTypes.shape({
     run: PropTypes.func,
-    setApiResponseErrors: PropTypes.func
+    setApiResponseErrors: PropTypes.func,
   }).isRequired,
   entryTitle: PropTypes.string.isRequired,
   onCreate: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
   isSubmitting: PropTypes.bool.isRequired,
   pendingJobs: PropTypes.array,
-  isMasterEnvironment: PropTypes.bool
+  isMasterEnvironment: PropTypes.bool,
 };
 
 export default JobDialog;

@@ -11,21 +11,21 @@ export default function register() {
       scope: {
         editorData: '<',
         preferences: '<',
-        trackLoadEvent: '<'
+        trackLoadEvent: '<',
       },
 
       template: entryEditorTemplate,
 
       controller: [
         '$scope',
-        $scope =>
+        ($scope) =>
           createEditorController(
             $scope,
             $scope.editorData,
             $scope.preferences,
             $scope.trackLoadEvent
-          )
-      ]
-    })
+          ),
+      ],
+    }),
   ]);
 }

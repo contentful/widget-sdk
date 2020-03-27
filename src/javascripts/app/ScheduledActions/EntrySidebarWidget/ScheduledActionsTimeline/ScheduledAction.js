@@ -12,7 +12,7 @@ import {
   DropdownList,
   DropdownListItem,
   SkeletonDisplayText,
-  SkeletonContainer
+  SkeletonContainer,
 } from '@contentful/forma-36-react-components';
 import { scheduleStyles as styles } from './styles';
 import CancellationModal from './CancellationModal';
@@ -23,7 +23,7 @@ import UserDisplayName from 'app/UserProfile/components/UserDisplayName';
 
 const tagTypeForAction = {
   [ScheduledActionAction.Publish]: 'positive',
-  [ScheduledActionAction.Unpublish]: 'secondary'
+  [ScheduledActionAction.Unpublish]: 'secondary',
 };
 
 export function ScheduledByDropdownList({ job, border }) {
@@ -62,19 +62,19 @@ export function ScheduledByDropdownList({ job, border }) {
 
 ScheduledByDropdownList.propTypes = {
   job: PropTypes.object,
-  border: PropTypes.string
+  border: PropTypes.string,
 };
 
 class Job extends Component {
   state = {
     isDropdownOpen: false,
-    isCancellationDialogOpen: false
+    isCancellationDialogOpen: false,
   };
 
   toggleCancelDialog = () => {
     this.setState({
       isCancellationDialogOpen: !this.state.isCancellationDialogOpen,
-      isDropdownOpen: false
+      isDropdownOpen: false,
     });
   };
 
@@ -83,7 +83,7 @@ class Job extends Component {
     const {
       sys: { id },
       action,
-      scheduledFor: { datetime: scheduledAt }
+      scheduledFor: { datetime: scheduledAt },
     } = job;
 
     // Do not render the dropdown for the read only small view (e.g. in the Schedule Action dialog)
@@ -141,7 +141,7 @@ class Job extends Component {
     const { job, size } = this.props;
     const {
       action,
-      scheduledFor: { datetime: scheduledAt }
+      scheduledFor: { datetime: scheduledAt },
     } = job;
 
     return (
@@ -171,7 +171,7 @@ export const propTypes = {
   job: PropTypes.object.isRequired,
   onCancel: PropTypes.func.isRequired,
   isReadOnly: PropTypes.bool.isRequired,
-  size: PropTypes.oneOf(['default', 'small']).isRequired
+  size: PropTypes.oneOf(['default', 'small']).isRequired,
 };
 Job.propTypes = propTypes;
 

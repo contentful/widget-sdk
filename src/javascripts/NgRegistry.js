@@ -5,7 +5,8 @@ import angular from 'angular';
 // angular.module('contentful/init').register is an object that contains
 // functions to define the Angular modules below at runtime. These functions
 // below allow registration within es6 files.
-const register = type => (name, def) => angular.module('contentful/init').register[type](name, def);
+const register = (type) => (name, def) =>
+  angular.module('contentful/init').register[type](name, def);
 
 export const registerController = register('controller');
 export const registerDirective = register('directive');
@@ -28,7 +29,7 @@ export const awaitInitReady = async () => {
   const ready = initReady();
 
   if (!ready) {
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     return awaitInitReady();
   }
@@ -44,7 +45,7 @@ export const appReady = () => {
   }
 };
 
-export const getModule = name => {
+export const getModule = (name) => {
   try {
     return angular.module('contentful/init').getModule(name);
   } catch (e) {

@@ -9,11 +9,11 @@ export function getWidgetTrackingContexts({
   fieldControls,
   sidebar,
   sidebarExtensions,
-  editorExtension
+  editorExtension,
 }) {
   return [
     ...getExtensionTrackingContexts({ fieldControls, sidebarExtensions, editorExtension }),
-    getSidebarTrackingContext({ fieldControls, sidebar })
+    getSidebarTrackingContext({ fieldControls, sidebar }),
   ];
 }
 
@@ -22,7 +22,7 @@ function getExtensionTrackingContexts({ fieldControls, sidebarExtensions, editor
     [WidgetLocations.LOCATION_ENTRY_FIELD]: getExtensions(fieldControls, ['form']),
     [WidgetLocations.LOCATION_ENTRY_FIELD_SIDEBAR]: getExtensions(fieldControls, ['sidebar']),
     [WidgetLocations.LOCATION_ENTRY_SIDEBAR]: getExtensions(sidebarExtensions),
-    [WidgetLocations.LOCATION_ENTRY_EDITOR]: getExtensions([editorExtension])
+    [WidgetLocations.LOCATION_ENTRY_EDITOR]: getExtensions([editorExtension]),
   };
 
   return Object.keys(extensionsByLocation).reduce(
@@ -31,7 +31,7 @@ function getExtensionTrackingContexts({ fieldControls, sidebarExtensions, editor
       ...extensionsByLocation[location].reduce(
         (acc, widget) => [...acc, makeExtensionEvent(location, widget)],
         []
-      )
+      ),
     ],
     []
   );
@@ -40,7 +40,7 @@ function getExtensionTrackingContexts({ fieldControls, sidebarExtensions, editor
 function makeExtensionEvent(location, widget) {
   return {
     schema: getSchema('extension_render').path,
-    data: makeEventFromWidget(location, widget)
+    data: makeEventFromWidget(location, widget),
   };
 }
 
@@ -53,7 +53,7 @@ function getSidebarTrackingContext({ fieldControls, sidebar }) {
   if (!Array.isArray(sidebar)) {
     return {
       schema,
-      data: { is_default: true, has_legacy_extensions, widgets: null }
+      data: { is_default: true, has_legacy_extensions, widgets: null },
     };
   }
 
@@ -62,10 +62,10 @@ function getSidebarTrackingContext({ fieldControls, sidebar }) {
     data: {
       is_default: false,
       has_legacy_extensions,
-      widgets: sidebar.map(item => {
+      widgets: sidebar.map((item) => {
         return { widget_id: item.widgetId, widget_namespace: item.widgetNamespace };
-      })
-    }
+      }),
+    },
   };
 }
 
@@ -73,7 +73,9 @@ function getExtensions(container, path) {
   const locationWidgets = Array.isArray(path) ? get(container, path) : container;
 
   if (Array.isArray(locationWidgets)) {
-    return locationWidgets.filter(identity).filter(w => w.widgetNamespace === NAMESPACE_EXTENSION);
+    return locationWidgets
+      .filter(identity)
+      .filter((w) => w.widgetNamespace === NAMESPACE_EXTENSION);
   } else {
     return [];
   }

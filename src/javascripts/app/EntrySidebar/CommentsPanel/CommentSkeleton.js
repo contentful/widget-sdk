@@ -4,7 +4,7 @@ import {
   SkeletonContainer,
   SkeletonDisplayText,
   SkeletonImage,
-  SkeletonBodyText
+  SkeletonBodyText,
 } from '@contentful/forma-36-react-components';
 import { range } from 'lodash';
 import { styles } from './Comment';
@@ -24,7 +24,7 @@ export default function CommentSkeleton() {
 export function CommentSkeletonGroup() {
   return (
     <div data-test-id="comments.loading">
-      {range(5).map(n => (
+      {range(5).map((n) => (
         <CommentSkeleton key={n} />
       ))}
     </div>

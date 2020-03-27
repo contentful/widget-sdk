@@ -7,14 +7,14 @@ describe('ControlMigrations', () => {
       fieldId: 'FID',
       widgetNamespace: NAMESPACE_BUILTIN,
       widgetId: 'oldWidget',
-      field: {}
+      field: {},
     };
 
     const migrations = [
       {
         from: 'oldWidget',
-        to: 'newWidget'
-      }
+        to: 'newWidget',
+      },
     ];
 
     expect(migrateControl(control, migrations)).toEqual('newWidget');
@@ -25,15 +25,15 @@ describe('ControlMigrations', () => {
       fieldId: 'FID',
       widgetNamespace: NAMESPACE_BUILTIN,
       widgetId: 'oldWidget',
-      field: { apiName: 'apiName', type: 'ft1' }
+      field: { apiName: 'apiName', type: 'ft1' },
     };
 
     const migrations = [
       {
         from: 'oldWidget',
         to: 'newWidget',
-        fieldTypes: ['ft1', 'ft2']
-      }
+        fieldTypes: ['ft1', 'ft2'],
+      },
     ];
 
     expect(migrateControl(control, migrations)).toEqual('newWidget');
@@ -44,15 +44,15 @@ describe('ControlMigrations', () => {
       fieldId: 'FID',
       widgetNamespace: NAMESPACE_BUILTIN,
       widgetId: 'oldWidget',
-      field: { apiName: 'apiName', type: 'ft1' }
+      field: { apiName: 'apiName', type: 'ft1' },
     };
 
     const migrations = [
       {
         from: 'oldWidget',
         to: 'newWidget',
-        fieldTypes: ['ft2']
-      }
+        fieldTypes: ['ft2'],
+      },
     ];
 
     expect(migrateControl(control, migrations)).toEqual('oldWidget');
@@ -63,15 +63,15 @@ describe('ControlMigrations', () => {
       fieldId: 'FID',
       widgetNamespace: NAMESPACE_EXTENSION,
       widgetId: 'oldWidget',
-      field: { apiName: 'apiName', type: 'ft1' }
+      field: { apiName: 'apiName', type: 'ft1' },
     };
 
     const migrations = [
       {
         from: 'oldWidget',
         to: 'newWidget',
-        fieldTypes: ['ft1']
-      }
+        fieldTypes: ['ft1'],
+      },
     ];
 
     expect(migrateControl(control, migrations)).toEqual('oldWidget');

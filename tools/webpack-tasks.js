@@ -12,7 +12,7 @@ function watch(done, callbacks) {
   compiler.watch(
     {
       aggregateTimeout: 300,
-      poll: 1000
+      poll: 1000,
     },
     (err, stats) => {
       handleCompileResults(err, stats, config, callbacks);
@@ -32,7 +32,7 @@ async function buildTestDeps() {
   const info = stats.toJson({ chunks: false });
 
   if (stats.hasErrors()) {
-    info.errors.forEach(error => {
+    info.errors.forEach((error) => {
       console.error(error);
     });
     throw new Error('Webpack failed to compile');
@@ -54,7 +54,7 @@ async function build() {
   const info = stats.toJson({ chunks: false });
 
   if (stats.hasErrors()) {
-    info.errors.forEach(error => {
+    info.errors.forEach((error) => {
       console.error(error);
     });
     throw new Error('Webpack failed to compile');

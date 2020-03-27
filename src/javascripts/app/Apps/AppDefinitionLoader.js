@@ -4,7 +4,7 @@ export default function createAppDefinitionLoader(appDefinitionsEndpoint, orgEnd
   return {
     getById,
     getByIds,
-    getAllForCurrentOrganization
+    getAllForCurrentOrganization,
   };
 
   async function getById(id) {
@@ -23,7 +23,7 @@ export default function createAppDefinitionLoader(appDefinitionsEndpoint, orgEnd
       throw new Error('Expected an array of IDs.');
     }
 
-    const uniqueIds = uniq(ids).filter(s => typeof s === 'string' && s.length > 0);
+    const uniqueIds = uniq(ids).filter((s) => typeof s === 'string' && s.length > 0);
     if (uniqueIds.length < 1) {
       return {};
     }
@@ -32,11 +32,11 @@ export default function createAppDefinitionLoader(appDefinitionsEndpoint, orgEnd
     const publicResponse = await appDefinitionsEndpoint({
       method: 'GET',
       path: [],
-      query: { 'sys.id[in]': uniqueIds.join(',') }
+      query: { 'sys.id[in]': uniqueIds.join(',') },
     });
 
     const publicDefinitions = publicResponse.items;
-    const fetchedIds = publicDefinitions.map(def => def.sys.id);
+    const fetchedIds = publicDefinitions.map((def) => def.sys.id);
     const missingIds = difference(uniqueIds, fetchedIds);
 
     // If there were some definitions we couldn't fetch from
@@ -52,7 +52,7 @@ export default function createAppDefinitionLoader(appDefinitionsEndpoint, orgEnd
     return ids.reduce((acc, id) => {
       return {
         ...acc,
-        [id]: publicDefinitionsMap[id] || orgDefinitionsMap[id] || null
+        [id]: publicDefinitionsMap[id] || orgDefinitionsMap[id] || null,
       };
     }, {});
   }
@@ -67,7 +67,7 @@ export default function createAppDefinitionLoader(appDefinitionsEndpoint, orgEnd
     const { items } = await orgEndpoint({
       method: 'GET',
       path: ['app_definitions'],
-      query: { 'sys.id[in]': ids.join(',') }
+      query: { 'sys.id[in]': ids.join(',') },
     });
 
     return items;
@@ -76,7 +76,7 @@ export default function createAppDefinitionLoader(appDefinitionsEndpoint, orgEnd
   async function getAllForCurrentOrganization() {
     const { items } = await orgEndpoint({
       method: 'GET',
-      path: ['app_definitions']
+      path: ['app_definitions'],
     });
 
     return items;

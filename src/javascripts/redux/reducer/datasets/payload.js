@@ -39,7 +39,7 @@ export default (state = {}, { type, meta, payload, error }, globalState) => {
     }
     case 'EDIT_TEAM_CONFIRMED': {
       const { id, changeSet } = payload;
-      return update([orgId, TEAMS, id], team => ({ ...team, ...changeSet }), state);
+      return update([orgId, TEAMS, id], (team) => ({ ...team, ...changeSet }), state);
     }
   }
   return state;

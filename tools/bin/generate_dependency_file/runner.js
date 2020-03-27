@@ -16,7 +16,7 @@ async function generate() {
     'enzyme',
     'enzyme-adapter-react-16',
     'react-dom/test-utils',
-    'sinon'
+    'sinon',
   ];
 
   const depNames = [];
@@ -42,7 +42,7 @@ async function generate() {
   const workers = _.range(numCpus).map(() => {
     const worker = fork(require.resolve('./worker'));
 
-    worker.on('message', data => {
+    worker.on('message', (data) => {
       // Write a progress indicator period/dot
       print('.');
 
@@ -58,7 +58,7 @@ async function generate() {
   print(`Generating ${depsFilePath} `);
 
   // Send the initial file load
-  workers.forEach(worker => {
+  workers.forEach((worker) => {
     worker.send({ files: getChunk() });
   });
 
@@ -79,7 +79,7 @@ window.jQuery = window.$ = require('jquery');
 window.libs = [
 ${uniqDeps
   .concat(testDepNames)
-  .map(depName => {
+  .map((depName) => {
     return `  ['${depName}', require('${depName}')]`;
   })
   .join(',\n')}
@@ -94,9 +94,9 @@ ${uniqDeps
 }
 
 function waitForAllWorkers(workers) {
-  const promises = workers.map(worker => {
+  const promises = workers.map((worker) => {
     return new Promise((resolve, reject) => {
-      worker.on('exit', code => {
+      worker.on('exit', (code) => {
         if (code === 0) {
           resolve();
         } else {
@@ -116,7 +116,7 @@ function waitForAllWorkers(workers) {
 function gatherFiles(p) {
   const filenames = [];
 
-  fs.readdirSync(p).forEach(name => {
+  fs.readdirSync(p).forEach((name) => {
     const resolved = path.resolve(p, name);
     const isJsFile = resolved.endsWith('.js');
     const isSpecFile = isJsFile && resolved.endsWith('.spec.js');

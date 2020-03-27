@@ -45,18 +45,18 @@ interface EntityDocument {
   resourceState: {
     apply(): Promise<Entity>;
     // @ts-ignore
-    stateChange$: Stream<{ from: State, to: State }, any>,
+    stateChange$: Stream<{ from: State; to: State }, any>;
     // @ts-ignore
-    state$: Property<State, any>,
-    inProgress$: Property<boolean, any>,
+    state$: Property<State, any>;
+    inProgress$: Property<boolean, any>;
   };
   permissions: {
     can(action: string): boolean;
     canEditFieldLocale(fieldId: string, localeCode: string): boolean;
   };
   presence: {
-    collaborators: Property<any[], any>,
-    collaboratorsFor(): Property<any[], any>,
+    collaborators: Property<any[], any>;
+    collaboratorsFor(): Property<any[], any>;
     focus(fieldId: string, localeCode: string): void;
     leave(): void;
     destroy(): void;

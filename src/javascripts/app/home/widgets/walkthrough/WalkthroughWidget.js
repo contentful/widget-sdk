@@ -15,7 +15,7 @@ const trackingGroupId = 'author_editor_continuous_onboarding';
 export default class WalkthroughWidget extends React.Component {
   static propTypes = {
     spaceName: PropTypes.string.isRequired,
-    setWalkthroughState: PropTypes.func.isRequired
+    setWalkthroughState: PropTypes.func.isRequired,
   };
 
   state = {
@@ -24,36 +24,36 @@ export default class WalkthroughWidget extends React.Component {
     started: undefined,
     dismissed: undefined,
     version: undefined,
-    ReactJoyrideComponent: undefined
+    ReactJoyrideComponent: undefined,
   };
 
   async componentDidMount() {
     try {
       const [ReactJoyrideComponent, userState] = await Promise.all([
         getReactJoyride(),
-        fetchUserState(walkthroughKey)
+        fetchUserState(walkthroughKey),
       ]);
       const {
         started,
         dismissed,
-        sys: { version }
+        sys: { version },
       } = userState;
       this.setState({
         ReactJoyrideComponent,
         started,
         dismissed,
-        version
+        version,
       });
 
       this.props.setWalkthroughState(started);
     } catch (error) {
       logger.logError('Author and Editor Space Home ui walkthrough', {
         message: 'An error happened while fetching user state data',
-        error
+        error,
       });
     }
     this.setState({
-      isLoading: false
+      isLoading: false,
     });
   }
 
@@ -62,28 +62,28 @@ export default class WalkthroughWidget extends React.Component {
       const payload = {
         version: this.state.version,
         started,
-        dismissed
+        dismissed,
       };
       const {
-        sys: { version }
+        sys: { version },
       } = await updateUserState(walkthroughKey, payload);
       this.setState({
         started,
         dismissed,
-        version
+        version,
       });
       this.props.setWalkthroughState(started);
     } catch (error) {
       logger.logError('Author and Editor Space Home ui walkthrough', {
         message: 'An error happened while fetching user state data',
-        error
+        error,
       });
     }
   };
 
-  runTour = isTourRunning => {
+  runTour = (isTourRunning) => {
     this.setState({
-      isTourRunning
+      isTourRunning,
     });
   };
 
@@ -92,7 +92,7 @@ export default class WalkthroughWidget extends React.Component {
     track('element:click', {
       elementId: `start_walkthrough_button`,
       groupId: trackingGroupId,
-      fromState: getCurrentStateName()
+      fromState: getCurrentStateName(),
     });
   };
 
@@ -101,7 +101,7 @@ export default class WalkthroughWidget extends React.Component {
     track('element:click', {
       elementId: `relaunch_walkthrough_button`,
       groupId: trackingGroupId,
-      fromState: getCurrentStateName()
+      fromState: getCurrentStateName(),
     });
   };
 
@@ -110,7 +110,7 @@ export default class WalkthroughWidget extends React.Component {
     track('element:click', {
       elementId: `dismiss_walkthrough_button`,
       groupId: trackingGroupId,
-      fromState: getCurrentStateName()
+      fromState: getCurrentStateName(),
     });
   };
 

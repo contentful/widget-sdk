@@ -10,7 +10,7 @@ import { createTasksStoreForEntry } from './TasksStore';
 import { createTasksStoreInteractor } from './TasksInteractor';
 import { TaskStatus } from 'data/CMA/TasksRepo';
 import createTaskPermissionChecker, {
-  createProhibitive as createProhibitiveTaskPermissionChecker
+  createProhibitive as createProhibitiveTaskPermissionChecker,
 } from './TaskPermissionChecker';
 import { onStoreFetchingStatusChange, onPromiseFetchingStatusChange } from './util';
 import TaskList from './View/TaskList';
@@ -36,7 +36,7 @@ export default function TasksWidgetContainerWithFeatureFlag(props) {
 
 export class TasksWidgetContainer extends Component {
   static propTypes = {
-    emitter: PropTypes.object.isRequired
+    emitter: PropTypes.object.isRequired,
   };
 
   state = {
@@ -45,7 +45,7 @@ export class TasksWidgetContainer extends Component {
     tasksInEditMode: {},
     tasksErrors: {},
     users: [],
-    taskPermissionChecker: createProhibitiveTaskPermissionChecker()
+    taskPermissionChecker: createProhibitiveTaskPermissionChecker(),
   };
 
   componentDidMount() {
@@ -59,7 +59,7 @@ export class TasksWidgetContainer extends Component {
     this.offUsersFetching && this.offUsersFetching();
   }
 
-  onUpdateTasksWidget = async update => {
+  onUpdateTasksWidget = async (update) => {
     const { endpoint, entityInfo, users, currentUser, isSpaceAdmin } = update;
     const tasksStore = createTasksStoreForEntry(endpoint, entityInfo.id);
 
@@ -67,7 +67,7 @@ export class TasksWidgetContainer extends Component {
     //  Do not pass setState but a dedicated, react independent store.
     const tasksInteractor = createTasksStoreInteractor(
       tasksStore,
-      val => this.setState(val),
+      (val) => this.setState(val),
       () => this.state
     );
     const taskPermissionChecker = createTaskPermissionChecker(
@@ -81,7 +81,7 @@ export class TasksWidgetContainer extends Component {
   };
 
   fetchTasks(tasksStore) {
-    this.offTasksFetching = onStoreFetchingStatusChange(tasksStore, status => {
+    this.offTasksFetching = onStoreFetchingStatusChange(tasksStore, (status) => {
       this.setState({ tasksFetchingStatus: status });
       this.handleTasksFetchingUpdate(status);
     });
@@ -92,13 +92,13 @@ export class TasksWidgetContainer extends Component {
     if (tasks) {
       const openTasksCount = tasks.filter(({ status }) => status === TaskStatus.ACTIVE).length;
       emitter.emit(SidebarEventTypes.SET_PUBLICATION_BLOCKING, {
-        openTasks: openTasksCount > 0 ? buildPublicationBlockingWarning(openTasksCount) : false
+        openTasks: openTasksCount > 0 ? buildPublicationBlockingWarning(openTasksCount) : false,
       });
     }
   };
 
   async fetchUsers(usersCache) {
-    this.offUsersFetching = onPromiseFetchingStatusChange(usersCache.getAll(), status => {
+    this.offUsersFetching = onPromiseFetchingStatusChange(usersCache.getAll(), (status) => {
       this.setState({ usersFetchingStatus: status });
     });
   }
@@ -108,7 +108,7 @@ export class TasksWidgetContainer extends Component {
       tasksInteractor,
       tasksFetchingStatus,
       usersFetchingStatus,
-      taskPermissionChecker
+      taskPermissionChecker,
     } = this.state;
     const { tasksInEditMode, tasksErrors } = this.state;
     const localState = { tasksInEditMode, tasksErrors };

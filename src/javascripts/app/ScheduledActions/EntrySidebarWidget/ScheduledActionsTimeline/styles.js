@@ -4,32 +4,32 @@ import tokens from '@contentful/forma-36-tokens';
 export const scheduleStyles = {
   scheduledTo: css({
     whiteSpace: 'nowrap',
-    width: '50%'
+    width: '50%',
   }),
   schedule: css({
-    marginBottom: tokens.spacingS
+    marginBottom: tokens.spacingS,
   }),
   scheduleSmall: css({
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   }),
   scheduleHeader: css({
     display: 'flex',
     alignContent: 'center',
-    marginBottom: tokens.spacingS
+    marginBottom: tokens.spacingS,
   }),
   scheduleHeaderSmall: css({
     marginBottom: '0px',
-    marginTop: '2px'
+    marginTop: '2px',
   }),
   scheduleIcon: css({
-    marginRight: tokens.spacingXs
+    marginRight: tokens.spacingXs,
   }),
   scheduleDropdownToggle: css({
     height: '1rem',
     span: {
-      padding: '0px'
-    }
+      padding: '0px',
+    },
   }),
   scheduleDropdownScheduledBy: css({
     fontStyle: 'italic',
@@ -37,16 +37,16 @@ export const scheduleStyles = {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
-    width: '230px'
+    width: '230px',
   }),
   actionType: css({
     display: 'block',
-    width: '100%'
+    width: '100%',
   }),
   date: css({
-    color: tokens.colorTextLight
+    color: tokens.colorTextLight,
   }),
   dateSmall: css({
-    marginLeft: 'auto'
-  })
+    marginLeft: 'auto',
+  }),
 };

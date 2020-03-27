@@ -16,31 +16,31 @@ import { Space as SpacePropType } from 'app/OrganizationSettings/PropTypes';
 
 const styles = {
   count: css({
-    marginTop: tokens.spacingM
+    marginTop: tokens.spacingM,
   }),
   list: css({
-    marginTop: tokens.spacingM
+    marginTop: tokens.spacingM,
   }),
   leftColumn: css({
     display: 'flex',
     justifyContent: 'flex-start',
-    alignItems: 'center'
+    alignItems: 'center',
   }),
   spaceName: css({
     fontWeight: tokens.fontWeightMedium,
-    width: 200
+    width: 200,
   }),
   roleEditor: css({
     button: {
       height: 30,
       span: {
-        padding: '0 .25rem'
-      }
-    }
+        padding: '0 .25rem',
+      },
+    },
   }),
   errorIcon: css({
-    marginLeft: tokens.spacingS
-  })
+    marginLeft: tokens.spacingS,
+  }),
 };
 
 const reducer = createImmerReducer({
@@ -51,14 +51,14 @@ const reducer = createImmerReducer({
   SPACE_REMOVED: (state, action) => {
     const spaceId = action.payload;
     state.spaceMemberships = state.spaceMemberships.filter(
-      membership => membership.space.sys.id !== spaceId
+      (membership) => membership.space.sys.id !== spaceId
     );
   },
   ROLES_CHANGED: (state, action) => {
     const { spaceId, roles = [] } = action.payload;
-    const item = state.spaceMemberships.find(membership => membership.space.sys.id === spaceId);
+    const item = state.spaceMemberships.find((membership) => membership.space.sys.id === spaceId);
     item.roles = roles;
-  }
+  },
 });
 
 /**
@@ -73,7 +73,7 @@ export default function AddToSpaces({
   submitted = false,
   ignoredSpaces = [],
   onChange,
-  inputWidth = 'full'
+  inputWidth = 'full',
 }) {
   const [{ spaceMemberships }, dispatch] = useReducer(reducer, { spaceMemberships: [] });
   const [allRoles, setAllRoles] = useState([]);
@@ -85,27 +85,27 @@ export default function AddToSpaces({
 
   const { isLoading, data } = useAsync(getRoles);
 
-  const handleSpaceSelected = space => {
+  const handleSpaceSelected = (space) => {
     dispatch({ type: 'SPACE_ADDED', payload: space });
   };
 
-  const handleRoleChanged = spaceId => roles => {
+  const handleRoleChanged = (spaceId) => (roles) => {
     dispatch({ type: 'ROLES_CHANGED', payload: { spaceId, roles } });
   };
 
-  const handleSpaceRemoved = spaceId => {
+  const handleSpaceRemoved = (spaceId) => {
     dispatch({ type: 'SPACE_REMOVED', payload: spaceId });
   };
 
-  const selectedSpaces = useMemo(() => spaceMemberships.map(membership => membership.space), [
-    spaceMemberships
+  const selectedSpaces = useMemo(() => spaceMemberships.map((membership) => membership.space), [
+    spaceMemberships,
   ]);
 
   // Create a list composed of `ignoredSpaces` and `selectedSpaces` and pass it down
   // as value. These spaces will not be displayed by SpacesAutocomplete
   const autoCompleteValue = useMemo(() => [...ignoredSpaces, ...selectedSpaces], [
     selectedSpaces,
-    ignoredSpaces
+    ignoredSpaces,
   ]);
 
   useEffect(() => {
@@ -162,5 +162,5 @@ AddToSpaces.propTypes = {
   onChange: PropTypes.func.isRequired,
   ignoredSpaces: PropTypes.arrayOf(SpacePropType),
   submitted: PropTypes.bool,
-  inputWidth: PropTypes.oneOf(['small', 'medium', 'large', 'full'])
+  inputWidth: PropTypes.oneOf(['small', 'medium', 'large', 'full']),
 };

@@ -38,7 +38,7 @@ export function createStore(initial, reduce) {
 
   return {
     state$,
-    dispatch
+    dispatch,
   };
 
   function getState() {
@@ -65,8 +65,8 @@ export function createStore(initial, reduce) {
  * Similar to `bindActions` from redux.
  */
 export function bindActions(store, actions) {
-  return mapValues(actions, ctor => {
-    return value => store.dispatch(ctor, value);
+  return mapValues(actions, (ctor) => {
+    return (value) => store.dispatch(ctor, value);
   });
 }
 
@@ -86,7 +86,7 @@ export function bindActions(store, actions) {
  */
 export function makeReducer(handlers) {
   return makeMatcher(
-    mapValues(handlers, handle => {
+    mapValues(handlers, (handle) => {
       return (value, state, ...args) => handle(state, value, ...args);
     })
   );
@@ -121,10 +121,10 @@ export function makeReducer(handlers) {
  *   render function with its current state.
  */
 export function combineStoreComponents(render, components) {
-  const statePropertiesMap = mapValues(components, c => {
+  const statePropertiesMap = mapValues(components, (c) => {
     const actions = bindActions(c.store, c.actions);
 
-    return c.store.state$.map(state => {
+    return c.store.state$.map((state) => {
       const memoizedRender = memoize(() => {
         if (c.render) {
           return c.render(state, actions);
@@ -137,7 +137,7 @@ export function combineStoreComponents(render, components) {
         // We compute the view lazily
         get view() {
           return memoizedRender();
-        }
+        },
       };
     });
   });

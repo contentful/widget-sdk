@@ -15,7 +15,7 @@ function getRequiredDatasets(state, routes = ROUTES) {
     Object.values,
     // this gets the datasets of the matching route and all parents
     // effectively parents gives their dataset requirements to all their children
-    flatMap(route => {
+    flatMap((route) => {
       const { partialTest, children, requiredDataSets = [] } = route;
       const datasets = (partialTest(path) ? requiredDataSets : [])
         // accumulate all the datasets that have to be loaded for the current state

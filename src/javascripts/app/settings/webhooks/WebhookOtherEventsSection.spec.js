@@ -5,7 +5,7 @@ import WebhookOtherEventsSection from './WebhookOtherEventsSection';
 import { transformTopicsToMap } from './WebhookSegmentationState';
 
 describe('WebhookOtherEventsSection', () => {
-  const renderComponent = topics => {
+  const renderComponent = (topics) => {
     const onChangeStub = jest.fn();
     const wrapper = render(
       <WebhookOtherEventsSection values={transformTopicsToMap(topics)} onChange={onChangeStub} />

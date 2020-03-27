@@ -12,7 +12,7 @@ export default function register() {
     function EntryListActionsController($scope, $controller, spaceContext) {
       const listActionsController = $controller('ListActionsController', {
         $scope: $scope,
-        entityType: 'Entry'
+        entityType: 'Entry',
       });
 
       $scope.showDuplicate = showDuplicate;
@@ -20,8 +20,8 @@ export default function register() {
 
       const controller = this;
       const publish = $scope.publishSelected;
-      $scope.publishSelected = function(...args) {
-        return publish.apply(controller, args).then(results => {
+      $scope.publishSelected = function (...args) {
+        return publish.apply(controller, args).then((results) => {
           results.succeeded.forEach(entryEventTracker('publish', 'content-list'));
         });
       };
@@ -34,11 +34,11 @@ export default function register() {
       }
 
       function duplicate() {
-        return listActionsController.duplicate().then(results => {
+        return listActionsController.duplicate().then((results) => {
           const succeeded = results.succeeded;
           succeeded.forEach(entryEventTracker('create', 'content-list__duplicate'));
           $scope.entries.unshift(...succeeded);
-          $scope.paginator.setTotal(total => total + succeeded.length);
+          $scope.paginator.setTotal((total) => total + succeeded.length);
           // instead of the stuff done above, we should call updateEntries here
           // and treat the server as the source of truth.
           // Just appending entries here for e.g., will not respect what the user
@@ -48,7 +48,7 @@ export default function register() {
       }
 
       function entryEventTracker(action, origin) {
-        return entry => {
+        return (entry) => {
           try {
             const event = 'entry:' + action; // entry:create, entry:publish
             const contentTypeId = entry.data.sys.contentType.sys.id;
@@ -56,16 +56,16 @@ export default function register() {
             Analytics.track(event, {
               eventOrigin: origin,
               contentType,
-              response: entry.data
+              response: entry.data,
             });
           } catch (error) {
             logger.logError('Unexpected error during entryEventTracker call', {
               err: error,
-              msg: error.message
+              msg: error.message,
             });
           }
         };
       }
-    }
+    },
   ]);
 }

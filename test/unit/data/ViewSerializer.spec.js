@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 describe('ViewSerializer', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     const ViewSerializer = await this.system.import('data/ViewSerializer');
     this.serialize = ViewSerializer.serialize;
     this.unserialize = ViewSerializer.unserialize;
@@ -13,25 +13,25 @@ describe('ViewSerializer', () => {
   }
 
   function itFlattens(description, view, flattened) {
-    it('does not mutate passed-in view object', function() {
+    it('does not mutate passed-in view object', function () {
       const viewClone = _.cloneDeep(view);
       this.serialize(view);
       expect(view).toEqual(viewClone);
     });
 
-    it(`flattens ${description}`, function() {
+    it(`flattens ${description}`, function () {
       expect(this.serialize(view)).toEqual(flattened);
     });
   }
 
   function itUnflattens(description, flattened, view) {
-    it('does not mutate passed-in object', function() {
+    it('does not mutate passed-in object', function () {
       const flattenedClone = _.cloneDeep(flattened);
       this.unserialize(flattened);
       expect(flattened).toEqual(flattenedClone);
     });
 
-    it(`unflattens ${description}`, function() {
+    it(`unflattens ${description}`, function () {
       expect(this.unserialize(flattened)).toEqual(view);
     });
   }
@@ -42,14 +42,14 @@ describe('ViewSerializer', () => {
       {
         order: {
           direction: 'descending',
-          fieldId: 'updatedAt'
+          fieldId: 'updatedAt',
         },
-        searchTerm: 'foo'
+        searchTerm: 'foo',
       },
       {
         'order.direction': 'descending',
         'order.fieldId': 'updatedAt',
-        searchTerm: 'foo'
+        searchTerm: 'foo',
       }
     );
 
@@ -57,18 +57,22 @@ describe('ViewSerializer', () => {
       '`displayFieldIds` array without touching it',
       {
         displayFieldIds: ['publishedAt', 'author'],
-        searchTerm: 'foo'
+        searchTerm: 'foo',
       },
       {
         displayFieldIds: ['publishedAt', 'author'],
-        searchTerm: 'foo'
+        searchTerm: 'foo',
       }
     );
 
     itRoundTrips(
       ' `searchFilters` object',
       {
-        searchFilters: [['__status', '', 'draft'], ['fields.foo', 'lt', '0'], ['sys.id', '', '']]
+        searchFilters: [
+          ['__status', '', 'draft'],
+          ['fields.foo', 'lt', '0'],
+          ['sys.id', '', ''],
+        ],
       },
       {
         'filters.0.key': '__status',
@@ -76,7 +80,7 @@ describe('ViewSerializer', () => {
         'filters.1.key': 'fields.foo',
         'filters.1.op': 'lt',
         'filters.1.val': '0',
-        'filters.2.key': 'sys.id'
+        'filters.2.key': 'sys.id',
       }
     );
 
@@ -86,12 +90,12 @@ describe('ViewSerializer', () => {
         id: 'VIEW_ID',
         order: {
           direction: 'descending',
-          fieldId: 'updatedAt'
+          fieldId: 'updatedAt',
         },
         displayFieldIds: ['publishedAt', 'author'],
         contentTypeId: 'CTID',
         searchText: 'SEARCH TEXT',
-        searchFilters: [['__status', '', 'published']]
+        searchFilters: [['__status', '', 'published']],
       },
       {
         id: 'VIEW_ID',
@@ -101,7 +105,7 @@ describe('ViewSerializer', () => {
         contentTypeId: 'CTID',
         searchText: 'SEARCH TEXT',
         'filters.0.key': '__status',
-        'filters.0.val': 'published'
+        'filters.0.val': 'published',
       }
     );
   });
@@ -111,10 +115,10 @@ describe('ViewSerializer', () => {
       'and removes empty `searchTerm`',
       {
         id: 'VIEW_ID',
-        searchFilters: []
+        searchFilters: [],
       },
       {
-        id: 'VIEW_ID'
+        id: 'VIEW_ID',
       }
     );
   });
@@ -123,11 +127,11 @@ describe('ViewSerializer', () => {
     itUnflattens(
       'and adds empty `searchFilters` if `searchTerm` is not set',
       {
-        id: 'VIEW_ID'
+        id: 'VIEW_ID',
       },
       {
         id: 'VIEW_ID',
-        searchFilters: []
+        searchFilters: [],
       }
     );
 
@@ -136,10 +140,10 @@ describe('ViewSerializer', () => {
       {
         searchTerm: 'foo:bar text',
         'filters.0.val': 'draft',
-        'filters.0.key': '__status'
+        'filters.0.key': '__status',
       },
       {
-        searchFilters: [['__status', '', 'draft']]
+        searchFilters: [['__status', '', 'draft']],
       }
     );
 
@@ -147,11 +151,11 @@ describe('ViewSerializer', () => {
       'removes `searchTerm` if `searchText` is present',
       {
         searchTerm: 'foo:bar text',
-        searchText: 'text'
+        searchText: 'text',
       },
       {
         searchText: 'text',
-        searchFilters: []
+        searchFilters: [],
       }
     );
   });

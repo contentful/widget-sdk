@@ -25,7 +25,7 @@ export default function register() {
         [
           'preferences.showDisabledFields',
           'localeData.isSingleLocaleModeOn',
-          'localeData.focusedLocale'
+          'localeData.focusedLocale',
         ],
         update
       );
@@ -34,7 +34,7 @@ export default function register() {
       function update() {
         $scope.widgets = controls.map(markVisibility).filter(shouldRender);
         $scope.shouldDisplayNoLocalizedFieldsAdvice = $scope.widgets.every(
-          w => w.isVisible === false
+          (w) => w.isVisible === false
         );
       }
 
@@ -76,6 +76,6 @@ export default function register() {
           return widget.isVisible;
         }
       }
-    }
+    },
   ]);
 }

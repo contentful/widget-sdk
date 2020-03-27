@@ -8,7 +8,7 @@ export default {
   data: {
     sys: {
       id: undefined,
-      type: 'AssetContentType'
+      type: 'AssetContentType',
     },
     fields: [
       {
@@ -16,14 +16,14 @@ export default {
         name: 'Title',
         type: 'Symbol',
         localized: true,
-        disabled: false
+        disabled: false,
       },
       {
         id: 'description',
         name: 'Description',
         type: 'Text',
         localized: true,
-        disabled: false
+        disabled: false,
       },
       {
         id: 'file',
@@ -31,8 +31,8 @@ export default {
         type: 'File',
         localized: true,
         disabled: false,
-        required: true
-      }
-    ]
-  }
+        required: true,
+      },
+    ],
+  },
 };

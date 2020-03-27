@@ -4,30 +4,30 @@ import moment from 'moment';
 import { update, push } from 'utils/Collections';
 
 xdescribe('LaunchDarkly', () => {
-  beforeEach(function() {
+  beforeEach(function () {
     const $apply = this.$apply.bind(this);
 
     // This is a mock implementation of the LaunchDarkly client
     // library.
     this.client = {
       _eventHandlers: {},
-      on: sinon.spy(function(event, handler) {
-        this._eventHandlers = update(this._eventHandlers, event, handlers => {
+      on: sinon.spy(function (event, handler) {
+        this._eventHandlers = update(this._eventHandlers, event, (handlers) => {
           return push(handlers || [], handler);
         });
       }),
       _emit(event, value) {
         const handlers = this._eventHandlers[event] || [];
-        handlers.forEach(handler => handler(value));
+        handlers.forEach((handler) => handler(value));
         $apply();
       },
       off: sinon.spy(),
       identify: sinon.spy(),
-      variation: sinon.stub()
+      variation: sinon.stub(),
     };
 
     this.LD = {
-      initialize: sinon.stub().returns(this.client)
+      initialize: sinon.stub().returns(this.client),
     };
 
     this.org = {
@@ -35,7 +35,7 @@ xdescribe('LaunchDarkly', () => {
       role: 'owner',
       subscription: { status: 'free' },
       sys: { id: 1 },
-      pricingVersion: `pricing_version_1`
+      pricingVersion: `pricing_version_1`,
     };
 
     this.user = {
@@ -43,18 +43,16 @@ xdescribe('LaunchDarkly', () => {
       organizationMemberships: [this.org],
       signInCount: 10,
       sys: {
-        createdAt: moment()
-          .subtract(7, 'days')
-          .toISOString(),
-        id: 'user-id-1'
-      }
+        createdAt: moment().subtract(7, 'days').toISOString(),
+        id: 'user-id-1',
+      },
     };
 
     this.altOrg = {
       name: 'alternate org',
       role: 'member',
       subscription: { status: 'free_paid' },
-      sys: { id: 2 }
+      sys: { id: 2 },
     };
 
     this.userDataBus$ = null;
@@ -63,11 +61,9 @@ xdescribe('LaunchDarkly', () => {
       email: 'b',
       organizationMemberships: [this.org],
       sys: {
-        createdAt: moment()
-          .subtract(7, 'days')
-          .toISOString(),
-        id: 'user-id-1'
-      }
+        createdAt: moment().subtract(7, 'days').toISOString(),
+        id: 'user-id-1',
+      },
     };
 
     const userModule = {
@@ -81,19 +77,19 @@ xdescribe('LaunchDarkly', () => {
       ownsAtleastOneOrg: sinon.stub().returns(true),
       isAutomationTestUser: sinon.stub().returns(true),
       isUserOrgCreator: sinon.stub().returns(false),
-      getUserCreationDateUnixTimestamp: sinon.stub().returns(1234567890)
+      getUserCreationDateUnixTimestamp: sinon.stub().returns(1234567890),
     };
 
     this.shallowObjectDiff = { default: sinon.stub().returns({}) };
 
     this.EnforceFlags = {
       isFlagOverridden: sinon.stub().returns(false),
-      getFlagOverride: sinon.stub()
+      getFlagOverride: sinon.stub(),
     };
 
     this.logger = { logError: sinon.stub() };
 
-    module('contentful/test', $provide => {
+    module('contentful/test', ($provide) => {
       $provide.constant('ldclient-js', this.LD);
       $provide.value('data/User', userModule);
       $provide.value('utils/ShallowObjectDiff', this.shallowObjectDiff);
@@ -122,19 +118,19 @@ xdescribe('LaunchDarkly', () => {
 
   describe('#init()', () => {
     describe('initialize()', () => {
-      it('should initialize ld client only once', function() {
+      it('should initialize ld client only once', function () {
         sinon.assert.calledOnce(this.LD.initialize);
         this.setUserDataStream(this.altUser, this.altOrg, {});
         sinon.assert.calledOnce(this.LD.initialize);
       });
     });
     describe('identify', () => {
-      it('should identify new user if already initialized', function() {
+      it('should identify new user if already initialized', function () {
         sinon.assert.notCalled(this.client.identify);
         this.setUserDataStream(this.altUser, this.altOrg, {});
         sinon.assert.calledOnce(this.client.identify);
       });
-      it('should add custom data to the user object', function() {
+      it('should add custom data to the user object', function () {
         sinon.assert.notCalled(this.client.identify);
         this.setUserDataStream(this.user, this.org, {});
 
@@ -155,14 +151,14 @@ xdescribe('LaunchDarkly', () => {
           isAutomationTestUser: true,
           currentUserIsCurrentOrgCreator: false,
           currentUserSignInCount: 10,
-          currentUserSpaceRole: []
+          currentUserSpaceRole: [],
         });
       });
     });
   });
 
   describe('#getCurrentVariation', () => {
-    it('should return a promise which resolves with variation after LD initializes', async function() {
+    it('should return a promise which resolves with variation after LD initializes', async function () {
       this.client.variation.withArgs('FLAG').returns('true');
       const variationPromise = this.ld.getCurrentVariation('FLAG');
 
@@ -170,7 +166,7 @@ xdescribe('LaunchDarkly', () => {
       expect(await variationPromise).toEqual(true);
     });
 
-    it('should return a promise which resolves with variation after LD context changes', async function() {
+    it('should return a promise which resolves with variation after LD context changes', async function () {
       this.client.variation.withArgs('FLAG').returns('"potato"');
       const variationPromise = this.ld.getCurrentVariation('FLAG');
 
@@ -179,7 +175,7 @@ xdescribe('LaunchDarkly', () => {
       expect(await variationPromise).toEqual('potato');
     });
 
-    it('should return a promise which resolves with undefined and log error for non-existing test/feature flag', async function() {
+    it('should return a promise which resolves with undefined and log error for non-existing test/feature flag', async function () {
       this.client.variation.callsFake((_flag, defaultValue) => defaultValue);
       const variationPromise = this.ld.getCurrentVariation('FLAG');
 
@@ -189,7 +185,7 @@ xdescribe('LaunchDarkly', () => {
       expect(variation).toBeUndefined();
     });
 
-    it('should return the overriden value for an overriden flag and not use client.variation', async function() {
+    it('should return the overriden value for an overriden flag and not use client.variation', async function () {
       this.EnforceFlags.isFlagOverridden.returns(true);
       this.EnforceFlags.getFlagOverride.returns('SOME VALUE');
       const variation = await this.ld.getCurrentVariation('FLAG');
@@ -200,7 +196,7 @@ xdescribe('LaunchDarkly', () => {
   });
 
   describe('#onFeatureFlag', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       this.$scope = this.$inject('$rootScope').$new();
 
       this.ld.onFeatureFlag(this.$scope, 'FLAG', (value, change) => {
@@ -209,7 +205,7 @@ xdescribe('LaunchDarkly', () => {
       });
     });
 
-    it('should attach a handler for flag variations and changes', async function() {
+    it('should attach a handler for flag variations and changes', async function () {
       this.client.variation.returns('true');
       await this.ready();
       expect(this.$scope.flagValue).toBe(true);
@@ -223,7 +219,7 @@ xdescribe('LaunchDarkly', () => {
       expect(this.$scope.flagChange).toBe(diff);
     });
 
-    it('should track variation changes by default', async function() {
+    it('should track variation changes by default', async function () {
       await this.ready();
 
       const diff = { a: true, b: 'test' };
@@ -234,14 +230,14 @@ xdescribe('LaunchDarkly', () => {
       expect(this.$scope.flagChange).toBe(diff);
     });
 
-    it('should remove change handler when scope is destroyed', async function() {
+    it('should remove change handler when scope is destroyed', async function () {
       await this.ready();
       const changeHandler = this.client.on.args[1][1];
       this.$scope.$destroy();
       expect(this.client.off.args[0][1]).toBe(changeHandler);
     });
 
-    it('should not filter undefined as the variation', async function() {
+    it('should not filter undefined as the variation', async function () {
       const spy = sinon.spy();
       this.ld.onFeatureFlag(this.$scope, 'feature-flag', spy);
       this.client.variation.returns(undefined);
@@ -251,13 +247,13 @@ xdescribe('LaunchDarkly', () => {
       sinon.assert.calledWith(spy, undefined);
     });
 
-    it('should not attach a change handler until LD is initialized with current context', async function() {
+    it('should not attach a change handler until LD is initialized with current context', async function () {
       sinon.assert.callCount(this.client.on.withArgs('change:FLAG'), 0);
       await this.ready();
       sinon.assert.callCount(this.client.on.withArgs('change:FLAG'), 1);
     });
 
-    it('should return the overriden value for an overriden flag and not use client.variation', function() {
+    it('should return the overriden value for an overriden flag and not use client.variation', function () {
       const spy1 = sinon.spy();
       const spy2 = sinon.spy();
 

@@ -71,7 +71,7 @@ export default function register() {
             Auth,
             Config,
             { default: client },
-            { createPubSubClientForSpace }
+            { createPubSubClientForSpace },
           ] = await Promise.all([
             import(/* webpackMode: "eager" */ 'data/sharejs/Connection'),
             import(/* webpackMode: "eager" */ 'data/shouldUseEnvEndpoint'),
@@ -93,7 +93,7 @@ export default function register() {
             import(/* webpackMode: "eager" */ 'Authentication'),
             import(/* webpackMode: "eager" */ 'Config'),
             import(/* webpackMode: "eager" */ 'services/client'),
-            import(/* webpackMode: "eager" */ 'services/PubSubService')
+            import(/* webpackMode: "eager" */ 'services/PubSubService'),
           ]);
         },
 
@@ -105,7 +105,7 @@ export default function register() {
          * It is updated in resetWithSpace method once we know we are in the context of a space.
          */
         publishedCTs: {
-          items$: publishedCTsBus$.property
+          items$: publishedCTsBus$.property,
         },
         /**
          * @ngdoc method
@@ -113,7 +113,7 @@ export default function register() {
          * @description
          * This method purges a space context, so it doesn't contain space any longer
          */
-        purge: function() {
+        purge: function () {
           resetMembers(spaceContext);
         },
         /**
@@ -135,7 +135,7 @@ export default function register() {
          * @param {string?} uriEnvOrAliasId environment id based on the uri
          * @returns {Promise<self>}
          */
-        resetWithSpace: async function(spaceData, uriEnvOrAliasId) {
+        resetWithSpace: async function (spaceData, uriEnvOrAliasId) {
           const self = this;
           accessChecker.setSpace(spaceData);
 
@@ -196,7 +196,7 @@ export default function register() {
             }),
             (async () => {
               self.pubsubClient = await createPubSubClientForSpace(spaceId);
-            })()
+            })(),
           ]).then(() => {
             Telemetry.record('space_context_http_time', Date.now() - start);
             // TODO: remove this after we have store with combined reducers on top level
@@ -211,7 +211,7 @@ export default function register() {
          * Returns ID of current space, if set
          * @returns String
          */
-        getId: function() {
+        getId: function () {
           return this.space && this.space.getId();
         },
 
@@ -220,7 +220,7 @@ export default function register() {
          * Returns current space, if set
          * @returns Object
          */
-        getSpace: function() {
+        getSpace: function () {
           return this.space;
         },
 
@@ -231,7 +231,7 @@ export default function register() {
          * Returns `undefined` if no space is set.
          * @returns string
          */
-        getEnvironmentId: function() {
+        getEnvironmentId: function () {
           if (this.space) {
             return _.get(this, ['space', 'environment', 'sys', 'id'], MASTER_ENVIRONMENT_ID);
           }
@@ -247,12 +247,12 @@ export default function register() {
          * 'master' (aka the environment as accessed via it's alias)
          * @returns boolean
          */
-        isMasterEnvironment: function(
+        isMasterEnvironment: function (
           envOrAlias = _.get(this, ['space', 'environment'], { sys: { id: MASTER_ENVIRONMENT_ID } })
         ) {
           if (
             envOrAlias.sys.id === MASTER_ENVIRONMENT_ID ||
-            _.find(envOrAlias.sys.aliases, alias => alias.sys.id === MASTER_ENVIRONMENT_ID)
+            _.find(envOrAlias.sys.aliases, (alias) => alias.sys.id === MASTER_ENVIRONMENT_ID)
           ) {
             return true;
           }
@@ -265,7 +265,7 @@ export default function register() {
          * Returns the ids of the environments aliases referencing the current environment
          * @returns array<string>
          */
-        getAliasesIds: function(
+        getAliasesIds: function (
           env = _.get(this, ['space', 'environment'], { sys: { id: MASTER_ENVIRONMENT_ID } })
         ) {
           if (!env.sys.aliases) return [];
@@ -280,7 +280,7 @@ export default function register() {
          * Checks if the space is opted in to the environment alias feature
          * @returns boolean
          */
-        hasOptedIntoAliases: function(environments = _.get(this, ['environments'], [])) {
+        hasOptedIntoAliases: function (environments = _.get(this, ['environments'], [])) {
           return environments.some(({ sys: { aliases = [] } }) => aliases.length > 0);
         },
 
@@ -294,10 +294,10 @@ export default function register() {
          * If not found, returns `defaultValue` (`undefined` when not provided)
          * @returns *
          */
-        getData: function(path, defaultValue) {
+        getData: function (path, defaultValue) {
           const data = _.get(this, 'space.data', {});
           return _.get(data, path, defaultValue);
-        }
+        },
       };
 
       resetMembers(spaceContext);
@@ -315,7 +315,7 @@ export default function register() {
         _.assign(spaceContext.publishedCTs, _.omit(publishedCTsForSpace, 'items$'));
         await spaceContext.publishedCTs.refresh();
         // Synchronous first update since there's a current value now.
-        K.onValue(publishedCTsForSpace.items$, items => publishedCTsBus$.set(items));
+        K.onValue(publishedCTsForSpace.items$, (items) => publishedCTsBus$.set(items));
       }
 
       function resetMembers(spaceContext) {
@@ -380,10 +380,10 @@ export default function register() {
               environmentId: spaceContext.getEnvironmentId(),
               isMasterEnvironment: spaceContext.isMasterEnvironment(spaceContext.space.environment),
               aliasId: aliases[0], // for now we assume that there is only alias ('master')
-              optedIn: spaceContext.hasOptedIntoAliases()
+              optedIn: spaceContext.hasOptedIntoAliases(),
             };
           });
       }
-    }
+    },
   ]);
 }

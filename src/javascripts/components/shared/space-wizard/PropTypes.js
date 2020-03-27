@@ -5,6 +5,6 @@ export const partnershipMeta = PropTypes.shape({
   fields: PropTypes.shape({
     clientName: PropTypes.string,
     description: PropTypes.string,
-    estimatedDeliveryDate: PropTypes.string
-  })
+    estimatedDeliveryDate: PropTypes.string,
+  }),
 });

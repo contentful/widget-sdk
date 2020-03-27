@@ -7,7 +7,7 @@ import {
   TEAM_MEMBERSHIPS,
   TEAM_SPACE_MEMBERSHIPS,
   TEAMS,
-  USERS
+  USERS,
 } from './datasets';
 
 /**
@@ -37,16 +37,16 @@ const ROUTES = {
               ORG_MEMBERSHIPS,
               TEAM_SPACE_MEMBERSHIPS,
               ORG_SPACES,
-              { orgRoles: ['admin', 'owner'], datasets: [ORG_SPACE_ROLES] }
-            ]
-          }
-        }
-      }
-    }
+              { orgRoles: ['admin', 'owner'], datasets: [ORG_SPACE_ROLES] },
+            ],
+          },
+        },
+      },
+    },
   },
   space: {
-    path: '/spaces/:spaceId'
-  }
+    path: '/spaces/:spaceId',
+  },
 };
 
 function addParser(route, parentPath) {
@@ -56,11 +56,11 @@ function addParser(route, parentPath) {
   route.partialTest = parser.partialTest.bind(parser);
   route.build = parser.build.bind(parser);
   if (route.children) {
-    Object.values(route.children).forEach(child => addParser(child, path));
+    Object.values(route.children).forEach((child) => addParser(child, path));
   }
 }
 
-Object.values(ROUTES).forEach(route => addParser(route));
+Object.values(ROUTES).forEach((route) => addParser(route));
 
 // assumes if a route belongs to a feature, all children belong to that feature as well
 export function getFeature(path, routes = ROUTES) {

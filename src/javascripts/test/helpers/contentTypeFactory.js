@@ -31,8 +31,8 @@ export function create({ sys = {}, name } = {}) {
     sys: {
       ...sys,
       id: sys.id || uniqueId('content-type-id'),
-      publishedVersion: sys.publishedVersion
+      publishedVersion: sys.publishedVersion,
     },
-    name: name || uniqueId('content-type-name')
+    name: name || uniqueId('content-type-name'),
   };
 }

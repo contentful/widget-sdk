@@ -7,17 +7,17 @@ import { css } from 'emotion';
 
 const styles = {
   availableItemsTitle: css({
-    marginBottom: tokens.spacingM
+    marginBottom: tokens.spacingM,
   }),
   availableItemsList: css({
-    marginBottom: tokens.spacingL
+    marginBottom: tokens.spacingL,
   }),
   uiExtensionInfo: css({
-    marginBottom: tokens.spacingM
+    marginBottom: tokens.spacingM,
   }),
   uiExtensionInfoTitle: css({
-    marginBottom: tokens.spacingS
-  })
+    marginBottom: tokens.spacingS,
+  }),
 };
 
 export default function AvailableItems(props) {
@@ -67,5 +67,5 @@ export default function AvailableItems(props) {
 
 AvailableItems.propTypes = {
   items: PropTypes.array.isRequired,
-  onAddItem: PropTypes.func.isRequired
+  onAddItem: PropTypes.func.isRequired,
 };

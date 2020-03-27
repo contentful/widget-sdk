@@ -13,11 +13,11 @@ import useAsync from 'app/common/hooks/useAsync';
 
 const styles = {
   count: css({
-    marginTop: tokens.spacingM
+    marginTop: tokens.spacingM,
   }),
   list: css({
-    marginTop: tokens.spacingM
-  })
+    marginTop: tokens.spacingM,
+  }),
 };
 
 export default function AddToTeams({ orgId, onChange, inputWidth }) {
@@ -35,12 +35,12 @@ export default function AddToTeams({ orgId, onChange, inputWidth }) {
     data && setTeamSpaceMemberships(groupBy(data, 'sys.team.sys.id'));
   }, [data]);
 
-  const handleTeamSelected = team => {
+  const handleTeamSelected = (team) => {
     setTeams([...teams, team]);
   };
 
-  const handleTeamRemoved = teamId => {
-    setTeams(teams.filter(team => team.sys.id !== teamId));
+  const handleTeamRemoved = (teamId) => {
+    setTeams(teams.filter((team) => team.sys.id !== teamId));
   };
 
   useEffect(() => {
@@ -63,7 +63,7 @@ export default function AddToTeams({ orgId, onChange, inputWidth }) {
         )} selected`}</SectionHeading>
       )}
       <div className={styles.list}>
-        {teams.map(team => (
+        {teams.map((team) => (
           <TeamSelection
             key={team.sys.id}
             onRemove={() => handleTeamRemoved(team.sys.id)}
@@ -78,5 +78,5 @@ export default function AddToTeams({ orgId, onChange, inputWidth }) {
 AddToTeams.propTypes = {
   orgId: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
-  inputWidth: PropTypes.oneOf(['small', 'medium', 'large', 'full'])
+  inputWidth: PropTypes.oneOf(['small', 'medium', 'large', 'full']),
 };

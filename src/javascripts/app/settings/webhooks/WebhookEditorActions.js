@@ -16,7 +16,7 @@ const PATH_TO_ERROR_MSG = {
   filters: 'Please make sure all filters are valid or remove incomplete ones.',
   headers: 'Please make sure all headers are valid or remove incomplete ones.',
   http_basic_username: HTTP_BASIC_ERROR_MSG,
-  http_basic_password: HTTP_BASIC_ERROR_MSG
+  http_basic_password: HTTP_BASIC_ERROR_MSG,
 };
 
 export async function save(webhook, templateId, templateIdReferrer) {
@@ -63,7 +63,7 @@ function trackSave(webhook, templateId = null, templateIdReferrer = null) {
     content_type_header: get(webhook, ['transformation', 'contentType']),
     topics: get(webhook, ['topics']),
     filters: JSON.stringify(get(webhook, ['filters'])),
-    body_transformation: get(webhook, ['transformation', 'body'])
+    body_transformation: get(webhook, ['transformation', 'body']),
   };
 
   Analytics.track('ui_webhook_editor:save', trackingData);

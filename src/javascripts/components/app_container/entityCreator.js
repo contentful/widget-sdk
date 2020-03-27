@@ -19,7 +19,7 @@ export function newAsset() {
 function makeEntityErrorHandler(entityType) {
   const $q = getModule('$q');
   const spaceContext = getModule('spaceContext');
-  return err => {
+  return (err) => {
     let message = 'Could not create ' + entityType;
 
     if (_.get(err, 'body.details.reasons')) {

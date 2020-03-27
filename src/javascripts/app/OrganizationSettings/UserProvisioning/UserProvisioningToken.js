@@ -7,8 +7,8 @@ import StateLink from 'app/common/StateLink';
 
 const styles = {
   note: css({
-    marginBottom: tokens.spacingL
-  })
+    marginBottom: tokens.spacingL,
+  }),
 };
 
 export default function UserProvisioningToken({ personalAccessToken }) {
@@ -37,5 +37,5 @@ export default function UserProvisioningToken({ personalAccessToken }) {
 }
 
 UserProvisioningToken.propTypes = {
-  personalAccessToken: PropTypes.any.isRequired
+  personalAccessToken: PropTypes.any.isRequired,
 };

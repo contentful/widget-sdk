@@ -12,7 +12,7 @@ export function createLoadEventTracker({
   getSlideStates,
   getEditorData,
   slide,
-  slidesControllerUuid
+  slidesControllerUuid,
 }) {
   const slideUuid = random.id();
 
@@ -20,7 +20,7 @@ export function createLoadEventTracker({
     const editorData = getEditorData();
     const { fields: fieldTypes } = editorData.contentType.data;
     const { fields } = editorData.entity.data;
-    const enabledFieldTypes = fieldTypes.filter(field => !field.disabled);
+    const enabledFieldTypes = fieldTypes.filter((field) => !field.disabled);
     const richTextFieldTypes = enabledFieldTypes.filter(isRichTextField);
     const singleReferenceFieldTypes = enabledFieldTypes.filter(isSingleReferenceField);
     const multiReferenceFieldTypes = enabledFieldTypes.filter(isMultiReferenceField);
@@ -35,12 +35,12 @@ export function createLoadEventTracker({
       singleLinkFieldEditorInstanceCount + multiLinkFieldEditorInstanceCount;
 
     const sumMatchingFieldsBy = (fieldTypes, predicate) =>
-      sum(fieldTypes.map(fieldType => sumBy(values(fields[fieldType.id]), predicate)));
-    const singleReferenceFieldLinkCount = sumMatchingFieldsBy(singleReferenceFieldTypes, field =>
+      sum(fieldTypes.map((fieldType) => sumBy(values(fields[fieldType.id]), predicate)));
+    const singleReferenceFieldLinkCount = sumMatchingFieldsBy(singleReferenceFieldTypes, (field) =>
       field ? 1 : 0
     );
     const multiReferenceFieldLinkCount = sumMatchingFieldsBy(multiReferenceFieldTypes, 'length');
-    const richTextFieldLinkCount = sumMatchingFieldsBy(richTextFieldTypes, field =>
+    const richTextFieldLinkCount = sumMatchingFieldsBy(richTextFieldTypes, (field) =>
       sumBy(values(getRichTextEntityLinks(field)), 'length')
     );
     const linkCount =
@@ -49,14 +49,14 @@ export function createLoadEventTracker({
     return {
       linkCount,
       richTextEditorInstanceCount,
-      linkFieldEditorInstanceCount
+      linkFieldEditorInstanceCount,
     };
   });
 
   return function trackEditorLoadEvent(eventName) {
     const slideStates = getSlideStates();
     const totalSlideCount = keys(slideStates).length;
-    const slideLevel = findIndex(slideStates, state => isEqual(state.slide, slide));
+    const slideLevel = findIndex(slideStates, (state) => isEqual(state.slide, slide));
     const baseData = { slidesControllerUuid, slideUuid, totalSlideCount, slideLevel };
     if (eventName === 'init') {
       return track(`${LOAD_EVENT_CATEGORY}:init`, { ...baseData, loadMs: 0 });
@@ -65,7 +65,7 @@ export function createLoadEventTracker({
     track(`${LOAD_EVENT_CATEGORY}:${eventName}`, {
       ...baseData,
       ...detailData,
-      loadMs: new Date().getTime() - loadStartMs
+      loadMs: new Date().getTime() - loadStartMs,
     });
   };
 }
@@ -77,7 +77,7 @@ export function bootstrapEntryEditorLoadEvents($scope, loadEvents, editorData, t
   const linkFieldTypes = editorData.contentType.data.fields.filter(isLinkField);
   const renderableLinkFieldInstanceCount = getRenderableLinkFieldInstanceCount(linkFieldTypes);
 
-  K.onValueScope($scope, $scope.otDoc.state.isConnected$, status => {
+  K.onValueScope($scope, $scope.otDoc.state.isConnected$, (status) => {
     if (loadShareJSConnected || status === false) {
       return;
     }
@@ -114,7 +114,7 @@ export function bootstrapEntryEditorLoadEvents($scope, loadEvents, editorData, t
 }
 
 export function getRenderableLinkFieldInstanceCount(fieldTypes) {
-  const localizedFieldCount = fieldTypes.filter(f => f.localized).length;
+  const localizedFieldCount = fieldTypes.filter((f) => f.localized).length;
   const nonLocalizedFieldCount = fieldTypes.length - localizedFieldCount;
   const activeLocaleCount = TheLocaleStore.getActiveLocales().length;
   return localizedFieldCount * activeLocaleCount + nonLocalizedFieldCount;
@@ -133,7 +133,7 @@ export function createWidgetLinkRenderEventsHandler({
   locale,
   loadEvents,
   editorData,
-  trackLinksRendered
+  trackLinksRendered,
 }) {
   return function handleWidgetLinkRenderEvents() {
     const { field } = widget;
@@ -154,7 +154,7 @@ export function createWidgetLinkRenderEventsHandler({
       loadEvents,
       editorData,
       trackLinksRendered,
-      getLinkCountForField
+      getLinkCountForField,
     });
   };
 }
@@ -165,7 +165,7 @@ function handleField({
   loadEvents,
   editorData,
   trackLinksRendered,
-  getLinkCountForField
+  getLinkCountForField,
 }) {
   // TODO: We shouldn't have to deal with `editorData` but a simple entity in here.
   const fieldId = widget.fieldId;

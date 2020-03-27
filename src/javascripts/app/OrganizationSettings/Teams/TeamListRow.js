@@ -12,7 +12,7 @@ import {
   Spinner,
   CardActions,
   DropdownList,
-  DropdownListItem
+  DropdownListItem,
 } from '@contentful/forma-36-react-components';
 import { Team as TeamPropType } from 'app/OrganizationSettings/PropTypes';
 import ROUTES from 'redux/routes';
@@ -26,12 +26,12 @@ import TeamDialog from './TeamDialog';
 const styles = {
   name: css({
     width: '18rem',
-    ...ellipsisStyle
+    ...ellipsisStyle,
   }),
   description: css({
     width: '30rem',
-    ...ellipsisStyle
-  })
+    ...ellipsisStyle,
+  }),
 };
 
 class TeamListRow extends React.Component {
@@ -41,11 +41,11 @@ class TeamListRow extends React.Component {
     readOnlyPermission: PropTypes.bool.isRequired,
     memberCount: PropTypes.number.isRequired,
     orgId: PropTypes.string.isRequired,
-    removeTeam: PropTypes.func.isRequired
+    removeTeam: PropTypes.func.isRequired,
   };
 
   state = {
-    showTeamDialog: false
+    showTeamDialog: false,
   };
 
   render() {
@@ -62,7 +62,7 @@ class TeamListRow extends React.Component {
                 data-test-id="team-name"
                 href={ROUTES.organization.children.teams.children.team.build({
                   orgId,
-                  teamId: team.sys.id
+                  teamId: team.sys.id,
                 })}>
                 {team.name}
               </TextLink>
@@ -114,9 +114,9 @@ export default connect(
   (state, { team }) => ({
     orgId: getOrgId(state),
     memberCount: getMemberCountsByTeam(state)[team.sys.id] || 0,
-    readOnlyPermission: hasReadOnlyPermission(state)
+    readOnlyPermission: hasReadOnlyPermission(state),
   }),
-  dispatch => ({
-    removeTeam: teamId => dispatch({ type: 'REMOVE_TEAM', payload: { teamId } })
+  (dispatch) => ({
+    removeTeam: (teamId) => dispatch({ type: 'REMOVE_TEAM', payload: { teamId } }),
   })
 )(TeamListRow);

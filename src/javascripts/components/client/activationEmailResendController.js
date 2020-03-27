@@ -3,7 +3,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import {
   openActivationEmailResendDialog,
-  openConfirmationEmailSentDialog
+  openConfirmationEmailSentDialog,
 } from './ActivationEmailResendDialog';
 import { resendActivationEmail } from './activationEmailResender';
 
@@ -44,7 +44,7 @@ export default function register() {
         const result = await openActivationEmailResendDialog({
           doResendEmail: () => {
             return resendActivationEmailWithDelay(email, 1300);
-          }
+          },
         });
         if (result) {
           await openConfirmationEmailSentDialog({ email });
@@ -84,6 +84,6 @@ export default function register() {
       function storeDialogLastShownTimestamp() {
         store.set(moment().unix());
       }
-    }
+    },
   ]);
 }

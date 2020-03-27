@@ -18,7 +18,7 @@ import {
   hasAnOrgWithSpaces,
   isAutomationTestUser,
   getUserSpaceRoles,
-  getUserCreationDateUnixTimestamp
+  getUserCreationDateUnixTimestamp,
 } from 'data/User';
 
 // mvar to wait until LD context is successfully switched
@@ -84,7 +84,7 @@ export function getCurrentVariation(flagName) {
     return Promise.resolve(getFlagOverride(flagName));
   }
 
-  return LDContextChangeMVar.read().then(_ => {
+  return LDContextChangeMVar.read().then((_) => {
     const variation = client.variation(flagName, UNINIT_VAL);
     if (variation === UNINIT_VAL) {
       // LD could not find a flag with given name, log error and return undefined
@@ -137,9 +137,9 @@ export function onFeatureFlag($scope, flagName, handler) {
 
     onValueScope(
       $scope,
-      obs$.property.map(v => [
+      obs$.property.map((v) => [
         v, // overridden value is a JS boolean so no need to parse
-        {} // no context change will be emitted as the flag value is forced
+        {}, // no context change will be emitted as the flag value is forced
       ]),
       ([variation, changes]) => handler(variation, changes)
     );
@@ -150,12 +150,12 @@ export function onFeatureFlag($scope, flagName, handler) {
     const obs$ = createPropertyBus(INITIAL_PROPERTY_VALUE);
     const setVariation = getVariationSetter(flagName, obs$);
 
-    LDContextChangeMVar.read().then(_ => {
+    LDContextChangeMVar.read().then((_) => {
       setVariation();
       client.on(`change:${flagName}`, setVariation);
     });
 
-    $scope.$on('$destroy', _ => {
+    $scope.$on('$destroy', (_) => {
       obs$.end();
       if (client) {
         client.off(`change:${flagName}`, setVariation);
@@ -165,8 +165,8 @@ export function onFeatureFlag($scope, flagName, handler) {
     onValueScope(
       $scope,
       obs$.property
-        .filter(v => v !== INITIAL_PROPERTY_VALUE)
-        .map(v => [v === undefined ? v : JSON.parse(v), getChangesObject(prevCtx, currCtx)]),
+        .filter((v) => v !== INITIAL_PROPERTY_VALUE)
+        .map((v) => [v === undefined ? v : JSON.parse(v), getChangesObject(prevCtx, currCtx)]),
       ([variation, changes]) => handler(variation, changes)
     );
   }
@@ -182,7 +182,7 @@ export function onFeatureFlag($scope, flagName, handler) {
  * @returns {Function}
  */
 function getVariationSetter(flagName, obs$) {
-  return _ => obs$.set(client.variation(flagName, UNINIT_VAL));
+  return (_) => obs$.set(client.variation(flagName, UNINIT_VAL));
 }
 
 /**
@@ -236,21 +236,21 @@ function buildLDUser(user, currOrg, spacesByOrg, currSpace) {
     isNonPayingUser: !['paid', 'free_paid'].includes(get(currOrg, ['subscription', 'status'])),
     // by default, if there is no current space, we pass empty array
     currentUserSpaceRole: [],
-    isAutomationTestUser: isAutomationTestUser(user)
+    isAutomationTestUser: isAutomationTestUser(user),
   };
 
   if (currSpace) {
     const roles = getUserSpaceRoles(currSpace);
     customData = assign({}, customData, {
       currentSpaceId: currSpace.sys.id,
-      currentUserSpaceRole: roles
+      currentUserSpaceRole: roles,
     });
   }
 
   // remove all custom props that are null and return the obj
   return {
     key: user.sys.id,
-    custom: omitBy(customData, isNull)
+    custom: omitBy(customData, isNull),
   };
 }
 

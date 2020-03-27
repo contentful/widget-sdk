@@ -7,11 +7,11 @@ import tokens from '@contentful/forma-36-tokens';
 
 const styles = {
   usersWidget: css({
-    marginBottom: tokens.spacingM
+    marginBottom: tokens.spacingM,
   }),
   noUsers: css({
-    color: tokens.colorTextLight
-  })
+    color: tokens.colorTextLight,
+  }),
 };
 
 export default class UsersWidget extends Component {
@@ -19,10 +19,10 @@ export default class UsersWidget extends Component {
     users: PropTypes.arrayOf(
       PropTypes.shape({
         sys: PropTypes.shape({
-          id: PropTypes.string.isRequired
-        }).isRequired
+          id: PropTypes.string.isRequired,
+        }).isRequired,
       })
-    ).isRequired
+    ).isRequired,
   };
 
   render() {

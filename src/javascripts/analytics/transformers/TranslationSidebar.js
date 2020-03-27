@@ -1,6 +1,6 @@
 import { addUserOrgSpace } from './Decorators';
 
-const extractAction = eventName => eventName.split(':')[1];
+const extractAction = (eventName) => eventName.split(':')[1];
 
 /**
  * @ngdoc service
@@ -13,6 +13,6 @@ export default addUserOrgSpace((eventName, data) => ({
     action: extractAction(eventName),
     current_mode: data.currentMode,
     previous_active_locale_count: data.previousActiveLocaleCount,
-    current_active_locale_count: data.currentActiveLocaleCount
-  }
+    current_active_locale_count: data.currentActiveLocaleCount,
+  },
 }));

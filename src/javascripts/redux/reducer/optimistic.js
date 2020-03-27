@@ -12,14 +12,14 @@ export default (state = {}, { type, payload }) => {
       return update(
         TEAMS,
         // handle placeholders as a list
-        teams => concat({ ...payload.team, sys: { id: 'placeholder' } }, teams || []),
+        (teams) => concat({ ...payload.team, sys: { id: 'placeholder' } }, teams || []),
         state
       );
     }
     case 'SUBMIT_NEW_TEAM_MEMBERSHIP': {
       return update(
         TEAM_MEMBERSHIPS,
-        memberships =>
+        (memberships) =>
           concat(
             { ...payload.orgMembership, admin: false, sys: { id: 'placeholder' } },
             memberships || []
@@ -30,7 +30,7 @@ export default (state = {}, { type, payload }) => {
     case 'SUBMIT_NEW_TEAM_SPACE_MEMBERSHIP': {
       return update(
         TEAM_SPACE_MEMBERSHIPS,
-        teamSpaceMembershiosPlaceholders =>
+        (teamSpaceMembershiosPlaceholders) =>
           concat({ sys: { id: 'placeholder' } }, teamSpaceMembershiosPlaceholders || []),
         state
       );

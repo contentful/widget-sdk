@@ -7,18 +7,18 @@ const TRANSFORMATION_EXAMPLE = {
   entityId: '{ /payload/sys/id }',
   spaceId: '{ /payload/sys/space/sys/id }',
   parameters: {
-    text: 'Entity version: { /payload/sys/version }'
-  }
+    text: 'Entity version: { /payload/sys/version }',
+  },
 };
 
 const CODE_MIRROR_OPTIONS = {
   mode: 'application/json',
   lineNumbers: true,
   tabSize: 2,
-  lineWrapping: true
+  lineWrapping: true,
 };
 
-const refreshCodeMirror = throttle(editor => {
+const refreshCodeMirror = throttle((editor) => {
   if (editor) {
     editor.setSize(null, '250px');
     editor.refresh();
@@ -28,7 +28,7 @@ const refreshCodeMirror = throttle(editor => {
 export default class WebhookBodyTransformation extends React.Component {
   static propTypes = {
     body: PropTypes.string,
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
   };
 
   editor = null;
@@ -85,7 +85,7 @@ export default class WebhookBodyTransformation extends React.Component {
         {hasBodyTransformation && (
           <div className="webhook-editor__settings_payload">
             <CodeMirror
-              editorDidMount={el => {
+              editorDidMount={(el) => {
                 this.editor = el;
               }}
               options={CODE_MIRROR_OPTIONS}

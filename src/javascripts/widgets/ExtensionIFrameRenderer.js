@@ -11,7 +11,7 @@ import ExtensionAPI from './ExtensionAPI';
 const SANDBOX = 'allow-scripts allow-popups allow-popups-to-escape-sandbox allow-forms';
 
 function isAppDomain(src) {
-  const protocol = ['//', 'http://', 'https://'].find(p => src.startsWith(p));
+  const protocol = ['//', 'http://', 'https://'].find((p) => src.startsWith(p));
 
   if (protocol) {
     const [domain] = src.slice(protocol.length).split('/');
@@ -28,20 +28,20 @@ export default class ExtensionIFrameRenderer extends React.Component {
       getData: PropTypes.func.isRequired,
       apply: PropTypes.func.isRequired,
       install: PropTypes.func.isRequired,
-      uninstall: PropTypes.func
+      uninstall: PropTypes.func,
     }).isRequired,
     descriptor: PropTypes.shape({
       id: PropTypes.string,
       appDefinitionId: PropTypes.string,
       src: PropTypes.string,
-      srcdoc: PropTypes.string
+      srcdoc: PropTypes.string,
     }).isRequired,
     parameters: PropTypes.shape({
       instance: PropTypes.object.isRequired,
       installation: PropTypes.object.isRequired,
-      invocation: PropTypes.object
+      invocation: PropTypes.object,
     }).isRequired,
-    isFullSize: PropTypes.bool
+    isFullSize: PropTypes.bool,
   };
 
   // There's no need to update. Once the iframe is loaded
@@ -88,7 +88,7 @@ export default class ExtensionIFrameRenderer extends React.Component {
   // be called).
   onLoad = () => this.extensionApi.connect();
 
-  initialize = iframe => {
+  initialize = (iframe) => {
     if (!iframe || this.extensionApi) {
       return;
     }
@@ -101,7 +101,7 @@ export default class ExtensionIFrameRenderer extends React.Component {
       // Make sure instance and installation parameters
       // are always defined (default is an empty object).
       instance: this.props.parameters.instance || {},
-      installation: this.props.parameters.installation || {}
+      installation: this.props.parameters.installation || {},
     };
 
     // Only add invocation parameters when defined.
@@ -117,7 +117,7 @@ export default class ExtensionIFrameRenderer extends React.Component {
       descriptor,
       channel,
       parameters,
-      ...bridgeData
+      ...bridgeData,
     });
 
     bridge.install(this.extensionApi);

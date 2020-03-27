@@ -23,13 +23,13 @@ export function buildExtensionWidget({ sys, extension, parameters }) {
     parameters: get(extension, ['parameters', 'instance'], []),
     installationParameters: {
       definitions: get(extension, ['parameters', 'installation'], []),
-      values: parameters || {}
-    }
+      values: parameters || {},
+    },
   };
 }
 
 function getAppFieldTypes(appDefinition) {
-  const entryFieldLocation = (appDefinition.locations || []).find(l => {
+  const entryFieldLocation = (appDefinition.locations || []).find((l) => {
     return isPlainObject(l) && l.location === LOCATION_ENTRY_FIELD;
   });
 
@@ -48,15 +48,15 @@ export function buildAppWidget({ id, title, icon, appDefinition, appInstallation
     namespace: NAMESPACE_APP,
     name: title,
     fieldTypes: getAppFieldTypes(appDefinition),
-    locations: (appDefinition.locations || []).map(l => l.location),
+    locations: (appDefinition.locations || []).map((l) => l.location),
     appId: id,
     appIconUrl: icon,
     sidebar: false,
     parameters: [],
     installationParameters: {
       definitions: [],
-      values: appInstallation.parameters || {}
-    }
+      values: appInstallation.parameters || {},
+    },
   };
 }
 
@@ -73,7 +73,7 @@ export function buildAppDefinitionWidget(appDefinition) {
     parameters: [],
     installationParameters: {
       definitions: [],
-      values: {}
-    }
+      values: {},
+    },
   };
 }

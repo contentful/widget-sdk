@@ -11,7 +11,7 @@ import { NEW_STATUS_SWITCH } from 'featureFlags';
 
 export default class PublicationWidgetContainer extends Component {
   static propTypes = {
-    emitter: PropTypes.object.isRequired
+    emitter: PropTypes.object.isRequired,
   };
 
   state = {
@@ -24,7 +24,7 @@ export default class PublicationWidgetContainer extends Component {
     userId: undefined,
     entity: undefined,
     validator: undefined,
-    isStatusSwitch: false
+    isStatusSwitch: false,
   };
 
   async componentDidMount() {
@@ -53,19 +53,19 @@ export default class PublicationWidgetContainer extends Component {
     );
   }
 
-  onUpdatePublicationWidget = update => {
+  onUpdatePublicationWidget = (update) => {
     this.setState({ ...update });
   };
 
-  onUpdatePublicationBlocking = publicationBlockedReasons => {
-    this.setState(prevState => ({
+  onUpdatePublicationBlocking = (publicationBlockedReasons) => {
+    this.setState((prevState) => ({
       publicationBlockedReasons: omitBy(
         {
           ...prevState.publicationBlockedReasons,
-          ...publicationBlockedReasons
+          ...publicationBlockedReasons,
         },
         isEmpty
-      )
+      ),
     }));
   };
 
@@ -82,7 +82,7 @@ export default class PublicationWidgetContainer extends Component {
       updatedAt,
       validator,
       publicationBlockedReasons,
-      isStatusSwitch
+      isStatusSwitch,
     } = this.state;
 
     const revert = get(commands, 'revertToPrevious');

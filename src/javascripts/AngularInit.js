@@ -12,7 +12,7 @@ import componentsSharedPersistentNotificationCfPersistentNotificationDirectiveEs
 
 export const angularInitRun = [
   '$injector',
-  async $injector => {
+  async ($injector) => {
     angular.module('contentful/init').getModule = $injector.get;
     angular.module('contentful/init').loaded = false;
 
@@ -101,12 +101,12 @@ export const angularInitRun = [
       import(/* webpackMode: "eager" */ 'states/cfSrefDirective'),
       import(/* webpackMode: "eager" */ 'ui/Framework/ReactDirective'),
       import(/* webpackMode: "eager" */ 'directives/cfIconDirective'),
-      import(/* webpackMode: "eager" */ 'directives/cfUiTab')
+      import(/* webpackMode: "eager" */ 'directives/cfUiTab'),
     ]);
-    modules.forEach(module => module.default());
+    modules.forEach((module) => module.default());
 
     angular.module('contentful/init').loaded = true;
-  }
+  },
 ];
 
 export default angular
@@ -125,8 +125,8 @@ export default angular
         service: $provide.service,
         constant: $provide.constant,
         provider: $provide.provider,
-        value: $provide.value
+        value: $provide.value,
       };
-    }
+    },
   ])
   .run(angularInitRun).name;

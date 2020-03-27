@@ -6,47 +6,50 @@ import _ from 'lodash';
 // we add them once globally they are removed later and the tests fail.
 beforeEach(() => {
   jasmine.addMatchers({
-    toLookEqual: function() {
+    toLookEqual: function () {
       return {
-        compare: function(actual, expected) {
+        compare: function (actual, expected) {
           return {
             pass: angular.equals(actual, expected),
             message:
-              'Expected ' + JSON.stringify(actual) + ' to look equal to ' + JSON.stringify(expected)
+              'Expected ' +
+              JSON.stringify(actual) +
+              ' to look equal to ' +
+              JSON.stringify(expected),
           };
-        }
+        },
       };
     },
 
-    toHaveClass: function() {
+    toHaveClass: function () {
       return {
-        compare: function(actual, expected) {
+        compare: function (actual, expected) {
           const pass = actual.hasClass(expected);
           const notText = pass ? 'not ' : '';
           return {
             pass: pass,
-            message: 'Expected element ' + notText + 'to have class ' + expected
+            message: 'Expected element ' + notText + 'to have class ' + expected,
           };
-        }
+        },
       };
     },
 
-    toBeNgHidden: function() {
+    toBeNgHidden: function () {
       return {
-        compare: function(actual) {
+        compare: function (actual) {
           const pass = actual.hasClass('ng-hide');
           const notText = pass ? 'not ' : '';
           return {
             pass: pass,
-            message: 'Expected element ' + notText + 'to be ng-hidden'
+            message: 'Expected element ' + notText + 'to be ng-hidden',
           };
-        }
+        },
       };
     },
 
-    toHaveTagName: function() {
+    toHaveTagName: function () {
       return {
-        compare: function(actual, expected) {
+        compare: function (actual, expected) {
           let tag;
           if (actual.tagName) {
             tag = actual.tagName.toLowerCase();
@@ -58,15 +61,15 @@ beforeEach(() => {
           return {
             pass: pass,
             message:
-              'Expected element with tag ' + tag + ' ' + notText + 'to have tag name ' + expected
+              'Expected element with tag ' + tag + ' ' + notText + 'to have tag name ' + expected,
           };
-        }
+        },
       };
     },
 
-    toBeInstanceOf: function() {
+    toBeInstanceOf: function () {
       return {
-        compare: function(actual, expected) {
+        compare: function (actual, expected) {
           const pass = actual instanceof expected;
           const notText = pass ? ' not' : '';
 
@@ -77,24 +80,24 @@ beforeEach(() => {
               actual.constructor.name +
               notText +
               ' to be an instance of ' +
-              expected.name
+              expected.name,
           };
-        }
+        },
       };
     },
 
-    toEqualObj: function() {
+    toEqualObj: function () {
       const KINDS = {
         N: 'newly added property/element',
         D: 'property/element was deleted',
         E: 'property/element was edited',
-        A: 'change occurred within an array'
+        A: 'change occurred within an array',
       };
 
       function formatDiff(objdiff) {
         return objdiff
           .map(
-            diff =>
+            (diff) =>
               '\t' +
               diff.kind +
               ' at ' +
@@ -109,20 +112,20 @@ beforeEach(() => {
       }
 
       return {
-        compare: function(actual, expected) {
+        compare: function (actual, expected) {
           /* global deepDiff */
-          const objdiff = (deepDiff(expected, actual) || []).map(diff => ({
+          const objdiff = (deepDiff(expected, actual) || []).map((diff) => ({
             kind: KINDS[diff.kind],
             path: diff.path,
             expected: diff.lhs,
-            actual: diff.rhs
+            actual: diff.rhs,
           }));
 
           return {
             pass: objdiff.length === 0,
-            message: 'Expected object not to have differences\n\n' + formatDiff(objdiff)
+            message: 'Expected object not to have differences\n\n' + formatDiff(objdiff),
           };
-        }
+        },
       };
     },
 
@@ -134,9 +137,9 @@ beforeEach(() => {
      * trying to understand if it was called with the right sequence of
      * arguments
      */
-    toMatchMultipleCallsArgs: function() {
+    toMatchMultipleCallsArgs: function () {
       return {
-        compare: function(actual, expected) {
+        compare: function (actual, expected) {
           const flattenedArgs = _.flatten(actual);
           const pass = _.isEqual(flattenedArgs, expected);
           return {
@@ -149,10 +152,10 @@ beforeEach(() => {
               : 'Expected arguments ' +
                 JSON.stringify(actual) +
                 ' to equal ' +
-                JSON.stringify(expected)
+                JSON.stringify(expected),
           };
-        }
+        },
       };
-    }
+    },
   });
 });

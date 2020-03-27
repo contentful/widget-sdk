@@ -4,7 +4,7 @@ import { apiUrl } from 'Config';
 import {
   default as newEntityBatchLoaderFn,
   MAX_FETCH_LIMIT,
-  WORST_CASE_QUERY_PARAMS
+  WORST_CASE_QUERY_PARAMS,
 } from './newEntityBatchLoaderFn';
 
 const MAX_URL_LENGTH = detectBrowser().name === 'ie' ? 2000 : 8000;
@@ -34,7 +34,7 @@ export default function newBatchEntityFetcher({ getResources, resourceContext })
   //  significantly shorter than 64 chars (mostly 32 chars). Optimize by calculating
   //  batch size dynamically (might require a DataLoader contribution).
   const loader = new DataLoader(batchLoaderFn, { maxBatchSize: MAX_BATCH_SIZE });
-  return id =>
+  return (id) =>
     loader
       .load(id)
       // Clear the cache after each cycle of loading data. This ensures we load a
@@ -70,7 +70,7 @@ export default function newBatchEntityFetcher({ getResources, resourceContext })
       code: 'NotFound',
       data: newActualApiError(entityId),
       headers: () => ({}),
-      request: {}
+      request: {},
     });
   }
 
@@ -78,16 +78,16 @@ export default function newBatchEntityFetcher({ getResources, resourceContext })
     return {
       sys: {
         type: 'Error',
-        id: 'NotFound'
+        id: 'NotFound',
       },
       message: 'The resource could not be found.',
       details: {
         type: resourceContext.type,
         id: entityId,
         environment: resourceContext.envId,
-        space: resourceContext.spaceId
+        space: resourceContext.spaceId,
       },
-      requestId: 'web-app__batchEntityFetcher'
+      requestId: 'web-app__batchEntityFetcher',
     };
   }
 }

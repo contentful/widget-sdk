@@ -19,7 +19,7 @@ import {
   Paragraph,
   SkeletonContainer,
   SkeletonBodyText,
-  Spinner
+  Spinner,
 } from '@contentful/forma-36-react-components';
 
 import tokens from '@contentful/forma-36-tokens';
@@ -44,99 +44,99 @@ import * as EntityState from 'data/CMA/EntityState';
 const styles = {
   flexCenter: css({
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   }),
   justifySpaceBetween: css({
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   }),
   table: css({
-    tableLayout: 'fixed'
+    tableLayout: 'fixed',
   }),
   tableCell: css({}),
   marginRightXS: css({
-    marginRight: tokens.spacingXs
+    marginRight: tokens.spacingXs,
   }),
   marginRightS: css({
-    marginRight: tokens.spacingS
+    marginRight: tokens.spacingS,
   }),
   marginLeftXS: css({
-    marginLeft: tokens.spacingXs
+    marginLeft: tokens.spacingXs,
   }),
   marginLeftXXS: css({
-    marginLeft: tokens.spacing2Xs
+    marginLeft: tokens.spacing2Xs,
   }),
   marginBottomXXS: css({
-    marginBottom: '0.25rem'
+    marginBottom: '0.25rem',
   }),
   paddingLeftS: css({
-    paddingLeft: tokens.spacingS
+    paddingLeft: tokens.spacingS,
   }),
   paddingTopM: css({
-    paddingTop: tokens.spacingM
+    paddingTop: tokens.spacingM,
   }),
   paddingBottomM: css({
-    paddingBottom: tokens.spacingM
+    paddingBottom: tokens.spacingM,
   }),
   fullWidth: css({
-    width: '100%'
+    width: '100%',
   }),
   sortable: css({
     '&:focus': {
-      zIndex: 1
+      zIndex: 1,
     },
     '&:hover': {
       cursor: 'pointer',
-      backgroundColor: tokens.colorElementLight
-    }
+      backgroundColor: tokens.colorElementLight,
+    },
   }),
   highlight: css({
-    backgroundColor: tokens.colorIceMid
+    backgroundColor: tokens.colorIceMid,
   }),
   activeSort: css({
-    fontWeight: tokens.fontWeightDemiBold
+    fontWeight: tokens.fontWeightDemiBold,
   }),
   textOverflow: css({
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap'
+    whiteSpace: 'nowrap',
   }),
   tableHead: css({
-    zIndex: tokens.zIndexWorkbenchHeader
+    zIndex: tokens.zIndexWorkbenchHeader,
   }),
   cursorPointer: css({
-    cursor: 'pointer'
+    cursor: 'pointer',
   }),
   /*
     We want to make area around checkbox clickable
   */
   nameCell: css({
     paddingTop: 0,
-    paddingBottom: 0
+    paddingBottom: 0,
   }),
   /*
     TODO: consolidate with #grid tokens
   */
   mediumCell: css({
-    width: '15%'
+    width: '15%',
   }),
   largeCell: css({
-    width: '21%'
+    width: '21%',
   }),
   /*
     We use visibility:hidden to preserve column width during search, sorting, or pagination.
   */
   visibilityHidden: css({
-    visibility: 'hidden'
+    visibility: 'hidden',
   }),
   /*
     We have to override inline styles set by TableHead.offsetTop
   */
   bulkActionsRow: css({
-    top: '22px !important'
+    top: '22px !important',
   }),
   statusTableHeader: css({
-    zIndex: tokens.zIndexDefault
-  })
+    zIndex: tokens.zIndexDefault,
+  }),
 };
 
 function SortableTableCell({
@@ -153,9 +153,9 @@ function SortableTableCell({
       tabIndex={isSortable ? '0' : '-1'}
       className={cn(className, {
         [styles.sortable]: isSortable,
-        [styles.activeSort]: isActiveSort
+        [styles.activeSort]: isActiveSort,
       })}
-      onKeyDown={e => {
+      onKeyDown={(e) => {
         if (isTargetInput(e) || e.target.tagName === 'LABEL') {
           return;
         }
@@ -164,7 +164,7 @@ function SortableTableCell({
           e.preventDefault();
         }
       }}
-      onClick={e => {
+      onClick={(e) => {
         if (isTargetInput(e)) {
           return;
         }
@@ -179,7 +179,7 @@ function SortableTableCell({
             className={styles.marginLeftXS}
             buttonType="muted"
             iconProps={{
-              icon: direction === 'ascending' ? 'ArrowDown' : 'ArrowUp'
+              icon: direction === 'ascending' ? 'ArrowDown' : 'ArrowUp',
             }}
           />
         )}
@@ -193,7 +193,7 @@ SortableTableCell.propTypes = {
   isSortable: PropTypes.bool,
   isActiveSort: PropTypes.bool,
   direction: PropTypes.oneOf(['ascending', 'descending']),
-  onClick: PropTypes.func.isRequired
+  onClick: PropTypes.func.isRequired,
 };
 
 function DeleteEntryConfirm({ itemsCount, onCancel, onConfirm, onSecondary }) {
@@ -224,7 +224,7 @@ DeleteEntryConfirm.propTypes = {
   itemsCount: PropTypes.number.isRequired,
   onCancel: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
-  onSecondary: PropTypes.func.isRequired
+  onSecondary: PropTypes.func.isRequired,
 };
 
 export class BulkActionsRow extends React.Component {
@@ -234,17 +234,17 @@ export class BulkActionsRow extends React.Component {
     colSpan: PropTypes.number.isRequired,
     actions: PropTypes.object.isRequired,
     selection: PropTypes.object.isRequired,
-    onActionComplete: PropTypes.func.isRequired
+    onActionComplete: PropTypes.func.isRequired,
   };
 
-  getPendingMessage = pendingAction => {
+  getPendingMessage = (pendingAction) => {
     const { selection } = this.props;
     return `${pendingAction} ${pluralize('entry', selection.size(), true)}`;
   };
 
-  setConfirmVisibility = isConfirmVisible => this.setState({ isConfirmVisible });
+  setConfirmVisibility = (isConfirmVisible) => this.setState({ isConfirmVisible });
 
-  fireAction = async actionName => {
+  fireAction = async (actionName) => {
     const { actions, onActionComplete } = this.props;
     let pendingMessage;
     let action;
@@ -377,8 +377,8 @@ export class BulkActionsRow extends React.Component {
 }
 
 const StatusCell = ({ href, jobs, entry }) => {
-  const filter = job => job.entity.sys.id === entry.data.sys.id;
-  const hasJobForEntry = jobs.find(job => job.entity.sys.id === entry.data.sys.id);
+  const filter = (job) => job.entity.sys.id === entry.data.sys.id;
+  const hasJobForEntry = jobs.find((job) => job.entity.sys.id === entry.data.sys.id);
   return (
     <SecretiveLink href={href}>
       <ScheduleTooltip jobs={jobs} filter={filter}>
@@ -399,17 +399,17 @@ StatusCell.propTypes = {
       action: PropTypes.string.isRequired,
       scheduledAt: PropTypes.string.isRequired,
       sys: PropTypes.shape({
-        id: PropTypes.string.isRequired
-      }).isRequired
+        id: PropTypes.string.isRequired,
+      }).isRequired,
     })
   ),
   entry: PropTypes.shape({
     data: PropTypes.shape({
       sys: PropTypes.shape({
-        id: PropTypes.string.isRequired
-      }).isRequired
-    }).isRequired
-  }).isRequired
+        id: PropTypes.string.isRequired,
+      }).isRequired,
+    }).isRequired,
+  }).isRequired,
 };
 
 export default function EntryList({
@@ -431,7 +431,7 @@ export default function EntryList({
   actions,
   entryCache,
   assetCache,
-  jobs = []
+  jobs = [],
 }) {
   const [hasSelectedAll, setHasSelectedAll] = React.useState(false);
 
@@ -448,7 +448,7 @@ export default function EntryList({
       name="select-all"
       className={cn(styles.marginRightS, styles.marginBottomXXS)}
       checked={hasSelectedAll}
-      onChange={e => {
+      onChange={(e) => {
         setHasSelectedAll(!hasSelectedAll);
         selection.toggleList(entries, e);
       }}
@@ -491,7 +491,7 @@ export default function EntryList({
             </TableCell>
           )}
 
-          {displayedFields.map(field => {
+          {displayedFields.map((field) => {
             return (
               <SortableTableCell
                 key={field.id}
@@ -545,19 +545,19 @@ export default function EntryList({
               </TableRow>
             );
           })}
-        {entries.map(entry => (
+        {entries.map((entry) => (
           <StateLink path="^.detail" params={{ entryId: entry.getId() }} key={entry.getId()}>
             {({ onClick, getHref }) => {
               return (
                 <TableRow
                   tabIndex="0"
-                  onClick={e => {
+                  onClick={(e) => {
                     if (isTargetInput(e)) {
                       return;
                     }
                     onClick(e);
                   }}
-                  onKeyDown={e => {
+                  onKeyDown={(e) => {
                     if (isTargetInput(e)) {
                       return;
                     }
@@ -568,7 +568,7 @@ export default function EntryList({
                   }}
                   className={cn(styles.cursorPointer, {
                     [styles.highlight]: selection.isSelected(entry),
-                    [styles.visibilityHidden]: context.isSearching
+                    [styles.visibilityHidden]: context.isSearching,
                   })}
                   testId="entry-row">
                   <TableCell
@@ -584,7 +584,7 @@ export default function EntryList({
                         <Checkbox
                           className={cn(styles.marginRightS, styles.marginBottomXXS)}
                           checked={selection.isSelected(entry)}
-                          onChange={e => {
+                          onChange={(e) => {
                             selection.toggle(entry, e);
                             e.preventDefault();
                           }}
@@ -610,7 +610,7 @@ export default function EntryList({
                       </SecretiveLink>
                     </TableCell>
                   )}
-                  {displayedFields.map(field => (
+                  {displayedFields.map((field) => (
                     <TableCell
                       key={field.id}
                       className={cn(styles.tableCell, styles.mediumCell)}
@@ -657,7 +657,7 @@ EntryList.propTypes = {
   actions: PropTypes.object,
   entryCache: PropTypes.object,
   assetCache: PropTypes.object,
-  jobs: PropTypes.array
+  jobs: PropTypes.array,
 };
 
 function isTargetInput(e) {

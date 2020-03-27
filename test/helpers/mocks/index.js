@@ -16,19 +16,19 @@ angular
     '$provide',
     '$controllerProvider',
     ($provide, $controllerProvider) => {
-      $provide.value('$exceptionHandler', e => {
+      $provide.value('$exceptionHandler', (e) => {
         throw e;
       });
 
-      $provide.removeDirectives = function(...args) {
-        _.flatten(args).forEach(directive => {
+      $provide.removeDirectives = function (...args) {
+        _.flatten(args).forEach((directive) => {
           const fullName = directive + 'Directive';
           $provide.factory(fullName, () => []);
         });
       };
 
-      $provide.removeControllers = function(...args) {
-        _.flatten(args).forEach(controller => {
+      $provide.removeControllers = function (...args) {
+        _.flatten(args).forEach((controller) => {
           $controllerProvider.register(controller, angular.noop);
         });
       };
@@ -36,38 +36,38 @@ angular
       $provide.makeStubs = function makeStubs(stubList) {
         if (!_.isArray(stubList)) stubList = _.flatten(arguments);
         const stubs = {};
-        _.each(stubList, val => {
+        _.each(stubList, (val) => {
           stubs[val] = sinon.stub();
         });
         return stubs;
       };
-    }
+    },
   ])
   .constant('lodash/debounce', _.identity)
   .constant('lodash/throttle', _.identity)
-  .constant('lodash/defer', function(f) {
+  .constant('lodash/defer', function (f) {
     const args = _.tail(arguments);
     f.apply(this, args);
   })
-  .constant('lodash/delay', function(f) {
+  .constant('lodash/delay', function (f) {
     const args = _.drop(arguments, 2);
     f.apply(this, args);
   })
-  .constant('delayedInvocationStub', originalFunction => {
+  .constant('delayedInvocationStub', (originalFunction) => {
     let result;
     function delayedFunction(...args) {
       delayedFunction.calls.push({
         thisArg: this,
-        arguments: args
+        arguments: args,
       });
       return result;
     }
     delayedFunction.calls = [];
-    delayedFunction.invokeDelayed = function() {
+    delayedFunction.invokeDelayed = function () {
       const call = this.calls.shift();
       result = originalFunction.apply(call.thisArg, call.arguments);
     };
-    delayedFunction.invokeAll = function() {
+    delayedFunction.invokeAll = function () {
       while (this.calls.length > 0) {
         this.invokeDelayed();
       }

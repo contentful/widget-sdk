@@ -170,7 +170,7 @@ export function create(baseUrl, auth) {
   let withBaseUrl = baseUrl;
 
   if (typeof baseUrl === 'string') {
-    withBaseUrl = path => joinPath([baseUrl].concat(path));
+    withBaseUrl = (path) => joinPath([baseUrl].concat(path));
   }
 
   return function request(config, headers) {
@@ -181,12 +181,12 @@ export function create(baseUrl, auth) {
       url,
       headers: makeHeaders(config.version, headers),
       data: config.data,
-      params: config.query
+      params: config.query,
     };
 
     return baseRequest(req).then(
-      response => response.data,
-      response => {
+      (response) => response.data,
+      (response) => {
         const status = parseInt(response.status, 10);
         const error = extend(new Error('API request failed'), {
           status,
@@ -196,7 +196,7 @@ export function create(baseUrl, auth) {
           code: get(response, ['data', 'sys', 'id'], response.status),
           data: response.data,
           headers: response.headers,
-          request: req
+          request: req,
         });
         return $q.reject(error);
       }
@@ -206,7 +206,7 @@ export function create(baseUrl, auth) {
   function makeHeaders(version, additional) {
     const headers = extend(
       {
-        'Content-Type': 'application/vnd.contentful.management.v1+json'
+        'Content-Type': 'application/vnd.contentful.management.v1+json',
       },
       additional
     );

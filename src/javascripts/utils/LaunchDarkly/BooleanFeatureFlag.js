@@ -15,24 +15,24 @@ import { getVariation } from 'LaunchDarkly';
 export default class BooleanFeatureFlag extends React.Component {
   static propTypes = {
     featureFlagKey: PropTypes.string.isRequired,
-    children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired
+    children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired,
   };
 
   state = {
-    currentVariation: undefined
+    currentVariation: undefined,
   };
   async componentDidMount() {
     const spaceContext = getModule('spaceContext');
     const currentVariation = await getVariation(this.props.featureFlagKey, {
       organizationId: spaceContext.getData('organization.sys.id'),
-      spaceId: spaceContext.getId()
+      spaceId: spaceContext.getId(),
     });
 
     if (this.isUnmounted) {
       return;
     }
     this.setState({
-      currentVariation
+      currentVariation,
     });
   }
   componentWillUnmount() {

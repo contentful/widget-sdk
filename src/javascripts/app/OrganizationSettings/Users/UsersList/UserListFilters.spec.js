@@ -15,10 +15,7 @@ describe('UserListFilters', () => {
   let onChangeCb, onResetCb, component;
 
   function simulateChange(filter) {
-    component
-      .find(SearchFilter)
-      .at(1)
-      .simulate('change', filter);
+    component.find(SearchFilter).at(1).simulate('change', filter);
   }
 
   beforeEach(() => {
@@ -41,7 +38,7 @@ describe('UserListFilters', () => {
   it('should trigger the onChange callback when any of the filters change', () => {
     const filter = {
       key: 'order',
-      value: 'sys.createdAt'
+      value: 'sys.createdAt',
     };
     simulateChange(filter);
     expect(onChangeCb.mock.calls[0][0]).toHaveLength(filters.length);

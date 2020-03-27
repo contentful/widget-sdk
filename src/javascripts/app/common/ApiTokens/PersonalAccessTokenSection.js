@@ -7,8 +7,8 @@ import TokenList from 'app/common/ApiTokens/TokenList';
 
 const styles = {
   pageSection: css({
-    marginBottom: tokens.spacing2Xl
-  })
+    marginBottom: tokens.spacing2Xl,
+  }),
 };
 
 const PersonalAccessTokenSection = ({ state, actions }) => {
@@ -44,7 +44,7 @@ const PersonalAccessTokenSection = ({ state, actions }) => {
 
 PersonalAccessTokenSection.propTypes = {
   state: PropTypes.object,
-  actions: PropTypes.object
+  actions: PropTypes.object,
 };
 
 export default PersonalAccessTokenSection;

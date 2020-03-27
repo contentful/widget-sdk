@@ -12,12 +12,12 @@ const styles = {
   searchButton: css({
     color: tokens.colorWhite,
     padding: `25px 20px`,
-    height: `100%`
+    height: `100%`,
   }),
   modal: css({
     boxShadow: 'none',
     border: 0,
-    marginTop: 0
+    marginTop: 0,
   }),
   shortcut: css({
     display: 'inline-block',
@@ -27,8 +27,8 @@ const styles = {
     marginLeft: tokens.spacing2Xs,
     width: '18px',
     fontWeight: tokens.fontWeightMedium,
-    fontFamily: tokens.fontStackMonospace
-  })
+    fontFamily: tokens.fontStackMonospace,
+  }),
 };
 
 export default class QuickNav extends React.Component {
@@ -42,7 +42,7 @@ export default class QuickNav extends React.Component {
     const modal = {
       FILESTACK: document.querySelector('.fsp-picker'),
       F36: document.querySelector('[data-test-id="cf-ui-modal-content"]'),
-      LEGACY: document.querySelector('.modal-background.is-visible')
+      LEGACY: document.querySelector('.modal-background.is-visible'),
     };
 
     return !!modal.FILESTACK || !!modal.F36 || !!modal.LEGACY;
@@ -60,8 +60,8 @@ export default class QuickNav extends React.Component {
         modalContentProps={{
           style: {
             background: 'none',
-            padding: 0
-          }
+            padding: 0,
+          },
         }}>
         <QuickNavSearch closeModal={onClose} />
       </Modal>
@@ -73,12 +73,12 @@ export default class QuickNav extends React.Component {
       <GlobalHotKeys
         keyMap={keyMap}
         handlers={{
-          QUICK_NAV: event => {
+          QUICK_NAV: (event) => {
             if (this.hasActiveModals()) return;
             event.preventDefault();
             trackOpenShortcut();
             this.openModal();
-          }
+          },
         }}>
         <Tooltip
           content={

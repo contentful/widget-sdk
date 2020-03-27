@@ -16,8 +16,8 @@ const styles = {
     lineHeight: '10px',
     borderRadius: '3px',
     textTransform: 'uppercase',
-    letterSpacing: '0.05rem'
-  })
+    letterSpacing: '0.05rem',
+  }),
 };
 
 export default function NavigationItemTag({ label }) {
@@ -25,5 +25,5 @@ export default function NavigationItemTag({ label }) {
 }
 
 NavigationItemTag.propTypes = {
-  label: PropTypes.string.isRequired
+  label: PropTypes.string.isRequired,
 };

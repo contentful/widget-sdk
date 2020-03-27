@@ -9,10 +9,10 @@ describe('UserNameFormatter', () => {
 
   const exampleUser = {
     sys: {
-      id: 'user1'
+      id: 'user1',
     },
     firstName: 'Testy',
-    lastName: 'McTesterson'
+    lastName: 'McTesterson',
   };
   const formattedName = 'Testy McTesterson';
 

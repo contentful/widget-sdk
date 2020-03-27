@@ -13,7 +13,7 @@ import {
   SkeletonBodyText,
   Note,
   TextLink,
-  Notification
+  Notification,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -34,7 +34,7 @@ import { create as createDto } from './ScheduledActionsFactory';
 import FailedScheduleNote from './FailedScheduleNote';
 import {
   createJob as trackCreatedJob,
-  cancelJob as trackCancelledJob
+  cancelJob as trackCancelledJob,
 } from '../Analytics/ScheduledActionsAnalytics';
 
 import { showUnpublishedReferencesWarning } from 'app/entity_editor/UnpublishedReferencesWarning';
@@ -42,15 +42,15 @@ import { showUnpublishedReferencesWarning } from 'app/entity_editor/UnpublishedR
 const styles = {
   jobsSkeleton: css({
     maxHeight: '40px',
-    marginTop: tokens.spacingM
+    marginTop: tokens.spacingM,
   }),
   warningNote: css({
-    marginTop: tokens.spacingM
+    marginTop: tokens.spacingM,
   }),
   marginedJobsSkeleton: css({
     maxHeight: '40px',
-    marginTop: tokens.spacing2Xl
-  })
+    marginTop: tokens.spacing2Xl,
+  }),
 };
 
 function shouldShowErrorNote(lastJob, entity) {
@@ -93,9 +93,7 @@ function getPublishedAt(entity) {
   // HACK: sys.publishedAt from the api and sharejs can be different
   // therefore we cut precision to reduce number of false positives
   if (entity.sys.publishedAt) {
-    return moment(entity.sys.publishedAt)
-      .milliseconds(0)
-      .toISOString();
+    return moment(entity.sys.publishedAt).milliseconds(0).toISOString();
   }
 }
 
@@ -112,7 +110,7 @@ export default function ScheduledActionsWidget({
   updatedAt,
   validator,
   publicationBlockedReason,
-  isStatusSwitch
+  isStatusSwitch,
 }) {
   const [jobs, setJobs] = useState([]);
   const [isDialogShown, setIsDialogShown] = useState(false);
@@ -121,7 +119,7 @@ export default function ScheduledActionsWidget({
   const publishedAt = getPublishedAt(entity);
   const entryTitle = EntityFieldValueSpaceContext.entryTitle({
     getContentTypeId: () => entity.sys.contentType.sys.id,
-    data: entity
+    data: entity,
   });
   const [{ isLoading, error }, fetchJobs] = useAsyncFn(
     useCallback(async () => {
@@ -149,7 +147,7 @@ export default function ScheduledActionsWidget({
           environmentId,
           entityId: entity.sys.id,
           action: action,
-          scheduledAt
+          scheduledAt,
         }),
         { 'environment.sys.id': environmentId }
       );
@@ -165,7 +163,7 @@ export default function ScheduledActionsWidget({
       setIsCreatingJob(false);
       logger.logError(`Entry failed to schedule`, {
         error,
-        message: error.message
+        message: error.message,
       });
     }
   };
@@ -182,20 +180,20 @@ export default function ScheduledActionsWidget({
     }
   };
 
-  const handleCancel = jobId => {
+  const handleCancel = (jobId) => {
     ScheduledActionsService.cancelJob(
       EndpointFactory.createSpaceEndpoint(spaceId, environmentId),
       jobId,
       { 'environment.sys.id': environmentId }
     ).then(() => {
-      const job = jobs.find(j => j.sys.id === jobId);
+      const job = jobs.find((j) => j.sys.id === jobId);
       trackCancelledJob(job);
-      setJobs(jobs.filter(j => j !== job));
+      setJobs(jobs.filter((j) => j !== job));
       Notification.success('Schedule canceled');
     });
   };
 
-  const pendingJobs = jobs.filter(job => job.sys.status === 'scheduled');
+  const pendingJobs = jobs.filter((job) => job.sys.status === 'scheduled');
   const hasScheduledActions = pendingJobs.length > 0;
 
   const lastJob = jobs[0];
@@ -229,7 +227,7 @@ export default function ScheduledActionsWidget({
             spaceId,
             environmentId,
             confirmLabel: 'Schedule anyway',
-            modalTitle: 'Are you sure you want to schedule this entry to publish?'
+            modalTitle: 'Are you sure you want to schedule this entry to publish?',
           });
 
           if (isConfirmed) {
@@ -307,12 +305,12 @@ ScheduledActionsWidget.propTypes = {
   secondary: PropTypes.arrayOf(CommandPropType.isRequired).isRequired,
   validator: PropTypes.shape({
     run: PropTypes.func,
-    setApiResponseErrors: PropTypes.func
+    setApiResponseErrors: PropTypes.func,
   }).isRequired,
   publicationBlockedReason: PropTypes.string,
-  isStatusSwitch: PropTypes.bool
+  isStatusSwitch: PropTypes.bool,
 };
 
 ScheduledActionsWidget.defaultProps = {
-  isStatusSwitch: false
+  isStatusSwitch: false,
 };

@@ -26,7 +26,7 @@ const indexPage = renderIndex(null, indexConfig, {
   'assets/favicon32x32.png': '/app/assets/favicon32x32.png',
   'assets/apple_icon57x57.png': '/app/assets/apple_icon57x57.png',
   'assets/apple_icon72x72.png': '/app/assets/apple_icon72x72.png',
-  'assets/apple_icon114x114.png': '/app/assets/apple_icon114x114.png'
+  'assets/apple_icon114x114.png': '/app/assets/apple_icon114x114.png',
 });
 
 // Server configuration
@@ -39,14 +39,14 @@ const webpackDevMiddleware = middleware(compiler, {
   publicPath: '/app/',
   watchOptions: {
     aggregateTimeout: 300,
-    poll: 1000
+    poll: 1000,
   },
   stats: {
     colors: true,
     modules: false,
     providedExports: false,
-    usedExports: false
-  }
+    usedExports: false,
+  },
 });
 
 const PORT = Number.parseInt(process.env.PORT, 10) || 3001;
@@ -55,14 +55,14 @@ app.use(
   '/_microbackends',
   MicroBackends.createMiddleware({
     backendsDir: path.resolve(__dirname, 'micro-backends'),
-    isolationType: process.env.MICRO_BACKENDS_ISOLATION_TYPE || 'subprocess'
+    isolationType: process.env.MICRO_BACKENDS_ISOLATION_TYPE || 'subprocess',
   })
 );
 
 app.use(webpackDevMiddleware);
 
 app.use(express.static(publicDir));
-app.get('*', async function(req, res, next) {
+app.get('*', async function (req, res, next) {
   // If the request is for a non-html page (e.g. a JS or CSS file)
   // continue to the next middleware
   if (!req.accepts('html')) {
@@ -71,17 +71,14 @@ app.get('*', async function(req, res, next) {
   }
 
   // Render the index page otherwise
-  res
-    .status(200)
-    .type('html')
-    .end(indexPage);
+  res.status(200).type('html').end(indexPage);
 });
 
-app.use(function(_req, res) {
+app.use(function (_req, res) {
   res.sendStatus(404).end();
 });
 
-app.listen(PORT, err => {
+app.listen(PORT, (err) => {
   if (err) {
     // eslint-disable-next-line
     console.error(err);

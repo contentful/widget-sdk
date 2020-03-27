@@ -2,9 +2,9 @@ import newBatchEntityFetcher from './newBatchEntityFetcher';
 
 import flushPromises from 'test/helpers/flushPromises';
 
-jest.mock('Config', () => ({ apiUrl: v => `https://api.some-domain.com/${v}` }));
+jest.mock('Config', () => ({ apiUrl: (v) => `https://api.some-domain.com/${v}` }));
 jest.mock('detect-browser', () => ({
-  detect: jest.fn().mockReturnValue({ name: 'not-ie' })
+  detect: jest.fn().mockReturnValue({ name: 'not-ie' }),
 }));
 
 const PENDING = new Promise(() => {});
@@ -20,23 +20,23 @@ describe('newBatchEntityFetcher({ getResources, resourceContext }) -> fetchEntit
     resourceContext = {
       type: 'Someentity',
       envId: 'ENVIRONMENT_ID',
-      spaceId: 'SPACE_ID'
+      spaceId: 'SPACE_ID',
     };
   });
 
   function setup() {
     fetch = newBatchEntityFetcher({
       getResources,
-      resourceContext
+      resourceContext,
     });
   }
 
   describe('invoking getResources()', () => {
     beforeEach(() => {
       let i = 0;
-      getResources.mockImplementation(query => {
+      getResources.mockImplementation((query) => {
         const ids = query['sys.id[in]'].split(',');
-        const mockEntities = ids.map(id => ({ sys: { id }, i: i++ }));
+        const mockEntities = ids.map((id) => ({ sys: { id }, i: i++ }));
         return Promise.resolve({ items: mockEntities });
       });
       setup();
@@ -91,7 +91,7 @@ describe('newBatchEntityFetcher({ getResources, resourceContext }) -> fetchEntit
           code: 'NotFound',
           headers: expect.any(Function),
           request: expect.any(Object),
-          data: expect.any(Object)
+          data: expect.any(Object),
         })
       );
     });
@@ -101,16 +101,16 @@ describe('newBatchEntityFetcher({ getResources, resourceContext }) -> fetchEntit
         expect.objectContaining({
           sys: {
             type: 'Error',
-            id: 'NotFound'
+            id: 'NotFound',
           },
           message: expect.any(String),
           details: {
             type: 'Someentity',
             id: 'SOME_UNKNOWN_ID',
             environment: 'ENVIRONMENT_ID',
-            space: 'SPACE_ID'
+            space: 'SPACE_ID',
           },
-          requestId: 'web-app__batchEntityFetcher'
+          requestId: 'web-app__batchEntityFetcher',
         })
       );
     });
@@ -129,11 +129,11 @@ describe('newBatchEntityFetcher({ getResources, resourceContext }) -> fetchEntit
       }
     });
 
-    it('throws an Error', function() {
+    it('throws an Error', function () {
       expect(error).toBeInstanceOf(Error);
     });
 
-    it('is treated as 404 rather than 400', function() {
+    it('is treated as 404 rather than 400', function () {
       expect(error.status).toEqual(404);
     });
   });

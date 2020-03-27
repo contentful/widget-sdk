@@ -9,7 +9,7 @@ class CodeSnippets extends React.Component {
   static propTypes = {
     active: PropTypes.string,
     onHover: PropTypes.func,
-    onLeave: PropTypes.func
+    onLeave: PropTypes.func,
   };
 
   state = {};
@@ -47,8 +47,8 @@ class CodeSnippets extends React.Component {
         'const client = contentful.createClient({',
         `  space: '${$stateParams.spaceId}',`,
         `  accessToken: '${deliveryToken || 'loading...'}'`,
-        '})'
-      ]
+        '})',
+      ],
     });
   };
 
@@ -62,11 +62,11 @@ class CodeSnippets extends React.Component {
         'async function getPeople() {',
         "  const entries = await client.getEntries({ content_type: 'person' })",
         '  return entries.items',
-        '}'
+        '}',
       ],
       onHover: () => onHover('person'),
       onLeave,
-      active: active === 'person'
+      active: active === 'person',
     });
   };
 
@@ -80,11 +80,11 @@ class CodeSnippets extends React.Component {
         'async function getBlogPosts() {',
         "  const entries = await client.getEntries({ content_type: 'blogPost' })",
         '  return entries.items',
-        '}'
+        '}',
       ],
       onHover: () => onHover('articles'),
       onLeave,
-      active: active === 'articles'
+      active: active === 'articles',
     });
   };
 
@@ -116,11 +116,11 @@ class CodeSnippets extends React.Component {
         '  )',
         '}',
         '',
-        'renderApp()'
+        'renderApp()',
       ],
       onHover: () => onHover('all'),
       onLeave,
-      active: active === 'all'
+      active: active === 'all',
     });
   };
 

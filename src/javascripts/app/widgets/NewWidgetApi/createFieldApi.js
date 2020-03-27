@@ -9,13 +9,13 @@ import { get, noop } from 'lodash';
 
 const ERROR_CODES = {
   BADUPDATE: 'ENTRY UPDATE FAILED',
-  NO_PERMISSIONS: 'NOT ENOUGH PERMISSIONS'
+  NO_PERMISSIONS: 'NOT ENOUGH PERMISSIONS',
 };
 
 const ERROR_MESSAGES = {
   MFAILUPDATE: 'Could not update entry field',
   MFAILREMOVAL: 'Could not remove value for field',
-  MFAILPERMISSIONS: 'Could not update entry field'
+  MFAILPERMISSIONS: 'Could not update entry field',
 };
 
 export function makePermissionError() {
@@ -50,7 +50,7 @@ export function createReadOnlyFieldApi({ field, locale, getValue = noop }) {
     onValueChanged: noop,
     setInvalid: noop,
     onIsDisabledChanged: noop,
-    onSchemaErrorsChanged: noop
+    onSchemaErrorsChanged: noop,
   };
 }
 
@@ -102,12 +102,12 @@ export function createInternalFieldApi({ field, locale, otDoc }) {
 
       return K.onValueWhile(
         otDoc.changes,
-        otDoc.changes.filter(path => PathUtils.isAffecting(path, trackingPath)),
+        otDoc.changes.filter((path) => PathUtils.isAffecting(path, trackingPath)),
         () => {
           cb(get(otDoc.getValueAt([]), trackingPath));
         }
       );
-    }
+    },
   };
 }
 
@@ -123,20 +123,20 @@ export function createFieldApi({ $scope }) {
     ...createInternalFieldApi({
       locale,
       field,
-      otDoc
+      otDoc,
     }),
-    setInvalid: isInvalid => {
+    setInvalid: (isInvalid) => {
       $scope.fieldController.setInvalid(locale.code, isInvalid);
     },
-    onIsDisabledChanged: cb => {
-      return K.onValueScope($scope, $scope.fieldLocale.access$, access => {
+    onIsDisabledChanged: (cb) => {
+      return K.onValueScope($scope, $scope.fieldLocale.access$, (access) => {
         cb(!!access.disabled);
       });
     },
-    onSchemaErrorsChanged: cb => {
-      return K.onValueScope($scope, $scope.fieldLocale.errors$, errors => {
+    onSchemaErrorsChanged: (cb) => {
+      return K.onValueScope($scope, $scope.fieldLocale.errors$, (errors) => {
         cb(errors || []);
       });
-    }
+    },
   };
 }

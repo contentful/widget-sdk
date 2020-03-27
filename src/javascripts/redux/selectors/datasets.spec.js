@@ -6,7 +6,7 @@ import {
   TEAM_MEMBERSHIPS,
   USERS,
   ORG_MEMBERSHIPS,
-  TEAM_SPACE_MEMBERSHIPS
+  TEAM_SPACE_MEMBERSHIPS,
 } from '../datasets';
 import { ORG_SPACE_ROLES, ORG_SPACES } from '../datasets';
 
@@ -23,10 +23,10 @@ describe('datasets selectors', () => {
           location: {
             pathname: ROUTES.organization.children.teams.children.team.build({
               orgId: activeOrgId,
-              teamId: activeTeamId
-            })
-          }
-        }
+              teamId: activeTeamId,
+            }),
+          },
+        },
       });
     });
 
@@ -55,9 +55,9 @@ describe('datasets selectors', () => {
             datasets: {
               [TEAMS]: [],
               [TEAM_MEMBERSHIPS]: [],
-              [USERS]: []
-            }
-          }
+              [USERS]: [],
+            },
+          },
         });
       });
 
@@ -65,7 +65,7 @@ describe('datasets selectors', () => {
         expect(getDatasets(stateWithSomeDatasets)).toEqual({
           [TEAMS]: {},
           [TEAM_MEMBERSHIPS]: {},
-          [USERS]: {}
+          [USERS]: {},
         });
       });
 
@@ -83,9 +83,9 @@ describe('datasets selectors', () => {
               datasets: {
                 [ORG_MEMBERSHIPS]: {},
                 [TEAM_SPACE_MEMBERSHIPS]: {},
-                [ORG_SPACES]: {}
-              }
-            }
+                [ORG_SPACES]: {},
+              },
+            },
           });
         });
 
@@ -96,7 +96,7 @@ describe('datasets selectors', () => {
             [USERS]: {},
             [ORG_MEMBERSHIPS]: {},
             [TEAM_SPACE_MEMBERSHIPS]: {},
-            [ORG_SPACES]: {}
+            [ORG_SPACES]: {},
           });
         });
 
@@ -120,13 +120,13 @@ describe('datasets selectors', () => {
                       role: 'member',
                       organization: {
                         sys: {
-                          id: activeOrgId
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
+                          id: activeOrgId,
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
             });
           });
 
@@ -148,13 +148,13 @@ describe('datasets selectors', () => {
                       role: 'admin',
                       organization: {
                         sys: {
-                          id: activeOrgId
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
+                          id: activeOrgId,
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
             });
           });
 
@@ -171,9 +171,9 @@ describe('datasets selectors', () => {
                 meta: { fetched: Date.now() },
                 payload: {
                   datasets: {
-                    [ORG_SPACE_ROLES]: []
-                  }
-                }
+                    [ORG_SPACE_ROLES]: [],
+                  },
+                },
               });
             });
 
@@ -193,9 +193,9 @@ describe('datasets selectors', () => {
             meta: { fetched: Date.now() - 60 * 1000 },
             payload: {
               datasets: {
-                [ORG_MEMBERSHIPS]: []
-              }
-            }
+                [ORG_MEMBERSHIPS]: [],
+              },
+            },
           });
         });
 

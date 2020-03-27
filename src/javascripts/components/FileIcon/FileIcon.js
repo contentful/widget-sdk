@@ -21,7 +21,7 @@ const groupToIconMap = {
   archive: 'Archive',
   plaintext: 'Plaintext',
   code: 'Code',
-  markup: 'Markup'
+  markup: 'Markup',
 };
 
 const DEFAULT_ILLUSTRATION_NAME = groupToIconMap.archive;
@@ -43,7 +43,7 @@ function fileToIllustrationName(file) {
 
   const groupName = mimetype.getGroupLabel({
     type: file.contentType,
-    fallbackFileName: file.fileName
+    fallbackFileName: file.fileName,
   });
 
   return groupToIconMap[groupName] || DEFAULT_ILLUSTRATION_NAME;
@@ -59,8 +59,8 @@ export default function FileIcon(props) {
 FileIcon.propTypes = {
   file: PropTypes.shape({
     contentType: PropTypes.string.isRequired,
-    fileName: PropTypes.string
+    fileName: PropTypes.string,
   }),
   className: PropTypes.string,
-  style: PropTypes.any
+  style: PropTypes.any,
 };

@@ -18,7 +18,7 @@ const TEAAdminSpaceHome = ({
   cdaToken,
   cpaToken,
   isSupportEnabled,
-  hasTeamsEnabled
+  hasTeamsEnabled,
 }) => {
   return (
     <WidgetContainer>
@@ -51,8 +51,8 @@ const TEAAdminSpaceHome = ({
                     Modify sample content in <span className={styles.demiBold}>{spaceName}</span>
                   </>
                 ),
-                content: <ExampleProjectOverview cdaToken={cdaToken} cpaToken={cpaToken} />
-              }
+                content: <ExampleProjectOverview cdaToken={cdaToken} cpaToken={cpaToken} />,
+              },
             ]}
           />
         </WidgetContainer.Col>
@@ -77,8 +77,8 @@ const TEAAdminSpaceHome = ({
                 headerText: (
                   <span className={styles.demiBold}>Learn what’s possible with Contentful</span>
                 ),
-                content: <LearnAboutContentful />
-              }
+                content: <LearnAboutContentful />,
+              },
             ]}
           />
         </WidgetContainer.Col>
@@ -99,7 +99,7 @@ TEAAdminSpaceHome.propTypes = {
   cdaToken: PropTypes.string.isRequired,
   cpaToken: PropTypes.string.isRequired,
   isSupportEnabled: PropTypes.bool.isRequired,
-  hasTeamsEnabled: PropTypes.bool.isRequired
+  hasTeamsEnabled: PropTypes.bool.isRequired,
 };
 
 export default TEAAdminSpaceHome;

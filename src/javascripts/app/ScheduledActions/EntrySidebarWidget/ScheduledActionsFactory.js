@@ -4,19 +4,19 @@ export function create({ environmentId, entityId, action, scheduledAt }) {
       sys: {
         type: 'Link',
         linkType: 'Entry',
-        id: entityId
-      }
+        id: entityId,
+      },
     },
     environment: {
       sys: {
         type: 'Link',
         linkType: 'Environment',
-        id: environmentId
-      }
+        id: environmentId,
+      },
     },
     scheduledFor: {
-      datetime: scheduledAt
+      datetime: scheduledAt,
     },
-    action
+    action,
   };
 }

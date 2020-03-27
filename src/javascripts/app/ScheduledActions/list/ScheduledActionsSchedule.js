@@ -14,34 +14,34 @@ import { formatDate } from 'app/ScheduledActions/FormattedDateAndTime';
 const styles = {
   jobsSchedule: css({}),
   dateGroup: css({
-    paddingTop: tokens.spacingL
+    paddingTop: tokens.spacingL,
   }),
   dateGroupHeader: css({
     borderBottom: `1px solid ${tokens.colorElementLight}`,
     paddingBottom: tokens.spacingXs,
-    marginBottom: tokens.spacingL
+    marginBottom: tokens.spacingL,
   }),
   timeGroup: css({ display: 'flex', marginBottom: tokens.spacingL }),
   timeGroupHeader: css({
     marginRight: tokens.spacingM,
     marginTop: tokens.spacingS,
     textAlign: 'right',
-    minWidth: '90px'
+    minWidth: '90px',
   }),
   timeGroupListWrapper: css({
     maxWidth: 'calc(100% - 95px)',
     flexGrow: 1,
     paddingLeft: tokens.spacingM,
-    borderLeft: `1px solid ${tokens.colorElementLight}`
+    borderLeft: `1px solid ${tokens.colorElementLight}`,
   }),
   timeGroupListItem: css({
-    marginBottom: 0
-  })
+    marginBottom: 0,
+  }),
 };
 
 const jobPropType = PropTypes.shape({
   scheduledAt: PropTypes.string,
-  action: PropTypes.string
+  action: PropTypes.string,
 });
 
 const TimeGroup = ({ jobs, entriesData, contentTypesData }) => {
@@ -55,7 +55,7 @@ const TimeGroup = ({ jobs, entriesData, contentTypesData }) => {
       </div>
       <div className={styles.timeGroupListWrapper}>
         <WrappedEntityList
-          entities={jobs.map(job => entriesData[job.entity.sys.id])}
+          entities={jobs.map((job) => entriesData[job.entity.sys.id])}
           contentTypes={contentTypesData}
         />
       </div>
@@ -66,20 +66,20 @@ const TimeGroup = ({ jobs, entriesData, contentTypesData }) => {
 TimeGroup.propTypes = {
   jobs: PropTypes.arrayOf(jobPropType),
   entriesData: PropTypes.object,
-  contentTypesData: PropTypes.object
+  contentTypesData: PropTypes.object,
 };
 
 const DateGroup = ({ jobs, entriesData, contentTypesData }) => {
   const timeGroups = _.chain(jobs)
-    .groupBy(job => `${moment(job.scheduledFor.datetime).format('HH:mm')}-${job.action}`)
-    .map(job => job)
+    .groupBy((job) => `${moment(job.scheduledFor.datetime).format('HH:mm')}-${job.action}`)
+    .map((job) => job)
     .value();
   return (
     <div className={styles.dateGroup} data-test-id="scheduled-jobs-date-group">
       <SectionHeading className={styles.dateGroupHeader}>
         {formatDate(jobs[0].scheduledFor.datetime)}
       </SectionHeading>
-      {timeGroups.map(jobs => (
+      {timeGroups.map((jobs) => (
         <TimeGroup
           jobs={jobs}
           key={`${jobs[0].sys.id}-timeGroup`}
@@ -94,7 +94,7 @@ const DateGroup = ({ jobs, entriesData, contentTypesData }) => {
 DateGroup.propTypes = {
   jobs: PropTypes.arrayOf(jobPropType),
   entriesData: PropTypes.object,
-  contentTypesData: PropTypes.object
+  contentTypesData: PropTypes.object,
 };
 
 export default class JobsSchedule extends React.Component {
@@ -102,7 +102,7 @@ export default class JobsSchedule extends React.Component {
     jobs: PropTypes.arrayOf(jobPropType),
     entriesData: PropTypes.object,
     contentTypesData: PropTypes.object,
-    emptyStateMessage: PropTypes.object
+    emptyStateMessage: PropTypes.object,
   };
 
   render() {
@@ -111,15 +111,15 @@ export default class JobsSchedule extends React.Component {
       return null;
     }
 
-    const jobsWithExisitingEntry = jobs.filter(job => entriesData[job.entity.sys.id]);
+    const jobsWithExisitingEntry = jobs.filter((job) => entriesData[job.entity.sys.id]);
     const groupedJobs = _.chain(jobsWithExisitingEntry)
-      .groupBy(item => moment(item.scheduledFor.datetime).format('YYYY.MM.DD'))
-      .map(item => item)
+      .groupBy((item) => moment(item.scheduledFor.datetime).format('YYYY.MM.DD'))
+      .map((item) => item)
       .value();
     return (
       <div>
         {groupedJobs && groupedJobs.length > 0 ? (
-          groupedJobs.map(jobsGroup => (
+          groupedJobs.map((jobsGroup) => (
             <DateGroup
               jobs={jobsGroup}
               key={`${jobsGroup[0].sys.id}-dateGroup`}

@@ -1,7 +1,7 @@
 const token = require('../fixtures/responses/token.json');
 
 enum States {
-  VALID = 'token/valid'
+  VALID = 'token/valid',
 }
 
 export const getTokenForUser = {
@@ -14,15 +14,15 @@ export const getTokenForUser = {
         method: 'GET',
         path: '/token',
         headers: {
-          Accept: 'application/json, text/plain, */*'
-        }
+          Accept: 'application/json, text/plain, */*',
+        },
       },
       willRespondWith: {
         status: 200,
-        body: token
-      }
+        body: token,
+      },
     }).as('getTokenForUser');
 
     return '@getTokenForUser';
-  }
-}
+  },
+};

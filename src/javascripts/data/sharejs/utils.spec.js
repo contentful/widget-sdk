@@ -8,7 +8,7 @@ const OtDocMock = createOtDocMock();
 describe('data/ShareJS/Utils', () => {
   describe('#peek', () => {
     function testPeek(doesWhat, stub, expected) {
-      it(doesWhat, function() {
+      it(doesWhat, function () {
         const doc = { getAt: stub };
         const val = ShareJS.peek(doc, ['a']);
         expect(val === expected).toBe(true);
@@ -33,18 +33,20 @@ describe('data/ShareJS/Utils', () => {
       await expect(ShareJS.remove(doc, ['a'])).resolves.toBeUndefined();
       expect(removeAtSpy).toHaveBeenCalledTimes(1);
       expect(removeAtSpy).toHaveBeenCalledWith(['a'], expect.any(Function));
-      removeAtSpy.mockClear()
+      removeAtSpy.mockClear();
     });
 
     it('ignores errors thrown by the doc', async () => {
       const doc = new OtDocMock();
-      doc.removeAt = () => { throw new Error( '' ) };
+      doc.removeAt = () => {
+        throw new Error('');
+      };
       await expect(ShareJS.remove(doc, ['a'])).resolves.toBeUndefined();
     });
   });
 
   describe('#setDeep()', () => {
-    it('overwrites existing value', function() {
+    it('overwrites existing value', function () {
       const doc = new OtDocMock();
       doc.snapshot = { a: { b: 'VAL' } };
 
@@ -52,7 +54,7 @@ describe('data/ShareJS/Utils', () => {
       expect(doc.snapshot.a.b).toEqual('NEW');
     });
 
-    it('keeps values in intermediate containers', function() {
+    it('keeps values in intermediate containers', function () {
       const doc = new OtDocMock();
       const intermediate = { x: 'VAL' };
       doc.snapshot = { i: intermediate };
@@ -62,20 +64,20 @@ describe('data/ShareJS/Utils', () => {
       expect(doc.snapshot.i.a.b).toEqual('NEW');
     });
 
-    it('creates intermediate containers', function() {
+    it('creates intermediate containers', function () {
       const doc = new OtDocMock();
       ShareJS.setDeep(doc, ['a', 'b'], 'VAL');
       expect(_.isObject(doc.snapshot.a)).toBe(true);
     });
 
-    it('sets deep value intermediate containers', function() {
+    it('sets deep value intermediate containers', function () {
       const doc = new OtDocMock();
       ShareJS.setDeep(doc, ['a', 'b', 'c'], 'VAL');
       expect(doc.snapshot.a.b.c).toBe('VAL');
     });
 
     describe('does not update if new value equals old one', () => {
-      it('for primitives', function() {
+      it('for primitives', function () {
         const doc = new OtDocMock();
         doc.snapshot.a = 'VALUE';
         sinon.spy(doc, 'setAt'); // eslint-disable-line
@@ -83,7 +85,7 @@ describe('data/ShareJS/Utils', () => {
         sinon.assert.notCalled(doc.set); // eslint-disable-line
       });
 
-      it('for references', function() {
+      it('for references', function () {
         const doc = new OtDocMock();
         doc.snapshot.a = ['some', 'array'];
         sinon.spy(doc, 'setAt'); // eslint-disable-line
@@ -92,7 +94,7 @@ describe('data/ShareJS/Utils', () => {
       });
     });
 
-    it('removes value if undefined is given', function() {
+    it('removes value if undefined is given', function () {
       const doc = new OtDocMock();
       const removeAtSpy = jest.spyOn(doc, 'removeAt');
       const setSpy = jest.spyOn(doc, 'set');

@@ -15,25 +15,25 @@ describe('WrappedEntityCard', () => {
       {
         action: ScheduledActionActions.Publish,
         scheduledFor: {
-          datetime: new Date().toISOString()
+          datetime: new Date().toISOString(),
         },
         entity: {
           sys: {
             id: JOB_ENTITY_ID,
             linkType: JOB_ENTITY_TYPE,
-            type: 'Link'
-          }
+            type: 'Link',
+          },
         },
         sys: {
-          id: 'job1'
-        }
-      }
+          id: 'job1',
+        },
+      },
     ];
 
     widgetAPIMock = {
       space: {
-        getEntityScheduledActions: jest.fn().mockResolvedValue(jobs)
-      }
+        getEntityScheduledActions: jest.fn().mockResolvedValue(jobs),
+      },
     };
   });
 
@@ -62,13 +62,13 @@ describe('WrappedEntityCard', () => {
   it('should not display the tooltip with an icon for an entry that was not scheduled', async () => {
     const widgetAPI = {
       space: {
-        getEntityScheduledActions: jest.fn().mockResolvedValue([])
-      }
+        getEntityScheduledActions: jest.fn().mockResolvedValue([]),
+      },
     };
     const { getByTestId } = render(
       <WidgetAPIContext.Provider
         value={{
-          widgetAPI: widgetAPI
+          widgetAPI: widgetAPI,
         }}>
         <EntityCard
           entityId="another-entity-not-scheduled"

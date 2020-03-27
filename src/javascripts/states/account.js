@@ -8,5 +8,5 @@ export default base({
   url: '/account',
   abstract: true,
   navComponent: EmptyNavigationBar,
-  children: [...orgSettingsState, accountProfileState]
+  children: [...orgSettingsState, accountProfileState],
 });

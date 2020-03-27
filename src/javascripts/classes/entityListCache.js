@@ -17,30 +17,30 @@ function EntityListCache(params) {
 }
 
 EntityListCache.prototype = {
-  has: function(id) {
+  has: function (id) {
     return !!this.cache[id];
   },
 
-  get: function(id) {
+  get: function (id) {
     return this.cache[id];
   },
 
-  save: function(entity) {
+  save: function (entity) {
     this.cache[getId(entity)] = entity;
   },
 
-  setDisplayedFieldIds: function(displayedFieldIds) {
+  setDisplayedFieldIds: function (displayedFieldIds) {
     this.displayedFieldIds = displayedFieldIds;
   },
 
-  resolveLinkedEntities: function(entities, linkResolver) {
+  resolveLinkedEntities: function (entities, linkResolver) {
     const $q = getModule('$q');
 
     linkResolver = linkResolver || $q.defer();
     if (this.inProgress) {
       this.queue.push({
         linkResolver: linkResolver,
-        entities: entities
+        entities: entities,
       });
       return linkResolver.promise;
     }
@@ -59,7 +59,7 @@ EntityListCache.prototype = {
     return linkResolver.promise;
   },
 
-  getLinkedEntities: function(entities) {
+  getLinkedEntities: function (entities) {
     const $q = getModule('$q');
     const self = this;
     this.determineMissingEntityIds(entities);
@@ -67,8 +67,8 @@ EntityListCache.prototype = {
     if (this.missingIds.length) {
       return this.params.space[this.fetchMethod]({
         'sys.id[in]': this.missingIds.join(','),
-        limit: 250
-      }).then(linkedEntities => {
+        limit: 250,
+      }).then((linkedEntities) => {
         self.missingIds = [];
         _.forEach(linkedEntities, self.save.bind(self));
       });
@@ -77,18 +77,18 @@ EntityListCache.prototype = {
     }
   },
 
-  fieldIsDisplayed: function(fieldId) {
+  fieldIsDisplayed: function (fieldId) {
     return _.includes(this.displayedFieldIds, fieldId);
   },
 
-  determineMissingEntityIds: function(entities) {
+  determineMissingEntityIds: function (entities) {
     const self = this;
-    _.forEach(entities, entity => {
+    _.forEach(entities, (entity) => {
       if (_.isUndefined(entity.data)) {
         logger.logError('Entity data is undefined', {
           data: {
-            entities: entities
-          }
+            entities: entities,
+          },
         });
       } else {
         _.forEach(entity.data.fields, (field, fieldId) => {
@@ -109,7 +109,7 @@ EntityListCache.prototype = {
     });
   },
 
-  pushFieldId: function(field) {
+  pushFieldId: function (field) {
     if (
       field.sys.linkType === this.params.entityType &&
       !_.includes(this.missingIds, getId(field)) &&
@@ -117,7 +117,7 @@ EntityListCache.prototype = {
     ) {
       this.missingIds.push(getId(field));
     }
-  }
+  },
 };
 
 function isLink(field) {

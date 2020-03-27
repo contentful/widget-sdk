@@ -10,9 +10,9 @@ const Client = function Client(adapter) {
 };
 
 Client.prototype = {
-  endpoint: function(...args) {
+  endpoint: function (...args) {
     return this.persistenceContext.endpoint().paths(args);
-  }
+  },
 };
 
 mixinChildResourceMethods(Client.prototype);

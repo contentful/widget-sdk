@@ -31,9 +31,7 @@ export function init() {
 
 function setVersionCookie(uiVersion) {
   Cookies.set('ui_version', uiVersion, {
-    expires: moment()
-      .add(24, 'h')
-      .toDate()
+    expires: moment().add(24, 'h').toDate(),
   });
 }
 
@@ -51,8 +49,8 @@ function addVersionNotification() {
 const styles = {
   buttonLink: css({
     marginLeft: '3px',
-    marginTop: '5px'
-  })
+    marginTop: '5px',
+  }),
 };
 
 function renderVersionNotification(gitRevision) {

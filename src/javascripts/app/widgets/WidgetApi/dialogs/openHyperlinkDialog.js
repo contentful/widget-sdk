@@ -10,7 +10,7 @@ import { isNodeTypeEnabled } from '@contentful/field-editor-rich-text';
 const nodeToHyperlinkType = {
   [INLINES.ENTRY_HYPERLINK]: LINK_TYPES.ENTRY,
   [INLINES.ASSET_HYPERLINK]: LINK_TYPES.ASSET,
-  [INLINES.HYPERLINK]: LINK_TYPES.URI
+  [INLINES.HYPERLINK]: LINK_TYPES.URI,
 };
 
 /**
@@ -27,18 +27,18 @@ const nodeToHyperlinkType = {
  *  Will be overwritten accordingly if `url` or `target` are set.
  * @returns {Promise<{uri: string?, target: object?, text: string?}>}
  */
-export default async function({ value = {}, showTextInput, widgetAPI }) {
+export default async function ({ value = {}, showTextInput, widgetAPI }) {
   const entitySelectorConfigs = newConfigsForField(widgetAPI.field);
   const isNew = !(value.uri || value.target);
   const props = {
     labels: {
       title: isNew ? 'Insert hyperlink' : 'Edit hyperlink',
-      confirm: isNew ? 'Insert' : 'Update'
+      confirm: isNew ? 'Insert' : 'Update',
     },
     value,
     hideText: !showTextInput,
     entitySelectorConfigs,
-    allowedHyperlinkTypes: getAllowedHyperlinkTypes(widgetAPI.field)
+    allowedHyperlinkTypes: getAllowedHyperlinkTypes(widgetAPI.field),
   };
 
   return new Promise((resolve, reject) => {
@@ -47,7 +47,7 @@ export default async function({ value = {}, showTextInput, widgetAPI }) {
         <HyperlinkDialog
           {...props}
           isShown={isShown}
-          onConfirm={value => {
+          onConfirm={(value) => {
             onClose(value);
           }}
           onCancel={() => {
@@ -55,7 +55,7 @@ export default async function({ value = {}, showTextInput, widgetAPI }) {
           }}
         />
       </WidgetAPIContext.Provider>
-    )).then(value => {
+    )).then((value) => {
       if (value === null) {
         reject();
       } else {
@@ -85,8 +85,8 @@ function getAllowedHyperlinkTypes(field) {
   const hyperlinkTypes = [INLINES.ENTRY_HYPERLINK, INLINES.ASSET_HYPERLINK, INLINES.HYPERLINK];
   if (field.type === 'RichText') {
     return hyperlinkTypes
-      .filter(nodeType => isNodeTypeEnabled(field, nodeType))
-      .map(nodeType => nodeToHyperlinkType[nodeType]);
+      .filter((nodeType) => isNodeTypeEnabled(field, nodeType))
+      .map((nodeType) => nodeToHyperlinkType[nodeType]);
   }
 
   return hyperlinkTypes;

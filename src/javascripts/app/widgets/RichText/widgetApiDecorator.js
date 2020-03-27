@@ -3,7 +3,7 @@ import {
   getSectionVisibility,
   canCreateAsset,
   canPerformActionOnEntryOfType,
-  Action
+  Action,
 } from 'access_control/AccessChecker';
 
 /**
@@ -18,7 +18,7 @@ import {
  * @param {Object} spaceContext
  * @returns {Object}
  */
-export default function(widgetAPI, spaceContext) {
+export default function (widgetAPI, spaceContext) {
   const { asset: canAccessAssets } = getSectionVisibility();
   const contentTypes = spaceContext ? spaceContext.publishedCTs.getAllBare() : [];
 
@@ -34,10 +34,10 @@ export default function(widgetAPI, spaceContext) {
       canCreateEntryOfContentType: contentTypes.reduce(
         (acc, contentType) => ({
           ...acc,
-          [contentType.sys.id]: canPerformActionOnEntryOfType(Action.CREATE, contentType)
+          [contentType.sys.id]: canPerformActionOnEntryOfType(Action.CREATE, contentType),
         }),
         {}
-      )
+      ),
     },
     dialogs: {
       ...widgetAPI.dialogs,
@@ -45,8 +45,8 @@ export default function(widgetAPI, spaceContext) {
         // Important to pass `rtWidgetAPI` as `FetchedEntityCard` depends on
         // `jobs` and `currentUrl`.
         return openHyperlinkDialog({ showTextInput, value, widgetAPI: rtWidgetAPI });
-      }
-    }
+      },
+    },
   };
   return rtWidgetAPI;
 }

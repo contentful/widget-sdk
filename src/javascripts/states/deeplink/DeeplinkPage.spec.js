@@ -8,11 +8,11 @@ import $state from 'ng/$state';
 
 jest.mock('./utils', () => ({
   getSpaceInfo: jest.fn(),
-  getAllEnviroments: jest.fn()
+  getAllEnviroments: jest.fn(),
 }));
 
 jest.mock('./resolver', () => ({
-  resolveLink: jest.fn()
+  resolveLink: jest.fn(),
 }));
 
 describe('deeplink/DeeplinkPage', () => {
@@ -20,8 +20,8 @@ describe('deeplink/DeeplinkPage', () => {
     resolveLink.mockResolvedValue({
       path: ['spaces', 'detail', 'environment', 'apps', 'list'],
       params: {
-        spaceId: '1234'
-      }
+        spaceId: '1234',
+      },
     });
 
     const { getByText } = render(
@@ -30,7 +30,7 @@ describe('deeplink/DeeplinkPage', () => {
         searchParams={{
           link: 'some-link',
           param1: '1',
-          param2: '2'
+          param2: '2',
         }}
         marketplaceApps={{}}
       />
@@ -38,7 +38,7 @@ describe('deeplink/DeeplinkPage', () => {
 
     expect(resolveLink).toHaveBeenCalledWith('some-link', {
       param1: '1',
-      param2: '2'
+      param2: '2',
     });
 
     await waitForElement(() => getByText('Redirecting…'));
@@ -46,22 +46,22 @@ describe('deeplink/DeeplinkPage', () => {
     expect($state.go).toHaveBeenCalledWith(
       'spaces.detail.environment.apps.list',
       {
-        spaceId: '1234'
+        spaceId: '1234',
       },
       { location: 'replace' }
     );
   });
 
-  it('should show space selection form if resolver returned deeplinkOptions', async function() {
+  it('should show space selection form if resolver returned deeplinkOptions', async function () {
     resolveLink.mockResolvedValue({
       path: ['spaces', 'detail', 'environment', 'apps', 'list'],
       params: {
-        spaceId: '1234'
+        spaceId: '1234',
       },
       deeplinkOptions: {
         selectSpace: true,
-        selectEnvironment: true
-      }
+        selectEnvironment: true,
+      },
     });
 
     getSpaceInfo.mockResolvedValue({
@@ -70,19 +70,19 @@ describe('deeplink/DeeplinkPage', () => {
         {
           sys: { id: 'current-space' },
           name: 'Current space',
-          organization: { sys: { id: 'org-1' }, name: 'Organization 1' }
+          organization: { sys: { id: 'org-1' }, name: 'Organization 1' },
         },
         {
           sys: { id: 'another-space' },
           name: 'Another space',
-          organization: { sys: { id: 'org-2' }, name: 'Organization 2' }
-        }
-      ]
+          organization: { sys: { id: 'org-2' }, name: 'Organization 2' },
+        },
+      ],
     });
 
     getAllEnviroments.mockResolvedValue([
       { sys: { id: 'master' }, name: 'master env' },
-      { sys: { id: 'test' }, name: 'test env' }
+      { sys: { id: 'test' }, name: 'test env' },
     ]);
 
     const { getByText, getByTestId } = render(
@@ -90,14 +90,14 @@ describe('deeplink/DeeplinkPage', () => {
         href="https://app.contentful.com"
         searchParams={{
           link: 'some-link',
-          spaceId: 'deeplink-space-id'
+          spaceId: 'deeplink-space-id',
         }}
         marketplaceApps={{}}
       />
     );
 
     expect(resolveLink).toHaveBeenCalledWith('some-link', {
-      spaceId: 'deeplink-space-id'
+      spaceId: 'deeplink-space-id',
     });
 
     await waitForElement(() => getByTestId('deeplink-select-space'));

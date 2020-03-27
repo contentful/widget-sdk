@@ -3,7 +3,7 @@ import { noop } from 'lodash';
 import {
   SkeletonContainer,
   SkeletonBodyText,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 

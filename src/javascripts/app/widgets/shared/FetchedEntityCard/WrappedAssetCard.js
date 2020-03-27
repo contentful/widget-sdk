@@ -19,11 +19,11 @@ export default class WrappedAssetCard extends React.Component {
     onClick: PropTypes.func,
     readOnly: PropTypes.bool,
     cardDragHandleComponent: PropTypes.element,
-    size: PropTypes.string
+    size: PropTypes.string,
   };
 
   static defaultProps = {
-    className: ''
+    className: '',
   };
 
   getFileType(file) {
@@ -42,12 +42,12 @@ export default class WrappedAssetCard extends React.Component {
       archive: 'archive',
       plaintext: 'plaintext',
       code: 'code',
-      markup: 'markup'
+      markup: 'markup',
     };
 
     const groupName = mimetype.getGroupLabel({
       type: file.contentType,
-      fallbackFileName: file.fileName
+      fallbackFileName: file.fileName,
     });
 
     if (groupName in groupToIconMap) {
@@ -68,7 +68,7 @@ export default class WrappedAssetCard extends React.Component {
       entityFile,
       isDisabled: disabled,
       onEdit,
-      onRemove
+      onRemove,
     }).render();
   }
 
@@ -83,7 +83,7 @@ export default class WrappedAssetCard extends React.Component {
       isLoading,
       onClick,
       cardDragHandleComponent,
-      size
+      size,
     } = this.props;
 
     return (

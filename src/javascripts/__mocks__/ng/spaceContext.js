@@ -1,15 +1,15 @@
 export const user = {
-  email: 'someone-from@contenful.com'
+  email: 'someone-from@contenful.com',
 };
 
 export const users = {
-  get: jest.fn().mockResolvedValue({})
+  get: jest.fn().mockResolvedValue({}),
 };
 
 export const organization = {
   sys: {
-    id: 'org'
-  }
+    id: 'org',
+  },
 };
 
 export const cma = {
@@ -18,16 +18,16 @@ export const cma = {
   getExtensions: jest.fn().mockResolvedValue({ items: [] }),
   getExtension: jest.fn().mockResolvedValue({}),
   getEntries: jest.fn().mockResolvedValue({ items: [] }),
-  getAssets: jest.fn().mockResolvedValue({ items: [] })
+  getAssets: jest.fn().mockResolvedValue({ items: [] }),
 };
 
 export const publishedCTs = {
   get: jest.fn(),
-  getAllBare: jest.fn().mockReturnValue([])
+  getAllBare: jest.fn().mockReturnValue([]),
 };
 
 export const widgets = {
-  refresh: jest.fn().mockResolvedValue([])
+  refresh: jest.fn().mockResolvedValue([]),
 };
 
 export const contentPreview = {
@@ -36,7 +36,7 @@ export const contentPreview = {
   getSelected: jest.fn(),
   create: jest.fn(),
   update: jest.fn(),
-  remove: jest.fn()
+  remove: jest.fn(),
 };
 
 export const getData = jest.fn();
@@ -50,9 +50,9 @@ export const getEnvironmentId = jest.fn();
 
 export const space = {
   getId: jest.fn(),
-  endpoint: jest.fn()
+  endpoint: jest.fn(),
 };
 
 export const memberships = {
-  invite: jest.fn().mockResolvedValue({})
+  invite: jest.fn().mockResolvedValue({}),
 };

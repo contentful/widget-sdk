@@ -11,14 +11,14 @@ export default function register() {
       // Definitions for narrow/medium types in entry list controller
       const classToWidth = {
         narrow: 70,
-        medium: 130
+        medium: 130,
       };
 
       return {
         template: entryListTemplate,
         restrict: 'A',
         controller: 'EntryListController',
-        link: function(scope, elem) {
+        link: function (scope, elem) {
           // We obtain a reference to the publishedCTs directly so that if
           // we are changing the space we do not refer to the new CT
           // repository.
@@ -27,19 +27,19 @@ export default function register() {
           let collapsedStates = {};
           let expandedField;
 
-          scope.expandColumn = field => {
+          scope.expandColumn = (field) => {
             expandedField = field.id;
             $timeout(collapseColumns);
           };
 
-          K.onValueScope(scope, publishedCTs.items$, cts => {
-            scope.contentTypeSelectOptions = cts.map(ct => ({
+          K.onValueScope(scope, publishedCTs.items$, (cts) => {
+            scope.contentTypeSelectOptions = cts.map((ct) => ({
               id: ct.sys.id,
-              name: ct.name
+              name: ct.name,
             }));
           });
 
-          scope.contentTypeName = entry => {
+          scope.contentTypeName = (entry) => {
             const ctId = entry.getContentTypeId();
             const ct = spaceContext.publishedCTs.get(ctId);
             if (ct) {
@@ -77,7 +77,7 @@ export default function register() {
 
           function getMinWidth(elem) {
             let minWidth;
-            _.forEach(elem.className.split(' '), classname => {
+            _.forEach(elem.className.split(' '), (classname) => {
               minWidth = classToWidth[classname];
               if (minWidth) return false;
             });
@@ -89,8 +89,8 @@ export default function register() {
           function isOrderingField(elem) {
             return elem.find('span').hasClass('active');
           }
-        }
+        },
       };
-    }
+    },
   ]);
 }

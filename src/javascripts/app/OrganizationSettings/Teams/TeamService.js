@@ -15,14 +15,14 @@ export default function createTeamService(state) {
     getAll,
     create,
     update,
-    remove
+    remove,
   };
 
   function get(id) {
     return endpoint(
       {
         method: 'GET',
-        path: ['teams', id]
+        path: ['teams', id],
       },
       alphaHeader
     );
@@ -37,7 +37,7 @@ export default function createTeamService(state) {
       {
         method: 'POST',
         path: ['teams'],
-        data: { name, description }
+        data: { name, description },
       },
       alphaHeader
     );
@@ -49,7 +49,7 @@ export default function createTeamService(state) {
         method: 'PUT',
         path: ['teams', sys.id],
         data: { name, description },
-        version: sys.version
+        version: sys.version,
       },
       alphaHeader
     );
@@ -59,7 +59,7 @@ export default function createTeamService(state) {
     return endpoint(
       {
         method: 'DELETE',
-        path: ['teams', teamId]
+        path: ['teams', teamId],
       },
       alphaHeader
     );

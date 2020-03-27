@@ -20,7 +20,7 @@ export default function createSnapshotExtensionBridge(dependencies) {
     getData,
     install,
     uninstall: () => {},
-    apply: () => {} // No matter what - don't apply changes
+    apply: () => {}, // No matter what - don't apply changes
   };
 
   function getData() {
@@ -32,12 +32,12 @@ export default function createSnapshotExtensionBridge(dependencies) {
       current: { field, locale },
       locales: {
         available: TheLocaleStore.getPrivateLocales(),
-        default: TheLocaleStore.getDefaultLocale()
+        default: TheLocaleStore.getDefaultLocale(),
       },
       entryData: entity,
       contentTypeData: editorData.contentType,
       initialContentTypesData: spaceContext.publishedCTs.getAllBare(),
-      editorInterface: editorData.editorInterface
+      editorInterface: editorData.editorInterface,
     };
   }
 

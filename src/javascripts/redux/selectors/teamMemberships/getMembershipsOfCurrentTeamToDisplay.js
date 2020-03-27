@@ -17,7 +17,7 @@ import getMembershipsOfCurrentTeam from './getMembershipsOfCurrentTeam';
  *
  * @return {Object}
  */
-export default state => {
+export default (state) => {
   return flow(
     getMembershipsOfCurrentTeam,
     // order by first and last name, in that priority

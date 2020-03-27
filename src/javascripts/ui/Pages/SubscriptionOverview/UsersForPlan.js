@@ -11,8 +11,8 @@ import StateLink from 'app/common/StateLink';
 const styles = {
   container: css({
     gridColumn: 2,
-    gridRow: 1
-  })
+    gridRow: 1,
+  }),
 };
 
 function UsersForPlan({ usersMeta, organizationId }) {
@@ -49,7 +49,7 @@ function UsersForPlan({ usersMeta, organizationId }) {
 
 UsersForPlan.propTypes = {
   usersMeta: PropTypes.object.isRequired,
-  organizationId: PropTypes.string.isRequired
+  organizationId: PropTypes.string.isRequired,
 };
 
 export default UsersForPlan;

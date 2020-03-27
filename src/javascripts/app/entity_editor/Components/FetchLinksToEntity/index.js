@@ -4,13 +4,13 @@ import { EntityType } from '../constants';
 import fetchLinks from 'app/entity_editor/Components/FetchLinksToEntity/fetchLinks';
 import {
   onFetchLinks as trackFetchLinks,
-  Origin as IncomingLinksOrigin
+  Origin as IncomingLinksOrigin,
 } from 'analytics/events/IncomingLinks';
 
 export const RequestState = {
   PENDING: 'pending',
   SUCCESS: 'success',
-  ERROR: 'error'
+  ERROR: 'error',
 };
 
 class FetchLinksToEntity extends React.Component {
@@ -18,19 +18,19 @@ class FetchLinksToEntity extends React.Component {
     id: PropTypes.string.isRequired,
     type: PropTypes.oneOf([EntityType.ASSET, EntityType.ENTRY]).isRequired,
     origin: PropTypes.oneOf([IncomingLinksOrigin.DIALOG, IncomingLinksOrigin.SIDEBAR]),
-    render: PropTypes.func.isRequired
+    render: PropTypes.func.isRequired,
   };
 
   state = {
     links: [],
-    requestState: RequestState.PENDING
+    requestState: RequestState.PENDING,
   };
 
   componentDidMount() {
     this.fetchLinks(this.props);
   }
 
-  UNSAFE_componentWillReceiveProps = nextProps => {
+  UNSAFE_componentWillReceiveProps = (nextProps) => {
     if (this.props.id !== nextProps.id) {
       this.fetchLinks(nextProps);
     }
@@ -38,25 +38,25 @@ class FetchLinksToEntity extends React.Component {
 
   fetchLinks = ({ id, type }) => {
     fetchLinks(id, type).then(
-      links => {
+      (links) => {
         this.setState(() => ({
           links,
-          requestState: RequestState.SUCCESS
+          requestState: RequestState.SUCCESS,
         }));
         if (this.props.origin === IncomingLinksOrigin.SIDEBAR) {
-          const incomingLinkIds = links.map(l => l.id);
+          const incomingLinkIds = links.map((l) => l.id);
 
           trackFetchLinks({
             entityId: this.props.id,
             entityType: this.props.type,
-            incomingLinkIds
+            incomingLinkIds,
           });
         }
       },
       () => {
         this.setState(() => ({
           links: [],
-          requestState: RequestState.ERROR
+          requestState: RequestState.ERROR,
         }));
       }
     );

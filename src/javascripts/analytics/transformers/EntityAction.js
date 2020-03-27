@@ -11,7 +11,7 @@ import { getSchema } from 'analytics/Schemas';
  * on the user's behalf. For example, during auto space creation or when a space is
  * created using an example space template.
  */
-export default function(_eventName, eventData) {
+export default function (_eventName, eventData) {
   const contexts = [getEntityContext(eventData)];
 
   if (eventData.template) {
@@ -24,11 +24,11 @@ export default function(_eventName, eventData) {
   if (eventData.entityAutomationScope) {
     contexts.push({
       schema: getSchema('entity_automation_scope').path,
-      data: extend({ scope: eventData.entityAutomationScope.scope }, getBaseData(eventData))
+      data: extend({ scope: eventData.entityAutomationScope.scope }, getBaseData(eventData)),
     });
   }
 
-  (eventData.widgetTrackingContexts || []).forEach(ctx => contexts.push(ctx));
+  (eventData.widgetTrackingContexts || []).forEach((ctx) => contexts.push(ctx));
 
   return { data: {}, contexts };
 }
@@ -36,7 +36,7 @@ export default function(_eventName, eventData) {
 function getSpaceTemplateContext(eventData) {
   return {
     schema: getSchema('space_template').path,
-    data: Object.assign({ name: eventData.template }, getBaseData(eventData))
+    data: Object.assign({ name: eventData.template }, getBaseData(eventData)),
   };
 }
 
@@ -44,7 +44,10 @@ function getEntityContext(eventData) {
   const schema = getSchema(snakeCase(eventData.actionData.entity));
   return {
     schema: schema.path,
-    data: Object.assign(getBaseEntityData(eventData), getEntitySpecificData(schema.name, eventData))
+    data: Object.assign(
+      getBaseEntityData(eventData),
+      getEntitySpecificData(schema.name, eventData)
+    ),
   };
 }
 
@@ -52,7 +55,7 @@ function getBaseEntityData(eventData) {
   return Object.assign(
     {
       action: eventData.actionData.action,
-      version: eventData.response.sys.version
+      version: eventData.response.sys.version,
     },
     getBaseData(eventData)
   );
@@ -73,6 +76,6 @@ function getBaseData(eventData) {
   return {
     executing_user_id: eventData.userId,
     organization_id: eventData.organizationId,
-    space_id: eventData.spaceId
+    space_id: eventData.spaceId,
   };
 }

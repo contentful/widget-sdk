@@ -25,7 +25,7 @@ function wrapWithCounter(request) {
 
     Telemetry.count('cma-req', {
       endpoint: getEndpoint(url),
-      state: getCurrentState()
+      state: getCurrentState(),
     });
 
     return request(...args);

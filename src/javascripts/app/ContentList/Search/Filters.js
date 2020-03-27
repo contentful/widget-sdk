@@ -16,7 +16,7 @@ const SUPPORTED_CT_FIELD_TYPES = [
   'Boolean',
   'Array',
   'Link',
-  'RichText'
+  'RichText',
 ];
 
 export const statusQueryKey = '__status';
@@ -25,7 +25,7 @@ export const Status = {
   Published: 'published',
   Changed: 'changed',
   Draft: 'draft',
-  Archived: 'archived'
+  Archived: 'archived',
 };
 
 /**
@@ -67,7 +67,7 @@ const sysFieldFilters = [
   ['createdBy', 'User', 'The user who created an item'],
   ['publishedBy', 'User', 'The user who last published an item'],
   ['version', 'Number', 'An item’s version'],
-  ['id', 'Text', 'An item’s unique identifier']
+  ['id', 'Text', 'An item’s unique identifier'],
 ]
   .map(([name, type, description, label]) => {
     return {
@@ -78,7 +78,7 @@ const sysFieldFilters = [
       queryKey: getSysFieldQueryKey({ name, type }),
       operators: getOperatorsByType(type),
       valueInput: getControlByType({ type }),
-      contentType: null
+      contentType: null,
     };
   })
   .concat([
@@ -93,10 +93,10 @@ const sysFieldFilters = [
         [Status.Published, 'Published'],
         [Status.Changed, 'Changed'],
         [Status.Draft, 'Draft'],
-        [Status.Archived, 'Archived']
+        [Status.Archived, 'Archived'],
       ]),
-      contentType: null
-    }
+      contentType: null,
+    },
   ]);
 
 // These are only applicable to assets
@@ -107,7 +107,7 @@ const assetsFieldFilters = [
   ['type', 'AssetType'],
   ['title', 'AssetField'],
   ['description', 'AssetField'],
-  ['fileName', 'AssetFileField']
+  ['fileName', 'AssetFileField'],
 ].map(([name, type, description, label]) => ({
   name,
   label: label || name,
@@ -116,7 +116,7 @@ const assetsFieldFilters = [
   queryKey: getAssetQueryKey({ name, type }),
   operators: getOperatorsByType(type),
   valueInput: getControlByType({ type }),
-  contentType: null
+  contentType: null,
 }));
 
 /**
@@ -126,7 +126,7 @@ const assetsFieldFilters = [
  * to contstruct the available options to select from.
  */
 export function contentTypeFilter(contentTypes) {
-  let valueInputSelect = [...contentTypes.map(ct => [ct.sys.id, ct.name])];
+  let valueInputSelect = [...contentTypes.map((ct) => [ct.sys.id, ct.name])];
 
   if (contentTypes.length !== 1) {
     valueInputSelect = [['', 'Any'], ...valueInputSelect];
@@ -136,7 +136,7 @@ export function contentTypeFilter(contentTypes) {
     name: 'Content type',
     queryKey: 'content_type',
     operators: [equalityOperator],
-    valueInput: ValueInput.Select(valueInputSelect)
+    valueInput: ValueInput.Select(valueInputSelect),
   };
 }
 
@@ -148,7 +148,7 @@ export function contentTypeFilter(contentTypes) {
  * @returns {API.ContentType?}
  */
 export function getContentTypeById(contentTypes, contentTypeId) {
-  return find(contentTypes, ct => ct.sys.id === contentTypeId);
+  return find(contentTypes, (ct) => ct.sys.id === contentTypeId);
 }
 
 export function getFiltersFromQueryKey({
@@ -156,14 +156,14 @@ export function getFiltersFromQueryKey({
   searchFilters,
   contentTypeId,
   users,
-  withAssets = false
+  withAssets = false,
 }) {
   const contentType = getContentTypeById(contentTypes, contentTypeId);
   const filters = searchFilters
     .map(([queryKey, op, value]) => [
       buildFilterFieldByQueryKey(contentType, queryKey, withAssets),
       op,
-      value
+      value,
     ])
     .filter(([queryKey]) => queryKey !== undefined);
 
@@ -182,7 +182,9 @@ export function sanitizeSearchFilters(
     if (contentType && isContentTypeField(queryKey)) {
       return getFieldByApiName(contentType, getApiName(queryKey)) !== undefined;
     } else {
-      return find(getSysFilters(withAssets), filter => filter.queryKey === queryKey) !== undefined;
+      return (
+        find(getSysFilters(withAssets), (filter) => filter.queryKey === queryKey) !== undefined
+      );
     }
   });
 }
@@ -205,7 +207,7 @@ export function buildFilterFieldByQueryKey(contentType, queryKey, withAssets = f
       filterField = buildFilterField(contentType, field);
     }
   } else {
-    filterField = find(getSysFilters(withAssets), filter => filter.queryKey === queryKey);
+    filterField = find(getSysFilters(withAssets), (filter) => filter.queryKey === queryKey);
   }
 
   return filterField;
@@ -292,7 +294,7 @@ function filterBySupportedTypes(filters) {
 function filterByName(filters, searchString = '') {
   searchString = searchString.trim().toLowerCase();
 
-  return filters.filter(filter => {
+  return filters.filter((filter) => {
     return startsWith(filter.name.toLowerCase(), searchString);
   });
 }
@@ -300,7 +302,7 @@ function filterByName(filters, searchString = '') {
 function filterByContentType(filters, contentTypeId) {
   if (contentTypeId) {
     // Remove all filters that do not apply to the given Content Type
-    return filters.filter(field => {
+    return filters.filter((field) => {
       if (field.contentType) {
         return field.contentType.id === contentTypeId;
       } else {
@@ -313,9 +315,9 @@ function filterByContentType(filters, contentTypeId) {
 }
 
 function setUserFieldsFilters(users, filters) {
-  const getName = user => (user.firstName ? user.firstName : user.email);
+  const getName = (user) => (user.firstName ? user.firstName : user.email);
   const byName = (curr, prev) => getName(curr).localeCompare(getName(prev));
-  const usersOptions = users.sort(byName).map(user => {
+  const usersOptions = users.sort(byName).map((user) => {
     const label = user.firstName ? `${user.firstName} ${user.lastName}` : user.email;
     const value = user.sys.id;
 
@@ -345,7 +347,7 @@ function getApiName(queryKey) {
 }
 
 function getFieldByApiName(contentType, apiName) {
-  return find(contentType.fields, field => field.apiName === apiName);
+  return find(contentType.fields, (field) => field.apiName === apiName);
 }
 
 function getSysFilters(withAssets = false) {
@@ -365,9 +367,9 @@ function buildFilterField(ct, ctField) {
     valueInput: getControlByType(ctField),
     contentType: {
       id: ct.sys.id,
-      name: ct.name
+      name: ct.name,
     },
-    type: ctField.type
+    type: ctField.type,
   };
 }
 
@@ -418,17 +420,20 @@ function getControlByType(ctField) {
   const type = getFieldType(ctField);
 
   if (type === 'Boolean') {
-    return ValueInput.Select([['true', 'Yes'], ['false', 'No']]);
+    return ValueInput.Select([
+      ['true', 'Yes'],
+      ['false', 'No'],
+    ]);
   } else if (['SymbolPredefined', 'SymbolListPredefined'].indexOf(type) > -1) {
     const emptyOption = ['', 'Select...'];
-    const valueOptions = getPredefinedValues(ctField).map(o => [o, o]);
+    const valueOptions = getPredefinedValues(ctField).map((o) => [o, o]);
     return ValueInput.Select([emptyOption].concat(valueOptions));
   } else if (isReferenceField(ctField)) {
     return ValueInput.Reference(
       assign(ctField, {
         // TODO: This is required by the entity selector
         itemLinkType: get(ctField, ['items', 'linkType']),
-        itemValidations: get(ctField, ['items', 'validations'])
+        itemValidations: get(ctField, ['items', 'validations']),
       })
     );
   } else if (ctField.type === 'Date') {
@@ -453,7 +458,7 @@ function isUserField({ type }) {
 
 function getPredefinedValues(ctField) {
   const { validations = [] } = ctField.items || ctField;
-  const validationWithPredefinedValues = find(validations, v => has(v, 'in')) || {};
+  const validationWithPredefinedValues = find(validations, (v) => has(v, 'in')) || {};
 
   return validationWithPredefinedValues.in;
 }

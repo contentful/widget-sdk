@@ -14,7 +14,7 @@ import { getReferencesForEntryId, getDefaultLocale } from './referencesDialogSer
 const styles = {
   dialogButton: css({
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   }),
   modalContent: css({
     overflowY: 'hidden',
@@ -30,21 +30,21 @@ const styles = {
       marginBottom: '-10px',
       position: 'absolute',
       bottom: '0px',
-      left: '0px'
-    }
+      left: '0px',
+    },
   }),
   icon: css({
-    marginRight: tokens.spacing2Xs
+    marginRight: tokens.spacing2Xs,
   }),
   buttonWrapper: css({
-    margin: `${tokens.spacingM} 0`
+    margin: `${tokens.spacingM} 0`,
   }),
   maxLevelWarning: css({
-    marginTop: tokens.spacingM
+    marginTop: tokens.spacingM,
   }),
   tooComplexNote: css({
-    marginBottom: tokens.spacingM
-  })
+    marginBottom: tokens.spacingM,
+  }),
 };
 
 const ReferencesDialog = ({ entity }) => {
@@ -89,7 +89,7 @@ const ReferencesDialog = ({ entity }) => {
     setIsLoading(false);
   };
 
-  const handleReferenceCardClick = entity => {
+  const handleReferenceCardClick = (entity) => {
     goToSlideInEntity({ type: entity.sys.type, id: entity.sys.id });
     setIsOpen(false);
   };
@@ -154,7 +154,7 @@ const ReferencesDialog = ({ entity }) => {
 };
 
 ReferencesDialog.propTypes = {
-  entity: PropTypes.object.isRequired
+  entity: PropTypes.object.isRequired,
 };
 
 export default ReferencesDialog;

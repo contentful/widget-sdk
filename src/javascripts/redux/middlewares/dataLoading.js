@@ -7,7 +7,7 @@ import getOrgId from 'redux/selectors/getOrgId';
 import { getFeature } from '../routes';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 
-export default ({ getState, dispatch }) => next => async action => {
+export default ({ getState, dispatch }) => (next) => async (action) => {
   const oldState = getState();
   const oldPath = getPath(oldState);
   const oldOrgRole = getOrgRole(oldState);

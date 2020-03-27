@@ -5,7 +5,7 @@ import { $initialize } from 'test/utils/ng';
 describe('Space Template creation service', () => {
   let spaceTemplateCreator, creator, stubs, spaceContext, enrichTemplate;
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     stubs = {
       ctPublish: sinon.stub(),
       assetPublish: sinon.stub(),
@@ -21,36 +21,36 @@ describe('Space Template creation service', () => {
       refreshLocaleStore: sinon.stub(),
       setActiveLocales: sinon.stub(),
       createApiKey: sinon.stub().returns(Promise.resolve()),
-      getAllApiKeys: sinon.stub().returns(Promise.resolve([{ accessToken: 'mock-token' }]))
+      getAllApiKeys: sinon.stub().returns(Promise.resolve([{ accessToken: 'mock-token' }])),
     };
 
     this.system.set('analytics/Analytics', { track: _.noop });
     this.system.set('services/SpaceTemplateCreator/enrichTemplate', {
       // we don't care about template info, because we describe enrichTemplate
       // function by ourselves
-      enrichTemplate: (_templateInfo, template) => enrichTemplate(template)
+      enrichTemplate: (_templateInfo, template) => enrichTemplate(template),
     });
 
     this.system.set('services/localeStore', {
       default: {
         refresh: stubs.refreshLocaleStore,
-        setActiveLocales: stubs.setActiveLocales
-      }
+        setActiveLocales: stubs.setActiveLocales,
+      },
     });
 
     this.system.set('services/contentPreview', {
       getContentPreview: () => ({
         getAll: stubs.getContentPreview,
-        create: stubs.createContentPreview
-      })
+        create: stubs.createContentPreview,
+      }),
     });
 
     this.system.set('app/settings/api/services/ApiKeyRepoInstance', {
       getApiKeyRepo: () => ({
         create: stubs.createApiKey,
-        getAll: stubs.getAllApiKeys
+        getAll: stubs.getAllApiKeys,
       }),
-      purgeApiKeyRepoCache: () => {}
+      purgeApiKeyRepoCache: () => {},
     });
 
     spaceTemplateCreator = await this.system.import('services/SpaceTemplateCreator');
@@ -64,27 +64,27 @@ describe('Space Template creation service', () => {
 
   describe('creates content based on a template', () => {
     let template;
-    beforeEach(async function() {
+    beforeEach(async function () {
       // we enrich template with 2 editor interfaces
       // but only 1 matches the content type we publish
-      enrichTemplate = template => ({
+      enrichTemplate = (template) => ({
         ...template,
         editorInterfaces: [
           {
             sys: {
               contentType: {
-                sys: { id: 'ct1' }
-              }
-            }
+                sys: { id: 'ct1' },
+              },
+            },
           },
           {
             sys: {
               contentType: {
-                sys: { id: 'unexisting_ct' }
-              }
-            }
-          }
-        ]
+                sys: { id: 'unexisting_ct' },
+              },
+            },
+          },
+        ],
       });
       stubs.getContentPreview.returns(Promise.resolve([]));
       stubs.createContentPreview.returns(Promise.resolve({ sys: { id: 1 }, name: 'test' }));
@@ -92,53 +92,53 @@ describe('Space Template creation service', () => {
         contentTypes: [
           { sys: { id: 'ct1' }, publish: stubs.ctPublish },
           { sys: { id: 'ct2' }, publish: stubs.ctPublish },
-          { sys: { id: 'ct3' }, publish: stubs.ctPublish }
+          { sys: { id: 'ct3' }, publish: stubs.ctPublish },
         ],
         assets: [
           {
             sys: { id: 'a1' },
             fields: { file: { 'en-US': 'val' } },
             process: stubs.assetProcess,
-            publish: stubs.assetPublish
+            publish: stubs.assetPublish,
           },
           {
             sys: { id: 'a2' },
             fields: { file: { 'en-US': 'val' } },
             process: stubs.assetProcess,
-            publish: stubs.assetPublish
+            publish: stubs.assetPublish,
           },
           {
             sys: { id: 'a3' },
             fields: { file: { 'en-US': 'val' } },
             process: stubs.assetProcess,
-            publish: stubs.assetPublish
-          }
+            publish: stubs.assetPublish,
+          },
         ],
         entries: [
           {
             sys: { id: 'e1', contentType: { sys: { id: 'ct1' } } },
             fields: { file: { 'en-US': 'val' } },
-            publish: stubs.entryPublish
+            publish: stubs.entryPublish,
           },
           {
             sys: { id: 'e2', contentType: { sys: { id: 'ct2' } } },
             fields: { file: { 'en-US': 'val' } },
-            publish: stubs.entryPublish
+            publish: stubs.entryPublish,
           },
           {
             sys: { id: 'e3', contentType: { sys: { id: 'ct3' } } },
             fields: { file: { 'en-US': 'val' } },
-            publish: stubs.entryPublish
-          }
+            publish: stubs.entryPublish,
+          },
         ],
         apiKeys: [{ sys: { id: 'ak1' } }, { sys: { id: 'ak2' } }],
         space: {
           locales: [
             {
-              code: 'en-US'
-            }
-          ]
-        }
+              code: 'en-US',
+            },
+          ],
+        },
       };
 
       spaceContext = {
@@ -147,7 +147,7 @@ describe('Space Template creation service', () => {
           createContentType: sinon.stub(),
           createEntry: sinon.stub(),
           createAsset: sinon.stub(),
-          getContentType: sinon.stub().resolves()
+          getContentType: sinon.stub().resolves(),
         },
         docConnection: {
           open: sinon.stub().returns(
@@ -156,20 +156,20 @@ describe('Space Template creation service', () => {
               doc: {
                 on: (_event, handler) => handler([{ p: ['fields', 'file'], oi: { url: 'url' } }]),
                 removeListener: sinon.stub(),
-                close: sinon.stub()
-              }
+                close: sinon.stub(),
+              },
             })
-          )
+          ),
         },
         localeRepo: {
-          save: sinon.stub()
+          save: sinon.stub(),
         },
         cma: {
-          updateEditorInterface: sinon.stub().resolves()
-        }
+          updateEditorInterface: sinon.stub().resolves(),
+        },
       };
 
-      _.times(2, n => {
+      _.times(2, (n) => {
         spaceContext.space.createContentType
           .onCall(n)
           .returns(Promise.resolve(template.contentTypes[n]));
@@ -179,7 +179,7 @@ describe('Space Template creation service', () => {
         .returns(Promise.reject(new Error('can not create a content type')));
       stubs.ctPublish.returns(Promise.resolve({ data: { sys: { id: 'ct1' } } }));
 
-      _.times(2, n => {
+      _.times(2, (n) => {
         spaceContext.space.createAsset.onCall(n).returns(Promise.resolve(template.assets[n]));
       });
       spaceContext.space.createAsset
@@ -188,7 +188,7 @@ describe('Space Template creation service', () => {
       stubs.assetProcess.returns(Promise.resolve());
       stubs.assetPublish.returns(Promise.resolve());
 
-      _.times(2, n => {
+      _.times(2, (n) => {
         spaceContext.space.createEntry.onCall(n).returns(Promise.resolve(template.entries[n]));
       });
       spaceContext.space.createEntry
@@ -206,7 +206,7 @@ describe('Space Template creation service', () => {
 
       await creator
         .create(template)
-        .spaceSetup.then(data => {
+        .spaceSetup.then((data) => {
           stubs.success(data);
         })
         .catch(() => {
@@ -296,54 +296,54 @@ describe('Space Template creation service', () => {
     });
 
     describe('retries creating the failed entities', () => {
-      beforeEach(async function() {
+      beforeEach(async function () {
         const template = {
           contentTypes: [
             { sys: { id: 'ct1' }, publish: stubs.ctPublish },
             { sys: { id: 'ct2' }, publish: stubs.ctPublish },
-            { sys: { id: 'ct3' }, publish: stubs.ctPublish }
+            { sys: { id: 'ct3' }, publish: stubs.ctPublish },
           ],
           assets: [
             {
               sys: { id: 'a1' },
               fields: { file: { 'en-US': 'val' } },
               process: stubs.assetProcess,
-              publish: stubs.assetPublish
+              publish: stubs.assetPublish,
             },
             {
               sys: { id: 'a2' },
               fields: { file: { 'en-US': 'val' } },
               process: stubs.assetProcess,
-              publish: stubs.assetPublish
+              publish: stubs.assetPublish,
             },
             {
               sys: { id: 'a3' },
               fields: { file: { 'en-US': 'val' } },
               process: stubs.assetProcess,
-              publish: stubs.assetPublish
-            }
+              publish: stubs.assetPublish,
+            },
           ],
           entries: [
             {
               sys: { id: 'e1', contentType: { sys: { id: 'ct1' } } },
               fields: { file: { 'en-US': 'val' } },
-              publish: stubs.entryPublish
+              publish: stubs.entryPublish,
             },
             {
               sys: { id: 'e2', contentType: { sys: { id: 'ct2' } } },
               fields: { file: { 'en-US': 'val' } },
-              publish: stubs.entryPublish
+              publish: stubs.entryPublish,
             },
             {
               sys: { id: 'e3', contentType: { sys: { id: 'ct3' } } },
               fields: { file: { 'en-US': 'val' } },
-              publish: stubs.entryPublish
-            }
+              publish: stubs.entryPublish,
+            },
           ],
           apiKeys: [{ sys: { id: 'ak1' } }, { sys: { id: 'ak2' } }],
           space: {
-            locales: []
-          }
+            locales: [],
+          },
         };
         spaceContext.space.createContentType = sinon.stub();
         spaceContext.space.createEntry = sinon.stub();
@@ -358,7 +358,7 @@ describe('Space Template creation service', () => {
           Promise.resolve({
             sys: { id: 'a3' },
             process: stubs.assetProcess,
-            publish: stubs.assetPublish
+            publish: stubs.assetPublish,
           })
         );
         stubs.assetProcess.returns(Promise.resolve());

@@ -5,7 +5,7 @@ import NoLocalizedFieldsAdvice from '.';
 
 describe('NoLocalizedFieldsAdvice', () => {
   const props = {
-    localeName: 'German (Germany)'
+    localeName: 'German (Germany)',
   };
 
   const render = () => Enzyme.shallow(<NoLocalizedFieldsAdvice {...props} />);

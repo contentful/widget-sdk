@@ -59,7 +59,7 @@ export const triggerAliasChangedToast = async (handleChangeEnvironment, update) 
   aliasChangedToastVisible = true;
   const { spaceId, alias, oldTarget, newTarget } = update;
   const {
-    sys: { id: aliasId }
+    sys: { id: aliasId },
   } = alias;
 
   try {
@@ -88,12 +88,12 @@ export const triggerAliasChangedToast = async (handleChangeEnvironment, update) 
   }, 6000);
 };
 
-export default currentEnvironmentId => {
-  return update => {
+export default (currentEnvironmentId) => {
+  return (update) => {
     if (window.location.pathname.startsWith('/spaces')) {
       triggerNotifications({
         currentEnvironmentId,
-        update
+        update,
       });
     }
   };

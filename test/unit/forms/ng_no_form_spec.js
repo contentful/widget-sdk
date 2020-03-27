@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import { $initialize, $inject } from 'test/utils/ng';
 
 describe('cfNoForm directive', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     await $initialize(this.system);
 
     const $compile = $inject('$compile');
@@ -18,7 +18,7 @@ describe('cfNoForm directive', () => {
     this.element = $compile(template)(this.scope);
   });
 
-  it('does not set the form to dirty', function() {
+  it('does not set the form to dirty', function () {
     const form = this.scope.myform;
 
     this.element.find('[name=no-dirty]').trigger('change');
@@ -28,21 +28,15 @@ describe('cfNoForm directive', () => {
     expect(form.$dirty).toBe(true);
   });
 
-  it('does not propagate the update event', function() {
+  it('does not propagate the update event', function () {
     const listener = sinon.spy();
     this.$rootScope.$on('ngModel:update', listener);
     this.$rootScope.$on('ngModel:commit', listener);
 
-    this.element
-      .find('[name=no-dirty]')
-      .trigger('change')
-      .trigger('blur');
+    this.element.find('[name=no-dirty]').trigger('change').trigger('blur');
     sinon.assert.notCalled(listener);
 
-    this.element
-      .find('[name=dirty]')
-      .trigger('change')
-      .trigger('blur');
+    this.element.find('[name=dirty]').trigger('change').trigger('blur');
     sinon.assert.calledTwice(listener);
   });
 });

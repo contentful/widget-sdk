@@ -17,12 +17,12 @@ export default class WalkthroughComponent extends React.Component {
     walkthroughStarted: PropTypes.bool, // from user state
     updateWalkthroughState: PropTypes.func.isRequired,
     // ReactJoyrideComponent is third-party-component, loaded dynamically in WalkthroughWidget
-    ReactJoyrideComponent: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired
+    ReactJoyrideComponent: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
   };
 
   static defaultProps = { isTourRunning: false };
 
-  tourCallback = data => {
+  tourCallback = (data) => {
     const { action } = data;
     const { runTour, walkthroughStarted, updateWalkthroughState } = this.props;
 
@@ -40,7 +40,7 @@ export default class WalkthroughComponent extends React.Component {
       updateWalkthroughState({ started: true, dismissed: false });
   };
 
-  setHelpers = helpers => {
+  setHelpers = (helpers) => {
     this.helpers = helpers;
   };
 
@@ -55,7 +55,7 @@ export default class WalkthroughComponent extends React.Component {
       ),
       disableBeacon: true,
       target: '[data-ui-tour-step="sidepanel-trigger"]',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     },
     {
       title: 'Create and edit content',
@@ -67,7 +67,7 @@ export default class WalkthroughComponent extends React.Component {
       ),
       disableBeacon: true,
       target: '[data-ui-tour-step="nav-item-entry-list"]',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     },
     {
       title: 'Manage your media',
@@ -79,7 +79,7 @@ export default class WalkthroughComponent extends React.Component {
       ),
       disableBeacon: true,
       target: '[data-ui-tour-step="nav-item-asset-list"]',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     },
     {
       title: 'Settings and support',
@@ -91,7 +91,7 @@ export default class WalkthroughComponent extends React.Component {
       ),
       disableBeacon: true,
       target: '[data-ui-tour-step="account-menu-trigger"]',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     },
     {
       title: 'Get started in Contentful',
@@ -103,10 +103,10 @@ export default class WalkthroughComponent extends React.Component {
       placement: 'top-end',
       styles: {
         options: {
-          arrowColor: '#fff'
-        }
-      }
-    }
+          arrowColor: '#fff',
+        },
+      },
+    },
   ];
 
   render() {
@@ -124,8 +124,8 @@ export default class WalkthroughComponent extends React.Component {
           options: {
             arrowColor: '#3072be',
             backgroundColor: '#fff',
-            zIndex: 10000
-          }
+            zIndex: 10000,
+          },
         }}
       />
     );

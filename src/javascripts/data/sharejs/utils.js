@@ -23,7 +23,7 @@ export function peek(doc, path) {
  * @return {Promise<void>}
  */
 export function remove(doc, path) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     // We catch and ignore synchronous errors since they tell us
     // that a value along the path does not exist. I.e. it has
     // already been removed.
@@ -67,7 +67,7 @@ export function setDeep(doc, path, value) {
     return remove(doc, path);
   }
 
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const container = getContainer(doc, path);
     const wrappedValue = makeDeepObject(container.restPath, value);
     container.doc.set(wrappedValue, resolve);

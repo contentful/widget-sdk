@@ -33,33 +33,33 @@ export default function register() {
         $scope,
         entityType: 'Entry',
         getBlankView,
-        resetList: _.noop
+        resetList: _.noop,
       });
 
       $scope.entryCache = new EntityListCache({
         space: spaceContext.space,
         entityType: 'Entry',
-        limit: 5
+        limit: 5,
       });
 
       $scope.assetCache = new EntityListCache({
         space: spaceContext.space,
         entityType: 'Asset',
-        limit: 3
+        limit: 3,
       });
 
       $scope.savedViewsState = 'loading';
       spaceContext.uiConfig.then(
-        api => {
+        (api) => {
           $scope.savedViewsSidebar = createSavedViewsSidebar({
             entityFolders: api.entries,
-            loadView: view => $scope.loadView(view),
+            loadView: (view) => $scope.loadView(view),
             getCurrentView: () => _.cloneDeep(_.get($scope, ['context', 'view'], {})),
             // a view can be assigned to roles only in the Entry List
             roleAssignment: {
               membership: spaceContext.space.data.spaceMember,
-              endpoint: spaceContext.endpoint
-            }
+              endpoint: spaceContext.endpoint,
+            },
           });
           $scope.savedViewsState = 'ready';
         },
@@ -77,7 +77,7 @@ export default function register() {
       $scope.paginator = Paginator.create();
 
       // TODO: kill selection and move it to the table state.
-      const wrapWithScopeApply = fn => (...args) => {
+      const wrapWithScopeApply = (fn) => (...args) => {
         const result = fn(...args);
         $scope.$applyAsync();
         return result;
@@ -88,7 +88,7 @@ export default function register() {
         ...selection,
         toggle: wrapWithScopeApply(selection.toggle),
         toggleList: wrapWithScopeApply(selection.toggleList),
-        clear: wrapWithScopeApply(selection.clear)
+        clear: wrapWithScopeApply(selection.clear),
       };
 
       $scope.shouldHide = accessChecker.shouldHide;
@@ -100,7 +100,7 @@ export default function register() {
           space: spaceContext.space.data,
           environmentId: spaceContext.getEnvironmentId(),
           isMasterEnvironment: spaceContext.isMasterEnvironment(),
-          currentTotal: $scope.paginator.getTotal()
+          currentTotal: $scope.paginator.getTotal(),
         };
         $scope.$applyAsync();
       });
@@ -135,32 +135,32 @@ export default function register() {
             showUnpublish: $scope.showUnpublish,
             publishSelected: $scope.publishSelected,
             showPublish: $scope.showPublish,
-            publishButtonName: $scope.publishButtonName
+            publishButtonName: $scope.publishButtonName,
           },
           entryCache: $scope.entryCache,
           assetCache: $scope.assetCache,
-          jobs: $scope.jobs
+          jobs: $scope.jobs,
         };
         $scope.paginatorProps = {
           page: $scope.paginator.getPage(),
           pageCount: $scope.paginator.getPageCount(),
-          select: page => {
+          select: (page) => {
             $scope.paginator.setPage(page);
             $scope.$applyAsync();
-          }
+          },
         };
 
         $scope.$applyAsync();
       });
 
-      const trackEnforcedButtonClick = err => {
+      const trackEnforcedButtonClick = (err) => {
         // If we get reason(s), that means an enforcement is present
         const reason = _.get(err, 'body.details.reasons', null);
 
         Analytics.track('entity_button:click', {
           entityType: 'entry',
           enforced: Boolean(reason),
-          reason
+          reason,
         });
       };
 
@@ -176,7 +176,7 @@ export default function register() {
           'paginator.getPage()',
           'paginator.getTotal()',
           'entryCache.inProgress',
-          'assetCache.inProgress'
+          'assetCache.inProgress',
         ],
         () => {
           resetSearchResults();
@@ -199,23 +199,23 @@ export default function register() {
         $state.go('^.^.content_types.new');
       };
 
-      $scope.newEntry = contentTypeId => {
+      $scope.newEntry = (contentTypeId) => {
         entityCreator
           .newEntry(contentTypeId)
-          .then(entry => {
+          .then((entry) => {
             const contentType = spaceContext.publishedCTs.get(contentTypeId).data;
             const eventOriginFlag = $scope.showNoEntriesAdvice() ? '--empty' : '';
 
             Analytics.track('entry:create', {
               eventOrigin: 'content-list' + eventOriginFlag,
               contentType: contentType,
-              response: entry.data
+              response: entry.data,
             });
 
             // X.list -> X.detail
             $state.go('^.detail', { entryId: entry.getId() });
           })
-          .catch(err => {
+          .catch((err) => {
             trackEnforcedButtonClick(err);
 
             throw err;
@@ -227,14 +227,14 @@ export default function register() {
       $scope.$watch(accessChecker.getResponses, updateAccessibleCts);
       $scope.$watch(getCurrentContentTypeId, updateAccessibleCts);
 
-      K.onValueScope($scope, spaceContext.publishedCTs.items$, cts => {
+      K.onValueScope($scope, spaceContext.publishedCTs.items$, (cts) => {
         $scope.hasContentType = cts.length > 0;
         $scope.canEditCT = !accessChecker.shouldDisable(accessChecker.Action.CREATE, 'contentType');
         updateAccessibleCts();
       });
 
       function updateAccessibleCts() {
-        $scope.accessibleCts = _.filter(spaceContext.publishedCTs.getAllBare(), ct =>
+        $scope.accessibleCts = _.filter(spaceContext.publishedCTs.getAllBare(), (ct) =>
           accessChecker.canPerformActionOnEntryOfType('create', ct.sys.id)
         );
       }
@@ -292,10 +292,10 @@ export default function register() {
        *
        * @type {boolean}
        */
-      $scope.$watch('showNoEntriesAdvice()', show => {
+      $scope.$watch('showNoEntriesAdvice()', (show) => {
         if (show) {
           $scope.hasArchivedEntries = false;
-          return hasArchivedEntries(spaceContext.space).then(hasArchived => {
+          return hasArchivedEntries(spaceContext.space).then((hasArchived) => {
             $scope.hasArchivedEntries = hasArchived;
           });
         }
@@ -309,7 +309,7 @@ export default function register() {
       // exist.
       // The solution is to separate `entryTitle()` and similar
       // functions from the space context.
-      $scope.entryTitle = entry => {
+      $scope.entryTitle = (entry) => {
         let entryTitle = EntityFieldValueSpaceContext.entryTitle(entry);
         const length = 130;
         if (entryTitle.length > length) {
@@ -323,9 +323,9 @@ export default function register() {
         return space
           .getEntries({
             limit: 0,
-            'sys.archivedAt[exists]': true
+            'sys.archivedAt[exists]': true,
           })
-          .then(response => response && response.total > 0);
+          .then((response) => response && response.total > 0);
       }
 
       function getViewItem(path) {
@@ -334,6 +334,6 @@ export default function register() {
       }
 
       $controller('EntryListActionsController', { $scope });
-    }
+    },
   ]);
 }

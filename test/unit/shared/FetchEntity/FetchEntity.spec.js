@@ -11,24 +11,21 @@ const sandbox = sinon.sandbox.create();
 const newMockWidgetAPI = (entity, contentType) => {
   return {
     jobs: {
-      getPendingJobs: sandbox.stub().returns(Promise.resolve([]))
+      getPendingJobs: sandbox.stub().returns(Promise.resolve([])),
     },
     space: {
-      getEntry: sandbox
-        .stub()
-        .withArgs(entity.sys.id)
-        .returns(Promise.resolve(entity)),
+      getEntry: sandbox.stub().withArgs(entity.sys.id).returns(Promise.resolve(entity)),
       getContentType: sandbox
         .stub()
         .withArgs(contentType.sys.id)
-        .returns(Promise.resolve(contentType))
+        .returns(Promise.resolve(contentType)),
     },
     currentUrl: {
-      pathname: ''
+      pathname: '',
     },
     navigator: {
-      onSlideInNavigation: sandbox.stub().returns(noop)
-    }
+      onSlideInNavigation: sandbox.stub().returns(noop),
+    },
   };
 };
 
@@ -36,10 +33,10 @@ describe('FetchEntity', () => {
   let FetchEntity;
   let RequestStatus;
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     this.system.set('data/CMA/EntityState', {
       stateName: sinon.stub().returns('draft'),
-      getState: sinon.stub()
+      getState: sinon.stub(),
     });
 
     this.system.set('app/entity_editor/entityHelpers', {
@@ -47,19 +44,13 @@ describe('FetchEntity', () => {
         .stub()
         .withArgs('lo-LOCALE')
         .returns({
-          entityFile: sinon
-            .stub()
-            .withArgs(this.entity)
-            .returns(Promise.resolve('FILE')),
-          entityTitle: sinon
-            .stub()
-            .withArgs(this.entity)
-            .returns(Promise.resolve('TITLE')),
+          entityFile: sinon.stub().withArgs(this.entity).returns(Promise.resolve('FILE')),
+          entityTitle: sinon.stub().withArgs(this.entity).returns(Promise.resolve('TITLE')),
           entityDescription: sinon
             .stub()
             .withArgs(this.entity)
-            .returns(Promise.resolve('DESCRIPTION'))
-        })
+            .returns(Promise.resolve('DESCRIPTION')),
+        }),
     });
 
     const FetchEntityModule = await this.system.import('app/widgets/shared/FetchEntity');
@@ -74,22 +65,22 @@ describe('FetchEntity', () => {
         id: 'ENTRY-ID',
         contentType: {
           sys: {
-            id: 'CT-ID'
-          }
+            id: 'CT-ID',
+          },
         },
         environment: {
-          sys: { id: 'envId' }
+          sys: { id: 'envId' },
         },
         space: {
-          sys: { id: 'spaceId' }
-        }
-      }
+          sys: { id: 'spaceId' },
+        },
+      },
     };
     this.contentType = {
       sys: {
-        id: 'CT-ID'
+        id: 'CT-ID',
       },
-      name: 'CONTENT-TYPE-NAME'
+      name: 'CONTENT-TYPE-NAME',
     };
 
     this.props = {
@@ -97,58 +88,58 @@ describe('FetchEntity', () => {
       entityType: 'Entry',
       localeCode: 'lo-LOCALE',
       render: sandbox.spy(() => null),
-      widgetAPI: newMockWidgetAPI(this.entity, this.contentType)
+      widgetAPI: newMockWidgetAPI(this.entity, this.contentType),
     };
 
-    this.mount = function(props = {}) {
+    this.mount = function (props = {}) {
       this.wrapper = mount(<FetchEntity {...this.props} {...props} />);
     };
   });
 
-  afterEach(function() {
+  afterEach(function () {
     sandbox.restore();
   });
 
-  describe('(pending/error) props.render()', function() {
-    beforeEach(function() {
+  describe('(pending/error) props.render()', function () {
+    beforeEach(function () {
       this.props.widgetAPI.space.getEntry.returns(Promise.reject(''));
       this.mount();
     });
 
-    it('is called initially, while fetching entity', function() {
+    it('is called initially, while fetching entity', function () {
       expect(this.props.render.args[0][0]).toEqual({
         entityId: 'ENTRY-ID',
         entityType: 'Entry',
-        requestStatus: RequestStatus.Pending
+        requestStatus: RequestStatus.Pending,
       });
     });
 
-    it('is called with `requestStatus: "error"`', function() {
+    it('is called with `requestStatus: "error"`', function () {
       expect(this.props.render.args[1][0]).toEqual({
         entityId: 'ENTRY-ID',
         entityType: 'Entry',
-        requestStatus: RequestStatus.Error
+        requestStatus: RequestStatus.Error,
       });
     });
   });
 
   const EXPECTED_RENDER_CALLS = 3;
 
-  describe('(pending/success) props.render()', function() {
-    beforeEach(async function() {
+  describe('(pending/success) props.render()', function () {
+    beforeEach(async function () {
       this.mount();
       await flushPromises();
     });
 
-    it('is called initially, while fetching entity', function() {
+    it('is called initially, while fetching entity', function () {
       expect(this.props.render.args[0][0]).toEqual({
         entityId: 'ENTRY-ID',
         entityType: 'Entry',
-        requestStatus: RequestStatus.Pending
+        requestStatus: RequestStatus.Pending,
       });
     });
 
-    it('is called after entity got fetched, while waiting for `entityFile`', function() {
+    it('is called after entity got fetched, while waiting for `entityFile`', function () {
       expect(this.props.render.args[1][0]).toEqual({
         entity: this.entity,
         entityId: 'ENTRY-ID',
@@ -158,11 +149,11 @@ describe('FetchEntity', () => {
         entityDescription: 'DESCRIPTION',
         entityStatus: 'draft',
         entityFile: undefined,
-        requestStatus: RequestStatus.Pending
+        requestStatus: RequestStatus.Pending,
       });
     });
 
-    it('is called with fetched entity and `entityFile`', function() {
+    it('is called with fetched entity and `entityFile`', function () {
       expect(this.props.render.args[2][0]).toEqual({
         entity: this.entity,
         entityId: 'ENTRY-ID',
@@ -172,23 +163,23 @@ describe('FetchEntity', () => {
         entityDescription: 'DESCRIPTION',
         entityStatus: 'draft',
         entityFile: 'FILE',
-        requestStatus: RequestStatus.Success
+        requestStatus: RequestStatus.Success,
       });
     });
 
-    it('is called thrice in total (before fetch, fetch entry, fetch file)', function() {
+    it('is called thrice in total (before fetch, fetch entry, fetch file)', function () {
       sandbox.assert.callCount(this.props.render, EXPECTED_RENDER_CALLS);
     });
   });
 
-  describe('on slide-in navigation', function() {
-    beforeEach(async function() {
-      const updateUrl = pathname =>
+  describe('on slide-in navigation', function () {
+    beforeEach(async function () {
+      const updateUrl = (pathname) =>
         (this.props.widgetAPI = { ...this.props.widgetAPI, currentUrl: { pathname } });
       updateUrl(`base/${this.entity.sys.id}`);
 
       let onNav;
-      this.props.widgetAPI.navigator.onSlideInNavigation = cb => {
+      this.props.widgetAPI.navigator.onSlideInNavigation = (cb) => {
         onNav = cb;
         return noop;
       };
@@ -199,22 +190,22 @@ describe('FetchEntity', () => {
       updateUrl('base/other');
       onNav({
         oldSlideLevel: 1,
-        newSlideLevel: 0
+        newSlideLevel: 0,
       });
       this.wrapper.setProps(this.props);
       await flushPromises();
     });
 
-    it('updates and re-fetches all information', function() {
+    it('updates and re-fetches all information', function () {
       sandbox.assert.callCount(this.props.render, EXPECTED_RENDER_CALLS);
     });
 
-    it('does not reset `entityFile` while waiting for it`s updated version', function() {
+    it('does not reset `entityFile` while waiting for it`s updated version', function () {
       sinon.assert.alwaysCalledWith(this.props.render, sinon.match({ entityFile: 'FILE' }));
     });
   });
 
-  it('does not fetch `entityFile` if props.fetchFile=false', async function() {
+  it('does not fetch `entityFile` if props.fetchFile=false', async function () {
     this.mount({ fetchFile: false });
     await flushPromises();
     sandbox.assert.callCount(this.props.render, EXPECTED_RENDER_CALLS - 1);

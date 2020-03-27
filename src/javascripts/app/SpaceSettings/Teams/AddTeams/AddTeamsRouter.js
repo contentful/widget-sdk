@@ -14,13 +14,13 @@ import { FetcherLoading } from 'app/common/createFetcherComponent';
 
 import AddTeamsPage from './AddTeamsPage';
 
-const fetch = spaceId => async () => {
+const fetch = (spaceId) => async () => {
   const spaceContext = getModule('spaceContext');
 
   const {
     organization: {
-      sys: { id: organizationId }
-    }
+      sys: { id: organizationId },
+    },
   } = await getSpace(spaceId);
 
   const orgEndpoint = createOrganizationEndpoint(organizationId);
@@ -30,7 +30,7 @@ const fetch = spaceId => async () => {
   const [roles, teams, teamSpaceMemberships] = await Promise.all([
     roleRepo.getAll(),
     getAllTeams(orgEndpoint),
-    getTeamsSpaceMembershipsOfSpace(spaceEndpoint)
+    getTeamsSpaceMembershipsOfSpace(spaceEndpoint),
   ]);
 
   return { teams, teamSpaceMemberships, roles };
@@ -65,5 +65,5 @@ export default function AddTeamsRouter({ spaceId }) {
 }
 
 AddTeamsRouter.propTypes = {
-  spaceId: PropTypes.string.isRequired
+  spaceId: PropTypes.string.isRequired,
 };

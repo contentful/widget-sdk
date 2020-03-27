@@ -8,7 +8,7 @@
  */
 export function filterRelevantJobsForEntity(jobs, entityType, entityId) {
   return jobs.filter(
-    job => job.entity && job.entity.sys.linkType === entityType && job.entity.sys.id === entityId
+    (job) => job.entity && job.entity.sys.linkType === entityType && job.entity.sys.id === entityId
   );
 }
 

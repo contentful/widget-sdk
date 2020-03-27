@@ -39,7 +39,7 @@ export default class UpgradePricing extends React.Component {
     const variation = await getCurrentVariation(UPGRADE_PRICING_FLAG);
     this.setState({
       flag: variation,
-      show: showUpgrade
+      show: showUpgrade,
     });
   }
 

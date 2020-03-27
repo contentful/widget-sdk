@@ -8,7 +8,7 @@ import {
   Notification,
   ModalConfirm,
   Paragraph,
-  IconButton
+  IconButton,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { remove as removeComment } from 'data/CMA/CommentsRepo';
@@ -21,45 +21,45 @@ export const styles = {
     flexDirection: 'column',
     marginBottom: tokens.spacingM,
     '&:last-child': {
-      marginBottom: 0
-    }
+      marginBottom: 0,
+    },
   }),
   header: css({
     display: 'flex',
     alignItems: 'flex-start',
-    marginBottom: tokens.spacingM
+    marginBottom: tokens.spacingM,
   }),
   avatar: css({
     width: 36,
     height: 36,
     background: tokens.colorElementLight,
     borderRadius: '100%',
-    marginRight: tokens.spacingS
+    marginRight: tokens.spacingS,
   }),
   avatarSmall: css({
     width: 18,
-    height: 18
+    height: 18,
   }),
   meta: css({
     display: 'flex',
     justifyContent: 'space-between',
     flexGrow: 1,
-    flexDirection: 'column'
+    flexDirection: 'column',
   }),
   userName: css({
-    fontSize: tokens.fontSizeM
+    fontSize: tokens.fontSizeM,
   }),
   timestamp: css({
     color: tokens.colorTextLight,
-    fontSize: tokens.fontSizeS
+    fontSize: tokens.fontSizeS,
   }),
   commentBody: css({
     wordBreak: 'break-word',
-    whiteSpace: 'pre-wrap'
+    whiteSpace: 'pre-wrap',
   }),
   commentBodyIndented: css({
-    marginLeft: `calc(${tokens.spacingS} + 18px)` // For aligning comment body with avatar
-  })
+    marginLeft: `calc(${tokens.spacingS} + 18px)`, // For aligning comment body with avatar
+  }),
 };
 
 // TODO: Make this a dumb component like <Task /> neither triggering any CMA requests
@@ -67,7 +67,7 @@ export const styles = {
 
 export default function Comment({ endpoint, comment, onRemoved, className, hasReplies, isReply }) {
   const {
-    sys: { createdBy, createdAt }
+    sys: { createdBy, createdAt },
   } = comment;
   const creationDate = moment(createdAt, moment.ISO_8601);
   const handleRemove = async () => {
@@ -119,7 +119,7 @@ Comment.propTypes = {
   // Only used to check if the comment can be removed.
   // Get rid of this once thread deletion is supported by the API
   hasReplies: PropTypes.bool,
-  isReply: PropTypes.bool
+  isReply: PropTypes.bool,
 };
 
 function renderUserName(user) {
@@ -141,7 +141,7 @@ function CommentActions({ comment, onRemove, hasReplies }) {
     <React.Fragment>
       <IconButton
         iconProps={{
-          icon: 'Delete'
+          icon: 'Delete',
         }}
         buttonType="muted"
         testId="comment.menu.remove"
@@ -165,7 +165,7 @@ CommentActions.propTypes = {
   onRemove: PropTypes.func.isRequired,
   // Only used to check if the comment can be removed.
   // Get rid of this once thread deletion is supported by the API
-  hasReplies: PropTypes.bool
+  hasReplies: PropTypes.bool,
 };
 
 function RemovalConfirmationDialog({ isShown, onConfirm, onCancel }) {
@@ -183,5 +183,5 @@ function RemovalConfirmationDialog({ isShown, onConfirm, onCancel }) {
 RemovalConfirmationDialog.propTypes = {
   isShown: PropTypes.bool.isRequired,
   onConfirm: PropTypes.func.isRequired,
-  onCancel: PropTypes.func.isRequired
+  onCancel: PropTypes.func.isRequired,
 };

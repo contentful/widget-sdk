@@ -29,8 +29,8 @@ export default {
           </a>
           .
         </p>
-      )
-    }
+      ),
+    },
   ],
   mapParamsToDefinition: ({ url }, name) => {
     return {
@@ -39,8 +39,8 @@ export default {
       topics: ['Entry.publish', 'Asset.publish', 'Entry.unpublish', 'Asset.unpublish'],
       filters: [{ equals: [{ doc: 'sys.environment.sys.id' }, 'master'] }],
       transformation: {
-        contentType: 'application/json'
-      }
+        contentType: 'application/json',
+      },
     };
-  }
+  },
 };

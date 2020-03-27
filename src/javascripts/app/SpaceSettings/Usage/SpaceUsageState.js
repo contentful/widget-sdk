@@ -20,9 +20,9 @@ export default {
         $scope.props = {
           spaceId: spaceContext.getId(),
           orgId: spaceContext.organization.sys.id,
-          environmentMeta: spaceContext.space.environmentMeta
+          environmentMeta: spaceContext.space.environmentMeta,
         };
       }
-    }
-  ]
+    },
+  ],
 };

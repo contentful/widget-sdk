@@ -10,7 +10,7 @@ import { css } from 'emotion';
 const ellipsis = {
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
-  overflow: 'hidden'
+  overflow: 'hidden',
 };
 
 const EnvOrAliasLabel = ({
@@ -21,7 +21,7 @@ const EnvOrAliasLabel = ({
   isSelected,
   isMaster,
   colorizeFont,
-  testId
+  testId,
 }) => {
   if (!environmentId) return null;
 
@@ -36,7 +36,7 @@ const EnvOrAliasLabel = ({
     marginRight: tokens.spacingS,
     minWidth: '16px',
     minHeight: '16px',
-    fill
+    fill,
   });
 
   const wrapperStyle = css({
@@ -45,7 +45,7 @@ const EnvOrAliasLabel = ({
     alignItems: 'center',
     color: colorizeFont ? fill : undefined,
     fontFamily: tokens.fontStackMonospace,
-    fontStyle: isMaster && aliasId ? 'italic' : 'normal'
+    fontStyle: isMaster && aliasId ? 'italic' : 'normal',
   });
 
   const aliasedToStyle = css({
@@ -54,8 +54,8 @@ const EnvOrAliasLabel = ({
     alignItems: 'center',
     '& > svg': {
       flexShrink: 0,
-      fill: tokens.colorTextLightest
-    }
+      fill: tokens.colorTextLightest,
+    },
   });
 
   return (
@@ -98,13 +98,13 @@ EnvOrAliasLabel.propTypes = {
   isMaster: PropTypes.bool,
   isSelected: PropTypes.bool,
   colorizeFont: PropTypes.bool,
-  testId: PropTypes.string
+  testId: PropTypes.string,
 };
 
 EnvOrAliasLabel.defaultProps = {
   className: '',
   showAliasedTo: true,
-  testId: 'envoralias.wrapper'
+  testId: 'envoralias.wrapper',
 };
 
 export default EnvOrAliasLabel;

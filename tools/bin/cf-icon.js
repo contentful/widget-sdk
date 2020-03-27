@@ -14,7 +14,7 @@ const svgDirname = path.resolve(__dirname, '..', '..', 'src', 'javascripts', 'sv
 
 const missing = [];
 
-fs.readdirSync(svgDirname).forEach(file => {
+fs.readdirSync(svgDirname).forEach((file) => {
   const filename = `svg/${file.split('.js')[0]}`;
 
   missing.push(filename);

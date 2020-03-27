@@ -19,41 +19,41 @@ const SnapshotPresenterExtension = ({ descriptor, parameters, ...bridgeProps }) 
 SnapshotPresenterExtension.propTypes = {
   settings: PropTypes.shape({
     trueLabel: PropTypes.string,
-    falseLabel: PropTypes.string
+    falseLabel: PropTypes.string,
   }),
   locale: PropTypes.shape({
     code: PropTypes.string,
-    internal_code: PropTypes.string
+    internal_code: PropTypes.string,
   }),
   field: PropTypes.oneOfType([
     PropTypes.shape({
       type: PropTypes.string,
-      linkType: PropTypes.string
+      linkType: PropTypes.string,
     }),
     PropTypes.shape({
       type: PropTypes.string,
       items: PropTypes.shape({
         type: PropTypes.string,
-        linkType: PropTypes.string
-      })
-    })
+        linkType: PropTypes.string,
+      }),
+    }),
   ]),
   descriptor: PropTypes.shape({
     id: PropTypes.string,
     appDefinitionId: PropTypes.string,
     src: PropTypes.string,
-    srcdoc: PropTypes.string
+    srcdoc: PropTypes.string,
   }),
   parameters: PropTypes.shape({
     instance: PropTypes.object.isRequired,
     installation: PropTypes.object.isRequired,
-    invocation: PropTypes.object
+    invocation: PropTypes.object,
   }),
   entity: PropTypes.object,
   editorData: PropTypes.shape({
     editorInterface: PropTypes.object,
-    contentType: PropTypes.object
-  })
+    contentType: PropTypes.object,
+  }),
 };
 
 export default SnapshotPresenterExtension;

@@ -47,7 +47,7 @@ export function removeTeamMembership(orgEndpoint, membership) {
   return orgEndpoint(
     {
       method: 'DELETE',
-      path: ['teams', membership.sys.team.sys.id, 'team_memberships', membership.sys.id]
+      path: ['teams', membership.sys.team.sys.id, 'team_memberships', membership.sys.id],
     },
     alphaHeader
   );
@@ -59,7 +59,7 @@ export async function updateTeamSpaceMembership(spaceEndpoint, membership, admin
       method: 'PUT',
       path: ['team_space_memberships', get(membership, 'sys.id')],
       data: { admin, roles },
-      version: get(membership, 'sys.version')
+      version: get(membership, 'sys.version'),
     },
     { ...alphaHeader, 'x-contentful-team': get(membership, 'sys.team.sys.id') }
   );
@@ -70,7 +70,7 @@ export async function deleteTeamSpaceMembership(spaceEndpoint, membership) {
     {
       method: 'DELETE',
       path: ['team_space_memberships', get(membership, 'sys.id')],
-      version: get(membership, 'sys.version')
+      version: get(membership, 'sys.version'),
     },
     { ...alphaHeader, 'x-contentful-team': get(membership, 'sys.team.sys.id') }
   );
@@ -89,11 +89,11 @@ export async function createTeamSpaceMembership(spaceEndpoint, teamId, { admin, 
     {
       method: 'POST',
       path: ['team_space_memberships'],
-      data
+      data,
     },
     {
       'x-contentful-team': teamId,
-      ...alphaHeader
+      ...alphaHeader,
     }
   );
 }
@@ -103,7 +103,7 @@ export function createTeamMembership(endpoint, organizationMembershipId, teamId)
     {
       method: 'POST',
       path: ['teams', teamId, 'team_memberships'],
-      data: { organizationMembershipId, admin: false }
+      data: { organizationMembershipId, admin: false },
     },
     alphaHeader
   );

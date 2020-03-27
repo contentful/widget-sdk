@@ -6,7 +6,7 @@ import {
   TableCell,
   TableBody,
   Tooltip,
-  Tag
+  Tag,
 } from '@contentful/forma-36-react-components';
 import PropTypes from 'prop-types';
 import { sum } from 'lodash';
@@ -42,7 +42,7 @@ SpaceRow.propTypes = {
   spaceUsage: PropTypes.arrayOf(PropTypes.number).isRequired,
   totalUsage: PropTypes.number.isRequired,
   colour: PropTypes.string.isRequired,
-  isPoC: PropTypes.bool
+  isPoC: PropTypes.bool,
 };
 
 const SpacesTable = ({ spaceNames, data, totalUsage, colours, isPoC }) => {
@@ -77,7 +77,7 @@ SpacesTable.propTypes = {
   totalUsage: PropTypes.number.isRequired,
   data: PropTypes.arrayOf(organizationResourceUsagePropType).isRequired,
   colours: PropTypes.arrayOf(PropTypes.string).isRequired,
-  isPoC: PropTypes.objectOf(PropTypes.bool).isRequired
+  isPoC: PropTypes.objectOf(PropTypes.bool).isRequired,
 };
 
 export default SpacesTable;

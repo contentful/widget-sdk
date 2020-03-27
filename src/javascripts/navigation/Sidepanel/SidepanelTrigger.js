@@ -19,28 +19,28 @@ import { css } from 'emotion';
 const oneLineTruncate = {
   overflow: 'hidden',
   whiteSpace: 'nowrap',
-  textOverflow: 'ellipsis'
+  textOverflow: 'ellipsis',
 };
 
 export default class SidepanelTrigger extends React.Component {
   static propTypes = {
-    onClick: PropTypes.func.isRequired
+    onClick: PropTypes.func.isRequired,
   };
 
   constructor(props) {
     super(props);
     this.state = {
       navState: null,
-      showOrganization: false
+      showOrganization: false,
     };
   }
 
   componentDidMount() {
-    this.unsubscribeNavState = K.onValue(navState$, navState => {
+    this.unsubscribeNavState = K.onValue(navState$, (navState) => {
       this.setState({ navState });
     });
 
-    this.unsubscribeOrgs = K.onValue(TokenStore.organizations$, organizations => {
+    this.unsubscribeOrgs = K.onValue(TokenStore.organizations$, (organizations) => {
       this.setState({ showOrganization: organizations.length > 1 });
     });
   }
@@ -64,7 +64,7 @@ export default class SidepanelTrigger extends React.Component {
         <Logo />
         <div
           className={css({
-            marginLeft: tokens.spacingM
+            marginLeft: tokens.spacingM,
           })}
         />
         <div
@@ -75,13 +75,13 @@ export default class SidepanelTrigger extends React.Component {
             alignSelf: 'stretch',
             flexGrow: '1',
             flexShrink: '1',
-            overflow: 'hidden'
+            overflow: 'hidden',
           })}>
           {this.state.navState && renderContent(this.state)}
         </div>
         <div
           className={css({
-            marginLeft: tokens.spacingM
+            marginLeft: tokens.spacingM,
           })}
         />
         <Hamburger fill={'white'} />
@@ -101,21 +101,21 @@ function renderContent({ navState, showOrganization }) {
         return [
           showOrganization && organizationName(org.name),
           stateTitle(space.name),
-          showEnvironments && environmentLabel(environmentMeta)
+          showEnvironments && environmentLabel(environmentMeta),
         ];
-      }
+      },
     ],
     [
       NavStates.OrgSettings,
       ({ org }) => [
         showOrganization && organizationName(org.name),
-        stateTitle('Organization settings')
-      ]
+        stateTitle('Organization settings'),
+      ],
     ],
     [NavStates.NewOrg, () => [stateTitle('Create new organization')]],
     [NavStates.Home, ({ org }) => [showOrganization && organizationName(org.name)]],
     [NavStates.UserProfile, () => [stateTitle('Account settings')]],
-    [NavStates.Default, () => [stateTitle('Welcome to Contentful')]]
+    [NavStates.Default, () => [stateTitle('Welcome to Contentful')]],
   ]);
 }
 
@@ -128,7 +128,7 @@ function stateTitle(title) {
         ...oneLineTruncate,
         color: '#fff',
         fontSize: '14px',
-        lineHeight: '1.3'
+        lineHeight: '1.3',
       })}>
       {title}
     </div>
@@ -144,7 +144,7 @@ function organizationName(orgName) {
         ...oneLineTruncate,
         color: tokens.colorTextLight,
         fontSize: '12px',
-        lineHeight: '1.5'
+        lineHeight: '1.5',
       })}>
       {orgName}
     </div>

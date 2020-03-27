@@ -22,5 +22,5 @@ export default function SidepanelNoOrgs(props) {
 }
 
 SidepanelNoOrgs.propTypes = {
-  createNewOrg: PropTypes.func.isRequired
+  createNewOrg: PropTypes.func.isRequired,
 };

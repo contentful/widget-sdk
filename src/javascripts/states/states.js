@@ -30,7 +30,7 @@ const deeplinkState = {
   component: DeeplinkPage,
   resolve: {
     searchParams: [() => getQueryString()],
-    marketplaceApps: ['searchParams', ({ link }) => (link === 'apps' ? getMarketplaceApps() : {})]
+    marketplaceApps: ['searchParams', ({ link }) => (link === 'apps' ? getMarketplaceApps() : {})],
   },
   mapInjectedToProps: [
     'searchParams',
@@ -38,9 +38,9 @@ const deeplinkState = {
     (searchParams, marketplaceApps) => ({
       href: getLocationHref(),
       searchParams,
-      marketplaceApps
-    })
-  ]
+      marketplaceApps,
+    }),
+  ],
 };
 
 /**
@@ -57,21 +57,21 @@ export function loadAll() {
     {
       name: '_other',
       url: '/*path',
-      redirectTo: 'home'
+      redirectTo: 'home',
     },
     {
       name: 'error',
       url: 'error',
-      controller: function() {
+      controller: function () {
         Notification.error(
           'We were unable to process your request. ' +
             'If this problem persists, please contact support',
           {
-            id: 'load-all-error-notification'
+            id: 'load-all-error-notification',
           }
         );
-      }
-    }
+      },
+    },
   ]);
 }
 
@@ -80,6 +80,6 @@ export function loadAll() {
  */
 export function load(states) {
   const config = getModule('states/config');
-  (states || []).forEach(state => config.add(state));
+  (states || []).forEach((state) => config.add(state));
   config.init();
 }

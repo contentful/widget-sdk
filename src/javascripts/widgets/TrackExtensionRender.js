@@ -16,6 +16,6 @@ export function makeEventFromWidget(location, widget) {
     extension_name: get(widget, ['descriptor', 'name']),
     src: typeof widget.src === 'string' ? widget.src : null,
     installation_params: Object.keys(get(widget, ['parameters', 'installation'], {})),
-    instance_params: Object.keys(get(widget, ['parameters', 'instance'], {}))
+    instance_params: Object.keys(get(widget, ['parameters', 'instance'], {})),
   };
 }

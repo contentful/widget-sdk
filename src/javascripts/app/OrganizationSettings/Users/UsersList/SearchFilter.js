@@ -9,15 +9,15 @@ export default class SearchFilter extends React.Component {
     filter: PropTypes.shape({
       key: PropTypes.string.isRequired,
       value: PropTypes.any,
-      operator: PropTypes.function
+      operator: PropTypes.function,
     }).isRequired,
     options: PropTypes.arrayOf(
       PropTypes.shape({
         label: PropTypes.string.isRequired,
-        value: PropTypes.any
+        value: PropTypes.any,
       })
     ).isRequired,
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
   };
 
   handleChange = ({ target: { value } }) => {
@@ -28,7 +28,7 @@ export default class SearchFilter extends React.Component {
 
   getSelectWidth() {
     const { filter, options } = this.props;
-    const selected = options.find(option => option.value === filter.value);
+    const selected = options.find((option) => option.value === filter.value);
     return `calc(${selected.label.length}ch + 40px)`;
   }
 
@@ -53,7 +53,7 @@ export default class SearchFilter extends React.Component {
             onChange={this.handleChange}
             data-test-id="search-filter.options"
             style={{ width: this.getSelectWidth() }}>
-            {options.map(option => (
+            {options.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>

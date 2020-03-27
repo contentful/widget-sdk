@@ -30,7 +30,7 @@ const resolveRolesInTSM = (state, TSM) => {
 
 // that means the return value of `getState` might change after `next(action)` was called...
 // ...because the state might have been updated by the reducer
-export default ({ dispatch, getState }) => next => async action => {
+export default ({ dispatch, getState }) => (next) => async (action) => {
   switch (action.type) {
     case 'CREATE_NEW_TEAM': {
       next(action);
@@ -46,7 +46,7 @@ export default ({ dispatch, getState }) => next => async action => {
           type: 'SUBMIT_NEW_TEAM_FAILED',
           error: true,
           payload: e,
-          meta: { team: action.payload.team }
+          meta: { team: action.payload.team },
         });
         if (isTaken(e)) {
           Notification.error(`${team.name} is already being used.`);
@@ -110,7 +110,7 @@ export default ({ dispatch, getState }) => next => async action => {
         const newTeamMembership = await service.create(orgMembership);
         dispatch({
           type: 'ADD_TO_DATASET',
-          payload: { item: newTeamMembership, dataset: TEAM_MEMBERSHIPS }
+          payload: { item: newTeamMembership, dataset: TEAM_MEMBERSHIPS },
         });
         Notification.success(`Successfully added ${userToString(user)} to team ${team.name}`);
       } catch (e) {
@@ -118,7 +118,7 @@ export default ({ dispatch, getState }) => next => async action => {
           type: 'SUBMIT_NEW_TEAM_MEMBERSHIP_FAILED',
           error: true,
           payload: e,
-          meta: { orgMembership }
+          meta: { orgMembership },
         });
         Notification.error(`Could not add ${userToString(user)} to team ${team.name}`);
       }
@@ -134,8 +134,8 @@ export default ({ dispatch, getState }) => next => async action => {
         TEAM_MEMBERSHIPS,
         ({
           sys: {
-            team: { name }
-          }
+            team: { name },
+          },
         }) => `Remove user from team ${name}`,
         ({ sys: { team, user } }) =>
           `Are you sure you want to remove ${userToString(user)} from team ${team.name}?`,
@@ -165,13 +165,13 @@ export default ({ dispatch, getState }) => next => async action => {
           type: 'ADD_TO_DATASET',
           payload: {
             dataset: TEAM_SPACE_MEMBERSHIPS,
-            item: newTeamSpaceMembership
-          }
+            item: newTeamSpaceMembership,
+          },
         });
 
         const rolesString = newTeamSpaceMembership.admin
           ? 'Admin role'
-          : `${joinWithAnd(newTeamSpaceMembership.roles.map(role => role.name))} ${pluralize(
+          : `${joinWithAnd(newTeamSpaceMembership.roles.map((role) => role.name))} ${pluralize(
               'role',
               newTeamSpaceMembership.roles.length
             )}`;
@@ -184,7 +184,7 @@ export default ({ dispatch, getState }) => next => async action => {
           type: 'SUBMIT_NEW_TEAM_SPACE_MEMBERSHIP_FAILED',
           error: true,
           payload: e,
-          meta: { teamId }
+          meta: { teamId },
         });
         Notification.error(`Could not add ${team.name} to space ${space.name}`);
       }
@@ -201,7 +201,7 @@ export default ({ dispatch, getState }) => next => async action => {
       const updatedMembership = {
         admin: updatedData.admin,
         roles: updatedData.roles,
-        sys
+        sys,
       };
       const { roles: resolvedRoles } = resolveRolesInTSM(state, updatedMembership);
       dispatch({
@@ -209,8 +209,8 @@ export default ({ dispatch, getState }) => next => async action => {
         payload: {
           dataset: TEAM_SPACE_MEMBERSHIPS,
           item: { ...updatedMembership, roles: resolvedRoles },
-          meta: { pending: true }
-        }
+          meta: { pending: true },
+        },
       });
 
       try {
@@ -220,7 +220,7 @@ export default ({ dispatch, getState }) => next => async action => {
         const persistedAndResolved = { ...persisted, roles: resolvedRoles };
         dispatch({
           type: 'ADD_TO_DATASET',
-          payload: { dataset: TEAM_SPACE_MEMBERSHIPS, item: persistedAndResolved }
+          payload: { dataset: TEAM_SPACE_MEMBERSHIPS, item: persistedAndResolved },
         });
         Notification.success(
           `Successfully changed the team's access to the space ${sys.space.name}`
@@ -243,26 +243,26 @@ export default ({ dispatch, getState }) => next => async action => {
         ({
           sys: {
             team: { name: teamName },
-            space: { name: spaceName }
-          }
+            space: { name: spaceName },
+          },
         }) => `Remove team ${teamName} from space ${spaceName}`,
         ({
           sys: {
             team: { name: teamName },
-            space: { name: spaceName }
-          }
+            space: { name: spaceName },
+          },
         }) => `Are you sure you want to remove ${teamName} from the space ${spaceName}?`,
         ({
           sys: {
             team: { name: teamName },
-            space: { name: spaceName }
-          }
+            space: { name: spaceName },
+          },
         }) => `Successfully removed ${teamName} from the space ${spaceName}`,
         ({
           sys: {
             team: { name: teamName },
-            space: { name: spaceName }
-          }
+            space: { name: spaceName },
+          },
         }) => `Could not remove ${teamName} from the space ${spaceName}`
       );
       break;

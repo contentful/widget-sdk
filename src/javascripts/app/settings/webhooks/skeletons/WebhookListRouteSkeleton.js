@@ -52,9 +52,9 @@ export function WebhookListShell(props) {
 WebhookListShell.propTypes = {
   sidebar: PropTypes.any,
   actions: PropTypes.any,
-  title: PropTypes.string
+  title: PropTypes.string,
 };
 
 WebhookListShell.defaultProps = {
-  title: 'Webhooks'
+  title: 'Webhooks',
 };

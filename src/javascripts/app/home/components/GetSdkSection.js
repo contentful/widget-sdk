@@ -8,7 +8,7 @@ import {
   TabPanel,
   TextLink,
   Paragraph,
-  Heading
+  Heading,
 } from '@contentful/forma-36-react-components';
 
 const TABS = {
@@ -19,7 +19,7 @@ const TABS = {
   IOS: 'iOS',
   ANDROID: 'Android',
   JAVA: 'Java',
-  PYTHON: 'Python'
+  PYTHON: 'Python',
 };
 
 const styles = {
@@ -29,7 +29,7 @@ const styles = {
     margin: ' 0 1px 16px 1px',
     width: '100%',
     transition: 'background-color 0.2s ease-in-out',
-    zIndex: 1
+    zIndex: 1,
   }),
   section: css({
     width: '100%',
@@ -37,7 +37,7 @@ const styles = {
     backgroundColor: 'white',
     border: `1px solid ${tokens.colorElementMid}`,
     display: 'block',
-    padding: tokens.spacingXl
+    padding: tokens.spacingXl,
   }),
   heading: css({ fontSize: tokens.fontSizeL }),
   description: css({ marginTop: 0, lineHeight: '1.5em' }),
@@ -55,7 +55,7 @@ const styles = {
       flexGrow: 1,
       flexBasis: '100%',
       marginTop: tokens.spacingM,
-      overflow: 'visible;'
+      overflow: 'visible;',
     }),
     language: css({
       position: 'absolute',
@@ -69,7 +69,7 @@ const styles = {
       padding: '0 4px',
       letterSpacing: '1px',
       backgroundColor: tokens.colorElementLightest,
-      color: tokens.colorTextLight
+      color: tokens.colorTextLight,
     }),
     line: css({
       fontFamily: 'monospace',
@@ -86,12 +86,12 @@ const styles = {
         padding: '.5em 1em',
         marginRight: '.7em',
         fontWeight: 'bold',
-        color: tokens.colorTextLightest
-      }
+        color: tokens.colorTextLightest,
+      },
     }),
     s1: css({ color: tokens.colorRedMid }),
-    s2: css({ color: tokens.colorGreenDark })
-  }
+    s2: css({ color: tokens.colorGreenDark }),
+  },
 };
 
 const GetSdkSection = () => {
@@ -316,7 +316,7 @@ const SelectedLanguage = ({ language }) => {
 };
 
 SelectedLanguage.propTypes = {
-  language: PropTypes.any.isRequired
+  language: PropTypes.any.isRequired,
 };
 
 const LanguageSection = ({ sdkDocsLink, githubLink, description, codeBlockContent }) => {
@@ -342,5 +342,5 @@ LanguageSection.propTypes = {
   sdkDocsLink: PropTypes.string.isRequired,
   githubLink: PropTypes.string.isRequired,
   description: PropTypes.node.isRequired,
-  codeBlockContent: PropTypes.node.isRequired
+  codeBlockContent: PropTypes.node.isRequired,
 };

@@ -8,10 +8,10 @@ const WrappedEntityList = ({
   internalLocaleCode,
   onEntityClick,
   contentTypes,
-  renderDropdown
+  renderDropdown,
 }) => (
   <EntityList>
-    {entities.map(entity => {
+    {entities.map((entity) => {
       return (
         <WrappedEntityListItem
           key={entity.sys.id}
@@ -37,7 +37,7 @@ WrappedEntityList.propTypes = {
    * @param {object} props
    * @param {object} props.entity The fetched entity for this list item
    */
-  renderDropdown: PropTypes.func
+  renderDropdown: PropTypes.func,
 };
 
 export default WrappedEntityList;

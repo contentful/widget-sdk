@@ -5,7 +5,7 @@ import {
   Option,
   TextInput,
   TextField,
-  ValidationMessage
+  ValidationMessage,
 } from '@contentful/forma-36-react-components';
 import { toNumber, toString, isEmpty } from 'lodash';
 import styles from './styles';
@@ -16,7 +16,7 @@ const SizeValidation = ({
   updateValidationCurrentView,
   updateValidationMessageValue,
   errorMessages,
-  validate
+  validate,
 }) => {
   const [currentView, setCurrentView] = useState(validation.currentView);
   const [message, setMessage] = useState(validation.message);
@@ -40,10 +40,10 @@ const SizeValidation = ({
     updateValidationCurrentView,
     updateValidationMessageValue,
     updateValidationSettingsValue,
-    validate
+    validate,
   ]);
 
-  const normalizeValue = value => (isEmpty(value) ? null : toNumber(value));
+  const normalizeValue = (value) => (isEmpty(value) ? null : toNumber(value));
 
   const getControls = () => {
     switch (currentView) {
@@ -153,7 +153,7 @@ SizeValidation.propTypes = {
   updateValidationCurrentView: PropTypes.func.isRequired,
   updateValidationMessageValue: PropTypes.func.isRequired,
   errorMessages: PropTypes.arrayOf(PropTypes.string).isRequired,
-  validate: PropTypes.func.isRequired
+  validate: PropTypes.func.isRequired,
 };
 
 export default SizeValidation;

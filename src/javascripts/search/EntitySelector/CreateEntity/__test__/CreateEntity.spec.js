@@ -11,21 +11,21 @@ import flushPromises from 'test/helpers/flushPromises';
 import { act } from 'react-dom/test-utils';
 
 jest.mock('navigation/SlideInNavigator', () => ({
-  goToSlideInEntity: jest.fn()
+  goToSlideInEntity: jest.fn(),
 }));
 
 jest.mock('components/app_container/entityCreator', () => ({
   newEntry: jest.fn().mockResolvedValue({}),
-  newAsset: jest.fn().mockResolvedValue({})
+  newAsset: jest.fn().mockResolvedValue({}),
 }));
 
 jest.mock('access_control/AccessChecker', () => ({
   canCreateAsset: jest.fn(),
   canPerformActionOnEntryOfType: jest.fn(),
-  Action: { CREATE: 'Create' }
+  Action: { CREATE: 'Create' },
 }));
 
-const mountComponent = props => {
+const mountComponent = (props) => {
   return mount(<CreateEntity {...props} />);
 };
 
@@ -34,7 +34,7 @@ describe('CreateEntity', () => {
     const props = {
       type: entityTypes.Entry,
       contentTypes: [{ sys: {}, name: 'First content type' }],
-      onSelect: () => {}
+      onSelect: () => {},
     };
     accessChecker.canPerformActionOnEntryOfType.mockReturnValueOnce(true);
     const wrapper = mountComponent(props);
@@ -45,7 +45,7 @@ describe('CreateEntity', () => {
     const props = {
       type: entityTypes.Asset,
       contentTypes: [{ sys: {}, name: 'First content type' }],
-      onSelect: () => {}
+      onSelect: () => {},
     };
     accessChecker.canCreateAsset.mockReturnValueOnce(true);
     const wrapper = mountComponent(props);
@@ -57,7 +57,7 @@ describe('CreateEntity', () => {
     const props = {
       type: entityTypes.Entry,
       contentTypes: [{ sys: {}, name: 'First content type' }],
-      onSelect: () => {}
+      onSelect: () => {},
     };
     const wrapper = mountComponent(props);
 
@@ -68,7 +68,7 @@ describe('CreateEntity', () => {
     const props = {
       type: entityTypes.Asset,
       contentTypes: [{ sys: {}, name: 'First content type' }],
-      onSelect: () => {}
+      onSelect: () => {},
     };
     const wrapper = mountComponent(props);
 
@@ -79,7 +79,7 @@ describe('CreateEntity', () => {
     const props = {
       type: entityTypes.Entry,
       contentTypes: [{ sys: { id: 'abs' }, name: 'First content type' }],
-      onSelect: jest.fn()
+      onSelect: jest.fn(),
     };
     const entry = { data: { sys: { id: '1', type: entityTypes.Entry } } };
 
@@ -100,14 +100,14 @@ describe('CreateEntity', () => {
     expect(props.onSelect).toHaveBeenCalledWith(entry.data);
     expect(slideInNavigator.goToSlideInEntity).toHaveBeenCalledWith({
       id: '1',
-      type: entityTypes.Entry
+      type: entityTypes.Entry,
     });
   });
 
   it('creates an asset when "create asset" link is clicked and opens slide in editor', async () => {
     const props = {
       type: entityTypes.Asset,
-      onSelect: jest.fn()
+      onSelect: jest.fn(),
     };
     const asset = { data: { sys: { id: '1', type: entityTypes.Asset } } };
 
@@ -128,7 +128,7 @@ describe('CreateEntity', () => {
     expect(props.onSelect).toHaveBeenCalledWith(asset.data);
     expect(slideInNavigator.goToSlideInEntity).toHaveBeenLastCalledWith({
       id: '1',
-      type: entityTypes.Asset
+      type: entityTypes.Asset,
     });
   });
 });

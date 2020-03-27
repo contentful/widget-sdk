@@ -14,7 +14,7 @@ import Code from 'components/shared/stack-onboarding/components/Code';
 
 export default class CopyScreen extends React.Component {
   state = {
-    pending: true
+    pending: true,
   };
 
   async componentDidMount() {
@@ -23,7 +23,7 @@ export default class CopyScreen extends React.Component {
     this.setState({ managementToken, deliveryToken, pending: false });
   }
 
-  renderCodeLine = code => {
+  renderCodeLine = (code) => {
     return (
       <div className={'modern-stack-onboarding--copyscreen-snippet'}>
         <Code lineNumbers={false} copy code={code} tooltipPosition={'right'} />
@@ -88,7 +88,7 @@ export default class CopyScreen extends React.Component {
             intercomKey="onboardingCopyCompleted"
             trackingElementId="copy_screen_completed"
             link="explore">
-            {move => (
+            {(move) => (
               <Button
                 onClick={move}
                 className="modern-stack-onboarding--next-button modern-stack-onboarding--next-button__left"

@@ -13,17 +13,17 @@ export default function register() {
    */
   registerDirective('cfContentTypeSchema', [
     'SchemaController',
-    SchemaController => ({
+    (SchemaController) => ({
       restrict: 'A',
       scope: true,
       controller: [
         '$scope',
-        $scope => {
+        ($scope) => {
           const buildMessage = errorMessageBuilder.forContentType;
           $scope.schema = new SchemaController(buildMessage, validation.schemas.ContentType);
-        }
-      ]
-    })
+        },
+      ],
+    }),
   ]);
 
   /**
@@ -34,7 +34,7 @@ export default function register() {
    * The Schema Controller validates data against a schema creates
    * error messages.
    */
-  registerFactory('SchemaController', function() {
+  registerFactory('SchemaController', function () {
     function SchemaController(messageBuilder, schema) {
       this.messageBuilder = messageBuilder;
       this.context = {};
@@ -46,7 +46,7 @@ export default function register() {
      * @name SchemaController#setSchema
      * @param {Schema} schema
      */
-    SchemaController.prototype.setSchema = function(schema) {
+    SchemaController.prototype.setSchema = function (schema) {
       this.schema = schema;
     };
 
@@ -55,7 +55,7 @@ export default function register() {
      * @name SchemaController#setContext
      * @param {Schema} schema
      */
-    SchemaController.prototype.setContext = function(context) {
+    SchemaController.prototype.setContext = function (context) {
       this.context = context;
     };
 
@@ -65,13 +65,13 @@ export default function register() {
      * @param data
      * @returns {Array<Error>}
      */
-    SchemaController.prototype.errors = function(data) {
+    SchemaController.prototype.errors = function (data) {
       if (this.schema) {
         return this.schema.errors(data, this.context);
       }
     };
 
-    SchemaController.prototype.buildMessage = function(error, data) {
+    SchemaController.prototype.buildMessage = function (error, data) {
       return this.messageBuilder(error, data);
     };
 

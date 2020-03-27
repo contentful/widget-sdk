@@ -35,7 +35,7 @@ export function open(localeCode) {
       return Promise.resolve([]);
     }
     return Promise.all(files.map(createAssetForFile)).then(
-      assets => {
+      (assets) => {
         assets = assets.filter(identity);
         Notification.success('Assets uploaded. Processing…');
         return Promise.all(assets.map(processAssetForFile))
@@ -43,12 +43,12 @@ export function open(localeCode) {
             Notification.success('Assets processed. Updating…');
             return assets;
           })
-          .catch(error => {
+          .catch((error) => {
             Notification.error('Some assets failed to process');
             return Promise.reject(error);
           });
       },
-      error => {
+      (error) => {
         logger.logServerWarn('Some assets failed to upload', { error });
         Notification.error('Some assets failed to upload');
         return Promise.reject(error);
@@ -64,8 +64,8 @@ export function open(localeCode) {
       sys: { type: 'Asset' },
       fields: {
         file: { [localeCode]: file },
-        title: { [localeCode]: title }
-      }
+        title: { [localeCode]: title },
+      },
     };
     return spaceContext.space.createAsset(data);
   }
@@ -102,7 +102,7 @@ export function tryToPublishProcessingAssets(assets) {
     })
     .then(() => ({
       publishedAssets: publishedAssets.slice(),
-      unpublishableAssets: unpublishableAssets.slice()
+      unpublishableAssets: unpublishableAssets.slice(),
     }));
 
   function nextTry(assets) {
@@ -121,7 +121,7 @@ export function tryToPublishProcessingAssets(assets) {
       const lastAsset = assets[assets.length - 1];
       const otherAssets = assets.slice(0, -1);
       return tryToPublish(lastAsset)
-        .then(() => tryAll(otherAssets).catch(unprocessedAssets => nextTry(unprocessedAssets)))
+        .then(() => tryAll(otherAssets).catch((unprocessedAssets) => nextTry(unprocessedAssets)))
         .catch(() => nextTry(assets));
     } else {
       return tryAll(assets).catch(() => Promise.resolve());
@@ -131,7 +131,7 @@ export function tryToPublishProcessingAssets(assets) {
   function tryAll(assets) {
     const rejectedAssets = [];
     return Promise.all(
-      assets.map(asset => {
+      assets.map((asset) => {
         return tryToPublish(asset).catch(() => rejectedAssets.push(asset));
       })
     ).then(() => {
@@ -146,7 +146,7 @@ export function tryToPublishProcessingAssets(assets) {
       () => {
         return publishedAssets.push(asset);
       },
-      error => {
+      (error) => {
         if (triesLeft && error.status === 409) {
           return Promise.reject(asset); // Try again!
         } else {

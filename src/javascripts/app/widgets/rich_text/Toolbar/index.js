@@ -17,7 +17,7 @@ import {
   Heading5,
   Heading6,
   Paragraph,
-  HeadingDropdown
+  HeadingDropdown,
 } from '../plugins/Heading';
 
 import EmbeddedEntityBlock from '../plugins/EmbeddedEntityBlock';
@@ -40,13 +40,13 @@ export default class Toolbar extends React.Component {
     editor: PropTypes.object.isRequired,
     onChange: PropTypes.func.isRequired,
     permissions: PropTypes.shape({
-      canAccessAssets: PropTypes.bool.isRequired
-    }).isRequired
+      canAccessAssets: PropTypes.bool.isRequired,
+    }).isRequired,
   };
 
   state = {
     headingMenuOpen: false,
-    ...getValidationInfo(this.props.richTextAPI.widgetAPI.field)
+    ...getValidationInfo(this.props.richTextAPI.widgetAPI.field),
   };
 
   onChange = (...args) => {
@@ -56,15 +56,15 @@ export default class Toolbar extends React.Component {
 
   toggleEmbedDropdown = () =>
     this.setState({
-      isEmbedDropdownOpen: !this.state.isEmbedDropdownOpen
+      isEmbedDropdownOpen: !this.state.isEmbedDropdownOpen,
     });
 
   handleEmbedDropdownClose = () =>
     this.setState({
-      isEmbedDropdownOpen: false
+      isEmbedDropdownOpen: false,
     });
 
-  renderEmbeds = props => {
+  renderEmbeds = (props) => {
     const field = this.props.richTextAPI.widgetAPI.field;
 
     const inlineEntryEmbedEnabled = isNodeTypeEnabled(field, INLINES.EMBEDDED_ENTRY);
@@ -75,7 +75,7 @@ export default class Toolbar extends React.Component {
     const numEnabledEmbeds = [
       inlineEntryEmbedEnabled,
       blockEntryEmbedEnabled,
-      blockAssetEmbedEnabled
+      blockAssetEmbedEnabled,
     ].filter(Boolean).length;
 
     return (
@@ -113,16 +113,16 @@ export default class Toolbar extends React.Component {
     );
   };
 
-  toggleHeadingMenu = event => {
+  toggleHeadingMenu = (event) => {
     event.preventDefault();
     this.setState({
-      headingMenuOpen: !this.state.headingMenuOpen
+      headingMenuOpen: !this.state.headingMenuOpen,
     });
   };
 
   closeHeadingMenu = () =>
     this.setState({
-      headingMenuOpen: false
+      headingMenuOpen: false,
     });
 
   render() {
@@ -132,7 +132,7 @@ export default class Toolbar extends React.Component {
       onToggle: this.onChange,
       onCloseEmbedMenu: this.toggleEmbedDropdown,
       disabled: isDisabled,
-      richTextAPI
+      richTextAPI,
     };
     const { field } = richTextAPI.widgetAPI;
     const { isAnyHyperlinkEnabled, isAnyListEnabled, isAnyMarkEnabled } = this.state;
@@ -228,6 +228,6 @@ function getValidationInfo(field) {
   return {
     isAnyMarkEnabled,
     isAnyHyperlinkEnabled,
-    isAnyListEnabled
+    isAnyListEnabled,
   };
 }

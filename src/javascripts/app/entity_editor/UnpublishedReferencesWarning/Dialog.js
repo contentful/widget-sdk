@@ -11,7 +11,7 @@ import localeStore from 'services/localeStore';
 const humaniseEntityType = (type, references) => {
   const plurals = {
     Entry: 'entries',
-    Asset: 'assets'
+    Asset: 'assets',
   };
   return references.length > 1 ? plurals[type] : type.toLowerCase();
 };
@@ -20,7 +20,7 @@ const getEntitiesMessage = (entities, type, shouldExplicitlyMentionUnpublish) =>
   return [
     entities.length,
     shouldExplicitlyMentionUnpublish && 'unpublished',
-    humaniseEntityType(type, entities)
+    humaniseEntityType(type, entities),
   ]
     .filter(Boolean)
     .join(' ');
@@ -44,27 +44,27 @@ const humaniseReferencesMessage = (references, shouldExplicitlyMentionUnpublish 
 
 const styles = {
   field: css({
-    marginBottom: tokens.spacingM
+    marginBottom: tokens.spacingM,
   }),
   fieldTitle: css({
-    marginBottom: tokens.spacingXs
+    marginBottom: tokens.spacingXs,
   }),
   unpublishedReferencesList: css({
     margin: `0 -${tokens.spacingM}`,
     padding: `0 ${tokens.spacingM}`,
     maxHeight: '350px',
-    overflowY: 'auto'
+    overflowY: 'auto',
   }),
   skeleton: css({
-    marginTop: tokens.spacingM
+    marginTop: tokens.spacingM,
   }),
   entryListItem: css({
     cursor: 'pointer',
-    marginBottom: 0
+    marginBottom: 0,
   }),
   description: css({
-    marginBottom: tokens.spacingM
-  })
+    marginBottom: tokens.spacingM,
+  }),
 };
 
 class UnpublishedReferencesConfirm extends Component {
@@ -75,12 +75,12 @@ class UnpublishedReferencesConfirm extends Component {
     contentTypes: PropTypes.array.isRequired,
     unpublishedReferencesInfo: PropTypes.array.isRequired,
     modalTitle: PropTypes.string,
-    confirmLabel: PropTypes.string
+    confirmLabel: PropTypes.string,
   };
 
   static defaultProps = {
     modalTitle: 'Are you sure you want to publish this entry?',
-    confirmLabel: 'Publish anyway'
+    confirmLabel: 'Publish anyway',
   };
 
   onEntityListClick = (e, reference) => {
@@ -94,7 +94,7 @@ class UnpublishedReferencesConfirm extends Component {
   renderUnpublishedRefsInfo({ field, references }) {
     const localeName = localeStore
       .getLocales()
-      .find(locale => locale.internal_code === field.internalLocaleCode).name;
+      .find((locale) => locale.internal_code === field.internalLocaleCode).name;
     const fieldInfo = <strong>{`${field.name} - ${localeName}`}</strong>;
     const [referenceMessage] = humaniseReferencesMessage(references);
     return (

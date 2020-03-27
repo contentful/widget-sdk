@@ -7,7 +7,7 @@ export function getFieldValue({
   entity,
   internalFieldId,
   internalLocaleCode,
-  defaultInternalLocaleCode
+  defaultInternalLocaleCode,
 }) {
   const values = _.get(entity, ['fields', internalFieldId]);
   if (!_.isObject(values)) {
@@ -26,13 +26,13 @@ export function getAssetTitle({
   asset,
   internalLocaleCode,
   defaultInternalLocaleCode,
-  defaultTitle
+  defaultTitle,
 }) {
   const title = getFieldValue({
     entity: asset,
     internalFieldId: 'title',
     internalLocaleCode,
-    defaultInternalLocaleCode
+    defaultInternalLocaleCode,
   });
   return titleOrDefault(title, defaultTitle);
 }
@@ -45,7 +45,7 @@ export function getEntryTitle({
   contentType,
   internalLocaleCode,
   defaultInternalLocaleCode,
-  defaultTitle
+  defaultTitle,
 }) {
   let title;
   if (!contentType) {
@@ -65,7 +65,7 @@ export function getEntryTitle({
         entity: entry,
         internalFieldId: displayField,
         internalLocaleCode,
-        defaultInternalLocaleCode
+        defaultInternalLocaleCode,
       });
       if (!title) {
         // Older content types may return id/apiName, but some entry lookup paths do not fetch raw data
@@ -75,20 +75,20 @@ export function getEntryTitle({
           entity: entry,
           internalFieldId: displayFieldInfo.apiName,
           internalLocaleCode,
-          defaultInternalLocaleCode
+          defaultInternalLocaleCode,
         });
       }
     } else {
       title = getFieldValue({
         entity: entry,
         internalFieldId: displayField,
-        defaultInternalLocaleCode
+        defaultInternalLocaleCode,
       });
       if (!title) {
         title = getFieldValue({
           entity: entry,
           internalFieldId: displayFieldInfo.apiName,
-          defaultInternalLocaleCode
+          defaultInternalLocaleCode,
         });
       }
     }

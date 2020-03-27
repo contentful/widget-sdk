@@ -24,7 +24,7 @@ const WebhookForbiddenPage = ({ templateId }) => {
   );
 };
 WebhookForbiddenPage.propTypes = {
-  templateId: PropTypes.string.isRequired
+  templateId: PropTypes.string.isRequired,
 };
 
 export default WebhookForbiddenPage;

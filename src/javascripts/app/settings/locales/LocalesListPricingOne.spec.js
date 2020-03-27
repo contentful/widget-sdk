@@ -34,7 +34,7 @@ describe('app/settings/locales/LocalesListPricingOne', () => {
     beforeEach(() => {
       $stateMocked.href.mockClear();
     });
-    const renderComponent = props => {
+    const renderComponent = (props) => {
       return render(
         <LocalesAdvice
           canCreateMultipleLocales={true}
@@ -52,16 +52,16 @@ describe('app/settings/locales/LocalesListPricingOne', () => {
         localeResource: {
           usage: 1,
           limits: {
-            maximum: 5
-          }
+            maximum: 5,
+          },
         },
-        locales: [{ id: 1 }]
+        locales: [{ id: 1 }],
       });
       [
         'Contentful enables publishing content in multiple languages',
         'To begin translating your content, add a second locale – for example, French (fr-FR)',
-        'Note that locale settings apply space-wide: the locales that you create will affect only the current space'
-      ].map(text => {
+        'Note that locale settings apply space-wide: the locales that you create will affect only the current space',
+      ].map((text) => {
         expect(getByTestId('locales-advice')).toHaveTextContent(text);
       });
     });
@@ -70,17 +70,17 @@ describe('app/settings/locales/LocalesListPricingOne', () => {
         localeResource: {
           usage: 3,
           limits: {
-            maximum: 5
-          }
+            maximum: 5,
+          },
         },
-        locales: [{ id: 1 }, { id: 2 }, { id: 3 }]
+        locales: [{ id: 1 }, { id: 2 }, { id: 3 }],
       });
 
       [
         'Contentful enables publishing content in multiple languages',
         'To enable localization, go to the relevant content type, open field settings, and enable translation for each necessary field',
-        'After that the content editor will display multiple input fields for each locale'
-      ].map(text => {
+        'After that the content editor will display multiple input fields for each locale',
+      ].map((text) => {
         expect(wrapper.getByTestId('locales-advice')).toHaveTextContent(text);
       });
     });
@@ -92,15 +92,15 @@ describe('app/settings/locales/LocalesListPricingOne', () => {
           limits: null,
           parent: {
             limits: {
-              maximum: 2
-            }
-          }
+              maximum: 2,
+            },
+          },
         },
         locales: [{ id: 1 }, { id: 2 }],
         subscriptionState: {
-          path: ['account', 'organization', 'subscription']
+          path: ['account', 'organization', 'subscription'],
         },
-        canChangeSpace
+        canChangeSpace,
       });
     };
 
@@ -110,14 +110,14 @@ describe('app/settings/locales/LocalesListPricingOne', () => {
         localeResource: {
           usage: 2,
           limits: {
-            maximum: 2
-          }
+            maximum: 2,
+          },
         },
         locales: [{ id: 1 }, { id: 2 }],
         subscriptionState: {
-          path: ['account', 'organization', 'subscription']
+          path: ['account', 'organization', 'subscription'],
         },
-        canChangeSpace
+        canChangeSpace,
       });
     };
 
@@ -126,8 +126,8 @@ describe('app/settings/locales/LocalesListPricingOne', () => {
         const { getByTestId } = renderComponentWithReachedLimit({ canChangeSpace: true });
         [
           'You have reached the organization locales limit',
-          'Your current subscription plan (some subscription plan name) enables a maximum of 2 locales per organization'
-        ].map(text => {
+          'Your current subscription plan (some subscription plan name) enables a maximum of 2 locales per organization',
+        ].map((text) => {
           expect(getByTestId('locales-advice')).toHaveTextContent(text);
         });
         expect(getByTestId('locales-advice')).toHaveTextContent(
@@ -142,12 +142,12 @@ describe('app/settings/locales/LocalesListPricingOne', () => {
 
       it('should show correct message if status is LocalesUsageStatus.NO_MULTIPLE_LOCALES', () => {
         const { getByTestId } = renderComponentWithNoMultipleLocales({
-          canChangeSpace: true
+          canChangeSpace: true,
         });
         [
           'Your plan does not include multiple locales',
-          'Your current subscription plan (some subscription plan name) does not support localizing content'
-        ].map(text => {
+          'Your current subscription plan (some subscription plan name) does not support localizing content',
+        ].map((text) => {
           expect(getByTestId('locales-advice')).toHaveTextContent(text);
         });
         expect(getByTestId('locales-advice')).toHaveTextContent(
@@ -167,8 +167,8 @@ describe('app/settings/locales/LocalesListPricingOne', () => {
         const { getByTestId } = renderComponentWithReachedLimit({ canChangeSpace: false });
         [
           'You have reached the organization locales limit',
-          'Your current subscription plan (some subscription plan name) enables a maximum of 2 locales per organization'
-        ].map(text => {
+          'Your current subscription plan (some subscription plan name) enables a maximum of 2 locales per organization',
+        ].map((text) => {
           expect(getByTestId('locales-advice')).toHaveTextContent(text);
         });
         expect(getByTestId('locales-advice')).toHaveTextContent(
@@ -181,8 +181,8 @@ describe('app/settings/locales/LocalesListPricingOne', () => {
         const { getByTestId } = renderComponentWithNoMultipleLocales({ canChangeSpace: false });
         [
           'Your plan does not include multiple locales',
-          'Your current subscription plan (some subscription plan name) does not support localizing content'
-        ].map(text => {
+          'Your current subscription plan (some subscription plan name) does not support localizing content',
+        ].map((text) => {
           expect(getByTestId('locales-advice')).toHaveTextContent(text);
         });
         expect(getByTestId('locales-advice')).toHaveTextContent(

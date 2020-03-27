@@ -14,11 +14,11 @@ class QueryInput extends React.Component {
     value: PropTypes.string,
     onKeyDown: PropTypes.func.isRequired,
     onKeyUp: PropTypes.func.isRequired,
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
   };
 
   state = {
-    value: this.props.value
+    value: this.props.value,
   };
 
   componentDidUpdate() {
@@ -27,19 +27,19 @@ class QueryInput extends React.Component {
     }
   }
 
-  UNSAFE_componentWillReceiveProps = nextProps => {
+  UNSAFE_componentWillReceiveProps = (nextProps) => {
     this.setState(() => ({
-      value: nextProps.value
+      value: nextProps.value,
     }));
   };
 
-  handleChange = e => {
+  handleChange = (e) => {
     const {
-      target: { value }
+      target: { value },
     } = e;
     this.props.onChange(value);
     this.setState(() => ({
-      value
+      value,
     }));
   };
 
@@ -57,7 +57,7 @@ class QueryInput extends React.Component {
         <input
           className="input-reset search-next__query-input"
           data-test-id="queryInput"
-          ref={input => {
+          ref={(input) => {
             this.inputRef = input;
           }}
           onFocus={onFocus}

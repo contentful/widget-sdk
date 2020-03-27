@@ -3,7 +3,7 @@ import periodToDates from './periodToDates';
 describe('periodToDates', () => {
   const defaultPeriod = {
     startDate: '2020-03-10',
-    endDate: '2020-03-12'
+    endDate: '2020-03-12',
   };
 
   it('should format dates as expected', () => {

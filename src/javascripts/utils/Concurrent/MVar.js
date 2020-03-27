@@ -34,9 +34,9 @@ export function createMVar(value) {
     take,
     empty,
     put,
-    isEmpty: function() {
+    isEmpty: function () {
       return isEmpty;
-    }
+    },
   };
 
   function read() {
@@ -44,7 +44,7 @@ export function createMVar(value) {
   }
 
   function take() {
-    return read().then(value => {
+    return read().then((value) => {
       empty();
       return value;
     });

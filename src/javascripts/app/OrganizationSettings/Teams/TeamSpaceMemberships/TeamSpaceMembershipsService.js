@@ -9,9 +9,9 @@ const HEADERS = getAlphaHeader(TEAMS_API);
 export default function createTeamMembershipsService(state) {
   const orgId = getOrgId(state);
   const endpoint = createOrganizationEndpoint(orgId);
-  const getTeamHeaders = teamId => ({
+  const getTeamHeaders = (teamId) => ({
     ...HEADERS,
-    'x-contentful-team': teamId
+    'x-contentful-team': teamId,
   });
 
   return {
@@ -19,14 +19,14 @@ export default function createTeamMembershipsService(state) {
     getAll,
     create,
     update,
-    remove
+    remove,
   };
 
   function get(id) {
     return endpoint(
       {
         method: 'GET',
-        path: ['team_space_memberships', id]
+        path: ['team_space_memberships', id],
       },
       HEADERS
     );
@@ -49,7 +49,7 @@ export default function createTeamMembershipsService(state) {
       {
         method: 'POST',
         path: ['team_space_memberships'],
-        data: { admin, roles }
+        data: { admin, roles },
       },
       getTeamHeaders(teamId)
     );
@@ -68,7 +68,7 @@ export default function createTeamMembershipsService(state) {
         method: 'PUT',
         path: ['team_space_memberships', sys.id],
         data: { admin, roles },
-        version: sys.version
+        version: sys.version,
       },
       getTeamHeaders(sys.team.sys.id)
     );
@@ -79,7 +79,7 @@ export default function createTeamMembershipsService(state) {
     return spaceEndpoint(
       {
         method: 'DELETE',
-        path: ['team_space_memberships', teamSpaceMembershipId]
+        path: ['team_space_memberships', teamSpaceMembershipId],
       },
       HEADERS
     );

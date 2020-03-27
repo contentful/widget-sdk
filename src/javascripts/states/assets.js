@@ -6,7 +6,7 @@ const list = base({
   name: 'list',
   url: '',
   loadingText: 'Loading media…',
-  template: '<div cf-asset-list class="workbench asset-list entity-list"></div>'
+  template: '<div cf-asset-list class="workbench asset-list entity-list"></div>',
 });
 
 const detail = {
@@ -14,12 +14,12 @@ const detail = {
   url: '/:assetId?previousEntries',
   params: { addToContext: true },
   template: entityPageTemplate,
-  controller: ['$scope', '$state', createEntityPageController]
+  controller: ['$scope', '$state', createEntityPageController],
 };
 
 export default {
   name: 'assets',
   url: '/assets',
   abstract: true,
-  children: [list, detail]
+  children: [list, detail],
 };

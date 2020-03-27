@@ -5,7 +5,7 @@ const { textQueryToUISearch } = require('./text-query-converter');
 
 let step = 0;
 jest.mock('./text-query-converter', () => ({
-  textQueryToUISearch: jest.fn()
+  textQueryToUISearch: jest.fn(),
 }));
 
 describe('savedViewMigrator', () => {
@@ -15,7 +15,7 @@ describe('savedViewMigrator', () => {
     viewMigrator,
     contentTypes = {};
 
-  beforeEach(function() {
+  beforeEach(function () {
     textQueryToUISearch.mockClear();
     contentTypes = {};
     viewMigrator = savedViewsMigrator.create(contentTypes);
@@ -27,14 +27,14 @@ describe('savedViewMigrator', () => {
   describe('#migrateView()', () => {
     describe('on View without a `searchTerm` (no migration required)', () => {
       const VIEW = {
-        contentTypeId: 'SOME_ID'
+        contentTypeId: 'SOME_ID',
       };
 
-      it('returns given view', function() {
+      it('returns given view', function () {
         expect(migrateView(VIEW)).toBe(VIEW);
       });
 
-      it('does not call `TextQueryConverter.textQueryToUISearch()`', function() {
+      it('does not call `TextQueryConverter.textQueryToUISearch()`', function () {
         migrateView(VIEW);
         expect(textQueryToUISearch).not.toHaveBeenCalled();
       });
@@ -45,15 +45,15 @@ describe('savedViewMigrator', () => {
       const BASE_VIEW = {
         id: 'SOME_VIEW_ID',
         searchTerm: SEARCH_TERM,
-        propertyUnrelatedToSearch: uniqueObject()
+        propertyUnrelatedToSearch: uniqueObject(),
       };
       const CONVERTED_SEARCH_TERM = {
         searchText: uniqueObject(),
-        searchFilters: uniqueObject()
+        searchFilters: uniqueObject(),
       };
 
       describe('on view with a `searchTerm`', () => {
-        beforeEach(function() {
+        beforeEach(function () {
           // `null` instead of {ContentType} as no `contentTypeId` is set in VIEW.
           textQueryToUISearch.mockImplementationOnce((...args) => {
             if (args[0] === null && args[1] === SEARCH_TERM) {
@@ -67,11 +67,11 @@ describe('savedViewMigrator', () => {
 
       describe('on view with a `searchTerm` and `contentTypeId`', () => {
         const VIEW_WITH_CT = Object.assign({}, BASE_VIEW, {
-          contentTypeId: 'TEST_CT_ID'
+          contentTypeId: 'TEST_CT_ID',
         });
         const CONTENT_TYPE = uniqueObject();
 
-        beforeEach(function() {
+        beforeEach(function () {
           contentTypes['TEST_CT_ID'] = CONTENT_TYPE;
 
           textQueryToUISearch.mockImplementationOnce((...args) => {
@@ -85,7 +85,7 @@ describe('savedViewMigrator', () => {
       });
 
       describe('TextQueryConverter.textQueryToUISearch() error', () => {
-        beforeEach(function() {
+        beforeEach(function () {
           textQueryToUISearch.mockImplementationOnce(() => {
             throw 'SOME UNKNOWN MIGRATION ERROR';
           });
@@ -98,14 +98,14 @@ describe('savedViewMigrator', () => {
     function testMigrateViewSuccess(view, convertedSearchTerm) {
       testMigrateViewBasics(view);
 
-      it('has a `searchText` as provided by `TextQueryConverter`', function() {
+      it('has a `searchText` as provided by `TextQueryConverter`', function () {
         const result = migrateView(view);
         const { searchText } = result;
 
         expect(searchText).toEqual(convertedSearchTerm.searchText);
       });
 
-      it('has `searchFilters` as provided by `TextQueryConverter`', function() {
+      it('has `searchFilters` as provided by `TextQueryConverter`', function () {
         const { searchFilters } = migrateView(view);
         expect(searchFilters).toEqual(convertedSearchTerm.searchFilters);
       });
@@ -114,39 +114,39 @@ describe('savedViewMigrator', () => {
     function testMigrateViewOnError(view) {
       testMigrateViewBasics(view);
 
-      it('returns view with empty search', function() {
+      it('returns view with empty search', function () {
         const { searchText, searchFilters } = migrateView(view);
         const emptySearch = {
           searchText: '',
-          searchFilters: []
+          searchFilters: [],
         };
         expect({ searchText, searchFilters }).toEqual(emptySearch);
       });
 
-      it('adds a `_legacySearchTerm` field', function() {
+      it('adds a `_legacySearchTerm` field', function () {
         const { _legacySearchTerm: legacySearchTerm } = migrateView(view);
         expect(legacySearchTerm).toEqual(view.searchTerm);
       });
     }
 
     function testMigrateViewBasics(view) {
-      it('does not mutate given view', function() {
+      it('does not mutate given view', function () {
         const viewClone = cloneDeep(view);
         migrateView(viewClone);
         expect(viewClone).toEqual(view);
       });
 
-      it('calls `TextQueryConverter.textQueryToUISearch()`', function() {
+      it('calls `TextQueryConverter.textQueryToUISearch()`', function () {
         migrateView(view);
         expect(textQueryToUISearch).toHaveBeenCalledTimes(1);
       });
 
-      it('deletes the `searchTerm', function() {
+      it('deletes the `searchTerm', function () {
         const { searchTerm } = migrateView(view);
         expect(searchTerm).toBeUndefined();
       });
 
-      it('preserves search unrelated view properties', function() {
+      it('preserves search unrelated view properties', function () {
         const { id, propertyUnrelatedToSearch } = migrateView(view);
         expect(id).toEqual(view.id);
         expect(propertyUnrelatedToSearch).toEqual(view.propertyUnrelatedToSearch);
@@ -157,7 +157,7 @@ describe('savedViewMigrator', () => {
   describe('#migrateViewsFolder()', () => {
     let migrateViewStub;
 
-    beforeEach(function() {
+    beforeEach(function () {
       migrateViewStub = jest.fn();
       viewMigrator.migrateView = migrateViewStub;
     });
@@ -167,14 +167,14 @@ describe('savedViewMigrator', () => {
       const MIGRATED_VIEWS = [uniqueObject(), uniqueObject()];
       const FOLDER = {
         name: 'Two views',
-        views: VIEWS
+        views: VIEWS,
       };
       const MIGRATED_FOLDER = {
         name: 'Two views',
-        views: MIGRATED_VIEWS
+        views: MIGRATED_VIEWS,
       };
 
-      beforeEach(function() {
+      beforeEach(function () {
         migrateViewStub.mockImplementation((...args) => {
           if (isEqual(args[0], VIEWS[0])) {
             return MIGRATED_VIEWS[0];
@@ -192,25 +192,25 @@ describe('savedViewMigrator', () => {
     describe('without any views', () => {
       const FOLDER = {
         name: 'No views',
-        views: []
+        views: [],
       };
 
       testMigrateViewsFolder(FOLDER, FOLDER);
     });
 
     function testMigrateViewsFolder(folder, expectedMigratedFolder) {
-      it('does not mutate given folder', function() {
+      it('does not mutate given folder', function () {
         const folderClone = cloneDeep(folder);
         migrateViewsFolder(folderClone);
         expect(folderClone).toEqual(folder);
       });
 
-      it('calls `migrateView()` once for each view', function() {
+      it('calls `migrateView()` once for each view', function () {
         migrateViewsFolder(folder);
         expect(migrateViewStub).toHaveBeenCalledTimes(folder.views.length);
       });
 
-      it('migrates views', function() {
+      it('migrates views', function () {
         const migratedFolder = migrateViewsFolder(folder);
         expect(migratedFolder).toEqual(expectedMigratedFolder);
       });
@@ -220,7 +220,7 @@ describe('savedViewMigrator', () => {
   describe('#migrateUIConfigViews()', () => {
     let migrateViewsFolderStub;
 
-    beforeEach(function() {
+    beforeEach(function () {
       migrateViewsFolderStub = jest.fn();
       viewMigrator.migrateViewsFolder = migrateViewsFolderStub;
     });
@@ -242,12 +242,12 @@ describe('savedViewMigrator', () => {
     });
 
     function testDoesNotMigrate(uiConfig) {
-      it('does no migration, returns equal UIConfig', function() {
+      it('does no migration, returns equal UIConfig', function () {
         const migratedUIConfig = migrateUIConfigViews(uiConfig);
         expect(migratedUIConfig).toEqual(uiConfig);
       });
 
-      it('does not call `migrateViewsFolder()`', function() {
+      it('does not call `migrateViewsFolder()`', function () {
         migrateUIConfigViews(uiConfig);
         expect(migrateViewsFolderStub).not.toHaveBeenCalled();
       });
@@ -270,7 +270,7 @@ describe('savedViewMigrator', () => {
       const MIGRATED_UI_CONFIG = { someThingElse: 'foo' };
       MIGRATED_UI_CONFIG[field] = MIGRATED_FOLDERS;
 
-      beforeEach(function() {
+      beforeEach(function () {
         migrateViewsFolderStub.mockImplementation((...args) => {
           if (isEqual(args[0], FOLDERS[0])) {
             return MIGRATED_FOLDERS[0];
@@ -286,18 +286,18 @@ describe('savedViewMigrator', () => {
         });
       });
 
-      it('does not mutate given uiConfig', function() {
+      it('does not mutate given uiConfig', function () {
         const uiConfigClone = cloneDeep(UI_CONFIG);
         migrateUIConfigViews(uiConfigClone);
         expect(uiConfigClone).toEqual(UI_CONFIG);
       });
 
-      it('calls `migrateViewsFolder()` once for each folder', function() {
+      it('calls `migrateViewsFolder()` once for each folder', function () {
         migrateUIConfigViews(UI_CONFIG);
         expect(migrateViewsFolderStub).toHaveBeenCalledTimes(FOLDERS.length);
       });
 
-      it('migrates views', function() {
+      it('migrates views', function () {
         const migratedUIConfig = migrateUIConfigViews(UI_CONFIG);
         expect(migratedUIConfig).toEqual(MIGRATED_UI_CONFIG);
       });

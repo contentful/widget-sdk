@@ -4,14 +4,14 @@ import 'jest-enzyme';
 import SidebarContentPreview from './SidebarContentPreview';
 
 describe('entity_editor/Components/SidebarContentPreview', () => {
-  const render = props => {
+  const render = (props) => {
     return Enzyme.mount(
       <SidebarContentPreview
         isInitialized={true}
         isPreviewSetup={true}
         isAdmin={false}
         selectedContentPreview={{
-          compiledUrl: 'https://contentful.com'
+          compiledUrl: 'https://contentful.com',
         }}
         contentPreviews={[]}
         onChangeContentPreview={() => {}}
@@ -24,12 +24,12 @@ describe('entity_editor/Components/SidebarContentPreview', () => {
   const selectors = {
     previewBtn: '[data-test-id="open-preview"]',
     helpText: '[data-test-id="open-preview-note"]',
-    changePreviewBtn: '[data-test-id="change-preview"]'
+    changePreviewBtn: '[data-test-id="change-preview"]',
   };
 
   it('preview button should be disabled if there is no preview', () => {
     const wrapper = render({
-      isPreviewSetup: false
+      isPreviewSetup: false,
     });
     expect(wrapper.find(selectors.previewBtn)).toBeDisabled();
   });
@@ -37,7 +37,7 @@ describe('entity_editor/Components/SidebarContentPreview', () => {
   describe('should have notes if there is no preview', () => {
     it('and if user is not admin', () => {
       const wrapper = render({
-        isPreviewSetup: false
+        isPreviewSetup: false,
       });
 
       expect(wrapper.find(selectors.helpText)).toHaveText(
@@ -48,7 +48,7 @@ describe('entity_editor/Components/SidebarContentPreview', () => {
     it('and if user is admin', () => {
       const wrapper = render({
         isPreviewSetup: false,
-        isAdmin: true
+        isAdmin: true,
       });
 
       expect(wrapper.find(selectors.helpText)).toHaveText(
@@ -59,13 +59,13 @@ describe('entity_editor/Components/SidebarContentPreview', () => {
 
   it('tracks click event once the button is clicked', () => {
     const stubs = {
-      trackStub: jest.fn()
+      trackStub: jest.fn(),
     };
     const wrapper = render({
       selectedContentPreview: {
-        compiledUrl: 'https://contentful.com'
+        compiledUrl: 'https://contentful.com',
       },
-      trackPreviewOpened: stubs.trackStub
+      trackPreviewOpened: stubs.trackStub,
     });
 
     wrapper.find(selectors.previewBtn).simulate('click');
@@ -74,7 +74,7 @@ describe('entity_editor/Components/SidebarContentPreview', () => {
 
   it('should show dropdown selector only if there 2 or more content previews', () => {
     const wrapper = render({
-      contentPreviews: [{ name: 'first' }, { name: 'second' }]
+      contentPreviews: [{ name: 'first' }, { name: 'second' }],
     });
     expect(wrapper.find(selectors.changePreviewBtn)).toExist();
   });

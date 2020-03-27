@@ -19,7 +19,7 @@ export function create({
   // Content type for the document. This is used to determine if a
   // field is of string type and if we want to send a string diff as an
   // update.
-  contentType
+  contentType,
 }) {
   const localFieldChangesBus = K.createBus();
   const errorBus = K.createBus();
@@ -45,7 +45,7 @@ export function create({
      */
     localFieldChange$: localFieldChangesBus.stream,
 
-    destroy
+    destroy,
   };
 
   function destroy() {
@@ -54,7 +54,7 @@ export function create({
   }
 
   function setValueAt(path, value) {
-    return withRawDoc(path, doc => {
+    return withRawDoc(path, (doc) => {
       maybeEmitLocalChange(path);
       return setValueAtRaw(doc, path, value);
     });
@@ -71,17 +71,17 @@ export function create({
   }
 
   function removeValueAt(path) {
-    return withRawDoc(path, doc => {
+    return withRawDoc(path, (doc) => {
       maybeEmitLocalChange(path);
       return ShareJS.remove(doc, path);
     });
   }
 
   function insertValueAt(path, i, x) {
-    return withRawDoc(path, doc => {
+    return withRawDoc(path, (doc) => {
       if (ShareJS.peek(doc, path)) {
         maybeEmitLocalChange(path);
-        return new Promise(resolve => doc.insertAt(path, i, x, resolve));
+        return new Promise((resolve) => doc.insertAt(path, i, x, resolve));
       } else if (i === 0) {
         maybeEmitLocalChange(path);
         return setValueAtRaw(doc, path, [x]);
@@ -111,7 +111,7 @@ export function create({
     } else {
       result = Promise.reject(new Error('ShareJS document is not connected'));
     }
-    return result.catch(error => {
+    return result.catch((error) => {
       errorBus.emit({ path, error });
       return Promise.reject(error);
     });

@@ -21,25 +21,25 @@ export function createTasksStoreForEntry(endpoint, entryId) {
 
   return {
     items$,
-    add: async task => {
+    add: async (task) => {
       const { sys: _sys, ...data } = task;
       const newTask = await create(endpoint, entryId, data);
 
       tasksBus.set([...getItems(), newTask]);
       return newTask;
     },
-    remove: async taskId => {
-      const task = getItems().find(task => task.sys.id === taskId);
+    remove: async (taskId) => {
+      const task = getItems().find((task) => task.sys.id === taskId);
       await remove(endpoint, entryId, task);
-      tasksBus.set(getItems().filter(task => task.sys.id !== taskId));
+      tasksBus.set(getItems().filter((task) => task.sys.id !== taskId));
     },
-    update: async task => {
+    update: async (task) => {
       const updatedTask = await update(endpoint, entryId, task);
       tasksBus.set(
-        getItems().map(task => (task.sys.id === updatedTask.sys.id ? updatedTask : task))
+        getItems().map((task) => (task.sys.id === updatedTask.sys.id ? updatedTask : task))
       );
     },
-    destroy: () => tasksBus.end()
+    destroy: () => tasksBus.end(),
   };
 
   async function initialFetch() {

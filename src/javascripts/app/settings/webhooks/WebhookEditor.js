@@ -7,7 +7,7 @@ import {
   Tabs,
   Tab,
   TabPanel,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -23,14 +23,14 @@ const TABS = { SETTINGS: 1, LOG: 2 };
 
 const style = {
   actionButton: css({ marginLeft: tokens.spacingM }),
-  tabs: css({ marginBottom: tokens.spacingM })
+  tabs: css({ marginBottom: tokens.spacingM }),
 };
 
 class WebhookEditor extends React.Component {
   static propTypes = {
     initialWebhook: PropTypes.object.isRequired,
     registerSaveAction: PropTypes.func.isRequired,
-    setDirty: PropTypes.func.isRequired
+    setDirty: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -49,7 +49,7 @@ class WebhookEditor extends React.Component {
       // Editor is "busy" if there's any HTTP request in flight.
       // All buttons triggering HTTP requests are disabled then.
       busy: false,
-      isDeleteDialogShown: false
+      isDeleteDialogShown: false,
     };
   }
 
@@ -58,12 +58,12 @@ class WebhookEditor extends React.Component {
     this.props.registerSaveAction(this.save);
   }
 
-  onChange = change => {
+  onChange = (change) => {
     this.setState(
-      s => ({
+      (s) => ({
         ...s,
         webhook: { ...s.webhook, ...change },
-        dirty: true
+        dirty: true,
       }),
       () => this.props.setDirty(true)
     );
@@ -218,7 +218,7 @@ class WebhookEditor extends React.Component {
               <TabPanel id="webhook_activity_log">
                 <WebhookActivityLog
                   webhookId={webhook.sys.id}
-                  registerLogRefreshAction={refreshLog => this.setState({ refreshLog })}
+                  registerLogRefreshAction={(refreshLog) => this.setState({ refreshLog })}
                 />
               </TabPanel>
             </Workbench.Content>

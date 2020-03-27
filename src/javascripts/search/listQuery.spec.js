@@ -5,9 +5,9 @@ jest.mock('ng/spaceContext', () => ({
   publishedCTs: {
     fetch: jest.fn().mockResolvedValue({
       data: { fields: [] },
-      getId: () => 'test'
-    })
-  }
+      getId: () => 'test',
+    }),
+  },
 }));
 
 describe('ListQuery service', () => {
@@ -24,7 +24,7 @@ describe('ListQuery service', () => {
       {
         order: { direction: 'descending', fieldId: 'updatedAt' },
         searchText: 'test',
-        paginator: Paginator.create()
+        paginator: Paginator.create(),
       },
       more
     );
@@ -34,13 +34,13 @@ describe('ListQuery service', () => {
   }
 
   describe('Returns promise of a query', () => {
-    it('for assets', async function() {
+    it('for assets', async function () {
       const q = await ListQuery.getForAssets(assetOpts());
       testQuery(q);
       expect(q.content_type).toBeUndefined();
     });
 
-    it('for entries', async function() {
+    it('for entries', async function () {
       const q = await ListQuery.getForEntries(entryOpts());
       testQuery(q);
       expect(q.content_type).toBe('TEST_CT_ID');
@@ -55,25 +55,25 @@ describe('ListQuery service', () => {
       return { searchFilters: [['__status', '', status]] };
     }
 
-    it('for published list', async function() {
+    it('for published list', async function () {
       const q = await queryFor(searchForStatus('published'));
       expect(q['sys.publishedAt[exists]']).toBe('true');
     });
 
-    it('for changed list', async function() {
+    it('for changed list', async function () {
       const q = await queryFor(searchForStatus('changed'));
       expect(q['sys.archivedAt[exists]']).toBe('false');
       expect(q.changed).toBe('true');
     });
 
-    it('for draft list', async function() {
+    it('for draft list', async function () {
       const q = await queryFor(searchForStatus('draft'));
       expect(q['sys.archivedAt[exists]']).toBe('false');
       expect(q['sys.publishedAt[exists]']).toBe('false');
       expect(q.changed).toBe('true');
     });
 
-    it('for archived list', async function() {
+    it('for archived list', async function () {
       const q = await queryFor(searchForStatus('archived'));
       expect(q['sys.archivedAt[exists]']).toBe('true');
     });

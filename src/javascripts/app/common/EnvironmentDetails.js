@@ -15,21 +15,21 @@ const environmentDetailsStyles = {
       height: '1.7em',
       width: '2em',
       '&:hover': {
-        backgroundColor: 'transparent'
-      }
-    }
+        backgroundColor: 'transparent',
+      },
+    },
   }),
   tag: css({
     marginLeft: 'auto',
-    paddingLeft: tokens.spacingM
+    paddingLeft: tokens.spacingM,
   }),
   wrapper: css({
     display: 'flex',
     alignItems: 'center',
     '& > span': {
-      marginRight: tokens.spacingXs
-    }
-  })
+      marginRight: tokens.spacingXs,
+    },
+  }),
 };
 
 export default function EnvironmentDetails({
@@ -41,7 +41,7 @@ export default function EnvironmentDetails({
   hasCopy,
   createdAt,
   isSelected,
-  testId
+  testId,
 }) {
   return (
     <div className={environmentDetailsStyles.wrapper} data-test-id={testId}>
@@ -82,10 +82,10 @@ EnvironmentDetails.propTypes = {
   aliasId: PropTypes.string,
   isDefault: PropTypes.bool,
   hasCopy: PropTypes.bool,
-  testId: PropTypes.string
+  testId: PropTypes.string,
 };
 
 EnvironmentDetails.defaultProps = {
   hasCopy: true,
-  testId: 'environmentdetails.wrapper'
+  testId: 'environmentdetails.wrapper',
 };

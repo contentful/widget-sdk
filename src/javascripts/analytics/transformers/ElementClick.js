@@ -2,25 +2,22 @@ import { flow, mapKeys, snakeCase, isEmpty, omit, omitBy, find } from 'lodash';
 import { addUserOrgSpace } from './Decorators';
 import { getSchema } from 'analytics/Schemas';
 
-const toSnakeCase = data => mapKeys(data, (_v, k) => snakeCase(k));
+const toSnakeCase = (data) => mapKeys(data, (_v, k) => snakeCase(k));
 
-const toDataObject = flow(
-  data => omitBy(data, isEmpty),
-  toSnakeCase
-);
+const toDataObject = flow((data) => omitBy(data, isEmpty), toSnakeCase);
 
 // TODO: Update our snowplow integration to support contexts in a cleaner
 // and more abstracted manner. Basically, move em out from the transformers
 // into something more top level since it's common duplicated behaviour
-export default function(_, eventData) {
+export default function (_, eventData) {
   const contexts = [];
   const { data } = addUserOrgSpace((_, { elementId, groupId, fromState, toState }) => ({
     data: toDataObject({
       elementId, // required
       groupId, // required
       fromState, // required
-      toState // optional
-    })
+      toState, // optional
+    }),
   }))(_, eventData);
 
   const rtEventData = toSnakeCase(omit(eventData.richTextEditor, ['fields', 'locales']));
@@ -35,9 +32,9 @@ export default function(_, eventData) {
         ...rtEventData,
         additional_data: {
           ...toSnakeCase(rtEventData.additional_data),
-          active_locales: locales.map(locale => locale.internal_code)
-        }
-      }
+          active_locales: locales.map((locale) => locale.internal_code),
+        },
+      },
     }))(_, eventData);
 
   if (eventData.richTextEditor) {
@@ -55,12 +52,12 @@ export default function(_, eventData) {
     contexts.push(
       addUserOrgSpace((_, data) => {
         const {
-          contentPreview: { previewName, previewId, contentTypeName, contentTypeId }
+          contentPreview: { previewName, previewId, contentTypeName, contentTypeId },
         } = data;
 
         return {
           schema: getSchema('content_preview').path,
-          data: toDataObject({ previewName, previewId, contentTypeName, contentTypeId })
+          data: toDataObject({ previewName, previewId, contentTypeName, contentTypeId }),
         };
       })(_, eventData)
     );
@@ -68,6 +65,6 @@ export default function(_, eventData) {
 
   return {
     data,
-    contexts
+    contexts,
   };
 }

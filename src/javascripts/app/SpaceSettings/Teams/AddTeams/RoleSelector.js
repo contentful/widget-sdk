@@ -6,18 +6,18 @@ import * as tokens from '@contentful/forma-36-tokens';
 
 const styles = {
   container: css({
-    flexBasis: '40%'
+    flexBasis: '40%',
   }),
   list: css({
     marginLeft: '20px',
-    wordBreak: 'break-word'
+    wordBreak: 'break-word',
   }),
   otherRoles: css({
-    marginTop: tokens.spacingM
+    marginTop: tokens.spacingM,
   }),
   role: css({
-    marginTop: tokens.spacingS
-  })
+    marginTop: tokens.spacingS,
+  }),
 };
 
 export default function RoleSelector({
@@ -26,7 +26,7 @@ export default function RoleSelector({
   onRoleSelected,
   adminSelected,
   onAdminSelected,
-  disabled
+  disabled,
 }) {
   return (
     <>
@@ -61,15 +61,15 @@ export default function RoleSelector({
             }}
           />
           <div className={styles.list}>
-            {roles.map(role => (
+            {roles.map((role) => (
               <div key={role.sys.id} className={styles.role}>
                 <CheckboxField
                   labelIsLight
                   id={role.sys.id}
                   labelText={role.name}
-                  checked={Boolean(selectedRoleIds.find(id => role.sys.id === id))}
+                  checked={Boolean(selectedRoleIds.find((id) => role.sys.id === id))}
                   disabled={adminSelected || disabled}
-                  onChange={e => {
+                  onChange={(e) => {
                     const isChecked = e.target.checked;
 
                     onRoleSelected(role.sys.id, isChecked);
@@ -90,5 +90,5 @@ RoleSelector.propTypes = {
   onAdminSelected: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
   adminSelected: PropTypes.bool,
-  selectedRoleIds: PropTypes.array.isRequired
+  selectedRoleIds: PropTypes.array.isRequired,
 };

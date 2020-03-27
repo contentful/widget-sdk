@@ -7,7 +7,7 @@ import {
   Paragraph,
   Typography,
   TextInput,
-  Note
+  Note,
 } from '@contentful/forma-36-react-components';
 import { spacingL } from '@contentful/forma-36-tokens';
 import ModalLauncher from 'app/common/ModalLauncher';
@@ -16,8 +16,8 @@ import { css } from 'emotion';
 
 const styles = {
   spacer: css({
-    marginBottom: spacingL
-  })
+    marginBottom: spacingL,
+  }),
 };
 
 /**
@@ -74,7 +74,7 @@ function SpaceEnvironmentsDeleteDialogContent({ inputValue, setInputValue, confi
         inputRef={inputRef}
         className={styles.spacer}
         value={inputValue}
-        onChange={e => {
+        onChange={(e) => {
           setInputValue(e.target.value);
         }}
         testId="confirmId"
@@ -88,7 +88,7 @@ function SpaceEnvironmentsDeleteDialogContent({ inputValue, setInputValue, confi
 SpaceEnvironmentsDeleteDialogContent.propTypes = {
   confirmationId: PropTypes.string.isRequired,
   inputValue: PropTypes.string,
-  setInputValue: PropTypes.func.isRequired
+  setInputValue: PropTypes.func.isRequired,
 };
 
 function SpaceEnvironmentsDeleteDialog({
@@ -97,7 +97,7 @@ function SpaceEnvironmentsDeleteDialog({
   activeEnvironmentId,
   onConfirm,
   onCancel,
-  runDelete
+  runDelete,
 }) {
   const [inputValue, setInputValue] = useState('');
   const [inProgress, setInProgress] = useState(false);
@@ -108,7 +108,7 @@ function SpaceEnvironmentsDeleteDialog({
       await runDelete(confirmationId);
       if (confirmationId === activeEnvironmentId) {
         await StateNavigator.go({
-          path: 'spaces.detail.settings.environments'
+          path: 'spaces.detail.settings.environments',
         });
         Notification.success(
           'The current environment has been successfully deleted, master will be loaded.'
@@ -158,5 +158,5 @@ SpaceEnvironmentsDeleteDialog.propTypes = {
   confirmationId: PropTypes.string.isRequired,
   activeEnvironmentId: PropTypes.string.isRequired,
   onCancel: PropTypes.func.isRequired,
-  onConfirm: PropTypes.func.isRequired
+  onConfirm: PropTypes.func.isRequired,
 };

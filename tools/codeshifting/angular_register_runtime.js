@@ -1,4 +1,4 @@
-module.exports = function(fileInfo, { jscodeshift: j }) {
+module.exports = function (fileInfo, { jscodeshift: j }) {
   const ast = j(fileInfo.source);
 
   const registerMethods = [
@@ -9,17 +9,17 @@ module.exports = function(fileInfo, { jscodeshift: j }) {
     'registerService',
     'registerConstant',
     'registerProvider',
-    'registerValue'
+    'registerValue',
   ];
 
   const nodes = [];
 
   // Find all registrations, copy them, and prune the original node
-  ast.find(j.ExpressionStatement, { expression: { type: 'CallExpression' } }).forEach(path => {
+  ast.find(j.ExpressionStatement, { expression: { type: 'CallExpression' } }).forEach((path) => {
     const {
       expression: {
-        callee: { name }
-      }
+        callee: { name },
+      },
     } = path.value;
 
     if (registerMethods.includes(name)) {

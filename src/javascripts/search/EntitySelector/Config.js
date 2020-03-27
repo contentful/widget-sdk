@@ -12,7 +12,7 @@ const LABELS = {
     input: 'Search for an entry:',
     info: 'You can insert only one entry. Click on any entry to insert it.',
     empty: 'No entries',
-    searchPlaceholder: 'Search %total% entries'
+    searchPlaceholder: 'Search %total% entries',
   },
   entry_multiple: {
     title: 'Insert existing entries',
@@ -20,14 +20,14 @@ const LABELS = {
     selected: 'selected entries',
     empty: 'No entries',
     insert: 'Insert selected entries',
-    searchPlaceholder: 'Search %total% entries'
+    searchPlaceholder: 'Search %total% entries',
   },
   asset_single: {
     title: 'Insert existing asset',
     input: 'Search for a media asset:',
     info: 'You can insert only one asset. Click on any asset to insert it.',
     empty: 'No assets',
-    searchPlaceholder: 'Search %total% assets'
+    searchPlaceholder: 'Search %total% assets',
   },
   asset_multiple: {
     title: 'Insert existing assets',
@@ -35,7 +35,7 @@ const LABELS = {
     selected: 'selected assets',
     empty: 'No assets',
     insert: 'Insert selected assets',
-    searchPlaceholder: 'Search %total% assets'
+    searchPlaceholder: 'Search %total% assets',
   },
   user_multiple: {
     title: 'Insert existing users',
@@ -43,8 +43,8 @@ const LABELS = {
     selected: 'selected users',
     empty: 'No users',
     insert: 'Insert selected users',
-    searchPlaceholder: 'Search %total% users in your organization'
-  }
+    searchPlaceholder: 'Search %total% users in your organization',
+  },
 };
 
 /**
@@ -89,7 +89,7 @@ export function newConfigFromField(field = {}, currentSize = 0) {
     min,
     max,
     linkedContentTypeIds: findLinkValidation(field, 'linkContentType'),
-    linkedMimetypeGroups: findLinkValidation(field, 'linkMimetypeGroup')
+    linkedMimetypeGroups: findLinkValidation(field, 'linkMimetypeGroup'),
 
     // @todo see comments in "prepareQueryExtension"
     // linkedFileSize: findValidation(field, 'assetFileSize', {}),
@@ -110,7 +110,7 @@ export function newConfigFromExtension(options = {}) {
     ...pick(options, ['multiple', 'min', 'max', 'entityType', 'withCreate']),
     locale: options.locale || getDefaultLocaleCode(),
     linkedContentTypeIds: options.contentTypes || [],
-    linkedMimetypeGroups: options.mimetypeGroups || []
+    linkedMimetypeGroups: options.mimetypeGroups || [],
   };
   config.fetch = makeFetch(config);
   return config;
@@ -129,8 +129,8 @@ function makeFetch(config) {
   const queryMethod = 'getFor' + getEntityTypePlural(config.entityType);
   const queryExtension = prepareQueryExtension(config);
 
-  return params =>
-    ListQuery[queryMethod](params).then(query => {
+  return (params) =>
+    ListQuery[queryMethod](params).then((query) => {
       return spaceContext.cma[fnName]({ ...query, ...queryExtension });
     });
 }
@@ -138,7 +138,7 @@ function makeFetch(config) {
 function getEntityTypePlural(singular) {
   return {
     Asset: 'Assets',
-    Entry: 'Entries'
+    Entry: 'Entries',
   }[singular];
 }
 
@@ -149,7 +149,7 @@ function findLinkValidation(field, property) {
 
 function findValidation({ validations = [], itemValidations = [] }, property, defaultValue) {
   const allValidations = [...validations, ...itemValidations];
-  const found = find(allValidations, v => isObject(v[property]) || isString(v[property]));
+  const found = find(allValidations, (v) => isObject(v[property]) || isString(v[property]));
   return (found && found[property]) || defaultValue;
 }
 

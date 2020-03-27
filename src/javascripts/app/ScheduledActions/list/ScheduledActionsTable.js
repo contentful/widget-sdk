@@ -13,7 +13,7 @@ import {
   TableCell,
   TableRow,
   Paragraph,
-  Icon
+  Icon,
 } from '@contentful/forma-36-react-components';
 import { EntityStatusTag } from 'components/shared/EntityStatusTag';
 import { getEntryTitle } from 'classes/EntityFieldValueHelpers';
@@ -24,30 +24,30 @@ import UserDisplayName from 'app/UserProfile/components/UserDisplayName';
 
 const styles = {
   jobRow: css({
-    cursor: 'pointer'
+    cursor: 'pointer',
   }),
   statusTag: css({
-    display: 'flex'
+    display: 'flex',
   }),
   statusTagIcon: css({
-    marginRight: tokens.spacingXs
+    marginRight: tokens.spacingXs,
   }),
   table: css({
-    tableLayout: 'fixed'
+    tableLayout: 'fixed',
   }),
   scheduledTimeTableHeader: css({
-    width: '260px'
+    width: '260px',
   }),
   statusTransition: css({
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   }),
   description: css({
-    marginBottom: tokens.spacingS
+    marginBottom: tokens.spacingS,
   }),
   tableHeaderCell: css({
-    whiteSpace: 'nowrap'
-  })
+    whiteSpace: 'nowrap',
+  }),
 };
 
 function StatusTag({ job }) {
@@ -55,7 +55,7 @@ function StatusTag({ job }) {
     failed: 'negative',
     succeeded: 'positive',
     scheduled: 'primary',
-    canceled: 'secondary'
+    canceled: 'secondary',
   };
 
   const getStatusLabel = () => {
@@ -90,7 +90,7 @@ function StatusTag({ job }) {
 }
 
 StatusTag.propTypes = {
-  job: PropTypes.object
+  job: PropTypes.object,
 };
 
 function StatusTransition({ entry }) {
@@ -104,7 +104,7 @@ function StatusTransition({ entry }) {
 }
 
 StatusTransition.propTypes = {
-  entry: PropTypes.object
+  entry: PropTypes.object,
 };
 
 function ScheduledActionWithExsitingEntryRow({
@@ -113,14 +113,14 @@ function ScheduledActionWithExsitingEntryRow({
   entry,
   contentType,
   defaultLocale,
-  showStatusTransition
+  showStatusTransition,
 }) {
   const entryTitle = getEntryTitle({
     entry,
     contentType,
     internallocaleCode: defaultLocale.internal_code,
     defaultInternalLocaleCode: defaultLocale.internal_code,
-    defaultTitle: 'Untilted'
+    defaultTitle: 'Untilted',
   });
 
   return (
@@ -130,20 +130,17 @@ function ScheduledActionWithExsitingEntryRow({
           className={styles.jobRow}
           data-test-id="scheduled-job"
           tabIndex="0"
-          onClick={e => {
+          onClick={(e) => {
             onClick(e);
           }}
-          onKeyDown={e => {
+          onKeyDown={(e) => {
             if (isHotkey(['enter', 'space'], e)) {
               onClick(e);
               e.preventDefault();
             }
           }}>
           <TableCell>
-            {moment
-              .utc(job.scheduledAt)
-              .local()
-              .format('ddd, MMM Do, YYYY - hh:mm A')}
+            {moment.utc(job.scheduledAt).local().format('ddd, MMM Do, YYYY - hh:mm A')}
           </TableCell>
           <TableCell>
             {' '}
@@ -168,17 +165,14 @@ ScheduledActionWithExsitingEntryRow.propTypes = {
   entry: PropTypes.object,
   contentType: PropTypes.object,
   defaultLocale: PropTypes.object,
-  showStatusTransition: PropTypes.bool
+  showStatusTransition: PropTypes.bool,
 };
 
 function ScheduledActionWithMissingEntryRow({ job, user }) {
   return (
     <TableRow data-test-id="scheduled-job">
       <TableCell>
-        {moment
-          .utc(job.scheduledAt)
-          .local()
-          .format('ddd, MMM Do, YYYY - hh:mm A')}
+        {moment.utc(job.scheduledAt).local().format('ddd, MMM Do, YYYY - hh:mm A')}
       </TableCell>
       <TableCell>Entry missing or inaccessible</TableCell>
       <TableCell />
@@ -192,7 +186,7 @@ function ScheduledActionWithMissingEntryRow({ job, user }) {
 
 ScheduledActionWithMissingEntryRow.propTypes = {
   job: PropTypes.object,
-  user: PropTypes.object
+  user: PropTypes.object,
 };
 
 export default class ScheduledActionsTable extends Component {
@@ -203,7 +197,7 @@ export default class ScheduledActionsTable extends Component {
     contentTypesData: PropTypes.object,
     entriesData: PropTypes.object,
     showStatusTransition: PropTypes.bool,
-    defaultLocale: PropTypes.object
+    defaultLocale: PropTypes.object,
   };
 
   render() {
@@ -214,7 +208,7 @@ export default class ScheduledActionsTable extends Component {
       entriesData,
       contentTypesData,
       showStatusTransition,
-      defaultLocale
+      defaultLocale,
     } = this.props;
     return (
       <div>
@@ -230,7 +224,7 @@ export default class ScheduledActionsTable extends Component {
             </TableRow>
           </TableHead>
           <TableBody>
-            {jobs.map(job => {
+            {jobs.map((job) => {
               const user = usersData[job.sys.createdBy.sys.id];
 
               const entry = entriesData[job.entity.sys.id];

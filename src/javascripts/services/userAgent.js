@@ -22,7 +22,7 @@ const tests = {
   ie: /msie/i.test(userAgent),
   safari: /^((?!chrome|android).)*safari/i.test(userAgent),
   ios: /(iphone os|ipad|iphone|ipod)/i.test(userAgent) && !window.MSStream,
-  apple: false
+  apple: false,
 };
 
 if (tests.ios || /mac(68k|ppc|intel)/i.test(platform)) {

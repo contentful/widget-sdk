@@ -14,11 +14,11 @@ import {
   TEAM_MEMBERSHIPS,
   TEAM_SPACE_MEMBERSHIPS,
   ORG_SPACES,
-  ORG_SPACE_ROLES
+  ORG_SPACE_ROLES,
 } from './datasets';
 import getOrgId from './selectors/getOrgId';
 
-const loaders = state => {
+const loaders = (state) => {
   const orgId = getOrgId(state);
   return {
     [USERS]: () => getAllUsers(createOrganizationEndpoint(orgId)),
@@ -44,12 +44,12 @@ const loaders = state => {
     [ORG_SPACE_ROLES]: () => {
       const endpoint = createOrganizationEndpoint(orgId);
       return getAllRoles(endpoint);
-    }
+    },
   };
 };
 
 export default async (dataSets, state) => {
   const boundLoaders = loaders(state);
 
-  return zipObject(dataSets, await Promise.all(dataSets.map(dataSet => boundLoaders[dataSet]())));
+  return zipObject(dataSets, await Promise.all(dataSets.map((dataSet) => boundLoaders[dataSet]())));
 };

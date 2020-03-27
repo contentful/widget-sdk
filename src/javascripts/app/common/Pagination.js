@@ -9,20 +9,20 @@ export default class Pagination extends React.Component {
     limit: PropTypes.number.isRequired,
     total: PropTypes.number.isRequired,
     loading: PropTypes.bool.isRequired,
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
   };
 
   static getDerivedStateFromProps(nextProps) {
     const { skip, limit, total } = nextProps;
     return {
       isLastPage: skip + limit >= total,
-      isFirstPage: skip === 0
+      isFirstPage: skip === 0,
     };
   }
 
   state = {
     isFirstPage: true,
-    isLastPage: true
+    isLastPage: true,
   };
 
   handleLimitChange = ({ target: { value } }) => {

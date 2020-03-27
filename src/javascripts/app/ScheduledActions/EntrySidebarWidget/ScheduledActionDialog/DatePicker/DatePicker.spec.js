@@ -8,7 +8,7 @@ describe('DatePicker', () => {
     const props = {
       labelText: 'label text',
       value: new Date('2017-01-01'),
-      onChange: jest.fn()
+      onChange: jest.fn(),
     };
     return [render(<DatePicker {...props} />), props];
   };

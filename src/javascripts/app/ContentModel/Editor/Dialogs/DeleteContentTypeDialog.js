@@ -6,8 +6,8 @@ import { ModalConfirm, TextInput, Paragraph, Note } from '@contentful/forma-36-r
 
 const styles = {
   spacer: css({
-    marginBottom: tokens.spacingL
-  })
+    marginBottom: tokens.spacingL,
+  }),
 };
 
 function DeleteContentTypeForm(props) {
@@ -35,7 +35,7 @@ function DeleteContentTypeForm(props) {
         className={styles.spacer}
         inputRef={textInputRef}
         value={props.value}
-        onChange={e => {
+        onChange={(e) => {
           props.setValue(e.target.value);
         }}
       />
@@ -47,7 +47,7 @@ function DeleteContentTypeForm(props) {
 DeleteContentTypeForm.propTypes = {
   value: PropTypes.string.isRequired,
   setValue: PropTypes.func.isRequired,
-  contentTypeName: PropTypes.string.isRequired
+  contentTypeName: PropTypes.string.isRequired,
 };
 
 export default function DeleteContentTypeDialog(props) {
@@ -86,5 +86,5 @@ DeleteContentTypeDialog.propTypes = {
   isShown: PropTypes.bool.isRequired,
   onCancel: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
-  contentTypeName: PropTypes.string.isRequired
+  contentTypeName: PropTypes.string.isRequired,
 };

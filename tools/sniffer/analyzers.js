@@ -6,7 +6,7 @@ const findOtherByRegexp = require('./analyzers/findOtherByRegexp');
 const findComponentLibrary = require('./analyzers/findComponentLibrary');
 const findGetModule = require('./analyzers/findGetModule');
 
-module.exports = function(node, src) {
+module.exports = function (node, src) {
   if (node.extension === '.js') {
     const ast = parser.parse(src, {
       sourceType: 'module',
@@ -17,19 +17,19 @@ module.exports = function(node, src) {
         'dynamicImport',
         'exportDefaultFrom',
         'exportNamespaceFrom',
-        'objectRestSpread'
-      ]
+        'objectRestSpread',
+      ],
     });
 
     const fnParams = {
       src,
-      ast
+      ast,
     };
 
     const fns = [findImports, findAngular, findOtherByRegexp, findComponentLibrary, findGetModule];
 
     const modules = _.uniq(
-      _.flatMap(fns, fn => {
+      _.flatMap(fns, (fn) => {
         return fn(fnParams);
       })
     );
@@ -38,12 +38,12 @@ module.exports = function(node, src) {
   }
   if (node.extension === '.jade') {
     const fnParams = {
-      src
+      src,
     };
     const fns = [findOtherByRegexp, findComponentLibrary];
 
     return _.uniq(
-      _.flatMap(fns, fn => {
+      _.flatMap(fns, (fn) => {
         return fn(fnParams);
       })
     );

@@ -14,21 +14,21 @@ const Space = function Space(data, persistenceContext) {
 
 Space.prototype = Object.create(Entity.prototype);
 
-Space.prototype.update = Space.prototype.save = Space.prototype.delete = function() {
+Space.prototype.update = Space.prototype.save = Space.prototype.delete = function () {
   // Disable `update`, `save` and `delete` methods, use new CMA client instead
   throw new Error('Cannot update/save/delete a space');
 };
 
-Space.prototype.isOwner = function(user) {
+Space.prototype.isOwner = function (user) {
   return user && this.data.organization.sys.createdBy.sys.id === user.sys.id;
 };
 
-Space.prototype.isAdmin = function(user) {
+Space.prototype.isAdmin = function (user) {
   const membership = this.data.spaceMember;
   return user && user.sys.id === membership.sys.user.sys.id && membership.admin === true;
 };
 
-Space.prototype.getOrganizationId = function() {
+Space.prototype.getOrganizationId = function () {
   return this.data.organization.sys.id;
 };
 
@@ -38,7 +38,7 @@ Space.prototype.getOrganizationId = function() {
  *
  * Environment data is exposed as `space.environment`.
  */
-Space.prototype.makeEnvironment = function(environmentId, shouldUseEnvEndpoint) {
+Space.prototype.makeEnvironment = function (environmentId, shouldUseEnvEndpoint) {
   // We need a fresh persistence context with a separate identity map.
   // We do not scope the endpoint to `spaces/:sid/environemnts/:eid`.
   // Predicate function `shouldUseEnvEndpoint` will be used to determine
@@ -48,7 +48,7 @@ Space.prototype.makeEnvironment = function(environmentId, shouldUseEnvEndpoint) 
 
   // We need to overide the endpoint so environment-scoped
   // endpoints are used when applicable.
-  space.endpoint = function() {
+  space.endpoint = function () {
     const args = _.toArray(arguments);
     const endpoint = this.persistenceContext.endpoint();
 
@@ -62,7 +62,7 @@ Space.prototype.makeEnvironment = function(environmentId, shouldUseEnvEndpoint) 
   return space;
 };
 
-Space.mixinFactoryMethods = function(target, path) {
+Space.mixinFactoryMethods = function (target, path) {
   const factoryMethods = createResourceFactoryMethods(Space, path);
   _.extend(target, { newSpace: factoryMethods.new });
 };

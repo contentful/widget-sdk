@@ -14,7 +14,7 @@ describe('Client', () => {
       makeRequest.mockReturnValue(baseRequest);
     });
 
-    it('constructs a path, strips extra slashes', async function() {
+    it('constructs a path, strips extra slashes', async function () {
       await client.request({ path: '/some/path' });
       await client.request({ path: 'path/2' });
 
@@ -24,7 +24,7 @@ describe('Client', () => {
       expect(baseRequest.mock.calls[1][0].url).toEqual('//api.test.com/path/2');
     });
 
-    it('passes through the method', async function() {
+    it('passes through the method', async function () {
       await client.request({ method: 'GET', path: '' });
       await client.request({ method: 'POST', path: '' });
 
@@ -34,13 +34,13 @@ describe('Client', () => {
       expect(baseRequest.mock.calls[1][0].method).toEqual('POST');
     });
 
-    it('uses "params" for GET payload', async function() {
+    it('uses "params" for GET payload', async function () {
       await client.request({ method: 'GET', path: '', payload: 'TEST' });
 
       expect(baseRequest.mock.calls[0][0].params).toEqual('TEST');
     });
 
-    it('uses "data" for any other payload', async function() {
+    it('uses "data" for any other payload', async function () {
       await client.request({ method: 'POST', path: '', payload: 'TEST1' });
       await client.request({ method: 'PUT', path: '', payload: 'TEST2' });
 
@@ -48,13 +48,13 @@ describe('Client', () => {
       expect(baseRequest.mock.calls[1][0].data).toEqual('TEST2');
     });
 
-    it('resolves with response data', async function() {
+    it('resolves with response data', async function () {
       const res = await client.request({ path: '' });
 
       expect(res).toBe('RESPONSE DATA');
     });
 
-    it('rejects with status code, data and request for errors', async function() {
+    it('rejects with status code, data and request for errors', async function () {
       baseRequest.mockRejectedValue({ status: '777', data: 'OMG ERROR' });
 
       let err;

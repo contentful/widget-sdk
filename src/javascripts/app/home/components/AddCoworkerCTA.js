@@ -30,7 +30,7 @@ const AddCoworkerCTA = ({ hasTeamsEnabled, spaceId, orgId }) => {
 AddCoworkerCTA.propTypes = {
   hasTeamsEnabled: PropTypes.bool.isRequired,
   spaceId: PropTypes.string.isRequired,
-  orgId: PropTypes.string.isRequired
+  orgId: PropTypes.string.isRequired,
 };
 
 export default AddCoworkerCTA;

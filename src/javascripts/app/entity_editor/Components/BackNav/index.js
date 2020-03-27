@@ -5,11 +5,11 @@ import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 
 export default class BackNav extends React.Component {
   static propTypes = {
-    onClose: PropTypes.func
+    onClose: PropTypes.func,
   };
 
   static defaultProps = {
-    onClose: () => goToPreviousSlideOrExit('arrow_back')
+    onClose: () => goToPreviousSlideOrExit('arrow_back'),
   };
 
   render() {

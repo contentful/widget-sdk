@@ -32,9 +32,9 @@ function prepare(internal) {
 }
 
 function prepareCollection(collection, entity, effect) {
-  return _.map(collection, source => ({
+  return _.map(collection, (source) => ({
     source: _.extend({ effect, entity }, source),
-    result: {}
+    result: {},
   }));
 }
 
@@ -145,7 +145,7 @@ export function toExternal(internal) {
       'contentDelivery',
       'settings',
       'environments',
-      'environmentAliases'
-    ])
+      'environmentAliases',
+    ]),
   };
 }

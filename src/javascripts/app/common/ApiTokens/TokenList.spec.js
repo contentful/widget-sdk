@@ -10,14 +10,14 @@ const defaultProps = {
   currentPage: 1,
   totalPages: 1,
   revoke: jest.fn(),
-  selectPage: jest.fn()
+  selectPage: jest.fn(),
 };
 
 describe('TokenList', () => {
   it('should render Loading component if loadingTokens', () => {
     const localTestProps = {
       ...defaultProps,
-      loadingTokens: true
+      loadingTokens: true,
     };
 
     const { getByTestId } = render(<TokenList {...localTestProps} />);
@@ -32,7 +32,7 @@ describe('TokenList', () => {
   it('should render error Note if loadingTokensError', () => {
     const localTestProps = {
       ...defaultProps,
-      loadingTokensError: true
+      loadingTokensError: true,
     };
 
     const { getByTestId } = render(<TokenList {...localTestProps} />);

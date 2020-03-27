@@ -4,14 +4,14 @@ import { awaitInitReady } from 'NgRegistry';
 function raw$inject(serviceName) {
   let ngModule;
 
-  inject($injector => {
+  inject(($injector) => {
     ngModule = $injector.get(serviceName);
   });
 
   return ngModule;
 }
 
-export const $inject = function(serviceName) {
+export const $inject = function (serviceName) {
   /*
     This checks to see if the `$injector` has been instantiated
     on the `this` context (in `angular-mocks`, it is known as `$currentSpec`)
@@ -37,7 +37,7 @@ export const $inject = function(serviceName) {
   }
 };
 
-export const $compile = function(template, scopeProperties, controllers) {
+export const $compile = function (template, scopeProperties, controllers) {
   const $compile = $inject('$compile');
   const $rootScope = $inject('$rootScope');
   const scope = _.extend($rootScope.$new(true), scopeProperties);
@@ -45,13 +45,13 @@ export const $compile = function(template, scopeProperties, controllers) {
 
   if (controllers) {
     // convert controllers to a form `$compile` understands
-    transcludeControllers = _.mapValues(controllers, controllerInstance => ({
-      instance: controllerInstance
+    transcludeControllers = _.mapValues(controllers, (controllerInstance) => ({
+      instance: controllerInstance,
     }));
   }
 
   const element = $compile(template)(scope, undefined, {
-    transcludeControllers: transcludeControllers
+    transcludeControllers: transcludeControllers,
   });
 
   element.appendTo('body');
@@ -60,7 +60,7 @@ export const $compile = function(template, scopeProperties, controllers) {
   return element;
 };
 
-export const $compileWith = function(template, initScope) {
+export const $compileWith = function (template, initScope) {
   const $compile = $inject('$compile');
   const $rootScope = $inject('$rootScope');
   const $scope = $rootScope.$new(true);
@@ -74,23 +74,23 @@ export const $compileWith = function(template, initScope) {
   return element;
 };
 
-export const $apply = function() {
+export const $apply = function () {
   const $rootScope = $inject('$rootScope');
 
   $rootScope.$apply();
 };
 
-export const $applyAsync = async function() {
+export const $applyAsync = async function () {
   $apply();
 
-  return new Promise(resolve => setTimeout(resolve, 10));
+  return new Promise((resolve) => setTimeout(resolve, 10));
 };
 
-export const $wait = async function() {
-  return new Promise(resolve => setTimeout(resolve));
+export const $wait = async function () {
+  return new Promise((resolve) => setTimeout(resolve));
 };
 
-export const $flush = function() {
+export const $flush = function () {
   const $http = $inject('$httpBackend');
   const $timeout = $inject('$timeout');
 
@@ -116,7 +116,7 @@ export const $flush = function() {
   });
 };
 
-export const $initialize = async function(system, mock = () => {}) {
+export const $initialize = async function (system, mock = () => {}) {
   const { angularInitRun } = await system.import('AngularInit');
 
   delete angular.module('contentful/init')._runBlocks[0];
@@ -129,15 +129,15 @@ export const $initialize = async function(system, mock = () => {}) {
   return awaitInitReady();
 };
 
-export const $removeControllers = async function(system, names) {
+export const $removeControllers = async function (system, names) {
   const { registerController } = await system.import('NgRegistry');
 
   for (const name of names) {
-    registerController(name, function() {});
+    registerController(name, function () {});
   }
 };
 
-export const $removeDirectives = async function(system, names) {
+export const $removeDirectives = async function (system, names) {
   const { registerFactory } = await system.import('NgRegistry');
 
   for (const name of names) {
@@ -145,7 +145,7 @@ export const $removeDirectives = async function(system, names) {
   }
 };
 
-export const $waitForControllerLoaded = async function($scope) {
+export const $waitForControllerLoaded = async function ($scope) {
   if ($scope.loaded) {
     return true;
   }
@@ -158,7 +158,7 @@ export const $waitForControllerLoaded = async function($scope) {
 };
 
 // Waits for a promise by calling apply, until the promise resolves
-export const $waitFor = promise => {
+export const $waitFor = (promise) => {
   const timer = setInterval($apply, 10);
   promise.finally(() => clearInterval(timer));
 

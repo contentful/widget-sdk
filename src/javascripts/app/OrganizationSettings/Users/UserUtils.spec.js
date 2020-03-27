@@ -3,9 +3,7 @@ import { getLastActivityDate, getFullNameOrEmail, get2FAStatus } from './UserUti
 
 describe('UserUtils', () => {
   function createMembership(amount, unit) {
-    const date = moment()
-      .subtract(amount, unit)
-      .toISOString();
+    const date = moment().subtract(amount, unit).toISOString();
     return { sys: { lastActiveAt: date } };
   }
 
@@ -37,12 +35,12 @@ describe('UserUtils', () => {
     const named = {
       firstName: 'John',
       lastName: 'Doe',
-      email: 'john.doe@company.com'
+      email: 'john.doe@company.com',
     };
     const unnamed = {
       firstName: null,
       lastName: null,
-      email: 'jane.doe@company.com'
+      email: 'jane.doe@company.com',
     };
 
     it('should get the first name when available', () => {

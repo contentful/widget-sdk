@@ -19,13 +19,13 @@ module.exports = function findComponentLibrary({ src, ast }) {
             ) {
               const specifiers = path.node.specifiers || [];
               specifiers
-                .filter(item => item.type === 'ImportSpecifier')
-                .forEach(item => {
+                .filter((item) => item.type === 'ImportSpecifier')
+                .forEach((item) => {
                   usages.push(`@contentful/forma-36-react-components/${item.imported.name}`);
                 });
             }
           }
-        }
+        },
       });
     }
   }
@@ -39,7 +39,7 @@ module.exports = function findComponentLibrary({ src, ast }) {
   if (matches.length > 0) {
     usages.push('@contentful/forma-36-react-components');
   }
-  matches.forEach(item => usages.push(item));
+  matches.forEach((item) => usages.push(item));
 
   return usages;
 };

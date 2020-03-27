@@ -14,15 +14,15 @@ describe('EmbeddedEntryInline component', () => {
         id: 'ID',
         contentType: {
           sys: {
-            id: 'CT-ID'
-          }
-        }
-      }
+            id: 'CT-ID',
+          },
+        },
+      },
     };
 
     const widgetAPIFake = {
       currentUrl: {
-        pathname: '/'
+        pathname: '/',
       },
       space: {
         getEntry: jest.fn().mockResolvedValue(entry),
@@ -31,37 +31,37 @@ describe('EmbeddedEntryInline component', () => {
           {
             action: ScheduledActionAction.Publish,
             sys: {
-              id: entry.sys.id
+              id: entry.sys.id,
             },
             entity: entry,
             scheduledFor: {
-              datetime: new Date(Date.now() * 2).toUTCString()
-            }
-          }
-        ])
+              datetime: new Date(Date.now() * 2).toUTCString(),
+            },
+          },
+        ]),
       },
       field: {
-        locale: 'en-US'
+        locale: 'en-US',
       },
       navigator: {
-        onSlideInNavigation: jest.fn().mockReturnValue(noop)
-      }
+        onSlideInNavigation: jest.fn().mockReturnValue(noop),
+      },
     };
 
     const props = {
       node: {
         data: {
-          get: jest.fn().mockReturnValue(entry)
-        }
+          get: jest.fn().mockReturnValue(entry),
+        },
       },
       widgetAPI: widgetAPIFake,
       isSelected: false,
       editor: {
         props: {
           actionsDisabled: false,
-          readOnly: false
-        }
-      }
+          readOnly: false,
+        },
+      },
     };
 
     const { getByTestId } = render(

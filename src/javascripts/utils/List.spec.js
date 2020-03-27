@@ -3,28 +3,28 @@ import * as List from './List';
 
 describe('utils/List', () => {
   describe('#makeKeyed', () => {
-    const makeKeyed = items => {
-      return List.makeKeyed(items, i => i.hash);
+    const makeKeyed = (items) => {
+      return List.makeKeyed(items, (i) => i.hash);
     };
 
     // Define some commonly used items
     const a = { hash: 'a' };
     const b = { hash: 'b' };
 
-    it('preserves values', function() {
+    it('preserves values', function () {
       const items = [a, b, a];
       const keyed = makeKeyed(items);
-      expect(keyed.map(i => i.value)).toEqual(items);
+      expect(keyed.map((i) => i.value)).toEqual(items);
     });
 
-    it('has unique keys', function() {
+    it('has unique keys', function () {
       const items = [a, b, a];
       const keyed = makeKeyed(items);
-      const keys = keyed.map(i => i.key);
+      const keys = keyed.map((i) => i.key);
       expect(_.uniq(keys)).toHaveLength(keys.length);
     });
 
-    it('same key implies same value', function() {
+    it('same key implies same value', function () {
       const items1 = [a, b, a];
       const items2 = [a, a, b];
 

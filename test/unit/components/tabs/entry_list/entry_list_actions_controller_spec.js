@@ -12,20 +12,20 @@ describe('Entry List Actions Controller', () => {
     action1 = action2 = action3 = action4 = null;
   });
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     const duplicateOrPublishResults = {
-      succeeded: ['foo', 'bar'].map(prefix => ({
+      succeeded: ['foo', 'bar'].map((prefix) => ({
         data: {
           sys: {
             id: prefix,
             contentType: {
               sys: {
-                id: `${prefix}-ct-id`
-              }
-            }
-          }
-        }
-      }))
+                id: `${prefix}-ct-id`,
+              },
+            },
+          },
+        },
+      })),
     };
 
     stubs = {
@@ -43,17 +43,17 @@ describe('Entry List Actions Controller', () => {
       timeout: sinon.stub(),
       shouldHide: sinon.stub(),
       shouldDisable: sinon.stub(),
-      canPerformActionOnEntity: sinon.stub()
+      canPerformActionOnEntity: sinon.stub(),
     };
 
     this.system.set('analytics/Analytics', {
-      track: stubs.track
+      track: stubs.track,
     });
 
     this.system.set('access_control/AccessChecker', {
       shouldHide: stubs.shouldHide,
       shouldDisable: stubs.shouldDisable,
-      canPerformActionOnEntity: stubs.canPerformActionOnEntity
+      canPerformActionOnEntity: stubs.canPerformActionOnEntity,
     });
 
     const paginatorClass = (await this.system.import('classes/Paginator')).default;
@@ -62,7 +62,7 @@ describe('Entry List Actions Controller', () => {
     ComponentLibrary.Notification.error = stubs.error;
     ComponentLibrary.Notification.success = stubs.success;
 
-    await $initialize(this.system, $provide => {
+    await $initialize(this.system, ($provide) => {
       $provide.value('$timeout', stubs.timeout);
     });
 
@@ -82,7 +82,7 @@ describe('Entry List Actions Controller', () => {
     scope.selection = {
       size: stubs.size,
       getSelected: stubs.getSelected.returns([]),
-      clear: stubs.clear
+      clear: stubs.clear,
     };
 
     const spaceContext = $inject('mocks/spaceContext').init();
@@ -103,7 +103,7 @@ describe('Entry List Actions Controller', () => {
         duplicate: (...args) => {
           duplicate(...args);
           return Promise.resolve(duplicateOrPublishResults);
-        }
+        },
       };
     });
 
@@ -118,11 +118,11 @@ describe('Entry List Actions Controller', () => {
           id: 'entity-id',
           contentType: {
             sys: {
-              id: 'content-type-id'
-            }
-          }
-        }
-      }
+              id: 'content-type-id',
+            },
+          },
+        },
+      },
     };
     entity[action] = stub;
     return entity;
@@ -136,7 +136,7 @@ describe('Entry List Actions Controller', () => {
           makeEntity(action, stubs.action1),
           makeEntity(action, stubs.action2),
           makeEntity(action, stubs.action3),
-          makeEntity(action, stubs.action4)
+          makeEntity(action, stubs.action4),
         ];
         action1.resolve(entities[0]);
         action2.reject(new Error('boom'));
@@ -210,10 +210,10 @@ describe('Entry List Actions Controller', () => {
           sys: {
             id: 'foo',
             contentType: {
-              sys: { id: 'foo-ct-id' }
-            }
-          }
-        }
+              sys: { id: 'foo-ct-id' },
+            },
+          },
+        },
       });
       stubs.action2.returns({
         type: 'Entry',
@@ -221,10 +221,10 @@ describe('Entry List Actions Controller', () => {
           sys: {
             id: 'bar',
             contentType: {
-              sys: { id: 'bar-ct-id' }
-            }
-          }
-        }
+              sys: { id: 'bar-ct-id' },
+            },
+          },
+        },
       });
       stubs.createEntry.withArgs('foo').resolves({});
       stubs.createEntry.withArgs('bar').rejects(new Error('boom'));
@@ -236,10 +236,10 @@ describe('Entry List Actions Controller', () => {
             sys: {
               id: 'foo',
               contentType: {
-                sys: { id: 'foo-ct-id' }
-              }
-            }
-          }
+                sys: { id: 'foo-ct-id' },
+              },
+            },
+          },
         },
         {
           getSys: stubs.action2,
@@ -247,11 +247,11 @@ describe('Entry List Actions Controller', () => {
             sys: {
               id: 'bar',
               contentType: {
-                sys: { id: 'bar-ct-id' }
-              }
-            }
-          }
-        }
+                sys: { id: 'bar-ct-id' },
+              },
+            },
+          },
+        },
       ]);
 
       scope.duplicateSelected();
@@ -314,7 +314,7 @@ describe('Entry List Actions Controller', () => {
       stubs.canPerformActionOnEntity.returns(true);
       stubs.getSelected.returns([
         makeEntity(canMethodName, stubs.action1),
-        makeEntity(canMethodName, stubs.action2)
+        makeEntity(canMethodName, stubs.action2),
       ]);
 
       expect(scope[methodName]()).toBeTruthy();
@@ -327,7 +327,7 @@ describe('Entry List Actions Controller', () => {
       stubs.canPerformActionOnEntity.returns(false);
       stubs.getSelected.returns([
         makeEntity(canMethodName, stubs.action1),
-        makeEntity(canMethodName, stubs.action2)
+        makeEntity(canMethodName, stubs.action2),
       ]);
 
       expect(scope[methodName]()).toBeFalsy();
@@ -339,7 +339,7 @@ describe('Entry List Actions Controller', () => {
       stubs.canPerformActionOnEntity.returns(true);
       stubs.getSelected.returns([
         makeEntity(canMethodName, stubs.action1),
-        makeEntity(canMethodName, stubs.action2)
+        makeEntity(canMethodName, stubs.action2),
       ]);
 
       expect(scope[methodName]()).toBeFalsy();
@@ -356,7 +356,7 @@ describe('Entry List Actions Controller', () => {
     stubs.action2.returns(false);
     stubs.getSelected.returns([
       makeEntity('isPublished', stubs.action1),
-      makeEntity('isPublished', stubs.action2)
+      makeEntity('isPublished', stubs.action2),
     ]);
 
     expect(scope.publishButtonName()).toBe('Publish');
@@ -367,7 +367,7 @@ describe('Entry List Actions Controller', () => {
     stubs.action2.returns(true);
     stubs.getSelected.returns([
       makeEntity('isPublished', stubs.action1),
-      makeEntity('isPublished', stubs.action2)
+      makeEntity('isPublished', stubs.action2),
     ]);
 
     expect(scope.publishButtonName()).toBe('Republish');
@@ -378,7 +378,7 @@ describe('Entry List Actions Controller', () => {
     stubs.action2.returns(false);
     stubs.getSelected.returns([
       makeEntity('isPublished', stubs.action1),
-      makeEntity('isPublished', stubs.action2)
+      makeEntity('isPublished', stubs.action2),
     ]);
 
     expect(scope.publishButtonName()).toBe('(Re)publish');

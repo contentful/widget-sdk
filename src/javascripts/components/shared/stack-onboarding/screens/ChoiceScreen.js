@@ -11,12 +11,12 @@ const store = getStore();
 export default class ChoiceScreen extends React.Component {
   static propTypes = {
     onContentChoice: PropTypes.func.isRequired,
-    onDevChoice: PropTypes.func
+    onDevChoice: PropTypes.func,
   };
 
   state = {
     isDevPathPending: false,
-    isDefaultPathPending: false
+    isDefaultPathPending: false,
   };
 
   renderBlock = ({ title, text, button }) => {
@@ -41,20 +41,20 @@ export default class ChoiceScreen extends React.Component {
 
   onDevChoice = async () => {
     this.setState({
-      isDevPathPending: true
+      isDevPathPending: true,
     });
     const newSpace = await this.props.onDevChoice();
     store.set(`${getStoragePrefix()}:currentStep`, {
       path: 'spaces.detail.onboarding.getStarted',
       params: {
-        spaceId: newSpace.sys.id
-      }
+        spaceId: newSpace.sys.id,
+      },
     });
   };
 
-  setChoiceInIntercom = choice => {
+  setChoiceInIntercom = (choice) => {
     updateUserInSegment({
-      onboardingChoice: choice
+      onboardingChoice: choice,
     });
   };
 
@@ -76,8 +76,8 @@ export default class ChoiceScreen extends React.Component {
         text: 'Explore content modeling',
         disabled: isButtonDisabled,
         isLoading: isDefaultPathPending,
-        'data-test-id': 'onboarding-content-choice-btn'
-      })
+        'data-test-id': 'onboarding-content-choice-btn',
+      }),
     });
 
     const developerChoice = this.renderBlock({
@@ -91,8 +91,8 @@ export default class ChoiceScreen extends React.Component {
         text: 'Deploy a website in 3 steps',
         disabled: isButtonDisabled,
         isLoading: isDevPathPending,
-        'data-test-id': 'onboarding-developer-choice-btn'
-      })
+        'data-test-id': 'onboarding-developer-choice-btn',
+      }),
     });
 
     return (

@@ -16,5 +16,5 @@ export default {
   INIT_COMMENTS_PANEL: 'sidebar:init-comments-panel',
   UPDATED_COMMENTS_COUNT: 'sidebar:updated-comments-count',
   WIDGET_REGISTERED: 'sidebar:widget-is-registered',
-  WIDGET_DEREGISTERED: 'sidebar:widget-is-registered'
+  WIDGET_DEREGISTERED: 'sidebar:widget-is-registered',
 };

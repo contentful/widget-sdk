@@ -5,14 +5,14 @@ import WebhookSecretHeaderDialog from './WebhookSecretHeaderDialog';
 
 const selectors = {
   confirmTestId: 'add-secret-header-button',
-  cancelTestId: 'close-secret-header-button'
+  cancelTestId: 'close-secret-header-button',
 };
 
 describe('webhooks/dialogs/WebhookSecretHeaderDialog', () => {
   const renderComponent = () => {
     const stubs = {
       onConfirm: jest.fn(),
-      onCancel: jest.fn()
+      onCancel: jest.fn(),
     };
     const wrapper = render(
       <WebhookSecretHeaderDialog isShown onCancel={stubs.onCancel} onConfirm={stubs.onConfirm} />
@@ -40,7 +40,7 @@ describe('webhooks/dialogs/WebhookSecretHeaderDialog', () => {
 
     expect(stubs.onConfirm).toHaveBeenCalledWith({
       key,
-      value
+      value,
     });
   });
 });

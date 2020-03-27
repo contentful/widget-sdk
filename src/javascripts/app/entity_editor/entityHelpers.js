@@ -13,7 +13,8 @@ import { transformHostname } from 'services/AssetUrlService';
  * We should collect all entity helper logic in one point and create that
  * object where it is needed.
  */
-const toInternalLocaleCode = localeCode => TheLocaleStore.toInternalCode(localeCode) || localeCode;
+const toInternalLocaleCode = (localeCode) =>
+  TheLocaleStore.toInternalCode(localeCode) || localeCode;
 
 export function newForLocale(localeCode) {
   const internalLocaleCode = toInternalLocaleCode(localeCode);
@@ -29,7 +30,7 @@ export function newForLocale(localeCode) {
      * @param {string} locale
      * @return {string|null}
      */
-    entityTitle: async function(data) {
+    entityTitle: async function (data) {
       const entity = await dataToEntity(data);
       return EntityFieldValueSpaceContext.entityTitle(entity, internalLocaleCode);
     },
@@ -45,7 +46,7 @@ export function newForLocale(localeCode) {
      * @param {string} locale
      * @return {string}
      */
-    entityDescription: async function(data) {
+    entityDescription: async function (data) {
       const entity = await dataToEntity(data);
       return EntityFieldValueSpaceContext.entityDescription(entity, internalLocaleCode);
     },
@@ -59,13 +60,13 @@ export function newForLocale(localeCode) {
      * @param {string} locale
      * @return {object|null}
      */
-    entityFile: entity => entityFile(entity, localeCode),
-    entryImage: async function(data) {
+    entityFile: (entity) => entityFile(entity, localeCode),
+    entryImage: async function (data) {
       const entity = await dataToEntity(data);
       return EntityFieldValueSpaceContext.entryImage(entity, internalLocaleCode);
     },
-    assetFile: asset => assetFile(asset, localeCode),
-    assetFileUrl: assetFileUrl
+    assetFile: (asset) => assetFile(asset, localeCode),
+    assetFileUrl: assetFileUrl,
   };
 }
 
@@ -100,7 +101,7 @@ function dataToEntity(data) {
   return {
     data: { fields: renamedFields, sys: data.sys },
     getType: _.constant(data.sys.type),
-    getContentTypeId: _.constant(contentTypeId)
+    getContentTypeId: _.constant(contentTypeId),
   };
 }
 
@@ -109,7 +110,7 @@ function dataToEntity(data) {
  * The locale might be missing in some cases, e.g. it was deleted.
  */
 function renameFieldLocales(fields) {
-  return _.mapValues(fields, field =>
+  return _.mapValues(fields, (field) =>
     _.mapKeys(field, (_, localeCode) => toInternalLocaleCode(localeCode))
   );
 }

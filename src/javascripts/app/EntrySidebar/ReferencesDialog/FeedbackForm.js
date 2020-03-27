@@ -10,7 +10,7 @@ import {
   Note,
   Notification,
   Button,
-  Subheading
+  Subheading,
 } from '@contentful/forma-36-react-components';
 import createMicroBackendsClient from 'MicroBackendsClient';
 import tokens from '@contentful/forma-36-tokens';
@@ -22,8 +22,8 @@ const styles = {
   buttonWrapper: css({ display: 'flex' }),
   textAreaHeader: css({
     fontSize: tokens.fontSizeM,
-    marginBottom: tokens.spacingS
-  })
+    marginBottom: tokens.spacingS,
+  }),
 };
 
 const textFieldMaxLength = 1024;
@@ -50,8 +50,8 @@ const FeedbackForm = ({ onClose }) => {
         about: 'Publish all references',
         target: 'cxPulitzerReleases',
         feedback,
-        ...userData
-      })
+        ...userData,
+      }),
     });
     setIsSubmitting(false);
     onClose();
@@ -71,8 +71,9 @@ const FeedbackForm = ({ onClose }) => {
         <Form
           onSubmit={() =>
             sendFeedbackForm({
-              feedback: `Would you feel confident publishing all these references together?: ${isUseful}, comment: ${commentValue ||
-                `none`}`
+              feedback: `Would you feel confident publishing all these references together?: ${isUseful}, comment: ${
+                commentValue || `none`
+              }`,
             })
           }
           spacing="condensed">
@@ -86,7 +87,7 @@ const FeedbackForm = ({ onClose }) => {
               className={styles.optionYes}
               value="yes"
               checked={isAnswerPositive}
-              onChange={e => {
+              onChange={(e) => {
                 setIsUseful(e.target.value);
                 setIsCommentFieldVisibile(true);
               }}
@@ -96,7 +97,7 @@ const FeedbackForm = ({ onClose }) => {
               value="no"
               id="no"
               checked={isUseful === 'no'}
-              onChange={e => {
+              onChange={(e) => {
                 setIsUseful(e.target.value);
                 setIsCommentFieldVisibile(true);
               }}
@@ -115,7 +116,7 @@ const FeedbackForm = ({ onClose }) => {
                       : "I don't feel confident because..."
                   }
                   maxLength={textFieldMaxLength}
-                  onChange={e => setCommentValue(e.target.value.substr(0, textFieldMaxLength))}
+                  onChange={(e) => setCommentValue(e.target.value.substr(0, textFieldMaxLength))}
                   value={commentValue}
                 />
               </FieldGroup>
@@ -154,7 +155,7 @@ const FeedbackForm = ({ onClose }) => {
 };
 
 FeedbackForm.propTypes = {
-  onClose: PropTypes.func
+  onClose: PropTypes.func,
 };
 
 export default FeedbackForm;

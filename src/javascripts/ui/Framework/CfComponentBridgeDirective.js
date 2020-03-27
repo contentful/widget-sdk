@@ -28,11 +28,11 @@ export default function register() {
   registerDirective('cfComponentBridge', () => ({
     restrict: 'E',
     scope: { component: '=' },
-    link: function($scope, $element) {
+    link: function ($scope, $element) {
       const mountPoint = createMountPoint($element.get(0));
       $scope.$watch('component', mountPoint.render);
       $scope.$on('$destroy', mountPoint.destroy);
-    }
+    },
   }));
 
   /**
@@ -78,17 +78,17 @@ export default function register() {
   registerDirective('cfComponentStoreBridge', () => ({
     restrict: 'E',
     scope: { component: '=' },
-    link: function($scope, $element) {
+    link: function ($scope, $element) {
       const c = $scope.component;
       const actions = bindActions(c.store, c.actions);
 
       const mountPoint = createMountPoint($element.get(0));
 
-      K.onValueScope($scope, c.store.state$, state => {
+      K.onValueScope($scope, c.store.state$, (state) => {
         mountPoint.render(c.render(state, actions));
       });
 
       $scope.$on('$destroy', mountPoint.destroy);
-    }
+    },
   }));
 }

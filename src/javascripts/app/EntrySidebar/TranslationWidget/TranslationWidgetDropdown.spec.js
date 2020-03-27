@@ -9,7 +9,7 @@ import { track } from 'analytics/Analytics';
 describe('EntrySidebar/TranslationWidgetDropdown', () => {
   const props = {
     emitter: {
-      emit: jest.fn()
+      emit: jest.fn(),
     },
     localeData: {
       privateLocales: [
@@ -17,19 +17,19 @@ describe('EntrySidebar/TranslationWidgetDropdown', () => {
           internal_code: 'en-HK',
           code: 'en-HK',
           default: true,
-          name: 'English (Hong Kong SAR China)'
+          name: 'English (Hong Kong SAR China)',
         },
         { internal_code: 'ru', code: 'ru', default: false, name: 'Russian' },
-        { internal_code: 'ar-AR', code: 'zh', default: false, name: 'Zhao (Azerbaijan)' }
+        { internal_code: 'ar-AR', code: 'zh', default: false, name: 'Zhao (Azerbaijan)' },
       ],
       focusedLocale: {
         internal_code: 'en-HK',
         code: 'en',
         default: true,
-        name: 'English (United States)'
+        name: 'English (United States)',
       },
-      errors: {}
-    }
+      errors: {},
+    },
   };
 
   const render = () => Enzyme.shallow(<TranslationWidgetDropdown {...props} />);
@@ -51,7 +51,7 @@ describe('EntrySidebar/TranslationWidgetDropdown', () => {
   describe('when a locale has 1 error', () => {
     beforeEach(() => {
       props.localeData.errors = {
-        'en-HK': [{}]
+        'en-HK': [{}],
       };
     });
 
@@ -63,7 +63,7 @@ describe('EntrySidebar/TranslationWidgetDropdown', () => {
   describe('when a locale has more than one 1 error', () => {
     beforeEach(() => {
       props.localeData.errors = {
-        'en-HK': [{}, {}]
+        'en-HK': [{}, {}],
       };
     });
 
@@ -76,7 +76,7 @@ describe('EntrySidebar/TranslationWidgetDropdown', () => {
     beforeEach(() => {
       props.localeData.errors = {
         'en-HK': [{}, {}],
-        ru: [{}]
+        ru: [{}],
       };
     });
 
@@ -96,13 +96,13 @@ describe('EntrySidebar/TranslationWidgetDropdown', () => {
         internal_code: 'ru',
         code: 'ru',
         default: false,
-        name: 'Russian'
+        name: 'Russian',
       });
     });
 
     it('tracks the change event', () => {
       expect(track).toHaveBeenCalledWith('translation_sidebar:change_focused_locale', {
-        currentMode: 'single'
+        currentMode: 'single',
       });
     });
   });

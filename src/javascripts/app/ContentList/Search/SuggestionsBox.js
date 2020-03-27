@@ -15,7 +15,7 @@ export default function SuggestionsBox({
   defaultFocus,
   onSelect,
   onKeyUp,
-  onKeyDown
+  onKeyDown,
 }) {
   const suggestions = items.map((field, index) => {
     return (
@@ -24,7 +24,7 @@ export default function SuggestionsBox({
         key={`${get(field, 'contentType.id', 'none')}::${field.queryKey}`}
         data-test-id={field.queryKey}
         tabIndex="0"
-        ref={el => {
+        ref={(el) => {
           if (defaultFocus.suggestionsFocusIndex === index && el) {
             el.focus();
           }
@@ -33,7 +33,7 @@ export default function SuggestionsBox({
           onSelect(field);
         }}
         onKeyUp={onKeyUp}
-        onKeyDown={e => {
+        onKeyDown={(e) => {
           if (Keys.enter(e)) {
             onSelect(field);
             e.stopPropagation();
@@ -48,7 +48,7 @@ export default function SuggestionsBox({
           data-test-id="contentType"
           style={{
             color: tokens.colorTextLightest,
-            flex: '0 0 30%'
+            flex: '0 0 30%',
           }}>
           {field.contentType ? field.contentType.name : 'All content types'}
         </div>
@@ -56,7 +56,7 @@ export default function SuggestionsBox({
           data-test-id="description"
           style={{
             flex: '0 0 30%',
-            color: tokens.colorTextLight
+            color: tokens.colorTextLight,
           }}>
           {field.description}
         </div>
@@ -80,7 +80,7 @@ SuggestionsBox.propTypes = {
   defaultFocus: PropTypes.object,
   onSelect: PropTypes.func,
   onKeyDown: PropTypes.func,
-  onKeyUp: PropTypes.func
+  onKeyUp: PropTypes.func,
 };
 
 const SearchHelpBanner = () => (
@@ -91,14 +91,14 @@ const SearchHelpBanner = () => (
       background: tokens.colorIceMid,
       borderTop: '1px solid ' + tokens.colorElementLight,
       height: '56px',
-      padding: '15px 20px'
+      padding: '15px 20px',
     }}>
     <InfoIcon />
     <p
       style={{
         color: tokens.colorTextLight,
         margin: '0',
-        marginLeft: '10px'
+        marginLeft: '10px',
       }}>
       Get more out of search. Here’s{' '}
       <a
@@ -116,11 +116,11 @@ class AutoHide extends React.Component {
   _isMounted = false;
 
   static propTypes = {
-    ms: PropTypes.number.isRequired
+    ms: PropTypes.number.isRequired,
   };
 
   state = {
-    isHidden: false
+    isHidden: false,
   };
 
   componentDidMount() {
@@ -136,9 +136,9 @@ class AutoHide extends React.Component {
 
   hideComponent = () => {
     if (this._isMounted) {
-      this.setState(previousState => ({
+      this.setState((previousState) => ({
         ...previousState,
-        isHidden: true
+        isHidden: true,
       }));
     }
   };
@@ -152,7 +152,7 @@ class SuggestionsList extends React.Component {
   static propTypes = {
     searchTerm: PropTypes.string,
     hasSuggestions: PropTypes.bool.isRequired,
-    children: PropTypes.node
+    children: PropTypes.node,
   };
 
   renderContent() {
@@ -165,14 +165,14 @@ class SuggestionsList extends React.Component {
           zIndex: 1,
           border: `solid ${tokens.colorBlueMid}`,
           borderWidth: '0 1px 1px 1px',
-          background: 'white'
+          background: 'white',
         }}>
         {hasSuggestions && (
           <div
             style={{
               maxHeight: '50vh',
               overflowX: 'hidden',
-              overflowY: 'auto'
+              overflowY: 'auto',
             }}>
             <div className="search-next__suggestions-header">
               <div className="search-next__suggestions__column">Field</div>

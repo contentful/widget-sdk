@@ -19,8 +19,8 @@ export class ExtensionEditorRoute extends React.Component {
     setDirty: PropTypes.func.isRequired,
     goToList: PropTypes.func.isRequired,
     cma: PropTypes.shape({
-      getExtension: PropTypes.func.isRequired
-    }).isRequired
+      getExtension: PropTypes.func.isRequired,
+    }).isRequired,
   };
 
   render() {

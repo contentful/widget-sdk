@@ -17,5 +17,5 @@ export default function RestrictedAction({ actionName }) {
 }
 
 RestrictedAction.propTypes = {
-  actionName: PropTypes.string.isRequired
+  actionName: PropTypes.string.isRequired,
 };

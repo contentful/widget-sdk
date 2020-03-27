@@ -5,7 +5,7 @@ import {
   Form,
   TextField,
   Button,
-  Notification
+  Notification,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
@@ -16,23 +16,23 @@ import { get } from 'lodash';
 
 const styles = {
   controlsPanel: css({ display: 'flex' }),
-  marginLeftM: css({ marginLeft: tokens.spacingM })
+  marginLeftM: css({ marginLeft: tokens.spacingM }),
 };
 
 const createFieldData = (initialValue = '') => ({
   interacted: false,
   blurred: false,
   value: initialValue,
-  serverValidationMessage: null
+  serverValidationMessage: null,
 });
 
-const initializeReducer = user => {
+const initializeReducer = (user) => {
   const {
-    sys: { version: currentVersion }
+    sys: { version: currentVersion },
   } = user;
   const fields = {
     newPassword: createFieldData(),
-    newPasswordConfirm: createFieldData()
+    newPasswordConfirm: createFieldData(),
   };
 
   if (user.passwordSet) {
@@ -43,7 +43,7 @@ const initializeReducer = user => {
     fields,
     formInvalid: false,
     submitting: false,
-    currentVersion
+    currentVersion,
   };
 };
 
@@ -57,15 +57,15 @@ const reducer = createImmerReducer({
   SET_FIELD_BLURRED: (state, { payload }) => {
     state.fields[payload.field].blurred = true;
   },
-  SET_ALL_FIELDS_BLURRED: state => {
-    Object.values(state.fields).forEach(fieldData => {
+  SET_ALL_FIELDS_BLURRED: (state) => {
+    Object.values(state.fields).forEach((fieldData) => {
       fieldData.blurred = true;
     });
   },
   SET_SUBMITTING: (state, { payload }) => {
     state.submitting = payload;
   },
-  SET_FORM_INVALID: state => {
+  SET_FORM_INVALID: (state) => {
     state.formInvalid = true;
   },
   SERVER_VALIDATION_FAILURE: (state, { payload }) => {
@@ -74,14 +74,14 @@ const reducer = createImmerReducer({
   },
   RESET: (_, { payload }) => {
     return initializeReducer(payload);
-  }
+  },
 });
 
 function handlePasswordChangeErrors(errorDetails, dispatch) {
   errorDetails.forEach(({ path, name }) => {
     const pathFieldMapping = {
       current_password: 'currentPassword',
-      password: 'newPassword'
+      password: 'newPassword',
     };
     let message;
 
@@ -102,7 +102,7 @@ function handlePasswordChangeErrors(errorDetails, dispatch) {
     if (message) {
       dispatch({
         type: 'SERVER_VALIDATION_FAILURE',
-        payload: { field: pathFieldMapping[path], value: message }
+        payload: { field: pathFieldMapping[path], value: message },
       });
     }
   });
@@ -115,7 +115,7 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
     dispatch({ type: 'SET_SUBMITTING', payload: true });
 
     const data = {
-      password: formData.fields.newPassword.value
+      password: formData.fields.newPassword.value,
     };
 
     if (formData.fields.currentPassword) {
@@ -127,7 +127,7 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
     try {
       response = await updateUserData({
         version: user.sys.version,
-        data
+        data,
       });
     } catch (err) {
       const { data } = err;
@@ -149,7 +149,7 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
     dispatch({ type: 'SET_ALL_FIELDS_BLURRED' });
 
     const formIsInvalid = Boolean(
-      Object.keys(formData.fields).find(fieldName =>
+      Object.keys(formData.fields).find((fieldName) =>
         getValidationMessageFor(formData.fields, fieldName)
       )
     );
@@ -166,7 +166,7 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
   const fields = formData.fields;
   const submitButtonDisabled = Boolean(
     formData.submitting ||
-      !Object.values(formData.fields).find(field => field.interacted) ||
+      !Object.values(formData.fields).find((field) => field.interacted) ||
       formData.formInvalid
   );
 
@@ -197,10 +197,10 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
             id="current-password"
             name="current-password"
             value={fields.currentPassword.value}
-            onChange={e =>
+            onChange={(e) =>
               dispatch({
                 type: 'UPDATE_FIELD_VALUE',
-                payload: { field: 'currentPassword', value: e.target.value }
+                payload: { field: 'currentPassword', value: e.target.value },
               })
             }
             onBlur={() =>
@@ -221,10 +221,10 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
           id="new-password"
           name="new-password"
           value={fields.newPassword.value}
-          onChange={e =>
+          onChange={(e) =>
             dispatch({
               type: 'UPDATE_FIELD_VALUE',
-              payload: { field: 'newPassword', value: e.target.value }
+              payload: { field: 'newPassword', value: e.target.value },
             })
           }
           onBlur={() => dispatch({ type: 'SET_FIELD_BLURRED', payload: { field: 'newPassword' } })}
@@ -242,10 +242,10 @@ export default function ChangePasswordModal({ user, onConfirm, onCancel, isShown
           id="new-password-confirm"
           name="new-password-confirm"
           value={fields.newPasswordConfirm.value}
-          onChange={e =>
+          onChange={(e) =>
             dispatch({
               type: 'UPDATE_FIELD_VALUE',
-              payload: { field: 'newPasswordConfirm', value: e.target.value }
+              payload: { field: 'newPasswordConfirm', value: e.target.value },
             })
           }
           onBlur={() =>
@@ -288,5 +288,5 @@ ChangePasswordModal.propTypes = {
   onConfirm: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
   isShown: PropTypes.bool.isRequired,
-  user: PropTypes.object.isRequired
+  user: PropTypes.object.isRequired,
 };

@@ -8,9 +8,9 @@ import createOtDocMock from 'test/helpers/mocks/ot_doc';
 const OtDocMock = createOtDocMock();
 
 describe('data/document/ResourceStateManager', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     this.system.set('access_control/AccessChecker', {
-      canUpdateEntity: sinon.stub().returns(true)
+      canUpdateEntity: sinon.stub().returns(true),
     });
 
     const { Action, State } = await this.system.import('data/document/ResourceStateManager');
@@ -31,20 +31,20 @@ describe('data/document/ResourceStateManager', () => {
         type: 'Entry',
         version: 8,
         contentType: {
-          sys: { id: 'CTID' }
+          sys: { id: 'CTID' },
         },
         environment: {
-          sys: { id: 'ENV_ID' }
-        }
+          sys: { id: 'ENV_ID' },
+        },
       },
-      fields: {}
+      fields: {},
     };
 
     endpoint.stores.entries['ENTITY_ID'] = entityData;
 
     const entity = {
       data: entityData,
-      setDeleted: sinon.stub()
+      setDeleted: sinon.stub(),
     };
 
     this.sjsDoc = new OtDocMock(entityData);
@@ -52,11 +52,11 @@ describe('data/document/ResourceStateManager', () => {
     const docLoader = {
       doc: K.createMockProperty(DocLoad.None()),
       destroy: sinon.spy(),
-      close: sinon.spy()
+      close: sinon.spy(),
     };
 
     const docConnection = {
-      getDocLoader: sinon.stub().returns(docLoader)
+      getDocLoader: sinon.stub().returns(docLoader),
     };
 
     this.doc = Doc.create(docConnection, entity, {}, { sys: { id: 'USER' } }, this.spaceEndpoint);
@@ -66,19 +66,19 @@ describe('data/document/ResourceStateManager', () => {
     docLoader.doc.set(DocLoad.Doc(this.sjsDoc));
   });
 
-  it('applies actions and makes HTTP requests', async function() {
+  it('applies actions and makes HTTP requests', async function () {
     await this.doc.resourceState.apply(this.Action.Publish());
     sinon.assert.calledWith(this.spaceEndpoint, {
       method: 'PUT',
       path: ['entries', 'ENTITY_ID', 'published'],
-      version: 8
+      version: 8,
     });
     K.assertMatchCurrentValue(
       this.doc.sysProperty,
       sinon.match({
         version: 9,
         publishedVersion: 8,
-        archivedVersion: undefined
+        archivedVersion: undefined,
       })
     );
     K.assertCurrentValue(this.doc.resourceState.state$, this.State.Published());
@@ -87,19 +87,19 @@ describe('data/document/ResourceStateManager', () => {
     sinon.assert.calledWith(this.spaceEndpoint, {
       method: 'DELETE',
       path: ['entries', 'ENTITY_ID', 'published'],
-      version: 9
+      version: 9,
     });
     sinon.assert.calledWith(this.spaceEndpoint, {
       method: 'PUT',
       path: ['entries', 'ENTITY_ID', 'archived'],
-      version: 10
+      version: 10,
     });
     K.assertMatchCurrentValue(
       this.doc.sysProperty,
       sinon.match({
         version: 11,
         publishedVersion: undefined,
-        archivedVersion: 10
+        archivedVersion: 10,
       })
     );
     K.assertCurrentValue(this.doc.resourceState.state$, this.State.Archived());
@@ -108,14 +108,14 @@ describe('data/document/ResourceStateManager', () => {
     sinon.assert.calledWith(this.spaceEndpoint, {
       method: 'DELETE',
       path: ['entries', 'ENTITY_ID', 'archived'],
-      version: 11
+      version: 11,
     });
     K.assertMatchCurrentValue(
       this.doc.sysProperty,
       sinon.match({
         version: 12,
         publishedVersion: undefined,
-        archivedVersion: undefined
+        archivedVersion: undefined,
       })
     );
     K.assertCurrentValue(this.doc.resourceState.state$, this.State.Draft());
@@ -124,7 +124,7 @@ describe('data/document/ResourceStateManager', () => {
     sinon.assert.calledWith(this.spaceEndpoint, {
       method: 'DELETE',
       path: ['entries', 'ENTITY_ID'],
-      version: 12
+      version: 12,
     });
     K.assertMatchCurrentValue(
       this.doc.sysProperty,
@@ -132,13 +132,13 @@ describe('data/document/ResourceStateManager', () => {
         version: 13,
         deletedVersion: 12,
         publishedVersion: undefined,
-        archivedVersion: undefined
+        archivedVersion: undefined,
       })
     );
     K.assertCurrentValue(this.doc.resourceState.state$, this.State.Deleted());
   });
 
-  it('changes state$ when sys property changes', function() {
+  it('changes state$ when sys property changes', function () {
     K.assertCurrentValue(this.doc.resourceState.state$, this.State.Draft());
 
     this.sjsDoc.setAt(['sys', 'publishedVersion'], 8);
@@ -155,7 +155,7 @@ describe('data/document/ResourceStateManager', () => {
     K.assertCurrentValue(this.doc.resourceState.state$, this.State.Deleted());
   });
 
-  it('ends streams when document is destroyed', function() {
+  it('ends streams when document is destroyed', function () {
     const endState = sinon.spy();
     const endStateChange = sinon.spy();
 

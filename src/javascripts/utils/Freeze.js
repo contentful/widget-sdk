@@ -32,7 +32,7 @@ export function deepFreeze(o) {
   if (Array.isArray(o)) {
     o.forEach(deepFreeze);
   } else if (isObjectLike(o)) {
-    Object.getOwnPropertyNames(o).forEach(prop => {
+    Object.getOwnPropertyNames(o).forEach((prop) => {
       deepFreeze(o[prop]);
     });
   }

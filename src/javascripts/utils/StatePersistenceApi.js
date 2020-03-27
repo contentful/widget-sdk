@@ -8,7 +8,7 @@ export async function fetchUserState(key) {
   return usersEndpoint(
     {
       method: 'GET',
-      path: ['states', key]
+      path: ['states', key],
     },
     alphaHeader
   );
@@ -21,7 +21,7 @@ export async function updateUserState(key, { version, ...data }) {
       method: 'PUT',
       path: ['states', key],
       data,
-      version
+      version,
     },
     alphaHeader
   );

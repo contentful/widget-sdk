@@ -12,11 +12,11 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',
-    flexDirection: 'column'
+    flexDirection: 'column',
   }),
   text: css({
-    marginTop: tokens.spacingS
-  })
+    marginTop: tokens.spacingS,
+  }),
 };
 
 export default function CommentsPanelEmptyState() {

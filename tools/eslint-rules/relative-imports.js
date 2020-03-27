@@ -31,11 +31,11 @@ module.exports = {
 
         context.report({
           node: sourceNode,
-          message: `Deep parent relative imports are not allowed. ${additionalMessage}`
+          message: `Deep parent relative imports are not allowed. ${additionalMessage}`,
         });
       }
     }
 
     return moduleVisitor.default(checkSourceValue, context.options[0]);
-  }
+  },
 };

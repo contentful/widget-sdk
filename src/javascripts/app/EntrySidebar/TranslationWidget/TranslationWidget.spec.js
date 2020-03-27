@@ -11,7 +11,7 @@ describe('EntrySidebar/TranslationWidget', () => {
     { internal_code: 'en-US', code: 'en', name: 'English (United States)', default: true },
     { internal_code: 'de-DE', code: 'de', name: 'German (Germany)', default: false },
     { internal_code: 'es-AR', code: 'es', name: 'Spanish (Argentina)', default: false },
-    { internal_code: 'ru', code: 'ru', name: 'Russian', default: false }
+    { internal_code: 'ru', code: 'ru', name: 'Russian', default: false },
   ];
 
   const props = {
@@ -21,11 +21,11 @@ describe('EntrySidebar/TranslationWidget', () => {
       errors: {},
       focusedLocale: locales[0],
       isLocaleActive: () => {},
-      isSingleLocaleModeOn: false
+      isSingleLocaleModeOn: false,
     },
     emitter: {
-      emit: jest.fn()
-    }
+      emit: jest.fn(),
+    },
   };
   const render = () => Enzyme.shallow(<TranslationWidget {...props} />);
 
@@ -40,11 +40,7 @@ describe('EntrySidebar/TranslationWidget', () => {
 
     describe('and the locale mode is change', () => {
       beforeEach(() => {
-        const headerNode = Enzyme.shallow(
-          render()
-            .find(EntrySidebarWidget)
-            .prop('headerNode')
-        );
+        const headerNode = Enzyme.shallow(render().find(EntrySidebarWidget).prop('headerNode'));
         headerNode.find('select').prop('onChange')({ target: { value: 'multiple' } });
       });
 
@@ -57,7 +53,7 @@ describe('EntrySidebar/TranslationWidget', () => {
 
       it('tracks the change event', () => {
         expect(track).toHaveBeenCalledWith('translation_sidebar:toggle_widget_mode', {
-          currentMode: 'multiple'
+          currentMode: 'multiple',
         });
       });
     });
@@ -74,11 +70,7 @@ describe('EntrySidebar/TranslationWidget', () => {
 
     describe('and the locale mode is changed', () => {
       beforeEach(() => {
-        const headerNode = Enzyme.shallow(
-          render()
-            .find(EntrySidebarWidget)
-            .prop('headerNode')
-        );
+        const headerNode = Enzyme.shallow(render().find(EntrySidebarWidget).prop('headerNode'));
         headerNode.find('select').prop('onChange')({ target: { value: 'single' } });
       });
 
@@ -91,7 +83,7 @@ describe('EntrySidebar/TranslationWidget', () => {
 
       it('tracks the change event', () => {
         expect(track).toHaveBeenCalledWith('translation_sidebar:toggle_widget_mode', {
-          currentMode: 'single'
+          currentMode: 'single',
         });
       });
     });

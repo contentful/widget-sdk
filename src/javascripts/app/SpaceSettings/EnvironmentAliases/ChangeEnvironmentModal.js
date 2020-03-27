@@ -13,7 +13,7 @@ import {
   Modal,
   Dropdown,
   Paragraph,
-  Note
+  Note,
 } from '@contentful/forma-36-react-components';
 import * as logger from 'services/logger';
 import EnvironmentDetails from 'app/common/EnvironmentDetails';
@@ -22,7 +22,7 @@ import { aliasStyles } from './SharedStyles';
 import { spacingM, spacingXs } from '@contentful/forma-36-tokens';
 import {
   changeEnvironmentAbort,
-  changeEnvironmentConfirm
+  changeEnvironmentConfirm,
 } from 'analytics/events/EnvironmentAliases';
 import { CodeFragment } from 'ui/Content';
 import AnimateHeight from 'react-animate-height';
@@ -31,7 +31,7 @@ import { triggerAliasChangedToast } from 'app/SpaceSettings/EnvironmentAliases/N
 const changeEnvironmentModalStyles = {
   dropdown: css({
     width: '100%',
-    height: '3.5rem'
+    height: '3.5rem',
   }),
   dropdownToggle: css({
     width: '100%',
@@ -39,27 +39,27 @@ const changeEnvironmentModalStyles = {
     backgroundColor: 'white',
     '& > span': {
       display: 'flex',
-      justifyContent: 'space-between'
-    }
+      justifyContent: 'space-between',
+    },
   }),
   list: css({
-    padding: 0
+    padding: 0,
   }),
   dropdownContainer: css({
-    zIndex: 1001
+    zIndex: 1001,
   }),
   header: css({
-    marginBottom: spacingM
+    marginBottom: spacingM,
   }),
   subHeader: css({
-    marginTop: spacingM
+    marginTop: spacingM,
   }),
   changeNotice: css({
     paddingTop: spacingXs,
     '& > span': {
-      verticalAlign: 'middle'
-    }
-  })
+      verticalAlign: 'middle',
+    },
+  }),
 };
 
 ChangeEnvironmentModal.propTypes = {
@@ -68,15 +68,15 @@ ChangeEnvironmentModal.propTypes = {
   setModalOpen: PropTypes.func.isRequired,
   alias: PropTypes.shape({
     sys: PropTypes.shape({
-      id: PropTypes.id
-    })
+      id: PropTypes.id,
+    }),
   }),
   targetEnv: PropTypes.shape({
     aliases: PropTypes.arrayOf(PropTypes.string).isRequired,
     id: PropTypes.string.isRequired,
-    payload: PropTypes.object.isRequired
+    payload: PropTypes.object.isRequired,
   }),
-  environments: PropTypes.array.isRequired
+  environments: PropTypes.array.isRequired,
 };
 
 export default function ChangeEnvironmentModal({
@@ -85,7 +85,7 @@ export default function ChangeEnvironmentModal({
   setModalOpen,
   alias,
   targetEnv: { aliases, id: oldTarget, payload },
-  environments
+  environments,
 }) {
   const initialAliasedEnvironment = 'Select environment';
   const [dropDownOpen, setDropDownOpen] = useState(false);
@@ -94,7 +94,7 @@ export default function ChangeEnvironmentModal({
 
   useEffect(() => setNewTarget(initialAliasedEnvironment), [oldTarget]);
 
-  const select = aliasedEnvironment => {
+  const select = (aliasedEnvironment) => {
     setNewTarget(aliasedEnvironment);
     setDropDownOpen(false);
   };
@@ -106,7 +106,7 @@ export default function ChangeEnvironmentModal({
         spaceId,
         alias,
         oldTarget,
-        newTarget
+        newTarget,
       });
       changeEnvironmentConfirm();
       setModalOpen(false);

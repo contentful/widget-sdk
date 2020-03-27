@@ -41,8 +41,8 @@ const AdminSpaceHome = ({ spaceName, spaceId, orgId, isSupportEnabled, hasTeamsE
                 headerText: (
                   <span className={styles.demiBold}>Learn what’s possible with Contentful</span>
                 ),
-                content: <LearnAboutContentful />
-              }
+                content: <LearnAboutContentful />,
+              },
             ]}
           />
         </WidgetContainer.Col>
@@ -79,7 +79,7 @@ AdminSpaceHome.propTypes = {
   spaceId: PropTypes.string.isRequired,
   orgId: PropTypes.string.isRequired,
   isSupportEnabled: PropTypes.bool.isRequired,
-  hasTeamsEnabled: PropTypes.bool.isRequired
+  hasTeamsEnabled: PropTypes.bool.isRequired,
 };
 
 export default AdminSpaceHome;

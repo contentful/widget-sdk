@@ -37,26 +37,26 @@ export default function create(spaceEndpoint) {
     remove,
     create,
     getAll,
-    refresh
+    refresh,
   };
 
   function get(id) {
     return spaceEndpoint({
       method: 'GET',
-      path: ['api_keys', id]
+      path: ['api_keys', id],
     }).then(resolvePreviewKey);
   }
 
   function create(name, description) {
     return getNewName(name)
-      .then(uniqueName => {
+      .then((uniqueName) => {
         return spaceEndpoint({
           method: 'POST',
           path: ['api_keys'],
-          data: { name: uniqueName, description }
+          data: { name: uniqueName, description },
         });
       })
-      .then(data => {
+      .then((data) => {
         refresh();
         return resolvePreviewKey(data);
       });
@@ -71,8 +71,8 @@ export default function create(spaceEndpoint) {
       method: 'PUT',
       path: ['api_keys', id],
       data: payload,
-      version
-    }).then(data => {
+      version,
+    }).then((data) => {
       refresh();
       return resolvePreviewKey(data);
     });
@@ -81,7 +81,7 @@ export default function create(spaceEndpoint) {
   function remove(id) {
     return spaceEndpoint({
       method: 'DELETE',
-      path: ['api_keys', id]
+      path: ['api_keys', id],
     }).then(() => {
       refresh();
     });
@@ -93,8 +93,8 @@ export default function create(spaceEndpoint) {
       path: ['api_keys'],
       // TODO Maximum limit allowed by the API. We should paginate
       // this.
-      query: { limit: '100' }
-    }).then(response => response.items);
+      query: { limit: '100' },
+    }).then((response) => response.items);
     return deliveryKeys;
   }
 
@@ -108,7 +108,7 @@ export default function create(spaceEndpoint) {
    */
   function resolvePreviewKey(apiKey) {
     if (apiKey.preview_api_key) {
-      return getPreviewKey(apiKey.preview_api_key.sys.id).then(previewKey => {
+      return getPreviewKey(apiKey.preview_api_key.sys.id).then((previewKey) => {
         apiKey.preview_api_key = previewKey;
         return apiKey;
       });
@@ -120,7 +120,7 @@ export default function create(spaceEndpoint) {
   function getPreviewKey(id) {
     return spaceEndpoint({
       method: 'GET',
-      path: ['preview_api_keys', id]
+      path: ['preview_api_keys', id],
     });
   }
 
@@ -130,8 +130,8 @@ export default function create(spaceEndpoint) {
    */
   function getNewName(base) {
     let i = 1;
-    return getAll().then(keys => {
-      const names = keys.map(k => k.name);
+    return getAll().then((keys) => {
+      const names = keys.map((k) => k.name);
       /* eslint no-constant-condition: off */
       while (true) {
         const name = base + ' ' + i;

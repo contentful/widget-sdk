@@ -25,7 +25,7 @@ const VOID_ELEMENTS = [
   'param',
   'command',
   'keygen',
-  'source'
+  'source',
 ];
 
 export const h = htmlH;
@@ -77,7 +77,7 @@ function htmlH(elSpec, props, children) {
     return key === 'style' ? renderStyles(value) : value;
   });
 
-  children = children.filter(c => typeof c === 'string').join('');
+  children = children.filter((c) => typeof c === 'string').join('');
 
   return createHTMLString(tag, props, children);
 }
@@ -107,7 +107,7 @@ function renderStyles(styles) {
     return styles;
   } else {
     return Object.keys(styles)
-      .map(prop => {
+      .map((prop) => {
         return `${kebabCase(prop)}: ${styles[prop]}`;
       })
       .join(';');
@@ -127,7 +127,7 @@ function createHTMLString(tag, attrs, content) {
   }
 
   attrs = Object.keys(attrs)
-    .map(attr => {
+    .map((attr) => {
       const value = attrs[attr];
       if (value === true) {
         return attr;

@@ -12,13 +12,13 @@ const styles = {
     fontSize: tokens.fontSizeL,
     marginTop: '2px',
     fontWeight: 'bold',
-    lineHeight: 1
+    lineHeight: 1,
   }),
   icon: css({
-    marginLeft: tokens.spacingL
+    marginLeft: tokens.spacingL,
   }),
   contentType: css({
-    fontSize: tokens.fontSizeS
+    fontSize: tokens.fontSizeS,
   }),
   wrapper: css({
     paddingRight: tokens.spacingS,
@@ -27,10 +27,10 @@ const styles = {
     cursor: 'pointer',
     WebkitBoxFlex: '1',
     msFlexPositive: '1',
-    flexGrow: '1'
+    flexGrow: '1',
   }),
   titleWrapper: css({
-    padding: `${tokens.spacingM} ${tokens.spacingXs}`
+    padding: `${tokens.spacingM} ${tokens.spacingXs}`,
   }),
   expander: css({
     fontFamily: "'FontAwesome'",
@@ -41,15 +41,15 @@ const styles = {
     alignSelf: 'center',
     transition: 'transform 0.1s linear',
     '&::before': {
-      content: `'\f0d7'`
-    }
+      content: `'\f0d7'`,
+    },
   }),
   contenType: css({
-    color: tokens.colorTextLight
+    color: tokens.colorTextLight,
   }),
   expanderCollapsed: css({
-    transform: 'rotate(-90deg)'
-  })
+    transform: 'rotate(-90deg)',
+  }),
 };
 
 export default function BulkEditorTitle({ title, isCollapsed, entityInfo }) {
@@ -70,5 +70,5 @@ export default function BulkEditorTitle({ title, isCollapsed, entityInfo }) {
 BulkEditorTitle.propTypes = {
   title: PropTypes.string,
   entityInfo: PropTypes.shape({ contentType: PropTypes.shape({ name: PropTypes.string }) }),
-  isCollapsed: PropTypes.bool
+  isCollapsed: PropTypes.bool,
 };

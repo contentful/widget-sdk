@@ -4,7 +4,7 @@ import {
   InlineEntryCard,
   DropdownListItem,
   DropdownList,
-  Icon
+  Icon,
 } from '@contentful/forma-36-react-components';
 import { ScheduledIconWithTooltip } from 'app/widgets/shared/FetchedEntityCard/ScheduledIconWithTooltip';
 
@@ -21,7 +21,7 @@ export default class EntryInlineEmbed extends React.Component {
     isReadOnly: PropTypes.bool.isRequired,
     onRemove: PropTypes.func,
     onOpenEntity: PropTypes.func,
-    onEntityFetchComplete: PropTypes.func
+    onEntityFetchComplete: PropTypes.func,
   };
 
   renderMissingNode() {
@@ -75,7 +75,7 @@ export default class EntryInlineEmbed extends React.Component {
         entityId={entryId}
         entityType="Entry"
         localeCode={widgetAPI.field.locale}
-        render={fetchEntityResult => {
+        render={(fetchEntityResult) => {
           if (fetchEntityResult.requestStatus !== RequestStatus.Pending) {
             onEntityFetchComplete && onEntityFetchComplete();
           }

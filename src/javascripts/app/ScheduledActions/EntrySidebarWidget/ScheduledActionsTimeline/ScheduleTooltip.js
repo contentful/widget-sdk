@@ -12,29 +12,29 @@ import { css } from 'emotion';
 const styles = {
   statusTag: css({
     marginLeft: tokens.spacingM,
-    zIndex: '0 !important'
+    zIndex: '0 !important',
   }),
   positiveColor: css({
-    color: tokens.colorPositive
+    color: tokens.colorPositive,
   }),
   secondaryColor: css({
-    color: tokens.colorElementDarkest
+    color: tokens.colorElementDarkest,
   }),
   marginRightXS: css({
-    marginRight: tokens.spacing2Xs
+    marginRight: tokens.spacing2Xs,
   }),
   paragraph: css({
     textAlign: 'center',
-    color: tokens.colorElementDarkest
+    color: tokens.colorElementDarkest,
   }),
   time: {
-    color: tokens.colorElementLight
-  }
+    color: tokens.colorElementLight,
+  },
 };
 
 const actionColors = {
   [ScheduledActionActions.Publish]: 'positive',
-  [ScheduledActionActions.Unpublish]: 'secondary'
+  [ScheduledActionActions.Unpublish]: 'secondary',
 };
 
 const ScheduleTooltipContent = ({ job, jobsCount }) => {
@@ -71,18 +71,19 @@ const ScheduleTooltipContent = ({ job, jobsCount }) => {
 };
 
 const Job = PropTypes.shape({
-  action: PropTypes.oneOf(Object.keys(ScheduledActionActions).map(x => x.toLowerCase())).isRequired,
+  action: PropTypes.oneOf(Object.keys(ScheduledActionActions).map((x) => x.toLowerCase()))
+    .isRequired,
   sys: PropTypes.shape({
-    id: PropTypes.string.isRequired
+    id: PropTypes.string.isRequired,
   }).isRequired,
   scheduledFor: PropTypes.shape({
-    datetime: PropTypes.string.isRequired
-  })
+    datetime: PropTypes.string.isRequired,
+  }),
 });
 
 ScheduleTooltipContent.propTypes = {
   job: Job,
-  jobsCount: PropTypes.number
+  jobsCount: PropTypes.number,
 };
 
 const ScheduleTooltip = ({ job, jobsCount, jobs, filter, children }) => {
@@ -108,11 +109,11 @@ ScheduleTooltip.propTypes = {
   jobs: PropTypes.arrayOf(Job),
   filter: PropTypes.func,
   jobsCount: PropTypes.number,
-  children: PropTypes.node.isRequired
+  children: PropTypes.node.isRequired,
 };
 
 ScheduleTooltip.defaultProps = {
-  jobsCount: 0
+  jobsCount: 0,
 };
 
 export { ScheduleTooltipContent };

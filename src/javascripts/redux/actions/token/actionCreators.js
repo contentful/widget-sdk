@@ -1,19 +1,19 @@
 import * as actions from './actions';
 
 export function updateOrganizationsFromToken(organizations) {
-  return dispatch => {
+  return (dispatch) => {
     dispatch(actions.organizationsUpdateFromToken(organizations));
   };
 }
 
 export function updateSpacesByOrgIdFromToken(spaces) {
-  return dispatch => {
+  return (dispatch) => {
     dispatch(actions.spacesByOrgUpdateFromToken(spaces));
   };
 }
 
 export function updateUserFromToken(spaces) {
-  return dispatch => {
+  return (dispatch) => {
     dispatch(actions.userUpdateFromToken(spaces));
   };
 }

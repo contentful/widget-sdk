@@ -22,20 +22,20 @@ const UNAUTHORIZED = 401;
 export default function wrapWithAuth(auth, request) {
   const $q = getModule('$q');
 
-  return params =>
-    auth.getToken().then(token => {
+  return (params) =>
+    auth.getToken().then((token) => {
       return requestWithToken(params, token, 1);
     });
 
   function requestWithToken(params, token, retry) {
     params = clone(params);
     params.headers = assign({}, params.headers, {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     });
 
-    return request(params).catch(err => {
+    return request(params).catch((err) => {
       if (err.status === UNAUTHORIZED && retry > 0) {
-        return ensureNewToken(token).then(token => {
+        return ensureNewToken(token).then((token) => {
           return requestWithToken(params, token, retry - 1);
         });
       } else {
@@ -47,7 +47,7 @@ export default function wrapWithAuth(auth, request) {
   // Instead of retrying immediately we get the current token again in
   // case some other thread has refreshed it in the mean time.
   function ensureNewToken(oldToken) {
-    return auth.getToken().then(newToken => {
+    return auth.getToken().then((newToken) => {
       if (newToken === oldToken) {
         return auth.refreshToken();
       } else {

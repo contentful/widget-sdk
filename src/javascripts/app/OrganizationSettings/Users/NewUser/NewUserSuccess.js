@@ -7,7 +7,7 @@ import {
   Heading,
   Paragraph,
   Textarea,
-  Subheading
+  Subheading,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';
@@ -16,18 +16,18 @@ import StateLink from 'app/common/StateLink';
 import { isForbidden } from 'utils/ServerErrorUtils';
 
 const noteStyle = css({
-  marginBottom: tokens.spacingS
+  marginBottom: tokens.spacingS,
 });
 
 const failedEmailsStyle = css({
   marginBottom: tokens.spacingS,
   textarea: {
-    resize: 'none'
-  }
+    resize: 'none',
+  },
 });
 
 const linkStyle = css({
-  marginLeft: tokens.spacingM
+  marginLeft: tokens.spacingM,
 });
 
 export default function NewUserSuccess({ failures = [], successes = [], onRestart, orgId }) {
@@ -94,11 +94,11 @@ NewUserSuccess.propTypes = {
   failures: PropTypes.arrayOf(
     PropTypes.shape({
       email: PropTypes.string.isRequired,
-      error: PropTypes.instanceOf(Error)
+      error: PropTypes.instanceOf(Error),
     })
   ).isRequired,
   successes: PropTypes.arrayOf(PropTypes.string).isRequired,
-  orgId: PropTypes.string.isRequired
+  orgId: PropTypes.string.isRequired,
 };
 
 function NewUserFailures({ failures = [] }) {
@@ -144,7 +144,7 @@ NewUserFailures.propTypes = {
   failures: PropTypes.arrayOf(
     PropTypes.shape({
       email: PropTypes.string.isRequired,
-      error: PropTypes.instanceOf(Error)
+      error: PropTypes.instanceOf(Error),
     })
-  ).isRequired
+  ).isRequired,
 };

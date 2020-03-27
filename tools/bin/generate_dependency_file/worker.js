@@ -4,7 +4,7 @@ const babel = require('@babel/core');
 const { createBabelOptions } = require('../../app-babel-options');
 const createWebpackConfig = require('../../webpack.config');
 
-process.on('message', data => {
+process.on('message', (data) => {
   if (data.files) {
     const { files } = data;
 
@@ -58,7 +58,7 @@ function determineDependencies(p) {
       if (isExternalImport(value)) {
         imports.push(value);
       }
-    }
+    },
   });
 
   return imports;

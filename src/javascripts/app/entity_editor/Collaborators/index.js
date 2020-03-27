@@ -12,7 +12,7 @@ const styles = {
   collaborators: css({
     display: ['-webkit-box', '-ms-flexbox', 'flex'],
     msFlexWrap: 'nowrap',
-    flexWrap: 'nowrap'
+    flexWrap: 'nowrap',
   }),
   collaboratorsItem: css({ overflow: 'hidden', marginLeft: tokens.spacingXs }),
   collaboratorsAvatar: css({ display: 'block', width: '30px', height: '30px' }),
@@ -25,8 +25,8 @@ const styles = {
     justifyContent: 'space-between',
     msFlexAlign: 'center',
     WebkitBoxAlign: 'center',
-    alignItems: 'center'
-  })
+    alignItems: 'center',
+  }),
 };
 
 class Collaborators extends Component {
@@ -34,17 +34,17 @@ class Collaborators extends Component {
     users: PropTypes.arrayOf(
       PropTypes.shape({
         sys: PropTypes.shape({
-          id: PropTypes.string.isRequired
-        }).isRequired
+          id: PropTypes.string.isRequired,
+        }).isRequired,
       })
     ).isRequired,
     className: PropTypes.string,
-    shape: PropTypes.oneOf(['circle', 'rect'])
+    shape: PropTypes.oneOf(['circle', 'rect']),
   };
 
   static defaultProps = {
     users: [],
-    shape: 'circle'
+    shape: 'circle',
   };
   render() {
     return (

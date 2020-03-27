@@ -25,13 +25,13 @@ import reducers from '../reducer';
  */
 function dispatchWrapper(dispatched) {
   return {
-    isThunk: function() {
+    isThunk: function () {
       return typeof dispatched === 'function';
     },
-    isAction: function() {
+    isAction: function () {
       return _.isPlainObject(dispatched);
     },
-    thunkName: function() {
+    thunkName: function () {
       if (this.isThunk()) {
         const name = dispatched.name;
         const thunkName = name === '' ? 'anonymous' : name;
@@ -41,13 +41,13 @@ function dispatchWrapper(dispatched) {
         return null;
       }
     },
-    actionValue: function() {
+    actionValue: function () {
       if (this.isAction()) {
         return dispatched;
       } else {
         return null;
       }
-    }
+    },
   };
 }
 
@@ -78,7 +78,7 @@ export default function createMockStore() {
     A middleware to log everything dispatched. See `#dispatchWrapper` for more
     information on the value pushed to the `dispatched` array.
    */
-  const logDispatches = () => next => thunkOrAction => {
+  const logDispatches = () => (next) => (thunkOrAction) => {
     if (_.isPlainObject(thunkOrAction) && thunkOrAction.type === '__SET_STATE__') {
       return next(thunkOrAction);
     }
@@ -90,7 +90,7 @@ export default function createMockStore() {
 
   const store = createStore(rootReducer, applyMiddleware(logDispatches, thunk));
 
-  const setState = state => {
+  const setState = (state) => {
     store.dispatch({ type: '__SET_STATE__', state });
   };
 
@@ -106,9 +106,9 @@ export default function createMockStore() {
     setState,
 
     // Gets all actions since the last reset or initialization
-    getActions: () => dispatched.filter(d => d.isAction()).map(d => d.actionValue()),
+    getActions: () => dispatched.filter((d) => d.isAction()).map((d) => d.actionValue()),
 
     // Gets all dispatched types (thunk or action)
-    getDispatched: () => [].concat(dispatched)
+    getDispatched: () => [].concat(dispatched),
   };
 }

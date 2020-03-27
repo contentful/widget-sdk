@@ -53,7 +53,7 @@ export default function create(getFolders, saveFolders) {
       draggable: '.view-folder.-draggable',
       handle: '.view-folder__header',
       filter: '.view-folder__actions, .view-folder__toggle',
-      onUpdate: e => saveFolders(moveFolder(getFolders(), e))
+      onUpdate: (e) => saveFolders(moveFolder(getFolders(), e)),
     });
   }
 
@@ -61,7 +61,7 @@ export default function create(getFolders, saveFolders) {
     create(['views', id], el, {
       draggable: 'li',
       group: `views,${viewsGroupId}`,
-      onAdd: e => {
+      onAdd: (e) => {
         // HACK: the ugly temporary fix for sortable.js + react
         // https://github.com/RubaXa/Sortable/issues/986#issuecomment-257030565
         const { item, from } = e;
@@ -70,7 +70,7 @@ export default function create(getFolders, saveFolders) {
 
         saveFolders(moveViewBetween(getFolders(), [srcFolder(e), id], e));
       },
-      onUpdate: e => saveFolders(moveView(getFolders(), id, e))
+      onUpdate: (e) => saveFolders(moveView(getFolders(), id, e)),
     });
   }
 
@@ -118,7 +118,7 @@ function moveFolder(foldersWithDefault, { oldIndex, newIndex }) {
 }
 
 function moveView(folders, folderId, { oldIndex, newIndex }) {
-  return map(folders, cur => {
+  return map(folders, (cur) => {
     if (cur.id === folderId) {
       return assign(cur, { views: move(cur.views, oldIndex, newIndex) });
     } else {
@@ -128,13 +128,13 @@ function moveView(folders, folderId, { oldIndex, newIndex }) {
 }
 
 function moveViewBetween(folders, [srcFolderId, folderId], { oldIndex, newIndex }) {
-  const view = findMap(folders, cur => {
+  const view = findMap(folders, (cur) => {
     if (cur.id === srcFolderId) {
       return cur.views[oldIndex];
     }
   });
 
-  return map(folders, cur => {
+  return map(folders, (cur) => {
     if (cur.id === srcFolderId) {
       return assign(cur, { views: filter(cur.views, (_, i) => i !== oldIndex) });
     } else if (cur.id === folderId) {

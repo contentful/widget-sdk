@@ -6,7 +6,7 @@ import {
   List,
   ListItem,
   TextLink,
-  Paragraph
+  Paragraph,
 } from '@contentful/forma-36-react-components';
 import * as slideInNavigator from 'navigation/SlideInNavigator';
 import tokens from '@contentful/forma-36-tokens';
@@ -22,38 +22,38 @@ const styles = {
     fontSize: tokens.fontSizeL,
     padding: '0px 5px',
     borderRadius: '4px',
-    color: tokens.colorWhite
+    color: tokens.colorWhite,
   }),
   idle: css({
     background: tokens.colorElementLight,
-    color: tokens.colorTextMid
+    color: tokens.colorTextMid,
   }),
   linksLength: css({
-    color: 'inherit'
+    color: 'inherit',
   }),
   icon: css({
-    marginRight: '2px'
+    marginRight: '2px',
   }),
   dropdown: css({
-    lineHeight: 0
+    lineHeight: 0,
   }),
   linkList: css({
     padding: 0,
     maxHeight: '200px',
     overflowY: 'auto',
-    overflowX: 'hidden'
+    overflowX: 'hidden',
   }),
   linkListHeader: css({
     padding: `0 ${tokens.spacingXs}`,
-    background: tokens.colorElementLight
+    background: tokens.colorElementLight,
   }),
   entryLinkWrapper: css({
     cursor: 'pointer',
     display: 'flex',
     padding: tokens.spacingXs,
     '&:hover': {
-      background: tokens.colorElementLightest
-    }
+      background: tokens.colorElementLightest,
+    },
   }),
   entryLink: css({
     marginRight: tokens.spacingL,
@@ -63,12 +63,12 @@ const styles = {
     span: {
       overflow: 'hidden',
       whiteSpace: 'nowrap',
-      textOverflow: 'ellipsis'
-    }
+      textOverflow: 'ellipsis',
+    },
   }),
   contentType: css({
-    marginLeft: 'auto'
-  })
+    marginLeft: 'auto',
+  }),
 };
 
 export default function LinkedEntitiesBadge({ entityInfo, className }) {
@@ -88,7 +88,7 @@ export default function LinkedEntitiesBadge({ entityInfo, className }) {
           <Dropdown
             isOpen={isLinkListOpen}
             className={styles.dropdown}
-            getContainerRef={ref => {
+            getContainerRef={(ref) => {
               setDropdownContainer(ref);
             }}
             toggleElement={
@@ -97,7 +97,7 @@ export default function LinkedEntitiesBadge({ entityInfo, className }) {
                 title={title}
                 className={cx(styles.badge, (!links || !isReused) && styles.idle, className)}
                 onMouseEnter={() => links.length > 0 && setLinkListOpen(true)}
-                onMouseLeave={e => {
+                onMouseLeave={(e) => {
                   if (
                     e.relatedTarget === window ||
                     !dropdownContainer ||
@@ -118,17 +118,17 @@ export default function LinkedEntitiesBadge({ entityInfo, className }) {
                 <Paragraph>{title}</Paragraph>
               </div>
               <List className={styles.linkList}>
-                {links.map(link => (
+                {links.map((link) => (
                   <ListItem
                     key={link.id}
                     testId={`cf-linked-entry-${link.id}`}
                     className={styles.entryLinkWrapper}
-                    onClick={e => {
+                    onClick={(e) => {
                       e.stopPropagation();
                       setLinkListOpen(false);
                       slideInNavigator.goToSlideInEntity({
                         type: 'Entry',
-                        id: link.id
+                        id: link.id,
                       });
                     }}>
                     <TextLink className={styles.entryLink}>{link.title || 'Untitled'}</TextLink>
@@ -147,7 +147,7 @@ export default function LinkedEntitiesBadge({ entityInfo, className }) {
 LinkedEntitiesBadge.propTypes = {
   entityInfo: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired
+    type: PropTypes.string.isRequired,
   }),
-  className: PropTypes.string
+  className: PropTypes.string,
 };

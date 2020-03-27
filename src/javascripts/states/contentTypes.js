@@ -6,31 +6,31 @@ import ContentTypeListPage from 'components/tabs/content_type_list/ContentTypeLi
 const list = {
   name: 'list',
   url: '',
-  component: ContentTypeListPage
+  component: ContentTypeListPage,
 };
 
 const fields = {
   name: 'fields',
   url: '/fields',
   params: {
-    ignoreLeaveConfirmation: true
-  }
+    ignoreLeaveConfirmation: true,
+  },
 };
 
 const preview = {
   name: 'preview',
   url: '/preview',
   params: {
-    ignoreLeaveConfirmation: true
-  }
+    ignoreLeaveConfirmation: true,
+  },
 };
 
 const sidebarConfiguration = {
   name: 'sidebar_configuration',
   url: '/sidebar_configuration',
   params: {
-    ignoreLeaveConfirmation: true
-  }
+    ignoreLeaveConfirmation: true,
+  },
 };
 
 const widgetResolvers = {
@@ -38,7 +38,7 @@ const widgetResolvers = {
     // Define dependency on spaceContext so we get custom widgets
     // only when the space is initialized.
     'spaceContext',
-    () => getCustomWidgetLoader().getUncachedForListing()
+    () => getCustomWidgetLoader().getUncachedForListing(),
   ],
   editorInterface: [
     'spaceContext',
@@ -47,24 +47,24 @@ const widgetResolvers = {
       const ct = contentType.data;
       const ei = await spaceContext.cma.getEditorInterface(ct.sys.id);
       return EditorInterfaceTransformer.fromAPI(ct, ei);
-    }
+    },
   ],
   hasAdvancedExtensibility: [
     'spaceContext',
-    spaceContext => {
+    (spaceContext) => {
       return AdvancedExtensibilityFeature.isEnabled(spaceContext.organization.sys.id);
-    }
-  ]
+    },
+  ],
 };
 
 const existingContentTypeIdsResolver = {
   contentTypeIds: [
     'spaceContext',
-    async spaceContext => {
+    async (spaceContext) => {
       const contentTypes = await spaceContext.cma.getContentTypes();
-      return contentTypes.items.map(ct => ct.sys.id);
-    }
-  ]
+      return contentTypes.items.map((ct) => ct.sys.id);
+    },
+  ],
 };
 
 const newState = editorBase(
@@ -74,13 +74,13 @@ const newState = editorBase(
     resolve: {
       contentType: [
         'spaceContext',
-        spaceContext =>
-          spaceContext.space.newContentType({ sys: { type: 'ContentType' }, fields: [] })
+        (spaceContext) =>
+          spaceContext.space.newContentType({ sys: { type: 'ContentType' }, fields: [] }),
       ],
       publishedContentType: [() => null],
       ...widgetResolvers,
-      ...existingContentTypeIdsResolver
-    }
+      ...existingContentTypeIdsResolver,
+    },
   },
   true
 );
@@ -94,22 +94,22 @@ const detail = editorBase(
         '$stateParams',
         'spaceContext',
         ($stateParams, spaceContext) =>
-          spaceContext.space.getContentType($stateParams.contentTypeId)
+          spaceContext.space.getContentType($stateParams.contentTypeId),
       ],
       publishedContentType: [
         'contentType',
-        contentType =>
-          contentType.getPublishedStatus().catch(err => {
+        (contentType) =>
+          contentType.getPublishedStatus().catch((err) => {
             if (err.statusCode === 404) {
               return null;
             } else {
               throw err;
             }
-          })
+          }),
       ],
       ...widgetResolvers,
-      ...existingContentTypeIdsResolver
-    }
+      ...existingContentTypeIdsResolver,
+    },
   },
   false
 );
@@ -118,7 +118,7 @@ export default {
   name: 'content_types',
   url: '/content_types',
   abstract: true,
-  children: [list, newState, detail]
+  children: [list, newState, detail],
 };
 
 function editorBase(options, isNew) {
@@ -149,10 +149,10 @@ function editorBase(options, isNew) {
         $scope.publishedContentType = publishedContentType;
         $scope.contentTypeIds = contentTypeIds;
         $scope.hasAdvancedExtensibility = hasAdvancedExtensibility;
-      }
+      },
     ],
     template:
       '<div cf-content-type-editor class="workbench" cf-validate="contentType.data" cf-content-type-schema></div>',
-    ...options
+    ...options,
   };
 }

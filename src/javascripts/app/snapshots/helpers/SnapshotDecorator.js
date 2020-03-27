@@ -15,7 +15,7 @@ import { cloneDeep, get } from 'lodash';
 export function withCurrent(entrySys, snapshots) {
   const currentVersion = entrySys.version;
   if (currentVersion) {
-    return cloneDeep(snapshots).map(snapshot => {
+    return cloneDeep(snapshots).map((snapshot) => {
       const isCurrent = get(snapshot, 'snapshot.sys.version') === currentVersion;
       snapshot.sys.isCurrent = isCurrent;
       return snapshot;
@@ -34,10 +34,10 @@ export function withCurrent(entrySys, snapshots) {
  * Decorates snapshots setting snapshot.sys.createdBy.authorName value
  */
 export function withAuthorName(spaceContext, snapshots) {
-  const promises = snapshots.map(snapshot => {
+  const promises = snapshots.map((snapshot) => {
     const userId = get(snapshot, 'sys.createdBy.sys.id');
 
-    return spaceContext.users.get(userId).then(user => {
+    return spaceContext.users.get(userId).then((user) => {
       const authorName = user ? user.firstName + ' ' + user.lastName : '';
       const snapshotClone = cloneDeep(snapshot);
       snapshotClone.sys.createdBy.authorName = authorName;

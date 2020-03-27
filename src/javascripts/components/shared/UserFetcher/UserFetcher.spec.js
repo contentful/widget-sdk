@@ -20,7 +20,7 @@ describe('UserFetcher', () => {
 
     Enzyme.mount(
       <UserFetcher userId={userId}>
-        {args => {
+        {(args) => {
           actualArgs = args;
           return null;
         }}

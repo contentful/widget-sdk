@@ -14,7 +14,7 @@ export const NavStates = makeSum({
   UserProfile: ['org'],
   Home: ['org'],
   NewOrg: [],
-  Default: []
+  Default: [],
 });
 
 const navStateBus = K.createPropertyBus(NavStates.Default());
@@ -34,11 +34,11 @@ export async function updateNavState(state, params, { space, organization, envir
   } else if (startsWith(state.name, 'account.profile')) {
     //we have to keep the correct state of the organization in the Sidepanel
     const orgId = store.get('lastUsedOrg');
-    getOrganization(orgId).then(org => {
+    getOrganization(orgId).then((org) => {
       navStateBus.set(NavStates.UserProfile(org));
     });
   } else if (startsWith(state.name, 'account.organizations') && params.orgId) {
-    getOrganization(params.orgId).then(org => {
+    getOrganization(params.orgId).then((org) => {
       navStateBus.set(NavStates.OrgSettings(org));
     });
   } else if (space) {
@@ -47,7 +47,7 @@ export async function updateNavState(state, params, { space, organization, envir
       NavStates.Space(data, environment, organization, environments, environmentMeta)
     );
   } else if (state.name === 'home' && params.orgId) {
-    getOrganization(params.orgId).then(org => {
+    getOrganization(params.orgId).then((org) => {
       navStateBus.set(NavStates.Home(org));
     });
   } else {

@@ -1,30 +1,30 @@
 export const arrayOfReferences = {
   sys: {
-    type: 'Array'
+    type: 'Array',
   },
   errors: [
     {
       sys: {
         id: 'notResolvable',
-        type: 'error'
+        type: 'error',
       },
       details: {
         id: '5s1h70JCx0faANRHxwFyXx',
         type: 'Link',
-        linkType: 'Entry'
-      }
+        linkType: 'Entry',
+      },
     },
     {
       sys: {
         id: 'notResolvable',
-        type: 'error'
+        type: 'error',
       },
       details: {
         type: 'Link',
         linkType: 'Entry',
-        id: '5s1h70JCx0faANRHxwFyXx'
-      }
-    }
+        id: '5s1h70JCx0faANRHxwFyXx',
+      },
+    },
   ],
   items: [
     {
@@ -33,8 +33,8 @@ export const arrayOfReferences = {
           sys: {
             type: 'Link',
             linkType: 'Space',
-            id: 'uxn1u7m0txgd'
-          }
+            id: 'uxn1u7m0txgd',
+          },
         },
         id: '4zaYBA8hYIxwRHsKfyJOVN',
         type: 'Entry',
@@ -44,8 +44,8 @@ export const arrayOfReferences = {
           sys: {
             id: 'master',
             type: 'Link',
-            linkType: 'Environment'
-          }
+            linkType: 'Environment',
+          },
         },
         publishedVersion: 3,
         publishedAt: '2019-12-16T14:00:10.531Z',
@@ -54,15 +54,15 @@ export const arrayOfReferences = {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         updatedBy: {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         publishedCounter: 1,
         version: 26,
@@ -70,21 +70,21 @@ export const arrayOfReferences = {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         contentType: {
           sys: {
             type: 'Link',
             linkType: 'ContentType',
-            id: 'user'
-          }
-        }
+            id: 'user',
+          },
+        },
       },
       fields: {
         name: {
           de: 'test',
-          'en-US': 'Root'
+          'en-US': 'Root',
         },
         arrayOfRefs: {
           'en-US': [
@@ -92,30 +92,30 @@ export const arrayOfReferences = {
               sys: {
                 type: 'Link',
                 linkType: 'Entry',
-                id: '3ADrOROW1jot5jExFOjt4i'
-              }
+                id: '3ADrOROW1jot5jExFOjt4i',
+              },
             },
             {
               sys: {
                 type: 'Link',
                 linkType: 'Entry',
-                id: 'iFsN9FnCxUVNrXnUbGeJu'
-              }
+                id: 'iFsN9FnCxUVNrXnUbGeJu',
+              },
             },
             {
               sys: {
                 type: 'Link',
                 linkType: 'Entry',
-                id: '5yFvj9td7s9n7GlRH1wqSA'
-              }
-            }
-          ]
+                id: '5yFvj9td7s9n7GlRH1wqSA',
+              },
+            },
+          ],
         },
         tags: {
-          'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5']
-        }
-      }
-    }
+          'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5'],
+        },
+      },
+    },
   ],
   includes: {
     Entry: [
@@ -125,8 +125,8 @@ export const arrayOfReferences = {
             sys: {
               type: 'Link',
               linkType: 'Space',
-              id: 'uxn1u7m0txgd'
-            }
+              id: 'uxn1u7m0txgd',
+            },
           },
           id: '3ADrOROW1jot5jExFOjt4i',
           type: 'Entry',
@@ -136,22 +136,22 @@ export const arrayOfReferences = {
             sys: {
               id: 'master',
               type: 'Link',
-              linkType: 'Environment'
-            }
+              linkType: 'Environment',
+            },
           },
           createdBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           updatedBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           publishedCounter: 0,
           version: 1,
@@ -159,16 +159,16 @@ export const arrayOfReferences = {
             sys: {
               type: 'Link',
               linkType: 'ContentType',
-              id: 'user'
-            }
-          }
+              id: 'user',
+            },
+          },
         },
         fields: {
           name: {
             de: 'Test (1)',
-            'en-US': 'Entry 3'
-          }
-        }
+            'en-US': 'Entry 3',
+          },
+        },
       },
       {
         sys: {
@@ -176,8 +176,8 @@ export const arrayOfReferences = {
             sys: {
               type: 'Link',
               linkType: 'Space',
-              id: 'uxn1u7m0txgd'
-            }
+              id: 'uxn1u7m0txgd',
+            },
           },
           id: '5yFvj9td7s9n7GlRH1wqSA',
           type: 'Entry',
@@ -187,22 +187,22 @@ export const arrayOfReferences = {
             sys: {
               id: 'master',
               type: 'Link',
-              linkType: 'Environment'
-            }
+              linkType: 'Environment',
+            },
           },
           createdBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           updatedBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           publishedCounter: 0,
           version: 1,
@@ -210,15 +210,15 @@ export const arrayOfReferences = {
             sys: {
               type: 'Link',
               linkType: 'ContentType',
-              id: 'user'
-            }
-          }
+              id: 'user',
+            },
+          },
         },
         fields: {
           name: {
-            'en-US': 'Entry 2'
-          }
-        }
+            'en-US': 'Entry 2',
+          },
+        },
       },
       {
         sys: {
@@ -226,8 +226,8 @@ export const arrayOfReferences = {
             sys: {
               type: 'Link',
               linkType: 'Space',
-              id: 'uxn1u7m0txgd'
-            }
+              id: 'uxn1u7m0txgd',
+            },
           },
           id: 'iFsN9FnCxUVNrXnUbGeJu',
           type: 'Entry',
@@ -237,8 +237,8 @@ export const arrayOfReferences = {
             sys: {
               id: 'master',
               type: 'Link',
-              linkType: 'Environment'
-            }
+              linkType: 'Environment',
+            },
           },
           publishedVersion: 11,
           publishedAt: '2020-01-10T16:22:14.228Z',
@@ -247,15 +247,15 @@ export const arrayOfReferences = {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           updatedBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           publishedCounter: 1,
           version: 14,
@@ -263,31 +263,31 @@ export const arrayOfReferences = {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           contentType: {
             sys: {
               type: 'Link',
               linkType: 'ContentType',
-              id: 'user'
-            }
-          }
+              id: 'user',
+            },
+          },
         },
         fields: {
           name: {
-            'en-US': 'Entry 1'
-          }
-        }
-      }
+            'en-US': 'Entry 1',
+          },
+        },
+      },
     ],
-    Asset: []
-  }
+    Asset: [],
+  },
 };
 
 export const circularReferences = {
   sys: {
-    type: 'Array'
+    type: 'Array',
   },
   errors: [],
   items: [
@@ -297,8 +297,8 @@ export const circularReferences = {
           sys: {
             type: 'Link',
             linkType: 'Space',
-            id: 'uxn1u7m0txgd'
-          }
+            id: 'uxn1u7m0txgd',
+          },
         },
         id: '4zaYBA8hYIxwRHsKfyJOVN',
         type: 'Entry',
@@ -308,8 +308,8 @@ export const circularReferences = {
           sys: {
             id: 'master',
             type: 'Link',
-            linkType: 'Environment'
-          }
+            linkType: 'Environment',
+          },
         },
         publishedVersion: 3,
         publishedAt: '2019-12-16T14:00:10.531Z',
@@ -318,15 +318,15 @@ export const circularReferences = {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         updatedBy: {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         publishedCounter: 1,
         version: 26,
@@ -334,36 +334,36 @@ export const circularReferences = {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         contentType: {
           sys: {
             type: 'Link',
             linkType: 'ContentType',
-            id: 'user'
-          }
-        }
+            id: 'user',
+          },
+        },
       },
       fields: {
         name: {
           de: 'test',
-          'en-US': 'Root'
+          'en-US': 'Root',
         },
         entryRef1: {
           'en-US': {
             sys: {
               type: 'Link',
               linkType: 'Entry',
-              id: '3ADrOROW1jot5jExFOjt4i'
-            }
-          }
+              id: '3ADrOROW1jot5jExFOjt4i',
+            },
+          },
         },
         tags: {
-          'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5']
-        }
-      }
-    }
+          'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5'],
+        },
+      },
+    },
   ],
   includes: {
     Entry: [
@@ -373,8 +373,8 @@ export const circularReferences = {
             sys: {
               type: 'Link',
               linkType: 'Space',
-              id: 'uxn1u7m0txgd'
-            }
+              id: 'uxn1u7m0txgd',
+            },
           },
           id: '3ADrOROW1jot5jExFOjt4i',
           type: 'Entry',
@@ -384,22 +384,22 @@ export const circularReferences = {
             sys: {
               id: 'master',
               type: 'Link',
-              linkType: 'Environment'
-            }
+              linkType: 'Environment',
+            },
           },
           createdBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           updatedBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           publishedCounter: 0,
           version: 1,
@@ -407,25 +407,25 @@ export const circularReferences = {
             sys: {
               type: 'Link',
               linkType: 'ContentType',
-              id: 'user'
-            }
-          }
+              id: 'user',
+            },
+          },
         },
         fields: {
           name: {
             de: 'Test (1)',
-            'en-US': 'TEst3 (sched) (1)'
+            'en-US': 'TEst3 (sched) (1)',
           },
           ref: {
             'en-US': {
               sys: {
                 type: 'Link',
                 linkType: 'Entry',
-                id: 'iFsN9FnCxUVNrXnUbGeJu'
-              }
-            }
-          }
-        }
+                id: 'iFsN9FnCxUVNrXnUbGeJu',
+              },
+            },
+          },
+        },
       },
       {
         sys: {
@@ -433,8 +433,8 @@ export const circularReferences = {
             sys: {
               type: 'Link',
               linkType: 'Space',
-              id: 'uxn1u7m0txgd'
-            }
+              id: 'uxn1u7m0txgd',
+            },
           },
           id: 'iFsN9FnCxUVNrXnUbGeJu',
           type: 'Entry',
@@ -444,8 +444,8 @@ export const circularReferences = {
             sys: {
               id: 'master',
               type: 'Link',
-              linkType: 'Environment'
-            }
+              linkType: 'Environment',
+            },
           },
           publishedVersion: 11,
           publishedAt: '2020-01-10T16:22:14.228Z',
@@ -454,15 +454,15 @@ export const circularReferences = {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           updatedBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           publishedCounter: 1,
           version: 14,
@@ -470,41 +470,41 @@ export const circularReferences = {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           contentType: {
             sys: {
               type: 'Link',
               linkType: 'ContentType',
-              id: 'user'
-            }
-          }
+              id: 'user',
+            },
+          },
         },
         fields: {
           name: {
             de: 'Test (0)',
-            'en-US': 'TEst3 (0)'
+            'en-US': 'TEst3 (0)',
           },
           ref: {
             'en-US': {
               sys: {
                 type: 'Link',
                 linkType: 'Entry',
-                id: '4zaYBA8hYIxwRHsKfyJOVN'
-              }
-            }
-          }
-        }
-      }
+                id: '4zaYBA8hYIxwRHsKfyJOVN',
+              },
+            },
+          },
+        },
+      },
     ],
-    Asset: []
-  }
+    Asset: [],
+  },
 };
 
 export const depthLimit = {
   sys: {
-    type: 'Array'
+    type: 'Array',
   },
   errors: [],
   items: [
@@ -514,8 +514,8 @@ export const depthLimit = {
           sys: {
             type: 'Link',
             linkType: 'Space',
-            id: 'uxn1u7m0txgd'
-          }
+            id: 'uxn1u7m0txgd',
+          },
         },
         id: '4zaYBA8hYIxwRHsKfyJOVN',
         type: 'Entry',
@@ -525,8 +525,8 @@ export const depthLimit = {
           sys: {
             id: 'master',
             type: 'Link',
-            linkType: 'Environment'
-          }
+            linkType: 'Environment',
+          },
         },
         publishedVersion: 3,
         publishedAt: '2019-12-16T14:00:10.531Z',
@@ -535,15 +535,15 @@ export const depthLimit = {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         updatedBy: {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         publishedCounter: 1,
         version: 26,
@@ -551,36 +551,36 @@ export const depthLimit = {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         contentType: {
           sys: {
             type: 'Link',
             linkType: 'ContentType',
-            id: 'user'
-          }
-        }
+            id: 'user',
+          },
+        },
       },
       fields: {
         name: {
           de: 'test',
-          'en-US': 'Root'
+          'en-US': 'Root',
         },
         entryRef1: {
           'en-US': {
             sys: {
               type: 'Link',
               linkType: 'Entry',
-              id: '3ADrOROW1jot5jExFOjt4i'
-            }
-          }
+              id: '3ADrOROW1jot5jExFOjt4i',
+            },
+          },
         },
         tags: {
-          'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5']
-        }
-      }
-    }
+          'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5'],
+        },
+      },
+    },
   ],
   includes: {
     Entry: [
@@ -590,8 +590,8 @@ export const depthLimit = {
             sys: {
               type: 'Link',
               linkType: 'Space',
-              id: 'uxn1u7m0txgd'
-            }
+              id: 'uxn1u7m0txgd',
+            },
           },
           id: '3ADrOROW1jot5jExFOjt4i',
           type: 'Entry',
@@ -601,22 +601,22 @@ export const depthLimit = {
             sys: {
               id: 'master',
               type: 'Link',
-              linkType: 'Environment'
-            }
+              linkType: 'Environment',
+            },
           },
           createdBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           updatedBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           publishedCounter: 0,
           version: 1,
@@ -624,25 +624,25 @@ export const depthLimit = {
             sys: {
               type: 'Link',
               linkType: 'ContentType',
-              id: 'user'
-            }
-          }
+              id: 'user',
+            },
+          },
         },
         fields: {
           name: {
             de: 'Test (1)',
-            'en-US': 'TEst3 (sched) (1)'
+            'en-US': 'TEst3 (sched) (1)',
           },
           ref: {
             'en-US': {
               sys: {
                 type: 'Link',
                 linkType: 'Entry',
-                id: 'iFsN9FnCxUVNrXnUbGeJu'
-              }
-            }
-          }
-        }
+                id: 'iFsN9FnCxUVNrXnUbGeJu',
+              },
+            },
+          },
+        },
       },
       {
         sys: {
@@ -650,8 +650,8 @@ export const depthLimit = {
             sys: {
               type: 'Link',
               linkType: 'Space',
-              id: 'uxn1u7m0txgd'
-            }
+              id: 'uxn1u7m0txgd',
+            },
           },
           id: 'iFsN9FnCxUVNrXnUbGeJu',
           type: 'Entry',
@@ -661,8 +661,8 @@ export const depthLimit = {
             sys: {
               id: 'master',
               type: 'Link',
-              linkType: 'Environment'
-            }
+              linkType: 'Environment',
+            },
           },
           publishedVersion: 11,
           publishedAt: '2020-01-10T16:22:14.228Z',
@@ -671,15 +671,15 @@ export const depthLimit = {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           updatedBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           publishedCounter: 1,
           version: 14,
@@ -687,32 +687,32 @@ export const depthLimit = {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           contentType: {
             sys: {
               type: 'Link',
               linkType: 'ContentType',
-              id: 'user'
-            }
-          }
+              id: 'user',
+            },
+          },
         },
         fields: {
           name: {
             de: 'Test (0)',
-            'en-US': 'TEst3 (0)'
-          }
-        }
-      }
+            'en-US': 'TEst3 (0)',
+          },
+        },
+      },
     ],
-    Asset: []
-  }
+    Asset: [],
+  },
 };
 
 export const nestedArrayOfReferences = {
   sys: {
-    type: 'Array'
+    type: 'Array',
   },
   errors: [],
   items: [
@@ -722,8 +722,8 @@ export const nestedArrayOfReferences = {
           sys: {
             type: 'Link',
             linkType: 'Space',
-            id: 'uxn1u7m0txgd'
-          }
+            id: 'uxn1u7m0txgd',
+          },
         },
         id: '4zaYBA8hYIxwRHsKfyJOVN',
         type: 'Entry',
@@ -733,8 +733,8 @@ export const nestedArrayOfReferences = {
           sys: {
             id: 'master',
             type: 'Link',
-            linkType: 'Environment'
-          }
+            linkType: 'Environment',
+          },
         },
         publishedVersion: 3,
         publishedAt: '2019-12-16T14:00:10.531Z',
@@ -743,15 +743,15 @@ export const nestedArrayOfReferences = {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         updatedBy: {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         publishedCounter: 1,
         version: 26,
@@ -759,21 +759,21 @@ export const nestedArrayOfReferences = {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         contentType: {
           sys: {
             type: 'Link',
             linkType: 'ContentType',
-            id: 'user'
-          }
-        }
+            id: 'user',
+          },
+        },
       },
       fields: {
         name: {
           de: 'test',
-          'en-US': 'Root'
+          'en-US': 'Root',
         },
         entryArray: {
           'en-US': [
@@ -781,23 +781,23 @@ export const nestedArrayOfReferences = {
               sys: {
                 type: 'Link',
                 linkType: 'Entry',
-                id: '3ADrOROW1jot5jExFOjt4i'
-              }
+                id: '3ADrOROW1jot5jExFOjt4i',
+              },
             },
             {
               sys: {
                 type: 'Link',
                 linkType: 'Entry',
-                id: 'iFsN9FnCxUVNrXnUbGeJu'
-              }
-            }
-          ]
+                id: 'iFsN9FnCxUVNrXnUbGeJu',
+              },
+            },
+          ],
         },
         tags: {
-          'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5']
-        }
-      }
-    }
+          'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5'],
+        },
+      },
+    },
   ],
   includes: {
     Entry: [
@@ -807,8 +807,8 @@ export const nestedArrayOfReferences = {
             sys: {
               type: 'Link',
               linkType: 'Space',
-              id: 'uxn1u7m0txgd'
-            }
+              id: 'uxn1u7m0txgd',
+            },
           },
           id: '3ADrOROW1jot5jExFOjt4i',
           type: 'Entry',
@@ -818,22 +818,22 @@ export const nestedArrayOfReferences = {
             sys: {
               id: 'master',
               type: 'Link',
-              linkType: 'Environment'
-            }
+              linkType: 'Environment',
+            },
           },
           createdBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           updatedBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           publishedCounter: 0,
           version: 1,
@@ -841,25 +841,25 @@ export const nestedArrayOfReferences = {
             sys: {
               type: 'Link',
               linkType: 'ContentType',
-              id: 'user'
-            }
-          }
+              id: 'user',
+            },
+          },
         },
         fields: {
           name: {
             de: 'Test (1)',
-            'en-US': 'TEst3 (sched) (1)'
+            'en-US': 'TEst3 (sched) (1)',
           },
           innerSimpleRef: {
             'en-US': {
               sys: {
                 type: 'Link',
                 linkType: 'Entry',
-                id: '4ADrOROW1jot5jExFOjt4j'
-              }
-            }
-          }
-        }
+                id: '4ADrOROW1jot5jExFOjt4j',
+              },
+            },
+          },
+        },
       },
       {
         sys: {
@@ -867,8 +867,8 @@ export const nestedArrayOfReferences = {
             sys: {
               type: 'Link',
               linkType: 'Space',
-              id: 'uxn1u7m0txgd'
-            }
+              id: 'uxn1u7m0txgd',
+            },
           },
           id: 'iFsN9FnCxUVNrXnUbGeJu',
           type: 'Entry',
@@ -878,8 +878,8 @@ export const nestedArrayOfReferences = {
             sys: {
               id: 'master',
               type: 'Link',
-              linkType: 'Environment'
-            }
+              linkType: 'Environment',
+            },
           },
           publishedVersion: 11,
           publishedAt: '2020-01-10T16:22:14.228Z',
@@ -888,15 +888,15 @@ export const nestedArrayOfReferences = {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           updatedBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           publishedCounter: 1,
           version: 14,
@@ -904,32 +904,32 @@ export const nestedArrayOfReferences = {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           contentType: {
             sys: {
               type: 'Link',
               linkType: 'ContentType',
-              id: 'user'
-            }
-          }
+              id: 'user',
+            },
+          },
         },
         fields: {
           name: {
             de: 'Test (0)',
-            'en-US': 'TEst3 (0)'
+            'en-US': 'TEst3 (0)',
           },
           innerSimpleRef: {
             'en-US': {
               sys: {
                 type: 'Link',
                 linkType: 'Entry',
-                id: '4ADrOROW1jot5jExFOjt4j'
-              }
-            }
-          }
-        }
+                id: '4ADrOROW1jot5jExFOjt4j',
+              },
+            },
+          },
+        },
       },
       {
         sys: {
@@ -937,8 +937,8 @@ export const nestedArrayOfReferences = {
             sys: {
               type: 'Link',
               linkType: 'Space',
-              id: 'uxn1u7m0txgd'
-            }
+              id: 'uxn1u7m0txgd',
+            },
           },
           id: '4ADrOROW1jot5jExFOjt4j',
           type: 'Entry',
@@ -948,22 +948,22 @@ export const nestedArrayOfReferences = {
             sys: {
               id: 'master',
               type: 'Link',
-              linkType: 'Environment'
-            }
+              linkType: 'Environment',
+            },
           },
           createdBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           updatedBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           publishedCounter: 0,
           version: 1,
@@ -971,25 +971,25 @@ export const nestedArrayOfReferences = {
             sys: {
               type: 'Link',
               linkType: 'ContentType',
-              id: 'user'
-            }
-          }
+              id: 'user',
+            },
+          },
         },
         fields: {
           name: {
             de: 'Test (1)',
-            'en-US': 'Inner Entry'
-          }
-        }
-      }
+            'en-US': 'Inner Entry',
+          },
+        },
+      },
     ],
-    Asset: []
-  }
+    Asset: [],
+  },
 };
 
 export const nestedSimpleReferences = {
   sys: {
-    type: 'Array'
+    type: 'Array',
   },
   errors: [],
   items: [
@@ -999,8 +999,8 @@ export const nestedSimpleReferences = {
           sys: {
             type: 'Link',
             linkType: 'Space',
-            id: 'uxn1u7m0txgd'
-          }
+            id: 'uxn1u7m0txgd',
+          },
         },
         id: '4zaYBA8hYIxwRHsKfyJOVN',
         type: 'Entry',
@@ -1010,8 +1010,8 @@ export const nestedSimpleReferences = {
           sys: {
             id: 'master',
             type: 'Link',
-            linkType: 'Environment'
-          }
+            linkType: 'Environment',
+          },
         },
         publishedVersion: 3,
         publishedAt: '2019-12-16T14:00:10.531Z',
@@ -1020,15 +1020,15 @@ export const nestedSimpleReferences = {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         updatedBy: {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         publishedCounter: 1,
         version: 26,
@@ -1036,45 +1036,45 @@ export const nestedSimpleReferences = {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         contentType: {
           sys: {
             type: 'Link',
             linkType: 'ContentType',
-            id: 'user'
-          }
-        }
+            id: 'user',
+          },
+        },
       },
       fields: {
         name: {
           de: 'test',
-          'en-US': 'Root'
+          'en-US': 'Root',
         },
         entryRef1: {
           'en-US': {
             sys: {
               type: 'Link',
               linkType: 'Entry',
-              id: '3ADrOROW1jot5jExFOjt4i'
-            }
-          }
+              id: '3ADrOROW1jot5jExFOjt4i',
+            },
+          },
         },
         entryRef2: {
           'en-US': {
             sys: {
               type: 'Link',
               linkType: 'Entry',
-              id: 'iFsN9FnCxUVNrXnUbGeJu'
-            }
-          }
+              id: 'iFsN9FnCxUVNrXnUbGeJu',
+            },
+          },
         },
         tags: {
-          'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5']
-        }
-      }
-    }
+          'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5'],
+        },
+      },
+    },
   ],
   includes: {
     Entry: [
@@ -1084,8 +1084,8 @@ export const nestedSimpleReferences = {
             sys: {
               type: 'Link',
               linkType: 'Space',
-              id: 'uxn1u7m0txgd'
-            }
+              id: 'uxn1u7m0txgd',
+            },
           },
           id: '3ADrOROW1jot5jExFOjt4i',
           type: 'Entry',
@@ -1095,22 +1095,22 @@ export const nestedSimpleReferences = {
             sys: {
               id: 'master',
               type: 'Link',
-              linkType: 'Environment'
-            }
+              linkType: 'Environment',
+            },
           },
           createdBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           updatedBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           publishedCounter: 0,
           version: 1,
@@ -1118,25 +1118,25 @@ export const nestedSimpleReferences = {
             sys: {
               type: 'Link',
               linkType: 'ContentType',
-              id: 'user'
-            }
-          }
+              id: 'user',
+            },
+          },
         },
         fields: {
           name: {
             de: 'Test (1)',
-            'en-US': 'TEst3 (sched) (1)'
+            'en-US': 'TEst3 (sched) (1)',
           },
           innerSimpleRef: {
             'en-US': {
               sys: {
                 type: 'Link',
                 linkType: 'Entry',
-                id: '4ADrOROW1jot5jExFOjt4j'
-              }
-            }
-          }
-        }
+                id: '4ADrOROW1jot5jExFOjt4j',
+              },
+            },
+          },
+        },
       },
       {
         sys: {
@@ -1144,8 +1144,8 @@ export const nestedSimpleReferences = {
             sys: {
               type: 'Link',
               linkType: 'Space',
-              id: 'uxn1u7m0txgd'
-            }
+              id: 'uxn1u7m0txgd',
+            },
           },
           id: 'iFsN9FnCxUVNrXnUbGeJu',
           type: 'Entry',
@@ -1155,8 +1155,8 @@ export const nestedSimpleReferences = {
             sys: {
               id: 'master',
               type: 'Link',
-              linkType: 'Environment'
-            }
+              linkType: 'Environment',
+            },
           },
           publishedVersion: 11,
           publishedAt: '2020-01-10T16:22:14.228Z',
@@ -1165,15 +1165,15 @@ export const nestedSimpleReferences = {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           updatedBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           publishedCounter: 1,
           version: 14,
@@ -1181,32 +1181,32 @@ export const nestedSimpleReferences = {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           contentType: {
             sys: {
               type: 'Link',
               linkType: 'ContentType',
-              id: 'user'
-            }
-          }
+              id: 'user',
+            },
+          },
         },
         fields: {
           name: {
             de: 'Test (0)',
-            'en-US': 'TEst3 (0)'
+            'en-US': 'TEst3 (0)',
           },
           innerSimpleRef: {
             'en-US': {
               sys: {
                 type: 'Link',
                 linkType: 'Entry',
-                id: '4ADrOROW1jot5jExFOjt4j'
-              }
-            }
-          }
-        }
+                id: '4ADrOROW1jot5jExFOjt4j',
+              },
+            },
+          },
+        },
       },
       {
         sys: {
@@ -1214,8 +1214,8 @@ export const nestedSimpleReferences = {
             sys: {
               type: 'Link',
               linkType: 'Space',
-              id: 'uxn1u7m0txgd'
-            }
+              id: 'uxn1u7m0txgd',
+            },
           },
           id: '4ADrOROW1jot5jExFOjt4j',
           type: 'Entry',
@@ -1225,22 +1225,22 @@ export const nestedSimpleReferences = {
             sys: {
               id: 'master',
               type: 'Link',
-              linkType: 'Environment'
-            }
+              linkType: 'Environment',
+            },
           },
           createdBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           updatedBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           publishedCounter: 0,
           version: 1,
@@ -1248,49 +1248,49 @@ export const nestedSimpleReferences = {
             sys: {
               type: 'Link',
               linkType: 'ContentType',
-              id: 'user'
-            }
-          }
+              id: 'user',
+            },
+          },
         },
         fields: {
           name: {
             de: 'Test (1)',
-            'en-US': 'Inner Entry'
-          }
-        }
-      }
+            'en-US': 'Inner Entry',
+          },
+        },
+      },
     ],
-    Asset: []
-  }
+    Asset: [],
+  },
 };
 
 export const richTextEmbeddedInlineEntryReferences = {
   sys: {
-    type: 'Array'
+    type: 'Array',
   },
   errors: [
     {
       sys: {
         id: 'notResolvable',
-        type: 'error'
+        type: 'error',
       },
       details: {
         id: '5s1h70JCx0faANRHxwFyXx',
         type: 'Link',
-        linkType: 'Entry'
-      }
+        linkType: 'Entry',
+      },
     },
     {
       sys: {
         id: 'notResolvable',
-        type: 'error'
+        type: 'error',
       },
       details: {
         type: 'Link',
         linkType: 'Entry',
-        id: '5s1h70JCx0faANRHxwFyXx'
-      }
-    }
+        id: '5s1h70JCx0faANRHxwFyXx',
+      },
+    },
   ],
   items: [
     {
@@ -1299,8 +1299,8 @@ export const richTextEmbeddedInlineEntryReferences = {
           sys: {
             type: 'Link',
             linkType: 'Space',
-            id: 'uxn1u7m0txgd'
-          }
+            id: 'uxn1u7m0txgd',
+          },
         },
         id: '4zaYBA8hYIxwRHsKfyJOVN',
         type: 'Entry',
@@ -1310,8 +1310,8 @@ export const richTextEmbeddedInlineEntryReferences = {
           sys: {
             id: 'master',
             type: 'Link',
-            linkType: 'Environment'
-          }
+            linkType: 'Environment',
+          },
         },
         publishedVersion: 3,
         publishedAt: '2019-12-16T14:00:10.531Z',
@@ -1320,15 +1320,15 @@ export const richTextEmbeddedInlineEntryReferences = {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         updatedBy: {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         publishedCounter: 1,
         version: 26,
@@ -1336,21 +1336,21 @@ export const richTextEmbeddedInlineEntryReferences = {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         contentType: {
           sys: {
             type: 'Link',
             linkType: 'ContentType',
-            id: 'user'
-          }
-        }
+            id: 'user',
+          },
+        },
       },
       fields: {
         name: {
           de: 'test',
-          'en-US': 'Root'
+          'en-US': 'Root',
         },
         monologue: {
           'en-US': {
@@ -1363,7 +1363,7 @@ export const richTextEmbeddedInlineEntryReferences = {
                     data: {},
                     marks: [],
                     value: '',
-                    nodeType: 'text'
+                    nodeType: 'text',
                   },
                   {
                     data: {
@@ -1371,31 +1371,31 @@ export const richTextEmbeddedInlineEntryReferences = {
                         sys: {
                           id: '5yFvj9td7s9n7GlRH1wqSA',
                           type: 'Link',
-                          linkType: 'Entry'
-                        }
-                      }
+                          linkType: 'Entry',
+                        },
+                      },
                     },
                     content: [],
-                    nodeType: 'embedded-entry-inline'
+                    nodeType: 'embedded-entry-inline',
                   },
                   {
                     data: {},
                     marks: [],
                     value: '',
-                    nodeType: 'text'
-                  }
+                    nodeType: 'text',
+                  },
                 ],
-                nodeType: 'paragraph'
-              }
+                nodeType: 'paragraph',
+              },
             ],
-            nodeType: 'document'
-          }
+            nodeType: 'document',
+          },
         },
         tags: {
-          'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5']
-        }
-      }
-    }
+          'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5'],
+        },
+      },
+    },
   ],
   includes: {
     Entry: [
@@ -1405,8 +1405,8 @@ export const richTextEmbeddedInlineEntryReferences = {
             sys: {
               type: 'Link',
               linkType: 'Space',
-              id: 'uxn1u7m0txgd'
-            }
+              id: 'uxn1u7m0txgd',
+            },
           },
           id: '5yFvj9td7s9n7GlRH1wqSA',
           type: 'Entry',
@@ -1416,22 +1416,22 @@ export const richTextEmbeddedInlineEntryReferences = {
             sys: {
               id: 'master',
               type: 'Link',
-              linkType: 'Environment'
-            }
+              linkType: 'Environment',
+            },
           },
           createdBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           updatedBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           publishedCounter: 0,
           version: 1,
@@ -1439,48 +1439,48 @@ export const richTextEmbeddedInlineEntryReferences = {
             sys: {
               type: 'Link',
               linkType: 'ContentType',
-              id: 'user'
-            }
-          }
+              id: 'user',
+            },
+          },
         },
         fields: {
           name: {
-            'en-US': 'Entry'
-          }
-        }
-      }
+            'en-US': 'Entry',
+          },
+        },
+      },
     ],
-    Asset: []
-  }
+    Asset: [],
+  },
 };
 
 export const richTextHyperlinkReference = {
   sys: {
-    type: 'Array'
+    type: 'Array',
   },
   errors: [
     {
       sys: {
         id: 'notResolvable',
-        type: 'error'
+        type: 'error',
       },
       details: {
         id: '5s1h70JCx0faANRHxwFyXx',
         type: 'Link',
-        linkType: 'Entry'
-      }
+        linkType: 'Entry',
+      },
     },
     {
       sys: {
         id: 'notResolvable',
-        type: 'error'
+        type: 'error',
       },
       details: {
         type: 'Link',
         linkType: 'Entry',
-        id: '5s1h70JCx0faANRHxwFyXx'
-      }
-    }
+        id: '5s1h70JCx0faANRHxwFyXx',
+      },
+    },
   ],
   items: [
     {
@@ -1489,8 +1489,8 @@ export const richTextHyperlinkReference = {
           sys: {
             type: 'Link',
             linkType: 'Space',
-            id: 'uxn1u7m0txgd'
-          }
+            id: 'uxn1u7m0txgd',
+          },
         },
         id: '4zaYBA8hYIxwRHsKfyJOVN',
         type: 'Entry',
@@ -1500,8 +1500,8 @@ export const richTextHyperlinkReference = {
           sys: {
             id: 'master',
             type: 'Link',
-            linkType: 'Environment'
-          }
+            linkType: 'Environment',
+          },
         },
         publishedVersion: 3,
         publishedAt: '2019-12-16T14:00:10.531Z',
@@ -1510,15 +1510,15 @@ export const richTextHyperlinkReference = {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         updatedBy: {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         publishedCounter: 1,
         version: 26,
@@ -1526,21 +1526,21 @@ export const richTextHyperlinkReference = {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         contentType: {
           sys: {
             type: 'Link',
             linkType: 'ContentType',
-            id: 'user'
-          }
-        }
+            id: 'user',
+          },
+        },
       },
       fields: {
         name: {
           de: 'test',
-          'en-US': 'Root'
+          'en-US': 'Root',
         },
         monologue: {
           'en-US': {
@@ -1553,28 +1553,28 @@ export const richTextHyperlinkReference = {
                     nodeType: 'text',
                     value: 'test link',
                     marks: [],
-                    data: {}
-                  }
+                    data: {},
+                  },
                 ],
                 data: {
                   target: {
                     sys: {
                       id: '5yFvj9td7s9n7GlRH1wqSA',
                       type: 'Link',
-                      linkType: 'Entry'
-                    }
-                  }
-                }
-              }
+                      linkType: 'Entry',
+                    },
+                  },
+                },
+              },
             ],
-            nodeType: 'document'
-          }
+            nodeType: 'document',
+          },
         },
         tags: {
-          'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5']
-        }
-      }
-    }
+          'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5'],
+        },
+      },
+    },
   ],
   includes: {
     Entry: [
@@ -1584,8 +1584,8 @@ export const richTextHyperlinkReference = {
             sys: {
               type: 'Link',
               linkType: 'Space',
-              id: 'uxn1u7m0txgd'
-            }
+              id: 'uxn1u7m0txgd',
+            },
           },
           id: '5yFvj9td7s9n7GlRH1wqSA',
           type: 'Entry',
@@ -1595,22 +1595,22 @@ export const richTextHyperlinkReference = {
             sys: {
               id: 'master',
               type: 'Link',
-              linkType: 'Environment'
-            }
+              linkType: 'Environment',
+            },
           },
           createdBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           updatedBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           publishedCounter: 0,
           version: 1,
@@ -1618,48 +1618,48 @@ export const richTextHyperlinkReference = {
             sys: {
               type: 'Link',
               linkType: 'ContentType',
-              id: 'user'
-            }
-          }
+              id: 'user',
+            },
+          },
         },
         fields: {
           name: {
-            'en-US': 'Entry'
-          }
-        }
-      }
+            'en-US': 'Entry',
+          },
+        },
+      },
     ],
-    Asset: []
-  }
+    Asset: [],
+  },
 };
 
 export const richTextSimpleReferences = {
   sys: {
-    type: 'Array'
+    type: 'Array',
   },
   errors: [
     {
       sys: {
         id: 'notResolvable',
-        type: 'error'
+        type: 'error',
       },
       details: {
         id: '5s1h70JCx0faANRHxwFyXx',
         type: 'Link',
-        linkType: 'Entry'
-      }
+        linkType: 'Entry',
+      },
     },
     {
       sys: {
         id: 'notResolvable',
-        type: 'error'
+        type: 'error',
       },
       details: {
         type: 'Link',
         linkType: 'Entry',
-        id: '5s1h70JCx0faANRHxwFyXx'
-      }
-    }
+        id: '5s1h70JCx0faANRHxwFyXx',
+      },
+    },
   ],
   items: [
     {
@@ -1668,8 +1668,8 @@ export const richTextSimpleReferences = {
           sys: {
             type: 'Link',
             linkType: 'Space',
-            id: 'uxn1u7m0txgd'
-          }
+            id: 'uxn1u7m0txgd',
+          },
         },
         id: '4zaYBA8hYIxwRHsKfyJOVN',
         type: 'Entry',
@@ -1679,8 +1679,8 @@ export const richTextSimpleReferences = {
           sys: {
             id: 'master',
             type: 'Link',
-            linkType: 'Environment'
-          }
+            linkType: 'Environment',
+          },
         },
         publishedVersion: 3,
         publishedAt: '2019-12-16T14:00:10.531Z',
@@ -1689,15 +1689,15 @@ export const richTextSimpleReferences = {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         updatedBy: {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         publishedCounter: 1,
         version: 26,
@@ -1705,21 +1705,21 @@ export const richTextSimpleReferences = {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         contentType: {
           sys: {
             type: 'Link',
             linkType: 'ContentType',
-            id: 'user'
-          }
-        }
+            id: 'user',
+          },
+        },
       },
       fields: {
         name: {
           de: 'test',
-          'en-US': 'Root'
+          'en-US': 'Root',
         },
         monologue: {
           'en-US': {
@@ -1731,12 +1731,12 @@ export const richTextSimpleReferences = {
                     sys: {
                       id: '5yFvj9td7s9n7GlRH1wqSA',
                       type: 'Link',
-                      linkType: 'Entry'
-                    }
-                  }
+                      linkType: 'Entry',
+                    },
+                  },
                 },
                 content: [],
-                nodeType: 'embedded-entry-block'
+                nodeType: 'embedded-entry-block',
               },
               {
                 data: {
@@ -1744,12 +1744,12 @@ export const richTextSimpleReferences = {
                     sys: {
                       id: '7c1UsDsOc6bZEAiR4aqLBE',
                       type: 'Link',
-                      linkType: 'Entry'
-                    }
-                  }
+                      linkType: 'Entry',
+                    },
+                  },
                 },
                 content: [],
-                nodeType: 'embedded-entry-block'
+                nodeType: 'embedded-entry-block',
               },
               {
                 data: {
@@ -1757,12 +1757,12 @@ export const richTextSimpleReferences = {
                     sys: {
                       id: '3ax6WfgrHJXRQIZT4Fi6my',
                       type: 'Link',
-                      linkType: 'Entry'
-                    }
-                  }
+                      linkType: 'Entry',
+                    },
+                  },
                 },
                 content: [],
-                nodeType: 'embedded-entry-block'
+                nodeType: 'embedded-entry-block',
               },
               {
                 data: {
@@ -1770,22 +1770,22 @@ export const richTextSimpleReferences = {
                     sys: {
                       id: '1TW36Lhg6vjjiOwnS4pK6f',
                       type: 'Link',
-                      linkType: 'Asset'
-                    }
-                  }
+                      linkType: 'Asset',
+                    },
+                  },
                 },
                 content: [],
-                nodeType: 'embedded-asset-block'
-              }
+                nodeType: 'embedded-asset-block',
+              },
             ],
-            nodeType: 'document'
-          }
+            nodeType: 'document',
+          },
         },
         tags: {
-          'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5']
-        }
-      }
-    }
+          'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5'],
+        },
+      },
+    },
   ],
   includes: {
     Entry: [
@@ -1795,8 +1795,8 @@ export const richTextSimpleReferences = {
             sys: {
               type: 'Link',
               linkType: 'Space',
-              id: 'uxn1u7m0txgd'
-            }
+              id: 'uxn1u7m0txgd',
+            },
           },
           id: '3ax6WfgrHJXRQIZT4Fi6my',
           type: 'Entry',
@@ -1806,22 +1806,22 @@ export const richTextSimpleReferences = {
             sys: {
               id: 'master',
               type: 'Link',
-              linkType: 'Environment'
-            }
+              linkType: 'Environment',
+            },
           },
           createdBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           updatedBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           publishedCounter: 0,
           version: 1,
@@ -1829,15 +1829,15 @@ export const richTextSimpleReferences = {
             sys: {
               type: 'Link',
               linkType: 'ContentType',
-              id: 'user'
-            }
-          }
+              id: 'user',
+            },
+          },
         },
         fields: {
           name: {
-            'en-US': 'TEst3'
-          }
-        }
+            'en-US': 'TEst3',
+          },
+        },
       },
       {
         sys: {
@@ -1845,8 +1845,8 @@ export const richTextSimpleReferences = {
             sys: {
               type: 'Link',
               linkType: 'Space',
-              id: 'uxn1u7m0txgd'
-            }
+              id: 'uxn1u7m0txgd',
+            },
           },
           id: '5yFvj9td7s9n7GlRH1wqSA',
           type: 'Entry',
@@ -1856,22 +1856,22 @@ export const richTextSimpleReferences = {
             sys: {
               id: 'master',
               type: 'Link',
-              linkType: 'Environment'
-            }
+              linkType: 'Environment',
+            },
           },
           createdBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           updatedBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           publishedCounter: 0,
           version: 1,
@@ -1879,15 +1879,15 @@ export const richTextSimpleReferences = {
             sys: {
               type: 'Link',
               linkType: 'ContentType',
-              id: 'user'
-            }
-          }
+              id: 'user',
+            },
+          },
         },
         fields: {
           name: {
-            'en-US': 'Entry'
-          }
-        }
+            'en-US': 'Entry',
+          },
+        },
       },
       {
         sys: {
@@ -1895,8 +1895,8 @@ export const richTextSimpleReferences = {
             sys: {
               type: 'Link',
               linkType: 'Space',
-              id: 'uxn1u7m0txgd'
-            }
+              id: 'uxn1u7m0txgd',
+            },
           },
           id: '7c1UsDsOc6bZEAiR4aqLBE',
           type: 'Entry',
@@ -1906,22 +1906,22 @@ export const richTextSimpleReferences = {
             sys: {
               id: 'master',
               type: 'Link',
-              linkType: 'Environment'
-            }
+              linkType: 'Environment',
+            },
           },
           createdBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           updatedBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           publishedCounter: 0,
           version: 1,
@@ -1929,16 +1929,16 @@ export const richTextSimpleReferences = {
             sys: {
               type: 'Link',
               linkType: 'ContentType',
-              id: 'user'
-            }
-          }
+              id: 'user',
+            },
+          },
         },
         fields: {
           name: {
-            'en-US': 'TEst3 (2)'
-          }
-        }
-      }
+            'en-US': 'TEst3 (2)',
+          },
+        },
+      },
     ],
     Asset: [
       {
@@ -1947,8 +1947,8 @@ export const richTextSimpleReferences = {
             sys: {
               type: 'Link',
               linkType: 'Space',
-              id: 'uxn1u7m0txgd'
-            }
+              id: 'uxn1u7m0txgd',
+            },
           },
           id: '1TW36Lhg6vjjiOwnS4pK6f',
           type: 'Asset',
@@ -1958,29 +1958,29 @@ export const richTextSimpleReferences = {
             sys: {
               id: 'master',
               type: 'Link',
-              linkType: 'Environment'
-            }
+              linkType: 'Environment',
+            },
           },
           createdBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           updatedBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           publishedCounter: 0,
-          version: 2
+          version: 2,
         },
         fields: {
           title: {
-            'en-US': 'Parrot'
+            'en-US': 'Parrot',
           },
           file: {
             'en-US': {
@@ -1990,22 +1990,22 @@ export const richTextSimpleReferences = {
                 size: 76313,
                 image: {
                   width: 640,
-                  height: 480
-                }
+                  height: 480,
+                },
               },
               fileName: 'Parrot',
-              contentType: 'image/jpeg'
-            }
-          }
-        }
-      }
-    ]
-  }
+              contentType: 'image/jpeg',
+            },
+          },
+        },
+      },
+    ],
+  },
 };
 
 export const simpleReferences = {
   sys: {
-    type: 'Array'
+    type: 'Array',
   },
   errors: [],
   items: [
@@ -2015,8 +2015,8 @@ export const simpleReferences = {
           sys: {
             type: 'Link',
             linkType: 'Space',
-            id: 'uxn1u7m0txgd'
-          }
+            id: 'uxn1u7m0txgd',
+          },
         },
         id: '4zaYBA8hYIxwRHsKfyJOVN',
         type: 'Entry',
@@ -2026,8 +2026,8 @@ export const simpleReferences = {
           sys: {
             id: 'master',
             type: 'Link',
-            linkType: 'Environment'
-          }
+            linkType: 'Environment',
+          },
         },
         publishedVersion: 3,
         publishedAt: '2019-12-16T14:00:10.531Z',
@@ -2036,15 +2036,15 @@ export const simpleReferences = {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         updatedBy: {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         publishedCounter: 1,
         version: 26,
@@ -2052,54 +2052,54 @@ export const simpleReferences = {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         contentType: {
           sys: {
             type: 'Link',
             linkType: 'ContentType',
-            id: 'user'
-          }
-        }
+            id: 'user',
+          },
+        },
       },
       fields: {
         name: {
           de: 'test',
-          'en-US': 'Root'
+          'en-US': 'Root',
         },
         entryRef1: {
           'en-US': {
             sys: {
               type: 'Link',
               linkType: 'Entry',
-              id: '3ADrOROW1jot5jExFOjt4i'
-            }
-          }
+              id: '3ADrOROW1jot5jExFOjt4i',
+            },
+          },
         },
         entryRef2: {
           'en-US': {
             sys: {
               type: 'Link',
               linkType: 'Entry',
-              id: 'iFsN9FnCxUVNrXnUbGeJu'
-            }
-          }
+              id: 'iFsN9FnCxUVNrXnUbGeJu',
+            },
+          },
         },
         assetRef: {
           'en-US': {
             sys: {
               type: 'Link',
               linkType: 'Asset',
-              id: '1RuPXX12mNeIzKQIcuOWQW'
-            }
-          }
+              id: '1RuPXX12mNeIzKQIcuOWQW',
+            },
+          },
         },
         tags: {
-          'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5']
-        }
-      }
-    }
+          'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5'],
+        },
+      },
+    },
   ],
   includes: {
     Entry: [
@@ -2109,8 +2109,8 @@ export const simpleReferences = {
             sys: {
               type: 'Link',
               linkType: 'Space',
-              id: 'uxn1u7m0txgd'
-            }
+              id: 'uxn1u7m0txgd',
+            },
           },
           id: '3ADrOROW1jot5jExFOjt4i',
           type: 'Entry',
@@ -2120,22 +2120,22 @@ export const simpleReferences = {
             sys: {
               id: 'master',
               type: 'Link',
-              linkType: 'Environment'
-            }
+              linkType: 'Environment',
+            },
           },
           createdBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           updatedBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           publishedCounter: 0,
           version: 1,
@@ -2143,16 +2143,16 @@ export const simpleReferences = {
             sys: {
               type: 'Link',
               linkType: 'ContentType',
-              id: 'user'
-            }
-          }
+              id: 'user',
+            },
+          },
         },
         fields: {
           name: {
             de: 'Test (1)',
-            'en-US': 'TEst3 (sched) (1)'
-          }
-        }
+            'en-US': 'TEst3 (sched) (1)',
+          },
+        },
       },
       {
         sys: {
@@ -2160,8 +2160,8 @@ export const simpleReferences = {
             sys: {
               type: 'Link',
               linkType: 'Space',
-              id: 'uxn1u7m0txgd'
-            }
+              id: 'uxn1u7m0txgd',
+            },
           },
           id: 'iFsN9FnCxUVNrXnUbGeJu',
           type: 'Entry',
@@ -2171,8 +2171,8 @@ export const simpleReferences = {
             sys: {
               id: 'master',
               type: 'Link',
-              linkType: 'Environment'
-            }
+              linkType: 'Environment',
+            },
           },
           publishedVersion: 11,
           publishedAt: '2020-01-10T16:22:14.228Z',
@@ -2181,15 +2181,15 @@ export const simpleReferences = {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           updatedBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           publishedCounter: 1,
           version: 14,
@@ -2197,24 +2197,24 @@ export const simpleReferences = {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           contentType: {
             sys: {
               type: 'Link',
               linkType: 'ContentType',
-              id: 'user'
-            }
-          }
+              id: 'user',
+            },
+          },
         },
         fields: {
           name: {
             de: 'Test (0)',
-            'en-US': 'TEst3 (0)'
-          }
-        }
-      }
+            'en-US': 'TEst3 (0)',
+          },
+        },
+      },
     ],
     Asset: [
       {
@@ -2223,8 +2223,8 @@ export const simpleReferences = {
             sys: {
               type: 'Link',
               linkType: 'Space',
-              id: 'uxn1u7m0txgd'
-            }
+              id: 'uxn1u7m0txgd',
+            },
           },
           id: '1RuPXX12mNeIzKQIcuOWQW',
           type: 'Asset',
@@ -2234,29 +2234,29 @@ export const simpleReferences = {
             sys: {
               id: 'master',
               type: 'Link',
-              linkType: 'Environment'
-            }
+              linkType: 'Environment',
+            },
           },
           createdBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           updatedBy: {
             sys: {
               type: 'Link',
               linkType: 'User',
-              id: '1ISXbiKugJkNkSrTE3jn25'
-            }
+              id: '1ISXbiKugJkNkSrTE3jn25',
+            },
           },
           publishedCounter: 0,
-          version: 2
+          version: 2,
         },
         fields: {
           title: {
-            'en-US': 'Parrot'
+            'en-US': 'Parrot',
           },
           file: {
             'en-US': {
@@ -2266,22 +2266,22 @@ export const simpleReferences = {
                 size: 90059,
                 image: {
                   width: 426,
-                  height: 640
-                }
+                  height: 640,
+                },
               },
               fileName: 'Parrot',
-              contentType: 'image/jpeg'
-            }
-          }
-        }
-      }
-    ]
-  }
+              contentType: 'image/jpeg',
+            },
+          },
+        },
+      },
+    ],
+  },
 };
 
 export const unresolvedReferences = {
   sys: {
-    type: 'Array'
+    type: 'Array',
   },
   errors: [],
   items: [
@@ -2291,8 +2291,8 @@ export const unresolvedReferences = {
           sys: {
             type: 'Link',
             linkType: 'Space',
-            id: 'uxn1u7m0txgd'
-          }
+            id: 'uxn1u7m0txgd',
+          },
         },
         id: '4zaYBA8hYIxwRHsKfyJOVN',
         type: 'Entry',
@@ -2302,8 +2302,8 @@ export const unresolvedReferences = {
           sys: {
             id: 'master',
             type: 'Link',
-            linkType: 'Environment'
-          }
+            linkType: 'Environment',
+          },
         },
         publishedVersion: 3,
         publishedAt: '2019-12-16T14:00:10.531Z',
@@ -2312,15 +2312,15 @@ export const unresolvedReferences = {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         updatedBy: {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         publishedCounter: 1,
         version: 26,
@@ -2328,64 +2328,64 @@ export const unresolvedReferences = {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         contentType: {
           sys: {
             type: 'Link',
             linkType: 'ContentType',
-            id: 'user'
-          }
-        }
+            id: 'user',
+          },
+        },
       },
       fields: {
         name: {
           de: 'test',
-          'en-US': 'Root'
+          'en-US': 'Root',
         },
         entryRef1: {
           'en-US': {
             sys: {
               type: 'Link',
               linkType: 'Entry',
-              id: '3ADrOROW1jot5jExFOjt4i'
-            }
-          }
+              id: '3ADrOROW1jot5jExFOjt4i',
+            },
+          },
         },
         entryRef2: {
           'en-US': {
             sys: {
               type: 'Link',
               linkType: 'Entry',
-              id: 'iFsN9FnCxUVNrXnUbGeJu'
-            }
-          }
+              id: 'iFsN9FnCxUVNrXnUbGeJu',
+            },
+          },
         },
         assetRef: {
           'en-US': {
             sys: {
               type: 'Link',
               linkType: 'Asset',
-              id: '1RuPXX12mNeIzKQIcuOWQW'
-            }
-          }
+              id: '1RuPXX12mNeIzKQIcuOWQW',
+            },
+          },
         },
         tags: {
-          'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5']
-        }
-      }
-    }
+          'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5'],
+        },
+      },
+    },
   ],
   includes: {
     Entry: [],
-    Asset: []
-  }
+    Asset: [],
+  },
 };
 
 export const noReferences = {
   sys: {
-    type: 'Array'
+    type: 'Array',
   },
   errors: [],
   items: [
@@ -2395,8 +2395,8 @@ export const noReferences = {
           sys: {
             type: 'Link',
             linkType: 'Space',
-            id: 'uxn1u7m0txgd'
-          }
+            id: 'uxn1u7m0txgd',
+          },
         },
         id: '4zaYBA8hYIxwRHsKfyJOVN',
         type: 'Entry',
@@ -2406,8 +2406,8 @@ export const noReferences = {
           sys: {
             id: 'master',
             type: 'Link',
-            linkType: 'Environment'
-          }
+            linkType: 'Environment',
+          },
         },
         publishedVersion: 3,
         publishedAt: '2019-12-16T14:00:10.531Z',
@@ -2416,15 +2416,15 @@ export const noReferences = {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         updatedBy: {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         publishedCounter: 1,
         version: 26,
@@ -2432,30 +2432,30 @@ export const noReferences = {
           sys: {
             type: 'Link',
             linkType: 'User',
-            id: '1ISXbiKugJkNkSrTE3jn25'
-          }
+            id: '1ISXbiKugJkNkSrTE3jn25',
+          },
         },
         contentType: {
           sys: {
             type: 'Link',
             linkType: 'ContentType',
-            id: 'user'
-          }
-        }
+            id: 'user',
+          },
+        },
       },
       fields: {
         name: {
           de: 'test',
-          'en-US': 'Root'
+          'en-US': 'Root',
         },
         tags: {
-          'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5']
-        }
-      }
-    }
+          'en-US': ['Test 1', 'Test 2', 'Test 3', 'Test 4', 'Test 5'],
+        },
+      },
+    },
   ],
   includes: {
     Entry: [],
-    Asset: []
-  }
+    Asset: [],
+  },
 };

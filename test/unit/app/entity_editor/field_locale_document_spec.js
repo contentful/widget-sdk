@@ -5,10 +5,9 @@ describe('entityEditor/FieldLocaleDocument', () => {
   const fieldsPath = ['FID', 'LC'];
   const path = ['fields', ...fieldsPath];
 
-  beforeEach(async function() {
-    const createFieldLocaleDoc = (await this.system.import(
-      'app/entity_editor/FieldLocaleDocument'
-    )).default;
+  beforeEach(async function () {
+    const createFieldLocaleDoc = (await this.system.import('app/entity_editor/FieldLocaleDocument'))
+      .default;
 
     await $initialize(this.system);
 
@@ -24,7 +23,7 @@ describe('entityEditor/FieldLocaleDocument', () => {
     testMethodDelegate('remove', 'removeValueAt');
 
     describe('with array value', () => {
-      beforeEach(function() {
+      beforeEach(function () {
         this.doc.set(['A', 'B']);
       });
 
@@ -33,7 +32,7 @@ describe('entityEditor/FieldLocaleDocument', () => {
     });
 
     function testMethodDelegate(method, target, args = []) {
-      it(`delegates calls to ${method}`, function() {
+      it(`delegates calls to ${method}`, function () {
         this.rootDoc[target].reset();
         this.doc[method].apply(null, args);
         const targetArgs = [path].concat(args);
@@ -43,23 +42,23 @@ describe('entityEditor/FieldLocaleDocument', () => {
   });
 
   describe('#set() / #get()', () => {
-    it('gets `undefined` initially', function() {
+    it('gets `undefined` initially', function () {
       expect(this.doc.get()).toEqual(undefined);
     });
 
-    it('gets value set in rootDoc', function() {
+    it('gets value set in rootDoc', function () {
       this.rootDoc.setValueAt(path, 'VAL-123');
       expect(this.doc.get()).toEqual('VAL-123');
     });
 
-    it('sets and gets', function() {
+    it('sets and gets', function () {
       this.doc.set('VAL-FOO');
       expect(this.doc.get()).toEqual('VAL-FOO');
     });
   });
 
   describe('#valueProperty()', () => {
-    it('has initial value', function() {
+    it('has initial value', function () {
       this.rootDoc.setValueAt(path, 'VAL');
       const changed = sinon.stub();
 
@@ -67,26 +66,26 @@ describe('entityEditor/FieldLocaleDocument', () => {
       sinon.assert.calledWith(changed, 'VAL');
     });
 
-    describe('change handling', function() {
-      beforeEach(function() {
+    describe('change handling', function () {
+      beforeEach(function () {
         this.changed = sinon.stub();
         this.doc.valueProperty.onValue(this.changed);
         this.changed.reset();
       });
 
-      it('updates value when root doc changes at path', function() {
+      it('updates value when root doc changes at path', function () {
         this.rootDoc.setValueAt(path, 'VAL');
         sinon.assert.calledWith(this.changed, 'VAL');
       });
 
-      it('updates value when root doc changes and reverts ', function() {
+      it('updates value when root doc changes and reverts ', function () {
         const initialValue = this.doc.get();
         this.rootDoc.setValueAt(path, `${initialValue || ''}VAL`);
         this.rootDoc.setValueAt(path, initialValue);
         sinon.assert.calledWith(this.changed, initialValue);
       });
 
-      it('does not update value when "set()" is called', function() {
+      it('does not update value when "set()" is called', function () {
         this.doc.set('VAL');
         this.rootDoc.setValueAt(path, 'VAL');
         sinon.assert.notCalled(this.changed);
@@ -95,7 +94,7 @@ describe('entityEditor/FieldLocaleDocument', () => {
   });
 
   describe('#fieldChanges$', () => {
-    it('emits when root document emits "localFieldChanges$" for current field', function() {
+    it('emits when root document emits "localFieldChanges$" for current field', function () {
       const emitted = sinon.spy();
       this.doc.localChanges$.onValue(emitted);
       this.rootDoc.changes.emit(['fields', 'FID', 'LC-other']);

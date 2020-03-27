@@ -47,18 +47,18 @@ AssetLink.propTypes = {
   asset: PropTypes.shape({
     fields: PropTypes.object,
     sys: PropTypes.shape({
-      type: PropTypes.oneOf(['Asset'])
-    })
+      type: PropTypes.oneOf(['Asset']),
+    }),
   }),
   entityHelpers: PropTypes.shape({
     entityTitle: PropTypes.func.isRequired,
-    assetFile: PropTypes.func.isRequired
+    assetFile: PropTypes.func.isRequired,
   }).isRequired,
-  size: PropTypes.oneOf(['default', 'small'])
+  size: PropTypes.oneOf(['default', 'small']),
 };
 
 AssetLink.defaultProps = {
-  size: 'small'
+  size: 'small',
 };
 
 export default AssetLink;

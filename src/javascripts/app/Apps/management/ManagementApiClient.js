@@ -20,10 +20,10 @@ export function createDefinitionTemplateForOrg(orgId) {
         sys: {
           type: 'Link',
           linkType: 'Organization',
-          id: orgId
-        }
-      }
-    }
+          id: orgId,
+        },
+      },
+    },
   };
 }
 
@@ -37,7 +37,7 @@ export function save(definition) {
   return orgEndpoint({
     method,
     path: ['app_definitions'].concat(isPersisted ? [id] : []),
-    data: omit(definition, ['sys'])
+    data: omit(definition, ['sys']),
   });
 }
 
@@ -47,7 +47,7 @@ export function deleteDef(definition) {
 
   return orgEndpoint({
     method: 'DELETE',
-    path: ['app_definitions', id]
+    path: ['app_definitions', id],
   });
 }
 

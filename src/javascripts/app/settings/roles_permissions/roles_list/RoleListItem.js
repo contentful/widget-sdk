@@ -11,7 +11,7 @@ import {
   IconButton,
   Dropdown,
   DropdownList,
-  DropdownListItem
+  DropdownListItem,
 } from '@contentful/forma-36-react-components';
 import jumpToRoleMembers from 'access_control/Users/jumpToRole';
 import { go } from 'states/Navigator';
@@ -20,12 +20,12 @@ const styles = {
   clickableCell: css({
     cursor: 'pointer',
     '&:hover > *': {
-      color: tokens.colorBlueBase
-    }
+      color: tokens.colorBlueBase,
+    },
   }),
   roleName: css({
-    fontWeight: tokens.fontWeightDemiBold
-  })
+    fontWeight: tokens.fontWeightDemiBold,
+  }),
 };
 
 function jumpToAdminRoleMembers() {
@@ -46,7 +46,7 @@ function RoleActions(props) {
           }}
           label="Actions"
           iconProps={{
-            icon: 'MoreHorizontal'
+            icon: 'MoreHorizontal',
           }}
         />
       }>
@@ -68,7 +68,7 @@ function RoleActions(props) {
 RoleActions.propTypes = {
   onEdit: PropTypes.func.isRequired,
   onDuplicate: PropTypes.func.isRequired,
-  onDelete: PropTypes.func.isRequired
+  onDelete: PropTypes.func.isRequired,
 };
 
 export function AdministratorRoleListItem(props) {
@@ -101,14 +101,14 @@ export function AdministratorRoleListItem(props) {
 
 AdministratorRoleListItem.propTypes = {
   count: PropTypes.number.isRequired,
-  hasCustomRolesFeature: PropTypes.bool.isRequired
+  hasCustomRolesFeature: PropTypes.bool.isRequired,
 };
 
 export function RoleListItem(props) {
   const openRole = () => {
     go({
       path: '^.detail',
-      params: { roleId: props.role.sys.id }
+      params: { roleId: props.role.sys.id },
     });
   };
 
@@ -150,12 +150,12 @@ export function RoleListItem(props) {
 RoleListItem.propTypes = {
   role: PropTypes.shape({
     sys: PropTypes.shape({
-      id: PropTypes.string.isRequired
+      id: PropTypes.string.isRequired,
     }).isRequired,
     name: PropTypes.string.isRequired,
     count: PropTypes.number.isRequired,
-    description: PropTypes.string
+    description: PropTypes.string,
   }).isRequired,
   hasCustomRolesFeature: PropTypes.bool.isRequired,
-  onRemoveRole: PropTypes.func.isRequired
+  onRemoveRole: PropTypes.func.isRequired,
 };

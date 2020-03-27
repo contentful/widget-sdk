@@ -9,8 +9,8 @@ import getOrgRole from 'redux/selectors/getOrgRole';
 
 const styles = {
   deleteButton: css({
-    marginRight: tokens.spacingM
-  })
+    marginRight: tokens.spacingM,
+  }),
 };
 
 class SpaceSettings extends React.Component {
@@ -20,20 +20,20 @@ class SpaceSettings extends React.Component {
     spaceName: PropTypes.string.isRequired,
     spaceId: PropTypes.string.isRequired,
 
-    showDeleteButton: PropTypes.bool.isRequired
+    showDeleteButton: PropTypes.bool.isRequired,
   };
 
   state = {
     isSaving: false,
     initialSpaceName: this.props.spaceName,
-    spaceName: this.props.spaceName
+    spaceName: this.props.spaceName,
   };
 
   isSaveDisabled() {
     return !this.state.spaceName || this.state.spaceName === this.state.initialSpaceName;
   }
 
-  onChangeSpaceName = e => {
+  onChangeSpaceName = (e) => {
     this.setState({ spaceName: e.target.value });
   };
 
@@ -87,7 +87,7 @@ class SpaceSettings extends React.Component {
               testId="space-id-text-input"
               value={spaceId}
               textInputProps={{
-                disabled: true
+                disabled: true,
               }}
             />
             <TextField
@@ -105,6 +105,6 @@ class SpaceSettings extends React.Component {
   }
 }
 
-export default connect(state => ({
-  showDeleteButton: ['owner', 'admin'].includes(getOrgRole(state))
+export default connect((state) => ({
+  showDeleteButton: ['owner', 'admin'].includes(getOrgRole(state)),
 }))(SpaceSettings);

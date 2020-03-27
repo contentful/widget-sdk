@@ -35,19 +35,9 @@ describe('ExtensionForm', () => {
     expect(inputs.at(3).prop('checked')).toBe(true); // third checkbox - Text
 
     // second radio - Contentful hosting
-    expect(
-      wrapper
-        .find('input[type="radio"]')
-        .at(1)
-        .prop('checked')
-    ).toBe(true);
+    expect(wrapper.find('input[type="radio"]').at(1).prop('checked')).toBe(true);
     // first CodeMirror - value of `srcdoc` property
-    expect(
-      wrapper
-        .find(CodeMirror)
-        .at(0)
-        .prop('value')
-    ).toBe('source');
+    expect(wrapper.find(CodeMirror).at(0).prop('value')).toBe('source');
   });
 
   it('updates entity values', () => {
@@ -61,7 +51,7 @@ describe('ExtensionForm', () => {
 
     inputs.at(1).simulate('change', { target: { checked: true } });
     expect(updateEntityStub).toHaveBeenCalledWith({
-      extension: { ...basic, fieldTypes: ['Text', 'Symbol'] }
+      extension: { ...basic, fieldTypes: ['Text', 'Symbol'] },
     });
   });
 
@@ -69,27 +59,17 @@ describe('ExtensionForm', () => {
     expect.assertions(5);
     const extension = { name: 'test', fieldTypes: ['Text'], src: '' };
     const [wrapper] = mount({ extension }, true);
-    const updateSrc = src =>
+    const updateSrc = (src) =>
       wrapper.setProps({
         ...wrapper.props(),
-        entity: { extension: { ...extension, src } }
+        entity: { extension: { ...extension, src } },
       });
     const assertError = () =>
-      expect(
-        wrapper
-          .find(ERR_SELECTOR)
-          .text()
-          .includes('Valid URLs')
-      ).toBe(true);
+      expect(wrapper.find(ERR_SELECTOR).text().includes('Valid URLs')).toBe(true);
     const assertOk = () => expect(wrapper.find(ERR_SELECTOR)).toHaveLength(0);
 
     // first radio - self hosted
-    expect(
-      wrapper
-        .find('input[type="radio"]')
-        .at(0)
-        .prop('checked')
-    ).toBe(true);
+    expect(wrapper.find('input[type="radio"]').at(0).prop('checked')).toBe(true);
 
     assertError();
     updateSrc('https://x');
@@ -130,11 +110,6 @@ describe('ExtensionForm', () => {
     const definitions = { instance: [param], installation: [param] };
     const extension = { ...basic, parameters: definitions };
     const [wrapper] = mount({ extension }, true);
-    expect(
-      wrapper
-        .find(CodeMirror)
-        .at(0)
-        .prop('value')
-    ).toBe(JSON.stringify(definitions, null, 2));
+    expect(wrapper.find(CodeMirror).at(0).prop('value')).toBe(JSON.stringify(definitions, null, 2));
   });
 });

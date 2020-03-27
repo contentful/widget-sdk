@@ -11,7 +11,7 @@ export default function register() {
       template: validationSettingsTemplate,
       controller: [
         '$scope',
-        $scope => {
+        ($scope) => {
           $scope.mimetypeGroups = mimetype.getGroupNames();
 
           $scope.$watch('validation.currentView', () => {
@@ -23,31 +23,31 @@ export default function register() {
           };
           $scope.setMatchingView();
 
-          $scope.$watch('validation.enabled', isEnabled => {
+          $scope.$watch('validation.enabled', (isEnabled) => {
             if (!isEnabled) {
               $scope.validate();
             }
           });
 
-          $scope.updateValidationSettingsValue = items => {
+          $scope.updateValidationSettingsValue = (items) => {
             $scope.validation.settings = items;
             $scope.validator.run();
             $scope.$applyAsync();
           };
 
-          $scope.updateValidationCurrentView = currentView => {
+          $scope.updateValidationCurrentView = (currentView) => {
             $scope.validation.currentView = currentView;
             $scope.validator.run();
             $scope.$applyAsync();
           };
 
-          $scope.updateValidationMessageValue = value => {
+          $scope.updateValidationMessageValue = (value) => {
             $scope.validation.message = value;
             $scope.validator.run();
             $scope.$applyAsync();
           };
-        }
-      ]
-    })
+        },
+      ],
+    }),
   ]);
 }

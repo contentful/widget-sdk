@@ -14,9 +14,9 @@ import TeamList from './TeamList';
 import TeamListRow from './TeamListRow';
 import TeamDialog from './TeamDialog';
 
-const renderComponent = actions => {
+const renderComponent = (actions) => {
   const store = createStore(reducer);
-  actions.forEach(action => store.dispatch(action));
+  actions.forEach((action) => store.dispatch(action));
   const wrapper = mount(
     <Provider store={store}>
       <TeamList />
@@ -39,8 +39,8 @@ describe('TeamList', () => {
       actions.push({
         type: 'LOCATION_CHANGED',
         payload: {
-          location: { pathname: ROUTES.organization.children.teams.build({ orgId: activeOrgId }) }
-        }
+          location: { pathname: ROUTES.organization.children.teams.build({ orgId: activeOrgId }) },
+        },
       });
     });
 
@@ -55,13 +55,13 @@ describe('TeamList', () => {
                   role: 'admin',
                   organization: {
                     sys: {
-                      id: activeOrgId
-                    }
-                  }
-                }
-              ]
-            }
-          }
+                      id: activeOrgId,
+                    },
+                  },
+                },
+              ],
+            },
+          },
         });
       });
 
@@ -80,28 +80,28 @@ describe('TeamList', () => {
                     description: 'Editors and writers in our west coast office.',
                     sys: {
                       type: 'Team',
-                      id: 'bTeam'
-                    }
+                      id: 'bTeam',
+                    },
                   },
                   {
                     name: 'D Team',
                     description: 'Editors and writers in our west coast office.',
                     sys: {
                       type: 'Team',
-                      id: 'dTeam'
-                    }
+                      id: 'dTeam',
+                    },
                   },
                   {
                     name: 'A Team',
                     sys: {
                       type: 'Team',
-                      id: 'aTeam'
-                    }
-                  }
+                      id: 'aTeam',
+                    },
+                  },
                 ],
-                [TEAM_MEMBERSHIPS]: []
-              }
-            }
+                [TEAM_MEMBERSHIPS]: [],
+              },
+            },
           });
         });
 
@@ -117,12 +117,7 @@ describe('TeamList', () => {
 
         it('should show number of teams', () => {
           const { wrapper } = renderComponent(actions);
-          expect(
-            wrapper
-              .find('[data-test-id="team-count"]')
-              .text()
-              .split(' ')
-          ).toContain('3');
+          expect(wrapper.find('[data-test-id="team-count"]').text().split(' ')).toContain('3');
         });
 
         it('it should not render empty placeholder', () => {
@@ -140,9 +135,9 @@ describe('TeamList', () => {
               payload: {
                 team: {
                   name: 'C Team',
-                  description: 'Simple description'
-                }
-              }
+                  description: 'Simple description',
+                },
+              },
             });
           });
 
@@ -166,11 +161,11 @@ describe('TeamList', () => {
                     description: 'Simple description',
                     sys: {
                       type: 'Team',
-                      id: 'cTeam'
-                    }
+                      id: 'cTeam',
+                    },
                   },
-                  dataset: 'Team'
-                }
+                  dataset: 'Team',
+                },
               });
             });
 
@@ -188,7 +183,7 @@ describe('TeamList', () => {
           describe('team creation failed', () => {
             beforeEach(() => {
               actions.push({
-                type: 'SUBMIT_NEW_TEAM_FAILED'
+                type: 'SUBMIT_NEW_TEAM_FAILED',
               });
             });
 
@@ -208,9 +203,9 @@ describe('TeamList', () => {
                 payload: {
                   team: {
                     name: 'C2 Team',
-                    description: 'Simple description'
-                  }
-                }
+                    description: 'Simple description',
+                  },
+                },
               });
             });
 
@@ -237,11 +232,11 @@ describe('TeamList', () => {
                       description: 'Simple description',
                       sys: {
                         type: 'Team',
-                        id: 'cTeam'
-                      }
+                        id: 'cTeam',
+                      },
                     },
-                    dataset: 'Team'
-                  }
+                    dataset: 'Team',
+                  },
                 });
                 actions.push({
                   type: 'ADD_TO_DATASET',
@@ -251,11 +246,11 @@ describe('TeamList', () => {
                       description: 'Simple description',
                       sys: {
                         type: 'Team',
-                        id: 'c2Team'
-                      }
+                        id: 'c2Team',
+                      },
                     },
-                    dataset: 'Team'
-                  }
+                    dataset: 'Team',
+                  },
                 });
               });
 
@@ -279,7 +274,7 @@ describe('TeamList', () => {
             describe('one team creation failed', () => {
               beforeEach(() => {
                 actions.push({
-                  type: 'SUBMIT_NEW_TEAM_FAILED'
+                  type: 'SUBMIT_NEW_TEAM_FAILED',
                 });
               });
 
@@ -294,7 +289,7 @@ describe('TeamList', () => {
               describe('second team creation failed', () => {
                 beforeEach(() => {
                   actions.push({
-                    type: 'SUBMIT_NEW_TEAM_FAILED'
+                    type: 'SUBMIT_NEW_TEAM_FAILED',
                   });
                 });
 
@@ -319,27 +314,21 @@ describe('TeamList', () => {
           expect(wrapper.find('[data-test-id="read-only-tooltip"]')).toHaveLength(0);
         });
 
-        const getDialog = wrapper =>
+        const getDialog = (wrapper) =>
           wrapper.find(TeamDialog).filter({ testId: 'create-team-dialog' });
 
         it('should show dialog when clicking add team button', () => {
           const { wrapper } = renderComponent(actions);
 
           expect(getDialog(wrapper).props()).toHaveProperty('isShown', false);
-          wrapper
-            .find(Button)
-            .filter({ testId: 'new-team-button' })
-            .simulate('click');
+          wrapper.find(Button).filter({ testId: 'new-team-button' }).simulate('click');
           expect(getDialog(wrapper).props()).toHaveProperty('isShown', true);
         });
 
         it('should hide dialog when closing', () => {
           const { wrapper } = renderComponent(actions);
 
-          wrapper
-            .find(Button)
-            .filter({ testId: 'new-team-button' })
-            .simulate('click');
+          wrapper.find(Button).filter({ testId: 'new-team-button' }).simulate('click');
 
           wrapper
             .find(TeamDialog)
@@ -360,9 +349,9 @@ describe('TeamList', () => {
             payload: {
               datasets: {
                 [TEAMS]: [],
-                [TEAM_MEMBERSHIPS]: []
-              }
-            }
+                [TEAM_MEMBERSHIPS]: [],
+              },
+            },
           });
         });
 
@@ -388,21 +377,21 @@ describe('TeamList', () => {
                   role: 'member',
                   organization: {
                     sys: {
-                      id: activeOrgId
-                    }
-                  }
+                      id: activeOrgId,
+                    },
+                  },
                 },
                 {
                   role: 'owner',
                   organization: {
                     sys: {
-                      id: 'otherOrg'
-                    }
-                  }
-                }
-              ]
-            }
-          }
+                      id: 'otherOrg',
+                    },
+                  },
+                },
+              ],
+            },
+          },
         });
       });
 
@@ -419,28 +408,28 @@ describe('TeamList', () => {
                     description: 'Editors and writers in our west coast office.',
                     sys: {
                       type: 'Team',
-                      id: 'bTeam'
-                    }
+                      id: 'bTeam',
+                    },
                   },
                   {
                     name: 'D Team',
                     description: 'Editors and writers in our west coast office.',
                     sys: {
                       type: 'Team',
-                      id: 'dTeam'
-                    }
+                      id: 'dTeam',
+                    },
                   },
                   {
                     name: 'A Team',
                     sys: {
                       type: 'Team',
-                      id: 'aTeam'
-                    }
-                  }
+                      id: 'aTeam',
+                    },
+                  },
                 ],
-                [TEAM_MEMBERSHIPS]: []
-              }
-            }
+                [TEAM_MEMBERSHIPS]: [],
+              },
+            },
           });
         });
 
@@ -461,9 +450,9 @@ describe('TeamList', () => {
             payload: {
               datasets: {
                 [TEAMS]: [],
-                [TEAM_MEMBERSHIPS]: []
-              }
-            }
+                [TEAM_MEMBERSHIPS]: [],
+              },
+            },
           });
         });
 
@@ -495,24 +484,24 @@ describe('TeamList', () => {
                     description: 'Editors and writers in our west coast office.',
                     sys: {
                       type: 'Team',
-                      id: 'bTeam'
-                    }
+                      id: 'bTeam',
+                    },
                   },
                   {
                     name: 'D Team',
                     description: 'Editors and writers in our west coast office.',
                     sys: {
                       type: 'Team',
-                      id: 'dTeam'
-                    }
+                      id: 'dTeam',
+                    },
                   },
                   {
                     name: 'A Team',
                     sys: {
                       type: 'Team',
-                      id: 'aTeam'
-                    }
-                  }
+                      id: 'aTeam',
+                    },
+                  },
                 ],
                 [TEAM_MEMBERSHIPS]: [
                   {
@@ -520,20 +509,20 @@ describe('TeamList', () => {
                     sys: {
                       id: 'membership1',
                       user: { sys: { id: currentUserId } },
-                      team: { sys: { id: 'dTeam' } }
-                    }
+                      team: { sys: { id: 'dTeam' } },
+                    },
                   },
                   {
                     admin: false,
                     sys: {
                       id: 'membership2',
                       user: { sys: { id: currentUserId } },
-                      team: { sys: { id: 'aTeam' } }
-                    }
-                  }
-                ]
-              }
-            }
+                      team: { sys: { id: 'aTeam' } },
+                    },
+                  },
+                ],
+              },
+            },
           });
         });
 

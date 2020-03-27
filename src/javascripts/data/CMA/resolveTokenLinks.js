@@ -1,6 +1,6 @@
 import { isPlainObject, set as setPath, get as getPath } from 'lodash';
 
-const isLink = item => getPath(item, ['sys', 'type']) === 'Link';
+const isLink = (item) => getPath(item, ['sys', 'type']) === 'Link';
 
 /**
  * @ngdoc service
@@ -39,7 +39,7 @@ export default function resolveTokenLinks(tokenData) {
 
   function store(item) {
     const {
-      sys: { type, id }
+      sys: { type, id },
     } = item;
 
     if (type === 'Role') {
@@ -60,8 +60,8 @@ export default function resolveTokenLinks(tokenData) {
   }
 
   function forEachInclude(fn) {
-    Object.keys(includes).forEach(type => {
-      includes[type].forEach(item => fn(item));
+    Object.keys(includes).forEach((type) => {
+      includes[type].forEach((item) => fn(item));
     });
   }
 
@@ -70,7 +70,7 @@ export default function resolveTokenLinks(tokenData) {
       return;
     }
 
-    Object.keys(item).forEach(key => {
+    Object.keys(item).forEach((key) => {
       const value = item[key];
       const shouldRecurse = isPlainObject(value) || Array.isArray(value);
 
@@ -85,7 +85,7 @@ export default function resolveTokenLinks(tokenData) {
   function replaceLink(item, key, parent) {
     let target;
     const {
-      sys: { linkType, id }
+      sys: { linkType, id },
     } = item[key];
     if (linkType === 'Role') {
       const spaceId = parent.sys.space.sys.id;

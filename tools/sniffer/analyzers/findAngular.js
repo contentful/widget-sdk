@@ -29,7 +29,7 @@ module.exports = function findAngular({ ast }) {
           }
         }
       }
-    }
+    },
   });
 
   return usages;

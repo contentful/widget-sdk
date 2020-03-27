@@ -2,7 +2,7 @@ import isHotkey from 'is-hotkey';
 import markDecorator from './MarkDecorator';
 import { haveMarks } from './UtilHave';
 
-export default function({ type, tagName, hotkey, richTextAPI }) {
+export default function ({ type, tagName, hotkey, richTextAPI }) {
   return {
     renderMark: (props, _editor, next) => {
       if (props.mark.type === type) {
@@ -19,6 +19,6 @@ export default function({ type, tagName, hotkey, richTextAPI }) {
         return;
       }
       return next();
-    }
+    },
   };
 }

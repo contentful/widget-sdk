@@ -15,10 +15,10 @@ export default function register() {
       controller.types = _.map(mimetype.getGroupNames(), (label, name) => ({
         name: name,
         label: label,
-        selected: _.includes($scope.validation.settings, name)
+        selected: _.includes($scope.validation.settings, name),
       }));
 
-      controller.updateFromReact = types => {
+      controller.updateFromReact = (types) => {
         $scope.validation.settings = getSelectedGroups(types);
         $scope.validate();
         $scope.$applyAsync();
@@ -30,11 +30,8 @@ export default function register() {
       };
 
       function getSelectedGroups(types) {
-        return _(types)
-          .filter('selected')
-          .map('name')
-          .value();
+        return _(types).filter('selected').map('name').value();
       }
-    }
+    },
   ]);
 }

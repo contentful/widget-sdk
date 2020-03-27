@@ -82,7 +82,7 @@ export const token$ = tokenBus.property;
 export const refreshToken = createExclusiveTask(() => {
   tokenStore.remove();
   tokenMVar.empty();
-  return fetchNewToken().then(token => {
+  return fetchNewToken().then((token) => {
     if (token) {
       tokenStore.set(token);
       updateToken(token);
@@ -219,12 +219,12 @@ function revokeToken(token) {
     Config.authUrl('oauth/revoke'),
     {
       token,
-      client_id: OAUTH_CLIENT_ID
+      client_id: OAUTH_CLIENT_ID,
     },
     {
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     }
   );
 }
@@ -245,15 +245,15 @@ function fetchNewToken() {
       grant_type: 'password',
       client_id: OAUTH_CLIENT_ID,
       // redirect_uri: APP_HOST,
-      scope: TOKEN_SCOPE
+      scope: TOKEN_SCOPE,
     },
     {
       // We include the cookies from the Gatekeeper domain in the
       // request. This is used to authenticate and give us a new token.
-      withCredentials: true
+      withCredentials: true,
     }
   )
-    .then(response => {
+    .then((response) => {
       return get(response, 'data.access_token');
     })
     .catch(() => {

@@ -11,52 +11,52 @@ export default function describeEntry() {
   describeArchivable(entry, setupEntity);
 
   function setupEntity() {
-    beforeEach(function() {
+    beforeEach(function () {
       this.entity = this.space.newEntry({
-        sys: { type: 'Entry', contentType: { sys: { id: 'abcd' } } }
+        sys: { type: 'Entry', contentType: { sys: { id: 'abcd' } } },
       });
     });
   }
 
   describeResource(entry);
 
-  describe('gets content type id', function() {
+  describe('gets content type id', function () {
     setupEntity();
 
-    it('gets content type id', function() {
+    it('gets content type id', function () {
       expect(this.entity.getContentTypeId()).toEqual('abcd');
     });
   });
 
-  describe('create entry resource', function() {
+  describe('create entry resource', function () {
     const serverData = Object.freeze({
       name: 'my resource',
       sys: Object.freeze({ id: '43', type: 'resource' }),
-      fields: 'hey ho'
+      fields: 'hey ho',
     });
 
-    it('posts to server', async function() {
+    it('posts to server', async function () {
       this.request.respond(serverData);
       const resource = await this.space.createEntry('123', { name: 'my resource' });
       sinon.assert.calledWith(this.request, {
         method: 'POST',
         url: '/spaces/42/entries',
         data: { name: 'my resource' },
-        headers: { 'X-Contentful-Content-Type': '123' }
+        headers: { 'X-Contentful-Content-Type': '123' },
       });
       expect(resource.getId()).toEqual('43');
     });
 
-    it('identical object is retrieved by .getId()', async function() {
+    it('identical object is retrieved by .getId()', async function () {
       this.request.respond(serverData);
       const resource = await this.space.createEntry('123', { name: 'my resource' });
       expect(resource.getId()).toEqual('43');
     });
 
-    it('updates with id given', async function() {
+    it('updates with id given', async function () {
       const newData = {
         name: 'my resource',
-        sys: { id: '55' }
+        sys: { id: '55' },
       };
       this.request.respond(serverData);
       await this.space.createEntry('123', newData);
@@ -64,7 +64,7 @@ export default function describeEntry() {
         method: 'PUT',
         url: '/spaces/42/entries/55',
         data: newData,
-        headers: { 'X-Contentful-Content-Type': '123' }
+        headers: { 'X-Contentful-Content-Type': '123' },
       });
     });
   });

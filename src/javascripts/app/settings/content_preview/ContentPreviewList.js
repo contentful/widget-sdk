@@ -12,7 +12,7 @@ import {
   TableHead,
   TableBody,
   TableCell,
-  TableRow
+  TableRow,
 } from '@contentful/forma-36-react-components';
 import EmptyStateIllustration from 'svg/illustrations/content-preview-empty-state.svg';
 import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
@@ -22,8 +22,8 @@ const styles = {
     marginTop: 200,
     width: '25vw',
     minWidth: '280px',
-    marginLeft: '-2vw'
-  })
+    marginLeft: '-2vw',
+  }),
 };
 
 export default class ContentPreviewList extends Component {
@@ -31,12 +31,12 @@ export default class ContentPreviewList extends Component {
     contentPreviews: PropTypes.arrayOf(
       PropTypes.shape({
         sys: PropTypes.shape({
-          id: PropTypes.string.isRequired
+          id: PropTypes.string.isRequired,
         }).isRequired,
         name: PropTypes.string.isRequired,
-        description: PropTypes.string.isRequired
+        description: PropTypes.string.isRequired,
       })
-    ).isRequired
+    ).isRequired,
   };
 
   renderList() {
@@ -50,7 +50,7 @@ export default class ContentPreviewList extends Component {
           </TableRow>
         </TableHead>
         <TableBody>
-          {this.props.contentPreviews.map(preview => (
+          {this.props.contentPreviews.map((preview) => (
             <StateLink
               key={preview.sys.id}
               path="^.detail"

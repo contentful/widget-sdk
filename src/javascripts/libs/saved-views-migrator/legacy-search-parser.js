@@ -22,13 +22,13 @@ function peg$SyntaxError(message, expected, found, location) {
 
 peg$subclass(peg$SyntaxError, Error);
 
-peg$SyntaxError.buildMessage = function(expected, found) {
+peg$SyntaxError.buildMessage = function (expected, found) {
   const DESCRIBE_EXPECTATION_FNS = {
-    literal: function(expectation) {
+    literal: function (expectation) {
       return '"' + literalEscape(expectation.text) + '"';
     },
 
-    class: function(expectation) {
+    class: function (expectation) {
       let escapedParts = '',
         i;
 
@@ -42,24 +42,21 @@ peg$SyntaxError.buildMessage = function(expected, found) {
       return '[' + (expectation.inverted ? '^' : '') + escapedParts + ']';
     },
 
-    any: function() {
+    any: function () {
       return 'any character';
     },
 
-    end: function() {
+    end: function () {
       return 'end of input';
     },
 
-    other: function(expectation) {
+    other: function (expectation) {
       return expectation.description;
-    }
+    },
   };
 
   function hex(ch) {
-    return ch
-      .charCodeAt(0)
-      .toString(16)
-      .toUpperCase();
+    return ch.charCodeAt(0).toString(16).toUpperCase();
   }
 
   function literalEscape(s) {
@@ -70,10 +67,10 @@ peg$SyntaxError.buildMessage = function(expected, found) {
       .replace(/\t/g, '\\t')
       .replace(/\n/g, '\\n')
       .replace(/\r/g, '\\r')
-      .replace(/[\x00-\x0F]/g, function(ch) {
+      .replace(/[\x00-\x0F]/g, function (ch) {
         return '\\x0' + hex(ch);
       })
-      .replace(/[\x10-\x1F\x7F-\x9F]/g, function(ch) {
+      .replace(/[\x10-\x1F\x7F-\x9F]/g, function (ch) {
         return '\\x' + hex(ch);
       });
   }
@@ -88,10 +85,10 @@ peg$SyntaxError.buildMessage = function(expected, found) {
       .replace(/\t/g, '\\t')
       .replace(/\n/g, '\\n')
       .replace(/\r/g, '\\r')
-      .replace(/[\x00-\x0F]/g, function(ch) {
+      .replace(/[\x00-\x0F]/g, function (ch) {
         return '\\x0' + hex(ch);
       })
-      .replace(/[\x10-\x1F\x7F-\x9F]/g, function(ch) {
+      .replace(/[\x10-\x1F\x7F-\x9F]/g, function (ch) {
         return '\\x' + hex(ch);
       });
   }
@@ -151,21 +148,21 @@ module.exports = function peg$parse(input, options) {
 
   let peg$startRuleFunction = peg$parseSearch;
 
-  const peg$c0 = function(_head, t) {
+  const peg$c0 = function (_head, t) {
       return t;
     },
-    peg$c1 = function(head, tail) {
+    peg$c1 = function (head, tail) {
       return [head].concat(tail);
     },
-    peg$c2 = function() {
+    peg$c2 = function () {
       return [];
     },
-    peg$c3 = function(key, op, value) {
+    peg$c3 = function (key, op, value) {
       return annotate(
         {
           key: key,
           operator: op,
-          value: value
+          value: value,
         },
         'Pair'
       );
@@ -178,31 +175,31 @@ module.exports = function peg$parse(input, options) {
     peg$c9 = peg$literalExpectation('=', false),
     peg$c10 = /^[<>]/,
     peg$c11 = peg$classExpectation(['<', '>'], false, false),
-    peg$c12 = function(op) {
+    peg$c12 = function (op) {
       return annotate(op, 'Operator');
     },
-    peg$c13 = function(val) {
+    peg$c13 = function (val) {
       return annotate(val, 'Value');
     },
-    peg$c14 = function() {
+    peg$c14 = function () {
       return '';
     },
     peg$c15 = /^[a-z0-9_-]/i,
     peg$c16 = peg$classExpectation([['a', 'z'], ['0', '9'], '_', '-'], false, true),
-    peg$c17 = function(key) {
+    peg$c17 = function (key) {
       return annotate(key, 'Key');
     },
-    peg$c18 = function(exp) {
+    peg$c18 = function (exp) {
       return annotate(exp, 'Query');
     },
-    peg$c19 = function(x) {
+    peg$c19 = function (x) {
       return x;
     },
     peg$c20 = '"',
     peg$c21 = peg$literalExpectation('"', false),
     peg$c22 = /^[^"]/,
     peg$c23 = peg$classExpectation(['"'], true, false),
-    peg$c24 = function(q) {
+    peg$c24 = function (q) {
       return q;
     },
     peg$c25 = /^[^ "]/i,
@@ -278,7 +275,7 @@ module.exports = function peg$parse(input, options) {
       details = peg$posDetailsCache[p];
       details = {
         line: details.line,
-        column: details.column
+        column: details.column,
       };
 
       while (p < pos) {
@@ -305,13 +302,13 @@ module.exports = function peg$parse(input, options) {
       start: {
         offset: startPos,
         line: startPosDetails.line,
-        column: startPosDetails.column
+        column: startPosDetails.column,
       },
       end: {
         offset: endPos,
         line: endPosDetails.line,
-        column: endPosDetails.column
-      }
+        column: endPosDetails.column,
+      },
     };
   }
 
@@ -958,7 +955,7 @@ module.exports = function peg$parse(input, options) {
       offset: offset(),
       length: text().length,
       end: offset() + text().length,
-      content: content
+      content: content,
     };
   }
 

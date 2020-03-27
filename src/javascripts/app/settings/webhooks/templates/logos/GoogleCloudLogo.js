@@ -1,6 +1,6 @@
 import React from 'react';
 
-const GoogleCloudLogo = props => (
+const GoogleCloudLogo = (props) => (
   <svg width={32} height={26} {...props}>
     <g fill="none" fillRule="evenodd">
       <path d="M0-3h32v32H0z" />

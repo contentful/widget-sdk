@@ -9,21 +9,21 @@ const styles = {
     padding: '10px',
     margin: 0,
     ':hover': {
-      backgroundColor: tokens.colorElementLightest
-    }
+      backgroundColor: tokens.colorElementLightest,
+    },
   }),
   row: css({
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center'
-  })
+    alignItems: 'center',
+  }),
 };
 
 export default function AutocompleteSelection({
   onRemove,
   children,
   extraContent,
-  testId = 'autocomplete-selection'
+  testId = 'autocomplete-selection',
 }) {
   return (
     <div className={styles.root} data-test-id={testId}>
@@ -45,5 +45,5 @@ export default function AutocompleteSelection({
 AutocompleteSelection.propTypes = {
   onRemove: PropTypes.func.isRequired,
   extraContent: PropTypes.node,
-  testId: PropTypes.string
+  testId: PropTypes.string,
 };

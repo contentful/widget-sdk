@@ -4,8 +4,8 @@ module.exports = {
       useJest: "'sinon.{{fn}}' is used. Use jest features instead of sinon.",
       useJestSpy: "'sinon.{{fn}}' is used. Avoid using it and use 'jest.fn()' instead.",
       useJestMatchers:
-        "'sinon.assert.{{fn}}' is used. Avoid using it and use jest matchers, for example 'expect(spy.{{fn}}).toBe(...)'"
-    }
+        "'sinon.assert.{{fn}}' is used. Avoid using it and use jest matchers, for example 'expect(spy.{{fn}}).toBe(...)'",
+    },
   },
   create(context) {
     return {
@@ -16,8 +16,8 @@ module.exports = {
               node,
               messageId: 'useJestMatchers',
               data: {
-                fn: node.parent.property.name
-              }
+                fn: node.parent.property.name,
+              },
             });
             return;
           }
@@ -26,8 +26,8 @@ module.exports = {
               node,
               messageId: 'useJestSpy',
               data: {
-                fn: node.property.name
-              }
+                fn: node.property.name,
+              },
             });
             return;
           }
@@ -35,11 +35,11 @@ module.exports = {
             node,
             messageId: 'useJest',
             data: {
-              fn: node.property ? node.property.name : ''
-            }
+              fn: node.property ? node.property.name : '',
+            },
           });
         }
-      }
+      },
     };
-  }
+  },
 };

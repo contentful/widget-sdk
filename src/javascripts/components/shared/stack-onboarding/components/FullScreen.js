@@ -18,7 +18,7 @@ const FullScreen = ({ children, close }) => {
 
 FullScreen.propTypes = {
   children: PropTypes.node,
-  close: PropTypes.node
+  close: PropTypes.node,
 };
 
 export default FullScreen;

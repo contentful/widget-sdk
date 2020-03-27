@@ -1,14 +1,14 @@
 import {
   getDefaultSidebar,
   transformEditorInterfacesToTargetState,
-  removeAllEditorInterfaceReferences
+  removeAllEditorInterfaceReferences,
 } from './AppEditorInterfaces';
 
 import {
   NAMESPACE_EXTENSION,
   NAMESPACE_BUILTIN,
   NAMESPACE_SIDEBAR_BUILTIN,
-  NAMESPACE_APP
+  NAMESPACE_APP,
 } from 'widgets/WidgetNamespaces';
 
 const APP_ID = 'appid';
@@ -17,9 +17,9 @@ const installation = {
   sys: {
     type: 'AppInstallation',
     appDefinition: {
-      sys: { type: 'Link', linkType: 'AppDefinition', id: APP_ID }
-    }
-  }
+      sys: { type: 'Link', linkType: 'AppDefinition', id: APP_ID },
+    },
+  },
 };
 
 jest.mock('i13n/Telemetry', () => ({ count: () => {} }));
@@ -31,10 +31,10 @@ describe('AppEditorInterfaces', () => {
   beforeEach(() => {
     cma = {
       getEditorInterfaces: jest.fn(() => Promise.resolve({ items: [] })),
-      updateEditorInterface: jest.fn(() => Promise.resolve())
+      updateEditorInterface: jest.fn(() => Promise.resolve()),
     };
 
-    transform = targetState => {
+    transform = (targetState) => {
       return transformEditorInterfacesToTargetState(cma, targetState, installation);
     };
 
@@ -56,36 +56,38 @@ describe('AppEditorInterfaces', () => {
                   fieldId: 'test2',
                   widgetNamespace: NAMESPACE_BUILTIN,
                   widgetId: 'date',
-                  settings: { ampm: true }
-                }
+                  settings: { ampm: true },
+                },
               ],
               sidebar: [
                 { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'publication-widget' },
-                { widgetNamespace: NAMESPACE_EXTENSION, widgetId: 'some-extension' }
-              ]
+                { widgetNamespace: NAMESPACE_EXTENSION, widgetId: 'some-extension' },
+              ],
             },
             {
               sys: { contentType: { sys: { id: 'CT2' } } },
               editor: {
                 widgetNamespace: NAMESPACE_EXTENSION,
                 widgetId: 'some-different-extension',
-                settings: { hello: 'world' }
+                settings: { hello: 'world' },
               },
-              sidebar: [{ widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'versions-widget' }]
-            }
-          ]
+              sidebar: [
+                { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'versions-widget' },
+              ],
+            },
+          ],
         })
       );
 
       await transform({
         CT1: {
           controls: [{ fieldId: 'test' }, { fieldId: 'test2' }],
-          sidebar: { position: 1 }
+          sidebar: { position: 1 },
         },
         CT2: {
           editor: true,
-          sidebar: true
-        }
+          sidebar: true,
+        },
       });
 
       expect(cma.updateEditorInterface).toBeCalledTimes(2);
@@ -96,18 +98,18 @@ describe('AppEditorInterfaces', () => {
           {
             fieldId: 'test',
             widgetNamespace: NAMESPACE_APP,
-            widgetId: APP_ID
+            widgetId: APP_ID,
           },
-          { fieldId: 'test2', widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }
+          { fieldId: 'test2', widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
         ],
         sidebar: [
           { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'publication-widget' },
           {
             widgetNamespace: NAMESPACE_APP,
-            widgetId: APP_ID
+            widgetId: APP_ID,
           },
-          { widgetNamespace: NAMESPACE_EXTENSION, widgetId: 'some-extension' }
-        ]
+          { widgetNamespace: NAMESPACE_EXTENSION, widgetId: 'some-extension' },
+        ],
       });
 
       expect(cma.updateEditorInterface).toBeCalledWith({
@@ -115,8 +117,8 @@ describe('AppEditorInterfaces', () => {
         editor: { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
         sidebar: [
           { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'versions-widget' },
-          { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }
-        ]
+          { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
+        ],
       });
     });
 
@@ -126,9 +128,9 @@ describe('AppEditorInterfaces', () => {
           items: [
             {
               sys: { contentType: { sys: { id: 'CT1' } } },
-              controls: [{ fieldId: 'test' }]
-            }
-          ]
+              controls: [{ fieldId: 'test' }],
+            },
+          ],
         })
       );
 
@@ -136,15 +138,15 @@ describe('AppEditorInterfaces', () => {
 
       await transform({
         CT1: {
-          controls: [{ fieldId: 'test' }]
-        }
+          controls: [{ fieldId: 'test' }],
+        },
       });
 
       expect(cma.updateEditorInterface).toBeCalledTimes(1);
 
       expect(cma.updateEditorInterface).toBeCalledWith({
         sys: { contentType: { sys: { id: 'CT1' } } },
-        controls: [{ fieldId: 'test', widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }]
+        controls: [{ fieldId: 'test', widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }],
       });
     });
 
@@ -158,24 +160,24 @@ describe('AppEditorInterfaces', () => {
                 {
                   fieldId: 'test',
                   widgetNamespace: NAMESPACE_APP,
-                  widgetId: APP_ID
-                }
+                  widgetId: APP_ID,
+                },
               ],
               sidebar: [
                 { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'publication-widget' },
                 { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'versions-widget' },
-                { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }
-              ]
-            }
-          ]
+                { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
+              ],
+            },
+          ],
         })
       );
 
       await transform({
         CT1: {
           controls: [{ fieldId: 'test' }],
-          sidebar: { position: 1 }
-        }
+          sidebar: { position: 1 },
+        },
       });
 
       expect(cma.updateEditorInterface).toBeCalledTimes(1);
@@ -186,14 +188,14 @@ describe('AppEditorInterfaces', () => {
           {
             fieldId: 'test',
             widgetNamespace: NAMESPACE_APP,
-            widgetId: APP_ID
-          }
+            widgetId: APP_ID,
+          },
         ],
         sidebar: [
           { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'publication-widget' },
           { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
-          { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'versions-widget' }
-        ]
+          { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'versions-widget' },
+        ],
       });
     });
 
@@ -202,14 +204,14 @@ describe('AppEditorInterfaces', () => {
         Promise.resolve({
           items: [
             { sys: { contentType: { sys: { id: 'CT1' } } } },
-            { sys: { contentType: { sys: { id: 'CT2' } } } }
-          ]
+            { sys: { contentType: { sys: { id: 'CT2' } } } },
+          ],
         })
       );
 
       await transform({
         CT1: { sidebar: { position: 3 } },
-        CT2: { sidebar: { position: 2 } }
+        CT2: { sidebar: { position: 2 } },
       });
 
       expect(cma.updateEditorInterface).toBeCalledTimes(2);
@@ -221,8 +223,8 @@ describe('AppEditorInterfaces', () => {
         sidebar: [
           ...defaultSidebar.slice(0, 3),
           { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
-          ...defaultSidebar.slice(3)
-        ]
+          ...defaultSidebar.slice(3),
+        ],
       });
 
       expect(cma.updateEditorInterface).toBeCalledWith({
@@ -230,8 +232,8 @@ describe('AppEditorInterfaces', () => {
         sidebar: [
           ...defaultSidebar.slice(0, 2),
           { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
-          ...defaultSidebar.slice(2)
-        ]
+          ...defaultSidebar.slice(2),
+        ],
       });
     });
 
@@ -241,9 +243,9 @@ describe('AppEditorInterfaces', () => {
           items: [
             {
               sys: { contentType: { sys: { id: 'CT1' } } },
-              editor: { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }
-            }
-          ]
+              editor: { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
+            },
+          ],
         });
       });
 
@@ -262,15 +264,15 @@ describe('AppEditorInterfaces', () => {
               sys: { contentType: { sys: { id: 'CT1' } } },
               editor: {
                 widgetNamespace: NAMESPACE_APP,
-                widgetId: APP_ID
+                widgetId: APP_ID,
               },
               sidebar: [
                 { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: APP_ID },
                 { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'publication-widget' },
                 { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
                 { widgetNamespace: NAMESPACE_EXTENSION, widgetId: 'different-extension' },
-                { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }
-              ]
+                { widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
+              ],
             },
             {
               sys: { contentType: { sys: { id: 'CT2' } } },
@@ -279,14 +281,14 @@ describe('AppEditorInterfaces', () => {
                 { fieldId: 'author', widgetNamespace: NAMESPACE_BUILTIN, widgetId: APP_ID },
                 { fieldId: 'date', widgetNamespace: NAMESPACE_APP, widgetId: 'different' },
                 { fieldId: 'lead', widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
-                { fieldId: 'content', widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }
+                { fieldId: 'content', widgetNamespace: NAMESPACE_APP, widgetId: APP_ID },
               ],
               editor: {
                 widgetNamespace: NAMESPACE_APP,
-                widgetId: 'some-other-editor'
-              }
-            }
-          ]
+                widgetId: 'some-other-editor',
+              },
+            },
+          ],
         })
       );
 
@@ -299,8 +301,8 @@ describe('AppEditorInterfaces', () => {
         sidebar: [
           { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: APP_ID },
           { widgetNamespace: NAMESPACE_SIDEBAR_BUILTIN, widgetId: 'publication-widget' },
-          { widgetNamespace: NAMESPACE_EXTENSION, widgetId: 'different-extension' }
-        ]
+          { widgetNamespace: NAMESPACE_EXTENSION, widgetId: 'different-extension' },
+        ],
       });
 
       expect(cma.updateEditorInterface).toBeCalledWith({
@@ -310,12 +312,12 @@ describe('AppEditorInterfaces', () => {
           { fieldId: 'author', widgetNamespace: NAMESPACE_BUILTIN, widgetId: APP_ID },
           { fieldId: 'date', widgetNamespace: NAMESPACE_APP, widgetId: 'different' },
           { fieldId: 'lead' },
-          { fieldId: 'content' }
+          { fieldId: 'content' },
         ],
         editor: {
           widgetNamespace: NAMESPACE_APP,
-          widgetId: 'some-other-editor'
-        }
+          widgetId: 'some-other-editor',
+        },
       });
     });
 
@@ -325,9 +327,9 @@ describe('AppEditorInterfaces', () => {
           items: [
             {
               sys: { contentType: { sys: { id: 'CT1' } } },
-              controls: [{ fieldId: 'test', widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }]
-            }
-          ]
+              controls: [{ fieldId: 'test', widgetNamespace: NAMESPACE_APP, widgetId: APP_ID }],
+            },
+          ],
         })
       );
 
@@ -339,7 +341,7 @@ describe('AppEditorInterfaces', () => {
 
       expect(cma.updateEditorInterface).toBeCalledWith({
         sys: { contentType: { sys: { id: 'CT1' } } },
-        controls: [{ fieldId: 'test' }]
+        controls: [{ fieldId: 'test' }],
       });
     });
 

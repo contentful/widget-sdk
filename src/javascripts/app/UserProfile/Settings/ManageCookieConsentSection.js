@@ -4,7 +4,7 @@ import {
   Subheading,
   Paragraph,
   Button,
-  Typography
+  Typography,
 } from '@contentful/forma-36-react-components';
 import * as logger from 'services/logger';
 import useAsync from 'app/common/hooks/useAsync';

@@ -11,7 +11,7 @@ const handleStringChange = (onChange, e) => {
   onChange(isNonEmptyString ? value : undefined);
 };
 
-const stringValue = value => (typeof value === 'number' ? `${value}` : value || '');
+const stringValue = (value) => (typeof value === 'number' ? `${value}` : value || '');
 
 const NumberControl = ({ definition, value, onChange }) => {
   return (
@@ -20,7 +20,7 @@ const NumberControl = ({ definition, value, onChange }) => {
       className="cfnext-form__input--full-size"
       type="number"
       value={stringValue(value)}
-      onChange={e => {
+      onChange={(e) => {
         const parsed = parseInt(e.target.value, 10);
         onChange(isNaN(parsed) ? undefined : parsed);
       }}
@@ -78,7 +78,7 @@ const WidgetParameterControl = ({ definition, value, isMissing, onChange }) => {
         countCharacters
         textInputProps={{
           type: 'text',
-          maxLength: 255
+          maxLength: 255,
         }}
         required={required}
         helpText={description}
@@ -104,7 +104,7 @@ const WidgetParameterControl = ({ definition, value, isMissing, onChange }) => {
         validationMessage={isMissing ? 'This value is required.' : ''}
         className="f36-margin-bottom--l">
         <Option value="">{get(definition, ['labels', 'empty']) || 'Select an option'}</Option>
-        {definition.options.map(o => {
+        {definition.options.map((o) => {
           const value = Object.keys(o)[0];
           return (
             <Option key={value} value={value}>
@@ -118,7 +118,7 @@ const WidgetParameterControl = ({ definition, value, isMissing, onChange }) => {
 
   const Control = {
     Number: NumberControl,
-    Boolean: BooleanControl
+    Boolean: BooleanControl,
   }[type];
 
   return (
@@ -137,7 +137,7 @@ const WidgetParameterControl = ({ definition, value, isMissing, onChange }) => {
 const WidgetParametersForm = ({ definitions, values, missing, updateValue }) => {
   return (
     <React.Fragment>
-      {definitions.map(definition => {
+      {definitions.map((definition) => {
         return (
           <WidgetParameterControl
             key={definition.id}
@@ -155,7 +155,7 @@ const WidgetParametersForm = ({ definitions, values, missing, updateValue }) => 
 const controlPropTypes = {
   definition: PropTypes.object.isRequired,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]),
-  onChange: PropTypes.func.isRequired
+  onChange: PropTypes.func.isRequired,
 };
 
 NumberControl.propTypes = controlPropTypes;
@@ -167,23 +167,23 @@ BooleanOption.propTypes = {
   option: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired,
   label: PropTypes.string.isRequired,
-  style: PropTypes.object
+  style: PropTypes.object,
 };
 
 WidgetParameterControl.propTypes = {
   ...controlPropTypes,
-  isMissing: PropTypes.bool.isRequired
+  isMissing: PropTypes.bool.isRequired,
 };
 
 WidgetParametersForm.propTypes = {
   definitions: PropTypes.array.isRequired,
   values: PropTypes.object.isRequired,
   missing: PropTypes.object.isRequired,
-  updateValue: PropTypes.func.isRequired
+  updateValue: PropTypes.func.isRequired,
 };
 
 WidgetParametersForm.defaultProps = {
-  definitions: []
+  definitions: [],
 };
 
 export default WidgetParametersForm;

@@ -33,7 +33,7 @@ const slideHelper = {
    */
   toStateGoArgs: (slide, params = {}) => [
     getSlideStrategyFor(slide).STATE_PATH,
-    { ...params, ...slideHelper.toStateParams(slide) }
+    { ...params, ...slideHelper.toStateParams(slide) },
   ],
   /**
    * Serializes a given slide as a string.
@@ -41,7 +41,7 @@ const slideHelper = {
    * @param {Slide} slide
    * @returns {string}
    */
-  toString: newStrategyForSlideInvoker('toString')
+  toString: newStrategyForSlideInvoker('toString'),
 };
 export default slideHelper;
 
@@ -52,7 +52,7 @@ const slideStrategies = [
     shareStateWithPreviousEntry: true,
     newFromStateParams: ({ entryId, bulkEditor = '' }) =>
       getSlideStrategyFor({ type: TYPES.BULK_EDITOR }).newFromQS(`${entryId}:${bulkEditor}`),
-    newFromQS: string => {
+    newFromQS: (string) => {
       const ID = RESOURCE_ID_PATTERN;
       const BULK_EDITOR_ID_REGEXP = new RegExp(`^(${ID}):(${ID}):(${ID}):(-?\\d+)$`);
       const match = string.match(BULK_EDITOR_ID_REGEXP);
@@ -60,33 +60,33 @@ const slideStrategies = [
         const [_, entryId, fieldId, localeCode, focusedEntityIndex] = match;
         return {
           type: TYPES.BULK_EDITOR,
-          path: [entryId, fieldId, localeCode, Number(focusedEntityIndex)]
+          path: [entryId, fieldId, localeCode, Number(focusedEntityIndex)],
         };
       }
       return null;
     },
     toStateParams: ({ path: [entryId, ...entryBulkPath] }) => ({
       entryId,
-      bulkEditor: entryBulkPath.join(':')
+      bulkEditor: entryBulkPath.join(':'),
     }),
-    toString: ({ path }) => path.join(':')
+    toString: ({ path }) => path.join(':'),
   },
   {
     TYPE: TYPES.ENTRY,
     STATE_PATH: '^.^.entries.detail',
     newFromStateParams: ({ entryId: id }) => (id ? { id, type: TYPES.ENTRY } : null),
-    newFromQS: string => (isValidResourceId(string) ? { id: string, type: TYPES.ENTRY } : null),
+    newFromQS: (string) => (isValidResourceId(string) ? { id: string, type: TYPES.ENTRY } : null),
     toStateParams: ({ id: entryId }) => ({ entryId, bulkEditor: null }),
-    toString: ({ id }) => id
+    toString: ({ id }) => id,
   },
   {
     TYPE: TYPES.ASSET,
     STATE_PATH: '^.^.assets.detail',
     newFromStateParams: ({ assetId: id }) => (id ? { id, type: TYPES.ASSET } : null),
-    newFromQS: _string => null, // Assets can't be in query string.
+    newFromQS: (_string) => null, // Assets can't be in query string.
     toStateParams: ({ id: assetId }) => ({ assetId }),
-    toString: ({ id }) => `${TYPES.ASSET}^${id}`
-  }
+    toString: ({ id }) => `${TYPES.ASSET}^${id}`,
+  },
 ];
 
 function getSlideStrategyFor({ type }) {
@@ -98,7 +98,7 @@ function getSlideStrategyFor({ type }) {
 }
 
 function newStrategyForSlideInvoker(fnName) {
-  return slide => getSlideStrategyFor(slide)[fnName](slide);
+  return (slide) => getSlideStrategyFor(slide)[fnName](slide);
 }
 
 function newFactoryStrategyInvoker(fnName) {

@@ -19,25 +19,25 @@ const styles = {
     background: tokens.colorIceMid,
     border: `1px solid ${tokens.colorElementLight}`,
     padding: tokens.spacingM,
-    margin: `${tokens.spacingL} 0`
+    margin: `${tokens.spacingL} 0`,
   }),
   hintParagraph: css({
     color: tokens.colorTextLight,
     margin: '0',
-    marginLeft: tokens.spacingS
+    marginLeft: tokens.spacingS,
   }),
   environmentDiv: css({
     display: 'flex',
     alignItems: 'center',
-    marginTop: tokens.spacingL
+    marginTop: tokens.spacingL,
   }),
   label: css({
     display: 'flex',
-    alignItems: 'baseline'
+    alignItems: 'baseline',
   }),
   toolTipFix: css({
-    bottom: 0
-  })
+    bottom: 0,
+  }),
 };
 
 function makeLink(envOrAlias) {
@@ -45,8 +45,8 @@ function makeLink(envOrAlias) {
     sys: {
       type: 'Link',
       linkType: envOrAlias.sys.type,
-      id: envOrAlias.sys.id
-    }
+      id: envOrAlias.sys.id,
+    },
   };
 }
 
@@ -64,7 +64,7 @@ EnvironmentSelector.propTypes = {
   canEdit: PropTypes.bool,
   spaceEnvironments: PropTypes.array.isRequired,
   spaceAliases: PropTypes.array.isRequired,
-  updateEnvOrAliasLabel: PropTypes.func.isRequired
+  updateEnvOrAliasLabel: PropTypes.func.isRequired,
 };
 
 function Hint() {
@@ -84,7 +84,7 @@ function Hint() {
 
 function ListEnvironments({ environments, canEdit, isSelected, showDefault, toggleSelection }) {
   const spaceContext = getModule('spaceContext');
-  return environments.map(environment => {
+  return environments.map((environment) => {
     const isMaster = spaceContext.isMasterEnvironment(environment);
     return (
       <label key={environment.sys.id} className={styles.label}>
@@ -112,7 +112,7 @@ function ListEnvironments({ environments, canEdit, isSelected, showDefault, togg
 
 function ListAliases({ aliases, canEdit, isSelected, toggleSelection }) {
   const spaceContext = getModule('spaceContext');
-  return aliases.map(alias => {
+  return aliases.map((alias) => {
     const isMaster = spaceContext.isMasterEnvironment(alias);
     return (
       <label key={alias.sys.id} className={styles.label}>
@@ -144,16 +144,16 @@ function List({
   spaceEnvironments,
   spaceAliases,
   selectedEnvOrAliasLabel,
-  updateEnvOrAliasLabel
+  updateEnvOrAliasLabel,
 }) {
   const envAndAliasCount = spaceAliases.length + spaceEnvironments.length;
   // Note that envs[] come from the api_keys endpoint which currently treats Environments and Aliases as Environments
-  const isSelected = envOrAlias =>
+  const isSelected = (envOrAlias) =>
     !!find(selectedEnvOrAliasLabel, { sys: { id: envOrAlias.sys.id } });
-  const toggleSelection = envOrAlias => {
+  const toggleSelection = (envOrAlias) => {
     if (isSelected(envOrAlias)) {
       updateEnvOrAliasLabel(
-        filter(selectedEnvOrAliasLabel, cur => cur.sys.id !== envOrAlias.sys.id)
+        filter(selectedEnvOrAliasLabel, (cur) => cur.sys.id !== envOrAlias.sys.id)
       );
     } else {
       updateEnvOrAliasLabel(concat(selectedEnvOrAliasLabel, [makeLink(envOrAlias)]));
@@ -206,5 +206,5 @@ List.propTypes = {
   spaceEnvironments: PropTypes.array.isRequired,
   spaceAliases: PropTypes.array.isRequired,
   selectedEnvOrAliasLabel: PropTypes.array.isRequired,
-  updateEnvOrAliasLabel: PropTypes.func.isRequired
+  updateEnvOrAliasLabel: PropTypes.func.isRequired,
 };

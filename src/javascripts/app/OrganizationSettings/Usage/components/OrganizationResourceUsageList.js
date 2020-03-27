@@ -8,14 +8,14 @@ import { Paragraph, Heading } from '@contentful/forma-36-react-components';
 
 export default class OrganizationResourceUsageList extends React.Component {
   static propTypes = {
-    resources: PropTypes.arrayOf(PropTypes.object)
+    resources: PropTypes.arrayOf(PropTypes.object),
   };
 
   render() {
     const { resources } = this.props;
     if (!resources.length) return null;
 
-    const formatDate = date => moment(date).format('DD MMMM');
+    const formatDate = (date) => moment(date).format('DD MMMM');
 
     const byId = keyBy(resources, property('sys.id'));
     const { start, end } = byId['api_request'].period;

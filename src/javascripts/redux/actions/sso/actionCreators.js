@@ -19,7 +19,7 @@ export function retrieveIdp({ orgId }) {
     try {
       idp = await endpoint({
         method: 'GET',
-        path: ['identity_provider']
+        path: ['identity_provider'],
       });
     } catch (e) {
       dispatch(actions.ssoGetIdentityProviderFailure(e));
@@ -32,7 +32,7 @@ export function retrieveIdp({ orgId }) {
 }
 
 export function createIdp({ orgId }) {
-  return async dispatch => {
+  return async (dispatch) => {
     const endpoint = createOrganizationEndpoint(orgId);
 
     dispatch(actions.ssoCreateIdentityProviderPending());
@@ -44,8 +44,8 @@ export function createIdp({ orgId }) {
         method: 'POST',
         path: ['identity_provider'],
         data: {
-          ssoName: null
-        }
+          ssoName: null,
+        },
       });
     } catch (e) {
       dispatch(actions.ssoCreateIdentityProviderFailure(e));
@@ -100,8 +100,8 @@ export function updateFieldValue({ fieldName, value, orgId }) {
         path: ['identity_provider'],
         version,
         data: {
-          [fieldName]: value
-        }
+          [fieldName]: value,
+        },
       });
     } catch (e) {
       dispatch(
@@ -140,7 +140,7 @@ export function validateField({ fieldName, value }) {
 }
 
 export function connectionTestStart({ orgId }) {
-  return dispatch => {
+  return (dispatch) => {
     const testConnectionUrl = authUrl(`/sso/${orgId}/test_connection`);
 
     // Open the new window and check if it's closed every 250ms
@@ -166,7 +166,7 @@ export function connectionTestCancel({ orgId }) {
 }
 
 export function enable({ orgId }) {
-  return async dispatch => {
+  return async (dispatch) => {
     dispatch(actions.ssoEnablePending());
 
     const endpoint = createOrganizationEndpoint(orgId);
@@ -175,7 +175,7 @@ export function enable({ orgId }) {
     try {
       identityProvider = await endpoint({
         method: 'POST',
-        path: ['identity_provider', 'enable']
+        path: ['identity_provider', 'enable'],
       });
     } catch (e) {
       dispatch(actions.ssoEnableFailure(e));

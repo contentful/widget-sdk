@@ -12,8 +12,8 @@ export const TEA_MAIN_CONTENT_PREVIEW = {
   description: 'The preview setup for an example app built using Node.js',
   baseUrl: {
     prod: 'https://the-example-app-nodejs.contentful.com',
-    staging: 'https://the-example-app-nodejs.flinkly.com'
-  }
+    staging: 'https://the-example-app-nodejs.flinkly.com',
+  },
 };
 
 // we want to create several content previews for TEA, one for each platform
@@ -24,40 +24,40 @@ export const TEA_CONTENT_PREVIEWS = [
     description: 'The preview setup for an example app built using .NET',
     baseUrl: {
       prod: 'https://the-example-app-csharp.contentful.com',
-      staging: 'https://the-example-app-csharp.flinkly.com'
-    }
+      staging: 'https://the-example-app-csharp.flinkly.com',
+    },
   },
   {
     name: 'The Ruby example app',
     description: 'The preview setup for an example app built using Ruby and Sinatra',
     baseUrl: {
       prod: 'https://the-example-app-rb.contentful.com',
-      staging: 'https://the-example-app-rb.flinkly.com'
-    }
+      staging: 'https://the-example-app-rb.flinkly.com',
+    },
   },
   {
     name: 'The PHP example app',
     description: 'The preview setup for an example app built using PHP',
     baseUrl: {
       prod: 'https://the-example-app-php.contentful.com',
-      staging: 'https://the-example-app-php.flinkly.com'
-    }
+      staging: 'https://the-example-app-php.flinkly.com',
+    },
   },
   {
     name: 'The Python example app',
     description: 'The preview setup for an example app built using Python and Flask',
     baseUrl: {
       prod: 'https://the-example-app-py.contentful.com',
-      staging: 'https://the-example-app-py.flinkly.com'
-    }
+      staging: 'https://the-example-app-py.flinkly.com',
+    },
   },
   {
     name: 'The Java example app',
     description: 'The preview setup for an example app built using Java',
     baseUrl: {
       prod: 'https://the-example-app-java.contentful.com',
-      staging: 'https://the-example-app-java.flinkly.com'
-    }
+      staging: 'https://the-example-app-java.flinkly.com',
+    },
   },
   // Swift(iOS) and Android have the same link because they lead to the page with QR-code that redirects to iOS and Android apps accordingly
   {
@@ -67,17 +67,17 @@ export const TEA_CONTENT_PREVIEWS = [
       // Please be careful with the trailing slash – doc app specifically requires them
       // and if there is no trailing slash, it will add one, erasing all the query parameters
       prod: 'https://www.contentful.com/developers/the-example-app-mobile/',
-      staging: 'https://www.flinkly.com/developers/the-example-app-mobile/'
+      staging: 'https://www.flinkly.com/developers/the-example-app-mobile/',
     },
-    isMobile: true
+    isMobile: true,
   },
   {
     name: 'The Android example app',
     description: 'The preview setup for an example app built using Android',
     baseUrl: {
       prod: 'https://www.contentful.com/developers/the-example-app-mobile/',
-      staging: 'https://www.flinkly.com/developers/the-example-app-mobile/'
+      staging: 'https://www.flinkly.com/developers/the-example-app-mobile/',
     },
-    isMobile: true
-  }
+    isMobile: true,
+  },
 ];

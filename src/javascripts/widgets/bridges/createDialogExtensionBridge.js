@@ -8,14 +8,14 @@ import TheLocaleStore from 'services/localeStore';
 
 export default function createDialogExtensionBridge(dependencies, openDialog, onClose) {
   const { spaceContext } = checkDependencies('DialogExtensionBridge', dependencies, [
-    'spaceContext'
+    'spaceContext',
   ]);
 
   return {
     getData,
     install,
     uninstall: () => {},
-    apply: fn => fn()
+    apply: (fn) => fn(),
   };
 
   function getData() {
@@ -27,12 +27,12 @@ export default function createDialogExtensionBridge(dependencies, openDialog, on
       current: null,
       locales: {
         available: TheLocaleStore.getPrivateLocales(),
-        default: TheLocaleStore.getDefaultLocale()
+        default: TheLocaleStore.getDefaultLocale(),
       },
       entryData: { sys: {}, fields: {} },
       contentTypeData: { sys: {}, fields: [] },
       initialContentTypesData: spaceContext.publishedCTs.getAllBare(),
-      editorInterface: undefined
+      editorInterface: undefined,
     };
   }
 

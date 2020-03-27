@@ -1,6 +1,6 @@
 import { get, isObject } from 'lodash';
 
-export const isUnsignedInteger = n => Number.isInteger(n) && n >= 0;
+export const isUnsignedInteger = (n) => Number.isInteger(n) && n >= 0;
 
 export default function validateTargetState(targetState) {
   const keys = Object.keys(targetState || {});
@@ -17,7 +17,7 @@ export default function validateTargetState(targetState) {
     throw new Error('Invalid target state declared for EditorInterface entities.');
   }
 
-  Object.keys(targetEditorInterfacesState).forEach(ctId => {
+  Object.keys(targetEditorInterfacesState).forEach((ctId) => {
     const ei = targetEditorInterfacesState[ctId];
 
     const validControls = !ei.controls || Array.isArray(ei.controls);
@@ -25,7 +25,7 @@ export default function validateTargetState(targetState) {
       throw new Error(`Invalid target controls declared for EditorInterface ${ctId}.`);
     }
 
-    (ei.controls || []).forEach(control => {
+    (ei.controls || []).forEach((control) => {
       const validControl =
         isObject(control) && typeof control.fieldId === 'string' && control.fieldId.length > 0;
       if (!validControl) {

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const JiraLogo = props => (
+const JiraLogo = (props) => (
   <svg width={32} height={32} {...props}>
     <defs>
       <linearGradient x1="91.867%" y1="40.328%" x2="28.264%" y2="81.66%" id="a">

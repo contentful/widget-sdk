@@ -13,22 +13,22 @@ jest.mock('utils/ngCompat/window', () => {
     set location(path) {
       return locationMock(path);
     },
-    __locationMock: locationMock
+    __locationMock: locationMock,
   };
 });
 
 jest.mock('./AccountRepository', () => ({
   getUserTotp: jest.fn(),
-  deleteUserTotp: jest.fn()
+  deleteUserTotp: jest.fn(),
 }));
 
 describe('SecuritySection', () => {
-  const build = custom => {
+  const build = (custom) => {
     const props = Object.assign(
       {
         onAddPassword: () => {},
         onEnable2FA: () => {},
-        onDisable2FA: () => {}
+        onDisable2FA: () => {},
       },
       custom
     );
@@ -44,7 +44,7 @@ describe('SecuritySection', () => {
     it('should show a CTA to resend email if both email is not confirmed and password is not set', () => {
       const user = {
         confirmed: false,
-        passwordSet: false
+        passwordSet: false,
       };
 
       const { queryByTestId } = build({ user });
@@ -55,7 +55,7 @@ describe('SecuritySection', () => {
     it('should show a CTA to resend email if user email is not confirmed', () => {
       const user = {
         confirmed: false,
-        passwordSet: true
+        passwordSet: true,
       };
 
       const { queryByTestId } = build({ user });
@@ -66,7 +66,7 @@ describe('SecuritySection', () => {
     it('should set $window.url when clicking on the resend email CTA', () => {
       const user = {
         confirmed: false,
-        passwordSet: true
+        passwordSet: true,
       };
 
       const { queryByTestId } = build({ user });
@@ -79,7 +79,7 @@ describe('SecuritySection', () => {
     it('should show a CTA to add a password if user has no password set but has confirmed email', () => {
       const user = {
         confirmed: true,
-        passwordSet: false
+        passwordSet: false,
       };
 
       const { queryByTestId } = build({ user });
@@ -93,7 +93,7 @@ describe('SecuritySection', () => {
       const onAddPassword = jest.fn();
       const user = {
         confirmed: true,
-        passwordSet: false
+        passwordSet: false,
       };
 
       const { queryByTestId } = build({ user, onAddPassword });
@@ -111,7 +111,7 @@ describe('SecuritySection', () => {
       const onAddPassword = jest.fn();
       const user = {
         confirmed: true,
-        passwordSet: false
+        passwordSet: false,
       };
 
       const { queryByTestId } = build({ user, onAddPassword });
@@ -128,7 +128,7 @@ describe('SecuritySection', () => {
     it('should show a CTA to enable 2FA', () => {
       const user = {
         mfaEligible: true,
-        mfaEnabled: false
+        mfaEnabled: false,
       };
 
       const { queryByTestId } = build({ user });
@@ -139,7 +139,7 @@ describe('SecuritySection', () => {
     it('should request TOTP data before opening the modal', async () => {
       const user = {
         mfaEligible: true,
-        mfaEnabled: false
+        mfaEnabled: false,
       };
 
       const { queryByTestId } = build({ user });
@@ -163,7 +163,7 @@ describe('SecuritySection', () => {
 
       const user = {
         mfaEligible: true,
-        mfaEnabled: false
+        mfaEnabled: false,
       };
 
       const { queryByTestId } = build({ user });
@@ -183,7 +183,7 @@ describe('SecuritySection', () => {
       const onEnable2FA = jest.fn();
       const user = {
         mfaEligible: true,
-        mfaEnabled: false
+        mfaEnabled: false,
       };
 
       const { queryByTestId } = build({ user, onEnable2FA });
@@ -201,7 +201,7 @@ describe('SecuritySection', () => {
       const onEnable2FA = jest.fn();
       const user = {
         mfaEligible: true,
-        mfaEnabled: false
+        mfaEnabled: false,
       };
 
       const { queryByTestId } = build({ user, onEnable2FA });
@@ -218,7 +218,7 @@ describe('SecuritySection', () => {
     it('should show a CTA to disable 2FA', () => {
       const user = {
         mfaEligible: true,
-        mfaEnabled: true
+        mfaEnabled: true,
       };
 
       const { queryByTestId } = build({ user });
@@ -232,7 +232,7 @@ describe('SecuritySection', () => {
       const onDisable2FA = jest.fn();
       const user = {
         mfaEligible: true,
-        mfaEnabled: true
+        mfaEnabled: true,
       };
 
       const { queryByTestId } = build({ user, onDisable2FA });
@@ -250,7 +250,7 @@ describe('SecuritySection', () => {
       const onDisable2FA = jest.fn();
       const user = {
         mfaEligible: true,
-        mfaEnabled: true
+        mfaEnabled: true,
       };
 
       const { queryByTestId } = build({ user, onDisable2FA });

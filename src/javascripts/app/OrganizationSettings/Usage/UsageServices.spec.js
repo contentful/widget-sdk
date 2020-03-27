@@ -3,7 +3,7 @@ import * as UsageService from './UsageService';
 describe('Usage API transformations', () => {
   it('Empty usagePerDay should map to an empty usage array', () => {
     const api = {
-      usagePerDay: {}
+      usagePerDay: {},
     };
     const res = UsageService.extractValues(api);
     expect(res.usage).toEqual([]);
@@ -12,8 +12,8 @@ describe('Usage API transformations', () => {
   it('usagePerDay object should map to a number', () => {
     const api = {
       usagePerDay: {
-        foo: 444
-      }
+        foo: 444,
+      },
     };
     const res = UsageService.extractValues(api);
     expect(res.usage[0]).toEqual(444);
@@ -21,14 +21,14 @@ describe('Usage API transformations', () => {
 
   it('API transformations should work for no metrics', () => {
     const api = {
-      items: []
+      items: [],
     };
 
     const apis = [
       { type: 'cma', api },
       { type: 'cda', api },
       { type: 'cpa', api },
-      { type: 'gql', api }
+      { type: 'gql', api },
     ];
 
     const res = UsageService.transformApi(apis);
@@ -37,7 +37,7 @@ describe('Usage API transformations', () => {
       cma: { items: [] },
       cda: { items: [] },
       cpa: { items: [] },
-      gql: { items: [] }
+      gql: { items: [] },
     });
   });
 
@@ -47,10 +47,10 @@ describe('Usage API transformations', () => {
         {
           usagePerDay: {
             foo: 100,
-            bar: 200
-          }
-        }
-      ]
+            bar: 200,
+          },
+        },
+      ],
     };
 
     const newAPIShape = {
@@ -59,17 +59,17 @@ describe('Usage API transformations', () => {
           usage: [100, 200],
           usagePerDay: {
             foo: 100,
-            bar: 200
-          }
-        }
-      ]
+            bar: 200,
+          },
+        },
+      ],
     };
 
     const apis = [
       { type: 'cma', api },
       { type: 'cda', api },
       { type: 'cpa', api },
-      { type: 'gql', api }
+      { type: 'gql', api },
     ];
 
     const res = UsageService.transformApi(apis);
@@ -78,7 +78,7 @@ describe('Usage API transformations', () => {
       cma: newAPIShape,
       cda: newAPIShape,
       cpa: newAPIShape,
-      gql: newAPIShape
+      gql: newAPIShape,
     });
   });
 
@@ -88,8 +88,8 @@ describe('Usage API transformations', () => {
         { metric: 'cma', usagePerDay: { foo: 1, bar: 2, baz: 4 } },
         { metric: 'cda', usagePerDay: {} },
         { metric: 'cpa', usagePerDay: { foo: 1 } },
-        { metric: 'gql', usagePerDay: { foo: 1, bar: 2 } }
-      ]
+        { metric: 'gql', usagePerDay: { foo: 1, bar: 2 } },
+      ],
     };
 
     const res = UsageService.transformOrg(org);

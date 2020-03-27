@@ -9,7 +9,7 @@ const styles = {
     width: '100%',
     border: `1px solid ${tokens.colorElementMid}`,
     borderBottom: 'none',
-    backgroundColor: tokens.colorWhite
+    backgroundColor: tokens.colorWhite,
   }),
   drawerHeader: css({
     display: 'flex',
@@ -18,17 +18,17 @@ const styles = {
     fontSize: tokens.fontSizeL,
     borderBottom: `1px solid ${tokens.colorElementMid}`,
     padding: tokens.spacingL,
-    margin: 0
+    margin: 0,
   }),
   headingFont: css({ fontWeight: tokens.fontWeightNormal }),
   clickableHeader: css({
-    cursor: 'pointer'
+    cursor: 'pointer',
   }),
   openedDrawerHeader: css({ boxShadow: `0px 2px 4px -1px ${tokens.colorElementMid}` }),
   drawerContent: css({
     borderBottom: `1px solid ${tokens.colorElementMid}`,
-    padding: tokens.spacingL
-  })
+    padding: tokens.spacingL,
+  }),
 };
 
 const Drawer = ({ headerText, content, index, shouldRenderChevron: isHeaderClickable }) => {
@@ -47,7 +47,7 @@ const Drawer = ({ headerText, content, index, shouldRenderChevron: isHeaderClick
           (isOpen ? (
             <IconButton
               iconProps={{
-                icon: 'ChevronUp'
+                icon: 'ChevronUp',
               }}
               label={`Close "${headerText}" drawer`}
               buttonType="secondary"
@@ -56,7 +56,7 @@ const Drawer = ({ headerText, content, index, shouldRenderChevron: isHeaderClick
           ) : (
             <IconButton
               iconProps={{
-                icon: 'ChevronDown'
+                icon: 'ChevronDown',
               }}
               label={`Open "${headerText}" drawer`}
               buttonType="secondary"
@@ -73,7 +73,7 @@ Drawer.propTypes = {
   headerText: PropTypes.node.isRequired,
   content: PropTypes.node.isRequired,
   index: PropTypes.number.isRequired,
-  shouldRenderChevron: PropTypes.bool.isRequired
+  shouldRenderChevron: PropTypes.bool.isRequired,
 };
 
 const AccordionComponent = ({ drawersContent }) => (
@@ -94,9 +94,9 @@ AccordionComponent.propTypes = {
   drawersContent: PropTypes.arrayOf(
     PropTypes.shape({
       headerText: PropTypes.node,
-      content: PropTypes.node
+      content: PropTypes.node,
     })
-  ).isRequired
+  ).isRequired,
 };
 
 export default AccordionComponent;

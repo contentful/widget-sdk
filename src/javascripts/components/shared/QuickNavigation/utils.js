@@ -8,8 +8,8 @@ import * as EntityHelpers from 'app/entity_editor/entityHelpers';
 const RESULTS_LIMIT = 20;
 export const MIN_QUERY_LENGTH = 2;
 
-const buildSearchPathParams = type => ({
-  path: ['spaces', 'detail', type, 'list']
+const buildSearchPathParams = (type) => ({
+  path: ['spaces', 'detail', type, 'list'],
 });
 
 const buildPathParams = (id, type) => {
@@ -23,11 +23,11 @@ const buildPathParams = (id, type) => {
   }
   return {
     path: ['spaces', 'detail', type, 'detail'],
-    params
+    params,
   };
 };
 
-const queryEntries = async query => {
+const queryEntries = async (query) => {
   const spaceContext = getModule('spaceContext');
 
   const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
@@ -41,26 +41,26 @@ const queryEntries = async query => {
     query,
     'sys.archivedAt[exists]': 'false', // Ensures we only get non-archived entities
     order: '-sys.updatedAt',
-    limit: RESULTS_LIMIT
+    limit: RESULTS_LIMIT,
   });
 
   const results = await Promise.all(
-    items.map(async entity => ({
+    items.map(async (entity) => ({
       title: (await entityHelpers.entityTitle(entity)) || 'Untitled',
       type: 'entries',
       sys: get(entity, ['sys'], {}),
       contentType: get(entity, ['sys', 'contentType', 'sys', 'id'], ''),
-      link: buildPathParams(get(entity, ['sys', 'id'], ''), 'entries')
+      link: buildPathParams(get(entity, ['sys', 'id'], ''), 'entries'),
     }))
   );
 
   return {
     results,
-    total
+    total,
   };
 };
 
-const queryAssets = async query => {
+const queryAssets = async (query) => {
   const spaceContext = getModule('spaceContext');
 
   const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
@@ -74,25 +74,25 @@ const queryAssets = async query => {
     query,
     'sys.archivedAt[exists]': 'false', // Ensures we only get non-archived entitie
     order: '-sys.updatedAt',
-    limit: RESULTS_LIMIT
+    limit: RESULTS_LIMIT,
   });
 
   const results = await Promise.all(
-    items.map(async entity => ({
+    items.map(async (entity) => ({
       title: (await entityHelpers.entityTitle(entity)) || 'Untitled',
       type: 'assets',
       sys: get(entity, ['sys'], {}),
-      link: buildPathParams(get(entity, ['sys', 'id'], ''), 'assets')
+      link: buildPathParams(get(entity, ['sys', 'id'], ''), 'assets'),
     }))
   );
 
   return {
     results,
-    total
+    total,
   };
 };
 
-const queryContentTypes = query => {
+const queryContentTypes = (query) => {
   const spaceContext = getModule('spaceContext');
 
   if (!getSectionVisibility().contentType) {
@@ -100,21 +100,21 @@ const queryContentTypes = query => {
   }
 
   const lowerCaseQuery = query.toLowerCase();
-  const contentTypes = spaceContext.publishedCTs.getAllBare().map(ct => ({
+  const contentTypes = spaceContext.publishedCTs.getAllBare().map((ct) => ({
     title: ct.name || 'Untitled',
     sys: get(ct, ['sys'], {}),
     type: 'content_types',
     link: buildPathParams(get(ct, ['sys', 'id'], ''), 'content_types'),
-    updatedAt: get(ct, ['sys', 'updatedAt'], '')
+    updatedAt: get(ct, ['sys', 'updatedAt'], ''),
   }));
 
-  const matchingContentTypes = contentTypes.filter(ct =>
+  const matchingContentTypes = contentTypes.filter((ct) =>
     includes(ct.title.toLowerCase(), lowerCaseQuery)
   );
 
   return {
     results: orderBy(matchingContentTypes, ['updatedAt'], ['desc']).slice(0, RESULTS_LIMIT),
-    total: matchingContentTypes.length
+    total: matchingContentTypes.length,
   };
 };
 
@@ -123,23 +123,23 @@ const linksToSearch = {
     link: buildSearchPathParams('content_types'),
     type: 'search_link',
     linkType: 'content_types',
-    title: 'Content Types'
+    title: 'Content Types',
   },
   entries: {
     link: buildSearchPathParams('entries'),
     type: 'search_link',
     linkType: 'entries',
-    title: 'Entries'
+    title: 'Entries',
   },
   assets: {
     link: buildSearchPathParams('assets'),
     type: 'search_link',
     linkType: 'assets',
-    title: 'Assets'
-  }
+    title: 'Assets',
+  },
 };
 
-export const getSearchResults = async query => {
+export const getSearchResults = async (query) => {
   query = query.trim();
 
   if (query.length < MIN_QUERY_LENGTH) {
@@ -149,25 +149,25 @@ export const getSearchResults = async query => {
   const [filteredEntries, filteredAssets, filteredContentTypes] = await Promise.all([
     queryEntries(query),
     queryAssets(query),
-    queryContentTypes(query)
+    queryContentTypes(query),
   ]);
 
   const results = [
     ...filteredEntries.results,
     filteredEntries.total > RESULTS_LIMIT && {
       ...linksToSearch.entries,
-      total: filteredEntries.total
+      total: filteredEntries.total,
     },
     ...filteredAssets.results,
     filteredAssets.total > RESULTS_LIMIT && {
       ...linksToSearch.assets,
-      total: filteredAssets.total
+      total: filteredAssets.total,
     },
     ...filteredContentTypes.results,
     filteredContentTypes.total > RESULTS_LIMIT && {
       ...linksToSearch.contentTypes,
-      total: filteredContentTypes.total
-    }
+      total: filteredContentTypes.total,
+    },
   ];
 
   return compact(results);

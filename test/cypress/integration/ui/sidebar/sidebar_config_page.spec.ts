@@ -2,7 +2,7 @@ import { defaultRequestsMock } from '../../../util/factories';
 import {
   getDefaultContentType,
   getPublishedVersionOfDefaultContentType,
-  getAllContentTypesInDefaultSpace
+  getAllContentTypesInDefaultSpace,
 } from '../../../interactions/content_types';
 import { getEditorInterfaceForDefaultContentType } from '../../../interactions/content_types';
 import { defaultContentTypeId, defaultSpaceId } from '../../../util/requests';
@@ -16,7 +16,7 @@ describe('Sidebar configuration', () => {
       getEditorInterfaceForDefaultContentType.willReturnOneWithoutSidebar(),
       getAllContentTypesInDefaultSpace.willReturnOne(),
       getDefaultContentType.willReturnIt(),
-      getPublishedVersionOfDefaultContentType.willReturnIt()
+      getPublishedVersionOfDefaultContentType.willReturnIt(),
     ];
 
     cy.visit(
@@ -30,12 +30,8 @@ describe('Sidebar configuration', () => {
 
   describe('Opening the page with no configuration saved', () => {
     it('displays sidebar options correctly', () => {
-      cy.getByTestId('default-sidebar-option')
-        .find('input')
-        .should('be.checked');
-      cy.getByTestId('custom-sidebar-option')
-        .find('input')
-        .should('not.be.checked');
+      cy.getByTestId('default-sidebar-option').find('input').should('be.checked');
+      cy.getByTestId('custom-sidebar-option').find('input').should('not.be.checked');
     });
 
     it('renders the page with a sidebar with no configurations', () => {
@@ -51,9 +47,7 @@ describe('Sidebar configuration', () => {
 
   describe('Enabling of a custom sidebar configuration option', () => {
     beforeEach(() => {
-      cy.getByTestId('custom-sidebar-option')
-        .find('input')
-        .click();
+      cy.getByTestId('custom-sidebar-option').find('input').click();
     });
 
     it('renders the page with custom sidebar configuration option enabled', () => {
@@ -70,7 +64,7 @@ describe('Sidebar configuration', () => {
         'Links',
         'Versions',
         'Translation',
-        'Users'
+        'Users',
       ];
 
       cy.getAllByTestId('sidebar-widget-item-draggable')

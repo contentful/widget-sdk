@@ -1,4 +1,4 @@
-const isDisplayField = field => ['Symbol', 'Text'].includes(field.type) && !field.disabled;
+const isDisplayField = (field) => ['Symbol', 'Text'].includes(field.type) && !field.disabled;
 
 /*
  * Mutate the Content Type data so that the 'displayField' property
@@ -27,7 +27,7 @@ export default function assureDisplayField(contentTypeData) {
  */
 function hasValidDisplayField(contentTypeData) {
   const displayField = contentTypeData.displayField;
-  return (contentTypeData.fields || []).some(field => {
+  return (contentTypeData.fields || []).some((field) => {
     return displayField === field.id && isDisplayField(field);
   });
 }
@@ -51,5 +51,5 @@ function getDisplayField(contentTypeData) {
  * disabled. Returns `undefined` if no display field candidate was found.
  */
 function findFieldUsableAsTitle(fields) {
-  return (fields || []).filter(isDisplayField).map(field => field.id)[0];
+  return (fields || []).filter(isDisplayField).map((field) => field.id)[0];
 }

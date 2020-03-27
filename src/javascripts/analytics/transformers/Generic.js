@@ -7,9 +7,9 @@ import { mapKeys, omit, snakeCase, first, last } from 'lodash';
  * Exports a function that transforms data from the Segment based internal analytics
  * format to fit Snowplow's `generic` schema.
  */
-export default function(eventName, data) {
+export default function (eventName, data) {
   return {
-    data: transformGenericData(eventName, data)
+    data: transformGenericData(eventName, data),
   };
 }
 
@@ -23,7 +23,7 @@ function transformGenericData(eventName, data) {
     payload: mapKeys(
       omit(data, ['organizationId', 'spaceId', 'userId', 'currentState']),
       (_val, key) => snakeCase(key)
-    )
+    ),
   };
 }
 

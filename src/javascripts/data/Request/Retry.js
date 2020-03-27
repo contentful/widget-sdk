@@ -37,7 +37,7 @@ export default function wrapWithRetry(requestFn) {
       deferred,
       args: Array.prototype.slice.call(arguments),
       ttl: DEFAULT_TTL,
-      wait: 0
+      wait: 0,
     });
     shift();
 
@@ -54,7 +54,7 @@ export default function wrapWithRetry(requestFn) {
       Telemetry.record('cma-response-time', now() - startTime, {
         endpoint: getEndpoint(url),
         status,
-        method
+        method,
       });
     } catch (_) {
       // no-op
@@ -73,11 +73,11 @@ export default function wrapWithRetry(requestFn) {
     $timeout(call.wait)
       .then(() => requestFn(...call.args))
       .then(
-        res => {
+        (res) => {
           recordResponseTime(res, start + call.wait, ...call.args);
           return res;
         },
-        err => {
+        (err) => {
           recordResponseTime(err, start + call.wait, ...call.args);
           return $q.reject(err);
         }
@@ -100,7 +100,7 @@ export default function wrapWithRetry(requestFn) {
 
           Telemetry.count('cma-rate-limit-exceeded', {
             endpoint: getEndpoint(url),
-            state: getCurrentState()
+            state: getCurrentState(),
           });
         } catch (_) {
           // no op

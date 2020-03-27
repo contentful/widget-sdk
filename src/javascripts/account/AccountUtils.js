@@ -14,8 +14,8 @@ const getPageRouteRef = (page = '') => {
   return {
     path: ['account', 'organizations', page],
     params: {
-      orgId: _.get(org, 'sys.id')
-    }
+      orgId: _.get(org, 'sys.id'),
+    },
   };
 };
 

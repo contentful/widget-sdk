@@ -17,8 +17,8 @@ const conceptLocalesDocsUrl = `${developerDocsUrl}/concepts/locales/${localeDocU
 
 const documentationsSectionStyles = {
   paragraph: css({
-    marginBottom: tokens.spacingM
-  })
+    marginBottom: tokens.spacingM,
+  }),
 };
 
 const DocumentationsSection = () => (
@@ -43,7 +43,7 @@ export default class LocalesListSidebar extends React.Component {
     insideMasterEnv: PropTypes.bool.isRequired,
     canChangeSpace: PropTypes.bool.isRequired,
     subscriptionState: PropTypes.object.isRequired,
-    upgradeSpace: PropTypes.func.isRequired
+    upgradeSpace: PropTypes.func.isRequired,
   };
 
   constructor(props) {

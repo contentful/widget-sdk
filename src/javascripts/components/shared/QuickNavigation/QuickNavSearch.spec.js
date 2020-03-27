@@ -6,22 +6,22 @@ import spaceContext from 'ng/spaceContext';
 
 jest.mock('services/localeStore', () => ({
   getDefaultLocale: () => ({
-    code: 'en-US'
+    code: 'en-US',
   }),
-  toInternalCode: () => 'en-US'
+  toInternalCode: () => 'en-US',
 }));
 
 jest.mock('browserStorage', () => ({
-  getStore: jest.fn()
+  getStore: jest.fn(),
 }));
 
 jest.mock('states/Navigator', () => ({
   href: jest.fn(),
-  getCurrentStateName: jest.fn()
+  getCurrentStateName: jest.fn(),
 }));
 
 jest.mock('app/entity_editor/entityHelpers', () => ({
-  newForLocale: () => ({ entityTitle: () => 'title' })
+  newForLocale: () => ({ entityTitle: () => 'title' }),
 }));
 
 jest.mock(
@@ -29,17 +29,17 @@ jest.mock(
   () => ({
     cma: {
       getEntries: jest.fn().mockReturnValue(Promise.resolve({ items: [] })),
-      getAssets: jest.fn().mockReturnValue(Promise.resolve({ items: [] }))
+      getAssets: jest.fn().mockReturnValue(Promise.resolve({ items: [] })),
     },
     publishedCTs: {
-      getAllBare: jest.fn().mockReturnValue([])
-    }
+      getAllBare: jest.fn().mockReturnValue([]),
+    },
   }),
   { virtual: true }
 );
 
 jest.mock('access_control/AccessChecker', () => ({
-  getSectionVisibility: jest.fn().mockReturnValue({ entry: true, asset: true, contentType: true })
+  getSectionVisibility: jest.fn().mockReturnValue({ entry: true, asset: true, contentType: true }),
 }));
 
 let wrapper;
@@ -55,7 +55,7 @@ beforeEach(() => {
 describe('shared/QuickNavSearch', () => {
   it('should send request if query length is more than one character', () => {
     fireEvent.change(wrapper.getByTestId('quick-nav-search-input'), {
-      target: { value: 'abc' }
+      target: { value: 'abc' },
     });
 
     jest.runOnlyPendingTimers();
@@ -66,7 +66,7 @@ describe('shared/QuickNavSearch', () => {
 
   it('should not send request if query length is less than one character', () => {
     fireEvent.change(wrapper.getByTestId('quick-nav-search-input'), {
-      target: { value: 'a' }
+      target: { value: 'a' },
     });
 
     jest.runOnlyPendingTimers();

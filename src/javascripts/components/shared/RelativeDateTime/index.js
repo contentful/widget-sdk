@@ -17,7 +17,7 @@ import moment from 'moment';
 export default class RelativeDateTime extends Component {
   static propTypes = {
     value: PropTypes.string.isRequired,
-    className: PropTypes.string
+    className: PropTypes.string,
   };
   componentDidMount() {
     this.scheduleUpdate();
@@ -46,14 +46,7 @@ export default class RelativeDateTime extends Component {
 }
 
 function diffString(a, b) {
-  if (
-    Math.abs(
-      a
-        .clone()
-        .startOf('day')
-        .diff(b, 'days', true)
-    ) < 1
-  ) {
+  if (Math.abs(a.clone().startOf('day').diff(b, 'days', true)) < 1) {
     return a.from(b);
   } else {
     return a.calendar(b);

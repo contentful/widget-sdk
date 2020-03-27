@@ -12,7 +12,7 @@ export default class WebhookTemplateDialog extends React.Component {
     templateContentTypes: PropTypes.array.isRequired,
     hasAwsProxy: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
-    onCreate: PropTypes.func.isRequired
+    onCreate: PropTypes.func.isRequired,
   };
 
   renderTabs = ({ getTabProps, getPaneProps }) => {
@@ -21,11 +21,11 @@ export default class WebhookTemplateDialog extends React.Component {
     return (
       <React.Fragment>
         <TabsList title={`Templates (${Templates.length})`}>
-          {Templates.map(template => (
+          {Templates.map((template) => (
             <Tab key={template.id} template={template} {...getTabProps(template.id)} />
           ))}
         </TabsList>
-        {Templates.map(template => (
+        {Templates.map((template) => (
           <TabPane key={template.id} {...getPaneProps(template.id)}>
             <WebhookTemplateForm
               template={template}

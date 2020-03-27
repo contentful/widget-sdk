@@ -12,32 +12,32 @@ class TextValueInput extends React.Component {
     value: PropTypes.string,
     onKeyDown: PropTypes.func,
     onChange: PropTypes.func,
-    onClick: PropTypes.func
+    onClick: PropTypes.func,
   };
 
   static defaultProps = {
     onChange: noop,
     onKeyDown: noop,
-    onClick: noop
+    onClick: noop,
   };
 
   state = {
-    value: this.props.value
+    value: this.props.value,
   };
 
-  UNSAFE_componentWillReceiveProps = nextProps => {
+  UNSAFE_componentWillReceiveProps = (nextProps) => {
     this.setState(() => ({
-      value: nextProps.value
+      value: nextProps.value,
     }));
   };
 
-  handleChange = e => {
+  handleChange = (e) => {
     const {
-      target: { value }
+      target: { value },
     } = e;
     this.props.onChange(value);
     this.setState(() => ({
-      value
+      value,
     }));
   };
 

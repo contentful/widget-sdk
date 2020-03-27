@@ -6,13 +6,13 @@ import EntryInfoPanel from './EntryInfoPanel';
 
 export default class EntryInfoPanelContainer extends Component {
   static propTypes = {
-    emitter: PropTypes.object.isRequired
+    emitter: PropTypes.object.isRequired,
   };
 
   state = {
     isVisible: false,
     sys: null,
-    contentType: null
+    contentType: null,
   };
 
   componentDidMount() {
@@ -23,20 +23,20 @@ export default class EntryInfoPanelContainer extends Component {
     this.props.emitter.off(SidebarEventTypes.UPDATED_INFO_PANEL, this.onUpdate);
   }
 
-  onUpdate = update => {
+  onUpdate = (update) => {
     const { sys } = update;
 
-    this.setState(state => ({
+    this.setState((state) => ({
       ...state,
       ...update,
-      sys: sys ? { ...state.sys, ...sys } : state.sys
+      sys: sys ? { ...state.sys, ...sys } : state.sys,
     }));
   };
 
   render() {
     const props = {
       isVisible: this.state.isVisible,
-      sys: this.state.sys
+      sys: this.state.sys,
     };
 
     if (this.state.contentType) {

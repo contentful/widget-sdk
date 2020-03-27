@@ -2,46 +2,46 @@ import sinon from 'sinon';
 import { $initialize, $inject, $compile, $apply } from 'test/utils/ng';
 
 describe('uiCommand directive element', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     const commandModule = await this.system.import('utils/command/command');
     this.createCommand = commandModule.createCommand;
     await $initialize(this.system);
   });
 
-  it('sets the "button" role if no role given', function() {
+  it('sets the "button" role if no role given', function () {
     const cmd = this.createCommand(sinon.stub());
     const el = $compile('<button ui-command=cmd>', { cmd: cmd });
     expect(el.attr('role')).toEqual('button');
   });
 
-  it('does not overide the role attribute', function() {
+  it('does not overide the role attribute', function () {
     const cmd = this.createCommand(sinon.stub());
     const el = $compile('<button role=menuitem ui-command=cmd>', { cmd: cmd });
     expect(el.attr('role')).toEqual('menuitem');
   });
 
-  it('is hidden when command is not available', function() {
+  it('is hidden when command is not available', function () {
     const available = sinon.stub().returns(false);
     const cmd = this.createCommand(sinon.stub(), { available: available });
     const el = $compile('<button ui-command=cmd>', { cmd: cmd });
     expect(el).toBeNgHidden();
   });
 
-  it('is not hidden by default', function() {
+  it('is not hidden by default', function () {
     const cmd = this.createCommand(sinon.stub());
     const el = $compile('<button ui-command=cmd>', { cmd: cmd });
     expect(el).not.toBeNgHidden();
   });
 
   describe('disabled', () => {
-    it('is not disabled by default', function() {
+    it('is not disabled by default', function () {
       const cmd = this.createCommand(sinon.stub());
       const el = $compile('<button ui-command=cmd>', { cmd: cmd });
       expect(el.prop('disabled')).toBe(false);
       expect(el.attr('aria-disabled')).toBeUndefined();
     });
 
-    it('is true when "disabled" property returns true', function() {
+    it('is true when "disabled" property returns true', function () {
       const disabled = sinon.stub().returns(true);
       const cmd = this.createCommand(sinon.stub(), { disabled: disabled });
       const el = $compile('<button ui-command=cmd>', { cmd: cmd });
@@ -50,7 +50,7 @@ describe('uiCommand directive element', () => {
       expect(el.attr('aria-disabled')).toBe('true');
     });
 
-    it('is true when "available" property returns false', function() {
+    it('is true when "available" property returns false', function () {
       const available = sinon.stub().returns(false);
       const cmd = this.createCommand(sinon.stub(), { available: available });
       const el = $compile('<button ui-command=cmd>', { cmd: cmd });
@@ -59,7 +59,7 @@ describe('uiCommand directive element', () => {
       expect(el.attr('aria-disabled')).toBe('true');
     });
 
-    it('remains false when "available" property switches to true', function() {
+    it('remains false when "available" property switches to true', function () {
       const available = sinon.stub().returns(false);
       const disabled = sinon.stub().returns(true);
       const cmd = this.createCommand(sinon.stub(), { available: available, disabled: disabled });
@@ -77,7 +77,7 @@ describe('uiCommand directive element', () => {
       expect(el.attr('aria-disabled')).toBe('true');
     });
 
-    it('is true when command is in progress', function() {
+    it('is true when command is in progress', function () {
       const action = $inject('$q').defer();
       const run = sinon.stub().returns(action.promise);
       const cmd = this.createCommand(run);
@@ -91,7 +91,7 @@ describe('uiCommand directive element', () => {
       expect(el.attr('aria-disabled')).toBe('true');
     });
 
-    it('is false again when command finished', function() {
+    it('is false again when command finished', function () {
       const action = $inject('$q').defer();
       const run = sinon.stub().returns(action.promise);
       const cmd = this.createCommand(run);
@@ -109,7 +109,7 @@ describe('uiCommand directive element', () => {
     });
   });
 
-  it('runs the action on click', function() {
+  it('runs the action on click', function () {
     const run = sinon.stub().resolves();
     const cmd = this.createCommand(run);
     const el = $compile('<button ui-command=cmd>', { cmd: cmd });
@@ -117,7 +117,7 @@ describe('uiCommand directive element', () => {
     sinon.assert.calledOnce(run);
   });
 
-  it('does not run the action on click if command is disabled', function() {
+  it('does not run the action on click if command is disabled', function () {
     const run = sinon.stub().resolves();
     const cmd = this.createCommand(run);
     cmd.isDisabled = sinon.stub().returns(true);
@@ -126,7 +126,7 @@ describe('uiCommand directive element', () => {
     sinon.assert.notCalled(run);
   });
 
-  it('is set to busy when command is in progress', function() {
+  it('is set to busy when command is in progress', function () {
     const action = $inject('$q').defer();
     const run = sinon.stub().returns(action.promise);
     const cmd = this.createCommand(run);

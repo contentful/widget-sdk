@@ -3,21 +3,21 @@ import tokens from '@contentful/forma-36-tokens';
 
 const styles = {
   timezonePicker: css({
-    display: 'block'
+    display: 'block',
   }),
   selectedTimezone: css({
-    background: tokens.colorElementLightest
+    background: tokens.colorElementLightest,
   }),
   dropdown: css({
-    width: '100%'
+    width: '100%',
   }),
   inputWrapper: css({
     display: 'flex',
     marginBottom: tokens.spacingXs,
     'input::placeholder': {
-      color: tokens.colorTextMid
-    }
-  })
+      color: tokens.colorTextMid,
+    },
+  }),
 };
 
 export default styles;

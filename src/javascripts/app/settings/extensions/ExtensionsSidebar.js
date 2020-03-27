@@ -6,7 +6,7 @@ import {
   Paragraph,
   TextLink,
   List,
-  ListItem
+  ListItem,
 } from '@contentful/forma-36-react-components';
 import WorkbenchSidebarItem from 'app/common/WorkbenchSidebarItem';
 
@@ -17,7 +17,7 @@ export const DocsLink = ({ href, title }) => (
 );
 DocsLink.propTypes = {
   href: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired
+  title: PropTypes.string.isRequired,
 };
 
 const Sidebar = () => {

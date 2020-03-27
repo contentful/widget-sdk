@@ -11,7 +11,7 @@ import {
   Heading,
   SkeletonContainer,
   SkeletonBodyText,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import { get } from 'lodash';
 
@@ -33,7 +33,7 @@ const BUSY_STATE_UNINSTALLATION = 'uninstallation';
 const BUSY_STATE_TO_TEXT = {
   [BUSY_STATE_INSTALLATION]: 'Installing the app...',
   [BUSY_STATE_UPDATE]: 'Updating configuration...',
-  [BUSY_STATE_UNINSTALLATION]: 'Uninstalling the app...'
+  [BUSY_STATE_UNINSTALLATION]: 'Uninstalling the app...',
 };
 
 const APP_STILL_LOADING_TIMEOUT = 3000;
@@ -42,12 +42,12 @@ const APP_HAS_ERROR_TIMEOUT = 15000;
 const fadeIn = keyframes({
   from: {
     transform: 'translateY(50px)',
-    opacity: '0'
+    opacity: '0',
   },
   to: {
     transform: 'translateY(0)',
-    opacity: '1'
-  }
+    opacity: '1',
+  },
 });
 
 const styles = {
@@ -56,15 +56,15 @@ const styles = {
     animation: `${fadeIn} 0.8s ease`,
     '> div': {
       height: '100%',
-      width: '100%'
+      width: '100%',
     },
-    overflow: 'hidden'
+    overflow: 'hidden',
   }),
   hideRenderer: css({
-    display: 'none'
+    display: 'none',
   }),
   actionButton: css({
-    marginLeft: tokens.spacingM
+    marginLeft: tokens.spacingM,
   }),
   overlay: css({
     backgroundColor: 'rgba(255, 255, 255, 0.75)',
@@ -74,7 +74,7 @@ const styles = {
     left: 0,
     right: 0,
     bottom: 0,
-    textAlign: 'center'
+    textAlign: 'center',
   }),
   busyText: css({
     display: 'flex',
@@ -84,31 +84,31 @@ const styles = {
     borderRadius: '50px',
     fontSize: '24px',
     backgroundColor: 'white',
-    letterSpacing: '1px'
+    letterSpacing: '1px',
   }),
   overlayPill: css({
     width: '100%',
     height: '100%',
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   }),
   spinner: css({
-    marginRight: tokens.spacingS
+    marginRight: tokens.spacingS,
   }),
   appIcon: css({
     marginRight: tokens.spacingXs,
-    verticalAlign: 'middle'
+    verticalAlign: 'middle',
   }),
   icon: css({
     width: '45px',
     height: '45px',
     verticalAlign: 'middle',
-    marginRight: tokens.spacingS
+    marginRight: tokens.spacingS,
   }),
   stillLoadingText: css({
-    marginTop: '-80px'
-  })
+    marginTop: '-80px',
+  }),
 };
 
 export default class AppRoute extends Component {
@@ -119,12 +119,12 @@ export default class AppRoute extends Component {
     appHookBus: PropTypes.shape({
       on: PropTypes.func.isRequired,
       emit: PropTypes.func.isRequired,
-      setInstallation: PropTypes.func.isRequired
+      setInstallation: PropTypes.func.isRequired,
     }).isRequired,
     cma: PropTypes.shape({
-      getAppInstallation: PropTypes.func.isRequired
+      getAppInstallation: PropTypes.func.isRequired,
     }).isRequired,
-    evictWidget: PropTypes.func.isRequired
+    evictWidget: PropTypes.func.isRequired,
   };
 
   state = {
@@ -133,13 +133,13 @@ export default class AppRoute extends Component {
     showStillLoadingText: false,
     loadingError: false,
     title: get(this.props.app, ['title'], get(this.props.app, ['appDefinition', 'name'])),
-    appIcon: get(this.props.app, ['icon'], '')
+    appIcon: get(this.props.app, ['icon'], ''),
   };
 
   // There are no parameters in the app location
   parameters = {
     installation: {},
-    instance: {}
+    instance: {},
   };
 
   async componentDidMount() {
@@ -157,13 +157,13 @@ export default class AppRoute extends Component {
         appDefinition,
         // Can throw 404 if the app is not installed yet:
         appInstallation: await this.props.cma.getAppInstallation(appDefinition.sys.id),
-        isMarketplaceInstallation: false
+        isMarketplaceInstallation: false,
       };
     } catch (err) {
       return {
         appDefinition,
         // There is no installation and the app is not private:
-        isMarketplaceInstallation: !this.props.app.isPrivateApp
+        isMarketplaceInstallation: !this.props.app.isPrivateApp,
       };
     }
   };
@@ -185,7 +185,7 @@ export default class AppRoute extends Component {
         ready: true,
         isInstalled: !!appInstallation,
         appDefinition,
-        actionList: get(app, ['actionList'], [])
+        actionList: get(app, ['actionList'], []),
       },
       this.afterInitialize
     );
@@ -262,7 +262,7 @@ export default class AppRoute extends Component {
     }
   };
 
-  update = busyWith => {
+  update = (busyWith) => {
     this.setState({ busyWith });
     this.props.appHookBus.emit(APP_EVENTS_OUT.STARTED);
   };
@@ -278,7 +278,7 @@ export default class AppRoute extends Component {
         isShown={isShown}
         title={this.state.title}
         actionList={this.state.actionList}
-        onConfirm={reasons => {
+        onConfirm={(reasons) => {
           onClose(true);
           this.uninstallApp(reasons);
         }}
@@ -290,7 +290,7 @@ export default class AppRoute extends Component {
     ));
   };
 
-  uninstallApp = async reasons => {
+  uninstallApp = async (reasons) => {
     const { cma, evictWidget, app } = this.props;
 
     this.setState({ busyWith: BUSY_STATE_UNINSTALLATION });

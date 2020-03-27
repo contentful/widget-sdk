@@ -1,6 +1,6 @@
 import React from 'react';
 
-const PubNubLogo = props => (
+const PubNubLogo = (props) => (
   <svg width={32} height={32} {...props}>
     <g fill="none" fillRule="evenodd">
       <path fill="#CD2028" d="M0 0h32v32H0z" />

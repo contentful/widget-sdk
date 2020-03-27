@@ -9,19 +9,19 @@ class DevNotifications extends React.Component {
       PropTypes.shape({
         title: PropTypes.oneOfType([PropTypes.element, PropTypes.string]).isRequired,
         content: PropTypes.oneOfType([PropTypes.element, PropTypes.string]).isRequired,
-        id: PropTypes.string.isRequired
+        id: PropTypes.string.isRequired,
       })
-    ).isRequired
+    ).isRequired,
   };
 
   state = {
-    isCollapsed: false
+    isCollapsed: false,
   };
 
   toggle = () => {
     const { isCollapsed } = this.state;
     this.setState({
-      isCollapsed: !isCollapsed
+      isCollapsed: !isCollapsed,
     });
   };
 

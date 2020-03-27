@@ -5,26 +5,26 @@ import WebhookSegmentation from './WebhookSegmentation';
 import { transformMapToTopics, transformTopicsToMap } from './WebhookSegmentationState';
 
 describe('WebhookSegmentation', () => {
-  const renderComponent = topics => {
+  const renderComponent = (topics) => {
     const onChangeStub = jest.fn();
 
     return [
       render(
         <WebhookSegmentation
           values={transformTopicsToMap(topics)}
-          onChange={map => onChangeStub(transformMapToTopics(map))}
+          onChange={(map) => onChangeStub(transformMapToTopics(map))}
         />
       ),
-      onChangeStub
+      onChangeStub,
     ];
   };
 
-  const getRadioValues = radios => {
+  const getRadioValues = (radios) => {
     return [radios[0].checked, radios[1].checked];
   };
 
-  const hasTable = wrapper => wrapper.querySelectorAll('table').length > 0;
-  const findTableCheckboxes = wrapper =>
+  const hasTable = (wrapper) => wrapper.querySelectorAll('table').length > 0;
+  const findTableCheckboxes = (wrapper) =>
     Array.from(wrapper.querySelectorAll('table input[type="checkbox"]'));
 
   it('uses "all" mode if topic list contains *.* wildcard', () => {
@@ -38,7 +38,7 @@ describe('WebhookSegmentation', () => {
     expect(getRadioValues(getAllByTestId('webhook-editor-setting-option'))).toEqual([false, true]);
     expect(hasTable(container)).toBe(true);
 
-    findTableCheckboxes(container).forEach(checkbox => {
+    findTableCheckboxes(container).forEach((checkbox) => {
       if (!checkbox.disabled) {
         expect(checkbox.checked).toBe(false);
       }
@@ -50,7 +50,7 @@ describe('WebhookSegmentation', () => {
     expect(getRadioValues(getAllByTestId('webhook-editor-setting-option'))).toEqual([false, true]);
     expect(hasTable(container)).toBe(true);
 
-    const checked = findTableCheckboxes(container).filter(checkbox => {
+    const checked = findTableCheckboxes(container).filter((checkbox) => {
       return checkbox.checked === true;
     });
 

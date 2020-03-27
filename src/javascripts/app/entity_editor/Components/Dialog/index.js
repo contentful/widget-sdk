@@ -7,14 +7,14 @@ class Dialog extends React.Component {
   static sizes = {
     small: '400px',
     medium: '600px',
-    large: '750px'
+    large: '750px',
   };
 
   static propTypes = {
     testId: PropTypes.string,
     children: PropTypes.node,
     size: PropTypes.oneOf(Object.keys(Dialog.sizes)),
-    className: PropTypes.string
+    className: PropTypes.string,
   };
 
   constructor(props) {
@@ -36,7 +36,7 @@ class Dialog extends React.Component {
 class Header extends React.Component {
   static propTypes = {
     children: PropTypes.node,
-    onCloseButtonClicked: PropTypes.func
+    onCloseButtonClicked: PropTypes.func,
   };
 
   render() {
@@ -53,7 +53,7 @@ class Header extends React.Component {
 
 class Body extends React.Component {
   static propTypes = {
-    children: PropTypes.node
+    children: PropTypes.node,
   };
 
   render() {
@@ -69,7 +69,7 @@ class Body extends React.Component {
 
 class Controls extends React.Component {
   static propTypes = {
-    children: PropTypes.node
+    children: PropTypes.node,
   };
 
   render() {

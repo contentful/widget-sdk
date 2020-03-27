@@ -16,10 +16,10 @@ import * as OrganizationMembershipRepositoryMocked from 'access_control/Organiza
 jest.mock('services/intercom', () => ({}));
 jest.mock('utils/ResourceUtils', () => ({}));
 jest.mock('services/OrganizationRoles', () => ({
-  isOwnerOrAdmin: jest.fn().mockReturnValue(true)
+  isOwnerOrAdmin: jest.fn().mockReturnValue(true),
 }));
 jest.mock('services/ResourceService', () => () => ({
-  get: jest.fn(resource => {
+  get: jest.fn((resource) => {
     switch (resource) {
       case 'api_request':
         return { limits: { included: 1000000 } };
@@ -27,11 +27,11 @@ jest.mock('services/ResourceService', () => () => ({
         return {
           usage: 200,
           unitOfMeasure: 'MB',
-          limits: { included: 2000 }
+          limits: { included: 2000 },
         };
     }
   }),
-  getAll: jest.fn()
+  getAll: jest.fn(),
 }));
 
 jest.mock('account/pricing/PricingDataProvider', () => {
@@ -40,25 +40,25 @@ jest.mock('account/pricing/PricingDataProvider', () => {
   const getPlansWithSpaces = jest.fn(() => ({
     items: [
       { name: 'Test plan', space: { sys: { id: 'space1' } } },
-      { name: 'Proof of concept (space trial)', space: { sys: { id: 'space2' } } }
-    ]
+      { name: 'Proof of concept (space trial)', space: { sys: { id: 'space2' } } },
+    ],
   }));
   return {
     isEnterprisePlan,
     getBasePlan: jest.fn(),
-    getPlansWithSpaces
+    getPlansWithSpaces,
   };
 });
 
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
   getAllSpaces: jest.fn(() => [
     { name: 'Test1', sys: { id: 'test1' } },
-    { name: 'Test2', sys: { id: 'test2' } }
-  ])
+    { name: 'Test2', sys: { id: 'test2' } },
+  ]),
 }));
 
 jest.mock('services/TokenStore', () => ({
-  getOrganization: jest.fn(() => ({}))
+  getOrganization: jest.fn(() => ({})),
 }));
 
 jest.mock('data/EndpointFactory', () => {
@@ -73,33 +73,31 @@ jest.mock('data/EndpointFactory', () => {
           {
             startDate: startDate.format(DATE_FORMAT),
             endDate: null,
-            sys: { type: 'UsagePeriod', id: '0' }
+            sys: { type: 'UsagePeriod', id: '0' },
           },
           {
             startDate: moment(startDate)
               .subtract(1, 'day')
               .subtract(1, 'month')
               .format(DATE_FORMAT),
-            endDate: moment(startDate)
-              .subtract(1, 'day')
-              .format(DATE_FORMAT),
-            sys: { type: 'UsagePeriod', id: '1' }
-          }
-        ]
+            endDate: moment(startDate).subtract(1, 'day').format(DATE_FORMAT),
+            sys: { type: 'UsagePeriod', id: '1' },
+          },
+        ],
       };
     }
   });
 
   return {
-    createOrganizationEndpoint: () => endpoint
+    createOrganizationEndpoint: () => endpoint,
   };
 });
 
 jest.mock('app/common/ReloadNotification', () => ({
-  trigger: jest.fn()
+  trigger: jest.fn(),
 }));
 
-const shallowRenderComponent = async props => {
+const shallowRenderComponent = async (props) => {
   const wrapper = shallow(<OrganizationUsage {...props} />);
   // Need to wait for internal async logic to finish
   // This means `componentDidMount` is called twice,
@@ -114,7 +112,7 @@ describe('OrganizationUsage', () => {
 
   beforeAll(() => {
     defaultProps = {
-      orgId: '23423'
+      orgId: '23423',
     };
     // set fixed date for stable snapshots
     // moment('2017-12-01').unix() = 1512082800
@@ -280,7 +278,7 @@ describe('WorkbenchContent', () => {
       isPoC: { space1: false, space2: true },
       periodicUsage: {
         org: { usage: [] },
-        apis: { cma: { items: [] } }
+        apis: { cma: { items: [] } },
       },
       apiRequestIncludedLimit: 1000,
       assetBandwidthUsage: 100,
@@ -288,7 +286,7 @@ describe('WorkbenchContent', () => {
       assetBandwidthUOM: 'GB',
       isLoading: false,
       periods: [],
-      resources: []
+      resources: [],
     };
   });
 

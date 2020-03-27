@@ -2,7 +2,7 @@ import React from 'react';
 import { Heading, Paragraph } from '@contentful/forma-36-react-components';
 
 import EmptyStateContainer, {
-  defaultSVGStyle
+  defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import Illustration from 'svg/illustrations/add-team-to-space-illustration.svg';
 

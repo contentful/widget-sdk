@@ -13,22 +13,22 @@ const styles = {
     display: 'flex',
     height: '100%',
     justifyContent: 'space-between',
-    marginBottom: tokens.spacingL
+    marginBottom: tokens.spacingL,
   }),
   button: css({
-    marginTop: tokens.spacingL
+    marginTop: tokens.spacingL,
   }),
   illustrationContainer: css({
-    alignSelf: 'flex-start'
+    alignSelf: 'flex-start',
   }),
   heading: css({
     fontSize: tokens.fontSizeL,
-    marginBottom: tokens.spacingS
+    marginBottom: tokens.spacingS,
   }),
   description: css({
     fontSize: tokens.fontSizeM,
-    paddingRight: tokens.spacingL
-  })
+    paddingRight: tokens.spacingL,
+  }),
 };
 
 const AppsFrameworkIntroBanner = ({ canManageApps }) => {
@@ -50,7 +50,7 @@ const AppsFrameworkIntroBanner = ({ canManageApps }) => {
             track('element:click', {
               elementId: 'apps_documentation_link',
               groupId: 'apps_listing_page',
-              fromState: getCurrentStateName()
+              fromState: getCurrentStateName(),
             })
           }
           target="_blank"
@@ -67,7 +67,7 @@ const AppsFrameworkIntroBanner = ({ canManageApps }) => {
 };
 
 AppsFrameworkIntroBanner.propTypes = {
-  canManageApps: PropTypes.bool
+  canManageApps: PropTypes.bool,
 };
 
 export default AppsFrameworkIntroBanner;

@@ -19,7 +19,7 @@ export default function register() {
     restrict: 'E',
     template: createNewSpaceTemplateDef(),
     controller: 'createSpaceController',
-    controllerAs: 'createSpace'
+    controllerAs: 'createSpace',
   }));
 
   registerController('createSpaceController', [
@@ -40,10 +40,10 @@ export default function register() {
       // Set new space defaults
       controller.newSpace = {
         data: {
-          defaultLocale: DEFAULT_LOCALE
+          defaultLocale: DEFAULT_LOCALE,
         },
         useTemplate: false,
-        errors: { fields: {} }
+        errors: { fields: {} },
       };
 
       controller.newSpace.organization = $scope.organization;
@@ -57,15 +57,15 @@ export default function register() {
         });
 
       // Populate locales
-      controller.localesList = _.map(localesList, locale => ({
+      controller.localesList = _.map(localesList, (locale) => ({
         displayName: locale.name + ' (' + locale.code + ')',
-        code: locale.code
+        code: locale.code,
       }));
 
       // Scroll to bottom if example templates are opened and templates loaded
       $scope.$watch(
         () => controller.newSpace.useTemplate,
-        usingTemplate => {
+        (usingTemplate) => {
           if (usingTemplate && controller.templates) {
             $element.animate({ scrollTop: $element.scrollTop() + 260 }, 'linear');
           }
@@ -73,7 +73,7 @@ export default function register() {
       );
 
       // Switch space template
-      controller.selectTemplate = template => {
+      controller.selectTemplate = (template) => {
         if (!controller.createSpaceInProgress) {
           controller.newSpace.selectedTemplate = template;
         }
@@ -89,17 +89,17 @@ export default function register() {
         // to create the space
         resources
           .canCreate('space')
-          .then(canCreate => {
+          .then((canCreate) => {
             if (canCreate) {
               // Resources are available. Attempt to create a new space
               createNewSpace();
             } else {
-              resources.messagesFor('space').then(errorObj => {
+              resources.messagesFor('space').then((errorObj) => {
                 handleUsageWarning(errorObj.error);
               });
             }
           })
-          .catch(error => {
+          .catch((error) => {
             showFormError(DEFAULT_ERROR_MESSAGE);
             logger.logServerWarn('Could not fetch permissions', { error: error });
           });
@@ -110,19 +110,19 @@ export default function register() {
         name: 'language-select',
         value: controller.newSpace.data.defaultLocale,
         validationMessage: controller.newSpace.errors.fields.default_locale,
-        children: controller.localesList.map(locale => (
+        children: controller.localesList.map((locale) => (
           <option key={locale.code} value={locale.code}>
             {locale.displayName}
           </option>
         )),
         testId: 'select-locale',
         id: 'newspace-language',
-        onChange: e => {
+        onChange: (e) => {
           controller.newSpace.data.defaultLocale = e.target.value;
         },
         selectProps: {
-          isDisabled: controller.createSpaceInProgress
-        }
+          isDisabled: controller.createSpaceInProgress,
+        },
       });
 
       controller.buildSpaceNameInputProps = () => ({
@@ -132,12 +132,12 @@ export default function register() {
         validationMessage: controller.newSpace.errors.fields.name,
         value: controller.newSpace.data.name || '',
         required: true,
-        onChange: e => {
+        onChange: (e) => {
           controller.newSpace.data.name = e.target.value;
         },
         textInputProps: {
-          disabled: controller.createSpaceInProgress
-        }
+          disabled: controller.createSpaceInProgress,
+        },
       });
 
       function setupTemplates(templates) {
@@ -193,20 +193,20 @@ export default function register() {
         const selectedLocale =
           controller.newSpace.useTemplate === true ? DEFAULT_LOCALE : data.defaultLocale;
         const dataWithUpdatedLocale = Object.assign({}, data, {
-          defaultLocale: selectedLocale
+          defaultLocale: selectedLocale,
         });
 
         client
           .createSpace(dataWithUpdatedLocale, organization.sys.id)
-          .then(newSpace => {
+          .then((newSpace) => {
             // Create space
             TokenStore.refresh().then(_.partial(handleSpaceCreation, newSpace, template));
           })
-          .catch(error => {
+          .catch((error) => {
             const errors = _.get(error, 'body.details.errors');
             const fieldErrors = [
               { name: 'length', path: 'name', message: 'Space name is too long' },
-              { name: 'invalid', path: 'default_locale', message: 'Invalid locale' }
+              { name: 'invalid', path: 'default_locale', message: 'Invalid locale' },
             ];
 
             // If there aren't explicit errors from the response,
@@ -218,7 +218,7 @@ export default function register() {
               return;
             }
 
-            _.forEach(fieldErrors, e => {
+            _.forEach(fieldErrors, (e) => {
               if (hasErrorOnField(errors, e.path, e.name)) {
                 showFieldError(e.path, e.message);
               }
@@ -237,7 +237,7 @@ export default function register() {
                 ? { templateName: templateName }
                 : {
                     templateName: templateName,
-                    entityAutomationScope: { scope: 'space_template' }
+                    entityAutomationScope: { scope: 'space_template' },
                   };
 
             Analytics.track('space:create', spaceCreateEventData);
@@ -271,7 +271,7 @@ export default function register() {
         createTemplatePromises.spaceSetup.catch(() => {});
 
         return createTemplatePromises.contentCreated
-          .catch(data => {
+          .catch((data) => {
             if (!retried) {
               createTemplate(data.template, true);
             }
@@ -286,14 +286,14 @@ export default function register() {
       function loadSelectedTemplate() {
         const itemHandlers = {
           // no need to show status of individual items
-          onItemSuccess: function(entityId, entityData, templateName) {
+          onItemSuccess: function (entityId, entityData, templateName) {
             spaceTemplateEvents.entityActionSuccess(
               entityId,
               Object.assign({}, entityData, { entityAutomationScope: { scope: 'space_template' } }),
               templateName
             );
           },
-          onItemError: _.noop
+          onItemError: _.noop,
         };
 
         const selectedTemplate = controller.newSpace.selectedTemplate;
@@ -313,7 +313,7 @@ export default function register() {
 
       // Form validations
       function hasErrorOnField(errors, fieldPath, errorName) {
-        return _.some(errors, e => e.path === fieldPath && e.name === errorName);
+        return _.some(errors, (e) => e.path === fieldPath && e.name === errorName);
       }
 
       function resetErrors() {
@@ -338,10 +338,10 @@ export default function register() {
         $rootScope.$broadcast('persistentNotification', {
           message: enforcement.message,
           actionMessage: enforcement.actionMessage,
-          action: enforcement.action
+          action: enforcement.action,
         });
         showFormError(usage);
       }
-    }
+    },
   ]);
 }

@@ -14,15 +14,15 @@ const messages = {
     success: 'Content type saved successfully',
     invalid: saveError + 'Data is invalid',
     outdated: saveError + 'Your version is outdated. Please reload and try again',
-    nofields: 'At least one field is required to save a content type.'
+    nofields: 'At least one field is required to save a content type.',
   },
   create: {
-    exists: 'A content type with this ID already exists'
+    exists: 'A content type with this ID already exists',
   },
   duplicate: {
     success: 'Content type duplicated successfully',
-    error: 'Unable to duplicate content type: '
-  }
+    error: 'Unable to duplicate content type: ',
+  },
 };
 
 export function deleteSuccess() {
@@ -36,18 +36,18 @@ export function deleteFail(err) {
 
 export function invalidAccordingToScope(errors, fieldNames) {
   errors = errors || [];
-  const fieldErrors = errors.filter(error => {
+  const fieldErrors = errors.filter((error) => {
     return error.path && error.path[0] === 'fields';
   });
 
   const errorFieldName = first(
-    fieldErrors.map(error => {
+    fieldErrors.map((error) => {
       return fieldNames[error.path[1]];
     })
   );
 
   const errorWithoutFieldName = first(
-    errors.map(error => {
+    errors.map((error) => {
       return error.message;
     })
   );
@@ -83,7 +83,7 @@ export function saveInvalidError(error, contentType) {
   Notification.error(messages.save.invalid);
   logger.logServerWarn('Error saving invalid Content Type', {
     error,
-    contentType: contentType.data
+    contentType: contentType.data,
   });
 }
 
@@ -91,7 +91,7 @@ export function saveOutdatedError(error, contentType) {
   Notification.error(messages.save.outdated);
   logger.logServerWarn('Error activating outdated Content Type', {
     error,
-    contentType: contentType.data
+    contentType: contentType.data,
   });
 }
 

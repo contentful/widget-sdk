@@ -8,13 +8,13 @@ export function create(snapshot, version$, setFields) {
   let snapshotVersion = snapshot.sys.version;
   let currentVersion;
 
-  version$.onValue(version => {
+  version$.onValue((version) => {
     currentVersion = version;
   });
 
   return {
     hasChanges,
-    revert
+    revert,
   };
 
   /**
@@ -37,7 +37,7 @@ export function create(snapshot, version$, setFields) {
    * initial snapshot.
    */
   function revert() {
-    return setFields(snapshot.fields).then(version => {
+    return setFields(snapshot.fields).then((version) => {
       snapshotVersion = version;
     });
   }

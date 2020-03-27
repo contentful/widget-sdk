@@ -6,7 +6,7 @@ import {
   SkeletonBodyText,
   SkeletonDisplayText,
   Heading,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import * as Navigator from 'states/Navigator';
 import NavigationIcon from 'ui/Components/NavigationIcon';
@@ -15,10 +15,10 @@ import {
   WhatIsContentPreview,
   TokensForContentPreview,
   LinkedEntries,
-  LegacyTokens
+  LegacyTokens,
 } from '../ContentPreviewSidebar';
 
-export const ContentPreviewFormSkeleton = props => {
+export const ContentPreviewFormSkeleton = (props) => {
   return (
     <Workbench>
       <Workbench.Header
@@ -69,5 +69,5 @@ export const ContentPreviewFormSkeleton = props => {
 ContentPreviewFormSkeleton.propTypes = {
   title: PropTypes.node,
   actions: PropTypes.node,
-  children: PropTypes.node
+  children: PropTypes.node,
 };

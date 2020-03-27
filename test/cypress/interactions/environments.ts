@@ -4,7 +4,7 @@ import { defaultSpaceId, defaultHeader } from '../util/requests';
 const environments = require('../fixtures/responses/environments.json');
 
 export enum States {
-  MASTER = 'environments/only-master'
+  MASTER = 'environments/only-master',
 }
 
 export const queryFirst101EnvironmentsInDefaultSpace = {
@@ -18,15 +18,15 @@ export const queryFirst101EnvironmentsInDefaultSpace = {
         path: `/spaces/${defaultSpaceId}/environments`,
         headers: defaultHeader,
         query: {
-          limit: '101'
-        }
+          limit: '101',
+        },
       },
       willRespondWith: {
         status: 200,
-        body: environments
-      }
+        body: environments,
+      },
     }).as('queryFirst101EnvironmentsInDefaultSpace');
-    
-    return '@queryFirst101EnvironmentsInDefaultSpace'
-  }
-}
+
+    return '@queryFirst101EnvironmentsInDefaultSpace';
+  },
+};

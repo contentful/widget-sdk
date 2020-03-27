@@ -21,28 +21,28 @@ const VALID_DEFINITION_PROPS = [
   'controller',
   'redirectTo',
   'component',
-  'mapInjectedToProps'
+  'mapInjectedToProps',
 ];
 
 export default function register() {
   registerProvider('states/config', [
     '$stateProvider',
-    function($stateProvider) {
+    function ($stateProvider) {
       const states = [];
 
       return {
         $get: [
           () => {
             return {
-              add: state => addChildren(null, [state]),
-              init: () => states.forEach(s => $stateProvider.state(s))
+              add: (state) => addChildren(null, [state]),
+              init: () => states.forEach((s) => $stateProvider.state(s)),
             };
-          }
-        ]
+          },
+        ],
       };
 
       function addChildren(parentName, children) {
-        children.forEach(state => {
+        children.forEach((state) => {
           const name = parentName ? `${parentName}.${state.name}` : state.name;
 
           const extraProps = difference(Object.keys(state), VALID_DEFINITION_PROPS);
@@ -64,7 +64,7 @@ export default function register() {
             onEnter: state.onEnter,
             // Our own props (they have no meaning to UI Router):
             params: state.params,
-            redirectTo: state.redirectTo
+            redirectTo: state.redirectTo,
           });
 
           if (state.children) {
@@ -80,14 +80,14 @@ export default function register() {
           views['nav-bar@'] = {
             template:
               '<react-component component="component" props="props" style="width: 100%" class="app-top-bar" />',
-            controller: makeReactNavigationController(state.navComponent)
+            controller: makeReactNavigationController(state.navComponent),
           };
         }
 
         if (state.component) {
           views['content@'] = {
             template: '<react-component component="component" props="props" />',
-            controller: makeReactController(state, state.component)
+            controller: makeReactController(state, state.component),
           };
         }
 
@@ -102,7 +102,7 @@ export default function register() {
 
           views['content@'] = {
             template: state.template,
-            controller: provideScopeContext(state.controller, stateName)
+            controller: provideScopeContext(state.controller, stateName),
           };
         }
 
@@ -114,13 +114,13 @@ export default function register() {
           '$scope',
           '$stateParams',
           '$rootScope',
-          function($scope, $stateParams, $rootScope) {
+          function ($scope, $stateParams, $rootScope) {
             let accessChecker;
 
             $scope.component = component;
 
             import(/* webpackMode: "eager" */ 'access_control/AccessChecker').then(
-              i => (accessChecker = i)
+              (i) => (accessChecker = i)
             );
 
             // force nav component rerender on every navigation change
@@ -139,7 +139,7 @@ export default function register() {
 
             $scope.props = {
               navVersion: 0,
-              stateParams: $stateParams
+              stateParams: $stateParams,
             };
 
             $scope.$on('$destroy', () => {
@@ -149,7 +149,7 @@ export default function register() {
             });
 
             $scope.$applyAsync();
-          }
+          },
         ];
       }
 
@@ -159,13 +159,13 @@ export default function register() {
         const mapperFn = mapping[mapping.length - 1];
 
         return ['$scope', '$state', '$stateParams'].concat(injectables).concat([
-          function($scope, $state, $stateParams, ...rest) {
+          function ($scope, $state, $stateParams, ...rest) {
             $scope.context = {};
             $state.current.data = $scope.context;
             $scope.component = component;
             $scope.props = Object.assign({}, mapperFn(...rest), $stateParams);
             $scope.$applyAsync();
-          }
+          },
         ]);
       }
 
@@ -186,14 +186,14 @@ export default function register() {
         const controllerFn = controller[controller.length - 1];
 
         return ['$scope', '$state'].concat(injectables).concat([
-          function($scope, $state) {
+          function ($scope, $state) {
             const args = Array.prototype.slice.call(arguments).slice(2);
             $scope.context = {};
             $state.current.data = $scope.context;
             return controllerFn.apply(this, args);
-          }
+          },
         ]);
       }
-    }
+    },
   ]);
 }

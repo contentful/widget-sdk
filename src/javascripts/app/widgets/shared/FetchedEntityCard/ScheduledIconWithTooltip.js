@@ -11,10 +11,10 @@ export const ScheduledIconWithTooltip = memo(({ entityType, entityId, children }
     if (widgetAPI && widgetAPI.space) {
       widgetAPI.space
         .getEntityScheduledActions(entityType, entityId)
-        .then(data => {
+        .then((data) => {
           setStatus({ type: 'loaded', jobs: data });
         })
-        .catch(e => {
+        .catch((e) => {
           setStatus({ type: 'error', error: e });
         });
     }
@@ -37,5 +37,5 @@ export const ScheduledIconWithTooltip = memo(({ entityType, entityId, children }
 ScheduledIconWithTooltip.propTypes = {
   entityType: PropTypes.string.isRequired,
   entityId: PropTypes.string.isRequired,
-  children: PropTypes.node.isRequired
+  children: PropTypes.node.isRequired,
 };

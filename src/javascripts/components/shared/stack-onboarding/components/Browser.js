@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 class BrowserTab extends React.Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
-    className: PropTypes.string
+    className: PropTypes.string,
   };
 
   render() {

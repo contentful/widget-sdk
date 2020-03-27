@@ -7,7 +7,7 @@ export default class ChangeOwnRoleConfirmation extends React.Component {
     oldRole: PropTypes.string.isRequired,
     newRole: PropTypes.string.isRequired,
     onClose: PropTypes.func.isRequired,
-    isShown: PropTypes.bool.isRequired
+    isShown: PropTypes.bool.isRequired,
   };
 
   render() {

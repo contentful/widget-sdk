@@ -5,7 +5,7 @@ import {
   TextField,
   Button,
   Icon,
-  ValidationMessage
+  ValidationMessage,
 } from '@contentful/forma-36-react-components';
 import { values, isString } from 'lodash';
 
@@ -15,7 +15,7 @@ export class WebhookTemplateForm extends React.Component {
     onClose: PropTypes.func.isRequired,
     templateContentTypes: PropTypes.array.isRequired,
     onCreate: PropTypes.func.isRequired,
-    hasAwsProxy: PropTypes.bool.isRequired
+    hasAwsProxy: PropTypes.bool.isRequired,
   };
 
   constructor(props) {
@@ -26,26 +26,26 @@ export class WebhookTemplateForm extends React.Component {
       fields: props.template.fields.reduce(
         (acc, field) => ({
           ...acc,
-          [field.name]: field.defaultValue || ''
+          [field.name]: field.defaultValue || '',
         }),
         {}
-      )
+      ),
     };
   }
 
   updateFieldState = (fieldName, value) => {
-    this.setState(state => ({
+    this.setState((state) => ({
       ...state,
       error: false,
       fields: {
         ...state.fields,
-        [fieldName]: value
-      }
+        [fieldName]: value,
+      },
     }));
   };
 
   isFormValid(fields) {
-    return values(fields).every(s => isString(s) && s.length > 0);
+    return values(fields).every((s) => isString(s) && s.length > 0);
   }
 
   onCreateClick = () => {
@@ -62,7 +62,7 @@ export class WebhookTemplateForm extends React.Component {
 
     this.props
       .onCreate(
-        mappers.map(mapFn => {
+        mappers.map((mapFn) => {
           return mapFn(this.state.fields, name, templateContentTypes);
         }),
         template.id
@@ -70,7 +70,7 @@ export class WebhookTemplateForm extends React.Component {
       .then(() => {
         this.setState({ busy: false });
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({ busy: false, error: err.message });
       });
   };
@@ -101,7 +101,7 @@ export class WebhookTemplateForm extends React.Component {
             </div>
           </div>
         )}
-        {template.fields.map(field => {
+        {template.fields.map((field) => {
           // We render forms for all templates and show only one of them with CSS.
           // If there are repeated parameter names (and there are...) we cannot use
           // the name as an HTML ID. Here we add a random number to the name so
@@ -116,14 +116,14 @@ export class WebhookTemplateForm extends React.Component {
                   id={id}
                   name={field.name}
                   value={this.state.fields[field.name]}
-                  onChange={e => this.updateFieldState(field.name, e.target.value)}
+                  onChange={(e) => this.updateFieldState(field.name, e.target.value)}
                   required
                   labelText={field.title}
                   textInputProps={{
                     testId: `webhook-template-field--${field.name}`,
                     type: field.type,
                     placeholder: field.placeholder,
-                    disabled: notAvailable
+                    disabled: notAvailable,
                   }}
                 />
               )}
@@ -139,9 +139,9 @@ export class WebhookTemplateForm extends React.Component {
                       id={id}
                       value={this.state.fields[field.name] || ''}
                       disabled={notAvailable}
-                      onChange={e => this.updateFieldState(field.name, e.target.value)}>
+                      onChange={(e) => this.updateFieldState(field.name, e.target.value)}>
                       <option value="">Select...</option>
-                      {templateContentTypes.map(ct => (
+                      {templateContentTypes.map((ct) => (
                         <option key={ct.id} value={ct.id}>
                           {ct.name}
                         </option>

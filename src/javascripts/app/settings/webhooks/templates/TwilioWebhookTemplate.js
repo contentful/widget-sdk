@@ -19,7 +19,7 @@ export default {
       name: 'contentTypeId',
       type: 'content-type-selector',
       title: 'Content type',
-      description: <p>Select the content type of the entries triggering the webhook.</p>
+      description: <p>Select the content type of the entries triggering the webhook.</p>,
     },
     {
       name: 'from',
@@ -36,7 +36,7 @@ export default {
           </a>
           . Starts with <code>+</code> followed by digits.
         </p>
-      )
+      ),
     },
     {
       name: 'to',
@@ -46,7 +46,7 @@ export default {
         <p>
           The phone number you plan to notify. (<code>+</code> area code)
         </p>
-      )
+      ),
     },
     {
       name: 'accountSid',
@@ -60,7 +60,7 @@ export default {
           </a>
           .
         </p>
-      )
+      ),
     },
     {
       name: 'authToken',
@@ -74,12 +74,12 @@ export default {
           </a>
           . This value can’t be revealed once stored.
         </p>
-      )
-    }
+      ),
+    },
   ],
   mapParamsToDefinition: (params, name, templateContentTypes) => {
     const { contentTypeId, from, to, accountSid, authToken } = params;
-    const contentType = templateContentTypes.find(ct => ct.id === contentTypeId);
+    const contentType = templateContentTypes.find((ct) => ct.id === contentTypeId);
 
     return {
       name,
@@ -87,23 +87,23 @@ export default {
       topics: ['Entry.publish'],
       filters: [
         { equals: [{ doc: 'sys.environment.sys.id' }, 'master'] },
-        { equals: [{ doc: 'sys.contentType.sys.id' }, contentType.id] }
+        { equals: [{ doc: 'sys.contentType.sys.id' }, contentType.id] },
       ],
       headers: [
         {
           key: 'Authorization',
           value: 'Basic ' + base64safe([accountSid, authToken].join(':')),
-          secret: true
-        }
+          secret: true,
+        },
       ],
       transformation: {
         contentType: 'application/x-www-form-urlencoded',
         body: JSON.stringify({
           From: from,
           To: to,
-          Body: `Published a new ${contentType.name}: { ${contentType.titlePointer} }`
-        })
-      }
+          Body: `Published a new ${contentType.name}: { ${contentType.titlePointer} }`,
+        }),
+      },
     };
-  }
+  },
 };

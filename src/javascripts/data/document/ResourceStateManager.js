@@ -37,7 +37,7 @@ export function create(sys$, setSys, getData, spaceEndpoint, docStateChangeBus) 
 
   const state$ = sys$.map(getState).skipDuplicates();
   let currentState;
-  state$.onValue(state => {
+  state$.onValue((state) => {
     currentState = state;
   });
 
@@ -74,7 +74,7 @@ export function create(sys$, setSys, getData, spaceEndpoint, docStateChangeBus) 
     const nextState = getState(newSys);
     const statesMap = {
       [State.Archived()]: 'archived',
-      [State.Published()]: 'published'
+      [State.Published()]: 'published',
     };
 
     setSys(newSys);
@@ -82,7 +82,7 @@ export function create(sys$, setSys, getData, spaceEndpoint, docStateChangeBus) 
     if (previousState !== nextState) {
       stateChangeBus.emit({
         from: previousState,
-        to: nextState
+        to: nextState,
       });
     }
 

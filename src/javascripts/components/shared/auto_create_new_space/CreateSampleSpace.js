@@ -24,7 +24,7 @@ const DEFAULT_LOCALE = 'en-US';
  *
  * @returns Promise<undefined>
  */
-export default function(org, templateName, modalTemplate = autoCreateSpaceTemplate) {
+export default function (org, templateName, modalTemplate = autoCreateSpaceTemplate) {
   const $rootScope = getModule('$rootScope');
   const spaceContext = getModule('spaceContext');
 
@@ -47,7 +47,7 @@ export default function(org, templateName, modalTemplate = autoCreateSpaceTempla
 
   const scope = $rootScope.$new();
 
-  const create = async function() {
+  const create = async function () {
     let dialog = null;
 
     // TODO: Remove after feature-ps-11-2017-project-status
@@ -55,19 +55,19 @@ export default function(org, templateName, modalTemplate = autoCreateSpaceTempla
     // enable us to have two independent "screens" inside
     // the modal
     if (modalTemplate !== autoCreateSpaceTemplate) {
-      scope.onProjectStatusSelect = elementId => {
+      scope.onProjectStatusSelect = (elementId) => {
         track('element:click', {
           elementId,
           groupId: 'project_status',
-          fromState: getCurrentStateName()
+          fromState: getCurrentStateName(),
         });
         updateUserInSegment({
-          projectStatus: elementId
+          projectStatus: elementId,
         });
         // this is used to goto the next screen _in_ the modal itself
         scope.chosenProjectStatus = elementId;
         // hacky way to recenter the modal once it's resized
-        setTimeout(_ => dialog._centerOnBackground(), 0);
+        setTimeout((_) => dialog._centerOnBackground(), 0);
       };
     }
 
@@ -92,9 +92,9 @@ export default function(org, templateName, modalTemplate = autoCreateSpaceTempla
           // which template we were trying to create
           template: templateName,
           // how long did it take to end up here
-          runningTime: Date.now() - startingMoment
+          runningTime: Date.now() - startingMoment,
         },
-        groupingHash: 'Failed sample space creation'
+        groupingHash: 'Failed sample space creation',
       });
 
       throw e;
@@ -116,7 +116,7 @@ async function createSpace(org, templateName) {
   const newSpace = await client.createSpace(
     {
       name: 'The example project',
-      defaultLocale: DEFAULT_LOCALE
+      defaultLocale: DEFAULT_LOCALE,
     },
     org.sys.id
   );
@@ -125,13 +125,13 @@ async function createSpace(org, templateName) {
   await gotoState({
     path: ['spaces', 'detail'],
     params: {
-      spaceId: newSpace.sys.id
-    }
+      spaceId: newSpace.sys.id,
+    },
   });
   track('space:create', {
     templateName,
     // mark space as an auto created space
-    entityAutomationScope: { scope: 'auto_create' }
+    entityAutomationScope: { scope: 'auto_create' },
   });
   return newSpace;
 }
@@ -149,12 +149,12 @@ async function applyTemplate(spaceContext, templateInfo) {
           entityId,
           {
             ...entityData,
-            entityAutomationScope: { scope: 'auto_create' }
+            entityAutomationScope: { scope: 'auto_create' },
           },
           templateName
         );
       },
-      onItemError: noop
+      onItemError: noop,
     },
     templateInfo,
     DEFAULT_LOCALE
@@ -181,13 +181,13 @@ async function applyTemplate(spaceContext, templateInfo) {
  */
 async function loadTemplate(name) {
   const templates = await getTemplatesList();
-  const template = find(templates, t => t.fields.name.toLowerCase() === name.toLowerCase());
+  const template = find(templates, (t) => t.fields.name.toLowerCase() === name.toLowerCase());
 
   if (!template) {
     throw new Error(`Template named ${name} not found`);
   } else {
     track('space:template_selected', {
-      templateName: template.name
+      templateName: template.name,
     });
 
     return template.fields;
@@ -203,6 +203,6 @@ function openDialog(scope, templateName, modalTemplate) {
     backgroundClose: false,
     persistOnNavigation: true,
     ignoreEsc: true,
-    scope
+    scope,
   });
 }

@@ -6,7 +6,7 @@ import classNames from 'classnames';
 export class Tab extends React.Component {
   static propTypes = {
     isActive: PropTypes.bool.isRequired,
-    template: PropTypes.object.isRequired
+    template: PropTypes.object.isRequired,
   };
 
   componentDidMount() {
@@ -21,13 +21,13 @@ export class Tab extends React.Component {
     const classes = classNames({
       'webhook-template-item': true,
       'webhook-template-item--active': isActive,
-      'webhook-template-item--3-lines': template.aws
+      'webhook-template-item--3-lines': template.aws,
     });
     return (
       <div
         {...rest}
         className={classes}
-        ref={ref => {
+        ref={(ref) => {
           this.domRef = ref;
         }}>
         <div className="webhook-template-item__logo">{template.logo}</div>
@@ -41,7 +41,7 @@ export class Tab extends React.Component {
   }
 }
 
-export const TabsList = props => (
+export const TabsList = (props) => (
   <div className="webhook-templates-dialog-tabs__list">
     <div className="webhook-templates-dialog-tabs__list-title">{props.title}</div>
     <div className="webhook-templates-dialog-tabs__scroll-container">
@@ -52,13 +52,13 @@ export const TabsList = props => (
 
 TabsList.propTypes = {
   title: PropTypes.string.isRequired,
-  children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired
+  children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
 };
 
 export class TabPane extends React.Component {
   static propTypes = {
     isActive: PropTypes.bool.isRequired,
-    children: PropTypes.any
+    children: PropTypes.any,
   };
 
   render() {
@@ -75,26 +75,26 @@ export class TabPane extends React.Component {
 export default class Tabs extends React.Component {
   static propTypes = {
     initialActive: PropTypes.string.isRequired,
-    renderTabs: PropTypes.func.isRequired
+    renderTabs: PropTypes.func.isRequired,
   };
 
   constructor(props) {
     super(props);
     this.state = {
-      active: props.initialActive
+      active: props.initialActive,
     };
   }
 
-  getTabProps = tabId => {
+  getTabProps = (tabId) => {
     return {
       onClick: () => this.setState({ active: tabId }),
-      isActive: this.state.active === tabId
+      isActive: this.state.active === tabId,
     };
   };
 
-  getPaneProps = tabId => {
+  getPaneProps = (tabId) => {
     return {
-      isActive: this.state.active === tabId
+      isActive: this.state.active === tabId,
     };
   };
 
@@ -104,7 +104,7 @@ export default class Tabs extends React.Component {
         <div className="webhook-templates-dialog-tabs__separator" />
         {this.props.renderTabs({
           getTabProps: this.getTabProps,
-          getPaneProps: this.getPaneProps
+          getPaneProps: this.getPaneProps,
         })}
       </div>
     );

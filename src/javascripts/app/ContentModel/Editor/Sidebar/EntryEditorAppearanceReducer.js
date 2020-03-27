@@ -3,35 +3,35 @@ import { createImmerReducer } from 'redux/utils/createImmerReducer';
 /* Actions */
 const SELECT_ACTIVE_OPTION = 'editor/SELECT_ACTIVE_OPTION';
 
-export const selectActiveOption = option => ({
+export const selectActiveOption = (option) => ({
   type: SELECT_ACTIVE_OPTION,
   payload: {
-    option
-  }
+    option,
+  },
 });
 
 const SET_WIDGET = 'editor/SET_WIDGET';
 
-export const setWidget = widget => ({
+export const setWidget = (widget) => ({
   type: SET_WIDGET,
   payload: {
-    widget
-  }
+    widget,
+  },
 });
 
 const SET_SETTINGS = 'editor/SET_SETTINGS';
 
-export const setSettings = settings => ({
+export const setSettings = (settings) => ({
   type: SET_SETTINGS,
   payload: {
-    settings
-  }
+    settings,
+  },
 });
 
 export const actions = {
   selectActiveOption,
   setWidget,
-  setSettings
+  setSettings,
 };
 
 export const reducer = createImmerReducer({
@@ -44,7 +44,7 @@ export const reducer = createImmerReducer({
       ? {
           widgetNamespace: widget.namespace,
           widgetId: widget.id,
-          settings: {}
+          settings: {},
         }
       : undefined;
     state.touched = true;
@@ -52,5 +52,5 @@ export const reducer = createImmerReducer({
   [SET_SETTINGS]: (state, action) => {
     state.configuration = state.configuration || {};
     state.configuration.settings = action.payload.settings;
-  }
+  },
 });

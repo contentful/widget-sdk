@@ -1,6 +1,6 @@
 import React from 'react';
 
-const AwsLogo = props => (
+const AwsLogo = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" {...props}>
     <g fill="none" fillRule="evenodd">
       <rect width="32" height="32" fill="#1B2532" rx="4.211" />

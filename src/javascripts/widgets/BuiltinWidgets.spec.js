@@ -18,11 +18,11 @@ describe('BuiltinWidgets', () => {
 
     it('returns a list of widget descriptors', () => {
       expect.assertions(BUILTIN_WIDGETS_COUNT * 2);
-      createBuiltinWidgetList().forEach(descriptor => {
+      createBuiltinWidgetList().forEach((descriptor) => {
         expect(descriptor).toMatchObject({
           id: expect.any(String),
           name: expect.any(String),
-          fieldTypes: expect.any(Array)
+          fieldTypes: expect.any(Array),
         });
         if (descriptor.template) {
           expect(descriptor.template).toEqual(expect.any(String));

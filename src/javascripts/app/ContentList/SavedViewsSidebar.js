@@ -21,18 +21,18 @@ const styles = {
   tabPanel: css({
     flexGrow: 1,
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
   }),
   tabsWrapper: css({
     paddingTop: tokens.spacingM,
     paddingRight: tokens.spacingL,
     paddingLeft: tokens.spacingM,
     backgroundColor: tokens.colorElementLightest,
-    borderBottom: `1px solid ${tokens.colorElementMid}`
-  })
+    borderBottom: `1px solid ${tokens.colorElementMid}`,
+  }),
 };
 
-export default function({ entityFolders, loadView, getCurrentView, roleAssignment }) {
+export default function ({ entityFolders, loadView, getCurrentView, roleAssignment }) {
   const sharedViewsTracking = trackingForScopedViews(VIEWS_SHARED);
   const privateViewsTracking = trackingForScopedViews(VIEWS_PRIVATE);
 
@@ -41,20 +41,20 @@ export default function({ entityFolders, loadView, getCurrentView, roleAssignmen
     loadView,
     getCurrentView,
     roleAssignment,
-    tracking: sharedViewsTracking
+    tracking: sharedViewsTracking,
   });
 
   const privateViews = initSavedViewsComponent({
     scopedFolders: entityFolders.private,
     loadView,
     getCurrentView,
-    tracking: privateViewsTracking
+    tracking: privateViewsTracking,
   });
 
   const reduce = makeReducer({ [Select]: (_, next) => next });
   const selector = {
     store: createStore(VIEWS_SHARED, reduce),
-    actions: { Select }
+    actions: { Select },
   };
 
   // eslint-disable-next-line react/prop-types
@@ -110,8 +110,8 @@ export default function({ entityFolders, loadView, getCurrentView, roleAssignmen
   function saveCurrentView() {
     return SaveCurrentViewDialog({
       allowViewTypeSelection: entityFolders.shared.canEdit,
-      allowRoleAssignment: roleAssignment
-    }).then(result => {
+      allowRoleAssignment: roleAssignment,
+    }).then((result) => {
       if (!result) {
         return;
       }

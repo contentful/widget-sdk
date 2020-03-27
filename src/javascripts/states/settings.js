@@ -18,7 +18,7 @@ export default SpaceSettingsBase({
     {
       name: 'space',
       url: '/space',
-      component: SpaceSettingsRoute
+      component: SpaceSettingsRoute,
     },
     localesSettingsState,
     usersSettingsState,
@@ -28,6 +28,6 @@ export default SpaceSettingsBase({
     environmentsSettingsState,
     spaceUsageState,
     extensionsSettingsState,
-    webhooksSettingsState
-  ]
+    webhooksSettingsState,
+  ],
 });

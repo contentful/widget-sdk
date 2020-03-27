@@ -6,7 +6,7 @@ import { SidebarType } from '../constants';
 import {
   NAMESPACE_SIDEBAR_BUILTIN,
   NAMESPACE_EXTENSION,
-  NAMESPACE_APP
+  NAMESPACE_APP,
 } from 'widgets/WidgetNamespaces';
 import { LOCATION_ENTRY_SIDEBAR } from 'widgets/WidgetLocations';
 
@@ -21,25 +21,25 @@ export function convertInternalStateToConfiguration(state, initialItems) {
   }
 
   const selectedDefaultIds = state.items
-    .filter(widget => widget.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN)
-    .map(widget => widget.widgetId);
-  const defaultIds = initialItems.map(widget => widget.widgetId);
+    .filter((widget) => widget.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN)
+    .map((widget) => widget.widgetId);
+  const defaultIds = initialItems.map((widget) => widget.widgetId);
   const missingBuiltinIds = difference(defaultIds, selectedDefaultIds);
 
   const selectedItems = state.items
-    .filter(widget => widget.problem !== true)
-    .map(widget => ({
+    .filter((widget) => widget.problem !== true)
+    .map((widget) => ({
       widgetId: widget.widgetId,
       widgetNamespace: widget.widgetNamespace,
-      settings: widget.settings || {}
+      settings: widget.settings || {},
     }));
 
   const missingItems = initialItems
-    .filter(widget => missingBuiltinIds.includes(widget.widgetId))
-    .map(widget => ({
+    .filter((widget) => missingBuiltinIds.includes(widget.widgetId))
+    .map((widget) => ({
       widgetId: widget.widgetId,
       widgetNamespace: widget.widgetNamespace,
-      disabled: true
+      disabled: true,
     }));
 
   return [...selectedItems, ...missingItems];
@@ -49,7 +49,7 @@ function convertToWidgetConfiguration(widget) {
   return {
     widgetId: widget.id,
     widgetNamespace: widget.namespace,
-    ...pick(widget, ['name', 'locations', 'parameters'])
+    ...pick(widget, ['name', 'locations', 'parameters']),
   };
 }
 
@@ -76,7 +76,7 @@ export function convertConfigurationToInternalState(configuration, widgets, init
       sidebarType: SidebarType.default,
       items: initialItems,
       availableItems: widgets.filter(canBeUsedInSidebar).map(convertToWidgetConfiguration),
-      configurableWidget: null
+      configurableWidget: null,
     };
   }
 
@@ -84,7 +84,7 @@ export function convertConfigurationToInternalState(configuration, widgets, init
 
   // Mark unavailable widgets with `problem: true`.
   let items = configuration
-    .map(configItem => {
+    .map((configItem) => {
       if (configItem.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN) {
         const found = defaultWidgetsMap[configItem.widgetId];
 
@@ -95,7 +95,7 @@ export function convertConfigurationToInternalState(configuration, widgets, init
 
       if ([NAMESPACE_EXTENSION, NAMESPACE_APP].includes(configItem.widgetNamespace)) {
         const found = widgets.find(
-          e =>
+          (e) =>
             e.widgetNamespace === configItem.widgetNamespace && e.widgetId === configItem.widgetId
         );
 
@@ -114,14 +114,14 @@ export function convertConfigurationToInternalState(configuration, widgets, init
     .filter(identity);
 
   const availableItems = [];
-  const validWidgetMatcher = widget => item =>
+  const validWidgetMatcher = (widget) => (item) =>
     item.widgetNamespace === widget.widgetNamespace &&
     item.widgetId === widget.widgetId &&
     item.problem !== true;
 
   // Add all disabled and missing built-in widgets to the list
   // of available items.
-  initialItems.forEach(buildInWidget => {
+  initialItems.forEach((buildInWidget) => {
     const found = items.find(validWidgetMatcher(buildInWidget));
 
     if (!found || found.disabled === true) {
@@ -131,7 +131,7 @@ export function convertConfigurationToInternalState(configuration, widgets, init
 
   // Add all custom widgets that are not selected to the list
   // of available items.
-  widgets.forEach(widget => {
+  widgets.forEach((widget) => {
     const found = items.find(validWidgetMatcher(widget));
 
     if (!found && canBeUsedInSidebar(widget)) {
@@ -140,10 +140,10 @@ export function convertConfigurationToInternalState(configuration, widgets, init
   });
 
   items = items
-    .filter(widget => widget.disabled !== true)
-    .filter(widget => {
+    .filter((widget) => widget.disabled !== true)
+    .filter((widget) => {
       // Filter out all items that are present in the list of available items.
-      return !availableItems.find(item => {
+      return !availableItems.find((item) => {
         return item.widgetNamespace === widget.widgetNamespace && item.widgetId === widget.widgetId;
       });
     });
@@ -152,6 +152,6 @@ export function convertConfigurationToInternalState(configuration, widgets, init
     sidebarType: SidebarType.custom,
     items,
     availableItems,
-    configurableWidget: null
+    configurableWidget: null,
   };
 }

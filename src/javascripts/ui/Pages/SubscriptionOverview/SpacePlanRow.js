@@ -10,7 +10,7 @@ import {
   Tooltip,
   CardActions,
   DropdownList,
-  DropdownListItem
+  DropdownListItem,
 } from '@contentful/forma-36-react-components';
 
 import { get } from 'lodash';
@@ -27,24 +27,24 @@ import QuestionMarkIcon from 'svg/QuestionMarkIcon.svg';
 const styles = {
   dotsRow: css({
     textAlign: 'right',
-    verticalAlign: 'middle'
+    verticalAlign: 'middle',
   }),
   spaceName: css({
     display: 'inline-block',
-    marginRight: '5px'
+    marginRight: '5px',
   }),
   star: css({
     color: tokens.colorOrangeLight,
     fontSize: '12px',
-    cursor: 'default'
+    cursor: 'default',
   }),
   helpIcon: css({
     display: 'inline',
     position: 'relative',
     bottom: '0.125em',
     paddingLeft: '0.3em',
-    cursor: 'help'
-  })
+    cursor: 'help',
+  }),
 };
 
 function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }) {
@@ -65,14 +65,14 @@ function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }
     go({
       path: ['spaces', 'detail', 'home'],
       params: { spaceId: space.sys.id },
-      options: { reload: true }
+      options: { reload: true },
     });
 
   const onViewUsage = () =>
     go({
       path: ['spaces', 'detail', 'settings', 'usage'],
       params: { spaceId: space.sys.id },
-      options: { reload: true }
+      options: { reload: true },
     });
 
   const className = upgraded ? 'x--success' : '';
@@ -123,7 +123,7 @@ function SpacePlanRow({ basePlan, plan, upgraded, onChangeSpace, onDeleteSpace }
         <CardActions
           iconButtonProps={{
             buttonType: 'primary',
-            testId: 'subscription-page.spaces-list.dropdown-menu.trigger'
+            testId: 'subscription-page.spaces-list.dropdown-menu.trigger',
           }}
           data-test-id="subscription-page.spaces-list.dropdown-menu">
           <DropdownList>
@@ -161,7 +161,7 @@ SpacePlanRow.propTypes = {
   plan: PropTypes.object.isRequired,
   onChangeSpace: PropTypes.func.isRequired,
   onDeleteSpace: PropTypes.func.isRequired,
-  upgraded: PropTypes.bool
+  upgraded: PropTypes.bool,
 };
 
 export default SpacePlanRow;

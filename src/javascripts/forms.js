@@ -18,9 +18,9 @@ export default function register() {
     restrict: 'A',
     require: 'ngModel',
 
-    link: function(_scope, _elem, _attrs, modelCtrl) {
-      modelCtrl.$parsers.push(value => value || null);
-    }
+    link: function (_scope, _elem, _attrs, modelCtrl) {
+      modelCtrl.$parsers.push((value) => value || null);
+    },
   }));
 
   /**
@@ -40,7 +40,7 @@ export default function register() {
     restrict: 'A',
     require: 'ngModel',
 
-    link: function(scope, _elem, _attrs, modelCtrl) {
+    link: function (scope, _elem, _attrs, modelCtrl) {
       modelCtrl.$setDirty = _.noop;
       scope.$on('ngModel:update', stopThisPropagation);
       scope.$on('ngModel:commit', stopThisPropagation);
@@ -50,7 +50,7 @@ export default function register() {
           ev.stopPropagation();
         }
       }
-    }
+    },
   }));
 
   /**
@@ -67,7 +67,7 @@ export default function register() {
   registerDirective('ngModel', () => ({
     require: 'ngModel',
 
-    link: function(scope, elem, _attrs, modelCtrl) {
+    link: function (scope, elem, _attrs, modelCtrl) {
       listenOnViewChange(emitUpdateEvent);
 
       if (elem.prop('tagName') === 'INPUT') {
@@ -89,7 +89,7 @@ export default function register() {
       function listenOnViewChange(listener) {
         modelCtrl.$viewChangeListeners.push(listener);
       }
-    }
+    },
   }));
 
   /**
@@ -103,16 +103,16 @@ export default function register() {
   registerDirective('ngModel', () => ({
     require: 'ngModel',
 
-    link: function(scope, elem, attrs, modelCtrl) {
+    link: function (scope, elem, attrs, modelCtrl) {
       if (elem.is('input, textarea')) {
         scope.$watch(
           () => modelCtrl.$invalid && !modelCtrl.hideErrors,
-          isInvalid => {
+          (isInvalid) => {
             attrs.$set('aria-invalid', isInvalid);
           }
         );
       }
-    }
+    },
   }));
 
   /**
@@ -133,19 +133,19 @@ export default function register() {
   registerDirective('ngModel', () => ({
     require: ['ngModel', '?^form'],
 
-    link: function(scope, _elem, attrs, ctrls) {
+    link: function (scope, _elem, attrs, ctrls) {
       const modelCtrl = ctrls[0];
       const formCtrl = ctrls[1];
       modelCtrl.hideErrors = true;
       scope.$watch(
         () => modelCtrl.$dirty || 'showErrors' in attrs || (formCtrl && formCtrl.showErrors),
-        show => {
+        (show) => {
           if (show) {
             modelCtrl.hideErrors = false;
           }
         }
       );
-    }
+    },
   }));
 
   /**
@@ -157,12 +157,12 @@ export default function register() {
    */
   registerDirective('ngForm', [
     '$timeout',
-    $timeout => ({
+    ($timeout) => ({
       restrict: 'A',
       require: 'form',
-      controller: function() {},
+      controller: function () {},
 
-      link: function(scope, _elem, attrs, formCtrl) {
+      link: function (scope, _elem, attrs, formCtrl) {
         scope.$form = formCtrl;
 
         if ('showErrors' in attrs) {
@@ -170,14 +170,14 @@ export default function register() {
         }
 
         const removeControl = formCtrl.$removeControl;
-        formCtrl.$removeControl = function(ctrl) {
+        formCtrl.$removeControl = function (ctrl) {
           removeControl.call(this, ctrl);
           $timeout(() => {
             scope.$apply();
           });
         };
-      }
-    })
+      },
+    }),
   ]);
 
   /**
@@ -195,18 +195,18 @@ export default function register() {
     restrict: 'A',
     require: '^form',
 
-    link: function(scope, element, attrs, formCtrl) {
+    link: function (scope, element, attrs, formCtrl) {
       if (!attrs.type) {
         attrs.$set('type', 'submit');
       }
 
-      element.on('click', ev => {
+      element.on('click', (ev) => {
         ev.preventDefault();
         scope.$apply(() => {
           formCtrl.submit();
         });
       });
-    }
+    },
   }));
 
   /**
@@ -227,11 +227,11 @@ export default function register() {
     restrict: 'A',
     require: 'form',
 
-    link: function(scope, _element, attrs, formCtrl) {
+    link: function (scope, _element, attrs, formCtrl) {
       formCtrl.submit = () => {
         formCtrl.showErrors = true;
         scope.$eval(attrs.cfOnSubmit);
       };
-    }
+    },
   }));
 }

@@ -7,7 +7,7 @@ function getMimeGroup(file) {
   if (file) {
     return mimetype.getGroupName({
       type: file.contentType,
-      fallbackFileName: file.fileName
+      fallbackFileName: file.fileName,
     });
   }
   return '';
@@ -56,5 +56,5 @@ export function FileEditorMetadata(props) {
 }
 
 FileEditorMetadata.propTypes = {
-  file: PropTypes.object.isRequired
+  file: PropTypes.object.isRequired,
 };

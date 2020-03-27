@@ -24,9 +24,9 @@ export default function register() {
   registerDirective('cfFocusOtInput', [
     () => ({
       restrict: 'A',
-      link: function(scope, elem, attrs) {
+      link: function (scope, elem, attrs) {
         if (scope.$eval(attrs.cfFocusOtInput) || _.isEmpty(attrs.cfFocusOtInput)) {
-          K.onValueScope(scope, scope.otDoc.state.loaded$, loaded => {
+          K.onValueScope(scope, scope.otDoc.state.loaded$, (loaded) => {
             if (loaded) {
               const input = elem.find('input').eq(0);
               defer(() => {
@@ -35,7 +35,7 @@ export default function register() {
             }
           });
         }
-      }
-    })
+      },
+    }),
   ]);
 }

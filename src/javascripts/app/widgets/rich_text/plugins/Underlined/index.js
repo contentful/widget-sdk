@@ -9,7 +9,7 @@ export const UnderlinedPlugin = ({ richTextAPI }) => {
     type: MARKS.UNDERLINE,
     tagName: 'u',
     hotkey: ['mod+u'],
-    richTextAPI
+    richTextAPI,
   });
 };
 
@@ -22,5 +22,5 @@ class Underlined extends Component {
 export default markToggleDecorator({
   type: MARKS.UNDERLINE,
   title: 'Underline',
-  icon: 'FormatUnderlined'
+  icon: 'FormatUnderlined',
 })(Underlined);

@@ -6,11 +6,11 @@ export default class FormSection extends React.Component {
     testId: PropTypes.string,
     title: PropTypes.string.isRequired,
     collapsible: PropTypes.bool,
-    children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired
+    children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
   };
 
   static defaultProps = {
-    collapsible: false
+    collapsible: false,
   };
 
   constructor(props) {

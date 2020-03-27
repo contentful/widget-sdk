@@ -6,7 +6,7 @@ import {
   Paragraph,
   Notification,
   Spinner,
-  Tooltip
+  Tooltip,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { css } from 'emotion';
@@ -15,28 +15,28 @@ import { CodeFragment } from 'ui/Content';
 import moment from 'moment';
 import {
   notificationContinueOnEnvironment,
-  notificationSwitchToAlias
+  notificationSwitchToAlias,
 } from 'analytics/events/EnvironmentAliases';
 
 const styles = {
   paragraph: css({
-    marginTop: tokens.spacingXs
+    marginTop: tokens.spacingXs,
   }),
   flex: css({
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   }),
   notification: css({
     display: 'flex',
     alignItems: 'center',
     color: tokens.colorWhite,
     flexWrap: 'wrap',
-    whiteSpace: 'pre'
+    whiteSpace: 'pre',
   }),
   tooltip: css({
-    zIndex: 1000
-  })
+    zIndex: 1000,
+  }),
 };
 
 export const entityUnavailableNotification = () =>
@@ -54,7 +54,7 @@ export const FromTo = ({ message, oldTarget, newTarget }) => (
 FromTo.propTypes = {
   newTarget: PropTypes.string.isRequired,
   oldTarget: PropTypes.string.isRequired,
-  message: PropTypes.string.isRequired
+  message: PropTypes.string.isRequired,
 };
 
 const getTimestamp = () => moment().format('MMMM Do YYYY, h:mm:ss a');
@@ -69,7 +69,7 @@ const UpdateParagraph = ({ aliasId, oldTarget, newTarget }) => (
 UpdateParagraph.propTypes = {
   aliasId: PropTypes.string.isRequired,
   newTarget: PropTypes.string.isRequired,
-  oldTarget: PropTypes.string.isRequired
+  oldTarget: PropTypes.string.isRequired,
 };
 
 export const ChoiceModal = ({
@@ -78,11 +78,11 @@ export const ChoiceModal = ({
   newTarget,
   aliasId,
   isShown,
-  onClose
+  onClose,
 }) => {
   const [loading, setLoading] = useState(false);
 
-  const reloadTo = async newEnvironmentId => {
+  const reloadTo = async (newEnvironmentId) => {
     setLoading(true);
     const error = await Navigator.reloadWithEnvironment(newEnvironmentId);
     if (error) entityUnavailableNotification();
@@ -145,7 +145,7 @@ ChoiceModal.propTypes = {
   oldTarget: PropTypes.string.isRequired,
   aliasId: PropTypes.string.isRequired,
   isShown: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired
+  onClose: PropTypes.func.isRequired,
 };
 
 export const InfoModal = ({
@@ -154,7 +154,7 @@ export const InfoModal = ({
   newTarget,
   aliasId,
   isShown,
-  onClose
+  onClose,
 }) => {
   const [loading, setLoading] = useState(false);
 
@@ -217,5 +217,5 @@ InfoModal.propTypes = {
   oldTarget: PropTypes.string.isRequired,
   aliasId: PropTypes.string.isRequired,
   isShown: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired
+  onClose: PropTypes.func.isRequired,
 };

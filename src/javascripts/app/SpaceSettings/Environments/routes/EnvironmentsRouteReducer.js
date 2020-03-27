@@ -41,10 +41,10 @@ export const createEnvReducer = createImmerReducer({
   },
   [SET_IS_LOADING]: (state, { value }) => {
     state.isLoading = value;
-  }
+  },
 });
 
-export const useEnvironmentsRouteState = props => {
+export const useEnvironmentsRouteState = (props) => {
   const initialState = {
     isLoading: true,
     canCreateEnv: false,
@@ -58,7 +58,7 @@ export const useEnvironmentsRouteState = props => {
     isLegacyOrganization: props.isLegacyOrganization,
     organizationId: props.organizationId,
     spaceId: props.spaceId,
-    pubsubClient: props.pubsubClient
+    pubsubClient: props.pubsubClient,
   };
 
   const [state, dispatch] = useReducer(createEnvReducer, initialState);
@@ -77,7 +77,7 @@ export const useEnvironmentsRouteState = props => {
     const [environmentsEnabled, canSelectSource, aliasesEnabled] = await Promise.all([
       LD.getCurrentVariation(ENVIRONMENTS_FLAG),
       getOrgFeature(organizationId, 'environment_branching'),
-      getSpaceFeature(spaceId, 'environment_aliasing')
+      getSpaceFeature(spaceId, 'environment_aliasing'),
     ]);
 
     if (!environmentsEnabled) goToSpaceDetail();
@@ -87,11 +87,11 @@ export const useEnvironmentsRouteState = props => {
       type: SET_PERMISSIONS,
       canSelectSource,
       canManageAliases,
-      aliasesEnabled
+      aliasesEnabled,
     });
   };
 
-  const makeEnvironmentModel = environment => {
+  const makeEnvironmentModel = (environment) => {
     const { isMasterEnvironment, getAliasesIds } = props;
     const statusId = environment.sys.status.sys.id;
     return {
@@ -99,7 +99,7 @@ export const useEnvironmentsRouteState = props => {
       isMaster: isMasterEnvironment(environment),
       aliases: getAliasesIds(environment),
       status: statusId.match(/ready|failed/) ? statusId : 'inProgress',
-      payload: environment
+      payload: environment,
     };
   };
 
@@ -121,7 +121,7 @@ export const useEnvironmentsRouteState = props => {
       items,
       canCreateEnv: isLegacyOrganization || canCreate(resource),
       hasOptedInEnv: !!aliases,
-      allSpaceAliases: aliases
+      allSpaceAliases: aliases,
     });
     dispatch({ type: SET_IS_LOADING, value: false });
   };
@@ -143,7 +143,7 @@ export const useEnvironmentsRouteState = props => {
       items,
       canCreateEnv: isLegacyOrganization || canCreate(resource),
       hasOptedInEnv: !!aliases,
-      allSpaceAliases: aliases
+      allSpaceAliases: aliases,
     });
   };
 
@@ -164,7 +164,7 @@ export const useEnvironmentsRouteState = props => {
     }
   };
 
-  const OpenDeleteDialog = async environment => {
+  const OpenDeleteDialog = async (environment) => {
     const { currentEnvironmentId } = props;
 
     const deleted = await openDeleteEnvironmentDialog(
@@ -186,7 +186,7 @@ export const useEnvironmentsRouteState = props => {
       space: getSpaceData(),
       action: 'change',
       scope: 'space',
-      onSubmit: () => FetchEnvironments()
+      onSubmit: () => FetchEnvironments(),
     });
   };
 
@@ -196,7 +196,7 @@ export const useEnvironmentsRouteState = props => {
     RefetchEnvironments,
     OpenCreateDialog,
     OpenDeleteDialog,
-    OpenUpgradeSpaceDialog
+    OpenUpgradeSpaceDialog,
   };
 
   return [state, actions];

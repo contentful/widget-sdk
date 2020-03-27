@@ -17,7 +17,7 @@ export default blockToggleDecorator({
   title: 'Blockquote',
   icon: 'Quote',
   applyChange,
-  isActive: isSelectionInQuote
+  isActive: isSelectionInQuote,
 })(Blockquote);
 
 export { default as QuotePlugin } from './QuotePlugin';

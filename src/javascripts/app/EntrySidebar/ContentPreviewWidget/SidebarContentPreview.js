@@ -4,7 +4,7 @@ import {
   Button,
   Dropdown,
   DropdownList,
-  DropdownListItem
+  DropdownListItem,
 } from '@contentful/forma-36-react-components';
 import StateLink from 'app/common/StateLink';
 
@@ -14,19 +14,19 @@ export default class SidebarContentPreview extends Component {
     isPreviewSetup: PropTypes.bool.isRequired,
     isAdmin: PropTypes.bool.isRequired,
     selectedContentPreview: PropTypes.shape({
-      name: PropTypes.string
+      name: PropTypes.string,
     }).isRequired,
     contentPreviews: PropTypes.arrayOf(
       PropTypes.shape({
-        name: PropTypes.string.isRequired
+        name: PropTypes.string.isRequired,
       })
     ).isRequired,
     onChangeContentPreview: PropTypes.func.isRequired,
-    trackPreviewOpened: PropTypes.func.isRequired
+    trackPreviewOpened: PropTypes.func.isRequired,
   };
 
   state = {
-    isOpenSelector: false
+    isOpenSelector: false,
   };
 
   renderNoPreviewNote() {
@@ -72,7 +72,7 @@ export default class SidebarContentPreview extends Component {
             </span>
           }>
           <DropdownList maxHeight={200}>
-            {contentPreviews.map(preview => (
+            {contentPreviews.map((preview) => (
               <DropdownListItem
                 key={preview.name}
                 onClick={() => {

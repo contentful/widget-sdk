@@ -5,13 +5,13 @@ import { document, block, mark, text } from 'app/widgets/RichText/helpers/nodeFa
 const mocks = {
   ShareJS: {
     setDeep: jest.fn().mockResolvedValue(),
-    peek: jest.fn()
-  }
+    peek: jest.fn(),
+  },
 };
 
 jest.mock('data/sharejs/utils', () => ({
   setDeep: (...args) => mocks.ShareJS.setDeep(...args),
-  peek: (...args) => mocks.ShareJS.peek(...args)
+  peek: (...args) => mocks.ShareJS.peek(...args),
 }));
 
 describe('RichTextFieldSetter', () => {
@@ -19,7 +19,7 @@ describe('RichTextFieldSetter', () => {
     it('returns true if fieldId is of type `RichText`', () => {
       const fieldId = 'abc';
       const ct = {
-        fields: [{ id: fieldId, type: 'RichText' }]
+        fields: [{ id: fieldId, type: 'RichText' }],
       };
       expect(RichTextFieldSetter.is(fieldId, ct)).toBeTruthy();
     });
@@ -27,7 +27,7 @@ describe('RichTextFieldSetter', () => {
     it('returns false if fieldId is not of type `RichText`', () => {
       const fieldId = 'abc';
       const ct = {
-        fields: [{ id: fieldId, type: 'Symbol' }]
+        fields: [{ id: fieldId, type: 'Symbol' }],
       };
       expect(RichTextFieldSetter.is(fieldId, ct)).toBeFalsy();
     });
@@ -35,7 +35,7 @@ describe('RichTextFieldSetter', () => {
     it('returns false if contentType has no field with id `fieldId`', () => {
       const fieldId = 'abc';
       const ct = {
-        fields: [{ id: 'cba', type: 'RichText' }]
+        fields: [{ id: 'cba', type: 'RichText' }],
       };
       expect(RichTextFieldSetter.is(fieldId, ct)).toBeFalsy();
     });
@@ -44,7 +44,7 @@ describe('RichTextFieldSetter', () => {
   describe('#setAt()', () => {
     it('initializes new documents with the default "empty document" value', async () => {
       const doc = {
-        submitOp: jest.fn().mockImplementationOnce((_ops, cb) => cb())
+        submitOp: jest.fn().mockImplementationOnce((_ops, cb) => cb()),
       };
       const fieldPath = ['fields', 'id', 'locale'];
       const nextValue = {};
@@ -57,7 +57,7 @@ describe('RichTextFieldSetter', () => {
 
     it('resets empty documents to `undefined`', async () => {
       const doc = {
-        submitOp: jest.fn().mockImplementationOnce((_ops, cb) => cb())
+        submitOp: jest.fn().mockImplementationOnce((_ops, cb) => cb()),
       };
       mocks.ShareJS.peek.mockReturnValueOnce(EMPTY_DOCUMENT);
 
@@ -71,7 +71,7 @@ describe('RichTextFieldSetter', () => {
       expect(doc.submitOp).toBeCalledWith([], expect.any(Function));
     });
 
-    it('sends changes as OT operations', async function() {
+    it('sends changes as OT operations', async function () {
       const testOps = [
         {
           value: document(block(BLOCKS.PARAGRAPH, {}, text('hello '))),
@@ -80,9 +80,9 @@ describe('RichTextFieldSetter', () => {
             {
               p: ['fields', 'id', 'locale', 'content', 0, 'content', 0, 'value'],
               od: 'hello ',
-              oi: 'hello world'
-            }
-          ]
+              oi: 'hello world',
+            },
+          ],
         },
         {
           value: document(block(BLOCKS.PARAGRAPH, {}, text('hello world'))),
@@ -91,9 +91,9 @@ describe('RichTextFieldSetter', () => {
             {
               p: ['fields', 'id', 'locale', 'content', 0, 'content', 0, 'value'],
               od: 'hello world',
-              oi: 'hello'
-            }
-          ]
+              oi: 'hello',
+            },
+          ],
         },
         {
           value: document(block(BLOCKS.PARAGRAPH, {}, text('hello world'))),
@@ -104,20 +104,20 @@ describe('RichTextFieldSetter', () => {
             {
               p: ['fields', 'id', 'locale', 'content', 0, 'content', 0, 'value'],
               od: 'hello world',
-              oi: 'hello '
+              oi: 'hello ',
             },
             {
               p: ['fields', 'id', 'locale', 'content', 0, 'content', 1],
-              li: { data: {}, nodeType: 'text', value: 'world', marks: [{ type: 'bold' }] }
-            }
-          ]
-        }
+              li: { data: {}, nodeType: 'text', value: 'world', marks: [{ type: 'bold' }] },
+            },
+          ],
+        },
       ];
       const fieldPath = ['fields', 'id', 'locale'];
 
       for await (const { value, nextValue, ops } of testOps) {
         const doc = {
-          submitOp: jest.fn().mockImplementationOnce((_ops, cb) => cb())
+          submitOp: jest.fn().mockImplementationOnce((_ops, cb) => cb()),
         };
         mocks.ShareJS.setDeep.mockClear();
         mocks.ShareJS.peek.mockReturnValueOnce(value);

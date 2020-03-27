@@ -13,67 +13,67 @@ angular
    */
   .factory('mocks/widgetApi', [
     '$q',
-    $q => {
+    ($q) => {
       return {
         create,
         createField,
         permissions: {
           canAccessAssets: true,
-          canAccessEntries: true
-        }
+          canAccessEntries: true,
+        },
       };
 
       function create(overrides) {
         const state = {
           // Set by field.isInvalid()
-          isInvalid: false
+          isInvalid: false,
         };
 
         const entrySys = {
-          contentType: { sys: { id: 'CTID' } }
+          contentType: { sys: { id: 'CTID' } },
         };
 
         const fieldProperties = {
           isDisabled$: K.createMockProperty(false),
           schemaErrors$: K.createMockProperty(null),
           access$: K.createMockProperty({ editable: true }),
-          value$: K.createMockProperty()
+          value$: K.createMockProperty(),
         };
 
         const api = {
           _state: state,
           settings: {
-            helpText: ''
+            helpText: '',
           },
           locales: {
             default: 'en-US',
-            available: ['en-US']
+            available: ['en-US'],
           },
           contentType: {
             displayField: '',
-            sys: { id: 'content-type-id' }
+            sys: { id: 'content-type-id' },
           },
           entry: {
             getSys: sinon.stub().returns(entrySys),
-            fields: {}
+            fields: {},
           },
           fieldProperties: fieldProperties,
           field: {
-            onValueChanged: sinon.spy(cb => K.onValue(fieldProperties.value$, cb)),
-            onIsDisabledChanged: function(cb) {
+            onValueChanged: sinon.spy((cb) => K.onValue(fieldProperties.value$, cb)),
+            onIsDisabledChanged: function (cb) {
               return K.onValue(fieldProperties.isDisabled$, cb);
             },
-            onPermissionChanged: function(cb) {
+            onPermissionChanged: function (cb) {
               return K.onValue(fieldProperties.access$, cb);
             },
-            onSchemaErrorsChanged: function(cb) {
+            onSchemaErrorsChanged: function (cb) {
               return K.onValue(fieldProperties.schemaErrors$, cb);
             },
-            setInvalid: sinon.spy(isInvalid => {
+            setInvalid: sinon.spy((isInvalid) => {
               state.isInvalid = isInvalid;
             }),
             getValue: sinon.spy(() => K.getValue(fieldProperties.value$)),
-            setValue: sinon.spy(value => {
+            setValue: sinon.spy((value) => {
               fieldProperties.value$.set(value);
               return $q.resolve();
             }),
@@ -85,21 +85,21 @@ angular
             name: '',
             locale: 'en-US',
             type: '',
-            value$: K.createMockProperty()
+            value$: K.createMockProperty(),
           },
           space: {
             getEntries: sinon.stub().resolves({ total: 0, items: [] }),
             getAssets: sinon.stub().resolves({ total: 0, items: [] }),
             createEntry: sinon.stub().resolves({}),
             createAsset: sinon.stub().resolves({}),
-            getContentTypes: sinon.stub().resolves([])
+            getContentTypes: sinon.stub().resolves([]),
           },
           state: {
-            goToEditor: sinon.stub().resolves()
+            goToEditor: sinon.stub().resolves(),
           },
           jobs: {
-            getPendingJobs: sinon.stub().returns([])
-          }
+            getPendingJobs: sinon.stub().returns([]),
+          },
         };
 
         return _.merge(api, overrides);
@@ -108,11 +108,8 @@ angular
       function createField() {
         return {
           getValue: sinon.stub(),
-          onValueChanged: sinon
-            .stub()
-            .returns(_.noop)
-            .yields()
+          onValueChanged: sinon.stub().returns(_.noop).yields(),
         };
       }
-    }
+    },
   ]);

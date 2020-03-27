@@ -8,11 +8,11 @@ const styles = {
   flexContainer: css({
     display: 'flex',
     height: '100%',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   }),
   illustrationContainer: css({ alignSelf: 'flex-end' }),
   heading: css({ fontSize: tokens.fontSizeL, marginBottom: tokens.spacingS }),
-  description: css({ fontSize: tokens.fontSizeM, marginBottom: tokens.spacingS })
+  description: css({ fontSize: tokens.fontSizeM, marginBottom: tokens.spacingS }),
 };
 
 const CTACardComponent = ({
@@ -22,7 +22,7 @@ const CTACardComponent = ({
   onClick,
   illustration,
   href,
-  isExternal
+  isExternal,
 }) => {
   return (
     <Card className={styles.flexContainer} padding="large">
@@ -51,7 +51,7 @@ CTACardComponent.propTypes = {
   onClick: PropTypes.func,
   illustration: PropTypes.node.isRequired,
   href: PropTypes.string,
-  isExternal: PropTypes.bool
+  isExternal: PropTypes.bool,
 };
 
 export default CTACardComponent;

@@ -12,7 +12,4 @@ import { getDatasets } from '../datasets';
  *
  * @return {Object}
  */
-export default flow(
-  getDatasets,
-  get(TEAM_MEMBERSHIPS)
-);
+export default flow(getDatasets, get(TEAM_MEMBERSHIPS));

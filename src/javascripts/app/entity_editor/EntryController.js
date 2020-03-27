@@ -75,7 +75,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
   const entityInfo = (editorContext.entityInfo = editorData.entityInfo);
   const contentType = {
     id: entityInfo.contentTypeId,
-    type: spaceContext.publishedCTs.get(entityInfo.contentTypeId)
+    type: spaceContext.publishedCTs.get(entityInfo.contentTypeId),
   };
 
   const notify = makeNotify('Entry', () => '“' + $scope.title + '”');
@@ -103,7 +103,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
       entityInfo,
       currentSlideLevel: slideCount,
       locale: TheLocaleStore.getDefaultLocale().internal_code,
-      editorType: slideCount > 1 ? 'slide_in_editor' : 'entry_editor'
+      editorType: slideCount > 1 ? 'slide_in_editor' : 'entry_editor',
     });
   } catch (error) {
     logger.logError(error);
@@ -121,21 +121,21 @@ export default async function create($scope, editorData, preferences, trackLoadE
     entity: editorData.entity,
     notify,
     validator: editorContext.validator,
-    otDoc: $scope.otDoc
+    otDoc: $scope.otDoc,
   });
 
   $scope.entryActions = {
     onAdd: () => {
       Analytics.track('entry_editor:created_with_same_ct', {
         contentTypeId: contentType.id,
-        entryId: entityInfo.id
+        entryId: entityInfo.id,
       });
 
-      return spaceContext.space.createEntry(contentType.id, {}).then(entry => {
+      return spaceContext.space.createEntry(contentType.id, {}).then((entry) => {
         Analytics.track('entry:create', {
           eventOrigin: 'entry-editor',
           contentType: contentType.type.data,
-          response: entry.data
+          response: entry.data,
         });
         return entry;
       });
@@ -147,13 +147,13 @@ export default async function create($scope, editorData, preferences, trackLoadE
           fields: appendDuplicateIndexToEntryTitle(
             currentFields,
             contentType.type.data.displayField
-          )
+          ),
         })
-        .then(entry => {
+        .then((entry) => {
           Analytics.track('entry:create', {
             eventOrigin: 'entry-editor__duplicate',
             contentType: contentType.type.data,
-            response: entry.data
+            response: entry.data,
           });
           return entry;
         });
@@ -162,19 +162,19 @@ export default async function create($scope, editorData, preferences, trackLoadE
       const show = ($scope.preferences.showDisabledFields = !$scope.preferences.showDisabledFields);
       Analytics.track('entry_editor:disabled_fields_visibility_toggled', {
         entryId: entityInfo.id,
-        show: show
+        show: show,
       });
       return show;
-    }
+    },
   };
 
   editorContext.focus = Focus.create();
 
   // TODO Move this into a separate function
-  K.onValueScope($scope, valuePropertyAt(doc, []), data => {
+  K.onValueScope($scope, valuePropertyAt(doc, []), (data) => {
     const title = EntityFieldValueSpaceContext.entryTitle({
       getContentTypeId: constant(entityInfo.contentTypeId),
-      data
+      data,
     });
     $scope.context.title = title;
     $scope.title = truncate(title, 50);
@@ -184,7 +184,7 @@ export default async function create($scope, editorData, preferences, trackLoadE
 
   editorContext.hasInitialFocus = preferences.hasInitialFocus;
 
-  K.onValueScope($scope, $scope.otDoc.state.isDirty$, isDirty => {
+  K.onValueScope($scope, $scope.otDoc.state.isDirty$, (isDirty) => {
     $scope.context.dirty = isDirty;
   });
 
@@ -202,21 +202,21 @@ export default async function create($scope, editorData, preferences, trackLoadE
 
   $scope.entrySidebarProps = createEntrySidebarProps({
     $scope,
-    emitter: $scope.emitter
+    emitter: $scope.emitter,
   });
 
   setLocaleData($scope, {
     entityLabel: 'entry',
     shouldHideLocaleErrors: onlyFocusedLocaleHasErrors,
-    emitter: $scope.emitter
+    emitter: $scope.emitter,
   });
 
   $controller('FormWidgetsController', {
     $scope,
-    controls: editorData.fieldControls.form
+    controls: editorData.fieldControls.form,
   });
 
-  $scope.$watch('localeData.focusedLocale.name', localeName => {
+  $scope.$watch('localeData.focusedLocale.name', (localeName) => {
     $scope.noLocalizedFieldsAdviceProps = { localeName };
   });
 
@@ -228,8 +228,8 @@ export default async function create($scope, editorData, preferences, trackLoadE
 
   getVariation(ENTRY_COMMENTS, {
     organizationId: spaceContext.getData('organization.sys.id'),
-    spaceId
-  }).then(isEnabled => {
+    spaceId,
+  }).then((isEnabled) => {
     if (isEnabled) {
       $scope.sidebarToggleProps.commentsToggle.isEnabled = isEnabled;
       trackIsCommentsAlphaEligible();
@@ -249,10 +249,10 @@ export default async function create($scope, editorData, preferences, trackLoadE
         $scope,
         spaceContext,
         Navigator,
-        SlideInNavigator
+        SlideInNavigator,
       },
       WidgetLocations.LOCATION_ENTRY_EDITOR
-    )
+    ),
   };
 }
 

@@ -8,7 +8,7 @@ import {
   hasAnOrgWithSpaces,
   isAutomationTestUser,
   getUserSpaceRoles,
-  getUserCreationDateUnixTimestamp
+  getUserCreationDateUnixTimestamp,
 } from 'data/User';
 import * as config from 'Config';
 import * as logger from 'services/logger';
@@ -78,12 +78,12 @@ async function ldUser(user, org, space) {
     isAutomationTestUser: isAutomationTestUser(user),
     currentUserOwnsAtleastOneOrg: ownsAtleastOneOrg(user),
     currentUserAge: getUserAgeInDays(user),
-    currentUserCreationDate: getUserCreationDateUnixTimestamp(user)
+    currentUserCreationDate: getUserCreationDateUnixTimestamp(user),
   };
 
   if (org) {
     const {
-      sys: { id: organizationId }
+      sys: { id: organizationId },
     } = org;
     const spacesByOrg = getSpacesByOrganization();
 
@@ -112,7 +112,7 @@ async function ldUser(user, org, space) {
       currentUserHasAtleastOneSpace: hasAnOrgWithSpaces(spacesByOrg),
       currentUserIsCurrentOrgCreator: isUserOrgCreator(user, org),
 
-      isNonPayingUser: !['paid', 'free_paid'].includes(_.get(org, ['subscription', 'status']))
+      isNonPayingUser: !['paid', 'free_paid'].includes(_.get(org, ['subscription', 'status'])),
     });
   }
 
@@ -120,13 +120,13 @@ async function ldUser(user, org, space) {
     const roles = getUserSpaceRoles(space);
     customData = _.assign({}, customData, {
       currentSpaceId: space.sys.id,
-      currentUserSpaceRole: roles
+      currentUserSpaceRole: roles,
     });
   }
 
   return {
     key: user.sys.id,
-    custom: _.omitBy(customData, _.isNull)
+    custom: _.omitBy(customData, _.isNull),
   };
 }
 
@@ -243,7 +243,7 @@ async function createFlagsPromise(user, organizationId, spaceId) {
   } catch (e) {
     logger.logError(`Invalid org ID ${organizationId} given to LD`, {
       groupingHash: 'InvalidLDOrgId',
-      data: { organizationId }
+      data: { organizationId },
     });
 
     return undefined;
@@ -254,7 +254,7 @@ async function createFlagsPromise(user, organizationId, spaceId) {
   } catch (e) {
     logger.logError(`Invalid space ID ${spaceId} given to LD`, {
       groupingHash: 'InvalidLDSpaceId',
-      data: { spaceId }
+      data: { spaceId },
     });
 
     return undefined;
@@ -268,14 +268,14 @@ async function createFlagsPromise(user, organizationId, spaceId) {
 
   // Now that we have all the flags for this identified user, return
   // a function that returns the given flagName variation
-  return flagName => {
+  return (flagName) => {
     const variation = _.get(flags, flagName, undefined);
 
     // LD could not find a flag with given name, log error and return undefined
     if (variation === undefined) {
       logger.logError(`Invalid flag ${flagName}`, {
         groupingHash: 'InvalidLDFlag',
-        data: { flagName }
+        data: { flagName },
       });
 
       return undefined;
@@ -288,7 +288,7 @@ async function createFlagsPromise(user, organizationId, spaceId) {
     } catch (e) {
       logger.logError(`Invalid variation JSON for ${flagName}`, {
         groupingHash: 'InvalidLDVariationJSON',
-        data: { variation }
+        data: { variation },
       });
 
       return undefined;

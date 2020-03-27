@@ -7,8 +7,8 @@ import EntryLink from './EntryLink';
 describe('EntryLink component', () => {
   const contentType = {
     data: {
-      name: 'Article'
-    }
+      name: 'Article',
+    },
   };
 
   const entryTitle = 'EntryTitle';
@@ -17,15 +17,15 @@ describe('EntryLink component', () => {
     entry: {
       sys: {
         id: 'entryId',
-        type: 'Entry'
-      }
+        type: 'Entry',
+      },
     },
     getContentType: jest.fn().mockResolvedValue(contentType),
     entityHelpers: {
       entityTitle: jest.fn().mockResolvedValue(entryTitle),
       entityFile: jest.fn().mockResolvedValue(undefined),
-      entityDescription: jest.fn().mockResolvedValue('Some lorem ipsum stuff')
-    }
+      entityDescription: jest.fn().mockResolvedValue('Some lorem ipsum stuff'),
+    },
   };
 
   afterEach(cleanup);
@@ -37,10 +37,10 @@ describe('EntryLink component', () => {
     expect(getByTestId('title').textContent).toBe(entryTitle);
   });
 
-  it('should not render anything if entity type is not Entry', done => {
+  it('should not render anything if entity type is not Entry', (done) => {
     const propsOverride = {
       ...props,
-      entry: undefined
+      entry: undefined,
     };
     const { queryByText } = render(<EntryLink {...propsOverride} />);
     wait(
@@ -58,8 +58,8 @@ describe('EntryLink component', () => {
       ...props,
       entityHelpers: {
         ...props.entityHelpers,
-        entityTitle: jest.fn().mockResolvedValue(undefined)
-      }
+        entityTitle: jest.fn().mockResolvedValue(undefined),
+      },
     };
     const { getByTestId } = render(<EntryLink {...propsOverrides} />);
     await waitForElement(() => getByTestId('title'));
@@ -76,13 +76,13 @@ describe('EntryLink component', () => {
           details: {
             image: {
               height: 400,
-              width: 400
-            }
+              width: 400,
+            },
           },
           fileName: 'dog-in-a-house-on-fire',
-          url: '//google.com/dog-in-a-house-on-fire.jpg'
-        })
-      }
+          url: '//google.com/dog-in-a-house-on-fire.jpg',
+        }),
+      },
     };
     render(<EntryLink {...propsOverrides} />);
     await waitForElement(() =>
@@ -95,8 +95,8 @@ describe('EntryLink component', () => {
       ...props,
       entityHelpers: {
         ...props.entityHelpers,
-        entityDescription: jest.fn().mockResolvedValue('Awesome stuff')
-      }
+        entityDescription: jest.fn().mockResolvedValue('Awesome stuff'),
+      },
     };
     const { queryByText } = render(<EntryLink {...propsOverrides} />);
     await waitForElement(() => queryByText('Awesome stuff'));

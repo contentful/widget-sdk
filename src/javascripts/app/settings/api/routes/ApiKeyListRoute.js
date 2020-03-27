@@ -8,7 +8,7 @@ import {
   Paragraph,
   Button,
   Notification,
-  Heading
+  Heading,
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -20,7 +20,7 @@ import ApiKeyList from '../api-keys-list/ApiKeyList';
 import { useApiKeysState } from '../api-keys-list/ApiKeyListState';
 import * as Navigator from 'states/Navigator';
 import EmptyStateContainer, {
-  defaultSVGStyle
+  defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import ApiKeysEmptyIllustration from 'svg/illustrations/api-keys-empty-illustation.svg';
 
@@ -29,9 +29,9 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     button: {
-      marginLeft: tokens.spacingM
-    }
-  })
+      marginLeft: tokens.spacingM,
+    },
+  }),
 };
 
 const EmptyState = () => (
@@ -114,9 +114,9 @@ UsageInformation.propTypes = {
   isLegacyOrganization: PropTypes.bool,
   reachedLimit: PropTypes.bool,
   limits: PropTypes.shape({
-    maximum: PropTypes.number
+    maximum: PropTypes.number,
   }),
-  usedAPIKeys: PropTypes.number.isRequired
+  usedAPIKeys: PropTypes.number.isRequired,
 };
 
 function AddApiKeys(props) {
@@ -126,10 +126,10 @@ function AddApiKeys(props) {
     setCreating(true);
     props
       .createAPIKey()
-      .then(apiKey => {
+      .then((apiKey) => {
         Navigator.go({ path: '^.detail', params: { apiKeyId: apiKey.sys.id } });
       })
-      .catch(err => {
+      .catch((err) => {
         Notification.error(err.data.message);
       })
       .finally(() => {
@@ -157,7 +157,7 @@ AddApiKeys.propTypes = {
   usedAPIKeys: PropTypes.number.isRequired,
   reachedLimit: PropTypes.bool,
   loaded: PropTypes.bool.isRequired,
-  createAPIKey: PropTypes.func.isRequired
+  createAPIKey: PropTypes.func.isRequired,
 };
 
 export default function ApiKeyListRoute() {
@@ -170,7 +170,7 @@ export default function ApiKeyListRoute() {
     reachedLimit,
     limits,
     isLegacyOrganization,
-    createAPIKey
+    createAPIKey,
   } = state;
 
   const hasApiKeys = apiKeys.length > 0;

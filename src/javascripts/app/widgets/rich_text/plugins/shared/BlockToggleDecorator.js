@@ -18,21 +18,17 @@ export const toggleChange = (editor, type) => {
 
 const isBlockActive = (editor, type) => haveBlocks(editor, type);
 
-export default ({
-  type,
-  title,
-  icon,
-  applyChange = toggleChange,
-  isActive = isBlockActive
-}) => Block => {
+export default ({ type, title, icon, applyChange = toggleChange, isActive = isBlockActive }) => (
+  Block
+) => {
   return class BlockToggleDecorator extends React.Component {
     static propTypes = TOOLBAR_PLUGIN_PROP_TYPES;
 
-    handleToggle = e => {
+    handleToggle = (e) => {
       const {
         editor,
         onToggle,
-        richTextAPI: { logToolbarAction }
+        richTextAPI: { logToolbarAction },
       } = this.props;
       e.preventDefault();
 

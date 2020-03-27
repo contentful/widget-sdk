@@ -7,22 +7,22 @@ import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import NewUserRoute from './NewUserRoute';
 
 jest.mock('services/TokenStore', () => ({
-  getOrganization: jest.fn()
+  getOrganization: jest.fn(),
 }));
 
 jest.mock('data/CMA/ProductCatalog', () => ({
-  getOrgFeature: jest.fn()
+  getOrgFeature: jest.fn(),
 }));
 
 jest.mock('services/OrganizationRoles', () => ({
-  isOwner: jest.fn().mockReturnValue(true)
+  isOwner: jest.fn().mockReturnValue(true),
 }));
 
 describe('NewUserRoute', () => {
-  const build = custom => {
+  const build = (custom) => {
     const props = Object.assign(
       {
-        orgId: 'org_1234'
+        orgId: 'org_1234',
       },
       custom
     );
@@ -61,7 +61,7 @@ describe('NewUserRoute', () => {
 
   it('shows the NewUser invitation form when requests finish and are successful', async () => {
     getOrganization.mockResolvedValueOnce({
-      hasSsoFeature: true
+      hasSsoFeature: true,
     });
 
     const { queryByTestId } = build();

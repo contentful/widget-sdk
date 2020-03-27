@@ -6,7 +6,7 @@ import {
   TableBody,
   TableHead,
   TableRow,
-  TableCell
+  TableCell,
 } from '@contentful/forma-36-react-components';
 
 export default function ApiKeyList({ apiKeys }) {
@@ -19,7 +19,7 @@ export default function ApiKeyList({ apiKeys }) {
         </TableRow>
       </TableHead>
       <TableBody>
-        {apiKeys.map(key => (
+        {apiKeys.map((key) => (
           <TableRow key={key.sys.id}>
             <TableCell>
               <StateLink path="^.detail" params={{ apiKeyId: key.sys.id }} data-test-id="api-link">
@@ -35,9 +35,9 @@ export default function ApiKeyList({ apiKeys }) {
 }
 
 ApiKeyList.defaultProps = {
-  apiKeys: []
+  apiKeys: [],
 };
 
 ApiKeyList.propTypes = {
-  apiKeys: PropTypes.arrayOf(PropTypes.object)
+  apiKeys: PropTypes.arrayOf(PropTypes.object),
 };

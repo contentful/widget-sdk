@@ -116,7 +116,7 @@ const styles = {
       font-size: ${tokens.fontSizeS};
       font-family: ${tokens.fontStackMonospace};
     }
-  `
+  `,
 };
 
 export default function MarkdownRenderer({ source }) {
@@ -128,5 +128,5 @@ export default function MarkdownRenderer({ source }) {
 }
 
 MarkdownRenderer.propTypes = {
-  source: PropTypes.string.isRequired
+  source: PropTypes.string.isRequired,
 };

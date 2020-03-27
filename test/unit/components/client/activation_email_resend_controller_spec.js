@@ -10,25 +10,25 @@ describe('activationEmailResendController', () => {
   const A_SECOND = 1000;
   const A_DAY = 24 * 60 * 60 * A_SECOND;
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     openActivationDialogStub = sinon.stub();
     openConfirmationDialogStub = sinon.stub();
 
     this.stubs = {
-      user$: K.createMockProperty()
+      user$: K.createMockProperty(),
     };
 
     this.system.set('services/TokenStore', {
-      user$: this.stubs.user$
+      user$: this.stubs.user$,
     });
 
     this.system.set('components/client/ActivationEmailResendDialog', {
       openActivationEmailResendDialog: openActivationDialogStub,
-      openConfirmationEmailSentDialog: openConfirmationDialogStub
+      openConfirmationEmailSentDialog: openConfirmationDialogStub,
     });
 
     this.system.set('components/client/activationEmailResender', {
-      resendActivationEmail: sinon.stub().resolves()
+      resendActivationEmail: sinon.stub().resolves(),
     });
 
     const { getStore } = await this.system.import('browserStorage');
@@ -36,13 +36,13 @@ describe('activationEmailResendController', () => {
 
     await $initialize(this.system);
 
-    this.setUser = props => {
+    this.setUser = (props) => {
       this.stubs.user$.set(
         _.assign(
           {
             name: 'Some User',
             email: 'user@example.com',
-            confirmed: false
+            confirmed: false,
           },
           props
         )
@@ -57,12 +57,12 @@ describe('activationEmailResendController', () => {
   });
 
   describe('with user already activated', () => {
-    it('does not open the resend activation email dialog', function() {
+    it('does not open the resend activation email dialog', function () {
       this.setUser({ confirmed: true });
       sinon.assert.notCalled(openActivationDialogStub);
     });
 
-    it('removes dialog related store info which is no longer required', function() {
+    it('removes dialog related store info which is no longer required', function () {
       this.store.set(true);
       this.setUser({ confirmed: true });
       expect(this.store.get()).toBe(null);
@@ -80,36 +80,36 @@ describe('activationEmailResendController', () => {
       jasmine.clock().uninstall();
     });
 
-    it('opens the resend activation email dialog', function() {
+    it('opens the resend activation email dialog', function () {
       this.setUser({ confirmed: false });
       sinon.assert.calledOnce(openActivationDialogStub);
     });
 
-    it('adds info to the store when the dialog got last shown', function() {
+    it('adds info to the store when the dialog got last shown', function () {
       this.store.remove();
       this.setUser({ confirmed: false });
       expect(this.store.get()).toBeTruthy();
     });
 
     describe('dialog has been shown before in another session', () => {
-      beforeEach(function() {
+      beforeEach(function () {
         this.store.set(moment().unix());
       });
 
-      it('opens the dialog after 24 hours', function() {
+      it('opens the dialog after 24 hours', function () {
         sinon.assert.callCount(openActivationDialogStub, 0);
         jasmine.clock().tick(A_DAY);
         this.setUser({ confirmed: false });
         sinon.assert.callCount(openActivationDialogStub, 1);
       });
 
-      it('does not open the dialog after 24 hours if meanwhile the user got activated', function() {
+      it('does not open the dialog after 24 hours if meanwhile the user got activated', function () {
         jasmine.clock().tick(A_DAY);
         this.setUser({ confirmed: true });
         sinon.assert.callCount(openActivationDialogStub, 0);
       });
 
-      it('does not open the dialog for the next 23:59 hours', function() {
+      it('does not open the dialog for the next 23:59 hours', function () {
         jasmine.clock().tick(A_DAY - A_SECOND);
         this.setUser({ confirmed: false });
         sinon.assert.callCount(openActivationDialogStub, 0);
@@ -117,11 +117,11 @@ describe('activationEmailResendController', () => {
     });
 
     describe('dialog gets shown and the browser tab remains open', () => {
-      beforeEach(function() {
+      beforeEach(function () {
         this.setUser({ confirmed: false });
       });
 
-      it('reopens the dialog after 24 hours', function() {
+      it('reopens the dialog after 24 hours', function () {
         sinon.assert.callCount(openActivationDialogStub, 1);
 
         jasmine.clock().tick(A_DAY - A_SECOND);
@@ -133,7 +133,7 @@ describe('activationEmailResendController', () => {
         sinon.assert.callCount(openActivationDialogStub, 2);
       });
 
-      it('does not reopen the dialog after 24 hours if meanwhile the user got activated', function() {
+      it('does not reopen the dialog after 24 hours if meanwhile the user got activated', function () {
         sinon.assert.callCount(openActivationDialogStub, 1);
         this.setUser({ confirmed: true });
         jasmine.clock().tick(A_DAY);
@@ -142,28 +142,26 @@ describe('activationEmailResendController', () => {
     });
 
     describe('dialog is not shown because only 12 hours have passed since last time', () => {
-      beforeEach(function() {
-        const lastShown = moment()
-          .subtract(12, 'hours')
-          .unix();
+      beforeEach(function () {
+        const lastShown = moment().subtract(12, 'hours').unix();
         this.store.set(lastShown);
         // this.setUser({confirmed: false});
       });
 
-      it('opens the dialog after 12 hours', function() {
+      it('opens the dialog after 12 hours', function () {
         sinon.assert.callCount(openActivationDialogStub, 0);
         jasmine.clock().tick(A_DAY / 2);
         this.setUser({ confirmed: false });
         sinon.assert.callCount(openActivationDialogStub, 1);
       });
 
-      it('does not open the dialog after 12 hours if meanwhile the user got activated', function() {
+      it('does not open the dialog after 12 hours if meanwhile the user got activated', function () {
         jasmine.clock().tick(A_DAY / 2);
         this.setUser({ confirmed: true });
         sinon.assert.callCount(openActivationDialogStub, 0);
       });
 
-      it('does not open the dialog for the next 13:59 hours', function() {
+      it('does not open the dialog for the next 13:59 hours', function () {
         jasmine.clock().tick(A_DAY / 2 - A_SECOND);
         this.setUser({ confirmed: false });
         sinon.assert.callCount(openActivationDialogStub, 0);

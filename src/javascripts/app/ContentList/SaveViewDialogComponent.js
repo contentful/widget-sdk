@@ -9,7 +9,7 @@ import {
   Paragraph,
   RadioButtonField,
   TextField,
-  Typography
+  Typography,
 } from '@contentful/forma-36-react-components';
 import keycodes from 'utils/keycodes';
 import { css } from 'emotion';
@@ -20,7 +20,7 @@ const MAX_LENGTH = 32;
 const styles = {
   input: css({ marginTop: '5px' }),
   list: css({ marginTop: '20px' }),
-  paragraph: css({ marginBottom: '25px' })
+  paragraph: css({ marginBottom: '25px' }),
 };
 
 export default class SaveViewDialogComponent extends React.Component {
@@ -29,7 +29,7 @@ export default class SaveViewDialogComponent extends React.Component {
     allowViewTypeSelection: PropTypes.bool.isRequired,
     isShown: PropTypes.bool.isRequired,
     onConfirm: PropTypes.func.isRequired,
-    onCancel: PropTypes.func.isRequired
+    onCancel: PropTypes.func.isRequired,
   };
 
   state = { value: '', viewType: 'isPrivate' };
@@ -42,7 +42,7 @@ export default class SaveViewDialogComponent extends React.Component {
     const isValid = !(trimmed.length < MIN_LENGTH || trimmed.length > MAX_LENGTH);
     const onConfirm = () =>
       isValid && this.props.onConfirm({ title: trimmed, isShared: viewType === 'isShared' });
-    const onKeyDown = e => e.keyCode === keycodes.ENTER && onConfirm();
+    const onKeyDown = (e) => e.keyCode === keycodes.ENTER && onConfirm();
 
     return (
       <Modal isShown={isShown} onClose={onCancel}>
@@ -63,10 +63,10 @@ export default class SaveViewDialogComponent extends React.Component {
                 required
                 countCharacters
                 value={value}
-                onChange={e => this.setState({ value: e.target.value })}
+                onChange={(e) => this.setState({ value: e.target.value })}
                 onKeyDown={onKeyDown}
                 textInputProps={{
-                  maxLength: MAX_LENGTH
+                  maxLength: MAX_LENGTH,
                 }}
                 className={styles.input}
               />
@@ -78,7 +78,7 @@ export default class SaveViewDialogComponent extends React.Component {
                       labelText="Save under my views"
                       helpText="Only you will see this view."
                       value="isPrivate"
-                      onChange={e => this.setState({ viewType: e.target.value })}
+                      onChange={(e) => this.setState({ viewType: e.target.value })}
                       checked={viewType === 'isPrivate'}
                       labelIsLight
                     />
@@ -89,7 +89,7 @@ export default class SaveViewDialogComponent extends React.Component {
                       id="option-shared"
                       value="isShared"
                       helpText="You can select which roles should see this view in the next step."
-                      onChange={e => this.setState({ viewType: e.target.value })}
+                      onChange={(e) => this.setState({ viewType: e.target.value })}
                       checked={viewType === 'isShared'}
                       labelIsLight
                     />

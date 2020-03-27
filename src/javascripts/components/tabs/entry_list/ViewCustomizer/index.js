@@ -14,33 +14,33 @@ import {
   DropdownListItem,
   DropdownList,
   IconButton,
-  Tooltip
+  Tooltip,
 } from '@contentful/forma-36-react-components';
 
 const styles = {
   root: css({
     display: 'inline-block',
-    marginLeft: tokens.spacingXs
+    marginLeft: tokens.spacingXs,
   }),
   tooltip: css({
-    display: 'flex'
+    display: 'flex',
   }),
   listItem: css({
     'button > span': {
       paddingLeft: 0,
       display: 'flex',
-      alignItems: 'center'
-    }
+      alignItems: 'center',
+    },
   }),
   dragHandle: css({
     svg: {
       width: 30,
-      verticalAlign: 'middle'
-    }
+      verticalAlign: 'middle',
+    },
   }),
   sortableHelper: css({
-    zIndex: 9999
-  })
+    zIndex: 9999,
+  }),
 };
 
 const SortableContainer = sortableContainer(({ children }) => <div>{children}</div>);
@@ -64,15 +64,15 @@ export default class ViewCustomizer extends React.Component {
     removeDisplayField: PropTypes.func.isRequired,
     toggleContentType: PropTypes.func.isRequired,
     updateFieldOrder: PropTypes.func.isRequired,
-    isContentTypeHidden: PropTypes.bool
+    isContentTypeHidden: PropTypes.bool,
   };
   static defaultProps = {
     displayedFields: [],
-    hiddenFields: []
+    hiddenFields: [],
   };
   state = {
     isOpen: false,
-    optimisticFields: null
+    optimisticFields: null,
   };
 
   componentDidUpdate(prevProps) {
@@ -144,7 +144,7 @@ export default class ViewCustomizer extends React.Component {
                 </DropdownListItem>
               )}
               {this.props.hiddenFields.map(
-                fieldInfo =>
+                (fieldInfo) =>
                   fieldInfo.type !== 'Object' &&
                   !fieldInfo.disabled && (
                     <DropdownListItem

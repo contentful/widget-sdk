@@ -6,7 +6,7 @@ export async function fetchUserData() {
   const usersEndpoint = createUsersEndpoint();
   return await usersEndpoint({
     method: 'GET',
-    query: { profile: '' }
+    query: { profile: '' },
   });
 }
 
@@ -15,7 +15,7 @@ export async function updateUserData({ version, data }) {
   return await usersEndpoint({
     method: 'PUT',
     data,
-    version
+    version,
   });
 }
 
@@ -26,7 +26,7 @@ export async function getUserTotp() {
     {
       method: 'POST',
       path: ['mfa', 'totp'],
-      data: {}
+      data: {},
     },
     { ...totpAlphaHeader }
   );
@@ -38,7 +38,7 @@ export async function deleteUserTotp() {
   return usersEndpoint(
     {
       method: 'DELETE',
-      path: ['mfa', 'totp']
+      path: ['mfa', 'totp'],
     },
     { ...totpAlphaHeader }
   );
@@ -51,7 +51,7 @@ export async function enableTotp(code) {
     {
       method: 'PUT',
       path: ['mfa', 'totp', 'verify'],
-      data: { totpCode: code }
+      data: { totpCode: code },
     },
     { ...totpAlphaHeader }
   );
@@ -61,7 +61,7 @@ export async function deleteUserIdentityData(id) {
   const usersEndpoint = createUsersEndpoint();
   return await usersEndpoint({
     method: 'DELETE',
-    path: ['identities', id]
+    path: ['identities', id],
   });
 }
 
@@ -70,6 +70,6 @@ export async function deleteUserAccount(data) {
   return await usersEndpoint({
     method: 'POST',
     path: ['user_cancellations'],
-    data
+    data,
   });
 }

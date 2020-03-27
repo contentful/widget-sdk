@@ -4,7 +4,7 @@ import { render, fireEvent } from '@testing-library/react';
 import ChooseNewFallbackLocaleDialog from './ChooseNewFallbackLocaleDialog';
 
 describe('locales/components/ChooseNewFallbackLocaleDialog', () => {
-  const renderComponent = props =>
+  const renderComponent = (props) =>
     render(
       <ChooseNewFallbackLocaleDialog
         isShown
@@ -12,27 +12,27 @@ describe('locales/components/ChooseNewFallbackLocaleDialog', () => {
         onCancel={() => {}}
         locale={{
           name: 'German',
-          code: 'de'
+          code: 'de',
         }}
         dependantLocales={[
           {
             name: 'Polish',
-            code: 'pl'
+            code: 'pl',
           },
           {
             name: 'French',
-            code: 'fr'
-          }
+            code: 'fr',
+          },
         ]}
         availableLocales={[
           {
             name: 'Russian',
-            code: 'ru'
+            code: 'ru',
           },
           {
             name: 'English',
-            code: 'en'
-          }
+            code: 'en',
+          },
         ]}
         {...props}
       />
@@ -40,10 +40,10 @@ describe('locales/components/ChooseNewFallbackLocaleDialog', () => {
 
   it('it is possible to invoke cancel by clicking on two buttons', () => {
     const stubs = {
-      onCancel: jest.fn()
+      onCancel: jest.fn(),
     };
     const { getByTestId } = renderComponent({
-      onCancel: stubs.onCancel
+      onCancel: stubs.onCancel,
     });
 
     fireEvent.click(getByTestId('choose-locale-cancel'));
@@ -52,10 +52,10 @@ describe('locales/components/ChooseNewFallbackLocaleDialog', () => {
 
   it('click on submit sends current selected code to the callback', () => {
     const stubs = {
-      onConfirm: jest.fn()
+      onConfirm: jest.fn(),
     };
     const { getByTestId } = renderComponent({
-      onConfirm: stubs.onConfirm
+      onConfirm: stubs.onConfirm,
     });
 
     const confirmChangeLocale = getByTestId('choose-locale-confirm');

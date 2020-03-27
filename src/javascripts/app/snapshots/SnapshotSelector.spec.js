@@ -9,24 +9,22 @@ jest.mock('NgRegistry', () => ({ getModule: jest.fn() }));
 const makeFakeSnapshot = (_, i) => {
   return {
     sys: {
-      createdAt: moment()
-        .subtract(i, 'days')
-        .format(),
+      createdAt: moment().subtract(i, 'days').format(),
       createdBy: {
         authorName: '',
         sys: {
           id: `xyz${i}`,
           linkType: 'User',
-          type: 'Link'
-        }
+          type: 'Link',
+        },
       },
       id: `some-id-${i}`,
       snapshotType: i % 2 ? 'published' : 'draft',
-      type: 'Snapshot'
+      type: 'Snapshot',
     },
     snapshot: {
-      fields: []
-    }
+      fields: [],
+    },
   };
 };
 
@@ -41,7 +39,7 @@ const getEntrySnapshots = jest.fn().mockImplementation((_, query) => {
 
 getModule.mockImplementation(() => ({
   cma: { getEntrySnapshots },
-  users: { get: jest.fn().mockResolvedValue() }
+  users: { get: jest.fn().mockResolvedValue() },
 }));
 
 const goToSnapshot = jest.fn();
@@ -50,20 +48,20 @@ const getProps = (args = {}) => {
     goToSnapshot,
     editorData: {
       entity: { data: makeFakeSnapshot(undefined, -1) },
-      entityInfo: { id: 'entityId' }
+      entityInfo: { id: 'entityId' },
     },
     snapshot: {
       sys: {
         id: 'snapshotId',
-        createdAt: moment().format()
-      }
+        createdAt: moment().format(),
+      },
     },
-    ...args
+    ...args,
   };
   return props;
 };
 
-const getSnapshotId = idx => {
+const getSnapshotId = (idx) => {
   return fakedSnapshots[idx].sys.id;
 };
 

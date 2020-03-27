@@ -15,5 +15,5 @@ export const ENTRY_REFERENCES_ENDPOINT = 'query-references';
 
 // Get an object with the alpha feature header with one or more features
 export const getAlphaHeader = (...features) => ({
-  'x-contentful-enable-alpha-feature': features.join()
+  'x-contentful-enable-alpha-feature': features.join(),
 });

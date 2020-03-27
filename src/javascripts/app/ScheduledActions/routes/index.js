@@ -18,9 +18,9 @@ export default {
           spaceId,
           environmentId: spaceContext.getEnvironmentId(),
           defaultLocale: TheLocaleStore.getDefaultLocale(),
-          contentTypes: spaceContext.publishedCTs.getAllBare()
-        })
-      ]
-    }
-  ]
+          contentTypes: spaceContext.publishedCTs.getAllBare(),
+        }),
+      ],
+    },
+  ],
 };

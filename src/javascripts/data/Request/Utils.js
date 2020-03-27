@@ -17,10 +17,7 @@ import { getCurrentStateName } from 'states/Navigator';
  * @returns {string}
  */
 export function getEndpoint(url) {
-  const segments = url
-    .split('?')[0]
-    .split('/')
-    .slice(3);
+  const segments = url.split('?')[0].split('/').slice(3);
 
   const relevantSegments =
     segments.length > 4 && segments[2] === 'environments'
@@ -56,10 +53,10 @@ const RELEVANT_ENTITY_PATHS = ['/tasks', '/comments', '/snapshots'];
 function makeStableName(relevantSegments) {
   const chunks = chunk(relevantSegments, 2);
 
-  const getPath = idx => `/${chunks[idx][0]}`;
-  const getId = idx => (chunks[idx][1] ? '/:id' : '');
+  const getPath = (idx) => `/${chunks[idx][0]}`;
+  const getId = (idx) => (chunks[idx][1] ? '/:id' : '');
   // See app/entity_editor/NoShareJsCmaFakeRequestsExperiment.js for experiment info:
-  const getExperiment = idx =>
+  const getExperiment = (idx) =>
     idx + 1 === chunks.length && getPath(idx).match(/\.php$/) ? getPath(idx) : '';
 
   if (chunks[1] && RELEVANT_ENTITY_PATHS.includes(getPath(1))) {

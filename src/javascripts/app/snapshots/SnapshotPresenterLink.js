@@ -13,8 +13,8 @@ import AssetLink from 'app/widgets/link/AssetLink';
 const styles = {
   assetLink: css({
     display: 'inline-block',
-    margin: '0 10px 10px 0'
-  })
+    margin: '0 10px 10px 0',
+  }),
 };
 
 const SnapshotPresenterLink = ({ locale, value, linkType }) => {
@@ -25,15 +25,15 @@ const SnapshotPresenterLink = ({ locale, value, linkType }) => {
     const links = Array.isArray(value) ? value : [value];
     const ids = links.map(({ sys }) => sys.id);
 
-    EntityResolver.fetchForType(spaceContext, linkType, ids).then(results => {
+    EntityResolver.fetchForType(spaceContext, linkType, ids).then((results) => {
       const mapped = results.reduce(
         (red, entity) => ({
           ...red,
-          [entity.sys.id]: { entity }
+          [entity.sys.id]: { entity },
         }),
         {}
       );
-      const mappedResults = ids.map(id => mapped[id]);
+      const mappedResults = ids.map((id) => mapped[id]);
       setModels(mappedResults);
     });
   }, [linkType, spaceContext, value]);
@@ -70,20 +70,20 @@ const entityProps = PropTypes.shape({
   sys: PropTypes.shape({
     id: PropTypes.string,
     type: PropTypes.string,
-    linkType: PropTypes.string
-  })
+    linkType: PropTypes.string,
+  }),
 });
 
 SnapshotPresenterLink.propTypes = {
   locale: PropTypes.shape({
-    code: PropTypes.string
+    code: PropTypes.string,
   }).isRequired,
   value: PropTypes.oneOfType([PropTypes.arrayOf(entityProps), entityProps]),
-  linkType: PropTypes.string.isRequired
+  linkType: PropTypes.string.isRequired,
 };
 
 SnapshotPresenterLink.defaultProps = {
-  locale: {}
+  locale: {},
 };
 
 export default SnapshotPresenterLink;

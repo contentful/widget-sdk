@@ -2,7 +2,7 @@ import { $initialize } from 'test/utils/ng';
 import sinon from 'sinon';
 
 describe('app/entityEditor/Notifications', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     this.ComponentLibrary = await this.system.import('@contentful/forma-36-react-components');
     this.ComponentLibrary.Notification.success = sinon.stub();
     this.ComponentLibrary.Notification.error = sinon.stub();
@@ -21,10 +21,10 @@ describe('app/entityEditor/Notifications', () => {
     const verbs = [
       ['archive', 'archiving', 'archived'],
       ['unarchive', 'unarchiving', 'unarchived'],
-      ['unpublish', 'unpublishing', 'unpublished']
+      ['unpublish', 'unpublishing', 'unpublished'],
     ];
 
-    it('handles success', function() {
+    it('handles success', function () {
       for (let [inf, _, present] of verbs) {
         this.notify(this.Notification.Success(inf));
         sinon.assert.calledWith(
@@ -34,7 +34,7 @@ describe('app/entityEditor/Notifications', () => {
       }
     });
 
-    it('handles error', function() {
+    it('handles error', function () {
       for (let [inf, past, _] of verbs) {
         const error = makeErrorResponse('ERROR ID');
         this.notify(this.Notification.Error(inf, error));
@@ -47,7 +47,7 @@ describe('app/entityEditor/Notifications', () => {
   });
 
   describe('reverting', () => {
-    it('handles success', function() {
+    it('handles success', function () {
       this.notify(this.Notification.Success('revert'));
       sinon.assert.calledWith(
         this.ComponentLibrary.Notification.success,
@@ -55,7 +55,7 @@ describe('app/entityEditor/Notifications', () => {
       );
     });
 
-    it('handles error', function() {
+    it('handles error', function () {
       this.notify(this.Notification.Error('revert'));
       sinon.assert.calledWith(
         this.ComponentLibrary.Notification.error,
@@ -65,7 +65,7 @@ describe('app/entityEditor/Notifications', () => {
   });
 
   describe('deleting', () => {
-    it('handles success', function() {
+    it('handles success', function () {
       this.notify(this.Notification.Success('delete'));
       sinon.assert.calledWith(
         this.ComponentLibrary.Notification.success,
@@ -73,7 +73,7 @@ describe('app/entityEditor/Notifications', () => {
       );
     });
 
-    it('handles error', function() {
+    it('handles error', function () {
       const error = makeErrorResponse('ERROR');
       this.notify(this.Notification.Error('delete', error));
       sinon.assert.calledWith(
@@ -84,7 +84,7 @@ describe('app/entityEditor/Notifications', () => {
   });
 
   describe('duplicating', () => {
-    it('handles error', function() {
+    it('handles error', function () {
       this.notify(this.Notification.Error('duplicate'));
       sinon.assert.calledWith(
         this.ComponentLibrary.Notification.error,
@@ -94,7 +94,7 @@ describe('app/entityEditor/Notifications', () => {
   });
 
   describe('publishing', () => {
-    it('handles success', function() {
+    it('handles success', function () {
       this.notify(this.Notification.Success('publish'));
       sinon.assert.calledWith(
         this.ComponentLibrary.Notification.success,
@@ -102,7 +102,7 @@ describe('app/entityEditor/Notifications', () => {
       );
     });
 
-    it('handles validation failure', function() {
+    it('handles validation failure', function () {
       this.notify(this.Notification.ValidationError());
       sinon.assert.calledWith(
         this.ComponentLibrary.Notification.error,
@@ -110,7 +110,7 @@ describe('app/entityEditor/Notifications', () => {
       );
     });
 
-    it('handles "ValidationFailed" response', function() {
+    it('handles "ValidationFailed" response', function () {
       const error = makeErrorResponse('ValidationFailed');
       this.notify(this.Notification.Error('publish', error));
       sinon.assert.calledWith(
@@ -119,7 +119,7 @@ describe('app/entityEditor/Notifications', () => {
       );
     });
 
-    it('handles "VersionMismatch" response', function() {
+    it('handles "VersionMismatch" response', function () {
       const error = makeErrorResponse('VersionMismatch');
       this.notify(this.Notification.Error('publish', error));
       sinon.assert.calledWith(
@@ -128,7 +128,7 @@ describe('app/entityEditor/Notifications', () => {
       );
     });
 
-    it('handles "UnresolvedLinks" response', function() {
+    it('handles "UnresolvedLinks" response', function () {
       const error = makeErrorResponse('UnresolvedLinks');
       this.notify(this.Notification.Error('publish', error));
       sinon.assert.calledWith(
@@ -137,12 +137,12 @@ describe('app/entityEditor/Notifications', () => {
       );
     });
 
-    it('handles content type validation response', function() {
+    it('handles content type validation response', function () {
       const error = makeErrorResponse('InvalidEntry', 'Validation error', [
         {
           name: 'linkContentType',
-          details: 'DETAIL'
-        }
+          details: 'DETAIL',
+        },
       ]);
       this.notify(this.Notification.Error('publish', error));
       sinon.assert.calledWith(
@@ -151,7 +151,7 @@ describe('app/entityEditor/Notifications', () => {
       );
     });
 
-    it('handles other "InvalidEntry" response', function() {
+    it('handles other "InvalidEntry" response', function () {
       const error = makeErrorResponse('InvalidEntry', 'Validation error');
       this.notify(this.Notification.Error('publish', error));
       sinon.assert.calledWith(
@@ -160,7 +160,7 @@ describe('app/entityEditor/Notifications', () => {
       );
     });
 
-    it('handles generic server error response', function() {
+    it('handles generic server error response', function () {
       const error = makeErrorResponse('Other');
       this.notify(this.Notification.Error('publish', error));
       sinon.assert.calledWith(
@@ -175,8 +175,8 @@ describe('app/entityEditor/Notifications', () => {
       data: {
         sys: { id: id },
         message: message,
-        details: { errors: errors || [] }
-      }
+        details: { errors: errors || [] },
+      },
     };
   }
 });

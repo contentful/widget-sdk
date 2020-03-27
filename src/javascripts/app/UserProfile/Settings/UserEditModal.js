@@ -7,7 +7,7 @@ import {
   Form,
   CheckboxField,
   Subheading,
-  Notification
+  Notification,
 } from '@contentful/forma-36-react-components';
 import _ from 'lodash';
 import tokens from '@contentful/forma-36-tokens';
@@ -19,29 +19,29 @@ import { css } from 'emotion';
 
 const styles = {
   controlsPanel: css({ display: 'flex' }),
-  marginLeftM: css({ marginLeft: tokens.spacingM })
+  marginLeftM: css({ marginLeft: tokens.spacingM }),
 };
 
 const createFieldData = (initialValue = '') => ({
   blurred: false,
   interacted: false,
   value: initialValue,
-  serverValidationMessage: null
+  serverValidationMessage: null,
 });
 
-const initializeReducer = user => {
+const initializeReducer = (user) => {
   const fields = {
     firstName: createFieldData(user.firstName),
     lastName: createFieldData(user.lastName),
     email: createFieldData(user.email),
     currentPassword: createFieldData(),
-    logAnalyticsFeature: createFieldData(user.logAnalyticsFeature)
+    logAnalyticsFeature: createFieldData(user.logAnalyticsFeature),
   };
 
   return {
     fields,
     formInvalid: false,
-    submitting: false
+    submitting: false,
   };
 };
 
@@ -55,15 +55,15 @@ const reducer = createImmerReducer({
   SET_FIELD_BLURRED: (state, { payload }) => {
     state.fields[payload.field].blurred = true;
   },
-  SET_ALL_FIELDS_BLURRED: state => {
-    Object.values(state.fields).forEach(fieldData => {
+  SET_ALL_FIELDS_BLURRED: (state) => {
+    Object.values(state.fields).forEach((fieldData) => {
       fieldData.blurred = true;
     });
   },
   SET_SUBMITTING: (state, { payload }) => {
     state.submitting = payload;
   },
-  SET_FORM_INVALID: state => {
+  SET_FORM_INVALID: (state) => {
     state.formInvalid = true;
   },
   SERVER_VALIDATION_FAILURE: (state, { payload }) => {
@@ -72,7 +72,7 @@ const reducer = createImmerReducer({
   },
   RESET: (_, { payload }) => {
     return initializeReducer(payload.user);
-  }
+  },
 });
 
 const submitForm = async (formData, user, dispatch, onConfirm) => {
@@ -83,7 +83,7 @@ const submitForm = async (formData, user, dispatch, onConfirm) => {
     firstName: fieldData.firstName.value,
     lastName: fieldData.lastName.value,
     email: fieldData.email.value,
-    logAnalyticsFeature: fieldData.logAnalyticsFeature.value
+    logAnalyticsFeature: fieldData.logAnalyticsFeature.value,
   };
 
   if (user.passwordSet) {
@@ -95,7 +95,7 @@ const submitForm = async (formData, user, dispatch, onConfirm) => {
   try {
     response = await updateUserData({
       version: user.sys.version,
-      data
+      data,
     });
   } catch (err) {
     const { data } = err;
@@ -107,7 +107,7 @@ const submitForm = async (formData, user, dispatch, onConfirm) => {
         first_name: 'firstName',
         last_name: 'lastName',
         current_password: 'currentPassword',
-        email: 'email'
+        email: 'email',
       };
 
       errorDetails.forEach(({ path, name }) => {
@@ -148,7 +148,7 @@ const submitForm = async (formData, user, dispatch, onConfirm) => {
 
           dispatch({
             type: 'SERVER_VALIDATION_FAILURE',
-            payload: { field: pathFieldMapping[path], value: message }
+            payload: { field: pathFieldMapping[path], value: message },
           });
         } else {
           Notification.error('Something went wrong. Try again.');
@@ -186,7 +186,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
     dispatch({ type: 'SET_ALL_FIELDS_BLURRED' });
 
     const formIsInvalid = Boolean(
-      Object.keys(formData.fields).find(fieldName => {
+      Object.keys(formData.fields).find((fieldName) => {
         if (fieldName === 'currentPassword' && !currentPasswordIsRequired) {
           return null;
         }
@@ -205,7 +205,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
   };
 
   const submitButtonDisabled =
-    !Object.values(formData.fields).find(field => field.interacted) ||
+    !Object.values(formData.fields).find((field) => field.interacted) ||
     formData.formInvalid ||
     formData.submitting;
 
@@ -229,10 +229,10 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
           testId="first-name-field"
           name="first-name"
           value={fields.firstName.value}
-          onChange={e =>
+          onChange={(e) =>
             dispatch({
               type: 'UPDATE_FIELD_VALUE',
-              payload: { field: 'firstName', value: e.target.value }
+              payload: { field: 'firstName', value: e.target.value },
             })
           }
           onBlur={() => dispatch({ type: 'SET_FIELD_BLURRED', payload: { field: 'firstName' } })}
@@ -240,7 +240,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
           textInputProps={{
             type: 'text',
             autoComplete: 'off',
-            placeholder: 'Felix'
+            placeholder: 'Felix',
           }}
         />
         <TextField
@@ -250,10 +250,10 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
           testId="last-name-field"
           name="last-name"
           value={fields.lastName.value}
-          onChange={e =>
+          onChange={(e) =>
             dispatch({
               type: 'UPDATE_FIELD_VALUE',
-              payload: { field: 'lastName', value: e.target.value }
+              payload: { field: 'lastName', value: e.target.value },
             })
           }
           onBlur={() => dispatch({ type: 'SET_FIELD_BLURRED', payload: { field: 'lastName' } })}
@@ -261,7 +261,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
           textInputProps={{
             type: 'text',
             autoComplete: 'off',
-            placeholder: 'Müller'
+            placeholder: 'Müller',
           }}
         />
         <TextField
@@ -271,10 +271,10 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
           testId="email-field"
           name="email"
           value={fields.email.value}
-          onChange={e =>
+          onChange={(e) =>
             dispatch({
               type: 'UPDATE_FIELD_VALUE',
-              payload: { field: 'email', value: e.target.value }
+              payload: { field: 'email', value: e.target.value },
             })
           }
           onBlur={() => dispatch({ type: 'SET_FIELD_BLURRED', payload: { field: 'email' } })}
@@ -282,7 +282,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
           textInputProps={{
             type: 'email',
             autoComplete: 'off',
-            placeholder: 'felix.mueller@example.com'
+            placeholder: 'felix.mueller@example.com',
           }}
           helpText={
             userHasPassword && fields.email.interacted
@@ -304,10 +304,10 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
               testId="current-password-field"
               name="current-password"
               value={fields.currentPassword.value}
-              onChange={e =>
+              onChange={(e) =>
                 dispatch({
                   type: 'UPDATE_FIELD_VALUE',
-                  payload: { field: 'currentPassword', value: e.target.value }
+                  payload: { field: 'currentPassword', value: e.target.value },
                 })
               }
               onBlur={() =>
@@ -325,7 +325,7 @@ export default function UserEditModal({ user, onConfirm, onCancel, isShown }) {
           onChange={() =>
             dispatch({
               type: 'UPDATE_FIELD_VALUE',
-              payload: { field: 'logAnalyticsFeature', value: !fields.logAnalyticsFeature.value }
+              payload: { field: 'logAnalyticsFeature', value: !fields.logAnalyticsFeature.value },
             })
           }
           checked={fields.logAnalyticsFeature.value === true}
@@ -363,5 +363,5 @@ UserEditModal.propTypes = {
   isShown: PropTypes.bool.isRequired,
   onConfirm: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
-  user: UserPropType.isRequired
+  user: UserPropType.isRequired,
 };

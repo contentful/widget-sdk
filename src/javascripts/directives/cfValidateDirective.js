@@ -17,7 +17,7 @@ export default function register() {
     restrict: 'A',
     scope: true,
     controller: 'ValidationController',
-    controllerAs: 'validator'
+    controllerAs: 'validator',
   }));
 
   registerController('ValidationController', [
@@ -39,13 +39,13 @@ export default function register() {
        */
       controller.errors$ = errorsBus.property;
 
-      controller.errors$.onValue(errors => {
+      controller.errors$.onValue((errors) => {
         controller.errors = errors;
       });
 
       $scope.validationResult = {};
 
-      $scope.$on('$destroy', event => {
+      $scope.$on('$destroy', (event) => {
         const scope = event.currentScope;
         scope.validationResult = {};
       });
@@ -71,7 +71,7 @@ export default function register() {
        *
        * @returns boolean
        */
-      controller.run = function(path, parent) {
+      controller.run = function (path, parent) {
         const data = getData();
         const errors = $scope.schema.errors(data);
 
@@ -112,7 +112,7 @@ export default function register() {
        * @name cfValidate#validator.setErrors
        * @param {Array<Error>} errors
        */
-      controller.setErrors = function(errors) {
+      controller.setErrors = function (errors) {
         $scope.validationResult = makeValidationResult(errors, getData(), $scope.schema);
         errorTree = $scope.validationResult.errorTree;
         errorsBus.set($scope.validationResult.errors);
@@ -129,11 +129,11 @@ export default function register() {
        * @param {boolean} parent
        * @returns {Array<Error>}
        */
-      controller.getPathErrors = function(path, parent) {
+      controller.getPathErrors = function (path, parent) {
         return _.filter(this.errors, errorPathMatcher(path, parent));
       };
 
-      controller.hasError = path => {
+      controller.hasError = (path) => {
         if (Array.isArray(path) && path.length === 0) {
           return !!errorTree;
         } else {
@@ -146,7 +146,7 @@ export default function register() {
       }
 
       function makeValidationResult(errors, data, schema) {
-        errors = _.filter(errors, error => {
+        errors = _.filter(errors, (error) => {
           if (error && error.path) {
             return error.path[error.path.length - 1] !== '$$hashKey';
           } else {
@@ -155,7 +155,7 @@ export default function register() {
         });
 
         if (schema.buildMessage) {
-          errors = _.forEach(errors, error => {
+          errors = _.forEach(errors, (error) => {
             error.message = schema.buildMessage(error);
           });
         }
@@ -167,7 +167,7 @@ export default function register() {
           errors: errors,
           valid: valid,
           // This is not used currently
-          errorTree: makeTree(errors)
+          errorTree: makeTree(errors),
         };
       }
 
@@ -185,10 +185,10 @@ export default function register() {
        */
       function makeTree(items) {
         const root = {};
-        _.forEach(items, item => {
+        _.forEach(items, (item) => {
           let node = root;
           const path = normalizePath(item.path);
-          _.forEach(path, segment => {
+          _.forEach(path, (segment) => {
             node = node[segment] = node[segment] || {};
           });
           node['$data'] = item;
@@ -197,7 +197,7 @@ export default function register() {
       }
 
       function errorPathMatcher(path, parent) {
-        return error => matchesPath(path, error.path, parent);
+        return (error) => matchesPath(path, error.path, parent);
       }
 
       function normalizePath(path) {
@@ -207,7 +207,7 @@ export default function register() {
         if (typeof path === 'string') {
           return path ? path.split('.') : [];
         } else if (Array.isArray(path)) {
-          return _.map(path, path => path.toString());
+          return _.map(path, (path) => path.toString());
         } else {
           throw new TypeError('Path is not an array or dot-separated strings');
         }
@@ -228,6 +228,6 @@ export default function register() {
           return _.isEqual(target, pattern);
         }
       }
-    }
+    },
   ]);
 }

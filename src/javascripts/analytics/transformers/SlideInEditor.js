@@ -12,8 +12,8 @@ export default addUserOrgSpace((eventName, data) => ({
     current_slide_level: data.currentSlideLevel,
     target_slide_level: data.targetSlideLevel,
     peek_hover_time_ms: data.peekHoverTimeMs || 0,
-    editor_type: data.editorType
-  }
+    editor_type: data.editorType,
+  },
 }));
 
 function extractAction(eventName) {

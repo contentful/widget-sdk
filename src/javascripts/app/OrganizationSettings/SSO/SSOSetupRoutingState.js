@@ -6,11 +6,11 @@ import importer from 'app/OrganizationSettings/importer';
 export default organizationRoute({
   name: 'sso',
   url: '/sso',
-  component: props => (
+  component: (props) => (
     <LazyLoadedComponent importer={importer}>
       {({ SSOSetup }) => {
         return <SSOSetup {...props} />;
       }}
     </LazyLoadedComponent>
-  )
+  ),
 });

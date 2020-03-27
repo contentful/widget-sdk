@@ -7,13 +7,13 @@ import { css } from 'emotion';
 
 const styles = {
   newPreviewNote: css({
-    marginBottom: tokens.spacingL
+    marginBottom: tokens.spacingL,
   }),
   loadingText: css({
-    marginLeft: tokens.spacingM
+    marginLeft: tokens.spacingM,
   }),
   unsavedChanges: css({
-    marginBottom: tokens.spacingL
+    marginBottom: tokens.spacingL,
   }),
   loaderContainer: css({
     height: 200,
@@ -22,11 +22,11 @@ const styles = {
     justifyContent: 'center',
     background: 'rgba(255,255,255,0.7)',
     padding: '10px',
-    borderRadius: '5em'
+    borderRadius: '5em',
   }),
   spinner: css({
-    display: 'block'
-  })
+    display: 'block',
+  }),
 };
 
 function ContentTypePreview(props) {
@@ -35,7 +35,7 @@ function ContentTypePreview(props) {
   const [preview, setPreview] = useState(null);
 
   useEffect(() => {
-    loadPreview(!publishedVersion).then(preview => {
+    loadPreview(!publishedVersion).then((preview) => {
       setPreview(preview);
       setLoading(false);
     });
@@ -86,7 +86,7 @@ function ContentTypePreview(props) {
 ContentTypePreview.propTypes = {
   isDirty: PropTypes.bool.isRequired,
   loadPreview: PropTypes.func.isRequired,
-  publishedVersion: PropTypes.number
+  publishedVersion: PropTypes.number,
 };
 
 export default ContentTypePreview;

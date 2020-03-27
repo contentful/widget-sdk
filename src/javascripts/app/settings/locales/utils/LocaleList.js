@@ -10,7 +10,7 @@ export function create(spaceLocales) {
     prepareFallbackList: asListItems(prepareFallbackList),
     getDependantLocales: asListItems(getDependantLocales),
     hasDependantLocales,
-    getAvailableFallbackLocales: asListItems(getAvailableFallbackLocales)
+    getAvailableFallbackLocales: asListItems(getAvailableFallbackLocales),
   };
 
   function prepareFallbackList(code) {
@@ -18,7 +18,7 @@ export function create(spaceLocales) {
   }
 
   function getDependantLocales(code) {
-    return spaceLocales.filter(locale => {
+    return spaceLocales.filter((locale) => {
       const fallbackCode = locale.fallbackCode;
       return fallbackCode && fallbackCode === code;
     });
@@ -30,7 +30,7 @@ export function create(spaceLocales) {
 
   function getAvailableFallbackLocales(code) {
     const dependantLocales = getDependantLocales(code);
-    return _.filter(spaceLocales, locale => {
+    return _.filter(spaceLocales, (locale) => {
       const isDependant = dependantLocales.indexOf(locale) > -1;
       return locale.code !== code && !isDependant;
     });
@@ -56,11 +56,11 @@ function getListExtension(locale) {
 }
 
 function canBeFallbackOf(code) {
-  return locale => locale.contentDeliveryApi && locale.code !== code;
+  return (locale) => locale.contentDeliveryApi && locale.code !== code;
 }
 
 function asListItems(fn) {
-  return function(...args) {
+  return function (...args) {
     return fn(...args).map(localeToListItem);
   };
 }
@@ -69,6 +69,6 @@ function localeToListItem(locale) {
   return {
     code: locale.code,
     name: locale.name,
-    label: locale.name + ' (' + locale.code + ')'
+    label: locale.name + ' (' + locale.code + ')',
   };
 }

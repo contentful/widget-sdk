@@ -7,10 +7,10 @@ export const SSO_PROVIDERS_MAP = {
   Okta: ['Okta'],
   OneLogin: ['OneLogin'],
   'Ping Identity': ['PingIdentity', 'Ping Identity'],
-  Other: ['Other']
+  Other: ['Other'],
 };
 
 export const TEST_RESULTS = {
   failure: 'failure',
-  success: 'success'
+  success: 'success',
 };

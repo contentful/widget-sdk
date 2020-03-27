@@ -11,7 +11,7 @@ export const showUnpublishedReferencesWarning = async ({
   spaceId,
   environmentId,
   confirmLabel,
-  modalTitle
+  modalTitle,
 }) => {
   const spaceContext = getModule('spaceContext');
   if (entity.sys.type !== 'Entry') {
@@ -24,7 +24,7 @@ export const showUnpublishedReferencesWarning = async ({
     entry: entity,
     contentTypes,
     spaceId,
-    environmentId
+    environmentId,
   });
 
   if (unpublishedReferencesInfo.length === 0) {

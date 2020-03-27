@@ -7,19 +7,19 @@ import base64safe from '../base64safe';
 export class WebhookHttpBasicForm extends React.Component {
   static propTypes = {
     onCancel: PropTypes.func.isRequired,
-    onConfirm: PropTypes.func.isRequired
+    onConfirm: PropTypes.func.isRequired,
   };
 
   state = {
     user: '',
-    password: ''
+    password: '',
   };
 
   addHeader = () => {
     const { user, password } = this.state;
     this.props.onConfirm({
       key: 'Authorization',
-      value: 'Basic ' + base64safe([user || '', password || ''].join(':'))
+      value: 'Basic ' + base64safe([user || '', password || ''].join(':')),
     });
   };
 
@@ -36,7 +36,7 @@ export class WebhookHttpBasicForm extends React.Component {
             id="http-basic-user"
             name="http-basic-user"
             value={this.state.user}
-            onChange={e => this.setState({ user: e.target.value })}
+            onChange={(e) => this.setState({ user: e.target.value })}
             labelText="User"
           />
           <div style={{ marginTop: 10 }} />
@@ -44,7 +44,7 @@ export class WebhookHttpBasicForm extends React.Component {
             id="http-basic-password"
             name="http-basic-password"
             value={this.state.password}
-            onChange={e => this.setState({ password: e.target.value })}
+            onChange={(e) => this.setState({ password: e.target.value })}
             labelText="Password"
             textInputProps={{ type: 'password' }}
           />
@@ -85,5 +85,5 @@ export default function WebhookHttpBasicDialog(props) {
 WebhookHttpBasicDialog.propTypes = {
   isShown: PropTypes.bool.isRequired,
   onConfirm: PropTypes.func.isRequired,
-  onCancel: PropTypes.func.isRequired
+  onCancel: PropTypes.func.isRequired,
 };

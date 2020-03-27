@@ -4,7 +4,7 @@ import { render, fireEvent, getByTestId } from '@testing-library/react';
 import { WebhookHeaders } from './WebhookHeaders';
 
 describe('WebhookHeaders', () => {
-  const renderComponent = headers => {
+  const renderComponent = (headers) => {
     const onChangeStub = jest.fn();
     return [render(<WebhookHeaders headers={headers} onChange={onChangeStub} />), onChangeStub];
   };
@@ -18,14 +18,14 @@ describe('WebhookHeaders', () => {
   it('renders headers', () => {
     const [{ getAllByTestId }] = renderComponent([
       { key: 'X-Custom-Header-1', value: '123' },
-      { key: 'X-Custom-Header-2', value: 'xyz' }
+      { key: 'X-Custom-Header-2', value: 'xyz' },
     ]);
     const headerRows = getAllByTestId('setting-row');
     expect(headerRows).toHaveLength(2);
 
     const values = [];
-    headerRows.forEach(row => {
-      row.querySelectorAll('input').forEach(input => {
+    headerRows.forEach((row) => {
+      row.querySelectorAll('input').forEach((input) => {
         values.push(input.value);
       });
     });
@@ -47,7 +47,7 @@ describe('WebhookHeaders', () => {
   it('removes a header', () => {
     const headers = [
       { key: 'X-Custom-Header-1', value: '123' },
-      { key: 'X-Custom-Header-2', value: 'xyz' }
+      { key: 'X-Custom-Header-2', value: 'xyz' },
     ];
 
     const [{ getAllByTestId }, onChangeStub] = renderComponent(headers);
@@ -62,7 +62,7 @@ describe('WebhookHeaders', () => {
   it('renders secret headers disabled not exposing value', () => {
     const headers = [
       { key: 'test', value: 'public' },
-      { key: 'test2', value: 'secret', secret: true }
+      { key: 'test2', value: 'secret', secret: true },
     ];
 
     const [{ getAllByTestId }] = renderComponent(headers);
@@ -70,8 +70,8 @@ describe('WebhookHeaders', () => {
     const headerRows = getAllByTestId('setting-row');
 
     const inputs = [];
-    headerRows.forEach(row => {
-      row.querySelectorAll('input').forEach(input => {
+    headerRows.forEach((row) => {
+      row.querySelectorAll('input').forEach((input) => {
         inputs.push(input);
       });
     });

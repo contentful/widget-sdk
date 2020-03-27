@@ -8,5 +8,5 @@ export default organizationBase({
   url: '/access_tools',
   abstract: true,
   navComponent: OrganizationNavBar,
-  children: [ssoRoutingState, userProvisioningState]
+  children: [ssoRoutingState, userProvisioningState],
 });

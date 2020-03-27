@@ -9,7 +9,7 @@ import {
   TextInput,
   ValidationMessage,
   Pill,
-  TextField
+  TextField,
 } from '@contentful/forma-36-react-components';
 import { normalizeWhiteSpace } from 'utils/StringUtils';
 import { sortableContainer, sortableElement } from 'react-sortable-hoc';
@@ -19,22 +19,22 @@ const styles = {
   hint: css({
     marginBottom: tokens.spacingM,
     color: tokens.colorTextMid,
-    fontSize: tokens.fontSizeM
+    fontSize: tokens.fontSizeM,
   }),
   container: css({
     marginTop: tokens.spacingM,
     marginBottom: tokens.spacingM,
     whiteSpace: 'nowrap',
     display: 'flex',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   }),
   pill: css({
     cursor: 'grab',
     userSelect: 'none',
     maxWidth: 200,
     marginBottom: tokens.spacingS,
-    marginRight: tokens.spacingS
-  })
+    marginRight: tokens.spacingS,
+  }),
 };
 
 // The maximum number of digits we can represent without rounding
@@ -49,7 +49,7 @@ const ERROR_MESSAGES = {
   numberParsingFailed: 'You can only add number values.',
   numberNotAnInteger: 'You can only add integer values.',
   stringTooLong: `Values must be ${MAX_LENGTH} characters or less.`,
-  duplicate: 'This value already exists on the list.'
+  duplicate: 'This value already exists on the list.',
 };
 
 function parseString(str) {
@@ -121,7 +121,7 @@ function ValidationHint(props) {
 }
 
 ValidationHint.propTypes = {
-  fieldType: PropTypes.string.isRequired
+  fieldType: PropTypes.string.isRequired,
 };
 
 const SortablePills = sortableContainer(({ children }) => (
@@ -145,7 +145,7 @@ const SortablePill = sortableElement(({ value, index, onRemoveItem }) => (
 SortablePill.propTypes = {
   value: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
-  onRemoveItem: PropTypes.func.isRequired
+  onRemoveItem: PropTypes.func.isRequired,
 };
 
 export default function ValidationValues(props) {
@@ -158,12 +158,12 @@ export default function ValidationValues(props) {
     props.updateItems(currentItems);
   }, [currentItems, props]);
 
-  const onChangeHandler = e => {
+  const onChangeHandler = (e) => {
     setTextValue(e.target.value);
     setError('');
   };
 
-  const onKeyDownHandler = e => {
+  const onKeyDownHandler = (e) => {
     let value = e.target.value;
     if (e.keyCode !== KEYCODES.ENTER || !value) {
       return;
@@ -185,7 +185,7 @@ export default function ValidationValues(props) {
     setTextValue('');
   };
 
-  const onRemoveItem = index => {
+  const onRemoveItem = (index) => {
     const items = [...currentItems];
     items.splice(index, 1);
     setCurrentItems(items);
@@ -230,7 +230,7 @@ export default function ValidationValues(props) {
         name="customErrorMessage"
         labelText="Custom error message"
         value={messageValue}
-        onChange={e => {
+        onChange={(e) => {
           setMessageValue(e.target.value);
         }}
         onBlur={() => {
@@ -247,5 +247,5 @@ ValidationValues.propTypes = {
   items: PropTypes.array,
   message: PropTypes.string,
   updateItems: PropTypes.func.isRequired,
-  updateMessage: PropTypes.func.isRequired
+  updateMessage: PropTypes.func.isRequired,
 };

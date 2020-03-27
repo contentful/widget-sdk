@@ -3,7 +3,7 @@ import {
   defaultSpaceId,
   defaultPreviewName,
   defaultPreviewId,
-  defaultPreviewDescription
+  defaultPreviewDescription,
 } from '../../../util/requests';
 import { queryFirst100PreviewEnvironments } from '../../../interactions/preview_environments';
 
@@ -18,13 +18,13 @@ const previewResponseBody = {
       sys: {
         type: 'Link',
         linkType: 'Space',
-        id: defaultSpaceId
-      }
+        id: defaultSpaceId,
+      },
     },
     createdAt: '2019-03-06T10:53:58Z',
-    updatedAt: '2019-03-06T10:53:58Z'
+    updatedAt: '2019-03-06T10:53:58Z',
   },
-  configurations: []
+  configurations: [],
 };
 
 describe('Content Preview Page', () => {
@@ -61,7 +61,7 @@ describe('Content Preview Page', () => {
         cors: true,
         pactfileWriteMode: 'merge',
         dir: Cypress.env('pactDir'),
-        spec: 2
+        spec: 2,
       });
 
       // TODO: This should be moved to interactions/preview_environments
@@ -73,18 +73,18 @@ describe('Content Preview Page', () => {
           method: 'POST',
           path: `/spaces/${defaultSpaceId}/preview_environments`,
           headers: {
-            Accept: 'application/json, text/plain, */*'
-          }
+            Accept: 'application/json, text/plain, */*',
+          },
         },
         willRespondWith: {
           status: 201,
-          body: previewResponseBody
-        }
+          body: previewResponseBody,
+        },
       }).as('preview_environments/add');
 
       const interactions = [
         '@preview_environments/add',
-        queryFirst100PreviewEnvironments.willFindNone()
+        queryFirst100PreviewEnvironments.willFindNone(),
       ];
 
       cy.getByTestId('cf-ui-text-input')
@@ -93,9 +93,7 @@ describe('Content Preview Page', () => {
       cy.getByTestId('cf-ui-textarea')
         .type(defaultPreviewDescription)
         .should('have.value', defaultPreviewDescription);
-      cy.getByTestId('save-content-preview')
-        .should('be.enabled')
-        .click();
+      cy.getByTestId('save-content-preview').should('be.enabled').click();
 
       cy.wait(interactions);
     });

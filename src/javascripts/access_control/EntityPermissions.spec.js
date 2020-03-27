@@ -5,12 +5,12 @@ jest.mock('access_control/AccessChecker', () => ({
   canPerformActionOnEntity: jest.fn(),
   canUpdateEntry: jest.fn(),
   canUpdateAsset: jest.fn(),
-  canEditFieldLocale: jest.fn()
+  canEditFieldLocale: jest.fn(),
 }));
 
 const entrySys = { type: 'Entry', id: 'some-entry-id' };
 const assetSys = { type: 'Asset', id: 'some-asset-id' };
-const emptyEntity = sys => ({ data: { sys } });
+const emptyEntity = (sys) => ({ data: { sys } });
 
 describe('EntityPermissions', () => {
   let permissions;

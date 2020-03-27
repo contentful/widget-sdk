@@ -14,7 +14,7 @@ import { isNil } from 'lodash';
  * @returns {Object}
  */
 export function formatQuery(filters = []) {
-  const isNilOrEmpty = value => value === '' || isNil(value);
+  const isNilOrEmpty = (value) => value === '' || isNil(value);
 
   return filters
     .filter(({ value }) => !isNilOrEmpty(value))

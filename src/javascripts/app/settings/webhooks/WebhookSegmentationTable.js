@@ -10,13 +10,13 @@ import {
   isActionDisabled,
   changeAction,
   shouldHideEntity,
-  shouldHideAction
+  shouldHideAction,
 } from './WebhookSegmentationState';
 
 export default class WebhookSegmentationTable extends React.Component {
   static propTypes = {
     values: PropTypes.object.isRequired,
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
   };
 
   renderCheckbox(entityType, action) {
@@ -43,7 +43,7 @@ export default class WebhookSegmentationTable extends React.Component {
           <Checkbox
             labelText={action === '*' ? ` ${TYPE_LABELS[entityType]}` : ''}
             checked={isActionChecked(values, entityType, action)}
-            onChange={e => onChange(changeAction(values, entityType, action, e.target.checked))}
+            onChange={(e) => onChange(changeAction(values, entityType, action, e.target.checked))}
           />
           {action === '*' ? ` ${TYPE_LABELS[entityType]}` : ''}
         </label>
@@ -54,7 +54,7 @@ export default class WebhookSegmentationTable extends React.Component {
   renderRow(entityType) {
     return (
       <tr key={entityType}>
-        {['*'].concat(ACTIONS).map(action => this.renderCheckbox(entityType, action))}
+        {['*'].concat(ACTIONS).map((action) => this.renderCheckbox(entityType, action))}
       </tr>
     );
   }
@@ -68,18 +68,20 @@ export default class WebhookSegmentationTable extends React.Component {
           <thead>
             <tr>
               <th className="x--empty-cell" />
-              {ACTIONS.map(a => ACTION_LABELS[a]).map(
-                a => !shouldHideAction(a) && <th key={a}>{a}</th>
+              {ACTIONS.map((a) => ACTION_LABELS[a]).map(
+                (a) => !shouldHideAction(a) && <th key={a}>{a}</th>
               )}
             </tr>
           </thead>
           <tbody>
             {ENTITY_TYPES.map(
-              entityType => !shouldHideEntity(entityType) && this.renderRow(entityType)
+              (entityType) => !shouldHideEntity(entityType) && this.renderRow(entityType)
             )}
             <tr>
               <td className="x--empty-cell" />
-              {ACTIONS.map(action => !shouldHideAction(action) && this.renderCheckbox('*', action))}
+              {ACTIONS.map(
+                (action) => !shouldHideAction(action) && this.renderCheckbox('*', action)
+              )}
             </tr>
           </tbody>
         </table>

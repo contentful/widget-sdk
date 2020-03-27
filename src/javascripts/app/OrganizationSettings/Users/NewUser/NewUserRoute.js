@@ -20,9 +20,9 @@ const styles = {
   content: css({
     height: '100%',
     '> div': {
-      height: '100%'
-    }
-  })
+      height: '100%',
+    },
+  }),
 };
 
 export default function NewUserRoute({ orgId }) {
@@ -30,7 +30,7 @@ export default function NewUserRoute({ orgId }) {
     useCallback(async () => {
       const [org, hasTeamsFeature] = await Promise.all([
         getOrganization(orgId),
-        getOrgFeature(orgId, 'teams')
+        getOrgFeature(orgId, 'teams'),
       ]);
 
       const isOwner = isOrgOwner(org);
@@ -39,7 +39,7 @@ export default function NewUserRoute({ orgId }) {
       return {
         hasSsoEnabled,
         hasTeamsFeature,
-        isOwner
+        isOwner,
       };
     }, [orgId])
   );
@@ -60,5 +60,5 @@ export default function NewUserRoute({ orgId }) {
 }
 
 NewUserRoute.propTypes = {
-  orgId: PropTypes.string.isRequired
+  orgId: PropTypes.string.isRequired,
 };

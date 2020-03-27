@@ -18,7 +18,7 @@ function EnvironmentList({ environments = [], isCurrSpace, currentEnvId, goToSpa
           (envA, envB) =>
             spaceContext.isMasterEnvironment(envB) - spaceContext.isMasterEnvironment(envA)
         )
-        .map(env => {
+        .map((env) => {
           const envId = env.sys.id;
           const [alias] = env.sys.aliases || [];
           const isMasterEnvironment = spaceContext.isMasterEnvironment(env);
@@ -32,19 +32,19 @@ function EnvironmentList({ environments = [], isCurrSpace, currentEnvId, goToSpa
             alignItems: 'center',
             backgroundColor: isSelected ? tokens.colorElementMid : undefined,
             '&:hover': {
-              backgroundColor: tokens.colorElementMid
+              backgroundColor: tokens.colorElementMid,
             },
             '& > a': {
               color: tokens.colorTextMid,
-              maxWidth: '90%'
-            }
+              maxWidth: '90%',
+            },
           });
 
           return (
             <li
               key={envId}
               className={environmentClassNames}
-              onClick={e => {
+              onClick={(e) => {
                 e.stopPropagation();
                 goToSpace(space.sys.id, envId, isMasterEnvironment);
               }}>
@@ -52,7 +52,7 @@ function EnvironmentList({ environments = [], isCurrSpace, currentEnvId, goToSpa
                 href={`/spaces/${space.sys.id}${
                   isMasterEnvironment ? '' : `/environments/${envId}`
                 }`}
-                onClick={e => {
+                onClick={(e) => {
                   if (e.shiftKey || e.ctrlKey || e.metaKey) {
                     // allow to open in a new tab/window normally
                     e.stopPropagation();
@@ -80,7 +80,7 @@ EnvironmentList.propTypes = {
   isCurrSpace: PropTypes.bool,
   currentEnvId: PropTypes.string,
   goToSpace: PropTypes.func.isRequired,
-  space: PropTypes.object.isRequired
+  space: PropTypes.object.isRequired,
 };
 
 export default class SpaceWithEnvironments extends React.Component {
@@ -93,7 +93,7 @@ export default class SpaceWithEnvironments extends React.Component {
     goToSpace: PropTypes.func.isRequired,
     index: PropTypes.number.isRequired,
     currentEnvId: PropTypes.string,
-    isCurrSpace: PropTypes.bool
+    isCurrSpace: PropTypes.bool,
   };
 
   state = { loading: false, environments: undefined };
@@ -121,10 +121,10 @@ export default class SpaceWithEnvironments extends React.Component {
 
     const {
       space: {
-        sys: { id: spaceId }
+        sys: { id: spaceId },
       },
       setOpenedSpaceId,
-      goToSpace
+      goToSpace,
     } = this.props;
 
     const endpoint = createSpaceEndpoint(spaceId);
@@ -144,7 +144,7 @@ export default class SpaceWithEnvironments extends React.Component {
       }
     }
 
-    const envs = allEnvs.filter(env => env.sys.status.sys.id === 'ready');
+    const envs = allEnvs.filter((env) => env.sys.status.sys.id === 'ready');
 
     const goToSpaceReset = (envId, isMasterEnv, isAliased) => {
       setOpenedSpaceId(null);

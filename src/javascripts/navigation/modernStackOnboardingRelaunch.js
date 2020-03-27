@@ -9,7 +9,7 @@ import {
   MODERN_STACK_ONBOARDING_FEATURE_FLAG,
   isDevOnboardingSpace,
   isOnboardingComplete,
-  getUser
+  getUser,
 } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
 import Icon from 'ui/Components/Icon';
 import { getModule } from 'NgRegistry';
@@ -59,7 +59,7 @@ export default class Relaunch extends React.Component {
     if (showRelaunch) {
       return (
         <WithLink link="copy" trackingElementId="onboarding_relaunched">
-          {move => (
+          {(move) => (
             <div className="modern-stack-onboarding--relaunch-wrapper nav-bar__link" onClick={move}>
               <Icon name="relaunch-onboarding" className="modern-stack-onboarding--relaunch-icon" />
               <span className="nav-bar__list-label">Relaunch onboarding</span>

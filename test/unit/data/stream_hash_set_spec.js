@@ -2,21 +2,21 @@ import * as K from 'test/utils/kefir';
 import _ from 'lodash';
 
 describe('data/StreamHashSet', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     this.store = (await this.system.import('data/streamHashSet')).create();
 
     this.itemValues = K.extractValues(this.store.items$);
   });
 
   describe('#add()', () => {
-    it('makes item retrievable with #get()', function() {
+    it('makes item retrievable with #get()', function () {
       expect(this.store.get('X')).toBe(undefined);
       const item = makeItem('X');
       this.store.add(item);
       expect(this.store.get('X')).toBe(item);
     });
 
-    it('emits new items value', function() {
+    it('emits new items value', function () {
       const item1 = makeItem('1');
       this.store.add(item1);
 
@@ -28,7 +28,7 @@ describe('data/StreamHashSet', () => {
   });
 
   describe('#remove()', () => {
-    it('makes item not retrievable with #get()', function() {
+    it('makes item not retrievable with #get()', function () {
       const item = makeItem('X');
       this.store.add(item);
       expect(this.store.get('X')).toBe(item);
@@ -37,7 +37,7 @@ describe('data/StreamHashSet', () => {
       expect(this.store.get('X')).toBe(undefined);
     });
 
-    it('emits new items value', function() {
+    it('emits new items value', function () {
       const item1 = makeItem('1');
       const item2 = makeItem('2');
       this.store.reset([item1, item2]);
@@ -48,7 +48,7 @@ describe('data/StreamHashSet', () => {
   });
 
   describe('#reset()', () => {
-    it('adds new items', function() {
+    it('adds new items', function () {
       const item1 = makeItem('1');
       const item2 = makeItem('2');
       this.store.reset([item1, item2]);
@@ -58,7 +58,7 @@ describe('data/StreamHashSet', () => {
       expect(this.store.get('2')).toBe(item2);
     });
 
-    it('evicts old items', function() {
+    it('evicts old items', function () {
       const old = makeItem('old');
       this.store.add(old);
       expect(this.store.get('old')).toBe(old);
@@ -71,7 +71,7 @@ describe('data/StreamHashSet', () => {
   function makeItem(id) {
     return {
       id: id,
-      getId: _.constant(id)
+      getId: _.constant(id),
     };
   }
 });

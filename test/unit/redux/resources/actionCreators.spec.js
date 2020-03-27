@@ -2,11 +2,11 @@ import sinon from 'sinon';
 import { $initialize } from 'test/utils/ng';
 import { it } from 'test/utils/dsl';
 
-describe('App Resources action creators', function() {
-  beforeEach(async function() {
+describe('App Resources action creators', function () {
+  beforeEach(async function () {
     this.stubs = {
       ResourceService_getAll: sinon.stub().resolves([]),
-      dispatch: sinon.stub()
+      dispatch: sinon.stub(),
     };
 
     this.dispatch = (action, ...args) => {
@@ -20,9 +20,9 @@ describe('App Resources action creators', function() {
     this.system.set('services/ResourceService', {
       default: () => {
         return {
-          getAll: this.stubs.ResourceService_getAll
+          getAll: this.stubs.ResourceService_getAll,
         };
-      }
+      },
     });
 
     this.spaceId = 'space_1234';
@@ -32,33 +32,33 @@ describe('App Resources action creators', function() {
     await $initialize(this.system);
   });
 
-  describe('getResourcesForSpace', function() {
-    beforeEach(function() {
+  describe('getResourcesForSpace', function () {
+    beforeEach(function () {
       this.actionCreator = this.actionCreators.getResourcesForSpace;
     });
 
-    it('should dispatch 3 times on success', async function() {
+    it('should dispatch 3 times on success', async function () {
       await this.dispatch(this.actionCreator, this.spaceId);
 
       expect(this.stubs.dispatch.callCount).toBe(3);
       this.assertDispatch(0, {
         type: this.actions.RESOURCES_FOR_SPACE_PENDING,
         spaceId: this.spaceId,
-        isPending: true
+        isPending: true,
       });
       this.assertDispatch(1, {
         type: this.actions.RESOURCES_FOR_SPACE_SUCCESS,
         spaceId: this.spaceId,
-        value: []
+        value: [],
       });
       this.assertDispatch(2, {
         type: this.actions.RESOURCES_FOR_SPACE_PENDING,
         spaceId: this.spaceId,
-        isPending: false
+        isPending: false,
       });
     });
 
-    it('should dispatch 3 times on failure', async function() {
+    it('should dispatch 3 times on failure', async function () {
       const error = new Error('getAll failed');
 
       this.stubs.ResourceService_getAll.throws(error);
@@ -69,17 +69,17 @@ describe('App Resources action creators', function() {
       this.assertDispatch(0, {
         type: this.actions.RESOURCES_FOR_SPACE_PENDING,
         spaceId: this.spaceId,
-        isPending: true
+        isPending: true,
       });
       this.assertDispatch(1, {
         type: this.actions.RESOURCES_FOR_SPACE_FAILURE,
         spaceId: this.spaceId,
-        error
+        error,
       });
       this.assertDispatch(2, {
         type: this.actions.RESOURCES_FOR_SPACE_PENDING,
         spaceId: this.spaceId,
-        isPending: false
+        isPending: false,
       });
     });
   });

@@ -31,22 +31,22 @@ const newSpace = {
   template: createSpaceAdviceTemplate,
   controller: [
     '$scope',
-    $scope => {
+    ($scope) => {
       $scope.canCreateSpace = accessChecker.canCreateSpace;
-    }
-  ]
+    },
+  ],
 };
 
 const hibernation = {
   name: 'hibernation',
   url: '/hibernation',
   navComponent: EmptyNavigationBar,
-  component: SpaceHibernationAdvice
+  component: SpaceHibernationAdvice,
 };
 
 const resolveSpaceData = [
   '$stateParams',
-  $stateParams => TokenStore.getSpace($stateParams.spaceId)
+  ($stateParams) => TokenStore.getSpace($stateParams.spaceId),
 ];
 
 const spaceEnvironment = {
@@ -59,8 +59,8 @@ const spaceEnvironment = {
       'spaceData',
       '$stateParams',
       (spaceContext, spaceData, $stateParams) =>
-        spaceContext.resetWithSpace(spaceData, $stateParams.environmentId)
-    ]
+        spaceContext.resetWithSpace(spaceData, $stateParams.environmentId),
+    ],
   },
   template: '<div />',
   controller: [
@@ -75,7 +75,7 @@ const spaceEnvironment = {
         storeCurrentIds(spaceData);
         $state.go('.entries.list');
       }
-    }
+    },
   ],
   children: [
     contentTypes,
@@ -89,8 +89,8 @@ const spaceEnvironment = {
     settings,
     scheduledActions,
     tasks,
-    pageExtensions
-  ]
+    pageExtensions,
+  ],
 };
 
 const spaceDetail = {
@@ -103,15 +103,15 @@ const spaceDetail = {
       'spaceData',
       '$stateParams',
       (spaceContext, spaceData, $stateParams) =>
-        spaceContext.resetWithSpace(spaceData, $stateParams.environmentId)
-    ]
+        spaceContext.resetWithSpace(spaceData, $stateParams.environmentId),
+    ],
   },
   onEnter: [
     'spaceData',
-    spaceData => {
+    (spaceData) => {
       const organizationData = spaceData.organization;
       Analytics.trackContextChange(spaceData, organizationData);
-    }
+    },
   ],
   template: noSectionAvailableTemplate,
   controller: [
@@ -129,7 +129,7 @@ const spaceDetail = {
       } else {
         $scope.noSectionAvailable = true;
       }
-    }
+    },
   ],
   children: [
     hibernation,
@@ -144,12 +144,12 @@ const spaceDetail = {
     apps,
     scheduledActions,
     tasks,
-    pageExtensions
-  ]
+    pageExtensions,
+  ],
 };
 
 function isHibernated(space) {
-  return (space.enforcements || []).some(e => e.reason === 'hibernated');
+  return (space.enforcements || []).some((e) => e.reason === 'hibernated');
 }
 
 function storeCurrentIds(space) {
@@ -162,5 +162,5 @@ export default {
   url: '/spaces',
   abstract: true,
   navComponent: SpaceNavigationBar,
-  children: [newSpace, spaceDetail]
+  children: [newSpace, spaceDetail],
 };

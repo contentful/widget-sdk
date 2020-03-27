@@ -4,7 +4,7 @@ import {
   InlineEntryCard,
   DropdownListItem,
   DropdownList,
-  Icon
+  Icon,
 } from '@contentful/forma-36-react-components';
 
 import { default as FetchEntity, RequestStatus } from 'app/widgets/shared/FetchEntity';
@@ -17,12 +17,12 @@ import tokens from '@contentful/forma-36-tokens';
 const styles = {
   scheduledIcon: css({
     verticalAlign: 'text-bottom',
-    marginRight: tokens.spacing2Xs
-  })
+    marginRight: tokens.spacing2Xs,
+  }),
 };
 
 class EmbeddedEntryInline extends React.Component {
-  handleEditClick = entry => {
+  handleEditClick = (entry) => {
     this.props.widgetAPI.navigator.openEntry(entry.sys.id, { slideIn: true });
   };
 
@@ -91,7 +91,7 @@ class EmbeddedEntryInline extends React.Component {
               entityId={entryId}
               entityType="Entry"
               localeCode={widgetAPI.field.locale}
-              render={fetchEntityResult => {
+              render={(fetchEntityResult) => {
                 if (fetchEntityResult.requestStatus !== RequestStatus.Pending) {
                   onEntityFetchComplete && onEntityFetchComplete();
                 }
@@ -115,7 +115,7 @@ EmbeddedEntryInline.propTypes = {
   isSelected: PropTypes.bool.isRequired,
   editor: PropTypes.object.isRequired,
   node: PropTypes.object.isRequired,
-  onEntityFetchComplete: PropTypes.func
+  onEntityFetchComplete: PropTypes.func,
 };
 
 export default EmbeddedEntryInline;

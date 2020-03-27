@@ -19,7 +19,7 @@ class Input extends React.Component {
       placeholder,
       width,
       wrapperClassName = '',
-      'data-test-id': dataTestId
+      'data-test-id': dataTestId,
     } = this.props;
 
     return (
@@ -35,7 +35,7 @@ class Input extends React.Component {
           type={type}
           value={value}
           placeholder={placeholder}
-          onChange={e => this.onChange(e)}
+          onChange={(e) => this.onChange(e)}
           style={{ width }}
         />
         {error && <p className="cfnext-form__field-error">{error}</p>}
@@ -46,7 +46,7 @@ class Input extends React.Component {
 
 Input.defaultProps = {
   type: 'text',
-  width: '400px'
+  width: '400px',
 };
 
 Input.propTypes = {
@@ -60,7 +60,7 @@ Input.propTypes = {
   onChange: PropTypes.func.isRequired,
   width: PropTypes.string,
   wrapperClassName: PropTypes.string,
-  'data-test-id': PropTypes.string
+  'data-test-id': PropTypes.string,
 };
 
 export default Input;

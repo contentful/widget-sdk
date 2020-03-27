@@ -10,24 +10,24 @@ describe('FetchLinksToEntity', () => {
   const defaultProps = {
     id: 'entry-id',
     type: EntityType.ENTRY,
-    origin: 'sidebar'
+    origin: 'sidebar',
   };
 
-  beforeEach(function() {
+  beforeEach(function () {
     this.onFetchLinks = sinon.stub();
     this.system.set('analytics/events/IncomingLinks', {
       onFetchLinks: this.onFetchLinks,
       Origin: {
         DIALOG: 'dialog',
-        SIDEBAR: 'sidebar'
-      }
+        SIDEBAR: 'sidebar',
+      },
     });
 
     const system = this.system;
 
-    this.importModule = async function({ fetchLinksStub }) {
+    this.importModule = async function ({ fetchLinksStub }) {
       system.set('app/entity_editor/Components/FetchLinksToEntity/fetchLinks', {
-        default: fetchLinksStub
+        default: fetchLinksStub,
       });
 
       const { default: FetchLinksToEntity } = await system.import(
@@ -42,7 +42,7 @@ describe('FetchLinksToEntity', () => {
     return mount(<Component {...defaultProps} {...props} />);
   }
 
-  it('passes pending state on initial render', async function() {
+  it('passes pending state on initial render', async function () {
     const fetchLinksStub = sinon.stub().returns(Promise.resolve([]));
     const Component = await this.importModule({ fetchLinksStub });
 
@@ -52,7 +52,7 @@ describe('FetchLinksToEntity', () => {
     sinon.assert.calledWith(renderFunc, { links: [], requestState: 'pending' });
   });
 
-  it('passes success state and links if api called returns data', async function() {
+  it('passes success state and links if api called returns data', async function () {
     const links = [{ id: 1 }, { id: 2 }];
     const fetchLinksStub = sinon
       .stub()
@@ -67,16 +67,16 @@ describe('FetchLinksToEntity', () => {
 
     sinon.assert.calledWith(renderFunc.getCall(1), {
       links,
-      requestState: 'success'
+      requestState: 'success',
     });
     sinon.assert.calledWithExactly(this.onFetchLinks, {
       entityId: 'entry-id',
       entityType: EntityType.ENTRY,
-      incomingLinkIds: [1, 2]
+      incomingLinkIds: [1, 2],
     });
   });
 
-  it('passes error state and empty links if api fails to return data', async function() {
+  it('passes error state and empty links if api fails to return data', async function () {
     const fetchLinksStub = sinon
       .stub()
       .withArgs(defaultProps.id, defaultProps.type)
@@ -90,7 +90,7 @@ describe('FetchLinksToEntity', () => {
 
     sinon.assert.calledWith(renderFunc.getCall(1), {
       links: [],
-      requestState: 'error'
+      requestState: 'error',
     });
   });
 });

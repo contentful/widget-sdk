@@ -8,7 +8,7 @@ import createFetcherComponent from 'app/common/createFetcherComponent';
 import StateRedirect from 'app/common/StateRedirect';
 import { getWebhookRepo } from 'app/settings/webhooks/services/WebhookRepoInstance';
 
-const WebhookCallFetcher = createFetcherComponent(props => {
+const WebhookCallFetcher = createFetcherComponent((props) => {
   const { webhookId, callId } = props;
   const webhookRepo = getWebhookRepo();
 
@@ -19,7 +19,7 @@ export class WebhookCallRoute extends React.Component {
   static propTypes = {
     webhookId: PropTypes.string.isRequired,
     callId: PropTypes.string.isRequired,
-    onGoBack: PropTypes.func.isRequired
+    onGoBack: PropTypes.func.isRequired,
   };
 
   render() {

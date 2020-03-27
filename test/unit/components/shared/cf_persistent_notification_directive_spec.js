@@ -6,13 +6,13 @@ describe('cfPersistentNotification Directive', () => {
   let element, scope;
   let $rootScope, $timeout;
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     this.stubs = {
-      logWarn: sinon.stub()
+      logWarn: sinon.stub(),
     };
 
     this.system.set('services/logger', {
-      logWarn: this.stubs.logWarn
+      logWarn: this.stubs.logWarn,
     });
 
     await $initialize(this.system);
@@ -35,7 +35,7 @@ describe('cfPersistentNotification Directive', () => {
 
     beforeEach(() => {
       $rootScope.$broadcast('persistentNotification', {
-        message: MESSAGE
+        message: MESSAGE,
       });
       digest();
     });
@@ -62,7 +62,7 @@ describe('cfPersistentNotification Directive', () => {
   describe('broadcast `actionMessage`', () => {
     beforeEach(() => {
       $rootScope.$broadcast('persistentNotification', {
-        actionMessage: 'some message'
+        actionMessage: 'some message',
       });
       digest();
     });
@@ -77,7 +77,7 @@ describe('cfPersistentNotification Directive', () => {
   describe('reset', () => {
     beforeEach(() => {
       $rootScope.$broadcast('persistentNotification', {
-        message: 'foo'
+        message: 'foo',
       });
     });
 
@@ -92,7 +92,7 @@ describe('cfPersistentNotification Directive', () => {
     const PARAMS_1 = { message: 'FIRST MESSAGE' };
     const PARAMS_2 = { message: 'some message 2' };
 
-    beforeEach(function() {
+    beforeEach(function () {
       $rootScope.$broadcast('persistentNotification', null);
       $rootScope.$broadcast('persistentNotification', PARAMS_1);
       $rootScope.$broadcast('persistentNotification', PARAMS_2);
@@ -112,13 +112,13 @@ describe('cfPersistentNotification Directive', () => {
       expect($body().length).toBe(0);
     });
 
-    it('logs concurrent broadcasted notification params', async function() {
+    it('logs concurrent broadcasted notification params', async function () {
       const RESET_NOTE = '*RESET NOTIFICATION*';
 
       await $wait();
       sinon.assert.calledOnce(this.stubs.logWarn);
       sinon.assert.calledWithExactly(this.stubs.logWarn, sinon.match.string, {
-        notifications: [RESET_NOTE, PARAMS_1, PARAMS_2, RESET_NOTE]
+        notifications: [RESET_NOTE, PARAMS_1, PARAMS_2, RESET_NOTE],
       });
     });
   });

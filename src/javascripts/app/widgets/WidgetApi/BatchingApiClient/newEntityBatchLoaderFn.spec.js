@@ -17,7 +17,7 @@ describe('newEntityBatchLoaderFn({ getResources, newEntityNotFoundError}) -> ent
   function setup() {
     entityBatchLoaderFn = newEntityBatchLoaderFn({
       getResources,
-      newEntityNotFoundError
+      newEntityNotFoundError,
     });
   }
 
@@ -76,7 +76,7 @@ describe('newEntityBatchLoaderFn({ getResources, newEntityNotFoundError}) -> ent
 
     beforeEach(() => {
       getResources.mockResolvedValue({ items: [] });
-      newEntityNotFoundError = jest.fn(_id => ERROR);
+      newEntityNotFoundError = jest.fn((_id) => ERROR);
       setup();
     });
 
@@ -98,7 +98,7 @@ describe('newEntityBatchLoaderFn({ getResources, newEntityNotFoundError}) -> ent
       const ids = ['UNKNOWN_ID_1', 'UNKNOWN_ID_2', 'UNKNOWN_ID_3'];
       const entities = await entityBatchLoaderFn(ids);
       expect(newEntityNotFoundError).toHaveBeenCalledTimes(3);
-      ids.forEach(id => {
+      ids.forEach((id) => {
         expect(newEntityNotFoundError).toHaveBeenCalledWith(id);
       });
       expect(entities).toEqual([ERROR, ERROR, ERROR]);
@@ -120,9 +120,9 @@ describe('newEntityBatchLoaderFn({ getResources, newEntityNotFoundError}) -> ent
     const CLIENT_ERROR = {
       data: {
         sys: {
-          type: 'Error'
-        }
-      }
+          type: 'Error',
+        },
+      },
     };
 
     beforeEach(() => {
@@ -145,8 +145,8 @@ describe('newEntityBatchLoaderFn({ getResources, newEntityNotFoundError}) -> ent
         data: {
           requestedIds: validIds, // INVALID_LONG_ID not expected to be in here.
           requestedIdsCount: 2,
-          requestedIdsCharacterCount: 12
-        }
+          requestedIdsCharacterCount: 12,
+        },
       });
     });
   });

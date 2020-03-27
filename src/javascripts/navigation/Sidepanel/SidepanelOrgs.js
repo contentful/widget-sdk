@@ -31,7 +31,7 @@ function OrganizationSelector({ currOrg, openOrgsDropdown, orgDropdownIsShown })
 OrganizationSelector.propTypes = {
   currOrg: PropTypes.object.isRequired,
   openOrgsDropdown: PropTypes.func.isRequired,
-  orgDropdownIsShown: PropTypes.bool.isRequired
+  orgDropdownIsShown: PropTypes.bool.isRequired,
 };
 
 function OrgListDropdown({
@@ -40,7 +40,7 @@ function OrgListDropdown({
   orgDropdownIsShown,
   currOrg,
   canCreateOrg,
-  createNewOrg
+  createNewOrg,
 }) {
   return (
     <div
@@ -68,7 +68,7 @@ OrgListDropdown.propTypes = {
   setCurrOrg: PropTypes.func.isRequired,
   orgDropdownIsShown: PropTypes.bool.isRequired,
   canCreateOrg: PropTypes.bool.isRequired,
-  createNewOrg: PropTypes.func.isRequired
+  createNewOrg: PropTypes.func.isRequired,
 };
 
 function Organizations({ orgs, currOrg, setCurrOrg }) {
@@ -96,7 +96,7 @@ function Organizations({ orgs, currOrg, setCurrOrg }) {
 Organizations.propTypes = {
   orgs: PropTypes.arrayOf(PropTypes.object).isRequired,
   currOrg: PropTypes.object.isRequired,
-  setCurrOrg: PropTypes.func.isRequired
+  setCurrOrg: PropTypes.func.isRequired,
 };
 
 export default function SidepanelOrgs(props) {
@@ -109,5 +109,5 @@ export default function SidepanelOrgs(props) {
 }
 
 SidepanelOrgs.propTypes = {
-  currOrg: PropTypes.object.isRequired
+  currOrg: PropTypes.object.isRequired,
 };

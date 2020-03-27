@@ -4,7 +4,7 @@ import { TaskStatus } from 'data/CMA/TasksRepo';
 import {
   UserSelectorViewData,
   createSpaceUserSelectorViewData,
-  createUserViewDataFromLinkAndFetcher
+  createUserViewDataFromLinkAndFetcher,
 } from './UserViewData';
 
 export const TaskViewData = {
@@ -20,7 +20,7 @@ export const TaskViewData = {
   canEdit: PropTypes.bool,
   canUpdateStatus: PropTypes.bool,
   validationMessage: PropTypes.string,
-  assignableUsersInfo: PropTypes.shape(UserSelectorViewData)
+  assignableUsersInfo: PropTypes.shape(UserSelectorViewData),
 };
 
 export const TaskListViewData = {
@@ -28,7 +28,7 @@ export const TaskListViewData = {
   isLoading: PropTypes.bool,
   errorMessage: PropTypes.string,
   hasCreateAction: PropTypes.bool,
-  tasks: PropTypes.arrayOf(PropTypes.shape(TaskViewData)).isRequired
+  tasks: PropTypes.arrayOf(PropTypes.shape(TaskViewData)).isRequired,
 };
 
 const DRAFT_TASK_KEY = '<<DRAFT-TASK>>';
@@ -38,11 +38,11 @@ const DRAFT_TASK = {
     id: DRAFT_TASK_KEY,
     version: 0,
     createdBy: null,
-    createdAt: null
+    createdAt: null,
   },
   body: '',
   assignedTo: null,
-  status: TaskStatus.ACTIVE
+  status: TaskStatus.ACTIVE,
 };
 
 /**
@@ -76,7 +76,7 @@ export function createTaskListViewData(
     isLoading: tasksFetchingStatus.isLoading && !tasks,
     errorMessage: loadingError ? `Error ${tasks ? 'syncing' : 'loading'} tasks` : null,
     hasCreateAction: !isCreatingDraft && !loadingError,
-    tasks: [...(tasks || []).map(newTaskVD), ...draftTasksVD]
+    tasks: [...(tasks || []).map(newTaskVD), ...draftTasksVD],
   };
 
   function newTaskVD(task) {
@@ -107,7 +107,7 @@ export function createLoadingStateTasksViewData() {
     isLoading: true,
     errorMessage: null,
     hasCreateAction: false,
-    tasks: []
+    tasks: [],
   };
 }
 
@@ -138,7 +138,7 @@ function createTaskViewData(task, usersFetchingStatus) {
     canEdit: false,
     canUpdateStatus: false,
     assignableUsersInfo: null,
-    validationMessage: null
+    validationMessage: null,
   };
 }
 
@@ -153,8 +153,8 @@ function decorateTaskViewDataWithEditMode(taskVD, usersSelectorVD) {
     isInEditMode: true,
     assignableUsersInfo: {
       ...usersSelectorVD,
-      selectedUser: taskVD.assignee
-    }
+      selectedUser: taskVD.assignee,
+    },
   };
 }
 

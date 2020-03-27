@@ -13,7 +13,7 @@ import {
   getPerson,
   getCredentials,
   isDevOnboardingSpace,
-  isContentOnboardingSpace
+  isContentOnboardingSpace,
 } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
 import { getModule } from 'NgRegistry';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
@@ -28,7 +28,7 @@ const isTEASpace = () => {
   const spaceContext = getModule('spaceContext');
   const publishedCTs = K.getValue(spaceContext.publishedCTs.items$) || [];
   return (
-    publishedCTs.find(ct => {
+    publishedCTs.find((ct) => {
       return get(ct, ['sys', 'id']) === 'layoutHighlightedCourse';
     }) || isContentOnboardingSpace(spaceContext.space)
   );
@@ -62,7 +62,7 @@ const fetchData = (setLoading, setState, isSpaceAdmin) => async () => {
       setState({
         hasTeamsEnabled,
         cdaToken: key.accessToken,
-        cpaToken: keyWithPreview.preview_api_key.accessToken
+        cpaToken: keyWithPreview.preview_api_key.accessToken,
       });
     }
 
@@ -75,11 +75,11 @@ const fetchData = (setLoading, setState, isSpaceAdmin) => async () => {
       setState({
         hasTeamsEnabled,
         managementToken: credentials && credentials.managementToken,
-        personEntry
+        personEntry,
       });
     } else {
       setState({
-        hasTeamsEnabled
+        hasTeamsEnabled,
       });
     }
     setLoading(false);
@@ -93,7 +93,7 @@ const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
   const [isLoading, setLoading] = useState(true);
   const [
     { managementToken, personEntry, cdaToken, cpaToken, hasTeamsEnabled },
-    setState
+    setState,
   ] = useState({});
 
   const currentSpace = spaceContext.space;
@@ -112,7 +112,7 @@ const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
     spaceName: spaceContext.getData('name'),
     orgName: spaceContext.getData('organization.name'),
     orgId: spaceContext.getData('organization.sys.id'),
-    spaceId: spaceContext.getData('sys.id')
+    spaceId: spaceContext.getData('sys.id'),
   };
 
   const isSupportEnabled = spaceContext.getData('organization.isBillable');
@@ -186,7 +186,7 @@ const SpaceHomePage = ({ spaceTemplateCreated, orgOwnerOrAdmin, orgId }) => {
 SpaceHomePage.propTypes = {
   spaceTemplateCreated: PropTypes.bool,
   orgOwnerOrAdmin: PropTypes.bool,
-  orgId: PropTypes.string
+  orgId: PropTypes.string,
 };
 
 export default SpaceHomePage;

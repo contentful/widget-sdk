@@ -14,12 +14,10 @@ function translatePolicies(external) {
     entries: { allowed: [], denied: [] },
     assets: { allowed: [], denied: [] },
     policyString,
-    uiCompatible: true
+    uiCompatible: true,
   };
 
-  _(prepare(external))
-    .map(extendPolicyWithRule)
-    .forEach(prepareExtension);
+  _(prepare(external)).map(extendPolicyWithRule).forEach(prepareExtension);
 
   return extension;
 
@@ -34,10 +32,10 @@ function translatePolicies(external) {
 }
 
 function prepare(external) {
-  return _.map(external.policies, policy => ({
+  return _.map(external.policies, (policy) => ({
     action: extractAction(policy),
     effectCollection: { allow: 'allowed', deny: 'denied' }[policy.effect],
-    constraints: extractConstraints(policy)
+    constraints: extractConstraints(policy),
   }));
 }
 
@@ -46,7 +44,7 @@ function extendPolicyWithRule(policy) {
 
   return _.extend(policy, {
     rule,
-    entityCollection: { entry: 'entries', asset: 'assets' }[(rule || {}).entity]
+    entityCollection: { entry: 'entries', asset: 'assets' }[(rule || {}).entity],
   });
 }
 
@@ -136,51 +134,54 @@ function createRule(policy) {
 function findEntityConstraint(cs) {
   return searchResult(
     cs,
-    _.findIndex(cs, c => docEq(c, 'sys.type') && _.includes(['Entry', 'Asset'], c.equals[1]))
+    _.findIndex(cs, (c) => docEq(c, 'sys.type') && _.includes(['Entry', 'Asset'], c.equals[1]))
   );
 }
 
 function findAssetConstraint(cs) {
   return searchResult(
     cs,
-    _.findIndex(cs, c => docEq(c, 'sys.type') && _.includes(['Asset'], c.equals[1]))
+    _.findIndex(cs, (c) => docEq(c, 'sys.type') && _.includes(['Asset'], c.equals[1]))
   );
 }
 
 function findEntryConstraint(cs) {
   return searchResult(
     cs,
-    _.findIndex(cs, c => docEq(c, 'sys.type') && _.includes(['Entry'], c.equals[1]))
+    _.findIndex(cs, (c) => docEq(c, 'sys.type') && _.includes(['Entry'], c.equals[1]))
   );
 }
 
 function findContentTypeConstraint(cs) {
   return searchResult(
     cs,
-    _.findIndex(cs, c => docEq(c, 'sys.contentType.sys.id') && _.isString(c.equals[1]))
+    _.findIndex(cs, (c) => docEq(c, 'sys.contentType.sys.id') && _.isString(c.equals[1]))
   );
 }
 
 function findIdConstraint(cs) {
-  return searchResult(cs, _.findIndex(cs, c => docEq(c, 'sys.id') && _.isString(c.equals[1])));
+  return searchResult(
+    cs,
+    _.findIndex(cs, (c) => docEq(c, 'sys.id') && _.isString(c.equals[1]))
+  );
 }
 
 function findUserConstraint(cs) {
   return searchResult(
     cs,
-    _.findIndex(cs, c => docEq(c, 'sys.createdBy.sys.id') && _.isString(c.equals[1]))
+    _.findIndex(cs, (c) => docEq(c, 'sys.createdBy.sys.id') && _.isString(c.equals[1]))
   );
 }
 
 function findPathConstraint(cs) {
   const index = _.findIndex(
     cs,
-    c => _.isArray(c.paths) && _.isObject(c.paths[0]) && _.isString(c.paths[0].doc)
+    (c) => _.isArray(c.paths) && _.isObject(c.paths[0]) && _.isString(c.paths[0].doc)
   );
 
   return {
     index,
-    value: index > -1 ? cs[index].paths[0].doc.split(PolicyBuilderConfig.PATH_SEPARATOR) : null
+    value: index > -1 ? cs[index].paths[0].doc.split(PolicyBuilderConfig.PATH_SEPARATOR) : null,
   };
 }
 
@@ -191,7 +192,7 @@ function docEq(c, val) {
 function searchResult(cs, index) {
   return {
     index,
-    value: index > -1 ? cs[index].equals[1] : null
+    value: index > -1 ? cs[index].equals[1] : null,
   };
 }
 
@@ -209,20 +210,20 @@ function pathSegment(segment, allValue) {
 
 export function findEntryIds(external) {
   return external
-    .filter(policy => findEntryConstraint(extractConstraints(policy)).index !== -1)
+    .filter((policy) => findEntryConstraint(extractConstraints(policy)).index !== -1)
     .map(extractConstraints)
     .reduce((acc, val) => acc.concat(val), [])
-    .filter(constraint => constraint.equals && constraint.equals[0].doc === 'sys.id')
-    .map(constraint => constraint.equals[1]);
+    .filter((constraint) => constraint.equals && constraint.equals[0].doc === 'sys.id')
+    .map((constraint) => constraint.equals[1]);
 }
 
 export function findAssetIds(external) {
   return external
-    .filter(policy => findAssetConstraint(extractConstraints(policy)).index !== -1)
+    .filter((policy) => findAssetConstraint(extractConstraints(policy)).index !== -1)
     .map(extractConstraints)
     .reduce((acc, val) => acc.concat(val), [])
-    .filter(constraint => constraint.equals && constraint.equals[0].doc === 'sys.id')
-    .map(constraint => constraint.equals[1]);
+    .filter((constraint) => constraint.equals && constraint.equals[0].doc === 'sys.id')
+    .map((constraint) => constraint.equals[1]);
 }
 
 export function toInternal(external) {
@@ -231,7 +232,7 @@ export function toInternal(external) {
       id: _.get(external, 'sys.id', null),
       version: _.get(external, 'sys.version', null),
       name: external.name,
-      description: external.description
+      description: external.description,
     },
     _.cloneDeep(external.permissions) || {},
     translatePolicies(external)

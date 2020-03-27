@@ -18,7 +18,7 @@ import createDialogExtensionBridge from './createDialogExtensionBridge';
 const SIMPLE_DIALOG_TYPE_TO_OPENER = {
   alert: Dialogs.openAlert,
   confirm: Dialogs.openConfirm,
-  prompt: Dialogs.openPrompt
+  prompt: Dialogs.openPrompt,
 };
 
 export default function makeExtensionDialogsHandlers(dependencies) {
@@ -77,7 +77,7 @@ export default function makeExtensionDialogsHandlers(dependencies) {
         descriptor.installationParameters.values
       ),
       // Parameters passed directly to the dialog.
-      invocation: options.parameters || {}
+      invocation: options.parameters || {},
     };
 
     trackExtensionRender(LOCATION_DIALOG, descriptor);

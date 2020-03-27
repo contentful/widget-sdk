@@ -15,15 +15,15 @@ const filtersToObject = flow(
 );
 
 // update the query parameters as object
-const updateLocationQuery = updater =>
+const updateLocationQuery = (updater) =>
   update(
     'search',
     flow(
-      query => query.slice(1), // remove leading '?'
+      (query) => query.slice(1), // remove leading '?'
       qs.parse, // parse query string into object
       updater, // update query object with given function
       qs.stringify, // create query string from query object
-      query => (query === '' ? '' : `?${query}`) // if query is non-empty, add leading '?'
+      (query) => (query === '' ? '' : `?${query}`) // if query is non-empty, add leading '?'
     )
   );
 

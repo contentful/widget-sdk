@@ -13,28 +13,28 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     height: '40px',
-    color: tokens.colorTextLight
+    color: tokens.colorTextLight,
   }),
   installHeaderIcon: css({
-    marginRight: tokens.spacingS
+    marginRight: tokens.spacingS,
   }),
   logos: css({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: tokens.spacingL,
-    marginBottom: tokens.spacingL
+    marginBottom: tokens.spacingL,
   }),
   appIcon: css({
     width: '45px',
     height: '45px',
     verticalAlign: 'middle',
     marginLeft: tokens.spacingXs,
-    marginRight: tokens.spacingXs
+    marginRight: tokens.spacingXs,
   }),
   arrowIcon: css({
     width: tokens.spacingXl,
-    height: tokens.spacingXl
+    height: tokens.spacingXl,
   }),
   extensionLink: css({
     paddingLeft: tokens.spacingM,
@@ -42,31 +42,31 @@ const styles = {
     textAlign: 'center',
     overflow: 'hidden',
     whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis'
+    textOverflow: 'ellipsis',
   }),
   webhook: css({
     display: 'flex',
     marginTop: tokens.spacingL,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   }),
   webhookLogo: css({
     width: '38px',
     height: '38px',
-    marginRight: tokens.spacingM
+    marginRight: tokens.spacingM,
   }),
   webhookTitle: css({
     strong: {
       display: 'block',
       color: tokens.colorTextDark,
-      fontWeight: tokens.fontWeightDemiBold
+      fontWeight: tokens.fontWeightDemiBold,
     },
     small: {
       display: 'block',
       color: tokens.colorTextLight,
-      fontWeight: tokens.fontWeightNormal
-    }
-  })
+      fontWeight: tokens.fontWeightNormal,
+    },
+  }),
 };
 
 export function isWebhookLink(link) {
@@ -108,7 +108,7 @@ export function InstallLogos(props) {
 }
 
 export function WebhookLinkHeader({ templateId }) {
-  const template = WebhookTemplates.find(template => template.id === templateId);
+  const template = WebhookTemplates.find((template) => template.id === templateId);
   return (
     <>
       <InstallHeader>Install webhook to Contentful</InstallHeader>
@@ -127,7 +127,7 @@ export function WebhookLinkHeader({ templateId }) {
 }
 
 WebhookLinkHeader.propTypes = {
-  templateId: PropTypes.string.isRequired
+  templateId: PropTypes.string.isRequired,
 };
 
 export function AppLinkHeader({ appId, apps }) {
@@ -154,7 +154,7 @@ export function AppLinkHeader({ appId, apps }) {
 
 AppLinkHeader.propTypes = {
   appId: PropTypes.string.isRequired,
-  apps: PropTypes.object.isRequired
+  apps: PropTypes.object.isRequired,
 };
 
 export function ExtensionLinkHeader({ url }) {
@@ -173,5 +173,5 @@ export function ExtensionLinkHeader({ url }) {
 }
 
 ExtensionLinkHeader.propTypes = {
-  url: PropTypes.string.isRequired
+  url: PropTypes.string.isRequired,
 };

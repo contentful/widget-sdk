@@ -10,7 +10,7 @@ import { NAMESPACE_APP } from 'widgets/WidgetNamespaces';
 // Like `Promise.all` but rejecting input promises do not cause
 // the result promise to reject. They are simply omitted.
 async function promiseAllSafe(promises) {
-  const guardedPromises = promises.map(p => {
+  const guardedPromises = promises.map((p) => {
     return p.then(identity, () => {
       Telemetry.count('apps.ignored-editor-interface-failure');
       return null;
@@ -24,7 +24,7 @@ async function promiseAllSafe(promises) {
 
 export async function getDefaultSidebar() {
   const defaultEntrySidebar = await SidebarDefaults.getEntryConfiguration();
-  return defaultEntrySidebar.map(item => pick(item, ['widgetNamespace', 'widgetId']));
+  return defaultEntrySidebar.map((item) => pick(item, ['widgetNamespace', 'widgetId']));
 }
 
 function isCurrentApp(widget, appInstallation) {
@@ -51,7 +51,7 @@ export async function transformEditorInterfacesToTargetState(cma, targetState, a
   const defaultSidebar = await getDefaultSidebar();
 
   const updatePromises = editorInterfaces
-    .map(ei => {
+    .map((ei) => {
       return transformSingleEditorInterfaceToTargetState(
         ei,
         defaultSidebar,
@@ -60,7 +60,7 @@ export async function transformEditorInterfacesToTargetState(cma, targetState, a
       );
     })
     .filter((ei, i) => !isEqual(ei, editorInterfaces[i]))
-    .map(ei => cma.updateEditorInterface(ei));
+    .map((ei) => cma.updateEditorInterface(ei));
 
   await promiseAllSafe(updatePromises);
 }
@@ -79,12 +79,12 @@ function transformSingleEditorInterfaceToTargetState(
 
   // Target state object for controls: `{ fieldId }`
   if (Array.isArray(targetState.controls)) {
-    targetState.controls.forEach(control => {
-      const idx = (result.controls || []).findIndex(cur => cur.fieldId === control.fieldId);
+    targetState.controls.forEach((control) => {
+      const idx = (result.controls || []).findIndex((cur) => cur.fieldId === control.fieldId);
       result.controls[idx] = {
         fieldId: control.fieldId,
         widgetNamespace: NAMESPACE_APP,
-        widgetId
+        widgetId,
       };
     });
   }
@@ -120,9 +120,9 @@ export async function removeAllEditorInterfaceReferences(cma, appInstallation) {
   const { items: editorInterfaces } = await cma.getEditorInterfaces();
 
   const updatePromises = editorInterfaces
-    .map(ei => removeSingleEditorInterfaceReferences(ei, appInstallation))
+    .map((ei) => removeSingleEditorInterfaceReferences(ei, appInstallation))
     .filter((ei, i) => !isEqual(ei, editorInterfaces[i]))
-    .map(ei => cma.updateEditorInterface(ei));
+    .map((ei) => cma.updateEditorInterface(ei));
 
   await promiseAllSafe(updatePromises);
 }
@@ -133,14 +133,14 @@ function removeSingleEditorInterfaceReferences(ei, appInstallation) {
 
   if (Array.isArray(ei.controls)) {
     // If the app is used in `controls`, reset it to the default.
-    result.controls = ei.controls.map(control => {
+    result.controls = ei.controls.map((control) => {
       return isCurrentApp(control, appInstallation) ? { fieldId: control.fieldId } : control;
     });
   }
 
   if (Array.isArray(ei.sidebar)) {
     // If the app is used in `sidebar`, remove it from the list.
-    result.sidebar = ei.sidebar.filter(widget => !isCurrentApp(widget, appInstallation));
+    result.sidebar = ei.sidebar.filter((widget) => !isCurrentApp(widget, appInstallation));
   }
 
   // If the app is used as `editor`, unset the reference.

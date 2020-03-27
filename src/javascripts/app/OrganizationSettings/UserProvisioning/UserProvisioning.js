@@ -44,5 +44,5 @@ export default function UserProvisioning({ orgId }) {
 }
 
 UserProvisioning.propTypes = {
-  orgId: PropTypes.string.isRequired
+  orgId: PropTypes.string.isRequired,
 };

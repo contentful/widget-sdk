@@ -6,13 +6,13 @@ export const FORM_ERROR = '__FORM_ERROR__';
 
 const ERROR_TYPES = {
   VALIDATOR: 'validator',
-  SUBMISSION: 'submission'
+  SUBMISSION: 'submission',
 };
 
-const isFormInvalid = state => {
+const isFormInvalid = (state) => {
   const fieldValues = Object.values(state.fields);
 
-  const anyFieldHasErrors = fieldValues.some(field => !!field.error);
+  const anyFieldHasErrors = fieldValues.some((field) => !!field.error);
 
   if (anyFieldHasErrors) {
     return true;
@@ -24,7 +24,7 @@ const isFormInvalid = state => {
 const fieldErrorMessage = (state, fieldName) => {
   const field = state.fields[fieldName];
 
-  const emptyValidator = value => {
+  const emptyValidator = (value) => {
     if (!value) {
       return 'This field is required';
     }
@@ -48,7 +48,7 @@ const fieldErrorMessage = (state, fieldName) => {
   return errorMessage;
 };
 
-const initializeFn = initialValues => {
+const initializeFn = (initialValues) => {
   return {
     fields: initialValues.fields,
     fieldsValidator: initialValues.fieldsValidator || (() => {}),
@@ -57,9 +57,9 @@ const initializeFn = initialValues => {
       invalid: false,
       pristine: true,
       error: '',
-      submissionError: false
+      submissionError: false,
     },
-    submitFn: initialValues.submitFn
+    submitFn: initialValues.submitFn,
   };
 };
 
@@ -130,7 +130,7 @@ const formReducer = createImmerReducer({
   SET_FORM_SUBMITTING: (state, { payload: { submitting, submitFnArgs } }) => {
     state.form.submitting = submitting;
     state.form.submitFnArgs = submitFnArgs;
-  }
+  },
 });
 
 /**
@@ -303,15 +303,15 @@ export default function useForm(initialValues) {
           dispatch({
             type: 'SET_FORM_ERROR',
             payload: {
-              message
-            }
+              message,
+            },
           });
 
           dispatch({
             type: 'SET_FORM_PENDING',
             payload: {
-              isPending: false
-            }
+              isPending: false,
+            },
           });
 
           return;
@@ -324,8 +324,8 @@ export default function useForm(initialValues) {
             dispatch({
               type: 'SET_FORM_ERROR',
               payload: {
-                message: 'An error occurred.'
-              }
+                message: 'An error occurred.',
+              },
             });
           } else {
             const formError = get(result, FORM_ERROR, '');
@@ -334,8 +334,8 @@ export default function useForm(initialValues) {
               dispatch({
                 type: 'SET_FORM_ERROR',
                 payload: {
-                  message: formError
-                }
+                  message: formError,
+                },
               });
             }
 
@@ -349,8 +349,8 @@ export default function useForm(initialValues) {
                 type: 'SET_FIELD_SUBMISSION_ERROR',
                 payload: {
                   fieldName,
-                  message
-                }
+                  message,
+                },
               });
             });
           }
@@ -359,8 +359,8 @@ export default function useForm(initialValues) {
         dispatch({
           type: 'SET_FORM_PENDING',
           payload: {
-            isPending: false
-          }
+            isPending: false,
+          },
         });
       }
     }
@@ -368,7 +368,7 @@ export default function useForm(initialValues) {
     handleSubmit(state);
   }, [state]);
 
-  const onBlur = fieldName => {
+  const onBlur = (fieldName) => {
     dispatch({ type: 'SET_FIELD_BLURRED', payload: { fieldName } });
   };
 
@@ -389,8 +389,8 @@ export default function useForm(initialValues) {
       type: 'SET_FORM_SUBMITTING',
       payload: {
         submitting: true,
-        submitFnArgs
-      }
+        submitFnArgs,
+      },
     });
   };
 
@@ -399,6 +399,6 @@ export default function useForm(initialValues) {
     onChange,
     onSubmit,
     fields: state.fields,
-    form: state.form
+    form: state.form,
   };
 }

@@ -3,7 +3,7 @@ import { set, cloneDeep } from 'lodash';
 import {
   getRoleOptions,
   getSpaceRoleOptions,
-  SPACE_ROLE_FILTER_KEYS
+  SPACE_ROLE_FILTER_KEYS,
 } from './UserListFiltersHelpers';
 
 /**
@@ -19,7 +19,7 @@ const idMap = {
   space: ['sys.spaceMemberships.sys.space.sys.id'],
   ssoLogin: ['sys.sso.lastSignInAt'],
   spaceRole: SPACE_ROLE_FILTER_KEYS,
-  team: ['sys.teamMemberships.sys.team.sys.id']
+  team: ['sys.teamMemberships.sys.team.sys.id'],
 };
 
 // The operator function always passes string as a value
@@ -27,40 +27,40 @@ const idMap = {
 const defaultFiltersById = {
   sort: {
     key: 'order',
-    value: '-sys.createdAt'
+    value: '-sys.createdAt',
   },
   orgRole: {
     key: 'role',
-    value: ''
+    value: '',
   },
   status: {
     key: 'status',
-    value: ''
+    value: '',
   },
   ssoLogin: {
     key: 'sys.sso.lastSignInAt',
     operator: () => 'exists',
-    value: ''
+    value: '',
   },
   space: {
     key: 'sys.spaceMemberships.sys.space.sys.id',
-    value: ''
+    value: '',
   },
   spaceRole: {
     key: 'sys.spaceMemberships.roles.name',
-    value: ''
+    value: '',
   },
   team: {
     key: 'sys.teamMemberships.sys.team.sys.id',
-    operator: value => {
+    operator: (value) => {
       if (['true', 'false'].includes(value)) {
         return 'exists';
       }
 
       return 'eq';
     },
-    value: ''
-  }
+    value: '',
+  },
 };
 
 /*
@@ -82,7 +82,7 @@ const defaultFiltersById = {
     }
   }
  */
-const normalizeFilterValues = filterValues => {
+const normalizeFilterValues = (filterValues) => {
   return filterValues.reduce((memo, [key, value]) => {
     const [id] = Object.entries(idMap).find(([_, filterKeys]) => filterKeys.includes(key)) || [];
     if (id) {
@@ -101,7 +101,7 @@ export function generateFilterDefinitions({
   hasSsoEnabled,
   hasPendingOrgMembershipsEnabled,
   hasTeamsFeature,
-  filterValues = {}
+  filterValues = {},
 }) {
   const normalized = normalizeFilterValues(Object.entries(filterValues));
 
@@ -117,8 +117,8 @@ export function generateFilterDefinitions({
       { label: 'Last name A → Z', value: 'sys.user.lastName' },
       { label: 'Last name Z → A', value: '-sys.user.lastName' },
       { label: 'Active recently', value: '-sys.lastActiveAt' },
-      { label: 'Active least recently', value: 'sys.lastActiveAt' }
-    ]
+      { label: 'Active least recently', value: 'sys.lastActiveAt' },
+    ],
   };
 
   const orgRole = {
@@ -127,8 +127,8 @@ export function generateFilterDefinitions({
     filter: normalized.orgRole,
     options: [
       { label: 'Any', value: '' },
-      ...orgRoles.map(({ name, value }) => ({ label: name, value }))
-    ]
+      ...orgRoles.map(({ name, value }) => ({ label: name, value })),
+    ],
   };
 
   const status = {
@@ -138,8 +138,8 @@ export function generateFilterDefinitions({
     options: [
       { label: 'Any', value: '' },
       { label: 'Active', value: 'active' },
-      { label: 'Invited', value: 'pending' }
-    ]
+      { label: 'Invited', value: 'pending' },
+    ],
   };
 
   const sso = {
@@ -149,8 +149,8 @@ export function generateFilterDefinitions({
     options: [
       { label: 'Any', value: '' },
       { label: 'Has logged in', value: 'true' },
-      { label: 'Never logged in', value: 'false' }
-    ]
+      { label: 'Never logged in', value: 'false' },
+    ],
   };
 
   const space = {
@@ -161,8 +161,8 @@ export function generateFilterDefinitions({
       { label: 'Any', value: '' },
       ...spaces
         .sort((a, b) => a.name.localeCompare(b.name))
-        .map(space => ({ label: space.name, value: space.sys.id }))
-    ]
+        .map((space) => ({ label: space.name, value: space.sys.id })),
+    ],
   };
 
   const spaceFilterValue = space.filter.value;
@@ -172,7 +172,7 @@ export function generateFilterDefinitions({
     filter: normalized.spaceRole,
     options: spaceFilterValue
       ? getSpaceRoleOptions(spaceRoles, spaceFilterValue)
-      : getRoleOptions(spaceRoles)
+      : getRoleOptions(spaceRoles),
   };
 
   const team = {
@@ -184,8 +184,8 @@ export function generateFilterDefinitions({
       { label: 'None', value: 'false' },
       ...teams
         .sort((a, b) => a.name.localeCompare(b.name))
-        .map(team => ({ label: team.name, value: team.sys.id }))
-    ]
+        .map((team) => ({ label: team.name, value: team.sys.id })),
+    ],
   };
 
   const definitions = [order, orgRole, space, spaceRole];

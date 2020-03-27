@@ -9,7 +9,7 @@ describe('LinkResolver', () => {
       const result = ResolveLinks({
         paths: [],
         includes: {},
-        items
+        items,
       });
 
       expect(result).toEqual(items);
@@ -20,14 +20,14 @@ describe('LinkResolver', () => {
       const result = ResolveLinks({
         paths: ['user'],
         includes: {
-          User: [user]
+          User: [user],
         },
         items: [
           {
             foo: 'bar',
-            user: fake.Link('User', user.sys.id)
-          }
-        ]
+            user: fake.Link('User', user.sys.id),
+          },
+        ],
       });
 
       expect(result[0].user).toBe(user);
@@ -38,18 +38,18 @@ describe('LinkResolver', () => {
       const result = ResolveLinks({
         paths: ['membership.sys.user'],
         includes: {
-          User: [user]
+          User: [user],
         },
         items: [
           {
             foo: 'bar',
             membership: {
               sys: {
-                user: fake.Link('User', user.sys.id)
-              }
-            }
-          }
-        ]
+                user: fake.Link('User', user.sys.id),
+              },
+            },
+          },
+        ],
       });
 
       expect(result[0].membership.sys.user).toBe(user);
@@ -60,14 +60,14 @@ describe('LinkResolver', () => {
       const result = ResolveLinks({
         paths: ['spaces'],
         includes: {
-          Space: spaces
+          Space: spaces,
         },
         items: [
           {
             foo: 'bar',
-            spaces: [fake.Link('Space', spaces[0].sys.id), fake.Link('Space', spaces[1].sys.id)]
-          }
-        ]
+            spaces: [fake.Link('Space', spaces[0].sys.id), fake.Link('Space', spaces[1].sys.id)],
+          },
+        ],
       });
 
       expect(result[0].spaces).toEqual(spaces);
@@ -79,14 +79,14 @@ describe('LinkResolver', () => {
       const result = ResolveLinks({
         paths: ['spaces'],
         includes: {
-          Space: [space]
+          Space: [space],
         },
         items: [
           {
             foo: 'bar',
-            spaces: [fake.Link('Space', space.sys.id), link]
-          }
-        ]
+            spaces: [fake.Link('Space', space.sys.id), link],
+          },
+        ],
       });
 
       expect(result[0].spaces).toEqual([space, link]);
@@ -99,9 +99,9 @@ describe('LinkResolver', () => {
         includes: {},
         items: [
           {
-            spaces: [link]
-          }
-        ]
+            spaces: [link],
+          },
+        ],
       });
 
       expect(result[0].spaces).toEqual([link]);
@@ -113,17 +113,17 @@ describe('LinkResolver', () => {
       const spaces = [fake.Space(), fake.Space()];
       const originalResponse = {
         includes: {
-          Space: spaces
+          Space: spaces,
         },
         items: [
           fake.SpaceMembership(fake.Link('Space', spaces[0].sys.id)),
-          fake.SpaceMembership(fake.Link('Space', spaces[1].sys.id))
-        ]
+          fake.SpaceMembership(fake.Link('Space', spaces[1].sys.id)),
+        ],
       };
       const promise = Promise.resolve(originalResponse);
       const resolved = await fetchAndResolve(promise, ['sys.space']);
 
-      expect(resolved.map(membership => membership.sys.space)).toEqual(spaces);
+      expect(resolved.map((membership) => membership.sys.space)).toEqual(spaces);
     });
   });
 });

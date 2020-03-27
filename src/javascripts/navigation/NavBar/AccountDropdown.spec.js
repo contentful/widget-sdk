@@ -12,11 +12,11 @@ let wrapper;
 
 jest.mock('analytics/Analytics', () => ({
   track: jest.fn(),
-  disable: jest.fn()
+  disable: jest.fn(),
 }));
 
 jest.mock('Authentication', () => ({
-  logout: jest.fn()
+  logout: jest.fn(),
 }));
 
 jest.mock('services/TokenStore', () => ({
@@ -25,16 +25,16 @@ jest.mock('services/TokenStore', () => ({
     lastName: 'Parton',
     avatarUrl: 'https://geocities.com/avatars/dolly-parton.jpg',
     email: 'dolly.parton@dollywood.com',
-    sys: { id: 'foo' }
-  })
+    sys: { id: 'foo' },
+  }),
 }));
 
 jest.mock('states/Navigator', () => ({
-  href: jest.fn()
+  href: jest.fn(),
 }));
 
 jest.mock('app/TasksPage/helpers', () => ({
-  getOpenAssignedTasksAndEntries: jest.fn()
+  getOpenAssignedTasksAndEntries: jest.fn(),
 }));
 
 describe('AccountDropdown', () => {
@@ -58,7 +58,7 @@ describe('AccountDropdown', () => {
     expect(href).toHaveBeenCalledWith({
       path: 'account.profile.user',
       options: undefined,
-      params: undefined
+      params: undefined,
     });
   });
 

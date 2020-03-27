@@ -54,7 +54,7 @@ export function count(name, tags) {
 export function record(name, value, tags) {
   const measurement = makeMeasurement(name, value, tags, state);
 
-  withState(state => {
+  withState((state) => {
     state.measurements = [...state.measurements, measurement];
   });
 }
@@ -74,9 +74,9 @@ export function countImmediate(name, tags) {
 export function recordImmediate(name, value, tags) {
   const measurement = makeMeasurement(name, value, tags, state);
 
-  withState(state => {
+  withState((state) => {
     const body = JSON.stringify([measurement]);
-    callBackend(state.client, body).catch(err => {
+    callBackend(state.client, body).catch((err) => {
       // eslint-disable-next-line no-console
       console.error('Could not send measurement.', body, err);
     });
@@ -84,7 +84,7 @@ export function recordImmediate(name, value, tags) {
 }
 
 export function init() {
-  withState(state => {
+  withState((state) => {
     if (!state.initialized) {
       state.initialized = true;
 
@@ -125,7 +125,7 @@ async function send(state) {
     // Don't fail if sending failed, no matter what.
     state.measurements = [
       ...state.measurements,
-      ...backupRef // Try next time...
+      ...backupRef, // Try next time...
     ];
   }
 }
@@ -134,6 +134,6 @@ function callBackend(client, body) {
   return client.call('/send', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body
+    body,
   });
 }

@@ -6,7 +6,7 @@ import { Paragraph, CheckboxField } from '@contentful/forma-36-react-components'
 export default class WebhookOtherEventsSection extends React.Component {
   static propTypes = {
     values: PropTypes.object.isRequired,
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
   };
 
   render() {
@@ -25,7 +25,7 @@ export default class WebhookOtherEventsSection extends React.Component {
             labelText={'Environment Alias Target Change'}
             helpText={'This event is triggered when an environment alias targets a new environment'}
             checked={isActionChecked(values, otherEventEntityType, otherEventEntityAction)}
-            onChange={e => {
+            onChange={(e) => {
               return onChange(
                 changeAction(values, otherEventEntityType, otherEventEntityAction, e.target.checked)
               );

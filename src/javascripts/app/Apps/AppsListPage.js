@@ -16,7 +16,7 @@ import {
   TextLink,
   Card,
   Paragraph,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 
 import NavigationIcon from 'ui/Components/NavigationIcon';
@@ -35,14 +35,14 @@ import { isUsageExceeded } from './isUsageExceeded';
 const styles = {
   pricingInfo: css({
     marginBottom: tokens.spacingL,
-    zIndex: 3
+    zIndex: 3,
   }),
   workbench: css({
-    backgroundColor: tokens.colorElementLightest
+    backgroundColor: tokens.colorElementLightest,
   }),
   appListCard: css({
     position: 'relative',
-    marginBottom: tokens.spacingL
+    marginBottom: tokens.spacingL,
   }),
   overlay: css({
     position: 'absolute',
@@ -52,19 +52,19 @@ const styles = {
     width: '100%',
     height: '100%',
     backgroundColor: tokens.colorWhite,
-    opacity: 0.8
+    opacity: 0.8,
   }),
   installedList: css({
-    marginBottom: tokens.spacing2Xl
-  })
+    marginBottom: tokens.spacing2Xl,
+  }),
 };
 
 const externalLinkProps = {
   target: '_blank',
-  rel: 'noopener noreferrer'
+  rel: 'noopener noreferrer',
 };
 
-const openDetailModal = ({ spaceInformation, usageExceeded, canManageApps }) => app => {
+const openDetailModal = ({ spaceInformation, usageExceeded, canManageApps }) => (app) => {
   AppLifecycleTracking.detailsOpened(app.id);
 
   ModalLauncher.open(({ isShown, onClose }) => (
@@ -105,7 +105,7 @@ const PricingInfo = () => (
   </Note>
 );
 
-const AppsListShell = props => (
+const AppsListShell = (props) => (
   <Workbench className={styles.workbench}>
     <Workbench.Header
       title={<Header />}
@@ -127,10 +127,10 @@ const AppsListShell = props => (
 
 AppsListShell.propTypes = {
   appsFeatureDisabled: PropTypes.bool,
-  canManageApps: PropTypes.bool
+  canManageApps: PropTypes.bool,
 };
 
-const ItemSkeleton = props => (
+const ItemSkeleton = (props) => (
   <React.Fragment>
     <SkeletonImage offsetTop={props.baseTop} width={36} height={36} radiusX={36} radiusY={36} />
     <SkeletonText offsetTop={props.baseTop + 15} offsetLeft={50} lineHeight={8} width={240} />
@@ -138,7 +138,7 @@ const ItemSkeleton = props => (
   </React.Fragment>
 );
 ItemSkeleton.propTypes = {
-  baseTop: PropTypes.number
+  baseTop: PropTypes.number,
 };
 
 const AppsListPageLoading = () => {
@@ -158,7 +158,7 @@ export default class AppsListPage extends React.Component {
   static propTypes = {
     goToContent: PropTypes.func.isRequired,
     repo: PropTypes.shape({
-      getApps: PropTypes.func.isRequired
+      getApps: PropTypes.func.isRequired,
     }).isRequired,
     organizationId: PropTypes.string.isRequired,
     spaceInformation: PropTypes.shape({
@@ -167,14 +167,14 @@ export default class AppsListPage extends React.Component {
       envMeta: PropTypes.shape({
         environmentId: PropTypes.string.isRequired,
         isMasterEnvironment: PropTypes.bool.isRequired,
-        aliasId: PropTypes.string
-      })
+        aliasId: PropTypes.string,
+      }),
     }).isRequired,
     userId: PropTypes.string.isRequired,
     hasAppsFeature: PropTypes.bool.isRequired,
     deeplinkAppId: PropTypes.string,
     deeplinkReferrer: PropTypes.string,
-    canManageApps: PropTypes.bool
+    canManageApps: PropTypes.bool,
   };
 
   state = { ready: false };
@@ -182,7 +182,7 @@ export default class AppsListPage extends React.Component {
   async componentDidMount() {
     try {
       const apps = await this.props.repo.getApps();
-      const [installedApps, availableApps] = partition(apps, app => !!app.appInstallation);
+      const [installedApps, availableApps] = partition(apps, (app) => !!app.appInstallation);
 
       this.setState({ ready: true, availableApps, installedApps }, () => {
         this.openDeeplinkedAppDetails();
@@ -201,7 +201,7 @@ export default class AppsListPage extends React.Component {
 
     const { installedApps, availableApps } = this.state;
 
-    const deeplinkedApp = installedApps.concat(availableApps).find(app => {
+    const deeplinkedApp = installedApps.concat(availableApps).find((app) => {
       // Find either by marketplace ID ("slug", pretty)
       // or definition ID (Contentful UUID, ugly).
       const byMarketplaceId = app.id === deeplinkAppId;
@@ -217,7 +217,7 @@ export default class AppsListPage extends React.Component {
       openDetailModal({
         spaceInformation,
         usageExceeded: isUsageExceeded(installedApps),
-        canManageApps
+        canManageApps,
       })(deeplinkedApp);
     }
   }
@@ -248,7 +248,7 @@ export default class AppsListPage extends React.Component {
           <>
             <Heading element="h2">Installed</Heading>
             <div data-test-id="installed-list" className={styles.installedList}>
-              {installedApps.map(app => (
+              {installedApps.map((app) => (
                 <AppListItem
                   key={app.id}
                   app={app}
@@ -262,7 +262,7 @@ export default class AppsListPage extends React.Component {
         <Heading element="h2">Available</Heading>
         {availableApps.length > 0 && (
           <div>
-            {availableApps.map(app => (
+            {availableApps.map((app) => (
               <AppListItem
                 key={app.id}
                 app={app}
@@ -270,7 +270,7 @@ export default class AppsListPage extends React.Component {
                 openDetailModal={openDetailModal({
                   spaceInformation,
                   usageExceeded,
-                  canManageApps
+                  canManageApps,
                 })}
               />
             ))}

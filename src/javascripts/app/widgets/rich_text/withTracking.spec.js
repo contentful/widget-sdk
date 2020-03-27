@@ -14,22 +14,22 @@ describe('withTracking() returned hoc', () => {
   beforeEach(() => {
     props = {
       loadEvents: {
-        emit: () => {}
+        emit: () => {},
       },
       widgetAPI: {
         field: {
           id: 'FIELD_ID,',
-          locale: 'FIELD_LOCALE'
+          locale: 'FIELD_LOCALE',
         },
         entry: {
           getSys: () => ({
             id: 'ENTRY_ID',
             contentType: {
-              sys: { id: 'CT_ID' }
-            }
-          })
-        }
-      }
+              sys: { id: 'CT_ID' },
+            },
+          }),
+        },
+      },
     };
     setup = () => {
       const HOC = withTracking(LOC);
@@ -66,8 +66,8 @@ describe('withTracking() returned hoc', () => {
           data: {
             trackingActionName: 'someUnknownActionFooBar',
             originalActionName: 'someUnknownAction',
-            originalActionData: data
-          }
+            originalActionData: data,
+          },
         }
       );
     });
@@ -88,7 +88,7 @@ describe('withTracking() returned hoc', () => {
         entryId: 'ENTRY_ID',
         fieldId: 'FIELD_ID,',
         fieldLocale: 'FIELD_LOCALE',
-        isFullscreen: false
+        isFullscreen: false,
       });
     });
 
@@ -134,7 +134,7 @@ describe('withTracking() returned hoc', () => {
 
       ['edit', INLINES.HYPERLINK, 'editHyperlink'],
       ['edit', INLINES.ENTRY_HYPERLINK, 'editEntryHyperlink'],
-      ['edit', INLINES.ASSET_HYPERLINK, 'editAssetHyperlink']
+      ['edit', INLINES.ASSET_HYPERLINK, 'editAssetHyperlink'],
     ])(
       'tracks action "%s" with `data.nodeType = "%s"` as analytics action "%s"',
       (action, nodeType, trackingAction) => {
@@ -152,7 +152,7 @@ describe('withTracking() returned hoc', () => {
       ['unmark', MARKS.BOLD, 'unmarkBold'],
       ['unmark', MARKS.UNDERLINE, 'unmarkUnderline'],
       ['unmark', MARKS.ITALIC, 'unmarkItalic'],
-      ['unmark', MARKS.CODE, 'unmarkCode']
+      ['unmark', MARKS.CODE, 'unmarkCode'],
     ])(
       'tracks action "%s" with `data.markType = "%s"` as analytics action "%s"',
       (action, markType, trackingAction) => {
@@ -175,8 +175,8 @@ describe('withTracking() returned hoc', () => {
       'cancelEditHyperlinkDialog',
       'cancelCreateEmbedDialogEmbeddedEntryInline',
       'cancelCreateEmbedDialogEmbeddedEntryBlock',
-      'cancelCreateEmbedDialogEmbeddedAssetBlock'
-    ])('action "%s"', action => {
+      'cancelCreateEmbedDialogEmbeddedAssetBlock',
+    ])('action "%s"', (action) => {
       it('is tracked as analytics action of same name', () => {
         locOnAction(action, {});
         expectTrackedAction(action);

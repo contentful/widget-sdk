@@ -19,12 +19,12 @@ describe('StateChangeConfirmationDialog', () => {
     action: Action.Unpublish(),
     entityInfo: {
       id: 'entry-id-257',
-      type: EntityType.ENTRY
+      type: EntityType.ENTRY,
     },
-    dialogSessionId: 'foo'
+    dialogSessionId: 'foo',
   };
 
-  beforeEach(function() {
+  beforeEach(function () {
     this.system.set('analytics/events/IncomingLinks', {
       onFetchLinks: sinon.stub(),
       onDialogOpen: sinon.stub(),
@@ -32,8 +32,8 @@ describe('StateChangeConfirmationDialog', () => {
       onIncomingLinkClick: sinon.stub(),
       Origin: {
         DIALOG: 'dialog',
-        SIDEBAR: 'sidebar'
-      }
+        SIDEBAR: 'sidebar',
+      },
     });
 
     const system = this.system;
@@ -42,7 +42,7 @@ describe('StateChangeConfirmationDialog', () => {
       fetchLinksStub = sinon.stub().returns(Promise.resolve([]))
     ) {
       system.set('app/entity_editor/Components/FetchLinksToEntity/fetchLinks', {
-        default: fetchLinksStub
+        default: fetchLinksStub,
       });
 
       const { default: StateChangeConfirmationDialog } = await system.import(
@@ -57,7 +57,7 @@ describe('StateChangeConfirmationDialog', () => {
     return mount(<Component {...defaultProps} {...props} />);
   }
 
-  it('renders the dialog with 0 links', async function() {
+  it('renders the dialog with 0 links', async function () {
     const Component = await this.importModule();
     const wrapper = render(Component);
     await flushPromises();
@@ -74,13 +74,13 @@ describe('StateChangeConfirmationDialog', () => {
     expect(getElement(wrapper, 'link').exists()).toBeFalsy();
   });
 
-  it('renders the dialog with 1 link', async function() {
+  it('renders the dialog with 1 link', async function () {
     const links = [
       {
         id: 'link-id',
         title: 'Title',
-        url: 'http://www.google1.com'
-      }
+        url: 'http://www.google1.com',
+      },
     ];
     const Component = await this.importModule(sinon.stub().returns(Promise.resolve(links)));
     const wrapper = render(Component);
@@ -97,18 +97,18 @@ describe('StateChangeConfirmationDialog', () => {
     assertLinksExist(wrapper, links);
   });
 
-  it('renders the dialog with 1+ link', async function() {
+  it('renders the dialog with 1+ link', async function () {
     const links = [
       {
         id: 'link-id',
         title: 'Title',
-        url: 'http://www.google1.com'
+        url: 'http://www.google1.com',
       },
       {
         id: 'link-id-2',
         title: 'Title 2',
-        url: 'http://www.google13.com'
-      }
+        url: 'http://www.google13.com',
+      },
     ];
 
     const Component = await this.importModule(sinon.stub().returns(Promise.resolve(links)));
@@ -121,7 +121,7 @@ describe('StateChangeConfirmationDialog', () => {
     assertBasicElementsExist(wrapper);
 
     assertMessageEquals(getContentText(wrapper), actionMessages.body, {
-      numberOfLinks: 2
+      numberOfLinks: 2,
     });
     expect(getElement(wrapper, 'cf-ui-modal-header').text()).toEqual(actionMessages.title);
     expect(getElement(wrapper, 'confirm').text()).toContain(actionMessages.confirm);
@@ -130,11 +130,11 @@ describe('StateChangeConfirmationDialog', () => {
     assertLinksExist(wrapper, links);
   });
 
-  it('triggers `onCancel`', async function() {
+  it('triggers `onCancel`', async function () {
     const Component = await this.importModule();
     const onCancel = sinon.spy();
     const wrapper = render(Component, {
-      onCancel
+      onCancel,
     });
     await flushPromises();
     wrapper.update();
@@ -143,11 +143,11 @@ describe('StateChangeConfirmationDialog', () => {
     sinon.assert.calledOnce(onCancel);
   });
 
-  it('triggers `onConfirm`', async function() {
+  it('triggers `onConfirm`', async function () {
     const Component = await this.importModule();
     const onConfirm = sinon.spy();
     const wrapper = render(Component, {
-      onConfirm
+      onConfirm,
     });
     await flushPromises();
     wrapper.update();
@@ -156,13 +156,13 @@ describe('StateChangeConfirmationDialog', () => {
     sinon.assert.calledOnce(onConfirm);
   });
 
-  it('renders loading content if linked entries are not yet loaded', async function() {
+  it('renders loading content if linked entries are not yet loaded', async function () {
     const Component = await this.importModule();
     const wrapper = render(Component);
     assertElementExists(wrapper, 'loader');
   });
 
-  it('renders error content if request failed', async function() {
+  it('renders error content if request failed', async function () {
     const Component = await this.importModule(sinon.stub().returns(Promise.reject(new Error())));
     const wrapper = render(Component);
     await flushPromises();
@@ -173,9 +173,7 @@ describe('StateChangeConfirmationDialog', () => {
 });
 
 function getContentText(wrapper) {
-  return getElement(wrapper, 'cf-ui-modal-content')
-    .find('p')
-    .text();
+  return getElement(wrapper, 'cf-ui-modal-content').find('p').text();
 }
 
 function assertBasicElementsExist(wrapper) {

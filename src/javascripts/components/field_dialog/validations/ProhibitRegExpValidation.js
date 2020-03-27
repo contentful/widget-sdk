@@ -4,7 +4,7 @@ import {
   TextInput,
   TextField,
   FormLabel,
-  ValidationMessage
+  ValidationMessage,
 } from '@contentful/forma-36-react-components';
 import { toString } from 'lodash';
 import styles from './styles';
@@ -14,14 +14,14 @@ const ProhibitRegExpValidation = ({
   validation,
   updateValidationSettingsValue,
   updateValidationMessageValue,
-  validate
+  validate,
 }) => {
   const [message, setMessage] = useState(validation.message);
   const [pattern, setPattern] = useState(validation.settings.pattern);
   const [flags, setFlags] = useState(validation.settings.flags);
   const [fieldTouched, setFieldTouched] = useState(false);
 
-  const updatePattern = updatedPattern => {
+  const updatePattern = (updatedPattern) => {
     setFieldTouched(true);
     setPattern(updatedPattern);
   };
@@ -79,7 +79,7 @@ ProhibitRegExpValidation.propTypes = {
   validation: PropTypes.object.isRequired,
   updateValidationSettingsValue: PropTypes.func.isRequired,
   updateValidationMessageValue: PropTypes.func.isRequired,
-  validate: PropTypes.func.isRequired
+  validate: PropTypes.func.isRequired,
 };
 
 export default ProhibitRegExpValidation;

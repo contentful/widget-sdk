@@ -8,7 +8,7 @@ class EntryEmbedDropdown extends Component {
     isOpen: PropTypes.bool,
     disabled: PropTypes.bool,
     onClose: PropTypes.func,
-    onToggle: PropTypes.func
+    onToggle: PropTypes.func,
   };
 
   render() {

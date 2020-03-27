@@ -4,9 +4,9 @@ import * as PolicyBuilder from 'access_control/PolicyBuilder';
 const policies = {
   entry: {
     allowed: { flat: [], byContentType: {} },
-    denied: { flat: [], byContentType: {} }
+    denied: { flat: [], byContentType: {} },
   },
-  asset: { allowed: [], denied: [] }
+  asset: { allowed: [], denied: [] },
 };
 
 let isAdmin = false;
@@ -18,7 +18,7 @@ export const canAccessAssets = () => policies.asset.allowed.length > 0;
 
 export function setMembership(membership, spaceAuthContext) {
   const internals = get(membership, 'roles', [])
-    .map(role => role && PolicyBuilder.toInternal(role))
+    .map((role) => role && PolicyBuilder.toInternal(role))
     .filter(identity);
 
   isAdmin = get(membership, 'admin', false);
@@ -101,7 +101,7 @@ function groupByContentType(collectionName) {
   const collection = policies.entry[collectionName];
   collection.byContentType = {};
 
-  collection.flat.forEach(p => {
+  collection.flat.forEach((p) => {
     if (isString(p.contentType)) {
       collection.byContentType[p.contentType] = collection.byContentType[p.contentType] || [];
       collection.byContentType[p.contentType].push(p);
@@ -112,7 +112,7 @@ function groupByContentType(collectionName) {
 function groupByEntityId(type, collectionName) {
   const collection = policies[type][collectionName];
 
-  collection.byId = collection.flat.filter(p => isString(p.entityId));
+  collection.byId = collection.flat.filter((p) => isString(p.entityId));
 }
 
 function getCached(ctId, fieldId, localeCode) {
@@ -138,7 +138,7 @@ function performCheck(c1, c2, fn) {
 }
 
 function withoutPathRules(c) {
-  return c.filter(p => !p.isPath);
+  return c.filter((p) => !p.isPath);
 }
 
 function getAllowed(contentTypeId) {
@@ -166,19 +166,19 @@ function getDeniedEntries() {
 }
 
 function anyUserUpdatePoliciesOnly(c) {
-  return updatePoliciesOnly(c).filter(p => p.scope !== 'user');
+  return updatePoliciesOnly(c).filter((p) => p.scope !== 'user');
 }
 
 function currentUserUpdatePoliciesOnly(c) {
-  return updatePoliciesOnly(c).filter(p => p.scope === 'user');
+  return updatePoliciesOnly(c).filter((p) => p.scope === 'user');
 }
 
 function updatePoliciesOnly(collection) {
-  return collection.filter(p => ['update', 'all'].includes(p.action));
+  return collection.filter((p) => ['update', 'all'].includes(p.action));
 }
 
 function checkPolicyCollectionForPath(collection, entitySys, fieldId, localeCode) {
-  return updatePoliciesOnly(collection).some(p => {
+  return updatePoliciesOnly(collection).some((p) => {
     const noPath = !isString(p.field) && !isString(p.locale);
     const fieldOnlyPathMatched = matchField(p.field) && !isString(p.locale);
     const localeOnlyPathMatched = !isString(p.field) && matchLocale(p.locale);

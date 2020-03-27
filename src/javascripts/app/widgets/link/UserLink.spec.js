@@ -13,8 +13,8 @@ describe('UserLink', () => {
         firstName: 'Vincent',
         lastName: 'Dunston',
         confirmed: true,
-        activated: true
-      }
+        activated: true,
+      },
     };
     const { container, getByTestId } = render(<UserLink {...props} />);
     expect(container.querySelector('img').getAttribute('src')).toBe(props.user.avatarUrl);
@@ -32,8 +32,8 @@ describe('UserLink', () => {
         firstName: 'Vincent',
         lastName: 'Dunston',
         confirmed: false,
-        activated: true
-      }
+        activated: true,
+      },
     };
     const { container, getByTestId } = render(<UserLink {...props} />);
     expect(container.querySelector('img').getAttribute('src')).toBe(props.user.avatarUrl);
@@ -53,8 +53,8 @@ describe('UserLink', () => {
         firstName: 'Vincent',
         lastName: 'Dunston',
         confirmed: false,
-        activated: false
-      }
+        activated: false,
+      },
     };
     const { container, getByTestId } = render(<UserLink {...props} />);
     expect(container.querySelector('img').getAttribute('src')).toBe(props.user.avatarUrl);
@@ -74,8 +74,8 @@ describe('UserLink', () => {
         firstName: undefined,
         lastName: undefined,
         confirmed: false,
-        activated: false
-      }
+        activated: false,
+      },
     };
     const { container, getByTestId } = render(<UserLink {...props} />);
     expect(container.querySelector('img').getAttribute('src')).toBe(props.user.avatarUrl);

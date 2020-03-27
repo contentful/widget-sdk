@@ -6,7 +6,7 @@ import {
   FieldGroup,
   RadioButtonField,
   Paragraph,
-  Form
+  Form,
 } from '@contentful/forma-36-react-components';
 
 export default class FeedbackDialog extends Component {
@@ -14,12 +14,12 @@ export default class FeedbackDialog extends Component {
     about: PropTypes.string.isRequired,
     isShown: PropTypes.bool.isRequired,
     onConfirm: PropTypes.func.isRequired,
-    onCancel: PropTypes.func.isRequired
+    onCancel: PropTypes.func.isRequired,
   };
 
   state = {
     canBeContacted: false,
-    feedback: ''
+    feedback: '',
   };
 
   render() {
@@ -46,10 +46,10 @@ export default class FeedbackDialog extends Component {
             labelText="Your feedback"
             name="feedback"
             id="feedback-input"
-            onChange={e => this.setState({ feedback: e.target.value })}
+            onChange={(e) => this.setState({ feedback: e.target.value })}
             value={feedback}
             textInputProps={{
-              rows: 6
+              rows: 6,
             }}
           />
           <FieldGroup>

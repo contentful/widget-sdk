@@ -32,7 +32,7 @@ const newPlugin = (defaultType, tagName, hotkey) => ({ type = defaultType, richT
       return;
     }
     return next();
-  }
+  },
 });
 
 // TODO: move hotkeys to components

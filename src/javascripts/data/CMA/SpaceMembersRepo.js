@@ -9,7 +9,7 @@ export default function create(endpoint) {
       return endpoint(
         {
           method: 'GET',
-          path: ['space_members']
+          path: ['space_members'],
         },
         alphaHeader
       );
@@ -17,7 +17,7 @@ export default function create(endpoint) {
 
     getAll() {
       return fetchAll(endpoint, ['space_members'], 100, {}, alphaHeader);
-    }
+    },
   };
 }
 

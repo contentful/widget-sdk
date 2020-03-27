@@ -21,7 +21,7 @@ import window from 'utils/ngCompat/window';
  * dev tools.
  */
 const TRACK_INTEGRATIONS = {
-  Intercom: false
+  Intercom: false,
 };
 
 const buffer = CallBuffer.create();
@@ -44,7 +44,7 @@ function enable() {
  * Removes all user traits.
  */
 function disable() {
-  buffer.call(analytics => {
+  buffer.call((analytics) => {
     analytics.user().traits({});
   });
   buffer.disable();
@@ -52,9 +52,9 @@ function disable() {
 }
 
 function bufferedCall(fnName) {
-  return function() {
+  return function () {
     const args = _.toArray(arguments);
-    buffer.call(analytics => {
+    buffer.call((analytics) => {
       try {
         analytics[fnName](...args);
       } catch (err) {
@@ -62,7 +62,7 @@ function bufferedCall(fnName) {
           err: err,
           msg: err.message,
           analyticsFn: fnName,
-          analyticsFnArgs: args
+          analyticsFnArgs: args,
         });
       }
     });
@@ -96,18 +96,18 @@ function install() {
     'page',
     'once',
     'off',
-    'on'
+    'on',
   ];
 
-  analytics.factory = method =>
-    function() {
+  analytics.factory = (method) =>
+    function () {
       const args = _.toArray(arguments);
       args.unshift(method);
       analytics.push(args);
       return analytics;
     };
 
-  analytics.methods.forEach(key => {
+  analytics.methods.forEach((key) => {
     analytics[key] = analytics.factory(key);
   });
 
@@ -133,12 +133,12 @@ function sendOnboardingDeploymentEvent(event, data) {
     bufferedTrack(
       'onboarding deployment completed',
       {
-        provider
+        provider,
       },
       {
         integrations: {
-          Intercom: true
-        }
+          Intercom: true,
+        },
       }
     );
   }
@@ -170,5 +170,5 @@ export default {
   /**
    * Sets current user traits.
    */
-  identify: bufferedCall('identify')
+  identify: bufferedCall('identify'),
 };

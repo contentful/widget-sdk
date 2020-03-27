@@ -11,22 +11,22 @@ import { OrganizationMembership as OrganizationMembershipPropType } from 'app/Or
 
 const styles = {
   addTeamMemberButton: css({
-    marginRight: tokens.spacingS
-  })
+    marginRight: tokens.spacingS,
+  }),
 };
 
 class TeamMembershipForm extends React.Component {
   static propTypes = {
     orgMemberships: PropTypes.arrayOf(OrganizationMembershipPropType),
     onSubmit: PropTypes.func.isRequired,
-    onClose: PropTypes.func.isRequired
+    onClose: PropTypes.func.isRequired,
   };
 
   state = {
-    selectedOrgMembershipId: null
+    selectedOrgMembershipId: null,
   };
 
-  setOrgMembership = evt => {
+  setOrgMembership = (evt) => {
     this.setState({ selectedOrgMembershipId: evt.target.value });
   };
 
@@ -79,13 +79,13 @@ function getAvailableOrgMemberships(state) {
 }
 
 export default connect(
-  state => ({
-    orgMemberships: getAvailableOrgMemberships(state)
+  (state) => ({
+    orgMemberships: getAvailableOrgMemberships(state),
   }),
   (dispatch, { onClose }) => ({
-    onSubmit: orgMembership => {
+    onSubmit: (orgMembership) => {
       dispatch({ type: 'SUBMIT_NEW_TEAM_MEMBERSHIP', payload: { orgMembership } });
       onClose();
-    }
+    },
   })
 )(TeamMembershipForm);

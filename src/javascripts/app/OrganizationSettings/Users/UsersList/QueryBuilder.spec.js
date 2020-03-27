@@ -3,16 +3,16 @@ import { formatQuery } from './QueryBuilder';
 describe('QueryBuilder', () => {
   const filterA = {
     key: 'sys.space.sys.id',
-    value: 'pizzaspace'
+    value: 'pizzaspace',
   };
   const filterB = {
     key: 'roles.name',
     operator: jest.fn(() => 'matches'),
-    value: 'editor'
+    value: 'editor',
   };
   const filterC = {
     key: 'sys.user.firstName',
-    value: ''
+    value: '',
   };
 
   it('should call the operator with the filter value', () => {
@@ -46,8 +46,8 @@ describe('QueryBuilder', () => {
       {
         key: 'sys.user.firstName',
         operator: jest.fn(() => 'exists'),
-        value: false
-      }
+        value: false,
+      },
     ]);
     expect(query).toEqual({ 'sys.user.firstName[exists]': false });
   });
@@ -56,7 +56,7 @@ describe('QueryBuilder', () => {
     const query = formatQuery([filterA, filterB, filterC]);
     expect(query).toEqual({
       'sys.space.sys.id': 'pizzaspace',
-      'roles.name[matches]': 'editor'
+      'roles.name[matches]': 'editor',
     });
   });
 });

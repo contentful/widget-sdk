@@ -16,7 +16,7 @@ import { LOCATION_ENTRY_FIELD, LOCATION_ENTRY_FIELD_SIDEBAR } from '../WidgetLoc
 const ERROR_MESSAGES = {
   MFAILUPDATE: 'Could not update entry field',
   MFAILREMOVAL: 'Could not remove value for field',
-  MFAILPERMISSIONS: 'Could not update entry field'
+  MFAILPERMISSIONS: 'Could not update entry field',
 };
 
 // This module, given editor-specific Angular dependencies
@@ -32,7 +32,7 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
   const { $rootScope, $scope, spaceContext } = checkDependencies('ExtensionBridge', dependencies, [
     '$rootScope',
     '$scope',
-    'spaceContext'
+    'spaceContext',
   ]);
 
   let unsubscribeFunctions = [];
@@ -44,10 +44,10 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
     getData,
     install,
     uninstall: () => {
-      unsubscribeFunctions.forEach(fn => fn());
+      unsubscribeFunctions.forEach((fn) => fn());
       unsubscribeFunctions = [];
     },
-    apply: fn => $rootScope.$apply(fn)
+    apply: (fn) => $rootScope.$apply(fn),
   };
 
   function getData() {
@@ -59,17 +59,17 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
       current: isFieldLevelExtension
         ? {
             field: $scope.widget.field,
-            locale: $scope.locale
+            locale: $scope.locale,
           }
         : null,
       locales: {
         available: TheLocaleStore.getPrivateLocales(),
-        default: TheLocaleStore.getDefaultLocale()
+        default: TheLocaleStore.getDefaultLocale(),
       },
       entryData: $scope.otDoc.getValueAt([]),
       contentTypeData: $scope.entityInfo.contentType,
       initialContentTypesData: spaceContext.publishedCTs.getAllBare(),
-      editorInterface: $scope.editorData.editorInterface
+      editorInterface: $scope.editorData.editorInterface,
     };
   }
 
@@ -104,29 +104,29 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
       const focusedLocale = $scope.localeData.focusedLocale;
       return {
         mode,
-        focused: focusedLocale ? focusedLocale.code : undefined
+        focused: focusedLocale ? focusedLocale.code : undefined,
       };
     }
     const activeLocales = $scope.localeData.activeLocales || [];
     return {
       mode,
-      active: activeLocales.map(locale => locale.code).filter(code => code)
+      active: activeLocales.map((locale) => locale.code).filter((code) => code),
     };
   }
 
   function install(api) {
-    K.onValueScope($scope, $scope.otDoc.sysProperty, sys => {
+    K.onValueScope($scope, $scope.otDoc.sysProperty, (sys) => {
       api.send('sysChanged', [sys]);
     });
 
     K.onValueScope(
       $scope,
-      $scope.otDoc.changes.filter(path => PathUtils.isAffecting(path, ['fields'])),
-      path => api.update(path, $scope.otDoc.getValueAt([]))
+      $scope.otDoc.changes.filter((path) => PathUtils.isAffecting(path, ['fields'])),
+      (path) => api.update(path, $scope.otDoc.getValueAt([]))
     );
 
     unsubscribeFunctions.push(
-      onSlideInNavigation(data => {
+      onSlideInNavigation((data) => {
         api.send('navigateSlideIn', [data]);
       })
     );
@@ -161,11 +161,11 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
 
     // Available for field-level extensions only:
     if (isFieldLevelExtension) {
-      K.onValueScope($scope, $scope.fieldLocale.access$, access => {
+      K.onValueScope($scope, $scope.fieldLocale.access$, (access) => {
         api.send('isDisabledChanged', [!!access.disabled]);
       });
 
-      K.onValueScope($scope, $scope.fieldLocale.errors$, errors => {
+      K.onValueScope($scope, $scope.fieldLocale.errors$, (errors) => {
         api.send('schemaErrorsChanged', [errors || []]);
       });
 
@@ -173,7 +173,7 @@ export default function createExtensionBridge(dependencies, location = LOCATION_
         $scope.fieldController.setInvalid(localeCode, isInvalid);
       });
 
-      api.registerHandler('setActive', isActive => {
+      api.registerHandler('setActive', (isActive) => {
         $scope.fieldLocale.setActive(isActive);
       });
     }

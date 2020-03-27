@@ -8,15 +8,15 @@ import { Select, Option, Button } from '@contentful/forma-36-react-components';
 import { PolicyBuilderConfig } from 'access_control/PolicyBuilder';
 import { truncate } from 'utils/StringUtils';
 
-const contentTypesToOptions = contentTypes =>
+const contentTypesToOptions = (contentTypes) =>
   [
     {
       id: PolicyBuilderConfig.ALL_CTS,
-      name: 'All content types'
-    }
+      name: 'All content types',
+    },
   ].concat(contentTypes.map(({ sys: { id }, name }) => ({ id, name })));
 
-const getEntityName = entity => {
+const getEntityName = (entity) => {
   if (entity === 'entry') {
     return ['Entry', 'Entries'];
   } else {
@@ -29,13 +29,13 @@ const styles = {
     display: 'flex',
     margin: `${tokens.spacingM} 0`,
     alignItems: 'center',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   }),
   select: css({
     marginRight: tokens.spacingS,
     marginTop: tokens.spacingXs,
-    marginBottom: tokens.spacingXs
-  })
+    marginBottom: tokens.spacingXs,
+  }),
 };
 
 class Rule extends React.Component {
@@ -49,7 +49,7 @@ class Rule extends React.Component {
       scope: PropTypes.string,
       entityId: PropTypes.string,
       field: PropTypes.string,
-      locale: PropTypes.string
+      locale: PropTypes.string,
     }),
     entity: PropTypes.string,
     onRemove: PropTypes.func.isRequired,
@@ -57,7 +57,7 @@ class Rule extends React.Component {
     privateLocales: PropTypes.array.isRequired,
     contentTypes: PropTypes.array.isRequired,
     searchEntities: PropTypes.func.isRequired,
-    getEntityTitle: PropTypes.func.isRequired
+    getEntityTitle: PropTypes.func.isRequired,
   };
 
   state = {};
@@ -71,19 +71,19 @@ class Rule extends React.Component {
   static getDerivedStateFromProps(props) {
     const { rule, contentTypes } = props;
 
-    const ct = contentTypes.find(ct => ct.sys.id === rule.contentType);
+    const ct = contentTypes.find((ct) => ct.sys.id === rule.contentType);
     return {
       contentTypeFields: [
         {
           id: PolicyBuilderConfig.ALL_FIELDS,
-          name: 'All fields'
-        }
+          name: 'All fields',
+        },
       ].concat(
         get(ct, ['fields'], []).map(({ id, name, apiName }) => ({
           id: apiName || id,
-          name
+          name,
         }))
-      )
+      ),
     };
   }
 
@@ -91,11 +91,11 @@ class Rule extends React.Component {
     const { entity, searchEntities, onUpdateAttribute } = this.props;
     const entityName = getEntityName(entity);
 
-    return searchEntities(entityName[0]).then(entity => {
+    return searchEntities(entityName[0]).then((entity) => {
       if (entity) {
         if (entityName[0] === 'Entry') {
           onUpdateAttribute('contentType')({
-            target: { value: entity.sys.contentType.sys.id }
+            target: { value: entity.sys.contentType.sys.id },
           });
         }
         onUpdateAttribute('entityId')({ target: { value: entity.sys.id } });
@@ -105,10 +105,10 @@ class Rule extends React.Component {
     });
   };
 
-  updateScope = event => {
+  updateScope = (event) => {
     const { rule, onUpdateAttribute } = this.props;
     if (event.target.value === 'entityId' && !rule.entityId) {
-      return this.searchEntitiesAndUpdate().then(entityId => {
+      return this.searchEntitiesAndUpdate().then((entityId) => {
         if (entityId) {
           return onUpdateAttribute('scope')({ target: { value: 'entityId' } });
         }
@@ -126,7 +126,7 @@ class Rule extends React.Component {
       onUpdateAttribute,
       rule,
       privateLocales,
-      getEntityTitle
+      getEntityTitle,
     } = this.props;
     const entityName = getEntityName(entity);
 

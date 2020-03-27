@@ -5,12 +5,12 @@ export default (state = { allowed: true }, { type, payload }) => {
     case 'ACCESS_DENIED': {
       return {
         allowed: false,
-        reason: payload.reason
+        reason: payload.reason,
       };
     }
     case 'LOCATION_CHANGED': {
       return {
-        allowed: true
+        allowed: true,
       };
     }
     default:

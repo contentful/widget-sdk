@@ -75,8 +75,8 @@ export function has(storage, key) {
  */
 export function externalChanges(key) {
   return K.fromEvents(window, 'storage')
-    .filter(event => event.key === key)
-    .map(event => event.newValue);
+    .filter((event) => event.key === key)
+    .map((event) => event.newValue);
 }
 
 /**
@@ -92,7 +92,7 @@ export function forKey(storage, key) {
     set: partial(set, storage, key),
     remove: partial(remove, storage, key),
     has: partial(has, storage, key),
-    externalChanges: partial(externalChanges, key)
+    externalChanges: partial(externalChanges, key),
   };
 }
 
@@ -109,6 +109,6 @@ export function forStorage(storage) {
     remove: partial(remove, storage),
     has: partial(has, storage),
     externalChanges,
-    forKey: partial(forKey, storage)
+    forKey: partial(forKey, storage),
   };
 }

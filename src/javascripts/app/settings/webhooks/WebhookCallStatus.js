@@ -21,7 +21,7 @@ const ERROR_NAMES = {
   NetworkUnreachableError: 'The target network is unreachable',
   ProtocolError: 'Invalid protocol',
   SelfSignedCertificateError: 'Self signed certificate',
-  TimeoutError: 'Timeout'
+  TimeoutError: 'Timeout',
 };
 
 function getStatus(code) {
@@ -38,7 +38,7 @@ function getStatus(code) {
 
 export default class WebhookCallStatus extends React.Component {
   static propTypes = {
-    call: PropTypes.object.isRequired
+    call: PropTypes.object.isRequired,
   };
 
   render() {

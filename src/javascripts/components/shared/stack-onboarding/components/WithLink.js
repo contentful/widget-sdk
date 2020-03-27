@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   track,
-  getStoragePrefix
+  getStoragePrefix,
 } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
 import { getStore } from 'browserStorage';
 import { updateUserInSegment } from 'analytics/Analytics';
@@ -15,7 +15,7 @@ export default class WithLink extends React.Component {
     link: PropTypes.oneOf(['getStarted', 'copy', 'explore', 'deploy', 'spaceHome']),
     trackingElementId: PropTypes.string.isRequired,
     intercomKey: PropTypes.string,
-    children: PropTypes.func.isRequired
+    children: PropTypes.func.isRequired,
   };
 
   render() {
@@ -35,7 +35,7 @@ export default class WithLink extends React.Component {
 
       return {
         path,
-        params
+        params,
       };
     };
 
@@ -51,7 +51,7 @@ export default class WithLink extends React.Component {
 
       if (intercomKey) {
         updateUserInSegment({
-          [intercomKey]: true
+          [intercomKey]: true,
         });
       }
 

@@ -7,13 +7,13 @@ export default organizationRoute({
   name: 'invitation',
   url: '/invitations/:invitationId',
   params: {
-    invitationId: ''
+    invitationId: '',
   },
-  component: props => (
+  component: (props) => (
     <LazyLoadedComponent importer={importer}>
       {({ UserInvitationDetailRouter }) => {
         return <UserInvitationDetailRouter {...props} />;
       }}
     </LazyLoadedComponent>
-  )
+  ),
 });

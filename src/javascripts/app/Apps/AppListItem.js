@@ -15,26 +15,26 @@ const styles = {
     borderBottom: `1px solid ${tokens.colorElementLight}`,
     '&:last-child': {
       borderBottom: 'none',
-      paddingBottom: '0'
-    }
+      paddingBottom: '0',
+    },
   }),
   title: css({
     flexGrow: 1,
-    display: 'block'
+    display: 'block',
   }),
   tagLine: css({
     fontSize: tokens.fontSizeS,
-    color: tokens.colorElementDarkest
+    color: tokens.colorElementDarkest,
   }),
   titleText: css({
     fontSize: tokens.fontSizeL,
-    fontWeight: '500'
+    fontWeight: '500',
   }),
   actions: css({
     display: 'block',
     button: {
-      marginLeft: tokens.spacingM
-    }
+      marginLeft: tokens.spacingM,
+    },
   }),
   icon: css({
     borderRadius: '5px',
@@ -43,17 +43,17 @@ const styles = {
     padding: '2px',
     marginRight: tokens.spacingS,
     width: '35px',
-    height: '35px'
+    height: '35px',
   }),
   appLink: css({
     display: 'flex',
     alignItems: 'center',
-    cursor: 'pointer'
+    cursor: 'pointer',
   }),
   tag: css({
     marginTop: '3px',
-    marginLeft: tokens.spacingXs
-  })
+    marginLeft: tokens.spacingXs,
+  }),
 };
 
 export default class AppListItem extends Component {
@@ -64,10 +64,10 @@ export default class AppListItem extends Component {
       tagLine: PropTypes.string,
       icon: PropTypes.string,
       appInstallation: PropTypes.object,
-      isPrivateApp: PropTypes.bool
+      isPrivateApp: PropTypes.bool,
     }).isRequired,
     openDetailModal: PropTypes.func.isRequired,
-    canManageApps: PropTypes.bool
+    canManageApps: PropTypes.bool,
   };
 
   determineOnClick = (onClick, openDetailsFunc, canManageApps) => {

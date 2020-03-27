@@ -16,9 +16,9 @@ export default {
       params: {
         // optional extensionUrl param to open GitHubInstaller
         extensionUrl: null,
-        referrer: null
+        referrer: null,
       },
-      component: props => (
+      component: (props) => (
         <LazyLoadedComponent importer={SettingsImporter} fallback={ExtensionListSkeleton}>
           {({ ExtensionsListRoute }) => <ExtensionsListRoute {...props} />}
         </LazyLoadedComponent>
@@ -30,15 +30,15 @@ export default {
           return {
             extensionUrl: decodeURI($stateParams.extensionUrl || ''),
             extensionUrlReferrer: $stateParams.referrer || null,
-            cma: spaceContext.cma
+            cma: spaceContext.cma,
           };
-        }
-      ]
+        },
+      ],
     },
     {
       name: 'detail',
       url: '/:extensionId',
-      component: props => (
+      component: (props) => (
         <LazyLoadedComponent importer={SettingsImporter} fallback={ExtensionEditorSkeleton}>
           {({ ExtensionEditorRoute }) => <ExtensionEditorRoute {...props} />}
         </LazyLoadedComponent>
@@ -51,21 +51,21 @@ export default {
         ($scope, $stateParams, spaceContext, $state) => {
           return {
             extensionId: $stateParams.extensionId,
-            registerSaveAction: save => {
+            registerSaveAction: (save) => {
               $scope.context.requestLeaveConfirmation = createUnsavedChangesDialogOpener(save);
               $scope.$applyAsync();
             },
-            setDirty: value => {
+            setDirty: (value) => {
               $scope.context.dirty = value;
               $scope.$applyAsync();
             },
             cma: spaceContext.cma,
             goToList: () => {
               $state.go('^.list');
-            }
+            },
           };
-        }
-      ]
-    }
-  ]
+        },
+      ],
+    },
+  ],
 };

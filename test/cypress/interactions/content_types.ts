@@ -2,7 +2,7 @@ import {
   defaultSpaceId,
   defaultContentType,
   defaultContentTypeId,
-  defaultHeader
+  defaultHeader,
 } from '../util/requests';
 import { RequestOptions, Query } from '@pact-foundation/pact-web';
 
@@ -23,7 +23,7 @@ enum States {
   SEVERAL = 'content_types/several',
   DEFAULT_CONTENT_TYPE_IS_PUBLISHED = 'content_types/default-content-type-is-published',
   NO_PUBLIC_CONTENT_TYPES = 'content_types/no-public-content-types',
-  ONLY_ONE_CONTENT_TYPE_IS_PUBLIC = 'content_types/one-single-content-type'
+  ONLY_ONE_CONTENT_TYPE_IS_PUBLIC = 'content_types/one-single-content-type',
 }
 
 const getAllPublicContentTypesInDefaultSpaceRequest: RequestOptions = {
@@ -31,9 +31,9 @@ const getAllPublicContentTypesInDefaultSpaceRequest: RequestOptions = {
   path: `/spaces/${defaultSpaceId}/public/content_types`,
   headers: defaultHeader,
   query: {
-    limit: '1000'
-  }
-}
+    limit: '1000',
+  },
+};
 
 export const getAllPublicContentTypesInDefaultSpace = {
   willReturnNone() {
@@ -44,8 +44,8 @@ export const getAllPublicContentTypesInDefaultSpace = {
       withRequest: getAllPublicContentTypesInDefaultSpaceRequest,
       willRespondWith: {
         status: 200,
-        body: empty
-      }
+        body: empty,
+      },
     }).as('getAllPublicContentTypesInDefaultSpace');
 
     return '@getAllPublicContentTypesInDefaultSpace';
@@ -60,20 +60,20 @@ export const getAllPublicContentTypesInDefaultSpace = {
       withRequest: getAllPublicContentTypesInDefaultSpaceRequest,
       willRespondWith: {
         status: 200,
-        body: contentTypeSingle
-      }
+        body: contentTypeSingle,
+      },
     }).as('getAllPublicContentTypesInDefaultSpace');
 
-    return '@getAllPublicContentTypesInDefaultSpace'
-  }
-}
+    return '@getAllPublicContentTypesInDefaultSpace';
+  },
+};
 
 function getAllContentTypesInDefaultSpaceRequest(query?: Query): RequestOptions {
   return {
     method: 'GET',
     path: `/spaces/${defaultSpaceId}/content_types`,
     headers: defaultHeader,
-    query
+    query,
   };
 }
 
@@ -86,11 +86,11 @@ export const getAllContentTypesInDefaultSpace = {
       withRequest: getAllContentTypesInDefaultSpaceRequest(),
       willRespondWith: {
         status: 200,
-        body: empty
-      }
+        body: empty,
+      },
     }).as('getAllContentTypesInDefaultSpace');
 
-    return '@getAllContentTypesInDefaultSpace'
+    return '@getAllContentTypesInDefaultSpace';
   },
   // TODO: Is not a good idea to test with a response of a single element against a collection
   // Unless there is a good reason for not doing so, test with several
@@ -102,13 +102,13 @@ export const getAllContentTypesInDefaultSpace = {
       withRequest: getAllContentTypesInDefaultSpaceRequest(),
       willRespondWith: {
         status: 200,
-        body: contentTypeSingle
-      }
+        body: contentTypeSingle,
+      },
     }).as('getAllContentTypesInDefaultSpace');
 
     return '@getAllContentTypesInDefaultSpace';
-  }
-}
+  },
+};
 
 export const getFirst1000ContentTypesInDefaultSpaceOrderedByName = {
   willReturnNone() {
@@ -118,12 +118,12 @@ export const getFirst1000ContentTypesInDefaultSpaceOrderedByName = {
       uponReceiving: `a request for the first 1000 content types in space "${defaultSpaceId}" ordered by name`,
       withRequest: getAllContentTypesInDefaultSpaceRequest({
         limit: '1000',
-        order: 'name'
+        order: 'name',
       }),
       willRespondWith: {
         status: 200,
-        body: empty
-      }
+        body: empty,
+      },
     }).as('getFirst1000ContentTypesInDefaultSpaceOrderedByName');
 
     return '@getFirst1000ContentTypesInDefaultSpaceOrderedByName';
@@ -135,23 +135,23 @@ export const getFirst1000ContentTypesInDefaultSpaceOrderedByName = {
       uponReceiving: `a request for the first 1000 content types in space "${defaultSpaceId}" ordered by name`,
       withRequest: getAllContentTypesInDefaultSpaceRequest({
         limit: '1000',
-        order: 'name'
+        order: 'name',
       }),
       willRespondWith: {
         status: 200,
-        body: severalContentTypes
-      }
+        body: severalContentTypes,
+      },
     }).as('getFirst1000ContentTypesInDefaultSpaceOrderedByName');
 
     return '@getFirst1000ContentTypesInDefaultSpaceOrderedByName';
-  }
-}
+  },
+};
 
 const getEditorInterfaceForDefaultContentTypeRequest: RequestOptions = {
   method: 'GET',
   path: `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}/editor_interface`,
-  headers: defaultHeader
-}
+  headers: defaultHeader,
+};
 
 export const getEditorInterfaceForDefaultContentType = {
   willReturnOneWithoutSidebar() {
@@ -162,8 +162,8 @@ export const getEditorInterfaceForDefaultContentType = {
       withRequest: getEditorInterfaceForDefaultContentTypeRequest,
       willRespondWith: {
         status: 200,
-        body: editorInterfaceWithoutSidebarResponseBody
-      }
+        body: editorInterfaceWithoutSidebarResponseBody,
+      },
     }).as('getEditorInterfaceForDefaultContentType');
 
     return '@getEditorInterfaceForDefaultContentType';
@@ -176,13 +176,13 @@ export const getEditorInterfaceForDefaultContentType = {
       withRequest: getEditorInterfaceForDefaultContentTypeRequest,
       willRespondWith: {
         status: 200,
-        body: editorInterfaceWithSidebarResponseBody
-      }
+        body: editorInterfaceWithSidebarResponseBody,
+      },
     }).as('getEditorInterfaceForDefaultContentType');
 
     return '@getEditorInterfaceForDefaultContentType';
-  }
-}
+  },
+};
 
 export const getDefaultContentType = {
   willReturnIt() {
@@ -193,17 +193,17 @@ export const getDefaultContentType = {
       withRequest: {
         method: 'GET',
         path: `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}`,
-        headers: defaultHeader
+        headers: defaultHeader,
       },
       willRespondWith: {
         status: 200,
-        body: defaultContentType
-      }
+        body: defaultContentType,
+      },
     }).as('getDefaultContentType');
 
     return '@getDefaultContentType';
-  }
-}
+  },
+};
 
 export const getPublishedVersionOfDefaultContentType = {
   willReturnIt() {
@@ -214,17 +214,17 @@ export const getPublishedVersionOfDefaultContentType = {
       withRequest: {
         method: 'GET',
         path: `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}/published`,
-        headers: defaultHeader
+        headers: defaultHeader,
       },
       willRespondWith: {
         status: 200,
-        body: defaultContentType
-      }
+        body: defaultContentType,
+      },
     }).as('getPublishedVersionOfDefaultContentType');
 
     return '@getPublishedVersionOfDefaultContentType';
-  }
-}
+  },
+};
 
 export const saveDefaultContentTypeWithCustomSidebar = {
   willSucceed() {
@@ -236,17 +236,17 @@ export const saveDefaultContentTypeWithCustomSidebar = {
         method: 'PUT',
         path: `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}`,
         headers: defaultHeader,
-        body: contentTypeWithCustomSidebarRequestBody
+        body: contentTypeWithCustomSidebarRequestBody,
       },
       willRespondWith: {
         status: 200,
-        body: defaultContentType
-      }
+        body: defaultContentType,
+      },
     }).as('saveDefaultContentTypeWithCustomSidebar');
 
     return '@saveDefaultContentTypeWithCustomSidebar';
-  }
-}
+  },
+};
 
 export const publishDefaultContentType = {
   willSucceed() {
@@ -257,17 +257,17 @@ export const publishDefaultContentType = {
       withRequest: {
         method: 'PUT',
         path: `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}/published`,
-        headers: defaultHeader
+        headers: defaultHeader,
       },
       willRespondWith: {
         status: 200,
-        body: defaultContentType
-      }
+        body: defaultContentType,
+      },
     }).as('publishDefaultContentType');
 
     return '@publishDefaultContentType';
-  }
-}
+  },
+};
 
 export const saveDefaultContentTypeEditorInterface = {
   willSucceed() {
@@ -279,14 +279,14 @@ export const saveDefaultContentTypeEditorInterface = {
         method: 'PUT',
         path: `/spaces/${defaultSpaceId}/content_types/${defaultContentTypeId}/editor_interface`,
         headers: defaultHeader,
-        body: editorInterfaceWithCustomSidebarRequestBody
+        body: editorInterfaceWithCustomSidebarRequestBody,
       },
       willRespondWith: {
         status: 200,
-        body: editorInterfaceWithCustomSidebarResponseBody
-      }
+        body: editorInterfaceWithCustomSidebarResponseBody,
+      },
     }).as('saveDefaultContentTypeEditorInterface');
 
     return '@saveDefaultContentTypeEditorInterface';
-  }
-}
+  },
+};

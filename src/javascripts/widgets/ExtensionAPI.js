@@ -4,10 +4,10 @@ import * as PublicContentType from './PublicContentType';
 import * as Analytics from 'analytics/Analytics';
 import { getLocalesObject } from 'app/widgets/NewWidgetApi/createLocalesApi';
 
-const sharedFieldProps = field => ({
+const sharedFieldProps = (field) => ({
   id: field.apiName || field.id,
   required: !!field.required,
-  ...pick(field, ['type', 'validations', 'items'])
+  ...pick(field, ['type', 'validations', 'items']),
 });
 
 const REQUIRED_CONFIG_KEYS = [
@@ -28,7 +28,7 @@ const REQUIRED_CONFIG_KEYS = [
   // `field` uses internal IDs (ShareJS format).
   // `locale` has the `internal_code` property.
   // Can be `null` if the extension is not tied to a field.
-  'current'
+  'current',
 ];
 
 /**
@@ -37,7 +37,7 @@ const REQUIRED_CONFIG_KEYS = [
  */
 export default class ExtensionAPI {
   constructor(config) {
-    REQUIRED_CONFIG_KEYS.forEach(key => {
+    REQUIRED_CONFIG_KEYS.forEach((key) => {
       if (key in config) {
         this[key] = config[key];
       } else {
@@ -62,7 +62,7 @@ export default class ExtensionAPI {
       environmentId,
       contentTypeData,
       entryData,
-      spaceMember
+      spaceMember,
     } = this;
 
     return {
@@ -74,7 +74,7 @@ export default class ExtensionAPI {
       contentType: get(contentTypeData, ['sys', 'id']),
       entry: get(entryData, ['sys', 'id']),
       field: get(current, ['field', 'apiName']) || get(current, ['field', 'id']),
-      user: get(spaceMember, ['sys', 'user', 'sys', 'id'])
+      user: get(spaceMember, ['sys', 'user', 'sys', 'id']),
     };
   }
 
@@ -89,7 +89,7 @@ export default class ExtensionAPI {
       editorInterface,
       parameters,
       contentTypeData,
-      initialContentTypesData
+      initialContentTypesData,
     } = this;
 
     this.channel.connect({
@@ -97,7 +97,7 @@ export default class ExtensionAPI {
       user: {
         sys: {
           type: 'User',
-          id: spaceMember.sys.user.sys.id
+          id: spaceMember.sys.user.sys.id,
         },
         firstName: spaceMember.sys.user.firstName,
         lastName: spaceMember.sys.user.lastName,
@@ -106,48 +106,48 @@ export default class ExtensionAPI {
         spaceMembership: {
           sys: {
             type: 'SpaceMembership',
-            id: spaceMember.sys.id
+            id: spaceMember.sys.id,
           },
           admin: !!spaceMember.admin,
-          roles: spaceMember.roles.map(role => ({
+          roles: spaceMember.roles.map((role) => ({
             name: role.name,
-            description: role.description
-          }))
-        }
+            description: role.description,
+          })),
+        },
       },
       field: current
         ? {
             locale: current.locale.code,
             value: get(entryData, ['fields', current.field.id, current.locale.internal_code]),
-            ...sharedFieldProps(current.field)
+            ...sharedFieldProps(current.field),
           }
         : undefined,
-      fieldInfo: this.contentTypeFields.map(field => {
+      fieldInfo: this.contentTypeFields.map((field) => {
         const fieldLocales = field.localized ? locales.available : [locales.default];
         const values = entryData.fields[field.id];
 
         return {
           localized: field.localized,
-          locales: fieldLocales.map(locale => locale.code),
+          locales: fieldLocales.map((locale) => locale.code),
           values: this.idMap.locale.valuesToPublic(values),
-          ...sharedFieldProps(field)
+          ...sharedFieldProps(field),
         };
       }),
       locales: getLocalesObject({
         availableLocales: locales.available,
-        defaultLocale: locales.default
+        defaultLocale: locales.default,
       }),
       // We only need `sys` in the SDK.
       // Make sure we don't leak internal field IDs:
       entry: { sys: entryData.sys },
       // Convert content type to its public form for external consumption:
       contentType: PublicContentType.fromInternal(contentTypeData),
-      initialContentTypes: (initialContentTypesData || []).map(ct =>
+      initialContentTypes: (initialContentTypesData || []).map((ct) =>
         PublicContentType.fromInternal(ct)
       ),
       editorInterface,
       parameters,
-      ids: this.getIds()
+      ids: this.getIds(),
     });
   }
 
@@ -160,10 +160,10 @@ export default class ExtensionAPI {
           fieldId,
           localeCode,
           extensionId: this.descriptor.id,
-          appDefinitionId: this.descriptor.appDefinitionId || null
+          appDefinitionId: this.descriptor.appDefinitionId || null,
         });
       }
-    }
+    },
   };
 
   maybeTrackHandler(handlerName, args) {
@@ -235,7 +235,7 @@ export default class ExtensionAPI {
     }
 
     if (!fieldId) {
-      this.contentTypeFields.forEach(field => this._updateFieldLocales(field.id, docSnapshot));
+      this.contentTypeFields.forEach((field) => this._updateFieldLocales(field.id, docSnapshot));
     } else if (!internalLocaleCode) {
       this._updateFieldLocales(fieldId, docSnapshot);
     } else {
@@ -244,7 +244,7 @@ export default class ExtensionAPI {
   }
 
   _updateFieldLocales(fieldId, docSnapshot) {
-    const field = this.contentTypeFields.find(field => field.id === fieldId);
+    const field = this.contentTypeFields.find((field) => field.id === fieldId);
 
     // We might receive changes from other uses on fields that we
     // do not yet know about. We silently ignore them.
@@ -255,7 +255,7 @@ export default class ExtensionAPI {
     const { locales } = this;
     const fieldLocales = field.localized ? locales.available : [locales.default];
 
-    fieldLocales.forEach(locale => {
+    fieldLocales.forEach((locale) => {
       this._updateFieldLocaleValue(fieldId, locale.internal_code, docSnapshot);
     });
   }

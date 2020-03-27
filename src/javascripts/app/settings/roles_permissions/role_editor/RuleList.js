@@ -8,11 +8,11 @@ import Rule from './Rule';
 const styles = {
   note: css({
     marginTop: tokens.spacingM,
-    marginBottom: tokens.spacingM
+    marginBottom: tokens.spacingM,
   }),
   addLink: css({
-    marginBottom: tokens.spacingL
-  })
+    marginBottom: tokens.spacingL,
+  }),
 };
 
 const RulesPropType = PropTypes.arrayOf(
@@ -23,7 +23,7 @@ export default class RuleList extends React.Component {
   static propTypes = {
     rules: PropTypes.shape({
       allowed: RulesPropType.isRequired,
-      denied: RulesPropType.isRequired
+      denied: RulesPropType.isRequired,
     }).isRequired,
     onAddRule: PropTypes.func.isRequired,
     onRemoveRule: PropTypes.func.isRequired,
@@ -33,7 +33,7 @@ export default class RuleList extends React.Component {
     privateLocales: PropTypes.array.isRequired,
     contentTypes: PropTypes.array.isRequired,
     searchEntities: PropTypes.func.isRequired,
-    getEntityTitle: PropTypes.func.isRequired
+    getEntityTitle: PropTypes.func.isRequired,
   };
 
   render() {
@@ -47,7 +47,7 @@ export default class RuleList extends React.Component {
       privateLocales,
       contentTypes,
       searchEntities,
-      getEntityTitle
+      getEntityTitle,
     } = this.props;
 
     return (
@@ -62,7 +62,7 @@ export default class RuleList extends React.Component {
               )}
             </Note>
           )}
-          {rules.allowed.map(rule => (
+          {rules.allowed.map((rule) => (
             <Rule
               key={rule.id}
               rule={rule}
@@ -98,7 +98,7 @@ export default class RuleList extends React.Component {
               </Note>
             )}
             <div className="rule-list__rule" data-test-id="rule-exceptions">
-              {rules.denied.map(rule => (
+              {rules.denied.map((rule) => (
                 <Rule
                   key={rule.id}
                   rule={rule}

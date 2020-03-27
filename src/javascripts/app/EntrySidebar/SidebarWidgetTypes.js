@@ -8,5 +8,5 @@ export default {
   INFO_PANEL: 'info-panel',
   JOBS: 'jobs-widget',
   TASKS: 'content-workflows-tasks-widget',
-  COMMENTS_PANEL: 'comments-panel'
+  COMMENTS_PANEL: 'comments-panel',
 };

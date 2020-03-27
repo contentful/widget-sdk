@@ -7,7 +7,7 @@ import {
   DropdownList,
   DropdownListItem,
   Paragraph,
-  SectionHeading
+  SectionHeading,
 } from '@contentful/forma-36-react-components';
 
 import { orgRoles } from 'utils/MembershipUtils';
@@ -15,8 +15,8 @@ import { orgRoles } from 'utils/MembershipUtils';
 const styles = {
   optionWrapper: css({
     width: 300,
-    whiteSpace: 'normal'
-  })
+    whiteSpace: 'normal',
+  }),
 };
 
 export function OrganizationRoleSelector({
@@ -24,15 +24,15 @@ export function OrganizationRoleSelector({
   initialRole,
   onChange,
   disableOwnerRole,
-  className
+  className,
 }) {
   const [isOpen, setOpen] = useState(false);
 
   const getOrgRole = () => {
-    return orgRoles.find(role => role.value === initialRole);
+    return orgRoles.find((role) => role.value === initialRole);
   };
 
-  const selectRole = role => {
+  const selectRole = (role) => {
     onChange(role.value);
     setOpen(false);
   };
@@ -41,7 +41,7 @@ export function OrganizationRoleSelector({
     setOpen(!isOpen);
   };
 
-  const renderOption = role => {
+  const renderOption = (role) => {
     const disabled = role.value === 'owner' && disableOwnerRole;
     return (
       <DropdownListItem
@@ -73,7 +73,7 @@ export function OrganizationRoleSelector({
       }
       isOpen={isOpen}
       className={className}>
-      <DropdownList>{orgRoles.map(role => renderOption(role))}</DropdownList>
+      <DropdownList>{orgRoles.map((role) => renderOption(role))}</DropdownList>
     </Dropdown>
   );
 }
@@ -83,5 +83,5 @@ OrganizationRoleSelector.propTypes = {
   onChange: PropTypes.func.isRequired,
   isDisabled: PropTypes.bool,
   disableOwnerRole: PropTypes.bool,
-  className: PropTypes.string
+  className: PropTypes.string,
 };

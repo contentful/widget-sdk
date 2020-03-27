@@ -26,12 +26,12 @@ class ConfirmScreen extends React.Component {
     onSubmit: PropTypes.func.isRequired,
     setPartnershipFields: PropTypes.func.isRequired,
     subscriptionPrice: PropTypes.object.isRequired,
-    partnershipMeta: propTypes.partnershipMeta
+    partnershipMeta: propTypes.partnershipMeta,
   };
 
   state = {
     partnershipFields: {},
-    partnershipValidation: {}
+    partnershipValidation: {},
   };
 
   componentDidMount() {
@@ -40,8 +40,8 @@ class ConfirmScreen extends React.Component {
     fetchSubscriptionPrice({ organization });
   }
 
-  onPartnershipFieldChange = fieldName => {
-    return value => {
+  onPartnershipFieldChange = (fieldName) => {
+    return (value) => {
       const { setPartnershipFields } = this.props;
       const { partnershipFields } = this.state;
 
@@ -102,7 +102,7 @@ class ConfirmScreen extends React.Component {
       spaceCreation,
       spaceChange,
       newSpaceMeta,
-      partnershipMeta
+      partnershipMeta,
     } = this.props;
     const { partnershipValidation } = this.state;
 

@@ -19,10 +19,10 @@ export const ENTRY = {
     id: 'testid2',
     contentType: {
       sys: {
-        id: 'ct-id'
-      }
-    }
-  }
+        id: 'ct-id',
+      },
+    },
+  },
 };
 
 const getWithId = (wrapper, testId) => wrapper.find(`[data-test-id="${testId}"]`).first();
@@ -31,25 +31,25 @@ const stubAll = async ({ isolatedSystem }) => {
   // TODO: Instead of stubbing all kind of services, stub `buildWidgetApi`!
   isolatedSystem.set('directives/thumbnailHelpers', {});
   isolatedSystem.set('app/widgets/WidgetApi/dialogs/HyperlinkDialog', {
-    LINK_TYPES: {}
+    LINK_TYPES: {},
   });
   isolatedSystem.set('utils/LaunchDarkly', {
     onFeatureFlag: sinon.stub(),
-    getCurrentVariation: sinon.stub()
+    getCurrentVariation: sinon.stub(),
   });
   isolatedSystem.set('detect-browser', {
-    detect: () => ({ name: 'chrome' })
+    detect: () => ({ name: 'chrome' }),
   });
 
   isolatedSystem.set('access_control/AccessChecker', {
     getSectionVisibility: sinon.stub().returns({
       asset: true,
-      entry: true
-    })
+      entry: true,
+    }),
   });
 
   isolatedSystem.set('analytics/Analytics', {
-    track: sinon.stub()
+    track: sinon.stub(),
   });
 };
 
@@ -61,7 +61,7 @@ const setupWidgetApi = (mockApi, mockDocument) => {
   return widgetApi;
 };
 
-const createSandbox = window => {
+const createSandbox = (window) => {
   const el = window.document.createElement('div');
   el.className = 'sticky-parent';
   window.document.body.appendChild(el);
@@ -73,10 +73,7 @@ const triggerToolbarIcon = async (wrapper, iconName) => {
   const toolbarIcon = getWithId(wrapper, `toolbar-toggle-${iconName}`);
 
   // TODO: EMBED_ASSET case only works with `click`.
-  toolbarIcon
-    .find('button')
-    .simulate('mouseDown')
-    .simulate('click');
+  toolbarIcon.find('button').simulate('mouseDown').simulate('click');
 };
 
 const triggerDropdownButton = async (wrapper, dataTestId) => {
@@ -90,8 +87,8 @@ const EMPTY_PARAGRAPH = block(BLOCKS.PARAGRAPH, {}, text());
 export const ASSET = {
   sys: {
     type: 'Asset',
-    id: 'ASSET-TEST-ID'
-  }
+    id: 'ASSET-TEST-ID',
+  },
 };
 
 /**
@@ -100,7 +97,7 @@ export const ASSET = {
  * Therefore these tests cannot be written in Jest or test actions involving DOM interactions.
  */
 describe('Rich Text toolbar', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     const mockDocument = document(block(BLOCKS.PARAGRAPH, {}, text()));
 
     this.selectedEntity = null;
@@ -108,50 +105,50 @@ describe('Rich Text toolbar', () => {
     this.openHyperlinkDialog = sinon.stub();
 
     stubAll({
-      isolatedSystem: this.system
+      isolatedSystem: this.system,
     });
 
     this.system.set('services/logger', {
-      logWarn: message => {
+      logWarn: (message) => {
         // Guards us from accidentally changing analytic actions without whitelisting them:
         throw new Error(`Unexpected logger.logWarn() call with message: ${message}`);
-      }
+      },
     });
 
     this.system.set('lodash/debounce', {
-      default: identity
+      default: identity,
     });
 
     this.system.set('app/widgets/WidgetApi/dialogs/openHyperlinkDialog', {
-      default: this.openHyperlinkDialog
+      default: this.openHyperlinkDialog,
     });
     this.system.set('analytics/Analytics', {
-      track: sinon.stub()
+      track: sinon.stub(),
     });
 
     this.system.set('app/entity_editor/entityHelpers', {
-      newForLocale: sinon.stub()
+      newForLocale: sinon.stub(),
     });
 
     this.system.set('search/EntitySelector/entitySelector', {
-      open: () => Promise.resolve([this.selectedEntity])
+      open: () => Promise.resolve([this.selectedEntity]),
     });
 
     const { default: RichTextEditor } = await this.system.import('app/widgets/rich_text');
 
-    await $initialize(this.system, $provide => {
+    await $initialize(this.system, ($provide) => {
       $provide.constant('spaceContext', {
         cma: {
           getEntries: sinon.stub().returns(Promise.resolve({})),
-          getAssets: sinon.stub().returns(Promise.resolve({}))
+          getAssets: sinon.stub().returns(Promise.resolve({})),
         },
-        isMasterEnvironment: sinon.stub().returns(false)
+        isMasterEnvironment: sinon.stub().returns(false),
       });
 
       $provide.constant('modalDialog', { open: sinon.stub() });
       $provide.constant('$location', { absUrl: () => 'abs-url' });
       $provide.constant('$state', {
-        href: sinon.stub()
+        href: sinon.stub(),
       });
     });
 
@@ -163,14 +160,14 @@ describe('Rich Text toolbar', () => {
       entry: {
         getSys: sinon.stub().returns({
           id: 'ENTRY_ID',
-          contentType: { sys: { id: 'CT_Id' } }
-        })
+          contentType: { sys: { id: 'CT_Id' } },
+        }),
       },
       onChange: sinon.spy(),
       onAction: sinon.spy(),
       permissions: {
-        canAccessAssets: true
-      }
+        canAccessAssets: true,
+      },
     };
     this.sandbox = createSandbox(window);
 
@@ -193,20 +190,20 @@ describe('Rich Text toolbar', () => {
 
     this.editorApi = {};
     this.editorApi.focus = () => this.editorNode.getDOMNode().click();
-    this.editorApi.clickIcon = type => triggerToolbarIcon(this.wrapper, type);
-    this.editorApi.embedEntryBlock = entry => embedEntity(entry, BLOCKS.EMBEDDED_ENTRY);
-    this.editorApi.embedInlineEntry = entry => embedEntity(entry, INLINES.EMBEDDED_ENTRY);
-    this.editorApi.embedAssetBlock = asset => embedEntity(asset, BLOCKS.EMBEDDED_ASSET);
-    this.editorApi.typeText = text =>
+    this.editorApi.clickIcon = (type) => triggerToolbarIcon(this.wrapper, type);
+    this.editorApi.embedEntryBlock = (entry) => embedEntity(entry, BLOCKS.EMBEDDED_ENTRY);
+    this.editorApi.embedInlineEntry = (entry) => embedEntity(entry, INLINES.EMBEDDED_ENTRY);
+    this.editorApi.embedAssetBlock = (asset) => embedEntity(asset, BLOCKS.EMBEDDED_ASSET);
+    this.editorApi.typeText = (text) =>
       // The editor node is a fragment/array which renders editor and command
       // palette. This is why we need to simulate the events on the first child which is
       // the actual content editable.
       this.editorNode.childAt(0).simulate('beforeinput', { data: text });
-    this.editorApi.pressKeys = async keys => {
+    this.editorApi.pressKeys = async (keys) => {
       await flushPromises();
       const event = {
         ...parseHotkey(keys, { byKey: true }),
-        ...parseHotkey(keys)
+        ...parseHotkey(keys),
       };
 
       event.key = upperFirst(event.key);
@@ -222,7 +219,7 @@ describe('Rich Text toolbar', () => {
       this.editorNode = getWithId(this.wrapper, 'editor');
       let editorApi = {};
       const promises = [];
-      const chainableApiFn = fn => (...args) => {
+      const chainableApiFn = (fn) => (...args) => {
         let lastPromise = promises[promises.length - 1] || Promise.resolve();
         lastPromise = lastPromise.then(() => {
           return fn(...args);
@@ -230,12 +227,12 @@ describe('Rich Text toolbar', () => {
         promises.push(lastPromise);
         return Object.assign(Promise.all(promises), editorApi);
       };
-      editorApi = mapValues(this.editorApi, fn => chainableApiFn(fn));
+      editorApi = mapValues(this.editorApi, (fn) => chainableApiFn(fn));
       return { editor: editorApi };
     };
   });
 
-  afterEach(function() {
+  afterEach(function () {
     this.wrapper.unmount();
     this.wrapper = null;
     this.sandbox.remove();
@@ -246,7 +243,7 @@ describe('Rich Text toolbar', () => {
       {
         [INLINES.HYPERLINK]: {
           type: 'uri',
-          uri: 'https://foo.bar'
+          uri: 'https://foo.bar',
         },
         [INLINES.ASSET_HYPERLINK]: {
           type: 'Asset',
@@ -254,9 +251,9 @@ describe('Rich Text toolbar', () => {
             sys: {
               type: 'Link',
               linkType: 'Asset',
-              id: 'ASSET-ID'
-            }
-          }
+              id: 'ASSET-ID',
+            },
+          },
         },
         [INLINES.ENTRY_HYPERLINK]: {
           type: 'Entry',
@@ -264,17 +261,17 @@ describe('Rich Text toolbar', () => {
             sys: {
               type: 'Link',
               linkType: 'Entry',
-              id: 'ASSET-ID'
-            }
-          }
-        }
+              id: 'ASSET-ID',
+            },
+          },
+        },
       },
       testHyperlink
     );
   });
 
   function testHyperlink(dialogData, nodeType) {
-    it(`supports "${nodeType}" type hyperlink `, async function({ editor }) {
+    it(`supports "${nodeType}" type hyperlink `, async function ({ editor }) {
       this.openHyperlinkDialog.returns(Promise.resolve({ text: 'a hyperlink', ...dialogData }));
       const { target, uri } = dialogData;
       const expectedLinkData = target ? { target } : { uri };
@@ -295,27 +292,27 @@ describe('Rich Text toolbar', () => {
       );
     });
 
-    it('logs opening the dialog', async function({ editor }) {
+    it('logs opening the dialog', async function ({ editor }) {
       this.openHyperlinkDialog.returns(new Promise(() => {}));
 
       await editor.clickIcon(INLINES.HYPERLINK);
 
       sinon.assert.calledOnceWith(this.props.onAction, 'openCreateHyperlinkDialog', {
-        origin: 'toolbar-icon'
+        origin: 'toolbar-icon',
       });
     });
 
-    it('logs dialog cancellation', async function({ editor }) {
+    it('logs dialog cancellation', async function ({ editor }) {
       this.openHyperlinkDialog.returns(Promise.reject());
 
       await editor.clickIcon(INLINES.HYPERLINK);
 
       sinon.assert.calledWith(this.props.onAction, 'cancelCreateHyperlinkDialog', {
-        origin: 'toolbar-icon'
+        origin: 'toolbar-icon',
       });
     });
 
-    it('logs `insert` action on dialog confirmation', async function({ editor }) {
+    it('logs `insert` action on dialog confirmation', async function ({ editor }) {
       this.openHyperlinkDialog.returns(Promise.resolve({ text: 'a hyperlink', ...dialogData }));
 
       await editor.clickIcon(INLINES.HYPERLINK);
@@ -323,18 +320,18 @@ describe('Rich Text toolbar', () => {
       sinon.assert.calledWith(this.props.onAction, 'insert', {
         origin: 'toolbar-icon',
         linkType: dialogData.type,
-        nodeType
+        nodeType,
       });
     });
   }
 
   describe('Embed Dropdown', () => {
-    it('renders the embed dropdown menu when "Embed" toolbar button is selected', async function() {
+    it('renders the embed dropdown menu when "Embed" toolbar button is selected', async function () {
       await triggerDropdownButton(this.wrapper, 'toolbar-entry-dropdown-toggle');
       expect(getWithId(this.wrapper, 'cf-ui-dropdown-list').getDOMNode()).toBeDefined();
     });
 
-    it('renders embed dropdown menu items for enabled node types', async function() {
+    it('renders embed dropdown menu items for enabled node types', async function () {
       this.field.validations = [{ enabledNodeTypes: ['embedded-entry-block'] }];
       this.mount({ ...this.props });
       expect(
@@ -342,8 +339,8 @@ describe('Rich Text toolbar', () => {
       ).toBeDefined();
     });
 
-    it('inserts an embedded entry when "Embed" > "Entry" option is selected', async function({
-      editor
+    it('inserts an embedded entry when "Embed" > "Entry" option is selected', async function ({
+      editor,
     }) {
       await editor.embedEntryBlock(ENTRY);
 
@@ -352,8 +349,8 @@ describe('Rich Text toolbar', () => {
       );
     });
 
-    it('inserts an inline entry when "Embed" > "Inline entry" option is selected', async function({
-      editor
+    it('inserts an inline entry when "Embed" > "Inline entry" option is selected', async function ({
+      editor,
     }) {
       await editor.embedInlineEntry(ENTRY);
 
@@ -364,8 +361,8 @@ describe('Rich Text toolbar', () => {
   });
 
   describe('Lists', () => {
-    [BLOCKS.OL_LIST, BLOCKS.UL_LIST].forEach(function(listType) {
-      it(`inserts ${listType} when ${listType} option is selected`, async function({ editor }) {
+    [BLOCKS.OL_LIST, BLOCKS.UL_LIST].forEach(function (listType) {
+      it(`inserts ${listType} when ${listType} option is selected`, async function ({ editor }) {
         await editor.clickIcon(listType);
 
         expect(this.field.getValue()).toEqual(
@@ -376,18 +373,14 @@ describe('Rich Text toolbar', () => {
         );
       });
 
-      it(`removes empty ${listType} after second click`, async function({ editor }) {
+      it(`removes empty ${listType} after second click`, async function ({ editor }) {
         await editor.clickIcon(listType).clickIcon(listType);
 
         expect(this.field.getValue()).toEqual(document(EMPTY_PARAGRAPH, EMPTY_PARAGRAPH));
       });
 
-      it('inserts text into list-item', async function({ editor }) {
-        await editor
-          .clickIcon(listType)
-          .typeText('a')
-          .typeText('b')
-          .pressEnter();
+      it('inserts text into list-item', async function ({ editor }) {
+        await editor.clickIcon(listType).typeText('a').typeText('b').pressEnter();
 
         expect(this.field.getValue()).toEqual(
           document(
@@ -402,12 +395,8 @@ describe('Rich Text toolbar', () => {
         );
       });
 
-      it('inserts nested list-item when tab is pressed', async function({ editor }) {
-        await editor
-          .clickIcon(listType)
-          .typeText('a')
-          .pressEnter()
-          .pressTab();
+      it('inserts nested list-item when tab is pressed', async function ({ editor }) {
+        await editor.clickIcon(listType).typeText('a').pressEnter().pressTab();
 
         expect(this.field.getValue()).toEqual(
           document(
@@ -426,7 +415,7 @@ describe('Rich Text toolbar', () => {
         );
       });
 
-      it('inserts an embedded entry into list-item', async function({ editor }) {
+      it('inserts an embedded entry into list-item', async function ({ editor }) {
         await editor.clickIcon(listType).embedEntryBlock(ENTRY);
 
         expect(this.field.getValue()).toEqual(
@@ -441,7 +430,7 @@ describe('Rich Text toolbar', () => {
         );
       });
 
-      it('inserts an inline entry into list-item', async function({ editor }) {
+      it('inserts an inline entry into list-item', async function ({ editor }) {
         await editor.clickIcon(listType).embedInlineEntry(ENTRY);
 
         expect(this.field.getValue()).toEqual(
@@ -461,11 +450,8 @@ describe('Rich Text toolbar', () => {
       });
 
       // TODO: Why is this test disabled?
-      xit("doesn't duplicate inline entry on the next line", async function({ editor }) {
-        await editor
-          .focus()
-          .clickIcon(listType)
-          .embedInlineEntry(ENTRY);
+      xit("doesn't duplicate inline entry on the next line", async function ({ editor }) {
+        await editor.focus().clickIcon(listType).embedInlineEntry(ENTRY);
 
         getWithId(this.wrapper, INLINES.EMBEDDED_ENTRY).simulate('click');
 
@@ -488,7 +474,7 @@ describe('Rich Text toolbar', () => {
         );
       });
 
-      it('inserts quote block inside a list-item', async function({ editor }) {
+      it('inserts quote block inside a list-item', async function ({ editor }) {
         await editor.clickIcon(listType).clickIcon(BLOCKS.QUOTE);
 
         expect(this.field.getValue()).toEqual(
@@ -503,11 +489,8 @@ describe('Rich Text toolbar', () => {
         );
       });
 
-      it('inserts a mark inside a list-item', async function({ editor }) {
-        await editor
-          .clickIcon(listType)
-          .clickIcon(MARKS.CODE)
-          .typeText('golang');
+      it('inserts a mark inside a list-item', async function ({ editor }) {
+        await editor.clickIcon(listType).clickIcon(MARKS.CODE).typeText('golang');
 
         expect(this.field.getValue()).toEqual(
           document(
@@ -530,12 +513,10 @@ describe('Rich Text toolbar', () => {
   describe('Quote', () => {
     const configs = [[BLOCKS.QUOTE, 'mod+shift+1']];
 
-    configs.forEach(config => {
+    configs.forEach((config) => {
       describeAction(`insert quote`, config, ({ actionOrigin }) => {
-        beforeEach(async function() {
-          await this.setup()
-            .editor.triggerAction()
-            .typeText('a quote');
+        beforeEach(async function () {
+          await this.setup().editor.triggerAction().typeText('a quote');
         });
 
         itUpdatesFieldValue(
@@ -547,12 +528,12 @@ describe('Rich Text toolbar', () => {
 
         itLogsAction('insert', {
           origin: actionOrigin,
-          nodeType: BLOCKS.QUOTE
+          nodeType: BLOCKS.QUOTE,
         });
       });
 
       describeAction(`remove quote`, config, ({ actionOrigin }) => {
-        beforeEach(async function() {
+        beforeEach(async function () {
           const { editor } = this.setup();
           await editor.triggerAction();
 
@@ -565,12 +546,12 @@ describe('Rich Text toolbar', () => {
 
         itLogsAction('remove', {
           origin: actionOrigin,
-          nodeType: BLOCKS.QUOTE
+          nodeType: BLOCKS.QUOTE,
         });
       });
     });
 
-    it(`removes quote on Backspace`, async function({ editor }) {
+    it(`removes quote on Backspace`, async function ({ editor }) {
       await editor.clickIcon(BLOCKS.QUOTE).pressBackspace();
 
       expect(this.field.getValue()).toEqual(document(EMPTY_PARAGRAPH));
@@ -582,28 +563,26 @@ describe('Rich Text toolbar', () => {
       [MARKS.BOLD, 'mod+b'],
       [MARKS.CODE, 'mod+/'],
       [MARKS.ITALIC, 'mod+i'],
-      [MARKS.UNDERLINE, 'mod+u']
+      [MARKS.UNDERLINE, 'mod+u'],
     ].forEach(testMark);
   });
 
   function testMark([mark, shortcut]) {
     describeAction(`mark as ${mark}`, [mark, shortcut], ({ actionOrigin }) => {
-      beforeEach(async function() {
-        await this.setup()
-          .editor.triggerAction()
-          .typeText('a text');
+      beforeEach(async function () {
+        await this.setup().editor.triggerAction().typeText('a text');
       });
 
       itUpdatesFieldValue(document(block(BLOCKS.PARAGRAPH, {}, text('a text', [{ type: mark }]))));
 
       itLogsAction('mark', {
         origin: actionOrigin,
-        markType: mark
+        markType: mark,
       });
     });
 
     describeAction(`unmark ${mark}`, [mark, shortcut], ({ actionOrigin }) => {
-      beforeEach(async function() {
+      beforeEach(async function () {
         const { editor } = this.setup();
         await editor.triggerAction();
 
@@ -616,13 +595,13 @@ describe('Rich Text toolbar', () => {
 
       itLogsAction('unmark', {
         origin: actionOrigin,
-        markType: mark
+        markType: mark,
       });
     });
   }
 
   describe('HR', () => {
-    it('inserts the HR', async function({ editor }) {
+    it('inserts the HR', async function ({ editor }) {
       await editor.clickIcon(BLOCKS.HR);
       expect(this.field.getValue()).toEqual(document(block(BLOCKS.HR, {}), EMPTY_PARAGRAPH));
     });
@@ -635,11 +614,11 @@ describe('Rich Text toolbar', () => {
       BLOCKS.HEADING_3,
       BLOCKS.HEADING_4,
       BLOCKS.HEADING_5,
-      BLOCKS.HEADING_6
+      BLOCKS.HEADING_6,
     ];
 
-    headings.forEach(function(heading, index) {
-      it(`inserts ${heading}`, async function({ editor }) {
+    headings.forEach(function (heading, index) {
+      it(`inserts ${heading}`, async function ({ editor }) {
         const dropdown = getWithId(this.wrapper, 'toolbar-heading-toggle');
         dropdown.simulate('mousedown');
         getWithId(this.wrapper, `heading-${index + 1}`)
@@ -661,11 +640,11 @@ describe('Rich Text toolbar', () => {
       [BLOCKS.HEADING_3, 'mod+opt+3'],
       [BLOCKS.HEADING_4, 'mod+opt+4'],
       [BLOCKS.HEADING_5, 'mod+opt+5'],
-      [BLOCKS.HEADING_6, 'mod+opt+6']
+      [BLOCKS.HEADING_6, 'mod+opt+6'],
     ];
 
-    headingShortcuts.forEach(function([heading, shortcut]) {
-      it(`inserts ${heading} with ${shortcut}`, async function({ editor }) {
+    headingShortcuts.forEach(function ([heading, shortcut]) {
+      it(`inserts ${heading} with ${shortcut}`, async function ({ editor }) {
         await editor.pressKeys(shortcut).typeText('a');
 
         expect(this.field.getValue()).toEqual(
@@ -680,8 +659,8 @@ function newEmbeddedEntityBlock(entity) {
   const { id, type: linkType } = entity.sys;
   const data = {
     target: {
-      sys: { id, type: 'Link', linkType }
-    }
+      sys: { id, type: 'Link', linkType },
+    },
   };
   const entityBlockName = 'EMBEDDED_' + linkType.toUpperCase();
   return block(BLOCKS[entityBlockName], data);
@@ -691,22 +670,22 @@ function newEmbeddedEntryInline(entity) {
   const { id } = entity.sys;
   const data = {
     target: {
-      sys: { id, type: 'Link', linkType: 'Entry' }
-    }
+      sys: { id, type: 'Link', linkType: 'Entry' },
+    },
   };
   return inline(INLINES.EMBEDDED_ENTRY, data);
 }
 
 function describeAction(description, [formattingOption, shortcut], setupTests) {
   describe(`${description} via toolbar icon`, () => {
-    beforeEach(function() {
+    beforeEach(function () {
       this.editorApi.triggerAction = () => this.editorApi.clickIcon(formattingOption);
     });
     setupTests({ actionOrigin: actionOrigin.TOOLBAR });
   });
 
   describe(`${description} via shortcut ${shortcut}`, () => {
-    beforeEach(function() {
+    beforeEach(function () {
       this.editorApi.triggerAction = () => this.editorApi.pressKeys(shortcut);
     });
     setupTests({ actionOrigin: actionOrigin.SHORTCUT });
@@ -714,13 +693,13 @@ function describeAction(description, [formattingOption, shortcut], setupTests) {
 }
 
 function itUpdatesFieldValue(expectedValue) {
-  it('updates field value', function() {
+  it('updates field value', function () {
     expect(this.field.getValue()).toEqual(expectedValue);
   });
 }
 
 function itLogsAction(action, data) {
-  it('tracks the action event', function() {
+  it('tracks the action event', function () {
     sinon.assert.calledOnceWith(this.props.onAction, action, data);
   });
 }

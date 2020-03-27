@@ -3,8 +3,8 @@ import Client from 'libs/legacy_client/client';
 import describeSpaceInstance from 'test/helpers/libs/legacy_client/space_instance';
 import _ from 'lodash';
 
-describe('legacyClient', function() {
-  beforeEach(function() {
+describe('legacyClient', function () {
+  beforeEach(function () {
     this.request = createRequestStub();
     this.client = new Client({
       request: ({ method, path, headers, payload }) => {
@@ -13,20 +13,20 @@ describe('legacyClient', function() {
           method,
           url: path,
           headers,
-          [payloadKey]: payload
+          [payloadKey]: payload,
         });
-      }
+      },
     });
   });
 
-  describe('space', function() {
+  describe('space', function () {
     const serverSpaceData = Object.freeze({
       name: 'myspace',
       sys: {
         id: '42',
         type: 'Space',
-        version: 0
-      }
+        version: 0,
+      },
     });
 
     describeSpaceInstance(serverSpaceData);
@@ -34,7 +34,7 @@ describe('legacyClient', function() {
 });
 
 function createRequestStub() {
-  const request = sinon.spy(function({ payload }) {
+  const request = sinon.spy(function ({ payload }) {
     if (!request.responses.length) {
       throw new Error('No server responses provided');
     }
@@ -48,7 +48,7 @@ function createRequestStub() {
     }
   });
 
-  request.respond = function(response) {
+  request.respond = function (response) {
     if (typeof response === 'undefined') {
       this.responses.push({ mirror: true });
     } else {
@@ -56,11 +56,11 @@ function createRequestStub() {
     }
   };
 
-  request.throw = function(error) {
+  request.throw = function (error) {
     this.responses.push({ error: error });
   };
 
-  request.reset = function() {
+  request.reset = function () {
     this.responses = [];
     sinon.spy.reset.call(this);
   };
@@ -69,7 +69,7 @@ function createRequestStub() {
    * Simplifies request parameters to facilitate asserting call
    * arguments.
    */
-  request.adapterRequest = function(r) {
+  request.adapterRequest = function (r) {
     if (_.isEmpty(r.headers)) {
       delete r.headers;
     }

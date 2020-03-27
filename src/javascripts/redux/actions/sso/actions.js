@@ -1,7 +1,7 @@
 export const SSO_CREATE_IDENTITY_PROVIDER_PENDING = 'SSO_CREATE_IDENTITY_PROVIDER/PENDING';
 export function ssoCreateIdentityProviderPending() {
   return {
-    type: SSO_CREATE_IDENTITY_PROVIDER_PENDING
+    type: SSO_CREATE_IDENTITY_PROVIDER_PENDING,
   };
 }
 
@@ -9,7 +9,7 @@ export const SSO_CREATE_IDENTITY_PROVIDER_SUCCESS = 'SSO_CREATE_IDENTITY_PROVIDE
 export function ssoCreateIdentityProviderSuccess(identityProvider) {
   return {
     type: SSO_CREATE_IDENTITY_PROVIDER_SUCCESS,
-    payload: identityProvider
+    payload: identityProvider,
   };
 }
 
@@ -18,14 +18,14 @@ export function ssoCreateIdentityProviderFailure(error) {
   return {
     type: SSO_CREATE_IDENTITY_PROVIDER_FAILURE,
     error: true,
-    payload: error
+    payload: error,
   };
 }
 
 export const SSO_GET_IDENTITY_PROVIDER_PENDING = 'SSO_GET_IDENTITY_PROVIDER/PENDING';
 export function ssoGetIdentityProviderPending() {
   return {
-    type: SSO_GET_IDENTITY_PROVIDER_PENDING
+    type: SSO_GET_IDENTITY_PROVIDER_PENDING,
   };
 }
 
@@ -33,7 +33,7 @@ export const SSO_GET_IDENTITY_PROVIDER_SUCCESS = 'SSO_GET_IDENTITY_PROVIDER/SUCC
 export function ssoGetIdentityProviderSuccess(identityProvider) {
   return {
     type: SSO_GET_IDENTITY_PROVIDER_SUCCESS,
-    payload: identityProvider
+    payload: identityProvider,
   };
 }
 
@@ -42,7 +42,7 @@ export function ssoGetIdentityProviderFailure(error) {
   return {
     type: SSO_GET_IDENTITY_PROVIDER_FAILURE,
     error: true,
-    payload: error
+    payload: error,
   };
 }
 
@@ -50,7 +50,7 @@ export const SSO_UPDATE_IDENTITY_PROVIDER = 'SSO_UPDATE_IDENTITY_PROVIDER';
 export function ssoUpdateIdentityProvider(identityProvider) {
   return {
     type: SSO_UPDATE_IDENTITY_PROVIDER,
-    payload: identityProvider
+    payload: identityProvider,
   };
 }
 
@@ -59,7 +59,7 @@ export function ssoFieldUpdateValue(fieldName, value) {
   return {
     type: SSO_FIELD_UPDATE_VALUE,
     payload: value,
-    meta: { fieldName }
+    meta: { fieldName },
   };
 }
 
@@ -67,7 +67,7 @@ export const SSO_FIELD_UPDATE_PENDING = 'SSO_FIELD_UPDATE/PENDING';
 export function ssoFieldUpdatePending(fieldName) {
   return {
     type: SSO_FIELD_UPDATE_PENDING,
-    meta: { fieldName }
+    meta: { fieldName },
   };
 }
 
@@ -75,7 +75,7 @@ export const SSO_FIELD_UPDATE_SUCCESS = 'SSO_FIELD_UPDATE/SUCCESS';
 export function ssoFieldUpdateSuccess(fieldName) {
   return {
     type: SSO_FIELD_UPDATE_SUCCESS,
-    meta: { fieldName }
+    meta: { fieldName },
   };
 }
 
@@ -85,14 +85,14 @@ export function ssoFieldUpdateFailure(fieldName, error) {
     type: SSO_FIELD_UPDATE_FAILURE,
     error: true,
     payload: error,
-    meta: { fieldName }
+    meta: { fieldName },
   };
 }
 export const SSO_FIELD_VALIDATION_SUCCESS = 'SSO_FIELD_VALIDATION/SUCCESS';
 export function ssoFieldValidationSuccess(fieldName) {
   return {
     type: SSO_FIELD_VALIDATION_SUCCESS,
-    meta: { fieldName }
+    meta: { fieldName },
   };
 }
 
@@ -102,7 +102,7 @@ export function ssoFieldValidationFailure(fieldName, error) {
     type: SSO_FIELD_VALIDATION_FAILURE,
     error: true,
     payload: error,
-    meta: { fieldName }
+    meta: { fieldName },
   };
 }
 
@@ -112,22 +112,22 @@ export function ssoConnectionTestStart(testWindow, timer) {
     type: SSO_CONNECTION_TEST_START,
     payload: {
       testWindow,
-      timer
-    }
+      timer,
+    },
   };
 }
 
 export const SSO_CONNECTION_TEST_END = 'SSO_CONNECTION_TEST/END';
 export function ssoConnectionTestEnd() {
   return {
-    type: SSO_CONNECTION_TEST_END
+    type: SSO_CONNECTION_TEST_END,
   };
 }
 
 export const SSO_ENABLE_PENDING = 'SSO_ENABLE/PENDING';
 export function ssoEnablePending() {
   return {
-    type: SSO_ENABLE_PENDING
+    type: SSO_ENABLE_PENDING,
   };
 }
 
@@ -135,7 +135,7 @@ export const SSO_ENABLE_SUCCESS = 'SSO_ENABLE/SUCCESS';
 export function ssoEnableSuccess(identityProvider) {
   return {
     type: SSO_ENABLE_SUCCESS,
-    payload: identityProvider
+    payload: identityProvider,
   };
 }
 
@@ -144,6 +144,6 @@ export function ssoEnableFailure(error) {
   return {
     type: SSO_ENABLE_FAILURE,
     error: true,
-    payload: error
+    payload: error,
   };
 }

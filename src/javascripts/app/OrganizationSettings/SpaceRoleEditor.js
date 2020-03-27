@@ -8,7 +8,7 @@ import {
   Checkbox,
   Dropdown,
   DropdownList,
-  DropdownListItem
+  DropdownListItem,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import classNames from 'classnames';
@@ -19,7 +19,7 @@ import { ADMIN_ROLE, ADMIN_ROLE_ID } from 'access_control/constants';
 const styles = {
   roleList: css({
     maxHeight: '300px',
-    overflowY: 'auto'
+    overflowY: 'auto',
   }),
   dropDown: css({ maxWidth: '100%' }),
   roleListItem: css({
@@ -27,19 +27,19 @@ const styles = {
     gridTemplateColumns: 'min-content auto',
     gridColumnGap: '4px',
     alignItems: 'center',
-    color: tokens.colorTextDark
+    color: tokens.colorTextDark,
   }),
   adminSubtitle: css({
     color: tokens.colorTextLight,
     gridColumnStart: 2,
     maxWidth: '200px',
-    whiteSpace: 'normal'
+    whiteSpace: 'normal',
   }),
   rolesSummary: css({
     display: 'inline-block',
     overflowX: 'hidden',
-    textOverflow: 'ellipsis'
-  })
+    textOverflow: 'ellipsis',
+  }),
 };
 
 class SpaceRoleEditor extends React.Component {
@@ -49,25 +49,25 @@ class SpaceRoleEditor extends React.Component {
     options: PropTypes.arrayOf(SpaceRoleProp),
     value: PropTypes.arrayOf(PropTypes.string),
     className: PropTypes.string,
-    buttonProps: PropTypes.shape({ className: PropTypes.string })
+    buttonProps: PropTypes.shape({ className: PropTypes.string }),
   };
 
   static defaultProps = {
     options: [],
     value: [],
     className: '',
-    buttonProps: { className: '' }
+    buttonProps: { className: '' },
   };
 
   state = {
-    isOpen: false
+    isOpen: false,
   };
 
   setAdmin = () => {
     this.props.onChange([ADMIN_ROLE_ID]);
   };
 
-  toggleRole = roleId => event => {
+  toggleRole = (roleId) => (event) => {
     event.stopPropagation();
     const isAdmin = roleId === ADMIN_ROLE_ID;
     const checked = this.props.value.includes(roleId);
@@ -86,7 +86,7 @@ class SpaceRoleEditor extends React.Component {
 
   removeRole(roleId) {
     const { value, onChange } = this.props;
-    onChange(value.filter(id => id !== roleId));
+    onChange(value.filter((id) => id !== roleId));
   }
 
   closeDropdown = () => {
@@ -105,8 +105,8 @@ class SpaceRoleEditor extends React.Component {
       nameA.localeCompare(nameB)
     );
     const selectedNames = [ADMIN_ROLE, ...sortedOptions]
-      .filter(option => value.includes(option.sys.id))
-      .map(role => role.name);
+      .filter((option) => value.includes(option.sys.id))
+      .map((role) => role.name);
 
     let rolesSummary;
     if (selectedNames.length === 0) {

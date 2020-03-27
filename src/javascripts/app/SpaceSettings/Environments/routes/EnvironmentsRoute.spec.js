@@ -13,40 +13,40 @@ import { createPaginationEndpoint } from '__mocks__/data/EndpointFactory';
 jest.mock('services/ResourceService', () => ({
   __esModule: true, // this property makes it work
   default: jest.fn().mockReturnValue({
-    get: jest.fn().mockResolvedValue({ usage: 0, limits: { maximum: 3 } })
-  })
+    get: jest.fn().mockResolvedValue({ usage: 0, limits: { maximum: 3 } }),
+  }),
 }));
 
 jest.mock('services/PubSubService', () => ({
   createPubSubClientForSpace: jest.fn().mockReturnValue({
     on: jest.fn(),
-    off: jest.fn()
-  })
+    off: jest.fn(),
+  }),
 }));
 
 jest.mock('access_control/AccessChecker', () => ({
-  can: jest.fn().mockReturnValue(true)
+  can: jest.fn().mockReturnValue(true),
 }));
 
 jest.mock('utils/LaunchDarkly', () => ({
-  getCurrentVariation: jest.fn().mockResolvedValue(true) // environmentsEnabled
+  getCurrentVariation: jest.fn().mockResolvedValue(true), // environmentsEnabled
 }));
 
 jest.mock('data/CMA/ProductCatalog', () => ({
   getOrgFeature: jest.fn().mockResolvedValue(true), // canSelectSource
-  getSpaceFeature: jest.fn().mockResolvedValue(true) // aliasesEnabled
+  getSpaceFeature: jest.fn().mockResolvedValue(true), // aliasesEnabled
 }));
 
 jest.mock('utils/ResourceUtils', () => ({
-  canCreate: jest.fn().mockReturnValue(true)
+  canCreate: jest.fn().mockReturnValue(true),
 }));
 
 jest.mock('services/ChangeSpaceService', () => ({
-  showUpgradeSpaceDialog: jest.fn()
+  showUpgradeSpaceDialog: jest.fn(),
 }));
 
 jest.mock('../DeleteDialog', () => ({
-  openDeleteEnvironmentDialog: jest.fn()
+  openDeleteEnvironmentDialog: jest.fn(),
 }));
 
 describe('EnvironmentsRoute', () => {
@@ -63,8 +63,8 @@ describe('EnvironmentsRoute', () => {
     isLegacyOrganization: false,
     pubsubClient: {
       on() {},
-      off() {}
-    }
+      off() {},
+    },
   };
 
   afterEach(() => {
@@ -76,8 +76,8 @@ describe('EnvironmentsRoute', () => {
       sys: {
         id,
         status: { sys: { id: status } },
-        aliases
-      }
+        aliases,
+      },
     }));
   };
 
@@ -173,7 +173,7 @@ describe('EnvironmentsRoute', () => {
         const { getByTestId, queryByTestId } = await renderEnvironmentsComponent({
           id: 'e1',
           status: 'ready',
-          aliases: ['master']
+          aliases: ['master'],
         });
 
         const env1 = getByTestId('environment.e1');
@@ -203,7 +203,7 @@ describe('EnvironmentsRoute', () => {
       beforeEach(() => {
         defaultProps.isLegacyOrganization = false;
         createResourceService.mockImplementation(() => ({
-          get: jest.fn().mockResolvedValue({ usage: 1, limits: { maximum: 1 } })
+          get: jest.fn().mockResolvedValue({ usage: 1, limits: { maximum: 1 } }),
         }));
       });
 
@@ -248,7 +248,7 @@ describe('EnvironmentsRoute', () => {
     beforeEach(() => {
       defaultProps.isLegacyOrganization = false;
       createResourceService.mockImplementation(() => ({
-        get: jest.fn().mockResolvedValue({ usage: 1, limits: { maximum: 1 } })
+        get: jest.fn().mockResolvedValue({ usage: 1, limits: { maximum: 1 } }),
       }));
     });
 
@@ -264,7 +264,7 @@ describe('EnvironmentsRoute', () => {
 
       const { getByTestId, queryByTestId } = await renderEnvironmentsComponent({
         id: 'e1',
-        status: 'ready'
+        status: 'ready',
       });
 
       expect(getByTestId('openUpgradeDialog')).toBeVisible();

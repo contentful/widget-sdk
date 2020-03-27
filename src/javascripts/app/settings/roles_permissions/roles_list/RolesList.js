@@ -8,7 +8,7 @@ import {
   TableRow,
   TableCell,
   Button,
-  Paragraph
+  Paragraph,
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
@@ -22,11 +22,11 @@ import { createRoleRemover } from 'access_control/RoleRemover';
 const styles = {
   actions: css({
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   }),
   addRoleButton: css({
-    marginLeft: tokens.spacingL
-  })
+    marginLeft: tokens.spacingL,
+  }),
 };
 
 function RoleListActions(props) {
@@ -59,15 +59,15 @@ RoleListActions.propTypes = {
   hasReachedLimit: PropTypes.bool.isRequired,
   hasCustomRolesFeature: PropTypes.bool.isRequired,
   rolesResource: PropTypes.object.isRequired,
-  isLegacyOrganization: PropTypes.bool.isRequired
+  isLegacyOrganization: PropTypes.bool.isRequired,
 };
 
 export default function RolesList(props) {
   const hasReachedLimit = !ResourceUtils.canCreate(props.rolesResource);
   const limit = ResourceUtils.getResourceLimits(props.rolesResource).maximum;
 
-  const removeRole = role =>
-    createRoleRemover(props.listHandler, role).then(removed => {
+  const removeRole = (role) =>
+    createRoleRemover(props.listHandler, role).then((removed) => {
       if (removed) {
         props.refetch();
       }
@@ -109,7 +109,7 @@ export default function RolesList(props) {
             hasCustomRolesFeature={props.hasCustomRolesFeature}
             count={props.roleCounts.admin}
           />
-          {props.roles.map(role => (
+          {props.roles.map((role) => (
             <RoleListItem
               key={role.sys.id}
               role={role}
@@ -129,9 +129,9 @@ RolesList.propTypes = {
   isLegacyOrganization: PropTypes.bool.isRequired,
   canUpgradeOrganization: PropTypes.bool.isRequired,
   roleCounts: PropTypes.shape({
-    admin: PropTypes.number.isRequired
+    admin: PropTypes.number.isRequired,
   }).isRequired,
   rolesResource: PropTypes.object.isRequired,
   listHandler: PropTypes.object.isRequired,
-  refetch: PropTypes.func.isRequired
+  refetch: PropTypes.func.isRequired,
 };

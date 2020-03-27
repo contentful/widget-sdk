@@ -7,13 +7,13 @@ class DataFlow extends React.Component {
   static propTypes = {
     onHover: PropTypes.func,
     onLeave: PropTypes.func,
-    active: PropTypes.string
+    active: PropTypes.string,
   };
 
-  parseStyle = style => {
+  parseStyle = (style) => {
     return {
       top: parseFloat(style.top),
-      left: parseFloat(style.left)
+      left: parseFloat(style.left),
     };
   };
 
@@ -31,8 +31,9 @@ class DataFlow extends React.Component {
         height: '1px',
         left: `calc(${parentStyle.left} + 180px)`,
         top: `calc(${parentStyle.top} + 33px)`,
-        right: `calc(100% - ${style.left} + ${numberedStyle.left -
-          numberedParentStyle.left}% / 2 - 90px)`
+        right: `calc(100% - ${style.left} + ${
+          numberedStyle.left - numberedParentStyle.left
+        }% / 2 - 90px)`,
       };
 
       // line which goes into the child
@@ -40,7 +41,7 @@ class DataFlow extends React.Component {
         height: '1px',
         left: `calc(${style.left} - ${numberedStyle.left - numberedParentStyle.left}% / 2 + 90px)`,
         top: `calc(${style.top} + 33px)`,
-        right: `${100 - numberedStyle.left}%`
+        right: `${100 - numberedStyle.left}%`,
       };
 
       const upVertical = `calc(${style.top} + 33px)`;
@@ -53,7 +54,7 @@ class DataFlow extends React.Component {
         top: numberedStyle.top < numberedParentStyle.top ? upVertical : bottomVertical,
         bottom: `calc(100% - 33px - ${
           numberedStyle.top < numberedParentStyle.top ? parentStyle.top : style.top
-        })`
+        })`,
       };
 
       return (
@@ -77,7 +78,7 @@ class DataFlow extends React.Component {
     // be generalized, depending on the maximum nesting level
     const style = {
       top: `${25 + position * modifier * 20}%`,
-      left: `${35 * level}%`
+      left: `${35 * level}%`,
     };
 
     return (
@@ -105,7 +106,7 @@ class DataFlow extends React.Component {
               child,
               {
                 level: level + 1,
-                position: position * 2 + i - (numberOfChildren - 1) / 2
+                position: position * 2 + i - (numberOfChildren - 1) / 2,
               },
               style
             );
@@ -118,46 +119,46 @@ class DataFlow extends React.Component {
     const JohnDoeBlock = {
       title: 'John Doe',
       subtitle: 'content type: person',
-      item: 'person'
+      item: 'person',
     };
 
     const PersonsBlock = {
       title: 'Person',
       subtitle: 'collection of authors',
       item: 'person',
-      children: [JohnDoeBlock]
+      children: [JohnDoeBlock],
     };
 
     const StaticSitesArticleBlock = {
       title: 'Static sites are great',
       subtitle: 'content type: blogPost',
-      item: 'static-sites-are-great'
+      item: 'static-sites-are-great',
     };
 
     const HelloWorldArticleBlock = {
       title: 'Hello world',
       subtitle: 'content type: blogPost',
-      item: 'hello-world'
+      item: 'hello-world',
     };
 
     const WebhooksArticleBlock = {
       title: 'Automate with webhooks',
       subtitle: 'content type: blogPost',
-      item: 'automate-with-webhooks'
+      item: 'automate-with-webhooks',
     };
 
     const BlogPostsBlock = {
       title: 'Blog Posts',
       subtitle: 'collection of articles',
       item: 'articles',
-      children: [StaticSitesArticleBlock, HelloWorldArticleBlock, WebhooksArticleBlock]
+      children: [StaticSitesArticleBlock, HelloWorldArticleBlock, WebhooksArticleBlock],
     };
 
     const structure = {
       title: 'App',
       subtitle: 'Application shell',
       item: 'all',
-      children: [PersonsBlock, BlogPostsBlock]
+      children: [PersonsBlock, BlogPostsBlock],
     };
 
     return (

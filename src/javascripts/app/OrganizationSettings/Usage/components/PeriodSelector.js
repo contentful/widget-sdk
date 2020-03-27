@@ -6,13 +6,13 @@ import { cond, constant, stubTrue } from 'lodash';
 
 import { periodPropType } from '../propTypes';
 
-const formatDate = date => moment(date).format('DD MMM');
+const formatDate = (date) => moment(date).format('DD MMM');
 
 export default class PeriodSelector extends React.Component {
   static propTypes = {
     periods: PropTypes.arrayOf(periodPropType).isRequired,
     selectedPeriodIndex: PropTypes.number.isRequired,
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
   };
 
   render() {
@@ -30,9 +30,7 @@ export default class PeriodSelector extends React.Component {
             const isCurrentPeriod = endDate === null;
             const start = moment(startDate);
             const end = isCurrentPeriod
-              ? moment(start)
-                  .add(1, 'month')
-                  .subtract(1, 'day')
+              ? moment(start).add(1, 'month').subtract(1, 'day')
               : moment(endDate);
 
             const value = `${index}`;
@@ -41,7 +39,7 @@ export default class PeriodSelector extends React.Component {
               <Option key={index} value={value}>{`${formatDate(start)} – ${formatDate(end)} ${cond([
                 [constant(isCurrentPeriod), constant('(current)')],
                 [constant(end.year() === moment().year()), constant(`(${moment().to(start)})`)],
-                [constant(stubTrue), constant(end.year())]
+                [constant(stubTrue), constant(end.year())],
               ])()}`}</Option>
             );
           })}

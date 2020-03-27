@@ -5,7 +5,7 @@ import { Subheading, Paragraph, TextLink } from '@contentful/forma-36-react-comp
 import {
   NAMESPACE_SIDEBAR_BUILTIN,
   NAMESPACE_EXTENSION,
-  NAMESPACE_APP
+  NAMESPACE_APP,
 } from 'widgets/WidgetNamespaces';
 import SidebarWidgetItem from './SidebarWidgetItem';
 import tokens from '@contentful/forma-36-tokens';
@@ -13,14 +13,14 @@ import { css } from 'emotion';
 
 const styles = {
   customSidebarTitle: css({
-    marginBottom: tokens.spacingM
+    marginBottom: tokens.spacingM,
   }),
   widgetType: css({
-    marginBottom: tokens.spacingS
+    marginBottom: tokens.spacingS,
   }),
   parameterConfigLink: css({
-    marginBottom: tokens.spacingS
-  })
+    marginBottom: tokens.spacingS,
+  }),
 };
 
 function WidgetItem({ widget, onRemoveClick, onConfigureClick, index }) {
@@ -61,7 +61,7 @@ WidgetItem.propTypes = {
   widget: PropTypes.object.isRequired,
   onRemoveClick: PropTypes.func.isRequired,
   onConfigureClick: PropTypes.func.isRequired,
-  index: PropTypes.number
+  index: PropTypes.number,
 };
 
 const SortableContainer = sortableContainer(({ children }) => <div>{children}</div>);
@@ -106,12 +106,12 @@ export default function CustomSidebar({ items, onChangePosition, onRemoveItem, o
 }
 
 CustomSidebar.defaultProps = {
-  items: []
+  items: [],
 };
 
 CustomSidebar.propTypes = {
   items: PropTypes.array.isRequired,
   onRemoveItem: PropTypes.func.isRequired,
   onConfigureItem: PropTypes.func.isRequired,
-  onChangePosition: PropTypes.func.isRequired
+  onChangePosition: PropTypes.func.isRequired,
 };

@@ -7,10 +7,10 @@ const defaultProps = {
   tokens: [
     {
       id: '1',
-      name: 'example token'
-    }
+      name: 'example token',
+    },
   ],
-  revoke: jest.fn()
+  revoke: jest.fn(),
 };
 
 describe('TokenList', () => {
@@ -22,7 +22,7 @@ describe('TokenList', () => {
   it('should render empty div if no tokens are avalaible', () => {
     const localTestProps = {
       ...defaultProps,
-      tokens: []
+      tokens: [],
     };
 
     const { getByTestId } = render(<TokenTable {...localTestProps} />);

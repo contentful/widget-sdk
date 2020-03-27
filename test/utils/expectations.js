@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-const sel = id => `[data-test-id="${id}"]`;
+const sel = (id) => `[data-test-id="${id}"]`;
 
 export const getElement = (wrapper, id) => wrapper.find(sel(id));
 

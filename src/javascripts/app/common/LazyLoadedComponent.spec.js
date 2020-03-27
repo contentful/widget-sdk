@@ -7,17 +7,17 @@ import LazyLoadedComponent from './LazyLoadedComponent';
 jest.mock('app/common/StateRedirect', () => jest.fn().mockReturnValue(null));
 
 describe('LazyLoadedComponent', () => {
-  const build = custom => {
+  const build = (custom) => {
     const props = Object.assign(
       {
         onReady: jest.fn(),
-        importer: jest.fn().mockResolvedValue(() => null)
+        importer: jest.fn().mockResolvedValue(() => null),
       },
       custom
     );
 
     return render(
-      <LazyLoadedComponent {...props}>{Component => <Component />}</LazyLoadedComponent>
+      <LazyLoadedComponent {...props}>{(Component) => <Component />}</LazyLoadedComponent>
     );
   };
   it('should immediately call onReady', () => {

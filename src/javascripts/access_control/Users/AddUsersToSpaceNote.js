@@ -65,5 +65,5 @@ export default AddUsersToSpaceNote;
 AddUsersToSpaceNote.propTypes = {
   orgId: PropTypes.string.isRequired,
   isOwnerOrAdmin: PropTypes.bool.isRequired,
-  hasTeamsFeature: PropTypes.bool
+  hasTeamsFeature: PropTypes.bool,
 };

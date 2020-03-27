@@ -18,31 +18,31 @@ export default ({ $scope, emitter }) => {
 
   const initializeIncomingLinks = once(() => {
     emitter.emit(SidebarEventTypes.UPDATED_INCOMING_LINKS_WIDGET, {
-      entityInfo: $scope.entityInfo
+      entityInfo: $scope.entityInfo,
     });
   });
 
   const initializeContentPreview = once(() => {
-    const updateEntry = entry => {
+    const updateEntry = (entry) => {
       emitter.emit(SidebarEventTypes.UPDATED_CONTENT_PREVIEW_WIDGET, {
         entry,
         contentType: $scope.entityInfo.contentType,
         dataForTracking: {
           locales: $scope.localeData.activeLocales,
           fromState: getCurrentStateName(),
-          entryId: $scope.entityInfo.id
-        }
+          entryId: $scope.entityInfo.id,
+        },
       });
     };
     updateEntry(null);
-    K.onValueScope($scope, $scope.otDoc.data$, entry => {
+    K.onValueScope($scope, $scope.otDoc.data$, (entry) => {
       updateEntry(entry);
     });
   });
 
   const initializeUsers = once(() => {
     emitter.emit(SidebarEventTypes.UPDATED_USERS_WIDGET, []);
-    K.onValueScope($scope, $scope.otDoc.presence.collaborators, collaborators => {
+    K.onValueScope($scope, $scope.otDoc.presence.collaborators, (collaborators) => {
       emitter.emit(SidebarEventTypes.UPDATED_USERS_WIDGET, collaborators);
     });
   });
@@ -51,20 +51,20 @@ export default ({ $scope, emitter }) => {
     const notifyUpdate = ({ entrySys, publishedVersion }) => {
       emitter.emit(SidebarEventTypes.UPDATED_VERSIONS_WIDGET, {
         entrySys,
-        publishedVersion
+        publishedVersion,
       });
     };
 
-    const updateStream$ = $scope.otDoc.sysProperty.map(sys => ({
+    const updateStream$ = $scope.otDoc.sysProperty.map((sys) => ({
       entrySys: sys,
-      publishedVersion: sys.publishedVersion
+      publishedVersion: sys.publishedVersion,
     }));
 
     K.onValue(updateStream$, notifyUpdate);
   });
 
   const initializePublication = once(() => {
-    const notifyUpdate = update => {
+    const notifyUpdate = (update) => {
       const entity = $scope.editorData.entity.data;
       emitter.emit(SidebarEventTypes.UPDATED_PUBLICATION_WIDGET, {
         ...update,
@@ -77,34 +77,34 @@ export default ({ $scope, emitter }) => {
         commands: {
           primary: $scope.state.primary,
           secondary: $scope.state.secondary,
-          revertToPrevious: $scope.state.revertToPrevious
-        }
+          revertToPrevious: $scope.state.revertToPrevious,
+        },
       });
     };
 
     notifyUpdate({
       status: $scope.state.current,
-      updatedAt: K.getValue($scope.otDoc.sysProperty).updatedAt
+      updatedAt: K.getValue($scope.otDoc.sysProperty).updatedAt,
     });
 
-    K.onValueScope($scope, $scope.otDoc.sysProperty, sys => {
+    K.onValueScope($scope, $scope.otDoc.sysProperty, (sys) => {
       notifyUpdate({
         status: $scope.state.current,
-        updatedAt: sys.updatedAt
+        updatedAt: sys.updatedAt,
       });
     });
 
     let setNotSavingTimeout;
-    K.onValueScope($scope, $scope.otDoc.state.isSaving$, isSaving => {
+    K.onValueScope($scope, $scope.otDoc.state.isSaving$, (isSaving) => {
       clearTimeout(setNotSavingTimeout);
       if (isSaving) {
         notifyUpdate({
-          isSaving: true
+          isSaving: true,
         });
       } else {
         setNotSavingTimeout = setTimeout(() => {
           notifyUpdate({
-            isSaving: false
+            isSaving: false,
           });
         }, 1000);
       }
@@ -112,34 +112,34 @@ export default ({ $scope, emitter }) => {
   });
 
   const initializeTasksWidget = once(() => {
-    const notifyUpdate = update => {
+    const notifyUpdate = (update) => {
       emitter.emit(SidebarEventTypes.UPDATED_TASKS_WIDGET, {
         ...update,
         entityInfo: $scope.entityInfo,
         endpoint: spaceContext.endpoint,
         users: spaceContext.users,
         currentUser: spaceContext.user,
-        isSpaceAdmin: user => spaceContext.space.isAdmin(user)
+        isSpaceAdmin: (user) => spaceContext.space.isAdmin(user),
       });
     };
     notifyUpdate({});
   });
 
   const initializeInfoPanel = once(() => {
-    const updateProps = update => {
+    const updateProps = (update) => {
       emitter.emit(SidebarEventTypes.UPDATED_INFO_PANEL, {
         contentType: $scope.entityInfo.contentType,
-        ...update
+        ...update,
       });
     };
 
     $scope.$on('show-aux-panel', (_, isVisible) => {
       updateProps({
-        isVisible
+        isVisible,
       });
     });
 
-    K.onValueScope($scope, $scope.otDoc.sysProperty, sys => {
+    K.onValueScope($scope, $scope.otDoc.sysProperty, (sys) => {
       updateProps({ sys });
     });
   });
@@ -152,14 +152,14 @@ export default ({ $scope, emitter }) => {
       // the comments tab is opened for the first time
       emitter.emit(SidebarEventTypes.INIT_COMMENTS_PANEL, {
         entryId: $scope.entityInfo.id,
-        endpoint: spaceContext.endpoint
+        endpoint: spaceContext.endpoint,
       });
     });
 
     commentsPanelDelistener = $scope.$on('show-comments-panel', (_, isVisible) => {
       init();
       emitter.emit(SidebarEventTypes.UPDATED_COMMENTS_PANEL, {
-        isVisible
+        isVisible,
       });
     });
   });
@@ -169,7 +169,7 @@ export default ({ $scope, emitter }) => {
     commentsPanelDelistener = undefined;
   });
 
-  emitter.on(SidebarEventTypes.WIDGET_DEREGISTERED, name => {
+  emitter.on(SidebarEventTypes.WIDGET_DEREGISTERED, (name) => {
     switch (name) {
       case SidebarWidgetTypes.COMMENTS_PANEL:
         deinitializeCommentsPanel();
@@ -177,7 +177,7 @@ export default ({ $scope, emitter }) => {
     }
   });
 
-  emitter.on(SidebarEventTypes.WIDGET_REGISTERED, name => {
+  emitter.on(SidebarEventTypes.WIDGET_REGISTERED, (name) => {
     switch (name) {
       case SidebarWidgetTypes.INCOMING_LINKS:
         initializeIncomingLinks();
@@ -207,7 +207,7 @@ export default ({ $scope, emitter }) => {
   });
 
   // Construct a list of legacy sidebar extensions
-  const legacyExtensions = $scope.editorData.fieldControls.sidebar.map(widget => {
+  const legacyExtensions = $scope.editorData.fieldControls.sidebar.map((widget) => {
     // A fake field-locale scope to be used in the bridge:
     const fieldLocaleScope = $scope.$new(false);
     fieldLocaleScope.widget = widget;
@@ -217,14 +217,14 @@ export default ({ $scope, emitter }) => {
     // We just provide a noop for this SDK method here:
     fieldLocaleScope.fieldController = { setInvalid: () => {} };
     fieldLocaleScope.fieldLocale = $controller('FieldLocaleController', {
-      $scope: fieldLocaleScope
+      $scope: fieldLocaleScope,
     });
 
     const bridge = createExtensionBridge(
       {
         $rootScope,
         $scope: fieldLocaleScope,
-        spaceContext
+        spaceContext,
       },
       WidgetLocations.LOCATION_ENTRY_FIELD_SIDEBAR
     );
@@ -236,7 +236,7 @@ export default ({ $scope, emitter }) => {
     {
       $rootScope,
       $scope,
-      spaceContext
+      spaceContext,
     },
     WidgetLocations.LOCATION_ENTRY_SIDEBAR
   );
@@ -249,6 +249,6 @@ export default ({ $scope, emitter }) => {
     sidebarExtensionsBridge,
     isEntry,
     isMasterEnvironment,
-    emitter
+    emitter,
   };
 };

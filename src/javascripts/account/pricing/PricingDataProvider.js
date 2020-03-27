@@ -10,7 +10,7 @@ const ENTERPRISE_HIGH_DEMAND = 'Enterprise High Demand';
 
 export const customerTypes = {
   selfService: [SELF_SERVICE],
-  enterprise: [ENTERPRISE, ENTERPRISE_TRIAL, ENTERPRISE_HIGH_DEMAND]
+  enterprise: [ENTERPRISE, ENTERPRISE_TRIAL, ENTERPRISE_HIGH_DEMAND],
 };
 
 export function isSelfServicePlan(plan) {
@@ -51,7 +51,7 @@ export function getSubscriptionPlans(endpoint, params) {
     {
       method: 'GET',
       path: ['plans'],
-      query: params
+      query: params,
     },
     alphaHeader
   );
@@ -67,7 +67,7 @@ export function getBasePlan(endpoint) {
     getSubscriptionPlans(endpoint, { plan_type: 'base' })
       // although you can only have 1 base plan, the endpoint
       // still returns a list
-      .then(data => data.items[0])
+      .then((data) => data.items[0])
   );
 }
 
@@ -84,59 +84,59 @@ export async function getPlansWithSpaces(endpoint) {
   const [ratePlans, subscriptions, spaces] = await Promise.all([
     getRatePlans(endpoint),
     getSubscriptionPlans(endpoint),
-    getAllSpaces(endpoint)
+    getAllSpaces(endpoint),
   ]);
 
-  const freeSpaceRatePlan = ratePlans.find(plan => plan.productPlanType === 'free_space');
+  const freeSpaceRatePlan = ratePlans.find((plan) => plan.productPlanType === 'free_space');
   const spaceSubscriptions = subscriptions.items.filter(
-    subscription => subscription.planType === 'space'
+    (subscription) => subscription.planType === 'space'
   );
 
-  const freeSpaces = spaces.filter(space => {
+  const freeSpaces = spaces.filter((space) => {
     // find all spaces that don't have a matching subscription.
     // gatekeeperKey is the space ID
     return !spaceSubscriptions.some(({ gatekeeperKey }) => space.sys.id === gatekeeperKey);
   });
 
-  const findSpaceByPlan = plan =>
+  const findSpaceByPlan = (plan) =>
     plan.gatekeeperKey && spaces.find(({ sys }) => sys.id === plan.gatekeeperKey);
 
   const plansWithSpaces = {
     plans: subscriptions,
     items: [
-      ...subscriptions.items.map(plan => ({
+      ...subscriptions.items.map((plan) => ({
         ...plan,
-        space: findSpaceByPlan(plan)
+        space: findSpaceByPlan(plan),
       })),
-      ...freeSpaces.map(space => ({
+      ...freeSpaces.map((space) => ({
         sys: { id: uniqueId('free-space-plan-') },
         gatekeeperKey: space.sys.id,
         name: freeSpaceRatePlan.name,
         planType: 'free_space',
-        space
-      }))
-    ]
+        space,
+      })),
+    ],
   };
 
   // Get unique `createdBy` users for all spaces
   const userIds = reject(
     uniq(plansWithSpaces.items.map(({ space }) => get(space, 'sys.createdBy.sys.id'))),
-    i => !i
+    (i) => !i
   );
   const users = await getUsersByIds(endpoint, userIds);
   // Map users to spaces
   return {
     ...plansWithSpaces,
-    items: plansWithSpaces.items.map(plan => ({
+    items: plansWithSpaces.items.map((plan) => ({
       ...plan,
       space: plan.space && {
         ...plan.space,
         sys: {
           ...plan.space.sys,
-          createdBy: users.find(({ sys }) => sys.id === plan.space.sys.createdBy.sys.id)
-        }
-      }
-    }))
+          createdBy: users.find(({ sys }) => sys.id === plan.space.sys.createdBy.sys.id),
+        },
+      },
+    })),
   };
 }
 
@@ -146,8 +146,8 @@ export function changeSpace(endpoint, productRatePlanId) {
       method: 'PUT',
       path: [],
       data: {
-        productRatePlanId: productRatePlanId
-      }
+        productRatePlanId: productRatePlanId,
+      },
     },
     alphaHeader
   );
@@ -163,10 +163,10 @@ export function getEnabledFeatures(endpoint) {
   return endpoint(
     {
       method: 'GET',
-      path: ['features']
+      path: ['features'],
     },
     alphaHeader
-  ).then(features => (features && features.items) || []);
+  ).then((features) => (features && features.items) || []);
 }
 
 /* Gets the space plan for the space with corresponding space id
@@ -176,23 +176,23 @@ export function getEnabledFeatures(endpoint) {
 export function getSingleSpacePlan(endpoint, spaceId) {
   return getSubscriptionPlans(endpoint, {
     plan_type: 'space',
-    gatekeeper_key: spaceId
-  }).then(data => data.items[0]);
+    gatekeeper_key: spaceId,
+  }).then((data) => data.items[0]);
 }
 
 export function getBaseSubscription(endpoint) {
   const query = {
-    plan_type: 'base'
+    plan_type: 'base',
   };
 
   return endpoint(
     {
       method: 'GET',
       path: ['plans'],
-      query
+      query,
     },
     alphaHeader
-  ).then(data => data.items[0]);
+  ).then((data) => data.items[0]);
 }
 
 /* Gets collection of space product rate plans.
@@ -201,7 +201,7 @@ export function getBaseSubscription(endpoint) {
  */
 export function getSpaceRatePlans(endpoint, spaceId) {
   const query = {
-    plan_type: 'space'
+    plan_type: 'space',
   };
 
   if (spaceId) {
@@ -212,10 +212,10 @@ export function getSpaceRatePlans(endpoint, spaceId) {
     {
       method: 'GET',
       path: ['product_rate_plans'],
-      query
+      query,
     },
     alphaHeader
-  ).then(data => data.items);
+  ).then((data) => data.items);
 }
 
 /**
@@ -225,10 +225,10 @@ export function getRatePlans(endpoint) {
   return endpoint(
     {
       method: 'GET',
-      path: ['product_rate_plans']
+      path: ['product_rate_plans'],
     },
     alphaHeader
-  ).then(data => data.items);
+  ).then((data) => data.items);
 }
 
 /**

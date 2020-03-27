@@ -10,7 +10,7 @@ import {
   Typography,
   Heading,
   Paragraph,
-  Button
+  Button,
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import { without } from 'lodash';
@@ -23,7 +23,7 @@ import LoadingState from 'app/common/LoadingState';
 import OrganizationRow from './OrganizationRow';
 import * as TokenStore from 'services/TokenStore';
 import EmptyStateContainer, {
-  defaultSVGStyle
+  defaultSVGStyle,
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import Illustration from 'svg/illustrations/readonly-space-ill.svg';
 
@@ -31,9 +31,9 @@ const styles = {
   content: css({
     height: '100%',
     '> div': {
-      height: '100%'
-    }
-  })
+      height: '100%',
+    },
+  }),
 };
 
 const OrganizationsRoute = () => {
@@ -48,7 +48,7 @@ const OrganizationsRoute = () => {
 
   // Note: this function is not currently tested, please be careful when editing it.
   const onLeaveSuccess = useCallback(
-    organization => {
+    (organization) => {
       setOrganizations(without(organizations, organization));
       TokenStore.refresh();
     },
@@ -99,7 +99,7 @@ const OrganizationsRoute = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {organizations.map(organization => {
+                  {organizations.map((organization) => {
                     return (
                       <OrganizationRow
                         key={organization.sys.id}

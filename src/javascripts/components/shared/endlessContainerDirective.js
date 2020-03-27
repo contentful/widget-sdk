@@ -5,11 +5,11 @@ export default function register() {
   registerDirective('cfEndlessContainer', () => ({
     restrict: 'A',
 
-    link: function(scope, elem, attr) {
+    link: function (scope, elem, attr) {
       const debouncedHandleAtBottom = _.debounce(handleAtBottom, 50);
 
       elem.css({
-        'overflow-y': 'auto'
+        'overflow-y': 'auto',
       });
 
       scope.$watch(attr.numElements, (numElements, old) => {
@@ -35,6 +35,6 @@ export default function register() {
           scope.$eval(attr.atBottom);
         }
       }
-    }
+    },
   }));
 }

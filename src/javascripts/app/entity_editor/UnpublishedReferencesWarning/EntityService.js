@@ -6,6 +6,6 @@ export function fetchEntities({ entryIds, assetIds }) {
   const spaceContext = getModule('spaceContext');
   return Promise.all([
     EntityResolver.fetchForType(spaceContext, 'Entry', entryIds),
-    EntityResolver.fetchForType(spaceContext, 'Asset', assetIds)
+    EntityResolver.fetchForType(spaceContext, 'Asset', assetIds),
   ]);
 }

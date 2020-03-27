@@ -103,7 +103,7 @@ function displayNotification() {
   if (enabledFlags.length) {
     addNotification(
       'Enabled flags:',
-      <ul>{enabledFlags.map(flag => renderFlagsListItem(flag, removeEnabledFlag))}</ul>
+      <ul>{enabledFlags.map((flag) => renderFlagsListItem(flag, removeEnabledFlag))}</ul>
     );
   }
 
@@ -111,7 +111,7 @@ function displayNotification() {
   if (disabledFlags.length) {
     addNotification(
       'Disabled flags:',
-      <ul>{disabledFlags.map(flag => renderFlagsListItem(flag, removeDisabledFlag))}</ul>
+      <ul>{disabledFlags.map((flag) => renderFlagsListItem(flag, removeDisabledFlag))}</ul>
     );
   }
 }

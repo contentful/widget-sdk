@@ -7,7 +7,7 @@ import {
   CardActions,
   DropdownList,
   DropdownListItem,
-  Tooltip
+  Tooltip,
 } from '@contentful/forma-36-react-components';
 import AppsPrivateFrameworkIllustration from 'svg/illustrations/apps-private-framework.svg';
 import tokens from '@contentful/forma-36-tokens';
@@ -31,7 +31,7 @@ import {
   CopyButton,
   SectionHeading,
   Workbench,
-  Note
+  Note,
 } from '@contentful/forma-36-react-components';
 
 import StateLink from 'app/common/StateLink';
@@ -43,15 +43,15 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    marginLeft: tokens.spacingXs
+    marginLeft: tokens.spacingXs,
   }),
   headerInput: css({
     maxWidth: '1100px',
     width: '100%',
-    marginLeft: tokens.spacing4Xl
+    marginLeft: tokens.spacing4Xl,
   }),
   appActions: css({
-    verticalAlign: 'middle'
+    verticalAlign: 'middle',
   }),
   copyButton: css({
     button: css({
@@ -65,28 +65,28 @@ const styles = {
         backgroundColor: 'transparent',
         border: 'none',
         opacity: '1',
-        transform: 'translateX(0)'
-      })
-    })
+        transform: 'translateX(0)',
+      }),
+    }),
   }),
   sidebarHeading: css({
     color: tokens.colorElementDarkest,
     borderBottom: `1px solid ${tokens.colorElementMid}`,
-    fontWeight: tokens.fontWeightNormal
+    fontWeight: tokens.fontWeightNormal,
   }),
   cell: css({
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   }),
   miniIcon: css({
     marginRight: tokens.spacingS,
-    verticalAlign: 'sub'
+    verticalAlign: 'sub',
   }),
   learnMore: css({
     maxWidth: '768px',
     margin: '0 auto',
     marginTop: '100px',
-    textAlign: 'center'
+    textAlign: 'center',
   }),
   emptyWorkbench: css({
     '> div': css({
@@ -94,8 +94,8 @@ const styles = {
       flexDirection: 'column',
       height: '100%',
       maxWidth: '768px',
-      margin: '0 auto'
-    })
+      margin: '0 auto',
+    }),
   }),
   emptyState: css({
     maxWidth: '768px',
@@ -104,11 +104,11 @@ const styles = {
     marginTop: tokens.spacingL,
     marginBottom: tokens.spacingS,
     '& svg': css({
-      width: '80%'
+      width: '80%',
     }),
     button: css({
-      marginBottom: tokens.spacingL
-    })
+      marginBottom: tokens.spacingL,
+    }),
   }),
   menuCell: css({
     display: 'flex',
@@ -116,17 +116,17 @@ const styles = {
     height: '20px',
     div: css({
       display: 'flex',
-      justifyContent: 'center'
-    })
-  })
+      justifyContent: 'center',
+    }),
+  }),
 };
 
 const idStyle = css({
   fontFamily: tokens.fontStackMonospace,
   [`&:hover ~ .${styles.copyButton} button`]: css({
     opacity: '1',
-    transform: 'translateX(0)'
-  })
+    transform: 'translateX(0)',
+  }),
 });
 
 function openInstallModal(definition) {
@@ -233,7 +233,7 @@ export default function AppListing({ definitions, canManageApps }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {definitions.map(def => {
+            {definitions.map((def) => {
               return (
                 <TableRow key={def.sys.id}>
                   <TableCell>
@@ -290,11 +290,11 @@ export default function AppListing({ definitions, canManageApps }) {
 
 AppListing.propTypes = {
   definitions: PropTypes.arrayOf(PropTypes.object).isRequired,
-  canManageApps: PropTypes.bool.isRequired
+  canManageApps: PropTypes.bool.isRequired,
 };
 
 CreateAppButton.propTypes = {
   disabled: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
-  orgId: PropTypes.string.isRequired
+  orgId: PropTypes.string.isRequired,
 };

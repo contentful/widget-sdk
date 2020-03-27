@@ -4,7 +4,7 @@ import { TextInput, ModalConfirm } from '@contentful/forma-36-react-components';
 
 const LocaleType = PropTypes.shape({
   code: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired
+  name: PropTypes.string.isRequired,
 });
 
 export default class LocaleCodeChangeConfirmDialog extends React.Component {
@@ -13,11 +13,11 @@ export default class LocaleCodeChangeConfirmDialog extends React.Component {
     previousLocale: LocaleType.isRequired,
     locale: LocaleType.isRequired,
     onCancel: PropTypes.func.isRequired,
-    onConfirm: PropTypes.func.isRequired
+    onConfirm: PropTypes.func.isRequired,
   };
 
   state = {
-    typedLocaleCode: ''
+    typedLocaleCode: '',
   };
 
   componentDidUpdate(nextProps) {
@@ -52,7 +52,7 @@ export default class LocaleCodeChangeConfirmDialog extends React.Component {
           width="medium"
           testId="repeat-locale-input"
           value={this.state.typedLocaleCode}
-          onChange={e => {
+          onChange={(e) => {
             this.setState({ typedLocaleCode: e.target.value });
           }}
         />

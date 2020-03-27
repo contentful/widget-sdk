@@ -1,6 +1,6 @@
 import { h } from 'utils/legacy-html-hyperscript';
 
-export default function() {
+export default function () {
   return h('.auto-create-space-modal.modal-background', [
     h(
       '.modal-dialog',
@@ -8,16 +8,16 @@ export default function() {
         style: {
           lineHeight: '1.5em',
           width: '750px',
-          borderRadius: '3px'
-        }
+          borderRadius: '3px',
+        },
       },
       [
         h(
           '.modal-dialog__content',
           {
             style: {
-              paddingBottom: '30px'
-            }
+              paddingBottom: '30px',
+            },
           },
           [
             h(
@@ -26,8 +26,8 @@ export default function() {
                 style: {
                   display: 'flex',
                   flexDirection: 'column',
-                  alignItems: 'center'
-                }
+                  alignItems: 'center',
+                },
               },
               [
                 h(
@@ -35,21 +35,21 @@ export default function() {
                   {
                     style: {
                       height: '28px',
-                      marginBottom: '20px'
-                    }
+                      marginBottom: '20px',
+                    },
                   },
                   [
                     h('div', { ngShow: 'isCreatingSpace' }, [
                       h('react-component', {
                         name: '@contentful/forma-36-react-components/Spinner',
-                        props: '{size: "large", style: {display: "block"}}'
-                      })
+                        props: '{size: "large", style: {display: "block"}}',
+                      }),
                     ]),
                     h('cf-icon', {
                       name: 'checkmark',
                       scale: '2',
-                      ngShow: '!isCreatingSpace'
-                    })
+                      ngShow: '!isCreatingSpace',
+                    }),
                   ]
                 ),
                 h(
@@ -57,20 +57,20 @@ export default function() {
                   {
                     style: {
                       fontWeight: 'bold',
-                      marginTop: 0
-                    }
+                      marginTop: 0,
+                    },
                   },
                   [`We’re preparing your example project`]
                 ),
-                h('p.modal-dialog__plaintext', ['Here’s what you can do with it'])
+                h('p.modal-dialog__plaintext', ['Here’s what you can do with it']),
               ]
             ),
             h(
               '.auto-create-space-modal__overview',
               {
                 style: {
-                  padding: '0 80px'
-                }
+                  padding: '0 80px',
+                },
               },
               [
                 overviewItem(
@@ -92,9 +92,9 @@ export default function() {
                   'apis',
                   'RESTful APIs',
                   'Quickly deliver your content to any of your platforms or update it programmatically using our APIs.'
-                )
+                ),
               ]
-            )
+            ),
           ]
         ),
         h(
@@ -102,22 +102,22 @@ export default function() {
           {
             style: {
               display: 'flex',
-              justifyContent: 'center'
-            }
+              justifyContent: 'center',
+            },
           },
           [
             h(
               'button.btn-action',
               {
                 ngDisabled: 'isCreatingSpace',
-                ngClick: 'dialog.confirm()'
+                ngClick: 'dialog.confirm()',
               },
               ['Explore the example project']
-            )
+            ),
           ]
-        )
+        ),
       ]
-    )
+    ),
   ]);
 }
 
@@ -128,15 +128,15 @@ function overviewItem(type, heading, text) {
     {
       style: {
         display: 'flex',
-        marginTop: '30px'
-      }
+        marginTop: '30px',
+      },
     },
     [
       h('cf-icon', {
         name: `page-${type}`,
         style: {
-          paddingRight: '20px'
-        }
+          paddingRight: '20px',
+        },
       }),
       h('div', {}, [
         h(
@@ -145,8 +145,8 @@ function overviewItem(type, heading, text) {
             style: {
               fontWeight: 'bold',
               margin: '0',
-              marginBottom: '8px'
-            }
+              marginBottom: '8px',
+            },
           },
           [`${heading}`]
         ),
@@ -154,12 +154,12 @@ function overviewItem(type, heading, text) {
           'p',
           {
             style: {
-              marginBottom: '0'
-            }
+              marginBottom: '0',
+            },
           },
           [`${text}`]
-        )
-      ])
+        ),
+      ]),
     ]
   );
 }

@@ -11,11 +11,7 @@ const getAccessState = get('access');
  *
  * @return {bool | null}
  */
-export const hasAccess = flow(
-  getAccessState,
-  get('allowed'),
-  defaultTo(false)
-);
+export const hasAccess = flow(getAccessState, get('allowed'), defaultTo(false));
 
 /**
  * @description
@@ -26,8 +22,4 @@ export const hasAccess = flow(
  *
  * @return {string | null}
  */
-export const getReasonDenied = flow(
-  getAccessState,
-  get('reason'),
-  defaultTo(null)
-);
+export const getReasonDenied = flow(getAccessState, get('reason'), defaultTo(null));

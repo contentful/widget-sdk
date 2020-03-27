@@ -6,18 +6,18 @@ import { Button, TextField, Modal } from '@contentful/forma-36-react-components'
 export class WebhookSecretHeaderForm extends Component {
   static propTypes = {
     onConfirm: PropTypes.func.isRequired,
-    onCancel: PropTypes.func.isRequired
+    onCancel: PropTypes.func.isRequired,
   };
 
   state = {
     key: '',
-    value: ''
+    value: '',
   };
 
   onConfirm = () => {
     this.props.onConfirm({
       key: this.state.key,
-      value: this.state.value
+      value: this.state.value,
     });
   };
 
@@ -35,7 +35,7 @@ export class WebhookSecretHeaderForm extends Component {
             id="secret-header-key"
             name="secret-header-key"
             value={this.state.key || ''}
-            onChange={e => this.setState({ key: e.target.value })}
+            onChange={(e) => this.setState({ key: e.target.value })}
             required
             labelText="Key"
             textInputProps={{ type: 'text' }}
@@ -45,7 +45,7 @@ export class WebhookSecretHeaderForm extends Component {
             id="secret-header-value"
             name="secret-header-value"
             value={this.state.value || ''}
-            onChange={e => this.setState({ value: e.target.value })}
+            onChange={(e) => this.setState({ value: e.target.value })}
             required
             labelText="Value"
             textInputProps={{ type: 'password' }}
@@ -82,5 +82,5 @@ export default function WebhookSecretHeaderDialog(props) {
 WebhookSecretHeaderDialog.propTypes = {
   isShown: PropTypes.bool.isRequired,
   onConfirm: PropTypes.func.isRequired,
-  onCancel: PropTypes.func.isRequired
+  onCancel: PropTypes.func.isRequired,
 };

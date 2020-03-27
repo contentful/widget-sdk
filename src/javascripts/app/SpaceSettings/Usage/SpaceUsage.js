@@ -11,20 +11,14 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import NavigationIcon from 'ui/Components/NavigationIcon';
 
 const addMasterEnvironment = flow(
-  update(
-    'limits',
-    flow(
-      update('included', add(1)),
-      update('maximum', add(1))
-    )
-  ),
+  update('limits', flow(update('included', add(1)), update('maximum', add(1)))),
   update('usage', add(1))
 );
 
 const styles = {
   sidebar: css({
-    position: 'relative'
-  })
+    position: 'relative',
+  }),
 };
 
 class SpaceUsage extends React.Component {
@@ -34,13 +28,13 @@ class SpaceUsage extends React.Component {
     environmentMeta: PropTypes.shape({
       aliasId: PropTypes.string,
       environmentId: PropTypes.string.isRequired,
-      isMasterEnvironment: PropTypes.bool.isRequired
-    }).isRequired
+      isMasterEnvironment: PropTypes.bool.isRequired,
+    }).isRequired,
   };
 
   state = {
     spaceResources: undefined,
-    environmentResources: undefined
+    environmentResources: undefined,
   };
 
   componentDidMount() {
@@ -51,7 +45,7 @@ class SpaceUsage extends React.Component {
     const { spaceId, environmentMeta } = this.props;
     const spaceScopedService = createResourceService(spaceId);
     const envScopedService = createResourceService(spaceId, 'space', environmentMeta.environmentId);
-    const isPermanent = resource => resource.kind === 'permanent';
+    const isPermanent = (resource) => resource.kind === 'permanent';
 
     try {
       this.setState({
@@ -60,7 +54,7 @@ class SpaceUsage extends React.Component {
           keyBy('sys.id'),
           update('environment', addMasterEnvironment)
         )(await spaceScopedService.getAll()),
-        environmentResources: flow(keyBy('sys.id'))(await envScopedService.getAll())
+        environmentResources: flow(keyBy('sys.id'))(await envScopedService.getAll()),
       });
     } catch (e) {
       ReloadNotification.apiErrorHandler(e);

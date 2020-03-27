@@ -11,7 +11,7 @@ jest.mock('./Analytics/ScheduledActionsAnalytics');
 describe('<ScheduledActionsFeatureFlag />', () => {
   const build = () => {
     const props = {
-      children: jest.fn().mockReturnValue(null)
+      children: jest.fn().mockReturnValue(null),
     };
     return [render(<ScheduledActionsFeatureFlag {...props} />), props];
   };

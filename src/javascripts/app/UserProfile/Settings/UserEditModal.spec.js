@@ -5,16 +5,16 @@ import UserEditModal from './UserEditModal';
 import { updateUserData } from './AccountRepository';
 
 jest.mock('./AccountRepository', () => ({
-  updateUserData: jest.fn()
+  updateUserData: jest.fn(),
 }));
 
 describe('UserEditModal', () => {
-  const build = custom => {
+  const build = (custom) => {
     const opts = Object.assign(
       {
         passwordSet: true,
         onConfirm: () => {},
-        onCancel: () => {}
+        onCancel: () => {},
       },
       custom
     );
@@ -25,8 +25,8 @@ describe('UserEditModal', () => {
       email: 'hans@hanszimmer.com',
       passwordSet: opts.passwordSet,
       sys: {
-        version: 3
-      }
+        version: 3,
+      },
     };
 
     return render(
@@ -34,21 +34,21 @@ describe('UserEditModal', () => {
     );
   };
 
-  const makeError = detailsErrors => {
+  const makeError = (detailsErrors) => {
     const err = new Error();
     err.data = {
       details: {
-        errors: detailsErrors
+        errors: detailsErrors,
       },
       sys: {
-        type: 'Error'
-      }
+        type: 'Error',
+      },
     };
 
     return err;
   };
 
-  const getValidationMessage = ele => {
+  const getValidationMessage = (ele) => {
     try {
       return within(ele).queryByTestId('cf-ui-validation-message').textContent;
     } catch (_) {
@@ -79,7 +79,7 @@ describe('UserEditModal', () => {
     const { queryByTestId } = build();
 
     fireEvent.change(queryByTestId('first-name-field').querySelector('input'), {
-      target: { value: '' }
+      target: { value: '' },
     });
 
     expect(queryByTestId('confirm-account-data-changes')).not.toHaveAttribute('disabled');
@@ -241,8 +241,8 @@ describe('UserEditModal', () => {
     const err = makeError([
       {
         name: 'new-field-error',
-        path: 'email'
-      }
+        path: 'email',
+      },
     ]);
 
     updateUserData.mockReset().mockRejectedValueOnce(err);
@@ -272,8 +272,8 @@ describe('UserEditModal', () => {
     const err = makeError([
       {
         name: 'not-important',
-        path: 'new-field'
-      }
+        path: 'new-field',
+      },
     ]);
 
     jest.spyOn(Notification, 'error').mockImplementationOnce(() => {});
@@ -299,8 +299,8 @@ describe('UserEditModal', () => {
     const err = makeError([
       {
         name: 'taken',
-        path: 'email'
-      }
+        path: 'email',
+      },
     ]);
 
     updateUserData.mockReset().mockRejectedValueOnce(err);
@@ -330,8 +330,8 @@ describe('UserEditModal', () => {
     const err = makeError([
       {
         name: 'invalid',
-        path: 'current_password'
-      }
+        path: 'current_password',
+      },
     ]);
     updateUserData.mockReset().mockRejectedValueOnce(err);
     const { queryByTestId } = build();
@@ -359,8 +359,8 @@ describe('UserEditModal', () => {
     const err = makeError([
       {
         name: 'length',
-        path: 'first_name'
-      }
+        path: 'first_name',
+      },
     ]);
     updateUserData.mockReset().mockRejectedValueOnce(err);
     const { queryByTestId } = build();
@@ -384,8 +384,8 @@ describe('UserEditModal', () => {
     const err = makeError([
       {
         name: 'length',
-        path: 'last_name'
-      }
+        path: 'last_name',
+      },
     ]);
     updateUserData.mockReset().mockRejectedValueOnce(err);
     const { queryByTestId } = build();
@@ -452,7 +452,7 @@ describe('UserEditModal', () => {
     jest.spyOn(Notification, 'success').mockImplementationOnce(() => {});
     jest.spyOn(Notification, 'warning').mockImplementationOnce(() => {});
     updateUserData.mockReset().mockResolvedValueOnce({
-      unconfirmedEmail: newEmail
+      unconfirmedEmail: newEmail,
     });
     const { queryByTestId } = build();
 

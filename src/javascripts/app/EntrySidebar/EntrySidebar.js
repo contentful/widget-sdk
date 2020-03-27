@@ -9,7 +9,7 @@ import { AssetConfiguration, EntryConfiguration } from 'app/EntrySidebar/Configu
 import {
   NAMESPACE_SIDEBAR_BUILTIN,
   NAMESPACE_EXTENSION,
-  NAMESPACE_APP
+  NAMESPACE_APP,
 } from 'widgets/WidgetNamespaces';
 
 import PublicationWidgetContainer from './PublicationWidget/PublicationWidgetContainer';
@@ -27,37 +27,37 @@ import CommentsPanelContainer from './CommentsPanel/CommentsPanelContainer';
 
 const styles = {
   activity: css({
-    marginTop: `-${tokens.spacingL}`
+    marginTop: `-${tokens.spacingL}`,
   }),
   tabWrapper: css({
     display: 'flex',
     flexDirection: 'column',
-    height: '100%'
+    height: '100%',
   }),
   panelWrapper: css({
     height: '100%',
     overflowY: 'scroll',
-    overflowX: 'hidden'
+    overflowX: 'hidden',
   }),
   tabs: css({
     display: 'flex',
-    justifyContent: 'center'
+    justifyContent: 'center',
   }),
   noteClassName: css({
     marginBottom: tokens.spacingL,
-    marginTop: tokens.spacingL
+    marginTop: tokens.spacingL,
   }),
   tab: css({
-    textAlign: 'center'
+    textAlign: 'center',
   }),
   tabPanel: css({
     display: 'none',
     height: '100%',
-    padding: tokens.spacingM
+    padding: tokens.spacingM,
   }),
   isVisible: css({
-    display: 'block'
-  })
+    display: 'block',
+  }),
 };
 
 const ComponentsMap = {
@@ -67,7 +67,7 @@ const ComponentsMap = {
   [SidebarWidgetTypes.INCOMING_LINKS]: IncomingLinksWidgetContainer,
   [SidebarWidgetTypes.TRANSLATION]: TranslationWidget,
   [SidebarWidgetTypes.USERS]: UsersWidgetContainer,
-  [SidebarWidgetTypes.VERSIONS]: VersionsWidgetContainer
+  [SidebarWidgetTypes.VERSIONS]: VersionsWidgetContainer,
 };
 
 export default class EntrySidebar extends Component {
@@ -81,7 +81,7 @@ export default class EntrySidebar extends Component {
         PropTypes.shape({
           widgetId: PropTypes.string.isRequired,
           widgetNamespace: PropTypes.string.isRequired,
-          disabled: PropTypes.bool
+          disabled: PropTypes.bool,
         })
       ),
       sidebarExtensions: PropTypes.arrayOf(
@@ -89,25 +89,25 @@ export default class EntrySidebar extends Component {
           widgetId: PropTypes.string.isRequired,
           widgetNamespace: PropTypes.string.isRequired,
           descriptor: PropTypes.object,
-          problem: PropTypes.string
+          problem: PropTypes.string,
         })
       ),
       sidebarExtensionsBridge: PropTypes.object.isRequired,
       legacySidebarExtensions: PropTypes.arrayOf(
         PropTypes.shape({
           bridge: PropTypes.object.isRequired,
-          widget: PropTypes.object.isRequired
+          widget: PropTypes.object.isRequired,
         })
       ),
-      localeData: PropTypes.object.isRequired
+      localeData: PropTypes.object.isRequired,
     }),
     sidebarToggleProps: PropTypes.shape({
       commentsToggle: PropTypes.shape({
         onClick: PropTypes.func.isRequired,
         isEnabled: PropTypes.boolean,
-        commentsCount: PropTypes.number
-      })
-    })
+        commentsCount: PropTypes.number,
+      }),
+    }),
   };
 
   entitySidebarRef = React.createRef();
@@ -116,9 +116,9 @@ export default class EntrySidebar extends Component {
     activity: {
       isEnabled: true,
       title: 'General',
-      onClick: id => {
+      onClick: (id) => {
         this.setState({ selectedTab: id });
-      }
+      },
     },
     comments: {
       isEnabled: this.props.sidebarToggleProps.commentsToggle.isEnabled,
@@ -133,22 +133,22 @@ export default class EntrySidebar extends Component {
           </span>
         </div>
       ),
-      onClick: id => {
+      onClick: (id) => {
         this.props.sidebarToggleProps.commentsToggle.onClick();
         this.setState({ selectedTab: id });
-      }
+      },
     },
     info: {
       isEnabled: true,
       title: 'Info',
-      onClick: id => {
+      onClick: (id) => {
         this.setState({ selectedTab: id });
-      }
-    }
+      },
+    },
   });
 
   state = {
-    selectedTab: Object.keys(this.createTabs())[0]
+    selectedTab: Object.keys(this.createTabs())[0],
   };
 
   componentDidUpdate(_, prevState) {
@@ -157,7 +157,7 @@ export default class EntrySidebar extends Component {
     }
   }
 
-  renderBuiltinWidget = sidebarItem => {
+  renderBuiltinWidget = (sidebarItem) => {
     const { emitter, localeData, sidebarExtensionsBridge: bridge } = this.props.entrySidebarProps;
     const { widgetId, widgetNamespace } = sidebarItem;
     const defaultProps = { emitter, bridge };
@@ -181,8 +181,8 @@ export default class EntrySidebar extends Component {
     return <Component {...props} key={`${widgetNamespace},${widgetId}`} />;
   };
 
-  renderExtensionWidget = item => {
-    item = this.props.entrySidebarProps.sidebarExtensions.find(w => {
+  renderExtensionWidget = (item) => {
+    item = this.props.entrySidebarProps.sidebarExtensions.find((w) => {
       return w.widgetNamespace === w.widgetNamespace && w.widgetId === item.widgetId;
     });
 
@@ -211,7 +211,7 @@ export default class EntrySidebar extends Component {
   };
 
   renderWidgets = (sidebarItems = []) => {
-    return sidebarItems.map(item => {
+    return sidebarItems.map((item) => {
       if (item.widgetNamespace === NAMESPACE_SIDEBAR_BUILTIN) {
         return this.renderBuiltinWidget(item);
       }
@@ -222,7 +222,7 @@ export default class EntrySidebar extends Component {
     });
   };
 
-  renderLegacyExtensions = legacyExtensions => {
+  renderLegacyExtensions = (legacyExtensions) => {
     return legacyExtensions.map(({ bridge, widget }) => (
       <EntrySidebarWidget title={widget.field.name} key={widget.field.id}>
         <ExtensionIFrameRenderer
@@ -241,7 +241,7 @@ export default class EntrySidebar extends Component {
     if (!isArray(this.props.entrySidebarProps.sidebar)) {
       return EntryConfiguration;
     }
-    return this.props.entrySidebarProps.sidebar.filter(widget => widget.disabled !== true);
+    return this.props.entrySidebarProps.sidebar.filter((widget) => widget.disabled !== true);
   };
 
   render() {
@@ -253,7 +253,7 @@ export default class EntrySidebar extends Component {
         <div className={styles.tabWrapper}>
           <Tabs className={styles.tabs} withDivider>
             {Object.keys(tabs).map(
-              key =>
+              (key) =>
                 tabs[key].isEnabled && (
                   <Tab
                     id={key}
@@ -270,7 +270,7 @@ export default class EntrySidebar extends Component {
             <TabPanel
               id="comments"
               className={cx(styles.tabPanel, {
-                [styles.isVisible]: this.state.selectedTab === 'comments'
+                [styles.isVisible]: this.state.selectedTab === 'comments',
               })}>
               <CommentsPanelContainer
                 emitter={this.props.entrySidebarProps.emitter}
@@ -280,14 +280,14 @@ export default class EntrySidebar extends Component {
             <TabPanel
               id="info"
               className={cx(styles.tabPanel, {
-                [styles.isVisible]: this.state.selectedTab === 'info'
+                [styles.isVisible]: this.state.selectedTab === 'info',
               })}>
               <EntryInfoPanelContainer emitter={this.props.entrySidebarProps.emitter} />
             </TabPanel>
             <TabPanel
               id="activity"
               className={cx(styles.tabPanel, {
-                [styles.isVisible]: this.state.selectedTab === 'activity'
+                [styles.isVisible]: this.state.selectedTab === 'activity',
               })}>
               <div className={styles.activity} data-test-id="entry-editor-sidebar">
                 {this.renderWidgets(sidebarItems)}

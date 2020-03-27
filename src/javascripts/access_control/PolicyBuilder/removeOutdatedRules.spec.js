@@ -13,23 +13,23 @@ describe('Remove outdated rules', () => {
         and: [
           { equals: [{ doc: 'sys.type' }, type] },
           { equals: [{ doc: 'sys.contentType.sys.id' }, ctId] },
-          { paths: [{ doc: path }] }
-        ]
-      }
+          { paths: [{ doc: path }] },
+        ],
+      },
     };
   }
 
   function createCt(id, fields) {
     return {
       sys: { id: id },
-      fields: fields || []
+      fields: fields || [],
     };
   }
 
   describe('path constraints with non-existent components', () => {
     it('removes rule if CT is missing', () => {
       const internal = toInternal({
-        policies: [createPolicy('ctid', 'fields.%.%'), createPolicy('ctid2', 'fields.%.%')]
+        policies: [createPolicy('ctid', 'fields.%.%'), createPolicy('ctid2', 'fields.%.%')],
       });
 
       const result = removeOutdatedRules(internal, [createCt('ctid')], []);
@@ -42,12 +42,12 @@ describe('Remove outdated rules', () => {
         policies: [
           createPolicy('ctid', 'fields.test.%'),
           createPolicy('ctid', 'fields.z.%'),
-          createPolicy('ctid2', 'fields.%.%')
-        ]
+          createPolicy('ctid2', 'fields.%.%'),
+        ],
       });
       const contentTypes = [
         createCt('ctid', [{ apiName: 'x' }, { apiName: 'y' }, { apiName: 'z' }]),
-        createCt('ctid2')
+        createCt('ctid2'),
       ];
 
       const result = removeOutdatedRules(internal, contentTypes, []);
@@ -57,7 +57,7 @@ describe('Remove outdated rules', () => {
 
     it('removes rules if a locale is missing', () => {
       const internal = toInternal({
-        policies: [createPolicy('ctid', 'fields.%.en-US'), createPolicy('ctid', 'fields.%.de-DE')]
+        policies: [createPolicy('ctid', 'fields.%.en-US'), createPolicy('ctid', 'fields.%.de-DE')],
       });
 
       const result = removeOutdatedRules(internal, [createCt('ctid')], [{ code: 'de-DE' }]);
@@ -81,8 +81,8 @@ describe('Remove outdated rules', () => {
             createPolicy('ctid', path, 'Entry', 'allow'),
             createPolicy('ctid', path, 'Entry', 'deny'),
             createPolicy('ctid', path, 'Asset', 'allow'),
-            createPolicy('ctid', path, 'Asset', 'deny')
-          ]
+            createPolicy('ctid', path, 'Asset', 'deny'),
+          ],
         });
 
         const result = removeOutdatedRules(internal, cts, locales);

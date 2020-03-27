@@ -11,7 +11,7 @@ import {
   ValidationMessage,
   Option,
   TextLink,
-  Subheading
+  Subheading,
 } from '@contentful/forma-36-react-components';
 import { NAMESPACE_APP, NAMESPACE_EXTENSION } from 'widgets/WidgetNamespaces';
 import { LOCATION_ENTRY_EDITOR } from 'widgets/WidgetLocations';
@@ -22,16 +22,16 @@ import tokens from '@contentful/forma-36-tokens';
 
 const Options = {
   default: 'default',
-  custom: 'custom'
+  custom: 'custom',
 };
 
 const styles = {
   validationMessage: css({
-    marginTop: tokens.spacingS
+    marginTop: tokens.spacingS,
   }),
   changeInstance: css({
-    marginTop: tokens.spacingS
-  })
+    marginTop: tokens.spacingS,
+  }),
 };
 
 function canBeUsedAsEntryEditor(widget) {
@@ -49,7 +49,7 @@ function getInitialValues(configuration, widgets) {
   configuration.settings = configuration.settings || {};
 
   const isCustom = [NAMESPACE_EXTENSION, NAMESPACE_APP].includes(configuration.widgetNamespace);
-  const isValid = !!validWidgets.find(w => {
+  const isValid = !!validWidgets.find((w) => {
     return w.namespace === configuration.widgetNamespace && w.id === configuration.widgetId;
   });
   const isConfigurationValid = isCustom && isValid;
@@ -58,7 +58,7 @@ function getInitialValues(configuration, widgets) {
     validWidgets,
     touched: false,
     activeOption: isConfigurationValid ? Options.custom : Options.default,
-    configuration: isConfigurationValid ? configuration : null
+    configuration: isConfigurationValid ? configuration : null,
   };
 }
 
@@ -81,7 +81,7 @@ export default function EntryEditorAppearanceSection(props) {
     const config = state.configuration;
     return (
       config &&
-      state.validWidgets.find(w => {
+      state.validWidgets.find((w) => {
         return w.namespace === config.widgetNamespace && w.id === config.widgetId;
       })
     );
@@ -104,7 +104,7 @@ export default function EntryEditorAppearanceSection(props) {
             name="editorType"
             checked={state.activeOption === Options.default}
             value={Options.default}
-            onChange={e => {
+            onChange={(e) => {
               dispatch(actions.selectActiveOption(e.target.value));
             }}
             id="defaultEditorType"
@@ -115,7 +115,7 @@ export default function EntryEditorAppearanceSection(props) {
             name="editorType"
             value={Options.custom}
             checked={state.activeOption === Options.custom}
-            onChange={e => {
+            onChange={(e) => {
               dispatch(actions.selectActiveOption(e.target.value));
             }}
             id="customEditorType"
@@ -126,7 +126,7 @@ export default function EntryEditorAppearanceSection(props) {
             <Select
               hasError={hasError}
               value={`${state.validWidgets.indexOf(currentWidget)}`}
-              onChange={e => {
+              onChange={(e) => {
                 const widget = state.validWidgets[e.target.value];
                 dispatch(actions.setWidget(widget));
               }}>
@@ -159,7 +159,7 @@ export default function EntryEditorAppearanceSection(props) {
         <EditorInstanceParametersConfigurationModal
           initialSettings={get(state, ['configuration', 'settings'], {})}
           widget={currentWidget}
-          onSave={settings => {
+          onSave={(settings) => {
             dispatch(actions.setSettings(settings));
             setConfigurationOpen(false);
           }}
@@ -175,5 +175,5 @@ export default function EntryEditorAppearanceSection(props) {
 EntryEditorAppearanceSection.propTypes = {
   widgets: PropTypes.array.isRequired,
   editorConfiguration: PropTypes.object,
-  updateEditorConfiguration: PropTypes.func.isRequired
+  updateEditorConfiguration: PropTypes.func.isRequired,
 };

@@ -3,7 +3,7 @@ import { defaultHeader, defaultSpaceId } from '../util/requests';
 const empty = require('../fixtures/responses/empty.json');
 
 enum States {
-  NONE = 'preview_environments/none'
+  NONE = 'preview_environments/none',
 }
 
 export const queryFirst100PreviewEnvironments = {
@@ -17,15 +17,15 @@ export const queryFirst100PreviewEnvironments = {
         path: `/spaces/${defaultSpaceId}/preview_environments`,
         headers: defaultHeader,
         query: {
-          limit: '100'
-        }
+          limit: '100',
+        },
       },
       willRespondWith: {
         status: 200,
-        body: empty
-      }
+        body: empty,
+      },
     }).as('queryFirst100PreviewEnvironments');
 
-    return  '@queryFirst100PreviewEnvironments'
-  }
-}
+    return '@queryFirst100PreviewEnvironments';
+  },
+};

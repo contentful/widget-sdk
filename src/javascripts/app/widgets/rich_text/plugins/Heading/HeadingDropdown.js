@@ -12,7 +12,7 @@ export const blockTitles = {
   [BLOCKS.HEADING_6]: 'Heading 6',
   [BLOCKS.PARAGRAPH]: 'Normal Text',
   [BLOCKS.EMBEDDED_ENTRY]: 'Embedded Entry',
-  [BLOCKS.EMBEDDED_ASSET]: 'Embedded Asset'
+  [BLOCKS.EMBEDDED_ASSET]: 'Embedded Asset',
 };
 
 class HeadingDropdown extends Component {
@@ -22,7 +22,7 @@ class HeadingDropdown extends Component {
     disabled: PropTypes.bool,
     onClose: PropTypes.func,
     onToggle: PropTypes.func,
-    currentBlockType: PropTypes.string
+    currentBlockType: PropTypes.string,
   };
   getStyleNameForChange = () => {
     return blockTitles[this.props.currentBlockType] || blockTitles[BLOCKS.PARAGRAPH];

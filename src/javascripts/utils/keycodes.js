@@ -9,5 +9,5 @@ export default {
   BACKSLASH: 220,
   P: 80,
   BACKSPACE: 8,
-  SPACE: 32
+  SPACE: 32,
 };

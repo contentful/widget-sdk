@@ -26,12 +26,12 @@ class FetchedEntityCard extends React.Component {
     onClick: PropTypes.func,
     onEntityFetchComplete: PropTypes.func,
     cardDragHandleComponent: PropTypes.element,
-    cardComponent: PropTypes.func
+    cardComponent: PropTypes.func,
   };
   static defaultProps = {
     className: '',
     onClick: noop,
-    onEntityFetchComplete: noop
+    onEntityFetchComplete: noop,
   };
 
   renderDeleteButton(fetchEntityResult, className) {
@@ -40,7 +40,7 @@ class FetchedEntityCard extends React.Component {
         className={`${className}__delete-cta`}
         iconProps={{ icon: 'Close' }}
         label={`Remove reference to ${this.props.entityType.toLowerCase()}`}
-        onClick={event => {
+        onClick={(event) => {
           event.stopPropagation();
           this.props.onRemove(fetchEntityResult);
         }}
@@ -59,7 +59,7 @@ class FetchedEntityCard extends React.Component {
         selected={selected}
         className={classNames(className, [
           `${className}--missing`,
-          cardDragHandleComponent && `${className}--has-drag-handle`
+          cardDragHandleComponent && `${className}--has-drag-handle`,
         ])}>
         <div style={{ display: 'flex' }}>
           {/* eslint-disable-next-line rulesdir/restrict-non-f36-components */}
@@ -69,7 +69,7 @@ class FetchedEntityCard extends React.Component {
               margin: 0,
               fontSize: '.875rem', // Equal to 14px when browser text size is set to 100%
               lineHeight: 1.5,
-              flex: '1 1 auto'
+              flex: '1 1 auto',
             }}>
             {entityType} missing or inaccessible
           </h1>
@@ -92,7 +92,7 @@ class FetchedEntityCard extends React.Component {
       readOnly,
       size,
       cardDragHandleComponent,
-      cardComponent
+      cardComponent,
     } = this.props;
 
     return (
@@ -104,7 +104,7 @@ class FetchedEntityCard extends React.Component {
             entityType={entityType}
             localeCode={widgetAPI.field.locale}
             fetchFile={entityType === 'Asset' || size !== 'small'}
-            render={fetchEntityResult => {
+            render={(fetchEntityResult) => {
               const isPending = fetchEntityResult.requestStatus === RequestStatus.Pending;
               const isLoading = isPending && !fetchEntityResult.entity;
               if (!isPending) {
@@ -136,20 +136,20 @@ class FetchedEntityCard extends React.Component {
                 selected,
                 disabled,
                 onEdit: () => onEdit(fetchEntityResult),
-                onClick: event => {
+                onClick: (event) => {
                   event.preventDefault();
                   onClick(fetchEntityResult);
                 },
                 onRemove: () => onRemove(fetchEntityResult),
-                cardDragHandleComponent
+                cardDragHandleComponent,
               };
               return (
                 <EntityStateLink
                   entity={{
                     sys: {
                       type: entityType,
-                      id: entityId
-                    }
+                      id: entityId,
+                    },
                   }}>
                   {({ getHref }) => <WrapperComponent {...cardProps} href={getHref()} />}
                 </EntityStateLink>

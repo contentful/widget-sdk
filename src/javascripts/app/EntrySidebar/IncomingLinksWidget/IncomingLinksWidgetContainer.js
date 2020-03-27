@@ -6,11 +6,11 @@ import SidebarWidgetTypes from '../SidebarWidgetTypes';
 
 export default class IncomingLinksWidgetContainer extends Component {
   static propTypes = {
-    emitter: PropTypes.object.isRequired
+    emitter: PropTypes.object.isRequired,
   };
 
   state = {
-    entityInfo: null
+    entityInfo: null,
   };
 
   componentDidMount() {

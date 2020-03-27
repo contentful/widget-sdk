@@ -57,8 +57,8 @@ export const organizations$ = organizationsBus.property;
  * @description
  * The list of spaces from the token grouped by organization
  */
-export const spacesByOrganization$ = spacesBus.property.map(spaces => {
-  return spaces ? groupBy(spaces, s => s.organization.sys.id) : null;
+export const spacesByOrganization$ = spacesBus.property.map((spaces) => {
+  return spaces ? groupBy(spaces, (s) => s.organization.sys.id) : null;
 });
 
 export function getTokenLookup() {
@@ -93,7 +93,7 @@ export function refresh() {
   if (!tokenInfoMVar.isEmpty()) {
     tokenInfoMVar.empty();
     getFetchInfo()().then(
-      newTokenInfo => {
+      (newTokenInfo) => {
         tokenInfo = newTokenInfo;
         tokenInfoMVar.put(newTokenInfo);
         const user = newTokenInfo.sys.createdBy;
@@ -114,7 +114,7 @@ export function refresh() {
 function prepareSpaces(spaces) {
   return (
     cloneDeep(spaces)
-      .map(space => {
+      .map((space) => {
         delete space.locales; // Do not expose token locales
         return deepFreeze(space);
       })
@@ -146,7 +146,7 @@ export function getSpaces() {
  * Promise is rejected if space with a provided ID couldn't be found.
  */
 export function getSpace(id) {
-  return getSpaces().then(spaces => {
+  return getSpaces().then((spaces) => {
     const found = find(spaces, { sys: { id } });
     return found || Promise.reject(new Error('No space with given ID could be found.'));
   });
@@ -162,8 +162,8 @@ export function getSpace(id) {
  * that are part of the organization with the provided ID.
  */
 export function getOrganizationSpaces(id) {
-  return getSpaces().then(spaces => {
-    return spaces.filter(space => space.organization.sys.id === id);
+  return getSpaces().then((spaces) => {
+    return spaces.filter((space) => space.organization.sys.id === id);
   });
 }
 
@@ -186,7 +186,7 @@ export function getDomains() {
  * Promise is rejected if organization with a provided ID couldn't be found.
  */
 export function getOrganization(id) {
-  return getOrganizations().then(orgs => {
+  return getOrganizations().then((orgs) => {
     const org = find(orgs, { sys: { id } });
     const $q = getModule('$q');
     return org || $q.reject(new Error('No organization with given ID could be found.'));

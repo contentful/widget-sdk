@@ -8,7 +8,7 @@ import mockDefinitions from './__mocks__/mockDefinitions.json';
 jest.mock('./util');
 
 jest.mock('states/Navigator', () => ({
-  go: jest.fn(() => Promise.resolve())
+  go: jest.fn(() => Promise.resolve()),
 }));
 
 util.getOrgSpacesFor = jest.fn(() =>
@@ -16,20 +16,20 @@ util.getOrgSpacesFor = jest.fn(() =>
     {
       name: 'mySpace',
       sys: { id: 'my-space-123' },
-      organization: { sys: { id: 'my-org-123' } }
+      organization: { sys: { id: 'my-org-123' } },
     },
     {
       name: 'myOtherSpace',
       sys: { id: 'my-other-space-123' },
-      organization: { sys: { id: 'my-org-123' } }
-    }
+      organization: { sys: { id: 'my-org-123' } },
+    },
   ])
 );
 
 util.getEnvsFor = jest.fn(() =>
   Promise.resolve([
     { name: 'my-env', sys: { id: 'my-env-123' } },
-    { name: 'my-other-env', sys: { id: 'my-other-env-123' } }
+    { name: 'my-other-env', sys: { id: 'my-other-env-123' } },
   ])
 );
 
@@ -56,9 +56,9 @@ describe('AppInstallModal', () => {
         appId: 'private_3AjEyjWz5tRouW4cVOF9la',
         environmentId: 'my-env-123',
         referrer: 'app-management',
-        spaceId: 'my-space-123'
+        spaceId: 'my-space-123',
       },
-      path: 'spaces.detail.environment.apps.detail'
+      path: 'spaces.detail.environment.apps.detail',
     });
   });
 
@@ -83,9 +83,9 @@ describe('AppInstallModal', () => {
         appId: 'private_3AjEyjWz5tRouW4cVOF9la',
         environmentId: 'my-other-env-123',
         referrer: 'app-management',
-        spaceId: 'my-other-space-123'
+        spaceId: 'my-other-space-123',
       },
-      path: 'spaces.detail.environment.apps.detail'
+      path: 'spaces.detail.environment.apps.detail',
     });
   });
 });

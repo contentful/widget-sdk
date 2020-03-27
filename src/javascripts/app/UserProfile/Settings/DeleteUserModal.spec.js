@@ -5,17 +5,17 @@ import DeleteUserModal from './DeleteUserModal';
 import { deleteUserAccount } from './AccountRepository';
 
 jest.mock('./AccountRepository', () => ({
-  deleteUserAccount: jest.fn()
+  deleteUserAccount: jest.fn(),
 }));
 
 describe('DeleteUser', () => {
-  const build = custom => {
+  const build = (custom) => {
     const opts = Object.assign(
       {},
       {
         singleOwnerOrganizations: [],
         onConfirm: () => {},
-        onCancel: () => {}
+        onCancel: () => {},
       },
       custom
     );
@@ -56,7 +56,7 @@ describe('DeleteUser', () => {
 
     expect(deleteUserAccount).toHaveBeenCalledWith({
       reason: 'not_useful',
-      description: ''
+      description: '',
     });
   });
 
@@ -65,7 +65,7 @@ describe('DeleteUser', () => {
 
     fireEvent.click(queryByTestId('reason-dont_understand').querySelector('input'));
     fireEvent.change(queryByTestId('cancellation-details'), {
-      target: { value: 'This is too complicated!!!!' }
+      target: { value: 'This is too complicated!!!!' },
     });
     fireEvent.click(queryByTestId('confirm-delete-account-button'));
 
@@ -73,7 +73,7 @@ describe('DeleteUser', () => {
 
     expect(deleteUserAccount).toHaveBeenCalledWith({
       reason: 'dont_understand',
-      description: 'This is too complicated!!!!'
+      description: 'This is too complicated!!!!',
     });
   });
 

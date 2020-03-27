@@ -13,11 +13,11 @@ import { getCurrentSpaceFeature } from 'data/CMA/ProductCatalog';
 export default class BooleanSpaceFeature extends React.Component {
   static propTypes = {
     spaceFeatureKey: PropTypes.string.isRequired,
-    children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired
+    children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired,
   };
 
   state = {
-    currentVariation: undefined
+    currentVariation: undefined,
   };
   async componentDidMount() {
     const currentVariation = await getCurrentSpaceFeature(this.props.spaceFeatureKey, false);
@@ -26,7 +26,7 @@ export default class BooleanSpaceFeature extends React.Component {
       return;
     }
     this.setState({
-      currentVariation
+      currentVariation,
     });
   }
   componentWillUnmount() {

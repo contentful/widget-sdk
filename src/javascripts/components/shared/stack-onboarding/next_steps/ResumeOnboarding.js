@@ -7,7 +7,7 @@ import {
   Button,
   Paragraph,
   Card,
-  Typography
+  Typography,
 } from '@contentful/forma-36-react-components';
 import { getModule } from 'NgRegistry';
 import { trackClickCTA } from 'app/home/tracking';
@@ -26,8 +26,8 @@ const styles = {
     width: '239px',
     height: '181px',
     backgroundSize: '239px 181px',
-    marginLeft: tokens.spacingXl
-  })
+    marginLeft: tokens.spacingXl,
+  }),
 };
 
 const ResumeOnboarding = () => {
@@ -44,7 +44,7 @@ const ResumeOnboarding = () => {
     if (!currentStep) {
       currentStep = {
         params: { spaceId: spaceContext.space && spaceContext.space.getId() },
-        path: 'spaces.detail.onboarding.copy'
+        path: 'spaces.detail.onboarding.copy',
       };
     }
     $state.go(currentStep.path, currentStep.params);

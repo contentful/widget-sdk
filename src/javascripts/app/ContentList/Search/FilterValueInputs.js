@@ -13,5 +13,5 @@ export default {
   Text: makeCtor(),
   Reference: makeCtor(),
   Date: makeCtor(),
-  AssetDetailsSize: makeCtor()
+  AssetDetailsSize: makeCtor(),
 };

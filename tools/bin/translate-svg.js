@@ -15,10 +15,10 @@ require('@babel/register')({
       require.resolve('@babel/preset-env'),
       {
         loose: false,
-        useBuiltIns: false
-      }
+        useBuiltIns: false,
+      },
     ],
-    require.resolve('@babel/preset-react')
+    require.resolve('@babel/preset-react'),
   ],
   plugins: [
     require.resolve('@babel/plugin-proposal-object-rest-spread'),
@@ -31,14 +31,14 @@ require('@babel/register')({
         sourceMap: true,
         autoLabel: process.env.NODE_ENV !== 'production',
         labelFormat: '[local]',
-        cssPropOptimization: true
-      }
-    ]
+        cssPropOptimization: true,
+      },
+    ],
   ],
-  only: [/src\/javascripts\/svg/]
+  only: [/src\/javascripts\/svg/],
 });
 
-fs.readdirSync(sourceDir).forEach(name => {
+fs.readdirSync(sourceDir).forEach((name) => {
   const resolved = path.resolve(sourceDir, name);
 
   if (!resolved.endsWith('.js')) {

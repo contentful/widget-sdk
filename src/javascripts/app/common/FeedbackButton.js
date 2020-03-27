@@ -10,7 +10,7 @@ export default class FeedbackButton extends Component {
   static propTypes = {
     about: PropTypes.string.isRequired,
     target: PropTypes.string.isRequired,
-    label: PropTypes.string
+    label: PropTypes.string,
   };
 
   onClick = async () => {
@@ -39,14 +39,14 @@ export default class FeedbackButton extends Component {
       const spaceContext = getModule('spaceContext');
       Object.assign(userData, {
         userId: spaceContext.user.sys.id,
-        orgId: spaceContext.organization.sys.id
+        orgId: spaceContext.organization.sys.id,
       });
     }
 
     const res = await client.call('/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ about, target, feedback, ...userData })
+      body: JSON.stringify({ about, target, feedback, ...userData }),
     });
 
     if (res.ok) {

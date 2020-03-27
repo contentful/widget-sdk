@@ -26,8 +26,8 @@ class EnterpriseSpaceWizard extends React.Component {
     freeSpaceResource: PropTypes.shape({
       usage: PropTypes.number.isRequired,
       limits: PropTypes.shape({
-        maximum: PropTypes.number.isRequired
-      })
+        maximum: PropTypes.number.isRequired,
+      }),
     }),
     isHighDemand: PropTypes.bool.isRequired,
     setNewSpaceName: PropTypes.func.isRequired,
@@ -36,9 +36,9 @@ class EnterpriseSpaceWizard extends React.Component {
     reset: PropTypes.func.isRequired,
     organization: PropTypes.shape({
       sys: PropTypes.shape({
-        id: PropTypes.string.isRequired
+        id: PropTypes.string.isRequired,
       }).isRequired,
-      name: PropTypes.string.isRequired
+      name: PropTypes.string.isRequired,
     }).isRequired,
     newSpaceMeta: PropTypes.object.isRequired,
     fetchTemplates: PropTypes.func.isRequired,
@@ -48,14 +48,14 @@ class EnterpriseSpaceWizard extends React.Component {
     scope: PropTypes.shape({
       dialog: PropTypes.shape({
         destroy: PropTypes.func.isRequired,
-        reposition: PropTypes.func.isRequired
-      })
-    })
+        reposition: PropTypes.func.isRequired,
+      }),
+    }),
   };
 
   state = {
     isValid: false,
-    isPending: false
+    isPending: false,
   };
 
   handleSpaceNameChange(value) {
@@ -84,7 +84,7 @@ class EnterpriseSpaceWizard extends React.Component {
         newSpaceMeta: this.props.newSpaceMeta,
         onSpaceCreated: this.handleSpaceCreated.bind(this),
         onTemplateCreated: EnterpriseSpaceWizard.handleTemplateCreated.bind(this),
-        onConfirm: this.close.bind(this)
+        onConfirm: this.close.bind(this),
       });
     }
   }
@@ -95,7 +95,7 @@ class EnterpriseSpaceWizard extends React.Component {
 
     await go({
       path: ['spaces', 'detail'],
-      params: { spaceId: newSpace.sys.id }
+      params: { spaceId: newSpace.sys.id },
     });
 
     const spaceCreateEventData = template
@@ -121,7 +121,7 @@ class EnterpriseSpaceWizard extends React.Component {
       templates,
       fetchTemplates,
       spaceCreation,
-      freeSpaceRatePlan
+      freeSpaceRatePlan,
     } = this.props;
     const submitted = spaceCreation.isPending;
     const { name, template } = this.props.newSpaceMeta;
@@ -176,9 +176,9 @@ class EnterpriseSpaceWizard extends React.Component {
                   helpText="Can have up to 30 characters"
                   textInputProps={{
                     maxLength: 30,
-                    width: 'large'
+                    width: 'large',
                   }}
-                  onChange={evt => this.handleSpaceNameChange(evt.target.value)}
+                  onChange={(evt) => this.handleSpaceNameChange(evt.target.value)}
                 />
                 <TemplateSelector
                   onSelect={setNewSpaceTemplate}
@@ -222,14 +222,14 @@ class EnterpriseSpaceWizard extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     templates: state.spaceWizard.templates,
     newSpaceMeta: state.spaceWizard.newSpaceMeta,
     error: state.spaceWizard.error,
     success: state.spaceWizard.success,
     spaceCreation: state.spaceWizard.spaceCreation,
-    spaceCreationTemplate: state.spaceWizard.spaceCreationTemplate
+    spaceCreationTemplate: state.spaceWizard.spaceCreationTemplate,
   };
 };
 
@@ -239,10 +239,7 @@ const mapDispatchToProps = {
   track: actionCreators.track,
   setNewSpaceName: actionCreators.setNewSpaceName,
   setNewSpaceTemplate: actionCreators.setNewSpaceTemplate,
-  reset: actionCreators.reset
+  reset: actionCreators.reset,
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(EnterpriseSpaceWizard);
+export default connect(mapStateToProps, mapDispatchToProps)(EnterpriseSpaceWizard);

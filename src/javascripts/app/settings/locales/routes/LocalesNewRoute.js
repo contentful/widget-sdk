@@ -23,15 +23,15 @@ class NewLocaleForm extends Component {
     saveLocale: PropTypes.func.isRequired,
     setDirty: PropTypes.func.isRequired,
     goToList: PropTypes.func.isRequired,
-    registerSaveAction: PropTypes.func.isRequired
+    registerSaveAction: PropTypes.func.isRequired,
   };
 
   state = {
     isSaving: false,
-    savedLocale: null
+    savedLocale: null,
   };
 
-  onSaveLocale = data => {
+  onSaveLocale = (data) => {
     this.setState({ isSaving: true });
     return this.props
       .saveLocale({
@@ -40,14 +40,14 @@ class NewLocaleForm extends Component {
         fallbackCode: data.fallbackCode || null,
         contentDeliveryApi: data.contentDeliveryApi || false,
         contentManagementApi: data.contentManagementApi || false,
-        optional: data.optional || false
+        optional: data.optional || false,
       })
-      .then(locale => {
+      .then((locale) => {
         this.props.setDirty(false);
         LocaleNotifications.saveSuccess();
         this.setState({ savedLocale: locale, isSaving: false });
       })
-      .catch(err => {
+      .catch((err) => {
         this.props.setDirty(true);
         LocaleNotifications.saveError(err);
         this.setState({ isSaving: false });
@@ -60,7 +60,7 @@ class NewLocaleForm extends Component {
         <StateRedirect
           path="^.detail"
           params={{
-            localeId: this.state.savedLocale.sys.id
+            localeId: this.state.savedLocale.sys.id,
           }}
         />
       );
@@ -74,7 +74,7 @@ class NewLocaleForm extends Component {
           default: false,
           contentDeliveryApi: true,
           contentManagementApi: true,
-          optional: false
+          optional: false,
         }}
         spaceLocales={this.props.spaceLocales}
         isSaving={this.state.isSaving}
@@ -88,7 +88,7 @@ class NewLocaleForm extends Component {
 }
 
 export default class LocalesNewRoute extends React.Component {
-  save = async function(locale) {
+  save = async function (locale) {
     const spaceContext = getModule('spaceContext');
 
     const savedLocale = await spaceContext.localeRepo.save(locale);
@@ -132,5 +132,5 @@ export default class LocalesNewRoute extends React.Component {
 LocalesNewRoute.propTypes = {
   setDirty: PropTypes.func.isRequired,
   registerSaveAction: PropTypes.func.isRequired,
-  goToList: PropTypes.func.isRequired
+  goToList: PropTypes.func.isRequired,
 };

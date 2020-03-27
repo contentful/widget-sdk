@@ -4,21 +4,21 @@ export default {
   localStorage: {
     setItem: jest.fn(),
     getItem: jest.fn(),
-    removeItem: jest.fn()
+    removeItem: jest.fn(),
   },
   sessionStorage: {
     setItem: jest.fn(),
     getItem: jest.fn(),
-    removeItem: jest.fn()
-  }
+    removeItem: jest.fn(),
+  },
 };
 
-export const setWindowLocationProperties = values => {
+export const setWindowLocationProperties = (values) => {
   global.window = Object.create(window);
   Object.defineProperty(window, 'location', {
     value: {
-      ...values
+      ...values,
     },
-    writable: true
+    writable: true,
   });
 };

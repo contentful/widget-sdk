@@ -12,7 +12,7 @@ export function getSpaceNavigationItems({
   hasOrgTeamFeature,
   teamsInSpacesFF,
   useSpaceEnviroment,
-  isMasterEnvironment
+  isMasterEnvironment,
 }) {
   const dropdownItems = {
     locales: {
@@ -20,27 +20,27 @@ export function getSpaceNavigationItems({
       sref: makeRef('settings.locales.list', isMasterEnvironment),
       rootSref: makeRef('settings.locales', isMasterEnvironment),
       dataViewType: 'spaces-settings-locales',
-      title: 'Locales'
+      title: 'Locales',
     },
     extensions: {
       if: canNavigateTo('extensions'),
       sref: makeRef('settings.extensions.list', isMasterEnvironment),
       rootSref: makeRef('settings.extensions', isMasterEnvironment),
       dataViewType: 'spaces-settings-extensions',
-      title: 'Extensions'
+      title: 'Extensions',
     },
     settings: {
       if: canNavigateTo('settings'),
       sref: makeRef('settings.space', isMasterEnvironment),
       dataViewType: 'spaces-settings-space',
-      title: 'General settings'
+      title: 'General settings',
     },
     users: {
       if: canNavigateTo('users'),
       sref: makeRef('settings.users.list', isMasterEnvironment),
       rootSref: makeRef('settings.users', isMasterEnvironment),
       dataViewType: 'spaces-settings-users',
-      title: 'Users'
+      title: 'Users',
     },
     teams: {
       if: teamsInSpacesFF && hasOrgTeamFeature && canNavigateTo('teams'),
@@ -48,34 +48,34 @@ export function getSpaceNavigationItems({
       rootSref: makeRef('settings.teams', isMasterEnvironment),
       dataViewType: 'spaces-settings-teams',
       label: 'new',
-      title: 'Teams'
+      title: 'Teams',
     },
     roles: {
       if: canNavigateTo('roles'),
       sref: makeRef('settings.roles.list', isMasterEnvironment),
       rootSref: makeRef('settings.roles', isMasterEnvironment),
       dataViewType: 'spaces-settings-roles',
-      title: 'Roles & permissions'
+      title: 'Roles & permissions',
     },
     environments: {
       if: canNavigateTo('environments'),
       sref: makeRef('settings.environments', isMasterEnvironment),
       dataViewType: 'spaces-settings-environments',
-      title: 'Environments'
+      title: 'Environments',
     },
     keys: {
       if: canNavigateTo('apiKey'),
       sref: makeRef('api.keys.list', isMasterEnvironment),
       rootSref: makeRef('api', isMasterEnvironment),
       dataViewType: 'spaces-settings-api',
-      title: 'API keys'
+      title: 'API keys',
     },
     webhooks: {
       if: canNavigateTo('webhooks'),
       sref: makeRef('settings.webhooks.list', isMasterEnvironment),
       rootSref: makeRef('settings.webhooks', isMasterEnvironment),
       dataViewType: 'spaces-settings-webhooks',
-      title: 'Webhooks'
+      title: 'Webhooks',
     },
     previews: {
       if: canNavigateTo('previews'),
@@ -84,8 +84,8 @@ export function getSpaceNavigationItems({
       dataViewType: 'spaces-settings-content-preview',
       title: 'Content preview',
       srefOptions: {
-        reload: useSpaceEnviroment
-      }
+        reload: useSpaceEnviroment,
+      },
     },
     usage: {
       if: usageEnabled && canNavigateTo('usage'),
@@ -93,9 +93,9 @@ export function getSpaceNavigationItems({
       dataViewType: 'spaces-settings-usage',
       title: 'Usage',
       srefOptions: {
-        reload: useSpaceEnviroment
-      }
-    }
+        reload: useSpaceEnviroment,
+      },
+    },
   };
 
   const envSettingsDropdown = [
@@ -105,14 +105,14 @@ export function getSpaceNavigationItems({
       if: canNavigateTo('locales'),
       separator: true,
       label: 'Environment settings',
-      tooltip: 'These settings apply only to the environment you’ve currently selected.'
+      tooltip: 'These settings apply only to the environment you’ve currently selected.',
     },
     dropdownItems.locales,
     dropdownItems.extensions,
     {
       separator: true,
       label: 'Space settings',
-      tooltip: 'These settings apply to the space and all its environments.'
+      tooltip: 'These settings apply to the space and all its environments.',
     },
     dropdownItems.settings,
     dropdownItems.users,
@@ -122,8 +122,8 @@ export function getSpaceNavigationItems({
     dropdownItems.keys,
     dropdownItems.webhooks,
     dropdownItems.previews,
-    dropdownItems.usage
-  ].filter(item => item.if !== false);
+    dropdownItems.usage,
+  ].filter((item) => item.if !== false);
 
   const spaceSettingsDropdown = [
     dropdownItems.settings,
@@ -135,8 +135,8 @@ export function getSpaceNavigationItems({
     dropdownItems.webhooks,
     dropdownItems.extensions,
     dropdownItems.previews,
-    dropdownItems.usage
-  ].filter(item => item.if !== false);
+    dropdownItems.usage,
+  ].filter((item) => item.if !== false);
 
   return [
     !useSpaceEnviroment || isMasterEnvironment
@@ -145,14 +145,14 @@ export function getSpaceNavigationItems({
           sref: 'spaces.detail.home',
           dataViewType: 'space-home',
           navIcon: 'home',
-          title: 'Space home'
+          title: 'Space home',
         }
       : {
           if: canNavigateTo('spaceHome'),
           disabled: true,
           tooltip: 'The space home is only available in the master environment.',
           navIcon: 'home',
-          title: 'Space home'
+          title: 'Space home',
         },
     {
       if: canNavigateTo('contentType'),
@@ -160,7 +160,7 @@ export function getSpaceNavigationItems({
       rootSref: makeRef('content_types', isMasterEnvironment),
       dataViewType: 'content-type-list',
       navIcon: 'content-model',
-      title: 'Content model'
+      title: 'Content model',
     },
     {
       if: canNavigateTo('entry'),
@@ -168,7 +168,7 @@ export function getSpaceNavigationItems({
       rootSref: makeRef('entries', isMasterEnvironment),
       dataViewType: 'entry-list',
       navIcon: 'content',
-      title: 'Content'
+      title: 'Content',
     },
     {
       if: canNavigateTo('asset'),
@@ -176,7 +176,7 @@ export function getSpaceNavigationItems({
       rootSref: makeRef('assets', isMasterEnvironment),
       dataViewType: 'asset-list',
       navIcon: 'media',
-      title: 'Media'
+      title: 'Media',
     },
     {
       if: canNavigateTo('apps'),
@@ -184,7 +184,7 @@ export function getSpaceNavigationItems({
       navIcon: 'apps',
       sref: makeRef('apps.list', isMasterEnvironment),
       rootSref: makeRef('apps', isMasterEnvironment),
-      title: 'Apps'
+      title: 'Apps',
     },
     {
       if: useSpaceEnviroment ? envSettingsDropdown.length > 0 : spaceSettingsDropdown.length > 0,
@@ -193,7 +193,7 @@ export function getSpaceNavigationItems({
       navIcon: 'settings',
       icon: 'nav-settings',
       title: useSpaceEnviroment ? 'Settings' : 'Space settings',
-      children: useSpaceEnviroment ? envSettingsDropdown : spaceSettingsDropdown
-    }
-  ].filter(item => item.if !== false);
+      children: useSpaceEnviroment ? envSettingsDropdown : spaceSettingsDropdown,
+    },
+  ].filter((item) => item.if !== false);
 }

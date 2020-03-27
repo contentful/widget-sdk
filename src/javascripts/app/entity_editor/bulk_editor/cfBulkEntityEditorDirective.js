@@ -63,16 +63,16 @@ export default function register() {
         scope: {
           entityContext: '<',
           bulkEditorContext: '<',
-          localeData: '<'
+          localeData: '<',
         },
         template: bulkEntityEditorTemplate,
-        link: function($scope, $el) {
+        link: function ($scope, $el) {
           $scope.$el = $el;
           $scope.el = $el.get(0);
         },
         controller: [
           '$scope',
-          $scope => {
+          ($scope) => {
             const entityContext = $scope.entityContext;
             const bulkEditorContext = $scope.bulkEditorContext;
 
@@ -91,30 +91,27 @@ export default function register() {
                   environment: {
                     sys: {
                       id: spaceContext.getEnvironmentId(),
-                      isMasterEnvironment: spaceContext.isMasterEnvironment()
-                    }
+                      isMasterEnvironment: spaceContext.isMasterEnvironment(),
+                    },
                   },
                   space: {
-                    sys: { id: spaceContext.getId() }
-                  }
-                }
-              })
+                    sys: { id: spaceContext.getId() },
+                  },
+                },
+              }),
             });
 
-            K.onValueScope($scope, bulkEditorContext.scrollTarget$, key => {
+            K.onValueScope($scope, bulkEditorContext.scrollTarget$, (key) => {
               if (key === entityContext.key) {
                 $timeout(() => {
-                  $scope.$el
-                    .find('input')
-                    .eq(0)
-                    .focus();
+                  $scope.$el.find('input').eq(0).focus();
                   $scope.el.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 });
               }
             });
 
             const editorDataPromise$ = K.promiseProperty(
-              bulkEditorContext.loadEditorData(entityContext.id).then(editorData => {
+              bulkEditorContext.loadEditorData(entityContext.id).then((editorData) => {
                 const doc = editorData.openDoc(K.scopeLifeline($scope));
                 // We wait for the document to be opened until we setup the
                 // editor
@@ -127,29 +124,35 @@ export default function register() {
             // Property<boolean>
             // True if the entry data is still loading. False when the data was loaded
             // or the loading failed.
-            const loadingEditorData$ = editorDataPromise$.map(p =>
-              caseof(p, [[K.PromiseStatus.Pending, _.constant(true)], [null, _.constant(false)]])
+            const loadingEditorData$ = editorDataPromise$.map((p) =>
+              caseof(p, [
+                [K.PromiseStatus.Pending, _.constant(true)],
+                [null, _.constant(false)],
+              ])
             );
 
             // Stream<void>
             // Emits exactly one event when the entry data has been loaded or the
             // loading has failed
-            const loaded$ = loadingEditorData$.filter(loading => loading === false);
+            const loaded$ = loadingEditorData$.filter((loading) => loading === false);
 
             K.onValueScope($scope, loaded$, bulkEditorContext.initializedEditor);
 
-            K.onValueScope($scope, loadingEditorData$, loading => {
+            K.onValueScope($scope, loadingEditorData$, (loading) => {
               $scope.loading = loading;
             });
 
             // Property<object?>
             // Holds the editor data if it has been loaded successfully. Holds 'null'
             // otherwise
-            const editorData$ = editorDataPromise$.map(p =>
-              caseof(p, [[K.PromiseStatus.Resolved, p => p.value], [null, _.constant(null)]])
+            const editorData$ = editorDataPromise$.map((p) =>
+              caseof(p, [
+                [K.PromiseStatus.Resolved, (p) => p.value],
+                [null, _.constant(null)],
+              ])
             );
 
-            K.onValueScope($scope, editorData$, editorData => {
+            K.onValueScope($scope, editorData$, (editorData) => {
               if (editorData) {
                 setupEditor(editorData);
 
@@ -159,7 +162,7 @@ export default function register() {
                     entityInfo: $scope.entityInfo,
                     currentSlideLevel: 0,
                     locale: localeStore.getDefaultLocale().internal_code,
-                    editorType: 'bulk_editor'
+                    editorType: 'bulk_editor',
                   });
                 } catch (error) {
                   logger.logError(error);
@@ -180,10 +183,10 @@ export default function register() {
                     $scope,
                     spaceContext,
                     Navigator,
-                    SlideInNavigator
+                    SlideInNavigator,
                   },
                   WidgetLocations.LOCATION_ENTRY_EDITOR
-                )
+                ),
               };
               $controller('InlineEditingController/editor', { $scope });
               data.hasEditor = true;
@@ -192,22 +195,22 @@ export default function register() {
             const trackAction = $scope.bulkEditorContext.track.actions(entityContext.id);
 
             $scope.actions = {
-              unlink: function() {
+              unlink: function () {
                 trackAction.unlink();
                 entityContext.remove();
               },
-              toggleExpansion: function() {
+              toggleExpansion: function () {
                 data.expanded = !data.expanded;
                 trackAction.setExpansion(data.expanded);
               },
-              openInEntryEditor: function() {
+              openInEntryEditor: function () {
                 trackAction.openInEntryEditor();
-              }
+              },
             };
-          }
-        ]
+          },
+        ],
       };
-    }
+    },
   ]);
 
   // TODO Consolidate this! same as entry editor minus some stuff
@@ -237,12 +240,12 @@ export default function register() {
         entity: editorData.entity,
         notify: notify,
         validator: this.validator,
-        otDoc: $scope.otDoc
+        otDoc: $scope.otDoc,
       });
 
       const { track } = $scope.bulkEditorContext;
 
-      K.onValueScope($scope, $scope.otDoc.resourceState.stateChange$, data => {
+      K.onValueScope($scope, $scope.otDoc.resourceState.stateChange$, (data) => {
         track.changeStatus($scope.entityInfo.id, data.to);
       });
 
@@ -252,14 +255,14 @@ export default function register() {
 
       this.focus = Focus.create();
 
-      K.onValueScope($scope, $scope.otDoc.state.isSaving$, isSaving => {
+      K.onValueScope($scope, $scope.otDoc.state.isSaving$, (isSaving) => {
         $scope.data.isSaving = isSaving;
       });
 
-      K.onValueScope($scope, valuePropertyAt($scope.otDoc, []), data => {
+      K.onValueScope($scope, valuePropertyAt($scope.otDoc, []), (data) => {
         const title = EntityFieldValueSpaceContext.entryTitle({
           getContentTypeId: _.constant($scope.entityInfo.contentTypeId),
-          data: data
+          data: data,
         });
         $scope.title = truncate(title, 50);
       });
@@ -269,7 +272,7 @@ export default function register() {
       // Building the form
       $controller('FormWidgetsController', {
         $scope,
-        controls: editorData.fieldControls.form
+        controls: editorData.fieldControls.form,
       });
 
       /**
@@ -280,6 +283,6 @@ export default function register() {
        */
       const fields = entityInfo.contentType.fields;
       $scope.fields = buildFieldsApi(fields, $scope.otDoc);
-    }
+    },
   ]);
 }

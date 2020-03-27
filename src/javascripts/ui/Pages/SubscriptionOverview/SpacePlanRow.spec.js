@@ -18,15 +18,15 @@ const mockPlan = {
   name: SPACE_NAME,
   planType: 'free_space',
   space: fake.Space(),
-  price: 1337
+  price: 1337,
 };
 
 jest.mock('states/Navigator', () => ({
-  go: jest.fn()
+  go: jest.fn(),
 }));
 
 jest.mock('account/pricing/PricingDataProvider', () => ({
-  isEnterprisePlan: jest.fn()
+  isEnterprisePlan: jest.fn(),
 }));
 
 isEnterprisePlan.mockImplementation(() => {
@@ -36,7 +36,7 @@ isEnterprisePlan.mockImplementation(() => {
 jest.mock('utils/SubscriptionUtils', () => ({
   getEnabledFeatures: jest.fn().mockImplementation(() => {
     return false;
-  })
+  }),
 }));
 
 jest.mock('moment', () => ({
@@ -44,9 +44,9 @@ jest.mock('moment', () => ({
     return {
       format: jest.fn(() => {
         return MOCK_CREATED_AT_TIME_DAY_MONTH_YEAR;
-      })
+      }),
     };
-  })
+  }),
 }));
 
 const mockOnChangeSpace = jest.fn();
@@ -232,7 +232,7 @@ describe('Space Plan Row', () => {
       expect(go).toHaveBeenCalledWith({
         path: ['spaces', 'detail', 'home'],
         params: { spaceId: mockPlan.space.sys.id },
-        options: { reload: true }
+        options: { reload: true },
       });
     });
 
@@ -249,7 +249,7 @@ describe('Space Plan Row', () => {
       expect(go).toHaveBeenCalledWith({
         path: ['spaces', 'detail', 'settings', 'usage'],
         params: { spaceId: mockPlan.space.sys.id },
-        options: { reload: true }
+        options: { reload: true },
       });
     });
 

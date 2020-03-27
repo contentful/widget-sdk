@@ -6,7 +6,7 @@
  * @returns Promise
  */
 export default function flushPromises() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     //eslint-disable-next-line no-undef
     setImmediate(() => {
       resolve();

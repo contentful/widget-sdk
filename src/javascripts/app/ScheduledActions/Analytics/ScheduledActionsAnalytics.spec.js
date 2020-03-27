@@ -10,7 +10,7 @@ describe('JobsAnalytics', () => {
     jest.spyOn(Analytics, 'track').mockImplementation(() => {});
     jest.spyOn(Intercom, 'trackEvent').mockImplementation(() => {});
     jest.spyOn(global, 'Date').mockImplementationOnce(() => ({
-      getTimezoneOffset: () => -120
+      getTimezoneOffset: () => -120,
     }));
   });
 
@@ -20,7 +20,7 @@ describe('JobsAnalytics', () => {
     expectTrackCalledOnceWith('global:dialog', {
       name: 'jobs:create',
       purpose: 'job.create',
-      action: 'open'
+      action: 'open',
     });
   });
 
@@ -29,31 +29,31 @@ describe('JobsAnalytics', () => {
 
     expectTrackCalledOnceWith('global:dialog', {
       name: 'jobs:create',
-      action: 'close'
+      action: 'close',
     });
   });
 
   it.each([
     [ScheduledActionAction.Publish, 'Entry.publish'],
-    [ScheduledActionAction.Unpublish, 'Entry.unpublish']
+    [ScheduledActionAction.Unpublish, 'Entry.unpublish'],
   ])('CreateJob with action %i', (jobAction, eventAction) => {
     const jobId = 'job-id';
     const entityId = 'entity-id';
     const scheduledFor = {
-      datetime: '2019-07-12T23:37:00.000+05:30'
+      datetime: '2019-07-12T23:37:00.000+05:30',
     };
 
     const job = {
       entity: {
         sys: {
-          id: entityId
-        }
+          id: entityId,
+        },
       },
       sys: {
-        id: jobId
+        id: jobId,
       },
       action: jobAction,
-      scheduledFor
+      scheduledFor,
     };
 
     JobsAnalytics.createJob(job);
@@ -63,7 +63,7 @@ describe('JobsAnalytics', () => {
       job_id: jobId,
       entity_id: entityId,
       scheduled_for: scheduledFor.datetime,
-      timezone_offset: -120
+      timezone_offset: -120,
     });
 
     expectTrackToIntercomCalledOnceWith('scheduled-publishing-create-job');
@@ -71,22 +71,22 @@ describe('JobsAnalytics', () => {
 
   it.each([
     [ScheduledActionAction.Publish, 'Entry.publish'],
-    [ScheduledActionAction.Unpublish, 'Entry.unpublish']
+    [ScheduledActionAction.Unpublish, 'Entry.unpublish'],
   ])('cancelJob with action %i', (jobAction, eventAction) => {
     const jobId = 'job-id';
 
     const job = {
       sys: {
-        id: jobId
+        id: jobId,
       },
-      action: jobAction
+      action: jobAction,
     };
 
     JobsAnalytics.cancelJob(job);
 
     expectTrackCalledOnceWith('jobs:cancel', {
       action: eventAction,
-      job_id: jobId
+      job_id: jobId,
     });
   });
 

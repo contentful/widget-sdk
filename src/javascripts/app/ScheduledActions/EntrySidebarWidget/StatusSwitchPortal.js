@@ -33,7 +33,7 @@ const StatusSwitchPortal = memo(({ entityId, children }) => {
 });
 
 StatusSwitchPortal.propTypes = {
-  entityId: PropTypes.string.isRequired
+  entityId: PropTypes.string.isRequired,
 };
 
 export default StatusSwitchPortal;

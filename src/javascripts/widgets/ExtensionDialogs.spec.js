@@ -37,7 +37,7 @@ describe('ExtensionDialogs', () => {
         await Dialogs.openAlert({
           title: 'test',
           message: 'hello',
-          shouldCloseOnEscapePress: null
+          shouldCloseOnEscapePress: null,
         });
       } catch (err) {
         expect(err).toMatchObject({ message: '"shouldCloseOnEscapePress" must be a boolean.' });

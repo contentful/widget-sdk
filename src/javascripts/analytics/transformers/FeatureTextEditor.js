@@ -21,7 +21,7 @@ export default addUserOrgSpace((_eventName, data) => {
       character_count_before: data.characterCountBefore || null,
       character_count_after: data.characterCountAfter || null,
       character_count_selection: data.characterCountSelection || null,
-      additional_data: data.additionalData || {}
-    }
+      additional_data: data.additionalData || {},
+    },
   };
 });

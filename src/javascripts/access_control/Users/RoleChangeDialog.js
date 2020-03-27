@@ -9,11 +9,11 @@ import RoleSelector from 'app/SpaceSettings/Teams/AddTeams/RoleSelector';
 
 const styles = {
   roleSelectionContainer: css({
-    maxWidth: '20rem'
+    maxWidth: '20rem',
   }),
   warning: css({
-    marginBottom: tokens.spacingS
-  })
+    marginBottom: tokens.spacingS,
+  }),
 };
 
 const RoleChangeDialog = ({
@@ -22,7 +22,7 @@ const RoleChangeDialog = ({
   displayName,
   isShown,
   onClose,
-  isLastAdmin
+  isLastAdmin,
 }) => {
   const [selectedRoleIds, setSelectedRoleIds] = useState(initiallySelectedRoleIds);
   const isCurrentlyAdmin = isEmpty(initiallySelectedRoleIds);
@@ -57,7 +57,7 @@ const RoleChangeDialog = ({
           onRoleSelected={(id, isSelected) =>
             setSelectedRoleIds(isSelected ? [...selectedRoleIds, id] : without(selectedRoleIds, id))
           }
-          onAdminSelected={isSelected =>
+          onAdminSelected={(isSelected) =>
             setAdminSelected(isSelected) || (isSelected && setSelectedRoleIds([]))
           }
         />
@@ -72,7 +72,7 @@ RoleChangeDialog.propTypes = {
   isShown: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   memberId: PropTypes.string.isRequired,
-  isLastAdmin: PropTypes.bool.isRequired
+  isLastAdmin: PropTypes.bool.isRequired,
 };
 
 export default RoleChangeDialog;

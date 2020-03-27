@@ -2,14 +2,14 @@ import {
   getTemplate,
   getTemplatesList,
   getClientParams,
-  _resetGlobals
+  _resetGlobals,
 } from './SpaceTemplateLoader';
 import newContentfulClient from './contentfulClient';
 import {
   contentTypesCDA,
   assetsCDA,
   entriesCDA,
-  spaceCDA
+  spaceCDA,
 } from './__fixtures__/SpaceTemplateLoader';
 
 jest.mock('./contentfulClient', () => jest.fn());
@@ -29,7 +29,7 @@ describe('SpaceTemplateLoader', () => {
       entries: clientGetEntriesMock,
       assets: clientGetAssetsMock,
       contentTypes: clientGetCTsMock,
-      space: clientGetSpaceMock
+      space: clientGetSpaceMock,
     });
   });
 
@@ -44,7 +44,7 @@ describe('SpaceTemplateLoader', () => {
       accessToken: 'access-token',
       previewAccessToken: 'preview-token',
       cdaApiUrl: 'cda-api-url',
-      previewApiUrl: 'preview-api-url'
+      previewApiUrl: 'preview-api-url',
     };
 
     describe('when env is production', () => {
@@ -52,12 +52,12 @@ describe('SpaceTemplateLoader', () => {
         expect(
           getClientParams({
             env: 'production',
-            ...contentfulConfig
+            ...contentfulConfig,
           })
         ).toEqual({
           space: contentfulConfig.space,
           accessToken: contentfulConfig.accessToken,
-          host: contentfulConfig.cdaApiUrl
+          host: contentfulConfig.cdaApiUrl,
         });
       });
     });
@@ -67,12 +67,12 @@ describe('SpaceTemplateLoader', () => {
         expect(
           getClientParams({
             env: 'dev',
-            ...contentfulConfig
+            ...contentfulConfig,
           })
         ).toEqual({
           space: contentfulConfig.space,
           accessToken: contentfulConfig.previewAccessToken,
-          host: contentfulConfig.previewApiUrl
+          host: contentfulConfig.previewApiUrl,
         });
       });
     });
@@ -83,13 +83,13 @@ describe('SpaceTemplateLoader', () => {
       { fields: { order: 2 } },
       { fields: { order: 1 } },
       { fields: { order: 3 } },
-      { fields: {} }
+      { fields: {} },
     ];
     const sortedEntries = [
       { fields: { order: 1 } },
       { fields: { order: 2 } },
       { fields: { order: 3 } },
-      { fields: {} }
+      { fields: {} },
     ];
 
     it("should instantiate a contentful client when there isn't one", async () => {
@@ -115,13 +115,13 @@ describe('SpaceTemplateLoader', () => {
       expect(newContentfulClient).toHaveBeenCalledTimes(1);
       expect(clientGetEntriesMock).toHaveBeenCalledTimes(1);
       expect(clientGetEntriesMock).toHaveBeenCalledWith({
-        content_type: 'space-template-ct-id' // comes from __mocks__/Config.js
+        content_type: 'space-template-ct-id', // comes from __mocks__/Config.js
       });
       expect(templates).toEqual(sortedEntries);
     });
 
     it('should throw when something fails', async () => {
-      newContentfulClient.mockImplementation(_ => {
+      newContentfulClient.mockImplementation((_) => {
         throw new Error();
       });
 
@@ -129,7 +129,7 @@ describe('SpaceTemplateLoader', () => {
 
       newContentfulClient.mockReset();
       newContentfulClient.mockReturnValue({
-        entries: clientGetEntriesMock
+        entries: clientGetEntriesMock,
       });
       clientGetEntriesMock.mockReset();
       clientGetEntriesMock.mockRejectedValue(new Error());
@@ -144,12 +144,12 @@ describe('SpaceTemplateLoader', () => {
       spaceApiKey: 'my-space-api-key',
       templateDeliveryApiKeys: [
         {
-          fields: { name: 'apikey-1', description: 'Api Key 1' }
+          fields: { name: 'apikey-1', description: 'Api Key 1' },
         },
         {
-          fields: { name: 'apikey-2', description: 'Api Key 2' }
-        }
-      ]
+          fields: { name: 'apikey-2', description: 'Api Key 2' },
+        },
+      ],
     };
 
     beforeEach(() => {
@@ -166,7 +166,7 @@ describe('SpaceTemplateLoader', () => {
       expect(newContentfulClient).toHaveBeenCalledWith({
         host: 'cda-api-url', // comes from __mocks__/Config.js
         space: templateInfo.spaceId,
-        accessToken: templateInfo.spaceApiKey
+        accessToken: templateInfo.spaceApiKey,
       });
     });
 

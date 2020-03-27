@@ -27,7 +27,7 @@ export class SpaceSettingsRoute extends React.Component {
     return plan;
   };
 
-  handleSaveError = err => {
+  handleSaveError = (err) => {
     if (get(err, ['data', 'details', 'errors'], []).length > 0) {
       Notification.error('Please provide a valid space name.');
     } else if (get(err, ['data', 'sys', 'id']) === 'Conflict') {
@@ -39,7 +39,7 @@ export class SpaceSettingsRoute extends React.Component {
     }
   };
 
-  save = newName => {
+  save = (newName) => {
     const spaceContext = getModule('spaceContext');
 
     const space = spaceContext.space;
@@ -49,7 +49,7 @@ export class SpaceSettingsRoute extends React.Component {
         TokenStore.refresh();
         return TokenStore.getSpace(spaceContext.space.data.sys.id);
       })
-      .then(newSpace => spaceContext.resetWithSpace(newSpace))
+      .then((newSpace) => spaceContext.resetWithSpace(newSpace))
       .then(() => {
         // re-render view with new space object
         this.forceUpdate();
@@ -62,11 +62,11 @@ export class SpaceSettingsRoute extends React.Component {
     const $state = getModule('$state');
     const spaceContext = getModule('spaceContext');
 
-    this.getSpacePlan().then(plan => {
+    this.getSpacePlan().then((plan) => {
       DeleteSpace.openDeleteSpaceDialog({
         space: spaceContext.space.data,
         plan,
-        onSuccess: () => $state.go('home')
+        onSuccess: () => $state.go('home'),
       });
     });
   };

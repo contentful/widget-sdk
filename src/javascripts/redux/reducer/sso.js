@@ -5,7 +5,7 @@ import * as actions from 'redux/actions/sso/actions';
 export default combineReducers({
   identityProvider,
   fields,
-  connectionTest
+  connectionTest,
 });
 
 /*
@@ -42,7 +42,7 @@ export function identityProvider(state = {}, action) {
     case actions.SSO_GET_IDENTITY_PROVIDER_PENDING:
       return {
         ...state,
-        isPending: true
+        isPending: true,
       };
     case actions.SSO_UPDATE_IDENTITY_PROVIDER:
     case actions.SSO_CREATE_IDENTITY_PROVIDER_SUCCESS:
@@ -50,32 +50,32 @@ export function identityProvider(state = {}, action) {
       return {
         ...state,
         data: action.payload,
-        isPending: false
+        isPending: false,
       };
     case actions.SSO_CREATE_IDENTITY_PROVIDER_FAILURE:
     case actions.SSO_GET_IDENTITY_PROVIDER_FAILURE:
       return {
         ...state,
         error: action.payload.message,
-        isPending: false
+        isPending: false,
       };
 
     case actions.SSO_ENABLE_PENDING:
       return {
         ...state,
-        isEnabling: true
+        isEnabling: true,
       };
     case actions.SSO_ENABLE_SUCCESS:
       return {
         ...state,
         data: action.payload,
-        isEnabling: false
+        isEnabling: false,
       };
     case actions.SSO_ENABLE_FAILURE:
       return {
         ...state,
         error: action.payload.message,
-        isEnabling: false
+        isEnabling: false,
       };
     default:
       return state;
@@ -102,7 +102,7 @@ export function fields(state = {}, action) {
     case actions.SSO_GET_IDENTITY_PROVIDER_SUCCESS: {
       const updatedState = clone(state);
 
-      fieldNames.forEach(field => {
+      fieldNames.forEach((field) => {
         let fieldValue = get(action.payload, field);
 
         // If the field is null or undefined, we default to empty string
@@ -175,14 +175,14 @@ export function connectionTest(state = {}, action) {
         ...state,
         isPending: true,
         testWindow: action.payload.testWindow,
-        timer: action.payload.timer
+        timer: action.payload.timer,
       };
     case actions.SSO_CONNECTION_TEST_END:
       return {
         ...state,
         isPending: false,
         testWindow: null,
-        timer: null
+        timer: null,
       };
     case actions.SSO_UPDATE_IDENTITY_PROVIDER:
     case actions.SSO_GET_IDENTITY_PROVIDER_SUCCESS:
@@ -190,7 +190,7 @@ export function connectionTest(state = {}, action) {
         ...state,
         result: action.payload.testConnectionResult,
         errors: action.payload.testConnectionErrors,
-        timestamp: action.payload.testConnectionAt
+        timestamp: action.payload.testConnectionAt,
       };
     default:
       return state;

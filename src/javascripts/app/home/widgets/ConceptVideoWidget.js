@@ -7,39 +7,39 @@ import * as logger from 'services/logger';
 
 export default class ConceptVideoWidget extends React.Component {
   state = {
-    playVideo: () => {}
+    playVideo: () => {},
   };
 
   onStart = () => {
     track('element:click', {
       elementId: 'concept_video_play',
       groupId: 'author_editor_continuous_onboarding',
-      fromState: getCurrentStateName()
+      fromState: getCurrentStateName(),
     });
   };
 
-  onError = error =>
+  onError = (error) =>
     logger.logError('Wistia video player', {
       message: 'An error occurred while attempting to play Concept Video for authors and editors',
-      error
+      error,
     });
 
   componentDidMount = () => {
     window._wq = window._wq || [];
     window._wq.push({
       id: '_all',
-      onReady: video => {
+      onReady: (video) => {
         this.setState({
           playVideo: () => {
             video.popover.show();
             video.play();
-          }
+          },
         });
 
         video.bind('end', () => {
           video.popover.hide();
         });
-      }
+      },
     });
   };
 
@@ -77,9 +77,9 @@ export default class ConceptVideoWidget extends React.Component {
                 wistia: {
                   options: {
                     popover: true,
-                    playButton: false
-                  }
-                }
+                    playButton: false,
+                  },
+                },
               }}
             />
             <button

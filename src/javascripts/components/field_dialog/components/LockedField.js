@@ -11,9 +11,9 @@ const styles = {
     '.lock-button-container': css({
       position: 'absolute',
       top: '2.5rem',
-      right: tokens.spacingS
-    })
-  })
+      right: tokens.spacingS,
+    }),
+  }),
 };
 
 const LockedField = ({
@@ -36,7 +36,7 @@ const LockedField = ({
           onChange={({ target: { value } }) => setValue(value)}
           textInputProps={{
             disabled: disabled,
-            type: 'text'
+            type: 'text',
           }}
           validationMessage={validationMessage}
           {...restProps}
@@ -64,7 +64,7 @@ LockedField.propTypes = {
   isDisabled: PropTypes.bool.isRequired,
   onUnlock: PropTypes.func.isRequired,
   validationMessage: PropTypes.string.isRequired,
-  testId: PropTypes.string.isRequired
+  testId: PropTypes.string.isRequired,
 };
 
 export default LockedField;

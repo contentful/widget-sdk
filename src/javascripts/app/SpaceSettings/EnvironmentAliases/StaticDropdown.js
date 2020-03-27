@@ -7,12 +7,12 @@ import {
   spacingL,
   colorBlueDark,
   colorWhite,
-  boxShadowDefault
+  boxShadowDefault,
 } from '@contentful/forma-36-tokens';
 
 const styles = {
   root: css({
-    position: 'relative'
+    position: 'relative',
   }),
   wrapper: css({
     position: 'absolute',
@@ -20,14 +20,14 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     minHeight: '15rem',
-    width: '18rem'
+    width: '18rem',
   }),
   arrowUp: css({
     width: 0,
     height: 0,
     borderLeft: `${spacingS} solid transparent`,
     borderRight: `${spacingS} solid transparent`,
-    borderBottom: `${spacingS} solid ${colorBlueDark}`
+    borderBottom: `${spacingS} solid ${colorBlueDark}`,
   }),
   body: css({
     padding: spacingL,
@@ -37,14 +37,14 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: colorWhite,
-    boxShadow: boxShadowDefault
+    boxShadow: boxShadowDefault,
   }),
   title: css({
     backgroundColor: colorBlueDark,
     color: colorWhite,
     padding: spacingS,
-    textAlign: 'center'
-  })
+    textAlign: 'center',
+  }),
 };
 
 export default function StaticDropdown({
@@ -54,7 +54,7 @@ export default function StaticDropdown({
   body,
   align,
   testId,
-  className
+  className,
 }) {
   const [top, setTop] = useState(0);
 
@@ -70,7 +70,7 @@ export default function StaticDropdown({
   const dynamicWrapper = css({ top, [align]: `-${spacingM}` });
   const dynamicArrowUp = css({
     marginLeft: align === 'right' ? 'auto' : spacingM,
-    marginRight: spacingM
+    marginRight: spacingM,
   });
 
   return (
@@ -97,11 +97,11 @@ StaticDropdown.propTypes = {
   title: PropTypes.string.isRequired,
   body: PropTypes.node,
   testId: PropTypes.string,
-  className: PropTypes.string
+  className: PropTypes.string,
 };
 
 StaticDropdown.defaultProps = {
   align: 'left',
   testId: 'staticdropdown.wrapper',
-  className: ''
+  className: '',
 };

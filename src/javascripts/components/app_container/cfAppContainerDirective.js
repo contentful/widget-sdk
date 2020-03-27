@@ -7,6 +7,6 @@ export default function register() {
       <div ui-view="nav-bar"></div>
       <div ui-view="content" class="app-container__content"></div>
     `,
-    restrict: 'E'
+    restrict: 'E',
   }));
 }

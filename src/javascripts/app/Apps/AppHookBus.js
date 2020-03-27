@@ -22,13 +22,13 @@ import { isObject } from 'lodash';
 export const APP_EVENTS_OUT = {
   STARTED: 'app-events-out-started',
   FAILED: 'app-events-out-failed',
-  SUCCEEDED: 'app-events-out-succeeded'
+  SUCCEEDED: 'app-events-out-succeeded',
 };
 
 export const APP_EVENTS_IN = {
   CONFIGURED: 'app-events-in-configured',
   MISCONFIGURED: 'app-events-in-misconfigured',
-  MARKED_AS_READY: 'app-events-in-ready'
+  MARKED_AS_READY: 'app-events-in-ready',
 };
 
 export function makeAppHookBus() {
@@ -43,7 +43,7 @@ export function makeAppHookBus() {
     emit: (eventName, data) => {
       bus.emit(eventName, data);
     },
-    setInstallation: value => {
+    setInstallation: (value) => {
       if (isObject(value)) {
         const { parameters } = value;
         installation = value;
@@ -52,6 +52,6 @@ export function makeAppHookBus() {
         installation = null;
       }
     },
-    getInstallation: () => installation
+    getInstallation: () => installation,
   };
 }

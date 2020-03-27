@@ -11,11 +11,11 @@ import {
   TextLink,
   Button,
   Notification,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import {
   removeMembership,
-  removeInvitation
+  removeInvitation,
 } from 'access_control/OrganizationMembershipRepository';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { getInvitedUsers } from '../UserInvitationUtils';
@@ -28,34 +28,34 @@ import tokens from '@contentful/forma-36-tokens';
 
 const styles = {
   workbenchContent: css({
-    padding: tokens.spacingXl
+    padding: tokens.spacingXl,
   }),
   actionsWrapper: css({
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   }),
   userListLink: css({
-    marginRight: tokens.spacingXs
-  })
+    marginRight: tokens.spacingXs,
+  }),
 };
 
-const getUserInvitationDetailLink = invitationId => {
+const getUserInvitationDetailLink = (invitationId) => {
   return {
     path: 'account.organizations.users.invitation',
     params: {
-      invitationId
-    }
+      invitationId,
+    },
   };
 };
 
 export default class InvitationsList extends React.Component {
   static propTypes = {
     orgId: PropTypes.string.isRequired,
-    membershipsCount: PropTypes.number.isRequired
+    membershipsCount: PropTypes.number.isRequired,
   };
 
   state = {
-    loading: true
+    loading: true,
   };
 
   componentDidMount() {
@@ -72,7 +72,7 @@ export default class InvitationsList extends React.Component {
     this.setState({ invitations, loading: false });
   };
 
-  removeInvitation = invitation => async () => {
+  removeInvitation = (invitation) => async () => {
     const { orgId } = this.props;
     const { invitations } = this.state;
     const { type, id, email } = invitation;
@@ -145,7 +145,7 @@ export default class InvitationsList extends React.Component {
               </TableRow>
             </TableHead>
             <TableBody>
-              {sortedList.map(invitation => (
+              {sortedList.map((invitation) => (
                 <TableRow key={invitation.id} className="user-invitations-list__row">
                   <StateLink {...getUserInvitationDetailLink(invitation.id)}>
                     {({ onClick }) => (

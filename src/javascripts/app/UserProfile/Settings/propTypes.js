@@ -10,5 +10,5 @@ export const User = PropTypes.shape({
   confirmed: PropTypes.bool,
   mfaEligible: PropTypes.bool,
   mfaEnabled: PropTypes.bool,
-  sys: PropTypes.shape({ version: PropTypes.number })
+  sys: PropTypes.shape({ version: PropTypes.number }),
 });

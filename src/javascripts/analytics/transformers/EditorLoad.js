@@ -1,6 +1,6 @@
 import { addUserOrgSpace } from './Decorators';
 
-const extractAction = eventName => eventName.split(':')[1];
+const extractAction = (eventName) => eventName.split(':')[1];
 
 /**
  * @ngdoc service
@@ -18,6 +18,6 @@ export default addUserOrgSpace((eventName, data) => ({
     rich_text_editor_instance_count: data.richTextEditorInstanceCount,
     link_field_editor_instance_count: data.linkFieldEditorInstanceCount,
     total_slide_count: data.totalSlideCount,
-    load_ms: data.loadMs
-  }
+    load_ms: data.loadMs,
+  },
 }));

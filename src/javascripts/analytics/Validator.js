@@ -9,14 +9,14 @@ export const validEvents = {
     'logout_clicked',
     'top_banner_dismissed',
     'navigated',
-    'dialog'
+    'dialog',
   ],
   home: [
     'space_selected',
     'space_learn_selected',
     'language_selected',
     'link_opened',
-    'command_copied'
+    'command_copied',
   ],
   notification: ['action_performed'],
   learn: ['step_clicked', 'language_selected', 'resource_selected'],
@@ -31,7 +31,7 @@ export const validEvents = {
     'space_create',
     'space_type_change',
     'select_plan',
-    'entered_details'
+    'entered_details',
   ],
   search: [
     'bulk_action_performed',
@@ -40,7 +40,7 @@ export const validEvents = {
     'view_edited',
     'view_deleted',
     'view_loaded',
-    'search_terms_migrated'
+    'search_terms_migrated',
   ],
   modelling: ['field_added'],
   experiment: ['start', 'interaction'],
@@ -49,14 +49,14 @@ export const validEvents = {
     'disabled_fields_visibility_toggled',
     'created_with_same_ct',
     'preview_opened',
-    'view'
+    'view',
   ],
   versioning: [
     'no_snapshots',
     'snapshot_opened',
     'snapshot_closed',
     'snapshot_restored',
-    'published_restored'
+    'published_restored',
   ],
   content_preview: ['created', 'updated', 'deleted'],
   slide_in_editor: [
@@ -65,20 +65,20 @@ export const validEvents = {
     'bulk_editor_close',
     'open',
     'open_create',
-    'delete'
+    'delete',
   ],
   editor_load: [
     'init',
     'entity_loaded',
     'sharejs_connected',
     'links_rendered',
-    'fully_interactive'
+    'fully_interactive',
   ],
   translation_sidebar: [
     'toggle_widget_mode',
     'deselect_active_locale',
     'update_active_locales',
-    'change_focused_locale'
+    'change_focused_locale',
   ],
   // https://contentful.atlassian.net/wiki/display/PRODBulk+references+editor+-+Tracking+specs
   bulk_editor: [
@@ -91,7 +91,7 @@ export const validEvents = {
     'open',
     'open_slide_in',
     'close',
-    'status'
+    'status',
   ],
   content_type: ['create'],
   entry: ['create', 'publish'],
@@ -111,7 +111,7 @@ export const validEvents = {
     'dialog_confirm',
     'dialog_link_click',
     'sidebar_link_click',
-    'query'
+    'query',
   ],
   extension: ['save', 'install', 'render', 'activate', 'set_value'],
   entity_button: ['click'],
@@ -130,7 +130,7 @@ export const validEvents = {
     'change_environment_abort',
     'notification_environment_alias_changed',
     'notification_switch_to_alias',
-    'notification_continue_on_environment'
+    'notification_continue_on_environment',
   ],
   ui_webhook_editor: ['save'],
   usage: ['period_selected', 'org_tab_selected', 'space_tab_selected'],
@@ -145,10 +145,10 @@ export const validEvents = {
   asset_list: ['add_asset_single', 'add_asset_multiple'],
   telemetry: ['measurement'],
   app_management: ['created', 'deleted', 'updated'],
-  tracking: ['invalid_event']
+  tracking: ['invalid_event'],
 };
 
-export const validateEvent = eventName => {
+export const validateEvent = (eventName) => {
   if (!isString(eventName)) {
     return false;
   }

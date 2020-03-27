@@ -8,7 +8,10 @@ describe('EditorInterfaceTransformer', () => {
     it('adds a default control if missing', () => {
       const ct = {
         sys: { id: 'CT' },
-        fields: [{ apiName: 'AAA', type: 'Symbol' }, { apiName: 'MISSING', type: 'Boolean' }]
+        fields: [
+          { apiName: 'AAA', type: 'Symbol' },
+          { apiName: 'MISSING', type: 'Boolean' },
+        ],
       };
       const ei = { controls: [{ fieldId: 'AAA' }] };
 
@@ -19,14 +22,14 @@ describe('EditorInterfaceTransformer', () => {
           fieldId: 'AAA',
           field: ct.fields[0],
           widgetNamespace: NAMESPACE_BUILTIN,
-          widgetId: 'singleLine'
+          widgetId: 'singleLine',
         },
         {
           fieldId: 'MISSING',
           field: ct.fields[1],
           widgetNamespace: NAMESPACE_BUILTIN,
-          widgetId: 'boolean'
-        }
+          widgetId: 'boolean',
+        },
       ]);
     });
 
@@ -51,8 +54,8 @@ describe('EditorInterfaceTransformer', () => {
           field: { apiName: 'AAA' },
           fieldId: 'AAA',
           widgetId: 'singleLine',
-          widgetNamespace: NAMESPACE_BUILTIN
-        }
+          widgetNamespace: NAMESPACE_BUILTIN,
+        },
       ]);
     });
 
@@ -91,13 +94,13 @@ describe('EditorInterfaceTransformer', () => {
       expect(controls[0].widgetId).toEqual('foo');
     });
 
-    it('restores field order', function() {
+    it('restores field order', function () {
       const ct = { sys: { id: 'CT' }, fields: [{ apiName: 'one' }, { apiName: 'two' }] };
       const ei = { controls: [{ fieldId: 'two' }, { fieldId: 'one' }] };
 
       const { controls } = fromAPI(ct, ei);
 
-      expect(controls.map(c => c.fieldId)).toEqual(['one', 'two']);
+      expect(controls.map((c) => c.fieldId)).toEqual(['one', 'two']);
     });
 
     it('keeps existing sys properties and provides type and CT link', () => {
@@ -109,7 +112,7 @@ describe('EditorInterfaceTransformer', () => {
       expect(sys).toEqual({
         updatedAt: 'some-time',
         type: 'EditorInterface',
-        contentType: { sys: { type: 'Link', linkType: 'ContentType', id: 'CT' } }
+        contentType: { sys: { type: 'Link', linkType: 'ContentType', id: 'CT' } },
       });
     });
 
@@ -117,31 +120,37 @@ describe('EditorInterfaceTransformer', () => {
       it('prefers the apiName over the field ID', () => {
         const ct = {
           sys: { id: 'CT' },
-          fields: [{ id: 'id2', apiName: 'apiName' }, { id: 'apiName', apiName: 'field2' }]
+          fields: [
+            { id: 'id2', apiName: 'apiName' },
+            { id: 'apiName', apiName: 'field2' },
+          ],
         };
 
         const ei = { controls: [{ widgetId: 'W', fieldId: 'apiName' }] };
 
         const { controls } = fromAPI(ct, ei);
 
-        expect(controls.map(c => c.fieldId)).toEqual(['apiName', 'field2']);
+        expect(controls.map((c) => c.fieldId)).toEqual(['apiName', 'field2']);
         expect(controls[0].widgetId).toEqual('W');
       });
 
       it('falls back to the field ID', () => {
         const ct = {
           sys: { id: 'CT' },
-          fields: [{ id: 'id1' }, { id: 'id2', apiName: 'apiName2' }]
+          fields: [{ id: 'id1' }, { id: 'id2', apiName: 'apiName2' }],
         };
 
         const ei = {
-          controls: [{ widgetId: 'A', fieldId: 'id1' }, { widgetId: 'B', fieldId: 'apiName2' }]
+          controls: [
+            { widgetId: 'A', fieldId: 'id1' },
+            { widgetId: 'B', fieldId: 'apiName2' },
+          ],
         };
 
         const { controls } = fromAPI(ct, ei);
 
-        expect(controls.map(c => c.fieldId)).toEqual(['id1', 'apiName2']);
-        expect(controls.map(c => c.widgetId)).toEqual(['A', 'B']);
+        expect(controls.map((c) => c.fieldId)).toEqual(['id1', 'apiName2']);
+        expect(controls.map((c) => c.widgetId)).toEqual(['A', 'B']);
       });
     });
   });
@@ -155,7 +164,7 @@ describe('EditorInterfaceTransformer', () => {
         settings: { test: true },
         field: { id: 'test' },
         unknown: 'test',
-        oneMore: 666
+        oneMore: 666,
       };
 
       const ct = { sys: { id: 'CT' }, fields: [{ apiName: 'test' }] };
@@ -168,8 +177,8 @@ describe('EditorInterfaceTransformer', () => {
           fieldId: 'test',
           widgetId: 'helloWorld',
           widgetNamespace: NAMESPACE_BUILTIN,
-          settings: { test: true }
-        }
+          settings: { test: true },
+        },
       ]);
     });
 
@@ -178,7 +187,7 @@ describe('EditorInterfaceTransformer', () => {
         fieldId: 'test',
         widgetId: 'helloWorld',
         widgetNamespace: NAMESPACE_BUILTIN,
-        settings: {}
+        settings: {},
       };
       const ct = { sys: { id: 'CT' }, fields: [{ apiName: 'test' }] };
       const ei = { controls: [control] };
@@ -186,17 +195,17 @@ describe('EditorInterfaceTransformer', () => {
       const { controls } = toAPI(ct, ei);
 
       expect(controls).toEqual([
-        { fieldId: 'test', widgetId: 'helloWorld', widgetNamespace: NAMESPACE_BUILTIN }
+        { fieldId: 'test', widgetId: 'helloWorld', widgetNamespace: NAMESPACE_BUILTIN },
       ]);
     });
 
-    it('restores field order', function() {
+    it('restores field order', function () {
       const ct = { sys: { id: 'CT' }, fields: [{ apiName: 'one' }, { apiName: 'two' }] };
       const ei = { controls: [{ fieldId: 'two' }, { fieldId: 'one' }] };
 
       const { controls } = toAPI(ct, ei);
 
-      expect(controls.map(c => c.fieldId)).toEqual(['one', 'two']);
+      expect(controls.map((c) => c.fieldId)).toEqual(['one', 'two']);
     });
 
     it('keeps existing sys properties and provides type and CT link', () => {
@@ -208,7 +217,7 @@ describe('EditorInterfaceTransformer', () => {
       expect(sys).toEqual({
         updatedAt: 'some-time',
         type: 'EditorInterface',
-        contentType: { sys: { type: 'Link', linkType: 'ContentType', id: 'CT' } }
+        contentType: { sys: { type: 'Link', linkType: 'ContentType', id: 'CT' } },
       });
     });
   });

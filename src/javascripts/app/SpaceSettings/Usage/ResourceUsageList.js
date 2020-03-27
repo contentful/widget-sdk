@@ -9,14 +9,14 @@ import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel';
 
 const styles = {
   environmentUsageParent: css({
-    marginTop: tokens.spacing2Xl
+    marginTop: tokens.spacing2Xl,
   }),
   environmentLabelParent: css({
-    display: 'flex'
+    display: 'flex',
   }),
   environmentLabel: css({
-    marginLeft: tokens.spacingS
-  })
+    marginLeft: tokens.spacingS,
+  }),
 };
 
 const ResourceUsageList = ({ spaceResources, environmentResources, environmentMeta }) => {
@@ -76,8 +76,8 @@ ResourceUsageList.propTypes = {
   environmentMeta: PropTypes.shape({
     aliasId: PropTypes.string,
     environmentId: PropTypes.string.isRequired,
-    isMasterEnvironment: PropTypes.bool.isRequired
-  }).isRequired
+    isMasterEnvironment: PropTypes.bool.isRequired,
+  }).isRequired,
 };
 
 export default ResourceUsageList;

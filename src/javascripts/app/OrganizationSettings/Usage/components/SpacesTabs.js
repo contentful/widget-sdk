@@ -14,39 +14,39 @@ import { track } from 'analytics/Analytics';
 const styles = {
   tabPanel: css({
     paddingTop: tokens.spacing2Xl,
-    paddingBottom: tokens.spacing2Xl
-  })
+    paddingBottom: tokens.spacing2Xl,
+  }),
 };
 
 const tabsData = [
   {
     id: 'cma',
     title: 'CMA Requests',
-    defaultActive: true
+    defaultActive: true,
   },
   {
     id: 'cda',
-    title: 'CDA Requests'
+    title: 'CDA Requests',
   },
   {
     id: 'cpa',
-    title: 'CPA Requests'
+    title: 'CPA Requests',
   },
   {
     id: 'gql',
-    title: 'GraphQL Requests'
-  }
+    title: 'GraphQL Requests',
+  },
 ];
 
 const colours = ['#2E75D4', '#0EB87F', '#EA9005', '#8C53C2', '#CC3C52'];
 
 const SpacesTabs = ({ spaceNames, period, periodicUsage, isPoC }) => {
-  const defaultActiveTab = tabsData.find(item => item.defaultActive);
+  const defaultActiveTab = tabsData.find((item) => item.defaultActive);
   const [selected, setSelected] = useState(
     defaultActiveTab ? defaultActiveTab.id : tabsData[0]['id']
   );
 
-  const handleSelected = id => {
+  const handleSelected = (id) => {
     track('usage:space_tab_selected', { old: selected, new: id });
     setSelected(id);
   };
@@ -57,7 +57,7 @@ const SpacesTabs = ({ spaceNames, period, periodicUsage, isPoC }) => {
   return (
     <>
       <Tabs withDivider={true}>
-        {tabsData.map(item => (
+        {tabsData.map((item) => (
           <Tab id={item.id} key={item.id} selected={selected === item.id} onSelect={handleSelected}>
             {item.title}
           </Tab>
@@ -87,7 +87,7 @@ SpacesTabs.propTypes = {
   spaceNames: PropTypes.objectOf(PropTypes.string).isRequired,
   period: PropTypes.arrayOf(PropTypes.string).isRequired,
   periodicUsage: periodicUsagePropType.isRequired,
-  isPoC: PropTypes.objectOf(PropTypes.bool).isRequired
+  isPoC: PropTypes.objectOf(PropTypes.bool).isRequired,
 };
 
 export default SpacesTabs;

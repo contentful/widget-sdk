@@ -12,7 +12,7 @@ const setAttrOnAppContainer = (attr, value) => {
   document.querySelector('cf-app-container').setAttribute(attr, value);
 };
 
-const removeAttrOnAppContainer = attr => {
+const removeAttrOnAppContainer = (attr) => {
   document.querySelector('cf-app-container').removeAttribute(attr);
 };
 
@@ -21,7 +21,7 @@ export const init = () => {
   const spaceContext = getModule('spaceContext');
 
   $rootScope.$on('$stateChangeSuccess', () => {
-    getCurrentVariation(WALK_FOR_ME_FLAG).then(variation => {
+    getCurrentVariation(WALK_FOR_ME_FLAG).then((variation) => {
       // If the new space is not the same variation, then reload the app
       // to remove the scripts from the page
       if (lastVariation && variation !== lastVariation) {

@@ -6,7 +6,7 @@ import { Operator } from 'app/ContentList/Search/Operators';
 import createViewPersistor from 'data/ListViewPersistor';
 
 const makeArchivedView = () => ({
-  searchFilters: [[statusQueryKey, Operator.EQUALS, Status.Archived]]
+  searchFilters: [[statusQueryKey, Operator.EQUALS, Status.Archived]],
 });
 
 export default function register() {
@@ -28,7 +28,7 @@ export default function register() {
       const viewPersistor = createViewPersistor({
         spaceId: spaceContext.getId(),
         entityType,
-        $location
+        $location,
       });
 
       $scope.loadView = loadView;
@@ -40,11 +40,11 @@ export default function register() {
       function loadView(view) {
         setAtPath($scope, ['context', 'view'], {
           ...getBlankView(),
-          ...cloneDeep(view || {})
+          ...cloneDeep(view || {}),
         });
 
         resetList();
       }
-    }
+    },
   ]);
 }

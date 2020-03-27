@@ -5,7 +5,7 @@ const TasksInteractor = {
   startEditingTask: PropTypes.func.isRequired,
   cancelTaskChanges: PropTypes.func.isRequired,
   saveTaskChanges: PropTypes.func.isRequired,
-  deleteTask: PropTypes.func.isRequired
+  deleteTask: PropTypes.func.isRequired,
 };
 export default TasksInteractor;
 
@@ -26,7 +26,7 @@ export function createTasksStoreInteractor(tasksStore, setState, getState) {
     const { tasksErrors = {} } = getState();
     setState({ tasksErrors: { ...tasksErrors, [key]: error } });
   };
-  const resetTaskError = key => setTaskError(key, null);
+  const resetTaskError = (key) => setTaskError(key, null);
 
   return {
     startTaskDraft() {
@@ -63,7 +63,7 @@ export function createTasksStoreInteractor(tasksStore, setState, getState) {
       } catch (error) {
         setTaskError(key, error);
       }
-    }
+    },
   };
 }
 
@@ -72,7 +72,7 @@ function createUserLink(id) {
     sys: {
       type: 'Link',
       linkType: 'User',
-      id
-    }
+      id,
+    },
   };
 }

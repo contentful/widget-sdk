@@ -19,9 +19,9 @@ describe('SpaceSettings', () => {
       type: 'LOCATION_CHANGED',
       payload: {
         location: {
-          pathname: routes.organization.build({ orgId: activeOrgId })
-        }
-      }
+          pathname: routes.organization.build({ orgId: activeOrgId }),
+        },
+      },
     });
     store.dispatch({
       type: 'USER_UPDATE_FROM_TOKEN',
@@ -31,18 +31,18 @@ describe('SpaceSettings', () => {
             {
               organization: {
                 sys: {
-                  id: activeOrgId
-                }
+                  id: activeOrgId,
+                },
               },
-              role: 'owner'
-            }
-          ]
-        }
-      }
+              role: 'owner',
+            },
+          ],
+        },
+      },
     });
   });
 
-  const renderComponent = props => {
+  const renderComponent = (props) => {
     return render(
       <Provider store={store}>
         <SpaceSettings
@@ -86,10 +86,10 @@ describe('SpaceSettings', () => {
   it('save is called when user clicks on save and double click is handled', () => {
     const saveStub = jest.fn().mockResolvedValue();
     const { getByTestId } = renderComponent({
-      save: saveStub
+      save: saveStub,
     });
     fireEvent.change(getByTestId('space-name-text-input').querySelector('input'), {
-      target: { value: 'new-value' }
+      target: { value: 'new-value' },
     });
     fireEvent.click(getByTestId('update-space'));
     // try double click
@@ -101,10 +101,10 @@ describe('SpaceSettings', () => {
   it('save is not called when user clicks on disable button', () => {
     const saveStub = jest.fn().mockResolvedValue();
     const { getByTestId } = renderComponent({
-      save: saveStub
+      save: saveStub,
     });
     fireEvent.change(getByTestId('space-name-text-input').querySelector('input'), {
-      target: { value: '' }
+      target: { value: '' },
     });
     fireEvent.click(getByTestId('update-space'));
     expect(saveStub).not.toHaveBeenCalled();

@@ -5,8 +5,8 @@ import tokens from '@contentful/forma-36-tokens';
 
 const styles = {
   filterList: css({
-    margin: `0 -${tokens.spacingL} 10px -${tokens.spacingL}`
-  })
+    margin: `0 -${tokens.spacingL} 10px -${tokens.spacingL}`,
+  }),
 };
 
 function ListItem({ isActive, status, label, onClick }) {
@@ -24,7 +24,7 @@ ListItem.propTypes = {
   isActive: PropTypes.bool,
   status: PropTypes.string,
   label: PropTypes.string,
-  onClick: PropTypes.func
+  onClick: PropTypes.func,
 };
 
 export default function ContentTypeListFilter({ status, onChange }) {
@@ -58,5 +58,5 @@ export default function ContentTypeListFilter({ status, onChange }) {
 
 ContentTypeListFilter.propTypes = {
   status: PropTypes.string,
-  onChange: PropTypes.func
+  onChange: PropTypes.func,
 };

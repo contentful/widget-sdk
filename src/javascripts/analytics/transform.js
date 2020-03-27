@@ -30,7 +30,7 @@ import ExtensionActivationTransformer from './transformers/ExtensionActivation';
 import ExtensionSetValueTransformer from './transformers/ExtensionSetValue';
 import {
   AppLifecycleEventTransformer,
-  AppUninstallationReasonTransformer
+  AppUninstallationReasonTransformer,
 } from './transformers/Apps';
 import DialogTransformer from './transformers/Dialog';
 import JobsCreateTransformer from './transformers/JobsCreate';
@@ -194,8 +194,8 @@ registerEvent('personal_access_token:action', 'personal_access_token', (_, data)
     data: {
       personal_access_token_id: data.patId,
       action: data.action,
-      executing_user_id: data.userId
-    }
+      executing_user_id: data.userId,
+    },
   };
 });
 
@@ -256,7 +256,7 @@ registerGenericEvent('entry_references:dialog_open');
 function registerEvent(event, schema, transformer) {
   _events[event] = {
     schema,
-    transformer
+    transformer,
   };
 }
 

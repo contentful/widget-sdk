@@ -13,12 +13,12 @@ export default function register() {
    */
   registerFactory('$exceptionHandler', [
     function exceptionHandler() {
-      return exception => {
+      return (exception) => {
         const metaData = _.extend({ promptedReload: true }, exception.metaData);
 
         logger.logException(exception, metaData);
         ReloadNotification.trigger();
       };
-    }
+    },
   ]);
 }

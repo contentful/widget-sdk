@@ -5,10 +5,10 @@ import OrganizationUsageInfo from './OrganizationUsageInfo';
 describe('OrganisationUsageInfoNew', () => {
   const defaultProps = {
     totalUsage: 23000,
-    includedLimit: 2000000
+    includedLimit: 2000000,
   };
 
-  const renderComp = props => {
+  const renderComp = (props) => {
     return render(<OrganizationUsageInfo {...props} />);
   };
 
@@ -28,7 +28,7 @@ describe('OrganisationUsageInfoNew', () => {
   it('should render overage', () => {
     const overageProps = {
       totalUsage: 2500000,
-      includedLimit: 2000000
+      includedLimit: 2000000,
     };
 
     const { getByTestId } = renderComp(overageProps);

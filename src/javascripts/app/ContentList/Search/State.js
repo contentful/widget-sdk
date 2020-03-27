@@ -8,7 +8,7 @@ import {
   getMatchingFilters,
   isFieldFilterApplicableToContentType,
   getContentTypeById,
-  buildFilterFieldByQueryKey
+  buildFilterFieldByQueryKey,
 } from './Filters';
 
 const CONTENT_TYPE_ALL = '';
@@ -17,7 +17,7 @@ const defaultFocus = {
   index: null,
   isValueFocused: false,
   isQueryInputFocused: false,
-  suggestionsFocusIndex: null
+  suggestionsFocusIndex: null,
 };
 
 // The state for this component looks like this
@@ -42,7 +42,7 @@ export const initialState = ({
   searchFilters = [],
   searchText = '',
   contentTypes,
-  withAssets
+  withAssets,
 }) => ({
   contentTypeId: contentTypeId || CONTENT_TYPE_ALL,
   filters: searchFilters,
@@ -56,7 +56,7 @@ export const initialState = ({
   contentTypes,
   users: [],
   // FIXME: Should be moved closer to the reducer responsible for the search.
-  isSearching: false
+  isSearching: false,
 });
 
 // Emitted when the value of the search input changes. Holds the new
@@ -119,7 +119,7 @@ export const Actions = {
   SetFocusOnPrevSuggestion,
   SetFocusOnQueryInput,
   HideSuggestions,
-  ShowSuggestions
+  ShowSuggestions,
 };
 
 export function makeReducer(dispatch, submitSearch) {
@@ -132,12 +132,12 @@ export function makeReducer(dispatch, submitSearch) {
   return Store.makeReducer({
     [SetUsers](state, users) {
       return assign(state, {
-        users
+        users,
       });
     },
     [SetIsSearching](state, isSearching) {
       return assign(state, {
-        isSearching
+        isSearching,
       });
     },
     [SetQueryInput]: setInput,
@@ -158,7 +158,7 @@ export function makeReducer(dispatch, submitSearch) {
     },
     [TriggerSearch]: triggerSearch,
     [ToggleSuggestions](state) {
-      return update(state, ['isSuggestionOpen'], value => !value);
+      return update(state, ['isSuggestionOpen'], (value) => !value);
     },
     [ShowSuggestions](state) {
       return set(state, ['isSuggestionOpen'], true);
@@ -168,7 +168,7 @@ export function makeReducer(dispatch, submitSearch) {
     },
     [SetContentType]: setContentType,
     [RemoveFilter](state, indexToRemove) {
-      state = update(state, ['filters'], filters => {
+      state = update(state, ['filters'], (filters) => {
         return filters.filter((_, index) => {
           return index !== indexToRemove;
         });
@@ -185,7 +185,7 @@ export function makeReducer(dispatch, submitSearch) {
     [SetFocusOnQueryInput]: setFocusOnQueryInput,
     [SetFocusOnFirstSuggestion]: setFocusOnFirstSuggestion,
     [SetFocusOnNextSuggestion]: setFocusOnNextSuggestion,
-    [SetFocusOnPrevSuggestion]: setFocusOnPrevSuggestion
+    [SetFocusOnPrevSuggestion]: setFocusOnPrevSuggestion,
   });
 
   function setFilterOperator(state, [index, op]) {
@@ -306,7 +306,7 @@ export function makeReducer(dispatch, submitSearch) {
   function tryGetValue(filterField) {
     let value;
     match(filterField.valueInput, {
-      [ValueInput.Select]: options => {
+      [ValueInput.Select]: (options) => {
         if (options.length === 1) {
           value = options[0][1];
         } else if (filterField.type === 'Boolean') {
@@ -315,7 +315,7 @@ export function makeReducer(dispatch, submitSearch) {
       },
       _: () => {
         value = undefined;
-      }
+      },
     });
 
     return value;
@@ -332,7 +332,7 @@ export function makeReducer(dispatch, submitSearch) {
 
     const value = tryGetValue(filterField);
 
-    state = update(state, ['filters'], filters => {
+    state = update(state, ['filters'], (filters) => {
       return push(filters, [filter.queryKey, filter.operators[0][0], value]);
     });
     state = setInput(state, '');
@@ -346,7 +346,7 @@ export function makeReducer(dispatch, submitSearch) {
     const { contentTypeId, contentTypes } = state;
 
     const contentType = getContentTypeById(contentTypes, contentTypeId);
-    state = update(state, ['filters'], filters => {
+    state = update(state, ['filters'], (filters) => {
       return filters.filter(([queryKey]) => {
         return isFieldFilterApplicableToContentType(contentType, queryKey);
       });
@@ -363,7 +363,7 @@ export function makeReducer(dispatch, submitSearch) {
     submitSearch({
       contentTypeId: state.contentTypeId,
       searchFilters: state.filters,
-      searchText: state.input
+      searchText: state.input,
     });
 
     return state;

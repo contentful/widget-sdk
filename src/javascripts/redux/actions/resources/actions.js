@@ -3,7 +3,7 @@ export function resourcesForSpacePending(spaceId, isPending) {
   return {
     type: RESOURCES_FOR_SPACE_PENDING,
     spaceId,
-    isPending
+    isPending,
   };
 }
 
@@ -12,7 +12,7 @@ export function resourcesForSpaceFailure(spaceId, error) {
   return {
     type: RESOURCES_FOR_SPACE_FAILURE,
     spaceId,
-    error
+    error,
   };
 }
 
@@ -21,6 +21,6 @@ export function resourcesForSpaceSuccess(spaceId, value) {
   return {
     type: RESOURCES_FOR_SPACE_SUCCESS,
     spaceId,
-    value
+    value,
   };
 }

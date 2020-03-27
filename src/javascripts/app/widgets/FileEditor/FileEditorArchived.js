@@ -11,13 +11,13 @@ const styles = {
     padding: `${tokens.spacingS} 0`,
     verticalAlign: 'middle',
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   }),
   icon: css({
     display: 'inline-block',
     height: '22px',
-    color: tokens.colorTextLight
-  })
+    color: tokens.colorTextLight,
+  }),
 };
 
 export function FileEditorArchived(props) {
@@ -31,6 +31,6 @@ export function FileEditorArchived(props) {
 
 FileEditorArchived.propTypes = {
   file: PropTypes.shape({
-    contentType: PropTypes.string.isRequired
-  })
+    contentType: PropTypes.string.isRequired,
+  }),
 };

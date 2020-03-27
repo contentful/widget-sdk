@@ -12,7 +12,7 @@ const ONE_ORGANIZATION = [fake.Organization()];
 const TWO_ORGANIZATIONS = [fake.Organization(), fake.Organization()];
 
 jest.mock('services/TokenStore', () => ({
-  getOrganizations: jest.fn()
+  getOrganizations: jest.fn(),
 }));
 
 jest.mock('./OrganizationRow', () => () => <tr data-test-id="organization-row"></tr>);

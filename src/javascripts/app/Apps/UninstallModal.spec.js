@@ -7,7 +7,7 @@ describe('UninstallModal', () => {
   const actionList = [
     { info: 'first thing is does' },
     { info: 'second thing is does negative', negative: true },
-    undefined // should be able to pass undefined and have it filtered out in the component
+    undefined, // should be able to pass undefined and have it filtered out in the component
   ];
 
   it('should render a list of things it will uninstall in the correct order', () => {
@@ -18,7 +18,7 @@ describe('UninstallModal', () => {
     const items = getAllByTestId('action-list-item');
     actionList
       // filtering out undefined values here; the test will rightfully fail if the component doesn't handle this case
-      .filter(x => x)
+      .filter((x) => x)
       .forEach((action, i) => {
         expect(items[i].textContent.trim()).toEqual(action.info);
       });
@@ -53,7 +53,7 @@ describe('UninstallModal', () => {
 
     expect(onConfirm).toHaveBeenCalledWith([
       'Does not do what I expected',
-      'App is not performing well'
+      'App is not performing well',
     ]);
   });
 
@@ -75,7 +75,7 @@ describe('UninstallModal', () => {
 
     expect(onConfirm).toHaveBeenCalledWith([
       'Does not do what I expected',
-      { custom: customReasonText }
+      { custom: customReasonText },
     ]);
   });
 

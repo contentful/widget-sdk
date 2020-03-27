@@ -11,17 +11,17 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Tag
+  Tag,
 } from '@contentful/forma-36-react-components';
 
 import FetchAndFormatUserName from 'components/shared/UserNameFormatter/FetchAndFormatUserName';
 import RelativeDateTime from 'components/shared/RelativeDateTime';
 import { isPublishedAndUpdated, isPublished } from '../ContentTypeListService';
 
-const numFields = ct => (ct.fields || []).length;
+const numFields = (ct) => (ct.fields || []).length;
 
-const statusType = ct => getStatusType(ct);
-const statusLabel = ct => {
+const statusType = (ct) => getStatusType(ct);
+const statusLabel = (ct) => {
   const label = getStatusLabel(ct);
   // Historically we call published content types "active".
   return label === 'published' ? 'active' : label;
@@ -56,7 +56,7 @@ function getStatusType(ct) {
 
 class ContentTypeList extends Component {
   static propTypes = {
-    contentTypes: PropTypes.array.isRequired
+    contentTypes: PropTypes.array.isRequired,
   };
 
   render() {
@@ -85,7 +85,7 @@ class ContentTypeList extends Component {
           </TableRow>
         </TableHead>
         <TableBody>
-          {this.props.contentTypes.map(contentType => {
+          {this.props.contentTypes.map((contentType) => {
             return (
               <StateLink
                 path="^.detail.fields"

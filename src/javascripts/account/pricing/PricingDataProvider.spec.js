@@ -5,51 +5,51 @@ const mockEnterpriseBasePlan = {
   items: [
     {
       productPlanType: 'base',
-      customerType: 'Enterprise'
+      customerType: 'Enterprise',
     },
     {
       productPlanType: 'free_space',
-      name: 'Proof of concept'
-    }
-  ]
+      name: 'Proof of concept',
+    },
+  ],
 };
 const mockHighDemandBasePlan = {
   items: [
     {
       productPlanType: 'base',
-      customerType: 'High Demand Enterprise'
+      customerType: 'High Demand Enterprise',
     },
     {
       productPlanType: 'free_space',
-      name: 'Performance 1x'
-    }
-  ]
+      name: 'Performance 1x',
+    },
+  ],
 };
 const mockSelfServiceBasePlan = {
   items: [
     {
       productPlanType: 'base',
-      customerType: 'Self-service'
+      customerType: 'Self-service',
     },
     {
       productPlanType: 'free_space',
-      name: 'Free'
-    }
-  ]
+      name: 'Free',
+    },
+  ],
 };
 const mockSpacePlansData = {
   items: [
     { sys: { id: 'plan1' }, planType: 'space', gatekeeperKey: 'space1', name: 'Yellow' },
     { sys: { id: 'plan2' }, planType: 'space', gatekeeperKey: 'space2', name: 'Blue' },
     { sys: { id: 'plan3' }, planType: 'space', gatekeeperKey: 'space3', name: 'Green' },
-    { sys: { id: 'plan4', planType: 'space', name: 'Gray' } }
-  ]
+    { sys: { id: 'plan4', planType: 'space', name: 'Gray' } },
+  ],
 };
 const mockSpacesData = [
   { sys: { id: 'space1', createdBy: { sys: { id: 'user1' } } } },
   { sys: { id: 'space2', createdBy: { sys: { id: 'user2' } } } },
   { sys: { id: 'space3', createdBy: { sys: { id: 'user1' } } } },
-  { sys: { id: 'free_space', createdBy: { sys: { id: 'free_space_user' } } } }
+  { sys: { id: 'free_space', createdBy: { sys: { id: 'free_space_user' } } } },
 ];
 const mockUsersData = [{ sys: { id: 'user1' }, email: 'user1@foo.com' }];
 
@@ -57,7 +57,7 @@ const mockEndpoint = jest.fn();
 
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
   getAllSpaces: jest.fn(),
-  getUsersByIds: jest.fn()
+  getUsersByIds: jest.fn(),
 }));
 
 describe('account/pricing/PricingDataProvider', () => {
@@ -66,14 +66,14 @@ describe('account/pricing/PricingDataProvider', () => {
     getUsersByIds.mockResolvedValue(mockUsersData);
   });
   describe('#getPlansWithSpaces()', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       mockEndpoint
         .mockResolvedValueOnce(mockSelfServiceBasePlan)
         .mockResolvedValueOnce(mockSpacePlansData)
         .mockResolvedValue(mockSpacesData);
     });
 
-    it('parses response data and sets spaces and users', async function() {
+    it('parses response data and sets spaces and users', async function () {
       const plans = await PricingDataProvider.getPlansWithSpaces(mockEndpoint);
       expect(plans.items).toHaveLength(5);
       expectSpacePlan(plans.items[0], 'plan1', 'space1', 'user1@foo.com');
@@ -83,18 +83,18 @@ describe('account/pricing/PricingDataProvider', () => {
       expectSpacePlan(plans.items[4], 'free-space-plan-1', 'free_space', null);
     });
 
-    it('fetches all spaces', async function() {
+    it('fetches all spaces', async function () {
       await PricingDataProvider.getPlansWithSpaces(mockEndpoint);
       expect(getAllSpaces).toHaveBeenCalled();
     });
 
-    it('gets unique user ids by id', async function() {
+    it('gets unique user ids by id', async function () {
       await PricingDataProvider.getPlansWithSpaces(mockEndpoint);
 
       expect(getUsersByIds).toHaveBeenCalledWith(mockEndpoint, [
         'user1',
         'user2',
-        'free_space_user'
+        'free_space_user',
       ]);
     });
 
@@ -106,9 +106,9 @@ describe('account/pricing/PricingDataProvider', () => {
   });
 
   describe('#isSelfServicePlan', () => {
-    it('should return true for customer type "Self-service"', function() {
+    it('should return true for customer type "Self-service"', function () {
       const plan = {
-        customerType: 'Self-service'
+        customerType: 'Self-service',
       };
 
       expect(PricingDataProvider.isSelfServicePlan(plan)).toBe(true);
@@ -116,17 +116,17 @@ describe('account/pricing/PricingDataProvider', () => {
   });
 
   describe('#isEnterprisePlan', () => {
-    it('should return true for customer type "Enterprise"', function() {
+    it('should return true for customer type "Enterprise"', function () {
       const plan = {
-        customerType: 'Enterprise'
+        customerType: 'Enterprise',
       };
 
       expect(PricingDataProvider.isEnterprisePlan(plan)).toBe(true);
     });
 
-    it('should return true for customer type "Enterprise Trial"', function() {
+    it('should return true for customer type "Enterprise Trial"', function () {
       const plan = {
-        customerType: 'Enterprise Trial'
+        customerType: 'Enterprise Trial',
       };
 
       expect(PricingDataProvider.isEnterprisePlan(plan)).toBe(true);
@@ -134,25 +134,25 @@ describe('account/pricing/PricingDataProvider', () => {
   });
 
   describe('#isHighDemandEnterprisePlan', () => {
-    it('should return true for customer type "Enterprise High Demand"', function() {
+    it('should return true for customer type "Enterprise High Demand"', function () {
       const plan = {
-        customerType: 'Enterprise High Demand'
+        customerType: 'Enterprise High Demand',
       };
 
       expect(PricingDataProvider.isHighDemandEnterprisePlan(plan)).toBe(true);
     });
 
-    it('should return false for customer type "Enterprise"', function() {
+    it('should return false for customer type "Enterprise"', function () {
       const plan = {
-        customerType: 'Enterprise'
+        customerType: 'Enterprise',
       };
 
       expect(PricingDataProvider.isHighDemandEnterprisePlan(plan)).toBe(false);
     });
 
-    it('should return false for customer type "Enterprise Trial"', function() {
+    it('should return false for customer type "Enterprise Trial"', function () {
       const plan = {
-        customerType: 'Enterprise Trial'
+        customerType: 'Enterprise Trial',
       };
 
       expect(PricingDataProvider.isHighDemandEnterprisePlan(plan)).toBe(false);
@@ -180,6 +180,6 @@ async function expectFreePlanName(name, baseRatePlan) {
   mockEndpoint.mockReset();
   mockEndpoint.mockResolvedValueOnce(baseRatePlan).mockResolvedValueOnce(mockSpacePlansData);
   const { items: plans } = await PricingDataProvider.getPlansWithSpaces(mockEndpoint);
-  const free = plans.find(plan => plan.gatekeeperKey === 'free_space');
+  const free = plans.find((plan) => plan.gatekeeperKey === 'free_space');
   expect(free.name).toBe(name);
 }

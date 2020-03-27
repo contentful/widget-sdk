@@ -5,7 +5,7 @@ import {
   TableHead,
   TableRow,
   TableCell,
-  TableBody
+  TableBody,
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import RevokeButton from './RevokeButton';
@@ -14,12 +14,12 @@ const styles = {
   nameCell: css({
     overflow: 'hidden',
     whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis'
+    textOverflow: 'ellipsis',
   }),
   actionCell: css({
     width: '7em',
-    textAlign: 'right'
-  })
+    textAlign: 'right',
+  }),
 };
 const TokenTable = ({ tokens, revoke }) => {
   if (tokens.length === 0) {
@@ -35,7 +35,7 @@ const TokenTable = ({ tokens, revoke }) => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {tokens.map(token => (
+        {tokens.map((token) => (
           <TableRow key={token.id} testId={`pat.tokenRow.${token.id}`}>
             <TableCell className={styles.nameCell}>{token.name}</TableCell>
             <TableCell className={styles.actionCell}>
@@ -50,7 +50,7 @@ const TokenTable = ({ tokens, revoke }) => {
 
 TokenTable.propTypes = {
   tokens: PropTypes.arrayOf(PropTypes.object).isRequired,
-  revoke: PropTypes.func.isRequired
+  revoke: PropTypes.func.isRequired,
 };
 
 export default TokenTable;

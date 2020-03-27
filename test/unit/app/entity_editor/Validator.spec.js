@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import { $initialize, $inject } from 'test/utils/ng';
 
 describe('app/entity_editor/Validator', () => {
-  beforeEach(async function() {
+  beforeEach(async function () {
     const Validator = await this.system.import('app/entity_editor/Validator');
 
     await $initialize(this.system);
@@ -11,18 +11,18 @@ describe('app/entity_editor/Validator', () => {
     const createDocument = $inject('mocks/entityEditor/Document').create;
     this.schemaErrors = sinon.stub();
     this.validator = Validator.createBase(
-      _error => '',
+      (_error) => '',
       { errors: this.schemaErrors },
       createDocument()
     );
 
-    this.getErrorIds = function() {
-      return K.getValue(this.validator.errors$).map(e => e.id);
+    this.getErrorIds = function () {
+      return K.getValue(this.validator.errors$).map((e) => e.id);
     };
   });
 
   describe('#setApiResponseErrors', () => {
-    it('includes only API validation errors', function() {
+    it('includes only API validation errors', function () {
       this.schemaErrors.returns([]);
       const errors = [{ id: 'EID', path: [], message: '' }];
 
@@ -32,9 +32,9 @@ describe('app/entity_editor/Validator', () => {
             sys: { id: id },
             message: message,
             details: {
-              errors: errors
-            }
-          }
+              errors: errors,
+            },
+          },
         });
       };
 
@@ -60,11 +60,11 @@ describe('app/entity_editor/Validator', () => {
   });
 
   describe('#validateFieldLocale', () => {
-    it('it only updates errors on specified field', function() {
+    it('it only updates errors on specified field', function () {
       // Initial errors
       this.schemaErrors.returns([
         { id: 'THIS BEFORE', path: ['fields', 'FID-1', 'LOCALE'] },
-        { id: 'OTHER BEFORE', path: ['fields', 'FID-2', 'LOCALE'] }
+        { id: 'OTHER BEFORE', path: ['fields', 'FID-2', 'LOCALE'] },
       ]);
       this.validator.run();
       expect(this.getErrorIds()).toEqual(['THIS BEFORE', 'OTHER BEFORE']);
@@ -72,18 +72,18 @@ describe('app/entity_editor/Validator', () => {
       // New errors. Validate only specified field
       this.schemaErrors.returns([
         { id: 'THIS AFTER', path: ['fields', 'FID-1', 'LOCALE'] },
-        { id: 'OTHER AFTER', path: ['fields', 'FID-2', 'LOCALE'] }
+        { id: 'OTHER AFTER', path: ['fields', 'FID-2', 'LOCALE'] },
       ]);
       this.validator.validateFieldLocale('FID-1', 'LOCALE');
 
       expect(this.getErrorIds()).toEqual(['THIS AFTER', 'OTHER BEFORE']);
     });
 
-    it('removes the entire field-errors', function() {
+    it('removes the entire field-errors', function () {
       // Initial errors
       this.schemaErrors.returns([
         { id: 'THIS BEFORE', path: ['fields', 'FID-1'] },
-        { id: 'OTHER BEFORE', path: ['fields', 'FID-2', 'LOCALE'] }
+        { id: 'OTHER BEFORE', path: ['fields', 'FID-2', 'LOCALE'] },
       ]);
       this.validator.run();
       expect(this.getErrorIds()).toEqual(['THIS BEFORE', 'OTHER BEFORE']);

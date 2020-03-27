@@ -39,7 +39,7 @@ function initDevNotifications() {
  */
 function create() {
   const modules = {
-    analytics: analyticsConsole.init
+    analytics: analyticsConsole.init,
   };
 
   return makeLazyObj(modules);

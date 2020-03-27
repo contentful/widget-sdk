@@ -61,7 +61,7 @@ export function formatConnectionTestErrors(errors) {
   const other = [];
   const formatted = [];
 
-  errors.forEach(error => {
+  errors.forEach((error) => {
     const missingAttrMatch = missingAttrRegex.exec(error);
 
     if (badCertRegex.exec(error)) {
@@ -84,7 +84,7 @@ export function formatConnectionTestErrors(errors) {
   }
 
   if (other.length) {
-    other.forEach(e => formatted.push(e));
+    other.forEach((e) => formatted.push(e));
   }
 
   return formatted;
@@ -96,6 +96,6 @@ export function trackTestResult(testData = {}) {
 
   track('sso:connection_test_result', {
     result: result ? result : 'unknown',
-    errors
+    errors,
   });
 }

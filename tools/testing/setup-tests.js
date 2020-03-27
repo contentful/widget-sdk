@@ -11,7 +11,7 @@ Enzyme.configure({ adapter: new EnzymeAdapter() });
 // Configure React Testing Library to use `data-test-id`
 // instead of the default `data-testid`
 ReactTestingLibrary.configure({
-  testIdAttribute: 'data-test-id'
+  testIdAttribute: 'data-test-id',
 });
 
 // We shouldn't allow failed prop types in tests
@@ -58,13 +58,13 @@ console.error = (message, ...args) => {
 };
 
 // Do not allow uncaught promises
-process.on('unhandledRejection', err => {
+process.on('unhandledRejection', (err) => {
   throw err;
 });
 
 // Polyfills
 
-global.requestAnimationFrame = cb => setTimeout(cb, 0);
+global.requestAnimationFrame = (cb) => setTimeout(cb, 0);
 
 if (global.document) {
   document.createRange = () => ({
@@ -72,11 +72,11 @@ if (global.document) {
     setEnd: () => {},
     commonAncestorContainer: {
       nodeName: 'BODY',
-      ownerDocument: document
+      ownerDocument: document,
     },
     getBoundingClientRect: () => {
       return { right: 0 };
     },
-    getClientRects: () => []
+    getClientRects: () => [],
   });
 }

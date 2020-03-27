@@ -11,7 +11,7 @@ export function getBlankEntryView() {
     contentTypeId: null,
     contentTypeHidden: false,
     order: SystemFields.getDefaultOrder(),
-    displayedFieldIds: SystemFields.getDefaultFieldIds()
+    displayedFieldIds: SystemFields.getDefaultFieldIds(),
   };
 }
 
@@ -19,7 +19,7 @@ export function getBlankAssetView() {
   return {
     id: random.id(),
     title: 'New view',
-    searchTerm: null
+    searchTerm: null,
   };
 }
 
@@ -28,7 +28,7 @@ export function makeBlankFolder(overrides) {
     {
       id: random.id(),
       title: 'New folder',
-      views: []
+      views: [],
     },
     overrides
   );

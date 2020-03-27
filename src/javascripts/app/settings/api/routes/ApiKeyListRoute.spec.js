@@ -8,7 +8,7 @@ let mockedResource;
 
 const mockApiKeyRepo = {
   getAll: jest.fn().mockResolvedValue([]),
-  create: jest.fn().mockResolvedValue()
+  create: jest.fn().mockResolvedValue(),
 };
 
 const mockKeyData = [
@@ -16,36 +16,36 @@ const mockKeyData = [
     name: 'My Api Key',
     description: 'This is some description',
     sys: {
-      id: '51h8tYBHHbMmt9btNNC5kR'
-    }
+      id: '51h8tYBHHbMmt9btNNC5kR',
+    },
   },
   {
     name: 'My Second Api Key',
     description: 'This is some description',
     sys: {
-      id: '61h8tYBHHbMmt9btNNC5kR'
-    }
-  }
+      id: '61h8tYBHHbMmt9btNNC5kR',
+    },
+  },
 ];
 
 jest.mock('app/settings/api/services/ApiKeyRepoInstance', () => ({
-  getApiKeyRepo: () => mockApiKeyRepo
+  getApiKeyRepo: () => mockApiKeyRepo,
 }));
 
 jest.mock('ng/spaceContext', () => ({
   getId: () => 'space-id',
   organization: {
-    pricingVersion: 'pricing_version_2'
+    pricingVersion: 'pricing_version_2',
   },
-  getData: jest.fn().mockImplementation(type => {
+  getData: jest.fn().mockImplementation((type) => {
     if (type === 'name') {
       return 'currentSpaceName';
     }
-  })
+  }),
 }));
 
 jest.mock('services/ResourceService', () => () => ({
-  get: jest.fn().mockResolvedValue(mockedResource)
+  get: jest.fn().mockResolvedValue(mockedResource),
 }));
 
 describe('ApiKeyListRoute', () => {
@@ -57,8 +57,8 @@ describe('ApiKeyListRoute', () => {
       usage: 0,
       limits: {
         included: 0,
-        maximum: 10
-      }
+        maximum: 10,
+      },
     };
   });
 
@@ -86,7 +86,7 @@ describe('ApiKeyListRoute', () => {
     });
 
     expect(getByTestId('add-api-key')).toBeEnabled();
-    mockKeyData.forEach(key => {
+    mockKeyData.forEach((key) => {
       expect(getByText(key.name)).toBeInTheDocument();
     });
   });
@@ -97,8 +97,8 @@ describe('ApiKeyListRoute', () => {
         usage: 2,
         limits: {
           included: 0,
-          maximum: 2
-        }
+          maximum: 2,
+        },
       };
     });
 
@@ -112,7 +112,7 @@ describe('ApiKeyListRoute', () => {
       });
 
       expect(getByTestId('add-api-key')).toBeDisabled();
-      mockKeyData.forEach(key => {
+      mockKeyData.forEach((key) => {
         expect(getByText(key.name)).toBeInTheDocument();
       });
     });

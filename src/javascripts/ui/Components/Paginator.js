@@ -83,7 +83,7 @@ function getRange(pageCount, activePage) {
     const range = _([1])
       .concat(neighbors)
       .concat(pageCount)
-      .filter(v => v > 0 && v <= pageCount)
+      .filter((v) => v > 0 && v <= pageCount)
       .sortedUniq()
       .value();
 
@@ -99,7 +99,7 @@ function getRange(pageCount, activePage) {
 }
 
 function getLabels(list) {
-  list = list.map(i => i - 1);
+  list = list.map((i) => i - 1);
 
   if (list.length === DISPLAY_PAGES) {
     if (list[DISPLAY_PAGES - 1] - list[DISPLAY_PAGES - 2] !== 1) {
@@ -116,7 +116,7 @@ function getLabels(list) {
 Paginator.propTypes = {
   select: PropTypes.func,
   page: PropTypes.number,
-  pageCount: PropTypes.number
+  pageCount: PropTypes.number,
 };
 
 export default Paginator;

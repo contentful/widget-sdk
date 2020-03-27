@@ -33,14 +33,14 @@ module.exports = () => {
       // Custom jQuery UI build: see the file for version and contents
       './vendor/jquery-ui/jquery-ui.js',
       './vendor/bcsocket-shim.js',
-      './src/javascripts/prelude.js'
-    ]
+      './src/javascripts/prelude.js',
+    ],
   };
 
   const testDepEntry = {
     // Dependency file, generated for tests (systemJs does not handle require statements
     // at all, making some dependency handling particularly challenging)
-    dependencies: ['./build/dependencies-pre.js']
+    dependencies: ['./build/dependencies-pre.js'],
   };
 
   return {
@@ -57,14 +57,14 @@ module.exports = () => {
           './node_modules/@contentful/forma-36-react-components/dist/styles.css',
           './node_modules/@contentful/forma-36-fcss/dist/styles.css',
           './src/stylesheets/legacy-styles.css',
-          './src/stylesheets/cookie-consent.css'
+          './src/stylesheets/cookie-consent.css',
         ],
         favicons: [
           './src/images/favicons/favicon32x32.png',
           './src/images/favicons/apple_icon57x57.png',
           './src/images/favicons/apple_icon72x72.png',
-          './src/images/favicons/apple_icon114x114.png'
-        ]
+          './src/images/favicons/apple_icon114x114.png',
+        ],
       },
       !isTest ? appEntry : {},
       isTest ? testDepEntry : {}
@@ -73,7 +73,7 @@ module.exports = () => {
       filename: isProd ? '[name]-[contenthash].js' : '[name].js',
       path: path.join(projectRoot, 'public', 'app'),
       publicPath,
-      chunkFilename: isProd ? '[name]-[contenthash].js' : '[name].js'
+      chunkFilename: isProd ? '[name]-[contenthash].js' : '[name].js',
     },
     mode: isProd ? 'production' : 'development',
     resolve: {
@@ -86,8 +86,8 @@ module.exports = () => {
           'libs',
           'saved-views-migrator',
           'index.js'
-        )
-      }
+        ),
+      },
     },
     module: {
       rules: [
@@ -99,25 +99,25 @@ module.exports = () => {
               loader: 'babel-loader',
               options: createBabelOptions({
                 compact: isProd,
-                cacheDirectory: isDev
-              })
-            }
-          ]
+                cacheDirectory: isDev,
+              }),
+            },
+          ],
         },
         {
           // All HTML files
           test: /\.html$/,
           issuer: {
-            test: /\.js$/
+            test: /\.js$/,
           },
           use: [
             {
               loader: 'html-loader',
               options: {
-                minimize: isProd
-              }
-            }
-          ]
+                minimize: isProd,
+              },
+            },
+          ],
         },
         {
           // All CSS files
@@ -130,10 +130,10 @@ module.exports = () => {
             {
               loader: 'css-loader',
               options: {
-                sourceMap: isDev
-              }
-            }
-          ]
+                sourceMap: isDev,
+              },
+            },
+          ],
         },
         // All image files from any non-JS file that are not favicons, see below.
         //
@@ -141,19 +141,19 @@ module.exports = () => {
         {
           test: /.(png|jpe?g|gif|eot|ttf|woff|otf|svg)$/i,
           issuer: {
-            test: /\.css$/
+            test: /\.css$/,
           },
           use: [
             {
               loader: 'file-loader',
               options: {
                 name: isProd ? '[name]-[contenthash].[ext]' : '[name].[ext]',
-                outputPath: function(url) {
+                outputPath: function (url) {
                   return `assets/${url}`;
-                }
-              }
-            }
-          ]
+                },
+              },
+            },
+          ],
         },
         // This block handles favicons specifically.
         //
@@ -172,12 +172,12 @@ module.exports = () => {
               loader: 'file-loader',
               options: {
                 name: isProd ? '[name]-[contenthash].[ext]' : '[name].[ext]',
-                outputPath: function(url) {
+                outputPath: function (url) {
                   return `assets/${url}`;
-                }
-              }
-            }
-          ]
+                },
+              },
+            },
+          ],
         },
         {
           // All SVGs used in the app
@@ -185,7 +185,7 @@ module.exports = () => {
           // These SVGs are turned into a React component automatically
           test: /.svg$/,
           issuer: {
-            test: /\.js$/
+            test: /\.js$/,
           },
           use: [
             {
@@ -193,26 +193,26 @@ module.exports = () => {
               options: {
                 svgoConfig: {
                   plugins: {
-                    removeViewBox: false
-                  }
-                }
-              }
-            }
-          ]
-        }
-      ]
+                    removeViewBox: false,
+                  },
+                },
+              },
+            },
+          ],
+        },
+      ],
     },
     plugins: [
       new WebpackRequireFrom({
         methodName: 'WebpackRequireFrom_getChunkURL',
 
         // We suppress errors here since we have non-JS entrypoints
-        suppressErrors: true
+        suppressErrors: true,
       }),
       new MiniCssExtractPlugin({
         filename: isProd ? '[name]-[contenthash].css' : '[name].css',
-        chunkFilename: isProd ? '[id]-[contenthash].css' : '[id].css'
-      })
+        chunkFilename: isProd ? '[id]-[contenthash].css' : '[id].css',
+      }),
     ]
       .concat(
         // moment.js by default bundles all locales, we want to remove them
@@ -227,15 +227,15 @@ module.exports = () => {
                 entries: true,
                 modules: true,
                 modulesCount: 1500,
-                profile: true
-              })
+                profile: true,
+              }),
             ]
           : [],
         isProd
           ? [
               new ManifestPlugin({
-                fileName: path.join(projectRoot, 'public', 'manifest.json')
-              })
+                fileName: path.join(projectRoot, 'public', 'manifest.json'),
+              }),
             ]
           : []
       ),
@@ -256,11 +256,11 @@ module.exports = () => {
             // https://github.com/terser/terser/issues/117,
             safari10: true,
             mangle: {
-              safari10: true
-            }
-          }
+              safari10: true,
+            },
+          },
         }),
-        new OptimizeCSSAssetsPlugin({})
+        new OptimizeCSSAssetsPlugin({}),
       ],
       moduleIds: 'hashed',
       chunkIds: isTest || isDev ? 'named' : false,
@@ -268,22 +268,22 @@ module.exports = () => {
         cacheGroups: !isTest
           ? {
               vendors: {
-                test: module => {
+                test: (module) => {
                   return (
                     module.userRequest &&
                     module.userRequest.match(/[\\/]node_modules[\\/]/) &&
                     module.type.match(/javascript|json/)
                   );
                 },
-                chunks: 'all'
-              }
+                chunks: 'all',
+              },
             }
-          : {}
-      }
+          : {},
+      },
     },
     stats: {
       // Set the maximum number of modules to be shown
-      maxModules: 1
-    }
+      maxModules: 1,
+    },
   };
 };

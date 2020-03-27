@@ -35,5 +35,5 @@ export default [
   AwsS3WebhookTemplate,
   AlgoliaWebhookTemplate,
   ElasticWebhookTemplate,
-  JiraWebhookTemplate
+  JiraWebhookTemplate,
 ];

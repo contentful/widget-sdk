@@ -1,26 +1,22 @@
-import { omit } from 'lodash'
-import {
-  defaultSpaceId,
-  defaultEntryId,
-  defaultHeader
-} from '../util/requests';
+import { omit } from 'lodash';
+import { defaultSpaceId, defaultEntryId, defaultHeader } from '../util/requests';
 import { RequestOptions } from '@pact-foundation/pact-web';
 const emptyWithTotal = require('../fixtures/responses/empty.json');
 const serverError = require('../fixtures/responses/server-error.json');
 import {
   severalTasksDefinition,
-  getTaskDefinitionById
+  getTaskDefinitionById,
 } from '../fixtures/responses/tasks-several.js';
 
 const empty = {
   // Tasks doesn't currently support "total" like most other collection endpoints.
-  ...omit(emptyWithTotal, 'total')
-}
+  ...omit(emptyWithTotal, 'total'),
+};
 
 enum States {
   NONE = 'none',
   SEVERAL = 'several',
-  INTERNAL_SERVER_ERROR = 'internal-server-error'
+  INTERNAL_SERVER_ERROR = 'internal-server-error',
 }
 
 export enum TaskStates {
@@ -29,22 +25,22 @@ export enum TaskStates {
 }
 
 export interface NewTask {
-  body: string
-  assigneeId: string
+  body: string;
+  assigneeId: string;
 }
 
 export interface TaskUpdate {
-  body?: string
-  assigneeId?: string
-  status?: TaskStates
+  body?: string;
+  assigneeId?: string;
+  status?: TaskStates;
 }
 
-const providerState = (state: States): string => `tasks-v2/${state}`
+const providerState = (state: States): string => `tasks-v2/${state}`;
 
 const getEntryTasksRequest: RequestOptions = {
   method: 'GET',
   path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}/tasks`,
-  headers: defaultHeader
+  headers: defaultHeader,
 };
 
 export const getAllTasksForDefaultEntry = {
@@ -56,8 +52,8 @@ export const getAllTasksForDefaultEntry = {
       withRequest: getEntryTasksRequest,
       willRespondWith: {
         status: 200,
-        body: empty
-      }
+        body: empty,
+      },
     }).as('getAllTasksForDefaultEntry');
 
     return '@getAllTasksForDefaultEntry';
@@ -70,8 +66,8 @@ export const getAllTasksForDefaultEntry = {
       withRequest: getEntryTasksRequest,
       willRespondWith: {
         status: 200,
-        body: severalTasksDefinition
-      }
+        body: severalTasksDefinition,
+      },
     }).as('getAllTasksForDefaultEntry');
 
     return '@getAllTasksForDefaultEntry';
@@ -84,13 +80,13 @@ export const getAllTasksForDefaultEntry = {
       withRequest: getEntryTasksRequest,
       willRespondWith: {
         status: 500,
-        body: serverError
-      }
+        body: serverError,
+      },
     }).as('getAllTasksForDefaultEntry');
 
     return '@getAllTasksForDefaultEntry';
-  }
-}
+  },
+};
 
 export function createTask({ body, assigneeId }) {
   const alias = `createTask-for-${assigneeId}`;
@@ -101,9 +97,9 @@ export function createTask({ body, assigneeId }) {
         type: 'Link',
         linkType: 'User',
         id: assigneeId,
-      }
+      },
     },
-    status: TaskStates.ACTIVE
+    status: TaskStates.ACTIVE,
   };
 
   const interactionRequestInfo = {
@@ -114,10 +110,10 @@ export function createTask({ body, assigneeId }) {
       path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}/tasks`,
       headers: {
         ...defaultHeader,
-        'Content-Type': 'application/vnd.contentful.management.v1+json'
+        'Content-Type': 'application/vnd.contentful.management.v1+json',
       },
-      body: newTask
-    } as RequestOptions
+      body: newTask,
+    } as RequestOptions,
   };
 
   return {
@@ -131,8 +127,8 @@ export function createTask({ body, assigneeId }) {
           body: {
             sys: newTaskSys,
             ...newTask,
-          }
-        }
+          },
+        },
       }).as(alias);
 
       return `@${alias}`;
@@ -143,17 +139,17 @@ export function createTask({ body, assigneeId }) {
         state: providerState(States.INTERNAL_SERVER_ERROR),
         willRespondWith: {
           status: 500,
-          body: serverError
-        }
+          body: serverError,
+        },
       }).as(alias);
 
       return `@${alias}`;
-    }
-  }
+    },
+  };
 }
 
 function updateTask(taskId: string, change: string) {
-  const alias = `update-task-${taskId}`
+  const alias = `update-task-${taskId}`;
   return function (update: TaskUpdate) {
     const taskDefinition = getTaskDefinitionById(taskId);
     const { body, assigneeId, status } = update;
@@ -164,7 +160,7 @@ function updateTask(taskId: string, change: string) {
           type: 'Link',
           linkType: 'User',
           id: assigneeId || taskDefinition.assignedTo.sys.id,
-        }
+        },
       },
       status: status || taskDefinition.status,
     };
@@ -178,16 +174,17 @@ function updateTask(taskId: string, change: string) {
         headers: {
           ...defaultHeader,
           'Content-Type': 'application/vnd.contentful.management.v1+json',
-          'X-Contentful-Version': '1'
+          'X-Contentful-Version': '1',
         },
-        body: updatedTask
-      } as RequestOptions
+        body: updatedTask,
+      } as RequestOptions,
     };
 
     return {
       willSucceed() {
-        const { sys: newTaskSysDefinition } = severalTasksDefinition.items.find((task: any) =>
-          task.sys.id.getValue() === taskId)
+        const { sys: newTaskSysDefinition } = severalTasksDefinition.items.find(
+          (task: any) => task.sys.id.getValue() === taskId
+        );
 
         cy.addInteraction({
           ...interactionRequestInfo,
@@ -198,21 +195,21 @@ function updateTask(taskId: string, change: string) {
               ...updatedTask,
               sys: {
                 ...newTaskSysDefinition,
-                version: newTaskSysDefinition.version + 1
+                version: newTaskSysDefinition.version + 1,
               },
-            }
-          }
+            },
+          },
         }).as(alias);
-        
+
         return `@${alias}`;
-      }
-    }
-  }
+      },
+    };
+  };
 }
 
 export function deleteTask() {
-  const taskId = 'taskId1'
-  const alias = `delete-task-${taskId}`
+  const taskId = 'taskId1';
+  const alias = `delete-task-${taskId}`;
 
   const interactionRequestInfo = {
     provider: 'tasks-v2',
@@ -222,9 +219,9 @@ export function deleteTask() {
       path: `/spaces/${defaultSpaceId}/entries/${defaultEntryId}/tasks/${taskId}`,
       headers: {
         ...defaultHeader,
-        'X-Contentful-Version': '1'
-      }
-    } as RequestOptions
+        'X-Contentful-Version': '1',
+      },
+    } as RequestOptions,
   };
 
   return {
@@ -233,15 +230,18 @@ export function deleteTask() {
         ...interactionRequestInfo,
         state: providerState(States.SEVERAL),
         willRespondWith: {
-          status: 204
-        }
+          status: 204,
+        },
       }).as(alias);
-      
+
       return `@${alias}`;
-    }
-  }
+    },
+  };
 }
 
 export const updateTaskBodyAndAssignee = updateTask('taskId1', 'change body and assignee');
 export const resolveTask = updateTask('taskId1', `set status to "${TaskStates.RESOLVED}"`);
-export const reopenTask = updateTask('taskId2', `set "${TaskStates.RESOLVED}" task back to "${TaskStates.ACTIVE}"`);
+export const reopenTask = updateTask(
+  'taskId2',
+  `set "${TaskStates.RESOLVED}" task back to "${TaskStates.ACTIVE}"`
+);

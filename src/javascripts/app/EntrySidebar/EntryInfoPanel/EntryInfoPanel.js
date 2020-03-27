@@ -10,11 +10,11 @@ export default class EntryInfoPanel extends Component {
     contentTypeDescription: PropTypes.string,
     contentTypeId: PropTypes.string,
     sys: PropTypes.object,
-    isVisible: PropTypes.bool.isRequired
+    isVisible: PropTypes.bool.isRequired,
   };
 
   static defaultProps = {
-    isVisible: false
+    isVisible: false,
   };
 
   render() {
@@ -22,7 +22,7 @@ export default class EntryInfoPanel extends Component {
     return (
       <div
         className={classNames('entity-sidebar__info-panel entity-info-panel', {
-          'x--show': isVisible
+          'x--show': isVisible,
         })}>
         {sys && (
           <table>

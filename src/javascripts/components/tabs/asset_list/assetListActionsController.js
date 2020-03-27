@@ -7,8 +7,8 @@ export default function register() {
     function AssetListActionsController($scope, $controller) {
       $controller('ListActionsController', {
         $scope: $scope,
-        entityType: 'Asset'
+        entityType: 'Asset',
       });
-    }
+    },
   ]);
 }

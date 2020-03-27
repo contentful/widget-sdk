@@ -29,14 +29,14 @@ UnknownErrorMessage.propTypes = {
   buttonText: PropTypes.string,
   description: PropTypes.string,
   heading: PropTypes.string,
-  onButtonClick: PropTypes.func
+  onButtonClick: PropTypes.func,
 };
 
 UnknownErrorMessage.defaultProps = {
   buttonText: 'Reload the page',
   description: '',
   heading: 'Something went wrong',
-  onButtonClick: window.location.reload
+  onButtonClick: window.location.reload,
 };
 
 export default UnknownErrorMessage;

@@ -41,7 +41,7 @@ function getScope() {
 
   scope = _.extend($rootScope.$new(true), {
     events$: events$,
-    sessionData$: sessionDataBus.property
+    sessionData$: sessionDataBus.property,
   });
 
   return scope;
@@ -84,7 +84,7 @@ export function add(name, data) {
     time: moment().format('HH:mm:ss'),
     name: name,
     data: data,
-    isValid: validateEvent(name)
+    isValid: validateEvent(name),
   };
 
   if (snowplowEvent) {
@@ -94,7 +94,7 @@ export function add(name, data) {
       name: snowplowSchema.name,
       version: snowplowSchema.version,
       data: snowplowEvent[1],
-      context: snowplowEvent[2]
+      context: snowplowEvent[2],
     };
   }
 

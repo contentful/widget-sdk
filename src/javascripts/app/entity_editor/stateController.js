@@ -32,7 +32,7 @@ export default function register() {
       // Is set to 'true' when the entity has been deleted by another user.
       let isDeleted = false;
 
-      K.onValueScope($scope, docStateManager.inProgress$, inProgress => {
+      K.onValueScope($scope, docStateManager.inProgress$, (inProgress) => {
         controller.inProgress = inProgress;
       });
 
@@ -42,12 +42,12 @@ export default function register() {
         () => applyActionWithConfirmation(Action.Archive()),
         {
           disabled: checkDisallowed(Action.Archive()),
-          restricted: checkRestricted(Action.Archive())
+          restricted: checkRestricted(Action.Archive()),
         },
         {
           label: 'Archive',
           status: 'Archived',
-          targetStateId: 'archived'
+          targetStateId: 'archived',
         }
       );
 
@@ -55,12 +55,12 @@ export default function register() {
         () => applyAction(Action.Unarchive()),
         {
           disabled: checkDisallowed(Action.Unarchive()),
-          restricted: checkRestricted(Action.Unarchive())
+          restricted: checkRestricted(Action.Unarchive()),
         },
         {
           label: 'Unarchive',
           status: 'Draft',
-          targetStateId: 'draft'
+          targetStateId: 'draft',
         }
       );
 
@@ -68,12 +68,12 @@ export default function register() {
         () => applyActionWithConfirmation(Action.Unpublish()),
         {
           disabled: checkDisallowed(Action.Unpublish()),
-          restricted: checkRestricted(Action.Unpublish())
+          restricted: checkRestricted(Action.Unpublish()),
         },
         {
           label: 'Unpublish',
           status: 'Draft',
-          targetStateId: 'draft'
+          targetStateId: 'draft',
         }
       );
 
@@ -81,11 +81,11 @@ export default function register() {
         publishEntity,
         {
           disabled: checkDisallowed(Action.Publish()),
-          restricted: checkRestricted(Action.Publish())
+          restricted: checkRestricted(Action.Publish()),
         },
         {
           label: 'Publish changes',
-          targetStateId: 'published'
+          targetStateId: 'published',
         }
       );
 
@@ -93,16 +93,16 @@ export default function register() {
         publishEntity,
         {
           disabled: checkDisallowed(Action.Publish()),
-          restricted: checkRestricted(Action.Publish())
+          restricted: checkRestricted(Action.Publish()),
         },
         {
           label: 'Publish',
           status: 'Published',
-          targetStateId: 'published'
+          targetStateId: 'published',
         }
       );
 
-      K.onValueScope($scope, docStateManager.state$, state => {
+      K.onValueScope($scope, docStateManager.state$, (state) => {
         caseof(state, [
           [
             State.Archived(),
@@ -111,7 +111,7 @@ export default function register() {
               controller.primary = unarchive;
               controller.secondary = [publish];
               controller.allActions = [unarchive, publish];
-            }
+            },
           ],
           [
             State.Draft(),
@@ -120,7 +120,7 @@ export default function register() {
               controller.primary = publish;
               controller.secondary = [archive];
               controller.allActions = [publish, archive];
-            }
+            },
           ],
           [
             State.Published(),
@@ -129,7 +129,7 @@ export default function register() {
               controller.primary = noop;
               controller.secondary = [unpublish, archive];
               controller.allActions = [unpublish, archive];
-            }
+            },
           ],
           [
             State.Changed(),
@@ -138,14 +138,14 @@ export default function register() {
               controller.primary = publishChanges;
               controller.secondary = [unpublish, archive];
               controller.allActions = [publishChanges, unpublish, archive];
-            }
+            },
           ],
           [
             State.Deleted(),
             () => {
               isDeleted = true;
-            }
-          ]
+            },
+          ],
         ]);
 
         controller.currentLabel = getStateLabel(state);
@@ -158,7 +158,7 @@ export default function register() {
           _.every(controller.secondary, (
             cmd // TODO this uses the private API
           ) => cmd._isDisabled()),
-        secondaryActionsDisabled => {
+        (secondaryActionsDisabled) => {
           controller.secondaryActionsDisabled = secondaryActionsDisabled;
         }
       );
@@ -167,7 +167,7 @@ export default function register() {
         return showUnpublishedReferencesWarning({
           entity: K.getValue(otDoc.data$),
           spaceId: spaceContext.getId(),
-          environmentId: spaceContext.getEnvironmentId()
+          environmentId: spaceContext.getEnvironmentId(),
         })
           .then(() => {
             if (validator.run()) {
@@ -194,12 +194,12 @@ export default function register() {
                       eventOrigin,
                       widgetTrackingContexts,
                       contentType: contentType,
-                      response: entity
+                      response: entity,
                     });
                   }
                   trackVersioning.publishedRestored(entity);
                 },
-                error => {
+                (error) => {
                   validator.setApiResponseErrors(error);
                 }
               );
@@ -219,16 +219,16 @@ export default function register() {
             }
           }),
         {
-          disabled: function() {
+          disabled: function () {
             const canDelete = permissions.can('delete');
             const canMoveToDraft = caseof(controller.current, [
               ['archived', _.constant(permissions.can('unarchive'))],
               ['changes', 'published', _.constant(permissions.can('unpublish'))],
-              [otherwise, _.constant(true)]
+              [otherwise, _.constant(true)],
             ]);
 
             return isDeleted || !canDelete || !canMoveToDraft;
-          }
+          },
         }
       );
 
@@ -240,22 +240,22 @@ export default function register() {
               () => {
                 notify(Notification.Success('revert'));
               },
-              err => {
+              (err) => {
                 notify(Notification.Error('revert', err));
               }
             )
             .then(() => {
               Analytics.track('entity_state:revert', {
                 id: $scope.entityInfo.id,
-                type: $scope.entityInfo.type
+                type: $scope.entityInfo.type,
               });
             });
         },
         {
-          available: function() {
+          available: function () {
             const canEdit = K.getValue(otDoc.state.canEdit$);
             return canEdit && reverter.hasChanges();
-          }
+          },
         }
       );
 
@@ -265,17 +265,17 @@ export default function register() {
           [State.Draft(), _.constant('draft')],
           [State.Published(), _.constant('published')],
           [State.Changed(), _.constant('changed')],
-          [State.Deleted(), _.constant('deleted')]
+          [State.Deleted(), _.constant('deleted')],
         ]);
       }
 
       function applyAction(action) {
         return docStateManager.apply(action).then(
-          data => {
+          (data) => {
             notify(Notification.Success(action));
             return { action, entity: data };
           },
-          err => {
+          (err) => {
             notify(Notification.Error(action, err));
             return Promise.reject(err);
           }
@@ -283,7 +283,7 @@ export default function register() {
       }
 
       function applyActionWithConfirmation(action) {
-        return showConfirmationMessage({ action }).then(payload =>
+        return showConfirmationMessage({ action }).then((payload) =>
           applyAction(_.get(payload, 'action', action))
         );
       }
@@ -308,11 +308,11 @@ export default function register() {
             onCancel={() => onClose({ action: null })}
             onArchive={() => onClose({ action: Action.Archive() })}
           />
-        )).then(result => {
+        )).then((result) => {
           if (result.action) return result;
           return Promise.reject();
         });
       }
-    }
+    },
   ]);
 }

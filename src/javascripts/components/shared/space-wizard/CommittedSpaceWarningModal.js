@@ -9,7 +9,7 @@ import * as Intercom from 'services/intercom';
 export default class CommittedSpaceWarningModal extends React.Component {
   static propTypes = {
     isShown: PropTypes.bool.isRequired,
-    onClose: PropTypes.func.isRequired
+    onClose: PropTypes.func.isRequired,
   };
 
   handleContact = () => {

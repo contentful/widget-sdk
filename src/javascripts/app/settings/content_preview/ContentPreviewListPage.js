@@ -11,12 +11,12 @@ export default class ContentPreviewListPage extends Component {
     contentPreviews: PropTypes.arrayOf(
       PropTypes.shape({
         sys: PropTypes.shape({
-          id: PropTypes.string.isRequired
+          id: PropTypes.string.isRequired,
         }).isRequired,
         name: PropTypes.string.isRequired,
-        description: PropTypes.string.isRequired
+        description: PropTypes.string.isRequired,
       })
-    ).isRequired
+    ).isRequired,
   };
 
   render() {

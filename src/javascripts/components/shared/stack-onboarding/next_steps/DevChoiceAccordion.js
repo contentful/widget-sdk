@@ -28,7 +28,7 @@ const DevChoiceAccordion = ({ managementToken, entry, spaceId }) => {
               entry={entry}
               spaceId={spaceId}
             />
-          )
+          ),
         },
 
         {
@@ -39,8 +39,8 @@ const DevChoiceAccordion = ({ managementToken, entry, spaceId }) => {
               </span>
             </>
           ),
-          content: <SetupWebhooksDrawer deploymentProvider={deploymentProvider} />
-        }
+          content: <SetupWebhooksDrawer deploymentProvider={deploymentProvider} />,
+        },
       ]}
     />
   );
@@ -49,7 +49,7 @@ const DevChoiceAccordion = ({ managementToken, entry, spaceId }) => {
 DevChoiceAccordion.propTypes = {
   managementToken: PropTypes.string.isRequired,
   entry: PropTypes.object.isRequired,
-  spaceId: PropTypes.string.isRequired
+  spaceId: PropTypes.string.isRequired,
 };
 
 export default DevChoiceAccordion;

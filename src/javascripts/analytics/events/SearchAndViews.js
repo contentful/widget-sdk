@@ -3,7 +3,7 @@ import { track as analyticsTrack } from 'analytics/Analytics';
 
 const PREFIX = 'search:';
 const track = (e, data) => analyticsTrack(PREFIX + e, data);
-const isStoredView = v => v && v.id;
+const isStoredView = (v) => v && v.id;
 
 export function searchPerformed(view, resultCount = 0) {
   track('search_performed', extend(query(view), { result_count: resultCount }));
@@ -12,10 +12,10 @@ export function searchPerformed(view, resultCount = 0) {
 export function forScopedViews(viewType) {
   return {
     viewCreated: (view, folder) => viewCreated(viewType, view, folder),
-    viewDeleted: view => viewDeleted(viewType, view),
-    viewLoaded: view => viewLoaded(viewType, view),
-    viewTitleEdited: view => viewEdited(viewType, view, 'title'),
-    viewRolesEdited: view => viewEdited(viewType, view, 'roles')
+    viewDeleted: (view) => viewDeleted(viewType, view),
+    viewLoaded: (view) => viewLoaded(viewType, view),
+    viewTitleEdited: (view) => viewEdited(viewType, view, 'title'),
+    viewRolesEdited: (view) => viewEdited(viewType, view, 'roles'),
   };
 }
 
@@ -27,7 +27,7 @@ function viewCreated(viewType, view, folder) {
         view_type: viewType,
         view_id: view.id,
         folder_id: folder && folder.id,
-        folder_title: folder && folder.title
+        folder_title: folder && folder.title,
       })
     );
   }
@@ -37,7 +37,7 @@ function viewDeleted(viewType, view) {
   if (isStoredView(view)) {
     track('view_deleted', {
       view_type: viewType,
-      view_id: view.id
+      view_id: view.id,
     });
   }
 }
@@ -58,7 +58,7 @@ function viewEdited(viewType, view, changedProperty = null) {
       extend(details(view), {
         view_type: viewType,
         view_id: view.id,
-        change_property: changedProperty
+        change_property: changedProperty,
       })
     );
   }
@@ -67,13 +67,13 @@ function viewEdited(viewType, view, changedProperty = null) {
 function details({ title, roles }) {
   return {
     view_title: title,
-    view_roles: Array.isArray(roles) ? roles.join(',') : roles || null
+    view_roles: Array.isArray(roles) ? roles.join(',') : roles || null,
   };
 }
 
 function query({ searchText = null, contentTypeId = null }) {
   return {
     content_type_id: contentTypeId,
-    search_query: searchText // We keep this for compatibility with schemas for now.
+    search_query: searchText, // We keep this for compatibility with schemas for now.
   };
 }

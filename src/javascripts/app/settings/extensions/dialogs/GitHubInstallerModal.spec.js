@@ -38,7 +38,7 @@ describe('GitHubInstallerModal', () => {
   it('accepts valid Github URLs', () => {
     expect.assertions(8);
     [VALID_URL, 'https://raw.githubusercontent.com/jelz/sample/master/extension.json'].forEach(
-      value => {
+      (value) => {
         const [wrapper, confirmStub] = mount();
         wrapper.find('input').simulate('change', { target: { value } });
         expect(wrapper.find(ERR_SELECTOR)).toHaveLength(0);
@@ -46,12 +46,12 @@ describe('GitHubInstallerModal', () => {
         expect(installBtn.prop('disabled')).toBe(false);
 
         const fetchStub = jest.spyOn(Fetcher, 'fetchExtension');
-        fetchStub.mockReturnValue({ then: handle => handle({ extension: true }) });
+        fetchStub.mockReturnValue({ then: (handle) => handle({ extension: true }) });
         installBtn.simulate('click');
         expect(fetchStub).toHaveBeenCalledWith(value);
         expect(confirmStub).toHaveBeenCalledWith({
           extension: { extension: true },
-          url: value
+          url: value,
         });
         fetchStub.mockRestore();
       }

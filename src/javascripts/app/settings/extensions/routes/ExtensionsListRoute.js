@@ -24,8 +24,8 @@ const prepareExtension = ({ sys, extension, parameters }) => {
     parameterCounts: {
       instanceDefinitions: get(extension, ['parameters', 'instance', 'length']),
       installationDefinitions: get(extension, ['parameters', 'installation', 'length']),
-      installationValues: Object.keys(parameters || {}).length
-    }
+      installationValues: Object.keys(parameters || {}).length,
+    },
   };
 };
 
@@ -40,8 +40,8 @@ class ExtensionsListRoute extends React.Component {
     extensionUrl: PropTypes.string,
     extensionUrlReferrer: PropTypes.string,
     cma: PropTypes.shape({
-      getExtensionsForListing: PropTypes.func.isRequired
-    }).isRequired
+      getExtensionsForListing: PropTypes.func.isRequired,
+    }).isRequired,
   };
 
   render() {

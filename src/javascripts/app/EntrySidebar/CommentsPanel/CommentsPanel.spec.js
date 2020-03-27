@@ -10,20 +10,20 @@ const mockAuthor = { firstName: 'John', lastName: 'Doe', avatarUrl: '0.jpeg', sy
 
 jest.mock('services/TokenStore', () => ({
   getSpace: jest.fn(),
-  getUserSync: jest.fn().mockReturnValue({ sys: { id: 'abc' } })
+  getUserSync: jest.fn().mockReturnValue({ sys: { id: 'abc' } }),
 }));
 jest.mock('./hooks', () => ({
   useCommentsFetcher: jest.fn(),
-  useCommentCreator: jest.fn().mockReturnValue([{}, jest.fn()])
+  useCommentCreator: jest.fn().mockReturnValue([{}, jest.fn()]),
 }));
 jest.mock('data/CMA/CommentsRepo', () => ({
-  remove: jest.fn()
+  remove: jest.fn(),
 }));
 
 const commentMeta = {
   createdBy: mockAuthor,
   space: { sys: { id: '123' } },
-  reference: { sys: { id: 'xyz' } }
+  reference: { sys: { id: 'xyz' } },
 };
 
 const mockComments = [
@@ -32,12 +32,12 @@ const mockComments = [
   { body: 'foobar3', sys: { id: '3', ...commentMeta } },
   { body: 'foobar4', sys: { id: '4', ...commentMeta } },
   { body: 'foobar5', sys: { id: '5', ...commentMeta } },
-  { body: 'foobar6', sys: { id: '6', ...commentMeta } }
+  { body: 'foobar6', sys: { id: '6', ...commentMeta } },
 ];
 
 const mockReply = {
   body: 'foobar7',
-  sys: { id: '7', parent: { sys: { id: '1' } }, ...commentMeta }
+  sys: { id: '7', parent: { sys: { id: '1' } }, ...commentMeta },
 };
 
 const setComments = (withReply = false) => {
@@ -59,7 +59,7 @@ const defaultProps = {
   entryId: 'b',
   environmentId: 'c',
   isVisible: true,
-  onCommentsCountUpdate: jest.fn()
+  onCommentsCountUpdate: jest.fn(),
 };
 
 const build = (props = defaultProps) => {
@@ -72,7 +72,7 @@ describe('CommentsPanel', () => {
   describe('with `isVisible: false`', () => {
     const props = {
       ...defaultProps,
-      isVisible: false
+      isVisible: false,
     };
 
     it('does not fetch any comments', () => {
@@ -143,10 +143,10 @@ describe('CommentsPanel', () => {
   // You can make the case that they are all part of the same thing.
   // For instance, the only way for a user to create a comment is by using the form
   describe('comment added', () => {
-    const addComment = container => {
+    const addComment = (container) => {
       const comment = {
         body: 'foobar8',
-        sys: { id: '8', createdBy: mockAuthor, parentEntity: { sys: { id: 'test' } } }
+        sys: { id: '8', createdBy: mockAuthor, parentEntity: { sys: { id: 'test' } } },
       };
       const form = within(container).getByTestId('comments.form');
       const textarea = within(form).getByTestId('comments.form.textarea');
@@ -155,7 +155,7 @@ describe('CommentsPanel', () => {
       fireEvent.change(textarea, { target: { value: 'My new comment' } });
       useCommentCreator.mockReturnValueOnce([
         { isLoading: false, error: null, data: comment },
-        jest.fn()
+        jest.fn(),
       ]);
       fireEvent.click(submitBtn);
       return wait();
@@ -182,7 +182,7 @@ describe('CommentsPanel', () => {
   });
 
   describe('comment deleted', () => {
-    const deleteComment = container => {
+    const deleteComment = (container) => {
       const removeButton = within(container).getAllByTestId('comment.menu.remove')[0];
       fireEvent.click(removeButton);
 

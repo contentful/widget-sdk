@@ -6,7 +6,7 @@ import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { create as createSpaceEnvRepo } from 'data/CMA/SpaceEnvironmentsRepo';
 import {
   MODERN_STACK_ONBOARDING_SPACE_NAME,
-  getStoragePrefix
+  getStoragePrefix,
 } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
 import { getSpaceAutoCreatedKey } from 'components/shared/auto_create_new_space/getSpaceAutoCreatedKey';
 import { fetchMarketplaceApps } from 'app/Apps/MarketplaceClient';
@@ -20,8 +20,8 @@ function getUser() {
     return user;
   }
 
-  return new Promise(resolve => {
-    const off = onValue(user$, user => {
+  return new Promise((resolve) => {
+    const off = onValue(user$, (user) => {
       if (user) {
         resolve(user);
         off();
@@ -39,7 +39,7 @@ export async function getOnboardingSpaceId() {
   const onboardingSpaceKey = `${prefix}:developerChoiceSpace`;
   const spaceId = store.get(onboardingSpaceKey);
   if (spaceId) {
-    const spaceExist = spaces.some(space => space.sys.id === spaceId);
+    const spaceExist = spaces.some((space) => space.sys.id === spaceId);
 
     if (spaceExist) {
       return spaceId;
@@ -47,7 +47,7 @@ export async function getOnboardingSpaceId() {
   }
 
   // try to find a space in all spaces with onboarding space name
-  const onboardingSpace = spaces.find(space => space.name === MODERN_STACK_ONBOARDING_SPACE_NAME);
+  const onboardingSpace = spaces.find((space) => space.name === MODERN_STACK_ONBOARDING_SPACE_NAME);
 
   if (onboardingSpace) {
     const onboardingSpaceId = onboardingSpace.sys.id;
@@ -77,7 +77,7 @@ export async function getSpaceInfo() {
   }
 
   const defaultSpace = spaces[0];
-  const usedSpace = lastUsedId && spaces.find(space => space.sys.id === lastUsedId);
+  const usedSpace = lastUsedId && spaces.find((space) => space.sys.id === lastUsedId);
   const space = usedSpace || defaultSpace;
 
   return { space, spaces, spaceId: space.sys.id };
@@ -107,7 +107,7 @@ export async function getOrg() {
   const lastUsedOrgId = store.get('lastUsedOrg');
   const orgs = await getOrganizations();
 
-  const usedOrg = lastUsedOrgId && orgs.find(org => org.sys.id === lastUsedOrgId);
+  const usedOrg = lastUsedOrgId && orgs.find((org) => org.sys.id === lastUsedOrgId);
 
   if (usedOrg) {
     return { orgId: lastUsedOrgId, org: usedOrg };

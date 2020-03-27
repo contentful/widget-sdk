@@ -9,7 +9,7 @@ export default addUserOrgSpace((_, data) => {
       locale_code: data.localeCode,
       extension_id: data.extensionId,
       // TODO: rename property in v2 of the schema.
-      extension_definition_id: data.appDefinitionId || null
-    }
+      extension_definition_id: data.appDefinitionId || null,
+    },
   };
 });

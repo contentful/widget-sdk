@@ -3,7 +3,7 @@ import { defaultSpaceId, defaultEnvironmentId } from '../util/requests';
 const resourcesWithLimitsReached = require('../fixtures/responses/resources-with-limits-reached.json');
 
 enum States {
-  SEVERAL_WITH_LIMITS_REACHED = 'resources/several-with-limits-reached'
+  SEVERAL_WITH_LIMITS_REACHED = 'resources/several-with-limits-reached',
 }
 
 export const getResourcesWithLimitsReached = {
@@ -16,15 +16,15 @@ export const getResourcesWithLimitsReached = {
         method: 'GET',
         path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/resources`,
         headers: {
-          Accept: 'application/json, text/plain, */*'
-        }
+          Accept: 'application/json, text/plain, */*',
+        },
       },
       willRespondWith: {
         status: 200,
-        body: resourcesWithLimitsReached
-      }
+        body: resourcesWithLimitsReached,
+      },
     }).as('getResourcesWithLimitsReached');
 
     return '@getResourcesWithLimitsReached';
-  }
-}
+  },
+};

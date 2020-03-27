@@ -8,7 +8,7 @@ import {
   Button,
   Paragraph,
   CopyButton,
-  Workbench
+  Workbench,
 } from '@contentful/forma-36-react-components';
 import { css, keyframes } from 'emotion';
 import Icon from 'ui/Components/Icon';
@@ -23,11 +23,11 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 
 const fadeIn = keyframes({
   from: {
-    opacity: '0'
+    opacity: '0',
   },
   to: {
-    opacity: '1'
-  }
+    opacity: '1',
+  },
 });
 
 const styles = {
@@ -37,11 +37,11 @@ const styles = {
     paddingBottom: tokens.spacingL,
     borderBottom: `1px solid ${tokens.colorElementLight}`,
     '& div:first-child': css({
-      marginRight: tokens.spacingL
+      marginRight: tokens.spacingL,
     }),
     '& div:last-child h1': css({
-      marginBottom: tokens.spacingXs
-    })
+      marginBottom: tokens.spacingXs,
+    }),
   }),
   copyButton: css({
     button: css({
@@ -55,33 +55,33 @@ const styles = {
         backgroundColor: 'transparent',
         border: 'none',
         opacity: '1',
-        transform: 'translateX(0)'
-      })
-    })
+        transform: 'translateX(0)',
+      }),
+    }),
   }),
   info: css({
     padding: `${tokens.spacingL} 0`,
     borderBottom: `1px solid ${tokens.colorElementLight}`,
     '& p:first-child': css({
-      marginBottom: tokens.spacing2Xs
+      marginBottom: tokens.spacing2Xs,
     }),
     '& p b': css({
       color: tokens.colorTextMid,
-      marginRight: tokens.spacing2Xs
-    })
+      marginRight: tokens.spacing2Xs,
+    }),
   }),
   appEditor: css({
-    padding: `${tokens.spacingL} 0`
+    padding: `${tokens.spacingL} 0`,
   }),
   formActions: css({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: tokens.spacing4Xl
+    marginBottom: tokens.spacing4Xl,
   }),
   creator: css({
-    animation: `${fadeIn} .2s ease`
-  })
+    animation: `${fadeIn} .2s ease`,
+  }),
 };
 
 const sysIdStyle = css({
@@ -90,19 +90,19 @@ const sysIdStyle = css({
   '& p': css({
     fontFamily: tokens.fontStackMonospace,
     fontSize: tokens.fontSizeS,
-    color: tokens.colorTextMid
+    color: tokens.colorTextMid,
   }),
   [`&:hover .${styles.copyButton} button`]: css({
     opacity: '1',
-    transform: 'translateX(0)'
-  })
+    transform: 'translateX(0)',
+  }),
 });
 
 function formatDate(date) {
   return new Date(date).toLocaleString('en-US', {
     month: 'long',
     day: 'numeric',
-    year: 'numeric'
+    year: 'numeric',
   });
 }
 
@@ -114,7 +114,7 @@ export default class AppDetails extends React.Component {
       busy: false,
       name: props.definition.name,
       definition: props.definition,
-      creator: ''
+      creator: '',
     };
   }
 
@@ -134,7 +134,7 @@ export default class AppDetails extends React.Component {
       this.setState({ name: updated.name, definition: updated });
       Notification.success('App updated successfully.');
       track('app_management:updated', {
-        definitionId: updated.sys.id
+        definitionId: updated.sys.id,
       });
     } catch (err) {
       Notification.error(
@@ -152,7 +152,7 @@ export default class AppDetails extends React.Component {
       await ManagementApiClient.deleteDef(this.state.definition);
       Notification.success(`${this.state.definition.name} was deleted!`);
       track('app_management:deleted', {
-        definitionId: this.state.definition.sys.id
+        definitionId: this.state.definition.sys.id,
       });
       this.props.goToListView();
     } catch (err) {
@@ -234,7 +234,7 @@ export default class AppDetails extends React.Component {
           <div className={styles.appEditor}>
             <AppEditor
               definition={definition}
-              onChange={definition => this.setState({ definition })}
+              onChange={(definition) => this.setState({ definition })}
             />
           </div>
           <div className={styles.formActions}>
@@ -261,5 +261,5 @@ export default class AppDetails extends React.Component {
 
 AppDetails.propTypes = {
   definition: PropTypes.object.isRequired,
-  goToListView: PropTypes.func.isRequired
+  goToListView: PropTypes.func.isRequired,
 };

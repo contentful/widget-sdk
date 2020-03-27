@@ -20,13 +20,13 @@ function canUserManageApps() {
 
 const appsFeatureResolver = [
   'spaceContext',
-  async spaceContext => {
+  async (spaceContext) => {
     try {
       return getSpaceFeature(spaceContext.getId(), BASIC_APPS_FEATURE_KEY, DEFAULT_FEATURE_STATUS);
     } catch (err) {
       return DEFAULT_FEATURE_STATUS;
     }
-  }
+  },
 ];
 
 export default {
@@ -39,10 +39,10 @@ export default {
       url: '',
       params: {
         appId: null,
-        referrer: null
+        referrer: null,
       },
       resolve: {
-        hasAppsFeature: appsFeatureResolver
+        hasAppsFeature: appsFeatureResolver,
       },
       component: AppsListPage,
       mapInjectedToProps: [
@@ -59,28 +59,28 @@ export default {
             spaceInformation: {
               spaceId: spaceContext.space.data.sys.id,
               spaceName: spaceContext.space.data.name,
-              envMeta: spaceContext.space.environmentMeta
+              envMeta: spaceContext.space.environmentMeta,
             },
             userId: spaceContext.user.sys.id,
             canManageApps: canUserManageApps(),
             deeplinkAppId: $stateParams.appId || null,
-            deeplinkReferrer: $stateParams.referrer || null
+            deeplinkReferrer: $stateParams.referrer || null,
           };
-        }
-      ]
+        },
+      ],
     },
     {
       name: 'detail',
       url: '/:appId',
       params: {
-        acceptedPermissions: null
+        acceptedPermissions: null,
       },
       component: AppPage,
       resolve: {
         // Define dependency on spaceContext so we load the app
         // only when the space is initialized.
         app: ['$stateParams', 'spaceContext', ({ appId }) => getAppsRepo().getApp(appId)],
-        hasAppsFeature: appsFeatureResolver
+        hasAppsFeature: appsFeatureResolver,
       },
       onEnter: [
         '$state',
@@ -119,7 +119,7 @@ export default {
 
             $state.go(absoluteListPath, params);
           }
-        }
+        },
       ],
       mapInjectedToProps: [
         'spaceContext',
@@ -133,7 +133,7 @@ export default {
             appHookBus,
             Navigator,
             SlideInNavigator,
-            appDefinition: app.appDefinition
+            appDefinition: app.appDefinition,
           });
 
           return {
@@ -142,14 +142,14 @@ export default {
             bridge,
             appHookBus,
             cma: spaceContext.cma,
-            evictWidget: appInstallation => {
+            evictWidget: (appInstallation) => {
               const widgetId = get(appInstallation, ['sys', 'appDefinition', 'sys', 'id']);
 
               getCustomWidgetLoader().evict([NAMESPACE_APP, widgetId]);
-            }
+            },
           };
-        }
-      ]
-    }
-  ]
+        },
+      ],
+    },
+  ],
 };

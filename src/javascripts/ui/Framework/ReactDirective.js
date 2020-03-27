@@ -160,7 +160,7 @@ function watchProps(watchDepth, scope, watchExpressions, listener) {
   const supportsWatchGroup = isFunction(scope.$watchGroup);
 
   const watchGroupExpressions = [];
-  watchExpressions.forEach(expr => {
+  watchExpressions.forEach((expr) => {
     const actualExpr = getPropExpression(expr);
     const exprWatchDepth = getPropWatchDepth(watchDepth, expr);
 
@@ -254,11 +254,11 @@ export default function register() {
             ReactDOM.unmountComponentAtNode(container);
           } else {
             $scope.$eval(attrs.onScopeDestroy)({
-              unmountComponent: ReactDOM.unmountComponentAtNode.bind(this, container)
+              unmountComponent: ReactDOM.unmountComponentAtNode.bind(this, container),
             });
           }
         });
-      }
+      },
     };
   });
 }
@@ -321,7 +321,7 @@ function getModule(name) {
     'app/widgets/link/EntryLink': EntryLink,
     'widgets/ExtensionIFrameRenderer': ExtensionIFrameRenderer,
     'components/field_dialog/validations/DateRangeValidation': DateRangeValidation,
-    'app/snapshots/SnapshotComparator': SnapshotComparator
+    'app/snapshots/SnapshotComparator': SnapshotComparator,
   };
 
   return get(allowedModules, name, null);

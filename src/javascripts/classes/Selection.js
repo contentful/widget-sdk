@@ -11,17 +11,17 @@ export function createSelection() {
     isSelected,
     updateList,
     clear,
-    size: function() {
+    size: function () {
       return _.size(selectedById);
     },
-    isEmpty: function() {
+    isEmpty: function () {
       return _.isEmpty(selectedById);
     },
-    getSelected: function() {
+    getSelected: function () {
       const values = _.memoize(_.values);
 
       return values(selectedById);
-    }
+    },
   };
 
   function add(entity) {

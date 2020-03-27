@@ -11,14 +11,14 @@ const iconStyles = css({
   padding: tokens.spacingXs,
   '& svg': {
     fill: tokens.colorGreenBase,
-    height: '14px'
-  }
+    height: '14px',
+  },
 });
 
 const iconComponentsMap = {
   content_types: ContentTypesIcon,
   entries: EntriesIcon,
-  assets: MediaIcon
+  assets: MediaIcon,
 };
 
 const ResultItemIcon = ({ type }) => {
@@ -33,5 +33,5 @@ const ResultItemIcon = ({ type }) => {
 export default ResultItemIcon;
 
 ResultItemIcon.propTypes = {
-  type: PropTypes.string.isRequired
+  type: PropTypes.string.isRequired,
 };

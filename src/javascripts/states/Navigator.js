@@ -25,7 +25,7 @@ import { getModule } from 'NgRegistry';
 
 const ENTITY_PLURALS = {
   Entry: 'entries',
-  Asset: 'assets'
+  Asset: 'assets',
 };
 
 /**
@@ -99,7 +99,7 @@ export async function reloadWithEnvironment(environmentId) {
       const fallback = path.replace(/\.(detail|detail\.fields)$/, '.list');
       await reloadTo(fallback, {
         spaceId: params.spaceId,
-        environmentId: params.environmentId
+        environmentId: params.environmentId,
       });
       return error;
     }
@@ -118,7 +118,7 @@ export async function reloadWithEnvironment(environmentId) {
 export function href(state) {
   if (!state) {
     state = {
-      path: []
+      path: [],
     };
   }
   const $state = getModule('$state');
@@ -150,7 +150,7 @@ export function makeEntityRef(entity) {
   return {
     path: makeEntityPath(entity),
     params: makeEntityParams(entity),
-    options: { inherit: false }
+    options: { inherit: false },
   };
 }
 

@@ -14,7 +14,7 @@ import {
   Paragraph,
   TextLink,
   Note,
-  Modal
+  Modal,
 } from '@contentful/forma-36-react-components';
 import { fetchAll } from 'data/CMA/FetchAll';
 
@@ -52,18 +52,18 @@ const styles = {
   selectAllWrapper: css({
     display: 'flex',
     marginTop: tokens.spacingM,
-    marginBottom: tokens.spacingM
+    marginBottom: tokens.spacingM,
   }),
   buttonsWrapper: css({
     display: 'flex',
-    marginTop: tokens.spacingL
+    marginTop: tokens.spacingL,
   }),
   shareButton: css({
-    marginRight: tokens.spacingM
+    marginRight: tokens.spacingM,
   }),
   note: css({
     marginTop: tokens.spacingM,
-    marginBottom: tokens.spacingM
+    marginBottom: tokens.spacingM,
   }),
   rolesContainer: css({
     // We want to show half of a role if the container scrolls
@@ -72,62 +72,62 @@ const styles = {
     overflowX: 'hidden',
     overflowY: 'auto',
     marginTop: tokens.spacingM,
-    marginBottom: tokens.spacingM
+    marginBottom: tokens.spacingM,
   }),
   role: css({
     display: 'flex',
     padding: `${tokens.spacingS} ${tokens.spacingM}`,
     userSelect: 'none',
-    cursor: 'pointer'
+    cursor: 'pointer',
   }),
   roleDisabled: css({
     cursor: 'not-allowed',
-    color: tokens.colorTextLight
+    color: tokens.colorTextLight,
   }),
   roleSelected: css({
-    backgroundColor: tokens.colorElementLightest
+    backgroundColor: tokens.colorElementLightest,
   }),
   viewWrapper: css({
-    maxWidth: '42em'
+    maxWidth: '42em',
   }),
   selectedWrapper: css({
     marginLeft: 'auto',
-    marginRight: '20px'
+    marginRight: '20px',
   }),
   selectLink: css({
-    marginLeft: tokens.spacingS
+    marginLeft: tokens.spacingS,
   }),
   selection: css({
     fontFamily: 'FontAwesome',
     fontSize: '18px',
     marginLeft: tokens.spacingXs,
-    color: tokens.colorTextLightest
+    color: tokens.colorTextLightest,
   }),
   selected: css({
-    color: tokens.colorGreenDark
-  })
+    color: tokens.colorGreenDark,
+  }),
 };
 
 const reducer = createImmerReducer({
-  SelectAll: state => {
-    state.roles = state.roles.map(role => {
+  SelectAll: (state) => {
+    state.roles = state.roles.map((role) => {
       if (role.disabled) {
         return role;
       }
       return {
         ...role,
-        selected: true
+        selected: true,
       };
     });
   },
-  UnselectAll: state => {
-    state.roles = state.roles.map(role => {
+  UnselectAll: (state) => {
+    state.roles = state.roles.map((role) => {
       if (role.disabled) {
         return role;
       }
       return {
         ...role,
-        selected: false
+        selected: false,
       };
     });
   },
@@ -136,39 +136,39 @@ const reducer = createImmerReducer({
     state.roles[index].selected = !state.roles[index].selected;
   },
   FetchSuccess: (state, action) => {
-    const customRoles = action.payload.map(role => ({
+    const customRoles = action.payload.map((role) => ({
       id: role.sys.id,
       name: role.name,
       disabled: false,
-      selected: includes(state.initialAssignedRoles, role.sys.id)
+      selected: includes(state.initialAssignedRoles, role.sys.id),
     }));
     const roles = [
       {
         id: '__admin',
         name: 'Administrator (built-in)',
         disabled: true,
-        selected: true
+        selected: true,
       },
-      ...customRoles
+      ...customRoles,
     ];
     state.roles = roles;
     state.rolesFetchStatus = 'success';
   },
-  FetchFailure: state => {
+  FetchFailure: (state) => {
     state.rolesFetchStatus = 'failure';
-  }
+  },
 });
 
 function RoleSelectorContainer({ spaceEndpoint, initialAssignedRoles, onClose }) {
   const [state, dispatch] = useReducer(reducer, {
     initialAssignedRoles: initialAssignedRoles || [],
     roles: null,
-    rolesFetchStatus: 'pending'
+    rolesFetchStatus: 'pending',
   });
 
   useEffect(() => {
     fetchAll(spaceEndpoint, ['roles'], 100).then(
-      data => {
+      (data) => {
         dispatch({ type: 'FetchSuccess', payload: data });
       },
       () => {
@@ -184,11 +184,11 @@ function RoleSelectorContainer({ spaceEndpoint, initialAssignedRoles, onClose })
     ConfirmSelection: () => {
       // Drop the builtin admin role
       const customRoles = state.roles.slice(1);
-      const selectedIDs = customRoles.filter(r => r.selected).map(r => r.id);
+      const selectedIDs = customRoles.filter((r) => r.selected).map((r) => r.id);
       onClose(selectedIDs);
       Notification.success('View successfully shared');
     },
-    ToggleRoleSelection: index => {
+    ToggleRoleSelection: (index) => {
       dispatch({ type: 'ToggleRoleSelection', payload: { index } });
     },
     SelectAll: () => {
@@ -196,7 +196,7 @@ function RoleSelectorContainer({ spaceEndpoint, initialAssignedRoles, onClose })
     },
     UnselectAll: () => {
       dispatch({ type: 'UnselectAll' });
-    }
+    },
   };
 
   return <RoleSelector state={state} actions={actions} />;
@@ -205,12 +205,12 @@ function RoleSelectorContainer({ spaceEndpoint, initialAssignedRoles, onClose })
 RoleSelectorContainer.propTypes = {
   spaceEndpoint: PropTypes.any,
   initialAssignedRoles: PropTypes.any,
-  onClose: PropTypes.func.isRequired
+  onClose: PropTypes.func.isRequired,
 };
 
 function selectAllButton(state, actions) {
   const disabled = !state.roles;
-  const allSelected = (state.roles || []).every(role => role.selected);
+  const allSelected = (state.roles || []).every((role) => role.selected);
   if (allSelected) {
     return (
       <TextLink
@@ -270,7 +270,7 @@ function RoleSelector({ state, actions }) {
 
 RoleSelector.propTypes = {
   actions: PropTypes.any,
-  state: PropTypes.any
+  state: PropTypes.any,
 };
 
 function renderRolesContainer(state, actions) {
@@ -303,7 +303,7 @@ function RolesList({ roles, toggleSelection }) {
             className={[
               styles.role,
               selected ? styles.roleSelected : '',
-              disabled ? styles.roleDisabled : ''
+              disabled ? styles.roleDisabled : '',
             ].join(' ')}
             data-test-id={testId(`roles.${id}`)}
             role="button"
@@ -324,7 +324,7 @@ function RolesList({ roles, toggleSelection }) {
 
 RolesList.propTypes = {
   roles: PropTypes.array,
-  toggleSelection: PropTypes.func.isRequired
+  toggleSelection: PropTypes.func.isRequired,
 };
 
 function testId(id) {

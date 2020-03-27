@@ -11,7 +11,7 @@ import * as accessChecker from 'access_control/AccessChecker';
 
 export const entityTypes = {
   Entry: 'Entry',
-  Asset: 'Asset'
+  Asset: 'Asset',
 };
 
 /**
@@ -34,11 +34,11 @@ CreateEntity.propTypes = {
   type: PropTypes.oneOf([entityTypes.Entry, entityTypes.Asset]).isRequired,
   contentTypes: PropTypes.array,
   suggestedContentTypeId: PropTypes.string,
-  hasPlusIcon: PropTypes.bool
+  hasPlusIcon: PropTypes.bool,
 };
 
 function CreateEntry(props) {
-  const allowedContentTypes = props.contentTypes.filter(ct =>
+  const allowedContentTypes = props.contentTypes.filter((ct) =>
     accessChecker.canPerformActionOnEntryOfType(accessChecker.Action.CREATE, ct.sys.id)
   );
 
@@ -50,7 +50,7 @@ function CreateEntry(props) {
     allowedContentTypes.length > 0 && (
       <CreateEntryLinkButton
         contentTypes={allowedContentTypes}
-        onSelect={contentTypeId => onSelectHandler(contentTypeId, props.onSelect)}
+        onSelect={(contentTypeId) => onSelectHandler(contentTypeId, props.onSelect)}
         text={text}
         hasPlusIcon={props.hasPlusIcon}
         suggestedContentTypeId={props.suggestedContentTypeId}
@@ -63,7 +63,7 @@ CreateEntry.propTypes = {
   contentTypes: PropTypes.array.isRequired,
   onSelect: PropTypes.func.isRequired,
   hasPlusIcon: PropTypes.bool,
-  suggestedContentTypeId: PropTypes.string
+  suggestedContentTypeId: PropTypes.string,
 };
 
 function CreateAsset(props) {
@@ -80,7 +80,7 @@ function CreateAsset(props) {
 }
 
 CreateAsset.propTypes = {
-  onSelect: PropTypes.func.isRequired
+  onSelect: PropTypes.func.isRequired,
 };
 
 async function onSelectHandler(contentTypeId, cb) {
@@ -90,7 +90,7 @@ async function onSelectHandler(contentTypeId, cb) {
     const entity = await createEntity();
     const slide = {
       id: entity.data.sys.id,
-      type: entity.data.sys.type
+      type: entity.data.sys.type,
     };
 
     cb(entity.data);

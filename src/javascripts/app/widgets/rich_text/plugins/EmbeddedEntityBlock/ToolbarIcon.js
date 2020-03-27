@@ -9,11 +9,11 @@ import { TOOLBAR_PLUGIN_PROP_TYPES } from '../shared/PluginApi';
 export default class EntityLinkToolbarIcon extends Component {
   static propTypes = {
     ...TOOLBAR_PLUGIN_PROP_TYPES,
-    isButton: PropTypes.bool
+    isButton: PropTypes.bool,
   };
 
   static defaultProps = {
-    isButton: false
+    isButton: false,
   };
 
   handleClick = async (event, widgetAPI) => {
@@ -22,7 +22,7 @@ export default class EntityLinkToolbarIcon extends Component {
     const {
       editor,
       nodeType,
-      richTextAPI: { logToolbarAction }
+      richTextAPI: { logToolbarAction },
     } = this.props;
     await selectEntityAndInsert(nodeType, widgetAPI, editor, logToolbarAction);
     this.props.onToggle(editor);
@@ -40,7 +40,7 @@ export default class EntityLinkToolbarIcon extends Component {
               disabled={this.props.disabled}
               className={`${baseClass}-button`}
               size="small"
-              onClick={event => this.handleClick(event, widgetAPI)}
+              onClick={(event) => this.handleClick(event, widgetAPI)}
               icon={type === 'Asset' ? 'Asset' : 'EmbeddedEntryBlock'}
               buttonType="muted"
               testId={`toolbar-toggle-${nodeType}`}>
@@ -51,7 +51,7 @@ export default class EntityLinkToolbarIcon extends Component {
               isDisabled={this.props.disabled}
               className={`${baseClass}-list-item`}
               size="small"
-              onClick={event => this.handleClick(event, widgetAPI)}
+              onClick={(event) => this.handleClick(event, widgetAPI)}
               testId={`toolbar-toggle-${nodeType}`}>
               <div className="cf-flex-grid">
                 <Icon

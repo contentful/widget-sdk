@@ -22,20 +22,20 @@ export function getEntryViews(contentTypes) {
           order: SystemFields.getDefaultOrder(),
           displayedFieldIds: SystemFields.getDefaultFieldIds(),
           searchText: '',
-          searchFilters: []
-        }
-      ]
+          searchFilters: [],
+        },
+      ],
     },
     {
       id: random.id(),
       title: 'Status',
-      views: STATUSES.map(createEntryStatusView)
+      views: STATUSES.map(createEntryStatusView),
     },
     {
       id: random.id(),
       title: 'Content Type',
-      views: contentTypeViews(contentTypes)
-    }
+      views: contentTypeViews(contentTypes),
+    },
   ];
 }
 
@@ -47,20 +47,20 @@ export function getAssetViews() {
       views: [
         {
           id: random.id(),
-          title: 'All'
-        }
-      ]
+          title: 'All',
+        },
+      ],
     },
     {
       id: random.id(),
       title: 'Status',
-      views: STATUSES.map(createStatusView)
+      views: STATUSES.map(createStatusView),
     },
     {
       id: random.id(),
       title: 'File Type',
-      views: fileTypeViews()
-    }
+      views: fileTypeViews(),
+    },
   ];
 }
 
@@ -69,7 +69,7 @@ function createStatusView(status) {
     title: status,
     searchText: '',
     searchFilters: [['__status', '', status.toLowerCase()]],
-    id: random.id()
+    id: random.id(),
   };
 }
 
@@ -77,12 +77,12 @@ function createEntryStatusView(status) {
   return extend(createStatusView(status), {
     contentTypeId: null,
     order: SystemFields.getDefaultOrder(),
-    displayedFieldIds: SystemFields.getDefaultFieldIds()
+    displayedFieldIds: SystemFields.getDefaultFieldIds(),
   });
 }
 
 function contentTypeViews(contentTypes) {
-  return map(contentTypes, ct => {
+  return map(contentTypes, (ct) => {
     return createContentTypeView(ct.sys.id, ct.name);
   });
 }
@@ -95,7 +95,7 @@ export function createContentTypeView(ctId, title) {
     order: SystemFields.getDefaultOrder(),
     displayedFieldIds: SystemFields.getDefaultFieldIds(),
     searchText: '',
-    searchFilters: []
+    searchFilters: [],
   };
 }
 
@@ -105,7 +105,7 @@ function fileTypeViews() {
       title,
       searchText: '',
       searchFilters: [['mimetype_group', '', label]],
-      id: random.id()
+      id: random.id(),
     };
   });
 }
@@ -120,15 +120,15 @@ export function getPrivateViews(userId) {
           id: random.id(),
           title: 'Created by me',
           searchText: '',
-          searchFilters: [['sys.createdBy.sys.id', '', userId]]
+          searchFilters: [['sys.createdBy.sys.id', '', userId]],
         },
         {
           id: random.id(),
           title: 'Updated by me',
           searchText: '',
-          searchFilters: [['sys.updatedBy.sys.id', '', userId]]
-        }
-      ]
-    }
+          searchFilters: [['sys.updatedBy.sys.id', '', userId]],
+        },
+      ],
+    },
   ];
 }

@@ -5,7 +5,7 @@ import sinon from 'sinon';
 angular
   .module('contentful/mocks')
 
-  .factory('TestingAdapter', $q => {
+  .factory('TestingAdapter', ($q) => {
     function Adapter() {
       this.requests = [];
     }
@@ -13,38 +13,38 @@ angular
     Adapter.prototype = {
       requests: null, // initialized in constructor
 
-      request: function(options) {
+      request: function (options) {
         const self = this;
         const deferred = $q.defer();
         self.requests.push({
           options: options,
           resolve: _.bind(deferred.resolve, deferred),
-          reject: _.bind(deferred.reject, deferred)
+          reject: _.bind(deferred.reject, deferred),
         });
         return deferred.promise;
       },
 
-      resolve: function(value) {
+      resolve: function (value) {
         const req = this.requests.shift();
         req.resolve(value);
       },
 
-      resolveLast: function(value) {
+      resolveLast: function (value) {
         const req = this.requests.pop();
         this.requests.length = 0;
         req.resolve(value);
       },
 
-      reject: function(error) {
+      reject: function (error) {
         const req = this.requests.shift();
         req.reject(error);
       },
 
-      rejectLast: function(value) {
+      rejectLast: function (value) {
         const req = this.requests.pop();
         this.requests.length = 0;
         req.resolve(value);
-      }
+      },
     };
 
     return Adapter;
@@ -68,12 +68,12 @@ angular
             contentDeliveryApi: true,
             contentManagementApi: true,
             default: true,
-            name: code
+            name: code,
           },
           extraData || {}
         );
 
-      cfStub.locales = function(...args) {
+      cfStub.locales = function (...args) {
         return _.map(args, (code, index) => cfStub.locale(code, { default: index === 0 }));
       };
 
@@ -85,22 +85,22 @@ angular
             {
               sys: {
                 id: id,
-                createdBy: { sys: { id: 123 } }
+                createdBy: { sys: { id: 123 } },
               },
               locales: cfStub.locales('en-US', 'de-DE'),
               organization: {
                 sys: {
                   id: '456',
-                  type: 'Organization'
+                  type: 'Organization',
                 },
                 usage: {},
                 subscription: {},
-                subscriptionPlan: { limits: {} }
+                subscriptionPlan: { limits: {} },
               },
               spaceMember: {
-                isAdmin: true
+                isAdmin: true,
               },
-              environmentMeta: {}
+              environmentMeta: {},
             },
             extraData || {}
           )
@@ -123,8 +123,8 @@ angular
             fields: fields,
             sys: {
               id: id,
-              type: 'ContentType'
-            }
+              type: 'ContentType',
+            },
           },
           extraData || {}
         );
@@ -133,7 +133,7 @@ angular
       cfStub.contentType = (space, id, name, fields, extraData) => {
         const data = cfStub.contentTypeData(id, fields, {
           name: name,
-          sys: { version: 1 }
+          sys: { version: 1 },
         });
         _.merge(data, extraData || {});
         return space.newContentType(data);
@@ -142,7 +142,7 @@ angular
       cfStub.entry = (space, id, contentTypeId, fields, extraData) => {
         fields = fields || {};
         let entry;
-        space.getEntry(id).then(res => {
+        space.getEntry(id).then((res) => {
           entry = res;
         });
         adapter.resolveLast(
@@ -157,10 +157,10 @@ angular
                   sys: {
                     type: 'Link',
                     linkType: 'ContentType',
-                    id: contentTypeId || 'entryId'
-                  }
-                }
-              }
+                    id: contentTypeId || 'entryId',
+                  },
+                },
+              },
             },
             extraData || {}
           )
@@ -171,7 +171,7 @@ angular
 
       cfStub.asset = (space, id, fields, extraData) => {
         let asset;
-        space.getAsset(id).then(res => {
+        space.getAsset(id).then((res) => {
           asset = res;
         });
         adapter.resolveLast(
@@ -180,16 +180,16 @@ angular
               sys: {
                 id: id,
                 type: 'Asset',
-                version: 1
+                version: 1,
               },
               fields: _.merge(
                 {
                   title: {},
                   description: {},
-                  file: {}
+                  file: {},
                 },
                 fields || {}
-              )
+              ),
             },
             extraData || {}
           )
@@ -199,5 +199,5 @@ angular
       };
 
       return cfStub;
-    }
+    },
   ]);

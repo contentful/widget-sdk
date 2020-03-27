@@ -12,7 +12,7 @@ export default function TeamsAutocomplete({
   disabled = false,
   validationMessage,
   inputWidth = 'large',
-  onChange
+  onChange,
 }) {
   const [teams, setTeams] = useState([]);
   const [lastQuery, setLastQuery] = useState('');
@@ -28,18 +28,18 @@ export default function TeamsAutocomplete({
     data && setTeams(data);
   }, [data]);
 
-  const handleChange = item => {
+  const handleChange = (item) => {
     onChange(item);
   };
 
-  const handleQueryChange = query => {
+  const handleQueryChange = (query) => {
     setLastQuery(query);
   };
 
   // Get the updated list of items, filtered by the last query (autocomplete input value)
   const items = useMemo(
     () =>
-      teams.filter(item => {
+      teams.filter((item) => {
         const name = item.name.toLowerCase();
         return name.includes((lastQuery || '').toLowerCase()) && !value.includes(item);
       }),
@@ -60,7 +60,7 @@ export default function TeamsAutocomplete({
       emptyListMessage="There are no teams to choose from"
       noMatchesMessage="No teams found"
       dropdownProps={{ isFullWidth: true }}>
-      {options => options.map(option => <span key={option.sys.id}>{option.name}</span>)}
+      {(options) => options.map((option) => <span key={option.sys.id}>{option.name}</span>)}
     </Autocomplete>
   );
 }
@@ -71,5 +71,5 @@ TeamsAutocomplete.propTypes = {
   onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
   validationMessage: PropTypes.string,
-  inputWidth: PropTypes.oneOf(['small', 'medium', 'large', 'full'])
+  inputWidth: PropTypes.oneOf(['small', 'medium', 'large', 'full']),
 };

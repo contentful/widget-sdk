@@ -13,7 +13,7 @@ import { getMembershipRoles } from 'access_control/utils';
 import {
   Space as SpacePropType,
   SpaceRole as SpaceRolePropType,
-  TeamSpaceMembership as TeamSpaceMembershipPropType
+  TeamSpaceMembership as TeamSpaceMembershipPropType,
 } from 'app/OrganizationSettings/PropTypes';
 
 class TeamMembershipForm extends React.Component {
@@ -24,24 +24,21 @@ class TeamMembershipForm extends React.Component {
     availableSpaces: PropTypes.arrayOf(SpacePropType),
     roles: PropTypes.objectOf(PropTypes.arrayOf(SpaceRolePropType)),
     onSubmit: PropTypes.func.isRequired,
-    onEdit: PropTypes.func.isRequired
+    onEdit: PropTypes.func.isRequired,
   };
 
   state = {
     selectedSpaceId: get(this.props.initialMembership, 'sys.space.sys.id', null),
     selectedRoles: this.props.initialMembership
-      ? flow(
-          getMembershipRoles,
-          map('sys.id')
-        )(this.props.initialMembership)
-      : []
+      ? flow(getMembershipRoles, map('sys.id'))(this.props.initialMembership)
+      : [],
   };
 
-  setSpace = evt => {
+  setSpace = (evt) => {
     this.setState({ selectedSpaceId: evt.target.value, selectedRoles: [] });
   };
 
-  setRoles = selectedRoles => {
+  setRoles = (selectedRoles) => {
     this.setState({ selectedRoles });
   };
 
@@ -100,20 +97,20 @@ class TeamMembershipForm extends React.Component {
 
 function getAvailableSpaces(state) {
   const teamSpaceMemberships = getTeamSpaceMembershipsOfCurrentTeamToDisplay(state);
-  const unavailableSpaces = teamSpaceMemberships.map(membership =>
+  const unavailableSpaces = teamSpaceMemberships.map((membership) =>
     get(membership, 'sys.space.sys.id')
   );
   const spaces = Object.values(getCurrentOrgSpaces(state));
 
   return spaces
-    .filter(space => !unavailableSpaces.includes(space.sys.id))
+    .filter((space) => !unavailableSpaces.includes(space.sys.id))
     .sort((curr, prev) => curr.name.localeCompare(prev.name));
 }
 
 export default connect(
-  state => ({
+  (state) => ({
     availableSpaces: getAvailableSpaces(state),
-    roles: getRolesBySpace(state)
+    roles: getRolesBySpace(state),
   }),
   (dispatch, { onClose }) => ({
     onSubmit: (spaceId, roles) => {
@@ -123,6 +120,6 @@ export default connect(
     onEdit: (oldMembership, roles) => {
       dispatch({ type: 'EDIT_TEAM_SPACE_MEMBERSHIP', payload: { oldMembership, roles } });
       onClose();
-    }
+    },
   })
 )(TeamMembershipForm);

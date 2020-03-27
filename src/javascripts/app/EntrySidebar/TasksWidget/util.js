@@ -16,21 +16,21 @@ export function onStoreFetchingStatusChange(store, onChange) {
   const initial = {
     isLoading: true,
     data: null,
-    error: null
+    error: null,
   };
   const update$ = store.items$
     .ignoreErrors()
-    .filter(data => data !== null)
-    .map(data => ({
+    .filter((data) => data !== null)
+    .map((data) => ({
       isLoading: false,
       data,
-      error: null
+      error: null,
     }));
   const error$ = store.items$
     .ignoreValues()
-    .mapErrors(error => ({
+    .mapErrors((error) => ({
       isLoading: false,
-      error
+      error,
     }))
     .withHandler(errorsAsValuesHandler);
   return update$

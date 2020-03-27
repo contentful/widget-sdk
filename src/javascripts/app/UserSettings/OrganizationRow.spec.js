@@ -19,24 +19,24 @@ const fakeOrgMemberhip = fake.OrganizationMembership('admin');
 const onLeaveSuccess = jest.fn();
 
 jest.mock('./OrganizationUtils', () => ({
-  fetchCanLeaveOrg: jest.fn(Promise.resolve())
+  fetchCanLeaveOrg: jest.fn(Promise.resolve()),
 }));
 
 jest.mock('utils/ResourceUtils', () => ({
-  isLegacyOrganization: jest.fn()
+  isLegacyOrganization: jest.fn(),
 }));
 
 jest.mock('services/OrganizationRoles', () => ({
   isOwnerOrAdmin: jest.fn(),
-  getOrganizationMembership: jest.fn()
+  getOrganizationMembership: jest.fn(),
 }));
 
 jest.mock('states/Navigator', () => ({
-  go: jest.fn()
+  go: jest.fn(),
 }));
 
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
-  removeMembership: jest.fn(Promise.resolve())
+  removeMembership: jest.fn(Promise.resolve()),
 }));
 
 const build = async (options = { props: {}, wait: true }) => {
@@ -48,7 +48,7 @@ const build = async (options = { props: {}, wait: true }) => {
           {...{
             organization: fakeOrganization,
             onLeaveSuccess: onLeaveSuccess,
-            ...options.props
+            ...options.props,
           }}
         />
       </TableBody>
@@ -170,7 +170,7 @@ describe('OrganizationRow', () => {
 
       expect(go).toHaveBeenCalledWith({
         path: ['account', 'organization_settings'],
-        params: { orgId: fakeOrganization.sys.id }
+        params: { orgId: fakeOrganization.sys.id },
       });
     });
 
@@ -186,7 +186,7 @@ describe('OrganizationRow', () => {
 
       expect(go).toHaveBeenCalledWith({
         path: ['account', 'organization_settings'],
-        params: { orgId: fakeOrganization.sys.id }
+        params: { orgId: fakeOrganization.sys.id },
       });
     });
 

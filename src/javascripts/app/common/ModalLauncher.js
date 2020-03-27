@@ -28,7 +28,7 @@ export function open(componentRenderer, opts = {}) {
     return rootDom;
   };
 
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     let currentConfig = { onClose, isShown: true };
 
     function render({ onClose, isShown }) {
@@ -38,7 +38,7 @@ export function open(componentRenderer, opts = {}) {
     function onClose(...args) {
       currentConfig = {
         ...currentConfig,
-        isShown: false
+        isShown: false,
       };
       render(currentConfig);
       resolve(...args);
@@ -50,5 +50,5 @@ export function open(componentRenderer, opts = {}) {
 }
 
 export default {
-  open
+  open,
 };

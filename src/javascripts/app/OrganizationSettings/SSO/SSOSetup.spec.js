@@ -14,14 +14,14 @@ import SSOUpsellState from './SSOUpsellState';
 import * as fake from 'test/helpers/fakeFactory';
 
 jest.mock('services/OrganizationRoles', () => ({
-  isOwnerOrAdmin: jest.fn().mockReturnValue(true)
+  isOwnerOrAdmin: jest.fn().mockReturnValue(true),
 }));
 
 jest.mock('data/CMA/ProductCatalog', () => ({
-  getOrgFeature: jest.fn().mockResolvedValue(true)
+  getOrgFeature: jest.fn().mockResolvedValue(true),
 }));
 
-const awaitSetImmediate = () => new Promise(resolve => setImmediate(resolve));
+const awaitSetImmediate = () => new Promise((resolve) => setImmediate(resolve));
 
 describe('SSOSetup', () => {
   const organization = fake.Organization();
@@ -30,7 +30,7 @@ describe('SSOSetup', () => {
     identityProvider,
     organization,
     createIdp = () => {},
-    retrieveIdp = jest.fn().mockResolvedValue(true)
+    retrieveIdp = jest.fn().mockResolvedValue(true),
   } = {}) => {
     const rendered = Enzyme.shallow(
       <SSOSetup
@@ -128,7 +128,7 @@ describe('SSOSetup', () => {
 
   it('should render the IDPSetupForm component if an identityProvider store data is given in props', async () => {
     const identityProvider = {
-      data: {}
+      data: {},
     };
     const rendered = await render({ identityProvider, organization });
 
@@ -139,8 +139,8 @@ describe('SSOSetup', () => {
     const identityProvider = {
       data: {
         enabled: true,
-        ssoName: 'my-sso-setup'
-      }
+        ssoName: 'my-sso-setup',
+      },
     };
     const rendered = await render({ identityProvider, organization });
 
@@ -152,8 +152,8 @@ describe('SSOSetup', () => {
       data: {
         enabled: true,
         ssoName: 'my-sso-setup',
-        restrictedMode: false
-      }
+        restrictedMode: false,
+      },
     };
     const rendered = await render({ identityProvider, organization });
 
@@ -166,13 +166,10 @@ describe('SSOSetup', () => {
     const rendered = await render({
       organization,
       identityProvider,
-      createIdp
+      createIdp,
     });
 
-    rendered
-      .find('[testId="create-idp"]')
-      .first()
-      .simulate('click');
+    rendered.find('[testId="create-idp"]').first().simulate('click');
 
     expect(createIdp.mock.calls).toHaveLength(1);
   });
@@ -182,10 +179,7 @@ describe('SSOSetup', () => {
 
     const rendered = await render({ identityProvider, organization });
 
-    rendered
-      .find('[testId="support-link"]')
-      .first()
-      .simulate('click');
+    rendered.find('[testId="support-link"]').first().simulate('click');
 
     expect(track).toHaveBeenCalledTimes(1);
     expect(track).toHaveBeenNthCalledWith(1, 'sso:contact_support');

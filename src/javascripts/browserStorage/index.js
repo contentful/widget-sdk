@@ -19,7 +19,7 @@ const SessionStorage = ClientStorage('session');
 export function getStore(storageType) {
   const validStorageTypes = {
     local: LocalStorage,
-    session: SessionStorage
+    session: SessionStorage,
   };
 
   if (storageType == null) {

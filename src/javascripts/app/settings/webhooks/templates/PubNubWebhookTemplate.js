@@ -26,13 +26,13 @@ export default {
           </a>
           .
         </p>
-      )
+      ),
     },
     {
       name: 'subKey',
       type: 'text',
       title: 'Subscribe Key',
-      description: <p>The Subscribe Key from the same key pair as the Publish Key above.</p>
+      description: <p>The Subscribe Key from the same key pair as the Publish Key above.</p>,
     },
     {
       name: 'channel',
@@ -49,8 +49,8 @@ export default {
           </a>{' '}
           for valid channel names.
         </p>
-      )
-    }
+      ),
+    },
   ],
   mapParamsToDefinition: ({ pubKey, subKey, channel }, name) => {
     return {
@@ -62,9 +62,9 @@ export default {
         contentType: 'application/json',
         body: JSON.stringify({
           topic: '{ /topic }',
-          payload: '{ /payload }'
-        })
-      }
+          payload: '{ /payload }',
+        }),
+      },
     };
-  }
+  },
 };

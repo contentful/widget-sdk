@@ -10,12 +10,12 @@ class Thumbnail extends React.Component {
   static propTypes = {
     thumbnail: PropTypes.shape({
       url: PropTypes.string,
-      contentType: PropTypes.string
-    })
+      contentType: PropTypes.string,
+    }),
   };
 
   static defaultProps = {
-    thumbnail: undefined
+    thumbnail: undefined,
   };
 
   render() {

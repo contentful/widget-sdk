@@ -25,15 +25,15 @@ export async function fetchMarketplaceApps() {
 
   const [listingResponse, marketplaceAppsResponse] = await Promise.all([
     tryPreviewRequest(MARKETPLACE_LISTING_QUERY),
-    tryPreviewRequest(MARKETPLACE_APPS_QUERY)
+    tryPreviewRequest(MARKETPLACE_APPS_QUERY),
   ]);
   const allApps = resolveResponse(marketplaceAppsResponse);
   const listedAppIds = new Set(
-    get(listingResponse, ['items', '0', 'fields', 'apps'], []).map(app => app.sys.id)
+    get(listingResponse, ['items', '0', 'fields', 'apps'], []).map((app) => app.sys.id)
   );
 
   marketplaceAppsCache = allApps
-    .map(a => createAppObject(a, listedAppIds.has(a.sys.id)))
+    .map((a) => createAppObject(a, listedAppIds.has(a.sys.id)))
     .filter(({ definitionId }) => !!definitionId);
 
   return marketplaceAppsCache;
@@ -43,7 +43,7 @@ async function tryPreviewRequest(query) {
   const isTryingToFetchMarketplacePreview = MARKETPLACE_SPACE_TOKEN !== MARKETPLACE_SPACE_CDN_TOKEN;
 
   let res = await window.fetch(MARKETPLACE_SPACE_BASE_URL + query, {
-    headers: { Authorization: `Bearer ${MARKETPLACE_SPACE_TOKEN}` }
+    headers: { Authorization: `Bearer ${MARKETPLACE_SPACE_TOKEN}` },
   });
 
   if (isTryingToFetchMarketplacePreview) {
@@ -53,7 +53,7 @@ async function tryPreviewRequest(query) {
       // If the user was trying to fetch the marketplace listing
       // from the Preview API with an invalid token, fall back to CDN API.
       res = await window.fetch(MARKETPLACE_SPACE_CDN_BASE_URL + MARKETPLACE_LISTING_QUERY, {
-        headers: { Authorization: `Bearer ${MARKETPLACE_SPACE_CDN_TOKEN}` }
+        headers: { Authorization: `Bearer ${MARKETPLACE_SPACE_CDN_TOKEN}` },
       });
     }
   }
@@ -73,20 +73,20 @@ function createAppObject(entry, isListed) {
     author: {
       name: get(entry, ['fields', 'developer', 'fields', 'name']),
       url: get(entry, ['fields', 'developer', 'fields', 'websiteUrl']),
-      icon: get(entry, ['fields', 'developer', 'fields', 'icon', 'fields', 'file', 'url'])
+      icon: get(entry, ['fields', 'developer', 'fields', 'icon', 'fields', 'file', 'url']),
     },
     categories: get(entry, ['fields', 'categories'], [])
-      .map(category => get(category, ['fields', 'name'], null))
+      .map((category) => get(category, ['fields', 'name'], null))
       .filter(identity),
     description: get(entry, ['fields', 'description'], ''),
     icon: get(entry, ['fields', 'icon', 'fields', 'file', 'url'], ''),
-    links: get(entry, ['fields', 'links'], []).map(link => link.fields),
+    links: get(entry, ['fields', 'links'], []).map((link) => link.fields),
     legal: {
       eula: get(entry, ['fields', 'eula'], ''),
-      privacyPolicy: get(entry, ['fields', 'privacyPolicy'], '')
+      privacyPolicy: get(entry, ['fields', 'privacyPolicy'], ''),
     },
     tagLine: get(entry, ['fields', 'tagLine'], ''),
-    actionList: get(entry, ['fields', 'uninstallMessages'], []).map(msg => msg.fields)
+    actionList: get(entry, ['fields', 'uninstallMessages'], []).map((msg) => msg.fields),
   };
 }
 
@@ -98,7 +98,7 @@ function getMarketplaceSpaceUrlAndToken() {
     MARKETPLACE_SPACE_TOKEN: isInPreviewMode ? previewToken : MARKETPLACE_SPACE_CDN_TOKEN,
     MARKETPLACE_SPACE_BASE_URL: isInPreviewMode
       ? MARKETPLACE_SPACE_PREVIEW_BASE_URL
-      : MARKETPLACE_SPACE_CDN_BASE_URL
+      : MARKETPLACE_SPACE_CDN_BASE_URL,
   };
 }
 

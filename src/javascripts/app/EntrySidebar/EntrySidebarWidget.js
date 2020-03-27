@@ -11,7 +11,7 @@ const headerClassName = css({
   borderBottom: `1px solid ${tokens.colorElementDark}`,
   marginBottom: tokens.spacingL,
   marginTop: tokens.spacingL,
-  alignItems: 'center'
+  alignItems: 'center',
 });
 
 const titleClassName = css({
@@ -22,7 +22,7 @@ const titleClassName = css({
   borderBottom: 0,
   margin: 0,
   lineHeight: 2,
-  letterSpacing: '1px'
+  letterSpacing: '1px',
 });
 
 export default class EntrySidebarWidget extends Component {
@@ -30,11 +30,11 @@ export default class EntrySidebarWidget extends Component {
     title: PropTypes.string.isRequired,
     testId: PropTypes.string,
     headerNode: PropTypes.node,
-    children: PropTypes.node
+    children: PropTypes.node,
   };
 
   static defaultProps = {
-    testId: 'cf-entity-sidebar'
+    testId: 'cf-entity-sidebar',
   };
 
   render() {

@@ -11,7 +11,7 @@ const types = {
   TEAM: 'Team',
   SPACE_MEMBERSHIP: 'SpaceMembership',
   ORGANIZATION_MEMBERSHIP: 'OrganizationMembership',
-  TEAM_MEMBERSHIP: 'TeamMembership'
+  TEAM_MEMBERSHIP: 'TeamMembership',
 };
 
 export function sys(options = {}) {
@@ -25,7 +25,7 @@ export function sys(options = {}) {
   return {
     type: '',
     id: uniqueId(options.type || ''),
-    ...options
+    ...options,
   };
 }
 
@@ -34,8 +34,8 @@ export function Link(linkType = '', id) {
     sys: {
       id: id || uniqueId(linkType.toLowerCase()),
       type: 'Link',
-      linkType
-    }
+      linkType,
+    },
   };
 }
 
@@ -48,8 +48,8 @@ export function Space(name = '') {
       type: types.SPACE,
       id: uniqueSpaceId,
       createdAt: DEFAULT_CREATED_AT_TIME_ISO,
-      createdBy: User()
-    })
+      createdBy: User(),
+    }),
   };
 }
 
@@ -59,9 +59,9 @@ export function Organization(options = {}) {
     sys: sys({
       type: types.ORGANIZATION,
       id: uniqueId(types.ORGANIZATION),
-      createdAt: DEFAULT_CREATED_AT_TIME_ISO
+      createdAt: DEFAULT_CREATED_AT_TIME_ISO,
     }),
-    ...options
+    ...options,
   };
 }
 
@@ -73,7 +73,7 @@ export function User(options = {}) {
     avatarUrl: 'avatar.jpg',
     activated: true,
     sys: sys({ type: types.USER }),
-    ...options
+    ...options,
   };
 }
 
@@ -81,7 +81,7 @@ export function Team(name = '', description = '') {
   return {
     name,
     description,
-    sys: sys({ type: types.TEAM })
+    sys: sys({ type: types.TEAM }),
   };
 }
 
@@ -90,8 +90,8 @@ export function Role(name = '', space = Link(types.SPACE)) {
     name,
     sys: {
       ...sys({ type: types.ROLE }),
-      space
-    }
+      space,
+    },
   };
 }
 
@@ -108,8 +108,8 @@ export function SpaceMembership(
       ...sys({ type: types.SPACE_MEMBERSHIP }),
       user: user,
       space: space,
-      createdBy: Link(types.USER)
-    }
+      createdBy: Link(types.USER),
+    },
   };
 }
 
@@ -124,8 +124,8 @@ export function OrganizationMembership(
     sys: {
       ...sys({ type: types.ORGANIZATION_MEMBERSHIP }),
       user: user,
-      createdBy: Link(types.USER)
-    }
+      createdBy: Link(types.USER),
+    },
   };
 }
 
@@ -139,8 +139,8 @@ export function TeamMembership(
       ...sys({ type: types.TEAM_MEMBERSHIP }),
       team,
       organizationMembership,
-      user
-    }
+      user,
+    },
   };
 }
 
@@ -155,6 +155,6 @@ export function SpaceRole(name = '') {
     description: 'description',
     permissions: {},
     policies: [],
-    sys: sys()
+    sys: sys(),
   };
 }

@@ -7,41 +7,41 @@ import { css } from 'emotion';
 const styles = {
   statusBadge: css({
     display: 'flex',
-    marginBottom: tokens.spacingXs
+    marginBottom: tokens.spacingXs,
   }),
   current: css({
     color: tokens.colorTextLight,
     alignItems: 'center',
-    display: 'flex'
+    display: 'flex',
   }),
   status: css({
     display: 'flex',
     marginLeft: 'auto',
-    alignItems: 'center'
+    alignItems: 'center',
   }),
   icon: css({
     marginRight: tokens.spacing2Xs,
-    height: tokens.spacingL
-  })
+    height: tokens.spacingL,
+  }),
 };
 
 const statusMap = {
   archived: {
     tagType: 'secondary',
-    title: 'Archived'
+    title: 'Archived',
   },
   draft: {
     tagType: 'warning',
-    title: 'Draft'
+    title: 'Draft',
   },
   published: {
     tagType: 'positive',
-    title: 'Published'
+    title: 'Published',
   },
   changes: {
     tagType: 'primary',
-    title: 'Changed'
-  }
+    title: 'Changed',
+  },
 };
 
 const StatusBadge = ({ status, isScheduled }) => (
@@ -58,11 +58,11 @@ const StatusBadge = ({ status, isScheduled }) => (
 
 StatusBadge.propTypes = {
   status: PropTypes.string.isRequired,
-  isScheduled: PropTypes.bool
+  isScheduled: PropTypes.bool,
 };
 
 StatusBadge.defaultProps = {
-  isScheduled: false
+  isScheduled: false,
 };
 
 export default StatusBadge;

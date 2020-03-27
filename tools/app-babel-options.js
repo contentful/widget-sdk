@@ -31,10 +31,10 @@ module.exports.createBabelOptions = function createBabelOptions(options = {}) {
           {
             loose: false,
             modules: modules,
-            useBuiltIns: false
-          }
+            useBuiltIns: false,
+          },
         ],
-        require.resolve('@babel/preset-react')
+        require.resolve('@babel/preset-react'),
       ],
       plugins: [
         systemJs && require.resolve('@babel/plugin-transform-modules-systemjs'),
@@ -48,11 +48,11 @@ module.exports.createBabelOptions = function createBabelOptions(options = {}) {
             sourceMap: true,
             autoLabel: process.env.NODE_ENV !== 'production',
             labelFormat: '[local]',
-            cssPropOptimization: true
-          }
-        ]
-      ].filter(p => !!p),
-      getModuleId: systemJs ? getModuleIdInSrc : undefined
+            cssPropOptimization: true,
+          },
+        ],
+      ].filter((p) => !!p),
+      getModuleId: systemJs ? getModuleIdInSrc : undefined,
     },
     opts
   );

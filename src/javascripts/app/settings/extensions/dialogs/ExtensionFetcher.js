@@ -6,10 +6,10 @@ const GITHUB_URL_PROPS = ['host', 'repo', 'branch', 'filepath'];
 const ERRORS = {
   DESCRIPTOR: 'Could not fetch the descriptor file. Please check the URL and try again.',
   SRCDOC: 'Could not fetch the extension source. Please check if the descriptor is valid.',
-  INVALID: 'The format of the descriptor file is invalid.'
+  INVALID: 'The format of the descriptor file is invalid.',
 };
 
-const nonEmptyString = s => typeof s === 'string' && s.length > 0;
+const nonEmptyString = (s) => typeof s === 'string' && s.length > 0;
 
 function isValidGHUserContentUrl(url) {
   return url.startsWith('https://raw.githubusercontent.com/') && url.endsWith('extension.json');
@@ -36,7 +36,7 @@ export function isValidSource(url) {
   }
 
   const parsed = parseGithubUrl(url) || {};
-  const onlyNonEmptyStrings = GITHUB_URL_PROPS.every(prop => nonEmptyString(parsed[prop]));
+  const onlyNonEmptyStrings = GITHUB_URL_PROPS.every((prop) => nonEmptyString(parsed[prop]));
 
   if (onlyNonEmptyStrings) {
     return parsed.host.endsWith('github.com') && parsed.filepath.endsWith('extension.json');
@@ -50,17 +50,17 @@ export function fetchExtension(url) {
 
   return window
     .fetch(descriptorUrl)
-    .then(res => {
+    .then((res) => {
       if (res.status >= 400) {
         return Promise.reject(new Error(ERRORS.DESCRIPTOR));
       } else {
         return res.json();
       }
     })
-    .then(descriptor => {
+    .then((descriptor) => {
       if (typeof descriptor.srcdoc === 'string') {
         const srcdocUrl = new URL(descriptor.srcdoc, descriptorUrl);
-        return window.fetch(srcdocUrl.toString()).then(res => {
+        return window.fetch(srcdocUrl.toString()).then((res) => {
           if (res.status >= 400) {
             return Promise.reject(new Error(ERRORS.SRCDOC));
           } else {

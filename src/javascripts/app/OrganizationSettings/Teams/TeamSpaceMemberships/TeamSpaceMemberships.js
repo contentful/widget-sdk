@@ -14,7 +14,7 @@ import {
   TableRow,
   TableHead,
   TableBody,
-  TableCell
+  TableCell,
 } from '@contentful/forma-36-react-components';
 
 export class TeamSpaceMemberships extends React.Component {
@@ -24,11 +24,11 @@ export class TeamSpaceMemberships extends React.Component {
     onFormDismissed: PropTypes.func.isRequired,
     memberships: PropTypes.arrayOf(
       PropTypes.oneOfType([types.TeamSpaceMembership, types.TeamSpaceMembershipPlaceholder])
-    )
+    ),
   };
 
   state = {
-    editingMembershipId: null
+    editingMembershipId: null,
   };
 
   render() {
@@ -50,7 +50,7 @@ export class TeamSpaceMemberships extends React.Component {
         </TableHead>
         <TableBody>
           {showingForm && <TeamSpaceMembershipForm onClose={onFormDismissed} />}
-          {memberships.map(membership =>
+          {memberships.map((membership) =>
             editingMembershipId === membership.sys.id ? (
               <TeamSpaceMembershipForm
                 key={membership.sys.id}
@@ -71,7 +71,7 @@ export class TeamSpaceMemberships extends React.Component {
   }
 }
 
-export default connect(state => ({
+export default connect((state) => ({
   hideCreator: hasReadOnlyPermission(state),
-  memberships: getTeamSpaceMembershipsOfCurrentTeamToDisplay(state)
+  memberships: getTeamSpaceMembershipsOfCurrentTeamToDisplay(state),
 }))(TeamSpaceMemberships);

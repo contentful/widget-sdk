@@ -8,11 +8,11 @@ describe('AppHookBus', () => {
         sys: {
           type: 'Link',
           linkType: 'AppDefinition',
-          id: 'def'
-        }
-      }
+          id: 'def',
+        },
+      },
     },
-    parameters: { test: true }
+    parameters: { test: true },
   };
 
   it('exposes even emitter', () => {
@@ -60,7 +60,7 @@ describe('AppHookBus', () => {
 
     expect(bus.getInstallation()).toEqual({
       ...noParams,
-      parameters: {}
+      parameters: {},
     });
   });
 

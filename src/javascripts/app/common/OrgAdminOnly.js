@@ -9,13 +9,13 @@ export default class OrgAdminOnly extends React.Component {
     orgId: PropTypes.string.isRequired,
     children: PropTypes.any,
     render: PropTypes.func,
-    redirect: PropTypes.string
+    redirect: PropTypes.string,
   };
 
   state = {
     isAdmin: false,
     isNotAMember: false,
-    loading: true
+    loading: true,
   };
 
   async componentDidMount() {

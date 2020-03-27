@@ -10,14 +10,14 @@ export default class EntryLinkToolbarIcon extends Component {
   static propTypes = TOOLBAR_PLUGIN_PROP_TYPES;
 
   static defaultProps = {
-    isButton: false
+    isButton: false,
   };
   handleClick = async (event, widgetAPI) => {
     this.props.onCloseEmbedMenu();
     event.preventDefault();
     const {
       editor,
-      richTextAPI: { logToolbarAction }
+      richTextAPI: { logToolbarAction },
     } = this.props;
     await selectEntryAndInsert(widgetAPI, editor, logToolbarAction);
     this.props.onToggle(editor);
@@ -31,7 +31,7 @@ export default class EntryLinkToolbarIcon extends Component {
               disabled={this.props.disabled}
               className={`${INLINES.EMBEDDED_ENTRY}-button`}
               size="small"
-              onClick={event => this.handleClick(event, widgetAPI)}
+              onClick={(event) => this.handleClick(event, widgetAPI)}
               icon="EmbeddedEntryInline"
               buttonType="muted"
               testId={`toolbar-toggle-${INLINES.EMBEDDED_ENTRY}`}>
@@ -45,7 +45,7 @@ export default class EntryLinkToolbarIcon extends Component {
               icon="Entry"
               buttonType="muted"
               testId={`toolbar-toggle-${INLINES.EMBEDDED_ENTRY}`}
-              onClick={event => this.handleClick(event, widgetAPI)}>
+              onClick={(event) => this.handleClick(event, widgetAPI)}>
               <div className="cf-flex-grid">
                 <Icon
                   icon="EmbeddedEntryInline"

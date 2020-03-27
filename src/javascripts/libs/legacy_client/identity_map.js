@@ -6,7 +6,7 @@ function IdentityMap() {
  * Add or update 'entity' and return unique reference to the shared
  * version.
  */
-IdentityMap.prototype.store = function(entity) {
+IdentityMap.prototype.store = function (entity) {
   const identity = entity.getIdentity && entity.getIdentity();
   if (!identity) {
     return entity;
@@ -26,11 +26,11 @@ IdentityMap.prototype.store = function(entity) {
   return existing;
 };
 
-IdentityMap.prototype._get = function(identity) {
+IdentityMap.prototype._get = function (identity) {
   return this._entities[identity];
 };
 
-IdentityMap.prototype._set = function(identity, entity) {
+IdentityMap.prototype._set = function (identity, entity) {
   this._entities[identity] = entity;
 };
 

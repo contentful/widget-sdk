@@ -7,7 +7,7 @@ import EditContentTypeDialog from './EditContentTypeDialog';
 export function openCreateContentTypeDialog(contentTypeIds) {
   // every time open modal with clean state
   const modalKey = Date.now();
-  return ModalLauncher.open(props => (
+  return ModalLauncher.open((props) => (
     <CreateContentTypeDialog
       key={modalKey}
       isShown={props.isShown}
@@ -19,7 +19,7 @@ export function openCreateContentTypeDialog(contentTypeIds) {
         props.onClose({
           contentTypeId,
           name,
-          description
+          description,
         });
       }}
     />
@@ -29,7 +29,7 @@ export function openCreateContentTypeDialog(contentTypeIds) {
 export function openEditContentTypeDialog(contentType) {
   // every time open modal with clean state
   const modalKey = Date.now();
-  return ModalLauncher.open(props => (
+  return ModalLauncher.open((props) => (
     <EditContentTypeDialog
       key={modalKey}
       isShown={props.isShown}
@@ -48,7 +48,7 @@ export function openEditContentTypeDialog(contentType) {
 export const openDuplicateContentTypeDialog = async (contentType, duplicate, contentTypeIds) => {
   // every time open modal with clean state
   const modalKey = Date.now();
-  return ModalLauncher.open(props => (
+  return ModalLauncher.open((props) => (
     <DuplicateContentTypeDialog
       key={modalKey}
       isShown={props.isShown}
@@ -59,7 +59,7 @@ export const openDuplicateContentTypeDialog = async (contentType, duplicate, con
         props.onClose(false);
       }}
       onConfirm={({ contentTypeId, name, description }) => {
-        return duplicate({ contentTypeId, name, description }).then(duplicated => {
+        return duplicate({ contentTypeId, name, description }).then((duplicated) => {
           props.onClose(duplicated);
         });
       }}

@@ -9,8 +9,8 @@ import useFormState from 'app/common/hooks/useFormState';
 
 const styles = {
   saveButton: css({
-    marginRight: tokens.spacingM
-  })
+    marginRight: tokens.spacingM,
+  }),
 };
 
 export default function EditorInstanceParametersConfigurationModal(props) {
@@ -23,7 +23,7 @@ export default function EditorInstanceParametersConfigurationModal(props) {
   const values = WidgetParametersUtils.applyDefaultValues(definitions, formState);
   definitions = WidgetParametersUtils.filterDefinitions(definitions, values, {
     namespace: widget.namespace,
-    id: widget.id
+    id: widget.id,
   });
   definitions = WidgetParametersUtils.unifyEnumOptions(definitions);
   const missing = WidgetParametersUtils.markMissingValues(definitions, values);
@@ -62,5 +62,5 @@ EditorInstanceParametersConfigurationModal.propTypes = {
   initialSettings: PropTypes.object.isRequired,
   widget: PropTypes.object.isRequired,
   onSave: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired
+  onClose: PropTypes.func.isRequired,
 };

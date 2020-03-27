@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SvgComponent = props => (
+const SvgComponent = (props) => (
   <svg data-name="Layer 1" viewBox="0 0 25 25" {...props}>
     <defs />
     <path

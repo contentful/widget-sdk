@@ -10,17 +10,17 @@ const GATSBY_APP_URL = 'https://ctf-gatsby-contentful-starter.netlify.com/';
 
 export default class ContentFlowExplorer extends React.Component {
   state = {
-    active: 'code'
+    active: 'code',
   };
 
-  selectTab = tabId => {
+  selectTab = (tabId) => {
     this.setState({
       active: tabId,
-      iframe: null
+      iframe: null,
     });
   };
 
-  renderContent = content => {
+  renderContent = (content) => {
     return (
       <div className="modern-stack-onboarding--content-explorer">
         <div className="modern-stack-onboarding--content-explorer-data">{content}</div>
@@ -37,7 +37,7 @@ export default class ContentFlowExplorer extends React.Component {
       <Browser>
         <iframe
           sandbox="allow-scripts allow-same-origin"
-          ref={iframe => {
+          ref={(iframe) => {
             if (stateIframe !== iframe) {
               this.setState({ iframe });
             }
@@ -56,13 +56,13 @@ export default class ContentFlowExplorer extends React.Component {
       {
         id: 'code',
         title: 'Code snippets',
-        content: this.renderContent(<CodeSnippets iframe={iframe} />)
+        content: this.renderContent(<CodeSnippets iframe={iframe} />),
       },
       {
         id: 'data-flow',
         title: 'Data model and data flow',
-        content: this.renderContent(<DataFlow iframe={iframe} />)
-      }
+        content: this.renderContent(<DataFlow iframe={iframe} />),
+      },
     ];
 
     return (
