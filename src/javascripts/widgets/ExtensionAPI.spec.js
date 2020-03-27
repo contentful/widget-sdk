@@ -21,10 +21,6 @@ describe('ExtensionAPI', () => {
         sys: { user: { sys: {}, firstName: 'Jakub' } },
         roles: []
       },
-      spaceMembership: {
-        sys: { user: { sys: {}, firstName: 'Jakub' } },
-        roles: []
-      },
       parameters: {
         instance: { test: true },
         installation: { hello: 'world' }
