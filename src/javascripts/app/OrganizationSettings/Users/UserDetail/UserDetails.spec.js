@@ -9,7 +9,7 @@ import {
 } from '@testing-library/react';
 import UserDetails from './UserDetails';
 
-import * as fake from 'testHelpers/fakeFactory';
+import * as fake from 'test/helpers/fakeFactory';
 import ModalLauncher from '__mocks__/app/common/ModalLauncher';
 import { removeTeamMembership } from 'access_control/TeamRepository';
 

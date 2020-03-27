@@ -1,4 +1,4 @@
-import * as fake from 'testHelpers/fakeFactory';
+import * as fake from 'test/helpers/fakeFactory';
 import ResolveLinks, { fetchAndResolve } from './LinkResolver';
 
 describe('LinkResolver', () => {

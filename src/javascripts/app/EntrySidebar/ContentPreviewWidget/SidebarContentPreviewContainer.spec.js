@@ -3,7 +3,7 @@ import { mount } from 'enzyme';
 import 'jest-enzyme';
 import * as mockedSpaceContext from 'ng/spaceContext';
 import SidebarContentPreviewContainer from './SidebarContentPreviewContainer';
-import flushPromises from 'testHelpers/flushPromises';
+import flushPromises from 'test/helpers/flushPromises';
 
 const mockContentPreview = {
   replaceVariablesInUrl: jest.fn(),

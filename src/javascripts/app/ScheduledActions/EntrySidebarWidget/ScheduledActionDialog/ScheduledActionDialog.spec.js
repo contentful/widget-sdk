@@ -2,7 +2,7 @@ import React from 'react';
 import { render, fireEvent, wait } from '@testing-library/react';
 import { Notification } from '@contentful/forma-36-react-components';
 
-import * as DateMocks from 'DateMocks';
+import * as DateMocks from './__mocks__/DateMocks';
 import ScheduledActionDialog from '.';
 import moment from 'moment';
 

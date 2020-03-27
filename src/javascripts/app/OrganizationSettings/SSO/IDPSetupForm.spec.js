@@ -7,7 +7,7 @@ import ModalLauncher from 'app/common/ModalLauncher';
 import { track } from 'analytics/Analytics';
 
 import { connectionTestingAllowed, formatConnectionTestErrors } from './utils';
-import * as fake from 'testHelpers/fakeFactory';
+import * as fake from 'test/helpers/fakeFactory';
 
 const awaitSetImmediate = () => new Promise(resolve => setImmediate(resolve));
 

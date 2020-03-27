@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, fireEvent, screen, wait, within } from '@testing-library/react';
 
-import * as fake from 'testHelpers/fakeFactory';
-import * as FORMA_CONSTANTS from 'testHelpers/Forma36Constants';
+import * as fake from 'test/helpers/fakeFactory';
+import * as FORMA_CONSTANTS from 'test/helpers/Forma36Constants';
 
 import OrganizationRow from './OrganizationRow';
 import ModalLauncher from 'app/common/ModalLauncher';

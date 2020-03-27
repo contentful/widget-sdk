@@ -11,7 +11,7 @@ import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import { getVariation } from 'LaunchDarkly';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import SSOUpsellState from './SSOUpsellState';
-import * as fake from 'testHelpers/fakeFactory';
+import * as fake from 'test/helpers/fakeFactory';
 
 jest.mock('services/OrganizationRoles', () => ({
   isOwnerOrAdmin: jest.fn().mockReturnValue(true)

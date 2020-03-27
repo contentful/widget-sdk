@@ -1,5 +1,5 @@
 import React from 'react';
-import * as fake from 'testHelpers/fakeFactory';
+import * as fake from 'test/helpers/fakeFactory';
 import { render, screen, fireEvent } from '@testing-library/react';
 import UserAttributes from './UserAttributes';
 import { orgRoles } from 'utils/MembershipUtils';

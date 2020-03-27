@@ -5,8 +5,8 @@ import { go } from 'states/Navigator';
 import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import { getEnabledFeatures } from 'utils/SubscriptionUtils';
 
-import * as fake from 'testHelpers/fakeFactory';
-import * as FORMA_CONSTANTS from 'testHelpers/Forma36Constants';
+import * as fake from 'test/helpers/fakeFactory';
+import * as FORMA_CONSTANTS from 'test/helpers/Forma36Constants';
 
 const MOCK_USER_NAME = 'John Doe';
 const SPACE_NAME = 'SPACE_NAME';

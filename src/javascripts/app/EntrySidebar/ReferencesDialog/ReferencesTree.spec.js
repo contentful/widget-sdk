@@ -15,7 +15,7 @@ import {
   depthLimit,
   unresolvedReferences,
   noReferences
-} from './fixtures';
+} from './__fixtures__';
 
 import ReferencesTree from './ReferencesTree';
 

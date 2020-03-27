@@ -5,7 +5,12 @@ import {
   _resetGlobals
 } from './SpaceTemplateLoader';
 import newContentfulClient from './contentfulClient';
-import { contentTypesCDA, assetsCDA, entriesCDA, spaceCDA } from '__fixtures__/SpaceTemplateLoader';
+import {
+  contentTypesCDA,
+  assetsCDA,
+  entriesCDA,
+  spaceCDA
+} from './__fixtures__/SpaceTemplateLoader';
 
 jest.mock('./contentfulClient', () => jest.fn());
 

@@ -7,7 +7,7 @@ import CreateEntity, { entityTypes } from '..';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as entityCreator from 'components/app_container/entityCreator';
 
-import flushPromises from 'testHelpers/flushPromises';
+import flushPromises from 'test/helpers/flushPromises';
 import { act } from 'react-dom/test-utils';
 
 jest.mock('navigation/SlideInNavigator', () => ({
